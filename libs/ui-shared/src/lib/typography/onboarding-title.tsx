@@ -1,9 +1,8 @@
-import React from 'react';
-
 interface OnBoardingTitleProps {
   color?: string;
   children: string;
   styles?: string;
+  id?: string;
 }
 
 export const OnBoardingTitle = ({
