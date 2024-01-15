@@ -4,6 +4,7 @@ interface OnBoardingSubTitleProps {
   color?: string;
   children: string;
   styles?: string;
+  id?: string;
 }
 
 export const OnBoardingSubTitle = ({
