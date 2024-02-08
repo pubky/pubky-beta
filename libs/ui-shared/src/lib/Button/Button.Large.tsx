@@ -84,14 +84,22 @@ export const Large = ({
     cursor: 'pointer',
   };
 
+  const wrapper = {
+    display: 'flex',
+    gap: '6px',
+    alignItems: 'center',
+  };
+
   return (
     <button
       style={type === 'secondary' ? buttonStyleSecondary : buttonStylePrimary}
     >
-      <p className="flex center font-semibold text-[15px] leading-[18px] tracking-[0.2px]">
+      <div style={wrapper}>
         {svg}
-        <span className="ml-[6px]">{title}</span>
-      </p>
+        <p className="center font-semibold text-[15px] leading-[18px] tracking-[0.2px]">
+          {title}
+        </p>
+      </div>
     </button>
   );
 };
