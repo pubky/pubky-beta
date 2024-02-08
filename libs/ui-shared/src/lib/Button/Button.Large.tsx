@@ -6,7 +6,7 @@ type LargeButtonProps = {
   width?: string;
 };
 
-export const LargeButton = ({
+export const Large = ({
   title,
   type = 'primary',
   svg,
