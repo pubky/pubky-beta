@@ -2,3 +2,4 @@
 
 export * from './lib/typography/onboarding-title';
 export * from './lib/typography/onboarding-subtitle';
+export * from './lib/buttons/tagButton';
