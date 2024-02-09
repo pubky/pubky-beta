@@ -10,6 +10,10 @@ export default async function Index() {
       <Form.Search width='990px' placeHolder='Search' />
       <br/>
       <Form.Search width='990px' tags={["#Bitcoin", "#Mining"]} placeHolder='Search' />
+      <br/>
+      <Form.Switch />
+      <br />
+      <Form.Switch disable={true}/>
     </div>
   );
 }
