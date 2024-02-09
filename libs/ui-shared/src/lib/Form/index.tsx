@@ -4,6 +4,7 @@ import { Search } from './Form.Search';
 import { Switch } from './Form.Switch';
 import { CheckBox } from './Form.CheckBox';
 import { Radio } from './Form.Radio';
+import { Dropdown } from './Form.Dropdown';
 
 export const Form = {
   InputField,
@@ -11,5 +12,6 @@ export const Form = {
   Search,
   Switch,
   CheckBox,
-  Radio
+  Radio,
+  Dropdown
 };
