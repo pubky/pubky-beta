@@ -14,6 +14,10 @@ export default async function Index() {
       <Form.Switch />
       <br />
       <Form.Switch disable={true}/>
+      <br />
+      <Form.CheckBox />
+      <br />
+      <Form.CheckBox />
     </div>
   );
 }

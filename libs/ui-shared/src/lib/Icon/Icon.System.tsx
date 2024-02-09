@@ -35,3 +35,20 @@ export const MagnifyingGlass = ({
     </g>
   </svg>
 );
+
+export const Check = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M27.7071 8.29353C28.0976 8.68407 28.0976 9.31723 27.7071 9.70775L13.7071 23.7071C13.3166 24.0976 12.6834 24.0976 12.2929 23.7071L5.29292 16.7078C4.90238 16.3173 4.90235 15.6841 5.29286 15.2936C5.68337 14.903 6.31653 14.903 6.70708 15.2935L13 21.5858L26.2929 8.2935C26.6834 7.90299 27.3166 7.903 27.7071 8.29353Z"
+      fill={color}
+    />
+  </svg>
+);
