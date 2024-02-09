@@ -6,6 +6,10 @@ export default async function Index() {
       <Form.InputField placeHolder="ciao" label="label" />
       <br/>
       <Form.Cursor placeHolder='cursor'/>
+      <br/>
+      <Form.Search width='990px' placeHolder='Search' />
+      <br/>
+      <Form.Search width='990px' tags={["#Bitcoin", "#Mining"]} placeHolder='Search' />
     </div>
   );
 }
