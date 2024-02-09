@@ -13,8 +13,6 @@ export const Medium = ({
 }: MediumButtonProps) => {
   function getBackground(state: string) {
     switch (state) {
-      case 'active':
-        return 'rgba(255, 255, 255, 0.16)';
       case 'border':
         return 'transparent';
       case 'no-border':
@@ -45,12 +43,17 @@ export const Medium = ({
     fontWeight: 'bold',
     cursor: 'pointer',
     border: border,
+    '&hover': {
+      ...(state === 'default' && {
+        backgroundColor: 'rgba(255, 255, 255, 0.16)',
+      }),
+    },
   };
 
   const wrapper = {
     display: 'flex',
-    gap: "6px",
-    alignItems: "center",
+    gap: '6px',
+    alignItems: 'center',
   };
 
   return (

@@ -13,12 +13,10 @@ export const Large = ({
   state = 'default',
   width = '100%',
 }: LargeButtonProps) => {
-  let gradient, gradient1, gradient2, gradient3, gradient4;
+  let gradient1, gradient2, gradient3, gradient4;
 
   function getGradientPrimaryButton(state: string) {
     switch (state) {
-      case 'active':
-        return ['0.5', '0.5', '0.5', '0.8'];
       case 'disable':
         return ['0.1', '0.1', '0.1', '0.3'];
       default:
@@ -26,18 +24,7 @@ export const Large = ({
     }
   }
 
-  function getGradientSecondaryButton(state: string) {
-    switch (state) {
-      case 'active':
-        return ['0.32'];
-      default:
-        return ['0.16'];
-    }
-  }
-
-  if (type === 'secondary') {
-    [gradient] = getGradientSecondaryButton(state);
-  } else {
+  if (type === 'primary') {
     [gradient1, gradient2, gradient3, gradient4] =
       getGradientPrimaryButton(state);
   }
@@ -53,21 +40,35 @@ export const Large = ({
       conic-gradient(from -45deg at 50% 50%, rgba(253, 0, 255, ${gradient1}) 0deg, rgba(0, 255, 93, ${gradient2}) 118.12deg, rgba(0, 75, 255, ${gradient3}) 238.12deg, rgba(253, 0, 255, ${gradient1}) 360deg),
       conic-gradient(from -45deg at 50% 50%, rgba(253, 0, 255, ${gradient1}) 0deg, rgba(0, 255, 93, ${gradient2}) 118.12deg, rgba(0, 75, 255, ${gradient3}) 238.12deg, rgba(253, 0, 255, ${gradient1}) 360deg)
     `,
-    boxShadow: '0px 25px 50px 0px rgba(0, 0, 0, 0.25)',
     borderImage: `conic-gradient(from -45deg at 50% 50%, 
         rgba(253, 0, 255, ${gradient4}) 0deg, 
         rgba(0, 255, 93, ${gradient4}) 118.12deg, 
         rgba(0, 75, 255, ${gradient4}) 238.12deg, 
         rgba(253, 0, 255, ${gradient4}) 360deg
       )`,
+    boxShadow: '0px 25px 50px 0px rgba(0, 0, 0, 0.25)',
     borderImageSlice: '1',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: 'white',
+    color: state === 'default' ? 'white' : 'gray',
     fontWeight: 'bold',
     cursor: 'pointer',
     marginTop: '24px',
+    '&:hover': {
+      ...(state === 'default' && {
+        background: `
+        conic-gradient(from -45deg at 50% 50%, rgba(253, 0, 255, 0.5) 0deg, rgba(0, 255, 93, 0.5) 118.12deg, rgba(0, 75, 255, 0.5) 238.12deg, rgba(253, 0, 255, 0.5) 360deg),
+        conic-gradient(from -45deg at 50% 50%, rgba(253, 0, 255, 0.5) 0deg, rgba(0, 255, 93, 0.5) 118.12deg, rgba(0, 75, 255, 0.5) 238.12deg, rgba(253, 0, 255, 0.5}) 360deg)
+      `,
+        borderImage: `conic-gradient(from -45deg at 50% 50%, 
+          rgba(253, 0, 255, 0.8) 0deg, 
+          rgba(0, 255, 93, 0.8) 118.12deg, 
+          rgba(0, 75, 255, 0.8) 238.12deg, 
+          rgba(253, 0, 255, 0.8) 360deg
+        )`,
+      }),
+    },
   };
 
   const buttonStyleSecondary = {
@@ -75,13 +76,16 @@ export const Large = ({
     padding: '20px 24px',
     borderRadius: '64px',
     gap: '40px',
-    backgroundColor: `rgba(255, 255, 255, ${gradient})`,
+    backgroundColor: `rgba(255, 255, 255, 0.16)`,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: 'white',
     fontWeight: 'bold',
     cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: `rgba(255, 255, 255, 0.32)`,
+    },
   };
 
   const wrapper = {
