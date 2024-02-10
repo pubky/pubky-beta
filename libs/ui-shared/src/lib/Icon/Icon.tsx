@@ -1,0 +1,18 @@
+export const Icon = {
+  Pencil,
+  Stack,
+  Tag,
+  ArrowUp,
+  Plus,
+  Clipboard,
+  NoteBlank,
+  Newspaper,
+  ImageSquare,
+  MusicNotesSimple,
+  Play,
+  Pause,
+  Podcast,
+  SlidersHorizontal,
+  LinkSimple,
+  DotsNine,
+};
