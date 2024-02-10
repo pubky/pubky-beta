@@ -2,5 +2,6 @@
 
 import { Typography } from './lib/Typography';
 import { Icon } from './lib/Icon';
+import { Button } from './lib/Button';
 
-export { Typography, Icon };
+export { Typography, Icon, Button };

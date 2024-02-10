@@ -1,4 +1,4 @@
-import { Typography } from '@social/ui-shared';
+import { Button, Typography, Icon } from '@social/ui-shared';
 
 export default async function Index() {
   return (
@@ -20,6 +20,9 @@ export default async function Index() {
       <Typography.Body variant="small-bold">
         Body Small Bold Typography
       </Typography.Body>
+      <Button.Large svg={<Icon.ArrowUp />} width="245px">
+        Send
+      </Button.Large>
     </div>
   );
 }
