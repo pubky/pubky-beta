@@ -10,7 +10,7 @@ export const Caption = ({
   color = 'text-white',
   variant = 'normal',
   children,
-  styles,
+  styles = '',
   ...props
 }: CaptionProps) => {
   let cssClasses = `text-[13px] font-normal font-['Inter Tight'] tracking-tight`;

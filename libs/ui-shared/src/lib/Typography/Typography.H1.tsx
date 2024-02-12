@@ -8,7 +8,7 @@ type H1Props = {
 export const H1 = ({
   color = 'text-white',
   children,
-  styles,
+  styles = '',
   ...props
 }: H1Props) => {
   return (
