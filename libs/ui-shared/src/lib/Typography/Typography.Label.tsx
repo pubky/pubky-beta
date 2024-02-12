@@ -8,7 +8,7 @@ type LabelProps = {
 export const Label = ({
   color = 'text-white',
   children,
-  styles,
+  styles = '',
   ...props
 }: LabelProps) => {
   return (

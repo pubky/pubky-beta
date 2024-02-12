@@ -8,7 +8,7 @@ type DisplayProps = {
 export const Display = ({
   color = 'text-white',
   children,
-  styles,
+  styles = '',
   ...props
 }: DisplayProps) => {
   return (

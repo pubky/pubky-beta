@@ -8,7 +8,7 @@ type PageTitleProps = {
 export const PageTitle = ({
   color = 'text-white',
   children,
-  styles,
+  styles = '',
   ...props
 }: PageTitleProps) => {
   return (

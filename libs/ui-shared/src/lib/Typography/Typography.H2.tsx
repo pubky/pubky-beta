@@ -10,7 +10,7 @@ export const H2 = ({
   color = 'text-white',
   variant = 'normal',
   children,
-  styles,
+  styles = '',
   ...props
 }: H2Props) => {
   let cssClasses = `text-2xl font-semibold font-['Inter Tight'] tracking-wide`;

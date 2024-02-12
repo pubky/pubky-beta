@@ -16,7 +16,7 @@ export const Body = ({
   color = 'text-white',
   variant = 'large',
   children,
-  styles,
+  styles = '',
   ...props
 }: BodyProps) => {
   let cssClasses = `text-2xl font-normal font-['Inter Tight'] tracking-wide`;
