@@ -4,6 +4,7 @@ import { H1 } from './Typography.H1';
 import { H2 } from './Typography.H2';
 import { Body } from './Typography.Body';
 import { Label } from './Typography.Label';
+import { Caption } from './Typography.Caption';
 
 export const Typography = {
   Display,
@@ -12,4 +13,5 @@ export const Typography = {
   H2,
   Body,
   Label,
+  Caption,
 };

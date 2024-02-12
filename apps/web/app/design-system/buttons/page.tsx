@@ -32,9 +32,9 @@ export default async function Index() {
       <Button.Action variant="link" />
       <Button.Action variant="link" disable /> */}
       <div className={'pb-4'}>
-        <Button.Action variant="link" size="small" />
-        <Button.Action variant="link" />
-        <Button.Action variant="link" size="large" />
+        <Button.Action variant="mode" label='label' counter={3} size="small" />
+        <Button.Action variant="posts" label='label' counter={3} active/>
+        <Button.Action variant="link" label='label' counter={3} size="large" />
       </div>
       <div>
         <Button.Action variant="link" size="small" disable />
