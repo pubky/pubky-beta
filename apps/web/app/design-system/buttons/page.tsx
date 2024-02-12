@@ -14,6 +14,19 @@ export default async function Index() {
       <Button.Large svg={<Icon.Plus />} variant="secondary" disable>
         Secondary Button Disabled
       </Button.Large>
+
+      <Button.Medium>Tag</Button.Medium>
+      <Button.Medium disable>Tag</Button.Medium>
+
+      <Button.Medium variant="line">Tag</Button.Medium>
+      <Button.Medium variant="line" disable>
+        Tag
+      </Button.Medium>
+
+      <Button.Medium variant="subtle">Tag</Button.Medium>
+      <Button.Medium variant="subtle" disable>
+        Tag
+      </Button.Medium>
     </div>
   );
 }
