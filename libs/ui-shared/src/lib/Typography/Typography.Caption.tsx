@@ -1,7 +1,7 @@
 type CaptionProps = {
   color?: string;
   variant?: 'normal' | 'bold';
-  children: string | number;
+  children?: string | number;
   styles?: string;
   fontSize?: string;
   id?: string;

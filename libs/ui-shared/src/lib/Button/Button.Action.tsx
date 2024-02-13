@@ -27,8 +27,6 @@ type ActionButtonProps = {
   svg?: React.ReactNode;
   disable?: boolean;
   active?: boolean;
-  width?: string;
-  height?: string;
   styles?: string;
   className?: string;
 };
@@ -181,14 +179,14 @@ export const Action = ({
       break;
   }
 
-  const cssClasses = `${sizeClasses} ${background} rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex  ${styles} ${disabled}`;
+  const cssClasses = `${sizeClasses} ${background} rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex ${disabled}`;
 
   return (
     <div className="relative">
       <button
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`${cssClasses}  ${styles}`}
+        className={`${cssClasses} ${styles}`}
         {...props}
       >
         <div className={`justify-center items-center inline-flex ${gap}`}>
