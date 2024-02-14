@@ -5,8 +5,10 @@ type BodyProps = {
     | 'large-bold'
     | 'medium'
     | 'medium-bold'
+    | 'medium-light'
     | 'small'
-    | 'small-bold';
+    | 'small-bold'
+    | 'small-light';
   children: string;
   styles?: string;
   id?: string;
@@ -32,6 +34,9 @@ export const Body = ({
       cssClasses =
         "text-[17px] font-semibold font-['Inter Tight'] tracking-wide";
       break;
+    case 'medium-light':
+      cssClasses = "text-[17px] font-light font-['Inter Tight'] tracking-wide";
+      break;
     case 'small':
       cssClasses =
         "text-[15px] font-normal font-['Inter Tight'] tracking-tight";
@@ -39,6 +44,9 @@ export const Body = ({
     case 'small-bold':
       cssClasses =
         "text-[15px] font-semibold font-['Inter Tight'] tracking-tight";
+      break;
+    case 'small-light':
+      cssClasses = "text-[15px] font-light font-['Inter Tight'] tracking-tight";
       break;
   }
 
