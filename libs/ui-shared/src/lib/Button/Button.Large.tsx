@@ -8,6 +8,7 @@ type LargeButtonProps = {
   width?: string;
   height?: string;
   styles?: string;
+  href?: string;
   className?: string;
 };
 
@@ -19,6 +20,7 @@ export const Large = ({
   width = 'w-full',
   height = 'h-[58px]',
   styles = '',
+  href,
   ...props
 }: LargeButtonProps) => {
   const color = disable ? 'text-gray-500' : 'text-white';
@@ -35,13 +37,15 @@ export const Large = ({
   }
 
   return (
-    <button className={`${cssClasses} ${styles}`} {...props}>
-      <div className="justify-start items-center gap-1.5 inline-flex">
-        {svg}
-        <Typography.Body color={color} variant="small-bold">
-          {children}
-        </Typography.Body>
-      </div>
-    </button>
+    <a href={href}>
+      <button className={`${cssClasses} ${styles}`} {...props}>
+        <div className="justify-start items-center gap-1.5 inline-flex">
+          {svg}
+          <Typography.Body color={color} variant="small-bold">
+            {children}
+          </Typography.Body>
+        </div>
+      </button>
+    </a>
   );
 };

@@ -28,6 +28,7 @@ type ActionButtonProps = {
   disable?: boolean;
   active?: boolean;
   styles?: string;
+  href?: string;
   className?: string;
 };
 
@@ -40,6 +41,7 @@ export const Action = ({
   disable = false,
   active = false,
   styles = '',
+  href,
   ...props
 }: ActionButtonProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -183,23 +185,25 @@ export const Action = ({
 
   return (
     <div className="relative">
-      <button
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className={`${cssClasses} ${styles}`}
-        {...props}
-      >
-        <div className={`justify-center items-center inline-flex ${gap}`}>
-          {icon}
-          <Typography.Caption
-            fontSize={fontSize}
-            styles="text-opacity-50"
-            variant="bold"
-          >
-            {counter ? counter : ''}
-          </Typography.Caption>
-        </div>
-      </button>
+      <a href={href}>
+        <button
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className={`${cssClasses} ${styles}`}
+          {...props}
+        >
+          <div className={`justify-center items-center inline-flex ${gap}`}>
+            {icon}
+            <Typography.Caption
+              fontSize={fontSize}
+              styles="text-opacity-50"
+              variant="bold"
+            >
+              {counter ? counter : ''}
+            </Typography.Caption>
+          </div>
+        </button>
+      </a>
       {isHovered && label && (
         <div className={`${labelClasses} justify-center items-center`}>
           <Typography.Caption

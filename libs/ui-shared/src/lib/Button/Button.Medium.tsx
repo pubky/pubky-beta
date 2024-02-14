@@ -9,6 +9,7 @@ type MediumButtonProps = {
   width?: string;
   height?: string;
   styles?: string;
+  href?: string;
   className?: string;
 };
 
@@ -20,6 +21,7 @@ export const Medium = ({
   width = 'w-full',
   height = 'h-12',
   styles = '',
+  href,
   ...props
 }: MediumButtonProps) => {
   const color = disable ? 'text-gray-500' : 'text-white';
@@ -41,13 +43,15 @@ export const Medium = ({
   }
 
   return (
-    <button className={`${cssClasses} ${styles}`} {...props}>
-      <div className="justify-center items-center flex">
-        {svg ? svg : <Icon.Tag color={colorIcon} />}
-      </div>
-      <Typography.Body variant="small-bold" color={color}>
-        {children}
-      </Typography.Body>
-    </button>
+    <a href={href}>
+      <button className={`${cssClasses} ${styles}`} {...props}>
+        <div className="justify-center items-center flex">
+          {svg ? svg : <Icon.Tag color={colorIcon} />}
+        </div>
+        <Typography.Body variant="small-bold" color={color}>
+          {children}
+        </Typography.Body>
+      </button>
+    </a>
   );
 };

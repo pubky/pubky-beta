@@ -42,3 +42,26 @@ export const DropdownIcon = ({ size = '24', color = 'white' }: IconProps) => (
     />
   </svg>
 );
+
+export const ArrowUpRight = ({ size = '16', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12.3536 3.64645C12.5488 3.84171 12.5488 4.15829 12.3536 4.35355L4.35355 12.3536C4.15829 12.5488 3.84171 12.5488 3.64645 12.3536C3.45118 12.1583 3.45118 11.8417 3.64645 11.6464L11.6464 3.64645C11.8417 3.45118 12.1583 3.45118 12.3536 3.64645Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M5 4C5 3.72386 5.22386 3.5 5.5 3.5H12C12.2761 3.5 12.5 3.72386 12.5 4V10.5C12.5 10.7761 12.2761 11 12 11C11.7239 11 11.5 10.7761 11.5 10.5V4.5H5.5C5.22386 4.5 5 4.27614 5 4Z"
+      fill={color}
+    />
+  </svg>
+);
