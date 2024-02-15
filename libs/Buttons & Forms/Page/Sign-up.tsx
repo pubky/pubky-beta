@@ -1,0 +1,68 @@
+import { Button, Component, Icon, Typography, Form } from '@social/ui-shared';
+
+export default async function Index() {
+  return (
+    <Component.BgImage src="../images/bg-image-2.png">
+      <Component.Header titlePage="Onboarding">
+        <Component.Stepper />
+      </Component.Header>
+      <Component.Grid height="h-[952px]">
+        <Form.Cursor
+          placeHolder="Your Name"
+          height="h-[174px]"
+          fontSize="text-[100px]"
+          fontWeight="font-bold"
+          color="text-white"
+        />
+        <Typography.PageTitle color="text-white text-opacity-50">
+          @1pm3...5jkm
+        </Typography.PageTitle>
+        <div className="grid grid-cols-3 gap-6 pt-12">
+          <Component.Card title="Profile">
+            <Form.Inputfield
+              label="Short bio"
+              width="w-80"
+              height="h-[422px]"
+              placeHolder="Short bio. Tell a bit about yourself."
+              multine
+            />
+          </Component.Card>
+          <Component.Card title="Links">
+            <Form.Inputfield
+              width="w-80"
+              height="h-[70px]"
+              label="website"
+              placeHolder="https://"
+            />
+            <Form.Inputfield
+              width="w-80"
+              height="h-[70px]"
+              label="email"
+              placeHolder="user@provider.com"
+            />
+            <Form.Inputfield
+              width="w-80"
+              height="h-[70px]"
+              label="x (twitter)"
+              placeHolder="@user"
+            />
+            <Form.Inputfield
+              width="w-80"
+              height="h-[70px]"
+              label="telegram"
+              placeHolder="@user"
+            />
+          </Component.Card>
+          <Component.Card title="Picture">
+            <Component.Image styles="mt-6" src="../images/Userpic.png" />
+            <div className="pt-[40px]">
+              <Button.Large href="/onboarding/step2" svg={<Icon.Check />}>
+                Finish
+              </Button.Large>
+            </div>
+          </Component.Card>
+        </div>
+      </Component.Grid>
+    </Component.BgImage>
+  );
+}

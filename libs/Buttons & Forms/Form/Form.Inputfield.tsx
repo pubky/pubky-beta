@@ -7,6 +7,7 @@ type InputfieldProps = {
   width?: string;
   height?: string;
   styles?: string;
+  multine?: boolean;
   className?: string;
 };
 
@@ -16,6 +17,7 @@ export const Inputfield = ({
   label,
   width = 'w-96',
   height = 'h-[70px]',
+  multine,
   styles,
   ...props
 }: InputfieldProps) => {
@@ -23,16 +25,25 @@ export const Inputfield = ({
   const inputTextStyle = `text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-30 text-[17px] font-normal font-['Inter Tight'] leading-snug tracking-wide`;
 
   return (
-    <div className="flex-col justify-start items-start gap-2 inline-flex">
+    <div className="flex-col justify-start items-start gap-2 mt-2 inline-flex">
       <Typography.Caption color="text-white text-opacity-30" styles="uppercase">
         {label}
       </Typography.Caption>
-      <input
-        className={`${cssStyle} ${inputTextStyle} ${styles}`}
-        placeholder={placeHolder}
-        value={value}
-        {...props}
-      />
+      {multine ? (
+        <textarea
+          className={`${cssStyle} ${inputTextStyle} ${styles}`}
+          placeholder={placeHolder}
+          value={value}
+          {...props}
+        />
+      ) : (
+        <input
+          className={`${cssStyle} ${inputTextStyle} ${styles}`}
+          placeholder={placeHolder}
+          value={value}
+          {...props}
+        />
+      )}
     </div>
   );
 };

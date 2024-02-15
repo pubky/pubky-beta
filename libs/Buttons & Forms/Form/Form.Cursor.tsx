@@ -6,6 +6,7 @@ type CursorProps = {
   styles?: string;
   fontSize?: string;
   fontWeight?: string;
+  color?: string;
   className?: string;
 };
 
@@ -17,10 +18,11 @@ export const Cursor = ({
   styles,
   fontSize = 'text-[17px]',
   fontWeight = 'font-normal',
+  color = 'text-white text-opacity-80',
   ...props
 }: CursorProps) => {
-  const cssStyle = `${width} ${height} p-8 bg-transparent rounded-[5px] outline-none`;
-  const inputTextStyle = `text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-30 ${fontSize} ${fontWeight} font-['Inter Tight'] leading-snug tracking-wide`;
+  const cssStyle = `${width} ${height} bg-transparent rounded-[5px] outline-none`;
+  const inputTextStyle = `${color} ${fontSize} ${fontWeight} font-['Inter Tight'] leading-snug tracking-wide`;
 
   return (
     <input

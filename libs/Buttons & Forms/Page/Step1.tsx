@@ -16,7 +16,9 @@ export default async function Index() {
             title="Sign in with Slashtag"
             text="Have Bitkit or a Slashtags powered wallet? Scan this QR to sign in."
           >
-            <Component.Image src="../images/QR.png" />
+            <a href="/onboarding/step2">
+              <Component.Image src="../images/QR.png" />
+            </a>
           </Component.Card>
           <Component.Card
             title="Portable Profile"
@@ -24,7 +26,10 @@ export default async function Index() {
           >
             <Component.LinksStoreApp />
             <div className="pt-[34px]">
-              <Button.Large href="https://bitkit.to/" svg={<Icon.ArrowUpRight />}>
+              <Button.Large
+                href="https://bitkit.to/"
+                svg={<Icon.ArrowUpRight />}
+              >
                 About Bitkit
               </Button.Large>
             </div>
@@ -34,7 +39,7 @@ export default async function Index() {
             text="Another option is to create a new Slashtags account with Hypekit."
           >
             <div className="pt-[260px]">
-              <Button.Large href="/onboarding/step2" svg={<Icon.UserRectangle />}>
+              <Button.Large href="/sign-up" svg={<Icon.UserRectangle />}>
                 Create Account
               </Button.Large>
             </div>
