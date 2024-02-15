@@ -1,0 +1,42 @@
+import { Button, Component, Icon, Typography } from '@social/ui-shared';
+export default async function Index() {
+  return (
+    <Component.BgImage src="../images/bg-image-2.png">
+      <Component.Header titlePage="Onboarding">
+        <Component.Stepper currentStep={2} />
+      </Component.Header>
+      <Component.Grid height="h-[952px]">
+        <Typography.Display>Welcome!</Typography.Display>
+        <Typography.PageTitle color="text-white text-opacity-50">
+          Allow Hypekit to read your profile and contacts for a more seamless
+          experience.
+        </Typography.PageTitle>
+        <div className="grid grid-cols-3 gap-6 pt-12">
+          <Component.Card title="Permissions">
+            <Component.List
+              title="Hypekit will be able to:"
+              list={[
+                'Read your profile',
+                'Read your contacts',
+                'Read your tags',
+                'Read your content',
+                'Read payment prefs',
+              ]}
+            />
+            <div className="pt-8">
+              <Button.Large href="/onboarding/step3" svg={<Icon.Check />}>
+                Accept & Sign in
+              </Button.Large>
+            </div>
+          </Component.Card>
+          <Component.Card title="No access">
+            <Component.List
+              title="Hypekit will not be able to:"
+              list={['Read your private key', 'Read encrypted content']}
+            />
+          </Component.Card>
+        </div>
+      </Component.Grid>
+    </Component.BgImage>
+  );
+}

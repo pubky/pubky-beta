@@ -1,0 +1,30 @@
+import { Typography } from '../Typography';
+
+type ListProps = {
+  title?: string;
+  list: string[];
+};
+
+export const List = ({ title, list }: ListProps) => {
+  return (
+    <div className="flex-col justify-start items-start gap-6 inline-flex mt-6">
+      <Typography.Body variant="medium-bold">{title}</Typography.Body>
+      {list && (
+        <Typography.Body
+          variant="medium"
+          color="text-white text-opacity-80"
+          styles="ml-[10px] leading-snug"
+        >
+          {list.map((item, index) => (
+            <li key={index} className="flex items-center">
+              <span className="mr-2 text-white text-opacity-80 text-[20px]">
+                &#8226;
+              </span>
+              {item}
+            </li>
+          ))}
+        </Typography.Body>
+      )}
+    </div>
+  );
+};

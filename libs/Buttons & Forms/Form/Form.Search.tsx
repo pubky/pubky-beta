@@ -1,0 +1,72 @@
+import { GridFour } from '../Icon/Icon.Design';
+import { X } from '../Icon/Icon.Math';
+import { MagnifyingGlass } from '../Icon/Icon.System';
+import { Typography } from '../Typography';
+
+type SearchProps = {
+  value?: string;
+  placeHolder?: string;
+  width?: string;
+  styles?: string;
+  className?: string;
+  tags?: string[];
+};
+
+export const Search = ({
+  width = 'w-full',
+  value,
+  placeHolder,
+  tags,
+  styles,
+  ...props
+}: SearchProps) => {
+  const getRandomColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    const finalColor = {
+      background: color,
+    };
+    return finalColor;
+  };
+
+  const cssStyle = `w-full p-6 rounded-[48px] border border-white border-opacity-20 bg-gradient-to-b from-black to-gray-900 outline-none justify-between items-center inline-flex`;
+  const inputTextStyle = `text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-30 text-[15px] font-semibold font-['Inter Tight'] leading-[18px] tracking-tight`;
+
+  const iconStyle = 'absolute flex top-1/3 right-4 gap-2';
+
+  const tagsContainerStyle =
+    'absolute top-[20%] left-6 flex items-center gap-2';
+
+  return (
+    <div className={`relative ${width}`}>
+      {tags && (
+        <div className={tagsContainerStyle}>
+          {tags.map((tag, index) => (
+            <div
+              style={getRandomColor()}
+              className={` flex items-center px-2 py-2 backdrop-blur-lg justify-start gap-1 inline-flex rounded-lg`}
+            >
+              <Typography.Body variant="small-bold" key={index}>
+                {tag}
+              </Typography.Body>
+              <X />
+            </div>
+          ))}
+        </div>
+      )}
+      <input
+        placeholder={tags ? '' : placeHolder}
+        className={`${cssStyle} ${inputTextStyle} ${styles}`}
+        value={tags ? '' : value}
+        {...props}
+      />
+      <div className={iconStyle}>
+        {tags && <GridFour />}
+        <MagnifyingGlass />
+      </div>
+    </div>
+  );
+};
