@@ -23,7 +23,7 @@ export default async function Index() {
                 'Read payment prefs',
               ]}
             />
-            <div className="pt-8">
+            <div className="pt-12">
               <Button.Large href="/onboarding/step3" svg={<Icon.Check />}>
                 Accept & Sign in
               </Button.Large>
