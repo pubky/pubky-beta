@@ -1,0 +1,12 @@
+type DividerProps = {
+  margin?: string;
+  styles?: string;
+  className?: string;
+};
+export const Divider = ({ margin = 'my-6', styles }: DividerProps) => {
+  return (
+    <div
+      className={`border-t border border-white opacity-[0.1] ${margin} ${styles}`}
+    />
+  );
+};

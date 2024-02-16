@@ -1,0 +1,34 @@
+import {
+  Button,
+  Component,
+  Icon,
+  Typography,
+  Form,
+  Post,
+} from '@social/ui-shared';
+
+export default async function Index() {
+  return (
+    <Component.BgImage createButton>
+      <Component.Header titlePage="Streams">
+        <Form.Search />
+        <Component.Image
+          styles="w-12 h-12 rounded-full"
+          src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+        />
+      </Component.Header>
+      <Component.Divider />
+      <Component.Grid
+        className={`max-w-[1200px] h-24 flex justify-between items-center my-0 mx-auto`}
+      >
+        <Component.FilterSection />
+      </Component.Grid>
+      <Component.Divider styles="mb-12" />
+      <Component.Grid styles="gap-6 flex pb-12 justify-between items-start">
+        <Component.PostsSection />
+        <Component.SidebarSuggestions />
+      </Component.Grid>
+    </Component.BgImage>
+  );
+}
+

@@ -1,0 +1,33 @@
+import { Button } from '../Button';
+
+type BgImageProps = {
+  children: React.ReactNode;
+  src?: string;
+  backgroundColor?: string;
+  createButton?: boolean;
+};
+
+export const BgImage = ({
+  children,
+  src,
+  backgroundColor = 'bg-gradient-to-br from-black to-[#0e0e18]',
+  createButton = false,
+}: BgImageProps) => {
+  return (
+    <div className={`w-full relative ${backgroundColor}`}>
+      {children}
+      {src && (
+        <img
+          src={src}
+          alt="Background Image"
+          className="absolute bottom-0 right-0 max-w-[50%] max-h-[50%]"
+        />
+      )}
+      {createButton && (
+        <div className="fixed bottom-10 right-10 max-w-[50%] max-h-[50%]">
+          <Button.Create />
+        </div>
+      )}
+    </div>
+  );
+};

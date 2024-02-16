@@ -1,0 +1,101 @@
+import { Component } from '..';
+import { Button } from '../../Button';
+import { Icon } from '../../Icon';
+import { Post } from '../../Post';
+import { Typography } from '../../Typography';
+
+export const PostsSection = () => {
+  const images = [
+    {
+      src: 'https://www.weusecoins.com/images/satoshi-nakamoto.png',
+      alt: '1',
+    },
+    {
+      src: 'https://www.weusecoins.com/images/satoshi-nakamoto.png',
+      alt: '2',
+    },
+    {
+      src: 'https://www.weusecoins.com/images/satoshi-nakamoto.png',
+      alt: '3',
+    },
+    {
+      src: 'https://www.weusecoins.com/images/satoshi-nakamoto.png',
+      alt: '4',
+    },
+    {
+      src: 'https://www.weusecoins.com/images/satoshi-nakamoto.png',
+      alt: '5',
+    },
+  ];
+  const renderPosts = () => {
+    const postItems = Array.from({ length: 5 }).map((_, index) => (
+      <Component.Card
+        key={index}
+        width="w-[792px]"
+        background="bg-white bg-opacity-10"
+      >
+        <div className="pb-6 justify-start items-start inline-flex">
+          <div className="justify-start items-center gap-4 flex">
+            <Component.Image
+              className="w-8 h-8 rounded-full"
+              src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+            />
+            <Typography.Body variant="medium-bold">
+              Satoshi Nakamoto
+            </Typography.Body>
+          </div>
+          <div className="grow justify-end items-center gap-1 flex mt-2">
+            <Icon.Clock />
+            <Typography.Caption
+              variant="bold"
+              color="text-white text-opacity-30"
+            >
+              27m
+            </Typography.Caption>
+          </div>
+        </div>
+        <div>
+          <Typography.Body variant="medium" color="text-white text-opacity-80">
+            You either want lots of people using Bitcoin (holding Bitcoin keys)
+            or you don't. Many of you seem to believe things that require both
+            positions.
+          </Typography.Body>
+          <div className="justify-start items-start gap-2 flex mt-6">
+            <Post.Tag color="amber">#Bitcoin</Post.Tag>
+            <Button.Action variant="custom" size="small" svg={<Icon.Plus />} />
+            <Post.Counter counter={16} />
+            <Post.Userpics images={images} />
+          </div>
+          <div className="justify-start items-start gap-2 flex mt-6">
+            <Button.Action
+              size="small"
+              variant="custom"
+              svg={<Icon.Newspaper size="16" />}
+              counter={3}
+            />
+            <Button.Action
+              size="small"
+              variant="custom"
+              svg={<Icon.Clipboard size="16" />}
+              counter={2}
+            />
+            <Button.Action
+              size="small"
+              variant="custom"
+              svg={<Icon.ImageSquare size="16" />}
+              counter={7}
+            />
+            <Button.Action
+              size="small"
+              variant="custom"
+              svg={<Icon.Podcast size="16" />}
+            />
+          </div>
+        </div>
+      </Component.Card>
+    ));
+    return postItems;
+  };
+
+  return <div className="grid gap-6">{renderPosts()}</div>;
+};

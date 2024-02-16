@@ -1,0 +1,63 @@
+import { Component } from '..';
+import { Button } from '../../Button';
+import { Typography } from '../../Typography';
+
+export const WhoFollow = () => {
+  return (
+    <div>
+      <Typography.Body variant="large-bold">Who to follow</Typography.Body>
+      <Component.Card width="w-96 mt-4">
+        <div className="justify-between items-center gap-4 inline-flex">
+          <div className="justify-start items-center gap-4 inline-flex">
+            <Component.Image
+              className="bg-white rounded-full overflow-hidden w-12 h-12"
+              src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+              alt="Profile Image"
+            />
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption color="text-neutral-400">
+                @1W78...gR31
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">Anna Pleb</Typography.Body>
+            </div>
+          </div>
+          <Button.Medium>Follow</Button.Medium>
+        </div>
+        <Component.Divider />
+        <div className="justify-between items-center gap-4 inline-flex">
+          <div className="justify-start items-center gap-4 inline-flex">
+            <Component.Image
+              className="bg-white rounded-full overflow-hidden w-12 h-12"
+              src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+              alt="Profile Image"
+            />
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption color="text-neutral-400">
+                @1W78...gR31
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">Anna Pleb</Typography.Body>
+            </div>
+          </div>
+          <Button.Medium>Follow</Button.Medium>
+        </div>
+        <Component.Divider />
+        <div className="justify-between items-center gap-4 inline-flex">
+          <div className="justify-start items-center gap-4 inline-flex">
+            <Component.Image
+              className="bg-white rounded-full overflow-hidden w-12 h-12"
+              src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+              alt="Profile Image"
+            />
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption color="text-neutral-400">
+                @1W78...gR31
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">Anna Pleb</Typography.Body>
+            </div>
+          </div>
+          <Button.Medium>Follow</Button.Medium>
+        </div>
+      </Component.Card>
+    </div>
+  );
+};

@@ -73,7 +73,7 @@ export default async function Index() {
             text="Hypekit successfully imported your profile and contacts."
           >
             <div className="pt-[365px]">
-              <Button.Large svg={<Icon.Check />}>Finish</Button.Large>
+              <Button.Large href='/home' svg={<Icon.Check />}>Finish</Button.Large>
             </div>
           </Component.Card>
         </div>
@@ -81,3 +81,4 @@ export default async function Index() {
     </Component.BgImage>
   );
 }
+

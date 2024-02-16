@@ -1,0 +1,130 @@
+import { Component } from '..';
+import { Button } from '../../Button';
+import { Typography } from '../../Typography';
+
+export const ActiveFriends = () => {
+  return (
+    <div>
+      <Typography.Body variant="large-bold">Active friends</Typography.Body>
+      <Component.Card width="w-96 mt-4">
+        <div className="justify-between items-center gap-4 inline-flex">
+          <div className="justify-start items-center gap-4 inline-flex">
+            <img
+              className="bg-white rounded-full overflow-hidden w-12 h-12"
+              src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+              alt="Profile Image"
+            />
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption
+                variant="bold"
+                color="text-white text-opacity-30"
+              >
+                FRIEND
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">Anna Pleb</Typography.Body>
+            </div>
+          </div>
+          <div className="inline-flex gap-4">
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption
+                variant="bold"
+                color="text-white text-opacity-30"
+              >
+                TAGS
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">142</Typography.Body>
+            </div>
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption
+                variant="bold"
+                color="text-white text-opacity-30"
+              >
+                POSTS
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">17</Typography.Body>
+            </div>
+          </div>
+        </div>
+        <Component.Divider />
+        <div className="justify-between items-center gap-4 inline-flex">
+          <div className="justify-start items-center gap-4 inline-flex">
+            <img
+              className="bg-white rounded-full overflow-hidden w-12 h-12"
+              src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+              alt="Profile Image"
+            />
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption
+                variant="bold"
+                color="text-white text-opacity-30"
+              >
+                FRIEND
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">Anna Pleb</Typography.Body>
+            </div>
+          </div>
+          <div className="inline-flex gap-4">
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption
+                variant="bold"
+                color="text-white text-opacity-30"
+              >
+                TAGS
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">142</Typography.Body>
+            </div>
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption
+                variant="bold"
+                color="text-white text-opacity-30"
+              >
+                POSTS
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">17</Typography.Body>
+            </div>
+          </div>
+        </div>
+        <Component.Divider />
+        <div className="justify-between items-center gap-4 inline-flex">
+          <div className="justify-start items-center gap-4 inline-flex">
+            <img
+              className="bg-white rounded-full overflow-hidden w-12 h-12"
+              src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+              alt="Profile Image"
+            />
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption
+                variant="bold"
+                color="text-white text-opacity-30"
+              >
+                FRIEND
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">Anna Pleb</Typography.Body>
+            </div>
+          </div>
+          <div className="inline-flex gap-4">
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption
+                variant="bold"
+                color="text-white text-opacity-30"
+              >
+                TAGS
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">142</Typography.Body>
+            </div>
+            <div className="flex-col justify-start items-start gap-1 inline-flex">
+              <Typography.Caption
+                variant="bold"
+                color="text-white text-opacity-30"
+              >
+                POSTS
+              </Typography.Caption>
+              <Typography.Body variant="medium-bold">17</Typography.Body>
+            </div>
+          </div>
+        </div>
+        <Button.Medium styles="mt-6">See All</Button.Medium>
+      </Component.Card>
+    </div>
+  );
+};

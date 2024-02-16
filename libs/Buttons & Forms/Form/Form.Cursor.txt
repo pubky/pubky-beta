@@ -22,7 +22,7 @@ export const Cursor = ({
   ...props
 }: CursorProps) => {
   const cssStyle = `${width} ${height} bg-transparent rounded-[5px] outline-none`;
-  const inputTextStyle = `${color} ${fontSize} ${fontWeight} placeholder:text-white placeholder:text-opacity-30 font-['Inter Tight'] leading-snug tracking-wide`;
+  const inputTextStyle = `${color} ${fontSize} ${fontWeight} font-['Inter Tight'] leading-snug tracking-wide`;
 
   return (
     <input
@@ -33,3 +33,4 @@ export const Cursor = ({
     />
   );
 };
+

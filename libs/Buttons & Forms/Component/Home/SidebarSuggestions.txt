@@ -1,0 +1,11 @@
+import { Component } from '..';
+
+export const SidebarSuggestions = () => {
+  return (
+    <div className="gap-6 grid">
+      <Component.WhoFollow />
+      <Component.HotTags />
+      <Component.ActiveFriends />
+    </div>
+  );
+};

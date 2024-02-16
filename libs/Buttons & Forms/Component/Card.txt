@@ -7,6 +7,8 @@ type CardProps = {
   title?: string;
   text?: string;
   children?: React.ReactNode;
+  className?: string;
+  background?: string;
 };
 
 export const Card = ({
@@ -16,9 +18,10 @@ export const Card = ({
   title,
   text,
   children,
+  background = 'bg-gradient-to-b from-[#07040a] to-[#1b1820]',
   ...props
 }: CardProps) => {
-  const cssStyle = `${width} ${height} z-10 p-8 bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-start gap-12 inline-flex`;
+  const cssStyle = `${width} ${height} z-10 p-8 ${background} opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-start gap-12 inline-flex`;
   return (
     <div className={`${cssStyle} ${styles}`} {...props}>
       <div className={`flex-col justify-start ${text && 'gap-6'} inline-flex`}>

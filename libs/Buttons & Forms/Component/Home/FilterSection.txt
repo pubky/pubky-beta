@@ -1,0 +1,29 @@
+import { Button } from '../../Button';
+import { Form } from '../../Form';
+import { Icon } from '../../Icon';
+
+export const FilterSection = () => {
+  return (
+    <>
+      <div className="justify-start items-center gap-6 inline-flex">
+        <div className="justify-start items-center gap-3 flex">
+          <Button.Action variant="posts" active />
+          <Button.Action variant="image" />
+          <Button.Action variant="video" />
+          <Button.Action variant="link" />
+          <Button.Action variant="podcast" />
+        </div>
+        <div className="flex-col justify-start items-start inline-flex">
+          <Form.Dropdown label="Sort by" items={['Recent', 'Old']} />
+        </div>
+      </div>
+      <div className="gap-4 inline-flex">
+        <Form.Select variant="small" active>
+          Following
+        </Form.Select>
+        <Form.Select variant="small">Friends</Form.Select>
+        <Button.Action variant="custom" svg={<Icon.DotsNine />} />
+      </div>
+    </>
+  );
+};

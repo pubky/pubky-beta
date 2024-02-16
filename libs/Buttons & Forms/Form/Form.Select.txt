@@ -9,6 +9,7 @@ type SelectButtonProps = {
   variant?: 'default' | 'large' | 'small';
   svg?: React.ReactNode;
   disable?: boolean;
+  active?: boolean;
   width?: string;
   height?: string;
   styles?: string;
@@ -20,6 +21,7 @@ export const Select = ({
   svg,
   variant = 'default',
   disable = false,
+  active = false,
   width = 'w-full',
   height = 'h-20',
   styles = '',
@@ -28,10 +30,11 @@ export const Select = ({
   const [clicked, setClicked] = useState(false);
   const color = disable ? 'text-gray-500' : 'text-white';
   const colorIcon = disable ? 'grey' : undefined;
-  const colorBorder = clicked ? 'border-t border-fuchsia-500' : '';
-  const backgroundColor = clicked
-    ? 'bg-fuchsia-500 bg-opacity-20'
-    : 'bg-white bg-opacity-10';
+  const colorBorder = clicked || active ? 'border-t border-fuchsia-500' : '';
+  const backgroundColor =
+    clicked || active
+      ? 'bg-fuchsia-500 bg-opacity-20'
+      : 'bg-white bg-opacity-10';
   let disabled = disable ? 'bg-opacity-10 cursor-auto' : 'hover:bg-opacity-20';
   let size = `${width} ${height}`;
 
@@ -59,7 +62,7 @@ export const Select = ({
       {...props}
     >
       <div className="justify-center items-center flex">
-        {svg ? svg : <Icon.Asterisk color={colorIcon} />}
+        {svg ? svg : <Icon.UserRectangle color={colorIcon} />}
       </div>
       <Typography.Body variant="small-bold" color={color}>
         {children}
