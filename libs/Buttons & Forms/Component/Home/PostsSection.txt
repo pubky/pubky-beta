@@ -32,6 +32,7 @@ export const PostsSection = () => {
       <Component.Card
         key={index}
         width="w-[792px]"
+        zIndex="z-auto"
         background="bg-white bg-opacity-10"
       >
         <div className="pb-6 justify-start items-start inline-flex">

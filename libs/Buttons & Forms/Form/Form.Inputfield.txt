@@ -9,6 +9,7 @@ type InputfieldProps = {
   styles?: string;
   multine?: boolean;
   className?: string;
+  icon?: React.ReactNode;
 };
 
 export const Inputfield = ({
@@ -19,6 +20,7 @@ export const Inputfield = ({
   height = 'h-[70px]',
   multine,
   styles,
+  icon,
   ...props
 }: InputfieldProps) => {
   const cssStyle = `${width} ${height} p-6 bg-white bg-opacity-10 rounded-lg shadow-inner border border-white border-opacity-10 flex-col justify-start items-start inline-flex outline-none`;
@@ -37,15 +39,21 @@ export const Inputfield = ({
           {...props}
         />
       ) : (
-        <input
-          className={`${cssStyle} ${inputTextStyle} ${styles}`}
-          placeholder={placeHolder}
-          value={value}
-          {...props}
-        />
+        <div className="relative">
+          <input
+            className={`${cssStyle} ${inputTextStyle} ${styles}`}
+            placeholder={placeHolder}
+            value={value}
+            {...props}
+          />
+          {icon && (
+            <div className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white">
+              {icon}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
 };
-
 

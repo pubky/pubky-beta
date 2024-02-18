@@ -1,17 +1,10 @@
-import {
-  Button,
-  Component,
-  Icon,
-  Typography,
-  Form,
-  Post,
-} from '@social/ui-shared';
+import { Component, Form } from '@social/ui-shared';
 
 export default async function Index() {
   return (
     <Component.BgImage createButton>
       <Component.Header titlePage="Streams">
-        <Form.Search />
+        <Form.Search placeHolder="Search" />
         <Component.Image
           styles="w-12 h-12 rounded-full"
           src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
@@ -31,4 +24,3 @@ export default async function Index() {
     </Component.BgImage>
   );
 }
-
