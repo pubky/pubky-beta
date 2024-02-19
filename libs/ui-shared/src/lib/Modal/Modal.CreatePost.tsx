@@ -83,7 +83,11 @@ export const CreatePost = ({ closeModal }: CreatePostModalProps) => {
           </div>
         </div>
         <div className="justify-end inline-flex">
-          <Button.Large svg={<Icon.ArrowUp />} styles="mt-8" width="w-96">
+          <Button.Large
+            svg={<Icon.PaperPlaneRight />}
+            styles="mt-8"
+            width="w-96"
+          >
             Publish Post
           </Button.Large>
         </div>

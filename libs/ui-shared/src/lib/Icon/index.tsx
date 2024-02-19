@@ -15,7 +15,7 @@ import { NoteBlank, Clipboard } from './Icon.Office';
 import { DotsNine, LinkSimple, MagnifyingGlass, Check } from './Icon.System';
 import { Clock } from './Icon.Time';
 import { UserPlus } from './Icon.People';
-import { Asterisk } from './Icon.Communication';
+import { Asterisk, PaperPlaneRight } from './Icon.Communication';
 
 export const Icon = {
   Pencil,
@@ -28,6 +28,7 @@ export const Icon = {
   Minus,
   X,
   Clipboard,
+  PaperPlaneRight,
   NoteBlank,
   Newspaper,
   ImageSquare,
