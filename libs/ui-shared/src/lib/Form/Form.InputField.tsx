@@ -6,6 +6,7 @@ type InputFieldProps = {
   label?: string;
   width?: string;
   height?: string;
+  padding?: string;
   styles?: string;
   multiline?: boolean;
   className?: string;
@@ -18,12 +19,13 @@ export const InputField = ({
   label,
   width = 'w-full',
   height = 'h-[70px]',
+  padding = 'p-6',
   multiline,
   styles,
   icon,
   ...props
 }: InputFieldProps) => {
-  const cssStyle = `${width} ${height} p-6 bg-white bg-opacity-10 rounded-lg shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] border border-white border-opacity-10 flex-col justify-start items-start inline-flex outline-none`;
+  const cssStyle = `${width} ${height} ${padding} bg-white bg-opacity-10 rounded-lg shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] border border-white border-opacity-10 flex-col justify-start items-start inline-flex outline-none`;
   const inputTextStyle = `text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-30 text-[17px] font-normal font-['Inter Tight'] leading-snug tracking-wide`;
 
   return (
@@ -38,13 +40,13 @@ export const InputField = ({
       )}
       {multiline ? (
         <textarea
-          className={`${cssStyle} ${inputTextStyle} resize-none ${styles}`}
+          className={`${cssStyle} ${inputTextStyle} resize-none ${styles} `}
           placeholder={placeHolder}
           value={value}
           {...props}
         />
       ) : (
-        <div className="relative">
+        <div className="relative w-full">
           <input
             className={`${cssStyle} ${inputTextStyle} ${styles}`}
             placeholder={placeHolder}
