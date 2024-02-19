@@ -69,11 +69,8 @@ export const CreatePost = ({ closeModal }: CreatePostModalProps) => {
               </Post.Tag>
             </div>
             <div className="flex-col justify-start items-start flex">
-              <Typography.Label color="text-white text-opacity-30">
-                Add tag:
-              </Typography.Label>
               <Form.InputField
-                // label="Add tag:"
+                label="Add tag:"
                 placeHolder="#"
                 icon={
                   <Button.Action

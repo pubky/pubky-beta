@@ -29,7 +29,10 @@ export const InputField = ({
   return (
     <>
       {label && (
-        <Typography.Label color="text-white text-opacity-30" styles="uppercase">
+        <Typography.Label
+          color="text-white text-opacity-30"
+          styles="uppercase mb-2"
+        >
           {label}
         </Typography.Label>
       )}
