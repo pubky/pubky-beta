@@ -1,0 +1,47 @@
+import { Typography } from '../../index';
+
+type CardProps = {
+  height?: string;
+  width?: string;
+  styles?: string;
+  title?: string;
+  text?: string;
+  children?: React.ReactNode;
+  className?: string;
+  background?: string;
+  zIndex?: string;
+};
+
+export const Primary = ({
+  height,
+  width = 'w-full',
+  styles,
+  title,
+  text,
+  children,
+  zIndex = 'z-10',
+  background = 'bg-gradient-to-b from-[#07040a] to-[#1b1820]',
+  ...props
+}: CardProps) => {
+  return (
+    <div
+      className={`${width} ${height} ${zIndex} p-8 ${background} opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-start gap-12 inline-flex ${styles}`}
+      {...props}
+    >
+      <div className={`flex-col justify-start ${text && 'gap-6'} inline-flex`}>
+        {title && (
+          <Typography.Body variant="large-bold">{title}</Typography.Body>
+        )}
+        {text && (
+          <Typography.Body
+            color="text-white text-opacity-80"
+            variant="medium-light"
+          >
+            {text}
+          </Typography.Body>
+        )}
+        {children}
+      </div>
+    </div>
+  );
+};

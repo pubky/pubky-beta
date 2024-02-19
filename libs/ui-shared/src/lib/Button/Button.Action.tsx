@@ -30,6 +30,7 @@ type ActionButtonProps = {
   active?: boolean;
   styles?: string;
   href?: string;
+  onClick?: () => void;
   className?: string;
   target?: string;
 };
