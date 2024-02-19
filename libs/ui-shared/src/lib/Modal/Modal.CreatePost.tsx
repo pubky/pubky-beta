@@ -1,5 +1,5 @@
 import { Button } from '../Button';
-import { Form } from '../Form';
+import { Input } from '../Input';
 import { Icon } from '../Icon';
 import { Post } from '../Post';
 import { Typography } from '../Typography';
@@ -31,7 +31,7 @@ export const CreatePost = ({ closeModal }: CreatePostModalProps) => {
         </div>
         <div className="grid grid-cols-3 gap-6">
           <div className="mt-6 inline-flex col-span-2">
-            <Form.InputField
+            <Input.Text
               height="h-[285px]"
               placeHolder="Write content, drop an image, or paste a link"
               padding="p-12"
@@ -73,7 +73,7 @@ export const CreatePost = ({ closeModal }: CreatePostModalProps) => {
               </Post.Tag>
             </div>
             <div className="flex-col w-full items-start flex">
-              <Form.InputField
+              <Input.Text
                 label="Add tag:"
                 placeHolder="#"
                 icon={

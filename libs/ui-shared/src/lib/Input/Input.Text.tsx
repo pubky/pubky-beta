@@ -1,6 +1,6 @@
 import { Typography } from '../Typography';
 
-type InputFieldProps = {
+type TextProps = {
   value?: string;
   placeHolder?: string;
   label?: string;
@@ -13,7 +13,7 @@ type InputFieldProps = {
   icon?: React.ReactNode;
 };
 
-export const InputField = ({
+export const Text = ({
   value,
   placeHolder,
   label,
@@ -24,7 +24,7 @@ export const InputField = ({
   styles,
   icon,
   ...props
-}: InputFieldProps) => {
+}: TextProps) => {
   const cssStyle = `${width} ${height} ${padding} bg-white bg-opacity-10 rounded-lg shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] border border-white border-opacity-10 flex-col justify-start items-start inline-flex outline-none`;
   const inputTextStyle = `text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-30 text-[17px] font-normal font-['Inter Tight'] leading-snug tracking-wide`;
 
