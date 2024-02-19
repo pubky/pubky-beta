@@ -3,5 +3,6 @@
 import { Typography } from './lib/Typography';
 import { Icon } from './lib/Icon';
 import { Button } from './lib/Button';
+import { Form } from './lib/Form';
 
-export { Typography, Icon, Button };
+export { Typography, Icon, Button, Form };
