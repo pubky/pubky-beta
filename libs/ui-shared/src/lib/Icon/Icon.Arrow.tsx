@@ -25,3 +25,43 @@ export const ArrowUp = ({ size = '16', color = 'white' }: IconProps) => (
     />
   </svg>
 );
+
+export const DropdownIcon = ({ size = '24', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M19.2803 7.71967C19.5732 8.01256 19.5732 8.48744 19.2803 8.78033L12.5303 15.5303C12.2374 15.8232 11.7626 15.8232 11.4697 15.5303L4.71967 8.78033C4.42678 8.48744 4.42678 8.01256 4.71967 7.71967C5.01256 7.42678 5.48744 7.42678 5.78033 7.71967L12 13.9393L18.2197 7.71967C18.5126 7.42678 18.9874 7.42678 19.2803 7.71967Z"
+      fill={color}
+    />
+  </svg>
+);
+
+export const ArrowUpRight = ({ size = '16', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12.3536 3.64645C12.5488 3.84171 12.5488 4.15829 12.3536 4.35355L4.35355 12.3536C4.15829 12.5488 3.84171 12.5488 3.64645 12.3536C3.45118 12.1583 3.45118 11.8417 3.64645 11.6464L11.6464 3.64645C11.8417 3.45118 12.1583 3.45118 12.3536 3.64645Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M5 4C5 3.72386 5.22386 3.5 5.5 3.5H12C12.2761 3.5 12.5 3.72386 12.5 4V10.5C12.5 10.7761 12.2761 11 12 11C11.7239 11 11.5 10.7761 11.5 10.5V4.5H5.5C5.22386 4.5 5 4.27614 5 4Z"
+      fill={color}
+    />
+  </svg>
+);
