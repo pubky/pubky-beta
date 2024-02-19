@@ -20,6 +20,12 @@ export default async function Index() {
       <Typography.Body variant="small-bold">
         Body Small Bold Typography
       </Typography.Body>
+      <Typography.Body variant="small-light">
+        Body Small Light Typography
+      </Typography.Body>
+      <Typography.Body variant="medium-light">
+        Body Medium Light Typography
+      </Typography.Body>
     </div>
   );
 }
