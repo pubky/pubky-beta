@@ -4,5 +4,6 @@ import { Typography } from './lib/Typography';
 import { Icon } from './lib/Icon';
 import { Button } from './lib/Button';
 import { Form } from './lib/Form';
+import { Modal } from './lib/Modal';
 
-export { Typography, Icon, Button, Form };
+export { Typography, Icon, Button, Form, Modal };
