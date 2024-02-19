@@ -6,25 +6,26 @@ import { Typography } from '../Typography';
 
 type ActionButtonProps = {
   variant?:
-    | 'posts'
-    | 'article'
-    | 'link'
-    | 'image'
-    | 'music'
-    | 'video'
-    | 'podcast'
-    | 'mode'
-    | 'sort'
-    | 'reach'
-    | 'hub'
     | 'advanced'
-    | 'plus'
+    | 'all'
+    | 'article'
+    | 'custom'
+    | 'hub'
+    | 'image'
+    | 'link'
+    | 'mode'
     | 'minus'
-    | 'custom';
+    | 'music'
+    | 'plus'
+    | 'podcast'
+    | 'posts'
+    | 'reach'
+    | 'sort'
+    | 'video';
   size?: 'small' | 'medium' | 'large';
   label?: string;
   counter?: number;
-  svg?: React.ReactNode;
+  icon?: React.ReactNode;
   disable?: boolean;
   active?: boolean;
   styles?: string;
@@ -37,7 +38,7 @@ export const Action = ({
   size = 'medium',
   label,
   counter,
-  svg,
+  icon,
   disable = false,
   active = false,
   styles = '',
@@ -54,19 +55,19 @@ export const Action = ({
     case 'small':
       iconSize = '12px';
       sizeClasses = counter ? 'w-11 h-8 p-2' : 'w-8 h-8 p-2';
-      labelClasses = counter ? 'px-3 py-1' : 'px-1.5 py-1';
+      labelClasses = counter ? 'px-3 mt-8' : 'w-8 mt-8';
       fontSize = 'text-[10px]';
       break;
     case 'medium':
       iconSize = '20px';
       sizeClasses = counter ? 'w-16 h-12 p-3' : 'w-12 h-12 p-3';
-      labelClasses = counter ? 'px-5 py-1' : 'px-3 py-1';
+      labelClasses = counter ? 'px-5 mt-12' : 'w-12 mt-12';
       fontSize = 'text-[13px]';
       break;
     case 'large':
       iconSize = '32px';
       sizeClasses = counter ? 'w-24 h-16 p-6' : 'w-16 h-16 p-6';
-      labelClasses = counter ? 'px-9 py-2' : 'px-4 py-2';
+      labelClasses = counter ? 'px-8 mt-16' : 'w-16 mt-16';
       fontSize = 'text-[15px]';
   }
 
@@ -74,13 +75,22 @@ export const Action = ({
   const colorIcon = disable ? 'grey' : undefined;
   const gap = counter ? 'gap-1.5' : '';
 
-  let icon = <Icon.Clipboard size={iconSize} color={colorIcon} />;
+  let iconComponent = <Icon.Clipboard size={iconSize} color={colorIcon} />;
   let disabled = disable ? 'bg-opacity-10 cursor-auto' : 'hover:bg-opacity-20';
   let background = 'bg-white bg-opacity-10';
 
   switch (variant) {
+    case 'all':
+      iconComponent = <Icon.Stack size={iconSize} color={colorIcon} />;
+      disabled = disable
+        ? 'bg-opacity-10 cursor-auto'
+        : 'hover:bg-fuchsia-500 hover:bg-opacity-30';
+      background = active
+        ? 'bg-fuchsia-500 bg-opacity-30 border-t border-fuchsia-500'
+        : background;
+      break;
     case 'posts':
-      icon = <Icon.NoteBlank size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.NoteBlank size={iconSize} color={colorIcon} />;
       disabled = disable
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-fuchsia-500 hover:bg-opacity-30';
@@ -89,7 +99,7 @@ export const Action = ({
         : background;
       break;
     case 'article':
-      icon = <Icon.Newspaper size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.Newspaper size={iconSize} color={colorIcon} />;
       disabled = disable
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-yellow-400 hover:bg-opacity-30';
@@ -99,7 +109,7 @@ export const Action = ({
       break;
 
     case 'link':
-      icon = <Icon.LinkSimple size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.LinkSimple size={iconSize} color={colorIcon} />;
       disabled = disable
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-cyan-400 hover:bg-opacity-30';
@@ -109,7 +119,7 @@ export const Action = ({
       break;
 
     case 'image':
-      icon = <Icon.ImageSquare size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.ImageSquare size={iconSize} color={colorIcon} />;
       disabled = disable
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-green-500 hover:bg-opacity-30';
@@ -119,7 +129,9 @@ export const Action = ({
       break;
 
     case 'music':
-      icon = <Icon.MusicNotesSimple size={iconSize} color={colorIcon} />;
+      iconComponent = (
+        <Icon.MusicNotesSimple size={iconSize} color={colorIcon} />
+      );
       disabled = disable
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-blue-600 hover:bg-opacity-30';
@@ -129,7 +141,7 @@ export const Action = ({
       break;
 
     case 'video':
-      icon = <Icon.Play size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.Play size={iconSize} color={colorIcon} />;
       disabled = disable
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-red-600 hover:bg-opacity-30';
@@ -139,7 +151,7 @@ export const Action = ({
       break;
 
     case 'podcast':
-      icon = <Icon.Podcast size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.Podcast size={iconSize} color={colorIcon} />;
       disabled = disable
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-amber-500 hover:bg-opacity-30';
@@ -149,73 +161,79 @@ export const Action = ({
       break;
 
     case 'mode':
-      icon = <Icon.DotsNine size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.DotsNine size={iconSize} color={colorIcon} />;
       break;
 
     case 'sort':
-      icon = <Icon.Clock size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.Clock size={iconSize} color={colorIcon} />;
       break;
 
     case 'reach':
-      icon = <Icon.UserPlus size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.UserPlus size={iconSize} color={colorIcon} />;
       break;
 
     case 'hub':
-      icon = <Icon.Stack size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.Stack size={iconSize} color={colorIcon} />;
       break;
 
     case 'advanced':
-      icon = <Icon.SlidersHorizontal size={iconSize} color={colorIcon} />;
+      iconComponent = (
+        <Icon.SlidersHorizontal size={iconSize} color={colorIcon} />
+      );
       break;
 
     case 'plus':
-      icon = <Icon.Plus size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.Plus size={iconSize} color={colorIcon} />;
       break;
 
     case 'minus':
-      icon = <Icon.Minus size={iconSize} color={colorIcon} />;
+      iconComponent = <Icon.Minus size={iconSize} color={colorIcon} />;
       break;
 
     case 'custom':
-      icon = svg as React.ReactElement;
+      iconComponent = icon as React.ReactElement;
       break;
   }
 
   const cssClasses = `${sizeClasses} ${background} rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex ${disabled}`;
 
   return (
-    <div className="relative">
-      <a href={href}>
-        <button
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          className={`${cssClasses} ${styles}`}
-          {...props}
-        >
-          <div className={`justify-center items-center inline-flex ${gap}`}>
-            {icon}
+    <div className="relative inline-flex">
+      <div className="flex">
+        <a href={href}>
+          <button
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className={`${cssClasses} ${styles}`}
+            {...props}
+          >
+            <div className={`justify-center items-center inline-flex ${gap}`}>
+              {iconComponent}
+              <Typography.Caption
+                fontSize={fontSize}
+                styles="text-opacity-50"
+                variant="bold"
+              >
+                {counter ? counter : ''}
+              </Typography.Caption>
+            </div>
+          </button>
+        </a>
+        {isHovered && label && (
+          <div
+            className={`${labelClasses} flex absolute text-center justify-center items-center`}
+          >
             <Typography.Caption
               fontSize={fontSize}
               styles="text-opacity-50"
               variant="bold"
+              color={color}
             >
-              {counter ? counter : ''}
+              {label}
             </Typography.Caption>
           </div>
-        </button>
-      </a>
-      {isHovered && label && (
-        <div className={`${labelClasses} justify-center items-center`}>
-          <Typography.Caption
-            fontSize={fontSize}
-            styles="text-opacity-50"
-            variant="bold"
-            color={color}
-          >
-            {label}
-          </Typography.Caption>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
