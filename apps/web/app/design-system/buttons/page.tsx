@@ -71,7 +71,7 @@ export default async function Index() {
         />
       </div>
       <div className={'pb-8'}>
-        <Button.Action variant="plus" size="small" />
+        <Button.Action variant="plus" size="small" href="https://google.com" />
         <Button.Action variant="minus" size="small" />
       </div>
     </div>

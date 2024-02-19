@@ -24,8 +24,8 @@ export const Caption = ({
   }
 
   return (
-    <caption className={`${cssClasses} ${color} ${styles}`} {...props}>
+    <div className={`${cssClasses} ${color} ${styles}`} {...props}>
       {children}
-    </caption>
+    </div>
   );
 };

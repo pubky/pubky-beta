@@ -31,6 +31,7 @@ type ActionButtonProps = {
   styles?: string;
   href?: string;
   className?: string;
+  target?: string;
 };
 
 export const Action = ({
@@ -42,6 +43,7 @@ export const Action = ({
   disable = false,
   active = false,
   styles = '',
+  target = '_self',
   href,
   ...props
 }: ActionButtonProps) => {
@@ -200,7 +202,7 @@ export const Action = ({
   return (
     <div className="relative inline-flex">
       <div className="flex">
-        <a href={href}>
+        <a href={href} target={target}>
           <button
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
