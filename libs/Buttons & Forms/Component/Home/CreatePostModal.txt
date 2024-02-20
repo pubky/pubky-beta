@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import { Button } from '../../Button';
 import { Form } from '../../Form';
 import { Icon } from '../../Icon';
@@ -12,86 +13,106 @@ type CreatePostModalProps = {
 };
 
 export const CreatePostModal = ({ closeModal }: CreatePostModalProps) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        closeModal?.();
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [closeModal]);
+
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center">
-      <Card className="w-[1200px] h-[582px] p-12 bg-gradient-to-b from-stone-950 to-black rounded-2xl shadow border border-fuchsia-500 border-opacity-30 flex-col justify-start items-start gap-12 inline-flex">
-        <Button.Action
-          variant="custom"
-          onClick={closeModal}
-          svg={<Icon.X size="24" />}
-          styles="absolute top-[-25px] right-[-25px]"
-        />
-        <div className="justify-start items-center gap-4 inline-flex">
-          <Typography.H1>New Post</Typography.H1>
-          <div className="justify-start items-start gap-3 flex">
-            <Button.Action variant="posts" active />
-            <Button.Action variant="image" />
-            <Button.Action variant="link" />
-          </div>
-        </div>
-        <div className="justify-start items-start gap-6 mt-6 inline-flex">
-          <Form.Inputfield
-            width="w-[696px]"
-            height="h-[305px]"
-            placeHolder="Write content, drop an image, or paste a link"
-            multine
+      <div ref={modalRef}>
+        <Card className="w-[1200px] h-[582px] p-12 bg-gradient-to-b from-stone-950 to-black rounded-2xl shadow border border-fuchsia-500 border-opacity-30 flex-col justify-start items-start gap-12 inline-flex">
+          <Button.Action
+            variant="custom"
+            onClick={closeModal}
+            svg={<Icon.X size="24" />}
+            styles="absolute top-[-25px] right-[-25px]"
           />
-          <div className="flex-col justify-start items-start gap-6 mt-4 inline-flex">
-            <Typography.H2>Suggested Tags</Typography.H2>
-            <div className="justify-start items-start">
-              <Post.Tag color="amber" styles="mr-2 my-1">
-                #Bitcoin
-              </Post.Tag>
-              <Post.Tag color="amber" styles="mr-2 my-1">
-                #Satoshi
-              </Post.Tag>
-              <Post.Tag color="red" styles="mr-2 my-1">
-                #P2P
-              </Post.Tag>
-              <Post.Tag color="blue" styles="mr-2 my-1">
-                #Keys
-              </Post.Tag>
-              <Post.Tag color="blue" styles="mr-2 my-1">
-                #Scalability
-              </Post.Tag>
-              <Post.Tag color="green" styles="mr-2 my-1">
-                #Whitepaper
-              </Post.Tag>
-              <Post.Tag color="cyan" styles="mr-2 my-1">
-                #PoW
-              </Post.Tag>
-              <Post.Tag color="yellow" styles="mr-2 my-1">
-                #Cryptography
-              </Post.Tag>
-              <Post.Tag color="fuchsia" styles="mr-2 my-1">
-                #Quote
-              </Post.Tag>
-              <Post.Tag color="amber" styles="mr-2 my-1">
-                #Bitcointalk
-              </Post.Tag>
-            </div>
-            <div className="flex-col justify-start items-start flex">
-              <Typography.Label color="text-white text-opacity-30">
-                Add tag:
-              </Typography.Label>
-              <Form.Inputfield
-                placeHolder="#"
-                icon={
-                  <Button.Action
-                    variant="custom"
-                    svg={<Icon.Plus size="20" />}
-                  />
-                }
-              />
+          <div className="justify-start items-center gap-4 inline-flex">
+            <Typography.H1>New Post</Typography.H1>
+            <div className="justify-start items-start gap-3 flex">
+              <Button.Action variant="posts" active />
+              <Button.Action variant="image" />
+              <Button.Action variant="link" />
             </div>
           </div>
-        </div>
-        <div className="justify-end inline-flex">
-          <Button.Large svg={<Icon.ArrowUp />} styles="mt-8" width="w-96">
-            Publish Post
-          </Button.Large>
-        </div>
-      </Card>
+          <div className="justify-start items-start gap-6 mt-6 inline-flex">
+            <Form.Inputfield
+              width="w-[696px]"
+              height="h-[305px]"
+              placeHolder="Write content, drop an image, or paste a link"
+              multine
+            />
+            <div className="flex-col justify-start items-start gap-6 mt-4 inline-flex">
+              <Typography.H2>Suggested Tags</Typography.H2>
+              <div className="justify-start items-start">
+                <Post.Tag color="amber" styles="mr-2 my-1">
+                  #Bitcoin
+                </Post.Tag>
+                <Post.Tag color="amber" styles="mr-2 my-1">
+                  #Satoshi
+                </Post.Tag>
+                <Post.Tag color="red" styles="mr-2 my-1">
+                  #P2P
+                </Post.Tag>
+                <Post.Tag color="blue" styles="mr-2 my-1">
+                  #Keys
+                </Post.Tag>
+                <Post.Tag color="blue" styles="mr-2 my-1">
+                  #Scalability
+                </Post.Tag>
+                <Post.Tag color="green" styles="mr-2 my-1">
+                  #Whitepaper
+                </Post.Tag>
+                <Post.Tag color="cyan" styles="mr-2 my-1">
+                  #PoW
+                </Post.Tag>
+                <Post.Tag color="yellow" styles="mr-2 my-1">
+                  #Cryptography
+                </Post.Tag>
+                <Post.Tag color="fuchsia" styles="mr-2 my-1">
+                  #Quote
+                </Post.Tag>
+                <Post.Tag color="amber" styles="mr-2 my-1">
+                  #Bitcointalk
+                </Post.Tag>
+              </div>
+              <div className="flex-col justify-start items-start flex">
+                <Typography.Label color="text-white text-opacity-30">
+                  Add tag:
+                </Typography.Label>
+                <Form.Inputfield
+                  placeHolder="#"
+                  icon={
+                    <Button.Action
+                      variant="custom"
+                      svg={<Icon.Plus size="20" />}
+                    />
+                  }
+                />
+              </div>
+            </div>
+          </div>
+          <div className="justify-end inline-flex">
+            <Button.Large svg={<Icon.ArrowUp />} styles="mt-8" width="w-96">
+              Publish Post
+            </Button.Large>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };

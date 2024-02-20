@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DropdownIcon } from '../Icon/Icon.Arrow';
 import { Typography } from '../Typography';
 import { Card } from '../Component/Card';
@@ -18,6 +18,7 @@ type DropdownProps = {
   title?: string;
   subtitle?: string;
   width?: string;
+  alignment?: 'right' | 'left';
 };
 
 export const Dropdown = ({
@@ -26,11 +27,29 @@ export const Dropdown = ({
   title,
   subtitle,
   width = 'w-[336px]',
+  alignment = 'left',
 }: DropdownProps) => {
   const [selectedItem, setSelectedItem] = useState<string | Item>(
     typeof items[0] === 'string' ? items[0] : (items[0] as Item)
   );
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleSelectItem = (item: string | Item) => {
     setSelectedItem(item);
@@ -52,7 +71,7 @@ export const Dropdown = ({
   }`;
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" ref={dropdownRef}>
       <div>
         {label && (
           <Typography.Label color="text-white text-opacity-30">
@@ -86,7 +105,9 @@ export const Dropdown = ({
             </button>
             {isOpen && (
               <Card
-                className={`${width} mt-4 absolute z-10 p-12 bg-gradient-to-b from-stone-950 to-black rounded-2xl shadow border border-fuchsia-600 border-opacity-30 flex-col justify-start items-start gap-12 inline-flex`}
+                className={`${width} ${
+                  alignment === 'right' && 'right-0'
+                } mt-4 absolute z-10 p-12 bg-gradient-to-b from-stone-950 to-black rounded-2xl shadow border border-fuchsia-600 border-opacity-30 flex-col justify-start items-start gap-12 inline-flex`}
               >
                 {(title || subtitle) && (
                   <div className="mb-6 flex-col justify-start items-start flex">

@@ -10,7 +10,12 @@ export const HotTags = () => {
       <div className="w-96 justify-between items-center inline-flex">
         <Typography.Body variant="large-bold">Hot tags</Typography.Body>
         <div className="flex-col justify-start mt-2 items-start inline-flex">
-            <Form.Dropdown title='Sort' subtitle='Sort tags by' items={['This week', 'Today']} />
+          <Form.Dropdown
+            title="Sort"
+            subtitle="Sort tags by"
+            items={['This week', 'Today']}
+            alignment="right"
+          />
         </div>
       </div>
       <Component.Card width="w-96 mt-4">
