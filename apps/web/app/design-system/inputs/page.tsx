@@ -1,6 +1,6 @@
 import { Input } from '@social/ui-shared';
 
-export default async function Index() {
+export default function Index() {
   return (
     <div className="flex-1 w-full h-screen bg-black p-10">
       <div className={'pb-8 w-full'}>
@@ -20,9 +20,9 @@ export default async function Index() {
           <div className="pb-4">
             <Input.Cursor />
           </div>
-          <div className="pb-4">
+          {/* <div className="pb-4">
             <Input.Dropdown items={['one', 'two', 'three']} />
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

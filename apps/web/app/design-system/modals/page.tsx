@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import {
   Button,
   Modal,
@@ -8,21 +9,38 @@ import {
   Post,
   Icon,
 } from '@social/ui-shared';
-import { useState } from 'react';
 
-export default async function Index() {
+export default function Index() {
   const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    console.log('show', show);
+  }, [show]);
 
   return (
     <div className="flex-1 w-full h-screen bg-black p-10">
       <div className={'pb-8'}>
         <Button.Create onClick={() => setShow(true)} />
-        <Modal.Root show={show}>
-          <Modal.CloseAction onClick={() => console.log('hey')} />
+        <Modal.Root
+          show={show}
+          closeModal={() => setShow(false)}
+          className="max-w-[1200px]"
+        >
+          <Modal.CloseAction onClick={() => setShow(false)} />
           <Modal.Header title="New Post">
-            <Button.Action variant="posts" active />
-            <Button.Action variant="image" />
-            <Button.Action variant="link" />
+            <Button.Action
+              variant="posts"
+              active
+              onClick={() => console.log('button clicked 1')}
+            />
+            <Button.Action
+              variant="image"
+              onClick={() => console.log('button clicked 2')}
+            />
+            <Button.Action
+              variant="link"
+              onClick={() => console.log('button clicked 3')}
+            />
           </Modal.Header>
           <Modal.Content>
             <div className="mt-6 inline-flex col-span-2">
