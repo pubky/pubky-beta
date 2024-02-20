@@ -5,5 +5,6 @@ import { Icon } from './lib/Icon';
 import { Button } from './lib/Button';
 import { Input } from './lib/Input';
 import { Modal } from './lib/Modal';
+import { Post } from './lib/Post';
 
-export { Typography, Icon, Button, Input, Modal };
+export { Typography, Icon, Button, Input, Modal, Post };

@@ -1,7 +1,7 @@
 import { Typography } from '../Typography';
 
 type LargeButtonProps = {
-  children: string;
+  children?: string;
   variant?: 'primary' | 'secondary';
   svg?: React.ReactNode;
   disable?: boolean;
@@ -41,9 +41,11 @@ export const Large = ({
       <button className={`${cssClasses} ${styles}`} {...props}>
         <div className="justify-start items-center gap-1.5 inline-flex">
           {svg}
-          <Typography.Body color={color} variant="small-bold">
-            {children}
-          </Typography.Body>
+          {children && (
+            <Typography.Body color={color} variant="small-bold">
+              {children}
+            </Typography.Body>
+          )}
         </div>
       </button>
     </a>

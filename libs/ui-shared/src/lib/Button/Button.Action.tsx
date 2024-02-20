@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Icon } from '../Icon';
 import { Typography } from '../Typography';
 
-type ActionButtonProps = {
+interface ActionButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   variant?:
     | 'advanced'
     | 'all'
@@ -30,10 +30,9 @@ type ActionButtonProps = {
   active?: boolean;
   styles?: string;
   href?: string;
-  onClick?: () => void;
   className?: string;
   target?: string;
-};
+}
 
 export const Action = ({
   variant = 'article',
@@ -46,7 +45,7 @@ export const Action = ({
   styles = '',
   target = '_self',
   href,
-  ...props
+  ...rest
 }: ActionButtonProps) => {
   const [isHovered, setIsHovered] = useState(false);
   let sizeClasses;
@@ -208,7 +207,7 @@ export const Action = ({
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className={`${cssClasses} ${styles}`}
-            {...props}
+            {...rest}
           >
             <div className={`justify-center items-center inline-flex ${gap}`}>
               {iconComponent}
