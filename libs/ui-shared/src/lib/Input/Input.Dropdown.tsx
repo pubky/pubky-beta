@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState } from 'react';
 import { DropdownIcon } from '../Icon/Icon.Arrow';
 import { Typography } from '../Typography';
