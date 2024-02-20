@@ -1,46 +1,36 @@
-'use client';
-
-import { useState } from 'react';
-import { Check } from '../Icon/Icon.System';
+import { CheckboxIcon } from './Input.CheckboxIcon';
 
 interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
+  checked: boolean;
   disabled?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const Checkbox = ({ disabled = false, ...rest }: CheckboxProps) => {
-  const [checked, setChecked] = useState(false);
+export const Checkbox = ({
+  checked,
+  disabled = false,
+  ...rest
+}: CheckboxProps) => {
+  let cssStyles = `inline-block w-8 h-8 rounded-lg border`;
 
-  const toggleCheckBox = () => {
-    if (!disabled) {
-      setChecked(!checked);
-    }
-  };
-
-  const cssStyle = `inline-block w-8 h-8 ${
-    disabled
-      ? 'bg-white bg-opacity-10 border border-white border-opacity-10'
-      : checked
-      ? 'bg-fuchsia-500 bg-opacity-30 border border-fuchsia-500'
-      : 'bg-white bg-opacity-10 border border-white border-opacity-30'
-  } rounded-lg`;
+  if (disabled) {
+    cssStyles += ' bg-white bg-opacity-10 border-white border-opacity-10';
+  } else if (checked) {
+    cssStyles += ' bg-fuchsia-500 bg-opacity-30 border-fuchsia-500';
+  } else {
+    cssStyles += ' bg-white bg-opacity-10 border-white border-opacity-30';
+  }
 
   return (
-    <div className="flex items-center">
-      <label className={`${disabled ? 'cursor-default' : 'cursor-pointer'}`}>
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={toggleCheckBox}
-          className="hidden"
-        />
-        <span className={cssStyle} {...rest}>
-          {checked && (
-            <div className="flex items-center justify-center mt-1">
-              <Check size="22" />
-            </div>
-          )}
-        </span>
-      </label>
-    </div>
+    <label className={`${disabled ? 'cursor-default' : 'cursor-pointer'}`}>
+      <span className={cssStyles}>{checked && <CheckboxIcon />}</span>
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        className="hidden"
+        {...rest}
+      />
+    </label>
   );
 };
