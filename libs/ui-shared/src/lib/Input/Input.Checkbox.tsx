@@ -25,11 +25,11 @@ export const Checkbox = ({
     <label className={`${disabled ? 'cursor-default' : 'cursor-pointer'}`}>
       <span className={cssStyles}>{checked && <CheckboxIcon />}</span>
       <input
+        {...rest}
         type="checkbox"
         checked={checked}
         disabled={disabled}
         className="hidden"
-        {...rest}
       />
     </label>
   );

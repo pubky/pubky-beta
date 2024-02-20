@@ -11,7 +11,7 @@ export const CheckboxIcon = ({
   ...rest
 }: CheckboxIconProps) => {
   return (
-    <div className="absolute mt-1 ml-1" {...rest}>
+    <div {...rest} className="absolute mt-1 ml-1">
       {icon}
     </div>
   );

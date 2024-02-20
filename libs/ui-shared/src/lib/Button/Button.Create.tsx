@@ -15,6 +15,7 @@ export const Create = ({
 }: CreateButtonProps) => {
   return (
     <button
+      {...rest}
       className={twMerge(
         `w-[96px] h-[96px] hover:transition-[transform] hover:duration-[0.3s] hover:ease-[ease] hover:rotate-[20deg] border-[11px] border-fuchsia-500 hover:bg-fuchsia-500 hover:bg-opacity-30 rounded-[96px] flex items-center justify-center cursor-pointer`,
         rest.className

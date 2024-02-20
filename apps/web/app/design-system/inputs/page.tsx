@@ -35,7 +35,10 @@ export default function Index() {
             />
           </div>
           <div className="pb-4">
-            <Input.Cursor />
+            <Input.Cursor
+              className="text-black"
+              onClick={() => console.log('hey')}
+            />
           </div>
         </form>
       </div>
