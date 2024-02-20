@@ -1,6 +1,6 @@
 import { Typography } from '../../index';
 
-type CardProps = {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   height?: string;
   width?: string;
   styles?: string;
@@ -10,7 +10,7 @@ type CardProps = {
   className?: string;
   background?: string;
   zIndex?: string;
-};
+}
 
 export const Primary = ({
   height,
@@ -21,12 +21,12 @@ export const Primary = ({
   children,
   zIndex = 'z-10',
   background = 'bg-gradient-to-b from-[#07040a] to-[#1b1820]',
-  ...props
+  ...rest
 }: CardProps) => {
   return (
     <div
       className={`${width} ${height} ${zIndex} p-8 ${background} opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-start gap-12 inline-flex ${styles}`}
-      {...props}
+      {...rest}
     >
       <div className={`flex-col justify-start ${text && 'gap-6'} inline-flex`}>
         {title && (

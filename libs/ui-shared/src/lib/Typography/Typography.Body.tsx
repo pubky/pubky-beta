@@ -1,4 +1,4 @@
-type BodyProps = {
+interface BodyProps extends React.HTMLAttributes<HTMLParagraphElement> {
   color?: string;
   variant?:
     | 'large'
@@ -12,14 +12,14 @@ type BodyProps = {
   children: string;
   styles?: string;
   id?: string;
-};
+}
 
 export const Body = ({
   color = 'text-white',
   variant = 'large',
   children,
   styles = '',
-  ...props
+  ...rest
 }: BodyProps) => {
   let cssClasses = `text-2xl font-normal font-['Inter Tight'] tracking-wide`;
 
@@ -51,7 +51,7 @@ export const Body = ({
   }
 
   return (
-    <p className={`${cssClasses} ${color} ${styles}`} {...props}>
+    <p className={`${cssClasses} ${color} ${styles}`} {...rest}>
       {children}
     </p>
   );

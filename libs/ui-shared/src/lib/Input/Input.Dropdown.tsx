@@ -4,10 +4,10 @@ import { Typography } from '../Typography';
 import { Card } from '../Card';
 import { Icon } from '../Icon';
 
-type Item = {
+interface Item extends React.HTMLAttributes<HTMLInputElement> {
   icon: React.ReactNode;
   option: string;
-};
+}
 
 type DropdownProps = {
   items: string[] | Item[];
@@ -24,7 +24,7 @@ export const Dropdown = ({
   title,
   subtitle,
   width = 'w-[336px]',
-  padding = 'p-12',
+  ...rest
 }: DropdownProps) => {
   const [selectedItem, setSelectedItem] = useState<string | undefined>(
     typeof items[0] === 'string'
@@ -66,6 +66,7 @@ export const Dropdown = ({
               type="button"
               className={`${styleSelect} w-full flex items-center justify-between`}
               onClick={toggleDropdown}
+              {...rest}
             >
               {selectedItem || 'Select'}
               {typeof items[0] === 'string' && (

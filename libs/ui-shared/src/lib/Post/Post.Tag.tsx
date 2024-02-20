@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import { Typography } from '../Typography';
 
-type TagProps = {
+interface TagProps extends React.HTMLAttributes<HTMLButtonElement> {
   children: string;
   color?: string;
   styles?: string;
   className?: string;
-};
+}
 
-export const Tag = ({ styles, color, children, ...props }: TagProps) => {
+export const Tag = ({ styles, color, children, ...rest }: TagProps) => {
   const [clicked, setClicked] = useState(false);
 
   let backgroundColor = clicked
@@ -63,7 +63,7 @@ export const Tag = ({ styles, color, children, ...props }: TagProps) => {
     <button
       onClick={handleClick}
       className={`border ${backgroundColor} h-8 px-3 py-1 rounded-lg cursor-pointer ${styles}`}
-      {...props}
+      {...rest}
     >
       <Typography.Body variant="small-bold">{children}</Typography.Body>
     </button>

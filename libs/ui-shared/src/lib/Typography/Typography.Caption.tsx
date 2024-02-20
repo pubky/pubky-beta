@@ -1,11 +1,11 @@
-type CaptionProps = {
+interface CaptionProps extends React.HTMLAttributes<HTMLDivElement> {
   color?: string;
   variant?: 'normal' | 'bold';
   children?: string | number;
   styles?: string;
   fontSize?: string;
   id?: string;
-};
+}
 
 export const Caption = ({
   color = 'text-white',
@@ -13,7 +13,7 @@ export const Caption = ({
   children,
   styles = '',
   fontSize = 'text-[13px]',
-  ...props
+  ...rest
 }: CaptionProps) => {
   let cssClasses = `${fontSize} font-normal font-['Inter Tight'] tracking-tight`;
 
@@ -24,7 +24,7 @@ export const Caption = ({
   }
 
   return (
-    <div className={`${cssClasses} ${color} ${styles}`} {...props}>
+    <div className={`${cssClasses} ${color} ${styles}`} {...rest}>
       {children}
     </div>
   );

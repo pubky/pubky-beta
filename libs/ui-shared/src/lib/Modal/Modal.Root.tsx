@@ -39,7 +39,7 @@ export const Root = ({
       {show && (
         <div
           className={twMerge(
-            `fixed top-1/4 w-full bg-black bg-opacity-70 flex justify-center items-center`,
+            `fixed top-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center`,
             rest.className
           )}
         >

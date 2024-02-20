@@ -1,17 +1,17 @@
-type H2Props = {
+interface H2Props extends React.HTMLAttributes<HTMLHeadingElement> {
   color?: string;
   variant?: 'normal' | 'light';
   children: string;
   styles?: string;
   id?: string;
-};
+}
 
 export const H2 = ({
   color = 'text-white',
   variant = 'normal',
   children,
   styles = '',
-  ...props
+  ...rest
 }: H2Props) => {
   let cssClasses = `text-2xl font-semibold font-['Inter Tight'] tracking-wide`;
 
@@ -22,7 +22,7 @@ export const H2 = ({
   }
 
   return (
-    <h2 className={`${cssClasses} ${color} ${styles}`} {...props}>
+    <h2 className={`${cssClasses} ${color} ${styles}`} {...rest}>
       {children}
     </h2>
   );

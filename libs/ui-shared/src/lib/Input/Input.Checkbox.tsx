@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { Check } from '../Icon/Icon.System';
 
-type CheckboxProps = {
+interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
   disabled?: boolean;
-};
+}
 
-export const Checkbox = ({ disabled = false }: CheckboxProps) => {
+export const Checkbox = ({ disabled = false, ...rest }: CheckboxProps) => {
   const [checked, setChecked] = useState(false);
 
   const toggleCheckBox = () => {
@@ -33,7 +33,7 @@ export const Checkbox = ({ disabled = false }: CheckboxProps) => {
           onChange={toggleCheckBox}
           className="hidden"
         />
-        <span className={cssStyle}>
+        <span className={cssStyle} {...rest}>
           {checked && (
             <div className="flex items-center justify-center mt-1">
               <Check size="22" />

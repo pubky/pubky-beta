@@ -1,4 +1,4 @@
-type CursorProps = {
+interface CursorProps extends React.HTMLAttributes<HTMLInputElement> {
   width?: string;
   height?: string;
   value?: string;
@@ -8,7 +8,7 @@ type CursorProps = {
   fontWeight?: string;
   color?: string;
   className?: string;
-};
+}
 
 export const Cursor = ({
   width = 'w-full',
@@ -19,7 +19,7 @@ export const Cursor = ({
   fontSize = 'text-[17px]',
   fontWeight = 'font-normal',
   color = 'text-white text-opacity-80',
-  ...props
+  ...rest
 }: CursorProps) => {
   const cssStyle = `${width} ${height} bg-transparent rounded-[5px] outline-none`;
   const inputTextStyle = `${color} ${fontSize} ${fontWeight} font-['Inter Tight'] leading-snug tracking-wide`;
@@ -29,7 +29,7 @@ export const Cursor = ({
       placeholder={placeHolder}
       className={`${cssStyle} ${inputTextStyle} ${styles}`}
       value={value}
-      {...props}
+      {...rest}
     />
   );
 };

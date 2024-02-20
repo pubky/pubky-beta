@@ -16,15 +16,13 @@ export const Create = ({
   styles = '',
   ...rest
 }: CreateButtonProps) => {
-  const cssStyle = `${width} ${height} border-[11px] border-fuchsia-500 hover:bg-fuchsia-500 hover:bg-opacity-30 rounded-[96px] flex items-center justify-center cursor-pointer`;
+  const iconStyle =
+    'hover:transition-[transform] hover:duration-[0.3s] hover:ease-[ease] hover:rotate-[20deg]';
+  const cssStyle = `${width} ${height} ${iconStyle} border-[11px]  border-fuchsia-500 hover:bg-fuchsia-500 hover:bg-opacity-30 rounded-[96px] flex items-center justify-center cursor-pointer`;
 
   return (
     <button className={`${cssStyle} ${styles}`} {...rest}>
-      <div
-        className={`hover:transition-[transform] hover:duration-[0.3s] hover:ease-[ease] hover:rotate-[20deg]`}
-      >
-        {icon}
-      </div>
+      {icon}
     </button>
   );
 };
