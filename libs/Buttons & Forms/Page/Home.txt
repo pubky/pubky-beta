@@ -4,11 +4,8 @@ export default async function Index() {
   return (
     <Component.BgImage createButton>
       <Component.Header titlePage="Streams">
-        <Form.Search placeHolder="Search" />
-        <Component.Image
-          styles="w-12 h-12 rounded-full"
-          src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
-        />
+        <Form.Search width="w-3/4" placeHolder="Search" />
+        <Component.Menu />
       </Component.Header>
       <Component.Divider />
       <Component.Grid

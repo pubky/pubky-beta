@@ -14,7 +14,12 @@ export const FilterSection = () => {
           <Button.Action variant="podcast" />
         </div>
         <div className="flex-col justify-start items-start inline-flex">
-          <Form.Dropdown label="Sort by" items={['Recent', 'Old']} />
+          <Form.Dropdown
+            label="Sort by"
+            title="Sort"
+            subtitle="Sort posts by"
+            items={['Recent', 'Old']}
+          />
         </div>
       </div>
       <div className="gap-4 inline-flex">
@@ -22,7 +27,20 @@ export const FilterSection = () => {
           Following
         </Form.Select>
         <Form.Select variant="small">Friends</Form.Select>
-        <Button.Action variant="custom" svg={<Icon.DotsNine />} />
+        <Form.Dropdown
+          title="Mode"
+          subtitle="Switch to a different view "
+          items={[
+            {
+              icon: <Icon.DotsNine />,
+              option: 'Sidebar',
+            },
+            {
+              icon: <Icon.ArrowUpRight />,
+              option: 'CheckBar',
+            },
+          ]}
+        />
       </div>
     </>
   );

@@ -1,0 +1,140 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { Typography } from '../../Typography';
+import { Icon } from '../../Icon';
+import { Post } from '../../Post';
+
+export const Menu = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        drawerRef.current &&
+        !drawerRef.current.contains(event.target as Node)
+      ) {
+        setDrawerOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  return (
+    <div>
+      <img
+        className="w-12 h-12 rounded-full cursor-pointer"
+        src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+        onClick={toggleDrawer}
+      />
+
+      {/* Drawer */}
+      <div
+        ref={drawerRef}
+        id="drawer-example"
+        className={`fixed top-0 right-0 z-40 w-[380px] h-screen transition-transform ${
+          drawerOpen ? '' : 'translate-x-full hidden'
+        } p-12 bg-black shadow border-l border-fuchsia-500 border-opacity-30 justify-start items-start`}
+        tabIndex={-1}
+        aria-labelledby="drawer-label"
+      >
+        <div className="w-60 flex-col justify-start items-start gap-6 inline-flex">
+          <div className="self-stretch h-[196px] flex-col justify-start items-start gap-4 flex">
+            <img
+              className="w-24 h-24 bg-orange-500 rounded-[400px] justify-center items-center inline-flex"
+              src="https://www.weusecoins.com/images/satoshi-nakamoto.png"
+            />
+            <div className="flex-col justify-start items-start gap-2 flex">
+              <Typography.H1
+                className={`text-white text-3xl font-bold font-['Inter Tight'] leading-[30px]`}
+              >
+                Satoshi Nakamoto
+              </Typography.H1>
+              <div className="justify-start items-center gap-1 inline-flex">
+                <Typography.Label color="text-white text-opacity-50">
+                  @1qx7...gkw3
+                </Typography.Label>
+                <Icon.Check size="20" color="gray" />
+              </div>
+            </div>
+          </div>
+          <div className="w-60 h-[336px] flex-col justify-start items-start gap-1 inline-flex">
+            <div className="self-stretch py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] justify-between items-center inline-flex">
+              <div className="justify-start items-center gap-2 flex">
+                <Icon.Clipboard size="24" />
+                <Typography.Body variant="medium-bold">Streams</Typography.Body>
+              </div>
+            </div>
+            <div className="self-stretch py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] justify-between items-center inline-flex">
+              <div className="justify-start items-center gap-2 flex">
+                <Icon.DotsNine size="24" />
+                <Typography.Body variant="medium-bold">
+                  Notifications
+                </Typography.Body>
+              </div>
+              <div>
+                {' '}
+                <Post.Counter
+                  border="border border-fuchsia-500"
+                  counter={5}
+                />{' '}
+              </div>
+            </div>
+            <div className="self-stretch py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] justify-between items-center inline-flex">
+              <div className="justify-start items-center gap-2 flex">
+                <Icon.Newspaper size="24" />
+                <Typography.Body variant="medium-bold">
+                  Bookmarks
+                </Typography.Body>
+              </div>
+            </div>
+            <div className="self-stretch py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] justify-between items-center inline-flex">
+              <div className="justify-start items-center gap-2 flex">
+                <Icon.Tag size="24" />
+                <Typography.Body variant="medium-bold">
+                  Hot Tags
+                </Typography.Body>
+              </div>
+            </div>
+            <div className="self-stretch py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] justify-between items-center inline-flex">
+              <div className="justify-start items-center gap-2 flex">
+                <Icon.DropdownIcon size="24" />
+                <Typography.Body variant="medium-bold">Friends</Typography.Body>
+              </div>
+            </div>
+            <div className="self-stretch py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] justify-between items-center inline-flex">
+              <div className="justify-start items-center gap-2 flex">
+                <Icon.MusicNotesSimple size="24" />
+                <Typography.Body variant="medium-bold">
+                  Settings
+                </Typography.Body>
+              </div>
+            </div>
+            <div className="self-stretch py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] justify-between items-center inline-flex">
+              <div className="justify-start items-center gap-2 flex">
+                <Icon.UserRectangle size="24" />
+                <Typography.Body variant="medium-bold">Profile</Typography.Body>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {drawerOpen && (
+        <div
+          className="fixed top-0 left-0 z-30 w-full h-screen bg-black bg-opacity-80"
+          onClick={() => setDrawerOpen(false)}
+        />
+      )}
+    </div>
+  );
+};

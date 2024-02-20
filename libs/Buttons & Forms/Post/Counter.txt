@@ -5,6 +5,7 @@ type CounterProps = {
   width?: string;
   height?: string;
   styles?: string;
+  border?: string;
   className?: string;
 };
 
@@ -13,9 +14,10 @@ export const Counter = ({
   height = 'h-8',
   counter,
   styles,
+  border = 'border border-white border-opacity-20',
   ...props
 }: CounterProps) => {
-  const cssStyle = `${width} ${height} px-3 py-1.5 rounded-[32px] border border-white border-opacity-20 flex-col justify-center items-center gap-2 inline-flex`;
+  const cssStyle = `${width} ${height} px-3 py-1.5 rounded-[32px] ${border} flex-col justify-center items-center gap-2 inline-flex`;
   return (
     <div className={`${cssStyle} ${styles}`} {...props}>
       <Typography.Body variant="small-bold">{counter}</Typography.Body>
