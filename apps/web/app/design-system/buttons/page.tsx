@@ -4,34 +4,36 @@ export default async function Index() {
   return (
     <div className="flex-1 w-full h-full bg-black p-10">
       <div className={'pb-8'}>
-        <Button.Large svg={<Icon.ArrowUp />}>Send</Button.Large>
-        <Button.Large svg={<Icon.Plus />}>Primary Button</Button.Large>
-        <Button.Large svg={<Icon.Plus />} disable>
+        <Button.Large icon={<Icon.ArrowUp />}>Send</Button.Large>
+        <Button.Large icon={<Icon.Plus />}>Primary Button</Button.Large>
+        <Button.Large icon={<Icon.Plus />} disabled>
           Primary Button
         </Button.Large>
-        <Button.Large svg={<Icon.Plus />} variant="secondary">
+        <Button.Large icon={<Icon.Plus />} variant="secondary">
           Secondary Button
         </Button.Large>
-        <Button.Large svg={<Icon.Plus />} variant="secondary" disable>
+        <Button.Large icon={<Icon.Plus />} variant="secondary" disabled>
           Secondary Button Disabled
         </Button.Large>
 
-        <Button.Medium>Tag</Button.Medium>
-        <Button.Medium disable>Tag</Button.Medium>
+        <Button.Medium icon={<Icon.Tag />}>Tag</Button.Medium>
+        <Button.Medium icon={<Icon.Tag color="gray" />} disabled>
+          Tag
+        </Button.Medium>
 
         <Button.Medium variant="line">Tag</Button.Medium>
-        <Button.Medium variant="line" disable>
+        <Button.Medium variant="line" disabled>
           Tag
         </Button.Medium>
 
         <Button.Medium variant="subtle">Tag</Button.Medium>
-        <Button.Medium variant="subtle" disable>
+        <Button.Medium variant="subtle" disabled>
           Tag
         </Button.Medium>
         <Button.Action variant="article" />
-        <Button.Action variant="article" disable />
+        <Button.Action variant="article" disabled />
         <Button.Action variant="link" />
-        <Button.Action variant="link" disable />
+        <Button.Action variant="link" disabled />
       </div>
       <div className={'pb-8'}>
         <Button.Action variant="mode" label="label" counter={3} size="small" />
@@ -52,9 +54,9 @@ export default async function Index() {
         <Button.Action variant="link" label="label" size="large" />
       </div>
       <div className={'pb-8'}>
-        <Button.Action variant="link" size="small" disable />
-        <Button.Action variant="link" disable />
-        <Button.Action variant="link" size="large" disable />`
+        <Button.Action variant="link" size="small" disabled />
+        <Button.Action variant="link" disabled />
+        <Button.Action variant="link" size="large" disabled />`
         <Button.Action variant="advanced" size="small" />
         <Button.Action variant="all" size="small" label="All" />
         <Button.Action variant="mode" size="medium" label="All" />
@@ -71,11 +73,14 @@ export default async function Index() {
         />
       </div>
       <div className={'pb-8'}>
-        <Button.Action variant="plus" size="small" href="https://google.com" />
+        <Button.Action variant="plus" size="small" />
         <Button.Action variant="minus" size="small" />
       </div>
       <div className={'pb-8'}>
-        <Button.Tile>Tile Button</Button.Tile>
+        <Button.Tile icon={<Icon.Plus />}>Tile Button</Button.Tile>
+        <Button.Tile icon={<Icon.Plus color="gray" />} disabled>
+          Tile Button
+        </Button.Tile>
       </div>
     </div>
   );

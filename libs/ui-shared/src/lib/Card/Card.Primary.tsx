@@ -1,40 +1,30 @@
+import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../index';
 
-type CardProps = {
-  height?: string;
-  width?: string;
-  styles?: string;
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   text?: string;
   children?: React.ReactNode;
   className?: string;
-  background?: string;
-  zIndex?: string;
-};
+}
 
-export const Primary = ({
-  height,
-  width = 'w-full',
-  styles,
-  title,
-  text,
-  children,
-  zIndex = 'z-10',
-  background = 'bg-gradient-to-b from-[#07040a] to-[#1b1820]',
-  ...props
-}: CardProps) => {
+export const Primary = ({ title, text, children, ...rest }: CardProps) => {
+  const baseCSS = `w-full z-10 p-8 bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-start gap-12 inline-flex`;
+
   return (
-    <div
-      className={`${width} ${height} ${zIndex} p-8 ${background} opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-start gap-12 inline-flex ${styles}`}
-      {...props}
-    >
-      <div className={`flex-col justify-start ${text && 'gap-6'} inline-flex`}>
+    <div {...rest} className={twMerge(baseCSS, rest.className)}>
+      <div
+        className={twMerge(
+          `flex-col justify-start inline-flex`,
+          text ? 'gap-6' : ''
+        )}
+      >
         {title && (
           <Typography.Body variant="large-bold">{title}</Typography.Body>
         )}
         {text && (
           <Typography.Body
-            color="text-white text-opacity-80"
+            className="text-white text-opacity-80"
             variant="medium-light"
           >
             {text}

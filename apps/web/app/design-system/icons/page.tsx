@@ -1,6 +1,6 @@
 import { Icon } from '@social/ui-shared';
 
-export default async function Index() {
+export default function Index() {
   return (
     <div className="flex flex-wrap w-full h-full min-h-screen justify-between bg-black p-10">
       <Icon.ArrowUp size="16" color="orange" />

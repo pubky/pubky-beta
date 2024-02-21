@@ -1,30 +1,32 @@
-type CaptionProps = {
-  color?: string;
+import { twMerge } from 'tailwind-merge';
+
+interface CaptionProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'normal' | 'bold';
   children?: string | number;
-  styles?: string;
-  fontSize?: string;
-  id?: string;
-};
+}
 
 export const Caption = ({
-  color = 'text-white',
   variant = 'normal',
   children,
-  styles = '',
-  fontSize = 'text-[13px]',
-  ...props
+  ...rest
 }: CaptionProps) => {
-  let cssClasses = `${fontSize} font-normal font-['Inter Tight'] tracking-tight`;
+  let cssClasses;
 
   switch (variant) {
     case 'bold':
-      cssClasses = `${fontSize} font-semibold font-['Inter Tight'] tracking-tight`;
+      cssClasses = `text-[13px] font-semibold font-['Inter Tight'] tracking-tight`;
       break;
   }
 
   return (
-    <div className={`${cssClasses} ${color} ${styles}`} {...props}>
+    <div
+      {...rest}
+      className={twMerge(
+        `text-[13px] font-normal font-['Inter Tight'] tracking-tight`,
+        cssClasses,
+        rest.className
+      )}
+    >
       {children}
     </div>
   );

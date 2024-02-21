@@ -1,5 +1,6 @@
-type BodyProps = {
-  color?: string;
+import { twMerge } from 'tailwind-merge';
+
+interface BodyProps extends React.HTMLAttributes<HTMLParagraphElement> {
   variant?:
     | 'large'
     | 'large-bold'
@@ -9,19 +10,11 @@ type BodyProps = {
     | 'small'
     | 'small-bold'
     | 'small-light';
-  children: string;
-  styles?: string;
-  id?: string;
-};
+  children: string | number;
+}
 
-export const Body = ({
-  color = 'text-white',
-  variant = 'large',
-  children,
-  styles = '',
-  ...props
-}: BodyProps) => {
-  let cssClasses = `text-2xl font-normal font-['Inter Tight'] tracking-wide`;
+export const Body = ({ variant = 'large', children, ...rest }: BodyProps) => {
+  let cssClasses;
 
   switch (variant) {
     case 'large-bold':
@@ -51,7 +44,14 @@ export const Body = ({
   }
 
   return (
-    <p className={`${cssClasses} ${color} ${styles}`} {...props}>
+    <p
+      {...rest}
+      className={twMerge(
+        `text-2xl font-normal font-['Inter Tight'] tracking-wide text-white`,
+        cssClasses,
+        rest.className
+      )}
+    >
       {children}
     </p>
   );

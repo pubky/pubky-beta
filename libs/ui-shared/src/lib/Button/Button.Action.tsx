@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import { Icon } from '../Icon';
 import { Typography } from '../Typography';
+import { twMerge } from 'tailwind-merge';
 
-type ActionButtonProps = {
+interface ActionButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   variant?:
     | 'advanced'
     | 'all'
@@ -26,14 +27,10 @@ type ActionButtonProps = {
   label?: string;
   counter?: number;
   icon?: React.ReactNode;
-  disable?: boolean;
+  disabled?: boolean;
   active?: boolean;
-  styles?: string;
-  href?: string;
-  onClick?: () => void;
   className?: string;
-  target?: string;
-};
+}
 
 export const Action = ({
   variant = 'article',
@@ -41,12 +38,9 @@ export const Action = ({
   label,
   counter,
   icon,
-  disable = false,
+  disabled = false,
   active = false,
-  styles = '',
-  target = '_self',
-  href,
-  ...props
+  ...rest
 }: ActionButtonProps) => {
   const [isHovered, setIsHovered] = useState(false);
   let sizeClasses;
@@ -74,18 +68,20 @@ export const Action = ({
       fontSize = 'text-[15px]';
   }
 
-  const color = disable ? 'text-gray-500' : 'text-white';
-  const colorIcon = disable ? 'grey' : undefined;
+  const color = disabled ? 'text-gray-500' : 'text-white';
+  const colorIcon = disabled ? 'grey' : undefined;
+  let stateButton = disabled
+    ? 'bg-opacity-10 cursor-auto'
+    : 'hover:bg-opacity-20';
   const gap = counter ? 'gap-1.5' : '';
 
   let iconComponent = <Icon.Clipboard size={iconSize} color={colorIcon} />;
-  let disabled = disable ? 'bg-opacity-10 cursor-auto' : 'hover:bg-opacity-20';
   let background = 'bg-white bg-opacity-10';
 
   switch (variant) {
     case 'all':
       iconComponent = <Icon.Stack size={iconSize} color={colorIcon} />;
-      disabled = disable
+      stateButton = disabled
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-fuchsia-500 hover:bg-opacity-30';
       background = active
@@ -94,7 +90,7 @@ export const Action = ({
       break;
     case 'posts':
       iconComponent = <Icon.NoteBlank size={iconSize} color={colorIcon} />;
-      disabled = disable
+      stateButton = disabled
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-fuchsia-500 hover:bg-opacity-30';
       background = active
@@ -103,7 +99,7 @@ export const Action = ({
       break;
     case 'article':
       iconComponent = <Icon.Newspaper size={iconSize} color={colorIcon} />;
-      disabled = disable
+      stateButton = disabled
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-yellow-400 hover:bg-opacity-30';
       background = active
@@ -113,7 +109,7 @@ export const Action = ({
 
     case 'link':
       iconComponent = <Icon.LinkSimple size={iconSize} color={colorIcon} />;
-      disabled = disable
+      stateButton = disabled
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-cyan-400 hover:bg-opacity-30';
       background = active
@@ -123,7 +119,7 @@ export const Action = ({
 
     case 'image':
       iconComponent = <Icon.ImageSquare size={iconSize} color={colorIcon} />;
-      disabled = disable
+      stateButton = disabled
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-green-500 hover:bg-opacity-30';
       background = active
@@ -135,7 +131,7 @@ export const Action = ({
       iconComponent = (
         <Icon.MusicNotesSimple size={iconSize} color={colorIcon} />
       );
-      disabled = disable
+      stateButton = disabled
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-blue-600 hover:bg-opacity-30';
       background = active
@@ -145,7 +141,7 @@ export const Action = ({
 
     case 'video':
       iconComponent = <Icon.Play size={iconSize} color={colorIcon} />;
-      disabled = disable
+      stateButton = disabled
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-red-600 hover:bg-opacity-30';
       background = active
@@ -155,7 +151,7 @@ export const Action = ({
 
     case 'podcast':
       iconComponent = <Icon.Podcast size={iconSize} color={colorIcon} />;
-      disabled = disable
+      stateButton = disabled
         ? 'bg-opacity-10 cursor-auto'
         : 'hover:bg-amber-500 hover:bg-opacity-30';
       background = active
@@ -198,45 +194,39 @@ export const Action = ({
       break;
   }
 
-  const cssClasses = `${sizeClasses} ${background} rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex ${disabled}`;
+  const cssClasses = `${sizeClasses} ${background} ${stateButton} ${gap} rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex`;
 
   return (
     <div className="relative inline-flex">
-      <div className="flex">
-        <a href={href} target={target}>
-          <button
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className={`${cssClasses} ${styles}`}
-            {...props}
+      <button
+        {...rest}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={twMerge(cssClasses, rest.className)}
+      >
+        {iconComponent}
+        <Typography.Caption
+          className={twMerge(fontSize, color, 'text-opacity-50')}
+          variant="bold"
+        >
+          {counter}
+        </Typography.Caption>
+      </button>
+      {isHovered && label && (
+        <div
+          className={twMerge(
+            labelClasses,
+            'flex absolute text-center justify-center items-center'
+          )}
+        >
+          <Typography.Caption
+            className={twMerge(fontSize, color, 'text-opacity-50')}
+            variant="bold"
           >
-            <div className={`justify-center items-center inline-flex ${gap}`}>
-              {iconComponent}
-              <Typography.Caption
-                fontSize={fontSize}
-                styles="text-opacity-50"
-                variant="bold"
-              >
-                {counter ? counter : ''}
-              </Typography.Caption>
-            </div>
-          </button>
-        </a>
-        {isHovered && label && (
-          <div
-            className={`${labelClasses} flex absolute text-center justify-center items-center`}
-          >
-            <Typography.Caption
-              fontSize={fontSize}
-              styles="text-opacity-50"
-              variant="bold"
-              color={color}
-            >
-              {label}
-            </Typography.Caption>
-          </div>
-        )}
-      </div>
+            {label}
+          </Typography.Caption>
+        </div>
+      )}
     </div>
   );
 };
