@@ -37,17 +37,15 @@ export const Large = ({
   }
 
   return (
-    <a href={href}>
-      <button className={`${cssClasses} ${styles}`} {...props}>
-        <div className="justify-start items-center gap-1.5 inline-flex">
-          {svg}
-          {children && (
-            <Typography.Body color={color} variant="small-bold">
-              {children}
-            </Typography.Body>
-          )}
-        </div>
-      </button>
-    </a>
+    <button className={`${cssClasses} ${styles}`} {...props}>
+      <div className="justify-start items-center gap-1.5 inline-flex">
+        {svg}
+        {children && (
+          <Typography.Body color={color} variant="small-bold">
+            {children}
+          </Typography.Body>
+        )}
+      </div>
+    </button>
   );
 };

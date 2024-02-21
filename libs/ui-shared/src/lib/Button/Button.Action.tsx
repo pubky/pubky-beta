@@ -212,8 +212,7 @@ export const Action = ({
             <div className={`justify-center items-center inline-flex ${gap}`}>
               {iconComponent}
               <Typography.Caption
-                fontSize={fontSize}
-                styles="text-opacity-50"
+                className={`${fontSize} text-opacity-50`}
                 variant="bold"
               >
                 {counter ? counter : ''}
@@ -226,10 +225,8 @@ export const Action = ({
             className={`${labelClasses} flex absolute text-center justify-center items-center`}
           >
             <Typography.Caption
-              fontSize={fontSize}
-              styles="text-opacity-50"
+              className={`${fontSize} ${color} text-opacity-50`}
               variant="bold"
-              color={color}
             >
               {label}
             </Typography.Caption>
