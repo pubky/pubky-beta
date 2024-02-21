@@ -6,6 +6,7 @@ import { useState } from 'react';
 export default function Index() {
   const [checkedA, setCheckedA] = useState(false);
   const [checkedB, setCheckedB] = useState(false);
+  const [radioValue, setRadioValue] = useState('1');
 
   return (
     <div className="flex-1 w-full h-screen bg-black p-10">
@@ -37,22 +38,44 @@ export default function Index() {
           <div className="pb-4">
             <Input.Cursor />
           </div>
+          <div className="pb-4">
+            <Input.Cursor />
+          </div>
+          <div className="pb-4">
+            <Input.Radio
+              disabled
+              value={radioValue}
+              onChange={(value) => setRadioValue(value)}
+              options={[
+                {
+                  value: '1',
+                },
+                {
+                  value: '2',
+                },
+              ]}
+            />
+          </div>
+          <div>
+            <Input.Dropdown
+              onClick={(e) => e.preventDefault()}
+              items={['Week', 'Day']}
+            />
+            <Input.Dropdown
+              onClick={(e) => e.preventDefault()}
+              items={[
+                {
+                  icon: <Icon.ArrowUp />,
+                  option: 'Week',
+                },
+                {
+                  icon: <Icon.Asterisk />,
+                  option: 'Month',
+                },
+              ]}
+            />
+          </div>
         </form>
-        <div>
-          <Input.Dropdown items={['Week', 'Day']} />
-          <Input.Dropdown
-            items={[
-              {
-                icon: <Icon.ArrowUp />,
-                option: 'Week',
-              },
-              {
-                icon: <Icon.Asterisk />,
-                option: 'Month',
-              },
-            ]}
-          />
-        </div>
       </div>
     </div>
   );
