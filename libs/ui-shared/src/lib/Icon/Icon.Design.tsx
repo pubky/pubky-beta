@@ -1,7 +1,7 @@
-type IconProps = {
+interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: string;
   color?: string;
-};
+}
 
 export const Pencil = ({ size = '48', color = 'white' }: IconProps) => (
   <svg

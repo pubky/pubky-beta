@@ -1,6 +1,6 @@
 'use client';
 
-import { Check } from '../Icon/Icon.System';
+import { Check } from '../../Icon/Icon.System';
 
 interface CheckboxIconProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;

@@ -1,7 +1,7 @@
-type IconProps = {
+interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: string;
   color?: string;
-};
+}
 
 export const LinkSimple = ({ size = '24', color = 'white' }: IconProps) => (
   <svg
