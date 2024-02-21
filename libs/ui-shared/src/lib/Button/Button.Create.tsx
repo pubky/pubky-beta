@@ -3,10 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { Icon } from '../Icon';
 
 interface CreateButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  width?: string;
-  height?: string;
   icon?: React.ReactNode;
-  styles?: string;
 }
 
 export const Create = ({
