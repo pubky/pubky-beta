@@ -1,20 +1,17 @@
+import { twMerge } from 'tailwind-merge';
+
 interface H1Props extends React.HTMLAttributes<HTMLHeadingElement> {
-  color?: string;
-  children: string;
-  styles?: string;
-  id?: string;
+  children: string | React.ReactNode;
 }
 
-export const H1 = ({
-  color = 'text-white',
-  children,
-  styles = '',
-  ...rest
-}: H1Props) => {
+export const H1 = ({ children, ...rest }: H1Props) => {
   return (
     <h1
-      className={`text-[38px] font-semibold font-['Inter Tight'] tracking-wide ${color} ${styles}`}
       {...rest}
+      className={twMerge(
+        `text-[38px] font-semibold font-['Inter Tight'] tracking-wide text-white`,
+        rest.className
+      )}
     >
       {children}
     </h1>
