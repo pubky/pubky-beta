@@ -11,6 +11,8 @@ type Tag = {
 export default function Index() {
   const [checkedA, setCheckedA] = useState(false);
   const [checkedB, setCheckedB] = useState(false);
+  const [checkedC, setCheckedC] = useState(false);
+  const [checkedD, setCheckedD] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
   const tags: Tag[] = [
     {
@@ -95,6 +97,17 @@ export default function Index() {
                   value: '2',
                 },
               ]}
+            />
+          </div>
+          <div className="pb-4">
+            <Input.Switch
+              checked={checkedC}
+              onChange={(value) => setCheckedC(value)}
+              disabled
+            />
+            <Input.Switch
+              checked={checkedD}
+              onChange={(value) => setCheckedD(value)}
             />
           </div>
           <div>
