@@ -1,6 +1,6 @@
 'use client';
 
-import { Input } from '@social/ui-shared';
+import { Icon, Input } from '@social/ui-shared';
 import { useState } from 'react';
 
 export default function Index() {
@@ -12,10 +12,14 @@ export default function Index() {
       <div className={'pb-8 w-full'}>
         <form>
           <div className="pb-4">
-            <Input.Text placeHolder="hint" />
+            <Input.Text value={''} placeHolder="hint" action={<Icon.Plus />} />
           </div>
           <div className="pb-4">
-            <Input.Text placeHolder="hint" multiline height={'h-[170px]'} />
+            <Input.TextArea
+              value={''}
+              placeHolder="hint"
+              className={'h-[170px]'}
+            />
           </div>
           <div className="pb-4">
             <Input.Checkbox
