@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
 interface TextAreaProps extends React.HTMLAttributes<HTMLTextAreaElement> {
-  value: string;
+  value?: string;
   placeHolder?: string;
   label?: string;
   icon?: React.ReactNode;

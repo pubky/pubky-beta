@@ -44,8 +44,7 @@ export default function Index() {
           </Modal.Header>
           <Modal.Content>
             <div className="mt-6 inline-flex col-span-2">
-              <Input.Text
-                value=""
+              <Input.TextArea
                 className="h-[285px] p-12"
                 placeHolder="Write content, drop an image, or paste a link"
               />
@@ -86,7 +85,6 @@ export default function Index() {
               </div>
               <div className="flex-col w-full items-start flex">
                 <Input.Text
-                  value={''}
                   label="Add tag:"
                   placeHolder="#"
                   action={

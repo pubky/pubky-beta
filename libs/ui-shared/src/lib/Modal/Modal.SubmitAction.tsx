@@ -13,7 +13,7 @@ export const SubmitAction = ({
   ...rest
 }: SubmitActionProps) => {
   return (
-    <Button.Large svg={icon} styles="mt-6" width="w-full" {...rest}>
+    <Button.Large icon={icon} className="w-full mt-6" {...rest}>
       {children}
     </Button.Large>
   );

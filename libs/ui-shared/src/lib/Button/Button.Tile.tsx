@@ -1,43 +1,39 @@
-import { Icon } from '../Icon';
+import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
-type TileButtonProps = {
+interface TileButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   children: string;
-  svg?: React.ReactNode;
-  disable?: boolean;
-  width?: string;
-  height?: string;
-  styles?: string;
+  icon?: React.ReactNode;
+  disabled?: boolean;
   className?: string;
-};
+}
 
 export const Tile = ({
   children,
-  svg,
-  disable = false,
-  width = 'w-full',
-  height = 'h-[66px]',
-  styles = '',
-  ...props
+  icon,
+  disabled = false,
+  ...rest
 }: TileButtonProps) => {
-  const color = disable ? 'text-gray-500' : 'text-white';
-  const colorIcon = disable ? 'grey' : undefined;
-  const colorBorder = disable
-    ? 'border-gray-500'
-    : 'border-white hover:border-fuchsia-500';
-  const disabled = disable
-    ? 'bg-opacity-10'
-    : 'hover:bg-fuchsia-500 hover:bg-opacity-20';
+  let color = 'text-white';
+  let colorBorder = 'border-white hover:border-fuchsia-500';
+  let stateButton = 'hover:bg-fuchsia-500 hover:bg-opacity-20';
+
+  if (disabled) {
+    color = 'text-gray-500';
+    colorBorder = 'border-gray-500';
+    stateButton = 'bg-opacity-10';
+  }
 
   return (
     <button
-      className={`${width} ${height} p-6 rounded-2xl border ${colorBorder} border-opacity-30 border-dashed justify-center items-center gap-2 inline-flex ${disabled} ${styles}`}
-      {...props}
+      {...rest}
+      className={twMerge(
+        `${stateButton} ${colorBorder} w-full h-[66px] p-6 rounded-2xl border border-opacity-30 border-dashed justify-center items-center gap-2 inline-flex`,
+        rest.className
+      )}
     >
-      <div className="justify-center items-center flex">
-        {svg ? svg : <Icon.Plus color={colorIcon} />}
-      </div>
-      <Typography.Body variant="small-bold" color={color}>
+      {icon}
+      <Typography.Body variant="small-bold" className={color}>
         {children}
       </Typography.Body>
     </button>

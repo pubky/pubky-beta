@@ -3,6 +3,7 @@ import { CheckboxIcon } from './Input.CheckboxIcon';
 import { Cursor } from './Input.Cursor';
 import { Text } from './Input.Text';
 import { TextArea } from './Input.TextArea';
+import { Dropdown } from './Input.Dropdown';
 
 export const Input = {
   Checkbox,
@@ -10,4 +11,5 @@ export const Input = {
   Cursor,
   Text,
   TextArea,
+  Dropdown,
 };

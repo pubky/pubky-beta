@@ -3,7 +3,7 @@ import { Typography } from '../Typography';
 
 interface TextProps
   extends React.HTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
-  value: string;
+  value?: string;
   placeHolder?: string;
   label?: string;
   multiline?: boolean;

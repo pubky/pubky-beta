@@ -45,6 +45,21 @@ export default function Index() {
             />
           </div>
         </form>
+        <div>
+          <Input.Dropdown items={['Week', 'Day']} />
+          <Input.Dropdown
+            items={[
+              {
+                icon: <Icon.ArrowUp />,
+                option: 'Week',
+              },
+              {
+                icon: <Icon.Asterisk />,
+                option: 'Month',
+              },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,39 +1,59 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
 import { DropdownIcon } from '../Icon/Icon.Arrow';
 import { Typography } from '../Typography';
-import { Card } from '../Card';
 import { Icon } from '../Icon';
+import { Button } from '../Button';
+import { Card } from '../Card';
+import { twMerge } from 'tailwind-merge';
 
-interface Item extends React.HTMLAttributes<HTMLInputElement> {
+type Item = {
   icon: React.ReactNode;
   option: string;
-}
+};
 
-type DropdownProps = {
+interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
   items: string[] | Item[];
   label?: string;
   title?: string;
   subtitle?: string;
   width?: string;
-  padding?: string;
-};
+  alignment?: 'right' | 'left';
+  className?: string;
+}
 
 export const Dropdown = ({
   items,
   label,
   title,
   subtitle,
-  width = 'w-[336px]',
+  alignment = 'left',
   ...rest
 }: DropdownProps) => {
-  const [selectedItem, setSelectedItem] = useState<string | undefined>(
-    typeof items[0] === 'string'
-      ? (items[0] as string)
-      : (items[0] as Item).option
+  const [selectedItem, setSelectedItem] = useState<string | Item>(
+    typeof items[0] === 'string' ? items[0] : (items[0] as Item)
   );
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleSelectItem = (item: string) => {
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSelectItem = (item: string | Item) => {
     setSelectedItem(item);
     setIsOpen(false);
   };
@@ -41,6 +61,8 @@ export const Dropdown = ({
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
+  const alignmentCard = alignment === 'right' && 'right-0';
 
   const arrowStyle = `ml-1 ${
     label ? 'mt-1' : 'mt-0.5'
@@ -53,93 +75,90 @@ export const Dropdown = ({
   }`;
 
   return (
-    <div className="relative inline-block">
-      <div>
-        {label && (
-          <Typography.Label color="text-white text-opacity-30">
-            {label}
-          </Typography.Label>
-        )}
-        <div className="relative">
-          <div className="rounded-md overflow-hidden">
-            <button
-              type="button"
-              className={`${styleSelect} w-full flex items-center justify-between`}
-              onClick={toggleDropdown}
-              {...rest}
-            >
-              {selectedItem || 'Select'}
-              {typeof items[0] === 'string' && (
+    <div className="relative inline-block" ref={dropdownRef}>
+      {label && (
+        <Typography.Label className="text-white text-opacity-30">
+          {label}
+        </Typography.Label>
+      )}
+      <div className="relative">
+        <div className="rounded-md overflow-hidden">
+          <div
+            className={`${styleSelect} w-full flex items-center justify-between cursor-pointer`}
+            onClick={toggleDropdown}
+          >
+            {typeof items[0] === 'string' ? (
+              <>
+                {selectedItem || 'Select'}
                 <div className={arrowStyle}>
                   <DropdownIcon color={label ? 'white' : 'gray'} />
                 </div>
-              )}
-            </button>
-            {isOpen && (
-              <Card.Primary
-                className={`${width} ${
-                  title ? 'p-12' : 'p-5'
-                } mt-4 absolute z-10 bg-gradient-to-b from-stone-950 to-black rounded-2xl shadow border border-fuchsia-600 border-opacity-30 flex-col justify-start items-start gap-12 inline-flex`}
-              >
-                {(title || subtitle) && (
-                  <div className="mb-6 flex-col justify-start items-start flex">
-                    {title && <Typography.H1>{title}</Typography.H1>}
-                    {subtitle && (
-                      <Typography.Body
-                        variant="medium"
-                        color="text-white text-opacity-80"
-                      >
-                        {subtitle}
-                      </Typography.Body>
-                    )}
-                  </div>
-                )}
-                {items.map((item, index) => (
-                  <button
-                    key={index}
-                    className={`${
-                      title ? 'w-60' : 'w-40'
-                    } h-12 py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] justify-between items-center inline-flex`}
-                    onClick={() =>
-                      handleSelectItem(
-                        typeof item === 'string' ? item : item.option
-                      )
-                    }
-                  >
-                    <div className="w-14 justify-start items-center contents">
-                      {typeof item === 'string' ? (
-                        <Typography.Body
-                          variant={title ? 'medium-bold' : 'small'}
-                        >
-                          {item}
-                        </Typography.Body>
-                      ) : (
-                        <>
-                          {item.icon}
-                          <Typography.Body
-                            variant={title ? 'medium-bold' : 'small'}
-                          >
-                            {item.option}
-                          </Typography.Body>
-                        </>
-                      )}
-
-                      {selectedItem ===
-                        (typeof item === 'string' ? item : item.option) && (
-                        <div>
-                          {typeof item === 'string' ? (
-                            <Icon.Check size={title ? '32' : '26'} />
-                          ) : (
-                            ''
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </Card.Primary>
+              </>
+            ) : (
+              <Button.Action
+                variant="custom"
+                icon={
+                  typeof selectedItem !== 'string' &&
+                  selectedItem &&
+                  selectedItem.icon
+                }
+              />
             )}
           </div>
+
+          {isOpen && (
+            <Card.Primary
+              {...rest}
+              className={twMerge(
+                `${alignmentCard} w-[336px] mt-4 absolute z-10 p-12 bg-gradient-to-b from-stone-950 to-black rounded-2xl shadow border border-fuchsia-600 border-opacity-30 flex-col justify-start items-start gap-12 inline-flex`,
+                rest.className
+              )}
+            >
+              {title && subtitle && (
+                <div className="mb-6 flex-col justify-start items-start flex">
+                  <Typography.H1>{title}</Typography.H1>
+                  <Typography.Body
+                    variant="medium"
+                    color="text-white text-opacity-80"
+                  >
+                    {subtitle}
+                  </Typography.Body>
+                </div>
+              )}
+              {items.map((item, index) => (
+                <button
+                  key={index}
+                  className={`w-60 h-12 py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] items-center inline-flex ${
+                    typeof item === 'string'
+                      ? 'justify-between'
+                      : 'justify-start'
+                  }`}
+                  onClick={() =>
+                    handleSelectItem(
+                      typeof item === 'string'
+                        ? item
+                        : { icon: item.icon, option: item.option }
+                    )
+                  }
+                >
+                  <div className="w-14 justify-start items-center contents">
+                    {typeof item !== 'string' && (
+                      <div className="mr-2">{item.icon}</div>
+                    )}
+                    <Typography.Body variant="medium-bold">
+                      {typeof item === 'string' ? item : item.option}
+                    </Typography.Body>
+                    {selectedItem ===
+                      (typeof item === 'string' ? item : item.option) && (
+                      <div>
+                        {typeof item === 'string' && <Icon.Check size="32" />}
+                      </div>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </Card.Primary>
+          )}
         </div>
       </div>
     </div>

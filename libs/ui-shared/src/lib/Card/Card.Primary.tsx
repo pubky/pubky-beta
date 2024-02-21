@@ -1,32 +1,21 @@
+import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../index';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  height?: string;
-  width?: string;
-  styles?: string;
   title?: string;
   text?: string;
   children?: React.ReactNode;
   className?: string;
-  background?: string;
-  zIndex?: string;
 }
 
-export const Primary = ({
-  height,
-  width = 'w-full',
-  styles,
-  title,
-  text,
-  children,
-  zIndex = 'z-10',
-  background = 'bg-gradient-to-b from-[#07040a] to-[#1b1820]',
-  ...rest
-}: CardProps) => {
+export const Primary = ({ title, text, children, ...rest }: CardProps) => {
   return (
     <div
-      className={`${width} ${height} ${zIndex} p-8 ${background} opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-start gap-12 inline-flex ${styles}`}
       {...rest}
+      className={twMerge(
+        `w-full z-10 p-8 bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-start gap-12 inline-flex`,
+        rest.className
+      )}
     >
       <div className={`flex-col justify-start ${text && 'gap-6'} inline-flex`}>
         {title && (
@@ -34,7 +23,7 @@ export const Primary = ({
         )}
         {text && (
           <Typography.Body
-            color="text-white text-opacity-80"
+            className="text-white text-opacity-80"
             variant="medium-light"
           >
             {text}
