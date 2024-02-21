@@ -8,6 +8,7 @@ import { SearchActions } from './Input.Search/Input.SearchActions';
 import { SearchInput } from './Input.Search/Input.SearchInput';
 import { SearchTag } from './Input.Search/Input.SearchTag';
 import { SearchTags } from './Input.Search/Input.SearchTags';
+import { Select } from './Input.Select';
 import { Switch } from './Input.Switch';
 import { Text } from './Input.Text';
 import { TextArea } from './Input.TextArea';
@@ -23,6 +24,7 @@ export const Input = {
   SearchInput,
   SearchTag,
   SearchTags,
+  Select,
   Switch,
   Text,
   TextArea,

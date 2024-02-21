@@ -13,6 +13,8 @@ export default function Index() {
   const [checkedB, setCheckedB] = useState(false);
   const [checkedC, setCheckedC] = useState(false);
   const [checkedD, setCheckedD] = useState(false);
+  const [selectedA, setSelectedA] = useState(false);
+  const [selectedB, setSelectedB] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
   const tags: Tag[] = [
     {
@@ -30,7 +32,7 @@ export default function Index() {
   ];
 
   return (
-    <div className="flex-1 w-full h-screen bg-black p-10">
+    <div className="flex-1 w-full h-full bg-black p-10">
       <div className={'pb-8 w-full'}>
         <form>
           <div className="pb-4">
@@ -130,6 +132,25 @@ export default function Index() {
             />
           </div>
         </form>
+        <div className="pb-4">
+          <Input.Select
+            text="Traditional"
+            size="small"
+            active={selectedA}
+            onClick={(active: boolean) => {
+              setSelectedA(active);
+            }}
+          />
+          <Input.Select
+            text="Traditional"
+            size="large"
+            disabled
+            active={selectedB}
+            onClick={(active: boolean) => {
+              setSelectedB(active);
+            }}
+          />
+        </div>
       </div>
     </div>
   );
