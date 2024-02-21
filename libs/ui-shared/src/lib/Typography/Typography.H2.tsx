@@ -1,19 +1,12 @@
+import { twMerge } from 'tailwind-merge';
+
 interface H2Props extends React.HTMLAttributes<HTMLHeadingElement> {
-  color?: string;
   variant?: 'normal' | 'light';
-  children: string;
-  styles?: string;
-  id?: string;
+  children: string | React.ReactNode;
 }
 
-export const H2 = ({
-  color = 'text-white',
-  variant = 'normal',
-  children,
-  styles = '',
-  ...rest
-}: H2Props) => {
-  let cssClasses = `text-2xl font-semibold font-['Inter Tight'] tracking-wide`;
+export const H2 = ({ variant = 'normal', children, ...rest }: H2Props) => {
+  let cssClasses;
 
   switch (variant) {
     case 'light':
@@ -22,7 +15,14 @@ export const H2 = ({
   }
 
   return (
-    <h2 className={`${cssClasses} ${color} ${styles}`} {...rest}>
+    <h2
+      {...rest}
+      className={twMerge(
+        `text-2xl font-semibold font-['Inter Tight'] tracking-wide text-white`,
+        cssClasses,
+        rest.className
+      )}
+    >
       {children}
     </h2>
   );
