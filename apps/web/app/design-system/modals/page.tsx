@@ -45,51 +45,51 @@ export default function Index() {
           <Modal.Content>
             <div className="mt-6 inline-flex col-span-2">
               <Input.Text
-                height="h-[285px]"
+                value=""
+                className="h-[285px] p-12"
                 placeHolder="Write content, drop an image, or paste a link"
-                padding="p-12"
-                multiline
               />
             </div>
             <div className="flex-col justify-start items-start gap-5 mt-4 inline-flex">
               <Typography.H2>Suggested Tags</Typography.H2>
               <div className="justify-start items-start">
-                <Post.Tag color="amber" styles="mr-2 my-1">
+                <Post.Tag clicked color="amber" className="mr-2 my-1">
                   #Bitcoin
                 </Post.Tag>
-                <Post.Tag color="amber" styles="mr-2 my-1">
+                <Post.Tag clicked color="amber" className="mr-2 my-1">
                   #Satoshi
                 </Post.Tag>
-                <Post.Tag color="red" styles="mr-2 my-1">
+                <Post.Tag clicked color="red" className="mr-2 my-1">
                   #P2P
                 </Post.Tag>
-                <Post.Tag color="blue" styles="mr-2 my-1">
+                <Post.Tag clicked color="blue" className="mr-2 my-1">
                   #Keys
                 </Post.Tag>
-                <Post.Tag color="blue" styles="mr-2 my-1">
+                <Post.Tag clicked color="blue" className="mr-2 my-1">
                   #Scalability
                 </Post.Tag>
-                <Post.Tag color="green" styles="mr-2 my-1">
+                <Post.Tag clicked color="green" className="mr-2 my-1">
                   #Whitepaper
                 </Post.Tag>
-                <Post.Tag color="cyan" styles="mr-2 my-1">
+                <Post.Tag clicked color="cyan" className="mr-2 my-1">
                   #PoW
                 </Post.Tag>
-                <Post.Tag color="yellow" styles="mr-2 my-1">
+                <Post.Tag clicked color="yellow" className="mr-2 my-1">
                   #Cryptography
                 </Post.Tag>
-                <Post.Tag color="fuchsia" styles="mr-2 my-1">
+                <Post.Tag clicked color="fuchsia" className="mr-2 my-1">
                   #Quote
                 </Post.Tag>
-                <Post.Tag color="amber" styles="mr-2 my-1">
+                <Post.Tag clicked color="amber" className="mr-2 my-1">
                   #Bitcointalk
                 </Post.Tag>
               </div>
               <div className="flex-col w-full items-start flex">
                 <Input.Text
+                  value={''}
                   label="Add tag:"
                   placeHolder="#"
-                  icon={
+                  action={
                     <Button.Action
                       variant="custom"
                       icon={<Icon.Plus size="20" />}
