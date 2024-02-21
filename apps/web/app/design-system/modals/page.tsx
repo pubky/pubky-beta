@@ -46,7 +46,7 @@ export default function Index() {
             <div className="mt-6 inline-flex col-span-2">
               <Input.TextArea
                 className="h-[285px] p-12"
-                placeHolder="Write content, drop an image, or paste a link"
+                placeholder="Write content, drop an image, or paste a link"
               />
             </div>
             <div className="flex-col justify-start items-start gap-5 mt-4 inline-flex">
@@ -86,7 +86,7 @@ export default function Index() {
               <div className="flex-col w-full items-start flex">
                 <Input.Text
                   label="Add tag:"
-                  placeHolder="#"
+                  placeholder="#"
                   action={
                     <Button.Action
                       variant="custom"

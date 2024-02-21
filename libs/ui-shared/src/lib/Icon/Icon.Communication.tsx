@@ -1,7 +1,7 @@
-type IconProps = {
+interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: string;
   color?: string;
-};
+}
 
 export const Asterisk = ({ size = '24', color = 'white' }: IconProps) => (
   <svg
@@ -32,7 +32,10 @@ export const Asterisk = ({ size = '24', color = 'white' }: IconProps) => (
   </svg>
 );
 
-export const PaperPlaneRight = ({ size = '16', color = 'white' }: IconProps) => (
+export const PaperPlaneRight = ({
+  size = '16',
+  color = 'white',
+}: IconProps) => (
   <svg
     width={size}
     height={size}
