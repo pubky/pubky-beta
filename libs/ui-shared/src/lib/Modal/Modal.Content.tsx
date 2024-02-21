@@ -1,4 +1,5 @@
 import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -6,7 +7,10 @@ interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Content = ({ children, ...rest }: ContentProps) => {
   return (
-    <div className="grid grid-cols-3 gap-6" {...rest}>
+    <div
+      {...rest}
+      className={twMerge(`grid grid-cols-3 gap-6`, rest.className)}
+    >
       {children}
     </div>
   );
