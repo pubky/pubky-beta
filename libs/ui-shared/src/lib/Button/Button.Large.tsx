@@ -1,51 +1,51 @@
+import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
-type LargeButtonProps = {
-  children: string;
+interface LargeButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+  children?: string;
   variant?: 'primary' | 'secondary';
-  svg?: React.ReactNode;
-  disable?: boolean;
-  width?: string;
-  height?: string;
-  styles?: string;
-  href?: string;
+  icon?: React.ReactNode;
+  disabled?: boolean;
   className?: string;
-};
+}
 
 export const Large = ({
   children,
   variant = 'primary',
-  svg,
-  disable = false,
-  width = 'w-full',
-  height = 'h-[58px]',
-  styles = '',
-  href,
-  ...props
+  icon,
+  disabled = false,
+  ...rest
 }: LargeButtonProps) => {
-  const color = disable ? 'text-gray-500' : 'text-white';
-  let disabled = disable
-    ? 'border-opacity-30 bg-opacity-10 cursor-auto'
-    : 'hover:bg-opacity-60';
-  let cssClasses = `${width} ${height} px-6 py-5 bg-fuchsia-500 bg-opacity-30 rounded-[64px] shadow border border-fuchsia-500 backdrop-blur-[10px] flex-col justify-center items-center gap-10 inline-flex ${disabled}`;
+  let colorText = 'text-white';
+  let stateButton = 'hover:bg-opacity-60';
+
+  if (disabled) {
+    colorText = 'text-gray-500';
+    stateButton = 'border-opacity-30 bg-opacity-10 cursor-auto';
+  }
+
+  let cssColorButton = ` bg-fuchsia-500 bg-opacity-30 border border-fuchsia-500`;
 
   switch (variant) {
     case 'secondary':
-      disabled = disable ? 'hover:bg-opacity-30' : '';
-      cssClasses = `${width} ${height} px-6 py-5 bg-white bg-opacity-20 rounded-[64px] shadow backdrop-blur-[10px] flex-col justify-center items-center gap-10 inline-flex ${disabled}`;
+      stateButton = disabled ? 'hover:bg-opacity-30' : '';
+      cssColorButton = ` bg-white bg-opacity-20 `;
       break;
   }
 
+  const cssButton = `${stateButton} w-full h-[58px] px-6 py-5 rounded-[64px] shadow backdrop-blur-[10px] justify-center items-center gap-2 inline-flex`;
+
   return (
-    <a href={href}>
-      <button className={`${cssClasses} ${styles}`} {...props}>
-        <div className="justify-start items-center gap-1.5 inline-flex">
-          {svg}
-          <Typography.Body color={color} variant="small-bold">
-            {children}
-          </Typography.Body>
-        </div>
-      </button>
-    </a>
+    <button
+      {...rest}
+      className={twMerge(cssButton, cssColorButton, rest.className)}
+    >
+      {icon}
+      {children && (
+        <Typography.Body className={colorText} variant="small-bold">
+          {children}
+        </Typography.Body>
+      )}
+    </button>
   );
 };

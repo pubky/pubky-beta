@@ -3,7 +3,8 @@
 import { Typography } from './lib/Typography';
 import { Icon } from './lib/Icon';
 import { Button } from './lib/Button';
-import { Form } from './lib/Form';
+import { Input } from './lib/Input';
 import { Modal } from './lib/Modal';
+import { Post } from './lib/Post';
 
-export { Typography, Icon, Button, Form, Modal };
+export { Typography, Icon, Button, Input, Modal, Post };
