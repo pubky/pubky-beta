@@ -40,11 +40,13 @@ export const Medium = ({
       break;
   }
 
-  let cssButton = `${stateButton} w-full h-12 px-6 py-[15px] rounded-[54px] justify-center items-center gap-2 inline-flex`;
-  cssButton += cssColorButton;
+  const cssButton = `${stateButton} w-full h-12 px-6 py-[15px] rounded-[54px] justify-center items-center gap-2 inline-flex`;
 
   return (
-    <button {...rest} className={twMerge(`${cssButton}`, rest.className)}>
+    <button
+      {...rest}
+      className={twMerge(cssButton, cssColorButton, rest.className)}
+    >
       {icon}
       <Typography.Body variant="small-bold" className={color}>
         {children}

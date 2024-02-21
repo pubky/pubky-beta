@@ -3,7 +3,6 @@ import { CheckboxIcon } from './Input.CheckboxIcon';
 interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
   checked: boolean;
   disabled?: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const Checkbox = ({

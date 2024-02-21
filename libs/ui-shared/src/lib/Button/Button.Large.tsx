@@ -33,11 +33,13 @@ export const Large = ({
       break;
   }
 
-  let cssButton = `${stateButton} w-full h-[58px] px-6 py-5 rounded-[64px] shadow backdrop-blur-[10px] justify-center items-center gap-2 inline-flex`;
-  cssButton += cssColorButton;
+  const cssButton = `${stateButton} w-full h-[58px] px-6 py-5 rounded-[64px] shadow backdrop-blur-[10px] justify-center items-center gap-2 inline-flex`;
 
   return (
-    <button {...rest} className={twMerge(`${cssButton}`, rest.className)}>
+    <button
+      {...rest}
+      className={twMerge(cssButton, cssColorButton, rest.className)}
+    >
       {icon}
       {children && (
         <Typography.Body className={colorText} variant="small-bold">

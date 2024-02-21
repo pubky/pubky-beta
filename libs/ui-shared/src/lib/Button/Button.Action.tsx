@@ -202,11 +202,11 @@ export const Action = ({
         {...rest}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={twMerge(`${cssClasses}`, rest.className)}
+        className={twMerge(cssClasses, rest.className)}
       >
         {iconComponent}
         <Typography.Caption
-          className={`${fontSize} ${color} text-opacity-50`}
+          className={twMerge(fontSize, color, 'text-opacity-50')}
           variant="bold"
         >
           {counter}
@@ -214,10 +214,13 @@ export const Action = ({
       </button>
       {isHovered && label && (
         <div
-          className={`${labelClasses} flex absolute text-center justify-center items-center`}
+          className={twMerge(
+            labelClasses,
+            'flex absolute text-center justify-center items-center'
+          )}
         >
           <Typography.Caption
-            className={`${fontSize} ${color} text-opacity-50`}
+            className={twMerge(fontSize, color, 'text-opacity-50')}
             variant="bold"
           >
             {label}

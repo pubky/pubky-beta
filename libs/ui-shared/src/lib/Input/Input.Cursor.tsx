@@ -1,20 +1,17 @@
 import { twMerge } from 'tailwind-merge';
 
 interface CursorProps extends React.HTMLAttributes<HTMLInputElement> {
-  value?: string;
-  placeHolder?: string;
+  children?: string;
 }
 
-export const Cursor = ({ value, placeHolder, ...rest }: CursorProps) => {
+export const Cursor = ({ children, ...rest }: CursorProps) => {
+  const baseCSS = `w-full h-24 bg-transparent rounded-[5px] outline-none text-white text-opacity-80 text-[17px] font-normal font-['Inter Tight'] leading-snug tracking-wide`;
+
   return (
     <input
       {...rest}
-      placeholder={placeHolder}
-      className={twMerge(
-        `w-full h-24 bg-transparent rounded-[5px] outline-none text-white text-opacity-80 text-[17px] font-normal font-['Inter Tight'] leading-snug tracking-wide`,
-        rest.className
-      )}
-      value={value}
+      className={twMerge(baseCSS, rest.className)}
+      value={children}
     />
   );
 };

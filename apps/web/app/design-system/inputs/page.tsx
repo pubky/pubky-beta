@@ -12,14 +12,10 @@ export default function Index() {
       <div className={'pb-8 w-full'}>
         <form>
           <div className="pb-4">
-            <Input.Text value={''} placeHolder="hint" action={<Icon.Plus />} />
+            <Input.Text placeholder="hint" action={<Icon.Plus />}></Input.Text>
           </div>
           <div className="pb-4">
-            <Input.TextArea
-              value={''}
-              placeHolder="hint"
-              className={'h-[170px]'}
-            />
+            <Input.TextArea className={'h-[170px]'}>test</Input.TextArea>
           </div>
           <div className="pb-4">
             <Input.Checkbox
@@ -39,10 +35,7 @@ export default function Index() {
             />
           </div>
           <div className="pb-4">
-            <Input.Cursor
-              className="text-black"
-              onClick={() => console.log('hey')}
-            />
+            <Input.Cursor />
           </div>
         </form>
         <div>

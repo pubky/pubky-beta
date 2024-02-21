@@ -18,9 +18,7 @@ interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string;
   title?: string;
   subtitle?: string;
-  width?: string;
   alignment?: 'right' | 'left';
-  className?: string;
 }
 
 export const Dropdown = ({
