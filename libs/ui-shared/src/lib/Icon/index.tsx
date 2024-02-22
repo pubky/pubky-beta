@@ -1,4 +1,4 @@
-import { ArrowUp, DropdownIcon } from './Icon.Arrow';
+import { ArrowUp, ArrowUpRight, DropdownIcon } from './Icon.Arrow';
 import { Tag } from './Icon.Commerce';
 import { Pencil, Stack, GridFour } from './Icon.Design';
 import { Plus, Minus, X } from './Icon.Math';
@@ -19,6 +19,7 @@ import { Asterisk, PaperPlaneRight } from './Icon.Communication';
 
 export const Icon = {
   ArrowUp,
+  ArrowUpRight,
   Asterisk,
   Check,
   Clipboard,

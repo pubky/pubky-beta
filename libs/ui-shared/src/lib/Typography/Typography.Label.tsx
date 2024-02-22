@@ -1,7 +1,7 @@
 import { twMerge } from 'tailwind-merge';
 
 interface LabelProps extends React.HTMLAttributes<HTMLParagraphElement> {
-  children: string;
+  children: React.ReactNode;
   id?: string;
 }
 

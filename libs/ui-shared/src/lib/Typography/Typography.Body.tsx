@@ -10,7 +10,7 @@ interface BodyProps extends React.HTMLAttributes<HTMLParagraphElement> {
     | 'small'
     | 'small-bold'
     | 'small-light';
-  children: string | number;
+  children: React.ReactNode;
 }
 
 export const Body = ({ variant = 'large', children, ...rest }: BodyProps) => {

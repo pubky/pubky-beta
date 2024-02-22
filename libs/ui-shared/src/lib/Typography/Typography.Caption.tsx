@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface CaptionProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'normal' | 'bold';
-  children?: string | number;
+  children?: React.ReactNode;
 }
 
 export const Caption = ({
