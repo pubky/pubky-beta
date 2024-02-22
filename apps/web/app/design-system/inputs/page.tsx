@@ -107,7 +107,7 @@ export default function Index() {
               ]}
             />
           </div>
-          <div className="pb-4">
+          <div className="pb-8">
             <Input.Switch
               checked={checkedC}
               onChange={(value) => setCheckedC(value)}
@@ -118,7 +118,7 @@ export default function Index() {
               onChange={(value) => setCheckedD(value)}
             />
           </div>
-          <div>
+          <div className="pb-8">
             <Input.Dropdown
               onClick={(e) => e.preventDefault()}
               items={['Week', 'Day']}
