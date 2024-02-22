@@ -28,33 +28,23 @@ export default function Index() {
         </Typography.PageTitle>
         <div className="grid grid-cols-3 gap-6 pt-12">
           <Card.Primary title="Profile">
-            <Typography.Label className="mt-4 mb-2 text-white text-opacity-30">
-              Short bio
-            </Typography.Label>
+            <Input.Label className="mt-4" value="Short bio" />
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
               className="w-80 h-[422px]"
             />
           </Card.Primary>
           <Card.Primary title="Links">
-            <Typography.Label className="mt-4 mb-2 text-white text-opacity-30">
-              Website
-            </Typography.Label>
+            <Input.Label className="mt-4" value="Website" />
             <Input.Text className="w-80 h-[70px]" placeholder="https://" />
-            <Typography.Label className="mt-4 mb-2 text-white text-opacity-30">
-              Email
-            </Typography.Label>
+            <Input.Label className="mt-4" value="Email" />
             <Input.Text
               className="w-80 h-[70px]"
               placeholder="user@provider.com"
             />
-            <Typography.Label className="mt-4 mb-2 text-white text-opacity-30">
-              x (twitter)
-            </Typography.Label>
+            <Input.Label className="mt-4" value="x (twitter)" />
             <Input.Text className="w-80 h-[70px]" placeholder="@user" />
-            <Typography.Label className="mt-4 mb-2 text-white text-opacity-30">
-              Telegram
-            </Typography.Label>
+            <Input.Label className="mt-4" value="telegram" />
             <Input.Text className="w-80 h-[70px]" placeholder="@user" />
           </Card.Primary>
           <Card.Primary title="Picture">
