@@ -16,17 +16,17 @@ export default function Index() {
       <Header.Root>
         <Header.Logo height={48} width={167} />
         <Header.Title title={'Onboarding'} />
-        <Content.Stepper currentStep={2} />
+        <Content.Stepper currentStep={2} className="w-[785px]" />
       </Header.Root>
-      <Content.Grid className="h-[952px]">
+      <Content.Grid className="h-[1000px]">
         <Input.Cursor
           placeholder="Your Name"
-          className="h-[174px] text-opacity-100 text-[100px] font-bold"
+          className="h-[174px] text-[100px] font-bold"
         />
-        <Typography.PageTitle className="text-white text-opacity-50">
+        <Typography.PageTitle className="text-opacity-50">
           @1pm3...5jkm
         </Typography.PageTitle>
-        <div className="grid grid-cols-3 gap-6 pt-12">
+        <div className="grid grid-cols-3 gap-6 mt-12">
           <Card.Primary title="Profile">
             <Input.Label className="mt-4" value="Short bio" />
             <Input.TextArea
@@ -57,9 +57,7 @@ export default function Index() {
             />
             <div className="pt-[40px]">
               <Link href="/onboarding/step2">
-                <Button.Large icon={<Icon.Check size="20" />}>
-                  Finish
-                </Button.Large>
+                <Button.Large icon={<Icon.Check />}>Finish</Button.Large>
               </Link>
             </div>
           </Card.Primary>

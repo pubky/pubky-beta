@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { twMerge } from 'tailwind-merge';
 
 interface MainBgProps {
@@ -8,11 +7,7 @@ interface MainBgProps {
 }
 
 export const MainBg = ({ imgSrc, alt, className }: MainBgProps) => {
-  const baseCSS = `w-[768px] h-[768px] absolute bottom-0 right-0 max-w-[50%] max-h-[50%]`;
+  const baseCSS = `absolute bottom-0 right-0 max-w-[50%] max-h-[50%]`;
 
-  return (
-    <div className={twMerge(baseCSS, className)}>
-      <Image fill alt={alt} src={imgSrc} />
-    </div>
-  );
+  return <img src={imgSrc} alt={alt} className={twMerge(baseCSS, className)} />;
 };

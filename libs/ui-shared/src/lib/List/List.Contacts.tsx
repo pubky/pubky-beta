@@ -2,11 +2,11 @@ import Image from 'next/image';
 import { Typography } from '../Typography';
 import { Content } from '../Content';
 
-type Contact = {
+interface Contact extends React.HTMLAttributes<HTMLDivElement> {
   image: string;
   name: string;
   slashUrl: string;
-};
+}
 
 type ContactsListProps = {
   contacts: Contact[];

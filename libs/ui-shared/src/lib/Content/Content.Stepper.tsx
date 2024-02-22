@@ -35,7 +35,7 @@ export const Stepper = ({
       <>
         <div className={`${baseCSS} ${activeStep} `}>
           {stepNumber < currentStep ? (
-            <Icon.Check size="20" />
+            <Icon.Check />
           ) : (
             <span
               className={`${
@@ -62,7 +62,7 @@ export const Stepper = ({
     <div
       {...rest}
       className={twMerge(
-        `w-3/4 flex justify-between items-center mx-auto`,
+        `w-full flex justify-between items-center mx-auto`,
         rest.className
       )}
     >

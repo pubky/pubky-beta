@@ -75,9 +75,7 @@ export const Dropdown = ({
   return (
     <div className="relative inline-block" ref={dropdownRef}>
       {label && (
-        <Typography.Label className="text-white text-opacity-30">
-          {label}
-        </Typography.Label>
+        <Typography.Label className="text-opacity-30">{label}</Typography.Label>
       )}
       <div className="relative">
         <div className="rounded-md overflow-hidden">
@@ -115,10 +113,7 @@ export const Dropdown = ({
               {title && subtitle && (
                 <div className="mb-6 flex-col justify-start items-start flex">
                   <Typography.H1>{title}</Typography.H1>
-                  <Typography.Body
-                    variant="medium"
-                    color="text-white text-opacity-80"
-                  >
+                  <Typography.Body variant="medium" className="text-opacity-80">
                     {subtitle}
                   </Typography.Body>
                 </div>

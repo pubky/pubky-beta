@@ -12,9 +12,7 @@ export const Stat = ({ label, children, ...rest }: StatProps) => {
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       {label && (
-        <Typography.Label className="text-white text-opacity-30">
-          {label}
-        </Typography.Label>
+        <Typography.Label className="text-opacity-30">{label}</Typography.Label>
       )}
       <Typography.H1>{children}</Typography.H1>
     </div>

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Typography } from '../Typography';
 import { Content } from '.';
 
-type Profile = {
+interface Profile extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
   image: string;
   slashUrl: string;
@@ -12,7 +12,7 @@ type Profile = {
     website?: string;
     x?: string;
   };
-};
+}
 
 type ProfileinfoProps = {
   profile: Profile;
@@ -29,7 +29,7 @@ export const Profile = ({ profile }: ProfileinfoProps) => {
       <div className="flex items-center justify-center">
         <div className="inline-grid gap-2 mr-auto">
           <Typography.Body variant="large-bold">{name}</Typography.Body>
-          <Typography.Label className="text-white text-opacity-50">
+          <Typography.Label className="text-opacity-50">
             @{shortSlashUrl}
           </Typography.Label>
         </div>
@@ -43,7 +43,7 @@ export const Profile = ({ profile }: ProfileinfoProps) => {
       </div>
       <div className="mt-8">
         <Typography.Body
-          className="w-80 text-white text-opacity-80"
+          className="w-80 text-opacity-80"
           variant="medium-light"
         >
           {info}
@@ -53,13 +53,10 @@ export const Profile = ({ profile }: ProfileinfoProps) => {
       {linkKeys &&
         linkKeys.map((key, index) => (
           <div key={key}>
-            <Typography.Label className="text-white text-opacity-50">
+            <Typography.Label className="text-opacity-50">
               {key}
             </Typography.Label>
-            <Typography.Body
-              variant="medium"
-              className="text-white text-opacity-80"
-            >
+            <Typography.Body variant="medium" className="text-opacity-80">
               {links[key]}
             </Typography.Body>
             {index !== linkKeys.length - 1 && <Content.Divider />}

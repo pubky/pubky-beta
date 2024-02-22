@@ -11,7 +11,7 @@ export default function Index() {
       </Header.Root>
       <Content.Grid>
         <Typography.Display>You are the algorithm</Typography.Display>
-        <Typography.PageTitle color="text-white text-opacity-50">
+        <Typography.PageTitle className="text-opacity-50">
           Your keys, your content, your rules. Social content, reimagined.
         </Typography.PageTitle>
         <Link href="/onboarding/step1">
@@ -23,10 +23,11 @@ export default function Index() {
       <div className="relative h-screen">
         <Image fill src="/images/background-image.png" alt="background" />
         <Image
-          fill
+          width={768}
+          height={768}
           src="/images/explosion.png"
           alt="explosion"
-          className="absolute bottom-0"
+          className="absolute bottom-0 ml-52"
         />
       </div>
     </Content.Main>

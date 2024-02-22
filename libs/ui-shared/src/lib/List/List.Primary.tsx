@@ -8,7 +8,7 @@ interface ListProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Primary = ({ title, list, ...rest }: ListProps) => {
-  const baseCSS = 'flex-col justify-start items-start gap-6 inline-flex mt-6';
+  const baseCSS = 'flex-col justify-start items-start gap-6 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       {title && (
@@ -20,11 +20,9 @@ export const Primary = ({ title, list, ...rest }: ListProps) => {
             <li key={index} className="flex items-center">
               <Typography.Body
                 variant="medium"
-                className="text-white text-opacity-80 ml-[10px] leading-[.1rem]"
+                className="text-opacity-80 ml-2.5 leading-[.1rem]"
               >
-                <span className="mr-2 text-white text-opacity-80 text-[20px]">
-                  &#8226;
-                </span>
+                <span className="mr-2 text-[20px]">&#8226;</span>
                 {item}
               </Typography.Body>
             </li>

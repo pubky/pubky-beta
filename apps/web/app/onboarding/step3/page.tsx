@@ -59,14 +59,14 @@ export default function Index() {
       <Header.Root>
         <Header.Logo height={48} width={167} />
         <Header.Title title={'Onboarding'} />
-        <Content.Stepper currentStep={3} />
+        <Content.Stepper currentStep={3} className="w-[785px]" />
       </Header.Root>
-      <Content.Grid className="h-[952px]">
+      <Content.Grid className="h-[1000px]">
         <Typography.Display>Welcome, Satoshi</Typography.Display>
-        <Typography.PageTitle className="text-white text-opacity-50">
+        <Typography.PageTitle className="text-opacity-50">
           Your contacts and profile information are ready to be used in Pubky.
         </Typography.PageTitle>
-        <div className="grid grid-cols-3 gap-6 pt-12">
+        <div className="grid grid-cols-3 gap-6 mt-12">
           <Card.Primary>
             <Content.Profile profile={profile} />
           </Card.Primary>
@@ -77,13 +77,9 @@ export default function Index() {
             title="Ready to Go!"
             text="Pubky successfully imported your profile and contacts."
           >
-            <div className="pt-[365px]">
-              <Link href="/onboarding">
-                <Button.Large icon={<Icon.Check size="20" />}>
-                  Finish
-                </Button.Large>
-              </Link>
-            </div>
+            <Link href="/onboarding">
+              <Button.Large icon={<Icon.Check />}>Finish</Button.Large>
+            </Link>
           </Card.Primary>
         </div>
       </Content.Grid>
