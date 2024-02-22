@@ -58,10 +58,16 @@ export default function Index() {
           </div>
 
           <div className="pb-4">
-            <Input.Text placeholder="hint" action={<Icon.Plus />}></Input.Text>
+            <Input.Label value="Label" />
+            <Input.Text
+              placeholder="hint"
+              action={<Icon.Plus />}
+              defaultValue={'teste'}
+            />
           </div>
           <div className="pb-4">
-            <Input.TextArea className={'h-[170px]'}>test</Input.TextArea>
+            <Input.Label value="Label" />
+            <Input.TextArea className={'h-[170px]'} defaultValue={'teste'} />
           </div>
           <div className="pb-4">
             <Input.Checkbox
