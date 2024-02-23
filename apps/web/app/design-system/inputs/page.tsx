@@ -58,10 +58,16 @@ export default function Index() {
           </div>
 
           <div className="pb-4">
-            <Input.Text placeholder="hint" action={<Icon.Plus />}></Input.Text>
+            <Input.Label value="Label" />
+            <Input.Text
+              placeholder="hint"
+              action={<Icon.Plus />}
+              defaultValue={'teste'}
+            />
           </div>
           <div className="pb-4">
-            <Input.TextArea className={'h-[170px]'}>test</Input.TextArea>
+            <Input.Label value="Label" />
+            <Input.TextArea className={'h-[170px]'} defaultValue={'teste'} />
           </div>
           <div className="pb-4">
             <Input.Checkbox
@@ -101,7 +107,7 @@ export default function Index() {
               ]}
             />
           </div>
-          <div className="pb-4">
+          <div className="pb-8">
             <Input.Switch
               checked={checkedC}
               onChange={(value) => setCheckedC(value)}
@@ -110,25 +116,6 @@ export default function Index() {
             <Input.Switch
               checked={checkedD}
               onChange={(value) => setCheckedD(value)}
-            />
-          </div>
-          <div>
-            <Input.Dropdown
-              onClick={(e) => e.preventDefault()}
-              items={['Week', 'Day']}
-            />
-            <Input.Dropdown
-              onClick={(e) => e.preventDefault()}
-              items={[
-                {
-                  icon: <Icon.ArrowUp />,
-                  option: 'Week',
-                },
-                {
-                  icon: <Icon.Asterisk />,
-                  option: 'Month',
-                },
-              ]}
             />
           </div>
         </form>

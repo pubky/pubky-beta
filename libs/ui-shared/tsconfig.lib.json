@@ -26,6 +26,6 @@
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/lib/typography/onboarding-title.spec.tsx"
+    "../../apps/web/app/components/Header.tsx"
   ]
 }

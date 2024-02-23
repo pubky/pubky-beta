@@ -9,29 +9,24 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Primary = ({ title, text, children, ...rest }: CardProps) => {
-  const baseCSS = `w-full z-10 p-8 bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-start gap-12 inline-flex`;
+  const baseCSS = `w-full z-10 p-8 bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
 
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <div
-        className={twMerge(
-          `flex-col justify-start inline-flex`,
-          text ? 'gap-6' : ''
-        )}
-      >
-        {title && (
+      {(title || text) && (
+        <div
+          className={twMerge(
+            `flex-col justify-start inline-flex`,
+            text && 'gap-6'
+          )}
+        >
           <Typography.Body variant="large-bold">{title}</Typography.Body>
-        )}
-        {text && (
-          <Typography.Body
-            className="text-white text-opacity-80"
-            variant="medium-light"
-          >
+          <Typography.Body className="text-opacity-80" variant="medium-light">
             {text}
           </Typography.Body>
-        )}
-        {children}
-      </div>
+        </div>
+      )}
+      {children}
     </div>
   );
 };

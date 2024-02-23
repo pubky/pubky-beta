@@ -1,4 +1,6 @@
+import React from 'react';
 import { CheckboxIcon } from './Input.CheckboxIcon';
+import { twMerge } from 'tailwind-merge'; // Ensure you've installed tailwind-merge
 
 interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
   checked: boolean;
@@ -10,18 +12,17 @@ export const Checkbox = ({
   disabled = false,
   ...rest
 }: CheckboxProps) => {
-  let cssStyles = `inline-block w-8 h-8 rounded-lg border`;
-
-  if (disabled) {
-    cssStyles += ' bg-white bg-opacity-10 border-white border-opacity-10';
-  } else if (checked) {
-    cssStyles += ' bg-fuchsia-500 bg-opacity-30 border-fuchsia-500';
-  } else {
-    cssStyles += ' bg-white bg-opacity-10 border-white border-opacity-30';
-  }
+  const cssStyles = twMerge(
+    'inline-block w-8 h-8 rounded-lg border',
+    disabled
+      ? 'bg-white bg-opacity-10 border-white border-opacity-10'
+      : checked
+      ? 'bg-fuchsia-500 bg-opacity-30 border-fuchsia-500'
+      : 'bg-white bg-opacity-10 border-white border-opacity-30'
+  );
 
   return (
-    <label className={`${disabled ? 'cursor-default' : 'cursor-pointer'}`}>
+    <label className={twMerge(disabled ? 'cursor-default' : 'cursor-pointer')}>
       <span className={cssStyles}>{checked && <CheckboxIcon />}</span>
       <input
         {...rest}
