@@ -1,7 +1,6 @@
 import { Checkbox } from './Input.Checkbox/Input.Checkbox';
 import { CheckboxIcon } from './Input.Checkbox/Input.CheckboxIcon';
 import { Cursor } from './Input.Cursor';
-import { Dropdown } from './Input.Dropdown';
 import { Label } from './Input.Label';
 import { Radio } from './Input.Radio';
 import { Search } from './Input.Search/Input.Search';
@@ -18,7 +17,6 @@ export const Input = {
   Checkbox,
   CheckboxIcon,
   Cursor,
-  Dropdown,
   Label,
   Radio,
   Search,

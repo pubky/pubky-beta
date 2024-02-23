@@ -118,25 +118,6 @@ export default function Index() {
               onChange={(value) => setCheckedD(value)}
             />
           </div>
-          <div className="pb-8">
-            <Input.Dropdown
-              onClick={(e) => e.preventDefault()}
-              items={['Week', 'Day']}
-            />
-            <Input.Dropdown
-              onClick={(e) => e.preventDefault()}
-              items={[
-                {
-                  icon: <Icon.ArrowUp />,
-                  option: 'Week',
-                },
-                {
-                  icon: <Icon.Asterisk />,
-                  option: 'Month',
-                },
-              ]}
-            />
-          </div>
         </form>
         <div className="pb-4">
           <Input.Select
