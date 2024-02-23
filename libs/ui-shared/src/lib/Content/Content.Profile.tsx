@@ -39,14 +39,9 @@ export const Profile = ({ profile }: ProfileProps) => {
           alt="Profile Image"
         />
       </div>
-      <div className="mt-8">
-        <Typography.Body
-          className="w-80 text-opacity-80"
-          variant="medium-light"
-        >
-          {info}
-        </Typography.Body>
-      </div>
+      <Typography.Body className="text-opacity-80 mt-8" variant="medium-light">
+        {info}
+      </Typography.Body>
       <Content.Divider />
       {linkKeys &&
         linkKeys.map((key, index) => (
