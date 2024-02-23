@@ -7,7 +7,7 @@ interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Main = ({
   children,
-  background = 'bg-gradient-to-br from-black to-[#0e0e18]',
+  background = 'bg-gradient-to-br from-black to-[#0e0e18] pb-20',
   ...rest
 }: RootProps) => {
   const baseCSS = `w-full h-full min-h-screen relative`;

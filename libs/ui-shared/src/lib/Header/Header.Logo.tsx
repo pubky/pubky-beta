@@ -11,8 +11,8 @@ interface HeaderLogoProps {
 export const Logo = ({
   logo = '/images/pubky.png',
   link = '/',
-  width = 100,
-  height = 100,
+  width = 167,
+  height = 48,
   className = '',
 }: HeaderLogoProps) => {
   return (

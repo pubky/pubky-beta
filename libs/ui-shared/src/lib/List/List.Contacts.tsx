@@ -2,17 +2,17 @@ import Image from 'next/image';
 import { Typography } from '../Typography';
 import { Content } from '../Content';
 
-interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
-  contacts: [
-    {
-      image: string;
-      name: string;
-      slashUrl: string;
-    }
-  ];
+interface Contact extends React.HTMLAttributes<HTMLDivElement> {
+  image: string;
+  name: string;
+  slashUrl: string;
 }
 
-export const Contacts = ({ contacts }: ContactsProps) => {
+type ContactsListProps = {
+  contacts: Contact[];
+};
+
+export const Contacts = ({ contacts }: ContactsListProps) => {
   const shortSlashUrl = (slashUrl: string) => {
     const [, firstPart] = slashUrl.match(/slash:(.{5})/) || [];
     const [, lastPart] = slashUrl.match(/(.{5})\?relay=/) || [];
