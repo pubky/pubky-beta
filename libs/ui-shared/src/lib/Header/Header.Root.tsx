@@ -2,15 +2,23 @@ import { twMerge } from 'tailwind-merge';
 
 interface HeaderRootProps extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode;
+  className?: string;
 }
 
 export const Root = ({ children, ...rest }: HeaderRootProps) => {
   const baseCSS =
-    'sticky top-0 z-50 bg-transparent bg-opacity-50 backdrop-blur-[80px] max-w-[1500px] max-h-36 mx-auto py-12 px-40 gap-6 flex items-center justify-between';
+    'max-w-[1200px] bg-transparent bg-opacity-50 mx-auto py-12 gap-6 flex items-center justify-between';
 
   return (
-    <header {...rest} className={twMerge(baseCSS, rest.className)}>
-      {children}
+    <header
+      className={twMerge(
+        'sticky top-0 z-20 backdrop-blur-[80px]',
+        rest.className
+      )}
+    >
+      <div {...rest} className={twMerge(baseCSS, rest.className)}>
+        {children}
+      </div>
     </header>
   );
 };

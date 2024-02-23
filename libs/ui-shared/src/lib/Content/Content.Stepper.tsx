@@ -35,7 +35,7 @@ export const Stepper = ({
       <>
         <div className={`${baseCSS} ${activeStep} `}>
           {stepNumber < currentStep ? (
-            <Icon.Check />
+            <Icon.Check size="20" />
           ) : (
             <span
               className={`${
