@@ -2,23 +2,21 @@ import Image from 'next/image';
 import { Typography } from '../Typography';
 import { Content } from '.';
 
-interface Profile extends React.HTMLAttributes<HTMLDivElement> {
-  name: string;
-  image: string;
-  slashUrl: string;
-  info?: string;
-  links?: {
-    email?: string;
-    website?: string;
-    x?: string;
+interface ProfileProps extends React.HTMLAttributes<HTMLDivElement> {
+  profile: {
+    name: string;
+    image: string;
+    slashUrl: string;
+    info?: string;
+    links?: {
+      email?: string;
+      website?: string;
+      x?: string;
+    };
   };
 }
 
-type ProfileinfoProps = {
-  profile: Profile;
-};
-
-export const Profile = ({ profile }: ProfileinfoProps) => {
+export const Profile = ({ profile }: ProfileProps) => {
   const { name, image, slashUrl, info, links } = profile;
   const linkKeys = links && (Object.keys(links) as Array<keyof typeof links>);
   const matches = slashUrl.match(/slash:(.{4}).*?(.{4})\?relay=/);
