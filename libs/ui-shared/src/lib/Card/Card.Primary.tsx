@@ -16,10 +16,10 @@ export const Primary = ({
   children,
   ...rest
 }: CardProps) => {
-  const baseCSS = `w-full z-10 p-8 ${background} rounded-2xl shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
+  const baseCSS = `w-full z-10 p-8 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
 
   return (
-    <div {...rest} className={twMerge(baseCSS, rest.className)}>
+    <div {...rest} className={twMerge(baseCSS, background, rest.className)}>
       {(title || text) && (
         <div
           className={twMerge(
