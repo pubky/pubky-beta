@@ -3,7 +3,7 @@ import { Typography } from '../Typography';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const Header = ({ title, children, ...rest }: HeaderProps) => {

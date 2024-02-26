@@ -4,12 +4,19 @@ import { Typography } from '../../index';
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   text?: string;
+  background?: string;
   children?: React.ReactNode;
   className?: string;
 }
 
-export const Primary = ({ title, text, children, ...rest }: CardProps) => {
-  const baseCSS = `w-full z-10 p-8 bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
+export const Primary = ({
+  title,
+  text,
+  background = 'bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90',
+  children,
+  ...rest
+}: CardProps) => {
+  const baseCSS = `w-full z-10 p-8 ${background} rounded-2xl shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
 
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>

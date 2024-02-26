@@ -37,14 +37,14 @@ export const Root = ({
   return (
     <div className="flex justify-center items-center">
       {show && (
-        <div
-          className={twMerge(
-            `fixed top-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center`,
-            rest.className
-          )}
-        >
+        <div className="fixed top-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center">
           {/* <div ref={modalRef}> */}
-          <Card.Primary className="w-full h-full p-12 bg-gradient-to-b from-stone-950 to-black rounded-2xl shadow border border-fuchsia-500 border-opacity-30 flex-col justify-start items-start gap-12 inline-flex">
+          <Card.Primary
+            className={twMerge(
+              `w-full h-full p-12 bg-gradient-to-b from-stone-950 to-black rounded-2xl shadow border border-fuchsia-500 border-opacity-30 flex-col justify-start items-start gap-12 inline-flex`,
+              rest.className
+            )}
+          >
             {children}
           </Card.Primary>
           {/* </div> */}
