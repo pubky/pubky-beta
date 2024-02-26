@@ -34,14 +34,19 @@ export const Menu = () => {
 
   return (
     <div>
-      <Image
-        width={48}
-        height={48}
-        className="rounded-full cursor-pointer"
-        alt="user-pic"
-        src="/images/user.png"
-        onClick={toggleDrawer}
-      />
+      <div className="relative cursor-pointer" onClick={toggleDrawer}>
+        <Post.Counter
+          className="absolute top-4 right-6 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
+          counter={5}
+        />
+        <Image
+          width={48}
+          height={48}
+          className="rounded-full cursor-pointer"
+          alt="user-pic"
+          src="/images/user.png"
+        />
+      </div>
 
       {/* Drawer */}
       <div
