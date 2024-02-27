@@ -133,11 +133,9 @@ export default function Index() {
             <Menu.Bg drawerOpen={drawerOpen} />
           </>
         </Header.Root>
-        <Image
-          width={1920}
-          height={336}
+        <img
           alt="bg-profile"
-          className="w-screen absolute z-0"
+          className="w-screen h-[336px] absolute z-0"
           src="/images/bg-profile.png"
         />
         <Content.Grid>
