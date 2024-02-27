@@ -5,7 +5,7 @@ import { Icon } from './lib/Icon';
 import { Button } from './lib/Button';
 import { Input } from './lib/Input';
 import { Modal } from './lib/Modal';
-import { Post } from './lib/Post';
+import { PostUtil } from './lib/PostUtil';
 import { Header } from './lib/Header';
 import { Content } from './lib/Content';
 import { Card } from './lib/Card';
@@ -17,7 +17,7 @@ export {
   Button,
   Input,
   Modal,
-  Post,
+  PostUtil,
   Header,
   Content,
   Card,

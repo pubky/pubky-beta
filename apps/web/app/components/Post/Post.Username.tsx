@@ -1,0 +1,17 @@
+import { Typography } from '@social/ui-shared';
+import { twMerge } from 'tailwind-merge';
+
+interface UsernameProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  children: React.ReactNode;
+}
+export const Username = ({ children, ...rest }: UsernameProps) => {
+  return (
+    <Typography.Body
+      {...rest}
+      className={twMerge(rest.className)}
+      variant="medium-bold"
+    >
+      {children}
+    </Typography.Body>
+  );
+};

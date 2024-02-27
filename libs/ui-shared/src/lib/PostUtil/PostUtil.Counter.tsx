@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
 interface CounterProps extends React.HTMLAttributes<HTMLDivElement> {
-  counter: number;
+  counter: number | string;
   className?: string;
 }
 
