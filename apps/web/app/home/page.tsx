@@ -149,7 +149,11 @@ export default function Index() {
                   handler="@1qx7...gkw3"
                 />
                 <div className="flex-col gap-1 inline-flex">
-                  <Menu.Section icon={<Icon.Activity />} text="Streams" />
+                  <Menu.Section
+                    href="/home"
+                    icon={<Icon.Activity />}
+                    text="Streams"
+                  />
                   <Menu.Section
                     icon={<Icon.Bell />}
                     text="Notifications"
@@ -162,7 +166,11 @@ export default function Index() {
                   <Menu.Section icon={<Icon.Tag size="24" />} text="Hot Tags" />
                   <Menu.Section icon={<Icon.Users />} text="Friends" />
                   <Menu.Section icon={<Icon.GearSix />} text="Settings" />
-                  <Menu.Section icon={<Icon.UserRectangle />} text="Profile" />
+                  <Menu.Section
+                    href="/profile"
+                    icon={<Icon.UserRectangle />}
+                    text="Profile"
+                  />
                 </div>
               </div>
             </Menu.Root>

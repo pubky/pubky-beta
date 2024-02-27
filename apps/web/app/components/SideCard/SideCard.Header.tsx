@@ -1,14 +1,20 @@
-import { Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
+import { HeaderTitle } from './SideCard.HeaderTitle';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLHeadingElement> {
   title: string;
   children?: React.ReactNode;
+  variantTitle?: 'normal' | 'label';
 }
-export const Header = ({ title, children, ...rest }: HeaderProps) => {
+export const Header = ({
+  title,
+  children,
+  variantTitle = 'normal',
+  ...rest
+}: HeaderProps) => {
   return (
     <div className="w-96 justify-between items-center inline-flex">
-      <Typography.Body variant="large-bold">{title}</Typography.Body>
+      <HeaderTitle variant={variantTitle}>{title}</HeaderTitle>
       <div
         {...rest}
         className={twMerge(

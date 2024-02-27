@@ -1,17 +1,24 @@
 import { PostUtil, Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 
-interface SectionProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SectionProps extends React.HTMLAttributes<HTMLAnchorElement> {
   icon: React.ReactNode;
   text: string;
   counter?: number;
+  href?: string;
 }
 
-export const Section = ({ icon, text, counter, ...rest }: SectionProps) => {
+export const Section = ({
+  href,
+  icon,
+  text,
+  counter,
+  ...rest
+}: SectionProps) => {
   const baseCSS =
     'py-2 shadow border-b border-white border-opacity-10 justify-between inline-flex cursor-pointer hover:bg-white hover:bg-opacity-10';
   return (
-    <div {...rest} className={twMerge(baseCSS, rest.className)}>
+    <a href={href} {...rest} className={twMerge(baseCSS, rest.className)}>
       <div className="items-center gap-2 flex">
         {icon}
         <Typography.Body variant="medium-bold">{text}</Typography.Body>
@@ -24,6 +31,6 @@ export const Section = ({ icon, text, counter, ...rest }: SectionProps) => {
           />
         </div>
       )}
-    </div>
+    </a>
   );
 };

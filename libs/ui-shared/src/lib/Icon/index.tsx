@@ -27,6 +27,7 @@ import {
   Bell,
   GearSix,
 } from './Icon.System';
+import { Twitter, Youtube, Telegram } from './Icon.Social';
 import { Clock } from './Icon.Time';
 import { UserPlus, UserRectangle, Users, Smiley } from './Icon.People';
 import {
@@ -73,8 +74,11 @@ export const Icon = {
   SquareHalf,
   Stack,
   Tag,
+  Telegram,
+  Twitter,
   Users,
   UserPlus,
   UserRectangle,
+  Youtube,
   X,
 };
