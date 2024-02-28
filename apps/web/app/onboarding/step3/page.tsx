@@ -7,7 +7,7 @@ import {
   Icon,
   List,
 } from '@social/ui-shared';
-import OnboardingLayout from '../../components/Onboarding.Layout';
+import { Onboarding } from '../components';
 
 export default function Index() {
   const profile = {
@@ -55,7 +55,7 @@ export default function Index() {
     },
   ];
   return (
-    <OnboardingLayout currentStep={3}>
+    <Onboarding.Layout currentStep={3}>
       <Typography.Display>Welcome, Satoshi</Typography.Display>
       <Typography.PageTitle className="text-opacity-50">
         Your contacts and profile information are ready to be used in Pubky.
@@ -77,6 +77,6 @@ export default function Index() {
         </Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-3.png" />
       </div>
-    </OnboardingLayout>
+    </Onboarding.Layout>
   );
 }

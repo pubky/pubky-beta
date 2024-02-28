@@ -106,3 +106,70 @@ export const GridFour = ({ size = '24', color = 'white' }: IconProps) => (
     </g>
   </svg>
 );
+
+export const SquaresFour = ({ size = '24', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path opacity="0.2" d="M10.5 4.5H4.5V10.5H10.5V4.5Z" fill="white" />
+    <path opacity="0.2" d="M19.5 4.5H13.5V10.5H19.5V4.5Z" fill="white" />
+    <path opacity="0.2" d="M10.5 13.5H4.5V19.5H10.5V13.5Z" fill="white" />
+    <path opacity="0.2" d="M19.5 13.5H13.5V19.5H19.5V13.5Z" fill="white" />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12.75 13.5C12.75 13.0858 13.0858 12.75 13.5 12.75H19.5C19.9142 12.75 20.25 13.0858 20.25 13.5V19.5C20.25 19.9142 19.9142 20.25 19.5 20.25H13.5C13.0858 20.25 12.75 19.9142 12.75 19.5V13.5ZM14.25 14.25V18.75H18.75V14.25H14.25Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M3.75 4.5C3.75 4.08579 4.08579 3.75 4.5 3.75H10.5C10.9142 3.75 11.25 4.08579 11.25 4.5V10.5C11.25 10.9142 10.9142 11.25 10.5 11.25H4.5C4.08579 11.25 3.75 10.9142 3.75 10.5V4.5ZM5.25 5.25V9.75H9.75V5.25H5.25Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12.75 4.5C12.75 4.08579 13.0858 3.75 13.5 3.75H19.5C19.9142 3.75 20.25 4.08579 20.25 4.5V10.5C20.25 10.9142 19.9142 11.25 19.5 11.25H13.5C13.0858 11.25 12.75 10.9142 12.75 10.5V4.5ZM14.25 5.25V9.75H18.75V5.25H14.25Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M3.75 13.5C3.75 13.0858 4.08579 12.75 4.5 12.75H10.5C10.9142 12.75 11.25 13.0858 11.25 13.5V19.5C11.25 19.9142 10.9142 20.25 10.5 20.25H4.5C4.08579 20.25 3.75 19.9142 3.75 19.5V13.5ZM5.25 14.25V18.75H9.75V14.25H5.25Z"
+      fill={color}
+    />
+  </svg>
+);
+
+export const SquareHalf = ({ size = '24', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      opacity="0.2"
+      d="M15 20H5.04762C4.76977 20 4.50331 19.9197 4.30684 19.7768C4.11037 19.634 4 19.4402 4 19.2381V4.7619C4 4.55984 4.11037 4.36604 4.30684 4.22316C4.50331 4.08027 4.76977 4 5.04762 4H15V20Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M3.375 4.875C3.375 4.04657 4.04657 3.375 4.875 3.375H19.125C19.9534 3.375 20.625 4.04657 20.625 4.875V19.125C20.625 19.9534 19.9534 20.625 19.125 20.625H4.875C4.04657 20.625 3.375 19.9534 3.375 19.125V4.875ZM19.125 4.875H4.875V19.125H19.125V4.875Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M14 3.375C14.4142 3.375 14.75 3.71079 14.75 4.125V19.875C14.75 20.2892 14.4142 20.625 14 20.625C13.5858 20.625 13.25 20.2892 13.25 19.875V4.125C13.25 3.71079 13.5858 3.375 14 3.375Z"
+      fill={color}
+    />
+  </svg>
+);

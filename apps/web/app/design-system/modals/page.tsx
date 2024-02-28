@@ -6,7 +6,7 @@ import {
   Modal,
   Input,
   Typography,
-  Post,
+  PostUtil,
   Icon,
 } from '@social/ui-shared';
 
@@ -52,40 +52,40 @@ export default function Index() {
             <div className="flex-col justify-start items-start gap-5 mt-4 inline-flex">
               <Typography.H2>Suggested Tags</Typography.H2>
               <div className="justify-start items-start">
-                <Post.Tag clicked color="amber" className="mr-2 my-1">
+                <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
                   #Bitcoin
-                </Post.Tag>
-                <Post.Tag clicked color="amber" className="mr-2 my-1">
+                </PostUtil.Tag>
+                <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
                   #Satoshi
-                </Post.Tag>
-                <Post.Tag clicked color="red" className="mr-2 my-1">
+                </PostUtil.Tag>
+                <PostUtil.Tag clicked color="red" className="mr-2 my-1">
                   #P2P
-                </Post.Tag>
-                <Post.Tag clicked color="blue" className="mr-2 my-1">
+                </PostUtil.Tag>
+                <PostUtil.Tag clicked color="blue" className="mr-2 my-1">
                   #Keys
-                </Post.Tag>
-                <Post.Tag clicked color="blue" className="mr-2 my-1">
+                </PostUtil.Tag>
+                <PostUtil.Tag clicked color="blue" className="mr-2 my-1">
                   #Scalability
-                </Post.Tag>
-                <Post.Tag clicked color="green" className="mr-2 my-1">
+                </PostUtil.Tag>
+                <PostUtil.Tag clicked color="green" className="mr-2 my-1">
                   #Whitepaper
-                </Post.Tag>
-                <Post.Tag clicked color="cyan" className="mr-2 my-1">
+                </PostUtil.Tag>
+                <PostUtil.Tag clicked color="cyan" className="mr-2 my-1">
                   #PoW
-                </Post.Tag>
-                <Post.Tag clicked color="yellow" className="mr-2 my-1">
+                </PostUtil.Tag>
+                <PostUtil.Tag clicked color="yellow" className="mr-2 my-1">
                   #Cryptography
-                </Post.Tag>
-                <Post.Tag clicked color="fuchsia" className="mr-2 my-1">
+                </PostUtil.Tag>
+                <PostUtil.Tag clicked color="fuchsia" className="mr-2 my-1">
                   #Quote
-                </Post.Tag>
-                <Post.Tag clicked color="amber" className="mr-2 my-1">
+                </PostUtil.Tag>
+                <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
                   #Bitcointalk
-                </Post.Tag>
+                </PostUtil.Tag>
               </div>
               <div className="flex-col w-full items-start flex">
+                <Input.Label value="Add tag:" />
                 <Input.Text
-                  label="Add tag:"
                   placeholder="#"
                   action={
                     <Button.Action
