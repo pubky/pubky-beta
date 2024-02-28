@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { Profile } from '../components/Profile';
 import { Post } from '../components/Post';
 import { SideCard } from '../components/SideCard';
+import Link from 'next/link';
 
 type Tag = {
   value: string;
@@ -256,16 +257,22 @@ export default function Index() {
             </div>
             <div>
               <SideCard.Header title="Links" variantTitle="label" />
-              <div className="w-96 h-24 justify-start items-start gap-4 inline-flex">
-                <SideCard.Content className="justify-center items-center">
-                  <Icon.Twitter />
-                </SideCard.Content>
-                <SideCard.Content className="justify-center items-center">
-                  <Icon.Youtube />
-                </SideCard.Content>
-                <SideCard.Content className="justify-center items-center">
-                  <Icon.Telegram />
-                </SideCard.Content>
+              <div className="gap-4 inline-flex">
+                <Link href="https://x.com/">
+                  <SideCard.Content className="w-[120px] h-24 justify-center items-center">
+                    <Icon.Twitter />
+                  </SideCard.Content>
+                </Link>
+                <Link href="https://youtube.com/">
+                  <SideCard.Content className="w-[120px] h-24 justify-center items-center">
+                    <Icon.Youtube />
+                  </SideCard.Content>
+                </Link>
+                <Link href="https://telegram.com/">
+                  <SideCard.Content className="w-[120px] h-24 justify-center items-center">
+                    <Icon.Telegram />
+                  </SideCard.Content>
+                </Link>
               </div>
             </div>
           </div>
