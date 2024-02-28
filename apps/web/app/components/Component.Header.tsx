@@ -77,6 +77,7 @@ export default function Header({ title, tags = [] }: HeaderProps) {
                 text="Streams"
               />
               <Menu.Section
+                href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
                 counter={5}
