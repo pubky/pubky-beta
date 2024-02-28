@@ -34,6 +34,7 @@ import {
   Asterisk,
   PaperPlaneRight,
   ChatCircleText,
+  Broadcast,
 } from './Icon.Communication';
 import { Activity } from './Icon.Health';
 
@@ -44,6 +45,7 @@ export const Icon = {
   Asterisk,
   Bell,
   BookmarkSimple,
+  Broadcast,
   ChatCircleText,
   Check,
   CheckCircle,

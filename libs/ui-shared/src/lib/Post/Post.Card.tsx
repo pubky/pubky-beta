@@ -11,7 +11,7 @@ export const MainCard = ({
   children,
   ...rest
 }: CardProps) => {
-  const baseCSS = 'w-[792px] z-auto border-0';
+  const baseCSS = 'w-full z-auto border-0';
   return (
     <Card.Primary
       {...rest}

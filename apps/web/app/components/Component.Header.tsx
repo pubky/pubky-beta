@@ -9,12 +9,12 @@ type Tag = {
 };
 interface HeaderProps {
   title: string;
+  tags?: Tag[];
 }
 
-export default function Header({ title }: HeaderProps) {
+export default function Header({ title, tags = [] }: HeaderProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
-  const tags: Tag[] = [];
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {

@@ -10,8 +10,8 @@ export default function Index() {
         <Post.MainPost />
         <Post.ReplyForm />
         <Post.Replies />
-        <CreatePost />
       </Content.Grid>
+      <CreatePost />
     </Content.Main>
   );
 }
