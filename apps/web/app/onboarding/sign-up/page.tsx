@@ -10,7 +10,7 @@ import {
   Card,
   Icon,
 } from '@social/ui-shared';
-import OnboardingLayout from '../../components/Onboarding.Layout';
+import { Onboarding } from '../components';
 
 type Profile = {
   name: string;
@@ -42,7 +42,7 @@ export default function Index() {
   };
 
   return (
-    <OnboardingLayout currentStep={2}>
+    <Onboarding.Layout currentStep={2}>
       <Input.Cursor
         placeholder="Your Name"
         className="h-[174px] text-[100px] font-bold"
@@ -132,6 +132,6 @@ export default function Index() {
         </Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
       </div>
-    </OnboardingLayout>
+    </Onboarding.Layout>
   );
 }

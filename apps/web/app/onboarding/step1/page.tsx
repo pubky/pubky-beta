@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Content, Typography, Button, Icon, Card } from '@social/ui-shared';
-import OnboardingLayout from '../../components/Onboarding.Layout';
+import { Onboarding } from '../components';
 
 export default function Index() {
   return (
-    <OnboardingLayout currentStep={1}>
+    <Onboarding.Layout currentStep={1}>
       <Typography.Display>Let&apos;s get started</Typography.Display>
       <Typography.PageTitle className="text-opacity-50">
         Sign in with a QR, download Bitkit, or create a new account.
@@ -48,6 +48,6 @@ export default function Index() {
         </Card.Primary>
       </div>
       <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image1.png" />
-    </OnboardingLayout>
+    </Onboarding.Layout>
   );
 }

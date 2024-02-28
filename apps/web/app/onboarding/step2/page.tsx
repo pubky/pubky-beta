@@ -7,11 +7,11 @@ import {
   Icon,
   List,
 } from '@social/ui-shared';
-import OnboardingLayout from '../../components/Onboarding.Layout';
+import { Onboarding } from '../components';
 
 export default function Index() {
   return (
-    <OnboardingLayout currentStep={2}>
+    <Onboarding.Layout currentStep={2}>
       <Typography.Display>Welcome!</Typography.Display>
       <Typography.PageTitle className="text-opacity-50">
         Allow Pubky to read your profile and contacts for a more seamless
@@ -47,6 +47,6 @@ export default function Index() {
         </Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
       </div>
-    </OnboardingLayout>
+    </Onboarding.Layout>
   );
 }
