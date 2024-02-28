@@ -18,7 +18,7 @@ export const Root = ({
   return (
     <div className="flex justify-center items-center">
       {show && (
-        <div className="fixed top-0 z-50 w-full h-full bg-black bg-opacity-70 flex justify-center items-center">
+        <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-70 flex justify-center items-center">
           <div ref={modalRef}>
             <Card.Primary
               background="bg-gradient-to-b from-[#07040a] to-black opacity-100"
