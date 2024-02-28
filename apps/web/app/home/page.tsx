@@ -238,7 +238,7 @@ export default function Index() {
           </Filter.Select>
         </Filter.Root>
         <Content.Grid className="gap-6 flex justify-between">
-          <Post.Root>
+          <Post.Root href="/post">
             <Post.MainCard>
               <Post.Header>
                 <div className="justify-start items-center gap-4 flex">

@@ -347,7 +347,7 @@ export default function Index() {
                   <div className="border-l-2 h-full ml-6 border-white border-opacity-10" />
                   <div className="w-6 h-px bg-white bg-opacity-20" />
                   <Post.Root>
-                    <Post.MainCard>
+                    <Post.MainCard className='w-[768px]'>
                       <Post.Header>
                         <div className="justify-start items-center gap-4 flex">
                           <Post.ImageUser src="/images/user.png" alt="user" />

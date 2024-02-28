@@ -1,13 +1,18 @@
 import { twMerge } from 'tailwind-merge';
 
-interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
+interface RootProps extends React.HTMLAttributes<HTMLAnchorElement> {
+  href?: string;
   children?: React.ReactNode;
 }
 
-export const Root = ({ children, ...rest }: RootProps) => {
+export const Root = ({ href, children, ...rest }: RootProps) => {
   return (
-    <div {...rest} className={twMerge(`flex-col gap-6 flex`, rest.className)}>
+    <a
+      href={href}
+      {...rest}
+      className={twMerge(`flex-col gap-6 flex`, rest.className)}
+    >
       {children}
-    </div>
+    </a>
   );
 };
