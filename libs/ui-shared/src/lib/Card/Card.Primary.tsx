@@ -5,6 +5,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   text?: string;
   background?: string;
+  borderRadius?: string;
   children?: React.ReactNode;
   className?: string;
 }
@@ -13,13 +14,17 @@ export const Primary = ({
   title,
   text,
   background = 'bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90',
+  borderRadius = 'rounded-2xl',
   children,
   ...rest
 }: CardProps) => {
-  const baseCSS = `w-full z-10 p-8 rounded-2xl shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
+  const baseCSS = `w-full z-10 p-8 shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
 
   return (
-    <div {...rest} className={twMerge(baseCSS, background, rest.className)}>
+    <div
+      {...rest}
+      className={twMerge(baseCSS, background, borderRadius, rest.className)}
+    >
       {(title || text) && (
         <div
           className={twMerge(

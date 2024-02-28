@@ -81,7 +81,11 @@ export default function Header({ title, tags = [] }: HeaderProps) {
                 text="Notifications"
                 counter={5}
               />
-              <Menu.Section icon={<Icon.BookmarkSimple />} text="Bookmarks" />
+              <Menu.Section
+                href="/bookmarks"
+                icon={<Icon.BookmarkSimple />}
+                text="Bookmarks"
+              />
               <Menu.Section icon={<Icon.Tag size="24" />} text="Hot Tags" />
               <Menu.Section icon={<Icon.Users />} text="Friends" />
               <Menu.Section icon={<Icon.GearSix />} text="Settings" />
