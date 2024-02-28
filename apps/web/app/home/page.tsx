@@ -270,25 +270,37 @@ export default function Index() {
                   variant="custom"
                   icon={<Icon.Tag size="16" />}
                   counter={3}
-                  onClick={() => setShowModalTag(true)}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setShowModalTag(true);
+                  }}
                 />
                 <Button.Action
                   size="small"
                   variant="custom"
                   icon={<Icon.ChatCircleText size="16" />}
                   counter={2}
+                  onClick={(event) => {
+                    event.preventDefault();
+                  }}
                 />
                 <Button.Action
                   size="small"
                   variant="custom"
                   icon={<Icon.Repost size="16" />}
                   counter={7}
-                  onClick={() => setShowModalRePost(true)}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setShowModalRePost(true);
+                  }}
                 />
                 <Button.Action
                   size="small"
                   variant="custom"
                   icon={<Icon.BookmarkSimple size="16" />}
+                  onClick={(event) => {
+                    event.preventDefault();
+                  }}
                 />
               </Post.Actions>
             </Post.MainCard>
