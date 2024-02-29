@@ -9,10 +9,11 @@ type Tag = {
 };
 interface HeaderProps {
   title: string;
+  className?: string;
   tags?: Tag[];
 }
 
-export default function Header({ title, tags = [] }: HeaderProps) {
+export default function Header({ title, className, tags = [] }: HeaderProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +37,7 @@ export default function Header({ title, tags = [] }: HeaderProps) {
   return (
     <HeaderUI.Root>
       <HeaderUI.Logo />
-      <HeaderUI.Title title={title} />
+      <HeaderUI.Title title={title} className={className} />
       <Input.Search className="w-[854px]">
         {tags && (
           <Input.SearchTags>

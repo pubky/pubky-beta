@@ -5,7 +5,7 @@ import { Followers } from './components';
 export default function Index() {
   return (
     <Content.Main>
-      <Header title="Followers" />
+      <Header title="John's Followers" className="w-[260px]" />
       <Followers.Filter />
       <Content.Grid>
         <Followers.Root>
