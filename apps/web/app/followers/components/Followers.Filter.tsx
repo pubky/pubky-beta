@@ -11,8 +11,8 @@ export default function Filter() {
 
   return (
     <FilterUI.Root>
-      <div className="gap-6 inline-flex">
-        <div className="justify-start items-center gap-3 inline-flex">
+      <FilterUI.Row>
+        <FilterUI.SmallRow className="items-center">
           <Image
             width={32}
             height={32}
@@ -24,9 +24,9 @@ export default function Filter() {
           <Typography.Label className="text-opacity-30 mt-1">
             @1Rx3...KO43
           </Typography.Label>
-        </div>
-      </div>
-      <FilterUI.Select>
+        </FilterUI.SmallRow>
+      </FilterUI.Row>
+      <FilterUI.SmallRow>
         <Input.Select
           size="small"
           text="Followers"
@@ -54,7 +54,7 @@ export default function Filter() {
             setSelectedB(active);
           }}
         />
-      </FilterUI.Select>
+      </FilterUI.SmallRow>
     </FilterUI.Root>
   );
 }

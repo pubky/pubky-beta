@@ -1,9 +1,9 @@
-import { Select } from './Filter.Select';
 import { Root } from './Filter.Root';
-import { Types } from './Filter.Types';
+import { Row } from './Filter.Row';
+import { SmallRow } from './Filter.SmallRow';
 
 export const Filter = {
-  Select,
   Root,
-  Types,
+  Row,
+  SmallRow,
 };

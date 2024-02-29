@@ -15,40 +15,42 @@ export default function Filter() {
 
   return (
     <FilterUI.Root>
-      <div className="gap-6 inline-flex">
-        <FilterUI.Types>
+      <FilterUI.Row>
+        <FilterUI.SmallRow>
           <Button.Action variant="all" active />
           <Button.Action variant="posts" />
           <Button.Action variant="image" />
           <Button.Action variant="video" />
           <Button.Action variant="link" />
-        </FilterUI.Types>
+        </FilterUI.SmallRow>
         <DropDown.Root
           label="Sort by"
           title="Sort"
           subtitle="Sort posts by"
           items={['Recent', 'Weight', 'Hotness', 'Discovery']}
         />
-      </div>
-      <FilterUI.Select>
-        <Input.Select
-          size="small"
-          text="Following"
-          icon={<Icon.UserPlus />}
-          active={selectedA}
-          onClick={(active: boolean) => {
-            setSelectedA(active);
-          }}
-        />
-        <Input.Select
-          size="small"
-          text="Friends"
-          icon={<Icon.Smiley />}
-          active={selectedB}
-          onClick={(active: boolean) => {
-            setSelectedB(active);
-          }}
-        />
+      </FilterUI.Row>
+      <FilterUI.Row>
+        <FilterUI.SmallRow>
+          <Input.Select
+            size="small"
+            text="Following"
+            icon={<Icon.UserPlus />}
+            active={selectedA}
+            onClick={(active: boolean) => {
+              setSelectedA(active);
+            }}
+          />
+          <Input.Select
+            size="small"
+            text="Friends"
+            icon={<Icon.Smiley />}
+            active={selectedB}
+            onClick={(active: boolean) => {
+              setSelectedB(active);
+            }}
+          />
+        </FilterUI.SmallRow>
         <DropDown.Root
           title="Mode"
           subtitle="Switch to a different view "
@@ -72,7 +74,7 @@ export default function Filter() {
           ]}
           alignment="right"
         />
-      </FilterUI.Select>
+      </FilterUI.Row>
     </FilterUI.Root>
   );
 }

@@ -12,17 +12,17 @@ export default function Filter() {
     <FilterUI.Root>
       <FilterUI.Row>
         <DropDown.Root
-          label="Show"
+          label="Sort by"
           title="Sort"
-          subtitle="Sort tags by"
-          items={['This month', 'This week', 'Today']}
+          subtitle="Sort your friend by"
+          items={['Active this month', 'Active all time', 'Key']}
         />
       </FilterUI.Row>
       <FilterUI.SmallRow>
         <Input.Select
           size="small"
-          text="All"
-          icon={<Icon.Broadcast />}
+          text="Followers"
+          icon={<Icon.Users />}
           active={selectedC}
           onClick={(active: boolean) => {
             setSelectedC(active);

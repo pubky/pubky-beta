@@ -3,22 +3,22 @@ import { Icon, Button, Filter as FilterUI, DropDown } from '@social/ui-shared';
 export default function Filter() {
   return (
     <FilterUI.Root>
-      <div className="gap-6 inline-flex">
-        <FilterUI.Types>
+      <FilterUI.Row>
+        <FilterUI.SmallRow>
           <Button.Action variant="all" active />
           <Button.Action variant="posts" />
           <Button.Action variant="image" />
           <Button.Action variant="video" />
           <Button.Action variant="link" />
-        </FilterUI.Types>
+        </FilterUI.SmallRow>
         <DropDown.Root
           label="Sort by"
           title="Sort"
           subtitle="Sort posts by"
           items={['Recent', 'Weight', 'Hotness', 'Discovery']}
         />
-      </div>
-      <FilterUI.Select>
+      </FilterUI.Row>
+      <FilterUI.Row>
         <DropDown.Root
           title="Mode"
           subtitle="Switch to a different view "
@@ -42,7 +42,7 @@ export default function Filter() {
           ]}
           alignment="right"
         />
-      </FilterUI.Select>
+      </FilterUI.Row>
     </FilterUI.Root>
   );
 }

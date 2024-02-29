@@ -1,17 +1,14 @@
 import { Content } from '@social/ui-shared';
 import { CreatePost, Header } from '../components';
-import { Followers } from './components';
+import { Friends } from './components';
 
 export default function Index() {
   return (
     <Content.Main>
-      <Header title="Followers" />
-      <Followers.Filter />
+      <Header title="Friends" />
+      <Friends.Filter />
       <Content.Grid>
-        <Followers.Root>
-          <Followers.Follower />
-          <Followers.Follower />
-        </Followers.Root>
+        <Friends.Friend />
       </Content.Grid>
       <CreatePost />
     </Content.Main>
