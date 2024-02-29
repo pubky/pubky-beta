@@ -7,9 +7,14 @@ import { twMerge } from 'tailwind-merge';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
+  bookmark?: boolean;
 }
 
-export default function Post({ repost = false, ...rest }: PostProps) {
+export default function Post({
+  repost = false,
+  bookmark = false,
+  ...rest
+}: PostProps) {
   const [showModalRePost, setShowModalRePost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const images = [
@@ -118,7 +123,12 @@ export default function Post({ repost = false, ...rest }: PostProps) {
               <Button.Action
                 size="small"
                 variant="custom"
-                icon={<Icon.BookmarkSimple size="16" />}
+                icon={
+                  <Icon.BookmarkSimple
+                    opacity={bookmark ? '1' : '0.2'}
+                    size="16"
+                  />
+                }
                 onClick={(event) => {
                   event.preventDefault();
                 }}

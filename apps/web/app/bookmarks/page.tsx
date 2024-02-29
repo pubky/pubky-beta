@@ -9,7 +9,7 @@ export default function Index() {
       <BookMark.Filter />
       <Content.Grid>
         <PostsLayout className="grid grid-cols-3 gap-4">
-          <Post repost />
+          <Post repost bookmark />
           <Post />
           <Post />
           <Post />
