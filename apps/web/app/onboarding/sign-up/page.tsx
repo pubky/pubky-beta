@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import {
   Content,
   Typography,
@@ -125,9 +126,14 @@ export default function Index() {
             src="/images/Userpic.png"
           />
           <div className="pt-[40px]">
-            <Button.Large onClick={() => handleSubmit()} icon={<Icon.Check />}>
-              Finish
-            </Button.Large>
+            <Link href="/home">
+              <Button.Large
+                onClick={() => handleSubmit()}
+                icon={<Icon.Check />}
+              >
+                Finish
+              </Button.Large>
+            </Link>
           </div>
         </Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
