@@ -12,6 +12,7 @@ import {
 export default function Filter() {
   const [selectedA, setSelectedA] = useState(true);
   const [selectedB, setSelectedB] = useState(false);
+  const [selectedC, setSelectedC] = useState(false);
 
   return (
     <FilterUI.Root>
@@ -32,6 +33,15 @@ export default function Filter() {
       </FilterUI.Row>
       <FilterUI.Row>
         <FilterUI.SmallRow>
+          <Input.Select
+            size="small"
+            text="All"
+            icon={<Icon.Broadcast />}
+            active={selectedC}
+            onClick={(active: boolean) => {
+              setSelectedC(active);
+            }}
+          />
           <Input.Select
             size="small"
             text="Following"

@@ -9,12 +9,13 @@ type Tag = {
 };
 interface HeaderProps {
   title: string;
+  className?: string;
+  tags?: Tag[];
 }
 
-export default function Header({ title }: HeaderProps) {
+export default function Header({ title, className, tags = [] }: HeaderProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
-  const tags: Tag[] = [];
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
@@ -36,7 +37,7 @@ export default function Header({ title }: HeaderProps) {
   return (
     <HeaderUI.Root>
       <HeaderUI.Logo />
-      <HeaderUI.Title title={title} />
+      <HeaderUI.Title title={title} className={className} />
       <Input.Search className="w-[854px]">
         {tags && (
           <Input.SearchTags>
@@ -77,14 +78,31 @@ export default function Header({ title }: HeaderProps) {
                 text="Streams"
               />
               <Menu.Section
+                href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
                 counter={5}
               />
-              <Menu.Section icon={<Icon.BookmarkSimple />} text="Bookmarks" />
-              <Menu.Section icon={<Icon.Tag size="24" />} text="Hot Tags" />
-              <Menu.Section icon={<Icon.Users />} text="Friends" />
-              <Menu.Section icon={<Icon.GearSix />} text="Settings" />
+              <Menu.Section
+                href="/bookmarks"
+                icon={<Icon.BookmarkSimple />}
+                text="Bookmarks"
+              />
+              <Menu.Section
+                href="/hot-tags"
+                icon={<Icon.Tag size="24" />}
+                text="Hot Tags"
+              />
+              <Menu.Section
+                href="/friends"
+                icon={<Icon.Users />}
+                text="Friends"
+              />
+              <Menu.Section
+                href="settings"
+                icon={<Icon.GearSix />}
+                text="Settings"
+              />
               <Menu.Section
                 href="/profile"
                 icon={<Icon.UserRectangle />}

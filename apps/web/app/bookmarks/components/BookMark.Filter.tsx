@@ -1,18 +1,6 @@
-'use client';
-
-import { useState } from 'react';
-import {
-  Input,
-  Icon,
-  Button,
-  Filter as FilterUI,
-  DropDown,
-} from '@social/ui-shared';
+import { Icon, Button, Filter as FilterUI, DropDown } from '@social/ui-shared';
 
 export default function Filter() {
-  const [selectedA, setSelectedA] = useState(true);
-  const [selectedB, setSelectedB] = useState(false);
-
   return (
     <FilterUI.Root>
       <FilterUI.Row>
@@ -31,26 +19,6 @@ export default function Filter() {
         />
       </FilterUI.Row>
       <FilterUI.Row>
-        <FilterUI.SmallRow>
-          <Input.Select
-            size="small"
-            text="Following"
-            icon={<Icon.UserPlus />}
-            active={selectedA}
-            onClick={(active: boolean) => {
-              setSelectedA(active);
-            }}
-          />
-          <Input.Select
-            size="small"
-            text="Friends"
-            icon={<Icon.Smiley />}
-            active={selectedB}
-            onClick={(active: boolean) => {
-              setSelectedB(active);
-            }}
-          />
-        </FilterUI.SmallRow>
         <DropDown.Root
           title="Mode"
           subtitle="Switch to a different view "

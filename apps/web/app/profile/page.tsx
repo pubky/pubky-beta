@@ -1,6 +1,6 @@
 import { Content } from '@social/ui-shared';
 import { Profile } from './components';
-import { CreatePost, Header, PostList } from '../components';
+import { CreatePost, Header, Post, PostsLayout } from '../components';
 
 export default function Index() {
   return (
@@ -11,10 +11,12 @@ export default function Index() {
         <Profile.Info username="Satoshi Nakamoto" src="/images/user.png" />
       </Content.Grid>
       <Content.Grid className="mt-6 gap-6 flex justify-between">
-        <PostList />
+        <PostsLayout>
+          <Post className="w-[792px]" />
+        </PostsLayout>
         <Profile.Sidebar />
-        <CreatePost />
       </Content.Grid>
+      <CreatePost />
     </Content.Main>
   );
 }

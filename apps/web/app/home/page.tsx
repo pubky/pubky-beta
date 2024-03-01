@@ -1,6 +1,15 @@
 import { Content } from '@social/ui-shared';
 import { Home } from './components';
-import { CreatePost, Header, PostList } from '../components';
+import {
+  ActiveFriends,
+  CreatePost,
+  Header,
+  HotTags,
+  Post,
+  PostsLayout,
+  Sidebar,
+  WhoFollow,
+} from '../components';
 
 export default function Index() {
   return (
@@ -8,10 +17,16 @@ export default function Index() {
       <Header title="Streams" />
       <Home.Filter />
       <Content.Grid className="gap-6 flex justify-between">
-        <PostList />
-        <Home.Sidebar />
-        <CreatePost />
+        <PostsLayout>
+          <Post className="w-[792px]" />
+        </PostsLayout>
+        <Sidebar>
+          <WhoFollow />
+          <HotTags />
+          <ActiveFriends />
+        </Sidebar>
       </Content.Grid>
+      <CreatePost />
     </Content.Main>
   );
 }

@@ -79,9 +79,8 @@ export const Root = ({
         )}
         <div className="relative">
           <div className="rounded-md overflow-hidden">
-            <button
-              type="button"
-              className={`${styleSelect} w-full flex items-center justify-between`}
+            <div
+              className={`${styleSelect} w-full flex items-center justify-between cursor-pointer`}
               onClick={toggleDropdown}
             >
               {typeof items[0] === 'string' ? (
@@ -101,7 +100,7 @@ export const Root = ({
                   }
                 />
               )}
-            </button>
+            </div>
             {isOpen && (
               <Card.Primary
                 className={`${width} ${

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import {
   Content,
   Typography,
@@ -58,7 +59,7 @@ export default function Index() {
           <Input.Label className="mt-4" value="Short bio" />
           <Input.TextArea
             placeholder="Short bio. Tell a bit about yourself."
-            className="w-80 h-[422px]"
+            className="h-[422px]"
             defaultValue={profile.info}
             onChange={(e) => setProfile({ ...profile, info: e.target.value })}
           />
@@ -66,7 +67,7 @@ export default function Index() {
         <Card.Primary title="Links">
           <Input.Label className="mt-4" value="Website" />
           <Input.Text
-            className="w-80 h-[70px]"
+            className="h-[70px]"
             placeholder="https://"
             defaultValue={profile.links.website}
             onChange={(e) =>
@@ -79,7 +80,7 @@ export default function Index() {
 
           <Input.Label className="mt-4" value="Email" />
           <Input.Text
-            className="w-80 h-[70px]"
+            className="h-[70px]"
             placeholder="user@provider.com"
             defaultValue={profile.links.email}
             onChange={(e) =>
@@ -92,7 +93,7 @@ export default function Index() {
 
           <Input.Label className="mt-4" value="x (twitter)" />
           <Input.Text
-            className="w-80 h-[70px]"
+            className="h-[70px]"
             placeholder="@user"
             defaultValue={profile.links.x}
             onChange={(e) =>
@@ -105,7 +106,7 @@ export default function Index() {
 
           <Input.Label className="mt-4" value="telegram" />
           <Input.Text
-            className="w-80 h-[70px]"
+            className="h-[70px]"
             placeholder="@user"
             defaultValue={profile.links.telegram}
             onChange={(e) =>
@@ -125,9 +126,14 @@ export default function Index() {
             src="/images/Userpic.png"
           />
           <div className="pt-[40px]">
-            <Button.Large onClick={() => handleSubmit()} icon={<Icon.Check />}>
-              Finish
-            </Button.Large>
+            <Link href="/home">
+              <Button.Large
+                onClick={() => handleSubmit()}
+                icon={<Icon.Check />}
+              >
+                Finish
+              </Button.Large>
+            </Link>
           </div>
         </Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />

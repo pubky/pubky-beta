@@ -3,18 +3,21 @@ import { Card } from '../Card';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   background?: string;
+  borderRadius?: string;
   children?: React.ReactNode;
 }
 
 export const MainCard = ({
   background = 'bg-white bg-opacity-10',
+  borderRadius = 'rounded-2xl',
   children,
   ...rest
 }: CardProps) => {
-  const baseCSS = 'w-[792px] z-auto border-0';
+  const baseCSS = 'w-full z-auto border-0';
   return (
     <Card.Primary
       {...rest}
+      borderRadius={borderRadius}
       background={background}
       className={twMerge(baseCSS, rest.className)}
     >

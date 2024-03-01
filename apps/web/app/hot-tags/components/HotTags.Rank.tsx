@@ -1,22 +1,22 @@
+import { Post, PostUtil } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
-import { PostUtil } from '../PostUtil';
-import { Post } from '../Post';
 
-interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
+interface RankProps extends React.HTMLAttributes<HTMLDivElement> {
   rank: number;
   tag: string;
   color: string;
   counter: string;
   images?: { alt: string; src: string }[];
 }
-export const Rank = ({
+
+export default function Rank({
   rank,
   tag,
   counter,
   color,
   images,
   ...rest
-}: RankProps) => {
+}: RankProps) {
   const baseCSS = 'justify-start items-center gap-3 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
@@ -28,4 +28,4 @@ export const Rank = ({
       {images && <Post.UserPic images={images} />}
     </div>
   );
-};
+}
