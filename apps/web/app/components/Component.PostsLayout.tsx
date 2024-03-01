@@ -17,9 +17,14 @@ import { twMerge } from 'tailwind-merge';
 
 interface PostsLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  bookmark?: boolean;
 }
 
-export default function PostsLayout({ children, ...rest }: PostsLayoutProps) {
+export default function PostsLayout({
+  children,
+  bookmark = false,
+  ...rest
+}: PostsLayoutProps) {
   const [showModalRePost, setShowModalRePost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -258,7 +263,12 @@ export default function PostsLayout({ children, ...rest }: PostsLayoutProps) {
                     <Button.Action
                       size="small"
                       variant="custom"
-                      icon={<Icon.BookmarkSimple size="16" />}
+                      icon={
+                        <Icon.BookmarkSimple
+                          opacity={bookmark ? '1' : '0.2'}
+                          size="16"
+                        />
+                      }
                     />
                   </div>
                 </div>

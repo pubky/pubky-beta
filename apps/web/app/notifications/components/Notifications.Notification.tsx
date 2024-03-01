@@ -5,7 +5,12 @@ export default function Notification() {
   return (
     <div className="p-3 border-t border-white border-opacity-10 justify-between items-start inline-flex">
       <div className="justify-start items-center gap-4 flex">
-        <Button.Action size="small" variant="custom" icon={<Icon.Tag />} />
+        <Button.Action
+          size="small"
+          variant="custom"
+          icon={<Icon.Tag />}
+          disabled
+        />
         <Image
           width={32}
           height={32}

@@ -2,9 +2,13 @@ import { Icon, Button, PostUtil, Post, Typography } from '@social/ui-shared';
 
 interface ListPostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
+  bookmark?: boolean;
 }
 
-export default function ListPost({ repost = false, ...rest }: ListPostProps) {
+export default function ListPost({
+  repost = false,
+  bookmark = false,
+}: ListPostProps) {
   const images = [
     {
       src: '/images/user.png',
@@ -100,7 +104,12 @@ export default function ListPost({ repost = false, ...rest }: ListPostProps) {
                 <Button.Action
                   size="small"
                   variant="custom"
-                  icon={<Icon.BookmarkSimple size="16" />}
+                  icon={
+                    <Icon.BookmarkSimple
+                      opacity={bookmark ? '1' : '0.2'}
+                      size="16"
+                    />
+                  }
                 />
               </Post.Actions>
             </div>

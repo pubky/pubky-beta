@@ -8,15 +8,15 @@ export default function Index() {
       <Header title="Bookmarks" />
       <BookMark.Filter />
       <Content.Grid>
-        <PostsLayout className="grid grid-cols-3 gap-4">
+        <PostsLayout className="grid gap-4">
           <Post repost bookmark />
-          <Post />
-          <Post />
-          <Post />
-          <Post />
-          <Post />
+          <Post bookmark />
+          <Post bookmark />
+          <Post bookmark />
+          <Post bookmark />
+          <Post bookmark />
         </PostsLayout>
-        <ListPost repost />
+        <ListPost repost bookmark />
       </Content.Grid>
       <CreatePost />
     </Content.Main>

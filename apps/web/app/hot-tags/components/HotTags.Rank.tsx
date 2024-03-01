@@ -1,7 +1,7 @@
 import { Post, PostUtil } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 
-interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
+interface RankProps extends React.HTMLAttributes<HTMLDivElement> {
   rank: number;
   tag: string;
   color: string;
