@@ -20,7 +20,7 @@ export const Root = ({ children, ...rest }: HeaderRootProps) => {
     >
       <header
         {...rest}
-        className={twMerge(responsiveCSS, baseCSS, rest.className)}
+        className={twMerge(baseCSS, responsiveCSS, rest.className)}
       >
         {children}
       </header>

@@ -54,12 +54,12 @@ export default function Index() {
       <Typography.PageTitle className="text-opacity-50">
         @1pm3...5jkm
       </Typography.PageTitle>
-      <div className="flex-col inline-flex gap-6 mt-12 lg:grid lg:grid-cols-3">
+      <div className="flex-col w-full inline-flex gap-6 mt-12 lg:grid lg:grid-cols-3">
         <Card.Primary title="Profile">
           <Input.Label className="mt-4" value="Short bio" />
           <Input.TextArea
             placeholder="Short bio. Tell a bit about yourself."
-            className="h-[422px]"
+            className="h-[222px] md:h-[422px]"
             defaultValue={profile.info}
             onChange={(e) => setProfile({ ...profile, info: e.target.value })}
           />
