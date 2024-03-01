@@ -11,7 +11,7 @@ export const Root = ({
   children,
   ...rest
 }: RootProps) => {
-  const baseCSS = `fixed top-0 right-0 z-40 w-[385px] h-screen transition-transform p-12 bg-black shadow border-l border-fuchsia-500 border-opacity-30 justify-start items-start`;
+  const baseCSS = `w-[80%] sm:w-[385px] fixed top-0 right-0 z-40 h-screen transition-transform p-12 bg-black shadow border-l border-fuchsia-500 border-opacity-30 justify-start items-start`;
   const drawer = drawerOpen ? '' : 'translate-x-full hidden';
   return (
     <div

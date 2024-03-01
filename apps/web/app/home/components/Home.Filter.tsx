@@ -14,7 +14,7 @@ export default function Filter() {
   const [selectedB, setSelectedB] = useState(false);
 
   return (
-    <FilterUI.Root>
+    <FilterUI.Root className="hidden md:block">
       <FilterUI.Row>
         <FilterUI.SmallRow>
           <Button.Action variant="all" active />
@@ -28,6 +28,7 @@ export default function Filter() {
           title="Sort"
           subtitle="Sort posts by"
           items={['Recent', 'Weight', 'Hotness', 'Discovery']}
+          className="hidden lg:block"
         />
       </FilterUI.Row>
       <FilterUI.Row>
@@ -73,6 +74,7 @@ export default function Filter() {
             },
           ]}
           alignment="right"
+          className="hidden lg:block"
         />
       </FilterUI.Row>
     </FilterUI.Root>

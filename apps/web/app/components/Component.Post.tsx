@@ -88,7 +88,10 @@ export default function Post({
                 icon={<Icon.Plus />}
               />
               <PostUtil.Counter counter={16} />
-              <PostUI.UserPic images={images} />
+              <PostUI.UserPic
+                className="hidden sm:inline-flex"
+                images={images}
+              />
             </PostUI.Footer>
             <PostUI.Actions>
               <Button.Action

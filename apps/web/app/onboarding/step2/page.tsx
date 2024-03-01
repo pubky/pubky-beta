@@ -17,7 +17,7 @@ export default function Index() {
         Allow Pubky to read your profile and contacts for a more seamless
         experience.
       </Typography.PageTitle>
-      <div className="grid grid-cols-3 gap-6 mt-12">
+      <div className="flex-col inline-flex gap-6 mt-12 sm:grid sm:grid-cols-2 lg:grid-cols-3">
         <Card.Primary title="Permissions">
           <List.Primary
             className="mt-6"

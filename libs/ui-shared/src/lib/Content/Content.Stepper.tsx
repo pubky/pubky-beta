@@ -62,7 +62,7 @@ export const Stepper = ({
     <div
       {...rest}
       className={twMerge(
-        `w-full max-w-[785px] flex justify-between items-center mx-auto`,
+        `w-[250px] max-w-[785px] flex justify-between items-center mx-auto md:w-[350px] lg:w-[600px] xl:w-full`,
         rest.className
       )}
     >

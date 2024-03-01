@@ -10,7 +10,7 @@ export default function Index() {
       <Typography.PageTitle className="text-opacity-50">
         Sign in with a QR, download Bitkit, or create a new account.
       </Typography.PageTitle>
-      <div className="grid grid-cols-3 gap-6 mt-12">
+      <div className="flex-col inline-flex gap-6 mt-12 lg:grid lg:grid-cols-3">
         <Card.Primary
           title="Sign in with Slashtag"
           text="Have Bitkit or a Slashtags powered wallet? Scan this QR to sign in."
@@ -40,7 +40,7 @@ export default function Index() {
           title="New Slashtags Account"
           text="Another option is to create a new Slashtags account with Pubky."
         >
-          <Link href="/onboarding/sign-up">
+          <Link href="/onboarding/sign-up" className="mt-4 lg:mt-0">
             <Button.Large icon={<Icon.UserRectangle />}>
               Create Account
             </Button.Large>

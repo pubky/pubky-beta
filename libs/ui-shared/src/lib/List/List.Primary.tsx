@@ -20,7 +20,7 @@ export const Primary = ({ title, list, ...rest }: ListProps) => {
             <li key={index} className="flex items-center">
               <Typography.Body
                 variant="medium"
-                className="text-opacity-80 ml-2.5 leading-[.1rem]"
+                className="text-opacity-80 ml-2.5 leading-[.1rem] tracking-normal sm:tracking-wide"
               >
                 <span className="mr-2 text-[20px]">&#8226;</span>
                 {item}

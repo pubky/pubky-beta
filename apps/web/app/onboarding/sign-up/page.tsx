@@ -46,7 +46,7 @@ export default function Index() {
     <Onboarding.Layout currentStep={2}>
       <Input.Cursor
         placeholder="Your Name"
-        className="h-[174px] text-[100px] font-bold"
+        className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
         defaultValue={profile.name}
         autoFocus
         onChange={(e) => setProfile({ ...profile, name: e.target.value })}
@@ -54,12 +54,12 @@ export default function Index() {
       <Typography.PageTitle className="text-opacity-50">
         @1pm3...5jkm
       </Typography.PageTitle>
-      <div className="grid grid-cols-3 gap-6 mt-12">
+      <div className="flex-col inline-flex gap-6 mt-12 lg:grid lg:grid-cols-3">
         <Card.Primary title="Profile">
           <Input.Label className="mt-4" value="Short bio" />
           <Input.TextArea
             placeholder="Short bio. Tell a bit about yourself."
-            className="w-80 h-[422px]"
+            className="h-[422px]"
             defaultValue={profile.info}
             onChange={(e) => setProfile({ ...profile, info: e.target.value })}
           />
@@ -67,7 +67,7 @@ export default function Index() {
         <Card.Primary title="Links">
           <Input.Label className="mt-4" value="Website" />
           <Input.Text
-            className="w-80 h-[70px]"
+            className="h-[70px]"
             placeholder="https://"
             defaultValue={profile.links.website}
             onChange={(e) =>
@@ -80,7 +80,7 @@ export default function Index() {
 
           <Input.Label className="mt-4" value="Email" />
           <Input.Text
-            className="w-80 h-[70px]"
+            className="h-[70px]"
             placeholder="user@provider.com"
             defaultValue={profile.links.email}
             onChange={(e) =>
@@ -93,7 +93,7 @@ export default function Index() {
 
           <Input.Label className="mt-4" value="x (twitter)" />
           <Input.Text
-            className="w-80 h-[70px]"
+            className="h-[70px]"
             placeholder="@user"
             defaultValue={profile.links.x}
             onChange={(e) =>
@@ -106,7 +106,7 @@ export default function Index() {
 
           <Input.Label className="mt-4" value="telegram" />
           <Input.Text
-            className="w-80 h-[70px]"
+            className="h-[70px]"
             placeholder="@user"
             defaultValue={profile.links.telegram}
             onChange={(e) =>

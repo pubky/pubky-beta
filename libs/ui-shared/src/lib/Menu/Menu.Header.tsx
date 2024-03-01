@@ -22,7 +22,10 @@ export const Header = ({
   ...rest
 }: HeaderProps) => {
   return (
-    <div {...rest} className={twMerge('flex-col gap-4 flex', rest.className)}>
+    <div
+      {...rest}
+      className={twMerge('flex-col sm:gap-4 flex', rest.className)}
+    >
       <Image
         width={width}
         height={height}
@@ -30,7 +33,7 @@ export const Header = ({
         src={src}
         className="rounded-full"
       />
-      <div className="flex-col gap-2 flex">
+      <div className="flex-col sm:gap-2 flex">
         <Typography.PageTitle className="font-bold leading-[30px]">
           {username}
         </Typography.PageTitle>

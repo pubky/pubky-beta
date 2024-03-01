@@ -15,7 +15,7 @@ export default function Index() {
             Your keys, your content, your rules. Social content, re-imagined.
           </Typography.PageTitle>
           <Link href="/onboarding/step1">
-            <Button.Large className="w-80 mt-12 relative z-10">
+            <Button.Large className="w-full sm:w-80 mt-12 relative z-10">
               Get Started
             </Button.Large>
           </Link>

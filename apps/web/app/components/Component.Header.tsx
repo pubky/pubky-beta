@@ -34,11 +34,21 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
     };
   }, [drawerRef]);
 
+  let width;
+  let height;
+  if (window.innerWidth < 640) {
+    width = 50;
+    height = 50;
+  } else {
+    width = 96;
+    height = 96;
+  }
+
   return (
     <HeaderUI.Root>
       <HeaderUI.Logo />
       <HeaderUI.Title title={title} className={className} />
-      <Input.Search className="w-[854px]">
+      <Input.Search className="w-auto sm:w-[354px] lg:w-[854px]">
         {tags && (
           <Input.SearchTags>
             {tags.map((tag, index) => (
@@ -51,7 +61,7 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
             ))}
           </Input.SearchTags>
         )}
-        <Input.SearchInput />
+        <Input.SearchInput className="hidden sm:block" />
         <Input.SearchActions>
           {tags.length > 0 && <Icon.GridFour />}
           <Icon.MagnifyingGlass />
@@ -65,11 +75,13 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
           <Menu.ImageMenu src="/images/user.png" notifications={5} />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
-          <div className="w-60 flex-col gap-6 inline-flex">
+          <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
               src="/images/user.png"
               username="Satoshi Nakamoto"
               handler="@1qx7...gkw3"
+              width={width}
+              height={height}
             />
             <div className="flex-col gap-1 inline-flex">
               <Menu.Section

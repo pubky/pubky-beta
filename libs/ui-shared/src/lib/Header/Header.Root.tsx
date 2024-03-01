@@ -6,8 +6,10 @@ interface HeaderRootProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export const Root = ({ children, ...rest }: HeaderRootProps) => {
+  const responsiveCSS =
+    'sm:max-w-[600px] md:max-w-[730px] lg:max-w-[1000px] xl:max-w-[1200px] sm:h-[144px]';
   const baseCSS =
-    'max-w-[1200px] h-[144px] bg-transparent bg-opacity-50 mx-auto py-12 gap-6 flex items-center justify-between';
+    'max-w-[280px] h-3.5 bg-transparent bg-opacity-50 mx-auto py-12 gap-6 flex items-center justify-between';
 
   return (
     <div
@@ -16,7 +18,10 @@ export const Root = ({ children, ...rest }: HeaderRootProps) => {
         rest.className
       )}
     >
-      <header {...rest} className={twMerge(baseCSS, rest.className)}>
+      <header
+        {...rest}
+        className={twMerge(responsiveCSS, baseCSS, rest.className)}
+      >
         {children}
       </header>
     </div>

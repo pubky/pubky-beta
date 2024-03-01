@@ -6,9 +6,13 @@ interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Title = ({ title, ...rest }: HeaderProps) => {
+  const responsiveCSS = title !== 'Onboarding' && 'hidden md:block';
   return (
-    <div {...rest} className={twMerge('grow pr-6', rest.className)}>
-      <Typography.PageTitle className="text-opacity-50">
+    <div
+      {...rest}
+      className={twMerge('grow pr-6', responsiveCSS, rest.className)}
+    >
+      <Typography.PageTitle className="text-lg mt-2 sm:text-3xl sm:mt-0 text-opacity-50">
         {title}
       </Typography.PageTitle>
     </div>
