@@ -86,7 +86,11 @@ export default function Post({
                 >
                   Satoshi Nakamoto
                 </PostUI.Username>
-                <Typography.Label className="hidden sm:block text-opacity-30">
+                <Typography.Label
+                  className={
+                    size === 'full' ? 'sm:block text-opacity-30' : 'hidden'
+                  }
+                >
                   @1qx8...gkw3
                 </Typography.Label>
               </div>

@@ -5,7 +5,7 @@ import { Friends } from './components';
 export default function Index() {
   return (
     <Content.Main>
-      <Header title="Friends" />
+      <Header className="hidden md:block" title="Friends" />
       <Friends.Filter />
       <Content.Grid>
         <Friends.Friend />

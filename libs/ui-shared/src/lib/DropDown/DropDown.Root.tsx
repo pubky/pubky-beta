@@ -68,7 +68,7 @@ export const Root = ({
 
   const styleSelect = `bg-transparent text-white outline-none appearance-none font-['Inter Tight'] tracking-wide ${
     label
-      ? 'text-2xl font-normal'
+      ? 'text-sm sm:text-2xl font-normal'
       : 'text-opacity-50 text-[13px] font-semibold uppercase'
   }`;
 

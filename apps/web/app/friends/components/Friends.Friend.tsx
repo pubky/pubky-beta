@@ -10,7 +10,7 @@ export default function Friend() {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <>
-      <div className="gap-6 inline-flex">
+      <div className="flex-col lg:flex-row gap-6 inline-flex">
         <Link href="/profile" className="w-full flex-col gap-6 inline-flex">
           <div className="gap-6 inline-flex">
             <div
