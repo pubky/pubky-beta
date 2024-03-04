@@ -10,7 +10,7 @@ export default function Index() {
       <Typography.PageTitle className="text-opacity-50 mt-4 sm:mt-0">
         Sign in with a QR, download Bitkit, or create a new account.
       </Typography.PageTitle>
-      <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary
           title="Sign in with Slashtag"
           text="Have Bitkit or a Slashtags powered wallet? Scan this QR to sign in."
