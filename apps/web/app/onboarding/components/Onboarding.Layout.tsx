@@ -14,7 +14,10 @@ export default function OnboardingLayout({
       <Header.Root>
         <Header.Logo />
         <Header.Title title={'Onboarding'} />
-        <Content.Stepper currentStep={currentStep} />
+        <Content.Stepper
+          className="w-[50%] lg:w-[70%] xl:w-full hidden sm:flex"
+          currentStep={currentStep}
+        />
       </Header.Root>
       <Content.Grid>{children}</Content.Grid>
     </Content.Main>
