@@ -9,7 +9,7 @@ export const Footer = ({ children, ...rest }: FooterProps) => {
     <div
       {...rest}
       className={twMerge(
-        `justify-start items-start gap-2 flex mt-6`,
+        `justify-start items-start gap-2 flex`,
         rest.className
       )}
     >

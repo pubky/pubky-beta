@@ -1,5 +1,5 @@
 import { Content } from '@social/ui-shared';
-import { CreatePost, Header, ListPost, Post, PostsLayout } from '../components';
+import { CreatePost, Header, Post, PostsLayout } from '../components';
 import { BookMark } from './components';
 
 export default function Index() {
@@ -16,7 +16,7 @@ export default function Index() {
           <Post bookmark />
           <Post bookmark />
         </PostsLayout>
-        <ListPost repost bookmark />
+        <Post repost bookmark />
       </Content.Grid>
       <CreatePost />
     </Content.Main>
