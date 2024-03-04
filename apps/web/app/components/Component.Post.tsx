@@ -89,7 +89,7 @@ export default function Post({
               />
               <PostUtil.Counter counter={16} />
               <PostUI.UserPic
-                className="hidden sm:inline-flex"
+                className="hidden md:inline-flex"
                 images={images}
               />
             </PostUI.Footer>
