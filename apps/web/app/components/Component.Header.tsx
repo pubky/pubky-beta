@@ -65,7 +65,7 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
           <Menu.ImageMenu src="/images/user.png" notifications={5} />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
-          <div className="w-60 flex-col gap-6 inline-flex">
+          <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
               src="/images/user.png"
               username="Satoshi Nakamoto"

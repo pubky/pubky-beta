@@ -28,7 +28,7 @@ export const Header = ({
         height={height}
         alt={alt}
         src={src}
-        className="rounded-full"
+        className="rounded-full scale-75 lg:scale-100"
       />
       <div className="flex-col gap-2 flex">
         <Typography.PageTitle className="font-bold leading-[30px]">
