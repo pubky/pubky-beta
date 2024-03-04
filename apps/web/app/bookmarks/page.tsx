@@ -5,10 +5,10 @@ import { BookMark } from './components';
 export default function Index() {
   return (
     <Content.Main>
-      <Header title="Bookmarks" />
+      <Header className="hidden md:block" title="Bookmarks" />
       <BookMark.Filter />
       <Content.Grid>
-        <PostsLayout className="grid gap-4">
+        <PostsLayout className="grid grid-cols-3 gap-4">
           <Post repost bookmark />
           <Post bookmark />
           <Post bookmark />
