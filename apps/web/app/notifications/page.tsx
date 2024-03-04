@@ -5,14 +5,14 @@ import { Notifications } from './components';
 export default function Index() {
   return (
     <Content.Main>
-      <Header title="Notifications" />
+      <Header className="hidden md:block" title="Notifications" />
       <Content.Grid className="gap-6 flex justify-between">
         <Notifications.Root>
           <Notifications.Notification />
           <Notifications.Notification />
           <Notifications.Notification />
         </Notifications.Root>
-        <Sidebar>
+        <Sidebar className="hidden xl:flex">
           <WhoFollow />
           <HotTags />
         </Sidebar>
