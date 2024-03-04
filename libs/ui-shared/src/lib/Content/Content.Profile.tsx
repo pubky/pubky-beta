@@ -49,7 +49,10 @@ export const Profile = ({ profile }: ProfileProps) => {
             <Typography.Label className="text-opacity-50">
               {key}
             </Typography.Label>
-            <Typography.Body variant="medium" className="text-opacity-80">
+            <Typography.Body
+              variant="medium"
+              className="break-words w-44 text-opacity-80 sm:w-full"
+            >
               {links[key]}
             </Typography.Body>
             {index !== linkKeys.length - 1 && <Content.Divider />}
