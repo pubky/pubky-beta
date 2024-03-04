@@ -11,11 +11,11 @@ export default function Index() {
         </Header.Root>
         <Content.Grid>
           <Typography.Display>You are the algorithm</Typography.Display>
-          <Typography.PageTitle className="text-opacity-50">
+          <Typography.PageTitle className="text-opacity-50 mt-4 sm:mt-0">
             Your keys, your content, your rules. Social content, re-imagined.
           </Typography.PageTitle>
           <Link href="/onboarding/step1">
-            <Button.Large className="w-80 mt-12 relative z-10">
+            <Button.Large className="sm:w-80 w-full mt-12 relative z-10">
               Get Started
             </Button.Large>
           </Link>
