@@ -27,7 +27,7 @@ export default function Index() {
   ];
   return (
     <Content.Main>
-      <Header title="Hot Tags" className="w-36" />
+      <Header className="w-52 xl:w-36 hidden md:block" title="Hot Tags" />
       <HotTags.Filter />
       <Content.Grid className="flex-col flex gap-3">
         <HotTags.Rank

@@ -25,7 +25,9 @@ export default function Rank({
         {tag}
       </PostUtil.Tag>
       <PostUtil.Counter className="w-[87px]" counter={counter} />
-      {images && <Post.UserPic images={images} />}
+      {images && (
+        <Post.UserPic className="hidden sm:inline-flex" images={images} />
+      )}
     </div>
   );
 }
