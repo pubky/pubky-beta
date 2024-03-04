@@ -34,7 +34,7 @@ export default function CreatePost() {
 
   return (
     <>
-      <div className="fixed bottom-10 right-10 max-w-[50%] max-h-[50%]">
+      <div className="fixed bottom-5 right-5 sm:bottom-10 sm:right-10">
         <Button.Create onClick={() => setShowModalPost(true)} />
       </div>
 

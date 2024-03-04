@@ -38,7 +38,7 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
     <HeaderUI.Root>
       <HeaderUI.Logo />
       <HeaderUI.Title title={title} className={className} />
-      <Input.Search className="w-[854px]">
+      <Input.Search className="w-auto sm:w-[354px] lg:w-[854px]">
         {tags && (
           <Input.SearchTags>
             {tags.map((tag, index) => (
@@ -51,8 +51,8 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
             ))}
           </Input.SearchTags>
         )}
-        <Input.SearchInput />
-        <Input.SearchActions>
+        <Input.SearchInput className="hidden sm:block" />
+        <Input.SearchActions className="hidden sm:block">
           {tags.length > 0 && <Icon.GridFour />}
           <Icon.MagnifyingGlass />
         </Input.SearchActions>

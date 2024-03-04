@@ -57,7 +57,10 @@ export const Select = ({
   return (
     <button {...rest} onClick={handleButtonClick} className={baseCSS}>
       <div>{icon || <Icon.UserRectangle color={iconColor} />}</div>
-      <Typography.Body variant="small-bold" className={bodyCSS}>
+      <Typography.Body
+        variant="small-bold"
+        className={`hidden sm:block ${bodyCSS}`}
+      >
         {text}
       </Typography.Body>
     </button>
