@@ -14,11 +14,13 @@ import { twMerge } from 'tailwind-merge';
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
   bookmark?: boolean;
+  size?: 'full' | 'normal';
 }
 
 export default function Post({
   repost = false,
   bookmark = false,
+  size = 'normal',
   ...rest
 }: PostProps) {
   const [showModalRePost, setShowModalRePost] = useState(false);
@@ -75,11 +77,13 @@ export default function Post({
             <PostUI.Header>
               <div className="justify-start items-center gap-4 flex">
                 <PostUI.ImageUser
-                  className="lg:w-12 lg:h-12 "
+                  className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
                   src="/images/user.png"
                   alt="user"
                 />
-                <PostUI.Username className="lg:text-2xl">
+                <PostUI.Username
+                  className={size === 'full' ? 'lg:text-2xl' : ''}
+                >
                   Satoshi Nakamoto
                 </PostUI.Username>
                 <Typography.Label className="hidden sm:block text-opacity-30">
@@ -88,14 +92,16 @@ export default function Post({
               </div>
               <PostUI.Time>27m</PostUI.Time>
             </PostUI.Header>
-            <div className={'block lg:inline-flex gap-12'}>
+            <div
+              className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
+            >
               <PostUI.Content
                 text="You either want lots of people using Bitcoin (holding Bitcoin keys)
             or you dont. Many of you seem to believe things that require both
             positions."
-                className="w-full lg:w-[60%] lg:text-xl"
+                className={size === 'full' ? 'lg:w-[60%] lg:text-xl' : 'w-full'}
               />
-              <PostUI.Footer className="mt-6 lg:mt-0">
+              <PostUI.Footer className={size === 'full' ? 'lg:mt-0' : 'mt-6'}>
                 <PostUtil.Tag clicked color="amber">
                   #Bitcoin
                 </PostUtil.Tag>

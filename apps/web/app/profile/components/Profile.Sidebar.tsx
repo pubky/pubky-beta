@@ -36,7 +36,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="flex-col justify-start items-start gap-6 inline-flex">
+    <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
       <div>
         <SideCard.Header title="profile" variantTitle="label" />
         <SideCard.Content className="flex-col gap-3 inline-flex">

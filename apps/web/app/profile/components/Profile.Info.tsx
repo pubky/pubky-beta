@@ -19,15 +19,17 @@ export default function Info({
   ...rest
 }: InfoProps) {
   const baseCSS =
-    'w-[1201px] h-60 justify-between items-center inline-flex relative z-10';
+    'xl:w-[1201px] gap-6 justify-between items-center inline-flex relative z-10';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <Typography.Display>{username}</Typography.Display>
+      <Typography.Display className="text-2xl leading-none">
+        {username}
+      </Typography.Display>
       <Image
         alt={alt}
         width={width}
         height={height}
-        className="rounded-full"
+        className="rounded-full scale-50 sm:scale-75"
         src={src}
       />
     </div>
