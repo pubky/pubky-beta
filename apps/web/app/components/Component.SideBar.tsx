@@ -5,7 +5,8 @@ interface SideBarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Sidebar({ children, ...rest }: SideBarProps) {
-  const baseCSS = 'flex-col justify-start items-start gap-6 inline-flex';
+  const baseCSS =
+    'hidden flex-col justify-start items-start gap-6 xl:inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       {children}

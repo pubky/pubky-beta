@@ -53,8 +53,10 @@ export default function Friend() {
             </Typography.Label>
           </div>
         </Link>
-        <Post />
-        <Post />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <Post />
+          <Post />
+        </div>
       </div>
       <Content.Divider className="my-12" />
     </>

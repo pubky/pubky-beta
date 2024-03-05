@@ -7,7 +7,7 @@ interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Content = ({ children, ...rest }: ContentProps) => {
   return (
-    <Card.Primary {...rest} className={twMerge(`w-96 mt-4`, rest.className)}>
+    <Card.Primary {...rest} className={twMerge(`w-full mt-4`, rest.className)}>
       {children}
     </Card.Primary>
   );

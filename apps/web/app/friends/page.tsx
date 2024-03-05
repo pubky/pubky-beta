@@ -9,6 +9,9 @@ export default function Index() {
       <Friends.Filter />
       <Content.Grid>
         <Friends.Friend />
+        <Friends.Friend />
+        <Friends.Friend />
+        <Friends.Friend />
       </Content.Grid>
       <CreatePost />
     </Content.Main>

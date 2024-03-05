@@ -59,7 +59,7 @@ export const Select = ({
       <div>{icon || <Icon.UserRectangle color={iconColor} />}</div>
       <Typography.Body
         variant="small-bold"
-        className={`hidden sm:block ${bodyCSS}`}
+        className={`hidden lg:block ${bodyCSS}`}
       >
         {text}
       </Typography.Body>
