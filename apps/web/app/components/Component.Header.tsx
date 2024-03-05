@@ -71,7 +71,7 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
               username="Satoshi Nakamoto"
               handler="@1qx7...gkw3"
             />
-            <div className="flex-col gap-1 inline-flex">
+            <div className="flex-col inline-flex">
               <Menu.Section
                 href="/home"
                 icon={<Icon.Activity />}
