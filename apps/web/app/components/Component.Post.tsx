@@ -1,18 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
-import { Icon, Button, PostUtil, Post as PostUI } from '@social/ui-shared';
+import {
+  Icon,
+  Button,
+  PostUtil,
+  Post as PostUI,
+  Typography,
+} from '@social/ui-shared';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
   bookmark?: boolean;
+  size?: 'full' | 'normal';
 }
 
 export default function Post({
   repost = false,
   bookmark = false,
+  size = 'normal',
   ...rest
 }: PostProps) {
   const [showModalRePost, setShowModalRePost] = useState(false);
@@ -68,28 +76,51 @@ export default function Post({
           >
             <PostUI.Header>
               <div className="justify-start items-center gap-4 flex">
-                <PostUI.ImageUser src="/images/user.png" alt="user" />
-                <PostUI.Username>Satoshi Nakamoto</PostUI.Username>
+                <PostUI.ImageUser
+                  className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
+                  src="/images/user.png"
+                  alt="user"
+                />
+                <PostUI.Username
+                  className={size === 'full' ? 'lg:text-2xl' : ''}
+                >
+                  Satoshi Nakamoto
+                </PostUI.Username>
+                <Typography.Label
+                  className={
+                    size === 'full' ? 'sm:block text-opacity-30' : 'hidden'
+                  }
+                >
+                  @1qx8...gkw3
+                </Typography.Label>
               </div>
               <PostUI.Time>27m</PostUI.Time>
             </PostUI.Header>
-            <PostUI.Content
-              text="You either want lots of people using Bitcoin (holding Bitcoin keys)
+            <div
+              className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
+            >
+              <PostUI.Content
+                text="You either want lots of people using Bitcoin (holding Bitcoin keys)
             or you dont. Many of you seem to believe things that require both
             positions."
-            />
-            <PostUI.Footer>
-              <PostUtil.Tag clicked color="amber">
-                #Bitcoin
-              </PostUtil.Tag>
-              <Button.Action
-                variant="custom"
-                size="small"
-                icon={<Icon.Plus />}
+                className={size === 'full' ? 'lg:w-[60%] lg:text-xl' : 'w-full'}
               />
-              <PostUtil.Counter counter={16} />
-              <PostUI.UserPic images={images} />
-            </PostUI.Footer>
+              <PostUI.Footer className={size === 'full' ? 'lg:mt-0' : 'mt-6'}>
+                <PostUtil.Tag clicked color="amber">
+                  #Bitcoin
+                </PostUtil.Tag>
+                <Button.Action
+                  variant="custom"
+                  size="small"
+                  icon={<Icon.Plus />}
+                />
+                <PostUtil.Counter counter={16} />
+                <PostUI.UserPic
+                  className="hidden md:inline-flex"
+                  images={images}
+                />
+              </PostUI.Footer>
+            </div>
             <PostUI.Actions>
               <Button.Action
                 size="small"

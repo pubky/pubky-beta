@@ -4,7 +4,7 @@ import { Button, Content, Icon, Typography } from '@social/ui-shared';
 export default function Follower() {
   return (
     <>
-      <div className="justify-start items-center gap-4 inline-flex">
+      <div className="flex-col lg:flex-row justify-start gap-4 inline-flex">
         <Image
           width={48}
           height={48}
@@ -20,7 +20,7 @@ export default function Follower() {
         </div>
         <Typography.Body
           variant="small"
-          className="px-12 text-opacity-80 leading-[18px]"
+          className="lg:px-12 text-opacity-80 leading-[18px]"
         >
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
           molestie nulla sit amet velit venenatis, ut blandit enim lacinia.

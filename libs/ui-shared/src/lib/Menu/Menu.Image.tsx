@@ -21,10 +21,10 @@ export const ImageMenu = ({
   ...rest
 }: Image) => {
   return (
-    <>
+    <div className="w-[48px]">
       {notifications && (
         <PostUtil.Counter
-          className="absolute top-4 right-6 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
+          className="absolute top-6 right-7 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
           counter={notifications}
         />
       )}
@@ -36,6 +36,6 @@ export const ImageMenu = ({
         alt="user-pic"
         src="/images/user.png"
       />
-    </>
+    </div>
   );
 };

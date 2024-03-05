@@ -34,7 +34,7 @@ export default function CreatePost() {
 
   return (
     <>
-      <div className="fixed bottom-10 right-10 max-w-[50%] max-h-[50%]">
+      <div className="fixed bottom-5 right-5 sm:bottom-10 sm:right-10">
         <Button.Create onClick={() => setShowModalPost(true)} />
       </div>
 
@@ -50,17 +50,20 @@ export default function CreatePost() {
             variant="posts"
             active
             onClick={() => console.log('button clicked 1')}
+            className="hidden lg:block"
           />
           <Button.Action
             variant="image"
             onClick={() => console.log('button clicked 2')}
+            className="hidden lg:block"
           />
           <Button.Action
             variant="link"
             onClick={() => console.log('button clicked 3')}
+            className="hidden lg:block"
           />
         </Modal.Header>
-        <Modal.Content>
+        <Modal.Content className="inline-flex flex-col gap-2 lg:grid lg:grid-cols-3 lg:gap-6">
           <div className="mt-6 inline-flex col-span-2">
             <Input.TextArea
               className="h-[285px] p-12"
@@ -68,8 +71,10 @@ export default function CreatePost() {
             />
           </div>
           <div className="flex-col justify-start items-start gap-5 mt-4 inline-flex">
-            <Typography.H2>Suggested Tags</Typography.H2>
-            <div className="justify-start items-start">
+            <Typography.H2 className="hidden lg:block">
+              Suggested Tags
+            </Typography.H2>
+            <div className="hidden lg:block justify-start items-start">
               <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
                 #Bitcoin
               </PostUtil.Tag>
@@ -101,7 +106,7 @@ export default function CreatePost() {
                 #Bitcointalk
               </PostUtil.Tag>
             </div>
-            <div className="flex-col w-full items-start flex">
+            <div className="hidden lg:flex flex-col w-full items-start">
               <Input.Label value="Add tag:" />
               <Input.Text
                 placeholder="#"

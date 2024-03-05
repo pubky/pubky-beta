@@ -20,8 +20,10 @@ export default function Filter() {
             src="/images/user.png"
             alt="user-pic"
           />
-          <Typography.H2> John Carvalho</Typography.H2>
-          <Typography.Label className="text-opacity-30 mt-1">
+          <Typography.H2 className="text-sm sm:text-2xl">
+            John Carvalho
+          </Typography.H2>
+          <Typography.Label className="hidden lg:block text-opacity-30 mt-1">
             @1Rx3...KO43
           </Typography.Label>
         </FilterUI.SmallRow>

@@ -14,13 +14,13 @@ import {
 export default function Index() {
   return (
     <Content.Main>
-      <Header title="Streams" />
+      <Header className="hidden md:block" title="Streams" />
       <Home.Filter />
-      <Content.Grid className="gap-6 flex justify-between">
-        <PostsLayout>
-          <Post className="w-[792px]" />
+      <Content.Grid className="grid grid-cols-3 gap-4">
+        <PostsLayout className="col-span-3 xl:col-span-2">
+          <Post />
         </PostsLayout>
-        <Sidebar>
+        <Sidebar className="hidden xl:inline-flex">
           <WhoFollow />
           <HotTags />
           <ActiveFriends />

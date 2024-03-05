@@ -36,7 +36,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="flex-col justify-start items-start gap-6 inline-flex">
+    <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
       <div>
         <SideCard.Header title="profile" variantTitle="label" />
         <SideCard.Content className="flex-col gap-3 inline-flex">
@@ -93,21 +93,21 @@ export default function Sidebar() {
           </div>
         </SideCard.Content>
       </div>
-      <div>
+      <div className="w-full">
         <SideCard.Header title="Links" variantTitle="label" />
-        <div className="gap-4 inline-flex">
-          <Link href="https://x.com/">
-            <SideCard.Content className="w-[120px] h-24 justify-center items-center">
+        <div className="gap-4 grid grid-cols-3 w-full">
+          <Link href="https://x.com/" className="w-full">
+            <SideCard.Content className="w-full h-24 justify-center items-center">
               <Icon.Twitter />
             </SideCard.Content>
           </Link>
-          <Link href="https://youtube.com/">
-            <SideCard.Content className="w-[120px] h-24 justify-center items-center">
+          <Link href="https://youtube.com/" className="w-full">
+            <SideCard.Content className="w-full h-24 justify-center items-center">
               <Icon.Youtube />
             </SideCard.Content>
           </Link>
-          <Link href="https://telegram.com/">
-            <SideCard.Content className="w-[120px] h-24 justify-center items-center">
+          <Link href="https://telegram.com/" className="w-full">
+            <SideCard.Content className="w-full h-24 justify-center items-center">
               <Icon.Telegram />
             </SideCard.Content>
           </Link>

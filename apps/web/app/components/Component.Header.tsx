@@ -38,9 +38,9 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
     <HeaderUI.Root>
       <HeaderUI.Logo />
       <HeaderUI.Title title={title} className={className} />
-      <Input.Search className="w-[854px]">
+      <Input.Search className="w-auto sm:w-[354px] lg:w-[854px]">
         {tags && (
-          <Input.SearchTags>
+          <Input.SearchTags className="hidden sm:block">
             {tags.map((tag, index) => (
               <Input.SearchTag
                 color={tag.color}
@@ -51,8 +51,8 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
             ))}
           </Input.SearchTags>
         )}
-        <Input.SearchInput />
-        <Input.SearchActions>
+        <Input.SearchInput className="hidden sm:block" />
+        <Input.SearchActions className="hidden sm:flex">
           {tags.length > 0 && <Icon.GridFour />}
           <Icon.MagnifyingGlass />
         </Input.SearchActions>
@@ -65,13 +65,13 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
           <Menu.ImageMenu src="/images/user.png" notifications={5} />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
-          <div className="w-60 flex-col gap-6 inline-flex">
+          <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
               src="/images/user.png"
               username="Satoshi Nakamoto"
               handler="@1qx7...gkw3"
             />
-            <div className="flex-col gap-1 inline-flex">
+            <div className="flex-col inline-flex">
               <Menu.Section
                 href="/home"
                 icon={<Icon.Activity />}

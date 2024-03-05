@@ -13,11 +13,11 @@ export default function Index() {
   return (
     <Onboarding.Layout currentStep={2}>
       <Typography.Display>Welcome!</Typography.Display>
-      <Typography.PageTitle className="text-opacity-50">
+      <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">
         Allow Pubky to read your profile and contacts for a more seamless
         experience.
       </Typography.PageTitle>
-      <div className="grid grid-cols-3 gap-6 mt-12">
+      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Permissions">
           <List.Primary
             className="mt-6"
@@ -40,7 +40,7 @@ export default function Index() {
         </Card.Primary>
         <Card.Primary className="justify-start" title="No access">
           <List.Primary
-            className="mt-6"
+            className="mt-6 tracking-normal sm:tracking-wide"
             title="Hypekit will not be able to:"
             list={['Read your private key', 'Read encrypted content']}
           />

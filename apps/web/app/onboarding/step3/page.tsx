@@ -57,10 +57,10 @@ export default function Index() {
   return (
     <Onboarding.Layout currentStep={3}>
       <Typography.Display>Welcome, Satoshi</Typography.Display>
-      <Typography.PageTitle className="text-opacity-50">
+      <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">
         Your contacts and profile information are ready to be used in Pubky.
       </Typography.PageTitle>
-      <div className="grid grid-cols-3 gap-6 mt-12">
+      <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary>
           <Content.Profile profile={profile} />
         </Card.Primary>
@@ -71,7 +71,7 @@ export default function Index() {
           title="Ready to Go!"
           text="Pubky successfully imported your profile and contacts."
         >
-          <Link href="/home">
+          <Link href="/home" className="mt-4 lg:mt-0">
             <Button.Large icon={<Icon.Check />}>Finish</Button.Large>
           </Link>
         </Card.Primary>

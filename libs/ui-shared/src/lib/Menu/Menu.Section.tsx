@@ -17,7 +17,7 @@ export const Section = ({
   ...rest
 }: SectionProps) => {
   const baseCSS =
-    'py-2 shadow border-b border-white border-opacity-10 justify-between inline-flex cursor-pointer hover:bg-white hover:bg-opacity-10';
+    'py-2.5 shadow border-b border-white border-opacity-10 justify-between inline-flex cursor-pointer hover:bg-white hover:bg-opacity-10';
   return (
     <a href={href} {...rest} className={twMerge(baseCSS, rest.className)}>
       <div className="items-center gap-2 flex">

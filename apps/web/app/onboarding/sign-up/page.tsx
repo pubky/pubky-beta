@@ -46,7 +46,7 @@ export default function Index() {
     <Onboarding.Layout currentStep={2}>
       <Input.Cursor
         placeholder="Your Name"
-        className="h-[174px] text-[100px] font-bold"
+        className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
         defaultValue={profile.name}
         autoFocus
         onChange={(e) => setProfile({ ...profile, name: e.target.value })}
@@ -54,7 +54,7 @@ export default function Index() {
       <Typography.PageTitle className="text-opacity-50">
         @1pm3...5jkm
       </Typography.PageTitle>
-      <div className="grid grid-cols-3 gap-6 mt-12">
+      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">
           <Input.Label className="mt-4" value="Short bio" />
           <Input.TextArea
