@@ -1,9 +1,11 @@
-import Info from './Profile.Info';
+import Avatar from './Profile.Avatar';
+import Handle from './Profile.Handle';
 import HeaderBackground from './Profile.HeaderBackground';
 import Sidebar from './Profile.Sidebar';
 
 export const Profile = {
-  Info,
+  Avatar,
+  Handle,
   HeaderBackground,
   Sidebar,
 };

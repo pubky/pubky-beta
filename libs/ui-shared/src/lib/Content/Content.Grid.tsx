@@ -6,7 +6,8 @@ interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Grid = ({ children, ...rest }: GridProps) => {
-  const baseCSS = 'max-w-[1200px] py-12 m-auto';
+  const baseCSS =
+    'max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] w-full py-12 m-auto';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       {children}

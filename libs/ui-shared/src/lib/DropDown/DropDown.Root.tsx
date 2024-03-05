@@ -5,6 +5,7 @@ import { Typography } from '../Typography';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Card } from '../Card';
+import { twMerge } from 'tailwind-merge';
 
 type Item = {
   icon: React.ReactNode;
@@ -18,6 +19,7 @@ type DropdownProps = {
   subtitle?: string;
   width?: string;
   alignment?: 'right' | 'left';
+  className?: string;
 };
 
 export const Root = ({
@@ -27,6 +29,7 @@ export const Root = ({
   subtitle,
   width = 'w-[336px]',
   alignment = 'left',
+  ...rest
 }: DropdownProps) => {
   const [selectedItem, setSelectedItem] = useState<string | Item>(
     typeof items[0] === 'string' ? items[0] : (items[0] as Item)
@@ -65,12 +68,16 @@ export const Root = ({
 
   const styleSelect = `bg-transparent text-white outline-none appearance-none font-['Inter Tight'] tracking-wide ${
     label
-      ? 'text-2xl font-normal'
+      ? 'text-sm sm:text-2xl font-normal'
       : 'text-opacity-50 text-[13px] font-semibold uppercase'
   }`;
 
   return (
-    <div className="relative inline-block" ref={dropdownRef}>
+    <div
+      {...rest}
+      className={twMerge('relative inline-block', rest.className)}
+      ref={dropdownRef}
+    >
       <div>
         {label && (
           <Typography.Label className="text-white text-opacity-30">

@@ -89,7 +89,7 @@ export default function PostsLayout({
           modalRef={modalTagRef}
           show={showModalTag}
           closeModal={() => setShowModalTag(false)}
-          className="w-[480px] items-stretch gap-6"
+          className="w-full items-stretch gap-6"
         >
           <Modal.CloseAction onClick={() => setShowModalTag(false)} />
           <Modal.Header title="Tag" />

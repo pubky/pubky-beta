@@ -10,7 +10,7 @@ export default function Friend() {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <>
-      <div className="gap-6 inline-flex">
+      <div className="flex-col lg:flex-row gap-6 inline-flex">
         <Link href="/profile" className="w-full flex-col gap-6 inline-flex">
           <div className="gap-6 inline-flex">
             <div
@@ -53,8 +53,10 @@ export default function Friend() {
             </Typography.Label>
           </div>
         </Link>
-        <Post />
-        <Post />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <Post />
+          <Post />
+        </div>
       </div>
       <Content.Divider className="my-12" />
     </>

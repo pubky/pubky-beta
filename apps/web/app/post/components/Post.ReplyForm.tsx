@@ -11,19 +11,19 @@ export default function ReplyForm() {
   return (
     <Post.Root>
       <Post.MainCard className="w-full p-12 bg-transparent border border-opacity-30 border-dashed">
-        <div className="gap-[126px] inline-flex">
+        <div className="justify-between block lg:inline-flex">
           <div>
             <Post.Header>
               <div className="justify-start items-center gap-4 flex">
                 <Post.ImageUser
-                  className="w-12 h-12"
+                  className="lg:w-12 lg:h-12"
                   src="/images/user.png"
                   alt="user"
                 />
-                <Post.Username className="text-2xl">
+                <Post.Username className="lg:text-2xl">
                   Satoshi Nakamoto
                 </Post.Username>
-                <div className="items-center gap-1 inline-flex">
+                <div className="hidden items-center gap-1 sm:inline-flex">
                   <Typography.Label className="text-opacity-30">
                     @1qx8...gkw3
                   </Typography.Label>
@@ -31,7 +31,7 @@ export default function ReplyForm() {
                 </div>
               </div>
             </Post.Header>
-            <Post.Content className="w-[642px]">
+            <Post.Content>
               <Input.CursorArea
                 className="text-2xl h-8"
                 placeholder="Post your reply"
@@ -44,7 +44,7 @@ export default function ReplyForm() {
               Reply
             </Button.Medium>
           </div>
-          <div className="flex-col gap-3 inline-flex">
+          <div className="flex-col gap-3 inline-flex mt-6 lg:mt-0">
             <div className="gap-1 items-center inline-flex">
               <Icon.Tag color="gray" />
               <Typography.Label className="text-opacity-30">
@@ -54,12 +54,6 @@ export default function ReplyForm() {
             <Post.Footer className="mt-4">
               <PostUtil.Tag clicked color="amber">
                 #Bitcoin
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="amber">
-                #Satoshi
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="cyan">
-                #Autonomy
               </PostUtil.Tag>
               <Button.Action
                 variant="custom"

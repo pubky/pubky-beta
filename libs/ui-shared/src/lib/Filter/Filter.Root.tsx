@@ -14,7 +14,9 @@ export const Root = ({ children, ...rest }: RootProps) => {
         rest.className
       )}
     >
-      <Content.Grid className="flex justify-between">{children}</Content.Grid>
+      <Content.Grid className="py-8 sm:py-12 flex justify-between">
+        {children}
+      </Content.Grid>
     </div>
   );
 };

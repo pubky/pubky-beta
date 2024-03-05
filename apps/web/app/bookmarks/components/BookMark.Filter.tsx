@@ -4,7 +4,7 @@ export default function Filter() {
   return (
     <FilterUI.Root>
       <FilterUI.Row>
-        <FilterUI.SmallRow>
+        <FilterUI.SmallRow className="hidden sm:flex">
           <Button.Action variant="all" active />
           <Button.Action variant="posts" />
           <Button.Action variant="image" />

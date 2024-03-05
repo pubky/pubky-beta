@@ -17,7 +17,7 @@ export default function Filter() {
   return (
     <FilterUI.Root>
       <FilterUI.Row>
-        <FilterUI.SmallRow>
+        <FilterUI.SmallRow className="hidden lg:flex">
           <Button.Action variant="all" active />
           <Button.Action variant="posts" />
           <Button.Action variant="image" />
@@ -83,6 +83,7 @@ export default function Filter() {
             },
           ]}
           alignment="right"
+          className="hidden lg:block"
         />
       </FilterUI.Row>
     </FilterUI.Root>

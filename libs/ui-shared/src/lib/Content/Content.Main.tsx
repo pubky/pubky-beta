@@ -10,7 +10,7 @@ export const Main = ({
   background = 'bg-gradient-to-br from-black to-[#0e0e18] pb-20',
   ...rest
 }: RootProps) => {
-  const baseCSS = `w-full h-full min-h-screen relative`;
+  const baseCSS = `w-full h-full min-w-[420px] min-h-screen relative`;
 
   return (
     <div {...rest} className={twMerge(baseCSS, background, rest.className)}>
