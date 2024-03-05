@@ -8,7 +8,7 @@ export default function Index() {
       <Header className="hidden md:block" title="Bookmarks" />
       <BookMark.Filter />
       <Content.Grid>
-        <PostsLayout className="grid grid-cols-3 gap-4">
+        <PostsLayout className="inline-flex flex-col gap-4">
           <Post repost bookmark />
           <Post bookmark />
           <Post bookmark />

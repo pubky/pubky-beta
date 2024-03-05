@@ -9,7 +9,7 @@ export default function Root({ children, ...rest }: RootProps) {
   return (
     <div className="flex-col gap-6 inline-flex">
       <Typography.H2>517 followers</Typography.H2>
-      <Card.Primary>
+      <Card.Primary className="z-auto">
         <div
           {...rest}
           className={twMerge(
