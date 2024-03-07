@@ -134,7 +134,7 @@ export default function Index() {
               <Image
                 width={320}
                 height={320}
-                className="mt-6 w-80 h-80 rounded-full"
+                className="mt-6 w-80 h-80 rounded-full cursor-pointer"
                 alt="user"
                 src={profile.pic}
               />
