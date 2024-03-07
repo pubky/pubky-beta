@@ -7,12 +7,14 @@ interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean;
   iconLabel?: React.ReactNode;
   label?: string;
+  size?: 'small' | 'default';
 }
 
 export const Button = ({
   isOpen,
   iconLabel,
   label = '',
+  size = 'default',
   ...rest
 }: ButtonProps) => {
   const baseCSS = `w-full flex items-center justify-between cursor-pointer`;
@@ -25,7 +27,7 @@ export const Button = ({
       className={twMerge(
         baseCSS,
         styleSelect,
-        label
+        size === 'default'
           ? 'text-sm sm:text-2xl font-normal'
           : 'text-opacity-50 text-[13px] font-semibold uppercase',
         rest.className
@@ -44,7 +46,7 @@ export const Button = ({
               rest.className
             )}
           >
-            <Icon.DropdownIcon color={label ? 'white' : 'gray'} />
+            <Icon.DropdownIcon color={size === 'default' ? 'white' : 'gray'} />
           </div>
         </>
       )}

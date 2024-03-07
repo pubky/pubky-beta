@@ -6,8 +6,8 @@ import { DropDown } from '@social/ui-shared';
 export default function DropDownSort() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
-    value: 'recent',
-    label: 'Recent',
+    value: 'this-week',
+    label: 'This week',
   });
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -29,61 +29,39 @@ export default function DropDownSort() {
   }, [dropdownRef]);
 
   return (
-    <DropDown.Root label="Sort by" reference={dropdownRef}>
+    <DropDown.Root reference={dropdownRef} className="hidden lg:block">
       <DropDown.Button
         label={dropdownValue.label}
         isOpen={openDropdown}
         onClick={() => setOpenDropdown(!openDropdown)}
+        size="small"
       />
       <DropDown.Content
         title="Sort"
-        subtitle="Sort posts by"
+        subtitle="Sort tags by"
         isOpen={openDropdown}
+        className="right-0"
       >
         <DropDown.Item
-          label="Recent"
-          value="recent"
-          selected={dropdownValue.value === 'recent'}
+          label="This week"
+          value="this-week"
+          selected={dropdownValue.value === 'this-week'}
           onClick={() => {
             setDropdownValue({
-              value: 'recent',
-              label: 'Recent',
+              value: 'this-week',
+              label: 'This week',
             });
             setOpenDropdown(false);
           }}
         />
         <DropDown.Item
-          label="Weight"
-          value="weight"
-          selected={dropdownValue.value === 'weight'}
+          label="Today"
+          value="today"
+          selected={dropdownValue.value === 'today'}
           onClick={() => {
             setDropdownValue({
-              value: 'weight',
-              label: 'Weight',
-            });
-            setOpenDropdown(false);
-          }}
-        />
-        <DropDown.Item
-          label="Hotness"
-          value="hotness"
-          selected={dropdownValue.value === 'hotness'}
-          onClick={() => {
-            setDropdownValue({
-              value: 'hotness',
-              label: 'Hotness',
-            });
-            setOpenDropdown(false);
-          }}
-        />
-        <DropDown.Item
-          label="Discovery"
-          value="discovery"
-          selected={dropdownValue.value === 'discovery'}
-          onClick={() => {
-            setDropdownValue({
-              value: 'discovery',
-              label: 'Discovery',
+              value: 'today',
+              label: 'Today',
             });
             setOpenDropdown(false);
           }}

@@ -1,4 +1,6 @@
-import { Icon, Button, Filter as FilterUI, DropDown } from '@social/ui-shared';
+import { Button, Filter as FilterUI } from '@social/ui-shared';
+import DropDownSort from './BookMark.DropDownSort';
+import DropDownMode from './BookMark.DropDownMode';
 
 export default function Filter() {
   return (
@@ -11,37 +13,10 @@ export default function Filter() {
           <Button.Action variant="video" />
           <Button.Action variant="link" />
         </FilterUI.SmallRow>
-        <DropDown.Root
-          label="Sort by"
-          title="Sort"
-          subtitle="Sort posts by"
-          items={['Recent', 'Weight', 'Hotness', 'Discovery']}
-        />
+        <DropDownSort />
       </FilterUI.Row>
       <FilterUI.Row>
-        <DropDown.Root
-          title="Mode"
-          subtitle="Switch to a different view "
-          items={[
-            {
-              icon: <Icon.SquareHalf />,
-              label: 'Sidebar',
-            },
-            {
-              icon: <Icon.List />,
-              label: 'List',
-            },
-            {
-              icon: <Icon.DotsNine />,
-              label: 'Grid',
-            },
-            {
-              icon: <Icon.SquaresFour />,
-              label: 'Columns',
-            },
-          ]}
-          alignment="right"
-        />
+        <DropDownMode />
       </FilterUI.Row>
     </FilterUI.Root>
   );

@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { DropDown } from '@social/ui-shared';
+import { Icon, DropDown } from '@social/ui-shared';
 
-export default function DropDownSort() {
+export default function DropDownMode() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
-    value: 'recent',
-    label: 'Recent',
+    value: 'Sidebar',
+    iconLabel: <Icon.SquareHalf />,
   });
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -29,61 +29,71 @@ export default function DropDownSort() {
   }, [dropdownRef]);
 
   return (
-    <DropDown.Root label="Sort by" reference={dropdownRef}>
+    <DropDown.Root reference={dropdownRef} className="hidden lg:block">
       <DropDown.Button
-        label={dropdownValue.label}
+        iconLabel={dropdownValue.iconLabel}
+        label={dropdownValue.value}
         isOpen={openDropdown}
         onClick={() => setOpenDropdown(!openDropdown)}
       />
       <DropDown.Content
-        title="Sort"
-        subtitle="Sort posts by"
+        title="Mode"
+        subtitle="Switch to a different view"
+        className="right-0"
         isOpen={openDropdown}
       >
         <DropDown.Item
-          label="Recent"
-          value="recent"
-          selected={dropdownValue.value === 'recent'}
+          label="Sidebar"
+          value="sidebar"
+          selected
+          icon={<Icon.SquareHalf />}
+          iconLabel
           onClick={() => {
             setDropdownValue({
-              value: 'recent',
-              label: 'Recent',
+              value: 'sidebar',
+              iconLabel: <Icon.SquareHalf />,
             });
             setOpenDropdown(false);
           }}
         />
         <DropDown.Item
-          label="Weight"
-          value="weight"
-          selected={dropdownValue.value === 'weight'}
+          label="List"
+          value="list"
+          selected
+          icon={<Icon.List />}
+          iconLabel
           onClick={() => {
             setDropdownValue({
-              value: 'weight',
-              label: 'Weight',
+              value: 'list',
+              iconLabel: <Icon.List />,
             });
             setOpenDropdown(false);
           }}
         />
         <DropDown.Item
-          label="Hotness"
-          value="hotness"
-          selected={dropdownValue.value === 'hotness'}
+          label="Grid"
+          value="grid"
+          selected
+          icon={<Icon.DotsNine />}
+          iconLabel
           onClick={() => {
             setDropdownValue({
-              value: 'hotness',
-              label: 'Hotness',
+              value: 'grid',
+              iconLabel: <Icon.DotsNine />,
             });
             setOpenDropdown(false);
           }}
         />
         <DropDown.Item
-          label="Discovery"
-          value="discovery"
-          selected={dropdownValue.value === 'discovery'}
+          label="Columns"
+          value="columns"
+          selected
+          icon={<Icon.SquaresFour />}
+          iconLabel
           onClick={() => {
             setDropdownValue({
-              value: 'discovery',
-              label: 'Discovery',
+              value: 'columns',
+              iconLabel: <Icon.SquaresFour />,
             });
             setOpenDropdown(false);
           }}

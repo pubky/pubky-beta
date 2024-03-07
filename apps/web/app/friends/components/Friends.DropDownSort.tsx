@@ -29,7 +29,11 @@ export default function DropDownSort() {
   }, [dropdownRef]);
 
   return (
-    <DropDown.Root label="Sort by" reference={dropdownRef}>
+    <DropDown.Root
+      label="Sort by"
+      reference={dropdownRef}
+      className="hidden lg:block"
+    >
       <DropDown.Button
         label={dropdownValue.label}
         isOpen={openDropdown}
