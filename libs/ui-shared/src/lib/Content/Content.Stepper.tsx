@@ -1,3 +1,4 @@
+import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Icon } from '../Icon';
 
@@ -32,7 +33,7 @@ export const Stepper = ({
     }`;
 
     return (
-      <>
+      <React.Fragment key={stepNumber}>
         <div className={`${baseCSS} ${activeStep} `}>
           {stepNumber < currentStep ? (
             <Icon.Check size="20" />
@@ -49,7 +50,7 @@ export const Stepper = ({
           )}
         </div>
         {!isLastStep && <div className={`h-px flex-1 ${activeLine}`} />}
-      </>
+      </React.Fragment>
     );
   };
 
