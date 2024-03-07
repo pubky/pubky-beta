@@ -29,7 +29,7 @@ export default function Index() {
   const [profile, setProfile] = useState<Profile>({
     name: '',
     info: '',
-    pic: '',
+    pic: '/images/Userpic.png',
     links: {
       website: '',
       email: '',
@@ -37,6 +37,17 @@ export default function Index() {
       telegram: '',
     },
   });
+
+  const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfile({ ...profile, pic: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = () => {
     console.log(profile);
@@ -118,13 +129,24 @@ export default function Index() {
           />
         </Card.Primary>
         <Card.Primary title="Picture">
-          <Image
-            width={320}
-            height={320}
-            className="mt-6"
-            alt="user"
-            src="/images/Userpic.png"
-          />
+          <label htmlFor="fileInput">
+            {profile.pic && (
+              <Image
+                width={320}
+                height={320}
+                className="mt-6 w-80 h-80 rounded-full"
+                alt="user"
+                src={profile.pic}
+              />
+            )}
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*"
+              onChange={UploadPic}
+              style={{ display: 'none' }}
+            />
+          </label>
           <div className="pt-[40px]">
             <Link href="/home">
               <Button.Large
