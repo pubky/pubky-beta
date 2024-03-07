@@ -21,7 +21,7 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
         <Card.Primary className="p-6 flex-row xl:p-8">
           <Image width={70} height={25} src={bitkit} alt="bitkit" />
           <Image
-            className="scale-50 md:scale-75 lg:scale-50 xl:scale-100"
+            className="w-auto h-auto scale-50 md:scale-75 lg:scale-50 xl:scale-100"
             width={116}
             height={24}
             src={iphone}
@@ -36,7 +36,7 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
         <Card.Primary className="p-6 flex-row xl:p-8">
           <Image width={70} height={25} src={bitkit} alt="bitkit" />
           <Image
-            className="scale-50 md:scale-75 lg:scale-50 xl:scale-100 -ml-[41px]"
+            className="w-auto h-auto scale-50 md:scale-75 lg:scale-50 xl:scale-100 -ml-[41px]"
             width={157}
             height={24}
             src={android}
