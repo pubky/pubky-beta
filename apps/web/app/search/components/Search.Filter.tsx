@@ -67,19 +67,19 @@ export default function Filter() {
           items={[
             {
               icon: <Icon.SquareHalf />,
-              option: 'Sidebar',
+              label: 'Sidebar',
             },
             {
               icon: <Icon.List />,
-              option: 'List',
+              label: 'List',
             },
             {
               icon: <Icon.DotsNine />,
-              option: 'Grid',
+              label: 'Grid',
             },
             {
               icon: <Icon.SquaresFour />,
-              option: 'Columns',
+              label: 'Columns',
             },
           ]}
           alignment="right"
