@@ -1,0 +1,167 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Icon } from '../../Icon';
+import { twMerge } from 'tailwind-merge';
+import { Action as ActionUI } from './Action';
+
+type ButtonColors = {
+  [key: string]: string;
+};
+
+interface ActionButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+  variant?:
+    | 'advanced'
+    | 'all'
+    | 'article'
+    | 'custom'
+    | 'hub'
+    | 'image'
+    | 'link'
+    | 'mode'
+    | 'minus'
+    | 'music'
+    | 'plus'
+    | 'podcast'
+    | 'posts'
+    | 'reach'
+    | 'sort'
+    | 'video';
+  size?: 'small' | 'medium' | 'large';
+  label?: string;
+  counter?: number;
+  icon?: React.ReactNode;
+  disabled?: boolean;
+  active?: boolean;
+  className?: string;
+}
+
+export const Action = ({
+  variant = 'article',
+  size = 'medium',
+  label,
+  counter,
+  icon,
+  disabled = false,
+  active = false,
+  ...rest
+}: ActionButtonProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const sizes = {
+    small: {
+      iconSize: '12px',
+      sizeClasses: counter ? 'w-11 h-8 p-2' : 'w-8 h-8 p-2',
+      labelClasses: counter ? 'px-3 mt-8' : 'w-8 mt-8',
+      fontSize: 'text-[10px]',
+    },
+    medium: {
+      iconSize: '20px',
+      sizeClasses: counter ? 'w-16 h-12 p-3' : 'w-12 h-12 p-3',
+      labelClasses: counter ? 'px-5 mt-12' : 'w-12 mt-12',
+      fontSize: 'text-[13px]',
+    },
+    large: {
+      iconSize: '32px',
+      sizeClasses: counter ? 'w-24 h-16 p-6' : 'w-16 h-16 p-6',
+      labelClasses: counter ? 'px-8 mt-16' : 'w-16 mt-16',
+      fontSize: 'text-[15px]',
+    },
+  };
+
+  const { iconSize, sizeClasses, labelClasses, fontSize } = sizes[size];
+
+  const color = disabled ? 'text-gray-500' : 'text-white';
+  const colorIcon = disabled ? 'grey' : undefined;
+  const gap = counter && 'gap-1.5';
+
+  const defaultBg = 'bg-white bg-opacity-10';
+  const stateButtonDisabled = 'bg-opacity-10 cursor-auto';
+  const defaultStateButton = disabled
+    ? stateButtonDisabled
+    : 'hover:bg-opacity-20';
+
+  const buttonColors: ButtonColors = {
+    all: 'fuchsia-500',
+    posts: 'fuchsia-500',
+    article: 'yellow-400',
+    link: 'cyan-400',
+    image: 'green-500',
+    music: 'blue-600',
+    video: 'red-600',
+    podcast: 'amber-500',
+  };
+
+  const buttonIcons: Record<string, { icon: React.ReactNode }> = {
+    all: { icon: <Icon.Stack size={iconSize} color={colorIcon} /> },
+    posts: { icon: <Icon.NoteBlank size={iconSize} color={colorIcon} /> },
+    article: { icon: <Icon.Newspaper size={iconSize} color={colorIcon} /> },
+    link: { icon: <Icon.LinkSimple size={iconSize} color={colorIcon} /> },
+    image: { icon: <Icon.ImageSquare size={iconSize} color={colorIcon} /> },
+    music: {
+      icon: <Icon.MusicNotesSimple size={iconSize} color={colorIcon} />,
+    },
+    video: { icon: <Icon.Play size={iconSize} color={colorIcon} /> },
+    podcast: { icon: <Icon.Podcast size={iconSize} color={colorIcon} /> },
+    mode: { icon: <Icon.DotsNine size={iconSize} color={colorIcon} /> },
+    sort: { icon: <Icon.Clock size={iconSize} color={colorIcon} /> },
+    reach: { icon: <Icon.UserPlus size={iconSize} color={colorIcon} /> },
+    hub: { icon: <Icon.Stack size={iconSize} color={colorIcon} /> },
+    advanced: {
+      icon: <Icon.SlidersHorizontal size={iconSize} color={colorIcon} />,
+    },
+    plus: { icon: <Icon.Plus size={iconSize} color={colorIcon} /> },
+    minus: { icon: <Icon.Minus size={iconSize} color={colorIcon} /> },
+    custom: { icon: icon as React.ReactElement },
+  };
+
+  const generateButtonProps = (
+    variant: string,
+    active: boolean,
+    disabled: boolean
+  ): { icon: React.ReactNode; background?: string; state?: string } => {
+    const baseButton = buttonIcons[variant];
+    const background = active
+      ? `bg-${buttonColors[variant]} bg-opacity-30 border-t border-${buttonColors[variant]}`
+      : defaultBg;
+    const state = disabled
+      ? stateButtonDisabled
+      : `hover:bg-${buttonColors[variant]} hover:bg-opacity-30`;
+    return { ...baseButton, background, state };
+  };
+
+  const {
+    icon: iconComponent,
+    background,
+    state,
+  } = generateButtonProps(variant, active, disabled);
+
+  const cssClasses = `${sizeClasses} ${background || defaultBg} ${
+    state || defaultStateButton
+  } ${gap}`;
+
+  return (
+    <ActionUI.Root>
+      <ActionUI.Button
+        {...rest}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={twMerge(cssClasses, rest.className)}
+      >
+        {iconComponent}
+        {counter && (
+          <ActionUI.Counter className={twMerge(fontSize, color)}>
+            {counter}
+          </ActionUI.Counter>
+        )}
+      </ActionUI.Button>
+      {isHovered && label && (
+        <ActionUI.LabelRoot className={labelClasses}>
+          <ActionUI.Label className={twMerge(fontSize, color)}>
+            {label}
+          </ActionUI.Label>
+        </ActionUI.LabelRoot>
+      )}
+    </ActionUI.Root>
+  );
+};
