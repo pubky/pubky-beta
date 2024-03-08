@@ -17,7 +17,7 @@ module.exports = {
     function ({ addUtilities }) {
       const newUtilities = {
         '.scrollbar-thin': {
-          scrollbarcolor: 'rgb(31 29 29) white',
+          scrollbarcolor: 'rgba(255, 255, 255, 0.16)',
         },
         '.scrollbar-webkit': {
           '&::-webkit-scrollbar': {
@@ -25,10 +25,13 @@ module.exports = {
           },
           '&::-webkit-scrollbar-track': {
             background: 'rgba(0, 0, 0, 0.32)',
+            borderRadius: '4px',
+            cursor: 'default',
           },
           '&::-webkit-scrollbar-thumb': {
             backgroundColor: 'rgba(255, 255, 255, 0.16)',
             borderRadius: '4px',
+            cursor: 'default',
           },
         },
       };
