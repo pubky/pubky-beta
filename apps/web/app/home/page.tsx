@@ -11,7 +11,19 @@ import {
   WhoFollow,
 } from '../components';
 
+const DEFAULT_HOME_SERVER = 'http://localhost:7259';
+const DEFAULT_RELAY = 'https://relay.pkarr.org';
+
+import Client from '@pubky/client';
+
 export default function Index() {
+  const pubkyClient = new Client(DEFAULT_HOME_SERVER, {
+    relay: DEFAULT_RELAY,
+    homeserverUrl: DEFAULT_HOME_SERVER,
+  });
+  pubkyClient.ready().then(() => {
+    console.log('Pubky client is ready');
+  });
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Streams" />
