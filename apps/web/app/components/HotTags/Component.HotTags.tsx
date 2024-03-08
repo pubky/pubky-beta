@@ -1,15 +1,11 @@
-import { DropDown, SideCard } from '@social/ui-shared';
+import { SideCard } from '@social/ui-shared';
+import DropDownSort from './DropDownSort';
 
 export default function HotTags() {
   return (
     <div>
       <SideCard.Header title="Hot tags">
-        <DropDown.Root
-          title="Sort"
-          subtitle="Sort tags by"
-          items={['This week', 'Today']}
-          alignment="right"
-        />
+        <DropDownSort />
       </SideCard.Header>
       <SideCard.Content>
         <div className="grid gap-3">

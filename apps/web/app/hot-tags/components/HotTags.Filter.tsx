@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Icon, Filter as FilterUI, DropDown } from '@social/ui-shared';
+import { Input, Icon, Filter as FilterUI } from '@social/ui-shared';
+import DropDownSort from './HotTags.DropDownSort';
 
 export default function Filter() {
   const [selectedA, setSelectedA] = useState(true);
@@ -11,12 +12,7 @@ export default function Filter() {
   return (
     <FilterUI.Root>
       <FilterUI.Row>
-        <DropDown.Root
-          label="Show"
-          title="Sort"
-          subtitle="Sort tags by"
-          items={['This month', 'This week', 'Today']}
-        />
+        <DropDownSort />
       </FilterUI.Row>
       <FilterUI.SmallRow>
         <Input.Select
