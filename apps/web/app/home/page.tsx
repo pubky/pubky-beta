@@ -1,3 +1,5 @@
+'use client';
+
 import { Content } from '@social/ui-shared';
 import {
   ActiveFriends,
@@ -10,8 +12,38 @@ import {
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
+import { useState } from 'react';
+
+type Layout = 'sidebar' | 'grid' | 'columns' | 'list';
+
+type Layouts = {
+  [key in 'sidebar' | 'grid' | 'columns' | 'list']: {
+    grid: string;
+    posts: string;
+  };
+};
+
+const layouts: Layouts = {
+  sidebar: {
+    grid: 'grid-cols-3',
+    posts: 'col-span-3 xl:col-span-2',
+  },
+  grid: {
+    grid: 'grid-cols-3',
+    posts: '',
+  },
+  columns: {
+    grid: 'grid-cols-2',
+    posts: '',
+  },
+  list: {
+    grid: 'grid-cols-1',
+    posts: '',
+  },
+};
 
 export default function Index() {
+  const [layout] = useState<Layout>('sidebar');
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Streams">
@@ -22,11 +54,15 @@ export default function Index() {
           <DropDown.Layout />
         </div>
       </Header>
-      <Content.Grid className="grid grid-cols-3 gap-4">
-        <PostsLayout className="col-span-3 xl:col-span-2">
-          <Post />
+      <Content.Grid className={`grid ${layouts[layout].grid} gap-4`}>
+        {/* Layout dei post */}
+        <PostsLayout className={layouts[layout].posts}>
+          <Post size={layout === 'list' ? 'full' : 'normal'} />
         </PostsLayout>
-        <Sidebar className="hidden xl:inline-flex">
+        {/* Sidebar */}
+        <Sidebar
+          className={`hidden ${layout === 'sidebar' && 'xl:inline-flex'}`}
+        >
           <WhoFollow />
           <HotTags />
           <ActiveFriends />
