@@ -29,7 +29,13 @@ import {
 } from './Icon.System';
 import { Twitter, Youtube, Telegram } from './Icon.Social';
 import { Clock } from './Icon.Time';
-import { UserPlus, UserRectangle, Users, Smiley } from './Icon.People';
+import {
+  UserPlus,
+  UserRectangle,
+  UsersLeft,
+  UsersRight,
+  Smiley,
+} from './Icon.People';
 import {
   Asterisk,
   PaperPlaneRight,
@@ -37,6 +43,7 @@ import {
   Broadcast,
 } from './Icon.Communication';
 import { Activity } from './Icon.Health';
+import { Fire } from './Icon.Weather';
 
 export const Icon = {
   Activity,
@@ -53,6 +60,7 @@ export const Icon = {
   Clock,
   DropdownIcon,
   DotsNine,
+  Fire,
   GearSix,
   GridFour,
   ImageSquare,
@@ -78,7 +86,8 @@ export const Icon = {
   Tag,
   Telegram,
   Twitter,
-  Users,
+  UsersLeft,
+  UsersRight,
   UserPlus,
   UserRectangle,
   Youtube,

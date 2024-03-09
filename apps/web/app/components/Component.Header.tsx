@@ -11,9 +11,15 @@ interface HeaderProps {
   title: string;
   className?: string;
   tags?: Tag[];
+  children?: React.ReactNode;
 }
 
-export default function Header({ title, className, tags = [] }: HeaderProps) {
+export default function Header({
+  title,
+  className,
+  tags = [],
+  children,
+}: HeaderProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +44,7 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
     <HeaderUI.Root>
       <HeaderUI.Logo />
       <HeaderUI.Title title={title} className={className} />
-      <Input.Search className="w-auto sm:w-[354px] lg:w-[854px]">
+      <Input.Search className="w-auto sm:w-[354px] lg:w-[530px]">
         {tags && (
           <Input.SearchTags className="hidden sm:block">
             {tags.map((tag, index) => (
@@ -51,12 +57,16 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
             ))}
           </Input.SearchTags>
         )}
-        <Input.SearchInput className="hidden sm:block" />
+        <Input.SearchInput
+          placeholder="Search tags"
+          className="hidden sm:block"
+        />
         <Input.SearchActions className="hidden sm:flex">
           {tags.length > 0 && <Icon.GridFour />}
           <Icon.MagnifyingGlass />
         </Input.SearchActions>
       </Input.Search>
+      {children}
       <>
         <div
           className="relative cursor-pointer"
@@ -95,7 +105,7 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
               />
               <Menu.Section
                 href="/friends"
-                icon={<Icon.Users />}
+                icon={<Icon.UsersLeft />}
                 text="Friends"
               />
               <Menu.Section

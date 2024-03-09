@@ -148,7 +148,7 @@ export default function Index() {
             />
           </label>
           <div className="pt-[40px]">
-            <Link href="/home">
+            <Link href="/onboarding/confirm">
               <Button.Large
                 onClick={() => handleSubmit()}
                 icon={<Icon.Check />}

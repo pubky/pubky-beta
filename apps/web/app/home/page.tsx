@@ -1,5 +1,4 @@
 import { Content } from '@social/ui-shared';
-import { Home } from './components';
 import {
   ActiveFriends,
   CreatePost,
@@ -10,12 +9,17 @@ import {
   Sidebar,
   WhoFollow,
 } from '../components';
+import { DropDown } from './components/DropDown';
 
 export default function Index() {
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Streams" />
-      <Home.Filter />
+      <Header className="hidden md:block" title="Streams">
+        <DropDown.Content />
+        <DropDown.Reach />
+        <DropDown.Sort />
+        <DropDown.Layout />
+      </Header>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="col-span-3 xl:col-span-2">
           <Post />

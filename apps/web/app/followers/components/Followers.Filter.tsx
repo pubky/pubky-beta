@@ -32,7 +32,7 @@ export default function Filter() {
         <Input.Select
           size="small"
           text="Followers"
-          icon={<Icon.Users />}
+          icon={<Icon.UsersLeft />}
           active={selectedC}
           onClick={(active: boolean) => {
             setSelectedC(active);

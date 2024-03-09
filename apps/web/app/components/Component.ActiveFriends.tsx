@@ -16,7 +16,7 @@ export default function ActiveFriends() {
           </div>
         </SideCard.User>
         <Content.Divider className="my-2.5" />
-        <SideCard.Action text="See All" icon={<Icon.Users size="16" />} />
+        <SideCard.Action text="See All" icon={<Icon.UsersLeft size="16" />} />
       </SideCard.Content>
     </div>
   );

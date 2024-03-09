@@ -1,53 +1,33 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Icon, DropDown } from '@social/ui-shared';
+import { useState } from 'react';
+import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
+import { DropDown } from '../../../components';
 
-export default function DropDownMode() {
+export default function Layout() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
-    value: 'Sidebar',
+    value: 'sidebar',
     iconLabel: <Icon.SquareHalf />,
   });
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setOpenDropdown(false);
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [dropdownRef]);
-
   return (
-    <DropDown.Root reference={dropdownRef} className="hidden lg:block">
-      <DropDown.Button
-        iconLabel={dropdownValue.iconLabel}
-        label={dropdownValue.value}
-        isOpen={openDropdown}
-        onClick={() => setOpenDropdown(!openDropdown)}
-      />
-      <DropDown.Content
-        title="Mode"
+    <DropDown
+      open={openDropdown}
+      setOpen={setOpenDropdown}
+      value={dropdownValue}
+    >
+      <DropDownUI.Content
+        title="Layout"
         subtitle="Switch to a different view"
         className="right-0"
         isOpen={openDropdown}
       >
-        <DropDown.Item
+        <DropDownUI.Item
           label="Sidebar"
           value="sidebar"
-          selected
+          selected={dropdownValue.value === 'sidebar'}
           icon={<Icon.SquareHalf />}
-          iconLabel
           onClick={() => {
             setDropdownValue({
               value: 'sidebar',
@@ -56,12 +36,11 @@ export default function DropDownMode() {
             setOpenDropdown(false);
           }}
         />
-        <DropDown.Item
+        <DropDownUI.Item
           label="List"
           value="list"
-          selected
+          selected={dropdownValue.value === 'list'}
           icon={<Icon.List />}
-          iconLabel
           onClick={() => {
             setDropdownValue({
               value: 'list',
@@ -70,12 +49,11 @@ export default function DropDownMode() {
             setOpenDropdown(false);
           }}
         />
-        <DropDown.Item
+        <DropDownUI.Item
           label="Grid"
           value="grid"
-          selected
+          selected={dropdownValue.value === 'grid'}
           icon={<Icon.DotsNine />}
-          iconLabel
           onClick={() => {
             setDropdownValue({
               value: 'grid',
@@ -84,12 +62,11 @@ export default function DropDownMode() {
             setOpenDropdown(false);
           }}
         />
-        <DropDown.Item
+        <DropDownUI.Item
           label="Columns"
           value="columns"
-          selected
+          selected={dropdownValue.value === 'columns'}
           icon={<Icon.SquaresFour />}
-          iconLabel
           onClick={() => {
             setDropdownValue({
               value: 'columns',
@@ -98,7 +75,7 @@ export default function DropDownMode() {
             setOpenDropdown(false);
           }}
         />
-      </DropDown.Content>
-    </DropDown.Root>
+      </DropDownUI.Content>
+    </DropDown>
   );
 }
