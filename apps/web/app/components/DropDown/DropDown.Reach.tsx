@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { DropDown } from '../../../components';
+import { DropDown } from '../../components';
 
-export default function Layout() {
+export default function Reach() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
-    value: 'sidebar',
-    iconLabel: <Icon.SquareHalf />,
+    value: 'following',
+    iconLabel: <Icon.UsersRight />,
   });
 
   return (
@@ -18,59 +18,59 @@ export default function Layout() {
       value={dropdownValue}
     >
       <DropDownUI.Content
-        title="Layout"
-        subtitle="Switch to a different view"
+        title="Reach"
+        subtitle="Show posts from"
         className="right-0"
         isOpen={openDropdown}
       >
         <DropDownUI.Item
-          label="Sidebar"
-          value="sidebar"
-          selected={dropdownValue.value === 'sidebar'}
-          icon={<Icon.SquareHalf />}
+          label="Following"
+          value="following"
+          selected={dropdownValue.value === 'following'}
+          icon={<Icon.UsersRight />}
           onClick={() => {
             setDropdownValue({
-              value: 'sidebar',
-              iconLabel: <Icon.SquareHalf />,
+              value: 'following',
+              iconLabel: <Icon.UsersRight />,
             });
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
-          label="List"
-          value="list"
-          selected={dropdownValue.value === 'list'}
-          icon={<Icon.List />}
+          label="Followers"
+          value="followers"
+          selected={dropdownValue.value === 'followers'}
+          icon={<Icon.UsersLeft />}
           onClick={() => {
             setDropdownValue({
-              value: 'list',
-              iconLabel: <Icon.List />,
+              value: 'followers',
+              iconLabel: <Icon.UsersLeft />,
             });
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
-          label="Grid"
-          value="grid"
-          selected={dropdownValue.value === 'grid'}
-          icon={<Icon.DotsNine />}
+          label="Friends"
+          value="friends"
+          selected={dropdownValue.value === 'friends'}
+          icon={<Icon.Smiley />}
           onClick={() => {
             setDropdownValue({
-              value: 'grid',
-              iconLabel: <Icon.DotsNine />,
+              value: 'friends',
+              iconLabel: <Icon.Smiley />,
             });
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
-          label="Columns"
-          value="columns"
-          selected={dropdownValue.value === 'columns'}
-          icon={<Icon.SquaresFour />}
+          label="All"
+          value="all"
+          selected={dropdownValue.value === 'all'}
+          icon={<Icon.Broadcast />}
           onClick={() => {
             setDropdownValue({
-              value: 'columns',
-              iconLabel: <Icon.SquaresFour />,
+              value: 'all',
+              iconLabel: <Icon.Broadcast />,
             });
             setOpenDropdown(false);
           }}

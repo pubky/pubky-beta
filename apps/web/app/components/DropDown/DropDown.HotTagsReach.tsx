@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { DropDown } from '../../../components';
+import { DropDown } from '../../components';
 
-export default function Reach() {
+export default function HotTagsReach() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: 'following',
@@ -19,7 +19,7 @@ export default function Reach() {
     >
       <DropDownUI.Content
         title="Reach"
-        subtitle="Show posts from"
+        subtitle="Show hot tags from"
         className="right-0"
         isOpen={openDropdown}
       >

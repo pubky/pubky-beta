@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { DropDown } from '../../../components';
+import { DropDown } from '../../components';
 
-export default function Sort() {
+export default function SortPosts() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: 'recent',

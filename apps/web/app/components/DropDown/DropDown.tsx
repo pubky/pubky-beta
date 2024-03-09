@@ -13,6 +13,7 @@ interface DropDownProps extends React.HTMLAttributes<HTMLDivElement> {
   };
   children: React.ReactNode;
   label?: string;
+  size?: string;
 }
 
 export default function DropDown({
@@ -21,6 +22,7 @@ export default function DropDown({
   value,
   children,
   label,
+  size = 'default',
   ...rest
 }: DropDownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -48,6 +50,7 @@ export default function DropDown({
         label={value.label}
         isOpen={open}
         onClick={() => setOpen(!open)}
+        size={size || 'default'}
       />
       {children}
     </DropDownUI.Root>

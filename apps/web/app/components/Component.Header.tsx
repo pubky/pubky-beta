@@ -44,7 +44,7 @@ export default function Header({
     <HeaderUI.Root>
       <HeaderUI.Logo />
       <HeaderUI.Title title={title} className={className} />
-      <Input.Search className="w-auto sm:w-[354px] lg:w-[530px]">
+      <Input.Search>
         {tags && (
           <Input.SearchTags className="hidden sm:block">
             {tags.map((tag, index) => (
@@ -104,9 +104,9 @@ export default function Header({
                 text="Hot Tags"
               />
               <Menu.Section
-                href="/friends"
+                href="/contacts"
                 icon={<Icon.UsersLeft />}
-                text="Friends"
+                text="Contacts"
               />
               <Menu.Section
                 href="settings"

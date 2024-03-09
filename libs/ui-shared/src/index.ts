@@ -11,7 +11,6 @@ import { Content } from './lib/Content';
 import { Card } from './lib/Card';
 import { List } from './lib/List';
 import { Menu } from './lib/Menu';
-import { Filter } from './lib/Filter';
 import { DropDown } from './lib/DropDown';
 import { Post } from './lib/Post';
 import { SideCard } from './lib/SideCard';
@@ -28,7 +27,6 @@ export {
   Card,
   List,
   Menu,
-  Filter,
   DropDown,
   Post,
   SideCard,

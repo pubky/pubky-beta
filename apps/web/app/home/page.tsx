@@ -9,16 +9,18 @@ import {
   Sidebar,
   WhoFollow,
 } from '../components';
-import { DropDown } from './components/DropDown';
+import { DropDown } from '../components/DropDown';
 
 export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Streams">
-        <DropDown.Content />
-        <DropDown.Reach />
-        <DropDown.Sort />
-        <DropDown.Layout />
+        <div className="hidden lg:flex gap-6 items-center">
+          <DropDown.Content />
+          <DropDown.Reach />
+          <DropDown.SortPosts />
+          <DropDown.Layout />
+        </div>
       </Header>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="col-span-3 xl:col-span-2">

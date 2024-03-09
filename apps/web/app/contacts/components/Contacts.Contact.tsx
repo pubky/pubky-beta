@@ -1,12 +1,12 @@
 'use client';
 
+import { useState } from 'react';
+import Link from 'next/link';
 import { Content, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import { Post } from '../../components';
-import { useState } from 'react';
-import Link from 'next/link';
 
-export default function Friend() {
+export default function Contact() {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <>

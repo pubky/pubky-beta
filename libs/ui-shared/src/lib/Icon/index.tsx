@@ -17,7 +17,14 @@ import {
   Podcast,
   SlidersHorizontal,
 } from './Icon.Media';
-import { NoteBlank, Clipboard, BookmarkSimple, List } from './Icon.Office';
+import {
+  NoteBlank,
+  Clipboard,
+  BookmarkSimple,
+  List,
+  ListBullets,
+  ListNumbers,
+} from './Icon.Office';
 import {
   DotsNine,
   LinkSimple,
@@ -28,7 +35,7 @@ import {
   GearSix,
 } from './Icon.System';
 import { Twitter, Youtube, Telegram } from './Icon.Social';
-import { Clock } from './Icon.Time';
+import { Clock, Calendar } from './Icon.Time';
 import {
   UserPlus,
   UserRectangle,
@@ -44,6 +51,7 @@ import {
 } from './Icon.Communication';
 import { Activity } from './Icon.Health';
 import { Fire } from './Icon.Weather';
+import { Key } from './Icon.Security';
 
 export const Icon = {
   Activity,
@@ -53,6 +61,7 @@ export const Icon = {
   Bell,
   BookmarkSimple,
   Broadcast,
+  Calendar,
   ChatCircleText,
   Check,
   CheckCircle,
@@ -64,8 +73,11 @@ export const Icon = {
   GearSix,
   GridFour,
   ImageSquare,
+  Key,
   LinkSimple,
   List,
+  ListBullets,
+  ListNumbers,
   MagnifyingGlass,
   Minus,
   MusicNotesSimple,

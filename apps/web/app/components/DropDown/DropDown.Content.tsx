@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { DropDown } from '../../../components';
+import { DropDown } from '../../components';
 
 export default function Content() {
   const [openDropdown, setOpenDropdown] = useState(false);

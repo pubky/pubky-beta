@@ -7,9 +7,9 @@ export default function Index() {
     <Content.Main>
       <Header
         className="hidden w-[400px] xl:w-[260px] md:block"
-        title="John's Followers"
+        title="John's&#160;Followers"
       />
-      <Followers.Filter />
+      <Followers.Me />
       <Content.Grid>
         <Followers.Root>
           <Followers.Follower />

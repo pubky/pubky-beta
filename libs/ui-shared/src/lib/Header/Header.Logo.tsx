@@ -16,14 +16,12 @@ export const Logo = ({
   className = '',
 }: HeaderLogoProps) => {
   return (
-    <a href={link}>
-      <Image
-        src={logo}
-        alt="Pubky"
-        width={width}
-        height={height}
-        className={className}
-      />
-    </a>
+    <Image
+      src={logo}
+      alt="Pubky"
+      width={width}
+      height={height}
+      className={className}
+    />
   );
 };
