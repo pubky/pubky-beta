@@ -11,10 +11,10 @@ import {
   WhoFollow,
 } from '../components';
 
+import Client from '@pubky/client';
+
 const DEFAULT_HOME_SERVER = 'http://localhost:7259';
 const DEFAULT_RELAY = 'https://relay.pkarr.org';
-
-import Client from '@pubky/client';
 
 export default function Index() {
   const pubkyClient = new Client(DEFAULT_HOME_SERVER, {
@@ -23,6 +23,9 @@ export default function Index() {
   });
   pubkyClient.ready().then(() => {
     console.log('Pubky client is ready');
+  });
+  pubkyClient.signup(Client.crypto.generateSeed()).then((result: unknown) => {
+    console.log(result);
   });
   return (
     <Content.Main>
