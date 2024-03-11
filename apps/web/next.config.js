@@ -12,6 +12,18 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  webpack: (
+    config,
+    { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
+  ) => {
+    config.externals = {
+      'sodium-universal': 'sodium-universal',
+      'blake3-wasm': 'blake3-wasm',
+      'hash-wasm': 'hash-wasm',
+    };
+    // Important: return the modified config
+    return config;
+  },
   async redirects() {
     return [
       {

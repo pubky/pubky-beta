@@ -52,5 +52,9 @@
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "typescript": "~5.2.2"
+  },
+  "overrides": {
+    "blake3-wasm@2.1.7": "^3.0.0",
+    "@c4312/blake3-internal": "^3.0.0"
   }
 }
