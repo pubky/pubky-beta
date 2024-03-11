@@ -5,6 +5,7 @@ import Header from './Component.Header';
 import HotTags from './Component.HotTags';
 import Post from './Component.Post';
 import PostsLayout from './Component.PostsLayout';
+import SearchInputCard from './Component.SearchInputCard';
 import Sidebar from './Component.SideBar';
 import WhoFollow from './Component.WhoFollow';
 
@@ -16,6 +17,7 @@ export {
   HotTags,
   Post,
   PostsLayout,
+  SearchInputCard,
   Sidebar,
   WhoFollow,
 };

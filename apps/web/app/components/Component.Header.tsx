@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
+import SearchInputCard from './Component.SearchInputCard';
 
 type Tag = {
   value: string;
@@ -21,7 +22,9 @@ export default function Header({
   children,
 }: HeaderProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchInputCard, setSearchInputCard] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const refSearchInputCard = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
@@ -31,14 +34,19 @@ export default function Header({
       ) {
         setDrawerOpen(false);
       }
+      if (
+        refSearchInputCard.current &&
+        !refSearchInputCard.current.contains(event.target as Node)
+      ) {
+        setSearchInputCard(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutsideDrawer);
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideDrawer);
     };
-  }, [drawerRef]);
+  }, [drawerRef, refSearchInputCard]);
 
   return (
     <HeaderUI.Root>
@@ -60,6 +68,11 @@ export default function Header({
         <Input.SearchInput
           placeholder="Search tags"
           className="hidden sm:block"
+          onClick={() => setSearchInputCard(true)}
+        />
+        <SearchInputCard
+          className={searchInputCard ? 'hidden xl:block' : 'hidden'}
+          refCard={refSearchInputCard}
         />
         <Input.SearchActions className="hidden sm:flex">
           {tags.length > 0 && <Icon.GridFour />}

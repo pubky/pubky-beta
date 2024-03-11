@@ -8,6 +8,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   borderRadius?: string;
   children?: React.ReactNode;
   className?: string;
+  refCard?: React.RefObject<HTMLDivElement>;
 }
 
 export const Primary = ({
@@ -16,12 +17,14 @@ export const Primary = ({
   background = 'bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90',
   borderRadius = 'rounded-2xl',
   children,
+  refCard,
   ...rest
 }: CardProps) => {
   const baseCSS = `w-full z-10 p-8 shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
 
   return (
     <div
+      ref={refCard}
       {...rest}
       className={twMerge(baseCSS, background, borderRadius, rest.className)}
     >
