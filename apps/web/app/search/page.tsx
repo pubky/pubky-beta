@@ -18,7 +18,7 @@ export default function Index() {
         </div>
       </Header>
       <Content.Grid>
-        <PostsLayout className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <PostsLayout className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Post />
           <Post />
         </PostsLayout>

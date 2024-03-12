@@ -54,7 +54,7 @@ export default function Index() {
           <DropDown.Layout />
         </div>
       </Header>
-      <Content.Grid className={`grid ${layouts[layout].grid} gap-4`}>
+      <Content.Grid className={`grid ${layouts[layout].grid} gap-6`}>
         {/* Layout dei post */}
         <PostsLayout className={layouts[layout].posts}>
           <Post size={layout === 'list' ? 'full' : 'normal'} />

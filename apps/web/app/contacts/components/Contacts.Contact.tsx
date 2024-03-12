@@ -53,7 +53,7 @@ export default function Contact() {
             </Typography.Label>
           </div>
         </Link>
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <Post />
           <Post />
         </div>

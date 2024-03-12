@@ -14,15 +14,15 @@ export default function Index() {
         </div>
       </Header>
       <Content.Grid>
-        <PostsLayout className="inline-flex flex-col gap-4">
+        <PostsLayout className="inline-flex flex-col gap-6">
           <Post repost bookmark />
           <Post bookmark />
           <Post bookmark />
           <Post bookmark />
           <Post bookmark />
           <Post bookmark />
+          <Post repost bookmark />
         </PostsLayout>
-        <Post repost bookmark />
       </Content.Grid>
       <CreatePost />
     </Content.Main>

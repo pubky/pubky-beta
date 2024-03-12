@@ -45,7 +45,7 @@ export default function CreatePost() {
         className="max-w-[1200px]"
       >
         <Modal.CloseAction onClick={() => setShowModalPost(false)} />
-        <Modal.Header title="New Post">
+        <Modal.Header title="New Post" className="mt-2">
           <Button.Action
             variant="posts"
             active
