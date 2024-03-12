@@ -34,7 +34,7 @@ import {
   Bell,
   GearSix,
 } from './Icon.System';
-import { Twitter, Youtube, Telegram } from './Icon.Social';
+import { Android, Iphone, Twitter, Youtube, Telegram } from './Icon.Social';
 import { Clock, Calendar } from './Icon.Time';
 import {
   UserPlus,
@@ -54,6 +54,7 @@ import { Fire } from './Icon.Weather';
 import { Key } from './Icon.Security';
 
 export const Icon = {
+  Android,
   Activity,
   ArrowUp,
   ArrowUpRight,
@@ -72,6 +73,7 @@ export const Icon = {
   Fire,
   GearSix,
   GridFour,
+  Iphone,
   ImageSquare,
   Key,
   LinkSimple,
