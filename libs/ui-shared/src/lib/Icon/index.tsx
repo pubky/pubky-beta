@@ -34,7 +34,14 @@ import {
   Bell,
   GearSix,
 } from './Icon.System';
-import { Android, Iphone, Twitter, Youtube, Telegram } from './Icon.Social';
+import {
+  Android,
+  Iphone,
+  Pubky,
+  Twitter,
+  Telegram,
+  Youtube,
+} from './Icon.Social';
 import { Clock, Calendar } from './Icon.Time';
 import {
   UserPlus,
@@ -91,6 +98,7 @@ export const Icon = {
   Play,
   Plus,
   Podcast,
+  Pubky,
   Repost,
   SlidersHorizontal,
   Smiley,
