@@ -7,7 +7,7 @@ interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean;
   iconLabel?: React.ReactNode;
   label?: string;
-  size?: 'small' | 'default';
+  size?: 'small' | 'default' | string;
 }
 
 export const Button = ({

@@ -17,7 +17,14 @@ import {
   Podcast,
   SlidersHorizontal,
 } from './Icon.Media';
-import { NoteBlank, Clipboard, BookmarkSimple, List } from './Icon.Office';
+import {
+  NoteBlank,
+  Clipboard,
+  BookmarkSimple,
+  List,
+  ListBullets,
+  ListNumbers,
+} from './Icon.Office';
 import {
   DotsNine,
   LinkSimple,
@@ -27,9 +34,22 @@ import {
   Bell,
   GearSix,
 } from './Icon.System';
-import { Twitter, Youtube, Telegram } from './Icon.Social';
-import { Clock } from './Icon.Time';
-import { UserPlus, UserRectangle, Users, Smiley } from './Icon.People';
+import {
+  Android,
+  Iphone,
+  Pubky,
+  Twitter,
+  Telegram,
+  Youtube,
+} from './Icon.Social';
+import { Clock, Calendar } from './Icon.Time';
+import {
+  UserPlus,
+  UserRectangle,
+  UsersLeft,
+  UsersRight,
+  Smiley,
+} from './Icon.People';
 import {
   Asterisk,
   PaperPlaneRight,
@@ -37,8 +57,11 @@ import {
   Broadcast,
 } from './Icon.Communication';
 import { Activity } from './Icon.Health';
+import { Fire } from './Icon.Weather';
+import { Key } from './Icon.Security';
 
 export const Icon = {
+  Android,
   Activity,
   ArrowUp,
   ArrowUpRight,
@@ -46,6 +69,7 @@ export const Icon = {
   Bell,
   BookmarkSimple,
   Broadcast,
+  Calendar,
   ChatCircleText,
   Check,
   CheckCircle,
@@ -53,11 +77,16 @@ export const Icon = {
   Clock,
   DropdownIcon,
   DotsNine,
+  Fire,
   GearSix,
   GridFour,
+  Iphone,
   ImageSquare,
+  Key,
   LinkSimple,
   List,
+  ListBullets,
+  ListNumbers,
   MagnifyingGlass,
   Minus,
   MusicNotesSimple,
@@ -69,6 +98,7 @@ export const Icon = {
   Play,
   Plus,
   Podcast,
+  Pubky,
   Repost,
   SlidersHorizontal,
   Smiley,
@@ -78,7 +108,8 @@ export const Icon = {
   Tag,
   Telegram,
   Twitter,
-  Users,
+  UsersLeft,
+  UsersRight,
   UserPlus,
   UserRectangle,
   Youtube,

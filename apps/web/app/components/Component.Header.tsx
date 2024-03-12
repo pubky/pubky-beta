@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
+import SearchInputCard from './Component.SearchInputCard';
 
 type Tag = {
   value: string;
@@ -11,11 +12,19 @@ interface HeaderProps {
   title: string;
   className?: string;
   tags?: Tag[];
+  children?: React.ReactNode;
 }
 
-export default function Header({ title, className, tags = [] }: HeaderProps) {
+export default function Header({
+  title,
+  className,
+  tags = [],
+  children,
+}: HeaderProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchInputCard, setSearchInputCard] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const refSearchInputCard = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
@@ -25,20 +34,25 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
       ) {
         setDrawerOpen(false);
       }
+      if (
+        refSearchInputCard.current &&
+        !refSearchInputCard.current.contains(event.target as Node)
+      ) {
+        setSearchInputCard(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutsideDrawer);
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideDrawer);
     };
-  }, [drawerRef]);
+  }, [drawerRef, refSearchInputCard]);
 
   return (
     <HeaderUI.Root>
       <HeaderUI.Logo />
       <HeaderUI.Title title={title} className={className} />
-      <Input.Search className="w-auto sm:w-[354px] lg:w-[854px]">
+      <Input.Search>
         {tags && (
           <Input.SearchTags className="hidden sm:block">
             {tags.map((tag, index) => (
@@ -51,12 +65,21 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
             ))}
           </Input.SearchTags>
         )}
-        <Input.SearchInput className="hidden sm:block" />
+        <Input.SearchInput
+          placeholder="Search tags"
+          className="hidden sm:block"
+          onClick={() => setSearchInputCard(true)}
+        />
+        <SearchInputCard
+          className={searchInputCard ? 'hidden xl:block' : 'hidden'}
+          refCard={refSearchInputCard}
+        />
         <Input.SearchActions className="hidden sm:flex">
           {tags.length > 0 && <Icon.GridFour />}
           <Icon.MagnifyingGlass />
         </Input.SearchActions>
       </Input.Search>
+      {children}
       <>
         <div
           className="relative cursor-pointer"
@@ -94,9 +117,9 @@ export default function Header({ title, className, tags = [] }: HeaderProps) {
                 text="Hot Tags"
               />
               <Menu.Section
-                href="/friends"
-                icon={<Icon.Users />}
-                text="Friends"
+                href="/contacts"
+                icon={<Icon.UsersLeft />}
+                text="Contacts"
               />
               <Menu.Section
                 href="settings"

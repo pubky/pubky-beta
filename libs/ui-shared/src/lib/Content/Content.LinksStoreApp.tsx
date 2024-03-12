@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 import { Card } from '../Card';
+import { Icon } from '../Icon';
 
 interface LinksStoreAppProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -9,8 +10,6 @@ interface LinksStoreAppProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
   const bitkit = '/images/bitkit.png';
-  const android = '/images/android.png';
-  const iphone = '/images/iphone.png';
   const baseCSS = 'flex-col justify-start items-start gap-6 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
@@ -20,13 +19,9 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
       >
         <Card.Primary className="p-6 flex-row xl:p-8">
           <Image width={70} height={25} src={bitkit} alt="bitkit" />
-          <Image
-            className="w-auto h-auto scale-50 md:scale-75 lg:scale-50 xl:scale-100"
-            width={116}
-            height={24}
-            src={iphone}
-            alt="iphone"
-          />
+          <div className="flex flex-row justify-center w-[116px] sm:w-[65px] md:w-[96px] lg:w-[65px] xl:w-[116px] ">
+            <Icon.Iphone />
+          </div>
         </Card.Primary>
       </Link>
       <Link
@@ -35,13 +30,9 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
       >
         <Card.Primary className="p-6 flex-row xl:p-8">
           <Image width={70} height={25} src={bitkit} alt="bitkit" />
-          <Image
-            className="w-auto h-auto scale-50 md:scale-75 lg:scale-50 xl:scale-100 -ml-[41px]"
-            width={157}
-            height={24}
-            src={android}
-            alt="android"
-          />
+          <div className="flex flex-row justify-center w-[156px] sm:w-[80px] md:w-[126px] lg:w-[80px] xl:w-[156px] ">
+            <Icon.Android />
+          </div>
         </Card.Primary>
       </Link>
     </div>

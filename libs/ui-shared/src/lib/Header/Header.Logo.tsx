@@ -1,29 +1,14 @@
-import Image from 'next/image';
+import Link from 'next/link';
+import { Icon } from '../Icon';
 
-interface HeaderLogoProps {
-  logo?: string;
+interface HeaderLogoProps extends React.HTMLAttributes<HTMLAnchorElement> {
   link?: string;
-  width?: number;
-  height?: number;
-  className?: string;
 }
 
-export const Logo = ({
-  logo = '/images/pubky.png',
-  link = '/',
-  width = 167,
-  height = 48,
-  className = '',
-}: HeaderLogoProps) => {
+export const Logo = ({ link = '/home', ...rest }: HeaderLogoProps) => {
   return (
-    <a href={link}>
-      <Image
-        src={logo}
-        alt="Pubky"
-        width={width}
-        height={height}
-        className={className}
-      />
-    </a>
+    <Link {...rest} href={link}>
+      <Icon.Pubky />
+    </Link>
   );
 };

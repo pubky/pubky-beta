@@ -1,6 +1,7 @@
 import { Content } from '@social/ui-shared';
 import { CreatePost, Header } from '../components';
 import { HotTags } from './components';
+import { DropDown } from '../components/DropDown';
 
 export default function Index() {
   const images = [
@@ -27,8 +28,12 @@ export default function Index() {
   ];
   return (
     <Content.Main>
-      <Header className="w-52 xl:w-36 hidden md:block" title="Hot Tags" />
-      <HotTags.Filter />
+      <Header className="w-52 xl:w-36 hidden md:block" title="Hot&#160;Tags">
+        <div className="hidden lg:flex gap-6 items-center">
+          <DropDown.HotTagsReach />
+          <DropDown.TagsTimeframe />
+        </div>
+      </Header>
       <Content.Grid className="flex-col flex gap-3">
         <HotTags.Rank
           rank={1}
