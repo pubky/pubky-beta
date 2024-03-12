@@ -15,7 +15,7 @@ export default function Index() {
           title="Sign in with Slashtag"
           text="Have Bitkit or a Slashtags powered wallet? Scan this QR to sign in."
         >
-          <Link href="/onboarding/step2">
+          <Link href="/onboarding/permissions">
             <Image
               width={320}
               height={320}

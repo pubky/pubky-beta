@@ -31,7 +31,7 @@ export default function Index() {
             ]}
           />
           <div className="mt-12">
-            <Link href="/onboarding/step3">
+            <Link href="/onboarding/welcome">
               <Button.Large icon={<Icon.Check />}>
                 Accept & Sign in
               </Button.Large>
