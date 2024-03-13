@@ -65,8 +65,8 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          <Post size={layout === 'list' ? 'full' : 'normal'} />
-          <Post size={layout === 'list' ? 'full' : 'normal'} />
+          <Post image size={layout === 'list' ? 'full' : 'normal'} />
+          <Post link size={layout === 'list' ? 'full' : 'normal'} />
           <Post size={layout === 'list' ? 'full' : 'normal'} />
           <Post size={layout === 'list' ? 'full' : 'normal'} />
         </PostsLayout>

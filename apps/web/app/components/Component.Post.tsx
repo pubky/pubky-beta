@@ -6,21 +6,25 @@ import {
   PostUtil,
   Post as PostUI,
   Typography,
+  Content,
 } from '@social/ui-shared';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import RepostModal from './Component.RepostModal';
-import TagModal from './Component.TagModal';
+import { Modal } from './Modal';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
   bookmark?: boolean;
+  image?: boolean;
+  link?: boolean;
   size?: 'full' | 'normal';
 }
 
 export default function Post({
   repost = false,
   bookmark = false,
+  image = false,
+  link = false,
   size = 'normal',
   ...rest
 }: PostProps) {
@@ -103,14 +107,38 @@ export default function Post({
               <div
                 className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
               >
-                <PostUI.Content
-                  text="You either want lots of people using Bitcoin (holding Bitcoin keys)
+                <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
+                  <PostUI.Content
+                    text="You either want lots of people using Bitcoin (holding Bitcoin keys)
             or you dont. Many of you seem to believe things that require both
             positions."
-                  className={
-                    size === 'full' ? 'lg:w-[60%] lg:text-xl' : 'w-full'
-                  }
-                />
+                    className={size === 'full' ? 'lg:text-xl' : 'w-full'}
+                  >
+                    {image && (
+                      <img
+                        alt="postImage"
+                        src="/images/user.png"
+                        className="mt-6 max-w-[642px] max-h-[360px] rounded-2xl"
+                      />
+                    )}
+                    {link && (
+                      <>
+                        <Content.Divider />
+                        <Typography.H2>
+                          Weighing Options of Bitcoin Private Key Management
+                        </Typography.H2>{' '}
+                        <Typography.Caption className="text-white text-opacity-80">
+                          https://bitcoinmagazine.com/
+                        </Typography.Caption>
+                        <img
+                          alt="postImage"
+                          src="/images/user.png"
+                          className="mt-6 max-w-[642px] max-h-[360px] rounded-2xl"
+                        />
+                      </>
+                    )}
+                  </PostUI.Content>
+                </div>
                 <PostUI.Footer
                   className={size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'}
                 >
@@ -177,11 +205,14 @@ export default function Post({
           </div>
         </PostUI.Root>
       </div>
-      <RepostModal
+      <Modal.Repost
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
       />
-      <TagModal showModalTag={showModalTag} setShowModalTag={setShowModalTag} />
+      <Modal.Tag
+        showModalTag={showModalTag}
+        setShowModalTag={setShowModalTag}
+      />
     </div>
   );
 }
