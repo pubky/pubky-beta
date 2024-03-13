@@ -50,17 +50,17 @@ export default function CreatePost() {
             variant="posts"
             active
             onClick={() => console.log('button clicked 1')}
-            className="hidden lg:block"
+            className="hidden lg:flex"
           />
           <Button.Action
             variant="image"
             onClick={() => console.log('button clicked 2')}
-            className="hidden lg:block"
+            className="hidden lg:flex"
           />
           <Button.Action
             variant="link"
             onClick={() => console.log('button clicked 3')}
-            className="hidden lg:block"
+            className="hidden lg:flex"
           />
         </Modal.Header>
         <Modal.Content className="inline-flex flex-col gap-2 lg:grid lg:grid-cols-3 lg:gap-6">

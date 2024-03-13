@@ -90,7 +90,9 @@ export default function Post({
                   </PostUI.Username>
                   <Typography.Label
                     className={
-                      size === 'full' ? 'sm:block text-opacity-30' : 'hidden'
+                      size === 'full'
+                        ? 'hidden sm:block text-opacity-30'
+                        : 'hidden'
                     }
                   >
                     @1qx8...gkw3
@@ -109,7 +111,9 @@ export default function Post({
                     size === 'full' ? 'lg:w-[60%] lg:text-xl' : 'w-full'
                   }
                 />
-                <PostUI.Footer className={size === 'full' ? 'lg:mt-0' : 'mt-6'}>
+                <PostUI.Footer
+                  className={size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'}
+                >
                   <PostUtil.Tag clicked color="amber">
                     #Bitcoin
                   </PostUtil.Tag>
