@@ -1,3 +1,5 @@
+'use client';
+
 import { Content } from '@social/ui-shared';
 import { Home } from './components';
 import {
