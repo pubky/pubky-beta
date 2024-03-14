@@ -11,7 +11,7 @@ export default function CreatePost() {
   const modalLinkRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutsideModalPost = (event: MouseEvent) => {
+    const handleClickOutsideModals = (event: MouseEvent) => {
       if (
         modalLinkRef.current &&
         !modalLinkRef.current.contains(event.target as Node)
@@ -24,21 +24,11 @@ export default function CreatePost() {
         setShowModalPost(false);
       }
     };
-    const handleClickOutsideModalLink = (event: MouseEvent) => {
-      if (
-        modalLinkRef.current &&
-        !modalLinkRef.current.contains(event.target as Node)
-      ) {
-        setShowModalLink(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutsideModalPost);
-    document.addEventListener('mousedown', handleClickOutsideModalLink);
+    document.addEventListener('mousedown', handleClickOutsideModals);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModalPost);
-      document.removeEventListener('mousedown', handleClickOutsideModalLink);
+      document.removeEventListener('mousedown', handleClickOutsideModals);
     };
   }, [modalPostRef, modalLinkRef]);
 
