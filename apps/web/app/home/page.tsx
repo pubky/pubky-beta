@@ -18,32 +18,39 @@ type Layout = 'sidebar' | 'grid' | 'columns' | 'list';
 
 type Layouts = {
   [key in 'sidebar' | 'grid' | 'columns' | 'list']: {
-    grid: string;
+    layout: string;
     posts: string;
   };
 };
 
 const layouts: Layouts = {
   sidebar: {
-    grid: 'grid-cols-3',
-    posts: 'col-span-3 xl:col-span-2',
+    layout: 'grid-cols-3',
+    posts: 'col-span-3 xl:col-span-2 flex-col inline-flex gap-6',
   },
   grid: {
-    grid: 'grid-cols-3',
+    layout: 'lg:grid-cols-2 xl:grid-cols-3',
     posts: '',
   },
   columns: {
-    grid: 'grid-cols-2',
+    layout: 'md:grid-cols-2',
     posts: '',
   },
   list: {
-    grid: 'grid-cols-1',
+    layout: 'grid-cols-1',
     posts: '',
   },
 };
 
 export default function Index() {
   const [layout] = useState<Layout>('sidebar');
+
+  const postsLayoutClassName =
+    layout === 'sidebar'
+      ? layouts[layout].posts
+      : `grid ${layouts[layout].layout} gap-6`;
+  const sidebarClassName = `hidden ${layout === 'sidebar' && 'xl:inline-flex'}`;
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Streams">
@@ -54,15 +61,16 @@ export default function Index() {
           <DropDown.Layout />
         </div>
       </Header>
-      <Content.Grid className={`grid ${layouts[layout].grid} gap-6`}>
-        {/* Layout dei post */}
-        <PostsLayout className={layouts[layout].posts}>
+      <Content.Grid
+        className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
+      >
+        <PostsLayout className={postsLayoutClassName}>
+          <Post size={layout === 'list' ? 'full' : 'normal'} />
+          <Post size={layout === 'list' ? 'full' : 'normal'} />
+          <Post size={layout === 'list' ? 'full' : 'normal'} />
           <Post size={layout === 'list' ? 'full' : 'normal'} />
         </PostsLayout>
-        {/* Sidebar */}
-        <Sidebar
-          className={`hidden ${layout === 'sidebar' && 'xl:inline-flex'}`}
-        >
+        <Sidebar className={sidebarClassName}>
           <WhoFollow />
           <HotTags />
           <ActiveFriends />

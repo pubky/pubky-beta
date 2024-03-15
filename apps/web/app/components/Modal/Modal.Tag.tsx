@@ -10,15 +10,12 @@ import {
   Typography,
 } from '@social/ui-shared';
 
-interface TagModalProps extends React.HTMLAttributes<HTMLDivElement> {
+interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function TagModal({
-  showModalTag,
-  setShowModalTag,
-}: TagModalProps) {
+export default function Tag({ showModalTag, setShowModalTag }: TagProps) {
   const modalTagRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -75,7 +72,7 @@ export default function TagModal({
               <Button.Action
                 size="small"
                 variant="custom"
-                icon={<Icon.Plus />}
+                icon={<Icon.Smiley />}
               />
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
-import SearchInputCard from './Component.SearchInputCard';
+import { Modal } from './Modal';
 
 type Tag = {
   value: string;
@@ -70,7 +70,7 @@ export default function Header({
           className="hidden sm:block"
           onClick={() => setSearchInputCard(true)}
         />
-        <SearchInputCard
+        <Modal.SearchInputCard
           className={searchInputCard ? 'hidden xl:block' : 'hidden'}
           refCard={refSearchInputCard}
         />

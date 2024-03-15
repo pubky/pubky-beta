@@ -13,17 +13,17 @@ import {
   Post,
 } from '@social/ui-shared';
 
-interface RepostModalProps extends React.HTMLAttributes<HTMLDivElement> {
+interface RepostProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   bookmark?: boolean;
 }
 
-export default function RepostModal({
+export default function Repost({
   showModalRepost,
   setShowModalRepost,
   bookmark = false,
-}: RepostModalProps) {
+}: RepostProps) {
   const modalRePostRef = useRef<HTMLDivElement>(null);
 
   const images = [
