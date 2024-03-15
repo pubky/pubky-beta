@@ -68,12 +68,17 @@ export default function Index() {
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">
           <Input.Label className="mt-4" value="Short bio" />
-          <Input.TextArea
-            placeholder="Short bio. Tell a bit about yourself."
-            className="h-[422px]"
-            defaultValue={profile.info}
-            onChange={(e) => setProfile({ ...profile, info: e.target.value })}
-          />
+          <Card.Primary
+            background="bg-white bg-opacity-10"
+            className="border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg"
+          >
+            <Input.TextArea
+              placeholder="Short bio. Tell a bit about yourself."
+              className="h-[422px]"
+              defaultValue={profile.info}
+              onChange={(e) => setProfile({ ...profile, info: e.target.value })}
+            />
+          </Card.Primary>
         </Card.Primary>
         <Card.Primary title="Links">
           <Input.Label className="mt-4" value="Website" />

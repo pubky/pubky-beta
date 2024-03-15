@@ -1,5 +1,6 @@
 import {
   Button,
+  Card,
   Icon,
   Input,
   Modal,
@@ -31,10 +32,15 @@ export default function CreatePost({
         <div className="mt-6 col-span-2">
           <div>
             <div>
-              <Input.TextArea
-                className="h-[285px] p-12"
-                placeholder="Write content, drop an image, or paste a link"
-              />
+              <Card.Primary
+                background="bg-white bg-opacity-10"
+                className="border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg"
+              >
+                <Input.TextArea
+                  className="h-[285px] p-4"
+                  placeholder="Write content, drop an image, or paste a link"
+                />
+              </Card.Primary>
             </div>
             <div className="gap-3 flex mt-9">
               <Button.Action
