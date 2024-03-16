@@ -13,7 +13,9 @@ import {
 } from '@social/ui-shared';
 import { Onboarding } from '../components';
 
-type Profile = {
+import { signup } from '../../api/actions/signup';
+
+export type Profile = {
   name: string;
   info: string;
   pic: string;
@@ -60,7 +62,9 @@ export default function Index() {
         className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
         defaultValue={profile.name}
         autoFocus
-        onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+        onChange={(e) =>
+          setProfile({ ...profile, name: (e.target as HTMLInputElement).value })
+        }
       />
       <Typography.PageTitle className="text-opacity-50">
         @1pm3...5jkm
@@ -72,7 +76,12 @@ export default function Index() {
             placeholder="Short bio. Tell a bit about yourself."
             className="h-[422px]"
             defaultValue={profile.info}
-            onChange={(e) => setProfile({ ...profile, info: e.target.value })}
+            onChange={(e) =>
+              setProfile({
+                ...profile,
+                info: (e.target as HTMLTextAreaElement).value,
+              })
+            }
           />
         </Card.Primary>
         <Card.Primary title="Links">
@@ -84,7 +93,10 @@ export default function Index() {
             onChange={(e) =>
               setProfile({
                 ...profile,
-                links: { ...profile.links, website: e.target.value },
+                links: {
+                  ...profile.links,
+                  website: (e.target as HTMLInputElement).value,
+                },
               })
             }
           />
@@ -97,7 +109,10 @@ export default function Index() {
             onChange={(e) =>
               setProfile({
                 ...profile,
-                links: { ...profile.links, email: e.target.value },
+                links: {
+                  ...profile.links,
+                  email: (e.target as HTMLInputElement).value,
+                },
               })
             }
           />
@@ -110,7 +125,10 @@ export default function Index() {
             onChange={(e) =>
               setProfile({
                 ...profile,
-                links: { ...profile.links, x: e.target.value },
+                links: {
+                  ...profile.links,
+                  x: (e.target as HTMLInputElement).value,
+                },
               })
             }
           />
@@ -123,7 +141,10 @@ export default function Index() {
             onChange={(e) =>
               setProfile({
                 ...profile,
-                links: { ...profile.links, telegram: e.target.value },
+                links: {
+                  ...profile.links,
+                  telegram: (e.target as HTMLInputElement).value,
+                },
               })
             }
           />
@@ -150,7 +171,11 @@ export default function Index() {
           <div className="pt-[40px]">
             <Link href="/home">
               <Button.Large
-                onClick={() => handleSubmit()}
+                onClick={async () => {
+                  const { pk, profile: savedProfile } = await signup(profile);
+                  console.log({ pk, savedProfile });
+                  handleSubmit();
+                }}
                 icon={<Icon.Check />}
               >
                 Finish

@@ -13,22 +13,7 @@ import {
   WhoFollow,
 } from '../components';
 
-import Client from '@pubky/client';
-
-const DEFAULT_HOME_SERVER = 'http://localhost:7259';
-const DEFAULT_RELAY = 'https://relay.pkarr.org';
-
-export default function Index() {
-  const pubkyClient = new Client(DEFAULT_HOME_SERVER, {
-    relay: DEFAULT_RELAY,
-    homeserverUrl: DEFAULT_HOME_SERVER,
-  });
-  pubkyClient.ready().then(() => {
-    console.log('Pubky client is ready');
-  });
-  pubkyClient.signup(Client.crypto.generateSeed()).then((result: unknown) => {
-    console.log(result);
-  });
+export default async function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Streams" />
