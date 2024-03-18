@@ -53,23 +53,27 @@ export const Action = ({
       iconSize: '12px',
       sizeClasses: counter ? 'w-11 h-8 p-2' : 'w-8 h-8 p-2',
       labelClasses: counter ? 'px-3 mt-8' : 'w-8 mt-8',
-      fontSize: 'text-[10px]',
+      labelSize: 'text-[10px]',
+      counterSize: 'text-[13px]',
     },
     medium: {
       iconSize: '20px',
       sizeClasses: counter ? 'w-16 h-12 p-3' : 'w-12 h-12 p-3',
       labelClasses: counter ? 'px-5 mt-12' : 'w-12 mt-12',
-      fontSize: 'text-[13px]',
+      labelSize: 'text-[13px]',
+      counterSize: 'text-[15px]',
     },
     large: {
       iconSize: '32px',
       sizeClasses: counter ? 'w-24 h-16 p-6' : 'w-16 h-16 p-6',
       labelClasses: counter ? 'px-8 mt-16' : 'w-16 mt-16',
-      fontSize: 'text-[15px]',
+      labelSize: 'text-[15px]',
+      counterSize: 'text-[17px]',
     },
   };
 
-  const { iconSize, sizeClasses, labelClasses, fontSize } = sizes[size];
+  const { iconSize, sizeClasses, labelClasses, labelSize, counterSize } =
+    sizes[size];
 
   const color = disabled ? 'text-gray-500' : 'text-white';
   const colorIcon = disabled ? 'grey' : undefined;
@@ -150,14 +154,14 @@ export const Action = ({
       >
         {iconComponent}
         {counter && (
-          <ActionUI.Counter className={twMerge(fontSize, color)}>
+          <ActionUI.Counter className={twMerge(counterSize, color)}>
             {counter}
           </ActionUI.Counter>
         )}
       </ActionUI.Button>
       {isHovered && label && (
         <ActionUI.LabelRoot className={labelClasses}>
-          <ActionUI.Label className={twMerge(fontSize, color)}>
+          <ActionUI.Label className={twMerge(labelSize, color)}>
             {label}
           </ActionUI.Label>
         </ActionUI.LabelRoot>

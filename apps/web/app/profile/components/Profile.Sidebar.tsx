@@ -82,15 +82,17 @@ export default function Sidebar() {
       <div>
         <SideCard.Header title="Contacts" variantTitle="label" />
         <SideCard.Content>
-          <div className="flex-col gap-3 inline-flex">
-            <div className="inline-flex gap-2">
-              <Typography.Label>1425</Typography.Label>
-              <Typography.Label className="text-opacity-50">
-                Followers
-              </Typography.Label>
+          <Link href="/followers">
+            <div className="flex-col gap-3 inline-flex">
+              <div className="inline-flex gap-2">
+                <Typography.Label>1425</Typography.Label>
+                <Typography.Label className="text-opacity-50">
+                  Followers
+                </Typography.Label>
+              </div>
+              <Post.UserPic images={images} />
             </div>
-            <Post.UserPic images={images} />
-          </div>
+          </Link>
         </SideCard.Content>
       </div>
       <div className="w-full">
