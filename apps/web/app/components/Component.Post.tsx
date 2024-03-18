@@ -75,7 +75,7 @@ export default function Post({
               }
               className={twMerge(rest.className)}
             >
-              <PostUI.Header>
+              <PostUI.Header size={size}>
                 <div className="justify-start items-center gap-4 flex">
                   <PostUI.ImageUser
                     className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
@@ -97,7 +97,18 @@ export default function Post({
                     @1qx8...gkw3
                   </Typography.Label>
                 </div>
-                <PostUI.Time>27m</PostUI.Time>
+                <PostUI.Time size={size}>
+                  {size === 'full' ? (
+                    <div>
+                      <span className="hidden lg:block uppercase">
+                        15 minutes ago
+                      </span>
+                      <span className="block lg:hidden">15m</span>
+                    </div>
+                  ) : (
+                    '15m'
+                  )}
+                </PostUI.Time>
               </PostUI.Header>
               <div
                 className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
