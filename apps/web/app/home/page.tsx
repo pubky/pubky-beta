@@ -14,9 +14,6 @@ import {
 import { DropDown } from '../components/DropDown';
 import { useState } from 'react';
 
-import { Client } from '@pubky/sdk'
-console.log({ Client })
-
 type Layout = 'sidebar' | 'grid' | 'columns' | 'list';
 
 type Layouts = {
