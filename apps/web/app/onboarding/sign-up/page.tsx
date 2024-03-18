@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -11,8 +12,8 @@ import {
   Card,
   Icon,
 } from '@social/ui-shared';
-import * as sdk from '../../sdk.ts'
 import { Onboarding } from '../components';
+import { useClientContext } from '../../contexts/client';
 
 type Profile = {
   name: string;
@@ -27,6 +28,7 @@ type Profile = {
 };
 
 export default function Index() {
+  const { signUp, pubKey } = useClientContext();
   const [profile, setProfile] = useState<Profile>({
     name: '',
     info: '',
@@ -40,9 +42,12 @@ export default function Index() {
   });
 
   useEffect(() => {
-    let id = sdk.crypto.generateKeyPair()
-    console.log({ client: sdk.client, id })
-  })
+    async function fetchData() {
+      await signUp();
+    }
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -66,10 +71,10 @@ export default function Index() {
         className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
         defaultValue={profile.name}
         autoFocus
-        onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+        onChange={(e: any) => setProfile({ ...profile, name: e.target.value })}
       />
-      <Typography.PageTitle className="text-opacity-50">
-        @1pm3...5jkm
+      <Typography.PageTitle className="text-opacity-50 break-words">
+        {pubKey ? `@${pubKey}` : 'Loading...'}
       </Typography.PageTitle>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">
@@ -82,7 +87,9 @@ export default function Index() {
               placeholder="Short bio. Tell a bit about yourself."
               className="h-[422px]"
               defaultValue={profile.info}
-              onChange={(e) => setProfile({ ...profile, info: e.target.value })}
+              onChange={(e: any) =>
+                setProfile({ ...profile, info: e.target.value })
+              }
             />
           </Card.Primary>
         </Card.Primary>
@@ -92,7 +99,7 @@ export default function Index() {
             className="h-[70px]"
             placeholder="https://"
             defaultValue={profile.links.website}
-            onChange={(e) =>
+            onChange={(e: any) =>
               setProfile({
                 ...profile,
                 links: { ...profile.links, website: e.target.value },
@@ -105,7 +112,7 @@ export default function Index() {
             className="h-[70px]"
             placeholder="user@provider.com"
             defaultValue={profile.links.email}
-            onChange={(e) =>
+            onChange={(e: any) =>
               setProfile({
                 ...profile,
                 links: { ...profile.links, email: e.target.value },
@@ -118,7 +125,7 @@ export default function Index() {
             className="h-[70px]"
             placeholder="@user"
             defaultValue={profile.links.x}
-            onChange={(e) =>
+            onChange={(e: any) =>
               setProfile({
                 ...profile,
                 links: { ...profile.links, x: e.target.value },
@@ -131,7 +138,7 @@ export default function Index() {
             className="h-[70px]"
             placeholder="@user"
             defaultValue={profile.links.telegram}
-            onChange={(e) =>
+            onChange={(e: any) =>
               setProfile({
                 ...profile,
                 links: { ...profile.links, telegram: e.target.value },

@@ -1,9 +1,5 @@
+import { ClientWrapper } from './contexts/client';
 import './global.css';
-
-export const metadata = {
-  title: 'Pubky',
-  description: 'Pubky social',
-};
 
 export default function RootLayout({
   children,
@@ -12,7 +8,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ClientWrapper>{children}</ClientWrapper>
+      </body>
     </html>
   );
 }
