@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -11,6 +11,7 @@ import {
   Card,
   Icon,
 } from '@social/ui-shared';
+import * as sdk from '../../sdk.ts'
 import { Onboarding } from '../components';
 
 type Profile = {
@@ -37,6 +38,11 @@ export default function Index() {
       telegram: '',
     },
   });
+
+  useEffect(() => {
+    let id = sdk.crypto.generateKeyPair()
+    console.log({ client: sdk.client, id })
+  })
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
