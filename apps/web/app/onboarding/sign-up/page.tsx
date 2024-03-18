@@ -15,35 +15,21 @@ import {
 import { Onboarding } from '../components';
 import { useClientContext } from '../../contexts/client';
 
-type Profile = {
-  name: string;
-  info: string;
-  pic: string;
-  links: {
-    website: string;
-    email: string;
-    x: string;
-    telegram: string;
-  };
-};
-
 export default function Index() {
-  const { signUp, pubKey } = useClientContext();
-  const [profile, setProfile] = useState<Profile>({
-    name: '',
-    info: '',
-    pic: '/images/Userpic.png',
-    links: {
-      website: '',
-      email: '',
-      x: '',
-      telegram: '',
-    },
-  });
+  const { signUp, pubKey, getProfile, saveProfile } = useClientContext();
+
+  const [name, setName] = useState('');
+  const [info, setInfo] = useState('');
+  const [pic, setPic] = useState('/images/Userpic.png');
+  const [website, setWebsite] = useState('');
+  const [email, setEmail] = useState('');
+  const [x, setX] = useState('');
+  const [telegram, setTelegram] = useState('');
 
   useEffect(() => {
     async function fetchData() {
       await signUp();
+      await getProfile();
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,14 +40,27 @@ export default function Index() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfile({ ...profile, pic: reader.result as string });
+        setPic(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = () => {
-    console.log(profile);
+  const handleSubmit = async () => {
+    const profileInfo = {
+      name,
+      info,
+      pic,
+      links: {
+        website,
+        email,
+        x,
+        telegram,
+      },
+    };
+
+    const result = await saveProfile(profileInfo);
+    console.log(result);
   };
 
   return (
@@ -69,9 +68,9 @@ export default function Index() {
       <Input.Cursor
         placeholder="Your Name"
         className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
-        defaultValue={profile.name}
+        defaultValue={name}
         autoFocus
-        onChange={(e: any) => setProfile({ ...profile, name: e.target.value })}
+        onChange={(e: any) => setName(e.target.value)}
       />
       <Typography.PageTitle className="text-opacity-50 break-words">
         {pubKey ? `@${pubKey}` : 'Loading...'}
@@ -86,10 +85,8 @@ export default function Index() {
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
               className="h-[422px]"
-              defaultValue={profile.info}
-              onChange={(e: any) =>
-                setProfile({ ...profile, info: e.target.value })
-              }
+              defaultValue={info}
+              onChange={(e: any) => setInfo(e.target.value)}
             />
           </Card.Primary>
         </Card.Primary>
@@ -98,63 +95,43 @@ export default function Index() {
           <Input.Text
             className="h-[70px]"
             placeholder="https://"
-            defaultValue={profile.links.website}
-            onChange={(e: any) =>
-              setProfile({
-                ...profile,
-                links: { ...profile.links, website: e.target.value },
-              })
-            }
+            defaultValue={website}
+            onChange={(e: any) => setWebsite(e.target.value)}
           />
 
           <Input.Label className="mt-4" value="Email" />
           <Input.Text
             className="h-[70px]"
             placeholder="user@provider.com"
-            defaultValue={profile.links.email}
-            onChange={(e: any) =>
-              setProfile({
-                ...profile,
-                links: { ...profile.links, email: e.target.value },
-              })
-            }
+            defaultValue={email}
+            onChange={(e: any) => setEmail(e.target.value)}
           />
 
           <Input.Label className="mt-4" value="x (twitter)" />
           <Input.Text
             className="h-[70px]"
             placeholder="@user"
-            defaultValue={profile.links.x}
-            onChange={(e: any) =>
-              setProfile({
-                ...profile,
-                links: { ...profile.links, x: e.target.value },
-              })
-            }
+            defaultValue={x}
+            onChange={(e: any) => setX(e.target.value)}
           />
 
           <Input.Label className="mt-4" value="telegram" />
           <Input.Text
             className="h-[70px]"
             placeholder="@user"
-            defaultValue={profile.links.telegram}
-            onChange={(e: any) =>
-              setProfile({
-                ...profile,
-                links: { ...profile.links, telegram: e.target.value },
-              })
-            }
+            defaultValue={telegram}
+            onChange={(e: any) => setTelegram(e.target.value.replace('@', ''))}
           />
         </Card.Primary>
         <Card.Primary title="Picture">
           <label htmlFor="fileInput">
-            {profile.pic && (
+            {pic && (
               <Image
                 width={320}
                 height={320}
                 className="w-80 h-auto mt-6 rounded-full cursor-pointer"
                 alt="user"
-                src={profile.pic}
+                src={pic}
               />
             )}
             <input

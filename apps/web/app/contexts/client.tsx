@@ -16,12 +16,16 @@ type ClientContextType = {
   signUp: () => Promise<any>;
   logout: (sessions: any) => Promise<any>;
   pubKey: string;
+  getProfile: () => Promise<any>;
+  saveProfile: (profile: any) => Promise<any>;
 };
 
 const ClientContext = createContext<ClientContextType>({
   signUp: async () => '',
   logout: async () => '',
   pubKey: '',
+  getProfile: async () => '',
+  saveProfile: async () => '',
 });
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
@@ -43,7 +47,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     await client.ready();
 
     const sessions = await client.session();
-    setPubKey(Object.keys(sessions.users)[0]);
+    const pubkey = Object.keys(sessions.users)[0];
+    setPubKey(pubkey);
+    return pubkey;
   };
 
   const isLoggedIn = async () => {
@@ -54,26 +60,34 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async () => {
-    try {
-      await client.ready();
+    await client.ready();
 
-      const loggedIn = await isLoggedIn();
-
-      if (!loggedIn) {
-        const seed = Client.crypto.generateSeed();
-        await client.login(seed);
-      }
-      await refreshPubKey();
-
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+      const seed = Client.crypto.generateSeed();
+      await client.login(seed);
     }
+    return await refreshPubKey();
+  };
+
+  const saveProfile = async (profileInfo) => {
+    await client.ready();
+
+    const pk = await refreshPubKey();
+    return await client.social.profile.put(pk, profileInfo);
+  };
+
+  const getProfile = async () => {
+    await client.ready();
+    const userId = await refreshPubKey();
+
+    return await client.social.profile.get(userId);
   };
 
   return (
-    <ClientContext.Provider value={{ signUp, logout, pubKey }}>
+    <ClientContext.Provider
+      value={{ signUp, logout, pubKey, getProfile, saveProfile }}
+    >
       {children}
     </ClientContext.Provider>
   );
