@@ -24,7 +24,7 @@ export default function Link({
       <Modal.Header title="Add link" />
       <div className="my-6">
         <Input.Label value="Url" />
-        <Input.Text placeholder="Add link" />
+        <Input.Text placeholder="Add link" action={<Icon.Clipboard />} />
       </div>
       <div className="w-full mt-4">
         <Modal.SubmitAction
