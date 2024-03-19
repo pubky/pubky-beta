@@ -65,7 +65,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     const loggedIn = await isLoggedIn();
     if (!loggedIn) {
       const seed = Client.crypto.generateSeed();
-      await client.login(seed);
+      await client.signup(seed);
     }
     return await refreshPubKey();
   };
