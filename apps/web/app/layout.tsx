@@ -1,3 +1,4 @@
+import { ClientWrapper } from './contexts/client';
 import './global.css';
 
 export const metadata = {
@@ -7,12 +8,12 @@ export const metadata = {
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ClientWrapper>{children}</ClientWrapper>
+      </body>
     </html>
   );
 }

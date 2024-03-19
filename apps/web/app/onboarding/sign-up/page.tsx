@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -12,8 +12,7 @@ import {
   Icon,
 } from '@social/ui-shared';
 import { Onboarding } from '../components';
-
-import { signup } from '../../api/actions/signup';
+import { useClientContext } from '../../contexts/client';
 
 export type Profile = {
   name: string;
@@ -28,6 +27,8 @@ export type Profile = {
 };
 
 export default function Index() {
+  const { signUp, pubky, saveProfile } = useClientContext();
+
   const [profile, setProfile] = useState<Profile>({
     name: '',
     info: '',
@@ -40,6 +41,16 @@ export default function Index() {
     },
   });
 
+  useEffect(() => {
+    const register = async () => {
+      if (pubky) return; // already registered
+      await signUp().catch((err) => {
+        console.error(`Sign up failed: ${err.message}`);
+      });
+    };
+    register();
+  }, [pubky, signUp]);
+
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -51,8 +62,11 @@ export default function Index() {
     }
   };
 
-  const handleSubmit = () => {
-    console.log(profile);
+  const handleSubmit = async () => {
+    // validation?
+    await saveProfile(profile).catch((err) => {
+      console.error(`Save profile failed: ${err.message}`);
+    });
   };
 
   return (
@@ -63,11 +77,14 @@ export default function Index() {
         defaultValue={profile.name}
         autoFocus
         onChange={(e) =>
-          setProfile({ ...profile, name: (e.target as HTMLInputElement).value })
+          setProfile({
+            ...profile,
+            name: (e.target as HTMLInputElement).value,
+          })
         }
       />
       <Typography.PageTitle className="text-opacity-50">
-        @1pm3...5jkm
+        {pubky ? `@${pubky}` : 'Loading...'}
       </Typography.PageTitle>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">
@@ -171,11 +188,7 @@ export default function Index() {
           <div className="pt-[40px]">
             <Link href="/onboarding/confirm">
               <Button.Large
-                onClick={async () => {
-                  const { pk, profile: savedProfile } = await signup(profile);
-                  console.log({ pk, savedProfile });
-                  handleSubmit();
-                }}
+                onClick={() => handleSubmit()}
                 icon={<Icon.Check />}
               >
                 Finish
