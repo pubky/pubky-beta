@@ -1,8 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
 import { Modal } from './Modal';
+import { useProfileContext } from '../../contexts/profile';
+import { minifyPubkey } from '../../libs/profileHelper';
+import { useAuthContext } from '../../contexts/auth';
 
 type Tag = {
   value: string;
@@ -21,10 +25,32 @@ export default function Header({
   tags = [],
   children,
 }: HeaderProps) {
+  const { getProfile } = useProfileContext();
+  const { getUserId } = useAuthContext();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
+  const [pic, setPic] = useState('/images/Userpic.png');
+  const [name, setName] = useState('');
+  const [pubKey, setPubKey] = useState('');
+
+  useEffect(() => {
+    async function fetchData() {
+      const profile = await getProfile();
+      const userId = await getUserId();
+      if (userId) {
+        setPubKey(userId);
+      }
+      if (profile) {
+        console.log(profile);
+        setPic(profile?.pic || '/images/Userpic.png');
+        setName(profile?.name || '');
+      }
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
@@ -85,14 +111,14 @@ export default function Header({
           className="relative cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-          <Menu.ImageMenu src="/images/user.png" notifications={5} />
+          <Menu.ImageMenu src={pic} notifications={5} />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
-              src="/images/user.png"
-              username="Satoshi Nakamoto"
-              handler="@1qx7...gkw3"
+              src={pic}
+              username={name}
+              handler={minifyPubkey(pubKey)}
             />
             <div className="flex-col inline-flex">
               <Menu.Section

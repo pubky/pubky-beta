@@ -1,7 +1,23 @@
+'use client';
+
 import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
+import { useProfileContext } from '../../../contexts/profile';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function Notification() {
+  const { getProfile } = useProfileContext();
+  const [pic, setPic] = useState('/images/Userpic.png');
+
+  useEffect(() => {
+    async function fetchData() {
+      const profile = await getProfile();
+      if (profile) {
+        setPic(profile?.pic || '/images/Userpic.png');
+      }
+    }
+    fetchData();
+  }, [getProfile]);
   return (
     <div className="p-3 border-t border-white border-opacity-10 justify-between items-start flex flex-row">
       <div className="flex gap-4 flex-col sm:flex-row">
@@ -17,7 +33,7 @@ export default function Notification() {
             height={32}
             className="rounded-full"
             alt="user-pic"
-            src="/images/user.png"
+            src={pic}
           />
         </div>
         <Typography.Body variant="medium-bold">John tagged</Typography.Body>

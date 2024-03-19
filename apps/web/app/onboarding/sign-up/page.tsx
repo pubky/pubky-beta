@@ -13,10 +13,13 @@ import {
   Icon,
 } from '@social/ui-shared';
 import { Onboarding } from '../components';
-import { useClientContext } from '../../contexts/client';
+import { useProfileContext } from '../../../contexts/profile';
+import { useAuthContext } from '../../../contexts/auth';
+import { minifyPubkey } from '../../../libs/profileHelper';
 
 export default function Index() {
-  const { signUp, pubKey, getProfile, saveProfile } = useClientContext();
+  const { signUp, getUserId } = useAuthContext();
+  const { getProfile, saveProfile } = useProfileContext();
 
   const [name, setName] = useState('');
   const [info, setInfo] = useState('');
@@ -25,15 +28,28 @@ export default function Index() {
   const [email, setEmail] = useState('');
   const [x, setX] = useState('');
   const [telegram, setTelegram] = useState('');
+  const [pubKey, setPubKey] = useState('');
 
   useEffect(() => {
     async function fetchData() {
       await signUp();
-      await getProfile();
+      const profile = await getProfile();
+      const pubKey = await getUserId();
+      if (pubKey) {
+        setPubKey(pubKey);
+      }
+      if (profile) {
+        setName(profile?.name || '');
+        setInfo(profile?.info || '');
+        setPic(profile?.pic || '/images/Userpic.png');
+        setWebsite(profile.links?.website || '');
+        setEmail(profile.links?.email || '');
+        setX(profile.links?.x || '');
+        setTelegram(profile.links?.telegram || '');
+      }
     }
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getProfile, getUserId, signUp]);
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -70,10 +86,11 @@ export default function Index() {
         className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
         defaultValue={name}
         autoFocus
+        autoCorrect="off"
         onChange={(e: any) => setName(e.target.value)}
       />
       <Typography.PageTitle className="text-opacity-50 break-words">
-        {pubKey ? `@${pubKey}` : 'Loading...'}
+        {pubKey ? minifyPubkey(pubKey) : 'Loading...'}
       </Typography.PageTitle>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">

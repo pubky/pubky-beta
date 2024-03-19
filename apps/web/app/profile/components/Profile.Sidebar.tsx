@@ -10,8 +10,39 @@ import {
 } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { minifyPubkey } from '../../../libs/profileHelper';
+import { useProfileContext } from '../../../contexts/profile';
+import { useAuthContext } from '../../../contexts/auth';
 
 export default function Sidebar() {
+  const { getProfile } = useProfileContext();
+  const { getUserId } = useAuthContext();
+
+  const [name, setName] = useState('');
+  const [pubKey, setPubKey] = useState('');
+  const [bio, setBio] = useState('');
+  const [telegram, setTelegram] = useState('');
+  const [x, setX] = useState('');
+  const [website, setWebsite] = useState('');
+
+  useEffect(() => {
+    async function fetchData() {
+      const profile = await getProfile();
+      const userId = await getUserId();
+      if (userId) {
+        setPubKey(userId);
+      }
+      if (profile) {
+        setName(profile?.name || '');
+        setBio(profile?.info || '');
+        setTelegram(profile.links?.telegram || '');
+        setX(profile.links?.x || '');
+        setWebsite(profile.links?.website || '');
+      }
+    }
+    fetchData();
+  }, [getProfile, getUserId]);
   const images = [
     {
       src: '/images/user.png',
@@ -48,15 +79,13 @@ export default function Sidebar() {
               src="/images/user.png"
               alt="user-pic"
             />
-            <Typography.H2>Satoshi Nakamoto</Typography.H2>
+            <Typography.H2>{name}</Typography.H2>
           </div>
           <Typography.Label className="text-opacity-50">
-            @1qx7...gkw3
+            {minifyPubkey(pubKey)}
           </Typography.Label>
           <Typography.Body variant="medium" className="text-opacity-80">
-            {' '}
-            Authored the Bitcoin white paper, developed Bitcoin, mined first
-            block.
+            {bio}
           </Typography.Body>
         </SideCard.Content>
       </div>
@@ -98,21 +127,35 @@ export default function Sidebar() {
       <div className="w-full">
         <SideCard.Header title="Links" variantTitle="label" />
         <div className="gap-4 grid grid-cols-3 w-full">
-          <Link href="https://x.com/" className="w-full">
-            <SideCard.Content className="w-full h-24 justify-center items-center">
-              <Icon.Twitter />
-            </SideCard.Content>
-          </Link>
-          <Link href="https://youtube.com/" className="w-full">
-            <SideCard.Content className="w-full h-24 justify-center items-center">
-              <Icon.Youtube />
-            </SideCard.Content>
-          </Link>
-          <Link href="https://telegram.com/" className="w-full">
-            <SideCard.Content className="w-full h-24 justify-center items-center">
-              <Icon.Telegram />
-            </SideCard.Content>
-          </Link>
+          {x && (
+            <Link
+              target="_blank"
+              href={`https://x.com/${x}`}
+              className="w-full"
+            >
+              <SideCard.Content className="w-full h-24 justify-center items-center">
+                <Icon.Twitter />
+              </SideCard.Content>
+            </Link>
+          )}
+          {website && (
+            <Link target="_blank" href={website} className="w-full">
+              <SideCard.Content className="w-full h-24 justify-center items-center">
+                <Icon.Youtube />
+              </SideCard.Content>
+            </Link>
+          )}
+          {telegram && (
+            <Link
+              target="_blank"
+              href={`https://telegram.com/${telegram}`}
+              className="w-full"
+            >
+              <SideCard.Content className="w-full h-24 justify-center items-center">
+                <Icon.Telegram />
+              </SideCard.Content>
+            </Link>
+          )}
         </div>
       </div>
     </div>
