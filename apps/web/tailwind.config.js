@@ -34,6 +34,11 @@ module.exports = {
             cursor: 'default',
           },
         },
+        '.no-scrollbar': {
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+        },
       };
 
       addUtilities(newUtilities, ['responsive', 'hover']);
