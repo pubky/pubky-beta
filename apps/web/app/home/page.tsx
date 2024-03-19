@@ -12,7 +12,8 @@ import {
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useClientContext } from '../contexts/client';
 
 type Layout = 'sidebar' | 'grid' | 'columns' | 'list';
 
@@ -44,12 +45,17 @@ const layouts: Layouts = {
 
 export default function Index() {
   const [layout] = useState<Layout>('sidebar');
+  const { dostuff } = useClientContext();
 
   const postsLayoutClassName =
     layout === 'sidebar'
       ? layouts[layout].posts
       : `grid ${layouts[layout].layout} gap-6`;
   const sidebarClassName = `hidden ${layout === 'sidebar' && 'xl:inline-flex'}`;
+
+  useEffect(() => {
+    dostuff();
+  })
 
   return (
     <Content.Main>
