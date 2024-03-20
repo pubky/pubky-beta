@@ -12,15 +12,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { minifyPubkey } from '../../../libs/profileHelper';
-import { useProfileContext } from '../../../contexts/profile';
-import { useAuthContext } from '../../../contexts/auth';
+import { useClientContext } from '../../../contexts/client';
 
 export default function Sidebar() {
-  const { getProfile } = useProfileContext();
-  const { getUserId } = useAuthContext();
+  const { pubkey, getProfile } = useClientContext();
 
   const [name, setName] = useState('');
-  const [pubKey, setPubKey] = useState('');
   const [bio, setBio] = useState('');
   const [telegram, setTelegram] = useState('');
   const [x, setX] = useState('');
@@ -28,21 +25,23 @@ export default function Sidebar() {
 
   useEffect(() => {
     async function fetchData() {
-      const profile = await getProfile();
-      const userId = await getUserId();
-      if (userId) {
-        setPubKey(userId);
-      }
-      if (profile) {
-        setName(profile?.name || '');
-        setBio(profile?.info || '');
-        setTelegram(profile.links?.telegram || '');
-        setX(profile.links?.x || '');
-        setWebsite(profile.links?.website || '');
+      try {
+        if (!pubkey) return;
+        const profile = await getProfile();
+        if (profile) {
+          setName(profile?.name || '');
+          setBio(profile?.info || '');
+          setTelegram(profile.links?.telegram || '');
+          setX(profile.links?.x || '');
+          setWebsite(profile.links?.website || '');
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
     fetchData();
-  }, [getProfile, getUserId]);
+  }, [pubkey, getProfile]);
+
   const images = [
     {
       src: '/images/user.png',
@@ -82,7 +81,7 @@ export default function Sidebar() {
             <Typography.H2>{name}</Typography.H2>
           </div>
           <Typography.Label className="text-opacity-50">
-            {minifyPubkey(pubKey)}
+            {pubkey ? minifyPubkey(pubkey) : 'Loading...'}
           </Typography.Label>
           <Typography.Body variant="medium" className="text-opacity-80">
             {bio}

@@ -3,24 +3,28 @@
 import { Content } from '@social/ui-shared';
 import { Profile } from './components';
 import { CreatePost, Header, Post, PostsLayout } from '../components';
-import { useProfileContext } from '../../contexts/profile';
+import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
-  const { getProfile } = useProfileContext();
+  const { pubkey, getProfile } = useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
-  const [name, setName] = useState('');
+  const [name, setName] = useState('Loading...');
 
   useEffect(() => {
     async function fetchData() {
-      const profileInfo = await getProfile();
-      if (profileInfo) {
-        setPic(profileInfo?.pic || '/images/Userpic.png');
-        setName(profileInfo?.name || '');
+      try {
+        const profileInfo = await getProfile();
+        if (profileInfo) {
+          setPic(profileInfo?.image || '/images/Userpic.png');
+          setName(profileInfo?.name || '');
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
     fetchData();
-  }, [getProfile]);
+  }, [pubkey, getProfile]);
 
   return (
     <Content.Main>

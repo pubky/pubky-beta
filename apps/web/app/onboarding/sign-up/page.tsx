@@ -13,70 +13,60 @@ import {
   Icon,
 } from '@social/ui-shared';
 import { Onboarding } from '../components';
-import { useProfileContext } from '../../../contexts/profile';
-import { useAuthContext } from '../../../contexts/auth';
+import { useClientContext } from '../../../contexts/client';
 import { minifyPubkey } from '../../../libs/profileHelper';
 
 export default function Index() {
-  const { signUp, getUserId } = useAuthContext();
-  const { getProfile, saveProfile } = useProfileContext();
+  const { pubkey, signUp, saveProfile } = useClientContext();
 
   const [name, setName] = useState('');
   const [info, setInfo] = useState('');
-  const [pic, setPic] = useState('/images/Userpic.png');
+  const [image, setImage] = useState('/images/Userpic.png');
   const [website, setWebsite] = useState('');
   const [email, setEmail] = useState('');
   const [x, setX] = useState('');
   const [telegram, setTelegram] = useState('');
-  const [pubKey, setPubKey] = useState('');
 
   useEffect(() => {
     async function fetchData() {
-      await signUp();
-      const profile = await getProfile();
-      const pubKey = await getUserId();
-      if (pubKey) {
-        setPubKey(pubKey);
-      }
-      if (profile) {
-        setName(profile?.name || '');
-        setInfo(profile?.info || '');
-        setPic(profile?.pic || '/images/Userpic.png');
-        setWebsite(profile.links?.website || '');
-        setEmail(profile.links?.email || '');
-        setX(profile.links?.x || '');
-        setTelegram(profile.links?.telegram || '');
+      try {
+        if (!pubkey) await signUp();
+      } catch (error) {
+        console.log(error);
       }
     }
     fetchData();
-  }, [getProfile, getUserId, signUp]);
+  }, [signUp, pubkey]);
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPic(reader.result as string);
+        setImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleSubmit = async () => {
-    const profileInfo = {
-      name,
-      info,
-      pic,
-      links: {
-        website,
-        email,
-        x,
-        telegram,
-      },
-    };
+    try {
+      const profileInfo = {
+        name,
+        info,
+        image,
+        links: {
+          website,
+          email,
+          x,
+          telegram,
+        },
+      };
 
-    const result = await saveProfile(profileInfo);
-    console.log(result);
+      await saveProfile(profileInfo);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -90,7 +80,7 @@ export default function Index() {
         onChange={(e: any) => setName(e.target.value)}
       />
       <Typography.PageTitle className="text-opacity-50 break-words">
-        {pubKey ? minifyPubkey(pubKey) : 'Loading...'}
+        {pubkey ? minifyPubkey(pubkey) : 'Loading...'}
       </Typography.PageTitle>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">
@@ -142,13 +132,13 @@ export default function Index() {
         </Card.Primary>
         <Card.Primary title="Picture">
           <label htmlFor="fileInput">
-            {pic && (
+            {image && (
               <Image
                 width={320}
                 height={320}
                 className="w-80 h-auto mt-6 rounded-full cursor-pointer"
                 alt="user"
-                src={pic}
+                src={image}
               />
             )}
             <input

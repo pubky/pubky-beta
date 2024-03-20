@@ -1,12 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
 import { Modal } from './Modal';
-import { useProfileContext } from '../../contexts/profile';
+import { useClientContext } from '../../contexts/client';
 import { minifyPubkey } from '../../libs/profileHelper';
-import { useAuthContext } from '../../contexts/auth';
 
 type Tag = {
   value: string;
@@ -25,32 +23,30 @@ export default function Header({
   tags = [],
   children,
 }: HeaderProps) {
-  const { getProfile } = useProfileContext();
-  const { getUserId } = useAuthContext();
+  const { pubkey, getProfile } = useClientContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
+  const [image, setImage] = useState('/images/Userpic.png');
+  const [name, setName] = useState('');
+
   const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
-  const [pic, setPic] = useState('/images/Userpic.png');
-  const [name, setName] = useState('');
-  const [pubKey, setPubKey] = useState('');
 
   useEffect(() => {
     async function fetchData() {
-      const profile = await getProfile();
-      const userId = await getUserId();
-      if (userId) {
-        setPubKey(userId);
-      }
-      if (profile) {
-        console.log(profile);
-        setPic(profile?.pic || '/images/Userpic.png');
-        setName(profile?.name || '');
+      try {
+        const profile = await getProfile();
+        if (profile) {
+          setImage(profile?.image || '/images/Userpic.png');
+          setName(profile?.name || '');
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
     fetchData();
-  }, []);
+  }, [pubkey, getProfile]);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
@@ -111,14 +107,14 @@ export default function Header({
           className="relative cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-          <Menu.ImageMenu src={pic} notifications={5} />
+          <Menu.ImageMenu src={image} notifications={5} />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
-              src={pic}
+              src={image}
               username={name}
-              handler={minifyPubkey(pubKey)}
+              handler={pubkey ? minifyPubkey(pubkey) : 'Loading...'}
             />
             <div className="flex-col inline-flex">
               <Menu.Section

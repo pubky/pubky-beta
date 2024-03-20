@@ -1,5 +1,4 @@
-import { ProfileWrapper } from '../contexts/profile';
-import { AuthWrapper } from '../contexts/auth';
+import { ClientWrapper } from '../contexts/client';
 import './global.css';
 
 export default function RootLayout({
@@ -10,9 +9,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthWrapper>
-          <ProfileWrapper>{children}</ProfileWrapper>
-        </AuthWrapper>
+        <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
   );
