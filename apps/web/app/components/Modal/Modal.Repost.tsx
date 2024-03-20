@@ -35,7 +35,7 @@ export default function Repost({
         <div>
           <Card.Primary
             background="bg-white bg-opacity-10"
-            className="scrollbar-thin scrollbar-webkit overflow-x-auto h-[334px] border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg flex flex-col"
+            className="scrollbar-thin scrollbar-webkit overflow-x-auto lg:h-[334px] border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg flex flex-col"
           >
             <div className="h-full mb-6">
               <Input.TextArea
@@ -101,7 +101,7 @@ export default function Repost({
             />
           </div>
         </div>
-        <Post className="hidden lg:inline-flex" />
+        <Post />
         <div className="flex-col inline-flex justify-between">
           <div className="flex-col justify-start items-start gap-5 inline-flex">
             <Typography.H2 className="hidden lg:block">
@@ -152,7 +152,7 @@ export default function Repost({
               />
             </div>
           </div>
-          <div className="w-full">
+          <div className="w-full mt-6">
             <Modal.SubmitAction
               icon={<Icon.Repost />}
               onClick={() => setShowModalRepost(false)}
