@@ -8,7 +8,7 @@ interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Button = ({ iconOption, labelIcon, ...rest }: ButtonProps) => {
   const baseCSS = `w-full flex items-center justify-between cursor-pointer`;
-  const styleSelect = `bg-transparent text-white outline-none appearance-none font-['Inter Tight'] tracking-wide`;
+  const styleSelect = `bg-transparent text-white outline-none appearance-none font-InterTight tracking-wide`;
 
   return (
     <div {...rest} className={twMerge(baseCSS, styleSelect, rest.className)}>

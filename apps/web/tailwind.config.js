@@ -11,7 +11,11 @@ module.exports = {
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        InterTight: ['Inter Tight'],
+      },
+    },
   },
   plugins: [
     function ({ addUtilities }) {

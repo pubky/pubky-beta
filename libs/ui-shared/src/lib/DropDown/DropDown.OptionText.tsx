@@ -14,7 +14,7 @@ export const OptionText = ({
 }: OptionTextProps) => {
   const baseCSS = `w-full flex items-center justify-between cursor-pointer`;
   const arrowStyle = `ml-1 transition ease duration-300`;
-  const styleSelect = `bg-transparent text-white outline-none appearance-none font-['Inter Tight'] tracking-wide`;
+  const styleSelect = `bg-transparent text-white outline-none appearance-none font-InterTight tracking-wide`;
 
   return (
     <div {...rest} className={twMerge(baseCSS, styleSelect, rest.className)}>
