@@ -64,6 +64,7 @@
   },
   "overrides": {
     "blake3-wasm@2.1.7": "^3.0.0",
+    "buffer": "^6.0.3",
     "@c4312/blake3-internal": "^3.0.0"
   }
 }
