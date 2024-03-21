@@ -8,7 +8,7 @@ export default function Index() {
     <Content.Main>
       <Header className="hidden md:block" title="Contacts">
         <div className="hidden lg:flex gap-6 items-center">
-          <DropDown.Reach />
+          <DropDown.Contacts />
           <DropDown.SortFriends />
           <DropDown.ContactsLayout />
         </div>

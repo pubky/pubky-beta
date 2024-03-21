@@ -8,7 +8,7 @@ export default function HotTagsReach() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: 'following',
-    iconLabel: <Icon.UsersRight />,
+    iconOption: <Icon.UsersRight />,
   });
 
   return (
@@ -16,6 +16,7 @@ export default function HotTagsReach() {
       open={openDropdown}
       setOpen={setOpenDropdown}
       value={dropdownValue}
+      labelIcon="Reach"
     >
       <DropDownUI.Content
         title="Reach"
@@ -31,7 +32,7 @@ export default function HotTagsReach() {
           onClick={() => {
             setDropdownValue({
               value: 'following',
-              iconLabel: <Icon.UsersRight />,
+              iconOption: <Icon.UsersRight />,
             });
             setOpenDropdown(false);
           }}
@@ -44,7 +45,7 @@ export default function HotTagsReach() {
           onClick={() => {
             setDropdownValue({
               value: 'followers',
-              iconLabel: <Icon.UsersLeft />,
+              iconOption: <Icon.UsersLeft />,
             });
             setOpenDropdown(false);
           }}
@@ -57,7 +58,7 @@ export default function HotTagsReach() {
           onClick={() => {
             setDropdownValue({
               value: 'friends',
-              iconLabel: <Icon.Smiley />,
+              iconOption: <Icon.Smiley />,
             });
             setOpenDropdown(false);
           }}
@@ -70,7 +71,7 @@ export default function HotTagsReach() {
           onClick={() => {
             setDropdownValue({
               value: 'all',
-              iconLabel: <Icon.Broadcast />,
+              iconOption: <Icon.Broadcast />,
             });
             setOpenDropdown(false);
           }}

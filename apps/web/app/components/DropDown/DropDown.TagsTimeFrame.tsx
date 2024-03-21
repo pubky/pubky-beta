@@ -13,8 +13,8 @@ export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
   const [dropdownValue, setDropdownValue] = useState({
     value: 'this-month',
     ...(type === 'icon'
-      ? { iconLabel: <Icon.Calendar /> }
-      : { label: 'This month' }),
+      ? { iconOption: <Icon.Calendar /> }
+      : { textOption: 'This month' }),
   });
 
   return (
@@ -22,7 +22,8 @@ export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
       open={openDropdown}
       setOpen={setOpenDropdown}
       value={dropdownValue}
-      size="small"
+      labelIcon="Sort"
+      type={type}
     >
       <DropDownUI.Content
         title="Timeframe"
@@ -39,8 +40,8 @@ export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
             setDropdownValue({
               value: 'today',
               ...(type === 'icon'
-                ? { iconLabel: <Icon.Asterisk /> }
-                : { label: 'Today' }),
+                ? { iconOption: <Icon.Asterisk /> }
+                : { textOption: 'Today' }),
             });
             setOpenDropdown(false);
           }}
@@ -54,8 +55,8 @@ export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
             setDropdownValue({
               value: 'this-month',
               ...(type === 'icon'
-                ? { iconLabel: <Icon.Calendar /> }
-                : { label: 'This month' }),
+                ? { iconOption: <Icon.Calendar /> }
+                : { textOption: 'This month' }),
             });
             setOpenDropdown(false);
           }}
@@ -69,8 +70,8 @@ export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
             setDropdownValue({
               value: 'all-time',
               ...(type === 'icon'
-                ? { iconLabel: <Icon.Clock /> }
-                : { label: 'All time' }),
+                ? { iconOption: <Icon.Clock /> }
+                : { textOption: 'All time' }),
             });
             setOpenDropdown(false);
           }}

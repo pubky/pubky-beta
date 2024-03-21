@@ -8,7 +8,7 @@ export default function ContactsLayout() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: 'ranking',
-    iconLabel: <Icon.ListNumbers />,
+    iconOption: <Icon.ListNumbers />,
   });
 
   return (
@@ -16,6 +16,7 @@ export default function ContactsLayout() {
       open={openDropdown}
       setOpen={setOpenDropdown}
       value={dropdownValue}
+      labelIcon="Layout"
     >
       <DropDownUI.Content
         title="Layout"
@@ -31,7 +32,7 @@ export default function ContactsLayout() {
           onClick={() => {
             setDropdownValue({
               value: 'ranking',
-              iconLabel: <Icon.ListNumbers />,
+              iconOption: <Icon.ListNumbers />,
             });
             setOpenDropdown(false);
           }}
@@ -44,7 +45,7 @@ export default function ContactsLayout() {
           onClick={() => {
             setDropdownValue({
               value: 'list',
-              iconLabel: <Icon.List />,
+              iconOption: <Icon.List />,
             });
             setOpenDropdown(false);
           }}

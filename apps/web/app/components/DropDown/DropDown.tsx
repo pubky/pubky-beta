@@ -8,12 +8,12 @@ interface DropDownProps extends React.HTMLAttributes<HTMLDivElement> {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   value: {
     value: string;
-    iconLabel?: React.ReactNode;
-    label?: string;
+    iconOption?: React.ReactNode;
+    textOption?: string;
   };
   children: React.ReactNode;
-  label?: string;
-  size?: string;
+  labelIcon?: string;
+  type?: 'icon' | 'text';
 }
 
 export default function DropDown({
@@ -21,8 +21,8 @@ export default function DropDown({
   setOpen,
   value,
   children,
-  label,
-  size = 'default',
+  labelIcon,
+  type,
   ...rest
 }: DropDownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -44,14 +44,20 @@ export default function DropDown({
   }, [dropdownRef, setOpen]);
 
   return (
-    <DropDownUI.Root {...rest} label={label} reference={dropdownRef}>
-      <DropDownUI.Button
-        iconLabel={value.iconLabel}
-        label={value.label}
-        isOpen={open}
-        onClick={() => setOpen(!open)}
-        size={size || 'default'}
-      />
+    <DropDownUI.Root {...rest} reference={dropdownRef}>
+      {type === 'text' ? (
+        <DropDownUI.OptionText
+          onClick={() => setOpen(!open)}
+          isOpen={open}
+          textOption={value.textOption}
+        />
+      ) : (
+        <DropDownUI.Button
+          iconOption={value.iconOption}
+          labelIcon={labelIcon}
+          onClick={() => setOpen(!open)}
+        />
+      )}
       {children}
     </DropDownUI.Root>
   );
