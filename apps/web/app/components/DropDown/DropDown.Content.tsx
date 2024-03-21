@@ -8,7 +8,7 @@ export default function Content() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: 'all',
-    iconLabel: <Icon.Stack />,
+    iconOption: <Icon.Stack />,
   });
 
   return (
@@ -16,6 +16,7 @@ export default function Content() {
       open={openDropdown}
       setOpen={setOpenDropdown}
       value={dropdownValue}
+      labelIcon="Content"
     >
       <DropDownUI.Content
         title="Content"
@@ -31,7 +32,7 @@ export default function Content() {
           onClick={() => {
             setDropdownValue({
               value: 'all',
-              iconLabel: <Icon.Stack />,
+              iconOption: <Icon.Stack />,
             });
             setOpenDropdown(false);
           }}
@@ -44,7 +45,7 @@ export default function Content() {
           onClick={() => {
             setDropdownValue({
               value: 'posts',
-              iconLabel: <Icon.NoteBlank />,
+              iconOption: <Icon.NoteBlank />,
             });
             setOpenDropdown(false);
           }}
@@ -57,7 +58,7 @@ export default function Content() {
           onClick={() => {
             setDropdownValue({
               value: 'Images',
-              iconLabel: <Icon.ImageSquare />,
+              iconOption: <Icon.ImageSquare />,
             });
             setOpenDropdown(false);
           }}
@@ -70,7 +71,7 @@ export default function Content() {
           onClick={() => {
             setDropdownValue({
               value: 'videos',
-              iconLabel: <Icon.Play />,
+              iconOption: <Icon.Play />,
             });
             setOpenDropdown(false);
           }}
@@ -83,7 +84,7 @@ export default function Content() {
           onClick={() => {
             setDropdownValue({
               value: 'links',
-              iconLabel: <Icon.LinkSimple />,
+              iconOption: <Icon.LinkSimple />,
             });
             setOpenDropdown(false);
           }}

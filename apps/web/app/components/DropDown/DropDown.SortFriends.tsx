@@ -8,7 +8,7 @@ export default function SortFriends() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: 'active-this-month',
-    iconLabel: <Icon.Calendar />,
+    iconOption: <Icon.Calendar />,
   });
 
   return (
@@ -16,6 +16,7 @@ export default function SortFriends() {
       open={openDropdown}
       setOpen={setOpenDropdown}
       value={dropdownValue}
+      labelIcon="Sort"
     >
       <DropDownUI.Content
         title="Sort"
@@ -31,7 +32,7 @@ export default function SortFriends() {
           onClick={() => {
             setDropdownValue({
               value: 'active-this-month',
-              iconLabel: <Icon.Calendar size="24" />,
+              iconOption: <Icon.Calendar size="24" />,
             });
             setOpenDropdown(false);
           }}
@@ -44,7 +45,7 @@ export default function SortFriends() {
           onClick={() => {
             setDropdownValue({
               value: 'active-all-time',
-              iconLabel: <Icon.Clock size="24" />,
+              iconOption: <Icon.Clock size="24" />,
             });
             setOpenDropdown(false);
           }}
@@ -57,7 +58,7 @@ export default function SortFriends() {
           onClick={() => {
             setDropdownValue({
               value: 'name',
-              iconLabel: <Icon.ListBullets size="24" />,
+              iconOption: <Icon.ListBullets size="24" />,
             });
             setOpenDropdown(false);
           }}
@@ -70,7 +71,7 @@ export default function SortFriends() {
           onClick={() => {
             setDropdownValue({
               value: 'key',
-              iconLabel: <Icon.Key size="24" />,
+              iconOption: <Icon.Key size="24" />,
             });
             setOpenDropdown(false);
           }}

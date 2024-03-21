@@ -7,7 +7,7 @@ export default function Index() {
     <Content.Main background="bg-black" className="pb-0">
       <Header.Root>
         <Header.Logo />
-        <Header.Title title={'Onboarding'} />
+        <Header.Title />
       </Header.Root>
       <Content.Grid>
         <Typography.Display>You are the algorithm</Typography.Display>

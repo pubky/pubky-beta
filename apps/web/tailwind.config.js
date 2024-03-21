@@ -11,7 +11,11 @@ module.exports = {
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        InterTight: ['Inter Tight'],
+      },
+    },
   },
   plugins: [
     function ({ addUtilities }) {
@@ -32,6 +36,11 @@ module.exports = {
             backgroundColor: 'rgba(255, 255, 255, 0.16)',
             borderRadius: '4px',
             cursor: 'default',
+          },
+        },
+        '.no-scrollbar': {
+          '&::-webkit-scrollbar': {
+            display: 'none',
           },
         },
       };

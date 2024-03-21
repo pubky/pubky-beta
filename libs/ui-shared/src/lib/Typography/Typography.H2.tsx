@@ -10,7 +10,7 @@ export const H2 = ({ variant = 'normal', children, ...rest }: H2Props) => {
 
   switch (variant) {
     case 'light':
-      cssClasses = "text-2xl font-normal font-['Inter Tight'] tracking-wide";
+      cssClasses = 'text-2xl font-normal font-InterTight tracking-wide';
       break;
   }
 
@@ -18,7 +18,7 @@ export const H2 = ({ variant = 'normal', children, ...rest }: H2Props) => {
     <h2
       {...rest}
       className={twMerge(
-        `text-2xl font-semibold font-['Inter Tight'] tracking-wide text-white`,
+        `text-2xl font-semibold font-InterTight tracking-wide text-white`,
         cssClasses,
         rest.className
       )}

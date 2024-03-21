@@ -8,7 +8,7 @@ export default function Layout() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: 'sidebar',
-    iconLabel: <Icon.SquareHalf />,
+    iconOption: <Icon.SquareHalf />,
   });
 
   return (
@@ -16,6 +16,7 @@ export default function Layout() {
       open={openDropdown}
       setOpen={setOpenDropdown}
       value={dropdownValue}
+      labelIcon="Layout"
     >
       <DropDownUI.Content
         title="Layout"
@@ -31,7 +32,7 @@ export default function Layout() {
           onClick={() => {
             setDropdownValue({
               value: 'sidebar',
-              iconLabel: <Icon.SquareHalf />,
+              iconOption: <Icon.SquareHalf />,
             });
             setOpenDropdown(false);
           }}
@@ -44,7 +45,7 @@ export default function Layout() {
           onClick={() => {
             setDropdownValue({
               value: 'list',
-              iconLabel: <Icon.List />,
+              iconOption: <Icon.List />,
             });
             setOpenDropdown(false);
           }}
@@ -57,7 +58,7 @@ export default function Layout() {
           onClick={() => {
             setDropdownValue({
               value: 'grid',
-              iconLabel: <Icon.DotsNine />,
+              iconOption: <Icon.DotsNine />,
             });
             setOpenDropdown(false);
           }}
@@ -70,7 +71,7 @@ export default function Layout() {
           onClick={() => {
             setDropdownValue({
               value: 'columns',
-              iconLabel: <Icon.SquaresFour />,
+              iconOption: <Icon.SquaresFour />,
             });
             setOpenDropdown(false);
           }}

@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  title: string;
+  title?: string;
 }
 
 export const Title = ({ title, ...rest }: HeaderProps) => {

@@ -10,6 +10,7 @@ import {
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
+import Repost from './Component.Repost';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
@@ -120,6 +121,26 @@ export default function Post({
             positions."
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}
                   />
+                  {/** <img
+                    alt="postImage"
+                    src="/images/user.png"
+                    className="mt-6 max-w-full rounded-2xl"
+                  />
+                  <>
+                    <Content.Divider />
+                    <Typography.H2>
+                      Weighing Options of Bitcoin Private Key Management
+                    </Typography.H2>{' '}
+                    <Typography.Caption className="text-white text-opacity-80">
+                      https://bitcoinmagazine.com/
+                    </Typography.Caption>
+                    <img
+                      alt="postImage"
+                      src="/images/user.png"
+                      className="mt-6 max-w-full rounded-2xl"
+                    />
+                  </>
+                  */}
                 </div>
                 <PostUI.Footer
                   className={size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'}
@@ -187,7 +208,7 @@ export default function Post({
           </div>
         </PostUI.Root>
       </div>
-      <Modal.Repost
+      <Repost
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
       />

@@ -1,13 +1,19 @@
 'use client';
 
-import { Button } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from './Modal';
 
-export default function CreatePost() {
-  const [showModalPost, setShowModalPost] = useState(false);
+interface RepostProps {
+  showModalRepost: boolean;
+  setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function Repost({
+  showModalRepost,
+  setShowModalRepost,
+}: RepostProps) {
   const [showModalLink, setShowModalLink] = useState(false);
-  const modalPostRef = useRef<HTMLDivElement>(null);
+  const modalRepostRef = useRef<HTMLDivElement>(null);
   const modalLinkRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,10 +25,10 @@ export default function CreatePost() {
         setShowModalLink(false);
       } else if (
         !showModalLink &&
-        modalPostRef.current &&
-        !modalPostRef.current.contains(event.target as Node)
+        modalRepostRef.current &&
+        !modalRepostRef.current.contains(event.target as Node)
       ) {
-        setShowModalPost(false);
+        setShowModalRepost(false);
       }
     };
 
@@ -31,18 +37,14 @@ export default function CreatePost() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideModals);
     };
-  }, [modalPostRef, modalLinkRef, showModalLink]);
+  }, [modalRepostRef, modalLinkRef, showModalLink, setShowModalRepost]);
 
   return (
     <>
-      <div className="fixed bottom-5 right-5 sm:bottom-10 sm:right-10">
-        <Button.Create onClick={() => setShowModalPost(true)} />
-      </div>
-
-      <Modal.CreatePost
-        showModalPost={showModalPost}
-        setShowModalPost={setShowModalPost}
-        modalPostRef={modalPostRef}
+      <Modal.Repost
+        showModalRepost={showModalRepost}
+        setShowModalRepost={setShowModalRepost}
+        modalRepostRef={modalRepostRef}
         setShowModalLink={setShowModalLink}
       />
       <Modal.Link

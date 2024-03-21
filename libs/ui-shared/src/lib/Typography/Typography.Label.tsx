@@ -10,7 +10,7 @@ export const Label = ({ children, ...rest }: LabelProps) => {
     <p
       {...rest}
       className={twMerge(
-        `text-[13px] font-semibold font-['Inter Tight'] uppercase tracking-wide text-white`,
+        `text-[13px] font-semibold font-InterTight uppercase tracking-wide text-white`,
         rest.className
       )}
     >
