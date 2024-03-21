@@ -153,6 +153,11 @@ export default function Header({
                 icon={<Icon.UserRectangle />}
                 text="Profile"
               />
+              <Menu.Section
+                href="/logout"
+                icon={<Icon.UsersLeft />}
+                text="Logout"
+              />
             </div>
           </div>
         </Menu.Root>
