@@ -168,7 +168,7 @@ const _toPubkyProfile = (profile: Profile): PubkyProfile => {
   const pubkyProfile: PubkyProfile = {
     name: profile.name || 'anonymous',
     bio: profile.info,
-    image: '<convert_me_to_base64_instead>',
+    image: profile.pic || '/images/Userpic.png',
     links: [
       { url: profile.links.website, title: 'website' },
       { url: profile.links.email, title: 'email' },

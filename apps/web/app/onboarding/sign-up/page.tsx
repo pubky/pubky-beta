@@ -12,7 +12,7 @@ import {
   Icon,
 } from '@social/ui-shared';
 import { Onboarding } from '../components';
-import { useClientContext } from '../../contexts/client';
+import { useClientContext } from '../../../contexts/client';
 
 export type Profile = {
   name: string;
@@ -97,7 +97,7 @@ export default function Index() {
               placeholder="Short bio. Tell a bit about yourself."
               className="h-[422px]"
               defaultValue={profile.info}
-              onChange={(e) => setProfile({ ...profile, info: e.target.value })}
+              // onChange={(e) => setProfile({ ...profile, info: e.target.value })}
             />
           </Card.Primary>
         </Card.Primary>

@@ -1,4 +1,4 @@
-import { ClientWrapper } from './contexts/client';
+import { ClientWrapper } from '../contexts/client';
 import './global.css';
 
 export const metadata = {
