@@ -2,14 +2,16 @@
   "name": "@social/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "setup": "./install.sh"
+  },
   "private": true,
   "dependencies": {
     "@nx/next": "17.2.4",
-    "@pubky/client": "file:../skunk-works-not-nuked/assets/pubky-client-0.0.1.tgz",
-    "@pubky/common": "file:../skunk-works-not-nuked/assets/pubky-common-0.0.1.tgz",
-    "@pubky/common-server": "file:../skunk-works-not-nuked/assets/pubky-common-server-0.0.1.tgz",
-    "@pubky/tags": "file:../skunk-works-not-nuked/assets/pubky-tags-0.0.1.tgz",
+    "@pubky/client": "file:../skunk-works/assets/pubky-client-0.0.1.tgz",
+    "@pubky/common": "file:../skunk-works/assets/pubky-common-0.0.1.tgz",
+    "@pubky/common-server": "file:../skunk-works/assets/pubky-common-server-0.0.1.tgz",
+    "@pubky/tags": "file:../skunk-works/assets/pubky-tags-0.0.1.tgz",
     "@swc/helpers": "~0.5.2",
     "buffer": "^6.0.3",
     "hash-wasm": "^4.11.0",
