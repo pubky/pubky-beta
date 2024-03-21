@@ -6,8 +6,12 @@
   "private": true,
   "dependencies": {
     "@nx/next": "17.2.4",
-    "@pubky/client": "^0.0.1",
+    "@pubky/client": "file:../skunk-works-not-nuked/assets/pubky-client-0.0.1.tgz",
+    "@pubky/common": "file:../skunk-works-not-nuked/assets/pubky-common-0.0.1.tgz",
+    "@pubky/common-server": "file:../skunk-works-not-nuked/assets/pubky-common-server-0.0.1.tgz",
+    "@pubky/tags": "file:../skunk-works-not-nuked/assets/pubky-tags-0.0.1.tgz",
     "@swc/helpers": "~0.5.2",
+    "buffer": "^6.0.3",
     "hash-wasm": "^4.11.0",
     "next": "^14.1.0",
     "react": "18.2.0",
