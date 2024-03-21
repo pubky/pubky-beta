@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck
@@ -23,23 +24,16 @@ const TEST_PKARR_RELAY = 'http://localhost:7258';
 
 type AuthContextType = {
   signUp: () => Promise<any>;
-  logout: (sessions: any) => Promise<any>;
-  getUserId: () => Promise<any>;
+  logout: () => Promise<void>;
   getProfile: () => Promise<any>;
-  saveProfile: (profile: any) => Promise<any>;
+  saveProfile: (profile: any) => Promise<void>;
+  createPost: (post: any) => Promise<any>;
+  isLoggedIn: () => Promise<boolean>;
   profile: any;
   pubkey: string;
 };
 
-const ClientContext = createContext<AuthContextType>({
-  signUp: async () => '',
-  logout: async () => '',
-  getUserId: async () => '',
-  getProfile: async () => '',
-  saveProfile: async () => '',
-  pubkey: '',
-  profile: {},
-});
+const ClientContext = createContext<AuthContextType>();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubkey, setPubkey] = useState();
@@ -53,11 +47,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const isLoggedIn = useCallback(async (): Promise<boolean> => {
     await client.ready();
     const sessions = await client.session();
-    const users = Object.keys(sessions?.users);
-    if (!users.length) return false;
-    const pk = users[0];
-    setPubkey(pk);
-    return pk;
+    const pks = Object.keys(sessions?.users);
+    if (!pks.length) return false;
+    setPubkey(pks[0]);
+    return true;
   }, [client]);
 
   const signUp = useCallback(async (): Promise<string> => {
@@ -81,22 +74,20 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     return pubkey;
   }, [client, pubkey, isLoggedIn]);
 
-  const logout = useCallback(
-    async (session: any) => {
-      await client.ready();
-      Object.keys(session.users).map(async (pk) => {
-        const result = await client.logout(pk);
-        if (!result.ok)
-          throw new Error(`Logout pubky:${pk} failed: ${result.error.message}`);
-      });
-    },
-    [client]
-  );
+  const logout = useCallback(async () => {
+    await client.ready();
+    const sessions = await client.session();
+    Object.keys(sessions.users).map(async (pk) => {
+      const result = await client.logout(pk);
+      if (!result.ok)
+        throw new Error(`Logout pubky:${pk} failed: ${result.error.message}`);
+    });
+  }, [client]);
 
   const saveProfile = useCallback(
     async (profile: any): Promise<void> => {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn) throw new Error('Save profile failed: not logged in.');
+      if (!loggedIn) throw new Error('Logged in failed : not logged in.');
       const pubkeyProfile = _toPubkeyProfile(profile);
       const result = await client.social.profile.put(pubkey, pubkeyProfile);
       if (!result.ok)
@@ -116,8 +107,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const getProfile = useCallback(async (): Promise<any> => {
     const loggedIn = await isLoggedIn();
-    if (!loggedIn) throw new Error('Get profile failed: not logged in.');
-    if (!pubkey) throw new Error('Get userId failed: not created yet.');
+    if (!loggedIn) throw new Error('Logged in failed : not logged in.');
     const result = await client.social.profile.get(pubkey);
     if (!result.ok)
       throw new Error(
@@ -130,9 +120,35 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     return pubkeyProfile;
   }, [client, pubkey, isLoggedIn]);
 
+  const createPost = useCallback(
+    async (post): Promise<any> => {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) throw new Error('Logged in failed : not logged in.');
+      const result = await client.social.post.put(pubkey, post);
+      if (!result.ok)
+        throw new Error(
+          `CREATE post:${pubkey} profile failed: ${result.error.message}`
+        );
+      const postInfo = result.value;
+      console.log(
+        `Got pubkey:${pubkey} profile: ${JSON.stringify(postInfo, null, 2)}`
+      );
+      return postInfo;
+    },
+    [client, pubkey, isLoggedIn]
+  );
+
   return (
     <ClientContext.Provider
-      value={{ pubkey, signUp, logout, saveProfile, getProfile }}
+      value={{
+        pubkey,
+        isLoggedIn,
+        createPost,
+        signUp,
+        logout,
+        saveProfile,
+        getProfile,
+      }}
     >
       {children}
     </ClientContext.Provider>
