@@ -1,8 +1,26 @@
+'use client';
+
 import { Content } from '@social/ui-shared';
 import { Profile } from './components';
 import { CreatePost, Header, Post, PostsLayout } from '../components';
+import { useClientContext } from '../../contexts/client';
+import { useEffect } from 'react';
 
 export default function Index() {
+  const { getProfile } = useClientContext();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profile = await getProfile();
+        console.log(profile);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchProfile();
+  }, [getProfile]);
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Profile" />

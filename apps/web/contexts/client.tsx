@@ -88,8 +88,8 @@ export function ClientWrapper({
 
       return newPubky;
     }
-    return pubky;
-  }, [client, pubky, isLoggedIn]);
+    return loggedIn;
+  }, [client, isLoggedIn]);
 
   const logout = useCallback(
     async (session: any) => {
@@ -107,35 +107,37 @@ export function ClientWrapper({
 
   const saveProfile = useCallback(
     async (profile: Profile): Promise<void> => {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) throw new Error('Save profile failed: not logged in.');
+      const pk = await isLoggedIn();
+      if (!pk) throw new Error('Save profile failed: not logged in.');
       const pubkyProfile = _toPubkyProfile(profile);
-      const result = await client.social.profile.put(pubky, pubkyProfile);
+      const result = await client.social.profile.put(pk, pubkyProfile);
       if (!result.ok)
         throw new Error(
-          `Save pubky:${pubky} profile failed: ${result.error.message}`
+          `Save pubky:${pk} profile failed: ${result.error.message}`
         );
       console.log(
-        `Saved pubky:${pubky} profile: ${JSON.stringify(pubkyProfile, null, 2)}`
+        `Saved pubky:${pk} profile: ${JSON.stringify(pubkyProfile, null, 2)}`
       );
     },
-    [client, pubky, isLoggedIn]
+    [client, isLoggedIn]
   );
 
   const getProfile = useCallback(async (): Promise<PubkyProfile> => {
-    const loggedIn = await isLoggedIn();
-    if (!loggedIn) throw new Error('Get profile failed: not logged in.');
-    const result = await client.social.profile.get(pubky);
+    const pk = await isLoggedIn();
+    if (!pk) throw new Error('Get profile failed: not logged in.');
+    console.log('pk', pk);
+    const result = await client.social.profile.get(pk);
+    console.log(result);
     if (!result.ok)
       throw new Error(
-        `Get pubky:${pubky} profile failed: ${result.error.message}`
+        `Get pubky:${pk} profile failed: ${result.error.message}`
       );
     const pubkyProfile = result.value;
     console.log(
-      `Got pubky:${pubky} profile: ${JSON.stringify(pubkyProfile, null, 2)}`
+      `Got pubky:${pk} profile: ${JSON.stringify(pubkyProfile, null, 2)}`
     );
     return pubkyProfile;
-  }, [client, pubky, isLoggedIn]);
+  }, [client, isLoggedIn]);
 
   return (
     <ClientContext.Provider
@@ -168,7 +170,7 @@ const _toPubkyProfile = (profile: Profile): PubkyProfile => {
   const pubkyProfile: PubkyProfile = {
     name: profile.name || 'anonymous',
     bio: profile.info,
-    image: profile.pic || '/images/Userpic.png',
+    image: profile.image || '/images/Userpic.png',
     links: [
       { url: profile.links.website, title: 'website' },
       { url: profile.links.email, title: 'email' },

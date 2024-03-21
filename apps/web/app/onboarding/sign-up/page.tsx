@@ -17,7 +17,7 @@ import { useClientContext } from '../../../contexts/client';
 export type Profile = {
   name: string;
   info: string;
-  pic: string;
+  image: string;
   links: {
     website: string;
     email: string;
@@ -32,7 +32,7 @@ export default function Index() {
   const [profile, setProfile] = useState<Profile>({
     name: '',
     info: '',
-    pic: '/images/Userpic.png',
+    image: '/images/Userpic.png',
     links: {
       website: '',
       email: '',
@@ -43,10 +43,12 @@ export default function Index() {
 
   useEffect(() => {
     const register = async () => {
-      if (pubky) return; // already registered
-      await signUp().catch((err) => {
-        console.error(`Sign up failed: ${err.message}`);
-      });
+      try {
+        if (pubky) return; // already registered
+        await signUp();
+      } catch (error) {
+        console.error(`Sign up failed: ${error}`);
+      }
     };
     register();
   }, [pubky, signUp]);
@@ -56,7 +58,7 @@ export default function Index() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfile({ ...profile, pic: reader.result as string });
+        setProfile({ ...profile, image: reader.result as string });
       };
       reader.readAsDataURL(file);
     }
@@ -64,9 +66,11 @@ export default function Index() {
 
   const handleSubmit = async () => {
     // validation?
-    await saveProfile(profile).catch((err) => {
-      console.error(`Save profile failed: ${err.message}`);
-    });
+    try {
+      await saveProfile(profile);
+    } catch (error) {
+      console.error(`Save profile failed: ${error}`);
+    }
   };
 
   return (
@@ -97,7 +101,9 @@ export default function Index() {
               placeholder="Short bio. Tell a bit about yourself."
               className="h-[422px]"
               defaultValue={profile.info}
-              // onChange={(e) => setProfile({ ...profile, info: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setProfile({ ...profile, info: e.target.value })
+              }
             />
           </Card.Primary>
         </Card.Primary>
@@ -168,13 +174,13 @@ export default function Index() {
         </Card.Primary>
         <Card.Primary title="Picture">
           <label htmlFor="fileInput">
-            {profile.pic && (
+            {profile.image && (
               <Image
                 width={320}
                 height={320}
                 className="w-80 h-auto mt-6 rounded-full cursor-pointer"
                 alt="user"
-                src={profile.pic}
+                src={profile.image}
               />
             )}
             <input
