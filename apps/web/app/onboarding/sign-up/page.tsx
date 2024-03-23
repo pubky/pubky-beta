@@ -17,7 +17,7 @@ import { useClientContext } from '../../../contexts/client';
 import { minifyPubkey } from '../../../libs/profileHelper';
 
 export default function Index() {
-  const { pubkey, signUp, saveProfile } = useClientContext();
+  const { pubkey, signUp, saveProfile, getProfile } = useClientContext();
 
   const [name, setName] = useState('');
   const [info, setInfo] = useState('');
@@ -30,13 +30,33 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!pubkey) await signUp();
+        if (!pubkey) {
+          await signUp();
+        } else {
+          const profile = await getProfile();
+
+          setName(profile.name);
+          setInfo(profile.bio);
+          setImage(profile.image);
+
+          for (const link of profile.links) {
+            if (link.title === 'website') {
+              setWebsite(link.url);
+            } else if (link.title === 'email') {
+              setEmail(link.url);
+            } else if (link.title === 'x') {
+              setX(link.url);
+            } else if (link.title === 'telegram') {
+              setTelegram(link.url);
+            }
+          }
+        }
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, [signUp, pubkey]);
+  }, [signUp, pubkey, getProfile]);
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

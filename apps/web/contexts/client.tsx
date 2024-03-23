@@ -44,18 +44,18 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const isLoggedIn = useCallback(async (): Promise<boolean> => {
+  const isLoggedIn = useCallback(async (): Promise<string | null> => {
     await client.ready();
     const sessions = await client.session();
     const pks = Object.keys(sessions?.users);
-    if (!pks.length) return false;
+    if (!pks.length) return null;
     setPubkey(pks[0]);
-    return true;
+    return pks[0];
   }, [client]);
 
   const signUp = useCallback(async (): Promise<string> => {
-    const loggedIn = await isLoggedIn();
-    if (!loggedIn) {
+    const pk = await isLoggedIn();
+    if (!pk) {
       const seed = Client.crypto.generateSeed();
       const result = await client.signup(seed); // seed is zeroed
       if (!result.ok) throw new Error(`Signup failed: ${result.error.message}`);
@@ -71,8 +71,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       return newPubkey;
     }
-    return pubkey;
-  }, [client, pubkey, isLoggedIn]);
+    return pk;
+  }, [client, isLoggedIn]);
 
   const logout = useCallback(async () => {
     await client.ready();
@@ -86,56 +86,52 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const saveProfile = useCallback(
     async (profile: any): Promise<void> => {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) throw new Error('Logged in failed : not logged in.');
+      const pk = await isLoggedIn();
+      if (!pk) throw new Error('Logged in failed : not logged in.');
       const pubkeyProfile = _toPubkeyProfile(profile);
-      const result = await client.social.profile.put(pubkey, pubkeyProfile);
+      const result = await client.social.profile.put(pk, pubkeyProfile);
       if (!result.ok)
         throw new Error(
-          `Save pubkey:${pubkey} profile failed: ${result.error.message}`
+          `Save pubkey:${pk} profile failed: ${result.error.message}`
         );
       console.log(
-        `Saved pubkey:${pubkey} profile: ${JSON.stringify(
-          pubkeyProfile,
-          null,
-          2
-        )}`
+        `Saved pubkey:${pk} profile: ${JSON.stringify(pubkeyProfile, null, 2)}`
       );
     },
-    [client, pubkey, isLoggedIn]
+    [client, isLoggedIn]
   );
 
   const getProfile = useCallback(async (): Promise<any> => {
-    const loggedIn = await isLoggedIn();
-    if (!loggedIn) throw new Error('Logged in failed : not logged in.');
-    const result = await client.social.profile.get(pubkey);
+    const pk = await isLoggedIn();
+    if (!pk) throw new Error('Logged in failed : not logged in.');
+    const result = await client.social.profile.get(pk);
     if (!result.ok)
       throw new Error(
-        `Get pubkey:${pubkey} profile failed: ${result.error.message}`
+        `Get pubkey:${pk} profile failed: ${result.error.message}`
       );
     const pubkeyProfile = result.value;
     console.log(
-      `Got pubkey:${pubkey} profile: ${JSON.stringify(pubkeyProfile, null, 2)}`
+      `Got pubkey:${pk} profile: ${JSON.stringify(pubkeyProfile, null, 2)}`
     );
     return pubkeyProfile;
-  }, [client, pubkey, isLoggedIn]);
+  }, [client, isLoggedIn]);
 
   const createPost = useCallback(
     async (post): Promise<any> => {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) throw new Error('Logged in failed : not logged in.');
-      const result = await client.social.post.put(pubkey, post);
+      const pk = await isLoggedIn();
+      if (!pk) throw new Error('Logged in failed : not logged in.');
+      const result = await client.social.post.put(pk, post);
       if (!result.ok)
         throw new Error(
-          `CREATE post:${pubkey} profile failed: ${result.error.message}`
+          `CREATE post:${pk} profile failed: ${result.error.message}`
         );
       const postInfo = result.value;
       console.log(
-        `Got pubkey:${pubkey} profile: ${JSON.stringify(postInfo, null, 2)}`
+        `Got pubkey:${pk} profile: ${JSON.stringify(postInfo, null, 2)}`
       );
       return postInfo;
     },
-    [client, pubkey, isLoggedIn]
+    [client, isLoggedIn]
   );
 
   return (
