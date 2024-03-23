@@ -7,6 +7,8 @@ import {
   PostUtil,
   Typography,
 } from '@social/ui-shared';
+import { useClientContext } from '../../../contexts/client';
+import React, { useState } from 'react';
 
 interface CreatePostProps {
   showModalPost: boolean;
@@ -21,6 +23,14 @@ export default function CreatePost({
   modalPostRef,
   setShowModalLink,
 }: CreatePostProps) {
+  const { createPost } = useClientContext();
+  const [content, setContent] = useState('');
+
+  const handleSubmit = async () => {
+    await createPost(content);
+    setShowModalPost(false);
+  };
+
   return (
     <Modal.Root
       modalRef={modalPostRef}
@@ -41,6 +51,9 @@ export default function CreatePost({
                 <Input.TextArea
                   className="no-scrollbar h-full p-4"
                   placeholder="Write content, drop an image, or paste a link"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setContent(e.target.value)
+                  }
                 />
               </div>
               {/**<div className="hidden lg:flex relative">
@@ -153,7 +166,7 @@ export default function CreatePost({
             </div>
           </div>
           <div className="w-full">
-            <Modal.SubmitAction onClick={() => setShowModalPost(false)}>
+            <Modal.SubmitAction onClick={() => handleSubmit()}>
               Publish Post
             </Modal.SubmitAction>
           </div>

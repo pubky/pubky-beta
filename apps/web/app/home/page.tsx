@@ -12,7 +12,8 @@ import {
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useClientContext } from '../../contexts/client';
 
 type Layout = 'sidebar' | 'grid' | 'columns' | 'list';
 
@@ -20,6 +21,15 @@ type Layouts = {
   [key in 'sidebar' | 'grid' | 'columns' | 'list']: {
     layout: string;
     posts: string;
+  };
+};
+
+type PostUri = {
+  key: string;
+  uri: string;
+  value: {
+    hash: string;
+    timestamp: number;
   };
 };
 
@@ -44,6 +54,19 @@ const layouts: Layouts = {
 
 export default function Index() {
   const [layout] = useState<Layout>('sidebar');
+  const { listPosts, pubkey } = useClientContext();
+  const [posts, setPosts] = useState<PostUri[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!pubkey) return;
+      const results = await listPosts(pubkey);
+      setPosts(results.value.list);
+      console.log(results.value.list[0]);
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listPosts, pubkey]);
 
   const postsLayoutClassName =
     layout === 'sidebar'
@@ -65,10 +88,13 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          <Post repost bookmark size={layout === 'list' ? 'full' : 'normal'} />
-          <Post size={layout === 'list' ? 'full' : 'normal'} />
-          <Post size={layout === 'list' ? 'full' : 'normal'} />
-          <Post size={layout === 'list' ? 'full' : 'normal'} />
+          {posts.map((post, index) => (
+            <Post
+              key={index}
+              postId={post}
+              size={layout === 'list' ? 'full' : 'normal'}
+            />
+          ))}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
           <WhoFollow />

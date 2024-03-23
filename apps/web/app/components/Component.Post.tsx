@@ -7,25 +7,47 @@ import {
   Post as PostUI,
   Typography,
 } from '@social/ui-shared';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
 import Repost from './Component.Repost';
+import { useClientContext } from '../../contexts/client';
+
+type PostUri = {
+  key: string;
+  uri: string;
+  value: {
+    hash: string;
+    timestamp: number;
+  };
+};
+
+type PostResult = {
+  uri: string;
+  content: string;
+  createdAt: string | Date | null;
+  id: string;
+};
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
   bookmark?: boolean;
   size?: 'full' | 'normal';
+  postId: PostUri;
 }
 
 export default function Post({
   repost = false,
   bookmark = false,
   size = 'normal',
+  postId,
   ...rest
 }: PostProps) {
+  const { getPost } = useClientContext();
+
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
+  const [post, setPost] = useState<PostResult>({} as PostResult);
   const images = [
     {
       src: '/images/user.png',
@@ -48,6 +70,17 @@ export default function Post({
       alt: '5',
     },
   ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!postId.uri) return;
+      const result = await getPost(postId.uri);
+      setPost(result);
+      console.log(result);
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getPost, post.uri]);
 
   return (
     <div>
@@ -116,9 +149,7 @@ export default function Post({
               >
                 <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
                   <PostUI.Content
-                    text="You either want lots of people using Bitcoin (holding Bitcoin keys)
-            or you dont. Many of you seem to believe things that require both
-            positions."
+                    text={post?.content}
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}
                   />
                   {/** <img

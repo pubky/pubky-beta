@@ -12,11 +12,13 @@ import {
   useCallback,
   useMemo,
 } from 'react';
-import Client from '@pubky/sdk';
+
 export * from '@pubky/common';
+
 import z32 from 'z32';
 
 import { argon2id } from 'hash-wasm';
+import Client from '@pubky/sdk';
 
 const TEST_HOMESERVER =
   'pk:z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo';
@@ -29,6 +31,8 @@ type AuthContextType = {
   saveProfile: (profile: any) => Promise<void>;
   createPost: (post: any) => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
+  listPosts: (pubky: string) => Promise<any>;
+  getPost: (uri: string) => Promise<any>;
   profile: any;
   pubkey: string;
 };
@@ -91,11 +95,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const pubkeyProfile = _toPubkeyProfile(profile);
       const result = await client.social.profile.put(pk, pubkeyProfile);
       if (!result.ok)
-        throw new Error(
-          `Save pubkey:${pk} profile failed: ${result.error.message}`
-        );
+        throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
       console.log(
-        `Saved pubkey:${pk} profile: ${JSON.stringify(pubkeyProfile, null, 2)}`
+        `Saved profile:${pk}: ${JSON.stringify(pubkeyProfile, null, 2)}`
       );
     },
     [client, isLoggedIn]
@@ -106,9 +108,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     if (!pk) throw new Error('Logged in failed : not logged in.');
     const result = await client.social.profile.get(pk);
     if (!result.ok)
-      throw new Error(
-        `Get pubkey:${pk} profile failed: ${result.error.message}`
-      );
+      throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
     const pubkeyProfile = result.value;
     console.log(
       `Got pubkey:${pk} profile: ${JSON.stringify(pubkeyProfile, null, 2)}`
@@ -117,19 +117,38 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   }, [client, isLoggedIn]);
 
   const createPost = useCallback(
-    async (post): Promise<any> => {
+    async (content: string) => {
       const pk = await isLoggedIn();
-      if (!pk) throw new Error('Logged in failed : not logged in.');
-      const result = await client.social.post.put(pk, post);
+      if (!pk) throw new Error('Get profile failed: not logged in.');
+      const payload = {
+        content: content,
+      };
+      const result = await client.social.posts.put(pk, { payload });
       if (!result.ok)
-        throw new Error(
-          `CREATE post:${pk} profile failed: ${result.error.message}`
-        );
-      const postInfo = result.value;
-      console.log(
-        `Got pubkey:${pk} profile: ${JSON.stringify(postInfo, null, 2)}`
-      );
-      return postInfo;
+        throw new Error(`Put post:${pk} failed: ${result.error.message}`);
+      return result;
+    },
+    [client, isLoggedIn]
+  );
+
+  const getPost = useCallback(
+    async (uri: string) => {
+      if (!uri) throw new Error('Get list posts failed');
+      const result = await client.social.posts.get(uri);
+      if (!result.ok)
+        throw new Error(`Get post:${pk} failed: ${result.error.message}`);
+      return result.value;
+    },
+    [client, isLoggedIn]
+  );
+
+  const listPosts = useCallback(
+    async (pk: string) => {
+      if (!pk) throw new Error('Get list posts failed');
+      const result = await client.social.posts.list(pk, { limit: 5 });
+      if (!result.ok)
+        throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
+      return result;
     },
     [client, isLoggedIn]
   );
@@ -140,6 +159,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         pubkey,
         isLoggedIn,
         createPost,
+        getPost,
+        listPosts,
         signUp,
         logout,
         saveProfile,
@@ -167,7 +188,6 @@ const _encryptionKeyFromPassphrase = async (password: string) => {
     outputType: 'binary',
   });
 };
-
 const _toPubkeyProfile = (profile: any): any => {
   if (!profile) throw new Error('Profile is required');
 
