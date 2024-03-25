@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface CaptionProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'normal' | 'bold';
-  children?: string | number;
+  children?: React.ReactNode;
 }
 
 export const Caption = ({
@@ -14,7 +14,7 @@ export const Caption = ({
 
   switch (variant) {
     case 'bold':
-      cssClasses = `text-[13px] font-semibold font-['Inter Tight'] tracking-tight`;
+      cssClasses = `text-[13px] font-semibold font-InterTight tracking-tight`;
       break;
   }
 
@@ -22,7 +22,7 @@ export const Caption = ({
     <div
       {...rest}
       className={twMerge(
-        `text-[13px] font-normal font-['Inter Tight'] tracking-tight`,
+        `text-[13px] font-normal font-InterTight tracking-tight`,
         cssClasses,
         rest.className
       )}

@@ -42,7 +42,7 @@ export const Select = ({
 
     return {
       baseCSS: twMerge(
-        `border-t px-6 py-[15px] rounded-lg justify-center items-center gap-2 inline-flex`,
+        `border-t px-2 sm:px-6 py-[15px] rounded-lg justify-center items-center gap-2 inline-flex`,
         sizeCSS,
         colorBorder,
         backgroundColor,
@@ -57,7 +57,10 @@ export const Select = ({
   return (
     <button {...rest} onClick={handleButtonClick} className={baseCSS}>
       <div>{icon || <Icon.UserRectangle color={iconColor} />}</div>
-      <Typography.Body variant="small-bold" className={bodyCSS}>
+      <Typography.Body
+        variant="small-bold"
+        className={`hidden lg:block ${bodyCSS}`}
+      >
         {text}
       </Typography.Body>
     </button>
