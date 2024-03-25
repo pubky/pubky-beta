@@ -63,20 +63,6 @@ export default function Post({
   const [creator, setCreator] = useState<User | null>(null);
   const [creatorPubky, setCreatorPubky] = useState<string>('');
   const [createdAt, setCreatedAt] = useState<string | Date | null>(null);
-  const images = [
-    {
-      src: '/images/user.png',
-      alt: '1',
-    },
-    {
-      src: '/images/user.png',
-      alt: '2',
-    },
-    {
-      src: '/images/user.png',
-      alt: '3',
-    },
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
