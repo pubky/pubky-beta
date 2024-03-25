@@ -34,7 +34,6 @@ type AuthContextType = {
   listPosts: (pubky: string) => Promise<any>;
   getPost: (uri: string) => Promise<any>;
   getUser: (pk: string) => Promise<any>;
-  profile: any;
   pubkey: string;
 };
 

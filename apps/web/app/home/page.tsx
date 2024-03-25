@@ -14,8 +14,7 @@ import {
 import { DropDown } from '../components/DropDown';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
-
-type Layout = 'sidebar' | 'grid' | 'columns' | 'list';
+import { useFilterContext } from '../../contexts/filters';
 
 type Layouts = {
   [key in 'sidebar' | 'grid' | 'columns' | 'list']: {
@@ -51,7 +50,7 @@ const layouts: Layouts = {
 };
 
 export default function Index() {
-  const [layout] = useState<Layout>('sidebar');
+  const { layout } = useFilterContext();
   const { listPosts, pubkey } = useClientContext();
   const [posts, setPosts] = useState<PostUri[]>([]);
 

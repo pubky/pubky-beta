@@ -3,12 +3,20 @@
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
+import { useFilterContext } from '../../../contexts/filters';
 
 export default function Layout() {
+  const { layout, setLayout } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
+  const icons = {
+    sidebar: <Icon.SquareHalf />,
+    list: <Icon.List />,
+    grid: <Icon.DotsNine />,
+    columns: <Icon.SquaresFour />,
+  };
   const [dropdownValue, setDropdownValue] = useState({
-    value: 'sidebar',
-    iconOption: <Icon.SquareHalf />,
+    value: layout ? layout : 'sidebar',
+    iconOption: layout ? icons[layout] : icons.sidebar,
   });
 
   return (
@@ -27,52 +35,56 @@ export default function Layout() {
         <DropDownUI.Item
           label="Sidebar"
           value="sidebar"
-          selected={dropdownValue.value === 'sidebar'}
+          selected={layout === 'sidebar'}
           icon={<Icon.SquareHalf />}
           onClick={() => {
             setDropdownValue({
               value: 'sidebar',
               iconOption: <Icon.SquareHalf />,
             });
+            setLayout('sidebar');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="List"
           value="list"
-          selected={dropdownValue.value === 'list'}
+          selected={layout === 'list'}
           icon={<Icon.List />}
           onClick={() => {
             setDropdownValue({
               value: 'list',
               iconOption: <Icon.List />,
             });
+            setLayout('list');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="Grid"
           value="grid"
-          selected={dropdownValue.value === 'grid'}
+          selected={layout === 'grid'}
           icon={<Icon.DotsNine />}
           onClick={() => {
             setDropdownValue({
               value: 'grid',
               iconOption: <Icon.DotsNine />,
             });
+            setLayout('grid');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="Columns"
           value="columns"
-          selected={dropdownValue.value === 'columns'}
+          selected={layout === 'columns'}
           icon={<Icon.SquaresFour />}
           onClick={() => {
             setDropdownValue({
               value: 'columns',
               iconOption: <Icon.SquaresFour />,
             });
+            setLayout('columns');
             setOpenDropdown(false);
           }}
         />

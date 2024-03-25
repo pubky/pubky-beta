@@ -1,5 +1,7 @@
-import { ClientWrapper } from '../contexts/client';
 import './global.css';
+
+import { ClientWrapper } from '../contexts/client';
+import { FilterWrapper } from '../contexts/filters';
 
 export default function RootLayout({
   children,
@@ -9,7 +11,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ClientWrapper>{children}</ClientWrapper>
+        <FilterWrapper>
+          <ClientWrapper>{children}</ClientWrapper>
+        </FilterWrapper>
       </body>
     </html>
   );

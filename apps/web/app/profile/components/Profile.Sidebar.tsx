@@ -30,7 +30,7 @@ export default function Sidebar() {
         const profile = await getProfile();
         if (profile) {
           setName(profile?.name || '');
-          setBio(profile?.info || '');
+          setBio(profile?.bio || '');
 
           if (profile.links) {
             const x = profile.links.find(
