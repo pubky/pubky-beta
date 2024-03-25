@@ -107,7 +107,7 @@ export default function Header({
           className="relative cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-          <Menu.ImageMenu src={image} notifications={5} />
+          <Menu.ImageMenu src={image} />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
@@ -123,13 +123,13 @@ export default function Header({
                 text="Streams"
                 onClick={() => setDrawerOpen(false)}
               />
-              <Menu.Section
+              {/* <Menu.Section
                 href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
                 counter={5}
                 onClick={() => setDrawerOpen(false)}
-              />
+              /> */}
               <Menu.Section
                 href="/bookmarks"
                 icon={<Icon.BookmarkSimple />}
