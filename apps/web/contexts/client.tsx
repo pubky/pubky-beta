@@ -48,111 +48,149 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const isLoggedIn = useCallback(async (): Promise<string | null> => {
-    await client.ready();
-    const sessions = await client.session();
-    const pks = Object.keys(sessions?.users);
-    if (!pks.length) return null;
-    setPubkey(pks[0]);
-    return pks[0];
+  const isLoggedIn = useCallback(async (): Promise<string | boolean> => {
+    try {
+      await client.ready();
+      const sessions = await client.session();
+      const pks = Object.keys(sessions?.users);
+      if (!pks.length) return false;
+      setPubkey(pks[0]);
+      return pks[0];
+    } catch (error) {
+      console.log(error);
+    }
   }, [client]);
 
   const signUp = useCallback(async (): Promise<string> => {
-    const pk = await isLoggedIn();
-    if (!pk) {
-      const seed = Client.crypto.generateSeed();
-      const result = await client.signup(seed); // seed is zeroed
-      if (!result.ok) throw new Error(`Signup failed: ${result.error.message}`);
-      const newPubkey = result.value;
-      setPubkey(newPubkey);
+    try {
+      const pk = await isLoggedIn();
+      if (!pk) {
+        const seed = Client.crypto.generateSeed();
+        const result = await client.signup(seed); // seed is zeroed
+        if (!result.ok)
+          throw new Error(`Signup failed: ${result.error.message}`);
+        const newPubkey = result.value;
+        setPubkey(newPubkey);
 
-      // DEMO: generate recovery file content
-      const encryptionKey = await _encryptionKeyFromPassphrase('password');
-      const encryptedSeed = Client.crypto.encrypt(seed, encryptionKey);
-      const recovery = z32.encode(encryptedSeed);
-      console.log(`Recovery: ${recovery}`);
+        // DEMO: generate recovery file content
+        const encryptionKey = await _encryptionKeyFromPassphrase('password');
+        const encryptedSeed = Client.crypto.encrypt(seed, encryptionKey);
+        const recovery = z32.encode(encryptedSeed);
+        console.log(`Recovery: ${recovery}`);
 
-      return newPubkey;
+        return newPubkey;
+      }
+      return pk;
+    } catch (error) {
+      console.log(error);
     }
-    return pk;
   }, [client, isLoggedIn]);
 
   const logout = useCallback(async () => {
-    await client.ready();
-    const sessions = await client.session();
-    Object.keys(sessions.users).map(async (pk) => {
-      const result = await client.logout(pk);
-      if (!result.ok)
-        throw new Error(`Logout pubky:${pk} failed: ${result.error.message}`);
-    });
-    setPubkey(null);
+    try {
+      await client.ready();
+      await client.logout(pubkey);
+      const sessions = await client.session();
+      Object.keys(sessions.users).map(async (pk) => {
+        const result = await client.logout(pk);
+        if (!result.ok)
+          throw new Error(`Logout pubky:${pk} failed: ${result.error.message}`);
+      });
+      setPubkey(null);
+    } catch (error) {
+      console.log(error);
+    }
   }, [client]);
 
   const saveProfile = useCallback(
     async (profile: any): Promise<void> => {
-      const pk = await isLoggedIn();
-      if (!pk) throw new Error('Logged in failed : not logged in.');
-      const pubkeyProfile = _toPubkeyProfile(profile);
-      const result = await client.social.profile.put(pk, pubkeyProfile);
-      if (!result.ok)
-        throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
+      try {
+        const pk = await isLoggedIn();
+        if (!pk) throw new Error('Logged in failed : not logged in.');
+        const pubkeyProfile = _toPubkeyProfile(profile);
+        const result = await client.social.profile.put(pk, pubkeyProfile);
+        if (!result.ok)
+          throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
+      } catch (error) {
+        console.log(error);
+      }
     },
     [client, isLoggedIn]
   );
 
   const getProfile = useCallback(async (): Promise<any> => {
-    const pk = await isLoggedIn();
-    if (!pk) throw new Error('Logged in failed : not logged in.');
-    const result = await client.social.profile.get(pk);
-    if (!result.ok)
-      throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
-    return result.value;
-  }, [client, isLoggedIn]);
-
-  const getUser = useCallback(
-    async (pk): Promise<any> => {
+    try {
+      const pk = await isLoggedIn();
       if (!pk) throw new Error('Logged in failed : not logged in.');
       const result = await client.social.profile.get(pk);
       if (!result.ok)
         throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
       return result.value;
+    } catch (error) {
+      console.log(error);
+    }
+  }, [client, isLoggedIn]);
+
+  const getUser = useCallback(
+    async (pk): Promise<any> => {
+      try {
+        if (!pk) throw new Error('Logged in failed : not logged in.');
+        const result = await client.social.profile.get(pk);
+        if (!result.ok)
+          throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
+        return result.value;
+      } catch (error) {
+        console.log(error);
+      }
     },
     [client, isLoggedIn]
   );
 
   const createPost = useCallback(
     async (content: string) => {
-      const pk = await isLoggedIn();
-      if (!pk) throw new Error('Get profile failed: not logged in.');
-      const payload = {
-        content: content,
-      };
-      const result = await client.social.posts.put(pk, { payload });
-      if (!result.ok)
-        throw new Error(`Put post:${pk} failed: ${result.error.message}`);
-      return result;
+      try {
+        const pk = await isLoggedIn();
+        if (!pk) throw new Error('Get profile failed: not logged in.');
+        const payload = {
+          content: content,
+        };
+        const result = await client.social.posts.put(pk, { payload });
+        if (!result.ok)
+          throw new Error(`Put post:${pk} failed: ${result.error.message}`);
+        return result;
+      } catch (error) {
+        console.log(error);
+      }
     },
     [client, isLoggedIn]
   );
 
   const getPost = useCallback(
     async (uri: string) => {
-      if (!uri) throw new Error('Get list posts failed');
-      const result = await client.social.posts.get(uri);
-      if (!result.ok)
-        throw new Error(`Get post:${pk} failed: ${result.error.message}`);
-      return result.value;
+      try {
+        if (!uri) throw new Error('Get list posts failed');
+        const result = await client.social.posts.get(uri);
+        if (!result.ok)
+          throw new Error(`Get post:${pk} failed: ${result.error.message}`);
+        return result.value;
+      } catch (error) {
+        console.log(error);
+      }
     },
     [client, isLoggedIn]
   );
 
   const listPosts = useCallback(
     async (pk: string) => {
-      if (!pk) throw new Error('Get list posts failed');
-      const result = await client.social.posts.list(pk, { limit: 5 });
-      if (!result.ok)
-        throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
-      return result;
+      try {
+        if (!pk) throw new Error('Get list posts failed');
+        const result = await client.social.posts.list(pk, { limit: 5 });
+        if (!result.ok)
+          throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
+        return result;
+      } catch (error) {
+        console.log(error);
+      }
     },
     [client, isLoggedIn]
   );
