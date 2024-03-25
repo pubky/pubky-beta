@@ -31,9 +31,21 @@ export default function Sidebar() {
         if (profile) {
           setName(profile?.name || '');
           setBio(profile?.info || '');
-          setTelegram(profile.links?.telegram || '');
-          setX(profile.links?.x || '');
-          setWebsite(profile.links?.website || '');
+
+          if (profile.links) {
+            const x = profile.links.find(
+              (link: { title: string }) => link.title === 'x'
+            );
+            const website = profile.links.find(
+              (link: { title: string }) => link.title === 'website'
+            );
+            const telegram = profile.links.find(
+              (link: { title: string }) => link.title === 'telegram'
+            );
+            setX(x?.url || '');
+            setWebsite(website?.url || '');
+            setTelegram(telegram?.url || '');
+          }
         }
       } catch (error) {
         console.log(error);
@@ -54,14 +66,6 @@ export default function Sidebar() {
     {
       src: '/images/user.png',
       alt: '3',
-    },
-    {
-      src: '/images/user.png',
-      alt: '4',
-    },
-    {
-      src: '/images/user.png',
-      alt: '5',
     },
   ];
 
@@ -123,40 +127,42 @@ export default function Sidebar() {
           </Link>
         </SideCard.Content>
       </div>
-      <div className="w-full">
-        <SideCard.Header title="Links" variantTitle="label" />
-        <div className="gap-4 grid grid-cols-3 w-full">
-          {x && (
-            <Link
-              target="_blank"
-              href={`https://x.com/${x}`}
-              className="w-full"
-            >
-              <SideCard.Content className="w-full h-24 justify-center items-center">
-                <Icon.Twitter />
-              </SideCard.Content>
-            </Link>
-          )}
-          {website && (
-            <Link target="_blank" href={website} className="w-full">
-              <SideCard.Content className="w-full h-24 justify-center items-center">
-                <Icon.Youtube />
-              </SideCard.Content>
-            </Link>
-          )}
-          {telegram && (
-            <Link
-              target="_blank"
-              href={`https://telegram.com/${telegram}`}
-              className="w-full"
-            >
-              <SideCard.Content className="w-full h-24 justify-center items-center">
-                <Icon.Telegram />
-              </SideCard.Content>
-            </Link>
-          )}
+      {(x || website || telegram) && (
+        <div className="w-full">
+          <SideCard.Header title="Links" variantTitle="label" />
+          <div className="gap-4 grid grid-cols-3 w-full">
+            {x && (
+              <Link
+                target="_blank"
+                href={`https://x.com/${x}`}
+                className="w-full"
+              >
+                <SideCard.Content className="w-full h-24 justify-center items-center">
+                  <Icon.Twitter />
+                </SideCard.Content>
+              </Link>
+            )}
+            {website && (
+              <Link target="_blank" href={website} className="w-full">
+                <SideCard.Content className="w-full h-24 justify-center items-center">
+                  <Icon.Youtube />
+                </SideCard.Content>
+              </Link>
+            )}
+            {telegram && (
+              <Link
+                target="_blank"
+                href={`https://telegram.com/${telegram}`}
+                className="w-full"
+              >
+                <SideCard.Content className="w-full h-24 justify-center items-center">
+                  <Icon.Telegram />
+                </SideCard.Content>
+              </Link>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
