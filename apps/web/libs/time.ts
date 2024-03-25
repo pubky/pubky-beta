@@ -3,25 +3,38 @@ export function timeAgo(date: string | Date | null) {
   const seconds = Math.floor(
     (new Date().getTime() - new Date(date).getTime()) / 1000
   );
+
   let interval = seconds / 31536000;
-  if (interval > 1) {
-    return Math.floor(interval) + ' years ago';
+  let number = Math.floor(interval);
+
+  if (number >= 1) {
+    return `${number} ${number === 1 ? 'year' : 'years'} ago`;
   }
+
   interval = seconds / 2592000;
-  if (interval > 1) {
-    return Math.floor(interval) + ' months ago';
+  number = Math.floor(interval);
+  if (number >= 1) {
+    return `${number} ${number === 1 ? 'month' : 'months'} ago`;
   }
+
   interval = seconds / 86400;
-  if (interval > 1) {
-    return Math.floor(interval) + ' days ago';
+  number = Math.floor(interval);
+  if (number >= 1) {
+    return `${number} ${number === 1 ? 'day' : 'days'} ago`;
   }
+
   interval = seconds / 3600;
-  if (interval > 1) {
-    return Math.floor(interval) + ' hours ago';
+  number = Math.floor(interval);
+  if (number >= 1) {
+    return `${number} ${number === 1 ? 'hour' : 'hours'} ago`;
   }
+
   interval = seconds / 60;
-  if (interval > 1) {
-    return Math.floor(interval) + ' minutes ago';
+  number = Math.floor(interval);
+  if (number >= 1) {
+    return `${number} ${number === 1 ? 'minute' : 'minutes'} ago`;
   }
-  return Math.floor(seconds) + ' seconds ago';
+
+  number = Math.floor(seconds);
+  return `${number} ${number === 1 ? 'second' : 'seconds'} ago`;
 }
