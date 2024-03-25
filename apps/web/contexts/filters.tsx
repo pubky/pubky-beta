@@ -36,38 +36,28 @@ const FilterContext = createContext<FilterContextType>({
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [layout, setLayout] = useState<Layout>(
-    typeof window !== 'undefined'
-      ? (localStorage.getItem('layout') as Layout)
-      : 'sidebar'
+    (globalThis.localStorage?.getItem('layout') as Layout) || 'sidebar'
   );
   const [sort, setSort] = useState<Sort>(
-    typeof window !== 'undefined'
-      ? (localStorage.getItem('sort') as Sort)
-      : 'recent'
+    (globalThis.localStorage?.getItem('sort') as Sort) || 'recent'
   );
   const [reach, setReach] = useState<Reach>(
-    typeof window !== 'undefined'
-      ? (localStorage.getItem('reach') as Reach)
-      : 'all'
+    (globalThis.localStorage?.getItem('reach') as Reach) || 'all'
   );
   const [content, setContent] = useState<Content>(
-    typeof window !== 'undefined'
-      ? (localStorage.getItem('content') as Content)
-      : 'all'
+    (globalThis.localStorage?.getItem('content') as Content) || 'all'
   );
   const [timeframe, setTimeframe] = useState<Timeframe>(
-    typeof window !== 'undefined'
-      ? (localStorage.getItem('timeframe') as Timeframe)
-      : 'today'
+    (globalThis.localStorage?.getItem('timeframe') as Timeframe) || 'today'
   );
 
   // save filters to local storage
   useEffect(() => {
-    localStorage.setItem('layout', layout);
-    localStorage.setItem('sort', sort);
-    localStorage.setItem('reach', reach);
-    localStorage.setItem('content', content);
-    localStorage.setItem('timeframe', timeframe);
+    globalThis.localStorage?.setItem('layout', layout);
+    globalThis.localStorage?.setItem('sort', sort);
+    globalThis.localStorage?.setItem('reach', reach);
+    globalThis.localStorage?.setItem('content', content);
+    globalThis.localStorage?.setItem('timeframe', timeframe);
   }, [layout, sort, reach, content, timeframe]);
 
   return (
