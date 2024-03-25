@@ -11,28 +11,44 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, pubkey } = useClientContext();
+  const { isLoggedIn } = useClientContext();
 
   useEffect(() => {
-    const notProtectedRoutes = [
+    const protectedRoutes = [
+      '/contacts',
+      '/followers',
+      '/home',
+      '/hot-tags',
+      '/notifications',
+      '/post',
+      '/profile',
+      '/search',
+      '/settings',
+    ];
+
+    const redirectLoggedUser = [
       '/onboarding',
       '/onboarding/sign-up',
-      '/onboarding/sign-in',
-      '/onboarding/confirm',
-      '/onboarding/permissions',
+      '/login',
+      '/sign-up',
     ];
+
+    const isProtected = protectedRoutes.includes(pathname);
 
     const checkLogin = async () => {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn && !pubkey && !notProtectedRoutes.includes(pathname)) {
+      if (!loggedIn && isProtected) {
         router.push('/onboarding');
-      } else if (pubkey && notProtectedRoutes.includes(pathname)) {
+        return;
+      }
+      if (loggedIn && redirectLoggedUser.includes(pathname)) {
         router.push('/home');
+        return;
       }
     };
 
     checkLogin();
-  }, [isLoggedIn, router, pathname, pubkey]);
+  }, [isLoggedIn, router, pathname]);
 
   return <>{children}</>;
 }

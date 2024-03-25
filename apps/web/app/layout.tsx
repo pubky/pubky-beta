@@ -2,6 +2,7 @@ import './global.css';
 
 import { ClientWrapper } from '../contexts/client';
 import { FilterWrapper } from '../contexts/filters';
+import ProtectedRoutes from './components/ProtectedRoutes';
 
 export default function RootLayout({
   children,
@@ -12,7 +13,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <FilterWrapper>
-          <ClientWrapper>{children}</ClientWrapper>
+          <ClientWrapper>
+            <ProtectedRoutes>{children}</ProtectedRoutes>
+          </ClientWrapper>
         </FilterWrapper>
       </body>
     </html>
