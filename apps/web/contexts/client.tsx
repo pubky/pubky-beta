@@ -25,7 +25,7 @@ const TEST_HOMESERVER =
 const TEST_PKARR_RELAY = 'http://localhost:7258';
 
 type AuthContextType = {
-  signUp: () => Promise<any>;
+  signUp: () => Promise<string>;
   logout: () => Promise<void>;
   getProfile: () => Promise<any>;
   saveProfile: (profile: any) => Promise<void>;
@@ -34,13 +34,13 @@ type AuthContextType = {
   listPosts: (pubky: string) => Promise<any>;
   getPost: (uri: string) => Promise<any>;
   getUser: (pk: string) => Promise<any>;
-  pubkey: string;
+  pubkey: string | null;
 };
 
 const ClientContext = createContext<AuthContextType>();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
-  const [pubkey, setPubkey] = useState();
+  const [pubkey, setPubkey] = useState<string | null>(null);
 
   const client = useMemo(() => {
     return new Client(TEST_HOMESERVER, {
@@ -85,6 +85,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`Logout pubky:${pk} failed: ${result.error.message}`);
     });
+    setPubkey(null);
   }, [client]);
 
   const saveProfile = useCallback(
