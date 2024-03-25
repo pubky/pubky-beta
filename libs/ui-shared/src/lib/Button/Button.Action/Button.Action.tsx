@@ -153,7 +153,7 @@ export const Action = ({
         className={twMerge(cssClasses, rest.className)}
       >
         {iconComponent}
-        {counter && (
+        {counter > 0 && (
           <ActionUI.Counter className={twMerge(counterSize, color)}>
             {counter}
           </ActionUI.Counter>

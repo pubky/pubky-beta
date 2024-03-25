@@ -185,19 +185,19 @@ export default function Post({
                 <PostUI.Footer
                   className={size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'}
                 >
-                  <PostUtil.Tag clicked color="amber">
+                  {/* <PostUtil.Tag clicked color="amber">
                     #Bitcoin
-                  </PostUtil.Tag>
+                  </PostUtil.Tag> */}
                   <Button.Action
                     variant="custom"
                     size="small"
                     icon={<Icon.Plus />}
                   />
-                  <PostUtil.Counter counter={16} />
-                  <PostUI.UserPic
+                  <PostUtil.Counter counter={0} />
+                  {/* <PostUI.UserPic
                     className="hidden md:inline-flex"
                     images={images}
-                  />
+                  /> */}
                 </PostUI.Footer>
               </div>
               <PostUI.Actions>
@@ -205,7 +205,7 @@ export default function Post({
                   size="small"
                   variant="custom"
                   icon={<Icon.Tag size="16" />}
-                  counter={3}
+                  counter={0}
                   onClick={(event) => {
                     event.preventDefault();
                     setShowModalTag(true);
@@ -215,7 +215,7 @@ export default function Post({
                   size="small"
                   variant="custom"
                   icon={<Icon.ChatCircleText size="16" />}
-                  counter={2}
+                  counter={0}
                   onClick={(event) => {
                     event.preventDefault();
                   }}
@@ -224,7 +224,7 @@ export default function Post({
                   size="small"
                   variant="custom"
                   icon={<Icon.Repost size="16" />}
-                  counter={7}
+                  counter={0}
                   onClick={(event) => {
                     event.preventDefault();
                     setShowModalRepost(true);
