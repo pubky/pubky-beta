@@ -33,6 +33,7 @@ type AuthContextType = {
   isLoggedIn: () => Promise<boolean>;
   listPosts: (pubky: string) => Promise<any>;
   getPost: (uri: string) => Promise<any>;
+  getUser: (pk: string) => Promise<any>;
   profile: any;
   pubkey: string;
 };
@@ -65,7 +66,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok) throw new Error(`Signup failed: ${result.error.message}`);
       const newPubkey = result.value;
       setPubkey(newPubkey);
-      console.log(`Signup success: ${newPubkey}`);
 
       // DEMO: generate recovery file content
       const encryptionKey = await _encryptionKeyFromPassphrase('password');
@@ -96,9 +96,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.profile.put(pk, pubkeyProfile);
       if (!result.ok)
         throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
-      console.log(
-        `Saved profile:${pk}: ${JSON.stringify(pubkeyProfile, null, 2)}`
-      );
     },
     [client, isLoggedIn]
   );
@@ -109,12 +106,19 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     const result = await client.social.profile.get(pk);
     if (!result.ok)
       throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
-    const pubkeyProfile = result.value;
-    console.log(
-      `Got pubkey:${pk} profile: ${JSON.stringify(pubkeyProfile, null, 2)}`
-    );
-    return pubkeyProfile;
+    return result.value;
   }, [client, isLoggedIn]);
+
+  const getUser = useCallback(
+    async (pk): Promise<any> => {
+      if (!pk) throw new Error('Logged in failed : not logged in.');
+      const result = await client.social.profile.get(pk);
+      if (!result.ok)
+        throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
+      return result.value;
+    },
+    [client, isLoggedIn]
+  );
 
   const createPost = useCallback(
     async (content: string) => {
@@ -165,6 +169,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         logout,
         saveProfile,
         getProfile,
+        getUser,
       }}
     >
       {children}

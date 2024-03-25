@@ -12,21 +12,23 @@ import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
 import Repost from './Component.Repost';
 import { useClientContext } from '../../contexts/client';
+import { timeAgo } from '../../libs/time';
+import { minifyPubkey } from '../../libs/profileHelper';
 
 type PostUri = {
-  key: string;
   uri: string;
-  value: {
-    hash: string;
-    timestamp: number;
+  payload: {
+    content: string;
   };
 };
 
 type PostResult = {
   uri: string;
   content: string;
+  payload: {
+    content: string;
+  };
   createdAt: string | Date | null;
-  id: string;
 };
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -36,6 +38,16 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   postId: PostUri;
 }
 
+interface User {
+  bio: string;
+  image: string;
+  links: {
+    url: string;
+    value: string;
+  }[];
+  name: string;
+}
+
 export default function Post({
   repost = false,
   bookmark = false,
@@ -43,11 +55,14 @@ export default function Post({
   postId,
   ...rest
 }: PostProps) {
-  const { getPost } = useClientContext();
+  const { getPost, getUser } = useClientContext();
 
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [post, setPost] = useState<PostResult>({} as PostResult);
+  const [creator, setCreator] = useState<User | null>(null);
+  const [creatorPubky, setCreatorPubky] = useState<string>('');
+  const [createdAt, setCreatedAt] = useState<string | Date | null>(null);
   const images = [
     {
       src: '/images/user.png',
@@ -61,31 +76,38 @@ export default function Post({
       src: '/images/user.png',
       alt: '3',
     },
-    {
-      src: '/images/user.png',
-      alt: '4',
-    },
-    {
-      src: '/images/user.png',
-      alt: '5',
-    },
   ];
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!postId.uri) return;
+      if (!postId?.uri) return;
       const result = await getPost(postId.uri);
       setPost(result);
-      console.log(result);
+      const pubkyCreator = postId.uri.split('/')[0].split(':')[1];
+      const creator = await getUser(pubkyCreator);
+      setCreator(creator);
+      setCreatorPubky(pubkyCreator);
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getPost, post.uri]);
+  }, [getPost, getUser, post.uri, postId]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPost((prev) => {
+        setCreatedAt(prev.createdAt);
+        return { ...prev };
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!post?.uri) return <></>;
 
   return (
     <div>
       <div className="gap-6 flex flex-col">
-        <PostUI.Root href="/post">
+        <PostUI.Root href={`/post?uri=${post?.uri}`}>
           <div>
             {repost && (
               <PostUI.RepostCard>
@@ -113,43 +135,30 @@ export default function Post({
                 <div className="justify-start items-center gap-4 flex">
                   <PostUI.ImageUser
                     className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
-                    src="/images/user.png"
+                    src={creator?.image || '/images/user.png'}
                     alt="user"
                   />
                   <PostUI.Username
                     className={size === 'full' ? 'lg:text-2xl' : ''}
                   >
-                    Satoshi Nakamoto
+                    {creator?.name}
                   </PostUI.Username>
                   <Typography.Label
                     className={
-                      size === 'full'
-                        ? 'hidden sm:block text-opacity-30'
-                        : 'hidden'
+                      size === 'full' ? 'hidden sm:block text-opacity-30' : ''
                     }
                   >
-                    @1qx8...gkw3
+                    {minifyPubkey(creatorPubky)}
                   </Typography.Label>
                 </div>
-                <PostUI.Time size={size}>
-                  {size === 'full' ? (
-                    <div>
-                      <span className="hidden lg:block uppercase">
-                        15 minutes ago
-                      </span>
-                      <span className="block lg:hidden">15m</span>
-                    </div>
-                  ) : (
-                    '15m'
-                  )}
-                </PostUI.Time>
+                <PostUI.Time size={size}>{timeAgo(createdAt)}</PostUI.Time>
               </PostUI.Header>
               <div
                 className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
               >
                 <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
                   <PostUI.Content
-                    text={post?.content}
+                    text={post?.payload?.content}
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}
                   />
                   {/** <img

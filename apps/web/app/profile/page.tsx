@@ -7,9 +7,10 @@ import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
-  const { pubkey, getProfile } = useClientContext();
+  const { pubkey, getProfile, listPosts } = useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -25,6 +26,20 @@ export default function Index() {
     }
     fetchData();
   }, [pubkey, getProfile]);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        if (!pubkey) return;
+        const results = await listPosts(pubkey);
+        if (!results.value.list) return;
+        setPosts(results.value.list);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchPosts();
+  }, [pubkey, listPosts]);
 
   return (
     <Content.Main>
@@ -42,8 +57,9 @@ export default function Index() {
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
-          <Post />
-          <Post />
+          {posts.map((post, index) => (
+            <Post key={index} postId={post} />
+          ))}
         </PostsLayout>
         <Profile.Sidebar />
       </Content.Grid>

@@ -25,11 +25,9 @@ type Layouts = {
 };
 
 type PostUri = {
-  key: string;
   uri: string;
-  value: {
-    hash: string;
-    timestamp: number;
+  payload: {
+    content: string;
   };
 };
 
@@ -62,7 +60,6 @@ export default function Index() {
       if (!pubkey) return;
       const results = await listPosts(pubkey);
       setPosts(results.value.list);
-      console.log(results.value.list[0]);
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
