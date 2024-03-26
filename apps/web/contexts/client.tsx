@@ -39,8 +39,8 @@ type AuthContextType = {
   ) => Promise<{ recoveryFile: Buffer; filename: string }>;
   decryptRecoveryFile: (
     password: string,
-    recoveryFile: ArrayBuffer
-  ) => Promise<string>;
+    recoveryFile: Buffer
+  ) => Promise<Uint8Array>;
   pubkey: string | null;
 };
 
@@ -225,18 +225,18 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const decryptRecoveryFile = useCallback(
-    async (password: string, recoveryFile: ArrayBuffer) => {
-      try {
-        console.log(recoveryFile, password);
-        const recoveredSeed = await client.seedRecovery.decryptRecoveryFile(
-          recoveryFile,
-          password
-        );
-        console.log(recoveredSeed);
-        return recoveredSeed;
-      } catch (error) {
-        console.log(error);
+    async (password: string, recoveryFile: Buffer) => {
+      const recoveredSeed = await client.seedRecovery.decryptRecoveryFile(
+        recoveryFile,
+        password
+      );
+
+      if (recoveredSeed.isErr()) {
+        alert(recoveredSeed.error)
+        return
       }
+
+      return recoveredSeed.value;
     },
     [client]
   );

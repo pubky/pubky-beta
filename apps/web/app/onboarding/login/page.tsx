@@ -9,7 +9,7 @@ import { useClientContext } from '../../../contexts/client';
 export default function Index() {
   const { decryptRecoveryFile } = useClientContext();
 
-  const [recoveryFile, setRecoveryFile] = useState<ArrayBuffer | null>(null);
+  const [recoveryFile, setRecoveryFile] = useState<Buffer | null>(null);
   const [password, setPassword] = useState('');
 
   const UploadRecoveryFile = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,7 +17,7 @@ export default function Index() {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setRecoveryFile(reader.result as ArrayBuffer);
+        setRecoveryFile(Buffer.from(reader.result as ArrayBuffer));
       };
       reader.readAsArrayBuffer(file);
     }
@@ -25,10 +25,10 @@ export default function Index() {
 
   const handleSubmit = async () => {
     try {
-      console.log(password, recoveryFile);
       if (!recoveryFile) return;
-      const recovery = await decryptRecoveryFile(password, recoveryFile);
-      console.log(recovery);
+      const seed = await decryptRecoveryFile(password, recoveryFile);
+      // Login then zerozie the seed
+      console.log({ seed });
     } catch (error) {
       console.log(error);
     }
