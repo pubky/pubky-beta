@@ -15,6 +15,7 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       try {
+        if (!pubkey) return;
         const profileInfo = await getProfile();
         if (profileInfo) {
           setPic(profileInfo?.image || '/images/Userpic.png');

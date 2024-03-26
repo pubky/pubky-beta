@@ -34,7 +34,7 @@ export default function Index() {
           await signUp();
         } else {
           const profile = await getProfile();
-          console.log(profile);
+
           setName(profile.name);
           setInfo(profile.bio);
           setImage(profile.image);

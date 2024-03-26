@@ -40,7 +40,7 @@ export const Action = ({
   variant = 'article',
   size = 'medium',
   label,
-  counter,
+  counter = 0,
   icon,
   disabled = false,
   active = false,
@@ -153,7 +153,7 @@ export const Action = ({
         className={twMerge(cssClasses, rest.className)}
       >
         {iconComponent}
-        {counter && counter > 0 && (
+        {counter > 0 && (
           <ActionUI.Counter className={twMerge(counterSize, color)}>
             {counter}
           </ActionUI.Counter>
