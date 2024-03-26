@@ -23,15 +23,28 @@ export default function Header({
   tags = [],
   children,
 }: HeaderProps) {
-  const { pubkey, getProfile } = useClientContext();
+  const { pubkey, getProfile, isLoggedIn } = useClientContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
   const [image, setImage] = useState('/images/Userpic.png');
   const [name, setName] = useState('');
+  const [logoLink, setLogoLink] = useState('/onboarding');
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        setLogoLink('/onboarding');
+      } else {
+        setLogoLink('/home');
+      }
+    }
+    fetchData();
+  }, [pubkey, isLoggedIn]);
 
   useEffect(() => {
     async function fetchData() {
@@ -72,7 +85,7 @@ export default function Header({
 
   return (
     <HeaderUI.Root>
-      <HeaderUI.Logo />
+      <HeaderUI.Logo link={logoLink} />
       <HeaderUI.Title title={title} className={className} />
       <Input.Search>
         {tags && (
