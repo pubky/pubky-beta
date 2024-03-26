@@ -51,18 +51,18 @@ const layouts: Layouts = {
 
 export default function Index() {
   const { layout } = useFilterContext();
-  const { listPosts, pubkey } = useClientContext();
+  const { listPosts, pubky } = useClientContext();
   const [posts, setPosts] = useState<PostUri[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!pubkey) return;
-      const results = await listPosts(pubkey);
-      setPosts(results.value.list);
+      if (!pubky) return;
+      const results = await listPosts(pubky);
+      setPosts(results);
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listPosts, pubkey]);
+  }, [listPosts, pubky]);
 
   const postsLayoutClassName =
     layout === 'sidebar'

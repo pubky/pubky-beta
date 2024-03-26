@@ -11,26 +11,27 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { minifyPubkey } from '../../../libs/profileHelper';
+import { minifyPubky } from '../../../libs/pubkyHelper';
 import { useClientContext } from '../../../contexts/client';
 
 export default function Sidebar() {
-  const { pubkey, getProfile } = useClientContext();
+  const { pubky, getProfile } = useClientContext();
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [telegram, setTelegram] = useState('');
   const [x, setX] = useState('');
   const [website, setWebsite] = useState('');
+  const [image, setImage] = useState('/images/Userpic.png');
 
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!pubkey) return;
         const profile = await getProfile();
         if (profile) {
           setName(profile?.name || '');
           setBio(profile?.bio || '');
+          setImage(profile?.image || '/images/Userpic.png');
 
           if (profile.links) {
             const x = profile.links.find(
@@ -52,22 +53,22 @@ export default function Sidebar() {
       }
     }
     fetchData();
-  }, [pubkey, getProfile]);
+  }, [pubky, getProfile]);
 
-  const images = [
-    {
-      src: '/images/user.png',
-      alt: '1',
-    },
-    {
-      src: '/images/user.png',
-      alt: '2',
-    },
-    {
-      src: '/images/user.png',
-      alt: '3',
-    },
-  ];
+  // const images = [
+  //   {
+  //     src: '/images/user.png',
+  //     alt: '1',
+  //   },
+  //   {
+  //     src: '/images/user.png',
+  //     alt: '2',
+  //   },
+  //   {
+  //     src: '/images/user.png',
+  //     alt: '3',
+  //   },
+  // ];
 
   return (
     <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
@@ -79,13 +80,13 @@ export default function Sidebar() {
               width={32}
               height={32}
               className="rounded-full"
-              src="/images/user.png"
+              src={image}
               alt="user-pic"
             />
             <Typography.H2>{name}</Typography.H2>
           </div>
           <Typography.Label className="text-opacity-50">
-            {pubkey ? minifyPubkey(pubkey) : 'Loading...'}
+            {pubky ? minifyPubky(pubky) : 'Loading...'}
           </Typography.Label>
           <Typography.Body variant="medium" className="text-opacity-80">
             {bio}
@@ -97,16 +98,16 @@ export default function Sidebar() {
         <SideCard.Content>
           <div className="flex-col gap-3 inline-flex">
             <Post.Footer className="mt-0">
-              <PostUtil.Tag clicked color="amber">
+              {/* <PostUtil.Tag clicked color="amber">
                 #Bitcoin
-              </PostUtil.Tag>
+              </PostUtil.Tag> */}
               <Button.Action
                 variant="custom"
                 size="small"
                 icon={<Icon.Plus />}
               />
-              <PostUtil.Counter counter={16} />
-              <Post.UserPic images={images} />
+              <PostUtil.Counter counter={0} />
+              {/* <Post.UserPic images={images} /> */}
             </Post.Footer>
           </div>
         </SideCard.Content>
@@ -117,12 +118,12 @@ export default function Sidebar() {
           <Link href="/followers">
             <div className="flex-col gap-3 inline-flex">
               <div className="inline-flex gap-2">
-                <Typography.Label>1425</Typography.Label>
+                <Typography.Label>0</Typography.Label>
                 <Typography.Label className="text-opacity-50">
                   Followers
                 </Typography.Label>
               </div>
-              <Post.UserPic images={images} />
+              {/* <Post.UserPic images={images} /> */}
             </div>
           </Link>
         </SideCard.Content>

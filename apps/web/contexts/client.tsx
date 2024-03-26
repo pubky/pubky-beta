@@ -16,6 +16,7 @@ import {
 export * from '@pubky/common';
 
 import Client from '@pubky/sdk';
+import localStorageUtils from '../libs/localStorageUtils';
 
 const TEST_HOMESERVER =
   'pk:z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo';
@@ -38,13 +39,18 @@ type AuthContextType = {
     password: string,
     recoveryFile: Buffer
   ) => Promise<Uint8Array>;
-  pubkey: string | null;
+  pubky: string | null;
 };
 
 const ClientContext = createContext<AuthContextType>();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
-  const [pubkey, setPubkey] = useState<string | null>(null);
+  const [pubky, setPubky] = useState<string | null>(
+    (localStorageUtils.get('pubky') as Layout) || null
+  );
+  const [profile, setProfile] = useState<any>(
+    localStorageUtils.get('profile') || null
+  );
 
   const client = useMemo(() => {
     return new Client(TEST_HOMESERVER, {
@@ -62,7 +68,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       if (!pks.length) return false;
 
-      setPubkey(pks[0]);
+      localStorageUtils.set('pubky', pks[0]);
+      setPubky(pks[0]);
 
       return pks[0];
     } catch (error) {
@@ -81,7 +88,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         if (!result.ok)
           throw new Error(`Signup failed: ${result.error.message}`);
 
-        setPubkey(result.value);
+        localStorageUtils.set('pubky', result.value);
+        setPubky(result.value);
 
         return result.value;
       }
@@ -91,23 +99,30 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   }, [client, isLoggedIn]);
 
-  const logout = useCallback(async () => {
+  const logout = useCallback(async (): Promise<boolean> => {
     try {
       await client.ready();
 
-      await client.logout(pubkey);
+      await client.logout(pubky);
 
       const sessions = await client.session();
 
       Object.keys(sessions.users).map(async (pk) => {
         const result = await client.logout(pk);
-        if (!result.ok)
-          throw new Error(`Logout pubky:${pk} failed: ${result.error.message}`);
+        if (!result.ok) {
+          return false;
+        }
       });
 
-      setPubkey(null);
+      localStorageUtils.remove('pubky');
+      localStorageUtils.remove('profile');
+      setPubky(null);
+      setProfile(null);
+
+      return true;
     } catch (error) {
       console.log(error);
+      return false;
     }
   }, [client]);
 
@@ -122,6 +137,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         const result = await client.social.profile.put(pk, pubkeyProfile);
 
+        setProfile(result.value);
+        localStorageUtils.set('profile', result.value);
+
         if (!result.ok)
           throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
       } catch (error) {
@@ -133,6 +151,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const getProfile = useCallback(async (): Promise<any> => {
     try {
+      if (profile) return profile;
+
       const pk = await isLoggedIn();
 
       if (!pk) throw new Error('Logged in failed : not logged in.');
@@ -141,6 +161,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       if (!result.ok)
         throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
+
+      localStorageUtils.set('profile', result.value);
+      setProfile(result.value);
 
       return result.value;
     } catch (error) {
@@ -218,7 +241,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         if (!result.ok)
           throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
 
-        return result;
+        return result.value.list;
       } catch (error) {
         console.log(error);
       }
@@ -271,7 +294,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ClientContext.Provider
       value={{
-        pubkey,
+        pubky,
         isLoggedIn,
         createPost,
         getPost,

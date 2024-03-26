@@ -14,10 +14,10 @@ import {
 } from '@social/ui-shared';
 import { Header } from '../components';
 import { useClientContext } from '../../contexts/client';
-import { minifyPubkey } from '../../libs/profileHelper';
+import { minifyPubky } from '../../libs/pubkyHelper';
 
 export default function Index() {
-  const { pubkey, signUp, saveProfile, getProfile } = useClientContext();
+  const { pubky, signUp, saveProfile, getProfile } = useClientContext();
 
   const [name, setName] = useState('');
   const [info, setInfo] = useState('');
@@ -30,7 +30,7 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!pubkey) {
+        if (!pubky) {
           await signUp();
         } else {
           const profile = await getProfile();
@@ -56,7 +56,7 @@ export default function Index() {
       }
     }
     fetchData();
-  }, [signUp, pubkey, getProfile]);
+  }, [signUp, pubky, getProfile]);
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -105,7 +105,7 @@ export default function Index() {
           onChange={(e: any) => setName(e.target.value)}
         />
         <Typography.PageTitle className="text-opacity-50 break-words">
-          {pubkey ? minifyPubkey(pubkey) : 'Loading...'}
+          {pubky ? minifyPubky(pubky) : 'Loading...'}
         </Typography.PageTitle>
         <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           <Card.Primary title="Profile">

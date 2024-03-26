@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
 import { Modal } from './Modal';
 import { useClientContext } from '../../contexts/client';
-import { minifyPubkey } from '../../libs/profileHelper';
+import { minifyPubky } from '../../libs/pubkyHelper';
 
 type Tag = {
   value: string;
@@ -23,7 +23,7 @@ export default function Header({
   tags = [],
   children,
 }: HeaderProps) {
-  const { pubkey, getProfile, isLoggedIn } = useClientContext();
+  const { pubky, getProfile, isLoggedIn } = useClientContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
@@ -44,7 +44,7 @@ export default function Header({
       }
     }
     fetchData();
-  }, [pubkey, isLoggedIn]);
+  }, [pubky, isLoggedIn]);
 
   useEffect(() => {
     async function fetchData() {
@@ -59,7 +59,7 @@ export default function Header({
       }
     }
     fetchData();
-  }, [pubkey, getProfile]);
+  }, [pubky, getProfile]);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
@@ -127,7 +127,7 @@ export default function Header({
             <Menu.Header
               src={image}
               username={name}
-              handler={pubkey ? minifyPubkey(pubkey) : 'Loading...'}
+              handler={pubky ? minifyPubky(pubky) : 'Loading...'}
             />
             <div className="flex-col inline-flex">
               <Menu.Section

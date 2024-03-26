@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import localStorageUtils from '../libs/localStorageUtils';
 
 type Layout = 'sidebar' | 'list' | 'grid' | 'columns';
 type Sort = 'recent' | 'tags' | 'activity';
@@ -36,28 +37,28 @@ const FilterContext = createContext<FilterContextType>({
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [layout, setLayout] = useState<Layout>(
-    (globalThis.localStorage?.getItem('layout') as Layout) || 'sidebar'
+    (localStorageUtils.get('layout') as Layout) || 'sidebar'
   );
   const [sort, setSort] = useState<Sort>(
-    (globalThis.localStorage?.getItem('sort') as Sort) || 'recent'
+    (localStorageUtils.get('sort') as Sort) || 'recent'
   );
   const [reach, setReach] = useState<Reach>(
-    (globalThis.localStorage?.getItem('reach') as Reach) || 'all'
+    (localStorageUtils.get('reach') as Reach) || 'all'
   );
   const [content, setContent] = useState<Content>(
-    (globalThis.localStorage?.getItem('content') as Content) || 'all'
+    (localStorageUtils.get('content') as Content) || 'all'
   );
   const [timeframe, setTimeframe] = useState<Timeframe>(
-    (globalThis.localStorage?.getItem('timeframe') as Timeframe) || 'today'
+    (localStorageUtils.get('timeframe') as Timeframe) || 'today'
   );
 
   // save filters to local storage
   useEffect(() => {
-    globalThis.localStorage?.setItem('layout', layout);
-    globalThis.localStorage?.setItem('sort', sort);
-    globalThis.localStorage?.setItem('reach', reach);
-    globalThis.localStorage?.setItem('content', content);
-    globalThis.localStorage?.setItem('timeframe', timeframe);
+    localStorageUtils.set('layout', layout);
+    localStorageUtils.set('sort', sort);
+    localStorageUtils.set('reach', reach);
+    localStorageUtils.set('content', content);
+    localStorageUtils.set('timeframe', timeframe);
   }, [layout, sort, reach, content, timeframe]);
 
   return (

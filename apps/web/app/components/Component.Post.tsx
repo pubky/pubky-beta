@@ -13,7 +13,7 @@ import { Modal } from './Modal';
 import Repost from './Component.Repost';
 import { useClientContext } from '../../contexts/client';
 import { timeAgo } from '../../libs/time';
-import { minifyPubkey } from '../../libs/profileHelper';
+import { minifyPubky } from '../../libs/pubkyHelper';
 
 type PostUri = {
   uri: string;
@@ -134,7 +134,7 @@ export default function Post({
                       size === 'full' ? 'hidden sm:block text-opacity-30' : ''
                     }
                   >
-                    {minifyPubkey(creatorPubky)}
+                    {minifyPubky(creatorPubky)}
                   </Typography.Label>
                 </div>
                 <PostUI.Time size={size}>{timeAgo(createdAt)}</PostUI.Time>

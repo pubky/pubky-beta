@@ -7,7 +7,7 @@ import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
-  const { pubkey, getProfile, listPosts } = useClientContext();
+  const { pubky, getProfile, listPosts } = useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
   const [posts, setPosts] = useState([]);
@@ -15,7 +15,6 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!pubkey) return;
         const profileInfo = await getProfile();
         if (profileInfo) {
           setPic(profileInfo?.image || '/images/Userpic.png');
@@ -26,21 +25,21 @@ export default function Index() {
       }
     }
     fetchData();
-  }, [pubkey, getProfile]);
+  }, [getProfile]);
 
   useEffect(() => {
     async function fetchPosts() {
       try {
-        if (!pubkey) return;
-        const results = await listPosts(pubkey);
-        if (!results.value.list) return;
-        setPosts(results.value.list);
+        if (!pubky) return;
+        const results = await listPosts(pubky);
+        if (!results) return;
+        setPosts(results);
       } catch (error) {
         console.log(error);
       }
     }
     fetchPosts();
-  }, [pubkey, listPosts]);
+  }, [pubky, listPosts]);
 
   return (
     <Content.Main>
