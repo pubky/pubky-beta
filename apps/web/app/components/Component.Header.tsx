@@ -30,11 +30,13 @@ export default function Header({
   const [image, setImage] = useState('/images/Userpic.png');
   const [name, setName] = useState('');
   const [logoLink, setLogoLink] = useState('/onboarding');
+  const [handler, setHandler] = useState('');
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setHandler(minifyPubky(pubky));
     async function fetchData() {
       const loggedIn = await isLoggedIn();
       if (!loggedIn) {
@@ -124,11 +126,7 @@ export default function Header({
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
-            <Menu.Header
-              src={image}
-              username={name}
-              handler={pubky ? minifyPubky(pubky) : 'Loading...'}
-            />
+            <Menu.Header src={image} username={name} handler={handler} />
             <div className="flex-col inline-flex">
               <Menu.Section
                 href="/home"
