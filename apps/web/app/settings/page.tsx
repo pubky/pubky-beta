@@ -93,7 +93,7 @@ export default function Index() {
     <Content.Main>
       <Header
         className="hidden w-[400px] xl:w-[260px] md:block"
-        title="John's&#160;Followers"
+        title="Settings"
       />
       <Content.Grid>
         <Input.Cursor

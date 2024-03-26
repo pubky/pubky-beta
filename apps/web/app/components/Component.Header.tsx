@@ -134,50 +134,42 @@ export default function Header({
                 href="/home"
                 icon={<Icon.Activity />}
                 text="Streams"
-                onClick={() => setDrawerOpen(false)}
               />
               {/* <Menu.Section
                 href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
                 counter={5}
-                onClick={() => setDrawerOpen(false)}
               /> */}
               <Menu.Section
                 href="/bookmarks"
                 icon={<Icon.BookmarkSimple />}
                 text="Bookmarks"
-                onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
                 href="/hot-tags"
                 icon={<Icon.Tag size="24" />}
                 text="Hot Tags"
-                onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
                 href="/contacts"
                 icon={<Icon.UsersLeft />}
                 text="Contacts"
-                onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
                 href="settings"
                 icon={<Icon.GearSix />}
                 text="Settings"
-                onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
                 href="/profile"
                 icon={<Icon.UserRectangle />}
                 text="Profile"
-                onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
                 href="/logout"
                 icon={<Icon.UsersLeft />}
                 text="Logout"
-                onClick={() => setDrawerOpen(false)}
               />
             </div>
           </div>

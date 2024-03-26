@@ -2,11 +2,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Content, Button, Input, Card, Icon } from '@social/ui-shared';
-import { Onboarding } from '../components';
 import { useClientContext } from '../../../contexts/client';
+import { useRouter } from 'next/navigation';
+import { Onboarding } from '../components';
+import { Button, Card, Content, Icon, Input } from '@social/ui-shared';
 
 export default function Index() {
+  const router = useRouter();
   const { decryptRecoveryFile } = useClientContext();
 
   const [recoveryFile, setRecoveryFile] = useState<Buffer | null>(null);
@@ -26,9 +28,10 @@ export default function Index() {
   const handleSubmit = async () => {
     try {
       if (!recoveryFile) return;
-      const seed = await decryptRecoveryFile(password, recoveryFile);
-      // Login then zerozie the seed
-      console.log({ seed });
+      const loggedIn = await decryptRecoveryFile(password, recoveryFile);
+      if (loggedIn) {
+        router.push('/home');
+      }
     } catch (error) {
       console.log(error);
     }
@@ -36,41 +39,36 @@ export default function Index() {
 
   return (
     <Onboarding.Layout currentStep={2}>
-      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-2 gap-6 mt-12">
-        <Card.Primary title="Recovery Password">
-          <Input.Label className="mt-4" value="Password" />
-          <Input.Text
-            className="h-[70px]"
-            type="password"
-            onChange={(e: any) => setPassword(e.target.value)}
-          />
-        </Card.Primary>
-        <Card.Primary title="Recovery File">
-          <label htmlFor="fileInput">
-            {/* {image && (
-              <Image
-                width={320}
-                height={320}
-                className="w-80 h-auto mt-6 rounded-full cursor-pointer"
-                alt="user"
-                src={image}
-              />
-            )} */}
+      <div className="w-full flex flex-col items-center">
+        <div className="w-[420px] sm:grid sm:grid-cols-1 lg:grid-cols-1 gap-6 mt-12">
+          <Card.Primary title="Recovery Password">
+            <Input.Label className="mt-4" value="Password" />
+            <Input.Text
+              className="h-[70px]"
+              type="password"
+              onChange={(e: any) => setPassword(e.target.value)}
+            />
+          </Card.Primary>
+          <Card.Primary title="Recovery File">
+            <Input.Label className="mt-4" value="Upload Recovery file" />
             <input
+              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 p-5"
+              id="file_input"
               type="file"
-              name="file"
-              id="fileInput"
               required
               onChange={UploadRecoveryFile}
             />
-          </label>
-          <div className="pt-[40px]">
-            <Button.Large onClick={() => handleSubmit()} icon={<Icon.Check />}>
-              Login
-            </Button.Large>
-          </div>
-        </Card.Primary>
-        <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
+            <div className="pt-[40px]">
+              <Button.Large
+                onClick={() => handleSubmit()}
+                icon={<Icon.Check />}
+              >
+                Login
+              </Button.Large>
+            </div>
+          </Card.Primary>
+          <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
+        </div>
       </div>
     </Onboarding.Layout>
   );
