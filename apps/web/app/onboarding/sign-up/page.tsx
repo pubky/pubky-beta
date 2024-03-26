@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import {
   Content,
   Typography,
@@ -15,9 +14,13 @@ import {
 import { Onboarding } from '../components';
 import { useClientContext } from '../../../contexts/client';
 import { minifyPubkey } from '../../../libs/profileHelper';
+import { useRouter } from 'next/navigation';
 
 export default function Index() {
-  const { pubkey, signUp, saveProfile, getProfile } = useClientContext();
+  const { pubkey, signUp, saveProfile, getProfile, downloadRecoveryFile } =
+    useClientContext();
+
+  const router = useRouter();
 
   const [name, setName] = useState('');
   const [info, setInfo] = useState('');
@@ -26,6 +29,7 @@ export default function Index() {
   const [email, setEmail] = useState('');
   const [x, setX] = useState('');
   const [telegram, setTelegram] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -69,6 +73,21 @@ export default function Index() {
     }
   };
 
+  const handleDownloadRecoveryFile = async () => {
+    try {
+      const { recoveryFile, filename } = await downloadRecoveryFile(password);
+      const element = document.createElement('a');
+      const fileBlob = new Blob([recoveryFile]);
+      element.href = URL.createObjectURL(fileBlob);
+      element.download = filename;
+      document.body.appendChild(element); // Required for this to work in FireFox
+      element.click();
+      await handleSubmit();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       const profileInfo = {
@@ -84,6 +103,7 @@ export default function Index() {
       };
 
       await saveProfile(profileInfo);
+      router.push('/onboarding/confirm');
     } catch (error) {
       console.log(error);
     }
@@ -111,7 +131,7 @@ export default function Index() {
           >
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
-              className="h-[422px]"
+              className="h-[490px]"
               defaultValue={info}
               onChange={(e: any) => setInfo(e.target.value)}
             />
@@ -154,8 +174,8 @@ export default function Index() {
           <label htmlFor="fileInput">
             {image && (
               <Image
-                width={320}
-                height={320}
+                width={150}
+                height={150}
                 className="w-80 h-auto mt-6 rounded-full cursor-pointer"
                 alt="user"
                 src={image}
@@ -169,15 +189,21 @@ export default function Index() {
               style={{ display: 'none' }}
             />
           </label>
-          <div className="pt-[40px]">
-            <Link href="/onboarding/confirm">
-              <Button.Large
-                onClick={() => handleSubmit()}
-                icon={<Icon.Check />}
-              >
-                Finish
-              </Button.Large>
-            </Link>
+          <div>
+            <Input.Label className="mt-4" value="Encrypt Recovery File" />
+            <Input.Text
+              className="h-[70px]"
+              type="password"
+              onChange={(e: any) => setPassword(e.target.value)}
+            />
+          </div>
+          <div className="pt-[20px]">
+            <Button.Large
+              onClick={() => handleDownloadRecoveryFile()}
+              icon={<Icon.Check />}
+            >
+              Download Recovery File
+            </Button.Large>
           </div>
         </Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />

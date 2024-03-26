@@ -34,6 +34,13 @@ type AuthContextType = {
   listPosts: (pubky: string) => Promise<any>;
   getPost: (uri: string) => Promise<any>;
   getUser: (pk: string) => Promise<any>;
+  downloadRecoveryFile: (
+    filename: string
+  ) => Promise<{ recoveryFile: Buffer; filename: string }>;
+  decryptRecoveryFile: (
+    password: string,
+    recoveryFile: ArrayBuffer
+  ) => Promise<string>;
   pubkey: string | null;
 };
 
@@ -195,6 +202,45 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client, isLoggedIn]
   );
 
+  const downloadRecoveryFile = useCallback(
+    async (password: string) => {
+      try {
+        const seed = Client.crypto.generateSeed();
+
+        const { recoveryFile, filename } =
+          await client.seedRecovery.recoveryFile(
+            'recovery_file',
+            seed,
+            password
+          );
+
+        console.log(recoveryFile, filename);
+        console.log(typeof recoveryFile);
+        return { recoveryFile, filename };
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client]
+  );
+
+  const decryptRecoveryFile = useCallback(
+    async (password: string, recoveryFile: ArrayBuffer) => {
+      try {
+        console.log(recoveryFile, password);
+        const recoveredSeed = await client.seedRecovery.decryptRecoveryFile(
+          recoveryFile,
+          password
+        );
+        console.log(recoveredSeed);
+        return recoveredSeed;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client]
+  );
+
   return (
     <ClientContext.Provider
       value={{
@@ -208,6 +254,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         saveProfile,
         getProfile,
         getUser,
+        downloadRecoveryFile,
+        decryptRecoveryFile,
       }}
     >
       {children}
