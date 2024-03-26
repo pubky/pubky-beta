@@ -16,7 +16,7 @@ export default function Index() {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onload = () => {
         setRecoveryFile(reader.result as ArrayBuffer);
       };
       reader.readAsArrayBuffer(file);
@@ -57,11 +57,11 @@ export default function Index() {
               />
             )} */}
             <input
-              id="fileInput"
               type="file"
-              accept="image/*"
+              name="file"
+              id="fileInput"
+              required
               onChange={UploadRecoveryFile}
-              // style={{ display: 'none' }}
             />
           </label>
           <div className="pt-[40px]">
