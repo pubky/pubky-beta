@@ -253,6 +253,11 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const listGlobalPosts = useCallback(
     async (cursor: string) => {
       try {
+        // TODO: find a way to memoize the client across page referesh
+        // that will basically require exctracting the internal caches,
+        // and load it in subsequent client instances.
+        await client.ready()
+
         const result = await client.social.timeline.global({
           limit: 5,
           cursor: cursor,
