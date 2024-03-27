@@ -1,13 +1,33 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import {
   Icon,
   Button,
-  PostUtil,
+  // PostUtil,
   Post,
   Typography,
   Input,
 } from '@social/ui-shared';
+import { useClientContext } from '../../../../../contexts/client';
+import { minifyPubky } from '../../../../../libs/pubkyHelper';
 
 export default function ReplyForm() {
+  const { getProfile, pubky } = useClientContext();
+  const [username, setUsername] = useState('');
+  const [image, setImage] = useState('');
+
+  useEffect(() => {
+    async function fetchData() {
+      const profile = await getProfile();
+      if (profile) {
+        setImage(profile.image);
+        setUsername(profile.name);
+      }
+    }
+    fetchData();
+  }, [getProfile, pubky]);
+
   return (
     <Post.Root>
       <Post.MainCard className="w-full p-12 bg-transparent border border-opacity-30 border-dashed">
@@ -17,15 +37,15 @@ export default function ReplyForm() {
               <div className="justify-start items-center gap-4 flex">
                 <Post.ImageUser
                   className="lg:w-12 lg:h-12"
-                  src="/images/user.png"
+                  src={image}
                   alt="user"
                 />
                 <Post.Username className="lg:text-2xl">
-                  Satoshi Nakamoto
+                  {username}
                 </Post.Username>
                 <div className="hidden items-center gap-1 sm:inline-flex">
                   <Typography.Label className="text-opacity-30">
-                    @1qx8...gkw3
+                    {minifyPubky(pubky)}
                   </Typography.Label>
                   <Icon.CheckCircle />
                 </div>
@@ -52,9 +72,9 @@ export default function ReplyForm() {
               </Typography.Label>
             </div>
             <Post.Footer className="mt-4">
-              <PostUtil.Tag clicked color="amber">
+              {/* <PostUtil.Tag clicked color="amber">
                 #Bitcoin
-              </PostUtil.Tag>
+              </PostUtil.Tag> */}
               <Button.Action
                 variant="custom"
                 size="small"

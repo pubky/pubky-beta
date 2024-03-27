@@ -22,7 +22,7 @@ const TEST_HOMESERVER =
   'pk:z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo';
 const TEST_PKARR_RELAY = 'http://localhost:7258';
 
-type AuthContextType = {
+type ClientContextType = {
   signUp: () => Promise<string>;
   logout: () => Promise<void>;
   getProfile: () => Promise<any>;
@@ -48,7 +48,7 @@ type AuthContextType = {
   setRefreshList: (value: boolean) => void;
 };
 
-const ClientContext = createContext<AuthContextType>();
+const ClientContext = createContext<ClientContextType>();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
