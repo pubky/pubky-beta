@@ -15,7 +15,8 @@ import { minifyPubky } from '../../../../../libs/pubkyHelper';
 export default function ReplyForm() {
   const { getProfile, pubky } = useClientContext();
   const [username, setUsername] = useState('');
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState('/images/Userpic.png');
+  const [pk, setPk] = useState<string | null>('');
 
   useEffect(() => {
     async function fetchData() {
@@ -23,6 +24,7 @@ export default function ReplyForm() {
       if (profile) {
         setImage(profile.image);
         setUsername(profile.name);
+        setPk(minifyPubky(pubky));
       }
     }
     fetchData();
@@ -43,12 +45,14 @@ export default function ReplyForm() {
                 <Post.Username className="lg:text-2xl">
                   {username}
                 </Post.Username>
-                <div className="hidden items-center gap-1 sm:inline-flex">
-                  <Typography.Label className="text-opacity-30">
-                    {minifyPubky(pubky)}
-                  </Typography.Label>
-                  <Icon.CheckCircle />
-                </div>
+                {pk && (
+                  <div className="hidden items-center gap-1 sm:inline-flex">
+                    <Typography.Label className="text-opacity-30">
+                      {pk}
+                    </Typography.Label>
+                    <Icon.CheckCircle />
+                  </div>
+                )}
               </div>
             </Post.Header>
             <Post.Content>
