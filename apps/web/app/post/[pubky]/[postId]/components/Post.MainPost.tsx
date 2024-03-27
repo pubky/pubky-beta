@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useClientContext } from '../../../contexts/client';
-import { Post } from '../../components';
+import { useClientContext } from '../../../../../contexts/client';
+import { Post } from '../../../../components';
 
 type PostResult = {
   uri: string;

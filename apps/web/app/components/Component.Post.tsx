@@ -13,7 +13,7 @@ import { Modal } from './Modal';
 import Repost from './Component.Repost';
 import { useClientContext } from '../../contexts/client';
 import { timeAgo } from '../../libs/time';
-import { minifyPubky } from '../../libs/pubkyHelper';
+import { encodePostUri, minifyPubky } from '../../libs/pubkyHelper';
 import { Skeleton } from '.';
 
 type PostUri = {
@@ -98,7 +98,7 @@ export default function Post({
   return (
     <div>
       <div className="gap-6 flex flex-col">
-        <PostUI.Root href={`/post?uri=${post?.uri}`}>
+        <PostUI.Root href={encodePostUri(post?.uri)}>
           <div>
             {repost && (
               <PostUI.RepostCard>
