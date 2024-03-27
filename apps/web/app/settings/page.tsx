@@ -15,10 +15,13 @@ import {
 import { Header } from '../components';
 import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
+import { useRouter } from 'next/navigation';
 
 export default function Index() {
+  const router = useRouter();
   const { pubky, signUp, saveProfile, getProfile } = useClientContext();
 
+  const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
   const [info, setInfo] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
@@ -28,6 +31,7 @@ export default function Index() {
   const [telegram, setTelegram] = useState('');
 
   useEffect(() => {
+    setHandler(minifyPubky(pubky));
     async function fetchData() {
       try {
         if (!pubky) {
@@ -84,6 +88,7 @@ export default function Index() {
       };
 
       await saveProfile(profileInfo);
+      router.push('/profile');
     } catch (error) {
       console.log(error);
     }
@@ -105,7 +110,7 @@ export default function Index() {
           onChange={(e: any) => setName(e.target.value)}
         />
         <Typography.PageTitle className="text-opacity-50 break-words">
-          {pubky ? minifyPubky(pubky) : 'Loading...'}
+          {handler}
         </Typography.PageTitle>
         <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           <Card.Primary title="Profile">
@@ -177,14 +182,12 @@ export default function Index() {
               />
             </label>
             <div className="pt-[40px]">
-              <Link href="/profile">
-                <Button.Large
-                  onClick={() => handleSubmit()}
-                  icon={<Icon.Check />}
-                >
-                  Finish
-                </Button.Large>
-              </Link>
+              <Button.Large
+                onClick={() => handleSubmit()}
+                icon={<Icon.Check />}
+              >
+                Finish
+              </Button.Large>
             </div>
           </Card.Primary>
           <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />

@@ -23,12 +23,13 @@ export default function CreatePost({
   modalPostRef,
   setShowModalLink,
 }: CreatePostProps) {
-  const { createPost } = useClientContext();
+  const { createPost, setRefreshList } = useClientContext();
   const [content, setContent] = useState('');
 
   const handleSubmit = async () => {
     await createPost(content);
     setShowModalPost(false);
+    setRefreshList(true);
   };
 
   return (

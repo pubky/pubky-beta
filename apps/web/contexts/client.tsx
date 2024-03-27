@@ -29,7 +29,8 @@ type AuthContextType = {
   saveProfile: (profile: any) => Promise<void>;
   createPost: (post: any) => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
-  listPosts: (pubky: string) => Promise<any>;
+  listPosts: (pubky: string, cursor: string) => Promise<any>;
+  listGlobalPosts: (cursor: string) => Promise<any>;
   getPost: (uri: string) => Promise<any>;
   getUser: (pk: string) => Promise<any>;
   downloadRecoveryFile: (
@@ -40,6 +41,8 @@ type AuthContextType = {
     recoveryFile: Buffer
   ) => Promise<Uint8Array>;
   pubky: string | null;
+  refreshList: boolean;
+  setRefreshList: (value: boolean) => void;
 };
 
 const ClientContext = createContext<AuthContextType>();
@@ -48,9 +51,11 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
     (localStorageUtils.get('pubky') as Layout) || null
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profile, setProfile] = useState<any>(
     localStorageUtils.get('profile') || null
   );
+  const [refreshList, setRefreshList] = useState<boolean>(false);
 
   const client = useMemo(() => {
     return new Client(TEST_HOMESERVER, {
@@ -103,15 +108,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     try {
       await client.ready();
 
-      await client.logout(pubky);
-
       const sessions = await client.session();
 
       Object.keys(sessions.users).map(async (pk) => {
-        const result = await client.logout(pk);
-        if (!result.ok) {
-          return false;
-        }
+        await client.logout(pk);
       });
 
       localStorageUtils.remove('pubky');
@@ -151,8 +151,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const getProfile = useCallback(async (): Promise<any> => {
     try {
-      if (profile) return profile;
-
       const pk = await isLoggedIn();
 
       if (!pk) throw new Error('Logged in failed : not logged in.');
@@ -232,16 +230,40 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const listPosts = useCallback(
-    async (pk: string) => {
+    async (pk: string, cursor: string) => {
       try {
         if (!pk) throw new Error('Get list posts failed');
 
-        const result = await client.social.posts.list(pk, { limit: 5 });
+        const result = await client.social.posts.list(pk, {
+          limit: 5,
+          cursor: cursor,
+        });
 
         if (!result.ok)
           throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
 
-        return result.value.list;
+        return result.value;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client, isLoggedIn]
+  );
+
+  const listGlobalPosts = useCallback(
+    async (cursor: string) => {
+      try {
+        const result = await client.social.timeline.global({
+          limit: 5,
+          cursor: cursor,
+        });
+
+        if (!result.ok)
+          throw new Error(
+            `Get posts:${cursor} failed: ${result.error.message}`
+          );
+
+        return result.value;
       } catch (error) {
         console.log(error);
       }
@@ -306,6 +328,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         getUser,
         downloadRecoveryFile,
         decryptRecoveryFile,
+        listGlobalPosts,
+        setRefreshList,
+        refreshList,
       }}
     >
       {children}

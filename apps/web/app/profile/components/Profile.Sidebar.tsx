@@ -13,16 +13,18 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 import { useClientContext } from '../../../contexts/client';
+import { Skeleton } from '../../components';
 
 export default function Sidebar() {
   const { pubky, getProfile } = useClientContext();
 
   const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
+  const [bio, setBio] = useState('No bio.');
   const [telegram, setTelegram] = useState('');
   const [x, setX] = useState('');
   const [website, setWebsite] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -30,7 +32,7 @@ export default function Sidebar() {
         const profile = await getProfile();
         if (profile) {
           setName(profile?.name || '');
-          setBio(profile?.bio || '');
+          setBio(profile?.bio || 'No bio.');
           setImage(profile?.image || '/images/Userpic.png');
 
           if (profile.links) {
@@ -47,6 +49,7 @@ export default function Sidebar() {
             setWebsite(website?.url || '');
             setTelegram(telegram?.url || '');
           }
+          setLoading(false);
         }
       } catch (error) {
         console.log(error);
@@ -72,27 +75,31 @@ export default function Sidebar() {
 
   return (
     <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
-      <div>
-        <SideCard.Header title="profile" variantTitle="label" />
-        <SideCard.Content className="flex-col gap-3 inline-flex">
-          <div className="justify-start items-center gap-3 inline-flex">
-            <Image
-              width={32}
-              height={32}
-              className="rounded-full"
-              src={image}
-              alt="user-pic"
-            />
-            <Typography.H2>{name}</Typography.H2>
-          </div>
-          <Typography.Label className="text-opacity-50">
-            {pubky ? minifyPubky(pubky) : 'Loading...'}
-          </Typography.Label>
-          <Typography.Body variant="medium" className="text-opacity-80">
-            {bio}
-          </Typography.Body>
-        </SideCard.Content>
-      </div>
+      {loading ? (
+        <Skeleton.ProfileSidebar />
+      ) : (
+        <div>
+          <SideCard.Header title="profile" variantTitle="label" />
+          <SideCard.Content className="flex-col gap-3 inline-flex">
+            <div className="justify-start items-center gap-3 inline-flex">
+              <Image
+                width={32}
+                height={32}
+                className="rounded-full"
+                src={image}
+                alt="user-pic"
+              />
+              <Typography.H2>{name}</Typography.H2>
+            </div>
+            <Typography.Label className="text-opacity-50">
+              {pubky ? minifyPubky(pubky) : 'Loading...'}
+            </Typography.Label>
+            <Typography.Body variant="medium" className="text-opacity-80">
+              {bio}
+            </Typography.Body>
+          </SideCard.Content>
+        </div>
+      )}
       <div>
         <SideCard.Header title="Tagged as" variantTitle="label" />
         <SideCard.Content>

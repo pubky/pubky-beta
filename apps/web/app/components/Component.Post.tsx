@@ -14,6 +14,7 @@ import Repost from './Component.Repost';
 import { useClientContext } from '../../contexts/client';
 import { timeAgo } from '../../libs/time';
 import { minifyPubky } from '../../libs/pubkyHelper';
+import { Skeleton } from '.';
 
 type PostUri = {
   uri: string;
@@ -24,7 +25,6 @@ type PostUri = {
 
 type PostResult = {
   uri: string;
-  content: string;
   payload: {
     content: string;
   };
@@ -67,10 +67,15 @@ export default function Post({
   useEffect(() => {
     const fetchData = async () => {
       if (!postId?.uri) return;
+
       const result = await getPost(postId.uri);
+
       setPost(result);
+
       const pubkyCreator = postId.uri.split('/')[0].split(':')[1];
+
       const creator = await getUser(pubkyCreator);
+
       setCreator(creator);
       setCreatorPubky(pubkyCreator);
     };
@@ -88,7 +93,7 @@ export default function Post({
     return () => clearInterval(interval);
   }, []);
 
-  if (!post?.uri) return <></>;
+  if (!post?.uri) return <Skeleton.Post size={size} />;
 
   return (
     <div>
