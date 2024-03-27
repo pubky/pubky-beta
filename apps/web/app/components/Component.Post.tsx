@@ -147,7 +147,7 @@ export default function Post({
               <div
                 className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
               >
-                <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
+                <div className={size === 'full' ? 'lg:w-[100%]' : ''}>
                   <PostUI.Content
                     text={post?.payload?.content}
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}

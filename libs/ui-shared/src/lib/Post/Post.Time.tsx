@@ -10,7 +10,7 @@ interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Time = ({ children, size = 'normal', ...rest }: RootProps) => {
   const baseCSS =
     size === 'full'
-      ? 'grow justify-end xl:justify-center items-center gap-1 flex mt-2 lg:mt-4'
+      ? 'grow justify-end xl:justify-end items-center gap-1 flex mt-2 lg:mt-4'
       : 'grow justify-end items-center gap-1 flex mt-2';
   return (
     <div className={twMerge(baseCSS, rest.className)}>
