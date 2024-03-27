@@ -52,7 +52,7 @@ const layouts: Layouts = {
 };
 
 export default function Index() {
-  const { layout } = useFilterContext();
+  const { layout, reach } = useFilterContext();
   const { refreshList, setRefreshList, listGlobalPosts, pubky } =
     useClientContext();
   const [posts, setPosts] = useState<PostUri[]>([]);
@@ -62,7 +62,9 @@ export default function Index() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const results = await listGlobalPosts(cursor);
+      const results = await listGlobalPosts(cursor, reach);
+
+      setShowLoadMore(false);
 
       if (!results || !results.feed) return;
 
@@ -79,14 +81,15 @@ export default function Index() {
       setLoading(false);
     };
     fetchData();
-  }, [listGlobalPosts, pubky]);
+  }, [listGlobalPosts, pubky, reach]);
 
   useEffect(() => {
     const refetchData = async () => {
-      const results = await listGlobalPosts('');
+      const results = await listGlobalPosts('', reach);
 
       if (!results || !results.feed) return;
 
+      setShowLoadMore(false);
       setPosts(results.feed);
 
       if (results.feed.length >= 5) {
@@ -104,11 +107,11 @@ export default function Index() {
       setCursor('');
       refetchData();
     }
-  }, [refreshList]);
+  }, [refreshList, reach]);
 
   const handleLoadMore = async () => {
     try {
-      const results = await listGlobalPosts(cursor);
+      const results = await listGlobalPosts(cursor, reach);
 
       if (!results || !results.feed) return;
 

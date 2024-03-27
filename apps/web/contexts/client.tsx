@@ -30,7 +30,10 @@ type AuthContextType = {
   createPost: (post: any) => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
   listPosts: (pubky: string, cursor: string) => Promise<any>;
-  listGlobalPosts: (cursor: string) => Promise<any>;
+  listGlobalPosts: (
+    cursor: string,
+    reach: 'following' | 'all' | 'followers' | 'friends'
+  ) => Promise<any>;
   getPost: (uri: string) => Promise<any>;
   getUser: (pk: string) => Promise<any>;
   downloadRecoveryFile: (
@@ -251,16 +254,25 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const listGlobalPosts = useCallback(
-    async (cursor: string) => {
+    async (
+      cursor: string,
+      reach: 'following' | 'all' | 'followers' | 'friends'
+    ) => {
       try {
         // TODO: find a way to memoize the client across page referesh
         // that will basically require exctracting the internal caches,
         // and load it in subsequent client instances.
-        await client.ready()
 
-        const result = await client.social.timeline.global({
+        const pk = await isLoggedIn();
+
+        if (!pk) throw new Error('Get profile failed: not logged in.');
+
+        await client.ready();
+
+        const result = await client.social.streams.get(pk, {
           limit: 5,
           cursor: cursor,
+          reach: reach ? reach : 'all',
         });
 
         if (!result.ok)
