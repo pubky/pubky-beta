@@ -22,15 +22,15 @@ const TEST_HOMESERVER =
   'pk:z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo';
 const TEST_PKARR_RELAY = 'http://localhost:7258';
 
-// const LIVE_HOMESERVER =
-//   'pk:4unkz8qto4xec6jhw9mie9oepgcurirebdx8axyq3o36fanooxxy';
-// const LIVE_PKARR_RELAY = 'https://relay.pkarr.org';
+const LIVE_HOMESERVER =
+  'pk:4unkz8qto4xec6jhw9mie9oepgcurirebdx8axyq3o36fanooxxy';
+const LIVE_PKARR_RELAY = 'https://relay.pkarr.org';
 
-// const HOMESERVER = LIVE_HOMESERVER || TEST_HOMESERVER;
-// const PKARR_RELAY = LIVE_HOMESERVER ? LIVE_PKARR_RELAY : TEST_PKARR_RELAY;
+const HOMESERVER = LIVE_HOMESERVER || TEST_HOMESERVER;
+const PKARR_RELAY = LIVE_HOMESERVER ? LIVE_PKARR_RELAY : TEST_PKARR_RELAY;
 
-const HOMESERVER = TEST_HOMESERVER;
-const PKARR_RELAY = TEST_PKARR_RELAY;
+// const HOMESERVER = TEST_HOMESERVER;
+// const PKARR_RELAY = TEST_PKARR_RELAY;
 
 type ClientContextType = {
   pubky: string | null;
@@ -82,9 +82,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const isLoggedIn = useCallback(async (): Promise<string | boolean> => {
     try {
-      await client.ready();
-
       if (pubky) return pubky;
+
+      await client.ready();
 
       const sessions = await client.session();
 
@@ -178,7 +178,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const getProfile = useCallback(
-    async (cache = false): Promise<any> => {
+    async (cache = true): Promise<any> => {
       try {
         if (cache) {
           if (profile) return profile;
@@ -383,6 +383,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         // and load it in subsequent client instances.
 
         const pk = await isLoggedIn();
+
+        await client.ready();
 
         if (!pk) throw new Error('Get global posts failed: not logged in.');
 

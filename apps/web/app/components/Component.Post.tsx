@@ -1,97 +1,31 @@
 'use client';
 
 import { Icon, Button, Post as PostUI, Typography } from '@social/ui-shared';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
 import Repost from './Component.Repost';
-import { useClientContext } from '../../contexts/client';
 import { timeAgo } from '../../libs/time';
 import { encodePostUri, minifyPubky } from '../../libs/pubkyHelper';
 import { Skeleton } from '.';
 import { useRouter } from 'next/navigation';
 
-type PostUri = {
-  uri: string;
-  payload: {
-    content: string;
-  };
-};
-
-type PostResult = {
-  uri: string;
-  payload: {
-    content: string;
-  };
-  createdAt: string | Date | null;
-};
-
-interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
-  repost?: boolean;
-  bookmark?: boolean;
-  size?: 'full' | 'normal';
-  postId: PostUri;
-  layout?: string;
-}
-
-interface User {
-  bio: string;
-  image: string;
-  links: {
-    url: string;
-    value: string;
-  }[];
-  name: string;
-}
+import { PostProps } from '../../types';
 
 export default function Post({
   repost = false,
   size = 'normal',
-  postId,
+  post,
   layout,
   ...rest
 }: PostProps) {
-  const { getPost, getUser } = useClientContext();
   const router = useRouter();
 
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
-  const [post, setPost] = useState<PostResult>({} as PostResult);
-  const [creator, setCreator] = useState<User | null>(null);
-  const [creatorPubky, setCreatorPubky] = useState<string>('');
-  const [createdAt, setCreatedAt] = useState<string | Date | null>(null);
   const [bookmark, setBookmark] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!postId?.uri) return;
-
-      const result = await getPost(postId.uri);
-
-      setPost(result);
-
-      const pubkyCreator = postId.uri.split('/')[0].split(':')[1];
-
-      const creator = await getUser(pubkyCreator);
-
-      setCreator(creator);
-      setCreatorPubky(pubkyCreator);
-    };
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getPost, getUser, post?.uri, postId]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPost((prev) => {
-        setCreatedAt(prev?.createdAt);
-        return { ...prev };
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!post?.uri) return <Skeleton.Post size={size} />;
+  if (!post) return <Skeleton.Post size={size} />;
 
   return (
     <div>
@@ -101,7 +35,7 @@ export default function Post({
           onClick={() => router.push(encodePostUri(post?.uri))}
         >
           <div>
-            {repost && (
+            {/* {repost && (
               <PostUI.RepostCard>
                 <div className="justify-start items-center gap-4 flex">
                   <Button.Action
@@ -116,7 +50,7 @@ export default function Post({
                 </div>
                 <PostUI.Time>3m</PostUI.Time>
               </PostUI.RepostCard>
-            )}
+            )} */}
             <PostUI.MainCard
               borderRadius={
                 repost ? 'rounded-bl-2xl rounded-br-2xl' : 'rounded-2xl'
@@ -128,12 +62,12 @@ export default function Post({
                   className="justify-start items-center gap-4 flex cursor-pointer"
                   onClick={(event) => {
                     event.stopPropagation();
-                    router.push(`/profile/${creatorPubky}`);
+                    router.push(`/profile/${post?.author?.id}`);
                   }}
                 >
                   <PostUI.ImageUser
                     className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
-                    src={creator?.image || '/images/user.png'}
+                    src={post?.author?.profile?.image || '/images/user.png'}
                     alt="user"
                   />
                   <div
@@ -144,21 +78,27 @@ export default function Post({
                     <PostUI.Username
                       className={size === 'full' ? 'lg:text-2xl' : ''}
                     >
-                      {creator?.name}
+                      {post?.author?.profile?.name}
                     </PostUI.Username>
-                    <Typography.Label className="block text-opacity-30">
-                      {minifyPubky(creatorPubky)}
+                    <Typography.Label
+                      className={
+                        size === 'full' ? 'hidden sm:block text-opacity-30' : ''
+                      }
+                    >
+                      {minifyPubky(post?.author?.uri)}
                     </Typography.Label>
                   </div>
                 </div>
-                <PostUI.Time size={size}>{timeAgo(createdAt)}</PostUI.Time>
+                <PostUI.Time size={size}>
+                  {timeAgo(post?.createdAt)}
+                </PostUI.Time>
               </PostUI.Header>
               <div
                 className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
               >
                 <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
                   <PostUI.Content
-                    text={post?.payload?.content}
+                    text={post?.post?.payload?.content}
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}
                   />
                   {/** <img
@@ -199,7 +139,7 @@ export default function Post({
                   <PostUI.UserPic
                     className="hidden md:inline-flex"
                     images={images}
-                  /> 
+                  />
                 </PostUI.Footer>
                   */}
               </div>
@@ -250,7 +190,7 @@ export default function Post({
         </PostUI.Root>
       </div>
       <Repost
-        postId={post}
+        post={post}
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
       />
