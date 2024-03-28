@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import {
@@ -21,7 +22,7 @@ interface Followers {
 }
 
 export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
-  const { getUser, listFollowers } = useClientContext();
+  const { getUser, listFollowers, follow } = useClientContext();
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
@@ -32,6 +33,7 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [followers, setFollowers] = useState<Followers | null>(null);
+  const [images, setImages] = useState<{ alt: string; src: string }[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -39,6 +41,12 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
         const followers = await listFollowers(creatorPubky);
 
         if (followers) {
+          setImages(
+            followers.followers.map((user: any) => ({
+              alt: 'user-pic',
+              src: user.profile.image,
+            }))
+          );
           setFollowers(followers);
           setLoadingFollowers(false);
         }
@@ -86,20 +94,15 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
     fetchData();
   }, [creatorPubky, getUser]);
 
-  // const images = [
-  //   {
-  //     src: '/images/user.png',
-  //     alt: '1',
-  //   },
-  //   {
-  //     src: '/images/user.png',
-  //     alt: '2',
-  //   },
-  //   {
-  //     src: '/images/user.png',
-  //     alt: '3',
-  //   },
-  // ];
+  const followUser = async () => {
+    try {
+      if (!creatorPubky) return;
+
+      await follow(creatorPubky);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
@@ -125,6 +128,13 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
             <Typography.Body variant="medium" className="text-opacity-80">
               {bio}
             </Typography.Body>
+            <Button.Medium
+              onClick={() => followUser()}
+              variant="default"
+              icon={<Icon.Activity />}
+            >
+              Follow me
+            </Button.Medium>
           </SideCard.Content>
         </div>
       )}
@@ -159,7 +169,6 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
                     Followers
                   </Typography.Label>
                 </div>
-                {/* <Post.UserPic images={images} /> */}
               </div>
             </Link>
           </SideCard.Content>
@@ -173,7 +182,8 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
                     Followers
                   </Typography.Label>
                 </div>
-                {/* <Post.UserPic images={images} /> */}
+
+                <Post.UserPic images={images} />
               </div>
             </Link>
           </SideCard.Content>

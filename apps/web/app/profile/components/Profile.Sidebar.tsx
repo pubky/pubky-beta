@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import {
@@ -15,8 +16,13 @@ import { minifyPubky } from '../../../libs/pubkyHelper';
 import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '../../components';
 
+interface Followers {
+  count: number;
+  followers: [];
+}
+
 export default function Sidebar() {
-  const { pubky, getProfile } = useClientContext();
+  const { pubky, getProfile, listFollowers } = useClientContext();
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
@@ -25,6 +31,33 @@ export default function Sidebar() {
   const [website, setWebsite] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
+  const [loadingFollowers, setLoadingFollowers] = useState(true);
+  const [followers, setFollowers] = useState<Followers | null>(null);
+  const [images, setImages] = useState<{ alt: string; src: string }[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (!pubky) return;
+
+        const followers = await listFollowers(pubky);
+
+        if (followers) {
+          setImages(
+            followers.followers.map((user: any) => ({
+              alt: 'user-pic',
+              src: user.profile.image,
+            }))
+          );
+          setFollowers(followers);
+          setLoadingFollowers(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, [pubky, listFollowers]);
 
   useEffect(() => {
     async function fetchData() {
@@ -57,21 +90,6 @@ export default function Sidebar() {
     }
     fetchData();
   }, [pubky, getProfile]);
-
-  // const images = [
-  //   {
-  //     src: '/images/user.png',
-  //     alt: '1',
-  //   },
-  //   {
-  //     src: '/images/user.png',
-  //     alt: '2',
-  //   },
-  //   {
-  //     src: '/images/user.png',
-  //     alt: '3',
-  //   },
-  // ];
 
   return (
     <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
@@ -121,19 +139,35 @@ export default function Sidebar() {
       </div>
       <div>
         <SideCard.Header title="Contacts" variantTitle="label" />
-        <SideCard.Content>
-          <Link href="/followers">
-            <div className="flex-col gap-3 inline-flex">
-              <div className="inline-flex gap-2">
-                <Typography.Label>0</Typography.Label>
-                <Typography.Label className="text-opacity-50">
-                  Followers
-                </Typography.Label>
+        {loadingFollowers ? (
+          <SideCard.Content>
+            <Link href="/followers">
+              <div className="flex-col gap-3 inline-flex">
+                <div className="inline-flex gap-2">
+                  <Typography.Label>{followers?.count}</Typography.Label>
+                  <Typography.Label className="text-opacity-50">
+                    Followers
+                  </Typography.Label>
+                </div>
+                <Post.UserPic images={images} />
               </div>
-              {/* <Post.UserPic images={images} /> */}
-            </div>
-          </Link>
-        </SideCard.Content>
+            </Link>
+          </SideCard.Content>
+        ) : (
+          <SideCard.Content>
+            <Link href="/followers">
+              <div className="flex-col gap-3 inline-flex">
+                <div className="inline-flex gap-2">
+                  <Typography.Label>{followers?.count}</Typography.Label>
+                  <Typography.Label className="text-opacity-50">
+                    Followers
+                  </Typography.Label>
+                </div>
+                <Post.UserPic images={images} />
+              </div>
+            </Link>
+          </SideCard.Content>
+        )}
       </div>
       {(x || website || telegram) && (
         <div className="w-full">

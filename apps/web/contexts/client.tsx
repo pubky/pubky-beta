@@ -37,6 +37,7 @@ type ClientContextType = {
   listPosts: (pubky: string, cursor: string) => Promise<any>;
   listUserFeed: (pubky: string, cursor: string) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
+  listFollowing: (pubky: string) => Promise<any>;
   listGlobalPosts: (
     cursor: string,
     reach: 'following' | 'all' | 'followers' | 'friends'
@@ -48,6 +49,7 @@ type ClientContextType = {
     recoveryFile: Buffer
   ) => Promise<Uint8Array>;
   setRefreshList: (value: boolean) => void;
+  follow: (pk: string) => Promise<any>;
 };
 
 const ClientContext = createContext<ClientContextType>();
@@ -171,7 +173,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         if (cache) {
           if (profile) return profile;
         }
-        console.log(profile);
 
         const pk = await isLoggedIn();
 
@@ -253,6 +254,49 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
+  const follow = useCallback(
+    async (pk: string) => {
+      try {
+        if (!pk) throw new Error('Get list followers failed');
+
+        const pkLogged = await isLoggedIn();
+
+        if (!pkLogged) throw new Error('Post follow failed: not logged in.');
+
+        const result = await client.social.graph.follow(pkLogged, pk);
+
+        if (!result.ok)
+          throw new Error(`Post follow:${pk} failed: ${result.error.message}`);
+
+        return result.value;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client]
+  );
+
+  const listFollowing = useCallback(
+    async (pk: string) => {
+      try {
+        if (!pk) throw new Error('Get list followers failed');
+        await client.ready();
+
+        const result = await client.social.graph.following(pk);
+
+        if (!result.ok)
+          throw new Error(
+            `Get list followers:${pk} failed: ${result.error.message}`
+          );
+
+        return result.value;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client]
+  );
+
   const listFollowers = useCallback(
     async (pk: string) => {
       try {
@@ -260,6 +304,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         await client.ready();
 
         const result = await client.social.graph.followers(pk);
+
+        console.log(result);
 
         if (!result.ok)
           throw new Error(
@@ -392,7 +438,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         decryptRecoveryFile,
         listGlobalPosts,
         listFollowers,
+        listFollowing,
         setRefreshList,
+        follow,
       }}
     >
       {children}
