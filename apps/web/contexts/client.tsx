@@ -30,7 +30,7 @@ type ClientContextType = {
     password: string
   ) => Promise<{ recoveryFile: Buffer; filename: string }>;
   logout: () => Promise<void>;
-  getProfile: () => Promise<any>;
+  getProfile: (cache?: boolean) => Promise<any>;
   saveProfile: (profile: any) => Promise<void>;
   createPost: (post: any) => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
@@ -153,8 +153,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         const result = await client.social.profile.put(pk, pubkeyProfile);
 
-        setProfile(result.value);
-        localStorageUtils.set('profile', result.value);
+        setProfile(profile);
+        localStorageUtils.set('profile', profile);
 
         if (!result.ok)
           throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
@@ -165,27 +165,33 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
-  const getProfile = useCallback(async (): Promise<any> => {
-    try {
-      if (profile) return profile;
+  const getProfile = useCallback(
+    async (cache = false): Promise<any> => {
+      try {
+        if (cache) {
+          if (profile) return profile;
+        }
+        console.log(profile);
 
-      const pk = await isLoggedIn();
+        const pk = await isLoggedIn();
 
-      if (!pk) throw new Error('Logged in failed : not logged in.');
+        if (!pk) throw new Error('Logged in failed : not logged in.');
 
-      const result = await client.social.profile.get(pk);
+        const result = await client.social.profile.get(pk);
 
-      if (!result.ok)
-        throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
+        if (!result.ok)
+          throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
 
-      localStorageUtils.set('profile', result.value);
-      setProfile(result.value);
+        localStorageUtils.set('profile', result.value);
+        setProfile(result.value);
 
-      return result.value;
-    } catch (error) {
-      console.log(error);
-    }
-  }, [client]);
+        return result.value;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client]
+  );
 
   const getUser = useCallback(
     async (pk): Promise<any> => {

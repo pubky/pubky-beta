@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import {
   Content,
   Typography,
@@ -23,7 +22,7 @@ export default function Index() {
 
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
-  const [info, setInfo] = useState('');
+  const [bio, setBio] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
   const [website, setWebsite] = useState('');
   const [email, setEmail] = useState('');
@@ -34,25 +33,21 @@ export default function Index() {
     setHandler(minifyPubky(pubky));
     async function fetchData() {
       try {
-        if (!pubky) {
-          await signUp();
-        } else {
-          const profile = await getProfile();
+        const profile = await getProfile(false);
 
-          setName(profile.name);
-          setInfo(profile.bio);
-          setImage(profile.image);
+        setName(profile.name);
+        setBio(profile.bio);
+        setImage(profile.image);
 
-          for (const link of profile.links) {
-            if (link.title === 'website') {
-              setWebsite(link.url);
-            } else if (link.title === 'email') {
-              setEmail(link.url);
-            } else if (link.title === 'x') {
-              setX(link.url);
-            } else if (link.title === 'telegram') {
-              setTelegram(link.url);
-            }
+        for (const link of profile.links) {
+          if (link.title === 'website') {
+            setWebsite(link.url);
+          } else if (link.title === 'email') {
+            setEmail(link.url);
+          } else if (link.title === 'x') {
+            setX(link.url);
+          } else if (link.title === 'telegram') {
+            setTelegram(link.url);
           }
         }
       } catch (error) {
@@ -77,7 +72,7 @@ export default function Index() {
     try {
       const profileInfo = {
         name,
-        info,
+        bio,
         image,
         links: {
           website,
@@ -122,8 +117,8 @@ export default function Index() {
               <Input.TextArea
                 placeholder="Short bio. Tell a bit about yourself."
                 className="h-[422px]"
-                defaultValue={info}
-                onChange={(e: any) => setInfo(e.target.value)}
+                defaultValue={bio}
+                onChange={(e: any) => setBio(e.target.value)}
               />
             </Card.Primary>
           </Card.Primary>
