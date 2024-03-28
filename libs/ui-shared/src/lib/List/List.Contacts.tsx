@@ -3,9 +3,10 @@ import { Typography } from '../Typography';
 import { Content } from '../Content';
 
 interface Contact extends React.HTMLAttributes<HTMLDivElement> {
-  image: string;
+  alt: string;
+  src: string;
   name: string;
-  slashUrl: string;
+  handler: string;
 }
 
 type ContactsListProps = {
@@ -13,11 +14,6 @@ type ContactsListProps = {
 };
 
 export const Contacts = ({ contacts }: ContactsListProps) => {
-  const shortSlashUrl = (slashUrl: string) => {
-    const [, firstPart] = slashUrl.match(/slash:(.{5})/) || [];
-    const [, lastPart] = slashUrl.match(/(.{5})\?relay=/) || [];
-    return `${firstPart || ''}...${lastPart || ''}`;
-  };
   return (
     <>
       {contacts.map((contact, index) => (
@@ -28,15 +24,15 @@ export const Contacts = ({ contacts }: ContactsListProps) => {
               width={48}
               height={48}
               className="rounded-full overflow-hidden"
-              src={contact.image}
-              alt="Profile Image"
+              src={contact.src}
+              alt={contact.alt}
             />
             <div className="flex-col justify-start items-start inline-flex">
               <Typography.Body variant="medium-bold">
                 {contact.name}
               </Typography.Body>
               <Typography.Caption className="text-neutral-400">
-                @{shortSlashUrl(contact.slashUrl)}
+                {contact.handler}
               </Typography.Caption>
             </div>
           </div>

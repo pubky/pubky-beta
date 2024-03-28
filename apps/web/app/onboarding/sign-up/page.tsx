@@ -165,7 +165,7 @@ export default function Index() {
           >
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
-              className="h-[490px]"
+              className="h-[390px]"
               defaultValue={bio}
               error={errors.bio}
               onChange={(e: any) => setBio(e.target.value)}
@@ -173,41 +173,48 @@ export default function Index() {
           </Card.Primary>
         </Card.Primary>
         <Card.Primary title="Links">
-          <Input.Label className="mt-4" value="Website" />
-          <Input.Text
-            className="h-[70px]"
-            placeholder="https://"
-            defaultValue={website}
-            error={errors.website}
-            onChange={(e: any) => setWebsite(e.target.value)}
-          />
-
-          <Input.Label className="mt-4" value="Email" />
-          <Input.Text
-            className="h-[70px]"
-            placeholder="user@provider.com"
-            defaultValue={email}
-            error={errors.email}
-            onChange={(e: any) => setEmail(e.target.value)}
-          />
-
-          <Input.Label className="mt-4" value="x (twitter)" />
-          <Input.Text
-            className="h-[70px]"
-            placeholder="@user"
-            defaultValue={x}
-            error={errors.x}
-            onChange={(e: any) => setX(e.target.value)}
-          />
-
-          <Input.Label className="mt-4" value="telegram" />
-          <Input.Text
-            className="h-[70px]"
-            placeholder="@user"
-            defaultValue={telegram}
-            error={errors.telegram}
-            onChange={(e: any) => setTelegram(e.target.value.replace('@', ''))}
-          />
+          <div>
+            <Input.Label className="mt-4" value="Website" />
+            <Input.Text
+              className="h-[70px]"
+              placeholder="https://"
+              defaultValue={website}
+              error={errors.website}
+              onChange={(e: any) => setWebsite(e.target.value)}
+            />
+          </div>
+          <div>
+            <Input.Label className="mt-4" value="Email" />
+            <Input.Text
+              className="h-[70px]"
+              placeholder="user@provider.com"
+              defaultValue={email}
+              error={errors.email}
+              onChange={(e: any) => setEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <Input.Label className="mt-4" value="x (twitter)" />
+            <Input.Text
+              className="h-[70px]"
+              placeholder="@user"
+              defaultValue={x}
+              error={errors.x}
+              onChange={(e: any) => setX(e.target.value)}
+            />
+          </div>
+          <div>
+            <Input.Label className="mt-4" value="telegram" />
+            <Input.Text
+              className="h-[70px]"
+              placeholder="@user"
+              defaultValue={telegram}
+              error={errors.telegram}
+              onChange={(e: any) =>
+                setTelegram(e.target.value.replace('@', ''))
+              }
+            />
+          </div>
         </Card.Primary>
         <Card.Primary title="Picture">
           <label htmlFor="fileInput">
@@ -229,7 +236,7 @@ export default function Index() {
             />
           </label>
           <div>
-            <Input.Label className="mt-4" value="Encrypt Recovery File" />
+            <Input.Label className="mt-4" value="Encrypt Recovery Password" />
             <Input.Text
               className="h-[70px]"
               type="password"

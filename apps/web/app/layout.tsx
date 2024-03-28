@@ -4,6 +4,11 @@ import { ClientWrapper } from '../contexts/client';
 import { FilterWrapper } from '../contexts/filters';
 import ProtectedRoutes from './components/ProtectedRoutes';
 
+export const metadata = {
+  title: 'Pubky',
+  description: 'Pubky social',
+};
+
 export default function RootLayout({
   children,
 }: {
