@@ -376,7 +376,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         if (!pk) throw new Error('Get global posts failed: not logged in.');
 
-        const result = await client.social.streams.all(pk, {
+        const result = await client.social.streams.get(pk, {
           limit: 5,
           cursor: cursor,
           reach: reach ? reach : 'all',
