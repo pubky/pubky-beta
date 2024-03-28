@@ -335,7 +335,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         await client.ready();
 
-        const result = await client.social.posts.list(pk, {
+        const result = await client.social.streams.userFeed(pk, {
           limit: 5,
           cursor: cursor,
         });

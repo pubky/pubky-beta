@@ -33,6 +33,7 @@ export default function Index({
     async function fetchProfile() {
       try {
         const profileInfo = await getUser(creatorPubky);
+
         if (profileInfo) {
           setPic(profileInfo?.image || '/images/Userpic.png');
           setName(profileInfo?.name || 'Loading...');
@@ -41,21 +42,20 @@ export default function Index({
         console.log(error);
       }
     }
-    fetchProfile();
-  }, [getUser]);
 
-  useEffect(() => {
+    fetchProfile();
+
     async function fetchPosts() {
       try {
         if (!creatorPubky) return;
 
         const results = await listUserFeed(creatorPubky, cursor);
 
-        if (!results || !results.list) return;
+        if (!results || !results.feed) return;
 
-        setPosts(results.list);
+        setPosts(results.feed);
 
-        if (results.list.length >= 5) {
+        if (results.feed.length >= 5) {
           setShowLoadMore(true);
         }
 
@@ -69,6 +69,7 @@ export default function Index({
         console.log(error);
       }
     }
+
     fetchPosts();
   }, [creatorPubky]);
 
@@ -115,7 +116,7 @@ export default function Index({
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
           {loading && <Skeleton.Post size={'normal'} />}
           {posts.map((post, index) => (
-            <Post key={index} postId={post} />
+            <Post key={index} post={post} />
           ))}
           {posts.length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
