@@ -15,19 +15,41 @@ import { Header } from '../components';
 import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
 import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+
+interface FormErrors {
+  [fieldName: string]: string[];
+}
+
+const profileSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }),
+  bio: z.string().min(3, { message: 'Short bio is required' }).optional(),
+  website: z.string().url({ message: 'Invalid website URL' }).optional(),
+  email: z.string().email({ message: 'Invalid email address' }).optional(),
+  x: z.string().optional(),
+  telegram: z.string().optional(),
+});
 
 export default function Index() {
   const router = useRouter();
   const { pubky, signUp, saveProfile, getProfile } = useClientContext();
 
   const [handler, setHandler] = useState('Loading...');
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
+  const [name, setName] = useState(undefined);
+  const [bio, setBio] = useState(undefined);
   const [image, setImage] = useState('/images/Userpic.png');
-  const [website, setWebsite] = useState('');
-  const [email, setEmail] = useState('');
-  const [x, setX] = useState('');
-  const [telegram, setTelegram] = useState('');
+  const [website, setWebsite] = useState(undefined);
+  const [email, setEmail] = useState(undefined);
+  const [x, setX] = useState(undefined);
+  const [telegram, setTelegram] = useState(undefined);
+  const [errors, setErrors] = useState({
+    name: '',
+    bio: '',
+    website: '',
+    email: '',
+    x: '',
+    telegram: '',
+  });
 
   useEffect(() => {
     setHandler(minifyPubky(pubky));
@@ -70,7 +92,40 @@ export default function Index() {
 
   const handleSubmit = async () => {
     try {
-      const profileInfo = {
+      setErrors({
+        name: '',
+        bio: '',
+        website: '',
+        email: '',
+        x: '',
+        telegram: '',
+      });
+
+      const result = profileSchema.safeParse({
+        name,
+        bio: bio || undefined,
+        website: website || undefined,
+        email: email || undefined,
+        x: x || undefined,
+        telegram: telegram || undefined,
+      });
+
+      if (!result.success) {
+        const newErrors: FormErrors = result.error.flatten().fieldErrors;
+
+        const errorMessages = Object.keys(newErrors).reduce(
+          (acc: { [key: string]: string }, key) => {
+            acc[key] = newErrors[key].join(', ');
+            return acc;
+          },
+          {}
+        );
+
+        setErrors((prev) => ({ ...prev, ...errorMessages }));
+        return;
+      }
+
+      await saveProfile({
         name,
         bio,
         image,
@@ -80,9 +135,8 @@ export default function Index() {
           x,
           telegram,
         },
-      };
+      });
 
-      await saveProfile(profileInfo);
       router.push('/profile');
     } catch (error) {
       console.log(error);
@@ -102,6 +156,7 @@ export default function Index() {
           defaultValue={name}
           autoFocus
           autoCorrect="off"
+          error={errors.name}
           onChange={(e: any) => setName(e.target.value)}
         />
         <Typography.PageTitle className="text-opacity-50 break-words">
@@ -118,6 +173,7 @@ export default function Index() {
                 placeholder="Short bio. Tell a bit about yourself."
                 className="h-[422px]"
                 defaultValue={bio}
+                error={errors.bio}
                 onChange={(e: any) => setBio(e.target.value)}
               />
             </Card.Primary>
@@ -128,6 +184,7 @@ export default function Index() {
               className="h-[70px]"
               placeholder="https://"
               defaultValue={website}
+              error={errors.website}
               onChange={(e: any) => setWebsite(e.target.value)}
             />
 
@@ -136,6 +193,7 @@ export default function Index() {
               className="h-[70px]"
               placeholder="user@provider.com"
               defaultValue={email}
+              error={errors.email}
               onChange={(e: any) => setEmail(e.target.value)}
             />
 
@@ -144,6 +202,7 @@ export default function Index() {
               className="h-[70px]"
               placeholder="@user"
               defaultValue={x}
+              error={errors.x}
               onChange={(e: any) => setX(e.target.value)}
             />
 
@@ -152,6 +211,7 @@ export default function Index() {
               className="h-[70px]"
               placeholder="@user"
               defaultValue={telegram}
+              error={errors.telegram}
               onChange={(e: any) =>
                 setTelegram(e.target.value.replace('@', ''))
               }

@@ -7,20 +7,46 @@ import { Content, Button, Input, Card, Icon } from '@social/ui-shared';
 import { Onboarding } from '../components';
 import { useClientContext } from '../../../contexts/client';
 import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+
+interface FormErrors {
+  [fieldName: string]: string[];
+}
+
+const profileSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }),
+  bio: z.string().min(3, { message: 'Short bio is required' }).optional(),
+  website: z.string().url({ message: 'Invalid website URL' }).optional(),
+  email: z.string().email({ message: 'Invalid email address' }).optional(),
+  x: z.string().optional(),
+  telegram: z.string().optional(),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters long' }),
+});
 
 export default function Index() {
   const { signUp } = useClientContext();
 
   const router = useRouter();
 
-  const [name, setName] = useState('');
-  const [info, setInfo] = useState('');
+  const [name, setName] = useState(undefined);
+  const [bio, setBio] = useState(undefined);
   const [image, setImage] = useState('/images/Userpic.png');
-  const [website, setWebsite] = useState('');
-  const [email, setEmail] = useState('');
-  const [x, setX] = useState('');
-  const [telegram, setTelegram] = useState('');
-  const [password, setPassword] = useState('');
+  const [website, setWebsite] = useState(undefined);
+  const [email, setEmail] = useState(undefined);
+  const [x, setX] = useState(undefined);
+  const [telegram, setTelegram] = useState(undefined);
+  const [password, setPassword] = useState(undefined);
+  const [errors, setErrors] = useState({
+    name: '',
+    bio: '',
+    website: '',
+    email: '',
+    x: '',
+    telegram: '',
+    password: '',
+  });
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -56,22 +82,63 @@ export default function Index() {
 
   const handleSubmit = async () => {
     try {
-      // add validation here
+      setErrors({
+        name: '',
+        bio: '',
+        website: '',
+        email: '',
+        x: '',
+        telegram: '',
+        password: '',
+      });
 
-      const profileInfo = {
+      const result = profileSchema.safeParse({
         name,
-        info,
-        image,
-        links: {
-          website,
-          email,
-          x,
-          telegram,
-        },
-      };
+        bio: bio || undefined,
+        website: website || undefined,
+        email: email || undefined,
+        x: x || undefined,
+        telegram: telegram || undefined,
+        password,
+      });
 
-      const { recoveryFile, filename } = await signUp(profileInfo, password);
-      await handleDownloadRecoveryFile({ recoveryFile, filename });
+      if (!result.success) {
+        const newErrors: FormErrors = result.error.flatten().fieldErrors;
+
+        const errorMessages = Object.keys(newErrors).reduce(
+          (acc: { [key: string]: string }, key) => {
+            acc[key] = newErrors[key].join(', ');
+            return acc;
+          },
+          {}
+        );
+
+        setErrors((prev) => ({ ...prev, ...errorMessages }));
+        return;
+      }
+
+      try {
+        const profileInfo = result.data;
+
+        const { recoveryFile, filename } = await signUp(
+          {
+            name,
+            bio,
+            image,
+            links: {
+              website,
+              email,
+              x,
+              telegram,
+            },
+          },
+          profileInfo.password
+        );
+        await handleDownloadRecoveryFile({ recoveryFile, filename });
+      } catch (error) {
+        console.log(error);
+      }
+
       router.push('/onboarding/confirm');
     } catch (error) {
       console.log(error);
@@ -87,6 +154,7 @@ export default function Index() {
         autoFocus
         autoCorrect="off"
         onChange={(e: any) => setName(e.target.value)}
+        error={errors.name}
       />
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">
@@ -98,8 +166,9 @@ export default function Index() {
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
               className="h-[490px]"
-              defaultValue={info}
-              onChange={(e: any) => setInfo(e.target.value)}
+              defaultValue={bio}
+              error={errors.bio}
+              onChange={(e: any) => setBio(e.target.value)}
             />
           </Card.Primary>
         </Card.Primary>
@@ -109,6 +178,7 @@ export default function Index() {
             className="h-[70px]"
             placeholder="https://"
             defaultValue={website}
+            error={errors.website}
             onChange={(e: any) => setWebsite(e.target.value)}
           />
 
@@ -117,6 +187,7 @@ export default function Index() {
             className="h-[70px]"
             placeholder="user@provider.com"
             defaultValue={email}
+            error={errors.email}
             onChange={(e: any) => setEmail(e.target.value)}
           />
 
@@ -125,6 +196,7 @@ export default function Index() {
             className="h-[70px]"
             placeholder="@user"
             defaultValue={x}
+            error={errors.x}
             onChange={(e: any) => setX(e.target.value)}
           />
 
@@ -133,6 +205,7 @@ export default function Index() {
             className="h-[70px]"
             placeholder="@user"
             defaultValue={telegram}
+            error={errors.telegram}
             onChange={(e: any) => setTelegram(e.target.value.replace('@', ''))}
           />
         </Card.Primary>
@@ -160,6 +233,7 @@ export default function Index() {
             <Input.Text
               className="h-[70px]"
               type="password"
+              error={errors.password}
               onChange={(e: any) => setPassword(e.target.value)}
             />
           </div>

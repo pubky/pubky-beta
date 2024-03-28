@@ -455,13 +455,13 @@ const _toPubkeyProfile = (profile: any): any => {
 
   const pubkeyProfile: any = {
     name: profile.name || 'anonymous',
-    bio: profile.bio,
+    bio: profile?.bio || '',
     image: profile.image,
     links: [
-      { url: profile.links.website, title: 'website' },
-      { url: profile.links.email, title: 'email' },
-      { url: profile.links.x, title: 'x' },
-      { url: profile.links.telegram, title: 'telegram' },
+      { url: profile?.links?.website || '', title: 'website' },
+      { url: profile?.links?.email || '', title: 'email' },
+      { url: profile?.links?.x || '', title: 'x' },
+      { url: profile?.links?.telegram || '', title: 'telegram' },
     ],
   };
   return pubkeyProfile;
