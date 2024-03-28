@@ -305,8 +305,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         const result = await client.social.graph.followers(pk);
 
-        console.log(result);
-
         if (!result.ok)
           throw new Error(
             `Get list followers:${pk} failed: ${result.error.message}`
