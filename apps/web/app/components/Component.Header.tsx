@@ -159,7 +159,7 @@ export default function Header({
                 onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
-                href="settings"
+                href="/settings"
                 icon={<Icon.GearSix />}
                 text="Settings"
                 onClick={() => setDrawerOpen(false)}
