@@ -66,7 +66,10 @@ export default function Index() {
 
       setShowLoadMore(false);
 
-      if (!results || !results.feed) return;
+      if (!results || !results.feed) {
+        setCursor('');
+        return;
+      }
 
       setPosts(results.feed);
 
@@ -113,7 +116,10 @@ export default function Index() {
     try {
       const results = await listGlobalPosts(cursor, reach);
 
-      if (!results || !results.feed) return;
+      if (!results || !results.feed) {
+        setCursor('');
+        return;
+      }
 
       setPosts((prev) => [...prev, ...results.feed]);
 

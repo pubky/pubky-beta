@@ -15,6 +15,7 @@ import { useClientContext } from '../../contexts/client';
 import { timeAgo } from '../../libs/time';
 import { encodePostUri, minifyPubky } from '../../libs/pubkyHelper';
 import { Skeleton } from '.';
+import { useRouter } from 'next/navigation';
 
 type PostUri = {
   uri: string;
@@ -56,6 +57,7 @@ export default function Post({
   ...rest
 }: PostProps) {
   const { getPost, getUser } = useClientContext();
+  const router = useRouter();
 
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
@@ -81,12 +83,12 @@ export default function Post({
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getPost, getUser, post.uri, postId]);
+  }, [getPost, getUser, post?.uri, postId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setPost((prev) => {
-        setCreatedAt(prev.createdAt);
+        setCreatedAt(prev?.createdAt);
         return { ...prev };
       });
     }, 1000);
@@ -98,7 +100,10 @@ export default function Post({
   return (
     <div>
       <div className="gap-6 flex flex-col">
-        <PostUI.Root href={encodePostUri(post?.uri)}>
+        <PostUI.Root
+          className="cursor-pointer"
+          onClick={() => router.push(encodePostUri(post?.uri))}
+        >
           <div>
             {repost && (
               <PostUI.RepostCard>
@@ -123,7 +128,13 @@ export default function Post({
               className={twMerge(rest.className)}
             >
               <PostUI.Header size={size}>
-                <div className="justify-start items-center gap-4 flex">
+                <div
+                  className="justify-start items-center gap-4 flex cursor-pointer"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    router.push(`/profile/${creatorPubky}`);
+                  }}
+                >
                   <PostUI.ImageUser
                     className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
                     src={creator?.image || '/images/user.png'}

@@ -22,7 +22,7 @@ export const encodePostUri = (uri: string) => {
 
   if (!pubky || !postId) return '';
 
-  return `post/${pubky}/${postId}`;
+  return `/post/${pubky}/${postId}`;
 };
 
 export const decodePostUri = (pubky: string, postId: string) => {

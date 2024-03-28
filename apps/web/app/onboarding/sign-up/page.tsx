@@ -1,24 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import {
-  Content,
-  Typography,
-  Button,
-  Input,
-  Card,
-  Icon,
-} from '@social/ui-shared';
+import { Content, Button, Input, Card, Icon } from '@social/ui-shared';
 import { Onboarding } from '../components';
 import { useClientContext } from '../../../contexts/client';
-import { minifyPubky } from '../../../libs/pubkyHelper';
 import { useRouter } from 'next/navigation';
 
 export default function Index() {
-  const { pubky, signUp, saveProfile, getProfile, downloadRecoveryFile } =
-    useClientContext();
+  const { signUp } = useClientContext();
 
   const router = useRouter();
 
@@ -31,37 +22,6 @@ export default function Index() {
   const [telegram, setTelegram] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (!pubky) {
-          await signUp();
-        } else {
-          const profile = await getProfile();
-
-          setName(profile.name);
-          setInfo(profile.bio);
-          setImage(profile.image);
-
-          for (const link of profile.links) {
-            if (link.title === 'website') {
-              setWebsite(link.url);
-            } else if (link.title === 'email') {
-              setEmail(link.url);
-            } else if (link.title === 'x') {
-              setX(link.url);
-            } else if (link.title === 'telegram') {
-              setTelegram(link.url);
-            }
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [signUp, pubky, getProfile]);
-
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -73,16 +33,22 @@ export default function Index() {
     }
   };
 
-  const handleDownloadRecoveryFile = async () => {
+  const handleDownloadRecoveryFile = async ({
+    recoveryFile,
+    filename,
+  }: {
+    recoveryFile: Buffer;
+    filename: string;
+  }) => {
     try {
-      const { recoveryFile, filename } = await downloadRecoveryFile(password);
       const element = document.createElement('a');
+
       const fileBlob = new Blob([recoveryFile]);
+
       element.href = URL.createObjectURL(fileBlob);
       element.download = filename;
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
-      await handleSubmit();
     } catch (error) {
       console.log(error);
     }
@@ -90,6 +56,8 @@ export default function Index() {
 
   const handleSubmit = async () => {
     try {
+      // add validation here
+
       const profileInfo = {
         name,
         info,
@@ -102,7 +70,8 @@ export default function Index() {
         },
       };
 
-      await saveProfile(profileInfo);
+      const { recoveryFile, filename } = await signUp(profileInfo, password);
+      await handleDownloadRecoveryFile({ recoveryFile, filename });
       router.push('/onboarding/confirm');
     } catch (error) {
       console.log(error);
@@ -119,9 +88,6 @@ export default function Index() {
         autoCorrect="off"
         onChange={(e: any) => setName(e.target.value)}
       />
-      <Typography.PageTitle className="text-opacity-50 break-words">
-        {pubky ? minifyPubky(pubky) : 'Loading...'}
-      </Typography.PageTitle>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">
           <Input.Label className="mt-4" value="Short bio" />
@@ -198,10 +164,7 @@ export default function Index() {
             />
           </div>
           <div className="pt-[20px]">
-            <Button.Large
-              onClick={() => handleDownloadRecoveryFile()}
-              icon={<Icon.Check />}
-            >
+            <Button.Large onClick={() => handleSubmit()} icon={<Icon.Check />}>
               Download Recovery File
             </Button.Large>
           </div>

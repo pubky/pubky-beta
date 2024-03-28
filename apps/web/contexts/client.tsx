@@ -23,22 +23,24 @@ const TEST_HOMESERVER =
 const TEST_PKARR_RELAY = 'http://localhost:7258';
 
 type ClientContextType = {
-  signUp: () => Promise<string>;
+  signUp: (
+    profile: any,
+    password: string
+  ) => Promise<{ recoveryFile: Buffer; filename: string }>;
   logout: () => Promise<void>;
   getProfile: () => Promise<any>;
   saveProfile: (profile: any) => Promise<void>;
   createPost: (post: any) => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
   listPosts: (pubky: string, cursor: string) => Promise<any>;
+  listUserFeed: (pubky: string, cursor: string) => Promise<any>;
+  listFollowers: (pubky: string) => Promise<any>;
   listGlobalPosts: (
     cursor: string,
     reach: 'following' | 'all' | 'followers' | 'friends'
   ) => Promise<any>;
   getPost: (uri: string) => Promise<any>;
   getUser: (pk: string) => Promise<any>;
-  downloadRecoveryFile: (
-    filename: string
-  ) => Promise<{ recoveryFile: Buffer; filename: string }>;
   decryptRecoveryFile: (
     password: string,
     recoveryFile: Buffer
@@ -64,11 +66,13 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     return new Client(TEST_HOMESERVER, {
       relay: TEST_PKARR_RELAY,
     });
-  }, []);
+  }, [pubky]);
 
   const isLoggedIn = useCallback(async (): Promise<string | boolean> => {
     try {
       await client.ready();
+
+      if (pubky) return pubky;
 
       const sessions = await client.session();
 
@@ -85,10 +89,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   }, [client]);
 
-  const signUp = useCallback(async (): Promise<string> => {
-    try {
-      const pk = await isLoggedIn();
-      if (!pk) {
+  const signUp = useCallback(
+    async (profile: any, password: string): Promise<string> => {
+      try {
         const seed = Client.crypto.generateSeed();
 
         const result = await client.signup(seed); // seed is zeroed
@@ -99,16 +102,31 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         localStorageUtils.set('pubky', result.value);
         setPubky(result.value);
 
-        return result.value;
+        await saveProfile(profile);
+
+        const { recoveryFile, filename } =
+          await client.seedRecovery.recoveryFile(
+            'recovery_file',
+            seed,
+            password
+          );
+
+        return { recoveryFile, filename };
+      } catch (error) {
+        console.log(error);
+        return false;
       }
-      return pk;
-    } catch (error) {
-      console.log(error);
-    }
-  }, [client, isLoggedIn]);
+    },
+    [client, isLoggedIn]
+  );
 
   const logout = useCallback(async (): Promise<boolean> => {
     try {
+      localStorageUtils.remove('pubky');
+      localStorageUtils.remove('profile');
+      setPubky(null);
+      setProfile(null);
+
       await client.ready();
 
       const sessions = await client.session();
@@ -116,11 +134,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       Object.keys(sessions.users).map(async (pk) => {
         await client.logout(pk);
       });
-
-      localStorageUtils.remove('pubky');
-      localStorageUtils.remove('profile');
-      setPubky(null);
-      setProfile(null);
 
       return true;
     } catch (error) {
@@ -149,11 +162,13 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         console.log(error);
       }
     },
-    [client, isLoggedIn]
+    [client]
   );
 
   const getProfile = useCallback(async (): Promise<any> => {
     try {
+      if (profile) return profile;
+
       const pk = await isLoggedIn();
 
       if (!pk) throw new Error('Logged in failed : not logged in.');
@@ -170,7 +185,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.log(error);
     }
-  }, [client, isLoggedIn]);
+  }, [client]);
 
   const getUser = useCallback(
     async (pk): Promise<any> => {
@@ -187,7 +202,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         console.log(error);
       }
     },
-    [client, isLoggedIn]
+    [client]
   );
 
   const createPost = useCallback(
@@ -211,7 +226,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         console.log(error);
       }
     },
-    [client, isLoggedIn]
+    [client]
   );
 
   const getPost = useCallback(
@@ -229,7 +244,51 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         console.log(error);
       }
     },
-    [client, isLoggedIn]
+    [client]
+  );
+
+  const listFollowers = useCallback(
+    async (pk: string) => {
+      try {
+        if (!pk) throw new Error('Get list followers failed');
+        await client.ready();
+
+        const result = await client.social.graph.followers(pk);
+
+        if (!result.ok)
+          throw new Error(
+            `Get list followers:${pk} failed: ${result.error.message}`
+          );
+
+        return result.value;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client]
+  );
+
+  const listUserFeed = useCallback(
+    async (pk: string, cursor: string) => {
+      try {
+        if (!pk) throw new Error('Get list posts failed');
+
+        await client.ready();
+
+        const result = await client.social.posts.list(pk, {
+          limit: 5,
+          cursor: cursor,
+        });
+
+        if (!result.ok)
+          throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
+
+        return result.value;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client]
   );
 
   const listPosts = useCallback(
@@ -250,7 +309,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         console.log(error);
       }
     },
-    [client, isLoggedIn]
+    [client]
   );
 
   const listGlobalPosts = useCallback(
@@ -265,11 +324,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         const pk = await isLoggedIn();
 
-        if (!pk) throw new Error('Get profile failed: not logged in.');
+        if (!pk) throw new Error('Get global posts failed: not logged in.');
 
-        await client.ready();
-
-        const result = await client.social.streams.get(pk, {
+        const result = await client.social.streams.all(pk, {
           limit: 5,
           cursor: cursor,
           reach: reach ? reach : 'all',
@@ -277,29 +334,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         if (!result.ok)
           throw new Error(
-            `Get posts:${cursor} failed: ${result.error.message}`
+            `Get global posts:${cursor} failed: ${result.error.message}`
           );
 
         return result.value;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [client, isLoggedIn]
-  );
-
-  const downloadRecoveryFile = useCallback(
-    async (password: string) => {
-      try {
-        const seed = Client.crypto.generateSeed();
-
-        const { recoveryFile, filename } =
-          await client.seedRecovery.recoveryFile(
-            'recovery_file',
-            seed,
-            password
-          );
-        return { recoveryFile, filename };
       } catch (error) {
         console.log(error);
       }
@@ -338,14 +376,15 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         createPost,
         getPost,
         listPosts,
+        listUserFeed,
         signUp,
         logout,
         saveProfile,
         getProfile,
         getUser,
-        downloadRecoveryFile,
         decryptRecoveryFile,
         listGlobalPosts,
+        listFollowers,
         setRefreshList,
         refreshList,
       }}
