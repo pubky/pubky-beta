@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Content, Typography } from '@social/ui-shared';
 import Image from 'next/image';
-import { Post } from '../../components';
+import { Post, PostsLayout } from '../../components';
 
 export default function Contact() {
   const [isHovered, setIsHovered] = useState(false);
@@ -53,10 +53,10 @@ export default function Contact() {
             </Typography.Label>
           </div>
         </Link>
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <Post />
-          <Post />
-        </div>
+        <PostsLayout className="flex flex-col gap-6">
+          <Post size="full" postId={{ uri: '', payload: { content: '' } }} />
+          <Post size="full" postId={{ uri: '', payload: { content: '' } }} />
+        </PostsLayout>
       </div>
       <Content.Divider className="my-12" />
     </>

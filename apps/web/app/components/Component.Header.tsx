@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
 import { Modal } from './Modal';
+import { useClientContext } from '../../contexts/client';
+import { minifyPubky } from '../../libs/pubkyHelper';
 
 type Tag = {
   value: string;
@@ -21,10 +23,45 @@ export default function Header({
   tags = [],
   children,
 }: HeaderProps) {
+  const { pubky, getProfile, isLoggedIn } = useClientContext();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
+  const [image, setImage] = useState('/images/Userpic.png');
+  const [name, setName] = useState('');
+  const [logoLink, setLogoLink] = useState('/onboarding');
+  const [handler, setHandler] = useState('');
+
   const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setHandler(minifyPubky(pubky));
+    async function fetchData() {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        setLogoLink('/onboarding');
+      } else {
+        setLogoLink('/home');
+      }
+    }
+    fetchData();
+  }, [pubky, isLoggedIn]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const profile = await getProfile();
+        if (profile) {
+          setImage(profile?.image || '/images/Userpic.png');
+          setName(profile?.name || '');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, [pubky, getProfile]);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
@@ -50,7 +87,7 @@ export default function Header({
 
   return (
     <HeaderUI.Root>
-      <HeaderUI.Logo />
+      <HeaderUI.Logo link={logoLink} />
       <HeaderUI.Title title={title} className={className} />
       <Input.Search>
         {tags && (
@@ -85,51 +122,59 @@ export default function Header({
           className="relative cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-          <Menu.ImageMenu src="/images/user.png" notifications={5} />
+          <Menu.ImageMenu src={image} />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
-            <Menu.Header
-              src="/images/user.png"
-              username="Satoshi Nakamoto"
-              handler="@1qx7...gkw3"
-            />
+            <Menu.Header src={image} username={name} handler={handler} />
             <div className="flex-col inline-flex">
               <Menu.Section
                 href="/home"
                 icon={<Icon.Activity />}
                 text="Streams"
+                onClick={() => setDrawerOpen(false)}
               />
-              <Menu.Section
+              {/* <Menu.Section
                 href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
                 counter={5}
-              />
+              /> */}
               <Menu.Section
                 href="/bookmarks"
                 icon={<Icon.BookmarkSimple />}
                 text="Bookmarks"
+                onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
                 href="/hot-tags"
                 icon={<Icon.Tag size="24" />}
                 text="Hot Tags"
+                onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
                 href="/contacts"
                 icon={<Icon.UsersLeft />}
                 text="Contacts"
+                onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
-                href="settings"
+                href="/settings"
                 icon={<Icon.GearSix />}
                 text="Settings"
+                onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section
                 href="/profile"
                 icon={<Icon.UserRectangle />}
                 text="Profile"
+                onClick={() => setDrawerOpen(false)}
+              />
+              <Menu.Section
+                href="/logout"
+                icon={<Icon.UsersLeft />}
+                text="Logout"
+                onClick={() => setDrawerOpen(false)}
               />
             </div>
           </div>

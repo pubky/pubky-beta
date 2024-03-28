@@ -41,7 +41,7 @@ export const Body = ({ variant = 'large', children, ...rest }: BodyProps) => {
   }
 
   return (
-    <p
+    <div
       {...rest}
       className={twMerge(
         `text-2xl font-normal font-InterTight tracking-wide text-white`,
@@ -50,6 +50,6 @@ export const Body = ({ variant = 'large', children, ...rest }: BodyProps) => {
       )}
     >
       {children}
-    </p>
+    </div>
   );
 };

@@ -17,7 +17,7 @@ export default function Notification() {
             height={32}
             className="rounded-full"
             alt="user-pic"
-            src="/images/user.png"
+            src={'/images/Userpic.png'}
           />
         </div>
         <Typography.Body variant="medium-bold">John tagged</Typography.Body>

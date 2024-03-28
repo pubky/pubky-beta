@@ -1,4 +1,4 @@
-import Image from 'next/image';
+// import Image from 'next/image';
 import Link from 'next/link';
 import { Content, Typography, Button, Icon, Card } from '@social/ui-shared';
 import { Onboarding } from '../components';
@@ -11,7 +11,7 @@ export default function Index() {
         Sign in with a QR, download Bitkit, or create a new account.
       </Typography.PageTitle>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-        <Card.Primary
+        {/* <Card.Primary
           title="Sign in with Slashtag"
           text="Have Bitkit or a Slashtags powered wallet? Scan this QR to sign in."
         >
@@ -24,8 +24,9 @@ export default function Index() {
               src="/images/qr.png"
             />
           </Link>
-        </Card.Primary>
+        </Card.Primary> */}
         <Card.Primary
+          className="min-h-[500px]"
           title="Portable Profile"
           text="No Slashtags? Download Bitkit and create a portable profile in minutes."
         >
@@ -34,6 +35,14 @@ export default function Index() {
             <Button.Large icon={<Icon.ArrowUpRight />}>
               About Bitkit
             </Button.Large>
+          </Link>
+        </Card.Primary>
+        <Card.Primary
+          title="Sign in with Slashtag"
+          text="Another option is to create a new Slashtags account with Pubky."
+        >
+          <Link href="/onboarding/login" className="mt-4 lg:mt-0">
+            <Button.Large icon={<Icon.UserRectangle />}>Login in</Button.Large>
           </Link>
         </Card.Primary>
         <Card.Primary

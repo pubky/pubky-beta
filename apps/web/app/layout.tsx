@@ -1,9 +1,8 @@
 import './global.css';
 
-export const metadata = {
-  title: 'Pubky',
-  description: 'Pubky social',
-};
+import { ClientWrapper } from '../contexts/client';
+import { FilterWrapper } from '../contexts/filters';
+import ProtectedRoutes from './components/ProtectedRoutes';
 
 export default function RootLayout({
   children,
@@ -12,7 +11,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <FilterWrapper>
+          <ClientWrapper>
+            <ProtectedRoutes>{children}</ProtectedRoutes>
+          </ClientWrapper>
+        </FilterWrapper>
+      </body>
     </html>
   );
 }

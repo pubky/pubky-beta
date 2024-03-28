@@ -3,12 +3,21 @@
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
+import { useFilterContext } from '../../../contexts/filters';
 
 export default function Content() {
+  const { content, setContent } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
+  const icons = {
+    posts: <Icon.NoteBlank />,
+    images: <Icon.ImageSquare />,
+    videos: <Icon.Play />,
+    links: <Icon.LinkSimple />,
+    all: <Icon.Stack />,
+  };
   const [dropdownValue, setDropdownValue] = useState({
-    value: 'all',
-    iconOption: <Icon.Stack />,
+    value: content ? content : 'all',
+    iconOption: content ? icons[content] : icons.posts,
   });
 
   return (
@@ -27,65 +36,70 @@ export default function Content() {
         <DropDownUI.Item
           label="All"
           value="all"
-          selected={dropdownValue.value === 'all'}
+          selected={content === 'all'}
           icon={<Icon.Stack />}
           onClick={() => {
             setDropdownValue({
               value: 'all',
               iconOption: <Icon.Stack />,
             });
+            setContent('all');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="Posts"
           value="posts"
-          selected={dropdownValue.value === 'posts'}
+          selected={content === 'posts'}
           icon={<Icon.NoteBlank />}
           onClick={() => {
             setDropdownValue({
               value: 'posts',
               iconOption: <Icon.NoteBlank />,
             });
+            setContent('posts');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="Images"
           value="images"
-          selected={dropdownValue.value === 'Images'}
+          selected={content === 'images'}
           icon={<Icon.ImageSquare />}
           onClick={() => {
             setDropdownValue({
-              value: 'Images',
+              value: 'images',
               iconOption: <Icon.ImageSquare />,
             });
+            setContent('images');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="Videos"
           value="videos"
-          selected={dropdownValue.value === 'videos'}
+          selected={content === 'videos'}
           icon={<Icon.Play />}
           onClick={() => {
             setDropdownValue({
               value: 'videos',
               iconOption: <Icon.Play />,
             });
+            setContent('videos');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="Links"
           value="links"
-          selected={dropdownValue.value === 'links'}
+          selected={content === 'links'}
           icon={<Icon.LinkSimple />}
           onClick={() => {
             setDropdownValue({
               value: 'links',
               iconOption: <Icon.LinkSimple />,
             });
+            setContent('links');
             setOpenDropdown(false);
           }}
         />

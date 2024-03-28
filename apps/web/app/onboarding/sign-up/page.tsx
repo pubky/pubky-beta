@@ -1,41 +1,51 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
-import {
-  Content,
-  Typography,
-  Button,
-  Input,
-  Card,
-  Icon,
-} from '@social/ui-shared';
+import { Content, Button, Input, Card, Icon } from '@social/ui-shared';
 import { Onboarding } from '../components';
+import { useClientContext } from '../../../contexts/client';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
 
-type Profile = {
-  name: string;
-  info: string;
-  pic: string;
-  links: {
-    website: string;
-    email: string;
-    x: string;
-    telegram: string;
-  };
-};
+interface FormErrors {
+  [fieldName: string]: string[];
+}
+
+const profileSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }),
+  bio: z.string().min(3, { message: 'Short bio is required' }).optional(),
+  website: z.string().url({ message: 'Invalid website URL' }).optional(),
+  email: z.string().email({ message: 'Invalid email address' }).optional(),
+  x: z.string().optional(),
+  telegram: z.string().optional(),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters long' }),
+});
 
 export default function Index() {
-  const [profile, setProfile] = useState<Profile>({
+  const { signUp } = useClientContext();
+
+  const router = useRouter();
+
+  const [name, setName] = useState(undefined);
+  const [bio, setBio] = useState(undefined);
+  const [image, setImage] = useState('/images/Userpic.png');
+  const [website, setWebsite] = useState(undefined);
+  const [email, setEmail] = useState(undefined);
+  const [x, setX] = useState(undefined);
+  const [telegram, setTelegram] = useState(undefined);
+  const [password, setPassword] = useState(undefined);
+  const [errors, setErrors] = useState({
     name: '',
-    info: '',
-    pic: '/images/Userpic.png',
-    links: {
-      website: '',
-      email: '',
-      x: '',
-      telegram: '',
-    },
+    bio: '',
+    website: '',
+    email: '',
+    x: '',
+    telegram: '',
+    password: '',
   });
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,14 +53,96 @@ export default function Index() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfile({ ...profile, pic: reader.result as string });
+        setImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = () => {
-    console.log(profile);
+  const handleDownloadRecoveryFile = async ({
+    recoveryFile,
+    filename,
+  }: {
+    recoveryFile: Buffer;
+    filename: string;
+  }) => {
+    try {
+      const element = document.createElement('a');
+
+      const fileBlob = new Blob([recoveryFile]);
+
+      element.href = URL.createObjectURL(fileBlob);
+      element.download = filename;
+      document.body.appendChild(element); // Required for this to work in FireFox
+      element.click();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setErrors({
+        name: '',
+        bio: '',
+        website: '',
+        email: '',
+        x: '',
+        telegram: '',
+        password: '',
+      });
+
+      const result = profileSchema.safeParse({
+        name,
+        bio: bio || undefined,
+        website: website || undefined,
+        email: email || undefined,
+        x: x || undefined,
+        telegram: telegram || undefined,
+        password,
+      });
+
+      if (!result.success) {
+        const newErrors: FormErrors = result.error.flatten().fieldErrors;
+
+        const errorMessages = Object.keys(newErrors).reduce(
+          (acc: { [key: string]: string }, key) => {
+            acc[key] = newErrors[key].join(', ');
+            return acc;
+          },
+          {}
+        );
+
+        setErrors((prev) => ({ ...prev, ...errorMessages }));
+        return;
+      }
+
+      try {
+        const profileInfo = result.data;
+
+        const { recoveryFile, filename } = await signUp(
+          {
+            name,
+            bio,
+            image,
+            links: {
+              website,
+              email,
+              x,
+              telegram,
+            },
+          },
+          profileInfo.password
+        );
+        await handleDownloadRecoveryFile({ recoveryFile, filename });
+      } catch (error) {
+        console.log(error);
+      }
+
+      router.push('/onboarding/confirm');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -58,13 +150,12 @@ export default function Index() {
       <Input.Cursor
         placeholder="Your Name"
         className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
-        defaultValue={profile.name}
+        defaultValue={name}
         autoFocus
-        onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+        autoCorrect="off"
+        onChange={(e: any) => setName(e.target.value)}
+        error={errors.name}
       />
-      <Typography.PageTitle className="text-opacity-50">
-        @1pm3...5jkm
-      </Typography.PageTitle>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">
           <Input.Label className="mt-4" value="Short bio" />
@@ -74,9 +165,10 @@ export default function Index() {
           >
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
-              className="h-[422px]"
-              defaultValue={profile.info}
-              onChange={(e) => setProfile({ ...profile, info: e.target.value })}
+              className="h-[490px]"
+              defaultValue={bio}
+              error={errors.bio}
+              onChange={(e: any) => setBio(e.target.value)}
             />
           </Card.Primary>
         </Card.Primary>
@@ -85,63 +177,47 @@ export default function Index() {
           <Input.Text
             className="h-[70px]"
             placeholder="https://"
-            defaultValue={profile.links.website}
-            onChange={(e) =>
-              setProfile({
-                ...profile,
-                links: { ...profile.links, website: e.target.value },
-              })
-            }
+            defaultValue={website}
+            error={errors.website}
+            onChange={(e: any) => setWebsite(e.target.value)}
           />
 
           <Input.Label className="mt-4" value="Email" />
           <Input.Text
             className="h-[70px]"
             placeholder="user@provider.com"
-            defaultValue={profile.links.email}
-            onChange={(e) =>
-              setProfile({
-                ...profile,
-                links: { ...profile.links, email: e.target.value },
-              })
-            }
+            defaultValue={email}
+            error={errors.email}
+            onChange={(e: any) => setEmail(e.target.value)}
           />
 
           <Input.Label className="mt-4" value="x (twitter)" />
           <Input.Text
             className="h-[70px]"
             placeholder="@user"
-            defaultValue={profile.links.x}
-            onChange={(e) =>
-              setProfile({
-                ...profile,
-                links: { ...profile.links, x: e.target.value },
-              })
-            }
+            defaultValue={x}
+            error={errors.x}
+            onChange={(e: any) => setX(e.target.value)}
           />
 
           <Input.Label className="mt-4" value="telegram" />
           <Input.Text
             className="h-[70px]"
             placeholder="@user"
-            defaultValue={profile.links.telegram}
-            onChange={(e) =>
-              setProfile({
-                ...profile,
-                links: { ...profile.links, telegram: e.target.value },
-              })
-            }
+            defaultValue={telegram}
+            error={errors.telegram}
+            onChange={(e: any) => setTelegram(e.target.value.replace('@', ''))}
           />
         </Card.Primary>
         <Card.Primary title="Picture">
           <label htmlFor="fileInput">
-            {profile.pic && (
+            {image && (
               <Image
-                width={320}
-                height={320}
+                width={150}
+                height={150}
                 className="w-80 h-auto mt-6 rounded-full cursor-pointer"
                 alt="user"
-                src={profile.pic}
+                src={image}
               />
             )}
             <input
@@ -152,15 +228,19 @@ export default function Index() {
               style={{ display: 'none' }}
             />
           </label>
-          <div className="pt-[40px]">
-            <Link href="/onboarding/confirm">
-              <Button.Large
-                onClick={() => handleSubmit()}
-                icon={<Icon.Check />}
-              >
-                Finish
-              </Button.Large>
-            </Link>
+          <div>
+            <Input.Label className="mt-4" value="Encrypt Recovery File" />
+            <Input.Text
+              className="h-[70px]"
+              type="password"
+              error={errors.password}
+              onChange={(e: any) => setPassword(e.target.value)}
+            />
+          </div>
+          <div className="pt-[20px]">
+            <Button.Large onClick={() => handleSubmit()} icon={<Icon.Check />}>
+              Download Recovery File
+            </Button.Large>
           </div>
         </Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />

@@ -13,15 +13,18 @@ export default function Index() {
           <DropDown.Layout />
         </div>
       </Header>
-      <Content.Grid>
-        <PostsLayout className="inline-flex flex-col gap-6">
-          <Post repost bookmark />
-          <Post bookmark />
-          <Post bookmark />
-          <Post bookmark />
-          <Post bookmark />
-          <Post bookmark />
-          <Post repost bookmark />
+      <Content.Grid className={''}>
+        <PostsLayout className="flex flex-col">
+          <Post
+            bookmark
+            postId={{ uri: '', payload: { content: '' } }}
+            size="full"
+          />
+          <Post
+            bookmark
+            postId={{ uri: '', payload: { content: '' } }}
+            size="full"
+          />
         </PostsLayout>
       </Content.Grid>
       <CreatePost />

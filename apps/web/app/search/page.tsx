@@ -1,5 +1,9 @@
 import { Content } from '@social/ui-shared';
-import { CreatePost, Header, Post, PostsLayout } from '../components';
+import {
+  CreatePost,
+  Header,
+  // , Post, PostsLayout
+} from '../components';
 import { DropDown } from '../components/DropDown';
 
 export default function Index() {
@@ -17,12 +21,12 @@ export default function Index() {
           <DropDown.Layout />
         </div>
       </Header>
-      <Content.Grid>
+      {/* <Content.Grid>
         <PostsLayout className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Post />
-          <Post />
+          <Post post={} />
+          <Post post={} />
         </PostsLayout>
-      </Content.Grid>
+      </Content.Grid> */}
       <CreatePost />
     </Content.Main>
   );
