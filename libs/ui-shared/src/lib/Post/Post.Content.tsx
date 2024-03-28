@@ -1,8 +1,9 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
+import React from 'react';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
-  text?: string;
+  text?: string | React.ReactNode;
   children?: React.ReactNode;
 }
 export const Content = ({ children, text, ...rest }: ContentProps) => {

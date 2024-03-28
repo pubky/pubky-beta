@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 import { twMerge } from 'tailwind-merge';
-import { PostUtil } from '../PostUtil';
+// import { PostUtil } from '../PostUtil';
 
 type Image = {
   src: string;
@@ -22,19 +22,19 @@ export const ImageMenu = ({
 }: Image) => {
   return (
     <div className="w-[48px]">
-      {notifications && (
+      {/* {notifications && (
         <PostUtil.Counter
-          className="absolute top-4 right-6 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
+          className="absolute text-center top-6 right-6 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
           counter={notifications}
         />
-      )}
+      )} */}
       <Image
         {...rest}
         width={48}
         height={48}
         className={twMerge(`rounded-full`, rest.className)}
         alt="user-pic"
-        src="/images/user.png"
+        src={src}
       />
     </div>
   );

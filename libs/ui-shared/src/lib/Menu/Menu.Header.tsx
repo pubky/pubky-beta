@@ -6,7 +6,7 @@ import { Icon } from '../Icon';
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   src: string;
   username: string;
-  handler: string;
+  handler?: string;
   width?: number;
   height?: number;
   alt?: string;

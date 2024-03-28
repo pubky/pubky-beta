@@ -1,12 +1,13 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 import { PostUtil } from '../PostUtil';
+import Link from 'next/link';
 
 interface SectionProps extends React.HTMLAttributes<HTMLAnchorElement> {
   icon: React.ReactNode;
   text: string;
   counter?: number;
-  href?: string;
+  href: string;
 }
 
 export const Section = ({
@@ -19,7 +20,7 @@ export const Section = ({
   const baseCSS =
     'py-2.5 shadow border-b border-white border-opacity-10 justify-between inline-flex cursor-pointer hover:bg-white hover:bg-opacity-10';
   return (
-    <a href={href} {...rest} className={twMerge(baseCSS, rest.className)}>
+    <Link href={href} {...rest} className={twMerge(baseCSS, rest.className)}>
       <div className="items-center gap-2 flex">
         {icon}
         <Typography.Body variant="medium-bold">{text}</Typography.Body>
@@ -32,6 +33,6 @@ export const Section = ({
           />
         </div>
       )}
-    </a>
+    </Link>
   );
 };

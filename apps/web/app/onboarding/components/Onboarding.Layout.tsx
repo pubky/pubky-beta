@@ -1,4 +1,7 @@
+'use client';
 import { Content, Header } from '@social/ui-shared';
+import { useClientContext } from '../../../contexts/client';
+import { useEffect, useState } from 'react';
 
 interface LayoutOnboardingProps {
   children: React.ReactNode;
@@ -9,10 +12,25 @@ export default function OnboardingLayout({
   children,
   currentStep = 1,
 }: LayoutOnboardingProps) {
+  const { pubkey, isLoggedIn } = useClientContext();
+  const [logoLink, setLogoLink] = useState('/onboarding');
+
+  useEffect(() => {
+    async function fetchData() {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        setLogoLink('/onboarding/sign-in');
+      } else {
+        setLogoLink('/home');
+      }
+    }
+    fetchData();
+  }, [pubkey, isLoggedIn]);
+
   return (
     <Content.Main>
       <Header.Root>
-        <Header.Logo />
+        <Header.Logo link={logoLink} />
         <Header.Title title={'Onboarding'} />
         <Content.Stepper
           className="w-[50%] lg:w-[70%] xl:w-full hidden sm:flex"

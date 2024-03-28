@@ -16,8 +16,6 @@ export default function Index() {
       <Content.Grid>
         <Contacts.Contact />
         <Contacts.Contact />
-        <Contacts.Contact />
-        <Contacts.Contact />
       </Content.Grid>
       <CreatePost />
     </Content.Main>

@@ -8,6 +8,7 @@ import PostsLayout from './Component.PostsLayout';
 import Repost from './Component.Repost';
 import Sidebar from './Component.SideBar';
 import WhoFollow from './Component.WhoFollow';
+import * as Skeleton from './Skeletons';
 
 export {
   ActiveFriends,
@@ -20,4 +21,5 @@ export {
   Repost,
   Sidebar,
   WhoFollow,
+  Skeleton,
 };

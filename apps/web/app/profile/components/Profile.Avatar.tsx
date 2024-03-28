@@ -5,8 +5,6 @@ interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   username?: string;
   src: string;
   alt?: string;
-  width?: number;
-  height?: number;
 }
 
 export default function Avatar({

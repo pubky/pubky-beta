@@ -3,18 +3,26 @@
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
+import { useFilterContext } from '../../../contexts/filters';
 
 interface TagsTime {
   type?: 'icon' | 'text';
 }
 
 export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
+  const { timeframe, setTimeframe } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
+
+  const labels = {
+    today: 'Today',
+    month: 'This month',
+    all: 'All time',
+  };
   const [dropdownValue, setDropdownValue] = useState({
-    value: 'this-month',
+    value: timeframe ? timeframe : 'today',
     ...(type === 'icon'
       ? { iconOption: <Icon.Calendar /> }
-      : { textOption: 'This month' }),
+      : { textOption: timeframe ? labels[timeframe] : labels.today }),
   });
 
   return (
@@ -34,7 +42,7 @@ export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
         <DropDownUI.Item
           label="Today"
           value="today"
-          selected={dropdownValue.value === 'today'}
+          selected={timeframe === 'today'}
           icon={<Icon.Asterisk size="24" />}
           onClick={() => {
             setDropdownValue({
@@ -43,36 +51,39 @@ export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
                 ? { iconOption: <Icon.Asterisk /> }
                 : { textOption: 'Today' }),
             });
+            setTimeframe('today');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="This month"
-          value="this-month"
-          selected={dropdownValue.value === 'this-month'}
+          value="month"
+          selected={timeframe === 'month'}
           icon={<Icon.Calendar size="24" />}
           onClick={() => {
             setDropdownValue({
-              value: 'this-month',
+              value: 'month',
               ...(type === 'icon'
                 ? { iconOption: <Icon.Calendar /> }
                 : { textOption: 'This month' }),
             });
+            setTimeframe('month');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="All time"
           value="all-time"
-          selected={dropdownValue.value === 'all-time'}
+          selected={timeframe === 'all'}
           icon={<Icon.Clock size="24" />}
           onClick={() => {
             setDropdownValue({
-              value: 'all-time',
+              value: 'all',
               ...(type === 'icon'
                 ? { iconOption: <Icon.Clock /> }
                 : { textOption: 'All time' }),
             });
+            setTimeframe('all');
             setOpenDropdown(false);
           }}
         />

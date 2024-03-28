@@ -12,17 +12,17 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { minifyPubky } from '../../../libs/pubkyHelper';
-import { useClientContext } from '../../../contexts/client';
-import { Skeleton } from '../../components';
+import { minifyPubky } from '../../../../libs/pubkyHelper';
+import { useClientContext } from '../../../../contexts/client';
+import { Skeleton } from '../../../components';
 
 interface Followers {
   count: number;
   followers: [];
 }
 
-export default function Sidebar() {
-  const { pubky, getProfile, listFollowers } = useClientContext();
+export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
+  const { getUser, listFollowers, follow } = useClientContext();
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
@@ -38,9 +38,7 @@ export default function Sidebar() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!pubky) return;
-
-        const followers = await listFollowers(pubky);
+        const followers = await listFollowers(creatorPubky);
 
         if (followers) {
           setImages(
@@ -57,12 +55,13 @@ export default function Sidebar() {
       }
     }
     fetchData();
-  }, [pubky, listFollowers]);
+  }, [creatorPubky, listFollowers]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const profile = await getProfile();
+        const profile = await getUser(creatorPubky);
+
         if (profile) {
           setName(profile?.name || '');
           setBio(profile?.bio || 'No bio.');
@@ -72,16 +71,20 @@ export default function Sidebar() {
             const x = profile.links.find(
               (link: { title: string }) => link.title === 'x'
             );
+
             const website = profile.links.find(
               (link: { title: string }) => link.title === 'website'
             );
+
             const telegram = profile.links.find(
               (link: { title: string }) => link.title === 'telegram'
             );
+
             setX(x?.url || '');
             setWebsite(website?.url || '');
             setTelegram(telegram?.url || '');
           }
+
           setLoading(false);
         }
       } catch (error) {
@@ -89,7 +92,17 @@ export default function Sidebar() {
       }
     }
     fetchData();
-  }, [pubky, getProfile]);
+  }, [creatorPubky, getUser]);
+
+  const followUser = async () => {
+    try {
+      if (!creatorPubky) return;
+
+      await follow(creatorPubky);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
@@ -110,11 +123,18 @@ export default function Sidebar() {
               <Typography.H2>{name}</Typography.H2>
             </div>
             <Typography.Label className="text-opacity-50">
-              {pubky ? minifyPubky(pubky) : 'Loading...'}
+              {creatorPubky ? minifyPubky(creatorPubky) : 'Loading...'}
             </Typography.Label>
             <Typography.Body variant="medium" className="text-opacity-80">
               {bio}
             </Typography.Body>
+            <Button.Medium
+              onClick={() => followUser()}
+              variant="default"
+              icon={<Icon.Activity />}
+            >
+              Follow me
+            </Button.Medium>
           </SideCard.Content>
         </div>
       )}
@@ -149,7 +169,6 @@ export default function Sidebar() {
                     Followers
                   </Typography.Label>
                 </div>
-                <Post.UserPic images={images} />
               </div>
             </Link>
           </SideCard.Content>
@@ -163,6 +182,7 @@ export default function Sidebar() {
                     Followers
                   </Typography.Label>
                 </div>
+
                 <Post.UserPic images={images} />
               </div>
             </Link>

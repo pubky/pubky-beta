@@ -7,52 +7,103 @@ import {
   Post as PostUI,
   Typography,
 } from '@social/ui-shared';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
 import Repost from './Component.Repost';
+import { useClientContext } from '../../contexts/client';
+import { timeAgo } from '../../libs/time';
+import { encodePostUri, minifyPubky } from '../../libs/pubkyHelper';
+import { Skeleton } from '.';
+import { useRouter } from 'next/navigation';
+
+type PostUri = {
+  uri: string;
+  payload: {
+    content: string;
+  };
+};
+
+type PostResult = {
+  uri: string;
+  payload: {
+    content: string;
+  };
+  createdAt: string | Date | null;
+};
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
   bookmark?: boolean;
   size?: 'full' | 'normal';
+  postId: PostUri;
+}
+
+interface User {
+  bio: string;
+  image: string;
+  links: {
+    url: string;
+    value: string;
+  }[];
+  name: string;
 }
 
 export default function Post({
   repost = false,
   bookmark = false,
   size = 'normal',
+  postId,
   ...rest
 }: PostProps) {
+  const { getPost, getUser } = useClientContext();
+  const router = useRouter();
+
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
-  const images = [
-    {
-      src: '/images/user.png',
-      alt: '1',
-    },
-    {
-      src: '/images/user.png',
-      alt: '2',
-    },
-    {
-      src: '/images/user.png',
-      alt: '3',
-    },
-    {
-      src: '/images/user.png',
-      alt: '4',
-    },
-    {
-      src: '/images/user.png',
-      alt: '5',
-    },
-  ];
+  const [post, setPost] = useState<PostResult>({} as PostResult);
+  const [creator, setCreator] = useState<User | null>(null);
+  const [creatorPubky, setCreatorPubky] = useState<string>('');
+  const [createdAt, setCreatedAt] = useState<string | Date | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!postId?.uri) return;
+
+      const result = await getPost(postId.uri);
+
+      setPost(result);
+
+      const pubkyCreator = postId.uri.split('/')[0].split(':')[1];
+
+      const creator = await getUser(pubkyCreator);
+
+      setCreator(creator);
+      setCreatorPubky(pubkyCreator);
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getPost, getUser, post?.uri, postId]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPost((prev) => {
+        setCreatedAt(prev?.createdAt);
+        return { ...prev };
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!post?.uri) return <Skeleton.Post size={size} />;
 
   return (
     <div>
       <div className="gap-6 flex flex-col">
-        <PostUI.Root href="/post">
+        <PostUI.Root
+          className="cursor-pointer"
+          onClick={() => router.push(encodePostUri(post?.uri))}
+        >
           <div>
             {repost && (
               <PostUI.RepostCard>
@@ -77,48 +128,39 @@ export default function Post({
               className={twMerge(rest.className)}
             >
               <PostUI.Header size={size}>
-                <div className="justify-start items-center gap-4 flex">
+                <div
+                  className="justify-start items-center gap-4 flex cursor-pointer"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    router.push(`/profile/${creatorPubky}`);
+                  }}
+                >
                   <PostUI.ImageUser
                     className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
-                    src="/images/user.png"
+                    src={creator?.image || '/images/user.png'}
                     alt="user"
                   />
                   <PostUI.Username
                     className={size === 'full' ? 'lg:text-2xl' : ''}
                   >
-                    Satoshi Nakamoto
+                    {creator?.name}
                   </PostUI.Username>
                   <Typography.Label
                     className={
-                      size === 'full'
-                        ? 'hidden sm:block text-opacity-30'
-                        : 'hidden'
+                      size === 'full' ? 'hidden sm:block text-opacity-30' : ''
                     }
                   >
-                    @1qx8...gkw3
+                    {minifyPubky(creatorPubky)}
                   </Typography.Label>
                 </div>
-                <PostUI.Time size={size}>
-                  {size === 'full' ? (
-                    <div>
-                      <span className="hidden lg:block uppercase">
-                        15 minutes ago
-                      </span>
-                      <span className="block lg:hidden">15m</span>
-                    </div>
-                  ) : (
-                    '15m'
-                  )}
-                </PostUI.Time>
+                <PostUI.Time size={size}>{timeAgo(createdAt)}</PostUI.Time>
               </PostUI.Header>
               <div
                 className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
               >
-                <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
+                <div className={size === 'full' ? 'lg:w-[100%]' : ''}>
                   <PostUI.Content
-                    text="You either want lots of people using Bitcoin (holding Bitcoin keys)
-            or you dont. Many of you seem to believe things that require both
-            positions."
+                    text={post?.payload?.content}
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}
                   />
                   {/** <img
@@ -145,19 +187,19 @@ export default function Post({
                 <PostUI.Footer
                   className={size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'}
                 >
-                  <PostUtil.Tag clicked color="amber">
+                  {/* <PostUtil.Tag clicked color="amber">
                     #Bitcoin
-                  </PostUtil.Tag>
+                  </PostUtil.Tag> */}
                   <Button.Action
                     variant="custom"
                     size="small"
                     icon={<Icon.Plus />}
                   />
-                  <PostUtil.Counter counter={16} />
-                  <PostUI.UserPic
+                  <PostUtil.Counter counter={0} />
+                  {/* <PostUI.UserPic
                     className="hidden md:inline-flex"
                     images={images}
-                  />
+                  /> */}
                 </PostUI.Footer>
               </div>
               <PostUI.Actions>
@@ -165,7 +207,7 @@ export default function Post({
                   size="small"
                   variant="custom"
                   icon={<Icon.Tag size="16" />}
-                  counter={3}
+                  counter={0}
                   onClick={(event) => {
                     event.preventDefault();
                     setShowModalTag(true);
@@ -175,7 +217,7 @@ export default function Post({
                   size="small"
                   variant="custom"
                   icon={<Icon.ChatCircleText size="16" />}
-                  counter={2}
+                  counter={0}
                   onClick={(event) => {
                     event.preventDefault();
                   }}
@@ -184,7 +226,7 @@ export default function Post({
                   size="small"
                   variant="custom"
                   icon={<Icon.Repost size="16" />}
-                  counter={7}
+                  counter={0}
                   onClick={(event) => {
                     event.preventDefault();
                     setShowModalRepost(true);

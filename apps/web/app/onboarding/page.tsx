@@ -1,12 +1,31 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Header, Content, Typography, Button } from '@social/ui-shared';
 
+import { useClientContext } from '../../contexts/client';
+import { useEffect, useState } from 'react';
+
 export default function Index() {
+  const { pubkey, isLoggedIn } = useClientContext();
+  const [logoLink, setLogoLink] = useState('/onboarding');
+
+  useEffect(() => {
+    async function fetchData() {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        setLogoLink('/onboarding');
+      } else {
+        setLogoLink('/home');
+      }
+    }
+    fetchData();
+  }, [pubkey, isLoggedIn]);
   return (
     <Content.Main background="bg-black" className="pb-0">
       <Header.Root>
-        <Header.Logo />
+        <Header.Logo link={logoLink} />
         <Header.Title />
       </Header.Root>
       <Content.Grid>

@@ -4,24 +4,35 @@
 
 import { Button, Content } from '@social/ui-shared';
 import { Profile } from './components';
-import { CreatePost, Header, Post, PostsLayout, Skeleton } from '../components';
-import { useClientContext } from '../../contexts/client';
+import { Profile as ProfileCommon } from '../components';
+import {
+  CreatePost,
+  Header,
+  Post,
+  PostsLayout,
+  Skeleton,
+} from '../../components';
+import { useClientContext } from '../../../contexts/client';
 import { useEffect, useState } from 'react';
 
-export default function Index() {
-  const { refreshList, setRefreshList, pubky, getProfile, listPosts } =
-    useClientContext();
+export default function Index({
+  params,
+}: {
+  params: { creatorPubky: string };
+}) {
+  const { setRefreshList, getUser, listUserFeed } = useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
+  const creatorPubky = params.creatorPubky;
 
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const profileInfo = await getProfile();
+        const profileInfo = await getUser(creatorPubky);
         if (profileInfo) {
           setPic(profileInfo?.image || '/images/Userpic.png');
           setName(profileInfo?.name || 'Loading...');
@@ -31,14 +42,14 @@ export default function Index() {
       }
     }
     fetchProfile();
-  }, [getProfile]);
+  }, [getUser]);
 
   useEffect(() => {
     async function fetchPosts() {
       try {
-        if (!pubky) return;
+        if (!creatorPubky) return;
 
-        const results = await listPosts(pubky, cursor);
+        const results = await listUserFeed(creatorPubky, cursor);
 
         if (!results || !results.list) return;
 
@@ -59,49 +70,24 @@ export default function Index() {
       }
     }
     fetchPosts();
-  }, [pubky]);
-
-  useEffect(() => {
-    async function refetchPosts() {
-      try {
-        if (!pubky) return;
-
-        const results = await listPosts(pubky, '');
-
-        if (!results || !results.list) return;
-
-        setPosts(results.list);
-
-        if (results.list.length >= 5) {
-          setShowLoadMore(true);
-        }
-
-        if (results.cursor) {
-          setCursor(results.cursor);
-        }
-
-        setRefreshList(false);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    if (refreshList) {
-      setCursor('');
-      refetchPosts();
-    }
-  }, [refreshList]);
+  }, [creatorPubky]);
 
   const handleLoadMore = async () => {
     try {
-      if (!pubky) return;
-      const results = await listPosts(pubky, cursor);
+      if (!creatorPubky) return;
+
+      const results = await listUserFeed(creatorPubky, cursor);
+
       if (!results || !results.list) return;
+
+      setCursor('');
       setPosts((prev) => [...prev, ...results.list]);
+
       if (!results.cursor) {
         setShowLoadMore(false);
         return;
       }
+
       setCursor(results.cursor);
     } catch (error) {
       console.log(error);
@@ -112,10 +98,13 @@ export default function Index() {
     <Content.Main>
       <Header className="hidden md:block" title="Profile" />
       <div>
-        <Profile.HeaderBackground />
+        <ProfileCommon.HeaderBackground />
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center sm:justify-between relative z-10">
-          <Profile.Handle username={name} className="order-2 lg:order-1" />
-          <Profile.Avatar
+          <ProfileCommon.Handle
+            username={name}
+            className="order-2 lg:order-1"
+          />
+          <ProfileCommon.Avatar
             username={name}
             src={pic}
             className="order-1 lg:order-2"
@@ -143,7 +132,7 @@ export default function Index() {
             </Button.Large>
           )}
         </PostsLayout>
-        <Profile.Sidebar />
+        <Profile.Sidebar creatorPubky={creatorPubky} />
       </Content.Grid>
       <CreatePost />
     </Content.Main>

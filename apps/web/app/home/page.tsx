@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { Content } from '@social/ui-shared';
+import { Button, Content } from '@social/ui-shared';
 import {
   ActiveFriends,
   CreatePost,
@@ -9,17 +10,25 @@ import {
   Post,
   PostsLayout,
   Sidebar,
+  Skeleton,
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
-import { useState } from 'react';
-
-type Layout = 'sidebar' | 'grid' | 'columns' | 'list';
+import { useEffect, useState } from 'react';
+import { useClientContext } from '../../contexts/client';
+import { useFilterContext } from '../../contexts/filters';
 
 type Layouts = {
   [key in 'sidebar' | 'grid' | 'columns' | 'list']: {
     layout: string;
     posts: string;
+  };
+};
+
+type PostUri = {
+  uri: string;
+  payload: {
+    content: string;
   };
 };
 
@@ -43,7 +52,71 @@ const layouts: Layouts = {
 };
 
 export default function Index() {
-  const [layout] = useState<Layout>('sidebar');
+  const { layout, reach } = useFilterContext();
+  const { refreshList, listGlobalPosts, pubky } = useClientContext();
+  const [posts, setPosts] = useState<PostUri[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showLoadMore, setShowLoadMore] = useState(false);
+  const [cursor, setCursor] = useState('');
+
+  const fetchData = async (pointer: string) => {
+    const results = await listGlobalPosts(pointer, reach);
+
+    setShowLoadMore(false);
+
+    if (!results || !results.feed) {
+      setCursor('');
+      return;
+    }
+
+    setPosts(results.feed);
+
+    if (results.feed.length >= 5) {
+      setShowLoadMore(true);
+    }
+
+    if (results.cursor) {
+      setCursor(results.cursor);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData('');
+  }, [reach]);
+
+  useEffect(() => {
+    fetchData(cursor);
+  }, [listGlobalPosts, pubky]);
+
+  useEffect(() => {
+    if (refreshList) {
+      fetchData('');
+    }
+  }, [refreshList, reach]);
+
+  const handleLoadMore = async () => {
+    try {
+      const results = await listGlobalPosts(cursor, reach);
+
+      if (!results || !results.feed) {
+        setCursor('');
+        return;
+      }
+
+      setPosts((prev) => [...prev, ...results.feed]);
+
+      if (!results.cursor) {
+        setShowLoadMore(false);
+        return;
+      }
+
+      setCursor(results.cursor);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const postsLayoutClassName =
     layout === 'sidebar'
@@ -65,10 +138,30 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          <Post repost bookmark size={layout === 'list' ? 'full' : 'normal'} />
-          <Post size={layout === 'list' ? 'full' : 'normal'} />
-          <Post size={layout === 'list' ? 'full' : 'normal'} />
-          <Post size={layout === 'list' ? 'full' : 'normal'} />
+          {loading && (
+            <Skeleton.Post size={layout === 'list' ? 'full' : 'normal'} />
+          )}
+          {posts.map((post, index) => (
+            <Post
+              key={index}
+              postId={post}
+              size={layout === 'list' ? 'full' : 'normal'}
+            />
+          ))}
+          {posts.length === 0 && !loading && (
+            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+              <div className="text-2xl text-gray-600">No posts yet.</div>
+            </div>
+          )}
+          {showLoadMore && (
+            <Button.Large
+              className="col-span-3 xl:col-span-2"
+              variant="secondary"
+              onClick={() => handleLoadMore()}
+            >
+              Load More
+            </Button.Large>
+          )}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
           <WhoFollow />
