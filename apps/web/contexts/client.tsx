@@ -23,6 +23,8 @@ const TEST_HOMESERVER =
 const TEST_PKARR_RELAY = 'http://localhost:7258';
 
 type ClientContextType = {
+  pubky: string | null;
+  refreshList: boolean;
   signUp: (
     profile: any,
     password: string
@@ -45,8 +47,6 @@ type ClientContextType = {
     password: string,
     recoveryFile: Buffer
   ) => Promise<Uint8Array>;
-  pubky: string | null;
-  refreshList: boolean;
   setRefreshList: (value: boolean) => void;
 };
 
@@ -372,6 +372,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     <ClientContext.Provider
       value={{
         pubky,
+        refreshList,
         isLoggedIn,
         createPost,
         getPost,
@@ -386,7 +387,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         listGlobalPosts,
         listFollowers,
         setRefreshList,
-        refreshList,
       }}
     >
       {children}
@@ -403,7 +403,7 @@ const _toPubkeyProfile = (profile: any): any => {
 
   const pubkeyProfile: any = {
     name: profile.name || 'anonymous',
-    bio: profile.info,
+    bio: profile.bio,
     image: profile.image,
     links: [
       { url: profile.links.website, title: 'website' },

@@ -53,62 +53,46 @@ const layouts: Layouts = {
 
 export default function Index() {
   const { layout, reach } = useFilterContext();
-  const { refreshList, setRefreshList, listGlobalPosts, pubky } =
-    useClientContext();
+  const { refreshList, listGlobalPosts, pubky } = useClientContext();
   const [posts, setPosts] = useState<PostUri[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const results = await listGlobalPosts(cursor, reach);
+  const fetchData = async (pointer: string) => {
+    const results = await listGlobalPosts(pointer, reach);
 
-      setShowLoadMore(false);
+    setShowLoadMore(false);
 
-      if (!results || !results.feed) {
-        setCursor('');
-        return;
-      }
-
-      setPosts(results.feed);
-
-      if (results.feed.length >= 5) {
-        setShowLoadMore(true);
-      }
-
-      if (results.cursor) {
-        setCursor(results.cursor);
-      }
-
-      setLoading(false);
-    };
-    fetchData();
-  }, [listGlobalPosts, pubky, reach]);
-
-  useEffect(() => {
-    const refetchData = async () => {
-      const results = await listGlobalPosts('', reach);
-
-      if (!results || !results.feed) return;
-
-      setShowLoadMore(false);
-      setPosts(results.feed);
-
-      if (results.feed.length >= 5) {
-        setShowLoadMore(true);
-      }
-
-      if (results.cursor) {
-        setCursor(results.cursor);
-      }
-
-      setLoading(false);
-      setRefreshList(false);
-    };
-    if (refreshList) {
+    if (!results || !results.feed) {
       setCursor('');
-      refetchData();
+      return;
+    }
+
+    setPosts(results.feed);
+
+    if (results.feed.length >= 5) {
+      setShowLoadMore(true);
+    }
+
+    if (results.cursor) {
+      setCursor(results.cursor);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData('');
+  }, [reach]);
+
+  useEffect(() => {
+    fetchData(cursor);
+  }, [listGlobalPosts, pubky]);
+
+  useEffect(() => {
+    if (refreshList) {
+      fetchData('');
     }
   }, [refreshList, reach]);
 
