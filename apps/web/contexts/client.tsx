@@ -22,6 +22,12 @@ const TEST_HOMESERVER =
   'pk:z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo';
 const TEST_PKARR_RELAY = 'http://localhost:7258';
 
+const LIVE_HOMESERVER = 'pk:4unkz8qto4xec6jhw9mie9oepgcurirebdx8axyq3o36fanooxxy'
+const LIVE_PKARR_RELAY = 'https://relay.pkarr.org'
+
+const HOMESERVER = LIVE_HOMESERVER || TEST_HOMESERVER
+const PKARR_RELAY = LIVE_HOMESERVER ? LIVE_PKARR_RELAY : TEST_PKARR_RELAY
+
 type ClientContextType = {
   pubky: string | null;
   refreshList: boolean;
@@ -65,8 +71,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [refreshList, setRefreshList] = useState<boolean>(false);
 
   const client = useMemo(() => {
-    return new Client(TEST_HOMESERVER, {
-      relay: TEST_PKARR_RELAY,
+    return new Client(HOMESERVER, {
+      relay: PKARR_RELAY,
     });
   }, [pubky]);
 
