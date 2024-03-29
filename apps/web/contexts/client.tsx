@@ -43,6 +43,7 @@ type ClientContextType = {
   getProfile: (cache?: boolean) => Promise<any>;
   saveProfile: (profile: any) => Promise<void>;
   createPost: (post: any) => Promise<any>;
+  createTag: (tag: any) => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
   listUserFeed: (pubky: string, cursor: string) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
@@ -245,6 +246,28 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
+  const createTag = useCallback(
+    async (uri: string, tag: string) => {
+      try {
+        const pk = await isLoggedIn();
+
+        if (!pk) throw new Error('Get create Tag: not logged in.');
+        if (!uri) throw new Error('Get create Tag: no uri.');
+        if (!tag) throw new Error('Get create Tag: no tag name.');
+
+        const result = await client.social.tags.put(pk, uri, tag);
+
+        if (!result.ok)
+          throw new Error(`Put tag:${pk} failed: ${result.error.message}`);
+
+        return result;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client]
+  );
+
   const getPost = useCallback(
     async (uri: string) => {
       try {
@@ -417,6 +440,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         refreshList,
         isLoggedIn,
         createPost,
+        createTag,
         getPost,
         listUserFeed,
         signUp,
