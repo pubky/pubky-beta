@@ -20,7 +20,7 @@ export default function Index() {
     <Content.Main>
       <Header.Root>
         <Header.Logo />
-        <Header.Title title={'Onboarding'} />
+        <Header.Title />
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Bye bye!</Typography.Display>

@@ -6,21 +6,20 @@ interface ProfileProps extends React.HTMLAttributes<HTMLDivElement> {
   profile: {
     name: string;
     image: string;
-    slashUrl: string;
-    info?: string;
+    handler: string;
+    bio?: string;
     links?: {
       email?: string;
       website?: string;
       x?: string;
+      telegram?: string;
     };
   };
 }
 
 export const Profile = ({ profile }: ProfileProps) => {
-  const { name, image, slashUrl, info, links } = profile;
+  const { name, image, handler, bio, links } = profile;
   const linkKeys = links && (Object.keys(links) as Array<keyof typeof links>);
-  const matches = slashUrl.match(/slash:(.{4}).*?(.{4})\?relay=/);
-  const shortSlashUrl = matches ? `${matches[1]}...${matches[2]}` : '';
 
   return (
     <div>
@@ -28,7 +27,7 @@ export const Profile = ({ profile }: ProfileProps) => {
         <div className="inline-grid gap-2 mr-auto">
           <Typography.Body variant="large-bold">{name}</Typography.Body>
           <Typography.Label className="text-opacity-50">
-            @{shortSlashUrl}
+            {handler}
           </Typography.Label>
         </div>
         <Image
@@ -40,22 +39,26 @@ export const Profile = ({ profile }: ProfileProps) => {
         />
       </div>
       <Typography.Body className="text-opacity-80 mt-8" variant="medium-light">
-        {info}
+        {bio}
       </Typography.Body>
       <Content.Divider />
       {linkKeys &&
         linkKeys.map((key, index) => (
           <div key={key}>
-            <Typography.Label className="text-opacity-50">
-              {key}
-            </Typography.Label>
-            <Typography.Body
-              variant="medium"
-              className="break-words w-44 text-opacity-80 sm:w-full"
-            >
-              {links[key]}
-            </Typography.Body>
-            {index !== linkKeys.length - 1 && <Content.Divider />}
+            {links[key] && (
+              <>
+                <Typography.Label className="text-opacity-50">
+                  {key}
+                </Typography.Label>
+                <Typography.Body
+                  variant="medium"
+                  className="break-words w-44 text-opacity-80 sm:w-full"
+                >
+                  {links[key]}
+                </Typography.Body>
+                {index !== linkKeys.length - 1 && <Content.Divider />}
+              </>
+            )}
           </div>
         ))}
     </div>
