@@ -120,14 +120,14 @@ export default function Index() {
         Your contacts and profile information are ready to be used in Pubky.
       </Typography.PageTitle>
       <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-        <Card.Primary>
+        <Card.Primary className="min-h-[400px]">
           {loading ? (
             <Skeleton.ProfileCard />
           ) : (
             <Content.Profile profile={profile} />
           )}
         </Card.Primary>
-        <Card.Primary title="Contacts" className="justify-start">
+        <Card.Primary title="Contacts" className="justify-start min-h-[400px]">
           {loadingContacts ? (
             <Skeleton.ContactsList />
           ) : contacts.length > 0 ? (
@@ -139,6 +139,7 @@ export default function Index() {
           )}
         </Card.Primary>
         <Card.Primary
+          className="min-h-[400px]"
           title="Ready to Go!"
           text="Pubky successfully imported your profile and contacts."
         >
