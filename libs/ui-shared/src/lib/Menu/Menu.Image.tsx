@@ -32,7 +32,7 @@ export const ImageMenu = ({
         {...rest}
         width={48}
         height={48}
-        className={twMerge(`rounded-full`, rest.className)}
+        className={twMerge(`rounded-full w-[48px] h-[48px]`, rest.className)}
         alt="user-pic"
         src={src}
       />

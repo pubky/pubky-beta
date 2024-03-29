@@ -223,7 +223,7 @@ export default function Index() {
                 <Image
                   width={320}
                   height={320}
-                  className="w-80 h-auto mt-6 rounded-full cursor-pointer"
+                  className="w-80 h-80 mt-6 rounded-full cursor-pointer"
                   alt="user"
                   src={image}
                 />

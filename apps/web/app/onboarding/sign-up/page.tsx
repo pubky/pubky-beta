@@ -165,7 +165,7 @@ export default function Index() {
           >
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
-              className="h-[390px]"
+              className="h-[420px]"
               defaultValue={bio}
               error={errors.bio}
               onChange={(e: any) => setBio(e.target.value)}
@@ -222,7 +222,7 @@ export default function Index() {
               <Image
                 width={150}
                 height={150}
-                className="w-80 h-auto mt-6 rounded-full cursor-pointer"
+                className="w-80 h-80 mt-6 rounded-full cursor-pointer"
                 alt="user"
                 src={image}
               />
@@ -236,7 +236,7 @@ export default function Index() {
             />
           </label>
           <div>
-            <Input.Label className="mt-4" value="Encrypt Recovery Password" />
+            <Input.Label className="mt-6" value="Encrypt Recovery Password" />
             <Input.Text
               className="h-[70px]"
               type="password"
@@ -244,7 +244,7 @@ export default function Index() {
               onChange={(e: any) => setPassword(e.target.value)}
             />
           </div>
-          <div className="pt-[20px]">
+          <div className="pt-[30px]">
             <Button.Large onClick={() => handleSubmit()} icon={<Icon.Check />}>
               Download Recovery File
             </Button.Large>

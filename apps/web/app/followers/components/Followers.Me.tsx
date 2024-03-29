@@ -2,7 +2,14 @@ import { Content, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function Me() {
+interface MeProps extends React.HTMLAttributes<HTMLDivElement> {
+  name: string;
+  pubkey: string;
+  image: string;
+  followersCount?: number;
+}
+
+export default function Me({ name, pubkey, image, followersCount }: MeProps) {
   return (
     <Content.Grid className="py-8 sm:py-12 flex justify-between">
       <div className="gap-6 inline-flex">
@@ -12,20 +19,22 @@ export default function Me() {
               width={32}
               height={32}
               className="rounded-full"
-              src="/images/user.png"
+              src={image}
               alt="user-pic"
             />
             <Typography.H2 className="text-sm sm:text-2xl">
-              John Carvalho
+              {name}
             </Typography.H2>
             <Typography.Label className="hidden lg:block text-opacity-30 mt-1">
-              @1Rx3...KO43
+              {pubkey}
             </Typography.Label>
           </div>
         </Link>
       </div>
       <div className="gap-3 flex">
-        <Typography.H2>517 followers</Typography.H2>
+        {followersCount && (
+          <Typography.H2>{followersCount} followers</Typography.H2>
+        )}
       </div>
     </Content.Grid>
   );

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { Button, Content } from '@social/ui-shared';
+import { Button, Content, Typography } from '@social/ui-shared';
 import {
   ActiveFriends,
   CreatePost,
@@ -146,11 +146,14 @@ export default function Index() {
               key={index}
               postId={post}
               size={layout === 'list' ? 'full' : 'normal'}
+              layout={layout}
             />
           ))}
           {posts.length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-              <div className="text-2xl text-gray-600">No posts yet.</div>
+              <Typography.H2 className="text-opacity-50">
+                No posts yet.
+              </Typography.H2>
             </div>
           )}
           {showLoadMore && (

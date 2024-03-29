@@ -45,6 +45,7 @@ import {
 import { Clock, Calendar } from './Icon.Time';
 import {
   UserPlus,
+  UserMinus,
   UserRectangle,
   UsersLeft,
   UsersRight,
@@ -58,7 +59,7 @@ import {
 } from './Icon.Communication';
 import { Activity } from './Icon.Health';
 import { Fire } from './Icon.Weather';
-import { Key } from './Icon.Security';
+import { Key, Warning } from './Icon.Security';
 
 export const Icon = {
   Android,
@@ -109,9 +110,11 @@ export const Icon = {
   Telegram,
   Twitter,
   UsersLeft,
+  UserMinus,
   UsersRight,
   UserPlus,
   UserRectangle,
+  Warning,
   Youtube,
   X,
 };

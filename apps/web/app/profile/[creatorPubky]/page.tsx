@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { Button, Content } from '@social/ui-shared';
+import { Button, Content, Typography } from '@social/ui-shared';
 import { Profile } from './components';
 import { Profile as ProfileCommon } from '../components';
 import {
@@ -119,7 +119,9 @@ export default function Index({
           ))}
           {posts.length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-              <div className="text-2xl text-gray-600">No posts yet.</div>
+              <Typography.H2 className="text-opacity-50">
+                No posts yet.
+              </Typography.H2>
             </div>
           )}
           {showLoadMore && (

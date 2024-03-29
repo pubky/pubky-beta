@@ -11,7 +11,7 @@ type Tag = {
   color: string;
 };
 interface HeaderProps {
-  title: string;
+  title: React.ReactNode;
   className?: string;
   tags?: Tag[];
   children?: React.ReactNode;
@@ -88,7 +88,7 @@ export default function Header({
   return (
     <HeaderUI.Root>
       <HeaderUI.Logo link={logoLink} />
-      <HeaderUI.Title title={title} className={className} />
+      <HeaderUI.Title titleHeader={title} className={className} />
       <Input.Search>
         {tags && (
           <Input.SearchTags className="hidden sm:block">
@@ -172,7 +172,7 @@ export default function Header({
               />
               <Menu.Section
                 href="/logout"
-                icon={<Icon.UsersLeft />}
+                icon={<Icon.UserMinus size="24" />}
                 text="Logout"
                 onClick={() => setDrawerOpen(false)}
               />

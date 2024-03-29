@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import {
-  Icon,
-  PostUtil,
-  Button,
-  Typography,
-  Post,
-  SideCard,
-} from '@social/ui-shared';
+import { useRouter } from 'next/navigation';
+import { Icon, Typography, Post, SideCard } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -23,7 +17,7 @@ interface Followers {
 
 export default function Sidebar() {
   const { pubky, getProfile, listFollowers } = useClientContext();
-
+  const router = useRouter();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
   const [telegram, setTelegram] = useState('');
@@ -118,25 +112,25 @@ export default function Sidebar() {
           </SideCard.Content>
         </div>
       )}
-      <div>
+      {/**<div>
         <SideCard.Header title="Tagged as" variantTitle="label" />
         <SideCard.Content>
           <div className="flex-col gap-3 inline-flex">
             <Post.Footer className="mt-0">
-              {/* <PostUtil.Tag clicked color="amber">
+              <PostUtil.Tag clicked color="amber">
                 #Bitcoin
-              </PostUtil.Tag> */}
+              </PostUtil.Tag>
               <Button.Action
                 variant="custom"
                 size="small"
                 icon={<Icon.Plus />}
               />
               <PostUtil.Counter counter={0} />
-              {/* <Post.UserPic images={images} /> */}
+             <Post.UserPic images={images} />
             </Post.Footer>
           </div>
         </SideCard.Content>
-      </div>
+      </div> */}
       <div>
         <SideCard.Header title="Contacts" variantTitle="label" />
         {loadingFollowers ? (
@@ -155,17 +149,23 @@ export default function Sidebar() {
           </SideCard.Content>
         ) : (
           <SideCard.Content>
-            <Link href="/followers">
-              <div className="flex-col gap-3 inline-flex">
-                <div className="inline-flex gap-2">
-                  <Typography.Label>{followers?.count}</Typography.Label>
-                  <Typography.Label className="text-opacity-50">
-                    Followers
-                  </Typography.Label>
-                </div>
-                <Post.UserPic images={images} />
+            <div
+              onClick={(event) => {
+                event.stopPropagation();
+                (followers?.count ?? 0) > 0 && router.push(`/followers`);
+              }}
+              className={`flex-col gap-3 inline-flex ${
+                (followers?.count ?? 0) > 0 && 'cursor-pointer'
+              }`}
+            >
+              <div className="inline-flex gap-2">
+                <Typography.Label>{followers?.count}</Typography.Label>
+                <Typography.Label className="text-opacity-50">
+                  Followers
+                </Typography.Label>
               </div>
-            </Link>
+              <Post.UserPic images={images} />
+            </div>
           </SideCard.Content>
         )}
       </div>

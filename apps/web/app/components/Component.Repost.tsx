@@ -3,14 +3,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from './Modal';
 
+type PostUri = {
+  uri: string;
+  payload: {
+    content: string;
+  };
+};
+
 interface RepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
+  postId: PostUri;
 }
 
 export default function Repost({
   showModalRepost,
   setShowModalRepost,
+  postId,
 }: RepostProps) {
   const [showModalLink, setShowModalLink] = useState(false);
   const modalRepostRef = useRef<HTMLDivElement>(null);
@@ -42,6 +51,7 @@ export default function Repost({
   return (
     <>
       <Modal.Repost
+        postId={postId}
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
         modalRepostRef={modalRepostRef}

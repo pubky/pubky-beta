@@ -49,7 +49,7 @@ export default function Index() {
               alt: 'contact-pic-' + (index + 1),
               src: user.profile.image,
               name: user.profile.name,
-              handler: minifyPubky(user.uri),
+              handler: minifyPubky(user.uri.replace('pubky:', '')),
             }))
           );
           setLoadingContacts(false);
