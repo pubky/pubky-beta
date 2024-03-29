@@ -40,8 +40,6 @@ export default function ProtectedRoutes({
     const checkLogin = async () => {
       const loggedIn = await isLoggedIn();
 
-      console.log(pathname, loggedIn, isProtected);
-
       // exceptions for the onboarding process
       if (notRedirectUser.includes(pathname)) {
         return;
