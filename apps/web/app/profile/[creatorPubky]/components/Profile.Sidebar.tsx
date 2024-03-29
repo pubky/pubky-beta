@@ -131,7 +131,7 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
             <Button.Medium
               onClick={() => followUser()}
               variant="default"
-              icon={<Icon.Activity />}
+              icon={<Icon.UserPlus size="16" />}
             >
               Follow me
             </Button.Medium>

@@ -1,47 +1,79 @@
 import Image from 'next/image';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
+import { minifyPubky } from '../../../libs/pubkyHelper';
+import Link from 'next/link';
 
-export default function Follower() {
+interface FollowersProps extends React.HTMLAttributes<HTMLDivElement> {
+  followers?: Array<{
+    profile: {
+      name: string;
+      image: string;
+      bio: string;
+    };
+    uri: string;
+  }>;
+}
+
+export default function Follower({ followers }: FollowersProps) {
   return (
     <>
-      <div className="flex-col lg:flex-row justify-start gap-4 inline-flex">
-        <Image
-          width={48}
-          height={48}
-          src="/images/user.png"
-          alt="user-pic"
-          className="rounded-full"
-        />
-        <div className="flex-col justify-center items-start gap-1 inline-flex">
-          <Typography.Label className="text-opacity-30 -mb-1">
-            @1Rx3...KO43
-          </Typography.Label>
-          <Typography.Body variant="medium-bold">Anna Pleb</Typography.Body>
-        </div>
-        <Typography.Body
-          variant="small"
-          className="lg:px-12 text-opacity-80 leading-[18px]"
-        >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-          molestie nulla sit amet velit venenatis, ut blandit enim lacinia.
-        </Typography.Body>
-        <div className="flex-col justify-start items-start gap-1 inline-flex">
-          <Typography.Label className="text-opacity-30 -mb-1">
-            TAGS
-          </Typography.Label>
-          <Typography.Body variant="medium-bold">76</Typography.Body>
-        </div>
-        <div className="flex-col justify-start items-start gap-1 inline-flex">
-          <Typography.Label className="text-opacity-30 -mb-1">
-            POSTS
-          </Typography.Label>
-          <Typography.Body variant="medium-bold">12</Typography.Body>
-        </div>
-        <Button.Medium icon={<Icon.UserPlus size="16" />} className="w-[114px]">
-          Follow
-        </Button.Medium>
-      </div>
-      <Content.Divider />
+      {followers &&
+        followers.map((follower, index) => (
+          <>
+            <div
+              key={index}
+              className="flex-col lg:flex-row justify-start gap-4 inline-flex"
+            >
+              <Link href={`/profile/${follower.uri.replace('pubky:', '')}`}>
+                <Image
+                  width={48}
+                  height={48}
+                  src={follower.profile.image}
+                  alt={`follower-pic-${index + 1}`}
+                  className="rounded-full"
+                />
+              </Link>
+              <Link
+                href={`/profile/${follower.uri.replace('pubky:', '')}`}
+                className="flex-col justify-center items-start gap-1 inline-flex"
+              >
+                <Typography.Label className="text-opacity-30 -mb-1">
+                  {minifyPubky(follower.uri.replace('pubky:', ''))}
+                </Typography.Label>
+                <Typography.Body variant="medium-bold">
+                  {follower.profile.name}
+                </Typography.Body>
+              </Link>
+              <div className="lg:flex justify-center items-center">
+                <Typography.Body
+                  variant="small"
+                  className="lg:px-12 text-opacity-80 leading-[18px]"
+                >
+                  {follower.profile.bio}
+                </Typography.Body>
+              </div>
+              <div className="flex-col justify-start items-start gap-1 inline-flex">
+                <Typography.Label className="uppercase text-opacity-30 -mb-1">
+                  Tags
+                </Typography.Label>
+                <Typography.Body variant="medium-bold">76</Typography.Body>
+              </div>
+              <div className="flex-col justify-start items-start gap-1 inline-flex">
+                <Typography.Label className="uppercase text-opacity-30 -mb-1">
+                  Posts
+                </Typography.Label>
+                <Typography.Body variant="medium-bold">12</Typography.Body>
+              </div>
+              <Button.Medium
+                icon={<Icon.UserPlus size="16" />}
+                className="w-[114px]"
+              >
+                Follow
+              </Button.Medium>
+            </div>
+            {index !== followers.length - 1 && <Content.Divider />}
+          </>
+        ))}
     </>
   );
 }

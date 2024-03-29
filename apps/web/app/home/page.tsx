@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { Button, Content } from '@social/ui-shared';
+import { Button, Content, Typography } from '@social/ui-shared';
 import {
   ActiveFriends,
   CreatePost,
@@ -146,21 +146,15 @@ export default function Index() {
               key={index}
               postId={post}
               size={layout === 'list' ? 'full' : 'normal'}
+              layout={layout}
             />
           ))}
           {posts.length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-              <div className="text-2xl text-gray-600">No posts yet.</div>
+              <Typography.H2 className="text-opacity-50">
+                No posts yet.
+              </Typography.H2>
             </div>
-          )}
-          {showLoadMore && (
-            <Button.Large
-              className="col-span-3 xl:col-span-2"
-              variant="secondary"
-              onClick={() => handleLoadMore()}
-            >
-              Load More
-            </Button.Large>
           )}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
@@ -168,6 +162,15 @@ export default function Index() {
           <HotTags />
           <ActiveFriends />
         </Sidebar>
+        {showLoadMore && (
+          <Button.Large
+            className="mt-6 col-span-3 xl:col-span-2"
+            variant="secondary"
+            onClick={() => handleLoadMore()}
+          >
+            Load More
+          </Button.Large>
+        )}
       </Content.Grid>
       <CreatePost />
     </Content.Main>
