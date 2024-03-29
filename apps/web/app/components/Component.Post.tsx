@@ -85,7 +85,7 @@ export default function Post({
                         size === 'full' ? 'hidden sm:block text-opacity-30' : ''
                       }
                     >
-                      {minifyPubky(post?.author?.uri)}
+                      {minifyPubky(post?.author?.id)}
                     </Typography.Label>
                   </div>
                 </div>

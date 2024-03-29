@@ -3,7 +3,7 @@ export interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   bookmark?: boolean;
   size?: 'full' | 'normal';
   post: IPost;
-  layout: 'sidebar' | 'grid' | 'columns' | 'list';
+  layout?: 'sidebar' | 'grid' | 'columns' | 'list';
 }
 
 export interface User {

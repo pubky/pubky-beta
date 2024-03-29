@@ -22,15 +22,15 @@ const TEST_HOMESERVER =
   'pk:z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo';
 const TEST_PKARR_RELAY = 'http://localhost:7258';
 
-const LIVE_HOMESERVER =
-  'pk:4unkz8qto4xec6jhw9mie9oepgcurirebdx8axyq3o36fanooxxy';
-const LIVE_PKARR_RELAY = 'https://relay.pkarr.org';
+// const LIVE_HOMESERVER =
+//   'pk:4unkz8qto4xec6jhw9mie9oepgcurirebdx8axyq3o36fanooxxy';
+// const LIVE_PKARR_RELAY = 'https://relay.pkarr.org';
 
-const HOMESERVER = LIVE_HOMESERVER || TEST_HOMESERVER;
-const PKARR_RELAY = LIVE_HOMESERVER ? LIVE_PKARR_RELAY : TEST_PKARR_RELAY;
+// const HOMESERVER = LIVE_HOMESERVER || TEST_HOMESERVER;
+// const PKARR_RELAY = LIVE_HOMESERVER ? LIVE_PKARR_RELAY : TEST_PKARR_RELAY;
 
-// const HOMESERVER = TEST_HOMESERVER;
-// const PKARR_RELAY = TEST_PKARR_RELAY;
+const HOMESERVER = TEST_HOMESERVER;
+const PKARR_RELAY = TEST_PKARR_RELAY;
 
 type ClientContextType = {
   pubky: string | null;
@@ -44,7 +44,6 @@ type ClientContextType = {
   saveProfile: (profile: any) => Promise<void>;
   createPost: (post: any) => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
-  listPosts: (pubky: string, cursor: string) => Promise<any>;
   listUserFeed: (pubky: string, cursor: string) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
   listFollowing: (pubky: string) => Promise<any>;
@@ -253,6 +252,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         const result = await client.social.posts.get(uri);
 
+        console.log(result);
+
         if (!result.ok)
           throw new Error(`Get post:${pk} failed: ${result.error.message}`);
 
@@ -351,27 +352,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
-  const listPosts = useCallback(
-    async (pk: string, cursor: string) => {
-      try {
-        if (!pk) throw new Error('Get list posts failed');
-
-        const result = await client.social.posts.list(pk, {
-          limit: 5,
-          cursor: cursor,
-        });
-
-        if (!result.ok)
-          throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
-
-        return result.value;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [client]
-  );
-
   const listGlobalPosts = useCallback(
     async (
       cursor: string,
@@ -438,7 +418,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         isLoggedIn,
         createPost,
         getPost,
-        listPosts,
         listUserFeed,
         signUp,
         logout,
