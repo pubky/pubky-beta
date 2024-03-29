@@ -9,11 +9,19 @@ import {
 } from '@social/ui-shared';
 import Post from '../Component.Post';
 
+type PostUri = {
+  uri: string;
+  payload: {
+    content: string;
+  };
+};
+
 interface RepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   modalRepostRef: React.RefObject<HTMLDivElement>;
   setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
+  postId: PostUri;
 }
 
 export default function Repost({
@@ -21,6 +29,7 @@ export default function Repost({
   setShowModalRepost,
   modalRepostRef,
   setShowModalLink,
+  postId,
 }: RepostProps) {
   return (
     <Modal.Root
@@ -101,7 +110,7 @@ export default function Repost({
             />
           </div>
         </div>
-        <Post />
+        <Post postId={postId} />
         <div className="flex-col inline-flex justify-between">
           <div className="flex-col justify-start items-start gap-5 inline-flex">
             <Typography.H2 className="hidden lg:block">

@@ -37,6 +37,7 @@ export default function Index() {
     password: '',
     recoveryFile: '',
   });
+  const [loginError, setLoginError] = useState(false);
 
   const UploadRecoveryFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -82,6 +83,8 @@ export default function Index() {
 
       if (loggedIn) {
         router.push('/onboarding/permissions');
+      } else {
+        setLoginError(true);
       }
     } catch (error) {
       console.log(error);
@@ -111,7 +114,7 @@ export default function Index() {
         <Card.Primary
           className="min-h-[500px]"
           title="Portable Profile"
-          text="No Slashtags? Download Bitkit and create a portable profile in minutes."
+          text="Download Bitkit and create a portable profile in minutes."
         >
           <Content.LinksStoreApp className="mt-4 mb-6 md:mt-0 md:mb-0 lg:mt-4 lg:mb-6 xl:mt-0 xl:mb-0" />
           <Link href="https://bitkit.to/">
@@ -135,13 +138,22 @@ export default function Index() {
           </div>
           <div>
             <Input.Label className="mt-4" value="Upload Recovery file" />
-            <Input.Text
-              id="file_input"
-              type="file"
+            <Input.UploadFile
               required
+              error={errors.recoveryFile}
+              className="mt-3"
+              id="file_input"
               onChange={UploadRecoveryFile}
             />
           </div>
+          {loginError && (
+            <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-[#e95164] bg-[#e95164] bg-opacity-10">
+              <Typography.Body className="text-[#e95164]" variant="small-bold">
+                Recovery password or recovery file incorrect
+              </Typography.Body>
+              <Icon.Warning color="#e95164" />
+            </div>
+          )}
           <Button.Large
             onClick={() => handleSubmit()}
             icon={<Icon.Check />}
@@ -151,8 +163,8 @@ export default function Index() {
           </Button.Large>
         </Card.Primary>
         <Card.Primary
-          title="New Slashtags Account"
-          text="Another option is to create a new Slashtags account with Pubky."
+          title="New Pubky Account"
+          text="Another option is to create a new Pubky account."
         >
           <Link href="/onboarding/sign-up" className="mt-4 lg:mt-0">
             <Button.Large icon={<Icon.UserRectangle />}>

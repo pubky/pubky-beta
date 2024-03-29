@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  Icon,
-  Button,
-  PostUtil,
-  Post as PostUI,
-  Typography,
-} from '@social/ui-shared';
+import { Icon, Button, Post as PostUI, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
@@ -37,6 +31,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   bookmark?: boolean;
   size?: 'full' | 'normal';
   postId: PostUri;
+  layout?: string;
 }
 
 interface User {
@@ -51,9 +46,9 @@ interface User {
 
 export default function Post({
   repost = false,
-  bookmark = false,
   size = 'normal',
   postId,
+  layout,
   ...rest
 }: PostProps) {
   const { getPost, getUser } = useClientContext();
@@ -65,6 +60,7 @@ export default function Post({
   const [creator, setCreator] = useState<User | null>(null);
   const [creatorPubky, setCreatorPubky] = useState<string>('');
   const [createdAt, setCreatedAt] = useState<string | Date | null>(null);
+  const [bookmark, setBookmark] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -140,25 +136,27 @@ export default function Post({
                     src={creator?.image || '/images/user.png'}
                     alt="user"
                   />
-                  <PostUI.Username
-                    className={size === 'full' ? 'lg:text-2xl' : ''}
+                  <div
+                    className={`${
+                      layout !== 'grid' && 'lg:flex'
+                    } justify-start items-center gap-4`}
                   >
-                    {creator?.name}
-                  </PostUI.Username>
-                  <Typography.Label
-                    className={
-                      size === 'full' ? 'hidden sm:block text-opacity-30' : ''
-                    }
-                  >
-                    {minifyPubky(creatorPubky)}
-                  </Typography.Label>
+                    <PostUI.Username
+                      className={size === 'full' ? 'lg:text-2xl' : ''}
+                    >
+                      {creator?.name}
+                    </PostUI.Username>
+                    <Typography.Label className="block text-opacity-30">
+                      {minifyPubky(creatorPubky)}
+                    </Typography.Label>
+                  </div>
                 </div>
                 <PostUI.Time size={size}>{timeAgo(createdAt)}</PostUI.Time>
               </PostUI.Header>
               <div
                 className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
               >
-                <div className={size === 'full' ? 'lg:w-[100%]' : ''}>
+                <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
                   <PostUI.Content
                     text={post?.payload?.content}
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}
@@ -184,23 +182,26 @@ export default function Post({
                   </>
                   */}
                 </div>
+                {/**
                 <PostUI.Footer
                   className={size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'}
                 >
-                  {/* <PostUtil.Tag clicked color="amber">
+                  <PostUtil.Tag clicked color="amber">
                     #Bitcoin
-                  </PostUtil.Tag> */}
+                  </PostUtil.Tag>
                   <Button.Action
                     variant="custom"
                     size="small"
                     icon={<Icon.Plus />}
                   />
+
                   <PostUtil.Counter counter={0} />
-                  {/* <PostUI.UserPic
+                  <PostUI.UserPic
                     className="hidden md:inline-flex"
                     images={images}
-                  /> */}
+                  /> 
                 </PostUI.Footer>
+                  */}
               </div>
               <PostUI.Actions>
                 <Button.Action
@@ -209,7 +210,7 @@ export default function Post({
                   icon={<Icon.Tag size="16" />}
                   counter={0}
                   onClick={(event) => {
-                    event.preventDefault();
+                    event.stopPropagation();
                     setShowModalTag(true);
                   }}
                 />
@@ -218,9 +219,6 @@ export default function Post({
                   variant="custom"
                   icon={<Icon.ChatCircleText size="16" />}
                   counter={0}
-                  onClick={(event) => {
-                    event.preventDefault();
-                  }}
                 />
                 <Button.Action
                   size="small"
@@ -228,7 +226,7 @@ export default function Post({
                   icon={<Icon.Repost size="16" />}
                   counter={0}
                   onClick={(event) => {
-                    event.preventDefault();
+                    event.stopPropagation();
                     setShowModalRepost(true);
                   }}
                 />
@@ -242,7 +240,8 @@ export default function Post({
                     />
                   }
                   onClick={(event) => {
-                    event.preventDefault();
+                    event.stopPropagation();
+                    setBookmark(!bookmark);
                   }}
                 />
               </PostUI.Actions>
@@ -251,6 +250,7 @@ export default function Post({
         </PostUI.Root>
       </div>
       <Repost
+        postId={post}
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
       />

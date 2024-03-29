@@ -10,7 +10,7 @@ export const Caption = ({
   children,
   ...rest
 }: CaptionProps) => {
-  let cssClasses;
+  let cssClasses = 'text-[13px] font-normal font-InterTight tracking-tight';
 
   switch (variant) {
     case 'bold':
@@ -19,14 +19,7 @@ export const Caption = ({
   }
 
   return (
-    <div
-      {...rest}
-      className={twMerge(
-        `text-[13px] font-normal font-InterTight tracking-tight`,
-        cssClasses,
-        rest.className
-      )}
-    >
+    <div {...rest} className={twMerge(cssClasses, rest.className)}>
       {children}
     </div>
   );

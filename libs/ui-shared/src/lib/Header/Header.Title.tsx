@@ -1,15 +1,16 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
-interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  title?: string;
+interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
+  titleHeader?: React.ReactNode;
+  className?: string;
 }
 
-export const Title = ({ title, ...rest }: HeaderProps) => {
+export const Title = ({ titleHeader, ...rest }: HeaderProps) => {
   return (
     <div {...rest} className={twMerge('grow', rest.className)}>
       <Typography.PageTitle className="text-opacity-50">
-        {title}
+        {titleHeader}
       </Typography.PageTitle>
     </div>
   );

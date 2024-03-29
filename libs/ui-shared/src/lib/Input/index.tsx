@@ -13,6 +13,7 @@ import { Select } from './Input.Select';
 import { Switch } from './Input.Switch';
 import { Text } from './Input.Text';
 import { TextArea } from './Input.TextArea';
+import { UploadFile } from './Input.UploadFile';
 
 export const Input = {
   Checkbox,
@@ -30,4 +31,5 @@ export const Input = {
   Switch,
   Text,
   TextArea,
+  UploadFile,
 };
