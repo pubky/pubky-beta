@@ -156,21 +156,21 @@ export default function Index() {
               </Typography.H2>
             </div>
           )}
-          {showLoadMore && (
-            <Button.Large
-              className="col-span-3 xl:col-span-2"
-              variant="secondary"
-              onClick={() => handleLoadMore()}
-            >
-              Load More
-            </Button.Large>
-          )}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
           <WhoFollow />
           <HotTags />
           <ActiveFriends />
         </Sidebar>
+        {showLoadMore && (
+          <Button.Large
+            className="mt-6 col-span-3 xl:col-span-2"
+            variant="secondary"
+            onClick={() => handleLoadMore()}
+          >
+            Load More
+          </Button.Large>
+        )}
       </Content.Grid>
       <CreatePost />
     </Content.Main>
