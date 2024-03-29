@@ -28,7 +28,7 @@ export const Large = ({
 
   switch (variant) {
     case 'secondary':
-      stateButton = disabled ? 'hover:bg-opacity-30' : '';
+      stateButton = disabled ? '' : 'hover:bg-opacity-30';
       cssColorButton = ` bg-white bg-opacity-20 `;
       break;
   }
