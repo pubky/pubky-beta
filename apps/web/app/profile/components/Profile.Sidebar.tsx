@@ -194,7 +194,7 @@ export default function Sidebar() {
             {telegram && (
               <Link
                 target="_blank"
-                href={`https://telegram.com/${telegram}`}
+                href={`https://t.me/${telegram}`}
                 className="w-full"
               >
                 <SideCard.Content className="w-full h-24 justify-center items-center">
