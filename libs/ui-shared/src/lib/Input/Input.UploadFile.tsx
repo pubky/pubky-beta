@@ -19,9 +19,7 @@ export const UploadFile = ({
   file:cursor-pointer
   file:mr-4
   file:font-InterTight
-  file:disabled:opacity-50 file:disabled:pointer-events-none
-  dark:file:bg-blue-500
-  dark:hover:file:bg-blue-400`;
+  file:disabled:opacity-50 file:disabled:pointer-events-none`;
 
   const errorCSS = `text-red-500 text-sm mt-2`;
 
