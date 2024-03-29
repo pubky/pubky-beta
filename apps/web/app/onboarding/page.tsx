@@ -8,7 +8,7 @@ import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
-  const { pubkey, isLoggedIn } = useClientContext();
+  const { pubky, isLoggedIn } = useClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
 
   useEffect(() => {
@@ -21,7 +21,8 @@ export default function Index() {
       }
     }
     fetchData();
-  }, [pubkey, isLoggedIn]);
+  }, [pubky, isLoggedIn]);
+
   return (
     <Content.Main background="bg-black" className="pb-0">
       <Header.Root>
