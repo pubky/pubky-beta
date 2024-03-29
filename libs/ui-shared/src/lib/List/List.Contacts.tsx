@@ -23,7 +23,7 @@ export const Contacts = ({ contacts }: ContactsListProps) => {
             <Image
               width={48}
               height={48}
-              className="rounded-full overflow-hidden"
+              className="w-[48px] h-[48px] rounded-full overflow-hidden"
               src={contact.src}
               alt={contact.alt}
             />

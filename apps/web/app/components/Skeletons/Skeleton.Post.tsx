@@ -32,7 +32,7 @@ export default function Post({ size = 'normal', ...rest }: PostProps) {
                 <div className="h-2.5 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-24"></div>
               </div>
               <div className={twMerge(baseCSS, rest.className)}>
-                <div className="h-2.5 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-24"></div>
+                <div className="h-2.5 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-12"></div>
               </div>
             </PostUI.Header>
             <div className={'block'}>

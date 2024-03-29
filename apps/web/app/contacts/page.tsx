@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Content } from '@social/ui-shared';
+import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../components';
 import { Contacts } from './components';
 import { DropDown } from '../components/DropDown';
@@ -44,8 +44,12 @@ export default function Index() {
       <Content.Grid>
         {loadingContacts ? (
           <Skeleton.Contacts />
-        ) : (
+        ) : contacts?.count ?? 0 > 0 ? (
           <Contacts.Contact contacts={contacts?.followers} />
+        ) : (
+          <Typography.H2 className="font-normal text-opacity-30 text-center">
+            No contacts yet
+          </Typography.H2>
         )}
       </Content.Grid>
       <CreatePost />
