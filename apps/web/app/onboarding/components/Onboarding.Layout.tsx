@@ -1,7 +1,9 @@
 'use client';
+
 import { Content, Header } from '@social/ui-shared';
 import { useClientContext } from '../../../contexts/client';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface LayoutOnboardingProps {
   children: React.ReactNode;
@@ -12,20 +14,22 @@ export default function OnboardingLayout({
   children,
   currentStep = 1,
 }: LayoutOnboardingProps) {
-  const { pubkey, isLoggedIn } = useClientContext();
+  const pathname = usePathname();
+  const { pubky, isLoggedIn } = useClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
 
   useEffect(() => {
     async function fetchData() {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
+
+      if (!loggedIn || pathname === '/onboarding/welcome') {
         setLogoLink('/onboarding/sign-in');
       } else {
         setLogoLink('/home');
       }
     }
     fetchData();
-  }, [pubkey, isLoggedIn]);
+  }, [pubky, pathname, isLoggedIn]);
 
   return (
     <Content.Main>

@@ -3,20 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../../../contexts/client';
 import { Post } from '../../../../components';
-
-type PostResult = {
-  uri: string;
-  content: string;
-  payload: {
-    content: string;
-  };
-  createdAt: string | Date | null;
-  id: string;
-};
+import { IPost } from '../../../../../types';
 
 export default function MainPost({ uri }: { uri: string }) {
   const { getPost } = useClientContext();
-  const [post, setPost] = useState<PostResult>({} as PostResult);
+  const [post, setPost] = useState<IPost>({} as IPost);
 
   useEffect(() => {
     async function fetchData() {
@@ -27,5 +18,5 @@ export default function MainPost({ uri }: { uri: string }) {
     fetchData();
   }, [uri, getPost]);
 
-  return <Post key={uri} postId={post} size="full" />;
+  return <Post key={uri} post={post} size="full" />;
 }

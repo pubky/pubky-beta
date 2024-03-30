@@ -17,20 +17,7 @@ import { DropDown } from '../components/DropDown';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
-
-type Layouts = {
-  [key in 'sidebar' | 'grid' | 'columns' | 'list']: {
-    layout: string;
-    posts: string;
-  };
-};
-
-type PostUri = {
-  uri: string;
-  payload: {
-    content: string;
-  };
-};
+import { Layouts, IPost } from '../../types';
 
 const layouts: Layouts = {
   sidebar: {
@@ -54,7 +41,7 @@ const layouts: Layouts = {
 export default function Index() {
   const { layout, reach } = useFilterContext();
   const { refreshList, listGlobalPosts, pubky } = useClientContext();
-  const [posts, setPosts] = useState<PostUri[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
@@ -83,18 +70,14 @@ export default function Index() {
   };
 
   useEffect(() => {
-    fetchData('');
-  }, [reach]);
-
-  useEffect(() => {
     fetchData(cursor);
-  }, [listGlobalPosts, pubky]);
+  }, [pubky]);
 
   useEffect(() => {
     if (refreshList) {
       fetchData('');
     }
-  }, [refreshList, reach]);
+  }, [refreshList]);
 
   const handleLoadMore = async () => {
     try {
@@ -144,7 +127,7 @@ export default function Index() {
           {posts.map((post, index) => (
             <Post
               key={index}
-              postId={post}
+              post={post}
               size={layout === 'list' ? 'full' : 'normal'}
               layout={layout}
             />

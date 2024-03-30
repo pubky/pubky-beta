@@ -9,7 +9,7 @@ import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
-  const { refreshList, setRefreshList, pubky, getProfile, listPosts } =
+  const { pubky, setRefreshList, getProfile, listUserFeed } =
     useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
@@ -22,6 +22,7 @@ export default function Index() {
     async function fetchProfile() {
       try {
         const profileInfo = await getProfile();
+
         if (profileInfo) {
           setPic(profileInfo?.image || '/images/Userpic.png');
           setName(profileInfo?.name || 'Loading...');
@@ -30,21 +31,20 @@ export default function Index() {
         console.log(error);
       }
     }
-    fetchProfile();
-  }, [getProfile]);
 
-  useEffect(() => {
+    fetchProfile();
+
     async function fetchPosts() {
       try {
         if (!pubky) return;
 
-        const results = await listPosts(pubky, cursor);
+        const results = await listUserFeed(pubky, cursor);
 
-        if (!results || !results.list) return;
+        if (!results || !results.feed) return;
 
-        setPosts(results.list);
+        setPosts(results.feed);
 
-        if (results.list.length >= 5) {
+        if (results.feed.length >= 5) {
           setShowLoadMore(true);
         }
 
@@ -58,51 +58,27 @@ export default function Index() {
         console.log(error);
       }
     }
+
     fetchPosts();
   }, [pubky]);
-
-  useEffect(() => {
-    async function refetchPosts() {
-      try {
-        if (!pubky) return;
-
-        const results = await listPosts(pubky, '');
-
-        if (!results || !results.list) return;
-
-        setPosts(results.list);
-
-        if (results.list.length >= 5) {
-          setShowLoadMore(true);
-        }
-
-        if (results.cursor) {
-          setCursor(results.cursor);
-        }
-
-        setRefreshList(false);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    if (refreshList) {
-      setCursor('');
-      refetchPosts();
-    }
-  }, [refreshList]);
 
   const handleLoadMore = async () => {
     try {
       if (!pubky) return;
-      const results = await listPosts(pubky, cursor);
-      if (!results || !results.list) return;
-      setPosts((prev) => [...prev, ...results.list]);
-      if (!results.cursor) {
-        setShowLoadMore(false);
-        return;
+
+      const results = await listUserFeed(pubky, cursor);
+
+      if (!results || !results.feed) return;
+
+      setPosts((prev) => [...prev, ...results.feed]);
+
+      if (results.feed.length >= 5) {
+        setShowLoadMore(true);
       }
-      setCursor(results.cursor);
+
+      if (results.cursor) {
+        setCursor(results.cursor);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -126,7 +102,7 @@ export default function Index() {
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
           {loading && <Skeleton.Post size={'normal'} />}
           {posts.map((post, index) => (
-            <Post key={index} postId={post} />
+            <Post key={index} post={post} />
           ))}
           {posts.length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">

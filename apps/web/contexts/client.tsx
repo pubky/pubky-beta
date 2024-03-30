@@ -43,8 +43,8 @@ type ClientContextType = {
   getProfile: (cache?: boolean) => Promise<any>;
   saveProfile: (profile: any) => Promise<void>;
   createPost: (post: any) => Promise<any>;
+  createTag: (tag: any) => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
-  listPosts: (pubky: string, cursor: string) => Promise<any>;
   listUserFeed: (pubky: string, cursor: string) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
   listFollowing: (pubky: string) => Promise<any>;
@@ -82,9 +82,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const isLoggedIn = useCallback(async (): Promise<string | boolean> => {
     try {
-      await client.ready();
-
       if (pubky) return pubky;
+
+      await client.ready();
 
       const sessions = await client.session();
 
@@ -178,7 +178,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const getProfile = useCallback(
-    async (cache = false): Promise<any> => {
+    async (cache = true): Promise<any> => {
       try {
         if (cache) {
           if (profile) return profile;
@@ -246,12 +246,36 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
+  const createTag = useCallback(
+    async (uri: string, tag: string) => {
+      try {
+        const pk = await isLoggedIn();
+
+        if (!pk) throw new Error('Get create Tag: not logged in.');
+        if (!uri) throw new Error('Get create Tag: no uri.');
+        if (!tag) throw new Error('Get create Tag: no tag name.');
+
+        const result = await client.social.tags.put(pk, uri, tag);
+
+        if (!result.ok)
+          throw new Error(`Put tag:${pk} failed: ${result.error.message}`);
+
+        return result;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [client]
+  );
+
   const getPost = useCallback(
     async (uri: string) => {
       try {
         if (!uri) throw new Error('Get list posts failed');
 
         const result = await client.social.posts.get(uri);
+
+        console.log(result);
 
         if (!result.ok)
           throw new Error(`Get post:${pk} failed: ${result.error.message}`);
@@ -335,28 +359,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         await client.ready();
 
-        const result = await client.social.posts.list(pk, {
-          limit: 5,
-          cursor: cursor,
-        });
-
-        if (!result.ok)
-          throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
-
-        return result.value;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [client]
-  );
-
-  const listPosts = useCallback(
-    async (pk: string, cursor: string) => {
-      try {
-        if (!pk) throw new Error('Get list posts failed');
-
-        const result = await client.social.posts.list(pk, {
+        const result = await client.social.streams.userFeed(pk, {
           limit: 5,
           cursor: cursor,
         });
@@ -383,6 +386,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         // and load it in subsequent client instances.
 
         const pk = await isLoggedIn();
+
+        await client.ready();
 
         if (!pk) throw new Error('Get global posts failed: not logged in.');
 
@@ -435,8 +440,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         refreshList,
         isLoggedIn,
         createPost,
+        createTag,
         getPost,
-        listPosts,
         listUserFeed,
         signUp,
         logout,
