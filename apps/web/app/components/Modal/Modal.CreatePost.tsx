@@ -23,23 +23,51 @@ export default function CreatePost({
   modalPostRef,
   setShowModalLink,
 }: CreatePostProps) {
-  const { createPost, setRefreshList } = useClientContext();
+  const { createPost, createTag, setRefreshList } = useClientContext();
   const [content, setContent] = useState('');
+  const [tag, setTag] = useState('');
+  const [arrayTags, setArrayTags] = useState<string[]>([]);
 
   const handleSubmit = async () => {
-    await createPost(content);
+    const newPost = await createPost(content);
+    for (const tag of arrayTags) {
+      await createTag(newPost.value.uri, tag);
+    }
     setShowModalPost(false);
+    setArrayTags([]);
+    setTag('');
     setRefreshList(true);
+  };
+
+  const handleAddTag = () => {
+    if (tag.trim() !== '') {
+      setTag('');
+      setArrayTags([...arrayTags, tag.trim()]);
+    }
+  };
+
+  const handleRemoveTag = (indexToRemove: number) => {
+    setArrayTags(arrayTags.filter((_, index) => index !== indexToRemove));
   };
 
   return (
     <Modal.Root
       modalRef={modalPostRef}
       show={showModalPost}
-      closeModal={() => setShowModalPost(false)}
+      closeModal={() => {
+        setShowModalPost(false);
+        setArrayTags([]);
+        setTag('');
+      }}
       className="max-w-[1200px]"
     >
-      <Modal.CloseAction onClick={() => setShowModalPost(false)} />
+      <Modal.CloseAction
+        onClick={() => {
+          setShowModalPost(false);
+          setArrayTags([]);
+          setTag('');
+        }}
+      />
       <Modal.Header title="New Post" />
       <Modal.Content className="inline-flex flex-col mt-6 gap-2 lg:grid lg:grid-cols-3 lg:gap-6">
         <div className="col-span-2">
@@ -119,48 +147,44 @@ export default function CreatePost({
         <div className="flex-col inline-flex justify-between">
           <div className="flex-col justify-start items-start gap-5  inline-flex">
             <Typography.H2 className="hidden lg:block">
-              Suggested Tags
+              {arrayTags.length > 0 ? 'Your Tags' : 'Add Tags'}
             </Typography.H2>
-            <div className="hidden lg:block justify-start items-start">
-              <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
-                #Bitcoin
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
-                #Satoshi
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="red" className="mr-2 my-1">
-                #P2P
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="blue" className="mr-2 my-1">
-                #Keys
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="blue" className="mr-2 my-1">
-                #Scalability
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="green" className="mr-2 my-1">
-                #Whitepaper
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="cyan" className="mr-2 my-1">
-                #PoW
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="yellow" className="mr-2 my-1">
-                #Cryptography
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="fuchsia" className="mr-2 my-1">
-                #Quote
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
-                #Bitcointalk
-              </PostUtil.Tag>
-            </div>
+            {arrayTags.length > 0 ? (
+              <div className="hidden lg:block justify-start items-start">
+                {arrayTags.map((tag, index) => (
+                  <PostUtil.Tag
+                    key={index}
+                    action={
+                      <div onClick={() => handleRemoveTag(index)}>
+                        <Icon.X size="20" />
+                      </div>
+                    }
+                    clicked
+                    color="amber"
+                    className="mr-2 my-1"
+                  >
+                    # {tag}
+                  </PostUtil.Tag>
+                ))}
+              </div>
+            ) : (
+              <Typography.Body variant="small" className="text-opacity-30">
+                No tags yet
+              </Typography.Body>
+            )}
             <div className="hidden lg:flex flex-col w-full items-start">
               <Input.Label value="Add tag:" />
               <Input.Text
                 placeholder="#"
+                value={tag}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setTag(e.target.value)
+                }
                 action={
                   <Button.Action
                     variant="custom"
                     icon={<Icon.Plus size="20" />}
+                    onClick={handleAddTag}
                   />
                 }
               />
