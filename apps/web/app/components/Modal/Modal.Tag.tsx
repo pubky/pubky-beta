@@ -49,7 +49,9 @@ export default function Tag({
   }, [modalTagRef, setShowModalTag]);
 
   const handleSubmit = async () => {
-    await createTag(post.uri, arrayTags);
+    for (const tag of arrayTags) {
+      await createTag(post.uri, tag);
+    }
     setShowModalTag(false);
     setArrayTags([]);
     setTag('');

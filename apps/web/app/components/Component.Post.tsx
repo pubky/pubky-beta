@@ -153,7 +153,7 @@ export default function Post({
                           }}
                         />
                         <PostUtil.Counter counter={tagObj.count} />
-                        {tagObj.from
+                        {/**{tagObj.from
                           .slice(0, 5)
                           .map((fromItem: any, fromIndex: number) => (
                             <Image
@@ -166,7 +166,7 @@ export default function Post({
                               }`}
                               src={fromItem.author.profile.image}
                             />
-                          ))}
+                            ))}*/}
                       </PostUI.Footer>
                     ))}
                   </div>
