@@ -5,13 +5,11 @@ import { Icon } from '../Icon';
 interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   size?: 'full' | 'normal';
-  tagCount: number;
 }
 
 export const Time = ({
   children,
   size = 'normal',
-  tagCount,
   ...rest
 }: RootProps) => {
   const baseCSS =

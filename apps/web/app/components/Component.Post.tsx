@@ -10,7 +10,7 @@ import {
 } from '@social/ui-shared';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
 import Repost from './Component.Repost';
@@ -35,7 +35,13 @@ export default function Post({
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [bookmark, setBookmark] = useState(false);
-  const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
+  const [sortedTags, setSortedTags] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (post?.tags) {
+      setSortedTags(post?.tags.slice().sort((a, b) => b.count - a.count));
+    }
+  }, [post?.tags]);
 
   const handleSubmit = async (tag: string) => {
     await createTag(post.uri, tag);
@@ -102,7 +108,7 @@ export default function Post({
                     </Typography.Label>
                   </div>
                 </div>
-                <PostUI.Time tagCount={post?.tags.length} size={size}>
+                <PostUI.Time size={size}>
                   {timeAgo(post?.createdAt)}
                 </PostUI.Time>
               </PostUI.Header>
