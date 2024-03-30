@@ -1,7 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { Icon, Button, Post as PostUI, Typography } from '@social/ui-shared';
-import { useState } from 'react';
+import {
+  Icon,
+  Button,
+  Post as PostUI,
+  Typography,
+  PostUtil,
+} from '@social/ui-shared';
+
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
 import Repost from './Component.Repost';
@@ -9,6 +18,7 @@ import { timeAgo } from '../../libs/time';
 import { encodePostUri, minifyPubky } from '../../libs/pubkyHelper';
 import { Skeleton } from '.';
 import { useRouter } from 'next/navigation';
+import { useClientContext } from '../../contexts/client';
 
 import { PostProps } from '../../types';
 
@@ -21,9 +31,22 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
 
+  const { createTag, setRefreshList } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [bookmark, setBookmark] = useState(false);
+  const [sortedTags, setSortedTags] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (post?.tags) {
+      setSortedTags(post?.tags.slice().sort((a, b) => b.count - a.count));
+    }
+  }, [post?.tags]);
+
+  const handleSubmit = async (tag: string) => {
+    await createTag(post.uri, tag);
+    setRefreshList(true);
+  };
 
   if (!post) return <Skeleton.Post size={size} />;
 
@@ -80,11 +103,7 @@ export default function Post({
                     >
                       {post?.author?.profile?.name}
                     </PostUI.Username>
-                    <Typography.Label
-                      className={
-                        size === 'full' ? 'hidden sm:block text-opacity-30' : ''
-                      }
-                    >
+                    <Typography.Label className="text-opacity-30">
                       {minifyPubky(post?.author?.id)}
                     </Typography.Label>
                   </div>
@@ -122,26 +141,47 @@ export default function Post({
                   </>
                   */}
                 </div>
-                {/**
-                <PostUI.Footer
-                  className={size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'}
-                >
-                  <PostUtil.Tag clicked color="amber">
-                    #Bitcoin
-                  </PostUtil.Tag>
-                  <Button.Action
-                    variant="custom"
-                    size="small"
-                    icon={<Icon.Plus />}
-                  />
-
-                  <PostUtil.Counter counter={0} />
-                  <PostUI.UserPic
-                    className="hidden md:inline-flex"
-                    images={images}
-                  />
-                </PostUI.Footer>
-                  */}
+                {post?.tags?.length > 0 && (
+                  <div
+                    className={`flex-col inline-flex gap-4 ${
+                      size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'
+                    }`}
+                  >
+                    {sortedTags
+                      .slice(0, size === 'full' ? 3 : 1)
+                      .map((tagObj, index) => (
+                        <PostUI.Footer key={index}>
+                          <PostUtil.Tag clicked color="amber">
+                            # {tagObj.tag}
+                          </PostUtil.Tag>
+                          <Button.Action
+                            variant="custom"
+                            size="small"
+                            icon={<Icon.Plus />}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleSubmit(tagObj.tag);
+                            }}
+                          />
+                          <PostUtil.Counter counter={tagObj.count} />
+                          {tagObj?.from
+                            .slice(0, 5)
+                            .map((fromItem: any, fromIndex: number) => (
+                              <Image
+                                width={32}
+                                height={32}
+                                alt={`pic-${fromIndex + 1}`}
+                                key={fromIndex}
+                                className={`w-[32px] h-[32px] rounded-full ${
+                                  fromIndex !== 0 ? '-ml-5' : ''
+                                }`}
+                                src={fromItem.author.profile.image}
+                              />
+                            ))}
+                        </PostUI.Footer>
+                      ))}
+                  </div>
+                )}
               </div>
               <PostUI.Actions>
                 <Button.Action
@@ -195,6 +235,8 @@ export default function Post({
         setShowModalRepost={setShowModalRepost}
       />
       <Modal.Tag
+        post={post}
+        setRefreshList={setRefreshList}
         showModalTag={showModalTag}
         setShowModalTag={setShowModalTag}
       />
