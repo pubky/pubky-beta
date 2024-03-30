@@ -26,17 +26,25 @@ export default function ProtectedRoutes({
       '/settings',
     ];
 
-    const redirectLoggedUser = [
-      '/onboarding',
+    const redirectLoggedUser = ['/onboarding', '/login', '/sign-up'];
+
+    const notRedirectUser = [
+      '/onboarding/welcome',
+      '/onboarding/permissions',
+      '/onboarding/confirm',
       '/onboarding/sign-up',
-      '/login',
-      '/sign-up',
     ];
 
     const isProtected = protectedRoutes.includes(pathname);
 
     const checkLogin = async () => {
       const loggedIn = await isLoggedIn();
+
+      // exceptions for the onboarding process
+      if (notRedirectUser.includes(pathname)) {
+        return;
+      }
+
       if (!loggedIn && isProtected) {
         router.push('/onboarding');
         return;

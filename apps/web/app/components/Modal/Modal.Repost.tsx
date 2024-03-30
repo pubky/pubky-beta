@@ -8,20 +8,14 @@ import {
   Typography,
 } from '@social/ui-shared';
 import Post from '../Component.Post';
-
-type PostUri = {
-  uri: string;
-  payload: {
-    content: string;
-  };
-};
+import { IPost } from '../../../types';
 
 interface RepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   modalRepostRef: React.RefObject<HTMLDivElement>;
   setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
-  postId: PostUri;
+  post: IPost;
 }
 
 export default function Repost({
@@ -29,7 +23,7 @@ export default function Repost({
   setShowModalRepost,
   modalRepostRef,
   setShowModalLink,
-  postId,
+  post,
 }: RepostProps) {
   return (
     <Modal.Root
@@ -110,7 +104,7 @@ export default function Repost({
             />
           </div>
         </div>
-        <Post postId={postId} />
+        <Post post={post} />
         <div className="flex-col inline-flex justify-between">
           <div className="flex-col justify-start items-start gap-5 inline-flex">
             <Typography.H2 className="hidden lg:block">

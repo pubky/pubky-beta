@@ -1,4 +1,4 @@
-export function timeAgo(date: string | Date | null) {
+export function timeAgo(date: number) {
   if (!date) return '';
   const seconds = Math.floor(
     (new Date().getTime() - new Date(date).getTime()) / 1000
