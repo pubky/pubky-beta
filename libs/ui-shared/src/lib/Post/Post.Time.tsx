@@ -14,10 +14,9 @@ export const Time = ({
   tagCount,
   ...rest
 }: RootProps) => {
-  const justify = tagCount > 0 ? 'xl:justify-center' : 'xl:justify-end';
   const baseCSS =
     size === 'full'
-      ? `grow justify-end ${justify} items-center gap-1 flex mt-2 lg:mt-4`
+      ? `grow justify-end items-center gap-1 flex mt-2 lg:mt-4`
       : 'grow justify-end items-center gap-1 flex mt-2';
   return (
     <div className={twMerge(baseCSS, rest.className)}>
