@@ -45,7 +45,16 @@ export interface IPost {
   post: {
     payload: PostPayload;
   };
-  tags: string[];
+  tags: {
+    count: number;
+    from: {
+      author: Author;
+      createdAt: number;
+      id: string;
+      indexedAt: number;
+    }[];
+    tag: string;
+  }[];
   createdAt: number;
   indexedAt: number;
 }

@@ -8,6 +8,7 @@ import {
   Typography,
   PostUtil,
 } from '@social/ui-shared';
+
 import Image from 'next/image';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -34,7 +35,7 @@ export default function Post({
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [bookmark, setBookmark] = useState(false);
-  const sortedTags = post.tags.slice().sort((a, b) => b.count - a.count);
+  const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
 
   const handleSubmit = async (tag: string) => {
     await createTag(post.uri, tag);
@@ -101,7 +102,7 @@ export default function Post({
                     </Typography.Label>
                   </div>
                 </div>
-                <PostUI.Time post={post} size={size}>
+                <PostUI.Time tagCount={post?.tags.length} size={size}>
                   {timeAgo(post?.createdAt)}
                 </PostUI.Time>
               </PostUI.Header>
@@ -135,40 +136,44 @@ export default function Post({
                   */}
                 </div>
                 {post?.tags?.length > 0 && (
-                  <div className={`flex-col inline-flex gap-4 ${size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'}`}>
-                    {sortedTags.slice(0, size === 'full' ? 3 : 1).map((tagObj, index) => (
-                      <PostUI.Footer
-                        key={index}
-                      >
-                        <PostUtil.Tag clicked color="amber">
-                          # {tagObj.tag}
-                        </PostUtil.Tag>
-                        <Button.Action
-                          variant="custom"
-                          size="small"
-                          icon={<Icon.Plus />}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleSubmit(tagObj.tag);
-                          }}
-                        />
-                        <PostUtil.Counter counter={tagObj.count} />
-                        {/**{tagObj.from
-                          .slice(0, 5)
-                          .map((fromItem: any, fromIndex: number) => (
-                            <Image
-                              width={32}
-                              height={32}
-                              alt={`pic-${fromIndex + 1}`}
-                              key={fromIndex}
-                              className={`w-[32px] h-[32px] rounded-full ${
-                                fromIndex !== 0 ? '-ml-5' : ''
-                              }`}
-                              src={fromItem.author.profile.image}
-                            />
-                            ))}*/}
-                      </PostUI.Footer>
-                    ))}
+                  <div
+                    className={`flex-col inline-flex gap-4 ${
+                      size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'
+                    }`}
+                  >
+                    {sortedTags
+                      .slice(0, size === 'full' ? 3 : 1)
+                      .map((tagObj, index) => (
+                        <PostUI.Footer key={index}>
+                          <PostUtil.Tag clicked color="amber">
+                            # {tagObj.tag}
+                          </PostUtil.Tag>
+                          <Button.Action
+                            variant="custom"
+                            size="small"
+                            icon={<Icon.Plus />}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleSubmit(tagObj.tag);
+                            }}
+                          />
+                          <PostUtil.Counter counter={tagObj.count} />
+                          {tagObj?.from
+                            .slice(0, 5)
+                            .map((fromItem: any, fromIndex: number) => (
+                              <Image
+                                width={32}
+                                height={32}
+                                alt={`pic-${fromIndex + 1}`}
+                                key={fromIndex}
+                                className={`w-[32px] h-[32px] rounded-full ${
+                                  fromIndex !== 0 ? '-ml-5' : ''
+                                }`}
+                                src={fromItem.author.profile.image}
+                              />
+                            ))}
+                        </PostUI.Footer>
+                      ))}
                   </div>
                 )}
               </div>
