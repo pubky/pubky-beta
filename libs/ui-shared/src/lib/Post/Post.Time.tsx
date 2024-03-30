@@ -1,16 +1,24 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 import { Icon } from '../Icon';
+import { IPost } from '../../../../../apps/web/types';
 
 interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   size?: 'full' | 'normal';
+  post: IPost;
 }
 
-export const Time = ({ children, size = 'normal', ...rest }: RootProps) => {
+export const Time = ({
+  children,
+  size = 'normal',
+  post,
+  ...rest
+}: RootProps) => {
+  const justify = post.tags.length > 0 ? 'xl:justify-center' : 'xl:justify-end';
   const baseCSS =
     size === 'full'
-      ? 'grow justify-end xl:justify-end items-center gap-1 xl:ml-24 flex mt-2 lg:mt-4'
+      ? `grow justify-end ${justify} items-center gap-1 flex mt-2 lg:mt-4`
       : 'grow justify-end items-center gap-1 flex mt-2';
   return (
     <div className={twMerge(baseCSS, rest.className)}>

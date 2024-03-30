@@ -4,13 +4,15 @@ import { twMerge } from 'tailwind-merge';
 interface TagProps extends React.HTMLAttributes<HTMLButtonElement> {
   clicked: boolean;
   color?: string;
-  children: string;
+  children: React.ReactNode;
+  action?: React.ReactNode;
 }
 
 export const Tag = ({
   clicked = false,
   color,
   children,
+  action,
   ...rest
 }: TagProps) => {
   let cssClasses = clicked
@@ -64,7 +66,10 @@ export const Tag = ({
         rest.className
       )}
     >
-      <Typography.Body variant="small-bold">{children}</Typography.Body>
+      <div className="flex gap-2">
+        <Typography.Body variant="small-bold">{children}</Typography.Body>
+        {action}
+      </div>
     </button>
   );
 };
