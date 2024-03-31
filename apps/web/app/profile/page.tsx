@@ -9,7 +9,7 @@ import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
-  const { pubky, setRefreshList, getProfile, listUserFeed } =
+  const { pubky, refreshList, setRefreshList, getProfile, listUserFeed } =
     useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
@@ -17,6 +17,38 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
+
+  async function fetchPosts() {
+    try {
+      if (!pubky) return;
+
+      const results = await listUserFeed(pubky, cursor);
+
+      if (!results || !results.feed) return;
+
+      setPosts(results.feed);
+
+      if (results.feed.length >= 5) {
+        setShowLoadMore(true);
+      }
+
+      if (results.cursor) {
+        setCursor(results.cursor);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (refreshList) {
+      setCursor('');
+      fetchPosts();
+      setRefreshList(false);
+    }
+  }, [refreshList]);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -33,31 +65,6 @@ export default function Index() {
     }
 
     fetchProfile();
-
-    async function fetchPosts() {
-      try {
-        if (!pubky) return;
-
-        const results = await listUserFeed(pubky, cursor);
-
-        if (!results || !results.feed) return;
-
-        setPosts(results.feed);
-
-        if (results.feed.length >= 5) {
-          setShowLoadMore(true);
-        }
-
-        if (results.cursor) {
-          setCursor(results.cursor);
-        }
-
-        setRefreshList(false);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
 
     fetchPosts();
   }, [pubky]);
