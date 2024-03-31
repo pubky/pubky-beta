@@ -18,19 +18,8 @@ export * from '@pubky/common';
 import Client from '@pubky/sdk';
 import localStorageUtils from '../libs/localStorageUtils';
 
-const TEST_HOMESERVER =
-  'pk:z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo';
-const TEST_PKARR_RELAY = 'http://localhost:7258';
-
-// const LIVE_HOMESERVER =
-//   'pk:4unkz8qto4xec6jhw9mie9oepgcurirebdx8axyq3o36fanooxxy';
-// const LIVE_PKARR_RELAY = 'https://relay.pkarr.org';
-
-// const HOMESERVER = LIVE_HOMESERVER || TEST_HOMESERVER;
-// const PKARR_RELAY = LIVE_HOMESERVER ? LIVE_PKARR_RELAY : TEST_PKARR_RELAY;
-
-const HOMESERVER = TEST_HOMESERVER;
-const PKARR_RELAY = TEST_PKARR_RELAY;
+const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER;
+const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY;
 
 type ClientContextType = {
   pubky: string | null;
