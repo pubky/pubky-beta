@@ -1,7 +1,9 @@
 import { SideCard } from '@social/ui-shared';
 import { DropDown } from '../components/DropDown';
+import { useRouter } from 'next/navigation';
 
 export default function HotTags() {
+  const router = useRouter();
   return (
     <div>
       <SideCard.Header title="Hot tags">
@@ -16,7 +18,10 @@ export default function HotTags() {
             counter="317 posts"
           />
         </div>
-        <SideCard.Action text="Explore All" />
+        <SideCard.Action
+          onClick={() => router.push('/hot-tags')}
+          text="Explore All"
+        />
       </SideCard.Content>
     </div>
   );

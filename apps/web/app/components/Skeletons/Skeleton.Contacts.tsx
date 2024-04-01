@@ -26,8 +26,7 @@ export default function Contacts() {
           </div>
         </div>
       </div>
-      <PostsLayout className="flex flex-col gap-6">
-        <Skeleton.Post />
+      <PostsLayout className="inline-flex flex-col gap-6">
         <Skeleton.Post />
       </PostsLayout>
     </div>

@@ -8,7 +8,8 @@ import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 
 interface Contacts {
-  count: number;
+  count: string;
+  cursor: string;
   followers: [];
 }
 
@@ -45,7 +46,11 @@ export default function Index() {
         {loadingContacts ? (
           <Skeleton.Contacts />
         ) : contacts?.count ?? 0 > 0 ? (
-          <Contacts.Contact contacts={contacts?.followers} />
+          <Contacts.Contact
+            contacts={contacts?.followers}
+            cursor={contacts?.cursor || ''}
+            count={contacts?.count || ''}
+          />
         ) : (
           <Typography.H2 className="font-normal text-opacity-30 text-center">
             No contacts yet

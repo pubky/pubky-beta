@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Content, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import { Post, PostsLayout } from '../../components';
 import { minifyPubky } from '../../../libs/pubkyHelper';
+import { useClientContext } from '../../../contexts/client';
+import { IPost } from '../../../types';
 
 interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
   contacts?: Array<{
@@ -16,10 +18,30 @@ interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
     };
     uri: string;
   }>;
+  cursor: string;
+  count: string;
 }
 
-export default function Contact({ contacts }: ContactsProps) {
+export default function Contact({ contacts, cursor, count }: ContactsProps) {
+  const { listUserFeed } = useClientContext();
   const [isHovered, setIsHovered] = useState(false);
+  const [posts, setPosts] = useState<IPost[]>([]);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      if (contacts) {
+        for (const contact of contacts) {
+          const postUris = await listUserFeed(
+            contact.uri.replace('pubky:', ''),
+            cursor
+          );
+          setPosts(postUris.feed);
+        }
+      }
+    }
+    fetchPosts();
+  }, [contacts, listUserFeed, cursor]);
+
   return (
     <>
       {contacts &&
@@ -51,19 +73,21 @@ export default function Contact({ contacts }: ContactsProps) {
                   </div>
                   <div className="flex-col gap-6 inline-flex">
                     <div className="flex-col gap-1 flex">
+                      {/**
                       <Typography.Label className="text-opacity-50 leading-none">
                         Tags
                       </Typography.Label>
                       <Typography.H1 className="leading-[46px]">
-                        142
+                        17
                       </Typography.H1>
+                       */}
                     </div>
                     <div className="flex-col gap-1 flex">
                       <Typography.Label className="text-opacity-50 leading-none">
                         Posts
                       </Typography.Label>
                       <Typography.H1 className="leading-[46px]">
-                        17
+                        {count}
                       </Typography.H1>
                     </div>
                   </div>
@@ -76,14 +100,9 @@ export default function Contact({ contacts }: ContactsProps) {
                 </div>
               </Link>
               <PostsLayout className="flex flex-col gap-6">
-                <Post
-                  size="full"
-                  postId={{ uri: '', payload: { content: '' } }}
-                />
-                <Post
-                  size="full"
-                  postId={{ uri: '', payload: { content: '' } }}
-                />
+                {posts.map((post, index) => (
+                  <Post key={index} post={post} />
+                ))}
               </PostsLayout>
             </div>
             {index !== contacts.length - 1 && <Content.Divider />}
