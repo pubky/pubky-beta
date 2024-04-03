@@ -3,7 +3,7 @@
 
 import { Button, Content, Typography } from '@social/ui-shared';
 import {
-  ActiveFriends,
+  // ActiveFriends,
   CreatePost,
   Header,
   HotTags,
@@ -143,7 +143,7 @@ export default function Index() {
         <Sidebar className={sidebarClassName}>
           <WhoFollow />
           <HotTags />
-          <ActiveFriends />
+          {/** <ActiveFriends /> */}
         </Sidebar>
         {showLoadMore && (
           <Button.Large

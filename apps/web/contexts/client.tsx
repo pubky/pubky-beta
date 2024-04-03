@@ -34,7 +34,7 @@ type ClientContextType = {
   getUserIndexed: (viewerId: string) => Promise<any>;
   createPost: (post: any) => Promise<any>;
   createTag: (uri: string, tag: any) => Promise<any>;
-  getHotTags: () => Promise<void>;
+  getHotTags: () => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
   listUserFeed: (pubky: string, cursor: string) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
@@ -285,6 +285,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const getHotTags = useCallback(async () => {
     try {
+      await client.ready();
+
       const pk = await isLoggedIn();
 
       if (!pk) throw new Error('Get Hot Tag: not logged in.');

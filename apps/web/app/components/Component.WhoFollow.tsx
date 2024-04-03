@@ -1,18 +1,54 @@
-import { Content, SideCard } from '@social/ui-shared';
+import { Content, SideCard, Typography } from '@social/ui-shared';
+import { useEffect, useState } from 'react';
+import { useClientContext } from '../../contexts/client';
+import { minifyPubky } from '../../libs/pubkyHelper';
+import { Skeleton } from '.';
+import { Followed } from '../../types';
 
 export default function WhoFollow() {
+  const { getMostFollowed } = useClientContext();
+  const [hotFollowed, setHotFollowed] = useState<Followed[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchFollowed() {
+      try {
+        const result = await getMostFollowed();
+        if (result) {
+          setHotFollowed(result);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchFollowed();
+  }, [getMostFollowed]);
   return (
     <div>
       <SideCard.Header title="Who to follow" />
       <SideCard.Content>
-        <SideCard.User
-          src="/images/user.png"
-          username="Anna Pleb"
-          label="@1W78...gR31"
-        >
-          <SideCard.FollowAction />
-        </SideCard.User>
-        <Content.Divider className="my-2.5" />
+        {loading ? (
+          <Skeleton.WhoFollow />
+        ) : hotFollowed.length > 0 ? (
+          hotFollowed.slice(0, 3).map((followed, index) => (
+            <>
+              <SideCard.User
+                key={index + 1}
+                src={followed.profile.image}
+                username={followed.profile.name}
+                label={minifyPubky(followed.id)}
+              >
+                <SideCard.FollowAction />
+              </SideCard.User>
+              {index !== hotFollowed.length - 1 && <Content.Divider />}
+            </>
+          ))
+        ) : (
+          <Typography.Body className="text-opacity-50" variant="small">
+            No users yet
+          </Typography.Body>
+        )}
       </SideCard.Content>
     </div>
   );
