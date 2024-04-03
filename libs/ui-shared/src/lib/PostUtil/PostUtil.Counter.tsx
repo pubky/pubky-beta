@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
 interface CounterProps extends React.HTMLAttributes<HTMLDivElement> {
-  counter: number;
+  counter: React.ReactNode;
   className?: string;
 }
 
@@ -11,7 +11,9 @@ export const Counter = ({ counter, ...rest }: CounterProps) => {
 
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <Typography.Body variant="small-bold">{counter}</Typography.Body>
+      <Typography.Body className="tracking-normal" variant="small-bold">
+        {counter}
+      </Typography.Body>
     </div>
   );
 };

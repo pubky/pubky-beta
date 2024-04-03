@@ -6,7 +6,7 @@ interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
   rank: number;
   tag: string;
   color: string;
-  counter: string;
+  counter: React.ReactNode;
   images?: { alt: string; src: string }[];
 }
 export const Rank = ({

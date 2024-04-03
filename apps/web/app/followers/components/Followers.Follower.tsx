@@ -19,11 +19,8 @@ export default function Follower({ followers }: FollowersProps) {
     <>
       {followers &&
         followers.map((follower, index) => (
-          <>
-            <div
-              key={index}
-              className="flex-col lg:flex-row justify-start gap-4 inline-flex"
-            >
+          <div key={index} className="w-full">
+            <div className="flex-col lg:flex-row justify-between gap-4 inline-flex w-full">
               <Link href={`/profile/${follower.uri.replace('pubky:', '')}`}>
                 <Image
                   width={48}
@@ -66,13 +63,13 @@ export default function Follower({ followers }: FollowersProps) {
               </div>
               <Button.Medium
                 icon={<Icon.UserPlus size="16" />}
-                className="w-[114px]"
+                className="lg:ml-6 w-[114px]"
               >
                 Follow
               </Button.Medium>
             </div>
             {index !== followers.length - 1 && <Content.Divider />}
-          </>
+          </div>
         ))}
     </>
   );

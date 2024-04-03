@@ -63,3 +63,19 @@ export type Layouts = {
     posts: string;
   };
 };
+
+export interface Tag {
+  tag: string;
+  count: number;
+  from: {
+    image: string;
+  }[];
+}
+
+export interface Followed {
+  profile: {
+    image: string;
+    name: string;
+  };
+  id: string;
+}
