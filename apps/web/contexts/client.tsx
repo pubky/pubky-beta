@@ -31,7 +31,7 @@ type ClientContextType = {
   logout: () => Promise<void>;
   getProfile: (cache?: boolean) => Promise<any>;
   saveProfile: (profile: any) => Promise<void>;
-  getUserIndexed: (viewerId: string) => Promise<any>;
+  getUserIndexed: (userId: string) => Promise<any>;
   createPost: (post: any) => Promise<any>;
   createTag: (uri: string, tag: any) => Promise<any>;
   getHotTags: () => Promise<any>;
@@ -219,17 +219,17 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const getUserIndexed = useCallback(
-    async (viewerId: string): Promise<any> => {
+    async (userId: string): Promise<any> => {
       try {
         const pk = await isLoggedIn();
 
         if (!pk) throw new Error('Get profile indexed failed: not logged in.');
-        if (!viewerId)
+        if (!userId)
           throw new Error('Get profile indexed failed: no viewer id pubky');
 
         await client.ready();
 
-        const result = await client.social.profile.indexed(viewerId, pk);
+        const result = await client.social.profile.indexed(userId, pk);
 
         if (!result.ok)
           throw new Error(
@@ -447,7 +447,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const listGlobalPosts = useCallback(
     async (
       cursor: string,
-      reach: 'following' | 'all' | 'followers' | 'friends'
+      reach: 'following' | 'all' | 'followers' | 'friends',
+      tags?: string[]
     ) => {
       try {
         // TODO: find a way to memoize the client across page referesh
@@ -464,6 +465,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
           limit: 5,
           cursor: cursor,
           reach: reach ? reach : 'all',
+          tags: tags,
         });
 
         if (!result.ok)

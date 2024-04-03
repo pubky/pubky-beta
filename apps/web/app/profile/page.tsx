@@ -9,7 +9,7 @@ import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
-  const { pubky, refreshList, setRefreshList, getProfile, listUserFeed } =
+  const { pubky, refreshList, setRefreshList, listUserFeed, getUserIndexed } =
     useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
@@ -53,11 +53,12 @@ export default function Index() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const profileInfo = await getProfile();
+        if (!pubky) return;
+        const { profile } = await getUserIndexed(pubky);
 
-        if (profileInfo) {
-          setPic(profileInfo?.image || '/images/Userpic.png');
-          setName(profileInfo?.name || 'Loading...');
+        if (profile) {
+          setPic(profile?.image || '/images/Userpic.png');
+          setName(profile?.name || 'Loading...');
         }
       } catch (error) {
         console.log(error);
