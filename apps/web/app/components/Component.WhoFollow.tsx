@@ -32,9 +32,9 @@ export default function WhoFollow() {
           <Skeleton.WhoFollow />
         ) : hotFollowed.length > 0 ? (
           hotFollowed.slice(0, 3).map((followed, index) => (
-            <>
+            <div key={index + 1}>
               <SideCard.User
-                key={index + 1}
+                uri={followed.id}
                 src={followed.profile.image}
                 username={followed.profile.name}
                 label={minifyPubky(followed.id)}
@@ -42,7 +42,7 @@ export default function WhoFollow() {
                 <SideCard.FollowAction />
               </SideCard.User>
               {index !== hotFollowed.length - 1 && <Content.Divider />}
-            </>
+            </div>
           ))
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">

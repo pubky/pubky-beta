@@ -20,7 +20,6 @@ export default function HotTags() {
         const result = await getHotTags();
         if (result) {
           setHotTags(result.value);
-          console.log('RESUKR', result);
           setLoading(false);
         }
       } catch (error) {

@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
+import Link from 'next/link';
 
 interface UserProps extends React.HTMLAttributes<HTMLDivElement> {
   src: string;
@@ -11,6 +12,7 @@ interface UserProps extends React.HTMLAttributes<HTMLDivElement> {
   height?: number;
   image?: string;
   children?: React.ReactNode;
+  uri: string;
 }
 export const User = ({
   width = 48,
@@ -21,17 +23,18 @@ export const User = ({
   username,
   children,
   label,
+  uri,
   ...rest
 }: UserProps) => {
   return (
     <div
       {...rest}
       className={twMerge(
-        `justify-between items-center inline-flex`,
+        `justify-between items-center inline-flex w-full`,
         rest.className
       )}
     >
-      <div className="gap-4 inline-flex">
+      <Link href={`profile/${uri}`} className="gap-4 inline-flex ">
         <Image
           width={width}
           height={height}
@@ -45,7 +48,7 @@ export const User = ({
           </Typography.Label>
           <Typography.Body variant="medium-bold">{username}</Typography.Body>
         </div>
-      </div>
+      </Link>
       {children}
     </div>
   );

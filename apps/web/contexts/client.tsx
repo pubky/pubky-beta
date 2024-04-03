@@ -180,6 +180,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         if (!pk) throw new Error('Logged in failed : not logged in.');
 
+        await client.ready();
+
         const result = await client.social.profile.get(pk);
 
         if (!result.ok)
@@ -200,6 +202,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     async (pk): Promise<any> => {
       try {
         if (!pk) throw new Error('Logged in failed : not logged in.');
+
+        await client.ready();
 
         const result = await client.social.profile.get(pk);
 
@@ -223,6 +227,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         if (!viewerId)
           throw new Error('Get profile indexed failed: no viewer id pubky');
 
+        await client.ready();
+
         const result = await client.social.profile.indexed(viewerId, pk);
 
         if (!result.ok)
@@ -245,6 +251,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         const pk = await isLoggedIn();
 
         if (!pk) throw new Error('Get profile failed: not logged in.');
+
+        await client.ready();
 
         const result = await client.social.posts.put(pk, {
           content: content,
@@ -270,6 +278,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         if (!uri) throw new Error('Get create Tag: no uri.');
         if (!tag) throw new Error('Get create Tag: no tag name.');
 
+        await client.ready();
+
         const result = await client.social.tags.put(pk, uri, tag);
 
         if (!result.ok)
@@ -285,11 +295,11 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const getHotTags = useCallback(async () => {
     try {
-      await client.ready();
-
       const pk = await isLoggedIn();
 
       if (!pk) throw new Error('Get Hot Tag: not logged in.');
+
+      await client.ready();
 
       const result = await client.social.tags.hotTags();
 
@@ -307,6 +317,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     async (uri: string) => {
       try {
         if (!uri) throw new Error('Get list posts failed');
+
+        await client.ready();
 
         const result = await client.social.posts.get(uri);
 
@@ -332,6 +344,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         if (!pkLogged) throw new Error('Post follow failed: not logged in.');
 
+        await client.ready();
+
         const result = await client.social.graph.follow(pkLogged, pk);
 
         if (!result.ok)
@@ -349,6 +363,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     async (pk: string) => {
       try {
         if (!pk) throw new Error('Get list followers failed');
+
         await client.ready();
 
         const result = await client.social.graph.following(pk);
@@ -388,6 +403,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     async (pk: string) => {
       try {
         if (!pk) throw new Error('Get list followers failed');
+
         await client.ready();
 
         const result = await client.social.graph.followers(pk);
@@ -435,14 +451,14 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     ) => {
       try {
         // TODO: find a way to memoize the client across page referesh
-        // that will basically require exctracting the internal caches,
+        // that will basically require extracting the internal caches,
         // and load it in subsequent client instances.
 
         const pk = await isLoggedIn();
 
-        await client.ready();
-
         if (!pk) throw new Error('Get global posts failed: not logged in.');
+
+        await client.ready();
 
         const result = await client.social.streams.get(pk, {
           limit: 5,
