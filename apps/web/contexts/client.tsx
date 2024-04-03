@@ -31,12 +31,15 @@ type ClientContextType = {
   logout: () => Promise<void>;
   getProfile: (cache?: boolean) => Promise<any>;
   saveProfile: (profile: any) => Promise<void>;
+  getUserIndexed: (viewerId: string) => Promise<any>;
   createPost: (post: any) => Promise<any>;
   createTag: (uri: string, tag: any) => Promise<any>;
+  getHotTags: () => Promise<void>;
   isLoggedIn: () => Promise<boolean>;
   listUserFeed: (pubky: string, cursor: string) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
   listFollowing: (pubky: string) => Promise<any>;
+  getMostFollowed: () => Promise<any>;
   listGlobalPosts: (
     cursor: string,
     reach: 'following' | 'all' | 'followers' | 'friends'
@@ -211,6 +214,31 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
+  const getUserIndexed = useCallback(
+    async (viewerId: string): Promise<any> => {
+      try {
+        const pk = await isLoggedIn();
+
+        if (!pk) throw new Error('Get profile indexed failed: not logged in.');
+        if (!viewerId)
+          throw new Error('Get profile indexed failed: no viewer id pubky');
+
+        const result = await client.social.profile.indexed(viewerId, pk);
+
+        if (!result.ok)
+          throw new Error(
+            `Get profile indexed:${pk} failed: ${result.error.message}`
+          );
+
+        return result.value;
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    },
+    [client]
+  );
+
   const createPost = useCallback(
     async (content: string) => {
       try {
@@ -256,6 +284,24 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     },
     [client]
   );
+
+  const getHotTags = useCallback(async () => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get Hot Tag: not logged in.');
+
+      const result = await client.social.tags.hotTags();
+
+      if (!result.ok)
+        throw new Error(`GET hot tags:${pk} failed: ${result.error.message}`);
+
+      return result;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }, [client]);
 
   const getPost = useCallback(
     async (uri: string) => {
@@ -319,6 +365,24 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     },
     [client]
   );
+
+  const getMostFollowed = useCallback(async () => {
+    try {
+      await client.ready();
+
+      const result = await client.social.graph.mostFollowed();
+
+      if (!result.ok)
+        throw new Error(
+          `Get most followed:${pk} failed: ${result.error.message}`
+        );
+
+      return result.value;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }, [client]);
 
   const listFollowers = useCallback(
     async (pk: string) => {
@@ -430,17 +494,20 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         isLoggedIn,
         createPost,
         createTag,
+        getHotTags,
         getPost,
         listUserFeed,
         signUp,
         logout,
         saveProfile,
+        getUserIndexed,
         getProfile,
         getUser,
         decryptRecoveryFile,
         listGlobalPosts,
         listFollowers,
         listFollowing,
+        getMostFollowed,
         setRefreshList,
         follow,
       }}
