@@ -32,11 +32,11 @@ export default function Index({
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const profileInfo = await getUserIndexed(creatorPubky);
+        const { profile } = await getUserIndexed(creatorPubky);
 
-        if (profileInfo) {
-          setPic(profileInfo?.image || '/images/Userpic.png');
-          setName(profileInfo?.name || 'Loading...');
+        if (profile) {
+          setPic(profile?.image || '/images/Userpic.png');
+          setName(profile?.name || 'Loading...');
         }
       } catch (error) {
         console.log(error);

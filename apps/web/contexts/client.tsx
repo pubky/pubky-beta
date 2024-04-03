@@ -451,7 +451,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       tags?: string[]
     ) => {
       try {
-        // TODO: find a way to memoize the client across page refresh
+        // TODO: find a way to memoize the client across page referesh
         // that will basically require extracting the internal caches,
         // and load it in subsequent client instances.
 
