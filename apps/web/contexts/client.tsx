@@ -246,11 +246,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         if (!pk) throw new Error('Get profile failed: not logged in.');
 
-        const payload = {
+        const result = await client.social.posts.put(pk, {
           content: content,
-        };
-
-        const result = await client.social.posts.put(pk, { payload });
+        });
 
         if (!result.ok)
           throw new Error(`Put post:${pk} failed: ${result.error.message}`);
