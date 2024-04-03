@@ -20,7 +20,7 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
-  const { setRefreshList, getUser, listUserFeed } = useClientContext();
+  const { setRefreshList, getUserIndexed, listUserFeed } = useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
   const [posts, setPosts] = useState<any[]>([]);
@@ -32,7 +32,7 @@ export default function Index({
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const profileInfo = await getUser(creatorPubky);
+        const profileInfo = await getUserIndexed(creatorPubky);
 
         if (profileInfo) {
           setPic(profileInfo?.image || '/images/Userpic.png');
