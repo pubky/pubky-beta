@@ -42,9 +42,7 @@ export interface IPost {
   id: string;
   uri: string;
   author: Author;
-  post: {
-    payload: PostPayload;
-  };
+  post: PostPayload;
   tags: {
     count: number;
     from: {
