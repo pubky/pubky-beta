@@ -3,7 +3,7 @@
 
 import { Button, Content, Typography } from '@social/ui-shared';
 import {
-  ActiveFriends,
+  // ActiveFriends,
   CreatePost,
   Header,
   HotTags,
@@ -105,7 +105,9 @@ export default function Index() {
     layout === 'sidebar'
       ? layouts[layout].posts
       : `grid ${layouts[layout].layout} gap-6`;
-  const sidebarClassName = `hidden ${layout === 'sidebar' && 'xl:inline-flex'}`;
+  const sidebarClassName = `hidden ${
+    layout === 'sidebar' && 'xl:inline-flex w-full'
+  }`;
 
   return (
     <Content.Main>
@@ -143,7 +145,7 @@ export default function Index() {
         <Sidebar className={sidebarClassName}>
           <WhoFollow />
           <HotTags />
-          <ActiveFriends />
+          {/** <ActiveFriends /> */}
         </Sidebar>
         {showLoadMore && (
           <Button.Large

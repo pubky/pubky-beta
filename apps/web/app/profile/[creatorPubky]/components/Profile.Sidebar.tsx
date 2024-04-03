@@ -159,9 +159,9 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
       </div>
       <div>
         <SideCard.Header title="Contacts" variantTitle="label" />
-        {loadingFollowers ? (
-          <SideCard.Content>
-            <Link href="/followers">
+        <SideCard.Content>
+          <Link href={`/followers/${creatorPubky}`}>
+            {loadingFollowers ? (
               <div className="flex-col gap-3 inline-flex">
                 <div className="inline-flex gap-2">
                   <Typography.Label>{followers?.count}</Typography.Label>
@@ -170,11 +170,7 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
                   </Typography.Label>
                 </div>
               </div>
-            </Link>
-          </SideCard.Content>
-        ) : (
-          <SideCard.Content>
-            <Link href="/followers">
+            ) : (
               <div className="flex-col gap-3 inline-flex">
                 <div className="inline-flex gap-2">
                   <Typography.Label>{followers?.count}</Typography.Label>
@@ -185,9 +181,9 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
 
                 <Post.UserPic images={images} />
               </div>
-            </Link>
-          </SideCard.Content>
-        )}
+            )}
+          </Link>
+        </SideCard.Content>
       </div>
       {(x || website || telegram) && (
         <div className="w-full">

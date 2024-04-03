@@ -81,15 +81,14 @@ export default function Index({
 
       if (!results || !results.list) return;
 
-      setCursor('');
+      setCursor(results.cursor);
       setPosts((prev) => [...prev, ...results.list]);
 
       if (!results.cursor) {
+        setCursor('');
         setShowLoadMore(false);
         return;
       }
-
-      setCursor(results.cursor);
     } catch (error) {
       console.log(error);
     }

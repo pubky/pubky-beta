@@ -1,31 +1,35 @@
-import { Content } from '@social/ui-shared';
-import { CreatePost, Header } from '../components';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { Content, Typography } from '@social/ui-shared';
+import { CreatePost, Header, Skeleton } from '../components';
 import { HotTags } from './components';
 import { DropDown } from '../components/DropDown';
+import { useClientContext } from '../../contexts/client';
+import { Tag } from '../../types';
 
 export default function Index() {
-  const images = [
-    {
-      alt: '1',
-      src: '/images/user.png',
-    },
-    {
-      alt: '2',
-      src: '/images/user.png',
-    },
-    {
-      alt: '3',
-      src: '/images/user.png',
-    },
-    {
-      alt: '4',
-      src: '/images/user.png',
-    },
-    {
-      alt: '5',
-      src: '/images/user.png',
-    },
-  ];
+  const { getHotTags } = useClientContext();
+  const [hotTags, setHotTags] = useState<Tag[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchTags() {
+      try {
+        const result = await getHotTags();
+        if (result) {
+          setHotTags(result.value);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchTags();
+  }, [getHotTags]);
+
   return (
     <Content.Main>
       <Header className="w-52 xl:w-36 hidden md:block" title="Hot&#160;Tags">
@@ -35,20 +39,41 @@ export default function Index() {
         </div>
       </Header>
       <Content.Grid className="flex-col flex gap-3">
-        <HotTags.Rank
-          rank={1}
-          tag="#Bitcoin"
-          color="amber"
-          counter="317 posts"
-          images={images}
-        />
-        <HotTags.Rank
-          rank={2}
-          tag="#Keys"
-          color="blue"
-          counter="197 posts"
-          images={images}
-        />
+        {loading ? (
+          <Skeleton.HotTags />
+        ) : hotTags.length > 0 ? (
+          hotTags.map((tag, index) => (
+            <>
+              <div className="flex gap-3">
+                <HotTags.Rank
+                  key={index}
+                  rank={index + 1}
+                  tag={`# ${tag.tag}`}
+                  color="amber"
+                  counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
+                />
+                {tag?.from
+                  .slice(0, 5)
+                  .map((fromItem: any, fromIndex: number) => (
+                    <Image
+                      width={32}
+                      height={32}
+                      alt={`pic-${fromIndex + 1}`}
+                      key={fromIndex}
+                      className={`w-[32px] h-[32px] rounded-full ${
+                        fromIndex !== 0 ? '-ml-5' : ''
+                      }`}
+                      src={fromItem.author.profile.image}
+                    />
+                  ))}
+              </div>
+            </>
+          ))
+        ) : (
+          <Typography.H2 className="text-center font-normal text-opacity-50">
+            No tags yet.
+          </Typography.H2>
+        )}
       </Content.Grid>
       <CreatePost />
     </Content.Main>
