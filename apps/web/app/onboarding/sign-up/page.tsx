@@ -14,8 +14,11 @@ interface FormErrors {
 }
 
 const profileSchema = z.object({
-  name: z.string().min(1, { message: 'Name is required' }),
-  bio: z.string().min(3, { message: 'Short bio is required' }).optional(),
+  name: z.string().max(24, { message: 'Maximum length 24 characters' }),
+  bio: z
+    .string()
+    .max(140, { message: 'Maximum length 140 characters' })
+    .optional(),
   website: z.string().url({ message: 'Invalid website URL' }).optional(),
   email: z.string().email({ message: 'Invalid email address' }).optional(),
   x: z.string().optional(),

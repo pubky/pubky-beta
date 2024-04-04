@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { minifyPubky } from '../../../libs/pubkyHelper';
+import { minifyText } from '../../../libs/textHelper';
 import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '../../components';
 
@@ -23,6 +24,7 @@ export default function Sidebar() {
   const [telegram, setTelegram] = useState('');
   const [x, setX] = useState('');
   const [website, setWebsite] = useState('');
+  const [email, setEmail] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
@@ -72,9 +74,13 @@ export default function Sidebar() {
             const telegram = profile.links.find(
               (link: { title: string }) => link.title === 'telegram'
             );
+            const email = profile.links.find(
+              (link: { title: string }) => link.title === 'email'
+            );
             setX(x?.url || '');
             setWebsite(website?.url || '');
             setTelegram(telegram?.url || '');
+            setEmail(email?.url || '');
           }
           setLoading(false);
         }
@@ -97,17 +103,20 @@ export default function Sidebar() {
               <Image
                 width={32}
                 height={32}
-                className="rounded-full"
+                className="w-[32px] h-[32px] rounded-full"
                 src={image}
                 alt="user-pic"
               />
-              <Typography.H2>{name}</Typography.H2>
+              <Typography.H2>{minifyText(name)}</Typography.H2>
             </div>
             <Typography.Label className="text-opacity-50">
               {pubky ? minifyPubky(pubky) : 'Loading...'}
             </Typography.Label>
-            <Typography.Body variant="medium" className="text-opacity-80">
-              {bio}
+            <Typography.Body
+              variant="medium"
+              className="text-opacity-80 break-all"
+            >
+              {minifyText(bio, 140)}
             </Typography.Body>
           </SideCard.Content>
         </div>
@@ -172,7 +181,21 @@ export default function Sidebar() {
       {(x || website || telegram) && (
         <div className="w-full">
           <SideCard.Header title="Links" variantTitle="label" />
-          <div className="gap-4 grid grid-cols-3 w-full">
+          <div className="gap-4 grid grid-cols-4 w-full">
+            {website && (
+              <Link target="_blank" href={website} className="w-full">
+                <SideCard.Content className="w-full h-24 justify-center items-center">
+                  <Icon.Globe />
+                </SideCard.Content>
+              </Link>
+            )}
+            {email && (
+              <Link target="_blank" href={`mailto:${email}`} className="w-full">
+                <SideCard.Content className="w-full h-24 justify-center items-center">
+                  <Icon.Envelope />
+                </SideCard.Content>
+              </Link>
+            )}
             {x && (
               <Link
                 target="_blank"
@@ -184,13 +207,7 @@ export default function Sidebar() {
                 </SideCard.Content>
               </Link>
             )}
-            {website && (
-              <Link target="_blank" href={website} className="w-full">
-                <SideCard.Content className="w-full h-24 justify-center items-center">
-                  <Icon.Youtube />
-                </SideCard.Content>
-              </Link>
-            )}
+
             {telegram && (
               <Link
                 target="_blank"

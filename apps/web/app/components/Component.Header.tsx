@@ -6,6 +6,7 @@ import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
 import { Modal } from './Modal';
 import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
+import { minifyText } from '../../libs/textHelper';
 
 type Tag = {
   value: string;
@@ -124,7 +125,11 @@ export default function Header({
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
-            <Menu.Header src={image} username={name} handler={handler} />
+            <Menu.Header
+              src={image}
+              username={minifyText(name)}
+              handler={handler}
+            />
             <div className="flex-col inline-flex">
               <Menu.Section
                 href="/home"

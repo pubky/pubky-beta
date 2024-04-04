@@ -43,6 +43,7 @@ import {
   Youtube,
 } from './Icon.Social';
 import { Clock, Calendar } from './Icon.Time';
+import { Globe } from './Icon.Maps';
 import {
   UserPlus,
   UserMinus,
@@ -56,6 +57,7 @@ import {
   PaperPlaneRight,
   ChatCircleText,
   Broadcast,
+  Envelope,
 } from './Icon.Communication';
 import { Activity } from './Icon.Health';
 import { Fire } from './Icon.Weather';
@@ -78,8 +80,10 @@ export const Icon = {
   Clock,
   DropdownIcon,
   DotsNine,
+  Envelope,
   Fire,
   GearSix,
+  Globe,
   GridFour,
   Iphone,
   ImageSquare,

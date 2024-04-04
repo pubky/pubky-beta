@@ -55,13 +55,7 @@ export default function Index() {
     <Content.Main>
       <Header
         className="hidden w-[400px] xl:w-[260px] md:block"
-        title={
-          loading ? (
-            <Skeleton.DisplayText className="h-8 w-22" />
-          ) : (
-            `${name}'s\u00A0Followers`
-          )
-        }
+        title="Followers"
       />
       {loading ? (
         <Skeleton.FollowerMe />

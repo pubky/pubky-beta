@@ -4,9 +4,10 @@ import React from 'react';
 interface CursorProps extends React.HTMLAttributes<HTMLInputElement> {
   children?: string;
   error?: string;
+  required?: boolean;
 }
 
-export const Cursor = ({ children, error, ...rest }: CursorProps) => {
+export const Cursor = ({ children, error, required, ...rest }: CursorProps) => {
   const baseCSS = `w-full h-24 bg-transparent rounded-[5px] outline-none text-white text-[17px] placeholder:text-white placeholder:text-opacity-30 font-normal font-InterTight leading-snug tracking-wide`;
 
   const errorCSS = `text-red-500 text-sm mt-2`;
@@ -17,6 +18,7 @@ export const Cursor = ({ children, error, ...rest }: CursorProps) => {
     <div className="relative">
       <input
         {...rest}
+        required={required}
         className={twMerge(
           baseCSS,
           rest.className,

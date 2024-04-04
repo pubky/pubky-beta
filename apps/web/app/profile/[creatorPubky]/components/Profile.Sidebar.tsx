@@ -1,18 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import {
-  Icon,
-  PostUtil,
-  Button,
-  Typography,
-  Post,
-  SideCard,
-} from '@social/ui-shared';
+import { Icon, Button, Typography, Post, SideCard } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { minifyPubky } from '../../../../libs/pubkyHelper';
+import { minifyText } from '../../../../libs/textHelper';
 import { useClientContext } from '../../../../contexts/client';
 import { Skeleton } from '../../../components';
 
@@ -120,13 +114,16 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
                 src={image}
                 alt="user-pic"
               />
-              <Typography.H2>{name}</Typography.H2>
+              <Typography.H2>{minifyText(name)}</Typography.H2>
             </div>
             <Typography.Label className="text-opacity-50">
               {creatorPubky ? minifyPubky(creatorPubky) : 'Loading...'}
             </Typography.Label>
-            <Typography.Body variant="medium" className="text-opacity-80">
-              {bio}
+            <Typography.Body
+              variant="medium"
+              className="text-opacity-80 break-all"
+            >
+              {minifyText(bio, 140)}
             </Typography.Body>
             <Button.Medium
               onClick={() => followUser()}
@@ -138,25 +135,27 @@ export default function Sidebar({ creatorPubky }: { creatorPubky: string }) {
           </SideCard.Content>
         </div>
       )}
+      {/**
       <div>
         <SideCard.Header title="Tagged as" variantTitle="label" />
         <SideCard.Content>
           <div className="flex-col gap-3 inline-flex">
             <Post.Footer className="mt-0">
-              {/* <PostUtil.Tag clicked color="amber">
+              <PostUtil.Tag clicked color="amber">
                 #Bitcoin
-              </PostUtil.Tag> */}
+              </PostUtil.Tag>
               <Button.Action
                 variant="custom"
                 size="small"
                 icon={<Icon.Plus />}
               />
               <PostUtil.Counter counter={0} />
-              {/* <Post.UserPic images={images} /> */}
+              <Post.UserPic images={images} />
             </Post.Footer>
           </div>
         </SideCard.Content>
       </div>
+      */}
       <div>
         <SideCard.Header title="Contacts" variantTitle="label" />
         <SideCard.Content>
