@@ -1,6 +1,3 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
 import { Content, Typography } from '@social/ui-shared';
 import Image from 'next/image';
@@ -19,23 +16,18 @@ interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Contact({ contacts }: ContactsProps) {
-  const [isHovered, setIsHovered] = useState(false);
   return (
     <>
       {contacts &&
         contacts.map((contact, index) => (
-          <>
-            <div key={index} className="flex-col lg:flex-row gap-6 inline-flex">
+          <div key={index} className="mt-12 mb-12">
+            <div className="flex-col lg:flex-row gap-12 inline-flex">
               <Link
                 href={`/profile/${contact.uri.replace('pubky:', '')}`}
                 className="w-full flex-col gap-6 inline-flex"
               >
                 <div className="gap-6 inline-flex">
-                  <div
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                    className="relative"
-                  >
+                  <div className="relative">
                     <Image
                       width={201}
                       height={201}
@@ -43,11 +35,6 @@ export default function Contact({ contacts }: ContactsProps) {
                       src={contact.profile.image}
                       alt={`contact-pic-${index + 1}`}
                     />
-                    {isHovered && (
-                      <Typography.H2 className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 p-4 rounded-full">
-                        {contact.profile.name}
-                      </Typography.H2>
-                    )}
                   </div>
                   <div className="flex-col gap-6 inline-flex">
                     <div className="flex-col gap-1 flex">
@@ -78,16 +65,12 @@ export default function Contact({ contacts }: ContactsProps) {
               <PostsLayout className="flex flex-col gap-6">
                 <Post
                   size="full"
-                  postId={{ uri: '', payload: { content: '' } }}
-                />
-                <Post
-                  size="full"
-                  postId={{ uri: '', payload: { content: '' } }}
+                  post={{ uri: '', payload: { content: '' } }}
                 />
               </PostsLayout>
             </div>
             {index !== contacts.length - 1 && <Content.Divider />}
-          </>
+          </div>
         ))}
     </>
   );
