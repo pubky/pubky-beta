@@ -43,31 +43,26 @@ export default function Index() {
           <Skeleton.HotTags />
         ) : hotTags.length > 0 ? (
           hotTags.map((tag, index) => (
-            <>
-              <div className="flex gap-3">
-                <HotTags.Rank
-                  key={index}
-                  rank={index + 1}
-                  tag={`# ${tag.tag}`}
-                  color="amber"
-                  counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
+            <div className="flex gap-3" key={index}>
+              <HotTags.Rank
+                rank={index + 1}
+                tag={`# ${tag.tag}`}
+                color="amber"
+                counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
+              />
+              {tag?.from.slice(0, 5).map((fromItem: any, fromIndex: number) => (
+                <Image
+                  width={32}
+                  height={32}
+                  alt={`pic-${fromIndex + 1}`}
+                  key={fromIndex}
+                  className={`w-[32px] h-[32px] rounded-full ${
+                    fromIndex !== 0 ? '-ml-5' : ''
+                  }`}
+                  src={fromItem.author.profile.image}
                 />
-                {tag?.from
-                  .slice(0, 5)
-                  .map((fromItem: any, fromIndex: number) => (
-                    <Image
-                      width={32}
-                      height={32}
-                      alt={`pic-${fromIndex + 1}`}
-                      key={fromIndex}
-                      className={`w-[32px] h-[32px] rounded-full ${
-                        fromIndex !== 0 ? '-ml-5' : ''
-                      }`}
-                      src={fromItem.author.profile.image}
-                    />
-                  ))}
-              </div>
-            </>
+              ))}
+            </div>
           ))
         ) : (
           <Typography.H2 className="text-center font-normal text-opacity-50">

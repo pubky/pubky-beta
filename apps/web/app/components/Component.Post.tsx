@@ -35,7 +35,7 @@ export default function Post({
   const { createTag, setRefreshList } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
-  const [bookmark, setBookmark] = useState(false);
+  // const [bookmark, setBookmark] = useState(false);
   const [sortedTags, setSortedTags] = useState<any[]>([]);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function Post({
 
   const handleSubmit = async (tag: string) => {
     await createTag(post.uri, tag);
-    setRefreshList(true);
+    // setRefreshList(true);
   };
 
   if (!post) return <Skeleton.Post size={size} />;
@@ -202,7 +202,7 @@ export default function Post({
                   icon={<Icon.ChatCircleText size="16" />}
                   counter={0}
                 />
-                <Button.Action
+                {/* <Button.Action
                   size="small"
                   variant="custom"
                   icon={<Icon.Repost size="16" />}
@@ -211,8 +211,8 @@ export default function Post({
                     event.stopPropagation();
                     setShowModalRepost(true);
                   }}
-                />
-                <Button.Action
+                /> */}
+                {/* <Button.Action
                   size="small"
                   variant="custom"
                   icon={
@@ -225,7 +225,7 @@ export default function Post({
                     event.stopPropagation();
                     setBookmark(!bookmark);
                   }}
-                />
+                /> */}
               </PostUI.Actions>
             </PostUI.MainCard>
           </div>
