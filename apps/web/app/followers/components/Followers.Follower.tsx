@@ -1,7 +1,11 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 import Link from 'next/link';
+import { useClientContext } from '../../../contexts/client';
 
 interface FollowersProps extends React.HTMLAttributes<HTMLDivElement> {
   followers?: Array<{
@@ -12,9 +16,34 @@ interface FollowersProps extends React.HTMLAttributes<HTMLDivElement> {
     };
     uri: string;
   }>;
+  creatorPubky?: string | null;
 }
 
-export default function Follower({ followers }: FollowersProps) {
+export default function Follower({ followers, creatorPubky }: FollowersProps) {
+  const [followed, setFollowed] = useState(false);
+  const { follow, unfollow } = useClientContext();
+
+  const followUser = async () => {
+    try {
+      if (!creatorPubky) return;
+
+      const result = await follow(creatorPubky);
+      setFollowed(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const unfollowUser = async () => {
+    try {
+      if (!creatorPubky) return;
+
+      const result = await unfollow(creatorPubky);
+      setFollowed(!result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       {followers &&
@@ -62,12 +91,23 @@ export default function Follower({ followers }: FollowersProps) {
                   </Typography.Label>
                   <Typography.Body variant="medium-bold">12</Typography.Body>
                 </div> */}
-                <Button.Medium
-                  icon={<Icon.UserPlus size="16" />}
-                  className="lg:ml-6 w-[114px]"
-                >
-                  Follow
-                </Button.Medium>
+                {followed ? (
+                  <Button.Medium
+                    onClick={() => unfollowUser()}
+                    icon={<Icon.UserPlus size="16" />}
+                    className="w-[154px]"
+                  >
+                    Unfollow me
+                  </Button.Medium>
+                ) : (
+                  <Button.Medium
+                    onClick={() => followUser()}
+                    icon={<Icon.UserPlus size="16" />}
+                    className="w-[154px]"
+                  >
+                    Follow me
+                  </Button.Medium>
+                )}
               </div>
             </div>
             {index !== followers.length - 1 && <Content.Divider />}

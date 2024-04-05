@@ -17,9 +17,9 @@ interface Followers {
 }
 
 export default function Sidebar({
-  creatorPubky = null,
+  creatorPubky,
 }: {
-  creatorPubky: string | null;
+  creatorPubky?: string | null;
 }) {
   const { pubky, follow, unfollow, getProfile, listFollowers, getUser } =
     useClientContext();
@@ -227,7 +227,7 @@ export default function Sidebar({
               onClick={(event) => {
                 event.stopPropagation();
                 (followers?.count ?? 0) > 0 &&
-                  router.push(`/followers/${creatorPubky ?? creatorPubky}`);
+                  router.push(`/followers/${creatorPubky ? creatorPubky : ''}`);
               }}
               className={`flex-col gap-3 inline-flex ${
                 (followers?.count ?? 0) > 0 && 'cursor-pointer'
