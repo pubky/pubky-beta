@@ -20,7 +20,7 @@ export default function Contact({ contacts }: ContactsProps) {
       {contacts &&
         contacts.map((contact, index) => (
           <div key={index} className="mt-12 mb-12">
-            <div className="flex-col lg:flex-row gap-12 inline-flex">
+            <div className="flex flex-col lg:flex-row gap-12">
               <Link
                 href={`/profile/${contact.uri.replace('pubky:', '')}`}
                 className="w-[350px] flex-col gap-6 inline-flex"
