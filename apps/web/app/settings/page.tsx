@@ -55,7 +55,7 @@ export default function Index() {
     setHandler(minifyPubky(pubky));
     async function fetchData() {
       try {
-        const profile = await getProfile(false);
+        const { profile } = await getProfile(false);
 
         setName(profile.name);
         setBio(profile.bio);
