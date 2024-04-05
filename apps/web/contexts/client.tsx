@@ -57,6 +57,26 @@ type ClientContextType = {
 
 const ClientContext = createContext<ClientContextType>();
 
+// Cache invalidation here seems a bit hacky and should be better
+// done somewhere else, the relay? accept a storage to the client?
+const homeserverUrlCache = localStorageUtils.get('homeserverUrl')
+const homeserverUrl = homeserverUrlCache?.timestamp > (Date.now() - (60 * 60 * 1000)) ? homeserverUrlCache.url : undefined
+console.log({ homeserverUrl })
+
+// Calling the client as soon as possible, because... we want to find the server as soon as possible!
+// and we aren't really switching homeserver according to the user settings any time soon.
+let client = new Client(HOMESERVER, {
+  relay: PKARR_RELAY,
+  homeserverUrl
+});
+
+client.ready().then(() => {
+  localStorageUtils.set('homeserverUrl', {
+    timestamp: Date.now(),
+    url: client.homeserverUrl
+  })
+})
+
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
     (localStorageUtils.get('pubky') as Layout) || null
@@ -67,11 +87,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
   const [refreshList, setRefreshList] = useState<boolean>(false);
 
-  const client = useMemo(() => {
-    return new Client(HOMESERVER, {
-      relay: PKARR_RELAY,
-    });
-  }, [pubky]);
 
   const isLoggedIn = useCallback(async (): Promise<string | boolean> => {
     try {
