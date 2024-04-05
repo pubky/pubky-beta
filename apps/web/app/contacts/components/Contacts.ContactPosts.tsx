@@ -1,0 +1,40 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+
+import { Post, PostsLayout } from '../../components';
+import { useEffect, useState } from 'react';
+import { useClientContext } from '../../../contexts/client';
+
+interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
+  creatorPubky?: string;
+}
+
+export default function Contact({ creatorPubky }: ContactsProps) {
+  const { listUserFeed } = useClientContext();
+  const [posts, setPosts] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        if (!creatorPubky) return;
+
+        const results = await listUserFeed(creatorPubky, '', 2);
+
+        if (!results || !results.feed) return;
+
+        setPosts(results.feed);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchPosts();
+  }, [creatorPubky, listUserFeed]);
+
+  return (
+    <PostsLayout className="flex flex-col w-full gap-6 mb-6">
+      {posts.map((post, index) => (
+        <Post key={index} size="full" post={post} layout="list" />
+      ))}
+    </PostsLayout>
+  );
+}

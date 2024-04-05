@@ -13,7 +13,7 @@ import {
   Skeleton,
   WhoFollow,
 } from '../components';
-import { DropDown } from '../components/DropDown';
+// import { DropDown } from '../components/DropDown';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
@@ -58,7 +58,7 @@ export default function Index() {
 
     setPosts(results.feed);
 
-    if (results.feed.length >= 5) {
+    if (results.feed.length >= 6) {
       setShowLoadMore(true);
     }
 
@@ -112,12 +112,12 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Streams">
-        <div className="hidden lg:flex gap-6 items-center">
+        {/* <div className="hidden lg:flex gap-6 items-center">
           <DropDown.Content />
           <DropDown.Reach />
           <DropDown.SortPosts />
           <DropDown.Layout />
-        </div>
+        </div> */}
       </Header>
       <Content.Grid
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
