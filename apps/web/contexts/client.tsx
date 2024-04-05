@@ -183,13 +183,13 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         await client.ready();
 
-        const result = await client.social.profile.get(pk);
+        const result = await client.social.profile.indexed(pk);
 
         if (!result.ok)
           throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
 
-        localStorageUtils.set('profile', result.value);
-        setProfile(result.value);
+        localStorageUtils.set('profile', result.value.profile);
+        setProfile(result.value.profile);
 
         return result.value;
       } catch (error) {
@@ -206,12 +206,12 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         await client.ready();
 
-        const result = await client.social.profile.get(pk);
+        const result = await client.social.profile.indexed(pk);
 
         if (!result.ok)
           throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
 
-        return result.value;
+        return result.value?.profile;
       } catch (error) {
         console.log(error);
       }
