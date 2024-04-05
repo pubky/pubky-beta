@@ -36,7 +36,7 @@ type ClientContextType = {
   createTag: (uri: string, tag: any) => Promise<any>;
   getHotTags: () => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
-  listUserFeed: (pubky: string, cursor: string) => Promise<any>;
+  listUserFeed: (pubky: string, cursor: string, limit?: number) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
   listFollowing: (pubky: string) => Promise<any>;
   getMostFollowed: () => Promise<any>;
@@ -447,14 +447,14 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const listUserFeed = useCallback(
-    async (pk: string, cursor: string) => {
+    async (pk: string, cursor: string, limit = 5) => {
       try {
         if (!pk) throw new Error('Get list posts failed');
 
         await client.ready();
 
         const result = await client.social.streams.userFeed(pk, {
-          limit: 5,
+          limit: limit,
           cursor: cursor,
         });
 
