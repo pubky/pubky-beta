@@ -50,7 +50,7 @@ export default function Header({
     fetchData();
     async function fetchProfile() {
       try {
-        const profile = await getProfile();
+        const { profile } = await getProfile();
         if (profile) {
           setImage(profile?.image || '/images/Userpic.png');
           setName(profile?.name || '');
