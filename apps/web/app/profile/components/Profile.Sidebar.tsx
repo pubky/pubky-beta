@@ -2,7 +2,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Icon, Typography, Post, SideCard } from '@social/ui-shared';
+import { Icon, Typography, Post, SideCard, Button } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -21,7 +21,8 @@ export default function Sidebar({
 }: {
   creatorPubky: string | null;
 }) {
-  const { pubky, getProfile, listFollowers, getUser } = useClientContext();
+  const { pubky, follow, getProfile, listFollowers, getUser } =
+    useClientContext();
   const router = useRouter();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
@@ -106,6 +107,16 @@ export default function Sidebar({
     fetchData();
   }, [pubky, getProfile, getUser, creatorPubky]);
 
+  const followUser = async () => {
+    try {
+      if (!creatorPubky) return;
+
+      await follow(creatorPubky);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
       {loading ? (
@@ -132,7 +143,14 @@ export default function Sidebar({
               className="text-opacity-80 break-all"
             >
               {minifyText(bio, 140)}
-            </Typography.Body>
+            </Typography.Body>{' '}
+            <Button.Medium
+              onClick={() => followUser()}
+              variant="default"
+              icon={<Icon.UserPlus size="16" />}
+            >
+              Follow me
+            </Button.Medium>
           </SideCard.Content>
         </div>
       )}
