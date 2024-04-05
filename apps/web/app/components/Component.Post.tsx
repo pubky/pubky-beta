@@ -95,9 +95,8 @@ export default function Post({
                     alt="user"
                   />
                   <div
-                    className={`${
-                      layout !== 'grid' && 'lg:flex'
-                    } justify-start items-center gap-4`}
+                    className={`${layout !== 'grid' && 'lg:flex'
+                      } justify-start items-center gap-4`}
                   >
                     <PostUI.Username
                       className={size === 'full' ? 'lg:text-2xl' : ''}
@@ -145,9 +144,8 @@ export default function Post({
                 </div>
                 {post?.tags?.length > 0 && (
                   <div
-                    className={`flex-col inline-flex gap-4 ${
-                      size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'
-                    }`}
+                    className={`flex-col inline-flex gap-4 ${size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'
+                      }`}
                   >
                     {sortedTags
                       .slice(0, size === 'full' ? 3 : 1)
@@ -174,10 +172,9 @@ export default function Post({
                                 height={32}
                                 alt={`pic-${fromIndex + 1}`}
                                 key={fromIndex}
-                                className={`w-[32px] h-[32px] rounded-full ${
-                                  fromIndex !== 0 ? '-ml-5' : ''
-                                }`}
-                                src={fromItem.author.profile.image}
+                                className={`w-[32px] h-[32px] rounded-full ${fromIndex !== 0 ? '-ml-5' : ''
+                                  }`}
+                                src={fromItem.author?.profile?.image}
                               />
                             ))}
                         </PostUI.Footer>
