@@ -2,6 +2,7 @@ import { Content, SideCard, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
+import { minifyText } from '../../libs/textHelper';
 import { Skeleton } from '.';
 import { Followed } from '../../types';
 
@@ -36,7 +37,7 @@ export default function WhoFollow() {
               <SideCard.User
                 uri={followed.id}
                 src={followed.profile.image}
-                username={followed.profile.name}
+                username={minifyText(followed.profile.name)}
                 label={minifyPubky(followed.id)}
               >
                 <SideCard.FollowAction />

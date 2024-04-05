@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Button, Content, Typography } from '@social/ui-shared';
 import { Profile } from './components';
 import { CreatePost, Header, Post, PostsLayout, Skeleton } from '../components';
 import { useClientContext } from '../../contexts/client';
-import { useEffect, useState } from 'react';
+import { minifyText } from '../../libs/textHelper';
 
 export default function Index() {
   const { pubky, refreshList, setRefreshList, listUserFeed, getUserIndexed } =
@@ -98,7 +99,10 @@ export default function Index() {
       <div>
         <Profile.HeaderBackground />
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center sm:justify-between relative z-10">
-          <Profile.Handle username={name} className="order-2 lg:order-1" />
+          <Profile.Handle
+            username={minifyText(name)}
+            className="order-2 lg:order-1"
+          />
           <Profile.Avatar
             username={name}
             src={pic}

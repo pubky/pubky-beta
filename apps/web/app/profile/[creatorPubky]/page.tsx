@@ -3,7 +3,7 @@
 'use client';
 
 import { Button, Content, Typography } from '@social/ui-shared';
-import { Profile } from './components';
+import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
 import {
   CreatePost,

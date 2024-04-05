@@ -11,6 +11,7 @@ import {
 } from '@social/ui-shared';
 import { useClientContext } from '../../../../../contexts/client';
 import { minifyPubky } from '../../../../../libs/pubkyHelper';
+import { minifyText } from '../../../../../libs/textHelper';
 
 export default function ReplyForm() {
   const { getProfile, pubky } = useClientContext();
@@ -43,7 +44,7 @@ export default function ReplyForm() {
                   alt="user"
                 />
                 <Post.Username className="lg:text-2xl">
-                  {username}
+                  {minifyText(username, 24)}
                 </Post.Username>
                 {pk && (
                   <div className="hidden items-center gap-1 sm:inline-flex">
