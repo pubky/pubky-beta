@@ -173,9 +173,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const getProfile = useCallback(
     async (cache = true): Promise<any> => {
       try {
-        if (cache) {
-          if (profile) return profile;
-        }
+        // if (cache) {
+        //   if (profile) return profile;
+        // }
 
         const pk = await isLoggedIn();
 
