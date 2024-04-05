@@ -36,8 +36,8 @@ export default function WhoFollow() {
             <div key={index + 1}>
               <SideCard.User
                 uri={followed.id}
-                src={followed.profile.image}
-                username={minifyText(followed.profile.name)}
+                src={followed?.profile?.image}
+                username={minifyText(followed?.profile?.name)}
                 label={minifyPubky(followed.id)}
               >
                 <SideCard.FollowAction />

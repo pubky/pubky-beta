@@ -65,7 +65,7 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const profile = await getProfile();
+        const { profile } = await getProfile();
         if (profile) {
           setImage(profile?.image || '/images/Userpic.png');
           setName(profile?.name || '');
