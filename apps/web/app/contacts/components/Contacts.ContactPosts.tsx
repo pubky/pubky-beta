@@ -31,9 +31,9 @@ export default function Contact({ creatorPubky }: ContactsProps) {
   }, [creatorPubky, listUserFeed]);
 
   return (
-    <PostsLayout className="grid md:grid-cols-2 gap-6 w-full gap-6 mb-6">
+    <PostsLayout className="grid w-full gap-6 mb-6">
       {posts.map((post, index) => (
-        <Post key={index} post={post} layout="list" />
+        <Post key={index} post={post} layout="list" className="w-full" />
       ))}
     </PostsLayout>
   );
