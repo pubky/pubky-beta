@@ -23,6 +23,7 @@ export default function Replies() {
           <SideCard.Header title="Participants" />
           <SideCard.Content>
             <SideCard.User
+              uri=""
               src="/images/user.png"
               username="John Carvalho"
               label="@1W78...gR31"
@@ -36,6 +37,7 @@ export default function Replies() {
             </SideCard.User>
             <Content.Divider className="my-2.5" />
             <SideCard.User
+              uri=""
               src="/images/user.png"
               username="Anna Pleb"
               label="@1W78...gR31"

@@ -16,6 +16,7 @@ import { Modal } from './Modal';
 import Repost from './Component.Repost';
 import { timeAgo } from '../../libs/time';
 import { encodePostUri, minifyPubky } from '../../libs/pubkyHelper';
+import { minifyText } from '../../libs/textHelper';
 import { Skeleton } from '.';
 import { useRouter } from 'next/navigation';
 import { useClientContext } from '../../contexts/client';
@@ -34,7 +35,7 @@ export default function Post({
   const { createTag, setRefreshList } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
-  const [bookmark, setBookmark] = useState(false);
+  // const [bookmark, setBookmark] = useState(false);
   const [sortedTags, setSortedTags] = useState<any[]>([]);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function Post({
 
   const handleSubmit = async (tag: string) => {
     await createTag(post.uri, tag);
-    setRefreshList(true);
+    // setRefreshList(true);
   };
 
   if (!post) return <Skeleton.Post size={size} />;
@@ -94,13 +95,15 @@ export default function Post({
                     alt="user"
                   />
                   <div
-                    className={`${layout !== 'grid' && 'lg:flex'
-                      } justify-start items-center gap-4`}
+                    className={`${
+                      layout !== 'grid' && 'lg:flex'
+                    } justify-start items-center gap-4`}
                   >
                     <PostUI.Username
                       className={size === 'full' ? 'lg:text-2xl' : ''}
                     >
-                      {post?.author?.profile?.name}
+                      {post?.author?.profile?.name &&
+                        minifyText(post?.author?.profile?.name, 24)}
                     </PostUI.Username>
                     <Typography.Label className="text-opacity-30">
                       {minifyPubky(post?.author?.id)}
@@ -142,8 +145,9 @@ export default function Post({
                 </div>
                 {post?.tags?.length > 0 && (
                   <div
-                    className={`flex-col inline-flex gap-4 ${size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'
-                      }`}
+                    className={`flex-col inline-flex gap-4 ${
+                      size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'
+                    }`}
                   >
                     {sortedTags
                       .slice(0, size === 'full' ? 3 : 1)
@@ -170,8 +174,9 @@ export default function Post({
                                 height={32}
                                 alt={`pic-${fromIndex + 1}`}
                                 key={fromIndex}
-                                className={`w-[32px] h-[32px] rounded-full ${fromIndex !== 0 ? '-ml-5' : ''
-                                  }`}
+                                className={`w-[32px] h-[32px] rounded-full ${
+                                  fromIndex !== 0 ? '-ml-5' : ''
+                                }`}
                                 src={fromItem.author.profile.image}
                               />
                             ))}
@@ -197,7 +202,7 @@ export default function Post({
                   icon={<Icon.ChatCircleText size="16" />}
                   counter={0}
                 />
-                <Button.Action
+                {/* <Button.Action
                   size="small"
                   variant="custom"
                   icon={<Icon.Repost size="16" />}
@@ -206,8 +211,8 @@ export default function Post({
                     event.stopPropagation();
                     setShowModalRepost(true);
                   }}
-                />
-                <Button.Action
+                /> */}
+                {/* <Button.Action
                   size="small"
                   variant="custom"
                   icon={
@@ -220,7 +225,7 @@ export default function Post({
                     event.stopPropagation();
                     setBookmark(!bookmark);
                   }}
-                />
+                /> */}
               </PostUI.Actions>
             </PostUI.MainCard>
           </div>

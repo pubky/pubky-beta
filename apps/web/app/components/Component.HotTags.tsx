@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { SideCard, Typography } from '@social/ui-shared';
-import { DropDown } from '../components/DropDown';
+// import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '.';
@@ -32,7 +32,7 @@ export default function HotTags() {
   return (
     <div>
       <SideCard.Header title="Hot tags">
-        <DropDown.TagsTimeframe type="text" />
+        {/** <DropDown.TagsTimeframe type="text" /> */}
       </SideCard.Header>
       <SideCard.Content>
         {loading ? (

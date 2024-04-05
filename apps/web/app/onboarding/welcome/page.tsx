@@ -14,6 +14,7 @@ import {
 import { Onboarding } from '../components';
 import { useClientContext } from '../../../contexts/client';
 import { minifyPubky } from '../../../libs/pubkyHelper';
+import { minifyText } from '../../../libs/textHelper';
 import { Skeleton } from '../../components';
 
 export default function Index() {
@@ -97,7 +98,7 @@ export default function Index() {
   }, [pubky, getProfile]);
 
   const profile = {
-    name: name,
+    name: minifyText(name),
     handler: handler,
     image: image,
     bio: bio,
@@ -113,7 +114,11 @@ export default function Index() {
       <Typography.Display>
         <span className="flex">
           Welcome,{' '}
-          {loading ? <Skeleton.DisplayText className="ml-6 mt-10" /> : name}
+          {loading ? (
+            <Skeleton.DisplayText className="ml-6 mt-10" />
+          ) : (
+            minifyText(name)
+          )}
         </span>
       </Typography.Display>
       <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">

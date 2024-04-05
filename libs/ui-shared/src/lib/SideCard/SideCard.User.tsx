@@ -38,7 +38,7 @@ export const User = ({
         <Image
           width={width}
           height={height}
-          className="rounded-full"
+          className="w-[48px] h-[48px] rounded-full"
           alt={alt}
           src={src}
         />

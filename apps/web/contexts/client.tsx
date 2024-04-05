@@ -322,8 +322,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         const result = await client.social.posts.get(uri);
 
-        console.log(result);
-
         if (!result.ok)
           throw new Error(`Get post:${pk} failed: ${result.error.message}`);
 
