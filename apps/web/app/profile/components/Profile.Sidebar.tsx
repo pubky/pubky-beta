@@ -16,8 +16,12 @@ interface Followers {
   followers: [];
 }
 
-export default function Sidebar() {
-  const { pubky, getProfile, listFollowers } = useClientContext();
+export default function Sidebar({
+  creatorPubky = null,
+}: {
+  creatorPubky: string | null;
+}) {
+  const { pubky, getProfile, listFollowers, getUser } = useClientContext();
   const router = useRouter();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
@@ -34,9 +38,15 @@ export default function Sidebar() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!pubky) return;
+        let pubkey = creatorPubky;
 
-        const followers = await listFollowers(pubky);
+        if (!pubkey) {
+          pubkey = pubky;
+        }
+
+        if (!pubkey) return;
+
+        const followers = await listFollowers(pubkey);
 
         if (followers) {
           setImages(
@@ -53,12 +63,17 @@ export default function Sidebar() {
       }
     }
     fetchData();
-  }, [pubky, listFollowers]);
+  }, [pubky, listFollowers, creatorPubky]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const profile = await getProfile();
+        let profile = null;
+        if (creatorPubky) {
+          profile = await getUser(creatorPubky);
+        } else {
+          profile = await getProfile();
+        }
         if (profile) {
           setName(profile?.name || '');
           setBio(profile?.bio || 'No bio.');
@@ -89,7 +104,7 @@ export default function Sidebar() {
       }
     }
     fetchData();
-  }, [pubky, getProfile]);
+  }, [pubky, getProfile, getUser, creatorPubky]);
 
   return (
     <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
