@@ -176,7 +176,8 @@ export default function Sidebar({
             <div
               onClick={(event) => {
                 event.stopPropagation();
-                (followers?.count ?? 0) > 0 && router.push(`/followers`);
+                (followers?.count ?? 0) > 0 &&
+                  router.push(`/followers/${creatorPubky ?? creatorPubky}`);
               }}
               className={`flex-col gap-3 inline-flex ${
                 (followers?.count ?? 0) > 0 && 'cursor-pointer'

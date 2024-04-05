@@ -6,7 +6,7 @@ interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Root({ children, ...rest }: RootProps) {
   return (
-    <div className="flex-col gap-6 inline-flex">
+    <div className="flex-col gap-6 flex">
       <div className="z-auto">
         <div
           {...rest}

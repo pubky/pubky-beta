@@ -20,9 +20,9 @@ export default function Follower({ followers }: FollowersProps) {
       {followers &&
         followers.map((follower, index) => (
           <div key={index} className="w-full">
-            <div className="flex-col lg:flex-row justify-between gap-4 inline-flex w-full">
+            <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
               <Link
-                className="flex gap-4"
+                className="flex gap-4 lg:w-[450px] xl:w-[350px]"
                 href={`/profile/${follower.uri.replace('pubky:', '')}`}
               >
                 <Image
@@ -30,7 +30,7 @@ export default function Follower({ followers }: FollowersProps) {
                   height={48}
                   src={follower.profile.image}
                   alt={`follower-pic-${index + 1}`}
-                  className="rounded-full"
+                  className="rounded-full w-[48px] h-[48px]"
                 />
                 <div className="flex-col justify-center items-start gap-1 inline-flex">
                   <Typography.Label className="text-opacity-30 -mb-1">
@@ -41,7 +41,7 @@ export default function Follower({ followers }: FollowersProps) {
                   </Typography.Body>
                 </div>
               </Link>
-              <div className="lg:flex justify-center items-center">
+              <div className="lg:flex justify-start items-center lg:w-full">
                 <Typography.Body
                   variant="small"
                   className="lg:px-12 text-opacity-80 leading-[18px]"
@@ -50,7 +50,7 @@ export default function Follower({ followers }: FollowersProps) {
                 </Typography.Body>
               </div>
               <div className="flex gap-4">
-                <div className="flex-col justify-start items-start gap-1 inline-flex">
+                {/* <div className="flex-col justify-start items-start gap-1 inline-flex">
                   <Typography.Label className="uppercase text-opacity-30 -mb-1">
                     Tags
                   </Typography.Label>
@@ -61,7 +61,7 @@ export default function Follower({ followers }: FollowersProps) {
                     Posts
                   </Typography.Label>
                   <Typography.Body variant="medium-bold">12</Typography.Body>
-                </div>
+                </div> */}
                 <Button.Medium
                   icon={<Icon.UserPlus size="16" />}
                   className="lg:ml-6 w-[114px]"
