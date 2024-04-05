@@ -56,10 +56,9 @@ export default function Index() {
                   height={32}
                   alt={`pic-${fromIndex + 1}`}
                   key={fromIndex}
-                  className={`w-[32px] h-[32px] rounded-full ${
-                    fromIndex !== 0 ? '-ml-5' : ''
-                  }`}
-                  src={fromItem.author.profile.image}
+                  className={`w-[32px] h-[32px] rounded-full ${fromIndex !== 0 ? '-ml-5' : ''
+                    }`}
+                  src={fromItem.author?.profile?.image}
                 />
               ))}
             </div>
