@@ -487,7 +487,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         await client.ready();
 
         const result = await client.social.streams.get(pk, {
-          limit: 5,
+          limit: 6,
           cursor: cursor,
           reach: reach ? reach : 'all',
           tags: tags,
