@@ -36,7 +36,7 @@ type ClientContextType = {
   createTag: (uri: string, tag: any) => Promise<any>;
   getHotTags: () => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
-  listUserFeed: (pubky: string, cursor: string) => Promise<any>;
+  listUserFeed: (pubky: string, cursor: string, limit?: number) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
   listFollowing: (pubky: string) => Promise<any>;
   getMostFollowed: () => Promise<any>;
@@ -51,7 +51,8 @@ type ClientContextType = {
     recoveryFile: Buffer
   ) => Promise<Uint8Array>;
   setRefreshList: (value: boolean) => void;
-  follow: (pk: string) => Promise<any>;
+  follow: (pk: string) => Promise<boolean>;
+  unfollow: (pk: string) => Promise<boolean>;
 };
 
 const ClientContext = createContext<ClientContextType>();
@@ -336,11 +337,11 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const follow = useCallback(
     async (pk: string) => {
       try {
-        if (!pk) throw new Error('Get list followers failed');
+        if (!pk) throw new Error('Pubky required');
 
         const pkLogged = await isLoggedIn();
 
-        if (!pkLogged) throw new Error('Post follow failed: not logged in.');
+        if (!pkLogged) throw new Error('Not logged in.');
 
         await client.ready();
 
@@ -349,9 +350,35 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         if (!result.ok)
           throw new Error(`Post follow:${pk} failed: ${result.error.message}`);
 
-        return result.value;
+        return true;
       } catch (error) {
         console.log(error);
+        return false;
+      }
+    },
+    [client]
+  );
+
+  const unfollow = useCallback(
+    async (pk: string) => {
+      try {
+        if (!pk) throw new Error('Pubky required');
+
+        const pkLogged = await isLoggedIn();
+
+        if (!pkLogged) throw new Error('Not logged in.');
+
+        await client.ready();
+
+        const result = await client.social.graph.unfollow(pkLogged, pk);
+
+        if (!result.ok)
+          throw new Error(`Unfollow:${pk} failed: ${result.error.message}`);
+
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
       }
     },
     [client]
@@ -420,14 +447,14 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const listUserFeed = useCallback(
-    async (pk: string, cursor: string) => {
+    async (pk: string, cursor: string, limit = 5) => {
       try {
         if (!pk) throw new Error('Get list posts failed');
 
         await client.ready();
 
         const result = await client.social.streams.userFeed(pk, {
-          limit: 5,
+          limit: limit,
           cursor: cursor,
         });
 
@@ -449,7 +476,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       tags?: string[]
     ) => {
       try {
-        // TODO: find a way to memoize the client across page referesh
+        // TODO: find a way to memoize the client across page refresh
         // that will basically require extracting the internal caches,
         // and load it in subsequent client instances.
 
@@ -460,7 +487,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         await client.ready();
 
         const result = await client.social.streams.get(pk, {
-          limit: 5,
+          limit: 6,
           cursor: cursor,
           reach: reach ? reach : 'all',
           tags: tags,
@@ -526,6 +553,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         getMostFollowed,
         setRefreshList,
         follow,
+        unfollow,
       }}
     >
       {children}

@@ -21,7 +21,7 @@ export default function Sidebar({
 }: {
   creatorPubky: string | null;
 }) {
-  const { pubky, follow, getProfile, listFollowers, getUser } =
+  const { pubky, follow, unfollow, getProfile, listFollowers, getUser } =
     useClientContext();
   const router = useRouter();
   const [name, setName] = useState('');
@@ -35,6 +35,7 @@ export default function Sidebar({
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [followers, setFollowers] = useState<Followers | null>(null);
   const [images, setImages] = useState<{ alt: string; src: string }[]>([]);
+  const [followed, setFollowed] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -58,13 +59,20 @@ export default function Sidebar({
           );
           setFollowers(followers);
           setLoadingFollowers(false);
+
+          followers.followers.forEach((user: any) => {
+            const uri = user.uri.replace('pubky:', '');
+            if (uri === pubky) {
+              setFollowed(true);
+            }
+          });
         }
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, [pubky, listFollowers, creatorPubky]);
+  }, [pubky, followed, listFollowers, creatorPubky]);
 
   useEffect(() => {
     async function fetchData() {
@@ -111,7 +119,19 @@ export default function Sidebar({
     try {
       if (!creatorPubky) return;
 
-      await follow(creatorPubky);
+      const result = await follow(creatorPubky);
+      setFollowed(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const unfollowUser = async () => {
+    try {
+      if (!creatorPubky) return;
+
+      const result = await unfollow(creatorPubky);
+      setFollowed(!result);
     } catch (error) {
       console.log(error);
     }
@@ -144,13 +164,25 @@ export default function Sidebar({
             >
               {minifyText(bio, 140)}
             </Typography.Body>{' '}
-            <Button.Medium
-              onClick={() => followUser()}
-              variant="default"
-              icon={<Icon.UserPlus size="16" />}
-            >
-              Follow me
-            </Button.Medium>
+            {followed ? (
+              <Button.Medium
+                onClick={() => unfollowUser()}
+                variant="default"
+                icon={<Icon.UserPlus size="16" />}
+                className={!creatorPubky ? 'hidden' : ''}
+              >
+                Unfollow me
+              </Button.Medium>
+            ) : (
+              <Button.Medium
+                onClick={() => followUser()}
+                variant="default"
+                icon={<Icon.UserPlus size="16" />}
+                className={!creatorPubky ? 'hidden' : ''}
+              >
+                Follow me
+              </Button.Medium>
+            )}
           </SideCard.Content>
         </div>
       )}
