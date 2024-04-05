@@ -112,11 +112,10 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Streams">
-         <div className="hidden lg:flex gap-6 items-center">
-         {/* <DropDown.Content />
+        <div className="hidden lg:flex gap-6 items-center">
+          <DropDown.Content />
           <DropDown.Reach />
           <DropDown.SortPosts />
-          */}
           <DropDown.Layout />
         </div>
       </Header>

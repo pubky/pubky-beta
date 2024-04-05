@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../components';
 import { HotTags } from './components';
-// import { DropDown } from '../components/DropDown';
+import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { Tag } from '../../types';
 
@@ -33,10 +33,10 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="w-52 xl:w-36 hidden md:block" title="Hot&#160;Tags">
-        {/* <div className="hidden lg:flex gap-6 items-center">
+        <div className="hidden lg:flex gap-6 items-center">
           <DropDown.HotTagsReach />
           <DropDown.TagsTimeframe />
-        </div> */}
+        </div>
       </Header>
       <Content.Grid className="flex-col flex gap-3">
         {loading ? (
