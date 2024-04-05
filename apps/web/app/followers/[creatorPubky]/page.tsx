@@ -78,7 +78,10 @@ export default function Index({
           {loadingFollowers ? (
             <Skeleton.Followers />
           ) : (
-            <Followers.Follower followers={followers?.followers} />
+            <Followers.Follower
+              creatorPubky={creatorPubky}
+              followers={followers?.followers}
+            />
           )}
         </Followers.Root>
       </Content.Grid>

@@ -18,7 +18,7 @@ export default function Me({ name, pubkey, image, followersCount }: MeProps) {
             <Image
               width={32}
               height={32}
-              className="rounded-full"
+              className="w-[32px] h-[32px] rounded-full"
               src={image}
               alt="user-pic"
             />

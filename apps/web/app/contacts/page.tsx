@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../components';
 import { Contacts } from './components';
-// import { DropDown } from '../components/DropDown';
+import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 
 interface Contacts {
@@ -38,11 +38,11 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Contacts">
-        {/* <div className="hidden lg:flex gap-6 items-center">
+        <div className="hidden lg:flex gap-6 items-center">
           <DropDown.Contacts />
           <DropDown.SortFriends />
           <DropDown.ContactsLayout />
-        </div> */}
+        </div>
       </Header>
       <Content.Grid>
         {loadingContacts ? (
