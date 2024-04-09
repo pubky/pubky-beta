@@ -76,9 +76,9 @@ export default function CreatePost({
               background="bg-white bg-opacity-10"
               className="scrollbar-thin scrollbar-webkit overflow-x-auto h-[285px] border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg flex flex-col"
             >
-              <div className="h-full mb-6">
+              <div className="h-full">
                 <Input.TextArea
-                  className="no-scrollbar h-full p-4"
+                  className="no-scrollbar h-[240px]"
                   placeholder="Write content, drop an image, or paste a link"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setContent(e.target.value)

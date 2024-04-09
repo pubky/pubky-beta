@@ -48,19 +48,19 @@ export default function Sidebar({
 
         if (!pubkey) return;
 
-        const followers = await listFollowers(pubkey);
+        const followersList = await listFollowers(pubkey);
 
-        if (followers) {
+        if (followersList) {
           setImages(
-            followers.followers.map((user: any) => ({
+            followersList.followers.map((user: any) => ({
               alt: 'user-pic',
               src: user.profile.image,
             }))
           );
-          setFollowers(followers);
+          setFollowers(followersList);
           setLoadingFollowers(false);
 
-          followers.followers.forEach((user: any) => {
+          followersList.followers.forEach((user: any) => {
             const uri = user.uri.replace('pubky:', '');
             if (uri === pubky) {
               setFollowed(true);

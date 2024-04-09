@@ -21,6 +21,7 @@ export default function WhoFollow() {
     async function fetchFollowed() {
       try {
         const result = await getMostFollowed();
+
         if (result) {
           setHotFollowed(result);
           setLoading(false);
@@ -29,6 +30,7 @@ export default function WhoFollow() {
         console.log(error);
       }
     }
+
     fetchFollowed();
   }, [getMostFollowed]);
 
@@ -36,7 +38,9 @@ export default function WhoFollow() {
     async function fetchFollowing() {
       try {
         if (!pubky) return;
+
         const following = await listFollowing(pubky);
+
         if (following) {
           following.following.forEach((user: any) => {
             const uri = user.uri.replace('pubky:', '');
@@ -52,6 +56,7 @@ export default function WhoFollow() {
         console.log(error);
       }
     }
+
     fetchFollowing();
   }, [pubky, listFollowing, hotFollowed]);
 
@@ -60,6 +65,7 @@ export default function WhoFollow() {
       if (!pubkyFollow) return;
 
       const result = await follow(pubkyFollow);
+
       setFollowedUser((prevState) => ({
         ...prevState,
         [pubkyFollow]: result,
@@ -74,6 +80,7 @@ export default function WhoFollow() {
       if (!pubkyUnfollow) return;
 
       const result = await unfollow(pubkyUnfollow);
+
       setFollowedUser((prevState) => ({
         ...prevState,
         [pubkyUnfollow]: !result,
@@ -93,7 +100,7 @@ export default function WhoFollow() {
           hotFollowed.slice(0, 3).map((followed, index) => {
             const pubkeyUser = pubky && followed.id.includes(pubky);
             const isFollowed = followedUser[followed.id] || false;
-            console.log('isFOLLOWED', isFollowed);
+
             return (
               <div key={index + 1}>
                 <SideCard.User

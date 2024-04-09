@@ -5,7 +5,6 @@ import { Content } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../../components';
 import { Followers } from './../components';
 import { useClientContext } from '../../../contexts/client';
-import { useRouter } from 'next/navigation';
 
 interface Followers {
   count: number;
@@ -17,20 +16,14 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
+  const creatorPubky = params.creatorPubky;
+
   const { pubky, getUserIndexed, listFollowers } = useClientContext();
-  const router = useRouter();
   const [name, setName] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [followers, setFollowers] = useState<Followers | null>(null);
-  const creatorPubky = params.creatorPubky;
-
-  useEffect(() => {
-    if (pubky === creatorPubky) {
-      router.push('/followers');
-    }
-  });
 
   useEffect(() => {
     async function fetchData() {
@@ -76,7 +69,7 @@ export default function Index({
         <Followers.Me
           image={image}
           name={name}
-          pubkey={creatorPubky}
+          pubkey={pubky === creatorPubky ? '' : creatorPubky}
           followersCount={followers?.count}
         />
       )}
@@ -86,7 +79,7 @@ export default function Index({
             <Skeleton.Followers />
           ) : (
             <Followers.Follower
-              creatorPubky={creatorPubky}
+              creatorPubky={pubky === creatorPubky ? '' : creatorPubky}
               followers={followers?.followers}
             />
           )}
