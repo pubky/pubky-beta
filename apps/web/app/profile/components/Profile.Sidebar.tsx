@@ -81,7 +81,7 @@ export default function Sidebar({
         if (creatorPubky) {
           profile = await getUser(creatorPubky);
         } else {
-          profile = await getProfile();
+          ({ profile } = await getProfile());
         }
         if (profile) {
           setName(profile?.name || '');

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { Typography } from '@social/ui-shared';
 import { Post, PostsLayout } from '../../components';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../contexts/client';
@@ -32,9 +33,15 @@ export default function Contact({ creatorPubky }: ContactsProps) {
 
   return (
     <PostsLayout className="grid w-full gap-6 mb-6">
-      {posts.map((post, index) => (
-        <Post key={index} post={post} layout="list" className="w-full" />
-      ))}
+      {posts.length > 0 ? (
+        posts.map((post, index) => (
+          <Post key={index} post={post} layout="list" className="w-full" />
+        ))
+      ) : (
+        <Typography.H2 className="font-normal text-opacity-20">
+          No posts yet.
+        </Typography.H2>
+      )}
     </PostsLayout>
   );
 }

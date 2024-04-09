@@ -174,8 +174,9 @@ export default function Tag({
           </div>
         </Modal.Content>
         <Modal.SubmitAction
-          icon={<Icon.Check />}
-          onClick={() => handleSubmit()}
+          icon={<Icon.Check color={arrayTags.length > 0 ? 'white' : 'gray'} />}
+          disabled={arrayTags.length === 0}
+          onClick={arrayTags.length > 0 ? handleSubmit : undefined}
         >
           Apply Tags
         </Modal.SubmitAction>

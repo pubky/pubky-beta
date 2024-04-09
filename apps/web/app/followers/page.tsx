@@ -5,7 +5,6 @@ import { Content } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../components';
 import { Followers } from './components';
 import { useClientContext } from '../../contexts/client';
-import { minifyPubky } from '../../libs/pubkyHelper';
 
 interface Followers {
   count: number;
@@ -23,7 +22,7 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const profile = await getProfile();
+        const { profile } = await getProfile();
         if (profile) {
           setName(profile?.name || '');
           setImage(profile?.image || '/images/Userpic.png');
@@ -63,7 +62,7 @@ export default function Index() {
         <Followers.Me
           image={image}
           name={name}
-          pubkey={minifyPubky(pubky)}
+          pubkey={pubky ? pubky.toString() : ''}
           followersCount={followers?.count}
         />
       )}

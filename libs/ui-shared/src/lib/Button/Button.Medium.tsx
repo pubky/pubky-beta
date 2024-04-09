@@ -47,7 +47,7 @@ export const Medium = ({
       {...rest}
       className={twMerge(cssButton, cssColorButton, rest.className)}
     >
-      {icon}
+      <div>{icon}</div>
       <Typography.Body variant="small-bold" className={color}>
         {children}
       </Typography.Body>

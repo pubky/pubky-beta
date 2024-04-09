@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button, Content, Typography } from '@social/ui-shared';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
@@ -13,14 +15,15 @@ import {
   Skeleton,
 } from '../../components';
 import { useClientContext } from '../../../contexts/client';
-import { useEffect, useState } from 'react';
 
 export default function Index({
   params,
 }: {
   params: { creatorPubky: string };
 }) {
-  const { setRefreshList, getUserIndexed, listUserFeed } = useClientContext();
+  const { pubky, setRefreshList, getUserIndexed, listUserFeed } =
+    useClientContext();
+  const router = useRouter();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
   const [posts, setPosts] = useState<any[]>([]);
@@ -28,6 +31,12 @@ export default function Index({
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
   const creatorPubky = params.creatorPubky;
+
+  useEffect(() => {
+    if (pubky === creatorPubky) {
+      router.push('/profile');
+    }
+  });
 
   useEffect(() => {
     async function fetchProfile() {

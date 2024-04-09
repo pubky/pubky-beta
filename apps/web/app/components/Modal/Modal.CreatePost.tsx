@@ -191,7 +191,10 @@ export default function CreatePost({
             </div>
           </div>
           <div className="w-full">
-            <Modal.SubmitAction onClick={() => handleSubmit()}>
+            <Modal.SubmitAction
+              disabled={!content}
+              onClick={content ? () => handleSubmit() : undefined}
+            >
               Publish Post
             </Modal.SubmitAction>
           </div>
