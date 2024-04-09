@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Button, Content, Typography } from '@social/ui-shared';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
@@ -13,21 +14,22 @@ import {
   Skeleton,
 } from '../../components';
 import { useClientContext } from '../../../contexts/client';
-import { useEffect, useState } from 'react';
 
 export default function Index({
   params,
 }: {
   params: { creatorPubky: string };
 }) {
-  const { setRefreshList, getUserIndexed, listUserFeed } = useClientContext();
+  const { pubky, setRefreshList, getUserIndexed, listUserFeed } =
+    useClientContext();
+  const creatorPubky = params.creatorPubky;
+
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
-  const creatorPubky = params.creatorPubky;
 
   useEffect(() => {
     async function fetchProfile() {
@@ -134,7 +136,9 @@ export default function Index({
             </Button.Large>
           )}
         </PostsLayout>
-        <Profile.Sidebar creatorPubky={creatorPubky} />
+        <Profile.Sidebar
+          creatorPubky={pubky === creatorPubky ? '' : creatorPubky}
+        />
       </Content.Grid>
       <CreatePost />
     </Content.Main>
