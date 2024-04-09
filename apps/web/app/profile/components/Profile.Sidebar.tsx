@@ -168,7 +168,7 @@ export default function Sidebar({
               <Button.Medium
                 onClick={() => unfollowUser()}
                 variant="default"
-                icon={<Icon.UserPlus size="16" />}
+                icon={<Icon.UserMinus size="16" />}
                 className={!creatorPubky ? 'hidden' : ''}
               >
                 Unfollow me

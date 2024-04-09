@@ -129,7 +129,7 @@ export default function Follower({ followers }: FollowersProps) {
                       onClick={() =>
                         unfollowUser(follower.uri.replace('pubky:', ''))
                       }
-                      icon={<Icon.UserPlus size="16" />}
+                      icon={<Icon.UserMinus size="16" />}
                       className="w-[154px]"
                     >
                       Unfollow me
