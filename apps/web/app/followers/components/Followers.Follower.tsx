@@ -24,17 +24,21 @@ export default function Follower({ followers }: FollowersProps) {
   const [followed, setFollowed] = useState<{
     [pubky: string]: boolean;
   }>({});
-  const { pubky, follow, unfollow, listFollowers } = useClientContext();
+  const { pubky, follow, unfollow, listFollowing } = useClientContext();
 
   useEffect(() => {
     async function fetchData() {
       try {
         if (!pubky) return;
-        const followersUser = await listFollowers(pubky);
-        if (followersUser) {
-          followersUser.followers.forEach((user: any) => {
+        const following = await listFollowing(pubky);
+        if (following && followers) {
+          following.following.forEach((user: any) => {
             const uri = user.uri.replace('pubky:', '');
-            if (uri === pubky) {
+            if (
+              followers.some(
+                (follower: any) => follower.uri.replace('pubky:', '') === uri
+              )
+            ) {
               setFollowed((prevState) => ({
                 ...prevState,
                 [uri]: true,
@@ -47,7 +51,7 @@ export default function Follower({ followers }: FollowersProps) {
       }
     }
     fetchData();
-  }, [pubky, listFollowers]);
+  }, [pubky, listFollowing, followers]);
 
   const followUser = async (pubkyFollow: string) => {
     try {

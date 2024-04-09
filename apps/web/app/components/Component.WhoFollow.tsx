@@ -9,7 +9,7 @@ import { Skeleton } from '.';
 import { Followed } from '../../types';
 
 export default function WhoFollow() {
-  const { pubky, getMostFollowed, follow, unfollow, listFollowers } =
+  const { pubky, getMostFollowed, follow, unfollow, listFollowing } =
     useClientContext();
   const [hotFollowed, setHotFollowed] = useState<Followed[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,14 +33,14 @@ export default function WhoFollow() {
   }, [getMostFollowed]);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchFollowing() {
       try {
         if (!pubky) return;
-        const followersUser = await listFollowers(pubky);
-        if (followersUser) {
-          followersUser.followers.forEach((user: any) => {
+        const following = await listFollowing(pubky);
+        if (following) {
+          following.following.forEach((user: any) => {
             const uri = user.uri.replace('pubky:', '');
-            if (uri === pubky) {
+            if (hotFollowed.some((followed: any) => followed.id === uri)) {
               setFollowedUser((prevState) => ({
                 ...prevState,
                 [uri]: true,
@@ -52,8 +52,8 @@ export default function WhoFollow() {
         console.log(error);
       }
     }
-    fetchData();
-  }, [pubky, listFollowers]);
+    fetchFollowing();
+  }, [pubky, listFollowing, hotFollowed]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -93,6 +93,7 @@ export default function WhoFollow() {
           hotFollowed.slice(0, 3).map((followed, index) => {
             const pubkeyUser = pubky && followed.id.includes(pubky);
             const isFollowed = followedUser[followed.id] || false;
+            console.log('isFOLLOWED', isFollowed);
             return (
               <div key={index + 1}>
                 <SideCard.User
