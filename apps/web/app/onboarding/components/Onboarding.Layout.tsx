@@ -35,7 +35,7 @@ export default function OnboardingLayout({
     <Content.Main>
       <Header.Root>
         <Header.Logo link={logoLink} />
-        <Header.Title title={'Onboarding'} />
+        <Header.Title titleHeader={'Onboarding'} />
         <Content.Stepper
           className="w-[50%] lg:w-[70%] xl:w-full hidden sm:flex"
           currentStep={currentStep}

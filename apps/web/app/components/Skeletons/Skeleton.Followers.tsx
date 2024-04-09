@@ -13,10 +13,10 @@ export default function Followers() {
         </svg>
         <div className="flex-col justify-center items-start gap-1 inline-flex">
           <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-32" />
-          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-42" />
+          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-12" />
         </div>
         <div className="lg:flex justify-center items-center">
-          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-60" />
+          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-60 lg:w-[420px] xl:w-[700px]" />
         </div>
         <div className="flex-col justify-start items-start gap-1 inline-flex">
           <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-12" />
@@ -40,10 +40,10 @@ export default function Followers() {
         </svg>
         <div className="flex-col justify-center items-start gap-1 inline-flex">
           <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-32" />
-          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-42" />
+          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-12" />
         </div>
         <div className="lg:flex justify-center items-center">
-          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-60" />
+          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-60 lg:w-[420px] xl:w-[700px]" />
         </div>
         <div className="flex-col justify-start items-start gap-1 inline-flex">
           <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-12" />
@@ -55,7 +55,7 @@ export default function Followers() {
         </div>
         <div className="h-12 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-24" />
       </div>
-      <div className="mb-4  flex-col lg:flex-row justify-start gap-4 inline-flex">
+      <div className="mb-4 flex-col lg:flex-row justify-start gap-4 inline-flex">
         <svg
           className="w-16 h-10 me-3 text-gray-200 dark:text-gray-700"
           aria-hidden="true"
@@ -67,10 +67,10 @@ export default function Followers() {
         </svg>
         <div className="flex-col justify-center items-start gap-1 inline-flex">
           <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-32" />
-          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-42" />
+          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-12" />
         </div>
         <div className="lg:flex justify-center items-center">
-          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-60" />
+          <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-60 lg:w-[420px] xl:w-[700px]" />
         </div>
         <div className="flex-col justify-start items-start gap-1 inline-flex">
           <div className="h-4 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full w-12" />
