@@ -67,3 +67,24 @@ export interface IUserProfile {
   taggedAs: string[];
   viewer: IViewer;
 }
+
+export interface ISaveProfile {
+  uri: string;
+}
+
+export interface IProfilePubkyProps {
+  bio: string;
+  image: string;
+  links: {
+    website: string;
+    email: string;
+    x: string;
+    telegram: string;
+  };
+  name: string;
+}
+
+export interface ISignUpResponse {
+  recoveryFile: Buffer;
+  filename: string;
+}

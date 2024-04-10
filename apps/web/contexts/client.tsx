@@ -6,6 +6,13 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback } from 'react';
+import {
+  IUserProfile,
+  IProfilePubkyProps,
+  ISignUpResponse,
+  ISaveProfile,
+  TReach,
+} from '../types';
 
 export * from '@pubky/common';
 
@@ -18,15 +25,12 @@ const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY;
 type ClientContextType = {
   pubky: string | null;
   refreshList: boolean;
-  signUp: (
-    profile: any,
-    password: string
-  ) => Promise<{ recoveryFile: Buffer; filename: string }>;
+  signUp: (profile: any, password: string) => Promise<ISignUpResponse | null>;
   logout: () => Promise<void>;
   getProfile: () => Promise<IUserProfile | null>;
-  saveProfile: (profile: any) => Promise<void>;
+  saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (post: any) => Promise<any>;
+  createPost: (content: string) => Promise<any>;
   createTag: (uri: string, tag: any) => Promise<any>;
   getHotTags: () => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
@@ -34,16 +38,13 @@ type ClientContextType = {
   listFollowers: (pubky: string) => Promise<any>;
   listFollowing: (pubky: string) => Promise<any>;
   getMostFollowed: () => Promise<any>;
-  listGlobalPosts: (
-    cursor: string,
-    reach: 'following' | 'all' | 'followers' | 'friends'
-  ) => Promise<any>;
+  listGlobalPosts: (cursor: string, reach: TReach) => Promise<any>;
   getPost: (uri: string) => Promise<any>;
   getUser: (pk: string) => Promise<any>;
   decryptRecoveryFile: (
     password: string,
     recoveryFile: Buffer
-  ) => Promise<Uint8Array>;
+  ) => Promise<boolean>;
   setRefreshList: (value: boolean) => void;
   follow: (pk: string) => Promise<boolean>;
   unfollow: (pk: string) => Promise<boolean>;
@@ -106,7 +107,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   }, [client]);
 
   const signUp = useCallback(
-    async (profile: any, password: string): Promise<string> => {
+    async (profile: any, password: string): Promise<ISignUpResponse | null> => {
       try {
         const seed = Client.crypto.generateSeed();
 
@@ -130,7 +131,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         return { recoveryFile, filename };
       } catch (error) {
         console.log(error);
-        return false;
+        return null;
       }
     },
     [client, isLoggedIn]
@@ -159,7 +160,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   }, [client]);
 
   const saveProfile = useCallback(
-    async (profile: any): Promise<void> => {
+    async (profile: IProfilePubky): Promise<ISaveProfile | null> => {
       try {
         const pk = await isLoggedIn();
 
@@ -171,11 +172,14 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         setProfile(profile);
         localStorageUtils.set('profile', profile);
-
+        console.log(result);
         if (!result.ok)
           throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
+
+        return result.value;
       } catch (error) {
         console.log(error);
+        return null;
       }
     },
     [client]
@@ -242,8 +246,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
             `Get profile indexed:${pk} failed: ${result.error.message}`
           );
 
-        console.log(result.value);
-
         return result.value;
       } catch (error) {
         console.log(error);
@@ -268,6 +270,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
         if (!result.ok)
           throw new Error(`Put post:${pk} failed: ${result.error.message}`);
+
+        console.log(result);
 
         return result;
       } catch (error) {
