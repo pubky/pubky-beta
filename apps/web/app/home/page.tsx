@@ -17,9 +17,9 @@ import { DropDown } from '../components/DropDown';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
-import { Layouts, IPost } from '../../types';
+import { IPost } from '../../types';
 
-const layouts: Layouts = {
+const layouts = {
   sidebar: {
     layout: 'grid-cols-3',
     posts: 'col-span-3 xl:col-span-2 flex-col inline-flex gap-6',

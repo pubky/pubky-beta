@@ -1,52 +1,33 @@
-export interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
-  repost?: boolean;
-  bookmark?: boolean;
-  size?: 'full' | 'normal';
-  post: IPost;
-  layout?: 'sidebar' | 'grid' | 'columns' | 'list';
-}
+export type TLayouts = 'grid' | 'columns' | 'list' | 'sidebar';
+export type TSize = 'full' | 'normal';
 
-export interface User {
-  bio: string;
-  image: string;
-  links: {
-    url: string;
-    value: string;
-  }[];
-  name: string;
-}
-
-export interface UserLink {
+export interface ILink {
   url: string;
   title: string;
 }
 
-export interface UserProfile {
+export interface IProfile {
   name: string;
   bio: string;
   image: string;
-  links: UserLink[];
+  links: ILink[];
 }
 
-export interface Author {
+export interface IAuthor {
   id: string;
   uri: string;
-  profile: UserProfile;
-}
-
-export interface PostPayload {
-  content: string;
+  profile: IProfile;
 }
 
 export interface IPost {
   id: string;
   uri: string;
-  author: Author;
-  post: PostPayload;
+  author: IAuthor;
+  post: { content: string };
   tags: {
     count: number;
     from: {
-      author: Author;
+      author: IAuthor;
       createdAt: number;
       id: string;
       indexedAt: number;
@@ -57,14 +38,7 @@ export interface IPost {
   indexedAt: number;
 }
 
-export type Layouts = {
-  [key in 'sidebar' | 'grid' | 'columns' | 'list']: {
-    layout: string;
-    posts: string;
-  };
-};
-
-export interface Tag {
+export interface ITag {
   tag: string;
   count: number;
   from: {
@@ -72,7 +46,7 @@ export interface Tag {
   }[];
 }
 
-export interface Followed {
+export interface IFollowed {
   profile: {
     image: string;
     name: string;

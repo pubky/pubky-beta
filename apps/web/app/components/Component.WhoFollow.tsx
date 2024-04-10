@@ -6,12 +6,12 @@ import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
 import { minifyText } from '../../libs/textHelper';
 import { Skeleton } from '.';
-import { Followed } from '../../types';
+import { IFollowed } from '../../types';
 
 export default function WhoFollow() {
   const { pubky, getMostFollowed, follow, unfollow, listFollowing } =
     useClientContext();
-  const [hotFollowed, setHotFollowed] = useState<Followed[]>([]);
+  const [hotFollowed, setHotFollowed] = useState<IFollowed[]>([]);
   const [loading, setLoading] = useState(true);
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;

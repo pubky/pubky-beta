@@ -6,12 +6,12 @@ import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '.';
-import { Tag } from '../../types';
+import { ITag } from '../../types';
 
 export default function HotTags() {
   const router = useRouter();
   const { getHotTags } = useClientContext();
-  const [hotTags, setHotTags] = useState<Tag[]>([]);
+  const [hotTags, setHotTags] = useState<ITag[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
