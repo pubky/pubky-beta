@@ -1,5 +1,9 @@
-import { Button, Card, Icon, PostUtil, Typography } from '@social/ui-shared';
+import { Card, PostUtil, Typography } from '@social/ui-shared';
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Tag } from '../../../types';
+import { useClientContext } from '../../../contexts/client';
+import { Skeleton } from '..';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -9,6 +13,25 @@ export default function SearchInputCard({
   refCard,
   ...rest
 }: SearchInputCardProps) {
+  const { getHotTags } = useClientContext();
+  const [hotTags, setHotTags] = useState<Tag[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchTags() {
+      try {
+        const result = await getHotTags();
+        if (result) {
+          setHotTags(result.value);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchTags();
+  }, [getHotTags]);
+
   return (
     <Card.Primary
       {...rest}
@@ -21,40 +44,28 @@ export default function SearchInputCard({
           <Typography.Label className="text-opacity-30">
             Hot tags
           </Typography.Label>
-          <div className="mt-2 justify-start items-start">
-            <PostUtil.Tag clicked={false} color="amber" className="mr-2 my-1">
-              #Bitcoin
-            </PostUtil.Tag>
-            <PostUtil.Tag clicked={false} color="amber" className="mr-2 my-1">
-              #Satoshi
-            </PostUtil.Tag>
-            <PostUtil.Tag clicked={false} color="red" className="mr-2 my-1">
-              #P2P
-            </PostUtil.Tag>
-            <PostUtil.Tag clicked={false} color="blue" className="mr-2 my-1">
-              #Keys
-            </PostUtil.Tag>
-            <PostUtil.Tag clicked={false} color="blue" className="mr-2 my-1">
-              #Scalability
-            </PostUtil.Tag>
-            <PostUtil.Tag clicked={false} color="green" className="mr-2 my-1">
-              #Whitepaper
-            </PostUtil.Tag>
-            <PostUtil.Tag clicked={false} color="cyan" className="mr-2 my-1">
-              #PoW
-            </PostUtil.Tag>
-            <PostUtil.Tag clicked={false} color="yellow" className="mr-2 my-1">
-              #Cryptography
-            </PostUtil.Tag>
-            <PostUtil.Tag clicked={false} color="fuchsia" className="mr-2 my-1">
-              #Quote
-            </PostUtil.Tag>
-            <PostUtil.Tag clicked={false} color="amber" className="mr-2 my-1">
-              #Bitcointalk
-            </PostUtil.Tag>
-          </div>
+          {loading ? (
+            <Skeleton.HotTags />
+          ) : (
+            hotTags.length > 0 && (
+              <div className="mt-2 justify-start items-start">
+                {hotTags.slice(0, 10).map((tag, index) => (
+                  <>
+                    <PostUtil.Tag
+                      key={index}
+                      clicked={false}
+                      color="amber"
+                      className="mr-2 my-1"
+                    >
+                      # {tag.tag}
+                    </PostUtil.Tag>
+                  </>
+                ))}
+              </div>
+            )
+          )}
         </div>
-        <div>
+        {/**<div>
           <Typography.Label className="text-opacity-30 font-medium">
             Emotag
           </Typography.Label>
@@ -83,7 +94,7 @@ export default function SearchInputCard({
               icon={<Icon.Smiley />}
             />
           </div>
-        </div>
+  </div>*/}
       </div>
     </Card.Primary>
   );
