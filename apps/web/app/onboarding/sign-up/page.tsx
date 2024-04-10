@@ -41,6 +41,7 @@ export default function Index() {
   const [x, setX] = useState('');
   const [telegram, setTelegram] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
     bio: '',
@@ -84,7 +85,11 @@ export default function Index() {
   };
 
   const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
     try {
+      setLoading(true);
       setErrors({
         name: '',
         bio: '',
@@ -151,6 +156,8 @@ export default function Index() {
       router.push('/onboarding/confirm');
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -254,8 +261,11 @@ export default function Index() {
             />
           </div>
           <div className="pt-[30px]">
-            <Button.Large onClick={() => handleSubmit()} icon={<Icon.Check />}>
-              Download Recovery File
+            <Button.Large
+              onClick={!loading ? () => handleSubmit() : undefined}
+              icon={loading ? <Icon.LoadingSpin /> : <Icon.Check />}
+            >
+              {!loading ? 'Download Recovery File' : ''}
             </Button.Large>
           </div>
         </Card.Primary>

@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Button,
   Card,
@@ -7,8 +8,8 @@ import {
   PostUtil,
   Typography,
 } from '@social/ui-shared';
+import { z } from 'zod';
 import { useClientContext } from '../../../contexts/client';
-import React, { useState } from 'react';
 
 interface CreatePostProps {
   showModalPost: boolean;
@@ -17,6 +18,14 @@ interface CreatePostProps {
   setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface FormErrors {
+  [fieldName: string]: string[];
+}
+
+const postSchema = z.object({
+  content: z.string().max(280, { message: 'Maximum length 280 characters' }),
+});
+
 export default function CreatePost({
   showModalPost,
   setShowModalPost,
@@ -24,33 +33,107 @@ export default function CreatePost({
   setShowModalLink,
 }: CreatePostProps) {
   const { createPost, createTag, setRefreshList } = useClientContext();
+  const [sendingPost, setSendingPost] = useState(false);
   const [content, setContent] = useState('');
   const [tag, setTag] = useState('');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
+  const [tagsError, setTagsError] = useState(false);
+  const [errors, setErrors] = useState({
+    content: '',
+  });
 
   const handleSubmit = async () => {
-    const newPost = await createPost(content);
-
-    if (!newPost) return;
-
-    for (const tag of arrayTags) {
-      await createTag(newPost.uri, tag);
+    if (sendingPost) {
+      return;
     }
-    setShowModalPost(false);
-    setArrayTags([]);
-    setTag('');
-    setRefreshList(true);
+    try {
+      setSendingPost(true);
+      setErrors({
+        content: '',
+      });
+      const result = postSchema.safeParse({
+        content,
+      });
+
+      if (!result.success) {
+        const newErrors: FormErrors = result.error.flatten().fieldErrors;
+
+        const errorMessages = Object.keys(newErrors).reduce(
+          (acc: { [key: string]: string }, key) => {
+            acc[key] = newErrors[key].join(', ');
+            return acc;
+          },
+          {}
+        );
+
+        setErrors((prev) => ({ ...prev, ...errorMessages }));
+        return;
+      }
+      try {
+        const newPost = await createPost(content);
+        if (newPost) {
+          for (const tag of arrayTags) {
+            await createTag(newPost.uri, tag);
+          }
+          setShowModalPost(false);
+          setArrayTags([]);
+          setTag('');
+          setContent('');
+          setRefreshList(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSendingPost(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valueWithoutSpaces = e.target.value.replace(/\s/g, '');
+    setTag(valueWithoutSpaces);
   };
 
   const handleAddTag = () => {
-    if (tag.trim() !== '') {
-      setTag('');
-      setArrayTags([...arrayTags, tag.trim()]);
+    if (arrayTags.length >= 4) {
+      setTagsError(true);
+    } else {
+      const trimmedTag = tag.trim();
+      if (trimmedTag !== '') {
+        if (!arrayTags.includes(trimmedTag)) {
+          setTag('');
+          setArrayTags([...arrayTags, trimmedTag]);
+        } else {
+          setTag('');
+        }
+      }
     }
   };
 
   const handleRemoveTag = (indexToRemove: number) => {
     setArrayTags(arrayTags.filter((_, index) => index !== indexToRemove));
+    if (arrayTags.length <= 4) {
+      setTagsError(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleAddTag();
+    }
+  };
+
+  const handlePaste = () => {
+    navigator.clipboard
+      .readText()
+      .then((text) => {
+        setContent(text);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -61,6 +144,7 @@ export default function CreatePost({
         setShowModalPost(false);
         setArrayTags([]);
         setTag('');
+        setTagsError(false);
       }}
       className="max-w-[1200px]"
     >
@@ -69,6 +153,7 @@ export default function CreatePost({
           setShowModalPost(false);
           setArrayTags([]);
           setTag('');
+          setTagsError(false);
         }}
       />
       <Modal.Header title="New Post" />
@@ -86,6 +171,8 @@ export default function CreatePost({
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setContent(e.target.value)
                   }
+                  defaultValue={content}
+                  error={errors.content}
                 />
               </div>
               {/**<div className="hidden lg:flex relative">
@@ -134,7 +221,7 @@ export default function CreatePost({
               variant="custom"
               icon={<Icon.Clipboard />}
               label="Paste"
-              onClick={() => console.log('button clicked 2')}
+              onClick={handlePaste}
               className="hidden lg:flex"
             />
             <Button.Action
@@ -180,9 +267,8 @@ export default function CreatePost({
               <Input.Text
                 placeholder="#"
                 value={tag}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setTag(e.target.value)
-                }
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
                 action={
                   <Button.Action
                     variant="custom"
@@ -193,12 +279,20 @@ export default function CreatePost({
               />
             </div>
           </div>
-          <div className="w-full">
+          {tagsError && (
+            <Typography.Body variant="small" className="text-[#e95164]">
+              Max 4 tags
+            </Typography.Body>
+          )}
+          <div className="w-full mt-6">
             <Modal.SubmitAction
               disabled={!content}
-              onClick={content ? () => handleSubmit() : undefined}
+              loading={sendingPost}
+              onClick={
+                content && !sendingPost ? () => handleSubmit() : undefined
+              }
             >
-              Publish Post
+              {!sendingPost ? 'Publish Post' : ''}
             </Modal.SubmitAction>
           </div>
         </div>

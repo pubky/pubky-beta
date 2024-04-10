@@ -38,6 +38,7 @@ export default function Index() {
     recoveryFile: '',
   });
   const [loginError, setLoginError] = useState(false);
+  const [logining, setLogining] = useState(false);
 
   const UploadRecoveryFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -51,7 +52,11 @@ export default function Index() {
   };
 
   const handleSubmit = async () => {
+    if (logining) {
+      return;
+    }
     try {
+      setLogining(true);
       setErrors({
         password: '',
         recoveryFile: '',
@@ -88,6 +93,8 @@ export default function Index() {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLogining(false);
     }
   };
   return (
@@ -155,11 +162,11 @@ export default function Index() {
             </div>
           )}
           <Button.Large
-            onClick={() => handleSubmit()}
-            icon={<Icon.Check />}
+            onClick={!logining ? () => handleSubmit() : undefined}
+            icon={logining ? <Icon.LoadingSpin /> : <Icon.Check />}
             className="mt-4"
           >
-            Login
+            {!logining ? 'Login' : ''}
           </Button.Large>
         </Card.Primary>
         <Card.Primary
