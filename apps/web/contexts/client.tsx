@@ -25,7 +25,7 @@ type ClientContextType = {
   logout: () => Promise<void>;
   getProfile: () => Promise<IUserProfile | null>;
   saveProfile: (profile: any) => Promise<void>;
-  getUserIndexed: (userId: string) => Promise<any>;
+  getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (post: any) => Promise<any>;
   createTag: (uri: string, tag: any) => Promise<any>;
   getHotTags: () => Promise<any>;
@@ -225,7 +225,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const getUserIndexed = useCallback(
-    async (userId: string): Promise<any> => {
+    async (userId: string): Promise<IUserProfile | null> => {
       try {
         const pk = await isLoggedIn();
 
@@ -241,6 +241,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
           throw new Error(
             `Get profile indexed:${pk} failed: ${result.error.message}`
           );
+
+        console.log(result.value);
 
         return result.value;
       } catch (error) {
