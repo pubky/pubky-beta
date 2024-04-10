@@ -173,7 +173,9 @@ export default function Sidebar({
                 onClick={() => unfollowUser()}
                 variant="default"
                 icon={<Icon.UserMinus size="16" />}
-                className={!creatorPubky ? 'hidden' : ''}
+                className={
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                }
               >
                 Unfollow me
               </Button.Medium>
@@ -182,7 +184,9 @@ export default function Sidebar({
                 onClick={() => followUser()}
                 variant="default"
                 icon={<Icon.UserPlus size="16" />}
-                className={!creatorPubky ? 'hidden' : ''}
+                className={
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                }
               >
                 Follow me
               </Button.Medium>

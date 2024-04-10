@@ -20,8 +20,7 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
-  const { pubky, setRefreshList, getUserIndexed, listUserFeed } =
-    useClientContext();
+  const { setRefreshList, getUserIndexed, listUserFeed } = useClientContext();
   const creatorPubky = params.creatorPubky;
 
   const [pic, setPic] = useState('/images/Userpic.png');
@@ -136,9 +135,7 @@ export default function Index({
             </Button.Large>
           )}
         </PostsLayout>
-        <Profile.Sidebar
-          creatorPubky={pubky === creatorPubky ? '' : creatorPubky}
-        />
+        <Profile.Sidebar creatorPubky={creatorPubky} />
       </Content.Grid>
       <CreatePost />
     </Content.Main>
