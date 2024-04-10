@@ -23,7 +23,7 @@ type ClientContextType = {
     password: string
   ) => Promise<{ recoveryFile: Buffer; filename: string }>;
   logout: () => Promise<void>;
-  getProfile: (cache?: boolean) => Promise<any>;
+  getProfile: () => Promise<IUserProfile | null>;
   saveProfile: (profile: any) => Promise<void>;
   getUserIndexed: (userId: string) => Promise<any>;
   createPost: (post: any) => Promise<any>;
@@ -181,30 +181,28 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
-  const getProfile = useCallback(
-    async (cache = true): Promise<any> => {
-      try {
-        const pk = await isLoggedIn();
+  const getProfile = useCallback(async (): Promise<IUserProfile | null> => {
+    try {
+      const pk = await isLoggedIn();
 
-        if (!pk) throw new Error('Logged in failed : not logged in.');
+      if (!pk) throw new Error('Logged in failed : not logged in.');
 
-        await client.ready();
+      await client.ready();
 
-        const result = await client.social.profile.indexed(pk);
+      const result = await client.social.profile.indexed(pk);
 
-        if (!result.ok)
-          throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
+      if (!result.ok)
+        throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
 
-        localStorageUtils.set('profile', result.value.profile);
-        setProfile(result.value.profile);
+      localStorageUtils.set('profile', result.value.profile);
+      setProfile(result.value.profile);
 
-        return result.value;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [client]
-  );
+      return result.value;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }, [client]);
 
   const getUser = useCallback(
     async (pk): Promise<any> => {

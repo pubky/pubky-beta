@@ -57,3 +57,13 @@ export interface IFollowed {
   };
   id: string;
 }
+
+interface IViewer {}
+
+export interface IUserProfile {
+  profile: IProfile;
+  tagsCount: number;
+  postsCount: number;
+  taggedAs: string[];
+  viewer: IViewer;
+}
