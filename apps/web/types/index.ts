@@ -1,5 +1,9 @@
 export type TLayouts = 'grid' | 'columns' | 'list' | 'sidebar';
 export type TSize = 'full' | 'normal';
+export type TSort = 'recent' | 'tags' | 'activity';
+export type TReach = 'following' | 'followers' | 'friends' | 'all';
+export type TContent = 'all' | 'posts' | 'images' | 'videos' | 'links';
+export type TTimeframe = 'today' | 'month' | 'all';
 
 export interface ILink {
   url: string;
