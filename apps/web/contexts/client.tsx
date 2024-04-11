@@ -40,7 +40,7 @@ type ClientContextType = {
   createPost: (content: string) => Promise<ICreatePostResponse | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
-  isLoggedIn: () => Promise<string | null>;
+  isLoggedIn: () => Promise<string | boolean>;
   listUserFeed: (
     pubky: string,
     cursor: string,
@@ -96,7 +96,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
   const [refreshList, setRefreshList] = useState<boolean>(false);
 
-  const isLoggedIn = useCallback(async (): Promise<string | null> => {
+  const isLoggedIn = useCallback(async (): Promise<string | false> => {
     try {
       if (pubky) return pubky;
 
@@ -106,7 +106,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const pks = Object.keys(sessions?.users);
 
-      if (!pks.length) return null;
+      if (!pks.length) return false;
 
       localStorageUtils.set('pubky', pks[0]);
       setPubky(pks[0]);
@@ -114,7 +114,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       return pks[0];
     } catch (error) {
       console.log(error);
-      return null;
+      return false;
     }
   }, [client]);
 
