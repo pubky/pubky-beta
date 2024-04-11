@@ -18,8 +18,9 @@ export default function HotTags() {
     async function fetchTags() {
       try {
         const result = await getHotTags();
+
         if (result) {
-          setHotTags(result.value);
+          setHotTags(result);
           setLoading(false);
         }
       } catch (error) {

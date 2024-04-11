@@ -93,3 +93,21 @@ export interface ICreatePostResponse {
   id: string;
   uri: string;
 }
+
+export interface ICreateTagResponse {
+  id: string;
+  uri: string;
+}
+
+export interface ITaggedPostFrom {
+  author: IAuthor;
+  createdAt: number;
+  indexedAt: number;
+  id: string;
+}
+
+export interface ITaggedPost {
+  tag: string;
+  count: number;
+  from: ITaggedPostFrom[];
+}

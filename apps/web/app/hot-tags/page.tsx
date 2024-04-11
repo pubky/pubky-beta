@@ -20,7 +20,7 @@ export default function Index() {
       try {
         const result = await getHotTags();
         if (result) {
-          setHotTags(result.value);
+          setHotTags(result);
           setLoading(false);
         }
       } catch (error) {

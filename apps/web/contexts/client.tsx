@@ -11,6 +11,8 @@ import {
   IProfilePubkyProps,
   ISignUpResponse,
   ISaveProfile,
+  ITaggedPost,
+  ICreatePostResponse,
   TReach,
 } from '../types';
 
@@ -31,9 +33,9 @@ type ClientContextType = {
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string) => Promise<ICreatePostResponse | null>;
-  createTag: (uri: string, tag: any) => Promise<any>;
-  getHotTags: () => Promise<any>;
-  isLoggedIn: () => Promise<boolean>;
+  createTag: (uri: string, tag: any) => Promise<ICreateTagResponse | null>;
+  getHotTags: () => Promise<ITaggedPost | null>;
+  isLoggedIn: () => Promise<string | null>;
   listUserFeed: (pubky: string, cursor: string, limit?: number) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
   listFollowing: (pubky: string) => Promise<any>;
@@ -85,7 +87,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
   const [refreshList, setRefreshList] = useState<boolean>(false);
 
-  const isLoggedIn = useCallback(async (): Promise<string | boolean> => {
+  const isLoggedIn = useCallback(async (): Promise<string | null> => {
     try {
       if (pubky) return pubky;
 
@@ -95,7 +97,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const pks = Object.keys(sessions?.users);
 
-      if (!pks.length) return false;
+      if (!pks.length) return null;
 
       localStorageUtils.set('pubky', pks[0]);
       setPubky(pks[0]);
@@ -103,6 +105,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       return pks[0];
     } catch (error) {
       console.log(error);
+      return null;
     }
   }, [client]);
 
@@ -281,7 +284,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const createTag = useCallback(
-    async (uri: string, tag: string) => {
+    async (uri: string, tag: string): Promise<ICreateTagResponse | null> => {
       try {
         const pk = await isLoggedIn();
 
@@ -296,7 +299,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         if (!result.ok)
           throw new Error(`Put tag:${pk} failed: ${result.error.message}`);
 
-        return result;
+        return result.value;
       } catch (error) {
         console.log(error);
       }
@@ -304,7 +307,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
-  const getHotTags = useCallback(async () => {
+  const getHotTags = useCallback(async (): Promise<ITaggedPost | null> => {
     try {
       const pk = await isLoggedIn();
 
@@ -317,7 +320,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`GET hot tags:${pk} failed: ${result.error.message}`);
 
-      return result;
+      return result.value;
     } catch (error) {
       console.log(error);
       return null;
