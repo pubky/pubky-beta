@@ -10,6 +10,13 @@ export interface ILink {
   title: string;
 }
 
+export interface ILinkPubky {
+  website: string;
+  email: string;
+  x: string;
+  telegram: string;
+}
+
 export interface IProfile {
   name: string;
   bio: string;
@@ -27,17 +34,10 @@ export interface IPost {
   id: string;
   uri: string;
   author: IAuthor;
-  post: { content: string };
-  tags: {
-    count: number;
-    from: {
-      author: IAuthor;
-      createdAt: number;
-      id: string;
-      indexedAt: number;
-    }[];
-    tag: string;
-  }[];
+  post: {
+    content: string;
+  };
+  tags: ITaggedPost[];
   createdAt: number;
   indexedAt: number;
 }
@@ -75,12 +75,7 @@ export interface ISaveProfile {
 export interface IProfilePubkyProps {
   bio: string;
   image: string;
-  links: {
-    website: string;
-    email: string;
-    x: string;
-    telegram: string;
-  };
+  links: ILinkPubky;
   name: string;
 }
 
@@ -99,7 +94,7 @@ export interface ICreateTagResponse {
   uri: string;
 }
 
-export interface ITaggedPostFrom {
+export interface IPostFrom {
   author: IAuthor;
   createdAt: number;
   indexedAt: number;
@@ -109,5 +104,5 @@ export interface ITaggedPostFrom {
 export interface ITaggedPost {
   tag: string;
   count: number;
-  from: ITaggedPostFrom[];
+  from: IPostFrom[];
 }

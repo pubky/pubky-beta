@@ -34,7 +34,7 @@ type ClientContextType = {
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string) => Promise<ICreatePostResponse | null>;
   createTag: (uri: string, tag: any) => Promise<ICreateTagResponse | null>;
-  getHotTags: () => Promise<ITaggedPost | null>;
+  getHotTags: () => Promise<ITaggedPost[] | null>;
   isLoggedIn: () => Promise<string | null>;
   listUserFeed: (pubky: string, cursor: string, limit?: number) => Promise<any>;
   listFollowers: (pubky: string) => Promise<any>;
@@ -307,7 +307,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
-  const getHotTags = useCallback(async (): Promise<ITaggedPost | null> => {
+  const getHotTags = useCallback(async (): Promise<ITaggedPost[] | null> => {
     try {
       const pk = await isLoggedIn();
 
