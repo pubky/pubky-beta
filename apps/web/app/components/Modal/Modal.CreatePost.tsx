@@ -153,6 +153,7 @@ export default function CreatePost({
           setShowModalPost(false);
           setArrayTags([]);
           setTag('');
+          setContent('');
           setTagsError(false);
         }}
       />

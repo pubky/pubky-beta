@@ -107,7 +107,9 @@ export default function Post({
                     } justify-start items-center gap-4`}
                   >
                     <PostUI.Username
-                      className={size === 'full' ? 'lg:text-2xl' : ''}
+                      className={`hover:underline hover:decoration-solid ${
+                        size === 'full' ? 'lg:text-2xl' : ''
+                      }`}
                     >
                       {post?.author?.profile?.name &&
                         minifyText(post?.author?.profile?.name, 24)}
