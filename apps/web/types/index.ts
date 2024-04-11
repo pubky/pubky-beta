@@ -88,3 +88,8 @@ export interface ISignUpResponse {
   recoveryFile: Buffer;
   filename: string;
 }
+
+export interface ICreatePostResponse {
+  id: string;
+  uri: string;
+}
