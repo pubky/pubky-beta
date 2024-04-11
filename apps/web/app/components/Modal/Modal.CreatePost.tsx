@@ -30,8 +30,11 @@ export default function CreatePost({
 
   const handleSubmit = async () => {
     const newPost = await createPost(content);
+
+    if (!newPost) return;
+
     for (const tag of arrayTags) {
-      await createTag(newPost.value.uri, tag);
+      await createTag(newPost.uri, tag);
     }
     setShowModalPost(false);
     setArrayTags([]);

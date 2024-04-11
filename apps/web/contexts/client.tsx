@@ -30,7 +30,7 @@ type ClientContextType = {
   getProfile: () => Promise<IUserProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string) => Promise<any>;
+  createPost: (content: string) => Promise<ICreatePostResponse | null>;
   createTag: (uri: string, tag: any) => Promise<any>;
   getHotTags: () => Promise<any>;
   isLoggedIn: () => Promise<boolean>;
@@ -256,7 +256,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const createPost = useCallback(
-    async (content: string) => {
+    async (content: string): Promise<ICreatePostResponse | null> => {
       try {
         const pk = await isLoggedIn();
 
@@ -271,11 +271,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         if (!result.ok)
           throw new Error(`Put post:${pk} failed: ${result.error.message}`);
 
-        console.log(result);
-
-        return result;
+        return result.value;
       } catch (error) {
         console.log(error);
+        return null;
       }
     },
     [client]
