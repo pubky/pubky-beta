@@ -30,13 +30,15 @@ export interface IAuthor {
   profile: IProfile;
 }
 
+export interface IPostContent {
+  content: string;
+}
+
 export interface IPost {
   id: string;
   uri: string;
   author: IAuthor;
-  post: {
-    content: string;
-  };
+  post: IPostContent;
   tags: ITaggedPost[];
   createdAt: number;
   indexedAt: number;
@@ -105,4 +107,9 @@ export interface ITaggedPost {
   tag: string;
   count: number;
   from: IPostFrom[];
+}
+
+export interface IFeed {
+  feed: IPost[];
+  cursor: string;
 }

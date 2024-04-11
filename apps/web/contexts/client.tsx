@@ -13,6 +13,8 @@ import {
   ISaveProfile,
   ITaggedPost,
   ICreatePostResponse,
+  ICreateTagResponse,
+  IFeed,
   TReach,
 } from '../types';
 
@@ -27,16 +29,23 @@ const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY;
 type ClientContextType = {
   pubky: string | null;
   refreshList: boolean;
-  signUp: (profile: any, password: string) => Promise<ISignUpResponse | null>;
-  logout: () => Promise<void>;
+  signUp: (
+    profile: IProfilePubkyProps,
+    password: string
+  ) => Promise<ISignUpResponse | null>;
+  logout: () => Promise<boolean>;
   getProfile: () => Promise<IUserProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string) => Promise<ICreatePostResponse | null>;
-  createTag: (uri: string, tag: any) => Promise<ICreateTagResponse | null>;
+  createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
   isLoggedIn: () => Promise<string | null>;
-  listUserFeed: (pubky: string, cursor: string, limit?: number) => Promise<any>;
+  listUserFeed: (
+    pubky: string,
+    cursor: string,
+    limit?: number
+  ) => Promise<IFeed | null>;
   listFollowers: (pubky: string) => Promise<any>;
   listFollowing: (pubky: string) => Promise<any>;
   getMostFollowed: () => Promise<any>;
@@ -460,7 +469,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
 
   const listUserFeed = useCallback(
-    async (pk: string, cursor: string, limit = 5) => {
+    async (pk: string, cursor: string, limit = 5): Promise<IFeed | null> => {
       try {
         if (!pk) throw new Error('Get list posts failed');
 
@@ -477,6 +486,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         return result.value;
       } catch (error) {
         console.log(error);
+        return null;
       }
     },
     [client]
