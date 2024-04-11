@@ -106,7 +106,15 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const pks = Object.keys(sessions?.users);
 
-      if (!pks.length) return false;
+      if (!pks.length) {
+        // remove any local storage data that might be there
+        localStorageUtils.remove('pubky');
+        localStorageUtils.remove('profile');
+        setPubky(null);
+        setProfile(null);
+
+        return false;
+      }
 
       localStorageUtils.set('pubky', pks[0]);
       setPubky(pks[0]);
