@@ -11,10 +11,10 @@ export interface ILink {
 }
 
 export interface ILinkPubky {
-  website: string;
-  email: string;
-  x: string;
-  telegram: string;
+  website: string | undefined;
+  email: string | undefined;
+  x: string | undefined;
+  telegram: string | undefined;
 }
 
 export interface IProfile {
@@ -75,10 +75,10 @@ export interface ISaveProfile {
 }
 
 export interface IProfilePubkyProps {
-  bio: string;
-  image: string;
-  links: ILinkPubky;
-  name: string;
+  bio: string | undefined;
+  image: string | undefined;
+  links: ILinkPubky | undefined;
+  name: string | undefined;
 }
 
 export interface ISignUpResponse {

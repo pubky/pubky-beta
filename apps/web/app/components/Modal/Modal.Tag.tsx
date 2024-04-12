@@ -31,6 +31,8 @@ export default function Tag({
   const { createTag } = useClientContext();
   const [tag, setTag] = useState('');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
+  const [sendingTags, setSendingTags] = useState(false);
+  const [tagsError, setTagsError] = useState(false);
 
   useEffect(() => {
     const handleClickOutsideModalTag = (event: MouseEvent) => {
@@ -49,24 +51,57 @@ export default function Tag({
   }, [modalTagRef, setShowModalTag]);
 
   const handleSubmit = async () => {
-    for (const tag of arrayTags) {
-      await createTag(post.uri, tag);
+    if (sendingTags) {
+      return;
     }
-    setShowModalTag(false);
-    setArrayTags([]);
-    setTag('');
-    setRefreshList(true);
+    try {
+      setSendingTags(true);
+      for (const tag of arrayTags) {
+        await createTag(post.uri, tag);
+      }
+      setShowModalTag(false);
+      setArrayTags([]);
+      setTag('');
+      setRefreshList(true);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSendingTags(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valueWithoutSpaces = e.target.value.replace(/\s/g, '');
+    setTag(valueWithoutSpaces);
   };
 
   const handleAddTag = () => {
-    if (tag.trim() !== '') {
-      setTag('');
-      setArrayTags([...arrayTags, tag.trim()]);
+    if (arrayTags.length >= 4) {
+      setTagsError(true);
+    } else {
+      const trimmedTag = tag.trim();
+      if (trimmedTag !== '') {
+        if (!arrayTags.includes(trimmedTag)) {
+          setTag('');
+          setArrayTags([...arrayTags, trimmedTag]);
+        } else {
+          setTag('');
+        }
+      }
     }
   };
 
   const handleRemoveTag = (indexToRemove: number) => {
     setArrayTags(arrayTags.filter((_, index) => index !== indexToRemove));
+    if (arrayTags.length <= 4) {
+      setTagsError(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleAddTag();
+    }
   };
 
   return (
@@ -77,6 +112,7 @@ export default function Tag({
         setShowModalTag(false);
         setArrayTags([]);
         setTag('');
+        setTagsError(false);
       }}
       className="w-[480px]"
     >
@@ -85,6 +121,7 @@ export default function Tag({
           setShowModalTag(false);
           setArrayTags([]);
           setTag('');
+          setTagsError(false);
         }}
       />
       <div className="items-stretch flex-col inline-flex gap-12">
@@ -157,9 +194,8 @@ export default function Tag({
                 placeholder="#"
                 value={tag}
                 className="w-[380px]"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setTag(e.target.value)
-                }
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
                 action={
                   <Button.Medium
                     icon={<Icon.Plus size="16" />}
@@ -171,12 +207,20 @@ export default function Tag({
                 }
               />
             </div>
+            {tagsError && (
+              <Typography.Body variant="small" className="text-[#e95164]">
+                Max 4 tags
+              </Typography.Body>
+            )}
           </div>
         </Modal.Content>
         <Modal.SubmitAction
           icon={<Icon.Check color={arrayTags.length > 0 ? 'white' : 'gray'} />}
           disabled={arrayTags.length === 0}
-          onClick={arrayTags.length > 0 ? handleSubmit : undefined}
+          onClick={
+            arrayTags.length > 0 && !sendingTags ? handleSubmit : undefined
+          }
+          loading={sendingTags}
         >
           Apply Tags
         </Modal.SubmitAction>

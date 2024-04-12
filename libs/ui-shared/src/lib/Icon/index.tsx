@@ -33,6 +33,7 @@ import {
   CheckCircle,
   Bell,
   GearSix,
+  LoadingSpin,
 } from './Icon.System';
 import {
   Android,
@@ -92,6 +93,7 @@ export const Icon = {
   List,
   ListBullets,
   ListNumbers,
+  LoadingSpin,
   MagnifyingGlass,
   Minus,
   MusicNotesSimple,

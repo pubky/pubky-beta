@@ -21,7 +21,7 @@ export default function Index() {
         <Card.Primary title="Permissions">
           <List.Primary
             className="mt-6"
-            title="Hypekit will be able to:"
+            title="Pubky will be able to:"
             list={[
               'Read your profile',
               'Read your contacts',
@@ -41,7 +41,7 @@ export default function Index() {
         <Card.Primary className="justify-start" title="No access">
           <List.Primary
             className="mt-6 tracking-normal sm:tracking-wide"
-            title="Hypekit will not be able to:"
+            title="Pubky will not be able to:"
             list={['Read your private key', 'Read encrypted content']}
           />
         </Card.Primary>

@@ -60,7 +60,7 @@ export default function Index() {
         if (userProfile) {
           setName(userProfile.profile.name);
           setBio(userProfile.profile.bio);
-          setImage(userProfile.profile.image);
+          setImage(userProfile.profile.image || '/images/Userpic.png');
 
           for (const link of userProfile.profile.links) {
             if (link.title === 'website') {

@@ -38,6 +38,7 @@ export default function Index() {
     recoveryFile: '',
   });
   const [loginError, setLoginError] = useState(false);
+  const [logining, setLogining] = useState(false);
 
   const UploadRecoveryFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -51,7 +52,11 @@ export default function Index() {
   };
 
   const handleSubmit = async () => {
+    if (logining) {
+      return;
+    }
     try {
+      setLogining(true);
       setErrors({
         password: '',
         recoveryFile: '',
@@ -79,12 +84,18 @@ export default function Index() {
 
       if (!recoveryFile || !password) return;
 
-      const loggedIn = await decryptRecoveryFile(password, recoveryFile);
+      try {
+        const loggedIn = await decryptRecoveryFile(password, recoveryFile);
 
-      if (loggedIn) {
-        router.push('/onboarding/permissions');
-      } else {
-        setLoginError(true);
+        if (loggedIn) {
+          router.push('/onboarding/permissions');
+        } else {
+          setLoginError(true);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLogining(false);
       }
     } catch (error) {
       console.log(error);
@@ -155,8 +166,9 @@ export default function Index() {
             </div>
           )}
           <Button.Large
-            onClick={() => handleSubmit()}
+            onClick={!logining ? () => handleSubmit() : undefined}
             icon={<Icon.Check />}
+            loading={logining}
             className="mt-4"
           >
             Login
