@@ -50,7 +50,7 @@ export default function Sidebar({
           setImages(
             followersList.followers.map((user: any) => ({
               alt: 'user-pic',
-              src: user.profile.image,
+              src: user?.profile?.image || '/images/Userpic.png',
             }))
           );
           setFollowers(followersList);
@@ -173,9 +173,7 @@ export default function Sidebar({
                 onClick={() => unfollowUser()}
                 variant="default"
                 icon={<Icon.UserMinus size="16" />}
-                className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
-                }
+                className={!creatorPubky ? 'hidden' : ''}
               >
                 Unfollow me
               </Button.Medium>
@@ -184,9 +182,7 @@ export default function Sidebar({
                 onClick={() => followUser()}
                 variant="default"
                 icon={<Icon.UserPlus size="16" />}
-                className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
-                }
+                className={!creatorPubky ? 'hidden' : ''}
               >
                 Follow me
               </Button.Medium>
@@ -237,9 +233,8 @@ export default function Sidebar({
                 (followers?.count ?? 0) > 0 &&
                   router.push(`/followers/${creatorPubky ? creatorPubky : ''}`);
               }}
-              className={`flex-col gap-3 inline-flex ${
-                (followers?.count ?? 0) > 0 && 'cursor-pointer'
-              }`}
+              className={`flex-col gap-3 inline-flex ${(followers?.count ?? 0) > 0 && 'cursor-pointer'
+                }`}
             >
               <div className="inline-flex gap-2">
                 <Typography.Label>{followers?.count}</Typography.Label>

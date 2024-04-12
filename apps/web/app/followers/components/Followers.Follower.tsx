@@ -93,7 +93,7 @@ export default function Follower({ followers }: FollowersProps) {
                   <Image
                     width={48}
                     height={48}
-                    src={follower.profile.image}
+                    src={follower?.profile?.image || '/images/Userpic.png'}
                     alt={`follower-pic-${index + 1}`}
                     className="rounded-full w-[48px] h-[48px]"
                   />

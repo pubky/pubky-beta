@@ -60,7 +60,7 @@ export default function Index() {
                   className={`w-[32px] h-[32px] rounded-full ${
                     fromIndex !== 0 ? '-ml-5' : ''
                   }`}
-                  src={fromItem.author?.profile?.image}
+                  src={fromItem.author?.profile?.image || '/images/Userpic.png'}
                 />
               ))}
             </div>

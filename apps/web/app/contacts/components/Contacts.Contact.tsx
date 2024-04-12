@@ -31,7 +31,7 @@ export default function Contact({ contacts }: ContactsProps) {
                       width={201}
                       height={201}
                       className="rounded-full w-[201px] h-[201px]"
-                      src={contact?.profile?.image}
+                      src={contact?.profile?.image || '/images/Userpic.png'}
                       alt={`contact-pic-${index + 1}`}
                     />
                   </div>

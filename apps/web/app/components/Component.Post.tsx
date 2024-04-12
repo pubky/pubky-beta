@@ -98,7 +98,7 @@ export default function Post({
                 >
                   <PostUI.ImageUser
                     className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
-                    src={post?.author?.profile?.image || '/images/user.png'}
+                    src={post?.author?.profile?.image || '/images/Userpic.png'}
                     alt="user"
                   />
                   <div
@@ -186,7 +186,10 @@ export default function Post({
                                 className={`w-[32px] h-[32px] rounded-full ${
                                   fromIndex !== 0 ? '-ml-5' : ''
                                 }`}
-                                src={fromItem.author?.profile?.image}
+                                src={
+                                  fromItem.author?.profile?.image ||
+                                  '/images/Userpic.png'
+                                }
                               />
                             ))}
                         </PostUI.Footer>
