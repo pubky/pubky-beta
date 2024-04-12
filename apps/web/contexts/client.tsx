@@ -37,7 +37,7 @@ type ClientContextType = {
   signUp: (
     profile: IProfilePubkyProps,
     password: string
-  ) => Promise<ISignUpResponse | null>;
+  ) => Promise<ISignUpResponse | false>;
   logout: () => Promise<boolean>;
   getProfile: () => Promise<IUserProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
@@ -45,7 +45,7 @@ type ClientContextType = {
   createPost: (content: string) => Promise<ICreatePostResponse | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
-  isLoggedIn: () => Promise<string | boolean>;
+  isLoggedIn: () => Promise<string | false>;
   listUserFeed: (
     pubky: string,
     cursor: string,
@@ -137,7 +137,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     async (
       profile: IProfilePubkyProps,
       password: string
-    ): Promise<ISignUpResponse | null> => {
+    ): Promise<ISignUpResponse | false> => {
       try {
         const seed = Client.crypto.generateSeed();
 
@@ -162,7 +162,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         return { recoveryFile, filename };
       } catch (error) {
         console.log(error);
-        return null;
+        return false;
       }
     },
     [client, isLoggedIn]
