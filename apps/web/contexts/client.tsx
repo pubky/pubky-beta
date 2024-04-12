@@ -134,7 +134,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   }, [client]);
 
   const signUp = useCallback(
-    async (profile: any, password: string): Promise<ISignUpResponse | null> => {
+    async (
+      profile: IProfilePubkyProps,
+      password: string
+    ): Promise<ISignUpResponse | null> => {
       try {
         const seed = Client.crypto.generateSeed();
 
@@ -555,6 +558,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const decryptRecoveryFile = useCallback(
     async (password: string, recoveryFile: Buffer) => {
       try {
+        await client.ready();
+
         const recoveredSeed = await client.seedRecovery.decryptRecoveryFile(
           recoveryFile,
           password
