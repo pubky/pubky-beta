@@ -1,7 +1,7 @@
 import { Card, PostUtil, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Tag } from '../../../types';
+import { ITaggedPost } from '../../../types';
 import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '..';
 
@@ -14,7 +14,7 @@ export default function SearchInputCard({
   ...rest
 }: SearchInputCardProps) {
   const { getHotTags } = useClientContext();
-  const [hotTags, setHotTags] = useState<Tag[]>([]);
+  const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function SearchInputCard({
       try {
         const result = await getHotTags();
         if (result) {
-          setHotTags(result.value);
+          setHotTags(result);
           setLoading(false);
         }
       } catch (error) {
