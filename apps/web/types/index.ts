@@ -113,3 +113,33 @@ export interface IFeed {
   feed: IPost[];
   cursor: string;
 }
+
+interface IProfileSimplified {
+  bio: string;
+  image: string;
+}
+
+interface IFollower {
+  createdAt: number;
+  indexedAt: number;
+  uri: string;
+  profile: IProfileSimplified;
+}
+
+export interface IFollowersResponse {
+  count: number;
+  cursor: string;
+  followers: IFollower[];
+}
+
+export interface IFollowingResponse {
+  count: number;
+  followers: IFollower[];
+}
+
+export interface IMostFollowed {
+  id: string;
+  uri: string;
+  profile: IProfile;
+  followers: number;
+}
