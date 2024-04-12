@@ -8,19 +8,20 @@ import { CreatePost, Header, Skeleton } from '../components';
 import { HotTags } from './components';
 import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
-import { Tag } from '../../types';
+import { ITaggedPost } from '../../types';
 
 export default function Index() {
   const { getHotTags } = useClientContext();
-  const [hotTags, setHotTags] = useState<Tag[]>([]);
+  const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchTags() {
       try {
         const result = await getHotTags();
+
         if (result) {
-          setHotTags(result.value);
+          setHotTags(result);
           setLoading(false);
         }
       } catch (error) {
@@ -56,8 +57,9 @@ export default function Index() {
                   height={32}
                   alt={`pic-${fromIndex + 1}`}
                   key={fromIndex}
-                  className={`w-[32px] h-[32px] rounded-full ${fromIndex !== 0 ? '-ml-5' : ''
-                    }`}
+                  className={`w-[32px] h-[32px] rounded-full ${
+                    fromIndex !== 0 ? '-ml-5' : ''
+                  }`}
                   src={fromItem.author?.profile?.image}
                 />
               ))}

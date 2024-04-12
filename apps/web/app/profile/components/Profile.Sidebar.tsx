@@ -10,11 +10,7 @@ import { minifyPubky } from '../../../libs/pubkyHelper';
 import { minifyText } from '../../../libs/textHelper';
 import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '../../components';
-
-interface Followers {
-  count: number;
-  followers: [];
-}
+import { IFollowersResponse } from '../../../types';
 
 export default function Sidebar({
   creatorPubky,
@@ -33,7 +29,7 @@ export default function Sidebar({
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
-  const [followers, setFollowers] = useState<Followers | null>(null);
+  const [followers, setFollowers] = useState<IFollowersResponse | null>(null);
   const [images, setImages] = useState<{ alt: string; src: string }[]>([]);
   const [followed, setFollowed] = useState(false);
 
@@ -79,9 +75,17 @@ export default function Sidebar({
       try {
         let profile = null;
         if (creatorPubky) {
-          profile = await getUser(creatorPubky);
+          const userProfile = await getUser(creatorPubky);
+
+          if (userProfile) {
+            profile = userProfile?.profile;
+          }
         } else {
-          ({ profile } = await getProfile());
+          const userProfile = await getProfile();
+
+          if (userProfile) {
+            profile = userProfile?.profile;
+          }
         }
         if (profile) {
           setName(profile?.name || '');

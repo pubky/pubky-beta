@@ -1,25 +1,21 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import localStorageUtils from '../libs/localStorageUtils';
 
-type Layout = 'sidebar' | 'list' | 'grid' | 'columns';
-type Sort = 'recent' | 'tags' | 'activity';
-type Reach = 'following' | 'followers' | 'friends' | 'all';
-type Content = 'all' | 'posts' | 'images' | 'videos' | 'links';
-type Timeframe = 'today' | 'month' | 'all';
+import localStorageUtils from '../libs/localStorageUtils';
+import { TContent, TLayouts, TReach, TSort, TTimeframe } from './../types';
 
 type FilterContextType = {
-  layout: Layout;
-  setLayout(layout: Layout): void;
-  sort: Sort;
-  setSort: (sort: Sort) => void;
-  reach: Reach;
-  setReach: (reach: Reach) => void;
-  content: Content;
-  setContent: (content: Content) => void;
-  timeframe: Timeframe;
-  setTimeframe: (timeframe: Timeframe) => void;
+  layout: TLayouts;
+  setLayout(layout: TLayouts): void;
+  sort: TSort;
+  setSort: (sort: TSort) => void;
+  reach: TReach;
+  setReach: (reach: TReach) => void;
+  content: TContent;
+  setContent: (content: TContent) => void;
+  timeframe: TTimeframe;
+  setTimeframe: (timeframe: TTimeframe) => void;
 };
 
 const FilterContext = createContext<FilterContextType>({
@@ -36,20 +32,20 @@ const FilterContext = createContext<FilterContextType>({
 });
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
-  const [layout, setLayout] = useState<Layout>(
-    (localStorageUtils.get('layout') as Layout) || 'sidebar'
+  const [layout, setLayout] = useState<TLayouts>(
+    (localStorageUtils.get('layout') as TLayouts) || 'sidebar'
   );
-  const [sort, setSort] = useState<Sort>(
-    (localStorageUtils.get('sort') as Sort) || 'recent'
+  const [sort, setSort] = useState<TSort>(
+    (localStorageUtils.get('sort') as TSort) || 'recent'
   );
-  const [reach, setReach] = useState<Reach>(
-    (localStorageUtils.get('reach') as Reach) || 'all'
+  const [reach, setReach] = useState<TReach>(
+    (localStorageUtils.get('reach') as TReach) || 'all'
   );
-  const [content, setContent] = useState<Content>(
-    (localStorageUtils.get('content') as Content) || 'all'
+  const [content, setContent] = useState<TContent>(
+    (localStorageUtils.get('content') as TContent) || 'all'
   );
-  const [timeframe, setTimeframe] = useState<Timeframe>(
-    (localStorageUtils.get('timeframe') as Timeframe) || 'today'
+  const [timeframe, setTimeframe] = useState<TTimeframe>(
+    (localStorageUtils.get('timeframe') as TTimeframe) || 'today'
   );
 
   // save filters to local storage

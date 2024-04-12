@@ -5,11 +5,7 @@ import { Content } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../../components';
 import { Followers } from './../components';
 import { useClientContext } from '../../../contexts/client';
-
-interface Followers {
-  count: number;
-  followers: [];
-}
+import { IFollowersResponse } from '../../../types';
 
 export default function Index({
   params,
@@ -23,15 +19,16 @@ export default function Index({
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
-  const [followers, setFollowers] = useState<Followers | null>(null);
+  const [followers, setFollowers] = useState<IFollowersResponse | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const { profile } = await getUserIndexed(creatorPubky);
-        if (profile) {
-          setName(profile?.name || '');
-          setImage(profile?.image || '/images/Userpic.png');
+        const userProfile = await getUserIndexed(creatorPubky);
+
+        if (userProfile) {
+          setName(userProfile.profile?.name || '');
+          setImage(userProfile.profile?.image || '/images/Userpic.png');
           setLoading(false);
         }
       } catch (error) {
@@ -78,10 +75,7 @@ export default function Index({
           {loadingFollowers ? (
             <Skeleton.Followers />
           ) : (
-            <Followers.Follower
-              creatorPubky={pubky === creatorPubky ? '' : creatorPubky}
-              followers={followers?.followers}
-            />
+            <Followers.Follower followers={followers?.followers} />
           )}
         </Followers.Root>
       </Content.Grid>

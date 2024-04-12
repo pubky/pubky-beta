@@ -6,22 +6,24 @@ import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '.';
-import { Tag } from '../../types';
+import { ITaggedPost } from '../../types';
 
 export default function HotTags() {
   const router = useRouter();
   const { getHotTags } = useClientContext();
-  const [hotTags, setHotTags] = useState<Tag[]>([]);
+  const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchTags() {
       try {
         const result = await getHotTags();
+
         if (result) {
-          setHotTags(result.value);
-          setLoading(false);
+          setHotTags(result);
         }
+
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -37,7 +39,7 @@ export default function HotTags() {
       <SideCard.Content>
         {loading ? (
           <Skeleton.HotTags />
-        ) : hotTags.length > 0 ? (
+        ) : hotTags && hotTags.length > 0 ? (
           <>
             <div className="grid gap-3">
               {hotTags.slice(0, 3).map((tag, index) => (

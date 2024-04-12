@@ -6,12 +6,12 @@ import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
 import { minifyText } from '../../libs/textHelper';
 import { Skeleton } from '.';
-import { Followed } from '../../types';
+import { IMostFollowed } from '../../types';
 
 export default function WhoFollow() {
   const { pubky, getMostFollowed, follow, unfollow, listFollowing } =
     useClientContext();
-  const [hotFollowed, setHotFollowed] = useState<Followed[]>([]);
+  const [hotFollowed, setHotFollowed] = useState<IMostFollowed[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
@@ -43,11 +43,13 @@ export default function WhoFollow() {
 
         if (following) {
           following.following.forEach((user: any) => {
-            const uri = user.uri.replace('pubky:', '');
-            if (hotFollowed.some((followed: any) => followed.id === uri)) {
+            if (
+              Array.isArray(hotFollowed) &&
+              hotFollowed.some((followed: any) => followed.uri === user.uri)
+            ) {
               setFollowedUser((prevState) => ({
                 ...prevState,
-                [uri]: true,
+                [user.uri]: true,
               }));
             }
           });
@@ -96,8 +98,8 @@ export default function WhoFollow() {
       <SideCard.Content>
         {loading ? (
           <Skeleton.WhoFollow />
-        ) : hotFollowed.length > 0 ? (
-          hotFollowed.slice(0, 3).map((followed, index) => {
+        ) : hotFollowed && hotFollowed.length > 0 ? (
+          hotFollowed.slice(0, 3).map((followed: any, index: number) => {
             const pubkeyUser = pubky && followed.id.includes(pubky);
             const isFollowed = followedUser[followed.id] || false;
 

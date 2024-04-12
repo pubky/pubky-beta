@@ -34,11 +34,11 @@ export default function Index({
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const { profile } = await getUserIndexed(creatorPubky);
+        const userProfile = await getUserIndexed(creatorPubky);
 
-        if (profile) {
-          setPic(profile?.image || '/images/Userpic.png');
-          setName(profile?.name || 'Loading...');
+        if (userProfile) {
+          setPic(userProfile.profile?.image || '/images/Userpic.png');
+          setName(userProfile.profile?.name || 'Loading...');
         }
       } catch (error) {
         console.log(error);
@@ -81,10 +81,10 @@ export default function Index({
 
       const results = await listUserFeed(creatorPubky, cursor);
 
-      if (!results || !results.list) return;
+      if (!results || !results.feed) return;
 
       setCursor(results.cursor);
-      setPosts((prev) => [...prev, ...results.list]);
+      setPosts((prev) => [...prev, ...results.feed]);
 
       if (!results.cursor) {
         setCursor('');
