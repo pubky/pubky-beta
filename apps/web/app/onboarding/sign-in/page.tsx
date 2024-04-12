@@ -84,17 +84,21 @@ export default function Index() {
 
       if (!recoveryFile || !password) return;
 
-      const loggedIn = await decryptRecoveryFile(password, recoveryFile);
+      try {
+        const loggedIn = await decryptRecoveryFile(password, recoveryFile);
 
-      if (loggedIn) {
-        router.push('/onboarding/permissions');
-      } else {
-        setLoginError(true);
+        if (loggedIn) {
+          router.push('/onboarding/permissions');
+        } else {
+          setLoginError(true);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLogining(false);
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      setLogining(false);
     }
   };
   return (
@@ -163,10 +167,11 @@ export default function Index() {
           )}
           <Button.Large
             onClick={!logining ? () => handleSubmit() : undefined}
-            icon={logining ? <Icon.LoadingSpin /> : <Icon.Check />}
+            icon={<Icon.Check />}
+            loading={logining}
             className="mt-4"
           >
-            {!logining ? 'Login' : ''}
+            Login
           </Button.Large>
         </Card.Primary>
         <Card.Primary

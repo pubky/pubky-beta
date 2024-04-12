@@ -293,7 +293,7 @@ export default function CreatePost({
                 content && !sendingPost ? () => handleSubmit() : undefined
               }
             >
-              {!sendingPost ? 'Publish Post' : ''}
+              Publish Post
             </Modal.SubmitAction>
           </div>
         </div>

@@ -18,7 +18,8 @@ export const SubmitAction = ({
 }: SubmitActionProps) => {
   return (
     <Button.Large
-      icon={loading ? <Icon.LoadingSpin /> : icon}
+      icon={icon}
+      loading={loading}
       disabled={disabled}
       className="w-full"
       {...rest}

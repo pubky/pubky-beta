@@ -151,6 +151,8 @@ export default function Index() {
         await handleDownloadRecoveryFile({ recoveryFile, filename });
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
 
       router.push('/onboarding/confirm');
@@ -263,9 +265,10 @@ export default function Index() {
           <div className="pt-[30px]">
             <Button.Large
               onClick={!loading ? () => handleSubmit() : undefined}
-              icon={loading ? <Icon.LoadingSpin /> : <Icon.Check />}
+              icon={<Icon.Check />}
+              loading={loading}
             >
-              {!loading ? 'Download Recovery File' : ''}
+              Download Recovery File
             </Button.Large>
           </div>
         </Card.Primary>

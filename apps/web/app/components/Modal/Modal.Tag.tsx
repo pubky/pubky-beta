@@ -222,7 +222,7 @@ export default function Tag({
           }
           loading={sendingTags}
         >
-          {!sendingTags ? 'Apply Tags' : ''}
+          Apply Tags
         </Modal.SubmitAction>
       </div>
     </Modal.Root>
