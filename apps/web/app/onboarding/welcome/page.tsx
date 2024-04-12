@@ -65,22 +65,22 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const { profile } = await getProfile();
-        if (profile) {
-          setImage(profile?.image || '/images/Userpic.png');
-          setName(profile?.name || '');
-          setBio(profile?.bio || 'No bio.');
-          if (profile.links) {
-            const email = profile.links.find(
+        const userProfile = await getProfile();
+        if (userProfile) {
+          setImage(userProfile.profile?.image || '/images/Userpic.png');
+          setName(userProfile.profile?.name || '');
+          setBio(userProfile.profile?.bio || 'No bio.');
+          if (userProfile.profile.links) {
+            const email = userProfile.profile.links.find(
               (link: { title: string }) => link.title === 'email'
             );
-            const x = profile.links.find(
+            const x = userProfile.profile.links.find(
               (link: { title: string }) => link.title === 'x'
             );
-            const website = profile.links.find(
+            const website = userProfile.profile.links.find(
               (link: { title: string }) => link.title === 'website'
             );
-            const telegram = profile.links.find(
+            const telegram = userProfile.profile.links.find(
               (link: { title: string }) => link.title === 'telegram'
             );
             setEmail(email?.url || '');

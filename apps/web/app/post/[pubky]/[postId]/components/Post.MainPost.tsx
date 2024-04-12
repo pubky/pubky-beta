@@ -14,8 +14,11 @@ export default function MainPost({ uri }: { uri: string }) {
     async function fetchData() {
       if (!uri) return;
       const result = await getPost(uri);
-      setPost(result);
-      setLoading(false);
+
+      if (result) {
+        setPost(result);
+        setLoading(false);
+      }
     }
     fetchData();
   }, [uri, getPost]);

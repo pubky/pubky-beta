@@ -21,10 +21,10 @@ export default function ReplyForm() {
 
   useEffect(() => {
     async function fetchData() {
-      const profile = await getProfile();
-      if (profile) {
-        setImage(profile.image);
-        setUsername(profile.name);
+      const userProfile = await getProfile();
+      if (userProfile) {
+        setImage(userProfile.profile.image);
+        setUsername(userProfile.profile.name);
         setPk(minifyPubky(pubky));
       }
     }

@@ -53,7 +53,7 @@ type ClientContextType = {
   ) => Promise<IFeed | null>;
   listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
   listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
-  getMostFollowed: () => Promise<IMostFollowed | null>;
+  getMostFollowed: () => Promise<IMostFollowed[] | null>;
   listGlobalPosts: (
     cursor: string,
     reach: TReach,
@@ -450,22 +450,23 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
-  const getMostFollowed =
-    useCallback(async (): Promise<IMostFollowed | null> => {
-      try {
-        await client.ready();
+  const getMostFollowed = useCallback(async (): Promise<
+    IMostFollowed[] | null
+  > => {
+    try {
+      await client.ready();
 
-        const result = await client.social.graph.mostFollowed();
+      const result = await client.social.graph.mostFollowed();
 
-        if (!result.ok)
-          throw new Error(`Get most followed failed: ${result.error.message}`);
+      if (!result.ok)
+        throw new Error(`Get most followed failed: ${result.error.message}`);
 
-        return result.value as IMostFollowed;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    }, [client]);
+      return result.value as IMostFollowed[];
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }, [client]);
 
   const listFollowers = useCallback(
     async (pk: string): Promise<IFollowersResponse | null> => {

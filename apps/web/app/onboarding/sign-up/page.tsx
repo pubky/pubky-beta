@@ -33,14 +33,14 @@ export default function Index() {
 
   const router = useRouter();
 
-  const [name, setName] = useState(undefined);
-  const [bio, setBio] = useState(undefined);
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
-  const [website, setWebsite] = useState(undefined);
-  const [email, setEmail] = useState(undefined);
-  const [x, setX] = useState(undefined);
-  const [telegram, setTelegram] = useState(undefined);
-  const [password, setPassword] = useState(undefined);
+  const [website, setWebsite] = useState('');
+  const [email, setEmail] = useState('');
+  const [x, setX] = useState('');
+  const [telegram, setTelegram] = useState('');
+  const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({
     name: '',
     bio: '',
@@ -96,13 +96,13 @@ export default function Index() {
       });
 
       const result = profileSchema.safeParse({
-        name,
-        bio: bio || undefined,
-        website: website || undefined,
-        email: email || undefined,
-        x: x || undefined,
-        telegram: telegram || undefined,
-        password,
+        name: name,
+        bio: bio,
+        website: website,
+        email: email,
+        x: x,
+        telegram: telegram,
+        password: password,
       });
 
       if (!result.success) {
@@ -123,7 +123,7 @@ export default function Index() {
       try {
         const profileInfo = result.data;
 
-        const { recoveryFile, filename } = await signUp(
+        const signUpResponse = await signUp(
           {
             name,
             bio,
@@ -137,6 +137,12 @@ export default function Index() {
           },
           profileInfo.password
         );
+
+        if (!signUpResponse) {
+          throw new Error('Something went wrong');
+        }
+
+        const { recoveryFile, filename } = signUpResponse;
         await handleDownloadRecoveryFile({ recoveryFile, filename });
       } catch (error) {
         console.log(error);

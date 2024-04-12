@@ -55,11 +55,11 @@ export default function Index() {
     async function fetchProfile() {
       try {
         if (!pubky) return;
-        const { profile } = await getUserIndexed(pubky);
+        const userProfile = await getUserIndexed(pubky);
 
-        if (profile) {
-          setPic(profile?.image || '/images/Userpic.png');
-          setName(profile?.name || 'Loading...');
+        if (userProfile) {
+          setPic(userProfile.profile?.image || '/images/Userpic.png');
+          setName(userProfile.profile?.name || 'Loading...');
         }
       } catch (error) {
         console.log(error);

@@ -35,13 +35,13 @@ export default function Index() {
   const { pubky, signUp, saveProfile, getProfile } = useClientContext();
 
   const [handler, setHandler] = useState('Loading...');
-  const [name, setName] = useState(undefined);
-  const [bio, setBio] = useState(undefined);
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
-  const [website, setWebsite] = useState(undefined);
-  const [email, setEmail] = useState(undefined);
-  const [x, setX] = useState(undefined);
-  const [telegram, setTelegram] = useState(undefined);
+  const [website, setWebsite] = useState('');
+  const [email, setEmail] = useState('');
+  const [x, setX] = useState('');
+  const [telegram, setTelegram] = useState('');
   const [errors, setErrors] = useState({
     name: '',
     bio: '',
@@ -55,21 +55,23 @@ export default function Index() {
     setHandler(minifyPubky(pubky));
     async function fetchData() {
       try {
-        const { profile } = await getProfile(false);
+        const userProfile = await getProfile();
 
-        setName(profile.name);
-        setBio(profile.bio);
-        setImage(profile.image);
+        if (userProfile) {
+          setName(userProfile.profile.name);
+          setBio(userProfile.profile.bio);
+          setImage(userProfile.profile.image);
 
-        for (const link of profile.links) {
-          if (link.title === 'website') {
-            setWebsite(link.url);
-          } else if (link.title === 'email') {
-            setEmail(link.url);
-          } else if (link.title === 'x') {
-            setX(link.url);
-          } else if (link.title === 'telegram') {
-            setTelegram(link.url);
+          for (const link of userProfile.profile.links) {
+            if (link.title === 'website') {
+              setWebsite(link.url);
+            } else if (link.title === 'email') {
+              setEmail(link.url);
+            } else if (link.title === 'x') {
+              setX(link.url);
+            } else if (link.title === 'telegram') {
+              setTelegram(link.url);
+            }
           }
         }
       } catch (error) {

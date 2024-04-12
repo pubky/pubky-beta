@@ -114,12 +114,13 @@ export interface IFeed {
   cursor: string;
 }
 
-interface IProfileSimplified {
+export interface IProfileSimplified {
   bio: string;
   image: string;
+  name?: string;
 }
 
-interface IFollower {
+export interface IFollower {
   createdAt: number;
   indexedAt: number;
   uri: string;
@@ -134,7 +135,7 @@ export interface IFollowersResponse {
 
 export interface IFollowingResponse {
   count: number;
-  followers: IFollower[];
+  following: IFollower[];
 }
 
 export interface IMostFollowed {

@@ -8,17 +8,18 @@ import { CreatePost, Header, Skeleton } from '../components';
 import { HotTags } from './components';
 import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
-import { ITag } from '../../types';
+import { ITaggedPost } from '../../types';
 
 export default function Index() {
   const { getHotTags } = useClientContext();
-  const [hotTags, setHotTags] = useState<ITag[]>([]);
+  const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchTags() {
       try {
         const result = await getHotTags();
+
         if (result) {
           setHotTags(result);
           setLoading(false);

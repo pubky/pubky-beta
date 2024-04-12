@@ -50,10 +50,11 @@ export default function Header({
     fetchData();
     async function fetchProfile() {
       try {
-        const { profile } = await getProfile();
-        if (profile) {
-          setImage(profile?.image || '/images/Userpic.png');
-          setName(profile?.name || '');
+        const userProfile = await getProfile();
+
+        if (userProfile) {
+          setImage(userProfile.profile?.image || '/images/Userpic.png');
+          setName(userProfile.profile?.name || '');
         }
       } catch (error) {
         console.log(error);

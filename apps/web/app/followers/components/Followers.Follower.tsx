@@ -7,17 +7,10 @@ import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 import Link from 'next/link';
 import { useClientContext } from '../../../contexts/client';
+import { IFollower } from '../../../types';
 
 interface FollowersProps extends React.HTMLAttributes<HTMLDivElement> {
-  followers?: Array<{
-    profile: {
-      name: string;
-      image: string;
-      bio: string;
-    };
-    uri: string;
-  }>;
-  creatorPubky?: string | null;
+  followers?: IFollower[];
 }
 
 export default function Follower({ followers }: FollowersProps) {
@@ -27,6 +20,7 @@ export default function Follower({ followers }: FollowersProps) {
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
 
   useEffect(() => {
+    console.log(followers);
     async function fetchData() {
       try {
         if (!pubky) return;
