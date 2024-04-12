@@ -50,16 +50,14 @@ export default function SearchInputCard({
             hotTags.length > 0 && (
               <div className="mt-2 justify-start items-start">
                 {hotTags.slice(0, 10).map((tag, index) => (
-                  <>
-                    <PostUtil.Tag
-                      key={index}
-                      clicked={false}
-                      color="amber"
-                      className="mr-2 my-1"
-                    >
-                      # {tag.tag}
-                    </PostUtil.Tag>
-                  </>
+                  <PostUtil.Tag
+                    key={index}
+                    clicked={false}
+                    color="amber"
+                    className="mr-2 my-1"
+                  >
+                    # {tag.tag}
+                  </PostUtil.Tag>
                 ))}
               </div>
             )
