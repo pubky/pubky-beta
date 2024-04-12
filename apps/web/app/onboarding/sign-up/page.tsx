@@ -33,14 +33,14 @@ export default function Index() {
 
   const router = useRouter();
 
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
+  const [name, setName] = useState(undefined);
+  const [bio, setBio] = useState(undefined);
   const [image, setImage] = useState('/images/Userpic.png');
-  const [website, setWebsite] = useState('');
-  const [email, setEmail] = useState('');
-  const [x, setX] = useState('');
-  const [telegram, setTelegram] = useState('');
-  const [password, setPassword] = useState('');
+  const [website, setWebsite] = useState(undefined);
+  const [email, setEmail] = useState(undefined);
+  const [x, setX] = useState(undefined);
+  const [telegram, setTelegram] = useState(undefined);
+  const [password, setPassword] = useState(undefined);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
@@ -102,11 +102,11 @@ export default function Index() {
 
       const result = profileSchema.safeParse({
         name: name,
-        bio: bio,
-        website: website,
-        email: email,
-        x: x,
-        telegram: telegram,
+        bio: bio ? bio : undefined,
+        website: website ? website : undefined,
+        email: email ? email : undefined,
+        x: x ? x : undefined,
+        telegram: telegram ? telegram : undefined,
         password: password,
       });
 
@@ -168,7 +168,7 @@ export default function Index() {
       <Input.Cursor
         placeholder="Your Name"
         className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
-        defaultValue={name}
+        defaultValue={name ? name : ''}
         autoFocus
         autoCorrect="off"
         onChange={(e: any) => setName(e.target.value)}
@@ -184,7 +184,7 @@ export default function Index() {
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
               className="h-[420px]"
-              defaultValue={bio}
+              defaultValue={bio ? bio : ''}
               error={errors.bio}
               onChange={(e: any) => setBio(e.target.value)}
             />
@@ -196,7 +196,7 @@ export default function Index() {
             <Input.Text
               className="h-[70px]"
               placeholder="https://"
-              defaultValue={website}
+              defaultValue={website ? website : ''}
               error={errors.website}
               onChange={(e: any) => setWebsite(e.target.value)}
             />
@@ -206,7 +206,7 @@ export default function Index() {
             <Input.Text
               className="h-[70px]"
               placeholder="user@provider.com"
-              defaultValue={email}
+              defaultValue={email ? email : ''}
               error={errors.email}
               onChange={(e: any) => setEmail(e.target.value)}
             />
@@ -216,7 +216,7 @@ export default function Index() {
             <Input.Text
               className="h-[70px]"
               placeholder="@user"
-              defaultValue={x}
+              defaultValue={x ? x : ''}
               error={errors.x}
               onChange={(e: any) => setX(e.target.value)}
             />
@@ -226,7 +226,7 @@ export default function Index() {
             <Input.Text
               className="h-[70px]"
               placeholder="@user"
-              defaultValue={telegram}
+              defaultValue={telegram ? telegram : ''}
               error={errors.telegram}
               onChange={(e: any) =>
                 setTelegram(e.target.value.replace('@', ''))
