@@ -43,13 +43,14 @@ export default function WhoFollow() {
 
         if (following) {
           following.following.forEach((user: any) => {
+            const id = user.uri.replace('pubky:', '');
             if (
               Array.isArray(hotFollowed) &&
-              hotFollowed.some((followed: any) => followed.uri === user.uri)
+              hotFollowed.some((followed: any) => followed.id === id)
             ) {
               setFollowedUser((prevState) => ({
                 ...prevState,
-                [user.uri]: true,
+                [id]: true,
               }));
             }
           });
