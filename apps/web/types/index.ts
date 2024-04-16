@@ -5,6 +5,45 @@ export type TReach = 'following' | 'followers' | 'friends' | 'all';
 export type TContent = 'all' | 'posts' | 'images' | 'videos' | 'links';
 export type TTimeframe = 'today' | 'month' | 'all';
 
+export interface ClientContextType {
+  pubky: string | null;
+  refreshList: boolean;
+  signUp: (
+    profile: IProfilePubkyProps,
+    password: string
+  ) => Promise<ISignUpResponse | false>;
+  logout: () => Promise<boolean>;
+  getProfile: () => Promise<IProfile | null>;
+  saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
+  getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
+  createPost: (content: string) => Promise<ICreatePostResponse | null>;
+  createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
+  getHotTags: () => Promise<ITaggedPost[] | null>;
+  isLoggedIn: () => Promise<string | false>;
+  listUserFeed: (
+    pubky: string,
+    cursor: string,
+    limit?: number
+  ) => Promise<IFeed | null>;
+  listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
+  listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
+  getMostFollowed: () => Promise<IMostFollowed[] | null>;
+  listGlobalPosts: (
+    cursor: string,
+    reach: TReach,
+    tags?: string[]
+  ) => Promise<IFeed | null>;
+  getPost: (uri: string) => Promise<IPost | null>;
+  getUser: (pk: string) => Promise<IUserProfile | null>;
+  decryptRecoveryFile: (
+    password: string,
+    recoveryFile: Buffer
+  ) => Promise<boolean>;
+  setRefreshList: (value: boolean) => void;
+  follow: (pk: string) => Promise<boolean>;
+  unfollow: (pk: string) => Promise<boolean>;
+}
+
 export interface ILink {
   url: string;
   title: string;

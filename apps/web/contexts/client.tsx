@@ -20,7 +20,8 @@ import {
   IPost,
   IFeed,
   TLayouts,
-  TReach,
+  ClientContextType,
+  IProfile,
 } from '../types';
 
 export * from '@pubky/common';
@@ -30,45 +31,6 @@ import localStorageUtils from '../libs/localStorageUtils';
 
 const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
 const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY || '';
-
-type ClientContextType = {
-  pubky: string | null;
-  refreshList: boolean;
-  signUp: (
-    profile: IProfilePubkyProps,
-    password: string
-  ) => Promise<ISignUpResponse | false>;
-  logout: () => Promise<boolean>;
-  getProfile: () => Promise<IProfile | null>;
-  saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
-  getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string) => Promise<ICreatePostResponse | null>;
-  createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
-  getHotTags: () => Promise<ITaggedPost[] | null>;
-  isLoggedIn: () => Promise<string | false>;
-  listUserFeed: (
-    pubky: string,
-    cursor: string,
-    limit?: number
-  ) => Promise<IFeed | null>;
-  listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
-  listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
-  getMostFollowed: () => Promise<IMostFollowed[] | null>;
-  listGlobalPosts: (
-    cursor: string,
-    reach: TReach,
-    tags?: string[]
-  ) => Promise<IFeed | null>;
-  getPost: (uri: string) => Promise<IPost | null>;
-  getUser: (pk: string) => Promise<IUserProfile | null>;
-  decryptRecoveryFile: (
-    password: string,
-    recoveryFile: Buffer
-  ) => Promise<boolean>;
-  setRefreshList: (value: boolean) => void;
-  follow: (pk: string) => Promise<boolean>;
-  unfollow: (pk: string) => Promise<boolean>;
-};
 
 const ClientContext = createContext<ClientContextType>({} as ClientContextType);
 
@@ -83,23 +45,27 @@ console.log({ homeserverUrl });
 
 // Calling the client as soon as possible, because... we want to find the server as soon as possible!
 // and we aren't really switching homeserver according to the user settings any time soon.
+
 const client = new Client(HOMESERVER, {
   relay: PKARR_RELAY,
   homeserverUrl,
 });
 
-client.ready().then(() => {
+const startClient = async () => {
+  await client.ready();
+
   localStorageUtils.set('homeserverUrl', {
     timestamp: Date.now(),
     url: client.homeserverUrl,
   });
-});
+};
+startClient();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
     (localStorageUtils.get('pubky') as TLayouts) || null
   );
-  const [profile, setProfile] = useState<any>(
+  const [profile, setProfile] = useState<string | null>(
     localStorageUtils.get('profile') || null
   );
   const [refreshList, setRefreshList] = useState<boolean>(false);
@@ -626,10 +592,10 @@ export function useClientContext() {
   return useContext(ClientContext);
 }
 
-const _toPubkeyProfile = (profile: any): any => {
+const _toPubkeyProfile = (profile: IUserProfile): IProfile => {
   if (!profile) throw new Error('Profile is required');
 
-  const pubkeyProfile: any = {
+  return {
     name: profile.name || 'anonymous',
     bio: profile?.bio || '',
     image: profile.image,
@@ -640,5 +606,4 @@ const _toPubkeyProfile = (profile: any): any => {
       { url: profile?.links?.telegram || '', title: 'telegram' },
     ],
   };
-  return pubkeyProfile;
 };
