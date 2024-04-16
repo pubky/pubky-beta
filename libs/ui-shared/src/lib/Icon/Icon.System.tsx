@@ -247,6 +247,7 @@ export const LoadingSpin = ({ size = '40', color = 'white' }: IconProps) => (
       <stop offset="1" stopColor={color} stopOpacity="0"></stop>
     </radialGradient>
     <circle
+      transform-origin="center"
       fill="none"
       stroke="url(#a11)"
       strokeWidth="30"
@@ -269,6 +270,7 @@ export const LoadingSpin = ({ size = '40', color = 'white' }: IconProps) => (
       ></animateTransform>
     </circle>
     <circle
+      transform-origin="center"
       fill="none"
       opacity=".2"
       stroke="#FFFFFF"
