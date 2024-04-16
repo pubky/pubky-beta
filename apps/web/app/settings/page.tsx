@@ -58,11 +58,11 @@ export default function Index() {
         const userProfile = await getProfile();
 
         if (userProfile) {
-          setName(userProfile.profile.name);
-          setBio(userProfile.profile.bio);
-          setImage(userProfile.profile.image || '/images/Userpic.png');
+          setName(userProfile.name);
+          setBio(userProfile.bio);
+          setImage(userProfile.image || '/images/Userpic.png');
 
-          for (const link of userProfile.profile.links) {
+          for (const link of userProfile.links) {
             if (link.title === 'website') {
               setWebsite(link.url);
             } else if (link.title === 'email') {

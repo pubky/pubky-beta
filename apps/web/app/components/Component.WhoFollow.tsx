@@ -105,7 +105,7 @@ export default function WhoFollow() {
             const isFollowed = followedUser[followed.id] || false;
 
             return (
-              <div key={index + 1}>
+              <div key={index}>
                 <SideCard.User
                   uri={followed.id}
                   src={followed?.profile?.image || '/images/Userpic.png'}

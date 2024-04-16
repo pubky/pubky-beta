@@ -40,7 +40,8 @@ const layouts = {
 
 export default function Index() {
   const { layout, reach } = useFilterContext();
-  const { refreshList, listGlobalPosts, pubky } = useClientContext();
+  const { pubky, refreshList, listGlobalPosts, setRefreshList } =
+    useClientContext();
   const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLoadMore, setShowLoadMore] = useState(false);
@@ -76,8 +77,9 @@ export default function Index() {
   useEffect(() => {
     if (refreshList) {
       fetchData('');
+      setRefreshList(false);
     }
-  }, [refreshList]);
+  }, [refreshList, reach]);
 
   const handleLoadMore = async () => {
     try {

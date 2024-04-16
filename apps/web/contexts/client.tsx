@@ -20,7 +20,8 @@ import {
   IPost,
   IFeed,
   TLayouts,
-  TReach,
+  ClientContextType,
+  IProfile,
 } from '../types';
 
 export * from '@pubky/common';
@@ -30,45 +31,6 @@ import localStorageUtils from '../libs/localStorageUtils';
 
 const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
 const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY || '';
-
-type ClientContextType = {
-  pubky: string | null;
-  refreshList: boolean;
-  signUp: (
-    profile: IProfilePubkyProps,
-    password: string
-  ) => Promise<ISignUpResponse | false>;
-  logout: () => Promise<boolean>;
-  getProfile: () => Promise<IUserProfile | null>;
-  saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
-  getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string) => Promise<ICreatePostResponse | null>;
-  createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
-  getHotTags: () => Promise<ITaggedPost[] | null>;
-  isLoggedIn: () => Promise<string | false>;
-  listUserFeed: (
-    pubky: string,
-    cursor: string,
-    limit?: number
-  ) => Promise<IFeed | null>;
-  listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
-  listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
-  getMostFollowed: () => Promise<IMostFollowed[] | null>;
-  listGlobalPosts: (
-    cursor: string,
-    reach: TReach,
-    tags?: string[]
-  ) => Promise<IFeed | null>;
-  getPost: (uri: string) => Promise<IPost | null>;
-  getUser: (pk: string) => Promise<IUserProfile | null>;
-  decryptRecoveryFile: (
-    password: string,
-    recoveryFile: Buffer
-  ) => Promise<boolean>;
-  setRefreshList: (value: boolean) => void;
-  follow: (pk: string) => Promise<boolean>;
-  unfollow: (pk: string) => Promise<boolean>;
-};
 
 const ClientContext = createContext<ClientContextType>({} as ClientContextType);
 
@@ -83,23 +45,27 @@ console.log({ homeserverUrl });
 
 // Calling the client as soon as possible, because... we want to find the server as soon as possible!
 // and we aren't really switching homeserver according to the user settings any time soon.
+
 const client = new Client(HOMESERVER, {
   relay: PKARR_RELAY,
   homeserverUrl,
 });
 
-client.ready().then(() => {
+const startClient = async () => {
+  await client.ready();
+
   localStorageUtils.set('homeserverUrl', {
     timestamp: Date.now(),
     url: client.homeserverUrl,
   });
-});
+};
+startClient();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
     (localStorageUtils.get('pubky') as TLayouts) || null
   );
-  const [, setProfile] = useState<any>(
+  const [profile, setProfile] = useState<string | null>(
     localStorageUtils.get('profile') || null
   );
   const [refreshList, setRefreshList] = useState<boolean>(false);
@@ -135,7 +101,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const signUp = useCallback(
     async (
-      profile: IProfilePubkyProps,
+      userProfile: IProfilePubkyProps,
       password: string
     ): Promise<ISignUpResponse | false> => {
       try {
@@ -150,16 +116,18 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         localStorageUtils.set('pubky', pk);
         setPubky(pk);
 
-        await saveProfile(profile);
+        const pubkeyProfile = _toPubkeyProfile(userProfile);
 
-        const { recoveryFile, filename } =
-          await client.seedRecovery.recoveryFile(
-            'recovery_file',
-            seed,
-            password
-          );
+        await client.social.profile.put(pk, pubkeyProfile);
 
-        return { recoveryFile, filename };
+        setProfile(pubkeyProfile);
+        localStorageUtils.set('profile', pubkeyProfile);
+
+        return await client.seedRecovery.recoveryFile(
+          'recovery_file',
+          seed,
+          password
+        );
       } catch (error) {
         console.log(error);
         return false;
@@ -191,18 +159,18 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   }, [client]);
 
   const saveProfile = useCallback(
-    async (profile: IProfilePubkyProps): Promise<ISaveProfile | null> => {
+    async (userProfile: IProfilePubkyProps): Promise<ISaveProfile | null> => {
       try {
         const pk = await isLoggedIn();
 
         if (!pk) throw new Error('Logged in failed : not logged in.');
 
-        const pubkeyProfile = _toPubkeyProfile(profile);
+        const pubkeyProfile = _toPubkeyProfile(userProfile);
 
         const result = await client.social.profile.put(pk, pubkeyProfile);
 
-        setProfile(profile);
-        localStorageUtils.set('profile', profile);
+        setProfile(pubkeyProfile);
+        localStorageUtils.set('profile', pubkeyProfile);
 
         if (!result.ok)
           throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
@@ -216,11 +184,12 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     [client]
   );
 
-  const getProfile = useCallback(async (): Promise<IUserProfile | null> => {
+  const getProfile = useCallback(async (): Promise<IProfile | null> => {
     try {
       const pk = await isLoggedIn();
-
       if (!pk) throw new Error('Logged in failed : not logged in.');
+
+      if (profile) return profile;
 
       await client.ready();
 
@@ -229,17 +198,17 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
 
-      const profile = result.value?.profile;
+      const userProfile = result.value?.profile;
 
-      localStorageUtils.set('profile', profile);
-      setProfile(profile);
+      localStorageUtils.set('profile', userProfile);
+      setProfile(userProfile);
 
-      return result.value as IUserProfile;
+      return userProfile;
     } catch (error) {
       console.log(error);
       return null;
     }
-  }, [client]);
+  }, [client, profile]);
 
   const getUser = useCallback(
     async (pk: string): Promise<IUserProfile | null> => {
@@ -569,7 +538,13 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
           console.log(recoveredSeed.error);
           return false;
         }
-        await client.signup(recoveredSeed.value);
+        const result = await client.signup(recoveredSeed.value);
+
+        if (!result.ok)
+          throw new Error(`Sign up failed: ${result.error.message}`);
+
+        localStorageUtils.set('pubky', result.value);
+        setPubky(result.value);
 
         return true;
       } catch (error) {
@@ -584,6 +559,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     <ClientContext.Provider
       value={{
         pubky,
+        profile,
         refreshList,
         isLoggedIn,
         createPost,
@@ -616,10 +592,10 @@ export function useClientContext() {
   return useContext(ClientContext);
 }
 
-const _toPubkeyProfile = (profile: any): any => {
+const _toPubkeyProfile = (profile: IUserProfile): IProfile => {
   if (!profile) throw new Error('Profile is required');
 
-  const pubkeyProfile: any = {
+  return {
     name: profile.name || 'anonymous',
     bio: profile?.bio || '',
     image: profile.image,
@@ -630,5 +606,4 @@ const _toPubkeyProfile = (profile: any): any => {
       { url: profile?.links?.telegram || '', title: 'telegram' },
     ],
   };
-  return pubkeyProfile;
 };

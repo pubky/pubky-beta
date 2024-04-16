@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -53,15 +52,15 @@ export default function Header({
         const userProfile = await getProfile();
 
         if (userProfile) {
-          setImage(userProfile.profile?.image || '/images/Userpic.png');
-          setName(userProfile.profile?.name || '');
+          setImage(userProfile.image || '/images/Userpic.png');
+          setName(userProfile.name || '');
         }
       } catch (error) {
         console.log(error);
       }
     }
     fetchProfile();
-  }, [pubky]);
+  }, [getProfile, isLoggedIn, pubky]);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {

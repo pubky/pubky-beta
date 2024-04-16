@@ -3,18 +3,9 @@ import { Content, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 import { Contacts } from '.';
-interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
-  contacts?: Array<{
-    profile: {
-      name: string;
-      image: string;
-      bio: string;
-    };
-    uri: string;
-  }>;
-}
+import { IFollower } from '../../../types';
 
-export default function Contact({ contacts }: ContactsProps) {
+export default function Contact({ contacts }: { contacts: IFollower[] }) {
   return (
     <>
       {contacts &&

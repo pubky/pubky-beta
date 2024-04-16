@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
 import { useFilterContext } from '../../../contexts/filters';
+import { useClientContext } from '../../../contexts/client';
 
 export default function Reach() {
+  const { setRefreshList } = useClientContext();
   const { reach, setReach } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
@@ -14,10 +16,15 @@ export default function Reach() {
     friends: <Icon.Smiley />,
     all: <Icon.Broadcast />,
   };
+
   const [dropdownValue, setDropdownValue] = useState({
-    value: reach ? reach : 'following',
-    iconOption: reach ? icons[reach] : icons.following,
+    value: reach ? reach : 'all',
+    iconOption: reach ? icons[reach] : icons.all,
   });
+
+  useEffect(() => {
+    setRefreshList(true);
+  }, [dropdownValue, setRefreshList]);
 
   return (
     <DropDown

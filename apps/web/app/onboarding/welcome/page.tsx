@@ -67,20 +67,20 @@ export default function Index() {
       try {
         const userProfile = await getProfile();
         if (userProfile) {
-          setImage(userProfile.profile?.image || '/images/Userpic.png');
-          setName(userProfile.profile?.name || '');
-          setBio(userProfile.profile?.bio || 'No bio.');
-          if (userProfile.profile.links) {
-            const email = userProfile.profile.links.find(
+          setImage(userProfile.image || '/images/Userpic.png');
+          setName(userProfile.name || '');
+          setBio(userProfile.bio || 'No bio.');
+          if (userProfile.links) {
+            const email = userProfile.links.find(
               (link: { title: string }) => link.title === 'email'
             );
-            const x = userProfile.profile.links.find(
+            const x = userProfile.links.find(
               (link: { title: string }) => link.title === 'x'
             );
-            const website = userProfile.profile.links.find(
+            const website = userProfile.links.find(
               (link: { title: string }) => link.title === 'website'
             );
-            const telegram = userProfile.profile.links.find(
+            const telegram = userProfile.links.find(
               (link: { title: string }) => link.title === 'telegram'
             );
             setEmail(email?.url || '');
