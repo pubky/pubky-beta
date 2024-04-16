@@ -2,6 +2,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../components';
@@ -11,7 +12,9 @@ import { useClientContext } from '../../contexts/client';
 import { ITaggedPost } from '../../types';
 
 export default function Index() {
-  const { getHotTags } = useClientContext();
+  const router = useRouter();
+  const { getHotTags, setRefreshList, setSearchTags, searchTags } =
+    useClientContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,6 +53,11 @@ export default function Index() {
               <HotTags.Rank
                 rank={index + 1}
                 tag={`# ${tag.tag}`}
+                onClick={() => {
+                  setSearchTags([...searchTags, tag.tag]);
+                  setRefreshList(true);
+                  router.push('/search');
+                }}
                 color="amber"
                 counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
               />

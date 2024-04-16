@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { Card, PostUtil, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -13,7 +14,9 @@ export default function SearchInputCard({
   refCard,
   ...rest
 }: SearchInputCardProps) {
-  const { getHotTags } = useClientContext();
+  const router = useRouter();
+  const { getHotTags, setRefreshList, searchTags, setSearchTags } =
+    useClientContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,6 +56,11 @@ export default function SearchInputCard({
                   <PostUtil.Tag
                     key={index}
                     clicked={false}
+                    onClick={() => {
+                      setSearchTags([...searchTags, tag.tag]);
+                      setRefreshList(true);
+                      router.push('/search');
+                    }}
                     color="amber"
                     className="mr-2 my-1"
                   >

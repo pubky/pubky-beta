@@ -10,7 +10,8 @@ import { ITaggedPost } from '../../types';
 
 export default function HotTags() {
   const router = useRouter();
-  const { getHotTags } = useClientContext();
+  const { getHotTags, setSearchTags, searchTags, setRefreshList } =
+    useClientContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -46,6 +47,11 @@ export default function HotTags() {
               {hotTags.slice(0, 8).map((tag, index) => (
                 <SideCard.Rank
                   key={index}
+                  onClick={() => {
+                    setSearchTags([...searchTags, tag.tag]);
+                    setRefreshList(true);
+                    router.push('/search');
+                  }}
                   rank={index + 1}
                   tag={`# ${tag.tag}`}
                   color="amber"

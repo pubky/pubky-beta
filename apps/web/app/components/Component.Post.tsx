@@ -39,7 +39,8 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
 
-  const { createTag, setRefreshList } = useClientContext();
+  const { createTag, setRefreshList, searchTags, setSearchTags } =
+    useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   // const [bookmark, setBookmark] = useState(false);
@@ -162,7 +163,16 @@ export default function Post({
                       .slice(0, size === 'full' ? 3 : 1)
                       .map((tagObj, index) => (
                         <PostUI.Footer key={index}>
-                          <PostUtil.Tag clicked color="amber">
+                          <PostUtil.Tag
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setSearchTags([...searchTags, tagObj.tag]);
+                              setRefreshList(true);
+                              router.push('/search');
+                            }}
+                            clicked
+                            color="amber"
+                          >
                             # {tagObj.tag}
                           </PostUtil.Tag>
                           <Button.Action

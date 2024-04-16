@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
 import { Modal } from './Modal';
@@ -7,14 +8,10 @@ import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
 import { minifyText } from '../../libs/textHelper';
 
-type Tag = {
-  value: string;
-  color: string;
-};
 interface HeaderProps {
   title: React.ReactNode;
   className?: string;
-  tags?: Tag[];
+  tags?: string[];
   children?: React.ReactNode;
 }
 
@@ -24,7 +21,9 @@ export default function Header({
   tags = [],
   children,
 }: HeaderProps) {
-  const { pubky, getProfile, isLoggedIn } = useClientContext();
+  const router = useRouter();
+  const { pubky, getProfile, isLoggedIn, setRefreshList, setSearchTags } =
+    useClientContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
@@ -84,19 +83,40 @@ export default function Header({
     };
   }, [drawerRef, refSearchInputCard]);
 
+  const handleRemoveTag = (indexToRemove: number) => {
+    setSearchTags((prevTags: string[]) => {
+      const newTags = [...prevTags];
+      newTags.splice(indexToRemove, 1);
+      return newTags;
+    });
+    setRefreshList(true);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const inputValue = e.target.value.trim();
+      if (inputValue.startsWith('#')) {
+        setSearchTags((prevTags) => [...prevTags, inputValue.slice(1)]);
+        router.push('/search');
+      }
+    }
+  };
+
   return (
     <HeaderUI.Root>
       <HeaderUI.Logo link={logoLink} />
       <HeaderUI.Title titleHeader={title} className={className} />
-      <Input.Search>
+      <Input.Search onKeyDown={handleKeyDown}>
         {tags && (
           <Input.SearchTags className="hidden sm:block">
             {tags.map((tag, index) => (
               <Input.SearchTag
-                color={tag.color}
+                color="bg-amber-500 bg-opacity-30"
                 key={index}
+                onClick={() => handleRemoveTag(index)}
                 actions={[<Icon.X key={index} />]}
-                value={tag.value}
+                value={`# ${tag}`}
+                className="mr-2"
               />
             ))}
           </Input.SearchTags>
