@@ -145,7 +145,10 @@ export default function Index() {
           {posts.length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
-                No posts yet.
+                No posts with this tag:
+              </Typography.H2>
+              <Typography.H2 className="font-normal">
+                #{searchTags}
               </Typography.H2>
             </div>
           )}
