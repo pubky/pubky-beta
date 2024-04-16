@@ -31,6 +31,7 @@ export default function Header({
   const [name, setName] = useState('');
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [handler, setHandler] = useState('');
+  const [inputValue, setInputValue] = useState('');
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
@@ -94,11 +95,16 @@ export default function Header({
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      const inputValue = e.target.value.trim();
-      if (inputValue.startsWith('#')) {
-        setSearchTags((prevTags) => [...prevTags, inputValue.slice(1)]);
-        router.push('/search');
-      }
+      handleSearchTag();
+    }
+  };
+
+  const handleSearchTag = () => {
+    const trimmedValue = inputValue.trim();
+    if (trimmedValue.startsWith('#')) {
+      setSearchTags((prevTags) => [...prevTags, trimmedValue.slice(1)]);
+      setInputValue('');
+      router.push('/search');
     }
   };
 
@@ -106,7 +112,11 @@ export default function Header({
     <HeaderUI.Root>
       <HeaderUI.Logo link={logoLink} />
       <HeaderUI.Title titleHeader={title} className={className} />
-      <Input.Search onKeyDown={handleKeyDown}>
+      <Input.Search
+        defaultValue={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+      >
         {tags && (
           <Input.SearchTags className="hidden sm:block">
             {tags.map((tag, index) => (
@@ -132,7 +142,9 @@ export default function Header({
         />
         <Input.SearchActions className="hidden sm:flex">
           {tags.length > 0 && <Icon.GridFour />}
-          <Icon.MagnifyingGlass />
+          <div className="cursor-pointer" onClick={handleSearchTag}>
+            <Icon.MagnifyingGlass />
+          </div>
         </Input.SearchActions>
       </Input.Search>
       {children}
