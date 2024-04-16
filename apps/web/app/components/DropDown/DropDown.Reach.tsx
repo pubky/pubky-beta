@@ -18,8 +18,8 @@ export default function Reach() {
   };
 
   const [dropdownValue, setDropdownValue] = useState({
-    value: reach ? reach : 'following',
-    iconOption: reach ? icons[reach] : icons.following,
+    value: reach ? reach : 'all',
+    iconOption: reach ? icons[reach] : icons.all,
   });
 
   useEffect(() => {

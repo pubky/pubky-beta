@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -61,7 +60,7 @@ export default function Header({
       }
     }
     fetchProfile();
-  }, [pubky]);
+  }, [getProfile, isLoggedIn, pubky]);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
