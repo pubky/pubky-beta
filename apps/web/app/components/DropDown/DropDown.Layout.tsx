@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
 import { useFilterContext } from '../../../contexts/filters';
@@ -13,11 +13,20 @@ export default function Layout() {
     list: <Icon.List />,
     grid: <Icon.DotsNine />,
     columns: <Icon.SquaresFour />,
+    loading: <Icon.LoadingSpin />,
   };
   const [dropdownValue, setDropdownValue] = useState({
     value: layout ? layout : 'sidebar',
-    iconOption: layout ? icons[layout] : icons.sidebar,
+    iconOption: icons.loading,
   });
+
+  useEffect(() => {
+    setDropdownValue({
+      value: layout ? layout : 'sidebar',
+      iconOption: layout ? icons[layout] : icons.sidebar,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DropDown

@@ -33,7 +33,6 @@ export default function Reach() {
   }, [setRefreshList]);
 
   useEffect(() => {
-    console.log(dropdownValue);
     setRefreshList(true);
   }, [dropdownValue, setRefreshList]);
 
