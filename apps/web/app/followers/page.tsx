@@ -21,8 +21,8 @@ export default function Index() {
         const userProfile = await getProfile();
 
         if (userProfile) {
-          setName(userProfile.profile?.name || '');
-          setImage(userProfile.profile?.image || '/images/Userpic.png');
+          setName(userProfile.name || '');
+          setImage(userProfile.image || '/images/Userpic.png');
           setLoading(false);
         }
       } catch (error) {

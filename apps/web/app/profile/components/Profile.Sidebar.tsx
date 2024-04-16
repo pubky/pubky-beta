@@ -84,7 +84,7 @@ export default function Sidebar({
           const userProfile = await getProfile();
 
           if (userProfile) {
-            profile = userProfile?.profile;
+            profile = userProfile;
           }
         }
         if (profile) {
@@ -233,8 +233,9 @@ export default function Sidebar({
                 (followers?.count ?? 0) > 0 &&
                   router.push(`/followers/${creatorPubky ? creatorPubky : ''}`);
               }}
-              className={`flex-col gap-3 inline-flex ${(followers?.count ?? 0) > 0 && 'cursor-pointer'
-                }`}
+              className={`flex-col gap-3 inline-flex ${
+                (followers?.count ?? 0) > 0 && 'cursor-pointer'
+              }`}
             >
               <div className="inline-flex gap-2">
                 <Typography.Label>{followers?.count}</Typography.Label>
