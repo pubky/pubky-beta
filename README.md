@@ -1,4 +1,4 @@
-# Pubky Social
+# Pubky App
 
 This is the frontend application for the Pubky Social.
 
