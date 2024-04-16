@@ -20,7 +20,6 @@ export default function Follower({ followers }: FollowersProps) {
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
 
   useEffect(() => {
-    console.log(followers);
     async function fetchData() {
       try {
         if (!pubky) return;

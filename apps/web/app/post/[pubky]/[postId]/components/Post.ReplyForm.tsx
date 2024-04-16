@@ -23,7 +23,7 @@ export default function ReplyForm() {
     async function fetchData() {
       const userProfile = await getProfile();
       if (userProfile) {
-        setImage(userProfile.image);
+        setImage(userProfile.image || '/images/Userpic.png');
         setUsername(userProfile.name);
         setPk(minifyPubky(pubky));
       }
