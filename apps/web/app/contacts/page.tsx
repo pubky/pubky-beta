@@ -6,16 +6,12 @@ import { CreatePost, Header, Skeleton } from '../components';
 import { Contacts } from './components';
 import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
-
-interface Contacts {
-  count: number;
-  following: [];
-}
+import { IFollowingResponse } from '../../types';
 
 export default function Index() {
   const { pubky, listFollowing } = useClientContext();
   const [loadingContacts, setLoadingContacts] = useState(true);
-  const [contacts, setContacts] = useState<Contacts | null>(null);
+  const [contacts, setContacts] = useState<IFollowingResponse | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -24,7 +20,6 @@ export default function Index() {
 
         const contacts = await listFollowing(pubky);
         if (contacts) {
-          console.log(contacts);
           setContacts(contacts);
         }
         setLoadingContacts(false);
@@ -48,7 +43,9 @@ export default function Index() {
         {loadingContacts ? (
           <Skeleton.Contacts />
         ) : contacts?.count ?? 0 > 0 ? (
-          <Contacts.Contact contacts={contacts?.following} />
+          <Contacts.Contact
+            contacts={contacts?.following ? contacts?.following : []}
+          />
         ) : (
           <Typography.H2 className="font-normal text-opacity-30 text-center">
             No contacts yet
