@@ -5,7 +5,10 @@
   "scripts": {
     "start:prod": "nx build web && nx serve web --prod",
     "start:dev": "nx serve web",
-    "build": "nx build web"
+    "build": "nx build web",
+    "reset": "nx reset",
+    "clean": "npm run reset && rm -rf ./node_modules/ ./dist/",
+    "setup:dev": "npm i && npm link @pubky/sdk @pubky/common"
   },
   "private": true,
   "dependencies": {
