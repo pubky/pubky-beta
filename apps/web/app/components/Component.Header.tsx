@@ -22,8 +22,14 @@ export default function Header({
   children,
 }: HeaderProps) {
   const router = useRouter();
-  const { pubky, getProfile, isLoggedIn, setRefreshList, setSearchTags } =
-    useClientContext();
+  const {
+    pubky,
+    getProfile,
+    isLoggedIn,
+    setRefreshList,
+    setSearchTags,
+    searchTags,
+  } = useClientContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
@@ -102,7 +108,14 @@ export default function Header({
   const handleSearchTag = () => {
     const trimmedValue = inputValue.trim();
     if (trimmedValue.startsWith('#')) {
-      setSearchTags((prevTags) => [...prevTags, trimmedValue.slice(1)]);
+      if (searchTags.includes(trimmedValue.slice(1))) return;
+
+      if (searchTags.length < 3) {
+        setSearchTags((prevTags) => [...prevTags, trimmedValue.slice(1)]);
+      } else {
+        const newSearchTags = [...searchTags.slice(1), trimmedValue.slice(1)];
+        setSearchTags(newSearchTags);
+      }
       setInputValue('');
       router.push('/search');
     }
@@ -134,6 +147,7 @@ export default function Header({
         <Input.SearchInput
           placeholder="Search"
           className="hidden sm:block"
+          disabled={searchTags.length > 0}
           onClick={() => setSearchInputCard(true)}
         />
         <Modal.SearchInputCard

@@ -145,10 +145,16 @@ export default function Index() {
           {posts.length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
-                No posts with this tag:
+                No posts with{' '}
+                {searchTags.length > 1 ? 'these tags:' : 'this tag:'}
               </Typography.H2>
               <Typography.H2 className="font-normal">
-                #{searchTags}
+                {searchTags.map((searchTag, index) => (
+                  <span key={index}>
+                    #{searchTag}
+                    {index !== searchTags.length - 1 && ', '}
+                  </span>
+                ))}
               </Typography.H2>
             </div>
           )}

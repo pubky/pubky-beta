@@ -36,6 +36,19 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleTagSearch = (tag: string) => {
+    if (searchTags.includes(tag)) return;
+
+    if (searchTags.length < 3) {
+      setSearchTags([...searchTags, tag]);
+    } else {
+      const newSearchTags = [...searchTags.slice(1), tag];
+      setSearchTags(newSearchTags);
+    }
+    setRefreshList(true);
+    router.push('/search');
+  };
+
   return (
     <Content.Main>
       <Header className="w-52 xl:w-36 hidden md:block" title="Hot&#160;Tags">
@@ -53,11 +66,7 @@ export default function Index() {
               <HotTags.Rank
                 rank={index + 1}
                 tag={`# ${tag.tag}`}
-                onClick={() => {
-                  setSearchTags([...searchTags, tag.tag]);
-                  setRefreshList(true);
-                  router.push('/search');
-                }}
+                onClick={() => handleTagSearch(tag.tag)}
                 color="amber"
                 counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
               />

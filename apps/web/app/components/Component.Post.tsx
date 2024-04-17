@@ -57,6 +57,19 @@ export default function Post({
     // setRefreshList(true);
   };
 
+  const handleTagSearch = (tag: string) => {
+    if (searchTags.includes(tag)) return;
+
+    if (searchTags.length < 3) {
+      setSearchTags([...searchTags, tag]);
+    } else {
+      const newSearchTags = [...searchTags.slice(1), tag];
+      setSearchTags(newSearchTags);
+    }
+    setRefreshList(true);
+    router.push('/search');
+  };
+
   if (!post) return <Skeleton.Post size={size} />;
 
   return (
@@ -166,9 +179,7 @@ export default function Post({
                           <PostUtil.Tag
                             onClick={(event) => {
                               event.stopPropagation();
-                              setSearchTags([...searchTags, tagObj.tag]);
-                              setRefreshList(true);
-                              router.push('/search');
+                              handleTagSearch(tagObj.tag);
                             }}
                             clicked
                             color="amber"

@@ -35,6 +35,19 @@ export default function SearchInputCard({
     fetchTags();
   }, [getHotTags]);
 
+  const handleTagSearch = (tag: string) => {
+    if (searchTags.includes(tag)) return;
+
+    if (searchTags.length < 3) {
+      setSearchTags([...searchTags, tag]);
+    } else {
+      const newSearchTags = [...searchTags.slice(1), tag];
+      setSearchTags(newSearchTags);
+    }
+    setRefreshList(true);
+    router.push('/search');
+  };
+
   return (
     <Card.Primary
       {...rest}
@@ -56,11 +69,7 @@ export default function SearchInputCard({
                   <PostUtil.Tag
                     key={index}
                     clicked={false}
-                    onClick={() => {
-                      setSearchTags([...searchTags, tag.tag]);
-                      setRefreshList(true);
-                      router.push('/search');
-                    }}
+                    onClick={() => handleTagSearch(tag.tag)}
                     color="amber"
                     className="mr-2 my-1"
                   >
