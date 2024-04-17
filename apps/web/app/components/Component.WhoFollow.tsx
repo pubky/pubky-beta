@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
 
 import { Content, Icon, SideCard, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
@@ -42,11 +42,11 @@ export default function WhoFollow() {
         const following = await listFollowing(pubky);
 
         if (following) {
-          following.following.forEach((user: any) => {
+          following.following.forEach((user) => {
             const id = user.uri.replace('pubky:', '');
             if (
               Array.isArray(hotFollowed) &&
-              hotFollowed.some((followed: any) => followed.id === id)
+              hotFollowed.some((followed) => followed.id === id)
             ) {
               setFollowedUser((prevState) => ({
                 ...prevState,
@@ -100,7 +100,7 @@ export default function WhoFollow() {
         {loading ? (
           <Skeleton.WhoFollow />
         ) : hotFollowed && hotFollowed.length > 0 ? (
-          hotFollowed.slice(0, 3).map((followed: any, index: number) => {
+          hotFollowed.slice(0, 3).map((followed, index: number) => {
             const pubkeyUser = pubky && followed.id.includes(pubky);
             const isFollowed = followedUser[followed.id] || false;
 

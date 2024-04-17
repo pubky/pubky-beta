@@ -2,7 +2,11 @@
   "name": "@social/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start:prod": "nx build web && nx serve web --prod",
+    "start:dev": "nx serve web",
+    "build": "nx build web"
+  },
   "private": true,
   "dependencies": {
     "@nx/next": "17.2.4",

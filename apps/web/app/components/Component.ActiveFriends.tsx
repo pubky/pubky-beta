@@ -6,6 +6,7 @@ export default function ActiveFriends() {
       <SideCard.Header title="Active friends" />
       <SideCard.Content>
         <SideCard.User
+          uri=""
           src="/images/user.png"
           username="Anna Pleb"
           label="friend"

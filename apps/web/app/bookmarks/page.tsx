@@ -1,8 +1,10 @@
 import { Content } from '@social/ui-shared';
 import { CreatePost, Header, Post, PostsLayout } from '../components';
 import { DropDown } from '../components/DropDown';
+import { IPost } from '../../types/index';
 
 export default function Index() {
+  const Item = {} as IPost;
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Bookmarks">
@@ -15,16 +17,8 @@ export default function Index() {
       </Header>
       <Content.Grid className={''}>
         <PostsLayout className="flex flex-col">
-          <Post
-            bookmark
-            postId={{ uri: '', payload: { content: '' } }}
-            size="full"
-          />
-          <Post
-            bookmark
-            postId={{ uri: '', payload: { content: '' } }}
-            size="full"
-          />
+          <Post bookmark post={Item} size="full" />
+          <Post bookmark post={Item} size="full" />
         </PostsLayout>
       </Content.Grid>
       <CreatePost />

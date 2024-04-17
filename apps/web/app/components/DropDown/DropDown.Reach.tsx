@@ -15,12 +15,22 @@ export default function Reach() {
     followers: <Icon.UsersLeft />,
     friends: <Icon.Smiley />,
     all: <Icon.Broadcast />,
+    loading: <Icon.LoadingSpin />,
   };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: reach ? reach : 'all',
-    iconOption: reach ? icons[reach] : icons.all,
+    iconOption: icons.loading,
   });
+
+  useEffect(() => {
+    setDropdownValue({
+      value: reach ? reach : 'all',
+      iconOption: reach ? icons[reach] : icons.all,
+    });
+    setRefreshList(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setRefreshList]);
 
   useEffect(() => {
     setRefreshList(true);
