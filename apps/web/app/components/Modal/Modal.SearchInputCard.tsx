@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { Card, PostUtil, Typography } from '@social/ui-shared';
+import { Card, Icon, PostUtil, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ITaggedPost } from '../../../types';
@@ -48,6 +48,15 @@ export default function SearchInputCard({
     router.push('/search');
   };
 
+  const handleRemoveTag = (indexToRemove: number) => {
+    setSearchTags((prevTags: string[]) => {
+      const newTags = [...prevTags];
+      newTags.splice(indexToRemove, 1);
+      return newTags;
+    });
+    setRefreshList(true);
+  };
+
   return (
     <Card.Primary
       {...rest}
@@ -56,6 +65,31 @@ export default function SearchInputCard({
       background="bg-gradient-to-t from-[#07040a] to-[#1b1820]"
     >
       <div className="flex-col gap-6 inline-flex">
+        {searchTags.length > 0 && (
+          <div>
+            <Typography.Label className="text-opacity-30">
+              Searched tags
+            </Typography.Label>
+            <div className="mt-2 justify-start items-start">
+              {searchTags.map((searchTag, index) => (
+                <PostUtil.Tag
+                  key={index}
+                  clicked
+                  action={
+                    <div className="mt-[3px]">
+                      <Icon.X key={index} />
+                    </div>
+                  }
+                  onClick={() => handleRemoveTag(index)}
+                  color="amber"
+                  className="mr-2 my-1"
+                >
+                  # {searchTag}
+                </PostUtil.Tag>
+              ))}
+            </div>
+          </div>
+        )}
         <div>
           <Typography.Label className="text-opacity-30">
             Hot tags

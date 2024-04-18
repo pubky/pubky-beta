@@ -11,16 +11,10 @@ import { minifyText } from '../../libs/textHelper';
 interface HeaderProps {
   title: React.ReactNode;
   className?: string;
-  tags?: string[];
   children?: React.ReactNode;
 }
 
-export default function Header({
-  title,
-  className,
-  tags = [],
-  children,
-}: HeaderProps) {
+export default function Header({ title, className, children }: HeaderProps) {
   const router = useRouter();
   const {
     pubky,
@@ -90,15 +84,6 @@ export default function Header({
     };
   }, [drawerRef, refSearchInputCard]);
 
-  const handleRemoveTag = (indexToRemove: number) => {
-    setSearchTags((prevTags: string[]) => {
-      const newTags = [...prevTags];
-      newTags.splice(indexToRemove, 1);
-      return newTags;
-    });
-    setRefreshList(true);
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearchTag();
@@ -116,6 +101,7 @@ export default function Header({
         const newSearchTags = [...searchTags.slice(1), trimmedValue.slice(1)];
         setSearchTags(newSearchTags);
       }
+      setRefreshList(true);
       setInputValue('');
       router.push('/search');
     }
@@ -130,24 +116,23 @@ export default function Header({
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
       >
-        {tags && (
+        {/**{searchTags && (
           <Input.SearchTags className="hidden sm:block">
-            {tags.map((tag, index) => (
+            {searchTags.map((searchTag, index) => (
               <Input.SearchTag
                 color="bg-amber-500 bg-opacity-30"
                 key={index}
                 onClick={() => handleRemoveTag(index)}
                 actions={[<Icon.X key={index} />]}
-                value={`# ${tag}`}
+                value={`# ${searchTag}`}
                 className="mr-2"
               />
             ))}
           </Input.SearchTags>
-        )}
+        )}*/}
         <Input.SearchInput
           placeholder="Search"
           className="hidden sm:block"
-          disabled={searchTags.length > 0}
           onClick={() => setSearchInputCard(true)}
         />
         <Modal.SearchInputCard
@@ -155,7 +140,7 @@ export default function Header({
           refCard={refSearchInputCard}
         />
         <Input.SearchActions className="hidden sm:flex">
-          {tags.length > 0 && <Icon.GridFour />}
+          {searchTags.length > 0 && <Icon.GridFour />}
           <div className="cursor-pointer" onClick={handleSearchTag}>
             <Icon.MagnifyingGlass />
           </div>

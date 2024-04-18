@@ -72,9 +72,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<string | null>(
     localStorageUtils.get('profile') || null
   );
-  const [searchTags, setSearchTags] = useState<string[]>(
-    localStorageUtils.get('searchTags') || []
-  );
+  const [searchTags, setSearchTags] = useState<string[]>([]);
   const [refreshList, setRefreshList] = useState<boolean>(false);
 
   const isLoggedIn = async (): Promise<string | false> => {
@@ -548,10 +546,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       return false;
     }
   };
-
-  useEffect(() => {
-    localStorageUtils.set('searchTags', searchTags);
-  }, [searchTags]);
 
   return (
     <ClientContext.Provider

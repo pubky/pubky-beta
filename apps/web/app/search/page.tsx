@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button, Content, Typography } from '@social/ui-shared';
 import {
   // ActiveFriends,
@@ -41,9 +41,16 @@ const layouts = {
 
 export default function Index() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { layout, reach } = useFilterContext();
-  const { pubky, refreshList, listGlobalPosts, setRefreshList, searchTags } =
-    useClientContext();
+  const {
+    pubky,
+    refreshList,
+    listGlobalPosts,
+    setRefreshList,
+    searchTags,
+    setSearchTags,
+  } = useClientContext();
   const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLoadMore, setShowLoadMore] = useState(false);
@@ -74,7 +81,7 @@ export default function Index() {
 
   useEffect(() => {
     fetchData(cursor);
-  }, [pubky]);
+  }, [pubky, searchParams, searchTags]);
 
   useEffect(() => {
     if (refreshList) {
@@ -105,6 +112,28 @@ export default function Index() {
     }
   };
 
+  useEffect(() => {
+    const search = searchParams.get('tags');
+
+    if (search) {
+      const tagsArray = search.split(',');
+      setSearchTags(tagsArray);
+    }
+    setRefreshList(true);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const searchTagsString = searchTags.join(',');
+    const searchUrl = searchTagsString
+      ? `/search?tags=${searchTagsString}`
+      : '/search';
+    router.push(searchUrl);
+  }, [searchTags, router]);
+
+  useEffect(() => {
+    if (searchTags.length <= 0) router.push('/home');
+  }, [searchTags]);
+
   const postsLayoutClassName =
     layout === 'sidebar'
       ? layouts[layout].posts
@@ -113,13 +142,9 @@ export default function Index() {
     layout === 'sidebar' && 'xl:inline-flex w-full'
   }`;
 
-  useEffect(() => {
-    if (searchTags.length <= 0) router.push('/home');
-  }, [searchTags]);
-
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Search" tags={searchTags}>
+      <Header className="hidden md:block" title="Search">
         <div className="hidden lg:flex gap-6 items-center">
           <DropDown.Content />
           <DropDown.Reach />
