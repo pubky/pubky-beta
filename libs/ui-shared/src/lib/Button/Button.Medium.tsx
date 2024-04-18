@@ -1,11 +1,13 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
+import { Icon } from '../Icon';
 
 interface MediumButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   children: string;
   variant?: 'default' | 'line' | 'subtle';
   icon?: React.ReactNode;
   disabled?: boolean;
+  loading?: boolean;
   className?: string;
 }
 
@@ -14,6 +16,7 @@ export const Medium = ({
   variant = 'default',
   icon,
   disabled = false,
+  loading = false,
   ...rest
 }: MediumButtonProps) => {
   let color = 'text-white';
@@ -47,7 +50,7 @@ export const Medium = ({
       {...rest}
       className={twMerge(cssButton, cssColorButton, rest.className)}
     >
-      <div>{icon}</div>
+      {loading ? <Icon.LoadingSpin size="16" /> : <div>{icon}</div>}
       <Typography.Body variant="small-bold" className={color}>
         {children}
       </Typography.Body>

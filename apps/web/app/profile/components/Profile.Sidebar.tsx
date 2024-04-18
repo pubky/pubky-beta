@@ -32,6 +32,8 @@ export default function Sidebar({
   const [followers, setFollowers] = useState<IFollowersResponse | null>(null);
   const [images, setImages] = useState<{ alt: string; src: string }[]>([]);
   const [followed, setFollowed] = useState(false);
+  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
+  const [loadingFollowed, setLoadingFollowed] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -55,6 +57,7 @@ export default function Sidebar({
           );
           setFollowers(followersList);
           setLoadingFollowers(false);
+          setInitLoadingFollowed(false);
 
           followersList.followers.forEach((user: any) => {
             const uri = user.uri.replace('pubky:', '');
@@ -122,9 +125,11 @@ export default function Sidebar({
   const followUser = async () => {
     try {
       if (!creatorPubky) return;
+      setLoadingFollowed(true);
 
       const result = await follow(creatorPubky);
       setFollowed(result);
+      setLoadingFollowed(false);
     } catch (error) {
       console.log(error);
     }
@@ -133,9 +138,11 @@ export default function Sidebar({
   const unfollowUser = async () => {
     try {
       if (!creatorPubky) return;
+      setLoadingFollowed(true);
 
       const result = await unfollow(creatorPubky);
       setFollowed(!result);
+      setLoadingFollowed(false);
     } catch (error) {
       console.log(error);
     }
@@ -167,10 +174,19 @@ export default function Sidebar({
               className="text-opacity-80 break-all"
             >
               {minifyText(bio, 140)}
-            </Typography.Body>{' '}
-            {followed ? (
+            </Typography.Body>
+            {initLoadingFollowed ? (
               <Button.Medium
-                onClick={() => unfollowUser()}
+                loading={initLoadingFollowed}
+                className={!creatorPubky ? 'hidden' : ''}
+              >
+                Loading
+              </Button.Medium>
+            ) : followed ? (
+              <Button.Medium
+                onClick={loadingFollowed ? undefined : () => unfollowUser()}
+                disabled={loadingFollowed}
+                loading={loadingFollowed}
                 variant="default"
                 icon={<Icon.UserMinus size="16" />}
                 className={!creatorPubky ? 'hidden' : ''}
@@ -179,7 +195,9 @@ export default function Sidebar({
               </Button.Medium>
             ) : (
               <Button.Medium
-                onClick={() => followUser()}
+                onClick={loadingFollowed ? undefined : () => followUser()}
+                disabled={loadingFollowed}
+                loading={loadingFollowed}
                 variant="default"
                 icon={<Icon.UserPlus size="16" />}
                 className={!creatorPubky ? 'hidden' : ''}

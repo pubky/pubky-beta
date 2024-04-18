@@ -13,7 +13,10 @@ export default function WhoFollow() {
     useClientContext();
   const [hotFollowed, setHotFollowed] = useState<IMostFollowed[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [loadingFollowers, setLoadingFollowers] = useState(true);
+  const [initloadingFollowers, setInitLoadingFollowers] = useState(true);
+  const [loadingFollowers, setLoadingFollowers] = useState<{
+    [pubky: string]: boolean;
+  }>({});
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
@@ -53,11 +56,11 @@ export default function WhoFollow() {
                 ...prevState,
                 [id]: true,
               }));
-              setLoadingFollowers(false);
+              setInitLoadingFollowers(false);
             }
           });
           if (following.following.length === 0) {
-            setLoadingFollowers(false);
+            setInitLoadingFollowers(false);
           }
         }
       } catch (error) {
@@ -73,7 +76,10 @@ export default function WhoFollow() {
     try {
       if (!pubkyFollow) return;
 
-      setLoadingFollowers(true);
+      setLoadingFollowers((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyFollow]: true,
+      }));
 
       const result = await follow(pubkyFollow);
 
@@ -82,7 +88,10 @@ export default function WhoFollow() {
         [pubkyFollow]: result,
       }));
 
-      setLoadingFollowers(false);
+      setLoadingFollowers((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyFollow]: false,
+      }));
     } catch (error) {
       console.log(error);
     }
@@ -92,7 +101,10 @@ export default function WhoFollow() {
     try {
       if (!pubkyUnfollow) return;
 
-      setLoadingFollowers(true);
+      setLoadingFollowers((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyUnfollow]: true,
+      }));
 
       const result = await unfollow(pubkyUnfollow);
 
@@ -101,7 +113,10 @@ export default function WhoFollow() {
         [pubkyUnfollow]: !result,
       }));
 
-      setLoadingFollowers(false);
+      setLoadingFollowers((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyUnfollow]: false,
+      }));
     } catch (error) {
       console.log(error);
     }
@@ -132,21 +147,35 @@ export default function WhoFollow() {
                       icon={<Icon.Check />}
                       className="bg-transparent cursor-default"
                     />
-                  ) : loadingFollowers ? (
+                  ) : initloadingFollowers ? (
                     <SideCard.FollowAction
-                      disabled={true}
+                      disabled
                       text="Loading"
                       icon={<Icon.LoadingSpin size="16" />}
                     />
                   ) : isFollowed ? (
                     <SideCard.FollowAction
-                      onClick={() => unfollowUser(followed.id)}
+                      onClick={
+                        loadingFollowers[followed.id]
+                          ? undefined
+                          : () => unfollowUser(followed.id)
+                      }
+                      disabled={loadingFollowers[followed.id]}
+                      loading={loadingFollowers[followed.id]}
                       text="Unfollow"
                       icon={<Icon.UserMinus size="16" />}
                     />
                   ) : (
                     <SideCard.FollowAction
-                      onClick={() => followUser(followed.id)}
+                      onClick={
+                        loadingFollowers[followed.id]
+                          ? undefined
+                          : () => followUser(followed.id)
+                      }
+                      disabled={loadingFollowers[followed.id]}
+                      loading={loadingFollowers[followed.id]}
+                      text="Follow"
+                      icon={<Icon.UserPlus size="16" />}
                     />
                   )}
                 </SideCard.User>
