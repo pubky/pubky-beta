@@ -13,7 +13,7 @@ export default function WhoFollow() {
     useClientContext();
   const [hotFollowed, setHotFollowed] = useState<IMostFollowed[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [initloadingFollowers, setInitLoadingFollowers] = useState(true);
+  const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
   }>({});
@@ -147,7 +147,7 @@ export default function WhoFollow() {
                       icon={<Icon.Check />}
                       className="bg-transparent cursor-default"
                     />
-                  ) : initloadingFollowers ? (
+                  ) : initLoadingFollowers ? (
                     <SideCard.FollowAction
                       disabled
                       text="Loading"
