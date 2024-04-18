@@ -10,15 +10,22 @@ import { minifyPubky } from '../../../libs/pubkyHelper';
 import { minifyText } from '../../../libs/textHelper';
 import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '../../components';
-import { IFollowersResponse } from '../../../types';
+import { IFollowingResponse, IFollowersResponse } from '../../../types';
 
 export default function Sidebar({
   creatorPubky,
 }: {
   creatorPubky?: string | null;
 }) {
-  const { pubky, follow, unfollow, getProfile, listFollowers, getUser } =
-    useClientContext();
+  const {
+    pubky,
+    follow,
+    unfollow,
+    getProfile,
+    listFollowers,
+    listFollowing,
+    getUser,
+  } = useClientContext();
   const router = useRouter();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
@@ -29,8 +36,15 @@ export default function Sidebar({
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
+  const [loadingFollowing, setLoadingFollowing] = useState(true);
+  const [following, setFollowing] = useState<IFollowingResponse | null>(null);
   const [followers, setFollowers] = useState<IFollowersResponse | null>(null);
-  const [images, setImages] = useState<{ alt: string; src: string }[]>([]);
+  const [followersImages, setFollowersImages] = useState<
+    { alt: string; src: string }[]
+  >([]);
+  const [followingImages, setFollowingImages] = useState<
+    { alt: string; src: string }[]
+  >([]);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
@@ -49,7 +63,7 @@ export default function Sidebar({
         const followersList = await listFollowers(pubkey);
 
         if (followersList) {
-          setImages(
+          setFollowersImages(
             followersList.followers.map((user: any) => ({
               alt: 'user-pic',
               src: user?.profile?.image || '/images/Userpic.png',
@@ -72,6 +86,36 @@ export default function Sidebar({
     }
     fetchData();
   }, [pubky, followed, listFollowers, creatorPubky]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let pubkey = creatorPubky;
+
+        if (!pubkey) {
+          pubkey = pubky;
+        }
+
+        if (!pubkey) return;
+
+        const followingList = await listFollowing(pubkey);
+
+        if (followingList) {
+          setFollowingImages(
+            followingList.following.map((user: any) => ({
+              alt: 'user-pic',
+              src: user?.profile?.image || '/images/Userpic.png',
+            }))
+          );
+          setFollowing(followingList);
+          setLoadingFollowing(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, [pubky, creatorPubky, listFollowing]);
 
   useEffect(() => {
     async function fetchData() {
@@ -229,22 +273,10 @@ export default function Sidebar({
       </div> */}
       <div>
         <SideCard.Header title="Contacts" variantTitle="label" />
-        {loadingFollowers ? (
-          <SideCard.Content>
-            <Link href="/followers">
-              <div className="flex-col gap-3 inline-flex">
-                <div className="inline-flex gap-2">
-                  <Typography.Label>{followers?.count}</Typography.Label>
-                  <Typography.Label className="text-opacity-50">
-                    Followers
-                  </Typography.Label>
-                </div>
-                <Post.UserPic images={images} />
-              </div>
-            </Link>
-          </SideCard.Content>
+        {loadingFollowers || loadingFollowing ? (
+          <Skeleton.ContactsSidebar />
         ) : (
-          <SideCard.Content>
+          <SideCard.Content className="flex-row gap-12 justify-start inline-flex">
             <div
               onClick={(event) => {
                 event.stopPropagation();
@@ -261,7 +293,25 @@ export default function Sidebar({
                   Followers
                 </Typography.Label>
               </div>
-              <Post.UserPic images={images} />
+              <Post.UserPic images={followersImages} />
+            </div>
+            <div
+              onClick={(event) => {
+                event.stopPropagation();
+                (following?.count ?? 0) > 0 &&
+                  router.push(`/following/${creatorPubky ? creatorPubky : ''}`);
+              }}
+              className={`flex-col gap-3 inline-flex ${
+                (following?.count ?? 0) > 0 && 'cursor-pointer'
+              }`}
+            >
+              <div className="inline-flex gap-2">
+                <Typography.Label>{following?.count}</Typography.Label>
+                <Typography.Label className="text-opacity-50">
+                  Following
+                </Typography.Label>
+              </div>
+              <Post.UserPic images={followingImages} />
             </div>
           </SideCard.Content>
         )}

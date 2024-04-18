@@ -171,6 +171,13 @@ export interface IFollower {
   profile: IProfileSimplified;
 }
 
+export interface IFollowing {
+  createdAt: number;
+  indexedAt: number;
+  uri: string;
+  profile: IProfileSimplified;
+}
+
 export interface IFollowersResponse {
   count: number;
   cursor: string;
