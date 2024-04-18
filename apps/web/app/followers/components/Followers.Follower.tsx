@@ -40,10 +40,10 @@ export default function Follower({ followers }: FollowersProps) {
                 ...prevState,
                 [uri]: true,
               }));
-              setInitLoadingFollowers(false);
             }
           });
         }
+        setInitLoadingFollowers(false);
       } catch (error) {
         console.log(error);
       }

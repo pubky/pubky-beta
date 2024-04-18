@@ -276,7 +276,7 @@ export default function Sidebar({
         {loadingFollowers || loadingFollowing ? (
           <Skeleton.ContactsSidebar />
         ) : (
-          <SideCard.Content className="flex-row gap-12 justify-start inline-flex">
+          <SideCard.Content className="flex-row gap-20 justify-start inline-flex">
             <div
               onClick={(event) => {
                 event.stopPropagation();

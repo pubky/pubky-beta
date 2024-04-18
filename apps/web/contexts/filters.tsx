@@ -3,7 +3,15 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import localStorageUtils from '../libs/localStorageUtils';
-import { TContent, TLayouts, TReach, TSort, TTimeframe } from './../types';
+import {
+  TContacts,
+  TContactsLayout,
+  TContent,
+  TLayouts,
+  TReach,
+  TSort,
+  TTimeframe,
+} from './../types';
 
 type FilterContextType = {
   layout: TLayouts;
@@ -12,6 +20,10 @@ type FilterContextType = {
   setSort: (sort: TSort) => void;
   reach: TReach;
   setReach: (reach: TReach) => void;
+  contacts: TContacts;
+  setContacts: (contacts: TContacts) => void;
+  contactsLayout: TContactsLayout;
+  setContactsLayout: (contactsLayout: TContactsLayout) => void;
   content: TContent;
   setContent: (content: TContent) => void;
   timeframe: TTimeframe;
@@ -25,6 +37,10 @@ const FilterContext = createContext<FilterContextType>({
   setSort: () => {},
   reach: 'all',
   setReach: () => {},
+  contacts: 'following',
+  setContacts: () => {},
+  contactsLayout: 'ranking',
+  setContactsLayout: () => {},
   content: 'all',
   setContent: () => {},
   timeframe: 'today',
@@ -41,6 +57,12 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [reach, setReach] = useState<TReach>(
     (localStorageUtils.get('reach') as TReach) || 'all'
   );
+  const [contacts, setContacts] = useState<TContacts>(
+    (localStorageUtils.get('contacts') as TContacts) || 'following'
+  );
+  const [contactsLayout, setContactsLayout] = useState<TContactsLayout>(
+    (localStorageUtils.get('contactsLayout') as TContactsLayout) || 'ranking'
+  );
   const [content, setContent] = useState<TContent>(
     (localStorageUtils.get('content') as TContent) || 'all'
   );
@@ -53,9 +75,11 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     localStorageUtils.set('layout', layout);
     localStorageUtils.set('sort', sort);
     localStorageUtils.set('reach', reach);
+    localStorageUtils.set('contacts', contacts);
+    localStorageUtils.set('contactsLayout', contactsLayout);
     localStorageUtils.set('content', content);
     localStorageUtils.set('timeframe', timeframe);
-  }, [layout, sort, reach, content, timeframe]);
+  }, [layout, sort, reach, contacts, contactsLayout, content, timeframe]);
 
   return (
     <FilterContext.Provider
@@ -66,6 +90,10 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         setSort,
         reach,
         setReach,
+        contacts,
+        setContacts,
+        contactsLayout,
+        setContactsLayout,
         content,
         setContent,
         timeframe,
