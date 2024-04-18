@@ -14,6 +14,7 @@ export interface ClientContextType {
   profile: IProfile | null;
   pubky: string | null;
   refreshList: boolean;
+  posts: IPost[];
   signUp: (
     profile: IProfilePubkyProps,
     password: string
@@ -46,6 +47,8 @@ export interface ClientContextType {
     recoveryFile: Buffer
   ) => Promise<boolean>;
   searchTags: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setPosts: any;
   setRefreshList: (value: boolean) => void;
   setSearchTags: (value: string[]) => Promise<IPost | null>;
   follow: (pk: string) => Promise<boolean>;

@@ -1,11 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { SideCard, Typography } from '@social/ui-shared';
+import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
-import { Skeleton } from '.';
 import { ITaggedPost } from '../../types';
 
 export default function HotTags() {
@@ -53,7 +52,17 @@ export default function HotTags() {
       </SideCard.Header>
       <SideCard.Content>
         {loading ? (
-          <Skeleton.HotTags />
+          <>
+            <div className="flex w-full justify-center">
+              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+            </div>
+            <Typography.Body
+              variant="medium-bold"
+              className="col-span-3 m-2 flex justify-center items-center gap-6 text-gray-600"
+            >
+              Loading Hot Tags
+            </Typography.Body>
+          </>
         ) : hotTags && hotTags.length > 0 ? (
           <>
             <div className="grid gap-3">

@@ -10,7 +10,6 @@ import {
   Post,
   PostsLayout,
   Sidebar,
-  Skeleton,
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
@@ -38,10 +37,28 @@ const layouts = {
   },
 };
 
+const Loading = (posts: IPost[]) => (
+  <div className="flex w-full justify-center flex-col">
+    <div
+      className={`flex w-full justify-center ${
+        posts.length === 0 ? 'mt-10' : 'mt-2'
+      }`}
+    >
+      <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+    </div>
+    <Typography.Body
+      variant="medium-bold"
+      className="col-span-3 flex mt-2 justify-center items-center gap-6 text-gray-600"
+    >
+      Loading Posts
+    </Typography.Body>
+  </div>
+);
+
 export default function Index() {
   const { layout, reach } = useFilterContext();
-  const { pubky, refreshList, listGlobalPosts } = useClientContext();
-  const [posts, setPosts] = useState<IPost[]>([]);
+  const { pubky, refreshList, listGlobalPosts, posts, setPosts } =
+    useClientContext();
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -52,7 +69,7 @@ export default function Index() {
 
     if (results && results.feed) {
       if (cursor) {
-        setPosts((prev) => [...prev, ...results.feed]);
+        setPosts((prev: IPost[]) => [...prev, ...results.feed]);
       } else {
         setPosts(results.feed);
       }
@@ -80,6 +97,7 @@ export default function Index() {
     setPosts([]);
     fetchData('');
   }, [reach]);
+
   useEffect(() => {
     fetchData(cursor);
   }, [pubky, refreshList]);
@@ -106,16 +124,6 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          {posts.length === 0 && (
-            <>
-              {[1, 2, 3, 4].map((index) => (
-                <Skeleton.Post
-                  key={index}
-                  size={layout === 'list' ? 'full' : 'normal'}
-                />
-              ))}
-            </>
-          )}
           {posts.map((post, index) => (
             <Post
               key={index}
@@ -131,11 +139,7 @@ export default function Index() {
               </Typography.H2>
             </div>
           )}
-          {loading && (
-            <div className="flex w-full justify-center">
-              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-            </div>
-          )}
+          {loading && Loading(posts)}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
           <WhoFollow />

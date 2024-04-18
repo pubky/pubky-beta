@@ -5,13 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Content, Icon, Typography } from '@social/ui-shared';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
-import {
-  CreatePost,
-  Header,
-  Post,
-  PostsLayout,
-  Skeleton,
-} from '../../components';
+import { CreatePost, Header, Post, PostsLayout } from '../../components';
 import { useClientContext } from '../../../contexts/client';
 import { IPost } from '../../../types';
 
@@ -111,7 +105,6 @@ export default function Index({
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
-          {loading && <Skeleton.Post size={'normal'} />}
           {posts.map((post, index) => (
             <Post key={index} post={post} />
           ))}
@@ -123,9 +116,21 @@ export default function Index({
             </div>
           )}
           {loading && (
-            <div className="flex w-full justify-center">
-              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-            </div>
+            <>
+              <div
+                className={`flex w-full justify-center ${
+                  posts.length === 0 ? 'mt-10' : 'mt-2'
+                }`}
+              >
+                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+              </div>
+              <Typography.Body
+                variant="medium-bold"
+                className="col-span-3 -m-2 flex justify-center items-center gap-6 text-gray-600"
+              >
+                Loading Posts
+              </Typography.Body>
+            </>
           )}
         </PostsLayout>
         <Profile.Sidebar

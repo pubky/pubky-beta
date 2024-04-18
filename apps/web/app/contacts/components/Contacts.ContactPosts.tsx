@@ -1,6 +1,6 @@
 'use client';
 
-import { Typography } from '@social/ui-shared';
+import { Icon, Typography } from '@social/ui-shared';
 import { Post, PostsLayout } from '../../components';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../contexts/client';
@@ -13,6 +13,7 @@ interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function Contact({ creatorPubky }: ContactsProps) {
   const { listUserFeed } = useClientContext();
   const [posts, setPosts] = useState<IPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchPosts() {
@@ -20,6 +21,8 @@ export default function Contact({ creatorPubky }: ContactsProps) {
         if (!creatorPubky) return;
 
         const results = await listUserFeed(creatorPubky, '', 2);
+
+        setLoading(false);
 
         if (!results || !results.feed) return;
 
@@ -37,6 +40,18 @@ export default function Contact({ creatorPubky }: ContactsProps) {
         posts.map((post, index) => (
           <Post key={index} post={post} layout="list" className="w-full" />
         ))
+      ) : loading ? (
+        <div className="mb-4 flex-row">
+          <div className={`flex w-full justify-center mt-10`}>
+            <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+          </div>
+          <Typography.Body
+            variant="medium-bold"
+            className="col-span-3 mt-4 flex justify-center items-center gap-6 text-gray-600"
+          >
+            Loading Posts
+          </Typography.Body>
+        </div>
       ) : (
         <Typography.H2 className="font-normal text-opacity-20">
           No posts yet.

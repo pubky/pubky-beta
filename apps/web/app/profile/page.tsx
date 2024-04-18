@@ -1,55 +1,66 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Button, Content, Typography } from '@social/ui-shared';
+import { useEffect, useRef, useState } from 'react';
+import { Content, Icon, Typography } from '@social/ui-shared';
 import { Profile } from './components';
-import { CreatePost, Header, Post, PostsLayout, Skeleton } from '../components';
+import { CreatePost, Header, Post, PostsLayout } from '../components';
 import { useClientContext } from '../../contexts/client';
 import { minifyText } from '../../libs/textHelper';
 import { IPost } from '../../types';
 
 export default function Index() {
-  const { pubky, refreshList, setRefreshList, listUserFeed, getUserIndexed } =
-    useClientContext();
+  const { pubky, listUserFeed, getUserIndexed } = useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
   const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
+  const loader = useRef(null);
 
-  async function fetchPosts() {
+  async function fetchPosts(pointer: string) {
     try {
+      setLoading(true);
+
       if (!pubky) return;
 
-      const results = await listUserFeed(pubky, cursor);
+      const results = await listUserFeed(pubky, pointer);
 
-      if (!results || !results.feed) return;
-
-      setPosts(results.feed);
-
-      if (results.feed.length >= 5) {
-        setShowLoadMore(true);
-      }
-
-      if (results.cursor) {
+      if (results && results.feed) {
+        if (cursor) {
+          setPosts((prev) => [...prev, ...results.feed]);
+        } else {
+          setPosts(results.feed);
+        }
         setCursor(results.cursor);
       }
-
       setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    if (refreshList) {
-      setCursor('');
-      fetchPosts();
-      setRefreshList(false);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && cursor) {
+          fetchPosts(cursor);
+        }
+      },
+      { threshold: 1 }
+    );
+    if (loader.current) {
+      observer.observe(loader.current);
     }
-  }, [refreshList]);
+    return () => observer.disconnect();
+
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [cursor]);
+
+  useEffect(() => {
+    setPosts([]);
+    fetchPosts('');
+  }, []);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -68,30 +79,9 @@ export default function Index() {
 
     fetchProfile();
 
-    fetchPosts();
+    fetchPosts(cursor);
+    /* eslint-disable react-hooks/exhaustive-deps */
   }, [pubky]);
-
-  const handleLoadMore = async () => {
-    try {
-      if (!pubky) return;
-
-      const results = await listUserFeed(pubky, cursor);
-
-      if (!results || !results.feed) return;
-
-      setPosts((prev) => [...prev, ...results.feed]);
-
-      if (results.feed.length >= 5) {
-        setShowLoadMore(true);
-      }
-
-      if (results.cursor) {
-        setCursor(results.cursor);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <Content.Main>
@@ -100,7 +90,7 @@ export default function Index() {
         <Profile.HeaderBackground />
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center sm:justify-between relative z-10">
           <Profile.Handle
-            username={minifyText(name)}
+            username={minifyText(name, 15)}
             className="order-2 lg:order-1"
           />
           <Profile.Avatar
@@ -112,7 +102,6 @@ export default function Index() {
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
-          {loading && <Skeleton.Post size={'normal'} />}
           {posts.map((post, index) => (
             <Post key={index} post={post} />
           ))}
@@ -123,19 +112,28 @@ export default function Index() {
               </Typography.H2>
             </div>
           )}
-          {showLoadMore && (
-            <Button.Large
-              className="col-span-3 xl:col-span-2"
-              variant="secondary"
-              onClick={() => handleLoadMore()}
-            >
-              Load More
-            </Button.Large>
+          {loading && (
+            <>
+              <div
+                className={`flex w-full justify-center ${
+                  posts.length === 0 ? 'mt-10' : 'mt-2'
+                }`}
+              >
+                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+              </div>
+              <Typography.Body
+                variant="medium-bold"
+                className="col-span-3 flex -mt-2 justify-center items-center gap-6 text-gray-600"
+              >
+                Loading Posts
+              </Typography.Body>
+            </>
           )}
         </PostsLayout>
         <Profile.Sidebar />
       </Content.Grid>
       <CreatePost />
+      <div ref={loader} />
     </Content.Main>
   );
 }

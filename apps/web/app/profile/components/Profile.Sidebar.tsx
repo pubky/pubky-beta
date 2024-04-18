@@ -108,6 +108,7 @@ export default function Sidebar({
           );
           setFollowing(followingList);
           setLoadingFollowing(false);
+          console.log(loadingFollowing);
         }
       } catch (error) {
         console.log(error);
@@ -207,7 +208,7 @@ export default function Sidebar({
                 src={image}
                 alt="user-pic"
               />
-              <Typography.H2>{minifyText(name)}</Typography.H2>
+              <Typography.H2>{minifyText(name, 15)}</Typography.H2>
             </div>
             <Typography.Label className="text-opacity-50">
               {pubky ? minifyPubky(pubky) : 'Loading...'}
@@ -272,8 +273,20 @@ export default function Sidebar({
       </div> */}
       <div>
         <SideCard.Header title="Contacts" variantTitle="label" />
-        {loadingFollowers || loadingFollowing ? (
-          <Skeleton.ContactsSidebar />
+        {loadingFollowers ? (
+          <SideCard.Content>
+            <>
+              <div className="flex w-full justify-center">
+                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+              </div>
+              <Typography.Body
+                variant="medium-bold"
+                className="col-span-3 m-2 flex justify-center items-center gap-6 text-gray-600"
+              >
+                Loading Followers
+              </Typography.Body>
+            </>
+          </SideCard.Content>
         ) : (
           <SideCard.Content className="flex-row gap-20 justify-start inline-flex">
             <div

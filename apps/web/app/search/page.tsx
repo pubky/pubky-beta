@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button, Content, Icon, Typography } from '@social/ui-shared';
+import { Content, Icon, Typography } from '@social/ui-shared';
 import {
   // ActiveFriends,
   CreatePost,
@@ -14,7 +13,7 @@ import {
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost } from '../../types';
@@ -42,75 +41,53 @@ export default function Index() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { layout, reach } = useFilterContext();
-  const {
-    pubky,
-    refreshList,
-    listGlobalPosts,
-    setRefreshList,
-    searchTags,
-    setSearchTags,
-  } = useClientContext();
-  const [posts, setPosts] = useState<IPost[]>([]);
+  const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } =
+    useClientContext();
   const [loading, setLoading] = useState(true);
-  const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
+  const loader = useRef(null);
 
-  const fetchData = async (pointer: string) => {
-    if (searchTags.length > 0) {
-      const results = await listGlobalPosts(pointer, reach, searchTags);
+  const fetchData = async (pointer: string, searchTags: string[]) => {
+    setLoading(true);
 
-      setShowLoadMore(false);
+    if (searchTags.length === 0) {
+      return;
+    }
 
-      if (!results || !results.feed) {
-        setCursor('');
-        return;
+    const results = await listGlobalPosts(pointer, reach, searchTags);
+
+    if (results && results.feed) {
+      if (cursor) {
+        setPosts((prev: IPost[]) => [...prev, ...results.feed]);
+      } else {
+        setPosts(results.feed);
       }
-
-      setPosts(results.feed);
-
-      if (results.feed.length >= 6) {
-        setShowLoadMore(true);
-      }
-
-      if (results.cursor) {
-        setCursor(results.cursor);
-      }
+      setCursor(results.cursor);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData(cursor);
-  }, [pubky]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && cursor) {
+          fetchData(cursor, searchTags);
+        }
+      },
+      { threshold: 1 }
+    );
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cursor]);
 
   useEffect(() => {
-    if (refreshList) {
-      fetchData('');
-      setRefreshList(false);
-    }
-  }, [refreshList, reach]);
-
-  const handleLoadMore = async () => {
-    try {
-      const results = await listGlobalPosts(cursor, reach, searchTags);
-
-      if (!results || !results.feed) {
-        setCursor('');
-        return;
-      }
-
-      setPosts((prev) => [...prev, ...results.feed]);
-
-      if (!results.cursor) {
-        setShowLoadMore(false);
-        return;
-      }
-
-      setCursor(results.cursor);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    setPosts([]);
+    fetchData('', searchTags);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reach, searchTags]);
 
   useEffect(() => {
     const search = searchParams.get('tags');
@@ -119,7 +96,7 @@ export default function Index() {
       const tagsArray = search.split(',');
       setSearchTags(tagsArray);
     }
-    setRefreshList(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   useEffect(() => {
@@ -127,11 +104,8 @@ export default function Index() {
     const searchUrl = searchTagsString
       ? `/search?tags=${searchTagsString}`
       : '/search';
-    router.push(searchUrl);
-  }, [searchTags, router]);
-
-  useEffect(() => {
-    if (searchTags.length <= 0) router.push('/home');
+    router.replace(searchUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTags]);
 
   const postsLayoutClassName =
@@ -156,20 +130,15 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          {loading ? (
-            <div className="flex justify-center items-center">
-              <Icon.LoadingSpin />
-            </div>
-          ) : posts.length > 0 ? (
-            posts.map((post, index) => (
-              <Post
-                key={index}
-                post={post}
-                size={layout === 'list' ? 'full' : 'normal'}
-                layout={layout}
-              />
-            ))
-          ) : (
+          {posts.map((post) => (
+            <Post
+              key={post.uri}
+              post={post}
+              size={layout === 'list' ? 'full' : 'normal'}
+              layout={layout}
+            />
+          ))}
+          {posts.length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts with{' '}
@@ -177,12 +146,29 @@ export default function Index() {
               </Typography.H2>
               <Typography.H2 className="font-normal">
                 {searchTags.map((searchTag, index) => (
-                  <span key={index}>
+                  <span key={`tag-${searchTag}`}>
                     #{searchTag}
                     {index !== searchTags.length - 1 && ', '}
                   </span>
                 ))}
               </Typography.H2>
+            </div>
+          )}
+          {loading && (
+            <div className="flex w-full justify-center flex-col">
+              <div
+                className={`flex w-full justify-center ${
+                  posts.length === 0 ? 'mt-10' : 'mt-2'
+                }`}
+              >
+                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+              </div>
+              <Typography.Body
+                variant="medium-bold"
+                className="col-span-3 mt-2 flex justify-center items-center gap-6 text-gray-600"
+              >
+                Loading Posts
+              </Typography.Body>
             </div>
           )}
         </PostsLayout>
@@ -191,17 +177,9 @@ export default function Index() {
           <HotTags />
           {/** <ActiveFriends /> */}
         </Sidebar>
-        {showLoadMore && (
-          <Button.Large
-            className="mt-6 col-span-3 xl:col-span-2"
-            variant="secondary"
-            onClick={() => handleLoadMore()}
-          >
-            Load More
-          </Button.Large>
-        )}
       </Content.Grid>
       <CreatePost />
+      <div ref={loader} />
     </Content.Main>
   );
 }

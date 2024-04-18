@@ -72,6 +72,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<string | null>(
     localStorageUtils.get('profile') || null
   );
+  const [posts, setPosts] = useState<IPost[]>([] as IPost[]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [refreshList, setRefreshList] = useState<boolean>(false);
 
@@ -555,6 +556,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         pubky,
         profile,
         refreshList,
+        posts,
         isLoggedIn,
         createPost,
         createTag,
@@ -573,6 +575,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         listFollowing,
         getMostFollowed,
         searchTags,
+        setPosts,
         setRefreshList,
         setSearchTags,
         follow,

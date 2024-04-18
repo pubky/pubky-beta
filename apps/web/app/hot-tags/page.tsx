@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Content, Typography } from '@social/ui-shared';
-import { CreatePost, Header, Skeleton } from '../components';
+import { Content, Icon, Typography } from '@social/ui-shared';
+import { CreatePost, Header } from '../components';
 import { HotTags } from './components';
 import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
@@ -134,7 +134,17 @@ export default function Index() {
       </Header>
       <Content.Grid className="flex-col flex gap-3">
         {loading ? (
-          <Skeleton.HotTags />
+          <>
+            <div className="flex w-full justify-center">
+              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+            </div>
+            <Typography.Body
+              variant="medium-bold"
+              className="col-span-3 m-2 flex justify-center items-center gap-6 text-gray-600"
+            >
+              Loading Hot Tags
+            </Typography.Body>
+          </>
         ) : hotTags.length > 0 ? (
           hotTags.map((tag, index) => (
             <div className="flex gap-3" key={index}>
