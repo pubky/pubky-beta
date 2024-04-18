@@ -13,6 +13,7 @@ export default function WhoFollow() {
     useClientContext();
   const [hotFollowed, setHotFollowed] = useState<IMostFollowed[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
@@ -52,8 +53,12 @@ export default function WhoFollow() {
                 ...prevState,
                 [id]: true,
               }));
+              setLoadingFollowers(false);
             }
           });
+          if (following.following.length === 0) {
+            setLoadingFollowers(false);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -61,11 +66,14 @@ export default function WhoFollow() {
     }
 
     fetchFollowing();
-  }, [pubky, listFollowing, hotFollowed]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubky, hotFollowed]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
       if (!pubkyFollow) return;
+
+      setLoadingFollowers(true);
 
       const result = await follow(pubkyFollow);
 
@@ -73,6 +81,8 @@ export default function WhoFollow() {
         ...prevState,
         [pubkyFollow]: result,
       }));
+
+      setLoadingFollowers(false);
     } catch (error) {
       console.log(error);
     }
@@ -82,12 +92,16 @@ export default function WhoFollow() {
     try {
       if (!pubkyUnfollow) return;
 
+      setLoadingFollowers(true);
+
       const result = await unfollow(pubkyUnfollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
         [pubkyUnfollow]: !result,
       }));
+
+      setLoadingFollowers(false);
     } catch (error) {
       console.log(error);
     }
@@ -117,6 +131,12 @@ export default function WhoFollow() {
                       text="Me"
                       icon={<Icon.Check />}
                       className="bg-transparent cursor-default"
+                    />
+                  ) : loadingFollowers ? (
+                    <SideCard.FollowAction
+                      disabled={true}
+                      text="Loading"
+                      icon={<Icon.LoadingSpin size="16" />}
                     />
                   ) : isFollowed ? (
                     <SideCard.FollowAction

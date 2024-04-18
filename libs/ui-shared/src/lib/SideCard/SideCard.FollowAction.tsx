@@ -5,6 +5,7 @@ import { Icon } from '../Icon';
 interface FollowAction extends React.HTMLAttributes<HTMLButtonElement> {
   text?: string;
   icon?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export const FollowAction = ({

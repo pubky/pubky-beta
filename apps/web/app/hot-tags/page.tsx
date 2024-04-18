@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../components';
 import { HotTags } from './components';
@@ -28,7 +28,10 @@ export default function Index() {
     }
   }
 
-  fetchTags();
+  useEffect(() => {
+    fetchTags();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Content.Main>
