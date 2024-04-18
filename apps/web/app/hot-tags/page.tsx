@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../components';
 import { HotTags } from './components';
@@ -15,21 +15,20 @@ export default function Index() {
   const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchTags() {
-      try {
-        const result = await getHotTags();
+  async function fetchTags() {
+    try {
+      const result = await getHotTags();
 
-        if (result) {
-          setHotTags(result);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
+      if (result) {
+        setHotTags(result);
+        setLoading(false);
       }
+    } catch (error) {
+      console.log(error);
     }
-    fetchTags();
-  }, [getHotTags]);
+  }
+
+  fetchTags();
 
   return (
     <Content.Main>

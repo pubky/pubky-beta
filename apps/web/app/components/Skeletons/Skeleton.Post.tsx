@@ -13,7 +13,7 @@ export default function Post({ size = 'normal', ...rest }: PostProps) {
       ? 'grow justify-end gap-1 flex mt-2 lg:mt-4'
       : 'grow justify-end gap-1 flex mt-2';
   return (
-    <div className="gap-6 flex flex-col mb-6">
+    <div className="gap-6 flex flex-col mb-0">
       <PostUI.Root>
         <div>
           <PostUI.MainCard className={twMerge(rest.className)}>

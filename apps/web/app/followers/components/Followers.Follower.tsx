@@ -129,7 +129,7 @@ export default function Follower({ followers }: FollowersProps) {
                       icon={<Icon.UserMinus size="16" />}
                       className="w-[154px]"
                     >
-                      Unfollow me
+                      Unfollow
                     </Button.Medium>
                   ) : (
                     <Button.Medium
@@ -139,7 +139,7 @@ export default function Follower({ followers }: FollowersProps) {
                       icon={<Icon.UserPlus size="16" />}
                       className="w-[154px]"
                     >
-                      Follow me
+                      Follow
                     </Button.Medium>
                   )}
                 </div>

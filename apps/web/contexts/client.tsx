@@ -65,6 +65,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
     (localStorageUtils.get('pubky') as TLayouts) || null
   );
+  const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
+  const [mostFollowed, setMostFollowed] = useState<IMostFollowed[] | null>(
+    null
+  );
   const [profile, setProfile] = useState<string | null>(
     localStorageUtils.get('profile') || null
   );
@@ -308,12 +312,16 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       if (!pk) throw new Error('Get Hot Tag: not logged in.');
 
+      if (hotTags) return hotTags;
+
       await client.ready();
 
       const result = await client.social.tags.hotTags();
 
       if (!result.ok)
         throw new Error(`GET hot tags:${pk} failed: ${result.error.message}`);
+
+      setHotTags(result.value);
 
       return result.value as ITaggedPost[];
     } catch (error) {
@@ -408,12 +416,16 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const getMostFollowed = async (): Promise<IMostFollowed[] | null> => {
     try {
+      if (mostFollowed) return mostFollowed;
+
       await client.ready();
 
       const result = await client.social.graph.mostFollowed();
 
       if (!result.ok)
         throw new Error(`Get most followed failed: ${result.error.message}`);
+
+      setMostFollowed(result.value);
 
       return result.value as IMostFollowed[];
     } catch (error) {
@@ -537,6 +549,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ClientContext.Provider
       value={{
+        hotTags,
+        mostFollowed,
         pubky,
         profile,
         refreshList,

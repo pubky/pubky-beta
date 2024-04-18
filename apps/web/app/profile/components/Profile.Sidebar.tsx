@@ -142,7 +142,7 @@ export default function Sidebar({
   };
 
   return (
-    <div className="hidden flex-col justify-start items-start gap-6 xl:inline-flex">
+    <div className="self-start sticky top-[160px] col-span-1 hidden flex-col justify-start items-start gap-6 xl:inline-flex">
       {loading ? (
         <Skeleton.ProfileSidebar />
       ) : (
@@ -175,7 +175,7 @@ export default function Sidebar({
                 icon={<Icon.UserMinus size="16" />}
                 className={!creatorPubky ? 'hidden' : ''}
               >
-                Unfollow me
+                Unfollow
               </Button.Medium>
             ) : (
               <Button.Medium
@@ -184,7 +184,7 @@ export default function Sidebar({
                 icon={<Icon.UserPlus size="16" />}
                 className={!creatorPubky ? 'hidden' : ''}
               >
-                Follow me
+                Follow
               </Button.Medium>
             )}
           </SideCard.Content>

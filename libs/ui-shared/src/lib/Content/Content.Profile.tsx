@@ -38,7 +38,10 @@ export const Profile = ({ profile }: ProfileProps) => {
           alt="Profile Image"
         />
       </div>
-      <Typography.Body className="text-opacity-80 mt-8" variant="medium-light">
+      <Typography.Body
+        className="text-opacity-80 mt-8 break-words"
+        variant="medium-light"
+      >
         {bio}
       </Typography.Body>
       <Content.Divider />
