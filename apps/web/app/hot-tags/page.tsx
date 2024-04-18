@@ -2,6 +2,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Skeleton } from '../components';
@@ -11,7 +12,9 @@ import { useClientContext } from '../../contexts/client';
 import { ITaggedPost } from '../../types';
 
 export default function Index() {
-  const { getHotTags } = useClientContext();
+  const router = useRouter();
+  const { getHotTags, setRefreshList, setSearchTags, searchTags } =
+    useClientContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,6 +36,19 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleTagSearch = (tag: string) => {
+    if (searchTags.includes(tag)) return;
+
+    if (searchTags.length < 3) {
+      setSearchTags([...searchTags, tag]);
+    } else {
+      const newSearchTags = [...searchTags.slice(1), tag];
+      setSearchTags(newSearchTags);
+    }
+    setRefreshList(true);
+    router.push('/search');
+  };
+
   return (
     <Content.Main>
       <Header className="w-52 xl:w-36 hidden md:block" title="Hot&#160;Tags">
@@ -50,6 +66,7 @@ export default function Index() {
               <HotTags.Rank
                 rank={index + 1}
                 tag={`# ${tag.tag}`}
+                onClick={() => handleTagSearch(tag.tag)}
                 color="amber"
                 counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
               />

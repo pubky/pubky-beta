@@ -39,7 +39,8 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
 
-  const { createTag, setRefreshList } = useClientContext();
+  const { createTag, setRefreshList, searchTags, setSearchTags } =
+    useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   // const [bookmark, setBookmark] = useState(false);
@@ -54,6 +55,19 @@ export default function Post({
   const handleSubmit = async (tag: string) => {
     await createTag(post.uri, tag);
     // setRefreshList(true);
+  };
+
+  const handleTagSearch = (tag: string) => {
+    if (searchTags.includes(tag)) return;
+
+    if (searchTags.length < 3) {
+      setSearchTags([...searchTags, tag]);
+    } else {
+      const newSearchTags = [...searchTags.slice(1), tag];
+      setSearchTags(newSearchTags);
+    }
+    setRefreshList(true);
+    router.push('/search');
   };
 
   if (!post) return <Skeleton.Post size={size} />;
@@ -162,7 +176,14 @@ export default function Post({
                       .slice(0, size === 'full' ? 3 : 1)
                       .map((tagObj, index) => (
                         <PostUI.Footer key={index}>
-                          <PostUtil.Tag clicked color="amber">
+                          <PostUtil.Tag
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleTagSearch(tagObj.tag);
+                            }}
+                            clicked
+                            color="amber"
+                          >
                             # {tagObj.tag}
                           </PostUtil.Tag>
                           <Button.Action

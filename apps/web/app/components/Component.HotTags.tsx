@@ -10,7 +10,8 @@ import { ITaggedPost } from '../../types';
 
 export default function HotTags() {
   const router = useRouter();
-  const { getHotTags } = useClientContext();
+  const { getHotTags, setSearchTags, searchTags, setRefreshList } =
+    useClientContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,6 +33,19 @@ export default function HotTags() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleTagSearch = (tag: string) => {
+    if (searchTags.includes(tag)) return;
+
+    if (searchTags.length < 3) {
+      setSearchTags([...searchTags, tag]);
+    } else {
+      const newSearchTags = [...searchTags.slice(1), tag];
+      setSearchTags(newSearchTags);
+    }
+    setRefreshList(true);
+    router.push('/search');
+  };
+
   return (
     <div className="self-start sticky top-[160px] col-span-1">
       <SideCard.Header title="Hot tags">
@@ -46,6 +60,7 @@ export default function HotTags() {
               {hotTags.slice(0, 8).map((tag, index) => (
                 <SideCard.Rank
                   key={index}
+                  onClick={() => handleTagSearch(tag.tag)}
                   rank={index + 1}
                   tag={`# ${tag.tag}`}
                   color="amber"
