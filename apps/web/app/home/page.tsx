@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { Button, Content, Typography } from '@social/ui-shared';
+import { Content, Icon, Typography } from '@social/ui-shared';
 import {
   // ActiveFriends,
   CreatePost,
@@ -14,7 +14,7 @@ import {
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost } from '../../types';
@@ -40,68 +40,49 @@ const layouts = {
 
 export default function Index() {
   const { layout, reach } = useFilterContext();
-  const { pubky, refreshList, listGlobalPosts, setRefreshList } =
-    useClientContext();
+  const { pubky, refreshList, listGlobalPosts } = useClientContext();
   const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
+  const loader = useRef(null);
 
   const fetchData = async (pointer: string) => {
+    setLoading(true);
     const results = await listGlobalPosts(pointer, reach);
 
-    setShowLoadMore(false);
-
-    if (!results || !results.feed) {
-      setCursor('');
-      return;
-    }
-
-    setPosts(results.feed);
-
-    if (results.feed.length >= 6) {
-      setShowLoadMore(true);
-    }
-
-    if (results.cursor) {
+    if (results && results.feed) {
+      if (cursor) {
+        setPosts((prev) => [...prev, ...results.feed]);
+      } else {
+        setPosts(results.feed);
+      }
       setCursor(results.cursor);
     }
-
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchData(cursor);
-  }, [pubky]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && cursor) {
+          fetchData(cursor);
+        }
+      },
+      { threshold: 1 }
+    );
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+    return () => observer.disconnect();
+  }, [cursor]);
 
   useEffect(() => {
-    if (refreshList) {
-      fetchData('');
-      setRefreshList(false);
-    }
-  }, [refreshList, reach]);
-
-  const handleLoadMore = async () => {
-    try {
-      const results = await listGlobalPosts(cursor, reach);
-
-      if (!results || !results.feed) {
-        setCursor('');
-        return;
-      }
-
-      setPosts((prev) => [...prev, ...results.feed]);
-
-      if (!results.cursor) {
-        setShowLoadMore(false);
-        return;
-      }
-
-      setCursor(results.cursor);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    setPosts([]);
+    fetchData('');
+  }, [reach]);
+  useEffect(() => {
+    fetchData(cursor);
+  }, [pubky, refreshList]);
 
   const postsLayoutClassName =
     layout === 'sidebar'
@@ -125,8 +106,15 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          {loading && (
-            <Skeleton.Post size={layout === 'list' ? 'full' : 'normal'} />
+          {posts.length === 0 && (
+            <>
+              {[1, 2, 3, 4].map((index) => (
+                <Skeleton.Post
+                  key={index}
+                  size={layout === 'list' ? 'full' : 'normal'}
+                />
+              ))}
+            </>
           )}
           {posts.map((post, index) => (
             <Post
@@ -143,23 +131,20 @@ export default function Index() {
               </Typography.H2>
             </div>
           )}
+          {loading && (
+            <div className="flex w-full justify-center">
+              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+            </div>
+          )}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
           <WhoFollow />
           <HotTags />
           {/** <ActiveFriends /> */}
-        </Sidebar>
-        {showLoadMore && (
-          <Button.Large
-            className="mt-6 col-span-3 xl:col-span-2"
-            variant="secondary"
-            onClick={() => handleLoadMore()}
-          >
-            Load More
-          </Button.Large>
-        )}
+        </Sidebar>{' '}
       </Content.Grid>
       <CreatePost />
+      <div ref={loader} />
     </Content.Main>
   );
 }

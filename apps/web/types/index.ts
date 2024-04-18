@@ -6,6 +6,9 @@ export type TContent = 'all' | 'posts' | 'images' | 'videos' | 'links';
 export type TTimeframe = 'today' | 'month' | 'all';
 
 export interface ClientContextType {
+  hotTags: ITaggedPost[] | null;
+  mostFollowed: IMostFollowed[] | null;
+  profile: IProfile | null;
   pubky: string | null;
   refreshList: boolean;
   signUp: (

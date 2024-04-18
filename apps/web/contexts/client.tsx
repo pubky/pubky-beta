@@ -5,7 +5,7 @@
 
 'use client';
 
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState } from 'react';
 import {
   IUserProfile,
   IProfilePubkyProps,
@@ -65,12 +65,16 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
     (localStorageUtils.get('pubky') as TLayouts) || null
   );
+  const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
+  const [mostFollowed, setMostFollowed] = useState<IMostFollowed[] | null>(
+    null
+  );
   const [profile, setProfile] = useState<string | null>(
     localStorageUtils.get('profile') || null
   );
   const [refreshList, setRefreshList] = useState<boolean>(false);
 
-  const isLoggedIn = useCallback(async (): Promise<string | false> => {
+  const isLoggedIn = async (): Promise<string | false> => {
     try {
       if (pubky) return pubky;
 
@@ -97,46 +101,44 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       console.log(error);
       return false;
     }
-  }, [client]);
+  };
 
-  const signUp = useCallback(
-    async (
-      userProfile: IProfilePubkyProps,
-      password: string
-    ): Promise<ISignUpResponse | false> => {
-      try {
-        const seed = Client.crypto.generateSeed();
+  const signUp = async (
+    userProfile: IProfilePubkyProps,
+    password: string
+  ): Promise<ISignUpResponse | false> => {
+    try {
+      const seed = Client.crypto.generateSeed();
 
-        const result = await client.signup(seed); // seed is zeroed
+      await client.ready();
 
-        if (!result.ok)
-          throw new Error(`Signup failed: ${result.error.message}`);
+      const result = await client.signup(seed); // seed is zeroed
 
-        const pk = result.value as unknown as string;
-        localStorageUtils.set('pubky', pk);
-        setPubky(pk);
+      if (!result.ok) throw new Error(`Signup failed: ${result.error.message}`);
 
-        const pubkeyProfile = _toPubkeyProfile(userProfile);
+      const pk = result.value as unknown as string;
+      localStorageUtils.set('pubky', pk);
+      setPubky(pk);
 
-        await client.social.profile.put(pk, pubkeyProfile);
+      const pubkeyProfile = _toPubkeyProfile(userProfile);
 
-        setProfile(pubkeyProfile);
-        localStorageUtils.set('profile', pubkeyProfile);
+      await client.social.profile.put(pk, pubkeyProfile);
 
-        return await client.seedRecovery.recoveryFile(
-          'recovery_file',
-          seed,
-          password
-        );
-      } catch (error) {
-        console.log(error);
-        return false;
-      }
-    },
-    [client, isLoggedIn]
-  );
+      setProfile(pubkeyProfile);
+      localStorageUtils.set('profile', pubkeyProfile);
 
-  const logout = useCallback(async (): Promise<boolean> => {
+      return await client.seedRecovery.recoveryFile(
+        'recovery_file',
+        seed,
+        password
+      );
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  const logout = async (): Promise<boolean> => {
     try {
       localStorageUtils.remove('pubky');
       localStorageUtils.remove('profile');
@@ -156,35 +158,36 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       console.log(error);
       return false;
     }
-  }, [client]);
+  };
 
-  const saveProfile = useCallback(
-    async (userProfile: IProfilePubkyProps): Promise<ISaveProfile | null> => {
-      try {
-        const pk = await isLoggedIn();
+  const saveProfile = async (
+    userProfile: IProfilePubkyProps
+  ): Promise<ISaveProfile | null> => {
+    try {
+      const pk = await isLoggedIn();
 
-        if (!pk) throw new Error('Logged in failed : not logged in.');
+      if (!pk) throw new Error('Logged in failed : not logged in.');
 
-        const pubkeyProfile = _toPubkeyProfile(userProfile);
+      const pubkeyProfile = _toPubkeyProfile(userProfile);
 
-        const result = await client.social.profile.put(pk, pubkeyProfile);
+      await client.ready();
 
-        setProfile(pubkeyProfile);
-        localStorageUtils.set('profile', pubkeyProfile);
+      const result = await client.social.profile.put(pk, pubkeyProfile);
 
-        if (!result.ok)
-          throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
+      setProfile(pubkeyProfile);
+      localStorageUtils.set('profile', pubkeyProfile);
 
-        return result.value as ISaveProfile;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
+      if (!result.ok)
+        throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
 
-  const getProfile = useCallback(async (): Promise<IProfile | null> => {
+      return result.value as ISaveProfile;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const getProfile = async (): Promise<IProfile | null> => {
     try {
       const pk = await isLoggedIn();
       if (!pk) throw new Error('Logged in failed : not logged in.');
@@ -208,111 +211,108 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       console.log(error);
       return null;
     }
-  }, [client, profile]);
+  };
 
-  const getUser = useCallback(
-    async (pk: string): Promise<IUserProfile | null> => {
-      try {
-        if (!pk) throw new Error('Logged in failed : not logged in.');
+  const getUser = async (pk: string): Promise<IUserProfile | null> => {
+    try {
+      if (!pk) throw new Error('Logged in failed : not logged in.');
 
-        await client.ready();
+      await client.ready();
 
-        const result = await client.social.profile.indexed(pk);
+      const result = await client.social.profile.indexed(pk);
 
-        if (!result.ok)
-          throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
+      if (!result.ok)
+        throw new Error(`Get profile:${pk} failed: ${result.error.message}`);
 
-        return result.value as IUserProfile;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
+      return result.value as IUserProfile;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
-  const getUserIndexed = useCallback(
-    async (userId: string): Promise<IUserProfile | null> => {
-      try {
-        const pk = await isLoggedIn();
+  const getUserIndexed = async (
+    userId: string
+  ): Promise<IUserProfile | null> => {
+    try {
+      const pk = await isLoggedIn();
 
-        if (!pk) throw new Error('Get profile indexed failed: not logged in.');
-        if (!userId)
-          throw new Error('Get profile indexed failed: no viewer id pubky');
+      if (!pk) throw new Error('Get profile indexed failed: not logged in.');
+      if (!userId)
+        throw new Error('Get profile indexed failed: no viewer id pubky');
 
-        await client.ready();
+      await client.ready();
 
-        const result = await client.social.profile.indexed(userId, pk);
+      const result = await client.social.profile.indexed(userId, pk);
 
-        if (!result.ok)
-          throw new Error(
-            `Get profile indexed:${pk} failed: ${result.error.message}`
-          );
+      if (!result.ok)
+        throw new Error(
+          `Get profile indexed:${pk} failed: ${result.error.message}`
+        );
 
-        return result.value as IUserProfile;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
+      return result.value as IUserProfile;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
-  const createPost = useCallback(
-    async (content: string): Promise<ICreatePostResponse | null> => {
-      try {
-        const pk = await isLoggedIn();
+  const createPost = async (
+    content: string
+  ): Promise<ICreatePostResponse | null> => {
+    try {
+      const pk = await isLoggedIn();
 
-        if (!pk) throw new Error('Get profile failed: not logged in.');
+      if (!pk) throw new Error('Get profile failed: not logged in.');
 
-        await client.ready();
+      await client.ready();
 
-        const result = await client.social.posts.put(pk, {
-          content: content,
-        });
+      const result = await client.social.posts.put(pk, {
+        content: content,
+      });
 
-        if (!result.ok)
-          throw new Error(`Put post:${pk} failed: ${result.error.message}`);
+      if (!result.ok)
+        throw new Error(`Put post:${pk} failed: ${result.error.message}`);
 
-        return result.value as ICreatePostResponse;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
+      return result.value as ICreatePostResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
-  const createTag = useCallback(
-    async (uri: string, tag: string): Promise<ICreateTagResponse | null> => {
-      try {
-        const pk = await isLoggedIn();
+  const createTag = async (
+    uri: string,
+    tag: string
+  ): Promise<ICreateTagResponse | null> => {
+    try {
+      const pk = await isLoggedIn();
 
-        if (!pk) throw new Error('Get create Tag: not logged in.');
-        if (!uri) throw new Error('Get create Tag: no uri.');
-        if (!tag) throw new Error('Get create Tag: no tag name.');
+      if (!pk) throw new Error('Get create Tag: not logged in.');
+      if (!uri) throw new Error('Get create Tag: no uri.');
+      if (!tag) throw new Error('Get create Tag: no tag name.');
 
-        await client.ready();
+      await client.ready();
 
-        const result = await client.social.tags.put(pk, uri, tag);
+      const result = await client.social.tags.put(pk, uri, tag);
 
-        if (!result.ok)
-          throw new Error(`Put tag:${pk} failed: ${result.error.message}`);
+      if (!result.ok)
+        throw new Error(`Put tag:${pk} failed: ${result.error.message}`);
 
-        return result.value as ICreateTagResponse;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
+      return result.value as ICreateTagResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
-  const getHotTags = useCallback(async (): Promise<ITaggedPost[] | null> => {
+  const getHotTags = async (): Promise<ITaggedPost[] | null> => {
     try {
       const pk = await isLoggedIn();
 
       if (!pk) throw new Error('Get Hot Tag: not logged in.');
+
+      if (hotTags) return hotTags;
 
       await client.ready();
 
@@ -321,111 +321,103 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`GET hot tags:${pk} failed: ${result.error.message}`);
 
+      setHotTags(result.value);
+
       return result.value as ITaggedPost[];
     } catch (error) {
       console.log(error);
       return null;
     }
-  }, [client]);
+  };
 
-  const getPost = useCallback(
-    async (uri: string): Promise<IPost | null> => {
-      try {
-        if (!uri) throw new Error('Get list posts failed');
-
-        await client.ready();
-
-        const result = await client.social.posts.get(uri);
-
-        if (!result.ok)
-          throw new Error(`Get post failed: ${result.error.message}`);
-
-        return result.value as unknown as IPost;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
-
-  const follow = useCallback(
-    async (pk: string) => {
-      try {
-        if (!pk) throw new Error('Pubky required');
-
-        const pkLogged = await isLoggedIn();
-
-        if (!pkLogged) throw new Error('Not logged in.');
-
-        await client.ready();
-
-        const result = await client.social.graph.follow(pkLogged, pk);
-
-        if (!result.ok)
-          throw new Error(`Post follow:${pk} failed: ${result.error.message}`);
-
-        return true;
-      } catch (error) {
-        console.log(error);
-        return false;
-      }
-    },
-    [client]
-  );
-
-  const unfollow = useCallback(
-    async (pk: string) => {
-      try {
-        if (!pk) throw new Error('Pubky required');
-
-        const pkLogged = await isLoggedIn();
-
-        if (!pkLogged) throw new Error('Not logged in.');
-
-        await client.ready();
-
-        const result = await client.social.graph.unfollow(pkLogged, pk);
-
-        if (!result.ok)
-          throw new Error(`Unfollow:${pk} failed: ${result.error.message}`);
-
-        return true;
-      } catch (error) {
-        console.log(error);
-        return false;
-      }
-    },
-    [client]
-  );
-
-  const listFollowing = useCallback(
-    async (pk: string): Promise<IFollowingResponse | null> => {
-      try {
-        if (!pk) throw new Error('Get list followers failed');
-
-        await client.ready();
-
-        const result = await client.social.graph.following(pk);
-
-        if (!result.ok)
-          throw new Error(
-            `Get list followers:${pk} failed: ${result.error.message}`
-          );
-
-        return result.value as IFollowingResponse;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
-
-  const getMostFollowed = useCallback(async (): Promise<
-    IMostFollowed[] | null
-  > => {
+  const getPost = async (uri: string): Promise<IPost | null> => {
     try {
+      if (!uri) throw new Error('Get list posts failed');
+
+      await client.ready();
+
+      const result = await client.social.posts.get(uri);
+
+      if (!result.ok)
+        throw new Error(`Get post failed: ${result.error.message}`);
+
+      return result.value as unknown as IPost;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const follow = async (pk: string) => {
+    try {
+      if (!pk) throw new Error('Pubky required');
+
+      const pkLogged = await isLoggedIn();
+
+      if (!pkLogged) throw new Error('Not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.graph.follow(pkLogged, pk);
+
+      if (!result.ok)
+        throw new Error(`Post follow:${pk} failed: ${result.error.message}`);
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  const unfollow = async (pk: string) => {
+    try {
+      if (!pk) throw new Error('Pubky required');
+
+      const pkLogged = await isLoggedIn();
+
+      if (!pkLogged) throw new Error('Not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.graph.unfollow(pkLogged, pk);
+
+      if (!result.ok)
+        throw new Error(`Unfollow:${pk} failed: ${result.error.message}`);
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  const listFollowing = async (
+    pk: string
+  ): Promise<IFollowingResponse | null> => {
+    try {
+      if (!pk) throw new Error('Get list followers failed');
+
+      await client.ready();
+
+      const result = await client.social.graph.following(pk);
+
+      if (!result.ok)
+        throw new Error(
+          `Get list followers:${pk} failed: ${result.error.message}`
+        );
+
+      return result.value as IFollowingResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const getMostFollowed = async (): Promise<IMostFollowed[] | null> => {
+    try {
+      if (mostFollowed) return mostFollowed;
+
       await client.ready();
 
       const result = await client.social.graph.mostFollowed();
@@ -433,131 +425,132 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`Get most followed failed: ${result.error.message}`);
 
+      setMostFollowed(result.value);
+
       return result.value as IMostFollowed[];
     } catch (error) {
       console.log(error);
       return null;
     }
-  }, [client]);
+  };
 
-  const listFollowers = useCallback(
-    async (pk: string): Promise<IFollowersResponse | null> => {
-      try {
-        if (!pk) throw new Error('Get list followers failed');
+  const listFollowers = async (
+    pk: string
+  ): Promise<IFollowersResponse | null> => {
+    try {
+      if (!pk) throw new Error('Get list followers failed');
 
-        await client.ready();
+      await client.ready();
 
-        const result = await client.social.graph.followers(pk);
+      const result = await client.social.graph.followers(pk);
 
-        if (!result.ok)
-          throw new Error(
-            `Get list followers:${pk} failed: ${result.error.message}`
-          );
-        return result.value as IFollowersResponse;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
+      if (!result.ok)
+        throw new Error(
+          `Get list followers:${pk} failed: ${result.error.message}`
+        );
+      return result.value as IFollowersResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
-  const listUserFeed = useCallback(
-    async (pk: string, cursor: string, limit = 5): Promise<IFeed | null> => {
-      try {
-        if (!pk) throw new Error('Get list posts failed');
+  const listUserFeed = async (
+    pk: string,
+    cursor: string,
+    limit = 5
+  ): Promise<IFeed | null> => {
+    try {
+      if (!pk) throw new Error('Get list posts failed');
 
-        await client.ready();
+      await client.ready();
 
-        const result = await client.social.streams.userFeed(pk, {
-          limit: limit,
-          cursor: cursor,
-        });
+      const result = await client.social.streams.userFeed(pk, {
+        limit: limit,
+        cursor: cursor,
+      });
 
-        if (!result.ok)
-          throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
+      if (!result.ok)
+        throw new Error(`Get posts:${pk} failed: ${result.error.message}`);
 
-        return result.value as unknown as IFeed;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
+      return result.value as unknown as IFeed;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
-  const listGlobalPosts = useCallback(
-    async (
-      cursor: string,
-      reach: 'following' | 'all' | 'followers' | 'friends',
-      tags?: string[]
-    ): Promise<IFeed | null> => {
-      try {
-        // TODO: find a way to memoize the client across page refresh
-        // that will basically require extracting the internal caches,
-        // and load it in subsequent client instances.
+  const listGlobalPosts = async (
+    cursor: string,
+    reach: 'following' | 'all' | 'followers' | 'friends',
+    tags?: string[]
+  ): Promise<IFeed | null> => {
+    try {
+      // TODO: find a way to memoize the client across page refresh
+      // that will basically require extracting the internal caches,
+      // and load it in subsequent client instances.
 
-        const pk = await isLoggedIn();
+      const pk = await isLoggedIn();
 
-        if (!pk) throw new Error('Get global posts failed: not logged in.');
+      if (!pk) throw new Error('Get global posts failed: not logged in.');
 
-        await client.ready();
+      await client.ready();
 
-        const result = await client.social.streams.get(pk, {
-          limit: 6,
-          cursor: cursor,
-          reach: reach ? reach : 'all',
-          tags: tags,
-        });
+      const result = await client.social.streams.get(pk, {
+        limit: 6,
+        cursor: cursor,
+        reach: reach ? reach : 'all',
+        tags: tags,
+      });
 
-        if (!result.ok)
-          throw new Error(
-            `Get global posts: ${cursor} failed: ${result.error.message}`
-          );
-
-        return result.value as unknown as IFeed;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
-    [client]
-  );
-
-  const decryptRecoveryFile = useCallback(
-    async (password: string, recoveryFile: Buffer) => {
-      try {
-        await client.ready();
-
-        const recoveredSeed = await client.seedRecovery.decryptRecoveryFile(
-          recoveryFile,
-          password
+      if (!result.ok)
+        throw new Error(
+          `Get global posts: ${cursor} failed: ${result.error.message}`
         );
 
-        if (recoveredSeed.isErr()) {
-          console.log(recoveredSeed.error);
-          return false;
-        }
-        const result = await client.signup(recoveredSeed.value);
+      return result.value as unknown as IFeed;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
-        if (!result.ok)
-          throw new Error(`Sign up failed: ${result.error.message}`);
+  const decryptRecoveryFile = async (
+    password: string,
+    recoveryFile: Buffer
+  ) => {
+    try {
+      await client.ready();
 
-        localStorageUtils.set('pubky', result.value);
-        setPubky(result.value);
+      const recoveredSeed = await client.seedRecovery.decryptRecoveryFile(
+        recoveryFile,
+        password
+      );
 
-        return true;
-      } catch (error) {
-        console.log(error);
+      if (recoveredSeed.isErr()) {
+        console.log(recoveredSeed.error);
         return false;
       }
-    },
-    [client]
-  );
+      const result = await client.login(recoveredSeed.value);
+
+      if (!result.ok)
+        throw new Error(`Sign up failed: ${result.error.message}`);
+
+      localStorageUtils.set('pubky', result.value);
+      setPubky(result.value);
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
 
   return (
     <ClientContext.Provider
       value={{
+        hotTags,
+        mostFollowed,
         pubky,
         profile,
         refreshList,

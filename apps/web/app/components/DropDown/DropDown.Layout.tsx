@@ -13,7 +13,7 @@ export default function Layout() {
     list: <Icon.List />,
     grid: <Icon.DotsNine />,
     columns: <Icon.SquaresFour />,
-    loading: <Icon.LoadingSpin />,
+    loading: <Icon.LoadingSpin className="animate-spin" />,
   };
   const [dropdownValue, setDropdownValue] = useState({
     value: layout ? layout : 'sidebar',

@@ -15,7 +15,7 @@ export default function Reach() {
     followers: <Icon.UsersLeft />,
     friends: <Icon.Smiley />,
     all: <Icon.Broadcast />,
-    loading: <Icon.LoadingSpin />,
+    loading: <Icon.LoadingSpin className="animate-spin" />,
   };
 
   const [dropdownValue, setDropdownValue] = useState({
@@ -28,13 +28,8 @@ export default function Reach() {
       value: reach ? reach : 'all',
       iconOption: reach ? icons[reach] : icons.all,
     });
-    setRefreshList(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setRefreshList]);
-
-  useEffect(() => {
-    setRefreshList(true);
-  }, [dropdownValue, setRefreshList]);
+  }, []);
 
   return (
     <DropDown
@@ -61,6 +56,7 @@ export default function Reach() {
             });
             setReach('following');
             setOpenDropdown(false);
+            setRefreshList(true);
           }}
         />
         <DropDownUI.Item
@@ -75,6 +71,7 @@ export default function Reach() {
             });
             setReach('followers');
             setOpenDropdown(false);
+            setRefreshList(true);
           }}
         />
         <DropDownUI.Item
@@ -89,6 +86,7 @@ export default function Reach() {
             });
             setReach('friends');
             setOpenDropdown(false);
+            setRefreshList(true);
           }}
         />
         <DropDownUI.Item
@@ -103,6 +101,7 @@ export default function Reach() {
             });
             setReach('all');
             setOpenDropdown(false);
+            setRefreshList(true);
           }}
         />
       </DropDownUI.Content>

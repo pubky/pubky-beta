@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Button, Content, Typography } from '@social/ui-shared';
+import { useEffect, useRef, useState } from 'react';
+import { Content, Icon, Typography } from '@social/ui-shared';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
 import {
@@ -20,7 +20,7 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
-  const { pubky, setRefreshList, getUserIndexed, listUserFeed } =
+  const { pubky, getUserIndexed, getProfile, listUserFeed } =
     useClientContext();
   const creatorPubky = params.creatorPubky;
 
@@ -28,73 +28,69 @@ export default function Index({
   const [name, setName] = useState('Loading...');
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
+  const loader = useRef(null);
 
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const userProfile = await getUserIndexed(creatorPubky);
-
-        if (userProfile) {
-          setPic(userProfile.profile?.image || '/images/Userpic.png');
-          setName(userProfile.profile?.name || 'Loading...');
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    fetchProfile();
-
-    async function fetchPosts() {
-      try {
-        if (!creatorPubky) return;
-
-        const results = await listUserFeed(creatorPubky, cursor);
-
-        if (!results || !results.feed) return;
-
-        setPosts(results.feed);
-
-        if (results.feed.length >= 5) {
-          setShowLoadMore(true);
-        }
-
-        if (results.cursor) {
-          setCursor(results.cursor);
-        }
-
-        setRefreshList(false);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    fetchPosts();
-  }, [creatorPubky]);
-
-  const handleLoadMore = async () => {
+  async function fetchProfile() {
     try {
-      if (!creatorPubky) return;
-
-      const results = await listUserFeed(creatorPubky, cursor);
-
-      if (!results || !results.feed) return;
-
-      setCursor(results.cursor);
-      setPosts((prev) => [...prev, ...results.feed]);
-
-      if (!results.cursor) {
-        setCursor('');
-        setShowLoadMore(false);
+      if (pubky === creatorPubky) {
+        const userProfile = await getProfile();
+        if (userProfile) {
+          setPic(userProfile.image || '/images/Userpic.png');
+          setName(userProfile.name || 'Loading...');
+        }
         return;
+      }
+      const userProfile = await getUserIndexed(creatorPubky);
+
+      if (userProfile) {
+        setPic(userProfile.profile?.image || '/images/Userpic.png');
+        setName(userProfile.profile?.name || 'Loading...');
       }
     } catch (error) {
       console.log(error);
     }
-  };
+  }
+
+  async function fetchPosts(pointer: string) {
+    try {
+      setLoading(true);
+      if (!creatorPubky) return;
+      const results = await listUserFeed(creatorPubky, pointer);
+
+      if (results && results.feed) {
+        if (cursor) {
+          setPosts((prev) => [...prev, ...results.feed]);
+        } else {
+          setPosts(results.feed);
+        }
+        setCursor(results.cursor);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      async (entries) => {
+        if (entries[0].isIntersecting && cursor) {
+          fetchPosts(cursor);
+        }
+      },
+      { threshold: 1 }
+    );
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+    return () => observer.disconnect();
+  }, [cursor]);
+
+  useEffect(() => {
+    fetchProfile();
+    fetchPosts(cursor);
+  }, [creatorPubky]);
 
   return (
     <Content.Main>
@@ -126,14 +122,10 @@ export default function Index({
               </Typography.H2>
             </div>
           )}
-          {showLoadMore && (
-            <Button.Large
-              className="col-span-3 xl:col-span-2"
-              variant="secondary"
-              onClick={() => handleLoadMore()}
-            >
-              Load More
-            </Button.Large>
+          {loading && (
+            <div className="flex w-full justify-center">
+              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+            </div>
           )}
         </PostsLayout>
         <Profile.Sidebar
@@ -141,6 +133,7 @@ export default function Index({
         />
       </Content.Grid>
       <CreatePost />
+      {posts.length > 0 && <div ref={loader} />}
     </Content.Main>
   );
 }

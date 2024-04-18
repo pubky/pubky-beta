@@ -23,7 +23,7 @@ interface FormErrors {
 }
 
 const postSchema = z.object({
-  content: z.string().max(280, { message: 'Maximum length 280 characters' }),
+  content: z.string(),
 });
 
 export default function CreatePost({

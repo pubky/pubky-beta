@@ -15,21 +15,23 @@ export default function Index() {
   const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchTags() {
-      try {
-        const result = await getHotTags();
+  async function fetchTags() {
+    try {
+      const result = await getHotTags();
 
-        if (result) {
-          setHotTags(result);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
+      if (result) {
+        setHotTags(result);
+        setLoading(false);
       }
+    } catch (error) {
+      console.log(error);
     }
+  }
+
+  useEffect(() => {
     fetchTags();
-  }, [getHotTags]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Content.Main>

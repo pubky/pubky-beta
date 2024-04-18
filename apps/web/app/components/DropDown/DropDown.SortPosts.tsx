@@ -13,7 +13,7 @@ export default function SortPosts() {
     recent: <Icon.Asterisk size="24" />,
     tags: <Icon.Tag size="24" />,
     activity: <Icon.Fire size="24" />,
-    loading: <Icon.LoadingSpin />,
+    loading: <Icon.LoadingSpin className="animate-spin" />,
   };
   const [dropdownValue, setDropdownValue] = useState({
     value: sort ? sort : 'recent',

@@ -16,8 +16,11 @@ import { useClientContext } from '../../../contexts/client';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 import { minifyText } from '../../../libs/textHelper';
 import { Skeleton } from '../../components';
+import { useRouter } from 'next/navigation';
 
 export default function Index() {
+  const router = useRouter();
+
   const { pubky, getProfile, listFollowers } = useClientContext();
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState('/images/Userpic.png');
@@ -37,65 +40,71 @@ export default function Index() {
     setHandler(minifyPubky(pubky));
   }, [pubky]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (!pubky) return;
+  async function fetchProfile() {
+    try {
+      const userProfile = await getProfile();
 
-        const followers = await listFollowers(pubky);
-
-        if (followers) {
-          setContacts(
-            followers.followers.map((user: any, index: any) => ({
-              alt: 'contact-pic-' + (index + 1),
-              src: user.profile.image,
-              name: user.profile.name,
-              handler: minifyPubky(user.uri.replace('pubky:', '')),
-            }))
+      if (userProfile) {
+        setImage(userProfile.image || '/images/Userpic.png');
+        setName(userProfile.name || '');
+        setBio(userProfile.bio || 'No bio.');
+        if (userProfile.links) {
+          const email = userProfile.links.find(
+            (link: { title: string }) => link.title === 'email'
           );
-          setLoadingContacts(false);
+          const x = userProfile.links.find(
+            (link: { title: string }) => link.title === 'x'
+          );
+          const website = userProfile.links.find(
+            (link: { title: string }) => link.title === 'website'
+          );
+          const telegram = userProfile.links.find(
+            (link: { title: string }) => link.title === 'telegram'
+          );
+
+          setEmail(email?.url || '');
+          setX(x?.url || '');
+          setWebsite(website?.url || '');
+          setTelegram(telegram?.url || '');
+
+          await fetchFollowers();
         }
-      } catch (error) {
-        console.log(error);
+        setLoading(false);
+      } else {
+        router.push('/onboarding/register');
       }
+    } catch (error) {
+      console.log(error);
     }
-    fetchData();
-  }, [pubky, listFollowers]);
+  }
+
+  async function fetchFollowers() {
+    try {
+      if (!pubky) return;
+
+      const followers = await listFollowers(pubky);
+
+      if (followers) {
+        setContacts(
+          followers.followers.map((user: any, index: any) => ({
+            alt: 'contact-pic-' + (index + 1),
+            src: user.profile.image,
+            name: user.profile.name,
+            handler: minifyPubky(user.uri.replace('pubky:', '')),
+          }))
+        );
+        setLoadingContacts(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const userProfile = await getProfile();
-        if (userProfile) {
-          setImage(userProfile.image || '/images/Userpic.png');
-          setName(userProfile.name || '');
-          setBio(userProfile.bio || 'No bio.');
-          if (userProfile.links) {
-            const email = userProfile.links.find(
-              (link: { title: string }) => link.title === 'email'
-            );
-            const x = userProfile.links.find(
-              (link: { title: string }) => link.title === 'x'
-            );
-            const website = userProfile.links.find(
-              (link: { title: string }) => link.title === 'website'
-            );
-            const telegram = userProfile.links.find(
-              (link: { title: string }) => link.title === 'telegram'
-            );
-            setEmail(email?.url || '');
-            setX(x?.url || '');
-            setWebsite(website?.url || '');
-            setTelegram(telegram?.url || '');
-          }
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [pubky, getProfile]);
+    fetchProfile();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubky]);
 
   const profile = {
     name: minifyText(name),
@@ -109,6 +118,7 @@ export default function Index() {
       telegram: telegram,
     },
   };
+
   return (
     <Onboarding.Layout currentStep={3}>
       <Typography.Display>

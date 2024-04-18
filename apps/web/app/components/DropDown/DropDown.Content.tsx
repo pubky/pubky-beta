@@ -14,7 +14,7 @@ export default function Content() {
     videos: <Icon.Play />,
     links: <Icon.LinkSimple />,
     all: <Icon.Stack />,
-    loading: <Icon.LoadingSpin />,
+    loading: <Icon.LoadingSpin className="animate-spin" />,
   };
   const [dropdownValue, setDropdownValue] = useState({
     value: content ? content : 'all',

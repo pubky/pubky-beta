@@ -29,10 +29,11 @@ export default function HotTags() {
       }
     }
     fetchTags();
-  }, [getHotTags]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <div>
+    <div className="self-start sticky top-[160px] col-span-1">
       <SideCard.Header title="Hot tags">
         <DropDown.TagsTimeframe type="text" />
       </SideCard.Header>
@@ -42,7 +43,7 @@ export default function HotTags() {
         ) : hotTags && hotTags.length > 0 ? (
           <>
             <div className="grid gap-3">
-              {hotTags.slice(0, 3).map((tag, index) => (
+              {hotTags.slice(0, 8).map((tag, index) => (
                 <SideCard.Rank
                   key={index}
                   rank={index + 1}
