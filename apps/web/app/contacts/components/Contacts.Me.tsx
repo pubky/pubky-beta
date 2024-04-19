@@ -7,10 +7,17 @@ interface MeProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
   pubkey: string;
   image: string;
-  followersCount?: number;
+  countContacts: number;
+  contactsLayout: string;
 }
 
-export default function Me({ name, pubkey, image, followersCount }: MeProps) {
+export default function Me({
+  name,
+  pubkey,
+  image,
+  countContacts,
+  contactsLayout,
+}: MeProps) {
   return (
     <Content.Grid className="py-8 sm:py-12 flex justify-between">
       <div className="gap-6 inline-flex">
@@ -33,9 +40,14 @@ export default function Me({ name, pubkey, image, followersCount }: MeProps) {
         </Link>
       </div>
       <div className="gap-3 flex">
-        {followersCount && (
-          <Typography.H2>{followersCount} followers</Typography.H2>
-        )}
+        <Typography.H2>
+          {countContacts}{' '}
+          {contactsLayout === 'followers'
+            ? 'followers'
+            : contactsLayout === 'following'
+            ? 'following'
+            : 'friends'}
+        </Typography.H2>
       </div>
     </Content.Grid>
   );

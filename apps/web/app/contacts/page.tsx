@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Content, Icon, Typography } from '@social/ui-shared';
-import { CreatePost, Header, Skeleton } from '../components';
+import { CreatePost, Header } from '../components';
 import { Contacts } from './components';
 import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
@@ -20,7 +20,7 @@ export default function Index() {
   const [name, setName] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
-  const [followers, setFollowers] = useState<IFollowersResponse | null>(null);
+  const [countContacts, setCountContacts] = useState(0);
   const [loadingContacts, setLoadingContacts] = useState(true);
   const [contactsUsers, setContactsUsers] = useState<
     IFollowingResponse | IFollowersResponse | IFriendsResponse | null
@@ -39,8 +39,10 @@ export default function Index() {
 
         if (contacts === 'following') {
           contactsList = await listFollowing(pubky);
+          if (contactsList) setCountContacts(contactsList.count);
         } else if (contacts === 'followers') {
           contactsList = await listFollowers(pubky);
+          if (contactsList) setCountContacts(contactsList.count);
         } else if (contacts === 'friends') {
           const contactsFollowers = await listFollowers(pubky);
           const contactsFollowing = await listFollowing(pubky);
@@ -60,6 +62,7 @@ export default function Index() {
             count: mutualContacts.length,
             friends: mutualContacts,
           };
+          if (contactsList) setCountContacts(contactsList.count);
         }
 
         if (contactsList) {
@@ -90,20 +93,6 @@ export default function Index() {
     fetchData();
   }, [pubky, getProfile]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (!pubky) return;
-
-        const followers = await listFollowers(pubky);
-        setFollowers(followers);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [pubky, listFollowers]);
-
   let contactsToShow:
     | IFollowingResponse['following']
     | IFollowersResponse['followers']
@@ -128,30 +117,40 @@ export default function Index() {
           <DropDown.ContactsLayout />
         </div>
       </Header>
-      <Content.Grid>
-        {contactsLayout === 'list' &&
-          (loading ? (
-            <Skeleton.FollowerMe />
-          ) : (
+      {loadingContacts || loading ? (
+        <div className="flex justify-center items-center">
+          <Icon.LoadingSpin />
+        </div>
+      ) : (
+        <>
+          {contactsLayout === 'list' && (
             <Contacts.Me
               image={image}
               name={name}
               pubkey={pubky ? pubky.toString() : ''}
-              followersCount={followers?.count}
+              countContacts={countContacts}
+              contactsLayout={contacts}
             />
-          ))}
-        {loadingContacts ? (
-          <div className="flex justify-center items-center">
-            <Icon.LoadingSpin />
-          </div>
-        ) : contactsUsers?.count ?? 0 > 0 ? (
-          <Contacts.Contact contacts={contactsToShow} />
-        ) : (
-          <Typography.H2 className="font-normal text-opacity-30 text-center">
-            No contacts yet
-          </Typography.H2>
-        )}
-      </Content.Grid>
+          )}
+          {contactsUsers?.count ?? 0 > 0 ? (
+            contactsLayout === 'list' ? (
+              <Content.Grid>
+                <Contacts.Root>
+                  <Contacts.Contact contacts={contactsToShow} />
+                </Contacts.Root>
+              </Content.Grid>
+            ) : (
+              <Content.Grid>
+                <Contacts.Contact contacts={contactsToShow} />
+              </Content.Grid>
+            )
+          ) : (
+            <Typography.H2 className="font-normal text-opacity-30 text-center">
+              No contacts yet
+            </Typography.H2>
+          )}
+        </>
+      )}
       <CreatePost />
     </Content.Main>
   );

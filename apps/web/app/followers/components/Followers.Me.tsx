@@ -33,9 +33,7 @@ export default function Me({ name, pubkey, image, followersCount }: MeProps) {
         </Link>
       </div>
       <div className="gap-3 flex">
-        {followersCount && (
-          <Typography.H2>{followersCount} followers</Typography.H2>
-        )}
+        <Typography.H2>{followersCount} followers</Typography.H2>
       </div>
     </Content.Grid>
   );
