@@ -2,7 +2,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button, Content, Typography } from '@social/ui-shared';
+import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import {
   // ActiveFriends,
   CreatePost,
@@ -11,7 +11,6 @@ import {
   Post,
   PostsLayout,
   Sidebar,
-  Skeleton,
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
@@ -57,31 +56,33 @@ export default function Index() {
   const [cursor, setCursor] = useState('');
 
   const fetchData = async (pointer: string) => {
-    const results = await listGlobalPosts(pointer, reach, searchTags);
+    if (searchTags.length > 0) {
+      const results = await listGlobalPosts(pointer, reach, searchTags);
 
-    setShowLoadMore(false);
+      setShowLoadMore(false);
 
-    if (!results || !results.feed) {
-      setCursor('');
-      return;
+      if (!results || !results.feed) {
+        setCursor('');
+        return;
+      }
+
+      setPosts(results.feed);
+
+      if (results.feed.length >= 6) {
+        setShowLoadMore(true);
+      }
+
+      if (results.cursor) {
+        setCursor(results.cursor);
+      }
+      console.log('results', results);
+      setLoading(false);
     }
-
-    setPosts(results.feed);
-
-    if (results.feed.length >= 6) {
-      setShowLoadMore(true);
-    }
-
-    if (results.cursor) {
-      setCursor(results.cursor);
-    }
-
-    setLoading(false);
   };
 
   useEffect(() => {
     fetchData(cursor);
-  }, [pubky, searchParams, searchTags]);
+  }, [pubky]);
 
   useEffect(() => {
     if (refreshList) {
@@ -156,18 +157,20 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          {loading && (
-            <Skeleton.Post size={layout === 'list' ? 'full' : 'normal'} />
-          )}
-          {posts.map((post, index) => (
-            <Post
-              key={index}
-              post={post}
-              size={layout === 'list' ? 'full' : 'normal'}
-              layout={layout}
-            />
-          ))}
-          {posts.length === 0 && !loading && (
+          {loading ? (
+            <div className="flex justify-center items-center">
+              <Icon.LoadingSpin />
+            </div>
+          ) : posts.length > 0 ? (
+            posts.map((post, index) => (
+              <Post
+                key={index}
+                post={post}
+                size={layout === 'list' ? 'full' : 'normal'}
+                layout={layout}
+              />
+            ))
+          ) : (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts with{' '}
