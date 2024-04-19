@@ -40,10 +40,10 @@ export default function FollowingUsers({ following }: FollowingProps) {
                 ...prevState,
                 [uri]: true,
               }));
-              setInitLoadingFollowing(false);
             }
           });
         }
+        setInitLoadingFollowing(false);
       } catch (error) {
         console.log(error);
       }

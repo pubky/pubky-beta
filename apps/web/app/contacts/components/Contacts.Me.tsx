@@ -21,7 +21,7 @@ export default function Me({
   return (
     <Content.Grid className="py-8 sm:py-12 flex justify-between">
       <div className="gap-6 inline-flex">
-        <Link href={`/profile/${pubkey}`}>
+        <Link href={`/profile`}>
           <div className="gap-3 flex items-center">
             <Image
               width={32}
