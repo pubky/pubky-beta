@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import {
@@ -20,7 +19,7 @@ import { minifyText } from '../../libs/textHelper';
 import { Skeleton } from '.';
 import { useRouter } from 'next/navigation';
 import { useClientContext } from '../../contexts/client';
-import { IPost, TLayouts, TSize } from '../../types';
+import { IPost, ITaggedPost, TLayouts, TSize } from '../../types';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
@@ -39,16 +38,17 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
 
-  const { createTag, setRefreshList, searchTags, setSearchTags } =
+  const { pubky, createTag, setRefreshList, searchTags, setSearchTags } =
     useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   // const [bookmark, setBookmark] = useState(false);
-  const [sortedTags, setSortedTags] = useState<any[]>([]);
+  const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
 
   useEffect(() => {
     if (post?.tags) {
-      setSortedTags(post?.tags.slice().sort((a, b) => b.count - a.count));
+      const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
+      setSortedTags(sortedTags);
     }
   }, [post?.tags]);
 
@@ -174,47 +174,53 @@ export default function Post({
                   >
                     {sortedTags
                       .slice(0, size === 'full' ? 3 : 1)
-                      .map((tagObj, index) => (
-                        <PostUI.Footer key={index}>
-                          <PostUtil.Tag
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleTagSearch(tagObj.tag);
-                            }}
-                            clicked
-                            color="amber"
-                          >
-                            # {tagObj.tag}
-                          </PostUtil.Tag>
-                          <Button.Action
-                            variant="custom"
-                            size="small"
-                            icon={<Icon.Plus />}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleSubmit(tagObj.tag);
-                            }}
-                          />
-                          <PostUtil.Counter counter={tagObj.count} />
-                          {tagObj?.from
-                            .slice(0, 5)
-                            .map((fromItem: any, fromIndex: number) => (
-                              <Image
-                                width={32}
-                                height={32}
-                                alt={`pic-${fromIndex + 1}`}
-                                key={fromIndex}
-                                className={`w-[32px] h-[32px] rounded-full ${
-                                  fromIndex !== 0 ? '-ml-5' : ''
-                                }`}
-                                src={
-                                  fromItem.author?.profile?.image ||
-                                  '/images/Userpic.png'
-                                }
-                              />
-                            ))}
-                        </PostUI.Footer>
-                      ))}
+                      .map((tagObj, index) => {
+                        const isTagFound = tagObj.from.some(
+                          (fromItem) => fromItem.author.id === pubky
+                        );
+
+                        return (
+                          <PostUI.Footer key={index}>
+                            <PostUtil.Tag
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleTagSearch(tagObj.tag);
+                              }}
+                              clicked={isTagFound}
+                              color="amber"
+                            >
+                              # {tagObj.tag}
+                            </PostUtil.Tag>
+                            <Button.Action
+                              variant="custom"
+                              size="small"
+                              icon={<Icon.Plus />}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleSubmit(tagObj.tag);
+                              }}
+                            />
+                            <PostUtil.Counter counter={tagObj.count} />
+                            {tagObj?.from
+                              .slice(0, 5)
+                              .map((fromItem, fromIndex: number) => (
+                                <Image
+                                  width={32}
+                                  height={32}
+                                  alt={`pic-${fromIndex + 1}`}
+                                  key={fromIndex}
+                                  className={`w-[32px] h-[32px] rounded-full ${
+                                    fromIndex !== 0 ? '-ml-5' : ''
+                                  }`}
+                                  src={
+                                    fromItem.author?.profile?.image ||
+                                    '/images/Userpic.png'
+                                  }
+                                />
+                              ))}
+                          </PostUI.Footer>
+                        );
+                      })}
                   </div>
                 )}
               </div>
@@ -223,7 +229,7 @@ export default function Post({
                   size="small"
                   variant="custom"
                   icon={<Icon.Tag size="16" />}
-                  counter={0}
+                  counter={post?.tags?.length}
                   onClick={(event) => {
                     event.stopPropagation();
                     setShowModalTag(true);

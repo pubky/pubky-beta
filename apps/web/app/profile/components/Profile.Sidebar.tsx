@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -64,7 +63,7 @@ export default function Sidebar({
 
         if (followersList) {
           setFollowersImages(
-            followersList.followers.map((user: any) => ({
+            followersList.followers.map((user) => ({
               alt: 'user-pic',
               src: user?.profile?.image || '/images/Userpic.png',
             }))
@@ -73,7 +72,7 @@ export default function Sidebar({
           setLoadingFollowers(false);
           setInitLoadingFollowed(false);
 
-          followersList.followers.forEach((user: any) => {
+          followersList.followers.forEach((user) => {
             const uri = user.uri.replace('pubky:', '');
             if (uri === pubky) {
               setFollowed(true);
@@ -102,7 +101,7 @@ export default function Sidebar({
 
         if (followingList) {
           setFollowingImages(
-            followingList.following.map((user: any) => ({
+            followingList.following.map((user) => ({
               alt: 'user-pic',
               src: user?.profile?.image || '/images/Userpic.png',
             }))

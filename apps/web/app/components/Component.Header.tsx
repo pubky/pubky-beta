@@ -96,7 +96,7 @@ export default function Header({ title, className, children }: HeaderProps) {
       if (searchTags.includes(trimmedValue.slice(1))) return;
 
       if (searchTags.length < 3) {
-        setSearchTags((prevTags) => [...prevTags, trimmedValue.slice(1)]);
+        setSearchTags([...searchTags, trimmedValue.slice(1)]);
       } else {
         const newSearchTags = [...searchTags.slice(1), trimmedValue.slice(1)];
         setSearchTags(newSearchTags);
@@ -113,7 +113,9 @@ export default function Header({ title, className, children }: HeaderProps) {
       <HeaderUI.Title titleHeader={title} className={className} />
       <Input.Search
         defaultValue={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setInputValue(e.target.value)
+        }
         onKeyDown={handleKeyDown}
       >
         {/**{searchTags && (
@@ -140,7 +142,6 @@ export default function Header({ title, className, children }: HeaderProps) {
           refCard={refSearchInputCard}
         />
         <Input.SearchActions className="hidden sm:flex">
-          {searchTags.length > 0 && <Icon.GridFour />}
           <div className="cursor-pointer" onClick={handleSearchTag}>
             <Icon.MagnifyingGlass />
           </div>

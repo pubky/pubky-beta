@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { Typography } from '@social/ui-shared';
 import { Post, PostsLayout } from '../../components';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../contexts/client';
+import { IPost } from '../../../types';
 
 interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky?: string;
@@ -12,7 +12,7 @@ interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Contact({ creatorPubky }: ContactsProps) {
   const { listUserFeed } = useClientContext();
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
 
   useEffect(() => {
     async function fetchPosts() {

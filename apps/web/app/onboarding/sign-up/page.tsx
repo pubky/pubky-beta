@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
@@ -33,14 +32,14 @@ export default function Index() {
 
   const router = useRouter();
 
-  const [name, setName] = useState(undefined);
-  const [bio, setBio] = useState(undefined);
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
-  const [website, setWebsite] = useState(undefined);
-  const [email, setEmail] = useState(undefined);
-  const [x, setX] = useState(undefined);
-  const [telegram, setTelegram] = useState(undefined);
-  const [password, setPassword] = useState(undefined);
+  const [website, setWebsite] = useState('');
+  const [email, setEmail] = useState('');
+  const [x, setX] = useState('');
+  const [telegram, setTelegram] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
@@ -171,7 +170,9 @@ export default function Index() {
         defaultValue={name ? name : ''}
         autoFocus
         autoCorrect="off"
-        onChange={(e: any) => setName(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setName(e.target.value)
+        }
         error={errors.name}
       />
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
@@ -186,7 +187,9 @@ export default function Index() {
               className="h-[420px]"
               defaultValue={bio ? bio : ''}
               error={errors.bio}
-              onChange={(e: any) => setBio(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setBio(e.target.value)
+              }
             />
           </Card.Primary>
         </Card.Primary>
@@ -198,7 +201,9 @@ export default function Index() {
               placeholder="https://"
               defaultValue={website ? website : ''}
               error={errors.website}
-              onChange={(e: any) => setWebsite(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setWebsite(e.target.value)
+              }
             />
           </div>
           <div>
@@ -208,7 +213,9 @@ export default function Index() {
               placeholder="user@provider.com"
               defaultValue={email ? email : ''}
               error={errors.email}
-              onChange={(e: any) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
             />
           </div>
           <div>
@@ -218,7 +225,9 @@ export default function Index() {
               placeholder="@user"
               defaultValue={x ? x : ''}
               error={errors.x}
-              onChange={(e: any) => setX(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setX(e.target.value)
+              }
             />
           </div>
           <div>
@@ -228,7 +237,7 @@ export default function Index() {
               placeholder="@user"
               defaultValue={telegram ? telegram : ''}
               error={errors.telegram}
-              onChange={(e: any) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setTelegram(e.target.value.replace('@', ''))
               }
             />
@@ -259,7 +268,9 @@ export default function Index() {
               className="h-[70px]"
               type="password"
               error={errors.password}
-              onChange={(e: any) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
             />
           </div>
           <div className="pt-[30px]">

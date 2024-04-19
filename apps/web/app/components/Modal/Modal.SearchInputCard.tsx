@@ -49,11 +49,9 @@ export default function SearchInputCard({
   };
 
   const handleRemoveTag = (indexToRemove: number) => {
-    setSearchTags((prevTags: string[]) => {
-      const newTags = [...prevTags];
-      newTags.splice(indexToRemove, 1);
-      return newTags;
-    });
+    const newTags = [...searchTags];
+    newTags.splice(indexToRemove, 1);
+    setSearchTags(newTags);
     setRefreshList(true);
   };
 

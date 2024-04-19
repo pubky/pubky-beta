@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -29,11 +28,11 @@ export default function Follower({ followers }: FollowersProps) {
         if (!pubky) return;
         const following = await listFollowing(pubky);
         if (following && followers) {
-          following.following.forEach((user: any) => {
+          following.following.forEach((user) => {
             const uri = user.uri.replace('pubky:', '');
             if (
               followers.some(
-                (follower: any) => follower.uri.replace('pubky:', '') === uri
+                (follower) => follower.uri.replace('pubky:', '') === uri
               )
             ) {
               setFollowed((prevState) => ({

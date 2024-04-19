@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
@@ -144,7 +143,9 @@ export default function Index() {
               className="h-[70px]"
               type="password"
               error={errors.password}
-              onChange={(e: any) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
             />
           </div>
           <div>

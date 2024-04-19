@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -8,13 +7,14 @@ import { Profile } from './components';
 import { CreatePost, Header, Post, PostsLayout, Skeleton } from '../components';
 import { useClientContext } from '../../contexts/client';
 import { minifyText } from '../../libs/textHelper';
+import { IPost } from '../../types';
 
 export default function Index() {
   const { pubky, refreshList, setRefreshList, listUserFeed, getUserIndexed } =
     useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');

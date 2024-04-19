@@ -41,7 +41,7 @@ export default function Index() {
           contactsList = await listFollowing(pubky);
         } else if (contacts === 'followers') {
           contactsList = await listFollowers(pubky);
-        } else {
+        } else if (contacts === 'friends') {
           const contactsFollowers = await listFollowers(pubky);
           const contactsFollowing = await listFollowing(pubky);
 
@@ -58,7 +58,7 @@ export default function Index() {
 
           contactsList = {
             count: mutualContacts.length,
-            contacts: mutualContacts,
+            friends: mutualContacts,
           };
         }
 
@@ -115,8 +115,8 @@ export default function Index() {
       contactsToShow = contactsUsers.following || [];
     } else if (contacts === 'followers' && 'followers' in contactsUsers) {
       contactsToShow = contactsUsers.followers || [];
-    } else {
-      contactsToShow = contactsUsers.contacts || [];
+    } else if (contacts === 'friends' && 'friends' in contactsUsers) {
+      contactsToShow = contactsUsers.friends || [];
     }
   }
   return (
