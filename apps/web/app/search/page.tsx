@@ -75,7 +75,6 @@ export default function Index() {
       if (results.cursor) {
         setCursor(results.cursor);
       }
-      console.log('results', results);
       setLoading(false);
     }
   };
