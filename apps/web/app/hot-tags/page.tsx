@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import Image from 'next/image';
@@ -9,20 +8,96 @@ import { CreatePost, Header, Skeleton } from '../components';
 import { HotTags } from './components';
 import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
+import { useFilterContext } from '../../contexts/filters';
 import { ITaggedPost } from '../../types';
 
 export default function Index() {
   const router = useRouter();
-  const { getHotTags, setRefreshList, setSearchTags, searchTags } =
-    useClientContext();
+  const {
+    pubky,
+    getHotTags,
+    setRefreshList,
+    setSearchTags,
+    searchTags,
+    listFollowers,
+    listFollowing,
+  } = useClientContext();
+  const { hotTagsReach } = useFilterContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   async function fetchTags() {
     try {
+      if (!pubky) return;
+
+      let filteredTags;
       const result = await getHotTags();
 
       if (result) {
+        if (hotTagsReach === 'followers') {
+          const followers = await listFollowers(pubky);
+          filteredTags = result.filter((tag) => {
+            return (
+              followers &&
+              followers.followers.some((follower) => {
+                return tag.from.some(
+                  (fromItem) =>
+                    fromItem.author.id === follower.uri.replace('pubky:', '')
+                );
+              })
+            );
+          });
+        } else if (hotTagsReach === 'following') {
+          const following = await listFollowing(pubky);
+          filteredTags = result.filter((tag) => {
+            return (
+              following &&
+              following.following.some((following) => {
+                return tag.from.some(
+                  (fromItem) =>
+                    fromItem.author.id === following.uri.replace('pubky:', '')
+                );
+              })
+            );
+          });
+        } else if (hotTagsReach === 'friends') {
+          const followers = await listFollowers(pubky);
+          const following = await listFollowing(pubky);
+
+          const followersIds = new Set(
+            followers?.followers?.map((follower) =>
+              follower.uri.replace('pubky:', '')
+            ) || []
+          );
+
+          const mutualContacts =
+            following?.following?.filter((following) =>
+              followersIds.has(following.uri.replace('pubky:', ''))
+            ) || [];
+
+          const friends = {
+            count: mutualContacts.length,
+            friends: mutualContacts,
+          };
+
+          filteredTags = result.filter((tag) => {
+            return (
+              friends &&
+              friends.friends.some((friend) => {
+                return tag.from.some(
+                  (fromItem) =>
+                    fromItem.author.id === friend.uri.replace('pubky:', '')
+                );
+              })
+            );
+          });
+        }
+      }
+
+      if (filteredTags) {
+        setHotTags(filteredTags);
+        setLoading(false);
+      } else if (result) {
         setHotTags(result);
         setLoading(false);
       }
@@ -34,7 +109,7 @@ export default function Index() {
   useEffect(() => {
     fetchTags();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [hotTagsReach]);
 
   const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
@@ -70,7 +145,7 @@ export default function Index() {
                 color="amber"
                 counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
               />
-              {tag?.from.slice(0, 5).map((fromItem: any, fromIndex: number) => (
+              {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
                 <Image
                   width={32}
                   height={32}

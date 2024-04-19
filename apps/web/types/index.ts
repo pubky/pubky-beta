@@ -2,6 +2,7 @@ export type TLayouts = 'grid' | 'columns' | 'list' | 'sidebar';
 export type TSize = 'full' | 'normal';
 export type TSort = 'recent' | 'tags' | 'activity';
 export type TReach = 'following' | 'followers' | 'friends' | 'all';
+export type THotTagsReach = 'following' | 'followers' | 'friends' | 'all';
 export type TContacts = 'following' | 'followers' | 'friends';
 export type TContactsLayout = 'ranking' | 'list';
 export type TContent = 'all' | 'posts' | 'images' | 'videos' | 'links';

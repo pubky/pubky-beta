@@ -9,6 +9,7 @@ import {
   TContent,
   TLayouts,
   TReach,
+  THotTagsReach,
   TSort,
   TTimeframe,
 } from './../types';
@@ -20,6 +21,8 @@ type FilterContextType = {
   setSort: (sort: TSort) => void;
   reach: TReach;
   setReach: (reach: TReach) => void;
+  hotTagsReach: THotTagsReach;
+  setHotTagsReach: (hotTagsReach: THotTagsReach) => void;
   contacts: TContacts;
   setContacts: (contacts: TContacts) => void;
   contactsLayout: TContactsLayout;
@@ -37,6 +40,8 @@ const FilterContext = createContext<FilterContextType>({
   setSort: () => {},
   reach: 'all',
   setReach: () => {},
+  hotTagsReach: 'all',
+  setHotTagsReach: () => {},
   contacts: 'following',
   setContacts: () => {},
   contactsLayout: 'ranking',
@@ -57,6 +62,9 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [reach, setReach] = useState<TReach>(
     (localStorageUtils.get('reach') as TReach) || 'all'
   );
+  const [hotTagsReach, setHotTagsReach] = useState<THotTagsReach>(
+    (localStorageUtils.get('hotTagsReach') as THotTagsReach) || 'all'
+  );
   const [contacts, setContacts] = useState<TContacts>(
     (localStorageUtils.get('contacts') as TContacts) || 'following'
   );
@@ -75,11 +83,21 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     localStorageUtils.set('layout', layout);
     localStorageUtils.set('sort', sort);
     localStorageUtils.set('reach', reach);
+    localStorageUtils.set('hotTagsReach', hotTagsReach);
     localStorageUtils.set('contacts', contacts);
     localStorageUtils.set('contactsLayout', contactsLayout);
     localStorageUtils.set('content', content);
     localStorageUtils.set('timeframe', timeframe);
-  }, [layout, sort, reach, contacts, contactsLayout, content, timeframe]);
+  }, [
+    layout,
+    sort,
+    reach,
+    hotTagsReach,
+    contacts,
+    contactsLayout,
+    content,
+    timeframe,
+  ]);
 
   return (
     <FilterContext.Provider
@@ -90,6 +108,8 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         setSort,
         reach,
         setReach,
+        hotTagsReach,
+        setHotTagsReach,
         contacts,
         setContacts,
         contactsLayout,

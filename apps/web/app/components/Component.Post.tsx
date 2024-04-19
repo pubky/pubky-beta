@@ -52,7 +52,7 @@ export default function Post({
     }
   }, [post?.tags]);
 
-  const handleSubmit = async (tag: string) => {
+  const handleAddTag = async (tag: string) => {
     await createTag(post.uri, tag);
     // setRefreshList(true);
   };
@@ -194,10 +194,12 @@ export default function Post({
                             <Button.Action
                               variant="custom"
                               size="small"
-                              icon={<Icon.Plus />}
+                              icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
                               onClick={(event) => {
                                 event.stopPropagation();
-                                handleSubmit(tagObj.tag);
+                                if (!isTagFound) {
+                                  handleAddTag(tagObj.tag);
+                                }
                               }}
                             />
                             <PostUtil.Counter counter={tagObj.count} />
