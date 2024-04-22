@@ -40,29 +40,29 @@ export default function Ranking({
               <Image
                 width={201}
                 height={201}
-                className="rounded-full w-[201px] h-[201px]"
+                className="rounded-full"
                 src={contact?.profile?.image || '/images/Userpic.png'}
                 alt={`contact-pic-${index + 1}`}
               />
             </div>
-            {/* <div className="flex-col gap-6 inline-flex">
-    <div className="flex-col gap-1 flex">
-      <Typography.Label className="text-opacity-50 leading-none">
-        Tags
-      </Typography.Label>
-      <Typography.H1 className="leading-[46px]">
-        142
-      </Typography.H1>
-    </div>
-    <div className="flex-col gap-1 flex">
-      <Typography.Label className="text-opacity-50 leading-none">
-        Posts
-      </Typography.Label>
-      <Typography.H1 className="leading-[46px]">
-        17
-      </Typography.H1>
-    </div>
-  </div> */}
+            <div className="flex-col gap-6 inline-flex">
+              <div className="flex-col gap-1 flex">
+                <Typography.Label className="text-opacity-50 leading-none">
+                  Followers
+                </Typography.Label>
+                <Typography.H1 className="leading-[46px]">
+                  {contact?.followersCount}
+                </Typography.H1>
+              </div>
+              <div className="flex-col gap-1 flex">
+                <Typography.Label className="text-opacity-50 leading-none">
+                  Following
+                </Typography.Label>
+                <Typography.H1 className="leading-[46px]">
+                  {contact?.followingCount}
+                </Typography.H1>
+              </div>
+            </div>
           </div>
           <div className="flex-col gap-1 flex">
             <Typography.H2>{contact.profile.name}</Typography.H2>

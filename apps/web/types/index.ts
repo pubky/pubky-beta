@@ -169,6 +169,8 @@ export interface IProfileSimplified {
 
 export interface IFollower {
   createdAt: number;
+  followersCount: number;
+  followingCount: number;
   indexedAt: number;
   uri: string;
   profile: IProfileSimplified;
@@ -176,6 +178,8 @@ export interface IFollower {
 
 export interface IFollowing {
   createdAt: number;
+  followersCount: number;
+  followingCount: number;
   indexedAt: number;
   uri: string;
   profile: IProfileSimplified;

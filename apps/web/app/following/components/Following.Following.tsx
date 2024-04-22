@@ -134,6 +134,22 @@ export default function FollowingUsers({ following }: FollowingProps) {
                     {followingUser.profile.bio}
                   </Typography.Body>
                 </div>
+                <div className="flex-col justify-start items-start gap-1 inline-flex">
+                  <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+                    Followers
+                  </Typography.Label>
+                  <Typography.Body variant="medium-bold">
+                    {followingUser.followersCount}
+                  </Typography.Body>
+                </div>
+                <div className="flex-col justify-start items-start gap-1 inline-flex">
+                  <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+                    Following
+                  </Typography.Label>
+                  <Typography.Body variant="medium-bold">
+                    {followingUser.followingCount}
+                  </Typography.Body>
+                </div>
                 <div className="flex gap-4">
                   {pubkeyUser ? (
                     <Button.Medium
