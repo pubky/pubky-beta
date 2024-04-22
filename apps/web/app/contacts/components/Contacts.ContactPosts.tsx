@@ -39,8 +39,13 @@ export default function Contact({ creatorPubky }: ContactsProps) {
   return (
     <PostsLayout className="grid w-full gap-6 mb-6">
       {posts.length > 0 ? (
-        posts.map((post) => (
-          <Post key={post.id} post={post} layout="list" className="w-full" />
+        posts.map((post, index) => (
+          <Post
+            key={`${index}-${post.id}`}
+            post={post}
+            layout="list"
+            className="w-full"
+          />
         ))
       ) : loading ? (
         <div className="mb-4 flex-row">

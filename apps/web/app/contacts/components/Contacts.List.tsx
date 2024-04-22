@@ -9,6 +9,7 @@ interface ContactsList {
   contactId: string;
   pubkeyUser: string | boolean | null;
   contact: IFollower;
+  showDivider: boolean;
   initLoadingContacts: boolean;
   isFollowed: boolean;
   loadingContacts: LoadingContacts;
@@ -20,6 +21,7 @@ export default function List({
   index,
   contactId,
   contact,
+  showDivider = true,
   initLoadingContacts,
   isFollowed,
   loadingContacts,
@@ -101,7 +103,7 @@ export default function List({
           )}
         </div>
       </div>
-      <Content.Divider />
+      {showDivider && <Content.Divider />}
     </div>
   );
 }

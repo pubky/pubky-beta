@@ -11,6 +11,7 @@ interface ContactsRanking {
   contact: IFollower;
   initLoadingContacts: boolean;
   isFollowed: boolean;
+  showDivider: boolean;
   loadingContacts: LoadingContacts;
   followUser: (pubkyFollow: string) => Promise<void>;
   unfollowUser: (pubkyUnfollow: string) => Promise<void>;
@@ -22,6 +23,7 @@ export default function Ranking({
   contact,
   initLoadingContacts,
   isFollowed,
+  showDivider = true,
   loadingContacts,
   followUser,
   unfollowUser,
@@ -110,7 +112,7 @@ export default function Ranking({
         </Link>
         <Contacts.Posts creatorPubky={contactId} />
       </div>
-      <Content.Divider />
+      {showDivider && <Content.Divider />}
     </div>
   );
 }
