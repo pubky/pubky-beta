@@ -9,10 +9,10 @@ import { minifyText } from '../../libs/textHelper';
 import { IPost, INewPost } from '../../types';
 
 export default function Index() {
-  const { pubky, listUserFeed, getUserIndexed } = useClientContext();
+  const { pubky, listUserFeed, getUserIndexed, posts, setPosts } =
+    useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
-  const [newPosts, setNewPosts] = useState<INewPost>({} as INewPost);
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -34,7 +34,7 @@ export default function Index() {
           {}
         );
 
-        setNewPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
+        setPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
 
         setCursor(results.cursor);
       }
@@ -101,10 +101,10 @@ export default function Index() {
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
-          {Object.keys(newPosts).map((key) => (
-            <Post key={newPosts[key].id} post={newPosts[key]} />
+          {Object.keys(posts).map((key) => (
+            <Post key={posts[key].id} post={posts[key]} />
           ))}
-          {Object.keys(newPosts).length === 0 && !loading && (
+          {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts yet.
@@ -115,7 +115,7 @@ export default function Index() {
             <>
               <div
                 className={`flex w-full justify-center ${
-                  Object.keys(newPosts).length === 0 ? 'mt-10' : 'mt-2'
+                  Object.keys(posts).length === 0 ? 'mt-10' : 'mt-2'
                 }`}
               >
                 <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />

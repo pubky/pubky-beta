@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -14,13 +13,12 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
-  const { pubky, getUserIndexed, getProfile, listUserFeed } =
+  const { pubky, getUserIndexed, getProfile, listUserFeed, posts, setPosts } =
     useClientContext();
   const creatorPubky = params.creatorPubky;
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
-  const [newPosts, setNewPosts] = useState<INewPost>({} as INewPost);
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -61,7 +59,7 @@ export default function Index({
           {}
         );
 
-        setNewPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
+        setPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
 
         setCursor(results.cursor);
       }
@@ -84,12 +82,14 @@ export default function Index({
       observer.observe(loader.current);
     }
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor]);
 
   useEffect(() => {
     fetchProfile();
     fetchPosts(cursor);
-  }, [creatorPubky]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Content.Main>
@@ -110,10 +110,10 @@ export default function Index({
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
-          {Object.keys(newPosts).map((key) => (
-            <Post key={newPosts[key].id} post={newPosts[key]} />
+          {Object.keys(posts).map((key) => (
+            <Post key={posts[key].id} post={posts[key]} />
           ))}
-          {Object.keys(newPosts).length === 0 && !loading && (
+          {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts yet.
@@ -124,7 +124,7 @@ export default function Index({
             <>
               <div
                 className={`flex w-full justify-center ${
-                  Object.keys(newPosts).length === 0 ? 'mt-10' : 'mt-2'
+                  Object.keys(posts).length === 0 ? 'mt-10' : 'mt-2'
                 }`}
               >
                 <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />

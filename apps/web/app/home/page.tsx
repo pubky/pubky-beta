@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { Content, Icon, Typography } from '@social/ui-shared';
@@ -55,12 +54,10 @@ const Loading = (posts: number) => (
 
 export default function Index() {
   const { layout, reach } = useFilterContext();
-  const { listGlobalPosts } = useClientContext();
+  const { listGlobalPosts, posts, setPosts } = useClientContext();
   const [loading, setLoading] = useState(false);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
-
-  const [newPosts, setNewPosts] = useState<INewPost>({} as INewPost);
 
   const fetchData = async (pointer: string) => {
     if (loading) return;
@@ -74,7 +71,7 @@ export default function Index() {
         return acc;
       }, {});
 
-      setNewPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
+      setPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
 
       setCursor(results.cursor);
     }
@@ -94,12 +91,14 @@ export default function Index() {
       observer.observe(loader.current);
     }
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor]);
 
   useEffect(() => {
-    setNewPosts({} as INewPost);
+    setPosts({} as INewPost);
     setCursor('');
     fetchData('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reach]);
 
   const postsLayoutClassName =
@@ -124,22 +123,22 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          {Object.keys(newPosts).map((key) => (
+          {Object.keys(posts).map((key) => (
             <Post
-              key={newPosts[key].id}
-              post={newPosts[key]}
+              key={posts[key].id}
+              post={posts[key]}
               size={layout === 'list' ? 'full' : 'normal'}
               layout={layout}
             />
           ))}
-          {Object.keys(newPosts).length === 0 && !loading && (
+          {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts yet.
               </Typography.H2>
             </div>
           )}
-          {loading && Loading(Object.keys(newPosts).length)}
+          {loading && Loading(Object.keys(posts).length)}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
           <WhoFollow />

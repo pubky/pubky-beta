@@ -14,7 +14,7 @@ export interface ClientContextType {
   profile: IProfile | null;
   pubky: string | null;
   refreshList: boolean;
-  posts: IPost[];
+  posts: INewPost;
   signUp: (
     profile: IProfilePubkyProps,
     password: string
@@ -23,7 +23,7 @@ export interface ClientContextType {
   getProfile: () => Promise<IProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string) => Promise<ICreatePostResponse | null>;
+  createPost: (content: string) => Promise<IPost | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
   isLoggedIn: () => Promise<string | false>;

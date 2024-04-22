@@ -10,6 +10,7 @@ import {
 } from '@social/ui-shared';
 import { z } from 'zod';
 import { useClientContext } from '../../../contexts/client';
+import { INewPost } from '../../../types';
 
 interface CreatePostProps {
   showModalPost: boolean;
@@ -32,7 +33,7 @@ export default function CreatePost({
   modalPostRef,
   setShowModalLink,
 }: CreatePostProps) {
-  const { createPost, createTag, setRefreshList } = useClientContext();
+  const { createPost, createTag, setPosts } = useClientContext();
   const [sendingPost, setSendingPost] = useState(false);
   const [content, setContent] = useState('');
   const [tag, setTag] = useState('');
@@ -73,13 +74,18 @@ export default function CreatePost({
         const newPost = await createPost(content);
         if (newPost) {
           for (const tag of arrayTags) {
-            await createTag(newPost.uri, tag);
+            await createTag(newPost.id, tag);
           }
+
+          setPosts((prev: INewPost) => ({
+            ...{ [newPost.uri]: newPost },
+            ...prev,
+          }));
+
           setShowModalPost(false);
           setArrayTags([]);
           setTag('');
           setContent('');
-          setRefreshList(true);
         }
       } catch (error) {
         console.log(error);
