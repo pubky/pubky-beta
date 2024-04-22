@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import { minifyPubky } from '../../../libs/pubkyHelper';
-import { IFollower, LoadingContacts } from '../../../types';
+import { IFollower, LoadingContacts, ContactInfoProps } from '../../../types';
 
 interface ContactsList {
   index: number;
@@ -10,6 +10,8 @@ interface ContactsList {
   pubkeyUser: string | boolean | null;
   contact: IFollower;
   contactsLength: number;
+  countFollowers?: number;
+  countFollowing?: number;
   initLoadingContacts: boolean;
   isFollowed: boolean;
   loadingContacts: LoadingContacts;
@@ -22,6 +24,8 @@ export default function List({
   contactId,
   contact,
   contactsLength,
+  countFollowers,
+  countFollowing,
   initLoadingContacts,
   isFollowed,
   loadingContacts,
@@ -29,6 +33,19 @@ export default function List({
   followUser,
   unfollowUser,
 }: ContactsList) {
+  const ContactInfo = ({ label, value, loading }: ContactInfoProps) => (
+    <div className="flex-col justify-start items-start gap-1 inline-flex">
+      <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+        {label}
+      </Typography.Label>
+      {loading ? (
+        <Icon.LoadingSpin size="20" />
+      ) : (
+        <Typography.Body variant="medium-bold">{value}</Typography.Body>
+      )}
+    </div>
+  );
+
   return (
     <div key={index} className="w-full">
       <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
@@ -60,6 +77,16 @@ export default function List({
             {contact.profile.bio}
           </Typography.Body>
         </div>
+        <ContactInfo
+          label="Followers"
+          value={countFollowers}
+          loading={initLoadingContacts}
+        />
+        <ContactInfo
+          label="Following"
+          value={countFollowing}
+          loading={initLoadingContacts}
+        />
         <div className="flex gap-4">
           {pubkeyUser ? (
             <Button.Medium

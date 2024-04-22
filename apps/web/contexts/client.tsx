@@ -415,6 +415,30 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const countContacts = async (pk: string) => {
+    try {
+      if (!pk) throw new Error('Get count contacts failed');
+
+      await client.ready();
+
+      const followers = await client.social.graph.followers(pk);
+      const following = await client.social.graph.following(pk);
+      const count = {
+        followers: followers.value.count,
+        following: following.value.count,
+      };
+
+      if (!followers.ok || !following.ok)
+        throw new Error(
+          `Get count contacts:${pk} failed: ${followers.error.message} |${following.error.message}`
+        );
+      return count;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const getMostFollowed = async (): Promise<IMostFollowed[] | null> => {
     try {
       if (mostFollowed) return mostFollowed;
@@ -571,6 +595,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         listGlobalPosts,
         listFollowers,
         listFollowing,
+        countContacts,
         getMostFollowed,
         searchTags,
         setRefreshList,

@@ -6,14 +6,15 @@ import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 import Link from 'next/link';
 import { useClientContext } from '../../../contexts/client';
-import { IFollowing } from '../../../types';
+import { IFollowing, ICount, ContactInfoProps } from '../../../types';
 
 interface FollowingProps extends React.HTMLAttributes<HTMLDivElement> {
   following?: IFollowing[];
 }
 
 export default function FollowingUsers({ following }: FollowingProps) {
-  const { pubky, follow, unfollow, listFollowing } = useClientContext();
+  const { pubky, follow, unfollow, listFollowing, countContacts } =
+    useClientContext();
   const [initLoadingFollowing, setInitLoadingFollowing] = useState(true);
   const [loadingFollowing, setLoadingFollowing] = useState<{
     [pubky: string]: boolean;
@@ -21,6 +22,7 @@ export default function FollowingUsers({ following }: FollowingProps) {
   const [followed, setFollowed] = useState<{
     [pubky: string]: boolean;
   }>({});
+  const [contactsCount, setContactsCount] = useState<ICount | undefined>();
 
   useEffect(() => {
     async function fetchData() {
@@ -29,6 +31,8 @@ export default function FollowingUsers({ following }: FollowingProps) {
         const followingUsers = await listFollowing(pubky);
 
         if (followingUsers && following) {
+          const count = await fetchCount();
+          setContactsCount(count);
           followingUsers.following.forEach((user) => {
             const uri = user.uri.replace('pubky:', '');
             if (
@@ -49,7 +53,19 @@ export default function FollowingUsers({ following }: FollowingProps) {
       }
     }
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky, following, listFollowing]);
+
+  const fetchCount = async () => {
+    const counts: ICount = {};
+    if (!following || following.length === 0) return counts;
+
+    for (const followingUser of following) {
+      const followingId = followingUser.uri.replace('pubky:', '');
+      counts[followingId] = await countContacts(followingId);
+    }
+    return counts;
+  };
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -95,6 +111,19 @@ export default function FollowingUsers({ following }: FollowingProps) {
     }
   };
 
+  const FollowingInfo = ({ label, value, loading }: ContactInfoProps) => (
+    <div className="flex-col justify-start items-start gap-1 inline-flex">
+      <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+        {label}
+      </Typography.Label>
+      {loading ? (
+        <Icon.LoadingSpin size="20" />
+      ) : (
+        <Typography.Body variant="medium-bold">{value}</Typography.Body>
+      )}
+    </div>
+  );
+
   return (
     <>
       {following && following.length > 0 ? (
@@ -102,6 +131,7 @@ export default function FollowingUsers({ following }: FollowingProps) {
           const pubkeyUser = pubky && followingUser.uri.includes(pubky);
           const followingId = followingUser.uri.replace('pubky:', '');
           const isFollowed = followed[followingId] || false;
+          const count = contactsCount && contactsCount[followingId];
 
           return (
             <div key={index} className="w-full">
@@ -134,6 +164,16 @@ export default function FollowingUsers({ following }: FollowingProps) {
                     {followingUser.profile.bio}
                   </Typography.Body>
                 </div>
+                <FollowingInfo
+                  label="Followers"
+                  value={count?.followers}
+                  loading={initLoadingFollowing}
+                />
+                <FollowingInfo
+                  label="Following"
+                  value={count?.following}
+                  loading={initLoadingFollowing}
+                />
                 <div className="flex gap-4">
                   {pubkeyUser ? (
                     <Button.Medium
