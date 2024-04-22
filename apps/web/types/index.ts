@@ -32,6 +32,7 @@ export interface ClientContextType {
     limit?: number
   ) => Promise<IFeed | null>;
   listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
+  countContacts: (pk: string) => Promise<ICountContactsResponse>;
   listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
   getMostFollowed: () => Promise<IMostFollowed[] | null>;
   listGlobalPosts: (
@@ -194,8 +195,26 @@ export interface IFollowersResponse {
   followers: IFollower[];
 }
 
+export interface ICountContactsResponse {
+  followers: number;
+  following: number;
+}
+
+export interface ICount {
+  [key: string]: {
+    followers: number;
+    following: number;
+  };
+}
+
 export interface LoadingContacts {
   [pubky: string]: boolean;
+}
+
+export interface ContactInfoProps {
+  label: string;
+  value?: number;
+  loading: boolean;
 }
 
 export interface IFollowingResponse {

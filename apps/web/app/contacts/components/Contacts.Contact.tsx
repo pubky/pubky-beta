@@ -2,18 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import { Contacts } from '.';
-import { IFollower, LoadingContacts } from '../../../types';
+import { IFollower, LoadingContacts, ICount } from '../../../types';
 import { useClientContext } from '../../../contexts/client';
 import { useFilterContext } from '../../../contexts/filters';
 
 export default function Contact({ contacts }: { contacts: IFollower[] }) {
-  const { pubky, follow, unfollow, listFollowing } = useClientContext();
+  const { pubky, follow, unfollow, listFollowing, countContacts } =
+    useClientContext();
   const { contactsLayout } = useFilterContext();
   const [initLoadingContacts, setInitLoadingContacts] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
   const [followed, setFollowed] = useState<{
     [pubky: string]: boolean;
   }>({});
+  const [contactsCount, setContactsCount] = useState<ICount | undefined>();
 
   useEffect(() => {
     async function fetchData() {
@@ -21,6 +23,8 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
         if (!pubky) return;
         const following = await listFollowing(pubky);
         if (following && contacts) {
+          const count = await fetchCount();
+          setContactsCount(count);
           following.following.forEach((user) => {
             const uri = user.uri.replace('pubky:', '');
             if (
@@ -41,7 +45,19 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
       }
     }
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky, listFollowing, contacts]);
+
+  const fetchCount = async () => {
+    const counts: ICount = {};
+    if (!contacts || contacts.length === 0) return counts;
+
+    for (const contact of contacts) {
+      const contactId = contact.uri.replace('pubky:', '');
+      counts[contactId] = await countContacts(contactId);
+    }
+    return counts;
+  };
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -94,6 +110,7 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
           const pubkeyUser = pubky && contact.uri.includes(pubky);
           const contactId = contact.uri.replace('pubky:', '');
           const isFollowed = followed[contactId] || false;
+          const count = contactsCount && contactsCount[contactId];
 
           return (
             <>
@@ -102,6 +119,8 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
                   index={index}
                   contactId={contactId}
                   contact={contact}
+                  countFollowers={count?.followers}
+                  countFollowing={count?.following}
                   contactsLength={contacts.length}
                   initLoadingContacts={initLoadingContacts}
                   isFollowed={isFollowed}
@@ -114,6 +133,8 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
                   index={index}
                   contactId={contactId}
                   contact={contact}
+                  countFollowers={count?.followers}
+                  countFollowing={count?.following}
                   pubkeyUser={pubkeyUser}
                   contactsLength={contacts.length}
                   initLoadingContacts={initLoadingContacts}
