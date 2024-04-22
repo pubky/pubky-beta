@@ -6,16 +6,16 @@ import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 import Link from 'next/link';
 import { useClientContext } from '../../../contexts/client';
-import { IFollower } from '../../../types';
+import { IFollowing } from '../../../types';
 
-interface FollowersProps extends React.HTMLAttributes<HTMLDivElement> {
-  followers?: IFollower[];
+interface FollowingProps extends React.HTMLAttributes<HTMLDivElement> {
+  following?: IFollowing[];
 }
 
-export default function Follower({ followers }: FollowersProps) {
+export default function FollowingUsers({ following }: FollowingProps) {
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
-  const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
-  const [loadingFollowers, setLoadingFollowers] = useState<{
+  const [initLoadingFollowing, setInitLoadingFollowing] = useState(true);
+  const [loadingFollowing, setLoadingFollowing] = useState<{
     [pubky: string]: boolean;
   }>({});
   const [followed, setFollowed] = useState<{
@@ -26,13 +26,14 @@ export default function Follower({ followers }: FollowersProps) {
     async function fetchData() {
       try {
         if (!pubky) return;
-        const following = await listFollowing(pubky);
-        if (following && followers) {
-          following.following.forEach((user) => {
+        const followingUsers = await listFollowing(pubky);
+
+        if (followingUsers && following) {
+          followingUsers.following.forEach((user) => {
             const uri = user.uri.replace('pubky:', '');
             if (
-              followers.some(
-                (follower) => follower.uri.replace('pubky:', '') === uri
+              following.some(
+                (following) => following.uri.replace('pubky:', '') === uri
               )
             ) {
               setFollowed((prevState) => ({
@@ -42,18 +43,18 @@ export default function Follower({ followers }: FollowersProps) {
             }
           });
         }
-        setInitLoadingFollowers(false);
+        setInitLoadingFollowing(false);
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, [pubky, listFollowing, followers]);
+  }, [pubky, following, listFollowing]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
       if (!pubkyFollow) return;
-      setLoadingFollowers((prevLoadingUsers) => ({
+      setLoadingFollowing((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyFollow]: true,
       }));
@@ -63,7 +64,7 @@ export default function Follower({ followers }: FollowersProps) {
         ...prevState,
         [pubkyFollow]: result,
       }));
-      setLoadingFollowers((prevLoadingUsers) => ({
+      setLoadingFollowing((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyFollow]: false,
       }));
@@ -75,7 +76,7 @@ export default function Follower({ followers }: FollowersProps) {
   const unfollowUser = async (pubkyUnfollow: string) => {
     try {
       if (!pubkyUnfollow) return;
-      setLoadingFollowers((prevLoadingUsers) => ({
+      setLoadingFollowing((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyUnfollow]: true,
       }));
@@ -85,7 +86,7 @@ export default function Follower({ followers }: FollowersProps) {
         ...prevState,
         [pubkyUnfollow]: !result,
       }));
-      setLoadingFollowers((prevLoadingUsers) => ({
+      setLoadingFollowing((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyUnfollow]: false,
       }));
@@ -96,32 +97,32 @@ export default function Follower({ followers }: FollowersProps) {
 
   return (
     <>
-      {followers && followers.length > 0 ? (
-        followers.map((follower, index) => {
-          const pubkeyUser = pubky && follower.uri.includes(pubky);
-          const followerId = follower.uri.replace('pubky:', '');
-          const isFollowed = followed[followerId] || false;
+      {following && following.length > 0 ? (
+        following.map((followingUser, index) => {
+          const pubkeyUser = pubky && followingUser.uri.includes(pubky);
+          const followingId = followingUser.uri.replace('pubky:', '');
+          const isFollowed = followed[followingId] || false;
 
           return (
             <div key={index} className="w-full">
               <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
                 <Link
                   className="flex gap-4 lg:w-[450px] xl:w-[350px]"
-                  href={`/profile/${followerId}`}
+                  href={`/profile/${followingId}`}
                 >
                   <Image
                     width={48}
                     height={48}
-                    src={follower?.profile?.image || '/images/Userpic.png'}
-                    alt={`follower-pic-${index + 1}`}
+                    src={followingUser?.profile?.image || '/images/Userpic.png'}
+                    alt={`following-pic-${index + 1}`}
                     className="rounded-full w-[48px] h-[48px]"
                   />
                   <div className="flex-col justify-center items-start gap-1 inline-flex">
                     <Typography.Label className="text-opacity-30 -mb-1">
-                      {minifyPubky(followerId)}
+                      {minifyPubky(followingId)}
                     </Typography.Label>
                     <Typography.Body variant="medium-bold">
-                      {follower.profile.name}
+                      {followingUser.profile.name}
                     </Typography.Body>
                   </div>
                 </Link>
@@ -130,7 +131,7 @@ export default function Follower({ followers }: FollowersProps) {
                     variant="small"
                     className="lg:px-12 text-opacity-80 leading-[18px]"
                   >
-                    {follower.profile.bio}
+                    {followingUser.profile.bio}
                   </Typography.Body>
                 </div>
                 <div className="flex gap-4">
@@ -141,19 +142,19 @@ export default function Follower({ followers }: FollowersProps) {
                     >
                       Me
                     </Button.Medium>
-                  ) : initLoadingFollowers ? (
-                    <Button.Medium disabled loading={initLoadingFollowers}>
+                  ) : initLoadingFollowing ? (
+                    <Button.Medium disabled loading={initLoadingFollowing}>
                       Loading
                     </Button.Medium>
                   ) : isFollowed ? (
                     <Button.Medium
                       onClick={
-                        loadingFollowers[followerId]
+                        loadingFollowing[followingId]
                           ? undefined
-                          : () => unfollowUser(followerId)
+                          : () => unfollowUser(followingId)
                       }
-                      disabled={loadingFollowers[followerId]}
-                      loading={loadingFollowers[followerId]}
+                      disabled={loadingFollowing[followingId]}
+                      loading={loadingFollowing[followingId]}
                       icon={<Icon.UserMinus size="16" />}
                       className="w-[154px]"
                     >
@@ -162,12 +163,12 @@ export default function Follower({ followers }: FollowersProps) {
                   ) : (
                     <Button.Medium
                       onClick={
-                        loadingFollowers[followerId]
+                        loadingFollowing[followingId]
                           ? undefined
-                          : () => followUser(followerId)
+                          : () => followUser(followingId)
                       }
-                      disabled={loadingFollowers[followerId]}
-                      loading={loadingFollowers[followerId]}
+                      disabled={loadingFollowing[followingId]}
+                      loading={loadingFollowing[followingId]}
                       icon={<Icon.UserPlus size="16" />}
                       className="w-[154px]"
                     >
@@ -176,13 +177,13 @@ export default function Follower({ followers }: FollowersProps) {
                   )}
                 </div>
               </div>
-              {index !== followers.length - 1 && <Content.Divider />}
+              {index !== following.length - 1 && <Content.Divider />}
             </div>
           );
         })
       ) : (
         <Typography.H2 className="font-normal text-opacity-30">
-          No followers yet.
+          No following yet.
         </Typography.H2>
       )}
     </>

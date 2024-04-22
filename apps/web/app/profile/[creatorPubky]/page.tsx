@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -14,6 +13,7 @@ import {
   Skeleton,
 } from '../../components';
 import { useClientContext } from '../../../contexts/client';
+import { IPost } from '../../../types';
 
 export default function Index({
   params,
@@ -26,7 +26,7 @@ export default function Index({
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);

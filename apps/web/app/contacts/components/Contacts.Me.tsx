@@ -2,21 +2,26 @@ import { Content, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
 import { minifyPubky } from '../../../libs/pubkyHelper';
-import { useClientContext } from '../../../contexts/client';
 
 interface MeProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
   pubkey: string;
   image: string;
-  followersCount?: number;
+  countContacts: number;
+  contactsLayout: string;
 }
 
-export default function Me({ name, pubkey, image, followersCount }: MeProps) {
-  const { pubky } = useClientContext();
+export default function Me({
+  name,
+  pubkey,
+  image,
+  countContacts,
+  contactsLayout,
+}: MeProps) {
   return (
     <Content.Grid className="py-8 sm:py-12 flex justify-between">
       <div className="gap-6 inline-flex">
-        <Link href={`/profile/${pubky == pubkey ? '' : pubkey}`}>
+        <Link href={`/profile`}>
           <div className="gap-3 flex items-center">
             <Image
               width={32}
@@ -35,7 +40,14 @@ export default function Me({ name, pubkey, image, followersCount }: MeProps) {
         </Link>
       </div>
       <div className="gap-3 flex">
-        <Typography.H2>{followersCount} followers</Typography.H2>
+        <Typography.H2>
+          {countContacts}{' '}
+          {contactsLayout === 'followers'
+            ? 'followers'
+            : contactsLayout === 'following'
+            ? 'following'
+            : 'friends'}
+        </Typography.H2>
       </div>
     </Content.Grid>
   );

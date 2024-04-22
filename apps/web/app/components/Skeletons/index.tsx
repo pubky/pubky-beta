@@ -1,5 +1,6 @@
 import Contacts from './Skeleton.Contacts';
 import ContactsList from './Skeleton.ContactsList';
+import ContactsSidebar from './Skeleton.ContactsSidebar';
 import DisplayText from './Skeleton.DisplayText';
 import FollowerMe from './Skeleton.FollowerMe';
 import Followers from './Skeleton.Followers';
@@ -12,6 +13,7 @@ import WhoFollow from './Skeleton.WhoFollow';
 export {
   Contacts,
   ContactsList,
+  ContactsSidebar,
   DisplayText,
   FollowerMe,
   Followers,

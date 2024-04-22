@@ -2,6 +2,9 @@ export type TLayouts = 'grid' | 'columns' | 'list' | 'sidebar';
 export type TSize = 'full' | 'normal';
 export type TSort = 'recent' | 'tags' | 'activity';
 export type TReach = 'following' | 'followers' | 'friends' | 'all';
+export type THotTagsReach = 'following' | 'followers' | 'friends' | 'all';
+export type TContacts = 'following' | 'followers' | 'friends';
+export type TContactsLayout = 'ranking' | 'list';
 export type TContent = 'all' | 'posts' | 'images' | 'videos' | 'links';
 export type TTimeframe = 'today' | 'month' | 'all';
 
@@ -171,15 +174,38 @@ export interface IFollower {
   profile: IProfileSimplified;
 }
 
+export interface IFollowing {
+  createdAt: number;
+  indexedAt: number;
+  uri: string;
+  profile: IProfileSimplified;
+}
+
+export interface IFriend {
+  createdAt: number;
+  indexedAt: number;
+  uri: string;
+  profile: IProfileSimplified;
+}
+
 export interface IFollowersResponse {
   count: number;
   cursor: string;
   followers: IFollower[];
 }
 
+export interface LoadingContacts {
+  [pubky: string]: boolean;
+}
+
 export interface IFollowingResponse {
   count: number;
-  following: IFollower[];
+  following: IFollowing[];
+}
+
+export interface IFriendsResponse {
+  count: number;
+  friends: IFriend[];
 }
 
 export interface IMostFollowed {

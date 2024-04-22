@@ -1,15 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
+import { useFilterContext } from '../../../contexts/filters';
+import { useClientContext } from '../../../contexts/client';
 
 export default function Contacts() {
+  const { setRefreshList } = useClientContext();
+  const { contacts, setContacts } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
+  const icons = {
+    following: <Icon.UsersRight />,
+    followers: <Icon.UsersLeft />,
+    friends: <Icon.Smiley />,
+    loading: <Icon.LoadingSpin className="animate-spin" />,
+  };
+
   const [dropdownValue, setDropdownValue] = useState({
-    value: 'following',
-    iconOption: <Icon.UsersRight />,
+    value: contacts ? contacts : 'following',
+    iconOption: icons.loading,
   });
+
+  useEffect(() => {
+    setDropdownValue({
+      value: contacts ? contacts : 'following',
+      iconOption: contacts ? icons[contacts] : icons.following,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DropDown
@@ -27,40 +46,46 @@ export default function Contacts() {
         <DropDownUI.Item
           label="Following"
           value="following"
-          selected={dropdownValue.value === 'following'}
+          selected={contacts === 'following'}
           icon={<Icon.UsersRight />}
           onClick={() => {
             setDropdownValue({
               value: 'following',
               iconOption: <Icon.UsersRight />,
             });
+            setContacts('following');
             setOpenDropdown(false);
+            setRefreshList(true);
           }}
         />
         <DropDownUI.Item
           label="Followers"
           value="followers"
-          selected={dropdownValue.value === 'followers'}
+          selected={contacts === 'followers'}
           icon={<Icon.UsersLeft />}
           onClick={() => {
             setDropdownValue({
               value: 'followers',
               iconOption: <Icon.UsersLeft />,
             });
+            setContacts('followers');
             setOpenDropdown(false);
+            setRefreshList(true);
           }}
         />
         <DropDownUI.Item
           label="Friends"
           value="friends"
-          selected={dropdownValue.value === 'friends'}
+          selected={contacts === 'friends'}
           icon={<Icon.Smiley />}
           onClick={() => {
             setDropdownValue({
               value: 'friends',
               iconOption: <Icon.Smiley />,
             });
+            setContacts('friends');
             setOpenDropdown(false);
+            setRefreshList(true);
           }}
         />
       </DropDownUI.Content>

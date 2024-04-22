@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -159,7 +158,9 @@ export default function Index() {
           autoFocus
           autoCorrect="off"
           error={errors.name}
-          onChange={(e: any) => setName(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setName(e.target.value)
+          }
         />
         <Typography.PageTitle className="text-opacity-50 break-words">
           {handler}
@@ -176,7 +177,9 @@ export default function Index() {
                 className="h-[422px]"
                 defaultValue={bio}
                 error={errors.bio}
-                onChange={(e: any) => setBio(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setBio(e.target.value)
+                }
               />
             </Card.Primary>
           </Card.Primary>
@@ -187,7 +190,9 @@ export default function Index() {
               placeholder="https://"
               defaultValue={website}
               error={errors.website}
-              onChange={(e: any) => setWebsite(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setWebsite(e.target.value)
+              }
             />
 
             <Input.Label className="mt-4" value="Email" />
@@ -196,7 +201,9 @@ export default function Index() {
               placeholder="user@provider.com"
               defaultValue={email}
               error={errors.email}
-              onChange={(e: any) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
             />
 
             <Input.Label className="mt-4" value="x (twitter)" />
@@ -205,7 +212,9 @@ export default function Index() {
               placeholder="@user"
               defaultValue={x}
               error={errors.x}
-              onChange={(e: any) => setX(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setX(e.target.value)
+              }
             />
 
             <Input.Label className="mt-4" value="telegram" />
@@ -214,7 +223,7 @@ export default function Index() {
               placeholder="@user"
               defaultValue={telegram}
               error={errors.telegram}
-              onChange={(e: any) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setTelegram(e.target.value.replace('@', ''))
               }
             />

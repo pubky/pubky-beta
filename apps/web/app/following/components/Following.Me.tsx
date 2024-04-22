@@ -8,10 +8,10 @@ interface MeProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
   pubkey: string;
   image: string;
-  followersCount?: number;
+  followingCount?: number;
 }
 
-export default function Me({ name, pubkey, image, followersCount }: MeProps) {
+export default function Me({ name, pubkey, image, followingCount }: MeProps) {
   const { pubky } = useClientContext();
   return (
     <Content.Grid className="py-8 sm:py-12 flex justify-between">
@@ -35,7 +35,7 @@ export default function Me({ name, pubkey, image, followersCount }: MeProps) {
         </Link>
       </div>
       <div className="gap-3 flex">
-        <Typography.H2>{followersCount} followers</Typography.H2>
+        <Typography.H2>{followingCount} following</Typography.H2>
       </div>
     </Content.Grid>
   );
