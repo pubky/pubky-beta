@@ -5,11 +5,10 @@ import { minifyPubky } from '../../../libs/pubkyHelper';
 import { IFollower, LoadingContacts } from '../../../types';
 
 interface ContactsList {
-  index: number;
+  index: string;
   contactId: string;
   pubkeyUser: string | boolean | null;
   contact: IFollower;
-  contactsLength: number;
   initLoadingContacts: boolean;
   isFollowed: boolean;
   loadingContacts: LoadingContacts;
@@ -21,7 +20,6 @@ export default function List({
   index,
   contactId,
   contact,
-  contactsLength,
   initLoadingContacts,
   isFollowed,
   loadingContacts,
@@ -103,7 +101,7 @@ export default function List({
           )}
         </div>
       </div>
-      {index !== contactsLength - 1 && <Content.Divider />}
+      <Content.Divider />
     </div>
   );
 }

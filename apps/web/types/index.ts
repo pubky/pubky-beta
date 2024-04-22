@@ -217,3 +217,7 @@ export interface IMostFollowed {
   profile: IProfile;
   followers: number;
 }
+
+export interface INewPost {
+  [key: string]: IPost;
+}

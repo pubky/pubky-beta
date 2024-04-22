@@ -134,17 +134,17 @@ export default function Index() {
       </Header>
       <Content.Grid className="flex-col flex gap-3">
         {loading ? (
-          <>
+          <div>
             <div className="flex w-full justify-center">
               <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
             </div>
             <Typography.Body
               variant="medium-bold"
-              className="col-span-3 m-2 flex justify-center items-center gap-6 text-gray-600"
+              className="col-span-3 mt-2 flex justify-center items-center gap-6 text-gray-600"
             >
               Loading Hot Tags
             </Typography.Body>
-          </>
+          </div>
         ) : hotTags.length > 0 ? (
           hotTags.map((tag, index) => (
             <div className="flex gap-3" key={index}>

@@ -7,7 +7,7 @@ interface UserPicProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const UserPic = ({ images, ...rest }: UserPicProps) => {
-  const baseCSS = 'justify-start items-start inline-flex';
+  const baseCSS = 'flex justify-center items-center gap-1 flex-wrap';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       {images &&

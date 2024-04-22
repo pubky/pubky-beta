@@ -29,6 +29,7 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       try {
+        setLoading(true);
         if (!pubky) return;
 
         let contactsList:
@@ -69,12 +70,14 @@ export default function Index() {
           setContactsUsers(contactsList);
         }
         setLoadingContacts(false);
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, [pubky, contacts, listFollowing, listFollowers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contacts]);
 
   useEffect(() => {
     async function fetchData() {
@@ -91,7 +94,8 @@ export default function Index() {
       }
     }
     fetchData();
-  }, [pubky, getProfile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   let contactsToShow:
     | IFollowingResponse['following']
@@ -118,8 +122,16 @@ export default function Index() {
         </div>
       </Header>
       {loadingContacts || loading ? (
-        <div className="flex justify-center items-center">
-          <Icon.LoadingSpin />
+        <div className="mt-12">
+          <div className="flex w-full justify-center">
+            <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+          </div>
+          <Typography.Body
+            variant="medium-bold"
+            className="col-span-3 m-2 flex justify-center items-center gap-6 text-gray-600"
+          >
+            Loading Contacts
+          </Typography.Body>
         </div>
       ) : (
         <>

@@ -6,13 +6,13 @@ import { Profile } from './components';
 import { CreatePost, Header, Post, PostsLayout } from '../components';
 import { useClientContext } from '../../contexts/client';
 import { minifyText } from '../../libs/textHelper';
-import { IPost } from '../../types';
+import { IPost, INewPost } from '../../types';
 
 export default function Index() {
   const { pubky, listUserFeed, getUserIndexed } = useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
-  const [posts, setPosts] = useState<IPost[]>([]);
+  const [newPosts, setNewPosts] = useState<INewPost>({} as INewPost);
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -26,17 +26,36 @@ export default function Index() {
       const results = await listUserFeed(pubky, pointer);
 
       if (results && results.feed) {
-        if (cursor) {
-          setPosts((prev) => [...prev, ...results.feed]);
-        } else {
-          setPosts(results.feed);
-        }
+        const newPostsTemp = results.feed.reduce(
+          (acc: INewPost, post: IPost) => {
+            acc[post.id] = post;
+            return acc;
+          },
+          {}
+        );
+
+        setNewPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
+
         setCursor(results.cursor);
       }
       setLoading(false);
     } catch (error) {
       console.log(error);
       setLoading(false);
+    }
+  }
+
+  async function fetchProfile() {
+    try {
+      if (!pubky) return;
+      const userProfile = await getUserIndexed(pubky);
+
+      if (userProfile) {
+        setPic(userProfile.profile?.image || '/images/Userpic.png');
+        setName(userProfile.profile?.name || 'Loading...');
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -58,30 +77,10 @@ export default function Index() {
   }, [cursor]);
 
   useEffect(() => {
-    setPosts([]);
-    fetchPosts('');
-  }, []);
-
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        if (!pubky) return;
-        const userProfile = await getUserIndexed(pubky);
-
-        if (userProfile) {
-          setPic(userProfile.profile?.image || '/images/Userpic.png');
-          setName(userProfile.profile?.name || 'Loading...');
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
     fetchProfile();
-
-    fetchPosts(cursor);
+    fetchPosts('');
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [pubky]);
+  }, []);
 
   return (
     <Content.Main>
@@ -102,10 +101,10 @@ export default function Index() {
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
-          {posts.map((post, index) => (
-            <Post key={index} post={post} />
+          {Object.keys(newPosts).map((key) => (
+            <Post key={newPosts[key].id} post={newPosts[key]} />
           ))}
-          {posts.length === 0 && !loading && (
+          {Object.keys(newPosts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts yet.
@@ -116,7 +115,7 @@ export default function Index() {
             <>
               <div
                 className={`flex w-full justify-center ${
-                  posts.length === 0 ? 'mt-10' : 'mt-2'
+                  Object.keys(newPosts).length === 0 ? 'mt-10' : 'mt-2'
                 }`}
               >
                 <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />

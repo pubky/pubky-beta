@@ -90,7 +90,7 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
   return (
     <>
       {contacts &&
-        contacts.map((contact, index) => {
+        contacts.map((contact) => {
           const pubkeyUser = pubky && contact.uri.includes(pubky);
           const contactId = contact.uri.replace('pubky:', '');
           const isFollowed = followed[contactId] || false;
@@ -99,10 +99,9 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
             <>
               {contactsLayout === 'ranking' ? (
                 <Contacts.Ranking
-                  index={index}
+                  index={`rank-${contact.uri}`}
                   contactId={contactId}
                   contact={contact}
-                  contactsLength={contacts.length}
                   initLoadingContacts={initLoadingContacts}
                   isFollowed={isFollowed}
                   loadingContacts={loadingContacts}
@@ -111,11 +110,10 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
                 />
               ) : (
                 <Contacts.List
-                  index={index}
+                  index={`list-${contact.uri}`}
                   contactId={contactId}
                   contact={contact}
                   pubkeyUser={pubkeyUser}
-                  contactsLength={contacts.length}
                   initLoadingContacts={initLoadingContacts}
                   isFollowed={isFollowed}
                   loadingContacts={loadingContacts}

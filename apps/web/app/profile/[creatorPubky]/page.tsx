@@ -7,7 +7,7 @@ import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
 import { CreatePost, Header, Post, PostsLayout } from '../../components';
 import { useClientContext } from '../../../contexts/client';
-import { IPost } from '../../../types';
+import { IPost, INewPost } from '../../../types';
 
 export default function Index({
   params,
@@ -20,7 +20,7 @@ export default function Index({
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
-  const [posts, setPosts] = useState<IPost[]>([]);
+  const [newPosts, setNewPosts] = useState<INewPost>({} as INewPost);
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -53,11 +53,16 @@ export default function Index({
       const results = await listUserFeed(creatorPubky, pointer);
 
       if (results && results.feed) {
-        if (cursor) {
-          setPosts((prev) => [...prev, ...results.feed]);
-        } else {
-          setPosts(results.feed);
-        }
+        const newPostsTemp = results.feed.reduce(
+          (acc: INewPost, post: IPost) => {
+            acc[post.id] = post;
+            return acc;
+          },
+          {}
+        );
+
+        setNewPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
+
         setCursor(results.cursor);
       }
       setLoading(false);
@@ -105,10 +110,10 @@ export default function Index({
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
-          {posts.map((post, index) => (
-            <Post key={index} post={post} />
+          {Object.keys(newPosts).map((key) => (
+            <Post key={newPosts[key].id} post={newPosts[key]} />
           ))}
-          {posts.length === 0 && !loading && (
+          {Object.keys(newPosts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts yet.
@@ -119,7 +124,7 @@ export default function Index({
             <>
               <div
                 className={`flex w-full justify-center ${
-                  posts.length === 0 ? 'mt-10' : 'mt-2'
+                  Object.keys(newPosts).length === 0 ? 'mt-10' : 'mt-2'
                 }`}
               >
                 <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
@@ -138,7 +143,7 @@ export default function Index({
         />
       </Content.Grid>
       <CreatePost />
-      {posts.length > 0 && <div ref={loader} />}
+      <div ref={loader} />
     </Content.Main>
   );
 }

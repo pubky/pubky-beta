@@ -150,7 +150,11 @@ export default function Post({
               >
                 <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
                   <PostUI.Content
-                    text={minifyText(post?.post?.content, 140)}
+                    text={
+                      size === 'full'
+                        ? post?.post?.content
+                        : minifyText(post?.post?.content, 140)
+                    }
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}
                   />
                   {/** <img

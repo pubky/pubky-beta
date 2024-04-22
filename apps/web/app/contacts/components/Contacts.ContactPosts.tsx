@@ -15,30 +15,32 @@ export default function Contact({ creatorPubky }: ContactsProps) {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchPosts() {
-      try {
-        if (!creatorPubky) return;
+  async function fetchPosts() {
+    try {
+      if (!creatorPubky) return;
 
-        const results = await listUserFeed(creatorPubky, '', 2);
+      const results = await listUserFeed(creatorPubky, '', 2);
 
-        setLoading(false);
+      setLoading(false);
 
-        if (!results || !results.feed) return;
+      if (!results || !results.feed) return;
 
-        setPosts(results.feed);
-      } catch (error) {
-        console.log(error);
-      }
+      setPosts(results.feed);
+    } catch (error) {
+      console.log(error);
     }
+  }
+
+  useEffect(() => {
     fetchPosts();
-  }, [creatorPubky, listUserFeed]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <PostsLayout className="grid w-full gap-6 mb-6">
       {posts.length > 0 ? (
-        posts.map((post, index) => (
-          <Post key={index} post={post} layout="list" className="w-full" />
+        posts.map((post) => (
+          <Post key={post.id} post={post} layout="list" className="w-full" />
         ))
       ) : loading ? (
         <div className="mb-4 flex-row">

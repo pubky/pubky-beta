@@ -84,7 +84,8 @@ export default function Sidebar({
       }
     }
     fetchData();
-  }, [pubky, followed, listFollowers, creatorPubky]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [followed, creatorPubky]);
 
   useEffect(() => {
     async function fetchData() {
@@ -108,14 +109,14 @@ export default function Sidebar({
           );
           setFollowing(followingList);
           setLoadingFollowing(false);
-          console.log(loadingFollowing);
         }
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, [pubky, creatorPubky, listFollowing]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [creatorPubky]);
 
   useEffect(() => {
     async function fetchData() {
@@ -289,42 +290,58 @@ export default function Sidebar({
           </SideCard.Content>
         ) : (
           <SideCard.Content className="flex-row gap-20 justify-start inline-flex">
-            <div
-              onClick={(event) => {
-                event.stopPropagation();
-                (followers?.count ?? 0) > 0 &&
-                  router.push(`/followers/${creatorPubky ? creatorPubky : ''}`);
-              }}
-              className={`flex-col gap-3 inline-flex ${
-                (followers?.count ?? 0) > 0 && 'cursor-pointer'
-              }`}
-            >
-              <div className="inline-flex gap-2">
-                <Typography.Label>{followers?.count}</Typography.Label>
-                <Typography.Label className="text-opacity-50">
-                  Followers
-                </Typography.Label>
+            {loadingFollowers ? (
+              <div className="flex w-full justify-center">
+                <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
               </div>
-              <Post.UserPic images={followersImages} />
-            </div>
-            <div
-              onClick={(event) => {
-                event.stopPropagation();
-                (following?.count ?? 0) > 0 &&
-                  router.push(`/following/${creatorPubky ? creatorPubky : ''}`);
-              }}
-              className={`flex-col gap-3 inline-flex ${
-                (following?.count ?? 0) > 0 && 'cursor-pointer'
-              }`}
-            >
-              <div className="inline-flex gap-2">
-                <Typography.Label>{following?.count}</Typography.Label>
-                <Typography.Label className="text-opacity-50">
-                  Following
-                </Typography.Label>
+            ) : (
+              <div
+                onClick={(event) => {
+                  event.stopPropagation();
+                  (followers?.count ?? 0) > 0 &&
+                    router.push(
+                      `/followers/${creatorPubky ? creatorPubky : ''}`
+                    );
+                }}
+                className={`flex-col gap-3 inline-flex ${
+                  (followers?.count ?? 0) > 0 && 'cursor-pointer'
+                }`}
+              >
+                <div className="inline-flex gap-2">
+                  <Typography.Label>{followers?.count}</Typography.Label>
+                  <Typography.Label className="text-opacity-50">
+                    Followers
+                  </Typography.Label>
+                </div>
+                <Post.UserPic images={followersImages} />
               </div>
-              <Post.UserPic images={followingImages} />
-            </div>
+            )}
+            {loadingFollowing ? (
+              <div className="flex w-full justify-center">
+                <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
+              </div>
+            ) : (
+              <div
+                onClick={(event) => {
+                  event.stopPropagation();
+                  (following?.count ?? 0) > 0 &&
+                    router.push(
+                      `/following/${creatorPubky ? creatorPubky : ''}`
+                    );
+                }}
+                className={`flex-col gap-3 inline-flex ${
+                  (following?.count ?? 0) > 0 && 'cursor-pointer'
+                }`}
+              >
+                <div className="inline-flex gap-2">
+                  <Typography.Label>{following?.count}</Typography.Label>
+                  <Typography.Label className="text-opacity-50">
+                    Following
+                  </Typography.Label>
+                </div>
+                <Post.UserPic images={followingImages} />
+              </div>
+            )}
           </SideCard.Content>
         )}
       </div>
