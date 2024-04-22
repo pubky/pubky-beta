@@ -130,15 +130,15 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          {posts.map((post) => (
+          {Object.keys(posts).map((key, index) => (
             <Post
-              key={post.uri}
-              post={post}
+              key={`${index}-${posts[key].id}`}
+              post={posts[key]}
               size={layout === 'list' ? 'full' : 'normal'}
               layout={layout}
             />
           ))}
-          {posts.length === 0 && !loading && (
+          {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts with{' '}
@@ -158,7 +158,7 @@ export default function Index() {
             <div className="flex w-full justify-center flex-col">
               <div
                 className={`flex w-full justify-center ${
-                  posts.length === 0 ? 'mt-10' : 'mt-2'
+                  Object.keys(posts).length === 0 ? 'mt-10' : 'mt-2'
                 }`}
               >
                 <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
