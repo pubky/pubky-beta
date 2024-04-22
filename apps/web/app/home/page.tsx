@@ -55,14 +55,13 @@ const Loading = (posts: number) => (
 export default function Index() {
   const { layout, reach } = useFilterContext();
   const { listGlobalPosts, posts, setPosts } = useClientContext();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
 
   const fetchData = async (pointer: string) => {
-    if (loading) return;
-
     setLoading(true);
+
     const results = await listGlobalPosts(pointer, reach);
 
     if (results && results.feed) {
