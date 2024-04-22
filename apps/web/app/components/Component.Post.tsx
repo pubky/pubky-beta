@@ -144,8 +144,8 @@ export default function Post({
                   size === 'full'
                     ? 'lg:inline-flex gap-12'
                     : layout === 'grid'
-                    ? 'block min-h-[160px]'
-                    : 'block min-h-[120px]'
+                    ? 'block min-h-[180px]'
+                    : 'block'
                 }
               >
                 <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
