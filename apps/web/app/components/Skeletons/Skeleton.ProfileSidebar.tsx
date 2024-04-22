@@ -13,7 +13,7 @@ export default function ProfileSidebar() {
           </div>
           <Typography.Body
             variant="medium-bold"
-            className="col-span-3 -m-2 flex justify-center items-center gap-6 text-gray-600"
+            className="col-span-3 -m-2 flex justify-center items-center gap-6 text-opacity-20"
           >
             Loading Profile
           </Typography.Body>

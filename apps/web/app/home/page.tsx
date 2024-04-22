@@ -45,7 +45,7 @@ const Loading = (posts: number) => (
     </div>
     <Typography.Body
       variant="medium-bold"
-      className="col-span-3 flex mt-2 justify-center items-center gap-6 text-gray-600"
+      className="col-span-3 flex mt-2 justify-center items-center gap-6 text-opacity-20"
     >
       Loading Posts
     </Typography.Body>
