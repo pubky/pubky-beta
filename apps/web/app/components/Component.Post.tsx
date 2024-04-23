@@ -38,8 +38,14 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
 
-  const { pubky, createTag, setRefreshList, searchTags, setSearchTags } =
-    useClientContext();
+  const {
+    pubky,
+    createTag,
+    setRefreshList,
+    searchTags,
+    setSearchTags,
+    deleteTag,
+  } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   // const [bookmark, setBookmark] = useState(false);
@@ -51,6 +57,11 @@ export default function Post({
       setSortedTags(sortedTags);
     }
   }, [post?.tags]);
+
+  const handleDeleteTag = async (tag: string) => {
+    await deleteTag(post.uri, tag);
+    // setRefreshList(true);
+  };
 
   const handleAddTag = async (tag: string) => {
     await createTag(post.uri, tag);
@@ -209,9 +220,9 @@ export default function Post({
                               icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
                               onClick={(event) => {
                                 event.stopPropagation();
-                                if (!isTagFound) {
-                                  handleAddTag(tagObj.tag);
-                                }
+                                isTagFound
+                                  ? handleDeleteTag(tagObj.tag)
+                                  : handleAddTag(tagObj.tag);
                               }}
                             />
                             <PostUtil.Counter counter={tagObj.count} />

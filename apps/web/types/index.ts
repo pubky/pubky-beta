@@ -25,6 +25,7 @@ export interface ClientContextType {
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string) => Promise<IPost | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
+  deleteTag: (uri: string, tag: string) => Promise<IDeleteTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
   isLoggedIn: () => Promise<string | false>;
   listUserFeed: (
@@ -142,6 +143,11 @@ export interface ICreatePostResponse {
 }
 
 export interface ICreateTagResponse {
+  id: string;
+  uri: string;
+}
+
+export interface IDeleteTagResponse {
   id: string;
   uri: string;
 }
