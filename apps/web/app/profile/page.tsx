@@ -77,6 +77,7 @@ export default function Index() {
   }, [cursor]);
 
   useEffect(() => {
+    setPosts({} as INewPost);
     fetchProfile();
     fetchPosts('');
     /* eslint-disable react-hooks/exhaustive-deps */
