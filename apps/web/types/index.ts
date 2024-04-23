@@ -34,7 +34,7 @@ export interface ClientContextType {
   ) => Promise<IFeed | null>;
   listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
   listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
-  getMostFollowed: () => Promise<IMostFollowed[] | null>;
+  getMostFollowed: (pk?: string) => Promise<IMostFollowed[] | null>;
   listGlobalPosts: (
     cursor: string,
     reach: TReach,

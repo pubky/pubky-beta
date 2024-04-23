@@ -419,13 +419,15 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getMostFollowed = async (): Promise<IMostFollowed[] | null> => {
+  const getMostFollowed = async (
+    pk: string
+  ): Promise<IMostFollowed[] | null> => {
     try {
       if (mostFollowed) return mostFollowed;
 
       await client.ready();
 
-      const result = await client.social.graph.mostFollowed();
+      const result = await client.social.graph.mostFollowed(pk);
 
       if (!result.ok)
         throw new Error(`Get most followed failed: ${result.error.message}`);

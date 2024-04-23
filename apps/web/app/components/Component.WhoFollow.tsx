@@ -23,7 +23,9 @@ export default function WhoFollow() {
   useEffect(() => {
     async function fetchFollowed() {
       try {
-        const result = await getMostFollowed();
+        const result = await (pubky
+          ? getMostFollowed(pubky)
+          : getMostFollowed());
 
         if (result) {
           setHotFollowed(result);
@@ -35,7 +37,7 @@ export default function WhoFollow() {
     }
 
     fetchFollowed();
-  }, [getMostFollowed]);
+  }, [getMostFollowed, pubky]);
 
   useEffect(() => {
     async function fetchFollowing() {
@@ -55,13 +57,10 @@ export default function WhoFollow() {
                 ...prevState,
                 [id]: true,
               }));
-              setInitLoadingFollowers(false);
             }
           });
-          if (following.following.length === 0) {
-            setInitLoadingFollowers(false);
-          }
         }
+        setInitLoadingFollowers(false);
       } catch (error) {
         console.log(error);
       }
@@ -194,7 +193,7 @@ export default function WhoFollow() {
           })
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">
-            No users yet
+            No users to follow
           </Typography.Body>
         )}
       </SideCard.Content>
