@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Content } from '@social/ui-shared';
-import { CreatePost, Header, Skeleton } from '../components';
+import { Content, Icon, Typography } from '@social/ui-shared';
+import { CreatePost, Header } from '../components';
 import { Followers } from './components';
 import { useClientContext } from '../../contexts/client';
 import { IFollowersResponse } from '../../types';
@@ -12,40 +12,38 @@ export default function Index() {
   const [name, setName] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
-  const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [followers, setFollowers] = useState<IFollowersResponse | null>(null);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const userProfile = await getProfile();
+  async function fetchFollowers() {
+    try {
+      if (!pubky) return;
 
-        if (userProfile) {
-          setName(userProfile.name || '');
-          setImage(userProfile.image || '/images/Userpic.png');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+      const followers = await listFollowers(pubky);
+      setFollowers(followers);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
     }
-    fetchData();
-  }, [pubky, getProfile]);
+  }
+
+  async function fetchProfile() {
+    try {
+      const userProfile = await getProfile();
+
+      if (userProfile) {
+        setName(userProfile.name || '');
+        setImage(userProfile.image || '/images/Userpic.png');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        if (!pubky) return;
-
-        const followers = await listFollowers(pubky);
-        setFollowers(followers);
-        setLoadingFollowers(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [pubky, listFollowers]);
+    fetchProfile();
+    fetchFollowers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Content.Main>
@@ -54,24 +52,32 @@ export default function Index() {
         title="Followers"
       />
       {loading ? (
-        <Skeleton.FollowerMe />
+        <div>
+          <div className={`flex w-full justify-center mt-10`}>
+            <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+          </div>
+          <Typography.Body
+            variant="medium-bold"
+            className="col-span-3 m-2 flex justify-center items-center gap-6 text-opacity-20"
+          >
+            Loading Followers
+          </Typography.Body>
+        </div>
       ) : (
-        <Followers.Me
-          image={image}
-          name={name}
-          pubkey={pubky ? pubky.toString() : ''}
-          followersCount={followers?.count}
-        />
+        <>
+          <Followers.Me
+            image={image}
+            name={name}
+            pubkey={pubky ? pubky.toString() : ''}
+            followersCount={followers?.count}
+          />
+          <Content.Grid>
+            <Followers.Root>
+              <Followers.Follower followers={followers?.followers} />
+            </Followers.Root>
+          </Content.Grid>
+        </>
       )}
-      <Content.Grid>
-        <Followers.Root>
-          {loadingFollowers ? (
-            <Skeleton.Followers />
-          ) : (
-            <Followers.Follower followers={followers?.followers} />
-          )}
-        </Followers.Root>
-      </Content.Grid>
       <CreatePost />
     </Content.Main>
   );

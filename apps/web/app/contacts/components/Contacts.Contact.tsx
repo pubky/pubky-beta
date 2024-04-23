@@ -96,13 +96,13 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
           const isFollowed = followed[contactId] || false;
 
           return (
-            <>
+            <div key={`contact-${index}`} className="w-full">
               {contactsLayout === 'ranking' ? (
                 <Contacts.Ranking
-                  index={index}
+                  index={`rank-${contact.uri}`}
                   contactId={contactId}
                   contact={contact}
-                  contactsLength={contacts.length}
+                  showDivider={contacts.length - 1 !== index}
                   initLoadingContacts={initLoadingContacts}
                   isFollowed={isFollowed}
                   loadingContacts={loadingContacts}
@@ -111,11 +111,11 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
                 />
               ) : (
                 <Contacts.List
-                  index={index}
+                  index={`list-${contact.uri}`}
                   contactId={contactId}
                   contact={contact}
+                  showDivider={contacts.length - 1 !== index}
                   pubkeyUser={pubkeyUser}
-                  contactsLength={contacts.length}
                   initLoadingContacts={initLoadingContacts}
                   isFollowed={isFollowed}
                   loadingContacts={loadingContacts}
@@ -123,7 +123,7 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
                   unfollowUser={unfollowUser}
                 />
               )}
-            </>
+            </div>
           );
         })}
     </>

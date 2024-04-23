@@ -98,7 +98,9 @@ export default function Post({
             )} */}
             <PostUI.MainCard
               borderRadius={
-                repost ? 'rounded-bl-2xl rounded-br-2xl' : 'rounded-2xl'
+                repost
+                  ? 'rounded-bl-2xl rounded-br-2xl'
+                  : 'rounded-2xl flex-grow'
               }
               className={twMerge(rest.className)}
             >
@@ -138,11 +140,21 @@ export default function Post({
                 </PostUI.Time>
               </PostUI.Header>
               <div
-                className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
+                className={
+                  size === 'full'
+                    ? 'lg:inline-flex gap-12'
+                    : layout === 'grid'
+                    ? 'block min-h-[180px]'
+                    : 'block'
+                }
               >
                 <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
                   <PostUI.Content
-                    text={post?.post?.content}
+                    text={
+                      size === 'full'
+                        ? post?.post?.content
+                        : minifyText(post?.post?.content, 140)
+                    }
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}
                   />
                   {/** <img

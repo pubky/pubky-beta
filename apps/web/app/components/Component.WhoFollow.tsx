@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
 import { minifyText } from '../../libs/textHelper';
-import { Skeleton } from '.';
 import { IMostFollowed } from '../../types';
 
 export default function WhoFollow() {
@@ -127,7 +126,17 @@ export default function WhoFollow() {
       <SideCard.Header title="Who to follow" />
       <SideCard.Content>
         {loading ? (
-          <Skeleton.WhoFollow />
+          <>
+            <div className="flex w-full justify-center">
+              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+            </div>
+            <Typography.Body
+              variant="medium-bold"
+              className="col-span-3 mt-2 flex justify-center items-center gap-6 text-opacity-20"
+            >
+              Loading Who to follow
+            </Typography.Body>
+          </>
         ) : hotFollowed && hotFollowed.length > 0 ? (
           hotFollowed.slice(0, 3).map((followed, index: number) => {
             const pubkeyUser = pubky && followed.id.includes(pubky);

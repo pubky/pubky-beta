@@ -72,6 +72,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<string | null>(
     localStorageUtils.get('profile') || null
   );
+  const [posts, setPosts] = useState<INewPost>({} as INewPost);
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [refreshList, setRefreshList] = useState<boolean>(false);
 
@@ -258,9 +259,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const createPost = async (
-    content: string
-  ): Promise<ICreatePostResponse | null> => {
+  const createPost = async (content: string): Promise<IPost | null> => {
     try {
       const pk = await isLoggedIn();
 
@@ -275,7 +274,12 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`Put post:${pk} failed: ${result.error.message}`);
 
-      return result.value as ICreatePostResponse;
+      const postResult = await client.social.posts.get(result.value.uri);
+
+      if (!postResult.ok)
+        throw new Error(`Put post:${pk} failed: ${postResult.error.message}`);
+
+      return postResult.value as ICreatePostResponse;
     } catch (error) {
       console.log(error);
       return null;
@@ -555,6 +559,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         pubky,
         profile,
         refreshList,
+        posts,
         isLoggedIn,
         createPost,
         createTag,
@@ -573,6 +578,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         listFollowing,
         getMostFollowed,
         searchTags,
+        setPosts,
         setRefreshList,
         setSearchTags,
         follow,

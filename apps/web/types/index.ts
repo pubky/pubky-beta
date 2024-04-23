@@ -14,6 +14,7 @@ export interface ClientContextType {
   profile: IProfile | null;
   pubky: string | null;
   refreshList: boolean;
+  posts: INewPost;
   signUp: (
     profile: IProfilePubkyProps,
     password: string
@@ -22,7 +23,7 @@ export interface ClientContextType {
   getProfile: () => Promise<IProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string) => Promise<ICreatePostResponse | null>;
+  createPost: (content: string) => Promise<IPost | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
   isLoggedIn: () => Promise<string | false>;
@@ -46,6 +47,8 @@ export interface ClientContextType {
     recoveryFile: Buffer
   ) => Promise<boolean>;
   searchTags: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setPosts: any;
   setRefreshList: (value: boolean) => void;
   setSearchTags: (value: string[]) => Promise<IPost | null>;
   follow: (pk: string) => Promise<boolean>;
@@ -213,4 +216,8 @@ export interface IMostFollowed {
   uri: string;
   profile: IProfile;
   followers: number;
+}
+
+export interface INewPost {
+  [key: string]: IPost;
 }

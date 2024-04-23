@@ -6,12 +6,12 @@ import { Contacts } from '.';
 import { IFollower, LoadingContacts } from '../../../types';
 
 interface ContactsRanking {
-  index: number;
+  index: string;
   contactId: string;
   contact: IFollower;
-  contactsLength: number;
   initLoadingContacts: boolean;
   isFollowed: boolean;
+  showDivider: boolean;
   loadingContacts: LoadingContacts;
   followUser: (pubkyFollow: string) => Promise<void>;
   unfollowUser: (pubkyUnfollow: string) => Promise<void>;
@@ -21,9 +21,9 @@ export default function Ranking({
   index,
   contactId,
   contact,
-  contactsLength,
   initLoadingContacts,
   isFollowed,
+  showDivider = true,
   loadingContacts,
   followUser,
   unfollowUser,
@@ -112,7 +112,7 @@ export default function Ranking({
         </Link>
         <Contacts.Posts creatorPubky={contactId} />
       </div>
-      {index !== contactsLength - 1 && <Content.Divider />}
+      {showDivider && <Content.Divider />}
     </div>
   );
 }

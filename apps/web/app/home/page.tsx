@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { Content, Icon, Typography } from '@social/ui-shared';
@@ -10,14 +9,13 @@ import {
   Post,
   PostsLayout,
   Sidebar,
-  Skeleton,
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
 import { useEffect, useRef, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
-import { IPost } from '../../types';
+import { IPost, INewPost } from '../../types';
 
 const layouts = {
   sidebar: {
@@ -38,24 +36,42 @@ const layouts = {
   },
 };
 
+const Loading = (posts: number) => (
+  <div className="flex w-full justify-center flex-col">
+    <div
+      className={`flex w-full justify-center ${posts === 0 ? 'mt-10' : 'mt-2'}`}
+    >
+      <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+    </div>
+    <Typography.Body
+      variant="medium-bold"
+      className="col-span-3 flex mt-2 justify-center items-center gap-6 text-opacity-20"
+    >
+      Loading Posts
+    </Typography.Body>
+  </div>
+);
+
 export default function Index() {
   const { layout, reach } = useFilterContext();
-  const { pubky, refreshList, listGlobalPosts } = useClientContext();
-  const [posts, setPosts] = useState<IPost[]>([]);
+  const { listGlobalPosts, posts, setPosts } = useClientContext();
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
 
   const fetchData = async (pointer: string) => {
     setLoading(true);
+
     const results = await listGlobalPosts(pointer, reach);
 
     if (results && results.feed) {
-      if (cursor) {
-        setPosts((prev) => [...prev, ...results.feed]);
-      } else {
-        setPosts(results.feed);
-      }
+      const newPostsTemp = results.feed.reduce((acc: INewPost, post: IPost) => {
+        acc[post.id] = post;
+        return acc;
+      }, {});
+
+      setPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
+
       setCursor(results.cursor);
     }
     setLoading(false);
@@ -63,26 +79,26 @@ export default function Index() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      async (entries) => {
         if (entries[0].isIntersecting && cursor) {
           fetchData(cursor);
         }
       },
-      { threshold: 1 }
+      { threshold: 0 }
     );
     if (loader.current) {
       observer.observe(loader.current);
     }
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor]);
 
   useEffect(() => {
-    setPosts([]);
+    setPosts({} as INewPost);
+    setCursor('');
     fetchData('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reach]);
-  useEffect(() => {
-    fetchData(cursor);
-  }, [pubky, refreshList]);
 
   const postsLayoutClassName =
     layout === 'sidebar'
@@ -106,36 +122,22 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          {posts.length === 0 && (
-            <>
-              {[1, 2, 3, 4].map((index) => (
-                <Skeleton.Post
-                  key={index}
-                  size={layout === 'list' ? 'full' : 'normal'}
-                />
-              ))}
-            </>
-          )}
-          {posts.map((post, index) => (
+          {Object.keys(posts).map((key) => (
             <Post
-              key={index}
-              post={post}
+              key={posts[key].id}
+              post={posts[key]}
               size={layout === 'list' ? 'full' : 'normal'}
               layout={layout}
             />
           ))}
-          {posts.length === 0 && !loading && (
+          {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts yet.
               </Typography.H2>
             </div>
           )}
-          {loading && (
-            <div className="flex w-full justify-center">
-              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-            </div>
-          )}
+          {loading && Loading(Object.keys(posts).length)}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
           <WhoFollow />

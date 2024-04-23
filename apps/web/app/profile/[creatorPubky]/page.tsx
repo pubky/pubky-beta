@@ -1,32 +1,24 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import { Content, Icon, Typography } from '@social/ui-shared';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
-import {
-  CreatePost,
-  Header,
-  Post,
-  PostsLayout,
-  Skeleton,
-} from '../../components';
+import { CreatePost, Header, Post, PostsLayout } from '../../components';
 import { useClientContext } from '../../../contexts/client';
-import { IPost } from '../../../types';
+import { IPost, INewPost } from '../../../types';
 
 export default function Index({
   params,
 }: {
   params: { creatorPubky: string };
 }) {
-  const { pubky, getUserIndexed, getProfile, listUserFeed } =
+  const { pubky, getUserIndexed, getProfile, listUserFeed, posts, setPosts } =
     useClientContext();
   const creatorPubky = params.creatorPubky;
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
-  const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -59,11 +51,16 @@ export default function Index({
       const results = await listUserFeed(creatorPubky, pointer);
 
       if (results && results.feed) {
-        if (cursor) {
-          setPosts((prev) => [...prev, ...results.feed]);
-        } else {
-          setPosts(results.feed);
-        }
+        const newPostsTemp = results.feed.reduce(
+          (acc: INewPost, post: IPost) => {
+            acc[post.id] = post;
+            return acc;
+          },
+          {}
+        );
+
+        setPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
+
         setCursor(results.cursor);
       }
       setLoading(false);
@@ -85,12 +82,14 @@ export default function Index({
       observer.observe(loader.current);
     }
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor]);
 
   useEffect(() => {
     fetchProfile();
     fetchPosts(cursor);
-  }, [creatorPubky]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Content.Main>
@@ -111,11 +110,10 @@ export default function Index({
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
-          {loading && <Skeleton.Post size={'normal'} />}
-          {posts.map((post, index) => (
-            <Post key={index} post={post} />
+          {Object.keys(posts).map((key) => (
+            <Post key={posts[key].id} post={posts[key]} />
           ))}
-          {posts.length === 0 && !loading && (
+          {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts yet.
@@ -123,9 +121,21 @@ export default function Index({
             </div>
           )}
           {loading && (
-            <div className="flex w-full justify-center">
-              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-            </div>
+            <>
+              <div
+                className={`flex w-full justify-center ${
+                  Object.keys(posts).length === 0 ? 'mt-10' : 'mt-2'
+                }`}
+              >
+                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+              </div>
+              <Typography.Body
+                variant="medium-bold"
+                className="col-span-3 -m-2 flex justify-center items-center gap-6 text-opacity-20"
+              >
+                Loading Posts
+              </Typography.Body>
+            </>
           )}
         </PostsLayout>
         <Profile.Sidebar
@@ -133,7 +143,7 @@ export default function Index({
         />
       </Content.Grid>
       <CreatePost />
-      {posts.length > 0 && <div ref={loader} />}
+      <div ref={loader} />
     </Content.Main>
   );
 }

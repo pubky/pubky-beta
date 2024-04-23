@@ -36,31 +36,34 @@ export default function Header({ title, className, children }: HeaderProps) {
   const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
 
+  async function fetchProfile() {
+    try {
+      const userProfile = await getProfile();
+
+      if (userProfile) {
+        setImage(userProfile.image || '/images/Userpic.png');
+        setName(userProfile.name || '');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function fetchLoggedIn() {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+      setLogoLink('/onboarding');
+    } else {
+      setLogoLink('/home');
+    }
+  }
+
   useEffect(() => {
     setHandler(minifyPubky(pubky));
-    async function fetchData() {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        setLogoLink('/onboarding');
-      } else {
-        setLogoLink('/home');
-      }
-    }
-    fetchData();
-    async function fetchProfile() {
-      try {
-        const userProfile = await getProfile();
-
-        if (userProfile) {
-          setImage(userProfile.image || '/images/Userpic.png');
-          setName(userProfile.name || '');
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    fetchLoggedIn();
     fetchProfile();
-  }, [getProfile, isLoggedIn, pubky]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubky]);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
