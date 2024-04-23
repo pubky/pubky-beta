@@ -14,6 +14,7 @@ import {
   ITaggedPost,
   ICreatePostResponse,
   ICreateTagResponse,
+  IDeleteTagResponse,
   IFollowersResponse,
   IFollowingResponse,
   IMostFollowed,
@@ -311,6 +312,31 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const deleteTag = async (
+    uri: string,
+    tag: string
+  ): Promise<IDeleteTagResponse | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get delete Tag: not logged in.');
+      if (!uri) throw new Error('Get delete Tag: no uri.');
+      if (!tag) throw new Error('Get delete Tag: no tag name.');
+
+      await client.ready();
+
+      const result = await client.social.tags.delete(pk, uri, tag);
+
+      if (!result.ok)
+        throw new Error(`Delete tag:${pk} failed: ${result.error.message}`);
+
+      return result.value as IDeleteTagResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const getHotTags = async (): Promise<ITaggedPost[] | null> => {
     try {
       const pk = await isLoggedIn();
@@ -563,6 +589,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         isLoggedIn,
         createPost,
         createTag,
+        deleteTag,
         getHotTags,
         getPost,
         listUserFeed,
