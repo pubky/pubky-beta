@@ -46,11 +46,18 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
+  const tagMessage =
+    searchTags.length > 1
+      ? 'with these tags:'
+      : searchTags.length === 1
+      ? 'with this tag:'
+      : '';
 
   const fetchData = async (pointer: string, searchTags: string[]) => {
     setLoading(true);
 
     if (searchTags.length === 0) {
+      setLoading(false);
       return;
     }
 
@@ -141,8 +148,7 @@ export default function Index() {
           {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
-                No posts with{' '}
-                {searchTags.length > 1 ? 'these tags:' : 'this tag:'}
+                No posts {tagMessage}
               </Typography.H2>
               <Typography.H2 className="font-normal">
                 {searchTags.map((searchTag, index) => (
