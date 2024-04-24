@@ -18,6 +18,7 @@ import {
   IFollowersResponse,
   IFollowingResponse,
   IMostFollowed,
+  IRecommendedProfiles,
   IPost,
   IFeed,
   TLayouts,
@@ -70,6 +71,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [mostFollowed, setMostFollowed] = useState<IMostFollowed[] | null>(
     null
   );
+  const [recommendedProfiles, setRecommendedProfiles] = useState<
+    IRecommendedProfiles[] | null
+  >(null);
   const [profile, setProfile] = useState<string | null>(
     localStorageUtils.get('profile') || null
   );
@@ -465,6 +469,31 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const getRecommendedProfiles = async (
+    pk: string
+  ): Promise<IRecommendedProfiles[] | null> => {
+    try {
+      if (!pk) throw new Error('Get recommended profiles failed');
+      if (recommendedProfiles) return recommendedProfiles;
+
+      await client.ready();
+
+      const result = await client.social.graph.recommendedProfiles(pk);
+
+      if (!result.ok)
+        throw new Error(
+          `Get recommended profiles failed: ${result.error.message}`
+        );
+
+      setRecommendedProfiles(result.value);
+
+      return result.value as IRecommendedProfiles[];
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const listFollowers = async (
     pk: string
   ): Promise<IFollowersResponse | null> => {
@@ -604,6 +633,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         listFollowers,
         listFollowing,
         getMostFollowed,
+        getRecommendedProfiles,
         searchTags,
         setPosts,
         setRefreshList,

@@ -3,13 +3,14 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 import { Icon } from '../Icon';
 
-interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+interface HeaderProps extends React.HTMLAttributes<HTMLAnchorElement> {
   src: string;
   username: string;
   handler?: string;
   width?: number;
   height?: number;
   alt?: string;
+  href?: string;
 }
 
 export const Header = ({
@@ -22,7 +23,7 @@ export const Header = ({
   ...rest
 }: HeaderProps) => {
   return (
-    <div {...rest} className={twMerge('flex-col gap-4 flex', rest.className)}>
+    <a {...rest} className={twMerge('flex-col gap-4 flex', rest.className)}>
       <Image
         width={width}
         height={height}
@@ -30,7 +31,7 @@ export const Header = ({
         src={src}
         className="rounded-full w-[96px] h-[96px]"
       />
-      <div className="flex-col gap-2 flex">
+      <div className="flex-col flex">
         <Typography.PageTitle className="font-bold leading-[30px]">
           {username}
         </Typography.PageTitle>
@@ -41,6 +42,6 @@ export const Header = ({
           <Icon.CheckCircle />
         </div>
       </div>
-    </div>
+    </a>
   );
 };
