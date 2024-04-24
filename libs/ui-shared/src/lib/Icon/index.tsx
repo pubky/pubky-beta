@@ -24,6 +24,7 @@ import {
   List,
   ListBullets,
   ListNumbers,
+  Trash,
 } from './Icon.Office';
 import {
   DotsNine,
@@ -115,6 +116,7 @@ export const Icon = {
   Tag,
   Telegram,
   Twitter,
+  Trash,
   UsersLeft,
   UserMinus,
   UsersRight,
