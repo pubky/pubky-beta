@@ -205,7 +205,7 @@ export default function WhoFollow() {
             })
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">
-            No users yet
+            No users to follow
           </Typography.Body>
         )}
       </SideCard.Content>
