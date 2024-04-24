@@ -11,6 +11,7 @@ export type TTimeframe = 'today' | 'month' | 'all';
 export interface ClientContextType {
   hotTags: ITaggedPost[] | null;
   mostFollowed: IMostFollowed[] | null;
+  recommendedProfiles: IRecommendedProfiles[] | null;
   profile: IProfile | null;
   pubky: string | null;
   refreshList: boolean;
@@ -36,6 +37,9 @@ export interface ClientContextType {
   listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
   listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
   getMostFollowed: () => Promise<IMostFollowed[] | null>;
+  getRecommendedProfiles: (
+    pk: string
+  ) => Promise<IRecommendedProfiles[] | null>;
   listGlobalPosts: (
     cursor: string,
     reach: TReach,
@@ -222,6 +226,13 @@ export interface IFriendsResponse {
 }
 
 export interface IMostFollowed {
+  id: string;
+  uri: string;
+  profile: IProfile;
+  followers: number;
+}
+
+export interface IRecommendedProfiles {
   id: string;
   uri: string;
   profile: IProfile;
