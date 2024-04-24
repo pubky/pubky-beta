@@ -3,6 +3,7 @@ import CreatePost from './Component.CreatePost';
 import DropDown from './DropDown/DropDown';
 import Header from './Component.Header';
 import HotTags from './Component.HotTags';
+import MenuBar from './Component.MenuBar';
 import Post from './Component.Post';
 import PostsLayout from './Component.PostsLayout';
 import Repost from './Component.Repost';
@@ -16,6 +17,7 @@ export {
   DropDown,
   Header,
   HotTags,
+  MenuBar,
   Post,
   PostsLayout,
   Repost,

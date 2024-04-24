@@ -1,11 +1,12 @@
 'use client';
 
-import { Content, Icon, Typography } from '@social/ui-shared';
+import { Content, Icon, Input, Typography } from '@social/ui-shared';
 import {
   // ActiveFriends,
   CreatePost,
   Header,
   HotTags,
+  MenuBar,
   Post,
   PostsLayout,
   Sidebar,
@@ -16,11 +17,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost, INewPost } from '../../types';
+import Image from 'next/image';
 
 const layouts = {
   sidebar: {
-    layout: 'grid-cols-3',
-    posts: 'col-span-3 xl:col-span-2 flex-col inline-flex gap-6',
+    layout: 'grid-cols-4',
+    posts: 'col-span-2 flex-col inline-flex',
   },
   grid: {
     layout: 'lg:grid-cols-2 xl:grid-cols-3',
@@ -104,24 +106,37 @@ export default function Index() {
     layout === 'sidebar'
       ? layouts[layout].posts
       : `grid ${layouts[layout].layout} gap-6`;
-  const sidebarClassName = `hidden ${
-    layout === 'sidebar' && 'xl:inline-flex w-full'
-  }`;
+  const sidebarClassName = `hidden ${layout === 'sidebar' && 'xl:inline-flex w-full'}`;
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Streams">
+      {/**  <Header className="hidden md:block" title="Streams">
         <div className="hidden lg:flex gap-6 items-center">
           <DropDown.Content />
           <DropDown.Reach />
           <DropDown.SortPosts />
           <DropDown.Layout />
         </div>
-      </Header>
+      </Header>*/}
       <Content.Grid
-        className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
+        className={layout === 'sidebar' ? 'grid grid-cols-4 gap-6' : ''}
       >
+        {' '}
+        <Sidebar className={sidebarClassName}>
+          <MenuBar />
+        </Sidebar>{' '}
         <PostsLayout className={postsLayoutClassName}>
+          <div className="flex gap-24 p-4 items-center justify-center">
+            <Typography.Body className="border-b-4 border-fuchsia-500 rounded">
+              For you
+            </Typography.Body>
+            <Typography.Body>Following</Typography.Body>
+            <Typography.Body>Friends</Typography.Body>
+          </div>
+          <div className='flex gap-6 pt-4 pb-6 px-8 border border-white border-opacity-10'>
+            <Image width={32} height={32} alt='user' className='rounded-full w-[32px] h-[32px]' src='/images/Userpic.png'/>
+            <Input.Cursor className='h-full' placeholder="What is happening !?" />
+          </div>
           {Object.keys(posts).map((key) => (
             <Post
               key={posts[key].id}
@@ -140,12 +155,24 @@ export default function Index() {
           {loading && Loading(Object.keys(posts).length)}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
+          <div className="hidden lg:flex gap-6 items-center">
+            <DropDown.Content />
+            <DropDown.Reach />
+            <DropDown.SortPosts />
+            <DropDown.Layout />
+          </div>
+          <Input.Search>
+            <Input.SearchInput
+              placeholder="Search"
+              className="hidden sm:block"
+            />
+          </Input.Search>
           <WhoFollow />
           <HotTags />
           {/** <ActiveFriends /> */}
         </Sidebar>{' '}
       </Content.Grid>
-      <CreatePost />
+      {/** <CreatePost />*/}
       <div ref={loader} />
     </Content.Main>
   );

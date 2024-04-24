@@ -110,8 +110,8 @@ export default function Post({
             <PostUI.MainCard
               borderRadius={
                 repost
-                  ? 'rounded-bl-2xl rounded-br-2xl'
-                  : 'rounded-2xl flex-grow'
+                  ? ''
+                  : 'flex-grow'
               }
               className={twMerge(rest.className)}
             >

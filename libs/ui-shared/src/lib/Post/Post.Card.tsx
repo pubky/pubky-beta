@@ -8,12 +8,12 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const MainCard = ({
-  background = 'bg-white bg-opacity-10',
-  borderRadius = 'rounded-2xl',
+  background = '',
+  borderRadius = '',
   children,
   ...rest
 }: CardProps) => {
-  const baseCSS = 'w-full z-auto border-0';
+  const baseCSS = 'w-full z-auto border border-white border-opacity-10';
   return (
     <Card.Primary
       {...rest}

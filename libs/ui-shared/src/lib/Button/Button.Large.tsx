@@ -3,7 +3,7 @@ import { Typography } from '../Typography';
 import { Icon } from '../Icon';
 
 interface LargeButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  children?: string;
+  children?: React.ReactNode;
   variant?: 'primary' | 'secondary';
   icon?: React.ReactNode;
   disabled?: boolean;
