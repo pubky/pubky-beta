@@ -161,6 +161,7 @@ export default function Header({ title, className, children }: HeaderProps) {
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
+              href="/profile"
               src={image}
               username={minifyText(name)}
               handler={handler}
