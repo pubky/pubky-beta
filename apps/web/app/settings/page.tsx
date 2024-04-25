@@ -155,7 +155,6 @@ export default function Index() {
           placeholder="Your Name"
           className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
           defaultValue={name}
-          autoFocus
           autoCorrect="off"
           error={errors.name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
