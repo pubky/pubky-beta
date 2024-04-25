@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import { minifyPubky } from '../../../libs/pubkyHelper';
@@ -28,12 +28,13 @@ export default function Ranking({
   followUser,
   unfollowUser,
 }: ContactsRanking) {
+  const router = useRouter();
   return (
     <div key={index} className="mt-12 mb-12">
       <div className="flex flex-col lg:flex-row gap-12">
-        <Link
-          href={`/profile/${contactId}`}
-          className="w-[350px] flex-col gap-6 inline-flex"
+        <div
+          onClick={() => router.push(`/profile/${contactId}`)}
+          className="w-[350px] cursor-pointer flex-col gap-6 inline-flex"
         >
           <div className="gap-6 inline-flex">
             <div className="relative">
@@ -80,7 +81,7 @@ export default function Ranking({
             ) : isFollowed ? (
               <Button.Medium
                 onClick={(event) => {
-                  event.preventDefault();
+                  event.stopPropagation();
                   if (!loadingContacts[contactId]) {
                     unfollowUser(contactId);
                   }
@@ -95,7 +96,7 @@ export default function Ranking({
             ) : (
               <Button.Medium
                 onClick={(event) => {
-                  event.preventDefault();
+                  event.stopPropagation();
                   if (!loadingContacts[contactId]) {
                     followUser(contactId);
                   }
@@ -109,7 +110,7 @@ export default function Ranking({
               </Button.Medium>
             )}
           </div>
-        </Link>
+        </div>
         <Contacts.Posts creatorPubky={contactId} />
       </div>
       {showDivider && <Content.Divider />}
