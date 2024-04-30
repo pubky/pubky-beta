@@ -41,6 +41,7 @@ export default function Index() {
   const [email, setEmail] = useState('');
   const [x, setX] = useState('');
   const [telegram, setTelegram] = useState('');
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
     bio: '',
@@ -92,7 +93,11 @@ export default function Index() {
   };
 
   const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
     try {
+      setLoading(true);
       setErrors({
         name: '',
         bio: '',
@@ -123,6 +128,7 @@ export default function Index() {
         );
 
         setErrors((prev) => ({ ...prev, ...errorMessages }));
+        setLoading(false);
         return;
       }
 
@@ -155,7 +161,6 @@ export default function Index() {
           placeholder="Your Name"
           className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
           defaultValue={name}
-          autoFocus
           autoCorrect="off"
           error={errors.name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -249,8 +254,9 @@ export default function Index() {
             </label>
             <div className="pt-[40px]">
               <Button.Large
-                onClick={() => handleSubmit()}
+                onClick={!loading ? () => handleSubmit() : undefined}
                 icon={<Icon.Check />}
+                loading={loading}
               >
                 Finish
               </Button.Large>

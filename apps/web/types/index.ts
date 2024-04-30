@@ -25,6 +25,7 @@ export interface ClientContextType {
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string) => Promise<IPost | null>;
+  deletePost: (postId: string) => Promise<IDeletePost | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
   deleteTag: (uri: string, tag: string) => Promise<IDeleteTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
@@ -154,6 +155,10 @@ export interface ICreateTagResponse {
 export interface IDeleteTagResponse {
   id: string;
   uri: string;
+}
+
+export interface IDeletePost {
+  id: string;
 }
 
 export interface IPostFrom {

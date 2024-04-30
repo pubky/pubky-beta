@@ -138,9 +138,7 @@ export default function Index({
             </>
           )}
         </PostsLayout>
-        <Profile.Sidebar
-          creatorPubky={pubky === creatorPubky ? '' : creatorPubky}
-        />
+        <Profile.Sidebar creatorPubky={creatorPubky} />
       </Content.Grid>
       <CreatePost />
       <div ref={loader} />

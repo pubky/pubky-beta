@@ -24,6 +24,7 @@ import {
   TLayouts,
   ClientContextType,
   IProfile,
+  IDeletePost,
 } from '../types';
 
 export * from '@pubky/common';
@@ -469,6 +470,27 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const deletePost = async (postId: string): Promise<IDeletePost | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get delete Post: not logged in.');
+      if (!postId) throw new Error('Get delete Post: no postId name.');
+
+      await client.ready();
+
+      const result = await client.social.posts.delete(pk, postId);
+
+      if (!result.ok)
+        throw new Error(`Delete post:${pk} failed: ${result.error.message}`);
+
+      return result.value as IDeletePost;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const getRecommendedProfiles = async (
     pk: string
   ): Promise<IRecommendedProfiles[] | null> => {
@@ -619,6 +641,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         createPost,
         createTag,
         deleteTag,
+        deletePost,
         getHotTags,
         getPost,
         listUserFeed,

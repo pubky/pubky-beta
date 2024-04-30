@@ -45,6 +45,7 @@ export default function Post({
     searchTags,
     setSearchTags,
     deleteTag,
+    deletePost,
   } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
@@ -57,6 +58,10 @@ export default function Post({
       setSortedTags(sortedTags);
     }
   }, [post?.tags]);
+
+  const handleDeletePost = async (postId: string) => {
+    await deletePost(postId);
+  };
 
   const handleDeleteTag = async (tag: string) => {
     await deleteTag(post.uri, tag);
@@ -266,6 +271,17 @@ export default function Post({
                   icon={<Icon.ChatCircleText size="16" />}
                   counter={0}
                 />
+                {post?.author?.id === pubky && (
+                  <Button.Action
+                    size="small"
+                    variant="custom"
+                    icon={<Icon.Trash size="16" />}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDeletePost(post.id);
+                    }}
+                  />
+                )}
                 {/* <Button.Action
                   size="small"
                   variant="custom"

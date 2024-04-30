@@ -131,17 +131,6 @@ export default function CreatePost({
     }
   };
 
-  const handlePaste = () => {
-    navigator.clipboard
-      .readText()
-      .then((text) => {
-        setContent(text);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   return (
     <Modal.Root
       modalRef={modalPostRef}
@@ -221,14 +210,6 @@ export default function CreatePost({
               variant="image"
               label="Image"
               onClick={() => console.log('button clicked 1')}
-              className="hidden lg:flex"
-            />
-
-            <Button.Action
-              variant="custom"
-              icon={<Icon.Clipboard />}
-              label="Paste"
-              onClick={handlePaste}
               className="hidden lg:flex"
             />
             <Button.Action
