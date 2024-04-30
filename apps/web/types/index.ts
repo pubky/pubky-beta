@@ -14,7 +14,6 @@ export interface ClientContextType {
   recommendedProfiles: IRecommendedProfiles[] | null;
   profile: IProfile | null;
   pubky: string | null;
-  refreshList: boolean;
   posts: INewPost;
   signUp: (
     profile: IProfilePubkyProps,
@@ -55,7 +54,6 @@ export interface ClientContextType {
   searchTags: string[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPosts: any;
-  setRefreshList: (value: boolean) => void;
   setSearchTags: (value: string[]) => Promise<IPost | null>;
   follow: (pk: string) => Promise<boolean>;
   unfollow: (pk: string) => Promise<boolean>;

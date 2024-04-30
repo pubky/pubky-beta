@@ -16,7 +16,6 @@ export default function Index() {
   const {
     pubky,
     getHotTags,
-    setRefreshList,
     setSearchTags,
     searchTags,
     listFollowers,
@@ -120,7 +119,6 @@ export default function Index() {
       const newSearchTags = [...searchTags.slice(1), tag];
       setSearchTags(newSearchTags);
     }
-    setRefreshList(true);
     router.push('/search');
   };
 

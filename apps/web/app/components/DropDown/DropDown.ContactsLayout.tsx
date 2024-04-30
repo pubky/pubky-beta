@@ -4,10 +4,8 @@ import { useEffect, useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
 import { useFilterContext } from '../../../contexts/filters';
-import { useClientContext } from '../../../contexts/client';
 
 export default function ContactsLayout() {
-  const { setRefreshList } = useClientContext();
   const { contactsLayout, setContactsLayout } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
@@ -54,7 +52,6 @@ export default function ContactsLayout() {
             });
             setContactsLayout('ranking');
             setOpenDropdown(false);
-            setRefreshList(true);
           }}
         />
         <DropDownUI.Item
@@ -69,7 +66,6 @@ export default function ContactsLayout() {
             });
             setContactsLayout('list');
             setOpenDropdown(false);
-            setRefreshList(true);
           }}
         />
       </DropDownUI.Content>

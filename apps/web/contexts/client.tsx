@@ -81,7 +81,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
   const [posts, setPosts] = useState<INewPost>({} as INewPost);
   const [searchTags, setSearchTags] = useState<string[]>([]);
-  const [refreshList, setRefreshList] = useState<boolean>(false);
 
   const isLoggedIn = async (): Promise<string | false> => {
     try {
@@ -636,7 +635,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         mostFollowed,
         pubky,
         profile,
-        refreshList,
         posts,
         isLoggedIn,
         createPost,
@@ -660,7 +658,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         getRecommendedProfiles,
         searchTags,
         setPosts,
-        setRefreshList,
         setSearchTags,
         follow,
         unfollow,
