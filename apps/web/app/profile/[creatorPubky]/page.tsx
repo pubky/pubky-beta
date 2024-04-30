@@ -86,6 +86,7 @@ export default function Index({
   }, [cursor]);
 
   useEffect(() => {
+    setPosts({} as INewPost);
     fetchProfile();
     fetchPosts(cursor);
     // eslint-disable-next-line react-hooks/exhaustive-deps

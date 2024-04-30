@@ -74,7 +74,7 @@ export default function CreatePost({
         const newPost = await createPost(content);
         if (newPost) {
           for (const tag of arrayTags) {
-            await createTag(newPost.id, tag);
+            await createTag(newPost.uri, tag);
           }
 
           setPosts((prev: INewPost) => ({
