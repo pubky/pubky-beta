@@ -12,21 +12,13 @@ import {
 import { useClientContext } from '../../../contexts/client';
 import { IPost } from '../../../types';
 
-type SetRefreshListType = (value: boolean) => void;
-
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
   post: IPost;
-  setRefreshList: SetRefreshListType;
 }
 
-export default function Tag({
-  showModalTag,
-  setShowModalTag,
-  post,
-  setRefreshList,
-}: TagProps) {
+export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
   const modalTagRef = useRef<HTMLDivElement>(null);
   const { createTag } = useClientContext();
   const [tag, setTag] = useState('');
@@ -62,7 +54,6 @@ export default function Tag({
       setShowModalTag(false);
       setArrayTags([]);
       setTag('');
-      setRefreshList(true);
     } catch (error) {
       console.log(error);
     } finally {

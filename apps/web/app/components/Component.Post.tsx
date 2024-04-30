@@ -38,15 +38,8 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
 
-  const {
-    pubky,
-    createTag,
-    setRefreshList,
-    searchTags,
-    setSearchTags,
-    deleteTag,
-    deletePost,
-  } = useClientContext();
+  const { pubky, createTag, searchTags, setSearchTags, deleteTag, deletePost } =
+    useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   // const [bookmark, setBookmark] = useState(false);
@@ -65,12 +58,10 @@ export default function Post({
 
   const handleDeleteTag = async (tag: string) => {
     await deleteTag(post.uri, tag);
-    // setRefreshList(true);
   };
 
   const handleAddTag = async (tag: string) => {
     await createTag(post.uri, tag);
-    // setRefreshList(true);
   };
 
   const handleTagSearch = (tag: string) => {
@@ -82,7 +73,6 @@ export default function Post({
       const newSearchTags = [...searchTags.slice(1), tag];
       setSearchTags(newSearchTags);
     }
-    setRefreshList(true);
     router.push('/search');
   };
 
@@ -318,7 +308,6 @@ export default function Post({
       />
       <Modal.Tag
         post={post}
-        setRefreshList={setRefreshList}
         showModalTag={showModalTag}
         setShowModalTag={setShowModalTag}
       />

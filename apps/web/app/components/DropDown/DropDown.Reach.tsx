@@ -4,10 +4,8 @@ import { useEffect, useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
 import { useFilterContext } from '../../../contexts/filters';
-import { useClientContext } from '../../../contexts/client';
 
 export default function Reach() {
-  const { setRefreshList } = useClientContext();
   const { reach, setReach } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
@@ -56,7 +54,6 @@ export default function Reach() {
             });
             setReach('following');
             setOpenDropdown(false);
-            setRefreshList(true);
           }}
         />
         <DropDownUI.Item
@@ -71,7 +68,6 @@ export default function Reach() {
             });
             setReach('followers');
             setOpenDropdown(false);
-            setRefreshList(true);
           }}
         />
         <DropDownUI.Item
@@ -86,7 +82,6 @@ export default function Reach() {
             });
             setReach('friends');
             setOpenDropdown(false);
-            setRefreshList(true);
           }}
         />
         <DropDownUI.Item
@@ -101,7 +96,6 @@ export default function Reach() {
             });
             setReach('all');
             setOpenDropdown(false);
-            setRefreshList(true);
           }}
         />
       </DropDownUI.Content>

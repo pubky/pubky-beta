@@ -16,14 +16,8 @@ interface HeaderProps {
 
 export default function Header({ title, className, children }: HeaderProps) {
   const router = useRouter();
-  const {
-    pubky,
-    getProfile,
-    isLoggedIn,
-    setRefreshList,
-    setSearchTags,
-    searchTags,
-  } = useClientContext();
+  const { pubky, getProfile, isLoggedIn, setSearchTags, searchTags } =
+    useClientContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
@@ -104,7 +98,6 @@ export default function Header({ title, className, children }: HeaderProps) {
         const newSearchTags = [...searchTags.slice(1), trimmedValue.slice(1)];
         setSearchTags(newSearchTags);
       }
-      setRefreshList(true);
       setInputValue('');
       router.push('/search');
     }

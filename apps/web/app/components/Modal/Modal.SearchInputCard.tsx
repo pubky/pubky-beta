@@ -14,8 +14,7 @@ export default function SearchInputCard({
   ...rest
 }: SearchInputCardProps) {
   const router = useRouter();
-  const { hotTags, setRefreshList, searchTags, setSearchTags } =
-    useClientContext();
+  const { hotTags, searchTags, setSearchTags } = useClientContext();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,7 +32,6 @@ export default function SearchInputCard({
       const newSearchTags = [...searchTags.slice(1), tag];
       setSearchTags(newSearchTags);
     }
-    setRefreshList(true);
     router.push('/search');
   };
 
@@ -41,7 +39,6 @@ export default function SearchInputCard({
     const newTags = [...searchTags];
     newTags.splice(indexToRemove, 1);
     setSearchTags(newTags);
-    setRefreshList(true);
   };
 
   return (

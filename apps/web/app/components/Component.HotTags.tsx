@@ -9,8 +9,7 @@ import { ITaggedPost } from '../../types';
 
 export default function HotTags() {
   const router = useRouter();
-  const { getHotTags, setSearchTags, searchTags, setRefreshList } =
-    useClientContext();
+  const { getHotTags, setSearchTags, searchTags } = useClientContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +40,6 @@ export default function HotTags() {
       const newSearchTags = [...searchTags.slice(1), tag];
       setSearchTags(newSearchTags);
     }
-    setRefreshList(true);
     router.push('/search');
   };
 
