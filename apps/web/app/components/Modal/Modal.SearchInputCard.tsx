@@ -2,7 +2,6 @@ import { useRouter } from 'next/navigation';
 import { Card, Icon, PostUtil, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ITaggedPost } from '../../../types';
 import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '..';
 
@@ -15,25 +14,15 @@ export default function SearchInputCard({
   ...rest
 }: SearchInputCardProps) {
   const router = useRouter();
-  const { getHotTags, setRefreshList, searchTags, setSearchTags } =
+  const { hotTags, setRefreshList, searchTags, setSearchTags } =
     useClientContext();
-  const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchTags() {
-      try {
-        const result = await getHotTags();
-        if (result) {
-          setHotTags(result);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    if (hotTags) {
+      setLoading(false);
     }
-    fetchTags();
-  }, [getHotTags]);
+  }, [hotTags]);
 
   const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
@@ -95,6 +84,7 @@ export default function SearchInputCard({
           {loading ? (
             <Skeleton.HotTags />
           ) : (
+            hotTags &&
             hotTags.length > 0 && (
               <div className="mt-2 justify-start items-start">
                 {hotTags.slice(0, 10).map((tag, index) => (
