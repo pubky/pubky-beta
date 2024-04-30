@@ -25,6 +25,7 @@ import {
   ClientContextType,
   IProfile,
   IDeletePost,
+  INewPost,
 } from '../types';
 
 export * from '@pubky/common';
