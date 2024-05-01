@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
@@ -38,6 +37,7 @@ export default function Index() {
     recoveryFile: '',
   });
   const [loginError, setLoginError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const UploadRecoveryFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -51,7 +51,11 @@ export default function Index() {
   };
 
   const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
     try {
+      setLoading(true);
       setErrors({
         password: '',
         recoveryFile: '',
@@ -74,17 +78,23 @@ export default function Index() {
         );
 
         setErrors((prev) => ({ ...prev, ...errorMessages }));
+        setLoading(false);
         return;
       }
 
       if (!recoveryFile || !password) return;
 
-      const loggedIn = await decryptRecoveryFile(password, recoveryFile);
+      try {
+        const loggedIn = await decryptRecoveryFile(password, recoveryFile);
 
-      if (loggedIn) {
-        router.push('/onboarding/permissions');
-      } else {
-        setLoginError(true);
+        if (loggedIn) {
+          router.push('/onboarding/permissions');
+        } else {
+          setLoginError(true);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log(error);
       }
     } catch (error) {
       console.log(error);
@@ -133,7 +143,9 @@ export default function Index() {
               className="h-[70px]"
               type="password"
               error={errors.password}
-              onChange={(e: any) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
             />
           </div>
           <div>
@@ -155,8 +167,9 @@ export default function Index() {
             </div>
           )}
           <Button.Large
-            onClick={() => handleSubmit()}
+            onClick={!loading ? () => handleSubmit() : undefined}
             icon={<Icon.Check />}
+            loading={loading}
             className="mt-4"
           >
             Login

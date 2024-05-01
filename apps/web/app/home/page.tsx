@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { Button, Content, Typography } from '@social/ui-shared';
+import { Content, Icon, Typography } from '@social/ui-shared';
 import {
   // ActiveFriends,
   CreatePost,
@@ -10,16 +9,15 @@ import {
   Post,
   PostsLayout,
   Sidebar,
-  Skeleton,
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
-import { Layouts, IPost } from '../../types';
+import { IPost, INewPost } from '../../types';
 
-const layouts: Layouts = {
+const layouts = {
   sidebar: {
     layout: 'grid-cols-3',
     posts: 'col-span-3 xl:col-span-2 flex-col inline-flex gap-6',
@@ -38,68 +36,69 @@ const layouts: Layouts = {
   },
 };
 
+const Loading = (posts: number) => (
+  <div className="flex w-full justify-center flex-col">
+    <div
+      className={`flex w-full justify-center ${posts === 0 ? 'mt-10' : 'mt-2'}`}
+    >
+      <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+    </div>
+    <Typography.Body
+      variant="medium-bold"
+      className="col-span-3 flex mt-2 justify-center items-center gap-6 text-opacity-20"
+    >
+      Loading Posts
+    </Typography.Body>
+  </div>
+);
+
 export default function Index() {
   const { layout, reach } = useFilterContext();
-  const { refreshList, listGlobalPosts, pubky } = useClientContext();
-  const [posts, setPosts] = useState<IPost[]>([]);
+  const { listGlobalPosts, posts, setPosts } = useClientContext();
   const [loading, setLoading] = useState(true);
-  const [showLoadMore, setShowLoadMore] = useState(false);
   const [cursor, setCursor] = useState('');
+  const loader = useRef(null);
 
   const fetchData = async (pointer: string) => {
+    setLoading(true);
+
     const results = await listGlobalPosts(pointer, reach);
 
-    setShowLoadMore(false);
+    if (results && results.feed) {
+      const newPostsTemp = results.feed.reduce((acc: INewPost, post: IPost) => {
+        acc[post.id] = post;
+        return acc;
+      }, {});
 
-    if (!results || !results.feed) {
-      setCursor('');
-      return;
-    }
+      setPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
 
-    setPosts(results.feed);
-
-    if (results.feed.length >= 6) {
-      setShowLoadMore(true);
-    }
-
-    if (results.cursor) {
       setCursor(results.cursor);
     }
-
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchData(cursor);
-  }, [pubky]);
+    const observer = new IntersectionObserver(
+      async (entries) => {
+        if (entries[0].isIntersecting && cursor) {
+          fetchData(cursor);
+        }
+      },
+      { threshold: 0 }
+    );
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cursor]);
 
   useEffect(() => {
-    if (refreshList) {
-      fetchData('');
-    }
-  }, [refreshList]);
-
-  const handleLoadMore = async () => {
-    try {
-      const results = await listGlobalPosts(cursor, reach);
-
-      if (!results || !results.feed) {
-        setCursor('');
-        return;
-      }
-
-      setPosts((prev) => [...prev, ...results.feed]);
-
-      if (!results.cursor) {
-        setShowLoadMore(false);
-        return;
-      }
-
-      setCursor(results.cursor);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    setPosts({} as INewPost);
+    setCursor('');
+    fetchData('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reach]);
 
   const postsLayoutClassName =
     layout === 'sidebar'
@@ -123,41 +122,31 @@ export default function Index() {
         className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
       >
         <PostsLayout className={postsLayoutClassName}>
-          {loading && (
-            <Skeleton.Post size={layout === 'list' ? 'full' : 'normal'} />
-          )}
-          {posts.map((post, index) => (
+          {Object.keys(posts).map((key) => (
             <Post
-              key={index}
-              post={post}
+              key={posts[key].id}
+              post={posts[key]}
               size={layout === 'list' ? 'full' : 'normal'}
               layout={layout}
             />
           ))}
-          {posts.length === 0 && !loading && (
+          {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
                 No posts yet.
               </Typography.H2>
             </div>
           )}
+          {loading && Loading(Object.keys(posts).length)}
         </PostsLayout>
         <Sidebar className={sidebarClassName}>
           <WhoFollow />
           <HotTags />
           {/** <ActiveFriends /> */}
-        </Sidebar>
-        {showLoadMore && (
-          <Button.Large
-            className="mt-6 col-span-3 xl:col-span-2"
-            variant="secondary"
-            onClick={() => handleLoadMore()}
-          >
-            Load More
-          </Button.Large>
-        )}
+        </Sidebar>{' '}
       </Content.Grid>
       <CreatePost />
+      <div ref={loader} />
     </Content.Main>
   );
 }

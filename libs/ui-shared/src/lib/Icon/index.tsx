@@ -24,6 +24,7 @@ import {
   List,
   ListBullets,
   ListNumbers,
+  Trash,
 } from './Icon.Office';
 import {
   DotsNine,
@@ -33,6 +34,7 @@ import {
   CheckCircle,
   Bell,
   GearSix,
+  LoadingSpin,
 } from './Icon.System';
 import {
   Android,
@@ -92,6 +94,7 @@ export const Icon = {
   List,
   ListBullets,
   ListNumbers,
+  LoadingSpin,
   MagnifyingGlass,
   Minus,
   MusicNotesSimple,
@@ -113,6 +116,7 @@ export const Icon = {
   Tag,
   Telegram,
   Twitter,
+  Trash,
   UsersLeft,
   UserMinus,
   UsersRight,

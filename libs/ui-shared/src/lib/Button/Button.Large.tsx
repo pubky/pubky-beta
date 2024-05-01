@@ -1,11 +1,13 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
+import { Icon } from '../Icon';
 
 interface LargeButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   children?: string;
   variant?: 'primary' | 'secondary';
   icon?: React.ReactNode;
   disabled?: boolean;
+  loading?: boolean;
   className?: string;
 }
 
@@ -13,6 +15,7 @@ export const Large = ({
   children,
   variant = 'primary',
   icon,
+  loading = false,
   disabled = false,
   ...rest
 }: LargeButtonProps) => {
@@ -40,12 +43,10 @@ export const Large = ({
       {...rest}
       className={twMerge(cssButton, cssColorButton, rest.className)}
     >
-      {icon}
-      {children && (
-        <Typography.Body className={colorText} variant="small-bold">
-          {children}
-        </Typography.Body>
-      )}
+      {loading ? <Icon.LoadingSpin /> : <div>{icon}</div>}
+      <Typography.Body className={colorText} variant="small-bold">
+        {children}
+      </Typography.Body>
     </button>
   );
 };

@@ -11,7 +11,7 @@ export const Content = ({ children, text, ...rest }: ContentProps) => {
     <>
       <Typography.Body
         {...rest}
-        className={twMerge(`text-opacity-80`, rest.className)}
+        className={twMerge(`text-opacity-80 break-all`, rest.className)}
         variant="medium"
       >
         {text}

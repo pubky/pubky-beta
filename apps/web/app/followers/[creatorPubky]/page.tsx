@@ -1,15 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Content } from '@social/ui-shared';
-import { CreatePost, Header, Skeleton } from '../../components';
+import { Content, Icon, Typography } from '@social/ui-shared';
+import { CreatePost, Header } from '../../components';
 import { Followers } from './../components';
 import { useClientContext } from '../../../contexts/client';
-
-interface Followers {
-  count: number;
-  followers: [];
-}
+import { IFollowersResponse } from '../../../types';
 
 export default function Index({
   params,
@@ -22,40 +18,39 @@ export default function Index({
   const [name, setName] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
-  const [loadingFollowers, setLoadingFollowers] = useState(true);
-  const [followers, setFollowers] = useState<Followers | null>(null);
+  const [followers, setFollowers] = useState<IFollowersResponse | null>(null);
+
+  async function fetchFollowers() {
+    try {
+      if (!creatorPubky) return;
+
+      const followers = await listFollowers(creatorPubky);
+
+      setFollowers(followers);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function fetchProfile() {
+    try {
+      const userProfile = await getUserIndexed(creatorPubky);
+
+      if (userProfile) {
+        setName(userProfile.profile?.name || '');
+        setImage(userProfile.profile?.image || '/images/Userpic.png');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const { profile } = await getUserIndexed(creatorPubky);
-        if (profile) {
-          setName(profile?.name || '');
-          setImage(profile?.image || '/images/Userpic.png');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [creatorPubky, getUserIndexed]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (!creatorPubky) return;
-
-        const followers = await listFollowers(creatorPubky);
-
-        setFollowers(followers);
-        setLoadingFollowers(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [creatorPubky, listFollowers]);
+    fetchProfile();
+    fetchFollowers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Content.Main>
@@ -64,27 +59,32 @@ export default function Index({
         title="Followers"
       />
       {loading ? (
-        <Skeleton.FollowerMe />
+        <div>
+          <div className={`flex w-full justify-center mt-10`}>
+            <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+          </div>
+          <Typography.Body
+            variant="medium-bold"
+            className="col-span-3 m-2 flex justify-center items-center gap-6 text-opacity-20"
+          >
+            Loading Followers
+          </Typography.Body>
+        </div>
       ) : (
-        <Followers.Me
-          image={image}
-          name={name}
-          pubkey={pubky === creatorPubky ? '' : creatorPubky}
-          followersCount={followers?.count}
-        />
+        <>
+          <Followers.Me
+            image={image}
+            name={name}
+            pubkey={pubky === creatorPubky ? '' : creatorPubky}
+            followersCount={followers?.count}
+          />
+          <Content.Grid>
+            <Followers.Root>
+              <Followers.Follower followers={followers?.followers} />
+            </Followers.Root>
+          </Content.Grid>
+        </>
       )}
-      <Content.Grid>
-        <Followers.Root>
-          {loadingFollowers ? (
-            <Skeleton.Followers />
-          ) : (
-            <Followers.Follower
-              creatorPubky={pubky === creatorPubky ? '' : creatorPubky}
-              followers={followers?.followers}
-            />
-          )}
-        </Followers.Root>
-      </Content.Grid>
       <CreatePost />
     </Content.Main>
   );

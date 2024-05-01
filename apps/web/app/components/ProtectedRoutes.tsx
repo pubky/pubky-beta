@@ -2,6 +2,7 @@
 
 import { useClientContext } from '../../contexts/client';
 import { useRouter, usePathname } from 'next/navigation';
+import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect } from 'react';
 
 export default function ProtectedRoutes({
@@ -58,5 +59,12 @@ export default function ProtectedRoutes({
     checkLogin();
   }, [isLoggedIn, router, pathname]);
 
-  return <>{children}</>;
+  return (
+    <>
+      <div className="z-index-999">
+        <NextTopLoader color="#FD00FF" />
+      </div>
+      {children}
+    </>
+  );
 }

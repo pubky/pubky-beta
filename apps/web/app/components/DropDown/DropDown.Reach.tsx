@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
 import { useFilterContext } from '../../../contexts/filters';
@@ -13,11 +13,21 @@ export default function Reach() {
     followers: <Icon.UsersLeft />,
     friends: <Icon.Smiley />,
     all: <Icon.Broadcast />,
+    loading: <Icon.LoadingSpin className="animate-spin" />,
   };
+
   const [dropdownValue, setDropdownValue] = useState({
-    value: reach ? reach : 'following',
-    iconOption: reach ? icons[reach] : icons.following,
+    value: reach ? reach : 'all',
+    iconOption: icons.loading,
   });
+
+  useEffect(() => {
+    setDropdownValue({
+      value: reach ? reach : 'all',
+      iconOption: reach ? icons[reach] : icons.all,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DropDown

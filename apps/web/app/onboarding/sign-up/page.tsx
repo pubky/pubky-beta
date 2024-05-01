@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
@@ -33,14 +32,15 @@ export default function Index() {
 
   const router = useRouter();
 
-  const [name, setName] = useState(undefined);
-  const [bio, setBio] = useState(undefined);
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
-  const [website, setWebsite] = useState(undefined);
-  const [email, setEmail] = useState(undefined);
-  const [x, setX] = useState(undefined);
-  const [telegram, setTelegram] = useState(undefined);
-  const [password, setPassword] = useState(undefined);
+  const [website, setWebsite] = useState('');
+  const [email, setEmail] = useState('');
+  const [x, setX] = useState('');
+  const [telegram, setTelegram] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
     bio: '',
@@ -84,7 +84,11 @@ export default function Index() {
   };
 
   const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
     try {
+      setLoading(true);
       setErrors({
         name: '',
         bio: '',
@@ -96,13 +100,13 @@ export default function Index() {
       });
 
       const result = profileSchema.safeParse({
-        name,
-        bio: bio || undefined,
-        website: website || undefined,
-        email: email || undefined,
-        x: x || undefined,
-        telegram: telegram || undefined,
-        password,
+        name: name,
+        bio: bio ? bio : undefined,
+        website: website ? website : undefined,
+        email: email ? email : undefined,
+        x: x ? x : undefined,
+        telegram: telegram ? telegram : undefined,
+        password: password,
       });
 
       if (!result.success) {
@@ -123,7 +127,7 @@ export default function Index() {
       try {
         const profileInfo = result.data;
 
-        const { recoveryFile, filename } = await signUp(
+        const signUpResponse = await signUp(
           {
             name,
             bio,
@@ -137,14 +141,24 @@ export default function Index() {
           },
           profileInfo.password
         );
+
+        if (!signUpResponse) {
+          throw new Error('Something went wrong');
+        }
+
+        const { recoveryFile, filename } = signUpResponse;
         await handleDownloadRecoveryFile({ recoveryFile, filename });
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
 
       router.push('/onboarding/confirm');
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -153,10 +167,12 @@ export default function Index() {
       <Input.Cursor
         placeholder="Your Name"
         className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
-        defaultValue={name}
+        defaultValue={name ? name : ''}
         autoFocus
         autoCorrect="off"
-        onChange={(e: any) => setName(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setName(e.target.value)
+        }
         error={errors.name}
       />
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
@@ -169,9 +185,11 @@ export default function Index() {
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
               className="h-[420px]"
-              defaultValue={bio}
+              defaultValue={bio ? bio : ''}
               error={errors.bio}
-              onChange={(e: any) => setBio(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setBio(e.target.value)
+              }
             />
           </Card.Primary>
         </Card.Primary>
@@ -181,9 +199,11 @@ export default function Index() {
             <Input.Text
               className="h-[70px]"
               placeholder="https://"
-              defaultValue={website}
+              defaultValue={website ? website : ''}
               error={errors.website}
-              onChange={(e: any) => setWebsite(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setWebsite(e.target.value)
+              }
             />
           </div>
           <div>
@@ -191,9 +211,11 @@ export default function Index() {
             <Input.Text
               className="h-[70px]"
               placeholder="user@provider.com"
-              defaultValue={email}
+              defaultValue={email ? email : ''}
               error={errors.email}
-              onChange={(e: any) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
             />
           </div>
           <div>
@@ -201,9 +223,11 @@ export default function Index() {
             <Input.Text
               className="h-[70px]"
               placeholder="@user"
-              defaultValue={x}
+              defaultValue={x ? x : ''}
               error={errors.x}
-              onChange={(e: any) => setX(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setX(e.target.value)
+              }
             />
           </div>
           <div>
@@ -211,9 +235,9 @@ export default function Index() {
             <Input.Text
               className="h-[70px]"
               placeholder="@user"
-              defaultValue={telegram}
+              defaultValue={telegram ? telegram : ''}
               error={errors.telegram}
-              onChange={(e: any) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setTelegram(e.target.value.replace('@', ''))
               }
             />
@@ -244,11 +268,17 @@ export default function Index() {
               className="h-[70px]"
               type="password"
               error={errors.password}
-              onChange={(e: any) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
             />
           </div>
           <div className="pt-[30px]">
-            <Button.Large onClick={() => handleSubmit()} icon={<Icon.Check />}>
+            <Button.Large
+              onClick={!loading ? () => handleSubmit() : undefined}
+              icon={<Icon.Check />}
+              loading={loading}
+            >
               Download Recovery File
             </Button.Large>
           </div>

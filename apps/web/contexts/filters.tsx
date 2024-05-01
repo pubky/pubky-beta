@@ -1,25 +1,36 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import localStorageUtils from '../libs/localStorageUtils';
 
-type Layout = 'sidebar' | 'list' | 'grid' | 'columns';
-type Sort = 'recent' | 'tags' | 'activity';
-type Reach = 'following' | 'followers' | 'friends' | 'all';
-type Content = 'all' | 'posts' | 'images' | 'videos' | 'links';
-type Timeframe = 'today' | 'month' | 'all';
+import localStorageUtils from '../libs/localStorageUtils';
+import {
+  TContacts,
+  TContactsLayout,
+  TContent,
+  TLayouts,
+  TReach,
+  THotTagsReach,
+  TSort,
+  TTimeframe,
+} from './../types';
 
 type FilterContextType = {
-  layout: Layout;
-  setLayout(layout: Layout): void;
-  sort: Sort;
-  setSort: (sort: Sort) => void;
-  reach: Reach;
-  setReach: (reach: Reach) => void;
-  content: Content;
-  setContent: (content: Content) => void;
-  timeframe: Timeframe;
-  setTimeframe: (timeframe: Timeframe) => void;
+  layout: TLayouts;
+  setLayout(layout: TLayouts): void;
+  sort: TSort;
+  setSort: (sort: TSort) => void;
+  reach: TReach;
+  setReach: (reach: TReach) => void;
+  hotTagsReach: THotTagsReach;
+  setHotTagsReach: (hotTagsReach: THotTagsReach) => void;
+  contacts: TContacts;
+  setContacts: (contacts: TContacts) => void;
+  contactsLayout: TContactsLayout;
+  setContactsLayout: (contactsLayout: TContactsLayout) => void;
+  content: TContent;
+  setContent: (content: TContent) => void;
+  timeframe: TTimeframe;
+  setTimeframe: (timeframe: TTimeframe) => void;
 };
 
 const FilterContext = createContext<FilterContextType>({
@@ -29,6 +40,12 @@ const FilterContext = createContext<FilterContextType>({
   setSort: () => {},
   reach: 'all',
   setReach: () => {},
+  hotTagsReach: 'all',
+  setHotTagsReach: () => {},
+  contacts: 'following',
+  setContacts: () => {},
+  contactsLayout: 'ranking',
+  setContactsLayout: () => {},
   content: 'all',
   setContent: () => {},
   timeframe: 'today',
@@ -36,20 +53,29 @@ const FilterContext = createContext<FilterContextType>({
 });
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
-  const [layout, setLayout] = useState<Layout>(
-    (localStorageUtils.get('layout') as Layout) || 'sidebar'
+  const [layout, setLayout] = useState<TLayouts>(
+    (localStorageUtils.get('layout') as TLayouts) || 'sidebar'
   );
-  const [sort, setSort] = useState<Sort>(
-    (localStorageUtils.get('sort') as Sort) || 'recent'
+  const [sort, setSort] = useState<TSort>(
+    (localStorageUtils.get('sort') as TSort) || 'recent'
   );
-  const [reach, setReach] = useState<Reach>(
-    (localStorageUtils.get('reach') as Reach) || 'all'
+  const [reach, setReach] = useState<TReach>(
+    (localStorageUtils.get('reach') as TReach) || 'all'
   );
-  const [content, setContent] = useState<Content>(
-    (localStorageUtils.get('content') as Content) || 'all'
+  const [hotTagsReach, setHotTagsReach] = useState<THotTagsReach>(
+    (localStorageUtils.get('hotTagsReach') as THotTagsReach) || 'all'
   );
-  const [timeframe, setTimeframe] = useState<Timeframe>(
-    (localStorageUtils.get('timeframe') as Timeframe) || 'today'
+  const [contacts, setContacts] = useState<TContacts>(
+    (localStorageUtils.get('contacts') as TContacts) || 'following'
+  );
+  const [contactsLayout, setContactsLayout] = useState<TContactsLayout>(
+    (localStorageUtils.get('contactsLayout') as TContactsLayout) || 'ranking'
+  );
+  const [content, setContent] = useState<TContent>(
+    (localStorageUtils.get('content') as TContent) || 'all'
+  );
+  const [timeframe, setTimeframe] = useState<TTimeframe>(
+    (localStorageUtils.get('timeframe') as TTimeframe) || 'today'
   );
 
   // save filters to local storage
@@ -57,9 +83,21 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     localStorageUtils.set('layout', layout);
     localStorageUtils.set('sort', sort);
     localStorageUtils.set('reach', reach);
+    localStorageUtils.set('hotTagsReach', hotTagsReach);
+    localStorageUtils.set('contacts', contacts);
+    localStorageUtils.set('contactsLayout', contactsLayout);
     localStorageUtils.set('content', content);
     localStorageUtils.set('timeframe', timeframe);
-  }, [layout, sort, reach, content, timeframe]);
+  }, [
+    layout,
+    sort,
+    reach,
+    hotTagsReach,
+    contacts,
+    contactsLayout,
+    content,
+    timeframe,
+  ]);
 
   return (
     <FilterContext.Provider
@@ -70,6 +108,12 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         setSort,
         reach,
         setReach,
+        hotTagsReach,
+        setHotTagsReach,
+        contacts,
+        setContacts,
+        contactsLayout,
+        setContactsLayout,
         content,
         setContent,
         timeframe,

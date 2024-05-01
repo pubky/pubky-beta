@@ -1,6 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
 import { Modal } from './Modal';
@@ -8,24 +8,16 @@ import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
 import { minifyText } from '../../libs/textHelper';
 
-type Tag = {
-  value: string;
-  color: string;
-};
 interface HeaderProps {
   title: React.ReactNode;
   className?: string;
-  tags?: Tag[];
   children?: React.ReactNode;
 }
 
-export default function Header({
-  title,
-  className,
-  tags = [],
-  children,
-}: HeaderProps) {
-  const { pubky, getProfile, isLoggedIn } = useClientContext();
+export default function Header({ title, className, children }: HeaderProps) {
+  const router = useRouter();
+  const { pubky, getProfile, isLoggedIn, setSearchTags, searchTags } =
+    useClientContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
@@ -33,33 +25,38 @@ export default function Header({
   const [name, setName] = useState('');
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [handler, setHandler] = useState('');
+  const [inputValue, setInputValue] = useState('');
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
 
+  async function fetchProfile() {
+    try {
+      const userProfile = await getProfile();
+
+      if (userProfile) {
+        setImage(userProfile.image || '/images/Userpic.png');
+        setName(userProfile.name || '');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function fetchLoggedIn() {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+      setLogoLink('/onboarding');
+    } else {
+      setLogoLink('/home');
+    }
+  }
+
   useEffect(() => {
     setHandler(minifyPubky(pubky));
-    async function fetchData() {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        setLogoLink('/onboarding');
-      } else {
-        setLogoLink('/home');
-      }
-    }
-    fetchData();
-    async function fetchProfile() {
-      try {
-        const { profile } = await getProfile();
-        if (profile) {
-          setImage(profile?.image || '/images/Userpic.png');
-          setName(profile?.name || '');
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    fetchLoggedIn();
     fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
 
   useEffect(() => {
@@ -84,23 +81,53 @@ export default function Header({
     };
   }, [drawerRef, refSearchInputCard]);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchTag();
+    }
+  };
+
+  const handleSearchTag = () => {
+    const trimmedValue = inputValue.trim();
+    if (trimmedValue.startsWith('#')) {
+      if (searchTags.includes(trimmedValue.slice(1))) return;
+
+      if (searchTags.length < 3) {
+        setSearchTags([...searchTags, trimmedValue.slice(1)]);
+      } else {
+        const newSearchTags = [...searchTags.slice(1), trimmedValue.slice(1)];
+        setSearchTags(newSearchTags);
+      }
+      setInputValue('');
+      router.push('/search');
+    }
+  };
+
   return (
     <HeaderUI.Root>
       <HeaderUI.Logo link={logoLink} />
       <HeaderUI.Title titleHeader={title} className={className} />
-      <Input.Search>
-        {tags && (
+      <Input.Search
+        defaultValue={inputValue}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setInputValue(e.target.value)
+        }
+        onKeyDown={handleKeyDown}
+      >
+        {/**{searchTags && (
           <Input.SearchTags className="hidden sm:block">
-            {tags.map((tag, index) => (
+            {searchTags.map((searchTag, index) => (
               <Input.SearchTag
-                color={tag.color}
+                color="bg-amber-500 bg-opacity-30"
                 key={index}
+                onClick={() => handleRemoveTag(index)}
                 actions={[<Icon.X key={index} />]}
-                value={tag.value}
+                value={`# ${searchTag}`}
+                className="mr-2"
               />
             ))}
           </Input.SearchTags>
-        )}
+        )}*/}
         <Input.SearchInput
           placeholder="Search"
           className="hidden sm:block"
@@ -111,8 +138,9 @@ export default function Header({
           refCard={refSearchInputCard}
         />
         <Input.SearchActions className="hidden sm:flex">
-          {tags.length > 0 && <Icon.GridFour />}
-          <Icon.MagnifyingGlass />
+          <div className="cursor-pointer" onClick={handleSearchTag}>
+            <Icon.MagnifyingGlass />
+          </div>
         </Input.SearchActions>
       </Input.Search>
       {children}
@@ -126,6 +154,7 @@ export default function Header({
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
+              href="/profile"
               src={image}
               username={minifyText(name)}
               handler={handler}

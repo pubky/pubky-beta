@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import {
@@ -20,8 +19,15 @@ import { minifyText } from '../../libs/textHelper';
 import { Skeleton } from '.';
 import { useRouter } from 'next/navigation';
 import { useClientContext } from '../../contexts/client';
+import { IPost, ITaggedPost, TLayouts, TSize } from '../../types';
 
-import { PostProps } from '../../types';
+interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
+  repost?: boolean;
+  bookmark?: boolean;
+  size?: TSize;
+  post: IPost;
+  layout?: TLayouts;
+}
 
 export default function Post({
   repost = false,
@@ -32,21 +38,42 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
 
-  const { createTag, setRefreshList } = useClientContext();
+  const { pubky, createTag, searchTags, setSearchTags, deleteTag, deletePost } =
+    useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   // const [bookmark, setBookmark] = useState(false);
-  const [sortedTags, setSortedTags] = useState<any[]>([]);
+  const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
 
   useEffect(() => {
     if (post?.tags) {
-      setSortedTags(post?.tags.slice().sort((a, b) => b.count - a.count));
+      const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
+      setSortedTags(sortedTags);
     }
   }, [post?.tags]);
 
-  const handleSubmit = async (tag: string) => {
+  const handleDeletePost = async (postId: string) => {
+    await deletePost(postId);
+  };
+
+  const handleDeleteTag = async (tag: string) => {
+    await deleteTag(post.uri, tag);
+  };
+
+  const handleAddTag = async (tag: string) => {
     await createTag(post.uri, tag);
-    // setRefreshList(true);
+  };
+
+  const handleTagSearch = (tag: string) => {
+    if (searchTags.includes(tag)) return;
+
+    if (searchTags.length < 3) {
+      setSearchTags([...searchTags, tag]);
+    } else {
+      const newSearchTags = [...searchTags.slice(1), tag];
+      setSearchTags(newSearchTags);
+    }
+    router.push('/search');
   };
 
   if (!post) return <Skeleton.Post size={size} />;
@@ -77,7 +104,9 @@ export default function Post({
             )} */}
             <PostUI.MainCard
               borderRadius={
-                repost ? 'rounded-bl-2xl rounded-br-2xl' : 'rounded-2xl'
+                repost
+                  ? 'rounded-bl-2xl rounded-br-2xl'
+                  : 'rounded-2xl flex-grow'
               }
               className={twMerge(rest.className)}
             >
@@ -91,15 +120,18 @@ export default function Post({
                 >
                   <PostUI.ImageUser
                     className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
-                    src={post?.author?.profile?.image || '/images/user.png'}
+                    src={post?.author?.profile?.image || '/images/Userpic.png'}
                     alt="user"
                   />
                   <div
-                    className={`${layout !== 'grid' && 'lg:flex'
-                      } justify-start items-center gap-4`}
+                    className={`${
+                      layout !== 'grid' && 'lg:flex'
+                    } justify-start items-center gap-4`}
                   >
                     <PostUI.Username
-                      className={size === 'full' ? 'lg:text-2xl' : ''}
+                      className={`hover:underline hover:decoration-solid ${
+                        size === 'full' ? 'lg:text-2xl' : ''
+                      }`}
                     >
                       {post?.author?.profile?.name &&
                         minifyText(post?.author?.profile?.name, 24)}
@@ -114,11 +146,21 @@ export default function Post({
                 </PostUI.Time>
               </PostUI.Header>
               <div
-                className={size === 'full' ? 'lg:inline-flex gap-12' : 'block'}
+                className={
+                  size === 'full'
+                    ? 'lg:inline-flex gap-12'
+                    : layout === 'grid'
+                    ? 'block min-h-[180px]'
+                    : 'block'
+                }
               >
                 <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
                   <PostUI.Content
-                    text={post?.post?.content}
+                    text={
+                      size === 'full'
+                        ? post?.post?.content
+                        : minifyText(post?.post?.content, 140)
+                    }
                     className={size === 'full' ? 'lg:text-xl' : 'w-full'}
                   />
                   {/** <img
@@ -144,41 +186,61 @@ export default function Post({
                 </div>
                 {post?.tags?.length > 0 && (
                   <div
-                    className={`flex-col inline-flex gap-4 ${size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'
-                      }`}
+                    className={`flex-col inline-flex gap-4 ${
+                      size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'
+                    }`}
                   >
                     {sortedTags
                       .slice(0, size === 'full' ? 3 : 1)
-                      .map((tagObj, index) => (
-                        <PostUI.Footer key={index}>
-                          <PostUtil.Tag clicked color="amber">
-                            # {tagObj.tag}
-                          </PostUtil.Tag>
-                          <Button.Action
-                            variant="custom"
-                            size="small"
-                            icon={<Icon.Plus />}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleSubmit(tagObj.tag);
-                            }}
-                          />
-                          <PostUtil.Counter counter={tagObj.count} />
-                          {tagObj?.from
-                            .slice(0, 5)
-                            .map((fromItem: any, fromIndex: number) => (
-                              <Image
-                                width={32}
-                                height={32}
-                                alt={`pic-${fromIndex + 1}`}
-                                key={fromIndex}
-                                className={`w-[32px] h-[32px] rounded-full ${fromIndex !== 0 ? '-ml-5' : ''
+                      .map((tagObj, index) => {
+                        const isTagFound = tagObj.from.some(
+                          (fromItem) => fromItem.author.id === pubky
+                        );
+
+                        return (
+                          <PostUI.Footer key={index}>
+                            <PostUtil.Tag
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleTagSearch(tagObj.tag);
+                              }}
+                              clicked={isTagFound}
+                              color="amber"
+                            >
+                              # {tagObj.tag}
+                            </PostUtil.Tag>
+                            <Button.Action
+                              variant="custom"
+                              size="small"
+                              icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                isTagFound
+                                  ? handleDeleteTag(tagObj.tag)
+                                  : handleAddTag(tagObj.tag);
+                              }}
+                            />
+                            <PostUtil.Counter counter={tagObj.count} />
+                            {tagObj?.from
+                              .slice(0, 5)
+                              .map((fromItem, fromIndex: number) => (
+                                <Image
+                                  width={32}
+                                  height={32}
+                                  alt={`pic-${fromIndex + 1}`}
+                                  key={fromIndex}
+                                  className={`w-[32px] h-[32px] rounded-full ${
+                                    fromIndex !== 0 ? '-ml-5' : ''
                                   }`}
-                                src={fromItem.author?.profile?.image}
-                              />
-                            ))}
-                        </PostUI.Footer>
-                      ))}
+                                  src={
+                                    fromItem.author?.profile?.image ||
+                                    '/images/Userpic.png'
+                                  }
+                                />
+                              ))}
+                          </PostUI.Footer>
+                        );
+                      })}
                   </div>
                 )}
               </div>
@@ -187,7 +249,7 @@ export default function Post({
                   size="small"
                   variant="custom"
                   icon={<Icon.Tag size="16" />}
-                  counter={0}
+                  counter={post?.tags?.length}
                   onClick={(event) => {
                     event.stopPropagation();
                     setShowModalTag(true);
@@ -199,6 +261,17 @@ export default function Post({
                   icon={<Icon.ChatCircleText size="16" />}
                   counter={0}
                 />
+                {post?.author?.id === pubky && (
+                  <Button.Action
+                    size="small"
+                    variant="custom"
+                    icon={<Icon.Trash size="16" />}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDeletePost(post.id);
+                    }}
+                  />
+                )}
                 {/* <Button.Action
                   size="small"
                   variant="custom"
@@ -235,7 +308,6 @@ export default function Post({
       />
       <Modal.Tag
         post={post}
-        setRefreshList={setRefreshList}
         showModalTag={showModalTag}
         setShowModalTag={setShowModalTag}
       />

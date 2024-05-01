@@ -2,13 +2,21 @@
   "name": "@social/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start:prod": "nx build web && nx serve web --prod",
+    "start:dev": "nx serve web",
+    "build": "nx build web",
+    "reset": "nx reset",
+    "clean": "npm run reset && rm -rf ./node_modules/ ./dist/",
+    "setup:dev": "npm i && npm link @pubky/sdk @pubky/common"
+  },
   "private": true,
   "dependencies": {
     "@nx/next": "17.2.4",
     "@swc/helpers": "~0.5.2",
     "jdenticon": "^3.2.0",
     "next": "^14.1.0",
+    "nextjs-toploader": "^1.6.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwind-merge": "^2.2.1",

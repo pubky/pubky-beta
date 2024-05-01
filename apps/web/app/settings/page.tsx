@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -35,13 +34,14 @@ export default function Index() {
   const { pubky, signUp, saveProfile, getProfile } = useClientContext();
 
   const [handler, setHandler] = useState('Loading...');
-  const [name, setName] = useState(undefined);
-  const [bio, setBio] = useState(undefined);
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
-  const [website, setWebsite] = useState(undefined);
-  const [email, setEmail] = useState(undefined);
-  const [x, setX] = useState(undefined);
-  const [telegram, setTelegram] = useState(undefined);
+  const [website, setWebsite] = useState('');
+  const [email, setEmail] = useState('');
+  const [x, setX] = useState('');
+  const [telegram, setTelegram] = useState('');
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
     bio: '',
@@ -55,21 +55,23 @@ export default function Index() {
     setHandler(minifyPubky(pubky));
     async function fetchData() {
       try {
-        const { profile } = await getProfile(false);
+        const userProfile = await getProfile();
 
-        setName(profile.name);
-        setBio(profile.bio);
-        setImage(profile.image);
+        if (userProfile) {
+          setName(userProfile.name);
+          setBio(userProfile.bio);
+          setImage(userProfile.image || '/images/Userpic.png');
 
-        for (const link of profile.links) {
-          if (link.title === 'website') {
-            setWebsite(link.url);
-          } else if (link.title === 'email') {
-            setEmail(link.url);
-          } else if (link.title === 'x') {
-            setX(link.url);
-          } else if (link.title === 'telegram') {
-            setTelegram(link.url);
+          for (const link of userProfile.links) {
+            if (link.title === 'website') {
+              setWebsite(link.url);
+            } else if (link.title === 'email') {
+              setEmail(link.url);
+            } else if (link.title === 'x') {
+              setX(link.url);
+            } else if (link.title === 'telegram') {
+              setTelegram(link.url);
+            }
           }
         }
       } catch (error) {
@@ -91,7 +93,11 @@ export default function Index() {
   };
 
   const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
     try {
+      setLoading(true);
       setErrors({
         name: '',
         bio: '',
@@ -122,6 +128,7 @@ export default function Index() {
         );
 
         setErrors((prev) => ({ ...prev, ...errorMessages }));
+        setLoading(false);
         return;
       }
 
@@ -154,10 +161,11 @@ export default function Index() {
           placeholder="Your Name"
           className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
           defaultValue={name}
-          autoFocus
           autoCorrect="off"
           error={errors.name}
-          onChange={(e: any) => setName(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setName(e.target.value)
+          }
         />
         <Typography.PageTitle className="text-opacity-50 break-words">
           {handler}
@@ -174,7 +182,9 @@ export default function Index() {
                 className="h-[422px]"
                 defaultValue={bio}
                 error={errors.bio}
-                onChange={(e: any) => setBio(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setBio(e.target.value)
+                }
               />
             </Card.Primary>
           </Card.Primary>
@@ -185,7 +195,9 @@ export default function Index() {
               placeholder="https://"
               defaultValue={website}
               error={errors.website}
-              onChange={(e: any) => setWebsite(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setWebsite(e.target.value)
+              }
             />
 
             <Input.Label className="mt-4" value="Email" />
@@ -194,7 +206,9 @@ export default function Index() {
               placeholder="user@provider.com"
               defaultValue={email}
               error={errors.email}
-              onChange={(e: any) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
             />
 
             <Input.Label className="mt-4" value="x (twitter)" />
@@ -203,7 +217,9 @@ export default function Index() {
               placeholder="@user"
               defaultValue={x}
               error={errors.x}
-              onChange={(e: any) => setX(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setX(e.target.value)
+              }
             />
 
             <Input.Label className="mt-4" value="telegram" />
@@ -212,7 +228,7 @@ export default function Index() {
               placeholder="@user"
               defaultValue={telegram}
               error={errors.telegram}
-              onChange={(e: any) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setTelegram(e.target.value.replace('@', ''))
               }
             />
@@ -238,8 +254,9 @@ export default function Index() {
             </label>
             <div className="pt-[40px]">
               <Button.Large
-                onClick={() => handleSubmit()}
+                onClick={!loading ? () => handleSubmit() : undefined}
                 icon={<Icon.Check />}
+                loading={loading}
               >
                 Finish
               </Button.Large>

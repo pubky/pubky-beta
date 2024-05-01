@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
 import { useFilterContext } from '../../../contexts/filters';
@@ -13,11 +13,20 @@ export default function SortPosts() {
     recent: <Icon.Asterisk size="24" />,
     tags: <Icon.Tag size="24" />,
     activity: <Icon.Fire size="24" />,
+    loading: <Icon.LoadingSpin className="animate-spin" />,
   };
   const [dropdownValue, setDropdownValue] = useState({
     value: sort ? sort : 'recent',
-    iconOption: sort ? icons[sort] : icons.recent,
+    iconOption: icons.loading,
   });
+
+  useEffect(() => {
+    setDropdownValue({
+      value: sort ? sort : 'recent',
+      iconOption: sort ? icons[sort] : icons.recent,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DropDown
