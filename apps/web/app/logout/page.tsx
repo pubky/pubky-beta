@@ -37,7 +37,11 @@ export default function Index() {
           />
         </div>
         <div className="flex-col justify-center items-center flex">
-          <Link href="/onboarding/sign-in" className="w-full sm:w-80">
+          <Link
+            href="/onboarding/sign-in"
+            className="w-full sm:w-80"
+            id="logout-link"
+          >
             <Button.Large>Sign in again</Button.Large>
           </Link>
         </div>

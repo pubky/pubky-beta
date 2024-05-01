@@ -169,6 +169,7 @@ export default function Index() {
         className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
         defaultValue={name ? name : ''}
         autoFocus
+        id="onboarding-name-input"
         autoCorrect="off"
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setName(e.target.value)
@@ -185,6 +186,7 @@ export default function Index() {
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
               className="h-[420px]"
+              id="onboarding-bio-input"
               defaultValue={bio ? bio : ''}
               error={errors.bio}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -268,6 +270,7 @@ export default function Index() {
               className="h-[70px]"
               type="password"
               error={errors.password}
+              id="onboarding-recovery-password-input"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPassword(e.target.value)
               }
@@ -278,6 +281,7 @@ export default function Index() {
               onClick={!loading ? () => handleSubmit() : undefined}
               icon={<Icon.Check />}
               loading={loading}
+              id="onboarding-submit-button"
             >
               Download Recovery File
             </Button.Large>
