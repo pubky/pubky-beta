@@ -143,6 +143,7 @@ export default function Index() {
               className="h-[70px]"
               type="password"
               error={errors.password}
+              id="onboarding-password-input"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPassword(e.target.value)
               }
@@ -171,6 +172,7 @@ export default function Index() {
             icon={<Icon.Check />}
             loading={loading}
             className="mt-4"
+            id="onboarding-sign-in-button"
           >
             Login
           </Button.Large>
@@ -179,7 +181,11 @@ export default function Index() {
           title="New Pubky Account"
           text="Another option is to create a new Pubky account."
         >
-          <Link href="/onboarding/sign-up" className="mt-4 lg:mt-0">
+          <Link
+            href="/onboarding/sign-up"
+            className="mt-4 lg:mt-0"
+            id="onboarding-sign-up-link"
+          >
             <Button.Large icon={<Icon.UserRectangle />}>
               Create Account
             </Button.Large>

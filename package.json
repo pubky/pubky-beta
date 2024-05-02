@@ -5,6 +5,7 @@
   "scripts": {
     "start:prod": "nx build web && nx serve web --prod",
     "start:dev": "nx serve web",
+    "start:e2e": "nx e2e web-e2e --watch",
     "build": "nx build web",
     "reset": "nx reset",
     "clean": "npm run reset && rm -rf ./node_modules/ ./dist/",
