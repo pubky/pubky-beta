@@ -41,7 +41,7 @@ export default function Ranking({
               <Image
                 width={201}
                 height={201}
-                className="rounded-full"
+                className="w-full h-full rounded-full"
                 src={contact?.profile?.image || '/images/Userpic.png'}
                 alt={`contact-pic-${index + 1}`}
               />
