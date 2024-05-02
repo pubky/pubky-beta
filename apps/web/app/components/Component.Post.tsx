@@ -38,11 +38,18 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
 
-  const { pubky, createTag, searchTags, setSearchTags, deleteTag, deletePost } =
-    useClientContext();
+  const {
+    pubky,
+    createTag,
+    searchTags,
+    setSearchTags,
+    deleteTag,
+    deletePost,
+    createBookmark,
+    deleteBookmark,
+  } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
-  // const [bookmark, setBookmark] = useState(false);
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
 
   useEffect(() => {
@@ -54,6 +61,14 @@ export default function Post({
 
   const handleDeletePost = async (postId: string) => {
     await deletePost(postId);
+  };
+
+  const handleAddBookmark = async (postId: string) => {
+    await createBookmark(postId);
+  };
+
+  const handleDeleteBookmark = async (postId: string, bookmarkId: string) => {
+    await deleteBookmark(postId, bookmarkId);
   };
 
   const handleDeleteTag = async (tag: string) => {
@@ -282,20 +297,22 @@ export default function Post({
                     setShowModalRepost(true);
                   }}
                 /> */}
-                {/* <Button.Action
+                <Button.Action
                   size="small"
                   variant="custom"
                   icon={
                     <Icon.BookmarkSimple
-                      opacity={bookmark ? '1' : '0.2'}
+                      opacity={post?.bookmark?.id ? '1' : '0.2'}
                       size="16"
                     />
                   }
                   onClick={(event) => {
                     event.stopPropagation();
-                    setBookmark(!bookmark);
+                    post?.bookmark?.id
+                      ? handleDeleteBookmark(post.uri, post.bookmark.id)
+                      : handleAddBookmark(post.uri);
                   }}
-                /> */}
+                />
               </PostUI.Actions>
             </PostUI.MainCard>
           </div>

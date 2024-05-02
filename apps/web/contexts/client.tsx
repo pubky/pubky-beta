@@ -26,6 +26,7 @@ import {
   IProfile,
   IDeletePost,
   INewPost,
+  IBookmark,
 } from '../types';
 
 export * from '@pubky/common';
@@ -286,6 +287,51 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         throw new Error(`Put post:${pk} failed: ${postResult.error.message}`);
 
       return postResult.value as ICreatePostResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const createBookmark = async (uri: string): Promise<IBookmark | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get profile failed: not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.bookmarks.put(pk, uri);
+
+      if (!result.ok)
+        throw new Error(`Put bookmark:${pk} failed: ${result.error.message}`);
+
+      return result.value as IBookmark;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const deleteBookmark = async (
+    uri: string,
+    uriBookmark: string
+  ): Promise<IBookmark | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get profile failed: not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.bookmarks.delete(pk, uri, uriBookmark);
+
+      if (!result.ok)
+        throw new Error(
+          `Delete bookmark:${pk} failed: ${result.error.message}`
+        );
+
+      return result.value as IBookmark;
     } catch (error) {
       console.log(error);
       return null;
@@ -638,6 +684,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         posts,
         isLoggedIn,
         createPost,
+        createBookmark,
+        deleteBookmark,
         createTag,
         deleteTag,
         deletePost,
