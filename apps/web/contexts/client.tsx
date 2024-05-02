@@ -315,7 +315,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const deleteBookmark = async (
     uri: string,
-    uriBookmark: string
+    bookmarkId: string
   ): Promise<IBookmark | null> => {
     try {
       const pk = await isLoggedIn();
@@ -324,7 +324,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       await client.ready();
 
-      const result = await client.social.bookmarks.delete(pk, uri, uriBookmark);
+      const result = await client.social.bookmarks.delete(pk, uri, bookmarkId);
 
       if (!result.ok)
         throw new Error(
