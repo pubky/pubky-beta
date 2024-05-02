@@ -2,11 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import { Contacts } from '.';
-import { IFollower, LoadingContacts } from '../../../types';
+import {
+  IFollower,
+  IFollowing,
+  IFriend,
+  LoadingContacts,
+} from '../../../types';
 import { useClientContext } from '../../../contexts/client';
 import { useFilterContext } from '../../../contexts/filters';
 
-export default function Contact({ contacts }: { contacts: IFollower[] }) {
+export default function Contact({
+  contacts,
+}: {
+  contacts: IFollower[] | IFollowing[] | IFriend[] | [];
+}) {
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const { contactsLayout } = useFilterContext();
   const [initLoadingContacts, setInitLoadingContacts] = useState(true);
@@ -101,7 +110,7 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
                 <Contacts.Ranking
                   index={`rank-${contact.uri}`}
                   contactId={contactId}
-                  contact={contact}
+                  contact={contact as IFollower}
                   showDivider={contacts.length - 1 !== index}
                   initLoadingContacts={initLoadingContacts}
                   isFollowed={isFollowed}
@@ -113,7 +122,7 @@ export default function Contact({ contacts }: { contacts: IFollower[] }) {
                 <Contacts.List
                   index={`list-${contact.uri}`}
                   contactId={contactId}
-                  contact={contact}
+                  contact={contact as IFollower}
                   showDivider={contacts.length - 1 !== index}
                   pubkeyUser={pubkeyUser}
                   initLoadingContacts={initLoadingContacts}
