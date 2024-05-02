@@ -35,7 +35,7 @@ export default function Index() {
           Your keys, your content, your rules. Social content, re-imagined.
         </Typography.PageTitle>
         <div className="relative">
-          <Link href="/onboarding/sign-in">
+          <Link id="onboarding-sign-in-link" href="/onboarding/sign-in">
             <Button.Large className="sm:w-80 w-full mt-12 relative z-20">
               Get Started
             </Button.Large>

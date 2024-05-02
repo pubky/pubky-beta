@@ -158,7 +158,11 @@ export default function Index() {
           title="Ready to Go!"
           text="Pubky successfully imported your profile and contacts."
         >
-          <Link href="/home" className="mt-4 lg:mt-0">
+          <Link
+            href="/home"
+            className="mt-4 lg:mt-0"
+            id="onboarding-welcome-link"
+          >
             <Button.Large icon={<Icon.Check />}>Finish</Button.Large>
           </Link>
         </Card.Primary>

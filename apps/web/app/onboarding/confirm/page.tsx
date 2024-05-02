@@ -21,7 +21,9 @@ export default function Index() {
       </div>
       <div className="flex-col justify-center items-center flex">
         <Link href="/home" className="w-full sm:w-80">
-          <Button.Large>Start Exploring</Button.Large>
+          <Button.Large id="onboarding-start-button">
+            Start Exploring
+          </Button.Large>
         </Link>
       </div>
     </Onboarding.Layout>
