@@ -276,17 +276,6 @@ export default function Post({
                   icon={<Icon.ChatCircleText size="16" />}
                   counter={0}
                 />
-                {post?.author?.id === pubky && (
-                  <Button.Action
-                    size="small"
-                    variant="custom"
-                    icon={<Icon.Trash size="16" />}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleDeletePost(post.id);
-                    }}
-                  />
-                )}
                 {/* <Button.Action
                   size="small"
                   variant="custom"
@@ -313,6 +302,17 @@ export default function Post({
                       : handleAddBookmark(post.uri);
                   }}
                 />
+                {post?.author?.id === pubky && (
+                  <Button.Action
+                    size="small"
+                    variant="custom"
+                    icon={<Icon.Trash size="16" />}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDeletePost(post.id);
+                    }}
+                  />
+                )}
               </PostUI.Actions>
             </PostUI.MainCard>
           </div>
