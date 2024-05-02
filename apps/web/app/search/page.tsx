@@ -1,6 +1,7 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Content, Icon, Typography } from '@social/ui-shared';
 import {
   // ActiveFriends,
@@ -13,7 +14,6 @@ import {
   WhoFollow,
 } from '../components';
 import { DropDown } from '../components/DropDown';
-import { useEffect, useRef, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost } from '../../types';
@@ -39,10 +39,9 @@ const layouts = {
 
 export default function Index() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   const { layout, reach } = useFilterContext();
-  const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } =
-    useClientContext();
+  const { listGlobalPosts, searchTags, posts, setPosts } = useClientContext();
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -96,15 +95,15 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reach, searchTags]);
 
-  useEffect(() => {
-    const search = searchParams.get('tags');
+  // useEffect(() => {
+  //   const search = searchParams.get('tags');
 
-    if (search) {
-      const tagsArray = search.split(',');
-      setSearchTags(tagsArray);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  //   if (search) {
+  //     const tagsArray = search.split(',');
+  //     setSearchTags(tagsArray);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [searchParams]);
 
   useEffect(() => {
     const searchTagsString = searchTags.join(',');
