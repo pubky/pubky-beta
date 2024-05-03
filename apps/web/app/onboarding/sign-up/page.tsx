@@ -2,11 +2,19 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Content, Button, Input, Card, Icon } from '@social/ui-shared';
+import {
+  Content,
+  Button,
+  Input,
+  Card,
+  Icon,
+  Typography,
+} from '@social/ui-shared';
 import { Onboarding } from '../components';
 import { useClientContext } from '../../../contexts/client';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
+import Link from 'next/link';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -154,12 +162,39 @@ export default function Index() {
         setLoading(false);
       }
 
-      router.push('/onboarding/confirm');
+      router.push('/onboarding/pubky');
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUploadImage = () => {
+    if (image === '/images/Userpic.png') {
+      const fileInput = document.getElementById('fileInput');
+      if (fileInput) {
+        fileInput.click();
+      }
+    } else {
+      setImage('/images/Userpic.png');
+    }
+  };
+
+  const getButtonIconImage = () => {
+    return image === '/images/Userpic.png' ? (
+      <Icon.File size="16" />
+    ) : (
+      <Icon.Trash size="16" />
+    );
+  };
+
+  const getButtonLabelImage = () => {
+    return image === '/images/Userpic.png' ? 'Choose file' : undefined;
+  };
+
+  const getButtonWidthImage = () => {
+    return image === '/images/Userpic.png' ? 'w-[154px]' : 'w-[60px]';
   };
 
   return (
@@ -176,6 +211,9 @@ export default function Index() {
         }
         error={errors.name}
       />
+      <Typography.PageTitle className="text-opacity-50 mt-4 sm:mt-0">
+        Enter your bio, add some links, and upload a user picture.
+      </Typography.PageTitle>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Profile">
           <Input.Label className="mt-4" value="Short bio" />
@@ -185,7 +223,7 @@ export default function Index() {
           >
             <Input.TextArea
               placeholder="Short bio. Tell a bit about yourself."
-              className="h-[420px]"
+              className="h-[370px]"
               id="onboarding-bio-input"
               defaultValue={bio ? bio : ''}
               error={errors.bio}
@@ -246,24 +284,31 @@ export default function Index() {
           </div>
         </Card.Primary>
         <Card.Primary title="Picture">
-          <label htmlFor="fileInput">
-            {image && (
+          {image && (
+            <div className="relative">
               <Image
                 width={150}
                 height={150}
-                className="w-80 h-80 mt-6 rounded-full cursor-pointer"
+                className="w-80 h-80 mt-6 rounded-full"
                 alt="user"
                 src={image}
               />
-            )}
-            <input
-              id="fileInput"
-              type="file"
-              accept="image/*"
-              onChange={UploadPic}
-              style={{ display: 'none' }}
-            />
-          </label>
+              <Button.Transparent
+                icon={getButtonIconImage()}
+                onClick={handleUploadImage}
+                className={`${getButtonWidthImage()} mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+              >
+                {getButtonLabelImage()}
+              </Button.Transparent>
+            </div>
+          )}
+          <input
+            id="fileInput"
+            type="file"
+            accept="image/*"
+            onChange={UploadPic}
+            className="hidden"
+          />
           <div>
             <Input.Label className="mt-6" value="Encrypt Recovery Password" />
             <Input.Text
@@ -276,18 +321,28 @@ export default function Index() {
               }
             />
           </div>
-          <div className="pt-[30px]">
-            <Button.Large
-              onClick={!loading ? () => handleSubmit() : undefined}
-              icon={<Icon.Check />}
-              loading={loading}
-              id="onboarding-submit-button"
-            >
-              Download Recovery File
-            </Button.Large>
-          </div>
         </Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
+      </div>
+      <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
+        <Link href="/onboarding/sign-in">
+          <Button.Large
+            icon={<Icon.ArrowLeft />}
+            className="w-[140px]"
+            variant="secondary"
+          >
+            Back
+          </Button.Large>
+        </Link>
+        <Button.Large
+          onClick={!loading ? () => handleSubmit() : undefined}
+          icon={<Icon.ArrowRight />}
+          className="w-[140px]"
+          loading={loading}
+          id="onboarding-submit-button"
+        >
+          Continue
+        </Button.Large>
       </div>
     </Onboarding.Layout>
   );

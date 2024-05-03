@@ -20,7 +20,7 @@ export default function Index() {
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Permissions">
           <List.Primary
-            className="mt-6"
+            className="my-6"
             title="Pubky will be able to:"
             list={[
               'Read your profile',
@@ -30,13 +30,6 @@ export default function Index() {
               'Read payment prefs',
             ]}
           />
-          <div className="mt-12">
-            <Link href="/onboarding/welcome" id="onboarding-permissions-link">
-              <Button.Large icon={<Icon.Check />}>
-                Accept & Sign in
-              </Button.Large>
-            </Link>
-          </div>
         </Card.Primary>
         <Card.Primary className="justify-start" title="No access">
           <List.Primary
@@ -45,7 +38,28 @@ export default function Index() {
             list={['Read your private key', 'Read encrypted content']}
           />
         </Card.Primary>
+        <Card.Primary
+          className="justify-start"
+          title="Be aware"
+          text="All content, posts, and profile data you create will be openly available to anyone."
+        />
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
+      </div>
+      <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
+        <Link href="/onboarding/sign-in">
+          <Button.Large
+            icon={<Icon.ArrowLeft />}
+            className="w-[140px]"
+            variant="secondary"
+          >
+            Back
+          </Button.Large>
+        </Link>
+        <Link href="/onboarding/welcome">
+          <Button.Large icon={<Icon.Check />} className="w-[140px] z-20">
+            Accept
+          </Button.Large>
+        </Link>
       </div>
     </Onboarding.Layout>
   );

@@ -3,7 +3,7 @@ import { Typography } from '../Typography';
 import { Icon } from '../Icon';
 
 interface LargeButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  children?: string;
+  children?: React.ReactNode;
   variant?: 'primary' | 'secondary';
   icon?: React.ReactNode;
   disabled?: boolean;
@@ -31,8 +31,8 @@ export const Large = ({
 
   switch (variant) {
     case 'secondary':
-      stateButton = disabled ? '' : 'hover:bg-opacity-30';
-      cssColorButton = ` bg-white bg-opacity-20 `;
+      stateButton = disabled ? '' : 'hover:bg-opacity-20';
+      cssColorButton = ` bg-white bg-opacity-10 `;
       break;
   }
 
@@ -43,7 +43,7 @@ export const Large = ({
       {...rest}
       className={twMerge(cssButton, cssColorButton, rest.className)}
     >
-      {loading ? <Icon.LoadingSpin /> : <div>{icon}</div>}
+      {loading ? <Icon.LoadingSpin /> : icon && <div>{icon}</div>}
       <Typography.Body className={colorText} variant="small-bold">
         {children}
       </Typography.Body>

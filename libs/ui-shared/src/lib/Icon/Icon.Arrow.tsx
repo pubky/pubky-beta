@@ -100,3 +100,49 @@ export const Repost = ({ size = '16', color = 'white' }: IconProps) => (
     />
   </svg>
 );
+
+export const ArrowLeft = ({ size = '16', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M2 8C2 7.72386 2.22386 7.5 2.5 7.5H13.5C13.7761 7.5 14 7.72386 14 8C14 8.27614 13.7761 8.5 13.5 8.5H2.5C2.22386 8.5 2 8.27614 2 8Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M7.35355 3.14645C7.54882 3.34171 7.54882 3.65829 7.35355 3.85355L3.20711 8L7.35355 12.1464C7.54882 12.3417 7.54882 12.6583 7.35355 12.8536C7.15829 13.0488 6.84171 13.0488 6.64645 12.8536L2.14645 8.35355C1.95118 8.15829 1.95118 7.84171 2.14645 7.64645L6.64645 3.14645C6.84171 2.95118 7.15829 2.95118 7.35355 3.14645Z"
+      fill={color}
+    />
+  </svg>
+);
+
+export const ArrowRight = ({ size = '16', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M2 8C2 7.72386 2.22386 7.5 2.5 7.5H13.5C13.7761 7.5 14 7.72386 14 8C14 8.27614 13.7761 8.5 13.5 8.5H2.5C2.22386 8.5 2 8.27614 2 8Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M8.64645 3.14645C8.84171 2.95118 9.15829 2.95118 9.35355 3.14645L13.8536 7.64645C14.0488 7.84171 14.0488 8.15829 13.8536 8.35355L9.35355 12.8536C9.15829 13.0488 8.84171 13.0488 8.64645 12.8536C8.45118 12.6583 8.45118 12.3417 8.64645 12.1464L12.7929 8L8.64645 3.85355C8.45118 3.65829 8.45118 3.34171 8.64645 3.14645Z"
+      fill={color}
+    />
+  </svg>
+);
