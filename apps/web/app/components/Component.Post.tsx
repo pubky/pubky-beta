@@ -38,11 +38,18 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
 
-  const { pubky, createTag, searchTags, setSearchTags, deleteTag, deletePost } =
-    useClientContext();
+  const {
+    pubky,
+    createTag,
+    searchTags,
+    setSearchTags,
+    deleteTag,
+    deletePost,
+    createBookmark,
+    deleteBookmark,
+  } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
-  // const [bookmark, setBookmark] = useState(false);
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
 
   useEffect(() => {
@@ -54,6 +61,14 @@ export default function Post({
 
   const handleDeletePost = async (postId: string) => {
     await deletePost(postId);
+  };
+
+  const handleAddBookmark = async (postId: string) => {
+    await createBookmark(postId);
+  };
+
+  const handleDeleteBookmark = async (postId: string, bookmarkId: string) => {
+    await deleteBookmark(postId, bookmarkId);
   };
 
   const handleDeleteTag = async (tag: string) => {
@@ -261,6 +276,32 @@ export default function Post({
                   icon={<Icon.ChatCircleText size="16" />}
                   counter={0}
                 />
+                {/* <Button.Action
+                  size="small"
+                  variant="custom"
+                  icon={<Icon.Repost size="16" />}
+                  counter={0}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setShowModalRepost(true);
+                  }}
+                /> */}
+                <Button.Action
+                  size="small"
+                  variant="custom"
+                  icon={
+                    <Icon.BookmarkSimple
+                      opacity={post?.bookmark?.id ? '1' : '0.2'}
+                      size="16"
+                    />
+                  }
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    post?.bookmark?.id
+                      ? handleDeleteBookmark(post.uri, post.bookmark.id)
+                      : handleAddBookmark(post.uri);
+                  }}
+                />
                 {post?.author?.id === pubky && (
                   <Button.Action
                     size="small"
@@ -272,30 +313,6 @@ export default function Post({
                     }}
                   />
                 )}
-                {/* <Button.Action
-                  size="small"
-                  variant="custom"
-                  icon={<Icon.Repost size="16" />}
-                  counter={0}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setShowModalRepost(true);
-                  }}
-                /> */}
-                {/* <Button.Action
-                  size="small"
-                  variant="custom"
-                  icon={
-                    <Icon.BookmarkSimple
-                      opacity={bookmark ? '1' : '0.2'}
-                      size="16"
-                    />
-                  }
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setBookmark(!bookmark);
-                  }}
-                /> */}
               </PostUI.Actions>
             </PostUI.MainCard>
           </div>
