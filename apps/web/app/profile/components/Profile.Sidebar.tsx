@@ -206,7 +206,9 @@ export default function Sidebar({
             {initLoadingFollowed ? (
               <Button.Medium
                 loading={initLoadingFollowed}
-                className={creatorPubky === pubky ? 'hidden' : ''}
+                className={
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                }
               >
                 Loading
               </Button.Medium>
@@ -217,7 +219,9 @@ export default function Sidebar({
                 loading={loadingFollowed}
                 variant="default"
                 icon={<Icon.UserMinus size="16" />}
-                className={creatorPubky === pubky ? 'hidden' : ''}
+                className={
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                }
               >
                 Unfollow
               </Button.Medium>
@@ -228,7 +232,9 @@ export default function Sidebar({
                 loading={loadingFollowed}
                 variant="default"
                 icon={<Icon.UserPlus size="16" />}
-                className={creatorPubky === pubky ? 'hidden' : ''}
+                className={
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                }
               >
                 Follow
               </Button.Medium>
