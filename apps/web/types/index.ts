@@ -25,6 +25,11 @@ export interface ClientContextType {
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string) => Promise<IPost | null>;
   deletePost: (postId: string) => Promise<IDeletePost | null>;
+  createBookmark: (postId: string) => Promise<IBookmark | null>;
+  deleteBookmark: (
+    postId: string,
+    bookmarkId: string
+  ) => Promise<IBookmark | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
   deleteTag: (uri: string, tag: string) => Promise<IDeleteTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
@@ -94,8 +99,13 @@ export interface IPost {
   author: IAuthor;
   post: IPostContent;
   tags: ITaggedPost[];
+  bookmark: BookmarkPost;
   createdAt: number;
   indexedAt: number;
+}
+
+export interface BookmarkPost {
+  id: string;
 }
 
 export interface ITag {
@@ -157,6 +167,11 @@ export interface IDeleteTagResponse {
 
 export interface IDeletePost {
   id: string;
+}
+
+export interface IBookmark {
+  id: string;
+  uri: string;
 }
 
 export interface IPostFrom {

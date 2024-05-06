@@ -172,12 +172,12 @@ export default function Header({ title, className, children }: HeaderProps) {
                 text="Notifications"
                 counter={5}
               /> */}
-              {/* <Menu.Section
+              <Menu.Section
                 href="/bookmarks"
                 icon={<Icon.BookmarkSimple />}
                 text="Bookmarks"
                 onClick={() => setDrawerOpen(false)}
-              /> */}
+              />
               <Menu.Section
                 href="/hot-tags"
                 icon={<Icon.Tag size="24" />}
