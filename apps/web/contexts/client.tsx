@@ -28,8 +28,6 @@ import {
   INewPost,
 } from '../types';
 
-export * from '@pubky/common';
-
 import Client from '@pubky/sdk';
 import localStorageUtils from '../libs/localStorageUtils';
 
