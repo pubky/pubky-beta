@@ -23,7 +23,7 @@ export default function OnboardingLayout({
       const loggedIn = await isLoggedIn();
 
       if (!loggedIn || pathname === '/onboarding/welcome') {
-        setLogoLink('/onboarding/sign-in');
+        setLogoLink('/onboarding');
       } else {
         setLogoLink('/home');
       }

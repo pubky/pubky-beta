@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
   Content,
@@ -15,6 +15,7 @@ import { useClientContext } from '../../../contexts/client';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import Link from 'next/link';
+import { Modal } from '../../components/Modal';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -26,10 +27,6 @@ const profileSchema = z.object({
     .string()
     .max(140, { message: 'Maximum length 140 characters' })
     .optional(),
-  website: z.string().url({ message: 'Invalid website URL' }).optional(),
-  email: z.string().email({ message: 'Invalid email address' }).optional(),
-  x: z.string().optional(),
-  telegram: z.string().optional(),
   password: z
     .string()
     .min(6, { message: 'Password must be at least 6 characters long' }),
@@ -43,21 +40,51 @@ export default function Index() {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
-  const [website, setWebsite] = useState('');
-  const [email, setEmail] = useState('');
-  const [x, setX] = useState('');
-  const [telegram, setTelegram] = useState('');
+  const [showModalLink, setShowModalLink] = useState(false);
+  const modalLinkRef = useRef<HTMLDivElement>(null);
+  const [links, setLinks] = useState<
+    { title: string; url: string; placeHolder?: string }[]
+  >([
+    { url: '', title: 'website', placeHolder: 'https://' },
+    { url: '', title: 'email', placeHolder: 'user@provider.com' },
+  ]);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
     bio: '',
-    website: '',
-    email: '',
-    x: '',
-    telegram: '',
     password: '',
   });
+
+  useEffect(() => {
+    const handleClickOutsideModal = (event: MouseEvent) => {
+      if (
+        modalLinkRef.current &&
+        !modalLinkRef.current.contains(event.target as Node)
+      ) {
+        setShowModalLink(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutsideModal);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideModal);
+    };
+  }, [modalLinkRef, setShowModalLink]);
+
+  const handleAddLink = (title: string, url: string) => {
+    setLinks([...links, { title, url }]);
+    setShowModalLink(false);
+  };
+
+  const handleRemoveLink = (indexToRemove: number) => {
+    setLinks((prevLinks) => {
+      const updatedLinks = prevLinks.filter(
+        (_, index) => index !== indexToRemove
+      );
+      return updatedLinks;
+    });
+  };
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -100,20 +127,12 @@ export default function Index() {
       setErrors({
         name: '',
         bio: '',
-        website: '',
-        email: '',
-        x: '',
-        telegram: '',
         password: '',
       });
 
       const result = profileSchema.safeParse({
         name: name,
         bio: bio ? bio : undefined,
-        website: website ? website : undefined,
-        email: email ? email : undefined,
-        x: x ? x : undefined,
-        telegram: telegram ? telegram : undefined,
         password: password,
       });
 
@@ -135,17 +154,19 @@ export default function Index() {
       try {
         const profileInfo = result.data;
 
+        const linksObject: { [fieldName: string]: string } = {};
+        links.forEach((link) => {
+          if (link.url) {
+            linksObject[link.title] = link.url;
+          }
+        });
+
         const signUpResponse = await signUp(
           {
             name,
             bio,
             image,
-            links: {
-              website,
-              email,
-              x,
-              telegram,
-            },
+            links: linksObject,
           },
           profileInfo.password
         );
@@ -215,72 +236,61 @@ export default function Index() {
         Enter your bio, add some links, and upload a user picture.
       </Typography.PageTitle>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-        <Card.Primary title="Profile">
-          <Input.Label className="mt-4" value="Short bio" />
-          <Card.Primary
-            background="bg-white bg-opacity-10"
-            className="border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg"
-          >
-            <Input.TextArea
-              placeholder="Short bio. Tell a bit about yourself."
-              className="h-[370px]"
-              id="onboarding-bio-input"
-              defaultValue={bio ? bio : ''}
-              error={errors.bio}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setBio(e.target.value)
-              }
-            />
-          </Card.Primary>
+        <Card.Primary className="justify-start gap-4" title="Profile">
+          <div>
+            <Input.Label value="Short bio" />
+            <Card.Primary
+              background="bg-white bg-opacity-10"
+              className="border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg mt-2"
+            >
+              <Input.TextArea
+                placeholder="Short bio. Tell a bit about yourself."
+                className="h-[290px]"
+                id="onboarding-bio-input"
+                defaultValue={bio ? bio : ''}
+                error={errors.bio}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setBio(e.target.value)
+                }
+              />
+            </Card.Primary>
+          </div>
         </Card.Primary>
-        <Card.Primary title="Links">
-          <div>
-            <Input.Label className="mt-4" value="Website" />
-            <Input.Text
-              className="h-[70px]"
-              placeholder="https://"
-              defaultValue={website ? website : ''}
-              error={errors.website}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setWebsite(e.target.value)
-              }
-            />
-          </div>
-          <div>
-            <Input.Label className="mt-4" value="Email" />
-            <Input.Text
-              className="h-[70px]"
-              placeholder="user@provider.com"
-              defaultValue={email ? email : ''}
-              error={errors.email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
-            />
-          </div>
-          <div>
-            <Input.Label className="mt-4" value="x (twitter)" />
-            <Input.Text
-              className="h-[70px]"
-              placeholder="@user"
-              defaultValue={x ? x : ''}
-              error={errors.x}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setX(e.target.value)
-              }
-            />
-          </div>
-          <div>
-            <Input.Label className="mt-4" value="telegram" />
-            <Input.Text
-              className="h-[70px]"
-              placeholder="@user"
-              defaultValue={telegram ? telegram : ''}
-              error={errors.telegram}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setTelegram(e.target.value.replace('@', ''))
-              }
-            />
+        <Card.Primary className="justify-start" title="Links">
+          <div className="flex-col inline-flex gap-4 mt-4">
+            {links.map((link, index) => (
+              <div key={index}>
+                <Input.Label value={link.title} />
+                <Input.Text
+                  className="h-[70px] mt-2"
+                  placeholder={link.placeHolder}
+                  value={link.url}
+                  action={
+                    index > 1 && (
+                      <div
+                        className="mt-3 cursor-pointer"
+                        onClick={() => handleRemoveLink(index)}
+                      >
+                        <Icon.Trash color="gray" />
+                      </div>
+                    )
+                  }
+                  //error={errors[link.label]}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const updatedLinks = [...links];
+                    updatedLinks[index].url = e.target.value;
+                    setLinks(updatedLinks);
+                  }}
+                />
+              </div>
+            ))}
+            <Button.Transparent
+              className="w-[40%] mt-2"
+              icon={<Icon.LinkSimple size="16" />}
+              onClick={() => setShowModalLink(true)}
+            >
+              Add link
+            </Button.Transparent>
           </div>
         </Card.Primary>
         <Card.Primary title="Picture">
@@ -344,6 +354,12 @@ export default function Index() {
           Continue
         </Button.Large>
       </div>
+      <Modal.Link
+        showModalLink={showModalLink}
+        setShowModalLink={setShowModalLink}
+        modalLinkRef={modalLinkRef}
+        onAddLink={handleAddLink}
+      />
     </Onboarding.Layout>
   );
 }

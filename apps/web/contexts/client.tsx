@@ -675,15 +675,15 @@ export function useClientContext() {
 const _toPubkeyProfile = (profile: IUserProfile): IProfile => {
   if (!profile) throw new Error('Profile is required');
 
+  const linksArray = Object.entries(profile.links).map(([title, url]) => ({
+    title,
+    url,
+  }));
+
   return {
     name: profile.name || 'anonymous',
     bio: profile?.bio || '',
     image: profile.image,
-    links: [
-      { url: profile?.links?.website || '', title: 'website' },
-      { url: profile?.links?.email || '', title: 'email' },
-      { url: profile?.links?.x || '', title: 'x' },
-      { url: profile?.links?.telegram || '', title: 'telegram' },
-    ],
+    links: linksArray,
   };
 };

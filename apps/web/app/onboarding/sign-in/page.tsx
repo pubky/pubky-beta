@@ -32,7 +32,7 @@ export default function Index() {
             width={320}
             height={236}
             alt="visual"
-            src="/images/visual.png"
+            src="/images/identity.png"
           />
           <Link
             href="/onboarding/sign-up"

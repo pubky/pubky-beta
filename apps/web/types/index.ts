@@ -65,10 +65,7 @@ export interface ILink {
 }
 
 export interface ILinkPubky {
-  website: string | undefined;
-  email: string | undefined;
-  x: string | undefined;
-  telegram: string | undefined;
+  [key: string]: string | undefined;
 }
 
 export interface IProfile {

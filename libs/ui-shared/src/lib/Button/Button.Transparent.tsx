@@ -6,14 +6,16 @@ interface TransparentButtonProps
   children?: string;
   icon?: React.ReactNode;
   className?: string;
+  background?: string;
 }
 
 export const Transparent = ({
   children,
   icon,
+  background = 'bg-white bg-opacity-10 backdrop-blur-lg hover:bg-opacity-20',
   ...rest
 }: TransparentButtonProps) => {
-  const baseCSS = `w-full px-3 py-2 text-white bg-white/opacity-10 rounded-[54px] backdrop-blur-lg justify-center items-center gap-1.5 inline-flex`;
+  const baseCSS = `${background} w-full px-3 py-2 text-white rounded-[54px] justify-center items-center gap-1.5 inline-flex`;
 
   return (
     <button {...rest} className={twMerge(baseCSS, rest.className)}>
