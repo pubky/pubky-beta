@@ -339,7 +339,10 @@ export default function Sidebar({
           <Typography.Label className="text-opacity-50">
             {link.title}
           </Typography.Label>
-          <Link href={link.url} target="_blank">
+          <Link
+            href={link.title === 'email' ? `mailto:${link.url}` : link.url}
+            target="_blank"
+          >
             <Typography.Body
               className="hover:text-opacity-80"
               variant="small-bold"
