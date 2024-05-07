@@ -70,7 +70,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     (localStorageUtils.get('pubky') as TLayouts) || null
   );
   const [seed, setSeed] = useState<string | null>(
-    localStorageUtils.get('seed') || Client.crypto.generateSeed()
+    localStorageUtils.get('seed') || null
   );
   const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [mostFollowed, setMostFollowed] = useState<IMostFollowed[] | null>(
