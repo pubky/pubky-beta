@@ -150,7 +150,7 @@ export default function Index() {
                 rank={index + 1}
                 tag={`# ${tag.tag}`}
                 onClick={() => handleTagSearch(tag.tag)}
-                color="amber"
+                color="purple"
                 counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
               />
               {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
