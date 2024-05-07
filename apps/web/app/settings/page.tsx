@@ -141,11 +141,45 @@ export default function Index() {
       }
 
       const linksObject: { [fieldName: string]: string } = {};
-      links.forEach((link) => {
+      const invalidLinkIndexes: number[] = [];
+
+      links.forEach((link, index) => {
         if (link.url) {
-          linksObject[link.title] = link.url;
+          let validationResult;
+          if (link.title === 'email') {
+            validationResult = z
+              .string()
+              .email({ message: 'Invalid email address' })
+              .safeParse(link.url);
+          } else {
+            validationResult = z
+              .string()
+              .url({ message: 'Invalid website URL' })
+              .optional()
+              .safeParse(link.url);
+          }
+
+          if (!validationResult.success) {
+            invalidLinkIndexes.push(index);
+          } else {
+            linksObject[link.title] = link.url;
+          }
         }
       });
+
+      if (invalidLinkIndexes.length > 0) {
+        const newErrors: FormErrors = {};
+        invalidLinkIndexes.forEach((index) => {
+          if (links[index].title === 'email') {
+            newErrors[`link${index}`] = ['Invalid email address'];
+          } else {
+            newErrors[`link${index}`] = ['Invalid website URL'];
+          }
+        });
+        setErrors((prev) => ({ ...prev, ...newErrors }));
+        setLoading(false);
+        return;
+      }
 
       await saveProfile({
         name,
@@ -236,6 +270,7 @@ export default function Index() {
                     className="h-[70px] mt-2"
                     placeholder={link.placeHolder}
                     value={link.url}
+                    error={errors[`link${index}`]}
                     action={
                       index > 1 && (
                         <div
@@ -246,7 +281,6 @@ export default function Index() {
                         </div>
                       )
                     }
-                    //error={errors[link.label]}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const updatedLinks = [...links];
                       updatedLinks[index].url = e.target.value;

@@ -57,11 +57,7 @@ export const Text = ({
           error ? 'border-red-500 border-opacity-100' : ''
         )}
       />
-      {action && (
-        <div className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white">
-          {action}
-        </div>
-      )}
+      {action && <div className="absolute top-5 right-5">{action}</div>}
       {error && <div className={errorCSS}>{error}</div>}
     </div>
   );
