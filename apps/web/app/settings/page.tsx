@@ -26,9 +26,16 @@ const profileSchema = z.object({
   bio: z.string().min(3, { message: 'Short bio is required' }).optional(),
 });
 
+const passwordSchema = z.object({
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters long' }),
+});
+
 export default function Index() {
   const router = useRouter();
-  const { pubky, signUp, saveProfile, getProfile } = useClientContext();
+  const { pubky, signUp, saveProfile, getProfile, getRecoveryFile } =
+    useClientContext();
 
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
@@ -37,6 +44,11 @@ export default function Index() {
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showModalBackup, setShowModalBackup] = useState(false);
+  const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
+  const [errorPassword, setErrorPassword] = useState<string>('');
+  const modalBackupRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<
     { title: string; url: string; placeHolder?: string }[]
   >([
@@ -56,13 +68,19 @@ export default function Index() {
       ) {
         setShowModalLink(false);
       }
+      if (
+        modalBackupRef.current &&
+        !modalBackupRef.current.contains(event.target as Node)
+      ) {
+        setShowModalBackup(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutsideModal);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideModal);
     };
-  }, [modalLinkRef, setShowModalLink]);
+  }, [modalLinkRef, setShowModalLink, modalBackupRef, setShowModalBackup]);
 
   useEffect(() => {
     setHandler(minifyPubky(pubky));
@@ -191,6 +209,62 @@ export default function Index() {
       router.push('/profile');
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleDownloadRecoveryFile = async ({
+    recoveryFile,
+    filename,
+  }: {
+    recoveryFile: Buffer;
+    filename: string;
+  }) => {
+    try {
+      const element = document.createElement('a');
+
+      const fileBlob = new Blob([recoveryFile]);
+
+      element.href = URL.createObjectURL(fileBlob);
+      element.download = filename;
+      document.body.appendChild(element); // Required for this to work in FireFox
+      element.click();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleRecoveryFile = async () => {
+    if (loadingRecoveryFile) {
+      return;
+    }
+    try {
+      setLoadingRecoveryFile(true);
+      setErrorPassword('');
+
+      const result = passwordSchema.safeParse({
+        password,
+      });
+
+      if (!result.success) {
+        setErrorPassword(
+          result.error.errors.map((err) => err.message).join(', ')
+        );
+        setLoadingRecoveryFile(false);
+        return;
+      }
+      const recoveryFileResponse = await getRecoveryFile(password);
+
+      if (!recoveryFileResponse) {
+        throw new Error('Something went wrong');
+      }
+
+      const { recoveryFile, filename } = recoveryFileResponse;
+      await handleDownloadRecoveryFile({ recoveryFile, filename });
+      setShowModalBackup(false);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingRecoveryFile(false);
     }
   };
 
@@ -324,7 +398,14 @@ export default function Index() {
               onChange={UploadPic}
               className="hidden"
             />
-            <div className="pt-[40px]">
+            <div className="flex gap-4 pt-[40px]">
+              <Button.Large
+                onClick={() => setShowModalBackup(true)}
+                icon={<Icon.Lock />}
+                variant="secondary"
+              >
+                Backup
+              </Button.Large>
               <Button.Large
                 onClick={!loading ? () => handleSubmit() : undefined}
                 icon={<Icon.Check />}
@@ -342,6 +423,15 @@ export default function Index() {
         setShowModalLink={setShowModalLink}
         modalLinkRef={modalLinkRef}
         onAddLink={handleAddLink}
+      />
+      <Modal.Backup
+        loading={loadingRecoveryFile}
+        setPassword={setPassword}
+        handleSubmit={handleRecoveryFile}
+        showModalBackup={showModalBackup}
+        setShowModalBackup={setShowModalBackup}
+        modalBackupRef={modalBackupRef}
+        errors={errorPassword}
       />
     </Content.Main>
   );
