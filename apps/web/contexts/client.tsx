@@ -27,6 +27,7 @@ import {
   IDeletePost,
   INewPost,
   IBookmark,
+  IRecoveryFileResponse,
 } from '../types';
 
 import Client from '@pubky/sdk';
@@ -67,6 +68,9 @@ startClient();
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
     (localStorageUtils.get('pubky') as TLayouts) || null
+  );
+  const [seed, setSeed] = useState<string | null>(
+    localStorageUtils.get('seed') || Client.crypto.generateSeed()
   );
   const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [mostFollowed, setMostFollowed] = useState<IMostFollowed[] | null>(
@@ -111,12 +115,12 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (
-    userProfile: IProfilePubkyProps,
-    password: string
+    userProfile: IProfilePubkyProps
   ): Promise<ISignUpResponse | false> => {
     try {
       const seed = Client.crypto.generateSeed();
-
+      localStorageUtils.set('seed', seed);
+      setSeed(seed);
       await client.ready();
 
       const result = await client.signup(seed); // seed is zeroed
@@ -133,6 +137,19 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       setProfile(pubkeyProfile);
       localStorageUtils.set('profile', pubkeyProfile);
+
+      return pubkeyProfile;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  const getRecoveryFile = async (
+    password: string
+  ): Promise<IRecoveryFileResponse | null> => {
+    try {
+      await client.ready();
 
       return await client.seedRecovery.recoveryFile(
         'recovery_file',
@@ -702,6 +719,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         listFollowing,
         getMostFollowed,
         getRecommendedProfiles,
+        getRecoveryFile,
         searchTags,
         setPosts,
         setSearchTags,

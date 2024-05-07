@@ -1,15 +1,27 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { z } from 'zod';
 import { Button, Icon, Typography } from '@social/ui-shared';
+import { useClientContext } from '../../../contexts/client';
 import { Onboarding } from '../components';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Modal } from '../../components/Modal';
 
+const passwordSchema = z.object({
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters long' }),
+});
+
 export default function Index() {
+  const { getRecoveryFile } = useClientContext();
   const [showModalBackup, setShowModalBackup] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<string>('');
 
   useEffect(() => {
     const handleClickOutsideModal = (event: MouseEvent) => {
@@ -26,6 +38,61 @@ export default function Index() {
       document.removeEventListener('mousedown', handleClickOutsideModal);
     };
   }, [modalBackupRef, setShowModalBackup]);
+
+  const handleDownloadRecoveryFile = async ({
+    recoveryFile,
+    filename,
+  }: {
+    recoveryFile: Buffer;
+    filename: string;
+  }) => {
+    try {
+      const element = document.createElement('a');
+
+      const fileBlob = new Blob([recoveryFile]);
+
+      element.href = URL.createObjectURL(fileBlob);
+      element.download = filename;
+      document.body.appendChild(element); // Required for this to work in FireFox
+      element.click();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
+    try {
+      setLoading(true);
+      setErrors('');
+
+      const result = passwordSchema.safeParse({
+        password,
+      });
+
+      if (!result.success) {
+        setErrors(result.error.errors.map((err) => err.message).join(', '));
+        setLoading(false);
+        return;
+      }
+      const recoveryFileResponse = await getRecoveryFile(password);
+
+      if (!recoveryFileResponse) {
+        throw new Error('Something went wrong');
+      }
+
+      const { recoveryFile, filename } = recoveryFileResponse;
+      await handleDownloadRecoveryFile({ recoveryFile, filename });
+      setShowModalBackup(false);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Onboarding.Layout currentStep={4}>
@@ -70,9 +137,13 @@ export default function Index() {
         </div>
       </Onboarding.Layout>
       <Modal.Backup
+        loading={loading}
+        setPassword={setPassword}
+        handleSubmit={handleSubmit}
         showModalBackup={showModalBackup}
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
+        errors={errors}
       />
     </>
   );

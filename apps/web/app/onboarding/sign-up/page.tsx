@@ -27,9 +27,6 @@ const profileSchema = z.object({
     .string()
     .max(140, { message: 'Maximum length 140 characters' })
     .optional(),
-  password: z
-    .string()
-    .min(6, { message: 'Password must be at least 6 characters long' }),
 });
 
 export default function Index() {
@@ -48,12 +45,10 @@ export default function Index() {
     { url: '', title: 'website', placeHolder: 'https://' },
     { url: '', title: 'email', placeHolder: 'user@provider.com' },
   ]);
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
     bio: '',
-    password: '',
   });
 
   useEffect(() => {
@@ -97,27 +92,6 @@ export default function Index() {
     }
   };
 
-  const handleDownloadRecoveryFile = async ({
-    recoveryFile,
-    filename,
-  }: {
-    recoveryFile: Buffer;
-    filename: string;
-  }) => {
-    try {
-      const element = document.createElement('a');
-
-      const fileBlob = new Blob([recoveryFile]);
-
-      element.href = URL.createObjectURL(fileBlob);
-      element.download = filename;
-      document.body.appendChild(element); // Required for this to work in FireFox
-      element.click();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleSubmit = async () => {
     if (loading) {
       return;
@@ -127,13 +101,11 @@ export default function Index() {
       setErrors({
         name: '',
         bio: '',
-        password: '',
       });
 
       const result = profileSchema.safeParse({
         name: name,
         bio: bio ? bio : undefined,
-        password: password,
       });
 
       if (!result.success) {
@@ -152,8 +124,6 @@ export default function Index() {
       }
 
       try {
-        const profileInfo = result.data;
-
         const linksObject: { [fieldName: string]: string } = {};
         const invalidLinkIndexes: number[] = [];
 
@@ -195,22 +165,16 @@ export default function Index() {
           return;
         }
 
-        const signUpResponse = await signUp(
-          {
-            name,
-            bio,
-            image,
-            links: linksObject,
-          },
-          profileInfo.password
-        );
+        const signUpResponse = await signUp({
+          name,
+          bio,
+          image,
+          links: linksObject,
+        });
 
         if (!signUpResponse) {
           throw new Error('Something went wrong');
         }
-
-        const { recoveryFile, filename } = signUpResponse;
-        await handleDownloadRecoveryFile({ recoveryFile, filename });
       } catch (error) {
         console.log(error);
       } finally {
@@ -327,13 +291,13 @@ export default function Index() {
             </Button.Transparent>
           </div>
         </Card.Primary>
-        <Card.Primary title="Picture">
+        <Card.Primary className="justify-start" title="Picture">
           {image && (
             <div className="relative">
               <Image
                 width={150}
                 height={150}
-                className="w-80 h-80 mt-6 rounded-full"
+                className="w-80 h-80 mt-12 rounded-full"
                 alt="user"
                 src={image}
               />
@@ -353,18 +317,6 @@ export default function Index() {
             onChange={UploadPic}
             className="hidden"
           />
-          <div>
-            <Input.Label className="mt-6" value="Encrypt Recovery Password" />
-            <Input.Text
-              className="h-[70px]"
-              type="password"
-              error={errors.password}
-              id="onboarding-recovery-password-input"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
-            />
-          </div>
         </Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
       </div>

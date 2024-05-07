@@ -12,15 +12,23 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 interface BackupProps {
+  loading: boolean;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+  handleSubmit: () => Promise<void>;
   showModalBackup: boolean;
   setShowModalBackup: React.Dispatch<React.SetStateAction<boolean>>;
   modalBackupRef: React.RefObject<HTMLDivElement>;
+  errors: string;
 }
 
 export default function Backup({
+  loading,
+  setPassword,
+  handleSubmit,
   showModalBackup,
   setShowModalBackup,
   modalBackupRef,
+  errors,
 }: BackupProps) {
   const [phrase, setPhrase] = useState(false);
   const [file, setFile] = useState(false);
@@ -149,8 +157,11 @@ export default function Backup({
             <Input.Text
               className="h-[70px] mt-3"
               type="password"
-              //error={errors.password}
+              error={errors}
               placeholder="••••••••••••"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
             />
           </div>
           <div className="w-full max-w-[796px] mt-4 justify-between items-center inline-flex">
@@ -164,7 +175,8 @@ export default function Backup({
             </Button.Large>
             <Button.Large
               icon={<Icon.DownloadSimple />}
-              onClick={() => setShowModalBackup(false)}
+              onClick={!loading ? () => handleSubmit() : undefined}
+              loading={loading}
               className="w-[270px]"
             >
               Download Recovery File
