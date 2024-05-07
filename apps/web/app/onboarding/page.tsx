@@ -3,13 +3,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Header, Content, Typography, Button } from '@social/ui-shared';
+import { useRouter } from 'next/navigation';
+import { ILinkPubky } from '../../types';
 
 import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
+  const { signUp } = useClientContext();
+  const router = useRouter();
   const { pubky, isLoggedIn } = useClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
+  const [loading, setLoading] = useState(false);
+  const links: ILinkPubky = {};
 
   useEffect(() => {
     async function fetchData() {
@@ -22,6 +28,32 @@ export default function Index() {
     }
     fetchData();
   }, [pubky, isLoggedIn]);
+
+  const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
+    try {
+      setLoading(true);
+
+      const signUpResponse = await signUp({
+        name: '',
+        bio: '',
+        image: '/images/Userpic.png',
+        links: links,
+      });
+
+      if (!signUpResponse) {
+        throw new Error('Something went wrong');
+      }
+
+      router.push('/home');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Content.Main background="bg-black" className="pb-0">
@@ -40,11 +72,14 @@ export default function Index() {
               Let&apos;s get started
             </Button.Large>
           </Link>
-          <Link href="">
-            <Button.Large variant="secondary" className=" mt-12 relative z-20">
-              Explore first
-            </Button.Large>
-          </Link>
+          <Button.Large
+            onClick={!loading ? () => handleSubmit() : undefined}
+            variant="secondary"
+            className="w-[15%] mt-12 relative z-20"
+            loading={loading}
+          >
+            Explore first
+          </Button.Large>
           <Image
             src="/images/explosion.png"
             alt="explosion"
