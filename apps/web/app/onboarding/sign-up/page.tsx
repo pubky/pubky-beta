@@ -22,7 +22,10 @@ interface FormErrors {
 }
 
 const profileSchema = z.object({
-  name: z.string().max(24, { message: 'Maximum length 24 characters' }),
+  name: z
+    .string()
+    .min(1, { message: 'Minimum length 1 character.' })
+    .max(24, { message: 'Maximum length 24 characters' }),
   bio: z
     .string()
     .max(140, { message: 'Maximum length 140 characters' })
@@ -263,7 +266,7 @@ export default function Index() {
                   className="h-[70px] mt-2"
                   placeholder={link.placeHolder}
                   value={link.url}
-                  error={errors[`link${index}`]}
+                  error={errors[`link${index}` as keyof typeof errors]}
                   action={
                     index > 1 && (
                       <div

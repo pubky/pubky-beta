@@ -344,7 +344,7 @@ export default function Index() {
                     className="h-[70px] mt-2"
                     placeholder={link.placeHolder}
                     value={link.url}
-                    error={errors[`link${index}`]}
+                    error={errors[`link${index}` as keyof typeof errors]}
                     action={
                       index > 1 && (
                         <div

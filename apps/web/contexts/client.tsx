@@ -166,8 +166,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     try {
       localStorageUtils.remove('pubky');
       localStorageUtils.remove('profile');
+      localStorageUtils.remove('seed');
       setPubky(null);
       setProfile(null);
+      setSeed(null);
 
       await client.ready();
 
