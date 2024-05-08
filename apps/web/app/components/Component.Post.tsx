@@ -220,7 +220,7 @@ export default function Post({
                                 handleTagSearch(tagObj.tag);
                               }}
                               clicked={isTagFound}
-                              color="amber"
+                              color="purple"
                             >
                               # {tagObj.tag}
                             </PostUtil.Tag>

@@ -49,6 +49,10 @@ export default function CreatePost() {
         showModalLink={showModalLink}
         setShowModalLink={setShowModalLink}
         modalLinkRef={modalLinkRef}
+        onAddLink={() => {
+          setShowModalLink(false);
+          setShowModalPost(true);
+        }}
       />
     </>
   );

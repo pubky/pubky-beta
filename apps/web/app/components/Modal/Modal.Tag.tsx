@@ -165,7 +165,7 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
                           </div>
                         }
                         clicked
-                        color="amber"
+                        color="purple"
                         className="mr-2 my-1"
                       >
                         # {tag}

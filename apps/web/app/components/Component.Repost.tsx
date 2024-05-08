@@ -55,6 +55,10 @@ export default function Repost({
         showModalLink={showModalLink}
         setShowModalLink={setShowModalLink}
         modalLinkRef={modalLinkRef}
+        onAddLink={() => {
+          setShowModalLink(false);
+          setShowModalRepost(true);
+        }}
       />
     </>
   );

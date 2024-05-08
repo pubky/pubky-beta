@@ -27,21 +27,19 @@ export default function Index() {
         <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">
           You have successfully logged out.
         </Typography.PageTitle>
-        <div className="w-full h-[434px] sm:h-[534px] justify-center items-center inline-flex">
-          <Image
-            width={384}
-            height={384}
-            src="/images/confirm.png"
-            alt="confirm"
-            className="scale-75 sm:scale-100"
-          />
+        <div className="my-12 w-full h-[434px] sm:h-[534px] p-8 bg-transparent rounded-2xl shadow border border-white border-opacity-20 backdrop-blur-[50px] flex-col justify-center items-center gap-8 inline-flex">
+          <div className="flex-col justify-center items-center flex">
+            <Image
+              width={284}
+              height={284}
+              src="/images/confirm.png"
+              alt="confirm"
+              className="scale-75 sm:scale-100"
+            />
+          </div>
         </div>
         <div className="flex-col justify-center items-center flex">
-          <Link
-            href="/onboarding/sign-in"
-            className="w-full sm:w-80"
-            id="logout-link"
-          >
+          <Link href="/sign-in" className="w-full sm:w-80" id="logout-link">
             <Button.Large>Sign in again</Button.Large>
           </Link>
         </div>

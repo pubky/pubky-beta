@@ -238,7 +238,7 @@ export default function CreatePost({
                       </div>
                     }
                     clicked
-                    color="amber"
+                    color="purple"
                     className="mr-2 my-1"
                   >
                     # {tag}

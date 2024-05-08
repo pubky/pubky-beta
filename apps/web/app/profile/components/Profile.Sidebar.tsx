@@ -28,10 +28,7 @@ export default function Sidebar({
   const router = useRouter();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
-  const [telegram, setTelegram] = useState('');
-  const [x, setX] = useState('');
-  const [website, setWebsite] = useState('');
-  const [email, setEmail] = useState('');
+  const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
@@ -135,29 +132,15 @@ export default function Sidebar({
             profile = userProfile;
           }
         }
+
         if (profile) {
           setName(profile?.name || '');
           setBio(profile?.bio || 'No bio.');
           setImage(profile?.image || '/images/Userpic.png');
+          setLinks(
+            profile?.links.map((link) => ({ title: link.title, url: link.url }))
+          );
 
-          if (profile.links) {
-            const x = profile.links.find(
-              (link: { title: string }) => link.title === 'x'
-            );
-            const website = profile.links.find(
-              (link: { title: string }) => link.title === 'website'
-            );
-            const telegram = profile.links.find(
-              (link: { title: string }) => link.title === 'telegram'
-            );
-            const email = profile.links.find(
-              (link: { title: string }) => link.title === 'email'
-            );
-            setX(x?.url || '');
-            setWebsite(website?.url || '');
-            setTelegram(telegram?.url || '');
-            setEmail(email?.url || '');
-          }
           setLoading(false);
         }
       } catch (error) {
@@ -351,50 +334,24 @@ export default function Sidebar({
           </SideCard.Content>
         )}
       </div>
-      {(x || website || telegram) && (
-        <div className="w-full">
-          <SideCard.Header title="Links" variantTitle="label" />
-          <div className="gap-4 grid grid-cols-4 w-full">
-            {website && (
-              <Link target="_blank" href={website} className="w-full">
-                <SideCard.Content className="w-full h-24 justify-center items-center">
-                  <Icon.Globe />
-                </SideCard.Content>
-              </Link>
-            )}
-            {email && (
-              <Link target="_blank" href={`mailto:${email}`} className="w-full">
-                <SideCard.Content className="w-full h-24 justify-center items-center">
-                  <Icon.Envelope />
-                </SideCard.Content>
-              </Link>
-            )}
-            {x && (
-              <Link
-                target="_blank"
-                href={`https://x.com/${x}`}
-                className="w-full"
-              >
-                <SideCard.Content className="w-full h-24 justify-center items-center">
-                  <Icon.Twitter />
-                </SideCard.Content>
-              </Link>
-            )}
-
-            {telegram && (
-              <Link
-                target="_blank"
-                href={`https://t.me/${telegram}`}
-                className="w-full"
-              >
-                <SideCard.Content className="w-full h-24 justify-center items-center">
-                  <Icon.Telegram />
-                </SideCard.Content>
-              </Link>
-            )}
-          </div>
+      {links.map((link, index) => (
+        <div key={index}>
+          <Typography.Label className="text-opacity-50">
+            {link.title}
+          </Typography.Label>
+          <Link
+            href={link.title === 'email' ? `mailto:${link.url}` : link.url}
+            target="_blank"
+          >
+            <Typography.Body
+              className="hover:text-opacity-80"
+              variant="small-bold"
+            >
+              {link.url}
+            </Typography.Body>
+          </Link>
         </div>
-      )}
+      ))}
     </div>
   );
 }

@@ -46,22 +46,28 @@ export const Text = ({
 
   return (
     <div className="relative w-full">
-      <input
-        {...rest}
-        type={type}
-        value={value}
-        required={required}
-        className={twMerge(
-          baseCSS,
-          rest.className,
-          error ? 'border-red-500 border-opacity-100' : ''
+      <div>
+        <input
+          {...rest}
+          type={type}
+          value={value}
+          required={required}
+          className={twMerge(
+            baseCSS,
+            rest.className,
+            error ? 'border-red-500 border-opacity-100' : ''
+          )}
+        />
+        {action && (
+          <div
+            className={`${
+              error ? 'top-[40%]' : 'top-1/2'
+            } absolute right-4 transform -translate-y-1/2 text-white`}
+          >
+            {action}
+          </div>
         )}
-      />
-      {action && (
-        <div className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white">
-          {action}
-        </div>
-      )}
+      </div>
       {error && <div className={errorCSS}>{error}</div>}
     </div>
   );
