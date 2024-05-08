@@ -1,39 +1,36 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
-import { Card } from '../Card';
-import { Icon } from '../Icon';
 
 interface LinksStoreAppProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
 export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
-  const bitkit = '/images/bitkit.png';
-  const baseCSS = 'flex-col justify-start items-start gap-6 inline-flex';
+  const baseCSS = 'flex gap-1 mt-6';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <Link
-        className="w-full"
-        href="https://testflight.apple.com/join/lGXhnwcC"
-      >
-        <Card.Primary className="p-6 flex-row xl:p-8">
-          <Image width={70} height={25} src={bitkit} alt="bitkit" />
-          <div className="flex flex-row justify-center w-[116px] sm:w-[65px] md:w-[96px] lg:w-[65px] xl:w-[116px] ">
-            <Icon.Iphone />
-          </div>
-        </Card.Primary>
+      <Link href="https://www.bitkit.to/" target="_blank">
+        <Image width={122} height={36} alt="bitkit" src="/images/bitkit.png" />
+      </Link>
+      <Link href="https://testflight.apple.com/join/lGXhnwcC" target="_blank">
+        <Image
+          width={100}
+          height={44}
+          alt="apple-store"
+          src="/images/apple-store.png"
+        />
       </Link>
       <Link
-        className="w-full"
         href="https://play.google.com/apps/testing/to.synonym.bitkit.wallet"
+        target="_blank"
       >
-        <Card.Primary className="p-6 flex-row xl:p-8">
-          <Image width={70} height={25} src={bitkit} alt="bitkit" />
-          <div className="flex flex-row justify-center w-[156px] sm:w-[80px] md:w-[126px] lg:w-[80px] xl:w-[156px] ">
-            <Icon.Android />
-          </div>
-        </Card.Primary>
+        <Image
+          width={100}
+          height={44}
+          alt="google-play"
+          src="/images/google-play.png"
+        />
       </Link>
     </div>
   );

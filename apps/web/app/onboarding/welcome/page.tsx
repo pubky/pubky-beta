@@ -102,7 +102,6 @@ export default function Index() {
 
   useEffect(() => {
     fetchProfile();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
 
@@ -155,18 +154,26 @@ export default function Index() {
         </Card.Primary>
         <Card.Primary
           className="min-h-[400px]"
-          title="Ready to Go!"
+          title="Data Imported"
           text="Pubky successfully imported your profile and contacts."
-        >
-          <Link
-            href="/home"
-            className="mt-4 lg:mt-0"
-            id="onboarding-welcome-link"
-          >
-            <Button.Large icon={<Icon.Check />}>Finish</Button.Large>
-          </Link>
-        </Card.Primary>
+        ></Card.Primary>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-3.png" />
+      </div>
+      <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
+        <Link href="/onboarding/permissions">
+          <Button.Large
+            icon={<Icon.ArrowLeft />}
+            className="w-[140px]"
+            variant="secondary"
+          >
+            Back
+          </Button.Large>
+        </Link>
+        <Link href="/home">
+          <Button.Large icon={<Icon.Check />} className="w-[140px] z-20">
+            Finish
+          </Button.Large>
+        </Link>
       </div>
     </Onboarding.Layout>
   );

@@ -1,4 +1,11 @@
-import { ArrowUp, ArrowUpRight, DropdownIcon, Repost } from './Icon.Arrow';
+import {
+  ArrowLeft,
+  ArrowUp,
+  ArrowUpRight,
+  ArrowRight,
+  DropdownIcon,
+  Repost,
+} from './Icon.Arrow';
 import { Tag } from './Icon.Commerce';
 import {
   Pencil,
@@ -6,6 +13,7 @@ import {
   GridFour,
   SquaresFour,
   SquareHalf,
+  Eye,
 } from './Icon.Design';
 import { Plus, Minus, X } from './Icon.Math';
 import {
@@ -25,6 +33,8 @@ import {
   ListBullets,
   ListNumbers,
   Trash,
+  File,
+  FileText,
 } from './Icon.Office';
 import {
   DotsNine,
@@ -35,6 +45,7 @@ import {
   Bell,
   GearSix,
   LoadingSpin,
+  DownloadSimple,
 } from './Icon.System';
 import {
   Android,
@@ -63,12 +74,14 @@ import {
 } from './Icon.Communication';
 import { Activity } from './Icon.Health';
 import { Fire } from './Icon.Weather';
-import { Key, Warning } from './Icon.Security';
+import { Key, Lock, Warning } from './Icon.Security';
 
 export const Icon = {
   Android,
   Activity,
   ArrowUp,
+  ArrowLeft,
+  ArrowRight,
   ArrowUpRight,
   Asterisk,
   Bell,
@@ -80,9 +93,13 @@ export const Icon = {
   CheckCircle,
   Clipboard,
   Clock,
+  DownloadSimple,
   DropdownIcon,
   DotsNine,
   Envelope,
+  Eye,
+  File,
+  FileText,
   Fire,
   GearSix,
   Globe,
@@ -95,6 +112,7 @@ export const Icon = {
   ListBullets,
   ListNumbers,
   LoadingSpin,
+  Lock,
   MagnifyingGlass,
   Minus,
   MusicNotesSimple,

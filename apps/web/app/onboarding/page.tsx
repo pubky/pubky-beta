@@ -3,13 +3,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Header, Content, Typography, Button } from '@social/ui-shared';
+import { useRouter } from 'next/navigation';
+import { ILinkPubky } from '../../types';
 
 import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
+  const { signUp } = useClientContext();
+  const router = useRouter();
   const { pubky, isLoggedIn } = useClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
+  const [loading, setLoading] = useState(false);
+  const links: ILinkPubky = {};
 
   useEffect(() => {
     async function fetchData() {
@@ -23,23 +29,57 @@ export default function Index() {
     fetchData();
   }, [pubky, isLoggedIn]);
 
+  const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
+    try {
+      setLoading(true);
+
+      const signUpResponse = await signUp({
+        name: '',
+        bio: '',
+        image: '/images/Userpic.png',
+        links: links,
+      });
+
+      if (!signUpResponse) {
+        throw new Error('Something went wrong');
+      }
+
+      router.push('/home');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Content.Main background="bg-black" className="pb-0">
       <Header.Root>
         <Header.Logo link={logoLink} />
-        <Header.Title />
+        <Header.Action>Sign in</Header.Action>
       </Header.Root>
       <Content.Grid>
-        <Typography.Display>You are the algorithm</Typography.Display>
+        <Typography.Display>Become the algorithm</Typography.Display>
         <Typography.PageTitle className="text-opacity-50 mt-4 sm:mt-0">
-          Your keys, your content, your rules. Social content, re-imagined.
+          Your keys, your content, your rules. Social publishing, reimagined.
         </Typography.PageTitle>
-        <div className="relative">
+        <div className="relative flex gap-6">
           <Link id="onboarding-sign-in-link" href="/onboarding/sign-in">
             <Button.Large className="sm:w-80 w-full mt-12 relative z-20">
-              Get Started
+              Let&apos;s get started
             </Button.Large>
           </Link>
+          <Button.Large
+            onClick={!loading ? () => handleSubmit() : undefined}
+            variant="secondary"
+            className="w-[15%] mt-12 relative z-20"
+            loading={loading}
+          >
+            Explore first
+          </Button.Large>
           <Image
             src="/images/explosion.png"
             alt="explosion"

@@ -3,7 +3,7 @@ import { Typography } from '../Typography';
 import { Icon } from '../Icon';
 
 interface MediumButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  children: string;
+  children: React.ReactNode;
   variant?: 'default' | 'line' | 'subtle';
   icon?: React.ReactNode;
   disabled?: boolean;
@@ -50,7 +50,7 @@ export const Medium = ({
       {...rest}
       className={twMerge(cssButton, cssColorButton, rest.className)}
     >
-      {loading ? <Icon.LoadingSpin size="16" /> : <div>{icon}</div>}
+      {loading ? <Icon.LoadingSpin size="16" /> : icon && <div>{icon}</div>}
       <Typography.Body variant="small-bold" className={color}>
         {children}
       </Typography.Body>

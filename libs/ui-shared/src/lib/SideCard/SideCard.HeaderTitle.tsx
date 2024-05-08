@@ -10,24 +10,17 @@ export const HeaderTitle = ({
   children,
   ...rest
 }: HeaderTitleProps) => {
-  return (
-    <>
-      {variant === 'normal' ? (
-        <Typography.Body
-          {...rest}
-          className={twMerge(rest.className)}
-          variant="large-bold"
-        >
-          {children}
-        </Typography.Body>
-      ) : (
-        <Typography.Label
-          {...rest}
-          className={twMerge('text-opacity-50', rest.className)}
-        >
-          {children}
-        </Typography.Label>
-      )}
-    </>
+  return variant === 'normal' ? (
+    <Typography.Body
+      {...rest}
+      className={twMerge(rest.className)}
+      variant="large-bold"
+    >
+      {children}
+    </Typography.Body>
+  ) : (
+    <Typography.Label className={twMerge('text-opacity-50', rest.className)}>
+      {children}
+    </Typography.Label>
   );
 };

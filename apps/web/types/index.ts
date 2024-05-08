@@ -15,10 +15,8 @@ export interface ClientContextType {
   profile: IProfile | null;
   pubky: string | null;
   posts: INewPost;
-  signUp: (
-    profile: IProfilePubkyProps,
-    password: string
-  ) => Promise<ISignUpResponse | false>;
+  signUp: (profile: IProfilePubkyProps) => Promise<ISignUpResponse | false>;
+  getRecoveryFile: (password: string) => Promise<IRecoveryFileResponse | null>;
   logout: () => Promise<boolean>;
   getProfile: () => Promise<IProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
@@ -70,10 +68,7 @@ export interface ILink {
 }
 
 export interface ILinkPubky {
-  website: string | undefined;
-  email: string | undefined;
-  x: string | undefined;
-  telegram: string | undefined;
+  [key: string]: string | undefined;
 }
 
 export interface IProfile {
@@ -146,6 +141,13 @@ export interface IProfilePubkyProps {
 }
 
 export interface ISignUpResponse {
+  bio: string | undefined;
+  image: string | undefined;
+  links: ILinkPubky | undefined;
+  name: string | undefined;
+}
+
+export interface IRecoveryFileResponse {
   recoveryFile: Buffer;
   filename: string;
 }

@@ -3,6 +3,7 @@ import { Medium } from './Button.Medium';
 import { Action } from './Button.Action/Button.Action';
 import { Create } from './Button.Create';
 import { Tile } from './Button.Tile';
+import { Transparent } from './Button.Transparent';
 
 export const Button = {
   Action,
@@ -10,4 +11,5 @@ export const Button = {
   Large,
   Medium,
   Tile,
+  Transparent,
 };

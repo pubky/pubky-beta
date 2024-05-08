@@ -25,7 +25,11 @@ export default function Notification() {
           {' '}
           post Let&apos;I have said it...Let&apos; as{' '}
         </Typography.Body>
-        <PostUtil.Tag className="hidden sm:block" clicked={false} color="amber">
+        <PostUtil.Tag
+          className="hidden sm:block"
+          clicked={false}
+          color="purple"
+        >
           #Bitcoin
         </PostUtil.Tag>
       </div>

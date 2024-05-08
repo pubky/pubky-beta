@@ -225,6 +225,35 @@ export const GearSix = ({ size = '24', color = 'white' }: IconProps) => (
   </svg>
 );
 
+export const DownloadSimple = ({ size = '16', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 17 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M5.52145 6.52145C5.71671 6.32618 6.03329 6.32618 6.22855 6.52145L8.5 8.79289L10.7714 6.52145C10.9667 6.32618 11.2833 6.32618 11.4786 6.52145C11.6738 6.71671 11.6738 7.03329 11.4786 7.22855L8.85355 9.85355C8.65829 10.0488 8.34171 10.0488 8.14645 9.85355L5.52145 7.22855C5.32618 7.03329 5.32618 6.71671 5.52145 6.52145Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M8.5 1.99805C8.77614 1.99805 9 2.2219 9 2.49805V9.49805C9 9.77419 8.77614 9.99805 8.5 9.99805C8.22386 9.99805 8 9.77419 8 9.49805V2.49805C8 2.2219 8.22386 1.99805 8.5 1.99805Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M2.5 8C2.77614 8 3 8.22386 3 8.5V13H14V8.5C14 8.22386 14.2239 8 14.5 8C14.7761 8 15 8.22386 15 8.5V13C15 13.2652 14.8946 13.5196 14.7071 13.7071C14.5196 13.8946 14.2652 14 14 14H3C2.73478 14 2.48043 13.8946 2.29289 13.7071C2.10536 13.5196 2 13.2652 2 13V8.5C2 8.22386 2.22386 8 2.5 8Z"
+      fill={color}
+    />
+  </svg>
+);
+
 export const LoadingSpin = ({ size = '40', color = 'white' }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
