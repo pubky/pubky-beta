@@ -6,6 +6,7 @@ import { useClientContext } from '../../contexts/client';
 import { minifyPubky } from '../../libs/pubkyHelper';
 import Image from 'next/image';
 import { INewPost } from '../../types';
+import Link from 'next/link';
 
 export default function CreateQuickPost() {
   const { pubky, getUserIndexed, createPost, setPosts } = useClientContext();
@@ -59,7 +60,10 @@ export default function CreateQuickPost() {
 
   return (
     <div className="p-6 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
-      <div className="justify-start items-center gap-2 flex">
+      <Link
+        href="/profile"
+        className="cursor-pointer justify-start items-center gap-2 flex"
+      >
         <Image
           width={32}
           height={32}
@@ -67,11 +71,16 @@ export default function CreateQuickPost() {
           alt="user-image"
           src={pic}
         />
-        <Typography.Body variant="medium-bold">{name}</Typography.Body>
+        <Typography.Body
+          className={`hover:underline hover:decoration-solid`}
+          variant="medium-bold"
+        >
+          {name}
+        </Typography.Body>
         <Typography.Label className="text-opacity-30">
           {minifyPubky(handler)}
         </Typography.Label>
-      </div>
+      </Link>
       <div className="w-full flex justify-between gap-6 items-start inline-flex">
         <Input.CursorArea
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
