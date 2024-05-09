@@ -5,7 +5,15 @@ import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
 import { useFilterContext } from '../../../contexts/filters';
 
-export default function ContactsLayout() {
+interface ContactsLayout {
+  type?: 'icon' | 'text';
+  subtitle?: string;
+}
+
+export default function ContactsLayout({
+  type = 'icon',
+  subtitle,
+}: ContactsLayout) {
   const { contactsLayout, setContactsLayout } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
@@ -14,15 +22,26 @@ export default function ContactsLayout() {
     loading: <Icon.LoadingSpin className="animate-spin" />,
   };
 
+  const labels = {
+    ranking: 'Ranking',
+    list: 'List',
+  };
+
   const [dropdownValue, setDropdownValue] = useState({
-    value: contactsLayout ? contactsLayout : 'ranking',
-    iconOption: icons.loading,
+    value: contactsLayout ? contactsLayout : 'list',
+    ...(type === 'icon'
+      ? { iconOption: icons.loading }
+      : { textOption: contactsLayout ? labels[contactsLayout] : labels.list }),
   });
 
   useEffect(() => {
     setDropdownValue({
-      value: contactsLayout ? contactsLayout : 'ranking',
-      iconOption: contactsLayout ? icons[contactsLayout] : icons.ranking,
+      value: contactsLayout ? contactsLayout : 'list',
+      ...(type === 'icon'
+        ? { iconOption: contactsLayout ? icons[contactsLayout] : icons.list }
+        : {
+            textOption: contactsLayout ? labels[contactsLayout] : labels.list,
+          }),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -33,6 +52,8 @@ export default function ContactsLayout() {
       setOpen={setOpenDropdown}
       value={dropdownValue}
       labelIcon="Layout"
+      type={type}
+      subtitle={subtitle}
     >
       <DropDownUI.Content
         title="Layout"
@@ -48,7 +69,9 @@ export default function ContactsLayout() {
           onClick={() => {
             setDropdownValue({
               value: 'ranking',
-              iconOption: <Icon.ListNumbers />,
+              ...(type === 'icon'
+                ? { iconOption: <Icon.ListNumbers /> }
+                : { textOption: 'Ranking' }),
             });
             setContactsLayout('ranking');
             setOpenDropdown(false);
@@ -62,7 +85,9 @@ export default function ContactsLayout() {
           onClick={() => {
             setDropdownValue({
               value: 'list',
-              iconOption: <Icon.List />,
+              ...(type === 'icon'
+                ? { iconOption: <Icon.List /> }
+                : { textOption: 'List' }),
             });
             setContactsLayout('list');
             setOpenDropdown(false);

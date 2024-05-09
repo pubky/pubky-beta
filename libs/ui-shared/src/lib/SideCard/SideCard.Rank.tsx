@@ -6,7 +6,7 @@ interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
   rank: number;
   tag: string;
   color: string;
-  counter: React.ReactNode;
+  counter?: React.ReactNode;
   images?: { alt: string; src: string }[];
 }
 export const Rank = ({
@@ -24,7 +24,7 @@ export const Rank = ({
       <PostUtil.Tag clicked={false} color={color}>
         {tag}
       </PostUtil.Tag>
-      <PostUtil.Counter className="w-[87px]" counter={counter} />
+      {counter && <PostUtil.Counter className="w-[87px]" counter={counter} />}
       {images && <Post.UserPic images={images} />}
     </div>
   );

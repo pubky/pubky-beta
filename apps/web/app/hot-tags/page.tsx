@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Content, Icon, Typography } from '@social/ui-shared';
-import { CreatePost, Header } from '../components';
+import { CreatePost, Header, Sidebar, WhoFollow } from '../components';
 import { HotTags } from './components';
 import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
@@ -124,54 +124,61 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Header className="w-52 xl:w-36 hidden md:block" title="Hot&#160;Tags">
-        <div className="hidden lg:flex gap-6 items-center">
-          <DropDown.HotTagsReach />
-          <DropDown.TagsTimeframe />
-        </div>
-      </Header>
-      <Content.Grid className="flex-col flex gap-3">
-        {loading ? (
-          <div>
-            <div className="flex w-full justify-center">
-              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-            </div>
-            <Typography.Body
-              variant="medium-bold"
-              className="col-span-3 mt-2 flex justify-center items-center gap-6 text-opacity-20"
-            >
-              Loading Hot Tags
-            </Typography.Body>
+      <Header className="w-52 xl:w-80 hidden md:block" title="Hot Tags" />
+      <Content.Grid className='flex justify-between items-start inline-flex"'>
+        <div className="flex-col inline-flex gap-3">
+          <div className="flex gap-6 mb-6">
+            <DropDown.HotTagsReach type="text" subtitle="Reach" />
+            <DropDown.TagsTimeframe type="text" subtitle="Timeframe" />
           </div>
-        ) : hotTags.length > 0 ? (
-          hotTags.map((tag, index) => (
-            <div className="flex gap-3" key={index}>
-              <HotTags.Rank
-                rank={index + 1}
-                tag={`# ${tag.tag}`}
-                onClick={() => handleTagSearch(tag.tag)}
-                color="purple"
-                counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
-              />
-              {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
-                <Image
-                  width={32}
-                  height={32}
-                  alt={`pic-${fromIndex + 1}`}
-                  key={fromIndex}
-                  className={`w-[32px] h-[32px] rounded-full ${
-                    fromIndex !== 0 ? '-ml-5' : ''
-                  }`}
-                  src={fromItem.author?.profile?.image || '/images/Userpic.png'}
-                />
-              ))}
+          {loading ? (
+            <div>
+              <div className="flex w-full justify-center">
+                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+              </div>
+              <Typography.Body
+                variant="medium-bold"
+                className="col-span-3 mt-2 flex justify-center items-center gap-6 text-opacity-20"
+              >
+                Loading Hot Tags
+              </Typography.Body>
             </div>
-          ))
-        ) : (
-          <Typography.H2 className="text-center font-normal text-opacity-50">
-            No tags yet.
-          </Typography.H2>
-        )}
+          ) : hotTags.length > 0 ? (
+            hotTags.map((tag, index) => (
+              <div className="flex gap-3" key={index}>
+                <HotTags.Rank
+                  rank={index + 1}
+                  tag={`#${tag.tag}`}
+                  onClick={() => handleTagSearch(tag.tag)}
+                  color="fuchsia"
+                  counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
+                />
+                {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
+                  <Image
+                    width={32}
+                    height={32}
+                    alt={`pic-${fromIndex + 1}`}
+                    key={fromIndex}
+                    className={`w-[32px] h-[32px] rounded-full ${
+                      fromIndex !== 0 ? '-ml-5' : ''
+                    }`}
+                    src={
+                      fromItem.author?.profile?.image || '/images/Userpic.png'
+                    }
+                  />
+                ))}
+              </div>
+            ))
+          ) : (
+            <Typography.H2 className="text-center font-normal text-opacity-50">
+              No tags yet.
+            </Typography.H2>
+          )}
+        </div>
+        <Sidebar className="self-start sticky top-[160px] hidden xl:block w-[20%]">
+          <WhoFollow />
+          {/** <ActiveFriends /> */}
+        </Sidebar>{' '}
       </Content.Grid>
       <CreatePost />
     </Content.Main>

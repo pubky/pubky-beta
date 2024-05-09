@@ -2,32 +2,38 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { Header as HeaderUI, Input, Icon, Menu } from '@social/ui-shared';
+import {
+  Header as HeaderUI,
+  Input,
+  Icon,
+  //Menu,
+  Button,
+} from '@social/ui-shared';
 import { Modal } from './Modal';
 import { useClientContext } from '../../contexts/client';
-import { minifyPubky } from '../../libs/pubkyHelper';
-import { minifyText } from '../../libs/textHelper';
+// import { minifyPubky } from '../../libs/pubkyHelper';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface HeaderProps {
   title: React.ReactNode;
   className?: string;
-  children?: React.ReactNode;
 }
 
-export default function Header({ title, className, children }: HeaderProps) {
+export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
   const { pubky, getProfile, isLoggedIn, setSearchTags, searchTags } =
     useClientContext();
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  //const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
   const [image, setImage] = useState('/images/Userpic.png');
-  const [name, setName] = useState('');
+  //const [name, setName] = useState('');
   const [logoLink, setLogoLink] = useState('/onboarding');
-  const [handler, setHandler] = useState('');
+  //const [handler, setHandler] = useState('');
   const [inputValue, setInputValue] = useState('');
 
-  const drawerRef = useRef<HTMLDivElement>(null);
+  //const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
 
   async function fetchProfile() {
@@ -36,7 +42,7 @@ export default function Header({ title, className, children }: HeaderProps) {
 
       if (userProfile) {
         setImage(userProfile.image || '/images/Userpic.png');
-        setName(userProfile.name || '');
+        //setName(userProfile.name || '');
       }
     } catch (error) {
       console.log(error);
@@ -53,7 +59,7 @@ export default function Header({ title, className, children }: HeaderProps) {
   }
 
   useEffect(() => {
-    setHandler(minifyPubky(pubky));
+    //setHandler(minifyPubky(pubky));
     fetchLoggedIn();
     fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,11 +67,13 @@ export default function Header({ title, className, children }: HeaderProps) {
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
-      if (
+      {
+        /** if (
         drawerRef.current &&
         !drawerRef.current.contains(event.target as Node)
       ) {
         setDrawerOpen(false);
+      }*/
       }
       if (
         refSearchInputCard.current &&
@@ -79,7 +87,7 @@ export default function Header({ title, className, children }: HeaderProps) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideDrawer);
     };
-  }, [drawerRef, refSearchInputCard]);
+  }, [refSearchInputCard]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -143,7 +151,64 @@ export default function Header({ title, className, children }: HeaderProps) {
           </div>
         </Input.SearchActions>
       </Input.Search>
-      {children}
+      <div className="hidden lg:flex gap-4 items-center">
+        <Link href="/home">
+          <Button.Action
+            variant="menu"
+            label="Streams"
+            active={title === 'Streams'}
+            icon={<Icon.Activity size="24" />}
+          />
+        </Link>
+        <Link href="/hot-tags">
+          <Button.Action
+            variant="menu"
+            label="Hot&#160;Tags"
+            active={title === `Hot Tags`}
+            icon={<Icon.Tag size="24" />}
+          />
+        </Link>
+        <Link href="/contacts">
+          <Button.Action
+            variant="menu"
+            label="Contacts"
+            active={title === 'Contacts'}
+            icon={<Icon.UsersLeft size="24" />}
+          />
+        </Link>
+        <Link href="/bookmarks">
+          <Button.Action
+            variant="menu"
+            label="Bookmarks"
+            active={title === 'Bookmarks'}
+            icon={<Icon.BookmarkSimple size="24" />}
+          />
+        </Link>
+        <Link href="/settings">
+          <Button.Action
+            variant="menu"
+            label="Settings"
+            active={title === 'Settings'}
+            icon={<Icon.GearSix size="24" />}
+          />
+        </Link>
+        <Link href="/profile" className="w-[48px] relative">
+          {/* {notifications && (
+        <PostUtil.Counter
+          className="absolute text-center top-6 right-6 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
+          counter={notifications}
+        />
+      )} */}
+          <Image
+            width={48}
+            height={48}
+            className={`rounded-full w-[48px] h-[48px]`}
+            alt="user-pic"
+            src={image}
+          />
+        </Link>
+      </div>
+      {/** 
       <>
         <div
           className="relative cursor-pointer"
@@ -151,7 +216,7 @@ export default function Header({ title, className, children }: HeaderProps) {
         >
           <Menu.ImageMenu src={image} />
         </div>
-        <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
+          <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
               href="/profile"
@@ -166,12 +231,12 @@ export default function Header({ title, className, children }: HeaderProps) {
                 text="Streams"
                 onClick={() => setDrawerOpen(false)}
               />
-              {/* <Menu.Section
+              <Menu.Section
                 href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
                 counter={5}
-              /> */}
+              />
               <Menu.Section
                 href="/bookmarks"
                 icon={<Icon.BookmarkSimple />}
@@ -213,6 +278,7 @@ export default function Header({ title, className, children }: HeaderProps) {
         </Menu.Root>
         <Menu.Bg drawerOpen={drawerOpen} />
       </>
+      */}
     </HeaderUI.Root>
   );
 }

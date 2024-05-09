@@ -212,14 +212,14 @@ export default function CreatePost({
               onClick={() => console.log('button clicked 1')}
               className="hidden lg:flex"
             />
-            <Button.Action
+            {/** <Button.Action
               variant="link"
               label="Link"
               onClick={() => {
                 setShowModalLink(true);
               }}
               className="hidden lg:flex"
-            />
+            />*/}
           </div>
         </div>
         <div className="flex-col inline-flex justify-between">
@@ -238,7 +238,7 @@ export default function CreatePost({
                       </div>
                     }
                     clicked
-                    color="purple"
+                    color="fuchsia"
                     className="mr-2 my-1"
                   >
                     # {tag}

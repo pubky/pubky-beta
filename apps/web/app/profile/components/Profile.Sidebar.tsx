@@ -2,14 +2,15 @@
 
 import { useRouter } from 'next/navigation';
 import { Icon, Typography, Post, SideCard, Button } from '@social/ui-shared';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { minifyPubky } from '../../../libs/pubkyHelper';
 import { minifyText } from '../../../libs/textHelper';
 import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '../../components';
+import { minifyPubky } from '../../../libs/pubkyHelper';
 import { IFollowingResponse, IFollowersResponse } from '../../../types';
+import Image from 'next/image';
+import { DropDown } from '../../components/DropDown';
 
 export default function Sidebar({
   creatorPubky,
@@ -182,21 +183,24 @@ export default function Sidebar({
         <Skeleton.ProfileSidebar />
       ) : (
         <div>
-          <SideCard.Header title="profile" variantTitle="label" />
           <SideCard.Content className="flex-col gap-3 inline-flex">
             <div className="justify-start items-center gap-3 inline-flex">
               <Image
-                width={32}
-                height={32}
-                className="w-[32px] h-[32px] rounded-full"
+                width={36}
+                height={36}
+                className="w-[36px] h-[36px] rounded-full"
                 src={image}
                 alt="user-pic"
               />
-              <Typography.H2>{minifyText(name, 15)}</Typography.H2>
+              <div>
+                <Typography.H2 className="-mb-2">
+                  {minifyText(name, 15)}
+                </Typography.H2>
+                <Typography.Label className="text-opacity-50">
+                  {pubky ? minifyPubky(pubky) : 'Loading...'}
+                </Typography.Label>
+              </div>
             </div>
-            <Typography.Label className="text-opacity-50">
-              {pubky ? minifyPubky(pubky) : 'Loading...'}
-            </Typography.Label>
             <Typography.Body
               variant="medium"
               className="text-opacity-80 break-all"
@@ -262,7 +266,7 @@ export default function Sidebar({
         </SideCard.Content>
       </div> */}
       <div>
-        <SideCard.Header title="Contacts" variantTitle="label" />
+        <SideCard.Header title="Contacts" />
         {loadingFollowers ? (
           <SideCard.Content>
             <>
@@ -334,24 +338,46 @@ export default function Sidebar({
           </SideCard.Content>
         )}
       </div>
-      {links.map((link, index) => (
-        <div key={index}>
-          <Typography.Label className="text-opacity-50">
-            {link.title}
-          </Typography.Label>
-          <Link
-            href={link.title === 'email' ? `mailto:${link.url}` : link.url}
-            target="_blank"
-          >
-            <Typography.Body
-              className="hover:text-opacity-80"
-              variant="small-bold"
-            >
-              {link.url}
-            </Typography.Body>
-          </Link>
+      {(!creatorPubky || creatorPubky === pubky) && (
+        <>
+          <SideCard.Header title="Status" />
+          <DropDown.Status />
+        </>
+      )}
+      <div className="flex-col inline-flex gap-4">
+        <SideCard.Header title="Links" />
+        <div className="flex-col inline-flex gap-2">
+          {links.map((link, index) => (
+            <div key={index}>
+              {link.url && (
+                <>
+                  <Typography.Label className="text-opacity-50">
+                    {link.title}
+                  </Typography.Label>
+                  <Link
+                    href={
+                      link.title === 'email' ? `mailto:${link.url}` : link.url
+                    }
+                    target="_blank"
+                  >
+                    <Typography.Body
+                      className="hover:text-opacity-80"
+                      variant="small-bold"
+                    >
+                      {link.url}
+                    </Typography.Body>
+                  </Link>
+                </>
+              )}
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+      {(!creatorPubky || creatorPubky === pubky) && (
+        <Link href="/logout">
+          <Button.Medium icon={<Icon.SignOut />}>Sign out</Button.Medium>
+        </Link>
+      )}
     </div>
   );
 }

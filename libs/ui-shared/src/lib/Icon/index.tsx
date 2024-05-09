@@ -13,6 +13,7 @@ import {
   GridFour,
   SquaresFour,
   SquareHalf,
+  ThreeColumns,
   Eye,
 } from './Icon.Design';
 import { Plus, Minus, X } from './Icon.Math';
@@ -46,6 +47,7 @@ import {
   GearSix,
   LoadingSpin,
   DownloadSimple,
+  SignOut,
 } from './Icon.System';
 import {
   Android,
@@ -126,6 +128,7 @@ export const Icon = {
   Podcast,
   Pubky,
   Repost,
+  SignOut,
   SlidersHorizontal,
   Smiley,
   SquaresFour,
@@ -133,6 +136,7 @@ export const Icon = {
   Stack,
   Tag,
   Telegram,
+  ThreeColumns,
   Twitter,
   Trash,
   UsersLeft,

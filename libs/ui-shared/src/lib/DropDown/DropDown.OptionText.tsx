@@ -5,11 +5,15 @@ import { Typography } from '../Typography';
 interface OptionTextProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean;
   textOption?: string;
+  iconText?: string;
+  subtitle?: string;
 }
 
 export const OptionText = ({
   isOpen,
   textOption,
+  iconText,
+  subtitle,
   ...rest
 }: OptionTextProps) => {
   const baseCSS = `w-full flex items-center justify-between cursor-pointer`;
@@ -18,18 +22,23 @@ export const OptionText = ({
 
   return (
     <div {...rest} className={twMerge(baseCSS, styleSelect, rest.className)}>
-      <Typography.Label className="text-opacity-50">
-        {textOption}
-      </Typography.Label>
+      <div className="flex-col inline-flex">
+        <Typography.Label className="text-opacity-30">
+          {subtitle}
+        </Typography.Label>
+        <Typography.H2 variant="light">
+          {iconText} {textOption}
+        </Typography.H2>
+      </div>
       <div
         className={twMerge(
           arrowStyle,
-          textOption ? 'mt-1' : 'mt-0.5',
+          textOption ? (subtitle ? 'mt-6' : 'mt-1') : 'mt-0.5',
           isOpen ? 'rotate-180' : 'rotate-0',
           rest.className
         )}
       >
-        <Icon.DropdownIcon color="gray" />
+        <Icon.DropdownIcon />
       </div>
     </div>
   );

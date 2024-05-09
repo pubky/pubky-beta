@@ -7,6 +7,7 @@ import { Profile as ProfileCommon } from '../components';
 import { CreatePost, Header, Post, PostsLayout } from '../../components';
 import { useClientContext } from '../../../contexts/client';
 import { IPost, INewPost } from '../../../types';
+import { minifyPubky } from '../../../libs/pubkyHelper';
 
 export default function Index({
   params,
@@ -19,6 +20,7 @@ export default function Index({
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
+  const [handler, setHandler] = useState('');
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -30,6 +32,7 @@ export default function Index({
         if (userProfile) {
           setPic(userProfile.image || '/images/Userpic.png');
           setName(userProfile.name || 'Loading...');
+          setHandler(pubky);
         }
         return;
       }
@@ -38,6 +41,7 @@ export default function Index({
       if (userProfile) {
         setPic(userProfile.profile?.image || '/images/Userpic.png');
         setName(userProfile.profile?.name || 'Loading...');
+        setHandler(creatorPubky);
       }
     } catch (error) {
       console.log(error);
@@ -96,16 +100,17 @@ export default function Index({
     <Content.Main>
       <Header className="hidden md:block" title="Profile" />
       <div>
-        <ProfileCommon.HeaderBackground />
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center sm:justify-between relative z-10">
           <ProfileCommon.Handle
             username={name}
             className="order-2 lg:order-1"
+            pubkey={minifyPubky(handler)}
           />
           <ProfileCommon.Avatar
             username={name}
             src={pic}
             className="order-1 lg:order-2"
+            //status="👨‍💻"
           />
         </Content.Grid>
       </div>

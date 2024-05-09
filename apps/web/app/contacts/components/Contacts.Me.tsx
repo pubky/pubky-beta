@@ -1,6 +1,7 @@
-import { Content, Typography } from '@social/ui-shared';
+import { Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
+import { DropDown } from '../../components/DropDown';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 
 interface MeProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -19,36 +20,39 @@ export default function Me({
   contactsLayout,
 }: MeProps) {
   return (
-    <Content.Grid className="py-8 sm:py-12 flex justify-between">
+    <div className="pb-8 sm:pb-12 flex gap-12">
       <div className="gap-6 inline-flex">
         <Link href={`/profile`}>
           <div className="gap-3 flex items-center">
             <Image
-              width={32}
-              height={32}
-              className="w-[32px] h-[32px] rounded-full"
+              width={48}
+              height={48}
+              className="w-[48px] h-[48px] rounded-full"
               src={image}
               alt="user-pic"
             />
-            <Typography.H2 className="text-sm sm:text-2xl">
-              {name}
-            </Typography.H2>
-            <Typography.Label className="hidden lg:block text-opacity-30 mt-1">
-              {minifyPubky(pubkey)}
-            </Typography.Label>
+            <div className="flex-col inline-flex">
+              <Typography.Label className="hidden lg:block text-opacity-30">
+                {minifyPubky(pubkey)}
+              </Typography.Label>
+              <Typography.H2 className="text-sm sm:text-2xl">
+                {name}
+              </Typography.H2>
+            </div>
           </div>
         </Link>
       </div>
-      <div className="gap-3 flex">
-        <Typography.H2>
-          {countContacts}{' '}
+      <div className="flex-col flex">
+        <Typography.Label className="text-opacity-30">
           {contactsLayout === 'followers'
             ? 'followers'
             : contactsLayout === 'following'
             ? 'following'
             : 'friends'}
-        </Typography.H2>
+        </Typography.Label>
+        <Typography.H2>{countContacts}</Typography.H2>
       </div>
-    </Content.Grid>
+      <DropDown.SortFriends type="text" subtitle="Sort by" />
+    </div>
   );
 }

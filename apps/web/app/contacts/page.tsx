@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Content, Icon, Typography } from '@social/ui-shared';
+import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import { CreatePost, Header } from '../components';
 import { Contacts } from './components';
-import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import {
@@ -16,7 +15,7 @@ import {
 export default function Index() {
   const { pubky, listFollowing, listFollowers, getProfile } =
     useClientContext();
-  const { contacts, contactsLayout } = useFilterContext();
+  const { contacts, contactsLayout, setContacts } = useFilterContext();
   const [name, setName] = useState('');
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
@@ -114,13 +113,7 @@ export default function Index() {
   }
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Contacts">
-        <div className="hidden lg:flex gap-6 items-center">
-          <DropDown.Contacts />
-          <DropDown.SortFriends />
-          <DropDown.ContactsLayout />
-        </div>
-      </Header>
+      <Header className="hidden md:block" title="Contacts" />
       {loadingContacts || loading ? (
         <div className="mt-12">
           <div className="flex w-full justify-center">
@@ -134,34 +127,53 @@ export default function Index() {
           </Typography.Body>
         </div>
       ) : (
-        <>
-          {contactsLayout === 'list' && (
-            <Contacts.Me
-              image={image}
-              name={name}
-              pubkey={pubky ? pubky.toString() : ''}
-              countContacts={countContacts}
-              contactsLayout={contacts}
-            />
-          )}
+        <Content.Grid>
+          <Contacts.Me
+            image={image}
+            name={name}
+            pubkey={pubky ? pubky.toString() : ''}
+            countContacts={countContacts}
+            contactsLayout={contacts}
+          />
+          <div className="mb-6">
+            <Button.Tab
+              onClick={() => setContacts('followers')}
+              active={contacts === 'followers'}
+              icon={<Icon.UsersLeft />}
+              className="mr-0.5"
+            >
+              Followers
+            </Button.Tab>
+            <Button.Tab
+              onClick={() => setContacts('following')}
+              active={contacts === 'following'}
+              icon={<Icon.UsersRight />}
+              className="mr-0.5"
+            >
+              Following
+            </Button.Tab>
+            <Button.Tab
+              onClick={() => setContacts('friends')}
+              active={contacts === 'friends'}
+              icon={<Icon.Smiley />}
+            >
+              Friends
+            </Button.Tab>
+          </div>
           {contactsUsers?.count ?? 0 > 0 ? (
             contactsLayout === 'list' ? (
-              <Content.Grid>
-                <Contacts.Root>
-                  <Contacts.Contact contacts={contactsToShow} />
-                </Contacts.Root>
-              </Content.Grid>
-            ) : (
-              <Content.Grid>
+              <Contacts.Root>
                 <Contacts.Contact contacts={contactsToShow} />
-              </Content.Grid>
+              </Contacts.Root>
+            ) : (
+              <Contacts.Contact contacts={contactsToShow} />
             )
           ) : (
             <Typography.H2 className="font-normal text-opacity-30 text-center">
               No contacts yet
             </Typography.H2>
           )}
-        </>
+        </Content.Grid>
       )}
       <CreatePost />
     </Content.Main>

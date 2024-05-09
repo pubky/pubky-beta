@@ -13,12 +13,14 @@ import {
   Sidebar,
   WhoFollow,
 } from '../components';
-import { DropDown } from '../components/DropDown';
+// import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost } from '../../types';
+import { Filter } from '../components/Filter';
 
-const layouts = {
+{
+  /**const layouts = {
   sidebar: {
     layout: 'grid-cols-3',
     posts: 'col-span-3 xl:col-span-2 flex-col inline-flex gap-6',
@@ -35,7 +37,8 @@ const layouts = {
     layout: 'grid-cols-1',
     posts: '',
   },
-};
+};*/
+}
 
 export default function Index() {
   const router = useRouter();
@@ -114,28 +117,29 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTags]);
 
-  const postsLayoutClassName =
+  {
+    /**const postsLayoutClassName =
     layout === 'sidebar'
       ? layouts[layout].posts
       : `grid ${layouts[layout].layout} gap-6`;
   const sidebarClassName = `hidden ${
     layout === 'sidebar' && 'xl:inline-flex w-full'
-  }`;
+  }`; */
+  }
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Search">
-        <div className="hidden lg:flex gap-6 items-center">
-          <DropDown.Content />
-          <DropDown.Reach />
-          <DropDown.SortPosts />
-          <DropDown.Layout />
-        </div>
-      </Header>
-      <Content.Grid
-        className={layout === 'sidebar' ? 'grid grid-cols-3 gap-6' : ''}
-      >
-        <PostsLayout className={postsLayoutClassName}>
+      <Header className="hidden md:block" title="Search" />
+      <Content.Grid className={'grid grid-cols-5 gap-4'}>
+        <Sidebar className="hidden xl:block">
+          <Filter.Reach />
+          <Filter.Sort />
+          <div className="self-start sticky top-[160px]">
+            <Filter.Layout />
+            <Filter.Content />
+          </div>
+        </Sidebar>
+        <PostsLayout className="col-span-5 xl:col-span-4 2xl:col-span-3 flex-col inline-flex gap-6">
           {Object.keys(posts).map((key, index) => (
             <Post
               key={`${index}-${posts[key].id}`}
@@ -177,7 +181,7 @@ export default function Index() {
             </div>
           )}
         </PostsLayout>
-        <Sidebar className={sidebarClassName}>
+        <Sidebar className="hidden 2xl:block">
           <WhoFollow />
           <HotTags />
           {/** <ActiveFriends /> */}

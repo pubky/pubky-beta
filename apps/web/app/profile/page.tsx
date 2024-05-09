@@ -6,6 +6,7 @@ import { Profile } from './components';
 import { CreatePost, Header, Post, PostsLayout } from '../components';
 import { useClientContext } from '../../contexts/client';
 import { minifyText } from '../../libs/textHelper';
+import { minifyPubky } from '../../libs/pubkyHelper';
 import { IPost, INewPost } from '../../types';
 
 export default function Index() {
@@ -13,6 +14,7 @@ export default function Index() {
     useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
+  const [handler, setHandler] = useState('');
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -53,6 +55,7 @@ export default function Index() {
       if (userProfile) {
         setPic(userProfile.profile?.image || '/images/Userpic.png');
         setName(userProfile.profile?.name || 'Loading...');
+        setHandler(pubky);
       }
     } catch (error) {
       console.log(error);
@@ -87,16 +90,17 @@ export default function Index() {
     <Content.Main>
       <Header className="hidden md:block" title="Profile" />
       <div>
-        <Profile.HeaderBackground />
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center sm:justify-between relative z-10">
           <Profile.Handle
             username={minifyText(name, 15)}
             className="order-2 lg:order-1"
+            pubkey={minifyPubky(handler)}
           />
           <Profile.Avatar
             username={name}
             src={pic}
             className="order-1 lg:order-2"
+            //status="👨‍💻"
           />
         </Content.Grid>
       </div>

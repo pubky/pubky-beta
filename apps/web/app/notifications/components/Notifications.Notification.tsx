@@ -28,7 +28,7 @@ export default function Notification() {
         <PostUtil.Tag
           className="hidden sm:block"
           clicked={false}
-          color="purple"
+          color="fuchsia"
         >
           #Bitcoin
         </PostUtil.Tag>

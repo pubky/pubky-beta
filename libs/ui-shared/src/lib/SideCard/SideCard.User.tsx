@@ -43,10 +43,10 @@ export const User = ({
           src={src}
         />
         <div className="flex-col justify-start items-start gap-1 inline-flex">
-          <Typography.Label className="text-opacity-30 -mb-1">
+          <Typography.Body variant="medium-bold">{username}</Typography.Body>
+          <Typography.Label className="text-opacity-30 -mt-1">
             {label}
           </Typography.Label>
-          <Typography.Body variant="medium-bold">{username}</Typography.Body>
         </div>
       </Link>
       {children}

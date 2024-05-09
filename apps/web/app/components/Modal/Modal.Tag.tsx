@@ -165,10 +165,10 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
                           </div>
                         }
                         clicked
-                        color="purple"
+                        color="fuchsia"
                         className="mr-2 my-1"
                       >
-                        # {tag}
+                        #{tag}
                       </PostUtil.Tag>
                     ))}
                   </div>
