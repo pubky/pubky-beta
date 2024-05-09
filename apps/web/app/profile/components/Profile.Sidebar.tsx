@@ -344,35 +344,37 @@ export default function Sidebar({
           <DropDown.Status />
         </>
       )}
-      <div className="flex-col inline-flex gap-4">
-        <SideCard.Header title="Links" />
-        <div className="flex-col inline-flex gap-2">
-          {links.map((link, index) => (
-            <div key={index}>
-              {link.url && (
-                <>
-                  <Typography.Label className="text-opacity-50">
-                    {link.title}
-                  </Typography.Label>
-                  <Link
-                    href={
-                      link.title === 'email' ? `mailto:${link.url}` : link.url
-                    }
-                    target="_blank"
-                  >
-                    <Typography.Body
-                      className="hover:text-opacity-80"
-                      variant="small-bold"
+      {links.length > 0 && (
+        <div className="flex-col inline-flex gap-4">
+          <SideCard.Header title="Links" />
+          <div className="flex-col inline-flex gap-2">
+            {links.map((link, index) => (
+              <div key={index}>
+                {link.url && (
+                  <>
+                    <Typography.Label className="text-opacity-50">
+                      {link.title}
+                    </Typography.Label>
+                    <Link
+                      href={
+                        link.title === 'email' ? `mailto:${link.url}` : link.url
+                      }
+                      target="_blank"
                     >
-                      {link.url}
-                    </Typography.Body>
-                  </Link>
-                </>
-              )}
-            </div>
-          ))}
+                      <Typography.Body
+                        className="hover:text-opacity-80"
+                        variant="small-bold"
+                      >
+                        {link.url}
+                      </Typography.Body>
+                    </Link>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
       {(!creatorPubky || creatorPubky === pubky) && (
         <Link href="/logout">
           <Button.Medium icon={<Icon.SignOut />}>Sign out</Button.Medium>
