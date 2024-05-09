@@ -52,7 +52,7 @@ export default function Status({ subtitle }: Status) {
         title="Status"
         subtitle="Set your current status"
         isOpen={openDropdown}
-        className="right-0"
+        className="right-0 bottom-0"
       >
         <DropDownUI.Item
           label="Available"
