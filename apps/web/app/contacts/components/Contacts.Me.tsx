@@ -2,6 +2,7 @@ import { Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
 import { DropDown } from '../../components/DropDown';
+import { useClientContext } from '../../../contexts/client';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 
 interface MeProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -21,10 +22,13 @@ export default function Me({
   contactsLayout,
   loadingContacts,
 }: MeProps) {
+  const { pubky } = useClientContext();
+  const profileLink = pubkey === pubky ? '/profile' : `/profile/${pubkey}`;
+
   return (
     <div className="pb-8 sm:pb-12 flex gap-12">
       <div className="gap-6 inline-flex">
-        <Link href={`/profile`}>
+        <Link href={profileLink}>
           <div className="gap-3 flex items-center">
             <Image
               width={48}

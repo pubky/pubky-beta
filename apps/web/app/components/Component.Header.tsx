@@ -16,7 +16,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 interface HeaderProps {
-  title: React.ReactNode;
+  title?: React.ReactNode;
   className?: string;
 }
 

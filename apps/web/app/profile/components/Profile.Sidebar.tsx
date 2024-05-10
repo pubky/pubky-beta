@@ -182,7 +182,7 @@ export default function Sidebar({
       {loading ? (
         <Skeleton.ProfileSidebar />
       ) : (
-        <div className="w-[100%]">
+        <div className="w-full">
           <SideCard.Content className="flex-col gap-3 inline-flex">
             <div className="justify-start items-center gap-3 inline-flex">
               <Image
@@ -211,7 +211,7 @@ export default function Sidebar({
               <Button.Medium
                 loading={initLoadingFollowed}
                 className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-[70%]'
                 }
               >
                 Loading
@@ -224,7 +224,7 @@ export default function Sidebar({
                 variant="default"
                 icon={<Icon.UserMinus size="16" />}
                 className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-[70%]'
                 }
               >
                 Unfollow
@@ -237,11 +237,22 @@ export default function Sidebar({
                 variant="default"
                 icon={<Icon.UserPlus size="16" />}
                 className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-[70%]'
                 }
               >
                 Follow
               </Button.Medium>
+            )}
+            {(!creatorPubky || creatorPubky === pubky) && (
+              <Link href="/settings">
+                <Button.Medium
+                  variant="default"
+                  icon={<Icon.GearSix size="16" />}
+                  className="w-[70%]"
+                >
+                  Edit profile
+                </Button.Medium>
+              </Link>
             )}
           </SideCard.Content>
         </div>
@@ -282,7 +293,7 @@ export default function Sidebar({
             </>
           </SideCard.Content>
         ) : (
-          <SideCard.Content className="justify-start inline-flex flex-col">
+          <SideCard.Content className="flex-row gap-20 justify-start inline-flex">
             {loadingFollowers ? (
               <div className="flex w-full justify-center">
                 <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
@@ -291,12 +302,13 @@ export default function Sidebar({
               <div
                 onClick={(event) => {
                   event.stopPropagation();
-                  (followers?.count ?? 0) > 0 &&
+                  ((followers?.count ?? 0) > 0 ||
+                    (following?.count ?? 0) > 0) &&
                     router.push(
-                      `/followers/${creatorPubky ? creatorPubky : ''}`
+                      `/contacts/${creatorPubky ? creatorPubky : ''}`
                     );
                 }}
-                className={`flex-col gap-3 inline-flex mb-6 ${
+                className={`flex-col gap-3 inline-flex ${
                   (followers?.count ?? 0) > 0 && 'cursor-pointer'
                 }`}
               >
@@ -317,12 +329,13 @@ export default function Sidebar({
               <div
                 onClick={(event) => {
                   event.stopPropagation();
-                  (following?.count ?? 0) > 0 &&
+                  ((followers?.count ?? 0) > 0 ||
+                    (following?.count ?? 0) > 0) &&
                     router.push(
-                      `/following/${creatorPubky ? creatorPubky : ''}`
+                      `/contacts/${creatorPubky ? creatorPubky : ''}`
                     );
                 }}
-                className={`flex-col gap-3 inline-flex mb-3 ${
+                className={`flex-col gap-3 inline-flex ${
                   (following?.count ?? 0) > 0 && 'cursor-pointer'
                 }`}
               >
