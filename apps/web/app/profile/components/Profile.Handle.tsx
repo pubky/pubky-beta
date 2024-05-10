@@ -9,9 +9,11 @@ interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function Handle({ username, pubkey, ...rest }: HandleProps) {
   return (
     <div {...rest} className={twMerge('mt-6', rest.className)}>
-      <Typography.Display>{username}</Typography.Display>
+      <Typography.Display className="sm:leading-[120px]">
+        {username}
+      </Typography.Display>
       {pubkey && (
-        <Typography.H2 className="text-left text-opacity-50 -mt-4">
+        <Typography.H2 className="text-left text-opacity-50">
           {pubkey}
         </Typography.H2>
       )}

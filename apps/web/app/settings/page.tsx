@@ -312,7 +312,7 @@ export default function Index() {
             setName(e.target.value)
           }
         />
-        <Typography.PageTitle className="-mt-6 text-opacity-50 break-words">
+        <Typography.PageTitle className="-mt-4 text-opacity-50 break-words">
           {handler}
         </Typography.PageTitle>
         <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
