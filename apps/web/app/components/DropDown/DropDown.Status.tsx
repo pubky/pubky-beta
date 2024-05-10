@@ -1,14 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
+import { useClientContext } from '../../../contexts/client';
 
 interface Status {
   subtitle?: string;
 }
 
 export default function Status({ subtitle }: Status) {
+  const { status, updateStatus } = useClientContext();
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const labels = {
@@ -20,6 +22,7 @@ export default function Status({ subtitle }: Status) {
     celebrating: 'Celebrating',
     sick: 'Sick',
     noStatus: 'No Status',
+    loading: 'loading',
   };
 
   const emojis = {
@@ -31,13 +34,23 @@ export default function Status({ subtitle }: Status) {
     celebrating: '🥂',
     sick: '🤒',
     noStatus: '💭',
+    loading: '⏳',
   };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: 'noStatus',
-    textOption: labels.noStatus,
-    iconText: emojis.noStatus,
+    textOption: labels.loading,
+    iconText: emojis.loading,
   });
+
+  useEffect(() => {
+    setDropdownValue({
+      value: status ? status : 'noStatus',
+      textOption: status ? labels[status] : labels.noStatus,
+      iconText: status ? emojis[status] : emojis.noStatus,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DropDown
@@ -65,6 +78,7 @@ export default function Status({ subtitle }: Status) {
               textOption: 'Available',
               iconText: '😃',
             });
+            updateStatus('available');
             setOpenDropdown(false);
           }}
         />
@@ -79,6 +93,7 @@ export default function Status({ subtitle }: Status) {
               textOption: 'Away',
               iconText: '🕓',
             });
+            updateStatus('away');
             setOpenDropdown(false);
           }}
         />
@@ -93,6 +108,7 @@ export default function Status({ subtitle }: Status) {
               textOption: 'Vacationing',
               iconText: '🌴',
             });
+            updateStatus('vacationing');
             setOpenDropdown(false);
           }}
         />
@@ -107,6 +123,7 @@ export default function Status({ subtitle }: Status) {
               textOption: 'Working',
               iconText: '👨‍💻',
             });
+            updateStatus('working');
             setOpenDropdown(false);
           }}
         />
@@ -121,6 +138,7 @@ export default function Status({ subtitle }: Status) {
               textOption: 'Traveling',
               iconText: '✈️',
             });
+            updateStatus('traveling');
             setOpenDropdown(false);
           }}
         />
@@ -135,6 +153,7 @@ export default function Status({ subtitle }: Status) {
               textOption: 'Celebrating',
               iconText: '🥂',
             });
+            updateStatus('celebrating');
             setOpenDropdown(false);
           }}
         />
@@ -149,6 +168,7 @@ export default function Status({ subtitle }: Status) {
               textOption: 'Sick',
               iconText: '🤒',
             });
+            updateStatus('sick');
             setOpenDropdown(false);
           }}
         />
@@ -163,6 +183,7 @@ export default function Status({ subtitle }: Status) {
               textOption: 'No Status',
               iconText: '💭',
             });
+            updateStatus('noStatus');
             setOpenDropdown(false);
           }}
         />
