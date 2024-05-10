@@ -27,6 +27,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: TSize;
   post: IPost;
   layout?: TLayouts;
+  fullContent?: boolean;
 }
 
 export default function Post({
@@ -34,6 +35,7 @@ export default function Post({
   size = 'full',
   post,
   layout,
+  fullContent = false,
   ...rest
 }: PostProps) {
   const router = useRouter();
@@ -156,7 +158,13 @@ export default function Post({
                 <div
                   className={post?.tags?.length > 0 ? 'lg:w-[60%]' : 'w-full'}
                 >
-                  <PostUI.Content text={minifyText(post?.post?.content, 140)} />
+                  <PostUI.Content
+                    text={
+                      fullContent
+                        ? post?.post?.content
+                        : minifyText(post?.post?.content, 140)
+                    }
+                  />
                   {/** <img
                     alt="postImage"
                     src="/images/user.png"

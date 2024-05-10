@@ -186,14 +186,14 @@ export default function Sidebar({
           <SideCard.Content className="flex-col gap-3 inline-flex">
             <div className="justify-start items-center gap-3 inline-flex">
               <Image
-                width={36}
-                height={36}
-                className="w-[36px] h-[36px] rounded-full"
+                width={40}
+                height={40}
+                className="w-[40px] h-[40px] rounded-full"
                 src={image}
                 alt="user-pic"
               />
               <div>
-                <Typography.H2 className="-mb-2">
+                <Typography.H2 className="-mb-1">
                   {minifyText(name, 15)}
                 </Typography.H2>
                 <Typography.Label className="text-opacity-50">

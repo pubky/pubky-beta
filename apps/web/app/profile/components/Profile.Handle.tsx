@@ -11,7 +11,7 @@ export default function Handle({ username, pubkey, ...rest }: HandleProps) {
     <div {...rest} className={twMerge('mt-6', rest.className)}>
       <Typography.Display>{username}</Typography.Display>
       {pubkey && (
-        <Typography.H2 className="text-left text-opacity-50 -mt-6">
+        <Typography.H2 className="text-left text-opacity-50 -mt-4">
           {pubkey}
         </Typography.H2>
       )}
