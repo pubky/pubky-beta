@@ -77,7 +77,7 @@ export default function CreateQuickPost() {
         >
           {name}
         </Typography.Body>
-        <Typography.Label className="text-opacity-30">
+        <Typography.Label className="cursor-pointer text-opacity-30">
           {minifyPubky(handler)}
         </Typography.Label>
       </Link>

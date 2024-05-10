@@ -164,7 +164,7 @@ export default function Index() {
       links.forEach((link, index) => {
         if (link.url) {
           let validationResult;
-          if (link.title === 'email') {
+          if (link.title === 'email' || link.title === 'mail') {
             validationResult = z
               .string()
               .email({ message: 'Invalid email address' })
@@ -188,7 +188,7 @@ export default function Index() {
       if (invalidLinkIndexes.length > 0) {
         const newErrors: FormErrors = {};
         invalidLinkIndexes.forEach((index) => {
-          if (links[index].title === 'email') {
+          if (links[index].title === 'email' || links[index].title === 'mail') {
             newErrors[`link${index}`] = ['Invalid email address'];
           } else {
             newErrors[`link${index}`] = ['Invalid website URL'];
@@ -304,7 +304,7 @@ export default function Index() {
       <Content.Grid>
         <Input.Cursor
           placeholder="Your Name"
-          className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
+          className="h-auto text-[40px] font-bold sm:text-[100px]"
           defaultValue={name}
           autoCorrect="off"
           error={errors.name}
@@ -312,7 +312,7 @@ export default function Index() {
             setName(e.target.value)
           }
         />
-        <Typography.PageTitle className="text-opacity-50 break-words">
+        <Typography.PageTitle className="-mt-6 text-opacity-50 break-words">
           {handler}
         </Typography.PageTitle>
         <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">

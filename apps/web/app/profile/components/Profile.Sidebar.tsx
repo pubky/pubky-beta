@@ -182,7 +182,7 @@ export default function Sidebar({
       {loading ? (
         <Skeleton.ProfileSidebar />
       ) : (
-        <div>
+        <div className="w-[70%]">
           <SideCard.Content className="flex-col gap-3 inline-flex">
             <div className="justify-start items-center gap-3 inline-flex">
               <Image
@@ -357,7 +357,9 @@ export default function Sidebar({
                     </Typography.Label>
                     <Link
                       href={
-                        link.title === 'email' ? `mailto:${link.url}` : link.url
+                        link.title === 'email' || link.title === 'mail'
+                          ? `mailto:${link.url}`
+                          : link.url
                       }
                       target="_blank"
                     >
