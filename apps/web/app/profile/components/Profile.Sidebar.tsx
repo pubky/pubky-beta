@@ -282,7 +282,7 @@ export default function Sidebar({
             </>
           </SideCard.Content>
         ) : (
-          <SideCard.Content className="flex-row gap-20 justify-start inline-flex">
+          <SideCard.Content className="justify-start inline-flex flex-col">
             {loadingFollowers ? (
               <div className="flex w-full justify-center">
                 <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
@@ -296,7 +296,7 @@ export default function Sidebar({
                       `/followers/${creatorPubky ? creatorPubky : ''}`
                     );
                 }}
-                className={`flex-col gap-3 inline-flex ${
+                className={`flex-col gap-3 inline-flex mb-6 ${
                   (followers?.count ?? 0) > 0 && 'cursor-pointer'
                 }`}
               >
@@ -322,7 +322,7 @@ export default function Sidebar({
                       `/following/${creatorPubky ? creatorPubky : ''}`
                     );
                 }}
-                className={`flex-col gap-3 inline-flex ${
+                className={`flex-col gap-3 inline-flex mb-3 ${
                   (following?.count ?? 0) > 0 && 'cursor-pointer'
                 }`}
               >
