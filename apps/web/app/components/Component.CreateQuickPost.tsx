@@ -9,7 +9,7 @@ import { INewPost } from '../../types';
 import Link from 'next/link';
 
 export default function CreateQuickPost() {
-  const { pubky, getUserIndexed, createPost, setPosts } = useClientContext();
+  const { pubky, getProfile, createPost, setPosts } = useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
   const [handler, setHandler] = useState('');
@@ -19,11 +19,11 @@ export default function CreateQuickPost() {
   async function fetchProfile() {
     try {
       if (!pubky) return;
-      const userProfile = await getUserIndexed(pubky);
+      const userProfile = await getProfile();
 
       if (userProfile) {
-        setPic(userProfile.profile?.image || '/images/Userpic.png');
-        setName(userProfile.profile?.name || 'Loading...');
+        setPic(userProfile?.image || '/images/Userpic.png');
+        setName(userProfile?.name || 'Loading...');
         setHandler(pubky);
       }
     } catch (error) {
@@ -34,7 +34,7 @@ export default function CreateQuickPost() {
   useEffect(() => {
     fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pubky]);
 
   const handleSubmit = async () => {
     if (sendingPost) {
