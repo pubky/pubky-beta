@@ -81,7 +81,7 @@ export default function CreateQuickPost() {
           {minifyPubky(handler)}
         </Typography.Label>
       </Link>
-      <div className="w-full flex justify-between gap-6 items-start inline-flex">
+      <div className="w-full flex justify-between gap-6 items-start flex-col xl:flex-row">
         <Input.CursorArea
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
             setContent(e.target.value)
