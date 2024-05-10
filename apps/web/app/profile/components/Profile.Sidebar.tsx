@@ -339,10 +339,10 @@ export default function Sidebar({
         )}
       </div>
       {(!creatorPubky || creatorPubky === pubky) && (
-        <>
+        <div>
           <SideCard.Header title="Status" />
           <DropDown.Status />
-        </>
+        </div>
       )}
       {links.length > 0 && (
         <div className="flex-col inline-flex gap-4">

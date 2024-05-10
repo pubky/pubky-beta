@@ -13,15 +13,15 @@ export const Header = ({
   ...rest
 }: HeaderProps) => {
   return (
-    <div className="w-96 justify-between items-center inline-flex">
+    <div
+      {...rest}
+      className={twMerge(
+        'w-96 justify-between items-center inline-flex',
+        rest.className
+      )}
+    >
       <HeaderTitle variant={variantTitle}>{title}</HeaderTitle>
-      <div
-        {...rest}
-        className={twMerge(
-          `flex-col justify-start mt-2 items-start inline-flex`,
-          rest.className
-        )}
-      >
+      <div className="flex-col justify-start mt-2 items-start inline-flex">
         {children}
       </div>
     </div>
