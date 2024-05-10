@@ -211,7 +211,7 @@ export default function Sidebar({
               <Button.Medium
                 loading={initLoadingFollowed}
                 className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-[70%]'
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
                 }
               >
                 Loading
@@ -224,7 +224,7 @@ export default function Sidebar({
                 variant="default"
                 icon={<Icon.UserMinus size="16" />}
                 className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-[70%]'
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
                 }
               >
                 Unfollow
@@ -237,7 +237,7 @@ export default function Sidebar({
                 variant="default"
                 icon={<Icon.UserPlus size="16" />}
                 className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-[70%]'
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
                 }
               >
                 Follow
@@ -248,7 +248,6 @@ export default function Sidebar({
                 <Button.Medium
                   variant="default"
                   icon={<Icon.GearSix size="16" />}
-                  className="w-[70%]"
                 >
                   Edit profile
                 </Button.Medium>
