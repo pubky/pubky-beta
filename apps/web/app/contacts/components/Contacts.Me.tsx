@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { DropDown } from '../../components/DropDown';
 import { useClientContext } from '../../../contexts/client';
 import { minifyPubky } from '../../../libs/pubkyHelper';
+import { useEffect, useState } from 'react';
 
 interface MeProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
@@ -22,8 +23,13 @@ export default function Me({
   contactsLayout,
   loadingContacts,
 }: MeProps) {
+  const [pubkyText, setPubkyText] = useState('');
   const { pubky } = useClientContext();
   const profileLink = pubkey === pubky ? '/profile' : `/profile/${pubkey}`;
+
+  useEffect(() => {
+    setPubkyText(minifyPubky(pubkey));
+  }, [pubkey]);
 
   return (
     <div className="pb-8 sm:pb-12 flex gap-12">
@@ -39,7 +45,7 @@ export default function Me({
             />
             <div className="flex-col inline-flex">
               <Typography.Label className="hidden lg:block text-opacity-30">
-                {minifyPubky(pubkey)}
+                {minifyPubky(pubkyText)}
               </Typography.Label>
               <Typography.H2 className="text-sm sm:text-2xl">
                 {name}

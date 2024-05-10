@@ -87,7 +87,7 @@ export default function CreateQuickPost() {
             setContent(e.target.value)
           }
           value={content}
-          className="w-[450px] h-auto mt-4"
+          className="w-full xl:w-[450px] h-auto mt-4"
           placeholder="What's in your mind?"
         />
         <Button.Large

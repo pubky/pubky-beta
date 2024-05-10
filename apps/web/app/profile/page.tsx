@@ -10,7 +10,7 @@ import { minifyPubky } from '../../libs/pubkyHelper';
 import { IPost, INewPost } from '../../types';
 
 export default function Index() {
-  const { pubky, listUserFeed, getUserIndexed, posts, setPosts } =
+  const { status, pubky, listUserFeed, getUserIndexed, posts, setPosts } =
     useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
@@ -18,6 +18,18 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
+
+  const emojis = {
+    available: '👋',
+    away: '🕓',
+    vacationing: '🌴',
+    working: '👨‍💻',
+    traveling: '✈️',
+    celebrating: '🥂',
+    sick: '🤒',
+    noStatus: '💭',
+    loading: '⏳',
+  };
 
   async function fetchPosts(pointer: string) {
     try {
@@ -100,7 +112,7 @@ export default function Index() {
             username={name}
             src={pic}
             className="order-1 lg:order-2"
-            //status="👨‍💻"
+            status={emojis[status]}
           />
         </Content.Grid>
       </div>

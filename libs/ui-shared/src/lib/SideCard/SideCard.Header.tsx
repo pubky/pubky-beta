@@ -16,7 +16,7 @@ export const Header = ({
     <div
       {...rest}
       className={twMerge(
-        'w-96 justify-between items-center inline-flex',
+        'w-full justify-between items-center inline-flex',
         rest.className
       )}
     >

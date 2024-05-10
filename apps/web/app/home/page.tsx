@@ -118,7 +118,7 @@ export default function Index() {
     <Content.Main>
       <Header className="hidden md:block" title="Streams" />
       <Content.Grid className={'grid grid-cols-5 gap-4'}>
-        <Sidebar className="hidden xl:block">
+        <Sidebar className="hidden lg:block">
           <Filter.Reach />
           <Filter.Sort />
           <div className="self-start sticky top-[160px]">
@@ -126,7 +126,7 @@ export default function Index() {
             <Filter.Content />
           </div>
         </Sidebar>
-        <PostsLayout className="col-span-5 xl:col-span-4 2xl:col-span-3 flex-col inline-flex gap-6">
+        <PostsLayout className="col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-6">
           <CreateQuickPost />
           {Object.keys(posts).map((key) => (
             <Post key={posts[key].id} post={posts[key]} />
@@ -140,7 +140,7 @@ export default function Index() {
           )}
           {loading && Loading(Object.keys(posts).length)}
         </PostsLayout>
-        <Sidebar className="hidden 2xl:block">
+        <Sidebar className="hidden xl:block">
           <WhoFollow />
           <HotTags />
           {/** <ActiveFriends /> */}
