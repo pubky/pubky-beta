@@ -182,7 +182,7 @@ export default function Sidebar({
       {loading ? (
         <Skeleton.ProfileSidebar />
       ) : (
-        <div className="w-[70%]">
+        <div className="w-[100%]">
           <SideCard.Content className="flex-col gap-3 inline-flex">
             <div className="justify-start items-center gap-3 inline-flex">
               <Image
