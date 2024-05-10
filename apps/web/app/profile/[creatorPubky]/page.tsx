@@ -111,7 +111,6 @@ export default function Index({
             username={name}
             src={pic}
             className="order-1 lg:order-2"
-            //status="👨‍💻"
           />
         </Content.Grid>
       </div>

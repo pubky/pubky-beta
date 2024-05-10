@@ -9,6 +9,7 @@ import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '../../components';
 import { minifyPubky } from '../../../libs/pubkyHelper';
 import { IFollowingResponse, IFollowersResponse } from '../../../types';
+import { emojis, labels } from '../../../libs/statusHelper';
 import Image from 'next/image';
 import { DropDown } from '../../components/DropDown';
 
@@ -31,6 +32,7 @@ export default function Sidebar({
   const [bio, setBio] = useState('No bio.');
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
   const [image, setImage] = useState('/images/Userpic.png');
+  const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [loadingFollowing, setLoadingFollowing] = useState(true);
@@ -138,6 +140,9 @@ export default function Sidebar({
           setName(profile?.name || '');
           setBio(profile?.bio || 'No bio.');
           setImage(profile?.image || '/images/Userpic.png');
+          if (profile.status && profile.status in labels) {
+            setStatus(profile.status);
+          }
           setLinks(
             profile?.links.map((link) => ({ title: link.title, url: link.url }))
           );
@@ -350,12 +355,25 @@ export default function Sidebar({
           </SideCard.Content>
         )}
       </div>
-      {(!creatorPubky || creatorPubky === pubky) && (
-        <div>
-          <SideCard.Header title="Status" />
-          <DropDown.Status />
-        </div>
-      )}
+      <div>
+        {!creatorPubky || creatorPubky === pubky ? (
+          <>
+            <SideCard.Header title="Status" />
+            <DropDown.Status />
+          </>
+        ) : (
+          status !== 'noStatus' && (
+            <>
+              <SideCard.Header title="Status" />
+              <div className="mt-2 px-4 py-2 bg-white bg-opacity-10 rounded-full">
+                <Typography.Body variant="medium">
+                  {emojis[status]} {labels[status]}
+                </Typography.Body>
+              </div>
+            </>
+          )
+        )}
+      </div>
       {links.length > 0 && (
         <div className="flex-col inline-flex gap-4">
           <SideCard.Header title="Links" />

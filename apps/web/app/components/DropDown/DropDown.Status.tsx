@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
 import { useClientContext } from '../../../contexts/client';
+import { emojis, labels } from '../../../libs/statusHelper';
 
 interface Status {
   subtitle?: string;
@@ -12,30 +13,6 @@ interface Status {
 export default function Status({ subtitle }: Status) {
   const { status, updateStatus } = useClientContext();
   const [openDropdown, setOpenDropdown] = useState(false);
-
-  const labels = {
-    available: 'Available',
-    away: 'Away',
-    vacationing: 'Vacationing',
-    working: 'Working',
-    traveling: 'Traveling',
-    celebrating: 'Celebrating',
-    sick: 'Sick',
-    noStatus: 'No Status',
-    loading: 'loading',
-  };
-
-  const emojis = {
-    available: '👋',
-    away: '🕓',
-    vacationing: '🌴',
-    working: '👨‍💻',
-    traveling: '✈️',
-    celebrating: '🥂',
-    sick: '🤒',
-    noStatus: '💭',
-    loading: '⏳',
-  };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: 'noStatus',

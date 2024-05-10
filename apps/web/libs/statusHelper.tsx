@@ -1,0 +1,23 @@
+export const labels = {
+  available: 'Available',
+  away: 'Away',
+  vacationing: 'Vacationing',
+  working: 'Working',
+  traveling: 'Traveling',
+  celebrating: 'Celebrating',
+  sick: 'Sick',
+  noStatus: 'No Status',
+  loading: 'loading',
+};
+
+export const emojis = {
+  available: '👋',
+  away: '🕓',
+  vacationing: '🌴',
+  working: '👨‍💻',
+  traveling: '✈️',
+  celebrating: '🥂',
+  sick: '🤒',
+  noStatus: '💭',
+  loading: '⏳',
+};
