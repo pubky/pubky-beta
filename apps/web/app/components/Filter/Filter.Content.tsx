@@ -4,12 +4,7 @@ export default function Content() {
   return (
     <div className="mb-6">
       <SideCard.Header title="Content" />
-      <SideCard.Item
-        label="All"
-        value="all"
-        disabled
-        icon={<Icon.Stack color="gray" />}
-      />
+      <SideCard.Item label="All" value="all" selected icon={<Icon.Stack />} />
       <SideCard.Item
         label="Posts"
         value="posts"

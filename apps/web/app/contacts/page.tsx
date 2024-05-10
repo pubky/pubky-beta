@@ -16,7 +16,7 @@ export default function Index() {
   const { pubky, listFollowing, listFollowers, getProfile } =
     useClientContext();
   const { contacts, contactsLayout, setContacts } = useFilterContext();
-  const [name, setName] = useState('');
+  const [name, setName] = useState('Loading...');
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
   const [countContacts, setCountContacts] = useState(0);
@@ -114,67 +114,66 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Contacts" />
-      {loadingContacts || loading ? (
-        <div className="mt-12">
-          <div className="flex w-full justify-center">
-            <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-          </div>
-          <Typography.Body
-            variant="medium-bold"
-            className="col-span-3 m-2 flex justify-center items-center gap-6 text-opacity-20"
+      <Content.Grid>
+        <Contacts.Me
+          image={image}
+          name={name}
+          pubkey={pubky ? pubky.toString() : ''}
+          countContacts={countContacts}
+          contactsLayout={contacts}
+          loadingContacts={loadingContacts}
+        />
+        <div className="mb-6">
+          <Button.Tab
+            onClick={() => setContacts('followers')}
+            active={!loadingContacts && contacts === 'followers'}
+            icon={<Icon.UsersLeft />}
+            className="mr-0.5"
           >
-            Loading Contacts
-          </Typography.Body>
+            Followers
+          </Button.Tab>
+          <Button.Tab
+            onClick={() => setContacts('following')}
+            active={!loadingContacts && contacts === 'following'}
+            icon={<Icon.UsersRight />}
+            className="mr-0.5"
+          >
+            Following
+          </Button.Tab>
+          <Button.Tab
+            onClick={() => setContacts('friends')}
+            active={!loadingContacts && contacts === 'friends'}
+            icon={<Icon.Smiley />}
+          >
+            Friends
+          </Button.Tab>
         </div>
-      ) : (
-        <Content.Grid>
-          <Contacts.Me
-            image={image}
-            name={name}
-            pubkey={pubky ? pubky.toString() : ''}
-            countContacts={countContacts}
-            contactsLayout={contacts}
-          />
-          <div className="mb-6">
-            <Button.Tab
-              onClick={() => setContacts('followers')}
-              active={contacts === 'followers'}
-              icon={<Icon.UsersLeft />}
-              className="mr-0.5"
+        {loadingContacts || loading ? (
+          <div className="mt-12">
+            <div className="flex w-full justify-center">
+              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
+            </div>
+            <Typography.Body
+              variant="medium-bold"
+              className="col-span-3 m-2 flex justify-center items-center gap-6 text-opacity-20"
             >
-              Followers
-            </Button.Tab>
-            <Button.Tab
-              onClick={() => setContacts('following')}
-              active={contacts === 'following'}
-              icon={<Icon.UsersRight />}
-              className="mr-0.5"
-            >
-              Following
-            </Button.Tab>
-            <Button.Tab
-              onClick={() => setContacts('friends')}
-              active={contacts === 'friends'}
-              icon={<Icon.Smiley />}
-            >
-              Friends
-            </Button.Tab>
+              Loading Contacts
+            </Typography.Body>
           </div>
-          {contactsUsers?.count ?? 0 > 0 ? (
-            contactsLayout === 'list' ? (
-              <Contacts.Root>
-                <Contacts.Contact contacts={contactsToShow} />
-              </Contacts.Root>
-            ) : (
+        ) : contactsUsers?.count ?? 0 > 0 ? (
+          contactsLayout === 'list' ? (
+            <Contacts.Root>
               <Contacts.Contact contacts={contactsToShow} />
-            )
+            </Contacts.Root>
           ) : (
-            <Typography.H2 className="font-normal text-opacity-30 text-center">
-              No contacts yet
-            </Typography.H2>
-          )}
-        </Content.Grid>
-      )}
+            <Contacts.Contact contacts={contactsToShow} />
+          )
+        ) : (
+          <Typography.H2 className="font-normal text-opacity-30 text-center">
+            No contacts yet
+          </Typography.H2>
+        )}
+      </Content.Grid>
       <CreatePost />
     </Content.Main>
   );

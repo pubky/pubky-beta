@@ -7,8 +7,8 @@ export default function Layout() {
       <SideCard.Item
         label="Columns"
         value="columns"
-        disabled
-        icon={<Icon.ThreeColumns color="gray" />}
+        selected
+        icon={<Icon.ThreeColumns />}
       />
       <SideCard.Item
         label="Wide"

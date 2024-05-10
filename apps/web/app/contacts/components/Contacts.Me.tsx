@@ -1,4 +1,4 @@
-import { Typography } from '@social/ui-shared';
+import { Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
 import { DropDown } from '../../components/DropDown';
@@ -10,6 +10,7 @@ interface MeProps extends React.HTMLAttributes<HTMLDivElement> {
   image: string;
   countContacts: number;
   contactsLayout: string;
+  loadingContacts: boolean;
 }
 
 export default function Me({
@@ -18,6 +19,7 @@ export default function Me({
   image,
   countContacts,
   contactsLayout,
+  loadingContacts,
 }: MeProps) {
   return (
     <div className="pb-8 sm:pb-12 flex gap-12">
@@ -50,7 +52,9 @@ export default function Me({
             ? 'following'
             : 'friends'}
         </Typography.Label>
-        <Typography.H2>{countContacts}</Typography.H2>
+        <Typography.H2>
+          {loadingContacts ? <Icon.LoadingSpin size="24" /> : countContacts}
+        </Typography.H2>
       </div>
       <DropDown.SortFriends type="text" subtitle="Sort by" />
     </div>
