@@ -367,7 +367,8 @@ export default function Sidebar({
               <SideCard.Header title="Status" />
               <div className="mt-2 px-4 py-2 bg-white bg-opacity-10 rounded-full">
                 <Typography.Body variant="medium">
-                  {emojis[status]} {labels[status]}
+                  {emojis[status as keyof typeof emojis]}{' '}
+                  {labels[status as keyof typeof labels]}
                 </Typography.Body>
               </div>
             </>
