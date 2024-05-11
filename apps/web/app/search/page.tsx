@@ -130,7 +130,7 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Search" />
-      <Content.Grid className={'grid grid-cols-5 gap-4'}>
+      <Content.Grid className={'grid grid-cols-5 gap-6'}>
         <Sidebar className="hidden xl:block">
           <Filter.Reach />
           <Filter.Sort />
