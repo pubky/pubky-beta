@@ -156,7 +156,7 @@ export default function WhoFollow() {
                       recommendedProfile?.profile?.image ||
                       '/images/Userpic.png'
                     }
-                    username={minifyText(recommendedProfile?.profile?.name, 10)}
+                    username={minifyText(recommendedProfile?.profile?.name, 8)}
                     label={minifyPubky(recommendedProfile.id)}
                   >
                     {pubkeyUser ? (
