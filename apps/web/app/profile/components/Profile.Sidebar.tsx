@@ -2,14 +2,16 @@
 
 import { useRouter } from 'next/navigation';
 import { Icon, Typography, Post, SideCard, Button } from '@social/ui-shared';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { minifyPubky } from '../../../libs/pubkyHelper';
 import { minifyText } from '../../../libs/textHelper';
 import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '../../components';
+import { minifyPubky } from '../../../libs/pubkyHelper';
 import { IFollowingResponse, IFollowersResponse } from '../../../types';
+import { emojis, labels } from '../../../libs/statusHelper';
+import Image from 'next/image';
+import { DropDown } from '../../components/DropDown';
 
 export default function Sidebar({
   creatorPubky,
@@ -30,6 +32,7 @@ export default function Sidebar({
   const [bio, setBio] = useState('No bio.');
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
   const [image, setImage] = useState('/images/Userpic.png');
+  const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [loadingFollowing, setLoadingFollowing] = useState(true);
@@ -137,6 +140,9 @@ export default function Sidebar({
           setName(profile?.name || '');
           setBio(profile?.bio || 'No bio.');
           setImage(profile?.image || '/images/Userpic.png');
+          if (profile.status && profile.status in labels) {
+            setStatus(profile.status);
+          }
           setLinks(
             profile?.links.map((link) => ({ title: link.title, url: link.url }))
           );
@@ -181,22 +187,25 @@ export default function Sidebar({
       {loading ? (
         <Skeleton.ProfileSidebar />
       ) : (
-        <div>
-          <SideCard.Header title="profile" variantTitle="label" />
+        <div className="w-full">
           <SideCard.Content className="flex-col gap-3 inline-flex">
             <div className="justify-start items-center gap-3 inline-flex">
               <Image
-                width={32}
-                height={32}
-                className="w-[32px] h-[32px] rounded-full"
+                width={40}
+                height={40}
+                className="w-[40px] h-[40px] rounded-full"
                 src={image}
                 alt="user-pic"
               />
-              <Typography.H2>{minifyText(name, 15)}</Typography.H2>
+              <div>
+                <Typography.H2 className="-mb-1">
+                  {minifyText(name, 15)}
+                </Typography.H2>
+                <Typography.Label className="text-opacity-50">
+                  {pubky ? minifyPubky(pubky) : 'Loading...'}
+                </Typography.Label>
+              </div>
             </div>
-            <Typography.Label className="text-opacity-50">
-              {pubky ? minifyPubky(pubky) : 'Loading...'}
-            </Typography.Label>
             <Typography.Body
               variant="medium"
               className="text-opacity-80 break-all"
@@ -207,7 +216,7 @@ export default function Sidebar({
               <Button.Medium
                 loading={initLoadingFollowed}
                 className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
                 }
               >
                 Loading
@@ -220,7 +229,7 @@ export default function Sidebar({
                 variant="default"
                 icon={<Icon.UserMinus size="16" />}
                 className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
                 }
               >
                 Unfollow
@@ -233,11 +242,21 @@ export default function Sidebar({
                 variant="default"
                 icon={<Icon.UserPlus size="16" />}
                 className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : ''
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
                 }
               >
                 Follow
               </Button.Medium>
+            )}
+            {(!creatorPubky || creatorPubky === pubky) && (
+              <Link href="/settings">
+                <Button.Medium
+                  variant="default"
+                  icon={<Icon.GearSix size="16" />}
+                >
+                  Edit profile
+                </Button.Medium>
+              </Link>
             )}
           </SideCard.Content>
         </div>
@@ -262,7 +281,7 @@ export default function Sidebar({
         </SideCard.Content>
       </div> */}
       <div>
-        <SideCard.Header title="Contacts" variantTitle="label" />
+        <SideCard.Header title="Contacts" />
         {loadingFollowers ? (
           <SideCard.Content>
             <>
@@ -287,9 +306,10 @@ export default function Sidebar({
               <div
                 onClick={(event) => {
                   event.stopPropagation();
-                  (followers?.count ?? 0) > 0 &&
+                  ((followers?.count ?? 0) > 0 ||
+                    (following?.count ?? 0) > 0) &&
                     router.push(
-                      `/followers/${creatorPubky ? creatorPubky : ''}`
+                      `/contacts/${creatorPubky ? creatorPubky : ''}`
                     );
                 }}
                 className={`flex-col gap-3 inline-flex ${
@@ -313,9 +333,10 @@ export default function Sidebar({
               <div
                 onClick={(event) => {
                   event.stopPropagation();
-                  (following?.count ?? 0) > 0 &&
+                  ((followers?.count ?? 0) > 0 ||
+                    (following?.count ?? 0) > 0) &&
                     router.push(
-                      `/following/${creatorPubky ? creatorPubky : ''}`
+                      `/contacts/${creatorPubky ? creatorPubky : ''}`
                     );
                 }}
                 className={`flex-col gap-3 inline-flex ${
@@ -334,24 +355,64 @@ export default function Sidebar({
           </SideCard.Content>
         )}
       </div>
-      {links.map((link, index) => (
-        <div key={index}>
-          <Typography.Label className="text-opacity-50">
-            {link.title}
-          </Typography.Label>
-          <Link
-            href={link.title === 'email' ? `mailto:${link.url}` : link.url}
-            target="_blank"
-          >
-            <Typography.Body
-              className="hover:text-opacity-80"
-              variant="small-bold"
-            >
-              {link.url}
-            </Typography.Body>
-          </Link>
+      <div>
+        {!creatorPubky || creatorPubky === pubky ? (
+          <>
+            <SideCard.Header title="Status" />
+            <DropDown.Status />
+          </>
+        ) : (
+          status !== 'noStatus' && (
+            <>
+              <SideCard.Header title="Status" />
+              <div className="mt-2 px-4 py-2 bg-white bg-opacity-10 rounded-full">
+                <Typography.Body variant="medium">
+                  {emojis[status as keyof typeof emojis]}{' '}
+                  {labels[status as keyof typeof labels]}
+                </Typography.Body>
+              </div>
+            </>
+          )
+        )}
+      </div>
+      {links.length > 0 && (
+        <div className="flex-col inline-flex gap-4">
+          <SideCard.Header title="Links" />
+          <div className="flex-col inline-flex gap-2">
+            {links.map((link, index) => (
+              <div key={index}>
+                {link.url && (
+                  <>
+                    <Typography.Label className="text-opacity-50">
+                      {link.title}
+                    </Typography.Label>
+                    <Link
+                      href={
+                        link.title === 'email' || link.title === 'mail'
+                          ? `mailto:${link.url}`
+                          : link.url
+                      }
+                      target="_blank"
+                    >
+                      <Typography.Body
+                        className="hover:text-opacity-80"
+                        variant="small-bold"
+                      >
+                        {link.url}
+                      </Typography.Body>
+                    </Link>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
+      )}
+      {(!creatorPubky || creatorPubky === pubky) && (
+        <Link href="/logout">
+          <Button.Medium icon={<Icon.SignOut />}>Sign out</Button.Medium>
+        </Link>
+      )}
     </div>
   );
 }

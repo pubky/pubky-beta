@@ -39,7 +39,7 @@ export default function MainPost({ uri }: { uri: string }) {
           </Typography.Body>
         </>
       ) : (
-        <Post key={uri} post={post} size="full" />
+        <Post key={uri} post={post} size="full" fullContent />
       )}
     </>
   );

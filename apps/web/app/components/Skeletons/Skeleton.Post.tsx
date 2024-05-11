@@ -17,7 +17,7 @@ export default function Post({ size = 'normal', ...rest }: PostProps) {
       <PostUI.Root>
         <div>
           <PostUI.MainCard className={twMerge(rest.className)}>
-            <PostUI.Header size={size}>
+            <PostUI.Header>
               <div className="justify-start items-center gap-4 flex">
                 <svg
                   className="w-10 h-10 me-3 text-gray-300 dark:text-gray-700 text-opacity-50 dark:text-opacity-50 rounded-full"

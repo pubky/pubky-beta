@@ -27,13 +27,15 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: TSize;
   post: IPost;
   layout?: TLayouts;
+  fullContent?: boolean;
 }
 
 export default function Post({
   repost = false,
-  size = 'normal',
+  size = 'full',
   post,
   layout,
+  fullContent = false,
   ...rest
 }: PostProps) {
   const router = useRouter();
@@ -50,6 +52,7 @@ export default function Post({
   } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
+  const [showModalDeletePost, setshowModalDeletePost] = useState(false);
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
 
   useEffect(() => {
@@ -91,7 +94,7 @@ export default function Post({
     router.push('/search');
   };
 
-  if (!post) return <Skeleton.Post size={size} />;
+  if (!post) return <Skeleton.Post />;
 
   return (
     <div>
@@ -125,7 +128,7 @@ export default function Post({
               }
               className={twMerge(rest.className)}
             >
-              <PostUI.Header size={size}>
+              <PostUI.Header>
                 <div
                   className="justify-start items-center gap-4 flex cursor-pointer"
                   onClick={(event) => {
@@ -134,19 +137,12 @@ export default function Post({
                   }}
                 >
                   <PostUI.ImageUser
-                    className={size === 'full' ? 'lg:w-12 lg:h-12' : ''}
                     src={post?.author?.profile?.image || '/images/Userpic.png'}
                     alt="user"
                   />
-                  <div
-                    className={`${
-                      layout !== 'grid' && 'lg:flex'
-                    } justify-start items-center gap-4`}
-                  >
+                  <div className={`justify-start items-center lg:flex gap-4`}>
                     <PostUI.Username
-                      className={`hover:underline hover:decoration-solid ${
-                        size === 'full' ? 'lg:text-2xl' : ''
-                      }`}
+                      className={`hover:underline hover:decoration-solid`}
                     >
                       {post?.author?.profile?.name &&
                         minifyText(post?.author?.profile?.name, 24)}
@@ -156,27 +152,18 @@ export default function Post({
                     </Typography.Label>
                   </div>
                 </div>
-                <PostUI.Time size={size}>
-                  {timeAgo(post?.createdAt)}
-                </PostUI.Time>
+                <PostUI.Time>{timeAgo(post?.createdAt)}</PostUI.Time>
               </PostUI.Header>
-              <div
-                className={
-                  size === 'full'
-                    ? 'lg:inline-flex gap-12'
-                    : layout === 'grid'
-                    ? 'block min-h-[180px]'
-                    : 'block'
-                }
-              >
-                <div className={size === 'full' ? 'lg:w-[60%]' : ''}>
+              <div className="lg:inline-flex gap-12">
+                <div
+                  className={post?.tags?.length > 0 ? 'lg:w-[60%]' : 'w-full'}
+                >
                   <PostUI.Content
                     text={
-                      size === 'full'
+                      fullContent
                         ? post?.post?.content
                         : minifyText(post?.post?.content, 140)
                     }
-                    className={size === 'full' ? 'lg:text-xl' : 'w-full'}
                   />
                   {/** <img
                     alt="postImage"
@@ -200,62 +187,56 @@ export default function Post({
                   */}
                 </div>
                 {post?.tags?.length > 0 && (
-                  <div
-                    className={`flex-col inline-flex gap-4 ${
-                      size === 'full' ? 'mt-6 lg:mt-0' : 'mt-6'
-                    }`}
-                  >
-                    {sortedTags
-                      .slice(0, size === 'full' ? 3 : 1)
-                      .map((tagObj, index) => {
-                        const isTagFound = tagObj.from.some(
-                          (fromItem) => fromItem.author.id === pubky
-                        );
+                  <div className={`flex-col inline-flex gap-4 mt-6 lg:mt-0`}>
+                    {sortedTags.slice(0, 3).map((tagObj, index) => {
+                      const isTagFound = tagObj.from.some(
+                        (fromItem) => fromItem.author.id === pubky
+                      );
 
-                        return (
-                          <PostUI.Footer key={index}>
-                            <PostUtil.Tag
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                handleTagSearch(tagObj.tag);
-                              }}
-                              clicked={isTagFound}
-                              color="purple"
-                            >
-                              # {tagObj.tag}
-                            </PostUtil.Tag>
-                            <Button.Action
-                              variant="custom"
-                              size="small"
-                              icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                isTagFound
-                                  ? handleDeleteTag(tagObj.tag)
-                                  : handleAddTag(tagObj.tag);
-                              }}
-                            />
-                            <PostUtil.Counter counter={tagObj.count} />
-                            {tagObj?.from
-                              .slice(0, 5)
-                              .map((fromItem, fromIndex: number) => (
-                                <Image
-                                  width={32}
-                                  height={32}
-                                  alt={`pic-${fromIndex + 1}`}
-                                  key={fromIndex}
-                                  className={`w-[32px] h-[32px] rounded-full ${
-                                    fromIndex !== 0 ? '-ml-5' : ''
-                                  }`}
-                                  src={
-                                    fromItem.author?.profile?.image ||
-                                    '/images/Userpic.png'
-                                  }
-                                />
-                              ))}
-                          </PostUI.Footer>
-                        );
-                      })}
+                      return (
+                        <PostUI.Footer key={index}>
+                          <PostUtil.Tag
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleTagSearch(tagObj.tag);
+                            }}
+                            clicked={isTagFound}
+                            color="fuchsia"
+                          >
+                            #{tagObj.tag}
+                          </PostUtil.Tag>
+                          <Button.Action
+                            variant="custom"
+                            size="small"
+                            icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              isTagFound
+                                ? handleDeleteTag(tagObj.tag)
+                                : handleAddTag(tagObj.tag);
+                            }}
+                          />
+                          <PostUtil.Counter counter={tagObj.count} />
+                          {tagObj?.from
+                            .slice(0, 5)
+                            .map((fromItem, fromIndex: number) => (
+                              <Image
+                                width={32}
+                                height={32}
+                                alt={`pic-${fromIndex + 1}`}
+                                key={fromIndex}
+                                className={`w-[32px] h-[32px] rounded-full ${
+                                  fromIndex !== 0 ? '-ml-5' : ''
+                                }`}
+                                src={
+                                  fromItem.author?.profile?.image ||
+                                  '/images/Userpic.png'
+                                }
+                              />
+                            ))}
+                        </PostUI.Footer>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -309,7 +290,8 @@ export default function Post({
                     icon={<Icon.Trash size="16" />}
                     onClick={(event) => {
                       event.stopPropagation();
-                      handleDeletePost(post.id);
+                      //handleDeletePost(post.id);
+                      setshowModalDeletePost(true);
                     }}
                   />
                 )}
@@ -327,6 +309,12 @@ export default function Post({
         post={post}
         showModalTag={showModalTag}
         setShowModalTag={setShowModalTag}
+      />
+      <Modal.DeletePost
+        showModalDeletePost={showModalDeletePost}
+        setShowModalDeletePost={setshowModalDeletePost}
+        handleDeletePost={handleDeletePost}
+        postId={post.id}
       />
     </div>
   );

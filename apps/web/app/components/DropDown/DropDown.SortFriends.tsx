@@ -4,11 +4,26 @@ import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '../../components';
 
-export default function SortFriends() {
+interface SortFriends {
+  type?: 'icon' | 'text';
+  subtitle?: string;
+}
+
+export default function SortFriends({ type = 'icon', subtitle }: SortFriends) {
   const [openDropdown, setOpenDropdown] = useState(false);
+
+  const labels = {
+    activeThisMonth: 'Active this month',
+    activeAllTime: 'Active all time',
+    name: 'Name',
+    key: 'Key',
+  };
+
   const [dropdownValue, setDropdownValue] = useState({
     value: 'active-this-month',
-    iconOption: <Icon.Calendar />,
+    ...(type === 'icon'
+      ? { iconOption: <Icon.Calendar /> }
+      : { textOption: labels.activeThisMonth }),
   });
 
   return (
@@ -17,11 +32,12 @@ export default function SortFriends() {
       setOpen={setOpenDropdown}
       value={dropdownValue}
       labelIcon="Sort"
+      type={type}
+      subtitle={subtitle}
     >
       <DropDownUI.Content
         title="Sort"
         subtitle="Sort your friends by"
-        className="right-0"
         isOpen={openDropdown}
       >
         <DropDownUI.Item
@@ -32,7 +48,9 @@ export default function SortFriends() {
           onClick={() => {
             setDropdownValue({
               value: 'active-this-month',
-              iconOption: <Icon.Calendar size="24" />,
+              ...(type === 'icon'
+                ? { iconOption: <Icon.Calendar size="24" /> }
+                : { textOption: 'Active this month' }),
             });
             setOpenDropdown(false);
           }}
@@ -45,7 +63,9 @@ export default function SortFriends() {
           onClick={() => {
             setDropdownValue({
               value: 'active-all-time',
-              iconOption: <Icon.Clock size="24" />,
+              ...(type === 'icon'
+                ? { iconOption: <Icon.Clock size="24" /> }
+                : { textOption: 'Active all time' }),
             });
             setOpenDropdown(false);
           }}
@@ -58,7 +78,9 @@ export default function SortFriends() {
           onClick={() => {
             setDropdownValue({
               value: 'name',
-              iconOption: <Icon.ListBullets size="24" />,
+              ...(type === 'icon'
+                ? { iconOption: <Icon.ListBullets size="24" /> }
+                : { textOption: 'Name' }),
             });
             setOpenDropdown(false);
           }}
@@ -71,7 +93,9 @@ export default function SortFriends() {
           onClick={() => {
             setDropdownValue({
               value: 'key',
-              iconOption: <Icon.Key size="24" />,
+              ...(type === 'icon'
+                ? { iconOption: <Icon.Key size="24" /> }
+                : { textOption: 'Key' }),
             });
             setOpenDropdown(false);
           }}

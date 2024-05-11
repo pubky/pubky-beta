@@ -2,19 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
-import { CreatePost, Header } from '../components';
-import { Contacts } from './components';
-import { useClientContext } from '../../contexts/client';
-import { useFilterContext } from '../../contexts/filters';
+import { CreatePost, Header } from '../../components';
+import { Contacts } from '../components';
+import { useClientContext } from '../../../contexts/client';
+import { useFilterContext } from '../../../contexts/filters';
 import {
   IFollowingResponse,
   IFollowersResponse,
   IFriendsResponse,
-} from '../../types';
+} from '../../../types';
 
-export default function Index() {
-  const { pubky, listFollowing, listFollowers, getProfile } =
-    useClientContext();
+export default function Index({
+  params,
+}: {
+  params: { creatorPubky: string };
+}) {
+  const creatorPubky = params.creatorPubky;
+
+  const { listFollowing, listFollowers, getUserIndexed } = useClientContext();
   const { contacts, contactsLayout, setContacts } = useFilterContext();
   const [name, setName] = useState('Loading...');
   const [image, setImage] = useState('/images/Userpic.png');
@@ -29,7 +34,7 @@ export default function Index() {
     async function fetchData() {
       try {
         setLoading(true);
-        if (!pubky) return;
+        if (!creatorPubky) return;
 
         let contactsList:
           | IFollowersResponse
@@ -38,14 +43,14 @@ export default function Index() {
           | null = null;
 
         if (contacts === 'following') {
-          contactsList = await listFollowing(pubky);
+          contactsList = await listFollowing(creatorPubky);
           if (contactsList) setCountContacts(contactsList.count);
         } else if (contacts === 'followers') {
-          contactsList = await listFollowers(pubky);
+          contactsList = await listFollowers(creatorPubky);
           if (contactsList) setCountContacts(contactsList.count);
         } else if (contacts === 'friends') {
-          const contactsFollowers = await listFollowers(pubky);
-          const contactsFollowing = await listFollowing(pubky);
+          const contactsFollowers = await listFollowers(creatorPubky);
+          const contactsFollowing = await listFollowing(creatorPubky);
 
           const followersIds = new Set(
             contactsFollowers?.followers?.map((follower) =>
@@ -81,11 +86,11 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const userProfile = await getProfile();
+        const userProfile = await getUserIndexed(creatorPubky);
 
         if (userProfile) {
-          setName(userProfile.name || '');
-          setImage(userProfile.image || '/images/Userpic.png');
+          setName(userProfile?.profile.name || '');
+          setImage(userProfile.profile.image || '/images/Userpic.png');
           setLoading(false);
         }
       } catch (error) {
@@ -111,14 +116,15 @@ export default function Index() {
       contactsToShow = contactsUsers.friends || [];
     }
   }
+
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Contacts" />
+      <Header className="hidden md:block" />
       <Content.Grid>
         <Contacts.Me
           image={image}
           name={name}
-          pubkey={pubky ? pubky.toString() : ''}
+          pubkey={creatorPubky ? creatorPubky.toString() : ''}
           countContacts={countContacts}
           contactsLayout={contacts}
           loadingContacts={loadingContacts}

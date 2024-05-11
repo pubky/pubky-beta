@@ -126,7 +126,7 @@ export default function WhoFollow() {
   };
 
   return (
-    <div>
+    <div className="mb-6">
       <SideCard.Header title="Who to follow" />
       <SideCard.Content>
         {loading ? (
@@ -156,7 +156,7 @@ export default function WhoFollow() {
                       recommendedProfile?.profile?.image ||
                       '/images/Userpic.png'
                     }
-                    username={minifyText(recommendedProfile?.profile?.name)}
+                    username={minifyText(recommendedProfile?.profile?.name, 8)}
                     label={minifyPubky(recommendedProfile.id)}
                   >
                     {pubkeyUser ? (
@@ -168,8 +168,7 @@ export default function WhoFollow() {
                     ) : initLoadingFollowers ? (
                       <SideCard.FollowAction
                         disabled
-                        text="Loading"
-                        icon={<Icon.LoadingSpin size="16" />}
+                        icon={<Icon.LoadingSpin size="20" />}
                       />
                     ) : isFollowed ? (
                       <SideCard.FollowAction
@@ -180,8 +179,7 @@ export default function WhoFollow() {
                         }
                         disabled={loadingFollowers[recommendedProfile.id]}
                         loading={loadingFollowers[recommendedProfile.id]}
-                        text="Unfollow"
-                        icon={<Icon.UserMinus size="16" />}
+                        icon={<Icon.Minus size="20" />}
                       />
                     ) : (
                       <SideCard.FollowAction
@@ -192,13 +190,12 @@ export default function WhoFollow() {
                         }
                         disabled={loadingFollowers[recommendedProfile.id]}
                         loading={loadingFollowers[recommendedProfile.id]}
-                        text="Follow"
-                        icon={<Icon.UserPlus size="16" />}
+                        icon={<Icon.Plus size="20" />}
                       />
                     )}
                   </SideCard.User>
                   {index !== recommendedProfiles.length - 1 && (
-                    <Content.Divider />
+                    <Content.Divider className="my-3" />
                   )}
                 </div>
               );
