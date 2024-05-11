@@ -6,12 +6,13 @@ import {
   Header as HeaderUI,
   Input,
   Icon,
-  //Menu,
+  Menu,
   Button,
 } from '@social/ui-shared';
 import { Modal } from './Modal';
 import { useClientContext } from '../../contexts/client';
-// import { minifyPubky } from '../../libs/pubkyHelper';
+import { minifyPubky } from '../../libs/pubkyHelper';
+import { minifyText } from '../../libs/textHelper';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -25,15 +26,15 @@ export default function Header({ title, className }: HeaderProps) {
   const { pubky, getProfile, isLoggedIn, setSearchTags, searchTags } =
     useClientContext();
 
-  //const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
   const [image, setImage] = useState('/images/Userpic.png');
-  //const [name, setName] = useState('');
+  const [name, setName] = useState('');
   const [logoLink, setLogoLink] = useState('/onboarding');
-  //const [handler, setHandler] = useState('');
+  const [handler, setHandler] = useState('');
   const [inputValue, setInputValue] = useState('');
 
-  //const drawerRef = useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
 
   async function fetchProfile() {
@@ -42,7 +43,7 @@ export default function Header({ title, className }: HeaderProps) {
 
       if (userProfile) {
         setImage(userProfile.image || '/images/Userpic.png');
-        //setName(userProfile.name || '');
+        setName(userProfile.name || '');
       }
     } catch (error) {
       console.log(error);
@@ -59,7 +60,7 @@ export default function Header({ title, className }: HeaderProps) {
   }
 
   useEffect(() => {
-    //setHandler(minifyPubky(pubky));
+    setHandler(minifyPubky(pubky));
     fetchLoggedIn();
     fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,12 +69,12 @@ export default function Header({ title, className }: HeaderProps) {
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
       {
-        /** if (
-        drawerRef.current &&
-        !drawerRef.current.contains(event.target as Node)
-      ) {
-        setDrawerOpen(false);
-      }*/
+        if (
+          drawerRef.current &&
+          !drawerRef.current.contains(event.target as Node)
+        ) {
+          setDrawerOpen(false);
+        }
       }
       if (
         refSearchInputCard.current &&
@@ -208,15 +209,14 @@ export default function Header({ title, className }: HeaderProps) {
           />
         </Link>
       </div>
-      {/** 
       <>
         <div
-          className="relative cursor-pointer"
+          className="lg:hidden relative cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
           <Menu.ImageMenu src={image} />
         </div>
-          <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
+        <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
               href="/profile"
@@ -231,12 +231,14 @@ export default function Header({ title, className }: HeaderProps) {
                 text="Streams"
                 onClick={() => setDrawerOpen(false)}
               />
+              {/**
               <Menu.Section
                 href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
                 counter={5}
               />
+              */}
               <Menu.Section
                 href="/bookmarks"
                 icon={<Icon.BookmarkSimple />}
@@ -278,7 +280,6 @@ export default function Header({ title, className }: HeaderProps) {
         </Menu.Root>
         <Menu.Bg drawerOpen={drawerOpen} />
       </>
-      */}
     </HeaderUI.Root>
   );
 }

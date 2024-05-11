@@ -142,6 +142,8 @@ export default function Sidebar({
           setImage(profile?.image || '/images/Userpic.png');
           if (profile.status && profile.status in labels) {
             setStatus(profile.status);
+          } else {
+            setStatus('noStatus');
           }
           setLinks(
             profile?.links.map((link) => ({ title: link.title, url: link.url }))
