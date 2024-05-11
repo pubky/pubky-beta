@@ -22,6 +22,7 @@ import {
   IPost,
   IFeed,
   TLayouts,
+  TStatus,
   ClientContextType,
   IProfile,
   IDeletePost,
@@ -67,10 +68,13 @@ startClient();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
-    (localStorageUtils.get('pubky') as TLayouts) || null
+    (localStorageUtils.get('pubky') as TStatus) || null
   );
   const [seed, setSeed] = useState<string | null>(
     localStorageUtils.get('seed') || null
+  );
+  const [status, setStatus] = useState<TStatus | null>(
+    (localStorageUtils.get('status') as TLayouts) || 'noStatus'
   );
   const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [mostFollowed, setMostFollowed] = useState<IMostFollowed[] | null>(
@@ -84,6 +88,34 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
   const [posts, setPosts] = useState<INewPost>({} as INewPost);
   const [searchTags, setSearchTags] = useState<string[]>([]);
+
+  const updateStatus = async (value: TStatus) => {
+    try {
+      if (!pubky) throw new Error('Pubky required');
+      if (!profile) throw new Error('Profile required');
+
+      await client.ready();
+
+      const updatedProfile = {
+        ...profile,
+        status: value,
+      };
+
+      localStorageUtils.set('profile', updatedProfile);
+      localStorageUtils.set('status', value);
+
+      const result = await client.social.profile.put(pubky, updatedProfile);
+
+      if (!result.ok)
+        throw new Error(
+          `Update status:${pubky} failed: ${result.error.message}`
+        );
+
+      setStatus(value);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const isLoggedIn = async (): Promise<string | false> => {
     try {
@@ -699,6 +731,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         pubky,
         profile,
         posts,
+        status,
+        updateStatus,
         isLoggedIn,
         createPost,
         createBookmark,
@@ -751,5 +785,6 @@ const _toPubkeyProfile = (profile: IUserProfile): IProfile => {
     bio: profile?.bio || '',
     image: profile.image,
     links: linksArray,
+    status: profile?.status || 'noStatus',
   };
 };

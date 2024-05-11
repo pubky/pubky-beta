@@ -20,6 +20,7 @@ interface ActionButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     | 'link'
     | 'mode'
     | 'minus'
+    | 'menu'
     | 'music'
     | 'plus'
     | 'podcast'
@@ -94,6 +95,7 @@ export const Action = ({
     music: 'blue-600',
     video: 'red-600',
     podcast: 'amber-500',
+    menu: 'fuchsia-500',
   };
 
   const buttonIcons: Record<string, { icon: React.ReactNode }> = {
@@ -116,6 +118,7 @@ export const Action = ({
     },
     plus: { icon: <Icon.Plus size={iconSize} color={colorIcon} /> },
     minus: { icon: <Icon.Minus size={iconSize} color={colorIcon} /> },
+    menu: { icon: icon as React.ReactElement },
     custom: { icon: icon as React.ReactElement },
   };
 

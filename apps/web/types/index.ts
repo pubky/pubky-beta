@@ -1,4 +1,13 @@
 export type TLayouts = 'grid' | 'columns' | 'list' | 'sidebar';
+export type TStatus =
+  | 'available'
+  | 'away'
+  | 'vacationing'
+  | 'working'
+  | 'traveling'
+  | 'celebrating'
+  | 'sick'
+  | 'noStatus';
 export type TSize = 'full' | 'normal';
 export type TSort = 'recent' | 'tags' | 'activity';
 export type TReach = 'following' | 'followers' | 'friends' | 'all';
@@ -15,6 +24,7 @@ export interface ClientContextType {
   profile: IProfile | null;
   pubky: string | null;
   posts: INewPost;
+  status: TStatus;
   signUp: (profile: IProfilePubkyProps) => Promise<ISignUpResponse | false>;
   getRecoveryFile: (password: string) => Promise<IRecoveryFileResponse | null>;
   logout: () => Promise<boolean>;
@@ -55,6 +65,7 @@ export interface ClientContextType {
     recoveryFile: Buffer
   ) => Promise<boolean>;
   searchTags: string[];
+  updateStatus: (value: TStatus) => Promise<void>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPosts: any;
   setSearchTags: (value: string[]) => Promise<IPost | null>;
@@ -76,6 +87,7 @@ export interface IProfile {
   bio: string;
   image: string;
   links: ILink[];
+  status?: string;
 }
 
 export interface IAuthor {

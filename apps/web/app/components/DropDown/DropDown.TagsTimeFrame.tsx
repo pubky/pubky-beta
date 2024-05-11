@@ -7,9 +7,10 @@ import { useFilterContext } from '../../../contexts/filters';
 
 interface TagsTime {
   type?: 'icon' | 'text';
+  subtitle?: string;
 }
 
-export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
+export default function TagsTimeframe({ type = 'icon', subtitle }: TagsTime) {
   const { timeframe, setTimeframe } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
 
@@ -32,11 +33,11 @@ export default function TagsTimeframe({ type = 'icon' }: TagsTime) {
       value={dropdownValue}
       labelIcon="Sort"
       type={type}
+      subtitle={subtitle}
     >
       <DropDownUI.Content
         title="Timeframe"
         subtitle="Show hot tags of"
-        className="right-0"
         isOpen={openDropdown}
       >
         <DropDownUI.Item

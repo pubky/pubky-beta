@@ -10,11 +10,12 @@ export const Caption = ({
   children,
   ...rest
 }: CaptionProps) => {
-  let cssClasses = 'text-[13px] font-normal font-InterTight tracking-tight';
+  let cssClasses =
+    'text-[13px] text-white font-normal font-InterTight tracking-tight';
 
   switch (variant) {
     case 'bold':
-      cssClasses = `text-[13px] font-semibold font-InterTight tracking-tight`;
+      cssClasses = `text-[13px] text-white font-semibold font-InterTight tracking-tight`;
       break;
   }
 

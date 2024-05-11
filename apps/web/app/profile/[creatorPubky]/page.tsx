@@ -7,6 +7,8 @@ import { Profile as ProfileCommon } from '../components';
 import { CreatePost, Header, Post, PostsLayout } from '../../components';
 import { useClientContext } from '../../../contexts/client';
 import { IPost, INewPost } from '../../../types';
+import { minifyPubky } from '../../../libs/pubkyHelper';
+import { minifyText } from '../../../libs/textHelper';
 
 export default function Index({
   params,
@@ -19,6 +21,7 @@ export default function Index({
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('Loading...');
+  const [handler, setHandler] = useState('');
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -30,6 +33,7 @@ export default function Index({
         if (userProfile) {
           setPic(userProfile.image || '/images/Userpic.png');
           setName(userProfile.name || 'Loading...');
+          setHandler(pubky);
         }
         return;
       }
@@ -38,6 +42,7 @@ export default function Index({
       if (userProfile) {
         setPic(userProfile.profile?.image || '/images/Userpic.png');
         setName(userProfile.profile?.name || 'Loading...');
+        setHandler(creatorPubky);
       }
     } catch (error) {
       console.log(error);
@@ -96,11 +101,11 @@ export default function Index({
     <Content.Main>
       <Header className="hidden md:block" title="Profile" />
       <div>
-        <ProfileCommon.HeaderBackground />
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center sm:justify-between relative z-10">
           <ProfileCommon.Handle
-            username={name}
+            username={minifyText(name, 17)}
             className="order-2 lg:order-1"
+            pubkey={minifyPubky(handler)}
           />
           <ProfileCommon.Avatar
             username={name}
@@ -109,7 +114,7 @@ export default function Index({
           />
         </Content.Grid>
       </div>
-      <Content.Grid className="grid grid-cols-3 gap-4">
+      <Content.Grid className="grid grid-cols-3 gap-6">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
           {Object.keys(posts).map((key) => (
             <Post key={posts[key].id} post={posts[key]} />

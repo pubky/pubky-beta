@@ -1,23 +1,26 @@
 /* eslint-disable @next/next/no-img-element */
-import { twMerge } from 'tailwind-merge';
 
 interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   username?: string;
   src: string;
   alt?: string;
+  status?: string;
 }
 
 export default function Avatar({
   username = 'user-pic',
   src,
+  status,
   ...rest
 }: AvatarProps) {
   return (
-    <img
-      alt={username}
-      src={src}
-      {...rest}
-      className={twMerge('rounded-full w-[240px] h-[240px]', rest.className)}
-    />
+    <div {...rest} className={rest.className}>
+      <img
+        alt={username}
+        src={src}
+        className={'rounded-full w-[240px] h-[240px]'}
+      />
+      <div className="absolute right-0 top-36 text-[110px]">{status}</div>
+    </div>
   );
 }

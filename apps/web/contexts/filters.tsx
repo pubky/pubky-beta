@@ -44,7 +44,7 @@ const FilterContext = createContext<FilterContextType>({
   setHotTagsReach: () => {},
   contacts: 'following',
   setContacts: () => {},
-  contactsLayout: 'ranking',
+  contactsLayout: 'list',
   setContactsLayout: () => {},
   content: 'all',
   setContent: () => {},
@@ -69,7 +69,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     (localStorageUtils.get('contacts') as TContacts) || 'following'
   );
   const [contactsLayout, setContactsLayout] = useState<TContactsLayout>(
-    (localStorageUtils.get('contactsLayout') as TContactsLayout) || 'ranking'
+    (localStorageUtils.get('contactsLayout') as TContactsLayout) || 'list'
   );
   const [content, setContent] = useState<TContent>(
     (localStorageUtils.get('content') as TContent) || 'all'

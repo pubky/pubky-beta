@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Icon, SideCard, Typography } from '@social/ui-shared';
-import { DropDown } from '../components/DropDown';
+// import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useEffect, useState } from 'react';
 import { ITaggedPost } from '../../types';
@@ -46,7 +46,7 @@ export default function HotTags() {
   return (
     <div className="self-start sticky top-[160px] col-span-1">
       <SideCard.Header title="Hot tags">
-        <DropDown.TagsTimeframe type="text" />
+        {/**<DropDown.TagsTimeframe type="text" />*/}
       </SideCard.Header>
       <SideCard.Content>
         {loading ? (
@@ -69,8 +69,8 @@ export default function HotTags() {
                   key={index}
                   onClick={() => handleTagSearch(tag.tag)}
                   rank={index + 1}
-                  tag={`# ${tag.tag}`}
-                  color="purple"
+                  tag={`#${tag.tag}`}
+                  color="fuchsia"
                   counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
                 />
               ))}

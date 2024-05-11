@@ -5,7 +5,7 @@ import { Icon, SideCard, Typography } from '@social/ui-shared';
 export default function ProfileSidebar() {
   return (
     <div>
-      <SideCard.Header title="profile" variantTitle="label" />
+      <SideCard.Header title="" />
       <SideCard.Content className="flex-col gap-3 inline-flex">
         <>
           <div className="flex w-full justify-center">

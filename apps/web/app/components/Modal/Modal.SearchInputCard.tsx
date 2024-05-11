@@ -65,10 +65,10 @@ export default function SearchInputCard({
                     </div>
                   }
                   onClick={() => handleRemoveTag(index)}
-                  color="purple"
+                  color="fuchsia"
                   className="mr-2 my-1"
                 >
-                  # {searchTag}
+                  #{searchTag}
                 </PostUtil.Tag>
               ))}
             </div>
@@ -89,10 +89,10 @@ export default function SearchInputCard({
                     key={index}
                     clicked={false}
                     onClick={() => handleTagSearch(tag.tag)}
-                    color="purple"
+                    color="fuchsia"
                     className="mr-2 my-1"
                   >
-                    # {tag.tag}
+                    #{tag.tag}
                   </PostUtil.Tag>
                 ))}
               </div>
