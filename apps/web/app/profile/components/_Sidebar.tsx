@@ -61,7 +61,7 @@ export default function Sidebar({
 
         if (followersList) {
           setFollowersImages(
-            followersList.followers.map((user) => ({
+            followersList.followers.slice(0, 5).map((user) => ({
               alt: 'user-pic',
               src: user?.profile?.image || '/images/Userpic.png',
             }))
@@ -100,7 +100,7 @@ export default function Sidebar({
 
         if (followingList) {
           setFollowingImages(
-            followingList.following.map((user) => ({
+            followingList.following.slice(0, 5).map((user) => ({
               alt: 'user-pic',
               src: user?.profile?.image || '/images/Userpic.png',
             }))
@@ -140,6 +140,8 @@ export default function Sidebar({
           setImage(profile?.image || '/images/Userpic.png');
           if (profile.status && profile.status in Utils.statusHelper.labels) {
             setStatus(profile.status);
+          } else {
+            setStatus('noStatus');
           }
           setLinks(
             profile?.links.map((link) => ({ title: link.title, url: link.url }))
@@ -290,12 +292,12 @@ export default function Sidebar({
                 variant="medium-bold"
                 className="col-span-3 m-2 flex justify-center items-center gap-6 text-opacity-20"
               >
-                Loading Followers
+                Loading Contacts
               </Typography.Body>
             </>
           </SideCard.Content>
         ) : (
-          <SideCard.Content className="flex-row gap-20 justify-start inline-flex">
+          <SideCard.Content className="grid grid-cols-2 gap-12 justify-start">
             {loadingFollowers ? (
               <div className="flex w-full justify-center">
                 <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
@@ -360,6 +362,7 @@ export default function Sidebar({
             <DropDown.Status />
           </>
         ) : (
+          status &&
           status !== 'noStatus' && (
             <>
               <SideCard.Header title="Status" />
