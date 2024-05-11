@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
-import { CreatePost, Header } from '../../components';
+import { CreatePost, Header } from '../../../components';
 import { Contacts } from '../components';
 import { useClientContext } from '../../../contexts/client';
 import { useFilterContext } from '../../../contexts/filters';

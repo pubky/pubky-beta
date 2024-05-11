@@ -12,12 +12,12 @@ import {
   PostsLayout,
   Sidebar,
   WhoFollow,
-} from '../components';
+} from '../../components';
 // import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost } from '../../types';
-import { Filter } from '../components/Filter';
+import { Filter } from '../../components/Filter';
 
 {
   /**const layouts = {

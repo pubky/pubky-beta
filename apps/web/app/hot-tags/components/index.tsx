@@ -1,5 +1,4 @@
-
-import Rank from './HotTags.Rank';
+import Rank from './_Rank';
 
 export const HotTags = {
   Rank,

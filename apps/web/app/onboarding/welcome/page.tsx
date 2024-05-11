@@ -13,9 +13,8 @@ import {
 } from '@social/ui-shared';
 import { Onboarding } from '../components';
 import { useClientContext } from '../../../contexts/client';
-import { minifyPubky } from '../../../libs/pubkyHelper';
-import { minifyText } from '../../../libs/textHelper';
-import { Skeleton } from '../../components';
+import { Utils } from '../../../utils';
+import { Skeleton } from '../../../components';
 import { useRouter } from 'next/navigation';
 
 export default function Index() {
@@ -37,7 +36,7 @@ export default function Index() {
   const [loadingContacts, setLoadingContacts] = useState(true);
 
   useEffect(() => {
-    setHandler(minifyPubky(pubky));
+    setHandler(Utils.minifyPubky(pubky));
   }, [pubky]);
 
   async function fetchProfile() {
@@ -90,7 +89,7 @@ export default function Index() {
             alt: 'contact-pic-' + (index + 1),
             src: user.profile.image,
             name: user.profile.name,
-            handler: minifyPubky(user.uri.replace('pubky:', '')),
+            handler: Utils.minifyPubky(user.uri.replace('pubky:', '')),
           }))
         );
         setLoadingContacts(false);
@@ -106,7 +105,7 @@ export default function Index() {
   }, [pubky]);
 
   const profile = {
-    name: minifyText(name),
+    name: Utils.minifyText(name),
     handler: handler,
     image: image,
     bio: bio,
@@ -126,7 +125,7 @@ export default function Index() {
           {loading ? (
             <Skeleton.DisplayText className="ml-6 mt-10" />
           ) : (
-            minifyText(name)
+            Utils.minifyText(name)
           )}
         </span>
       </Typography.Display>

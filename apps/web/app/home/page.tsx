@@ -11,13 +11,13 @@ import {
   PostsLayout,
   Sidebar,
   WhoFollow,
-} from '../components';
+} from '../../components';
 // import { DropDown } from '../components/DropDown';
 import { useEffect, useRef, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost, INewPost } from '../../types';
-import { Filter } from '../components/Filter';
+import { Filter } from '../../components/Filter';
 
 {
   /**const layouts = {

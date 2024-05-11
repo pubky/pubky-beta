@@ -15,7 +15,7 @@ import { useClientContext } from '../../../contexts/client';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import Link from 'next/link';
-import { Modal } from '../../components/Modal';
+import { Modal } from '../../../components/Modal';
 
 interface FormErrors {
   [fieldName: string]: string[];

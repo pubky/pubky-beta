@@ -2,7 +2,7 @@ import './global.css';
 
 import { ClientWrapper } from '../contexts/client';
 import { FilterWrapper } from '../contexts/filters';
-import ProtectedRoutes from './components/ProtectedRoutes';
+import { ProtectedRoutes } from '../components';
 
 export const metadata = {
   title: 'Pubky',

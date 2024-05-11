@@ -2,8 +2,8 @@
 
 import { Content } from '@social/ui-shared';
 import { Post } from './components';
-import { CreatePost, Header } from '../../../components';
-import { decodePostUri } from '../../../../libs/pubkyHelper';
+import { CreatePost, Header } from '../../../../components';
+import { Utils } from '../../../../utils';
 
 export default function Index({
   params,
@@ -14,7 +14,7 @@ export default function Index({
     <Content.Main>
       <Header className="hidden md:block" title="Post" />
       <Content.Grid className="flex justify-between flex-col gap-12">
-        <Post.MainPost uri={decodePostUri(params.pubky, params.postId)} />
+        <Post.MainPost uri={Utils.decodePostUri(params.pubky, params.postId)} />
         {/* <Post.ReplyForm />
         <Post.Replies /> */}
       </Content.Grid>
