@@ -1,9 +1,9 @@
-import Contact from './Contacts.Contact';
-import Posts from './Contacts.ContactPosts';
-import List from './Contacts.List';
-import Me from './Contacts.Me';
-import Ranking from './Contacts.Ranking';
-import Root from './Contacts.Root';
+import Contact from './_Contact';
+import Posts from './_ContactPosts';
+import List from './_List';
+import Me from './_Me';
+import Ranking from './_Ranking';
+import Root from './_Root';
 
 export const Contacts = {
   Contact,

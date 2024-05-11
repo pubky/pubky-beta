@@ -10,12 +10,12 @@ import {
   Card,
   Icon,
 } from '@social/ui-shared';
-import { Header } from '../components';
+import { Header } from '../../components';
 import { useClientContext } from '../../contexts/client';
-import { minifyPubky } from '../../libs/pubkyHelper';
+import { Utils } from '../../utils';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
-import { Modal } from '../components/Modal';
+import { Modal } from '../../components/Modal';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -83,7 +83,7 @@ export default function Index() {
   }, [modalLinkRef, setShowModalLink, modalBackupRef, setShowModalBackup]);
 
   useEffect(() => {
-    setHandler(minifyPubky(pubky));
+    setHandler(Utils.minifyPubky(pubky));
     async function fetchData() {
       try {
         const userProfile = await getProfile();

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import localStorageUtils from '../libs/localStorageUtils';
+import { Utils } from '../utils';
 import {
   TContacts,
   TContactsLayout,
@@ -54,40 +54,40 @@ const FilterContext = createContext<FilterContextType>({
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [layout, setLayout] = useState<TLayouts>(
-    (localStorageUtils.get('layout') as TLayouts) || 'sidebar'
+    (Utils.storage.get('layout') as TLayouts) || 'sidebar'
   );
   const [sort, setSort] = useState<TSort>(
-    (localStorageUtils.get('sort') as TSort) || 'recent'
+    (Utils.storage.get('sort') as TSort) || 'recent'
   );
   const [reach, setReach] = useState<TReach>(
-    (localStorageUtils.get('reach') as TReach) || 'all'
+    (Utils.storage.get('reach') as TReach) || 'all'
   );
   const [hotTagsReach, setHotTagsReach] = useState<THotTagsReach>(
-    (localStorageUtils.get('hotTagsReach') as THotTagsReach) || 'all'
+    (Utils.storage.get('hotTagsReach') as THotTagsReach) || 'all'
   );
   const [contacts, setContacts] = useState<TContacts>(
-    (localStorageUtils.get('contacts') as TContacts) || 'following'
+    (Utils.storage.get('contacts') as TContacts) || 'following'
   );
   const [contactsLayout, setContactsLayout] = useState<TContactsLayout>(
-    (localStorageUtils.get('contactsLayout') as TContactsLayout) || 'list'
+    (Utils.storage.get('contactsLayout') as TContactsLayout) || 'list'
   );
   const [content, setContent] = useState<TContent>(
-    (localStorageUtils.get('content') as TContent) || 'all'
+    (Utils.storage.get('content') as TContent) || 'all'
   );
   const [timeframe, setTimeframe] = useState<TTimeframe>(
-    (localStorageUtils.get('timeframe') as TTimeframe) || 'today'
+    (Utils.storage.get('timeframe') as TTimeframe) || 'today'
   );
 
   // save filters to local storage
   useEffect(() => {
-    localStorageUtils.set('layout', layout);
-    localStorageUtils.set('sort', sort);
-    localStorageUtils.set('reach', reach);
-    localStorageUtils.set('hotTagsReach', hotTagsReach);
-    localStorageUtils.set('contacts', contacts);
-    localStorageUtils.set('contactsLayout', contactsLayout);
-    localStorageUtils.set('content', content);
-    localStorageUtils.set('timeframe', timeframe);
+    Utils.storage.set('layout', layout);
+    Utils.storage.set('sort', sort);
+    Utils.storage.set('reach', reach);
+    Utils.storage.set('hotTagsReach', hotTagsReach);
+    Utils.storage.set('contacts', contacts);
+    Utils.storage.set('contactsLayout', contactsLayout);
+    Utils.storage.set('content', content);
+    Utils.storage.set('timeframe', timeframe);
   }, [
     layout,
     sort,

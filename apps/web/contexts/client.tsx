@@ -32,7 +32,7 @@ import {
 } from '../types';
 
 import Client from '@pubky/sdk';
-import localStorageUtils from '../libs/localStorageUtils';
+import { Utils } from '../utils/';
 
 const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
 const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY || '';
@@ -41,7 +41,7 @@ const ClientContext = createContext<ClientContextType>({} as ClientContextType);
 
 // Cache invalidation here seems a bit hacky and should be better
 // done somewhere else, the relay? accept a storage to the client?
-const homeserverUrlCache = localStorageUtils.get('homeserverUrl');
+const homeserverUrlCache = Utils.storage.get('homeserverUrl');
 const homeserverUrl =
   homeserverUrlCache?.timestamp > Date.now() - 60 * 60 * 1000
     ? homeserverUrlCache.url
@@ -59,7 +59,7 @@ const client = new Client(HOMESERVER, {
 const startClient = async () => {
   await client.ready();
 
-  localStorageUtils.set('homeserverUrl', {
+  Utils.storage.set('homeserverUrl', {
     timestamp: Date.now(),
     url: client.homeserverUrl,
   });
@@ -68,13 +68,13 @@ startClient();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
-    (localStorageUtils.get('pubky') as TStatus) || null
+    (Utils.storage.get('pubky') as TStatus) || null
   );
   const [seed, setSeed] = useState<string | null>(
-    localStorageUtils.get('seed') || null
+    Utils.storage.get('seed') || null
   );
   const [status, setStatus] = useState<TStatus | null>(
-    (localStorageUtils.get('status') as TLayouts) || 'noStatus'
+    (Utils.storage.get('status') as TLayouts) || 'noStatus'
   );
   const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [mostFollowed, setMostFollowed] = useState<IMostFollowed[] | null>(
@@ -84,7 +84,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     IRecommendedProfiles[] | null
   >(null);
   const [profile, setProfile] = useState<string | null>(
-    localStorageUtils.get('profile') || null
+    Utils.storage.get('profile') || null
   );
   const [posts, setPosts] = useState<INewPost>({} as INewPost);
   const [searchTags, setSearchTags] = useState<string[]>([]);
@@ -101,8 +101,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         status: value,
       };
 
-      localStorageUtils.set('profile', updatedProfile);
-      localStorageUtils.set('status', value);
+      Utils.storage.set('profile', updatedProfile);
+      Utils.storage.set('status', value);
 
       const result = await client.social.profile.put(pubky, updatedProfile);
 
@@ -128,15 +128,15 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       if (!pks.length) {
         // remove any local storage data that might be there
-        localStorageUtils.remove('pubky');
-        localStorageUtils.remove('profile');
+        Utils.storage.remove('pubky');
+        Utils.storage.remove('profile');
         setPubky(null);
         setProfile(null);
 
         return false;
       }
 
-      localStorageUtils.set('pubky', pks[0]);
+      Utils.storage.set('pubky', pks[0]);
       setPubky(pks[0]);
 
       return pks[0];
@@ -151,7 +151,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   ): Promise<ISignUpResponse | false> => {
     try {
       const seed = Client.crypto.generateSeed();
-      localStorageUtils.set('seed', seed);
+      Utils.storage.set('seed', seed);
       setSeed(seed);
       await client.ready();
 
@@ -160,7 +160,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok) throw new Error(`Signup failed: ${result.error.message}`);
 
       const pk = result.value as unknown as string;
-      localStorageUtils.set('pubky', pk);
+      Utils.storage.set('pubky', pk);
       setPubky(pk);
 
       const pubkeyProfile = _toPubkeyProfile(userProfile);
@@ -168,7 +168,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       await client.social.profile.put(pk, pubkeyProfile);
 
       setProfile(pubkeyProfile);
-      localStorageUtils.set('profile', pubkeyProfile);
+      Utils.storage.set('profile', pubkeyProfile);
 
       return pubkeyProfile;
     } catch (error) {
@@ -196,9 +196,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const logout = async (): Promise<boolean> => {
     try {
-      localStorageUtils.remove('pubky');
-      localStorageUtils.remove('profile');
-      localStorageUtils.remove('seed');
+      Utils.storage.remove('pubky');
+      Utils.storage.remove('profile');
+      Utils.storage.remove('seed');
       setPubky(null);
       setProfile(null);
       setSeed(null);
@@ -233,7 +233,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.profile.put(pk, pubkeyProfile);
 
       setProfile(pubkeyProfile);
-      localStorageUtils.set('profile', pubkeyProfile);
+      Utils.storage.set('profile', pubkeyProfile);
 
       if (!result.ok)
         throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
@@ -261,7 +261,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const userProfile = result.value?.profile;
 
-      localStorageUtils.set('profile', userProfile);
+      Utils.storage.set('profile', userProfile);
       setProfile(userProfile);
 
       return userProfile;
@@ -713,7 +713,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`Sign up failed: ${result.error.message}`);
 
-      localStorageUtils.set('pubky', result.value);
+      Utils.storage.set('pubky', result.value);
       setPubky(result.value);
 
       return true;

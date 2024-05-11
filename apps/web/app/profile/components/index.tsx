@@ -1,7 +1,7 @@
-import Avatar from './Profile.Avatar';
-import Handle from './Profile.Handle';
-import HeaderBackground from './Profile.HeaderBackground';
-import Sidebar from './Profile.Sidebar';
+import Avatar from './_Avatar';
+import Handle from './_Handle';
+import HeaderBackground from './_HeaderBackground';
+import Sidebar from './_Sidebar';
 
 export const Profile = {
   Avatar,

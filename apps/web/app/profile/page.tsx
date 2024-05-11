@@ -3,10 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Content, Icon, Typography } from '@social/ui-shared';
 import { Profile } from './components';
-import { CreatePost, Header, Post, PostsLayout } from '../components';
+import { CreatePost, Header, Post, PostsLayout } from '../../components';
 import { useClientContext } from '../../contexts/client';
-import { minifyText } from '../../libs/textHelper';
-import { minifyPubky } from '../../libs/pubkyHelper';
+import { Utils } from '../../utils';
 import { IPost, INewPost } from '../../types';
 
 export default function Index() {
@@ -92,9 +91,9 @@ export default function Index() {
       <div>
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center sm:justify-between relative z-10">
           <Profile.Handle
-            username={minifyText(name, 15)}
+            username={Utils.minifyText(name, 15)}
             className="order-2 lg:order-1"
-            pubkey={minifyPubky(handler)}
+            pubkey={Utils.minifyPubky(handler)}
           />
           <Profile.Avatar
             username={name}
