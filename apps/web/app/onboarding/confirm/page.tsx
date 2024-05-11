@@ -7,7 +7,7 @@ import { useClientContext } from '../../../contexts/client';
 import { Onboarding } from '../components';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Modal } from '../../components/Modal';
+import { Modal } from '../../../components/Modal';
 
 const passwordSchema = z.object({
   password: z

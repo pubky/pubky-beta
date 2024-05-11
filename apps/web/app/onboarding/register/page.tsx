@@ -11,7 +11,7 @@ import {
   Icon,
 } from '@social/ui-shared';
 import { useClientContext } from '../../../contexts/client';
-import { minifyPubky } from '../../../libs/pubkyHelper';
+import { Utils } from '../../../utils';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { Onboarding } from '../components';
@@ -51,7 +51,7 @@ export default function Index() {
   });
 
   useEffect(() => {
-    setHandler(minifyPubky(pubky));
+    setHandler(Utils.minifyPubky(pubky));
     async function fetchData() {
       try {
         const userProfile = await getProfile();
