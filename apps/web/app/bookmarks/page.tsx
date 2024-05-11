@@ -132,7 +132,7 @@ export default function Index() {
           {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
-                No posts yet.
+                No bookmarks yet.
               </Typography.H2>
             </div>
           )}
