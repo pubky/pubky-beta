@@ -8,7 +8,6 @@ import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '../../../components';
 import { Utils } from '../../../utils';
 import { IFollowingResponse, IFollowersResponse } from '../../../types';
-import { emojis, labels } from '../../../utils/statusHelper';
 import Image from 'next/image';
 import { DropDown } from '../../../components/DropDown';
 
@@ -139,7 +138,7 @@ export default function Sidebar({
           setName(profile?.name || '');
           setBio(profile?.bio || 'No bio.');
           setImage(profile?.image || '/images/Userpic.png');
-          if (profile.status && profile.status in labels) {
+          if (profile.status && profile.status in Utils.statusHelper.labels) {
             setStatus(profile.status);
           }
           setLinks(
@@ -366,8 +365,16 @@ export default function Sidebar({
               <SideCard.Header title="Status" />
               <div className="mt-2 px-4 py-2 bg-white bg-opacity-10 rounded-full">
                 <Typography.Body variant="medium">
-                  {emojis[status as keyof typeof emojis]}{' '}
-                  {labels[status as keyof typeof labels]}
+                  {
+                    Utils.statusHelper.emojis[
+                      status as keyof typeof Utils.statusHelper.emojis
+                    ]
+                  }{' '}
+                  {
+                    Utils.statusHelper.labels[
+                      status as keyof typeof Utils.statusHelper.labels
+                    ]
+                  }
                 </Typography.Body>
               </div>
             </>

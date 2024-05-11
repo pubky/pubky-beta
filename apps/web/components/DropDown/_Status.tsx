@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
 import { useClientContext } from '../../contexts/client';
-import { emojis, labels } from '../../utils/statusHelper';
+import { emojis, labels } from '../../utils/_statusHelper';
 
 interface Status {
   subtitle?: string;

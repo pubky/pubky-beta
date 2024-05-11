@@ -21,3 +21,10 @@ export const emojis = {
   noStatus: '💭',
   loading: '⏳',
 };
+
+export const statusHelper = {
+  labels,
+  emojis,
+};
+
+export default statusHelper;
