@@ -309,7 +309,11 @@ export default function Sidebar({
                   ((followers?.count ?? 0) > 0 ||
                     (following?.count ?? 0) > 0) &&
                     router.push(
-                      `/contacts/${creatorPubky ? creatorPubky : ''}`
+                      `/contacts/${
+                        creatorPubky
+                          ? `${creatorPubky}?tab=followers`
+                          : '?tab=followers'
+                      }`
                     );
                 }}
                 className={`flex-col gap-3 inline-flex ${
@@ -336,7 +340,11 @@ export default function Sidebar({
                   ((followers?.count ?? 0) > 0 ||
                     (following?.count ?? 0) > 0) &&
                     router.push(
-                      `/contacts/${creatorPubky ? creatorPubky : ''}`
+                      `/contacts/${
+                        creatorPubky
+                          ? `${creatorPubky}?tab=following`
+                          : '?tab=following'
+                      }`
                     );
                 }}
                 className={`flex-col gap-3 inline-flex ${
