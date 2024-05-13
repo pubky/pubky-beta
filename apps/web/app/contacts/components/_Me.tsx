@@ -38,7 +38,7 @@ export default function Me({
   }, [pubkey]);
 
   return (
-    <div className="pb-8 sm:pb-12 flex justify-between">
+    <div className="pb-8 sm:pb-12 lg:flex justify-between">
       <div className="gap-6 inline-flex">
         <Link href={profileLink}>
           <div className="gap-3 flex items-center">
@@ -50,7 +50,7 @@ export default function Me({
               alt="user-pic"
             />
             <div className="flex-col inline-flex">
-              <Typography.Label className="hidden lg:block text-opacity-30">
+              <Typography.Label className="text-opacity-30">
                 {Utils.minifyPubky(pubkyText)}
               </Typography.Label>
               <Typography.H2 className="text-sm sm:text-2xl">
@@ -60,8 +60,10 @@ export default function Me({
           </div>
         </Link>
       </div>
-      <div className="flex gap-12">
-        <DropDown.SortFriends type="text" subtitle="Sort by" />
+      <div className="mt-6 lg:mt-0 flex gap-12">
+        <div className="hidden lg:block">
+          <DropDown.SortFriends type="text" subtitle="Sort by" />
+        </div>
         <div className="flex-col flex">
           <Typography.Label className="text-opacity-30">
             Followers
