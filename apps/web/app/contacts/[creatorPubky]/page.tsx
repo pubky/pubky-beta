@@ -158,7 +158,8 @@ export default function Index({
             icon={<Icon.UsersLeft />}
             className="mr-0.5"
           >
-            Followers ({countContacts.followers.toString()})
+            Followers{' '}
+            {!loadingContacts && `(${countContacts.followers.toString()})`}
           </Button.Tab>
           <Button.Tab
             onClick={() => setContacts('following')}
@@ -166,14 +167,16 @@ export default function Index({
             icon={<Icon.UsersRight />}
             className="mr-0.5"
           >
-            Following ({countContacts.following.toString()})
+            Following{' '}
+            {!loadingContacts && `(${countContacts.following.toString()})`}
           </Button.Tab>
           <Button.Tab
             onClick={() => setContacts('friends')}
             active={!loadingContacts && contacts === 'friends'}
             icon={<Icon.Smiley />}
           >
-            Friends ({countContacts.friends.toString()})
+            Friends{' '}
+            {!loadingContacts && `(${countContacts.friends.toString()})`}
           </Button.Tab>
         </div>
         {loadingContacts || loading ? (
