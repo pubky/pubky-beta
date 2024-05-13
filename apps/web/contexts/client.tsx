@@ -199,9 +199,11 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       Utils.storage.remove('pubky');
       Utils.storage.remove('profile');
       Utils.storage.remove('seed');
+      Utils.storage.remove('status');
       setPubky(null);
       setProfile(null);
       setSeed(null);
+      setStatus(null);
 
       await client.ready();
 
@@ -729,6 +731,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         hotTags,
         mostFollowed,
         pubky,
+        seed,
         profile,
         posts,
         status,

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Content, Header, Typography } from '@social/ui-shared';
+import { Button, Content, Header, Icon, Typography } from '@social/ui-shared';
 import { useClientContext } from '../../contexts/client';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -40,7 +40,9 @@ export default function Index() {
         </div>
         <div className="flex-col justify-center items-center flex">
           <Link href="/sign-in" className="w-full sm:w-80" id="logout-link">
-            <Button.Large>Sign in again</Button.Large>
+            <Button.Large icon={<Icon.Key size="16" />}>
+              Sign in again
+            </Button.Large>
           </Link>
         </div>
       </Content.Grid>

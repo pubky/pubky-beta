@@ -133,16 +133,20 @@ export default function CreateQuickPost() {
           {(textArea || arrayTags.length > 0) && (
             <Post.Actions>
               <Button.Action
-                size="small"
                 variant="custom"
-                icon={<Icon.Tag size="16" />}
+                icon={<Icon.Tag size="32" />}
                 onClick={(event) => {
                   event.stopPropagation();
                   setShowModalTag(true);
                 }}
               />
-              <Button.Transparent
-                className="w-[150px] h-[34px]"
+              <Button.Action
+                variant="custom"
+                icon={<Icon.ImageSquare size="32" />}
+              />
+              <Button.Medium
+                className="w-[158px]"
+                variant="line"
                 icon={
                   <Icon.PaperPlaneRight color={!content ? 'gray' : 'white'} />
                 }
@@ -152,8 +156,8 @@ export default function CreateQuickPost() {
                   content && !sendingPost ? () => handleSubmit() : undefined
                 }
               >
-                Publish
-              </Button.Transparent>
+                Publish post
+              </Button.Medium>
             </Post.Actions>
           )}
         </div>

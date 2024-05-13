@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
-import { Button, Icon, Typography } from '@social/ui-shared';
+import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
 import { useClientContext } from '../../../contexts/client';
 import { Onboarding } from '../components';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Modal } from '../../../components/Modal';
+import { Utils } from '../../../utils';
 
 const passwordSchema = z.object({
   password: z
@@ -16,12 +17,13 @@ const passwordSchema = z.object({
 });
 
 export default function Index() {
-  const { getRecoveryFile } = useClientContext();
+  const { seed, getRecoveryFile } = useClientContext();
   const [showModalBackup, setShowModalBackup] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string>('');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     const handleClickOutsideModal = (event: MouseEvent) => {
@@ -85,6 +87,7 @@ export default function Index() {
 
       const { recoveryFile, filename } = recoveryFileResponse;
       await handleDownloadRecoveryFile({ recoveryFile, filename });
+      Utils.storage.remove('seed');
       setShowModalBackup(false);
     } catch (error) {
       console.log(error);
@@ -121,14 +124,30 @@ export default function Index() {
               Back
             </Button.Large>
           </Link>
-          <Button.Large
-            icon={<Icon.Lock />}
-            className="w-[250px]"
-            variant="secondary"
-            onClick={() => setShowModalBackup(true)}
-          >
-            Backup account
-          </Button.Large>
+          <div className="relative inline-block">
+            <Button.Large
+              icon={<Icon.Lock color={seed ? ' white' : 'gray'} />}
+              disabled={!seed}
+              onClick={seed ? () => setShowModalBackup(true) : undefined}
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+              className="w-[250px]"
+              variant="secondary"
+            >
+              Backup account
+            </Button.Large>
+            {showTooltip && !seed && (
+              <Tooltip.Small>
+                <Typography.Body variant="small" className="text-opacity-80">
+                  You have already done the backup,{' '}
+                  <span className="text-white font-bold text-opacity-100">
+                    your seed has been deleted
+                  </span>
+                  .
+                </Typography.Body>
+              </Tooltip.Small>
+            )}
+          </div>
           <Link href="/home">
             <Button.Large icon={<Icon.ArrowRight />} className="w-[170px] z-20">
               Start Exploring

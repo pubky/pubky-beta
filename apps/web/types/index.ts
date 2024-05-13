@@ -23,6 +23,7 @@ export interface ClientContextType {
   recommendedProfiles: IRecommendedProfiles[] | null;
   profile: IProfile | null;
   pubky: string | null;
+  seed: Seed | null;
   posts: INewPost;
   status: TStatus;
   signUp: (profile: IProfilePubkyProps) => Promise<ISignUpResponse | false>;
@@ -71,6 +72,11 @@ export interface ClientContextType {
   setSearchTags: (value: string[]) => Promise<IPost | null>;
   follow: (pk: string) => Promise<boolean>;
   unfollow: (pk: string) => Promise<boolean>;
+}
+
+interface Seed {
+  type: string;
+  data: number[];
 }
 
 export interface ILink {
