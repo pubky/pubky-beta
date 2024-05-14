@@ -1,5 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
+import { Icon } from '../Icon';
 
 interface TransparentButtonProps
   extends React.HTMLAttributes<HTMLButtonElement> {
@@ -7,21 +8,33 @@ interface TransparentButtonProps
   icon?: React.ReactNode;
   className?: string;
   background?: string;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
 export const Transparent = ({
   children,
   icon,
-  background = 'bg-white bg-opacity-10 backdrop-blur-lg hover:bg-opacity-20',
+  background = 'bg-white bg-opacity-10 backdrop-blur-lg',
+  disabled,
+  loading,
   ...rest
 }: TransparentButtonProps) => {
-  const baseCSS = `${background} w-full px-3 py-2 text-white rounded-[54px] justify-center items-center gap-1.5 inline-flex`;
+  const disabledCSS = disabled
+    ? `${background} cursor-default`
+    : `${background} hover:bg-opacity-20`;
+  const baseCSS = `${disabledCSS} w-full px-3 py-2 rounded-[54px] justify-center items-center gap-1.5 inline-flex`;
 
   return (
     <button {...rest} className={twMerge(baseCSS, rest.className)}>
-      {icon}
+      {loading ? <Icon.LoadingSpin size="24" /> : icon}
       {children && (
-        <Typography.Body variant="small-bold">{children}</Typography.Body>
+        <Typography.Body
+          className={disabled ? 'text-white text-opacity-20' : ''}
+          variant="small-bold"
+        >
+          {children}
+        </Typography.Body>
       )}
     </button>
   );

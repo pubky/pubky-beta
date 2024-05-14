@@ -9,6 +9,7 @@ import {
   HotTags,
   Post,
   PostsLayout,
+  RemindBackup,
   Sidebar,
   WhoFollow,
 } from '../../components';
@@ -117,6 +118,7 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Streams" />
+      <RemindBackup />
       <Content.Grid className={'grid grid-cols-5 gap-6'}>
         <Sidebar className="hidden lg:block">
           <Filter.Reach />

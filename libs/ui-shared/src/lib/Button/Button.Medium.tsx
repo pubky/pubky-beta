@@ -33,12 +33,16 @@ export const Medium = ({
 
   switch (variant) {
     case 'line':
-      stateButton = disabled ? '' : 'hover:bg-white hover:bg-opacity-20';
+      stateButton = disabled
+        ? 'cursor-default'
+        : 'hover:bg-white hover:bg-opacity-20';
       cssColorButton = ` border ${colorBorder}  `;
       break;
 
     case 'subtle':
-      stateButton = disabled ? '' : 'hover:bg-white hover:bg-opacity-20';
+      stateButton = disabled
+        ? 'cursor-default'
+        : 'hover:bg-white hover:bg-opacity-20';
       cssColorButton = ``;
       break;
   }

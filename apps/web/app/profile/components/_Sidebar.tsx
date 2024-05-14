@@ -10,6 +10,7 @@ import { Utils } from '../../../utils';
 import { IFollowingResponse, IFollowersResponse } from '../../../types';
 import Image from 'next/image';
 import { DropDown } from '../../../components/DropDown';
+import { Modal } from '../../../components/Modal';
 
 export default function Sidebar({
   creatorPubky,
@@ -18,6 +19,7 @@ export default function Sidebar({
 }) {
   const {
     pubky,
+    seed,
     follow,
     unfollow,
     getProfile,
@@ -26,6 +28,7 @@ export default function Sidebar({
     getUser,
   } = useClientContext();
   const router = useRouter();
+  const [disposableAccount, setDisposableAccount] = useState(false);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
@@ -45,6 +48,17 @@ export default function Sidebar({
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
+  const [showModalLogout, setShowModalLogout] = useState(false);
+  const [showModalCheckLink, setShowModalCheckLink] = useState(false);
+  const [clickedLink, setClickedLink] = useState('');
+
+  useEffect(() => {
+    if (seed) {
+      setDisposableAccount(true);
+    } else {
+      setDisposableAccount(false);
+    }
+  }, [seed]);
 
   useEffect(() => {
     async function fetchData() {
@@ -309,7 +323,11 @@ export default function Sidebar({
                   ((followers?.count ?? 0) > 0 ||
                     (following?.count ?? 0) > 0) &&
                     router.push(
-                      `/contacts/${creatorPubky ? creatorPubky : ''}`
+                      `/contacts/${
+                        creatorPubky
+                          ? `${creatorPubky}?tab=followers`
+                          : '?tab=followers'
+                      }`
                     );
                 }}
                 className={`flex-col gap-3 inline-flex ${
@@ -336,7 +354,11 @@ export default function Sidebar({
                   ((followers?.count ?? 0) > 0 ||
                     (following?.count ?? 0) > 0) &&
                     router.push(
-                      `/contacts/${creatorPubky ? creatorPubky : ''}`
+                      `/contacts/${
+                        creatorPubky
+                          ? `${creatorPubky}?tab=following`
+                          : '?tab=following'
+                      }`
                     );
                 }}
                 className={`flex-col gap-3 inline-flex ${
@@ -395,21 +417,31 @@ export default function Sidebar({
                     <Typography.Label className="text-opacity-50">
                       {link.title}
                     </Typography.Label>
-                    <Link
-                      href={
-                        link.title === 'email' || link.title === 'mail'
-                          ? `mailto:${link.url}`
-                          : link.url
-                      }
-                      target="_blank"
-                    >
-                      <Typography.Body
-                        className="hover:text-opacity-80"
-                        variant="small-bold"
+                    {link.title === 'email' || link.title === 'mail' ? (
+                      <Link href={`mailto:${link.url}`} target="_blank">
+                        <Typography.Body
+                          className="hover:text-opacity-80"
+                          variant="small-bold"
+                        >
+                          {link.url}
+                        </Typography.Body>
+                      </Link>
+                    ) : (
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setShowModalCheckLink(true);
+                          setClickedLink(link.url);
+                        }}
                       >
-                        {link.url}
-                      </Typography.Body>
-                    </Link>
+                        <Typography.Body
+                          className="hover:text-opacity-80"
+                          variant="small-bold"
+                        >
+                          {link.url}
+                        </Typography.Body>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -418,10 +450,27 @@ export default function Sidebar({
         </div>
       )}
       {(!creatorPubky || creatorPubky === pubky) && (
-        <Link href="/logout">
-          <Button.Medium icon={<Icon.SignOut />}>Sign out</Button.Medium>
-        </Link>
+        <Button.Medium
+          className="w-[200px]"
+          onClick={
+            disposableAccount
+              ? () => setShowModalLogout(true)
+              : () => router.push('/logout')
+          }
+          icon={<Icon.SignOut />}
+        >
+          Sign out
+        </Button.Medium>
       )}
+      <Modal.Logout
+        showModalLogout={showModalLogout}
+        setShowModalLogout={setShowModalLogout}
+      />
+      <Modal.CheckLink
+        showModalCheckLink={showModalCheckLink}
+        setShowModalCheckLink={setShowModalCheckLink}
+        clickedLink={clickedLink}
+      />
     </div>
   );
 }

@@ -48,7 +48,9 @@ export default function List({
               {Utils.minifyPubky(contactId)}
             </Typography.Label>
             <Typography.Body variant="medium-bold">
-              {contact.profile.name}
+              {contact.profile.name
+                ? Utils.minifyText(contact.profile.name, 12)
+                : ''}
             </Typography.Body>
           </div>
         </Link>

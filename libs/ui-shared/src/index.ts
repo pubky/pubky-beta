@@ -13,6 +13,7 @@ import { List } from './lib/List';
 import { Menu } from './lib/Menu';
 import { DropDown } from './lib/DropDown';
 import { Post } from './lib/Post';
+import { Tooltip } from './lib/Tooltip';
 import { SideCard } from './lib/SideCard';
 
 export {
@@ -29,5 +30,6 @@ export {
   Menu,
   DropDown,
   Post,
+  Tooltip,
   SideCard,
 };
