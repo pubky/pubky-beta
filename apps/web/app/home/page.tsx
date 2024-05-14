@@ -3,7 +3,6 @@
 import { Content, Icon, Typography } from '@social/ui-shared';
 import {
   ActiveFriends,
-  // ActiveFriends,
   CreatePost,
   CreateQuickPost,
   Header,
