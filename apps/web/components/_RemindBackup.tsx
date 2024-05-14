@@ -158,7 +158,7 @@ export default function RemindBackup() {
             Time to back up your account. Without a backup you lose your account
             if you close your browser!
           </Typography.Body>
-          <div className="w-[40%] max-w-full flex gap-6">
+          <div className="w-full xl:w-[40%] max-w-full flex gap-6">
             <Button.Large
               onClick={() => setShowModalBackup(true)}
               icon={<Icon.Lock size="16" />}
@@ -181,7 +181,9 @@ export default function RemindBackup() {
           >
             <div className="w-full flex justify-between">
               <div className="flex gap-2">
-                <Icon.CheckCircle size="20" />
+                <div className="relative">
+                  <Icon.CheckCircle size="20" />
+                </div>
                 <Typography.Body className="text-opacity-80" variant="small">
                   Backup successful! Your seed has been deleted and now you can
                   make login via the chosen recovery method.
