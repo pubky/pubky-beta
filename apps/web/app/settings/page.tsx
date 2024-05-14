@@ -9,6 +9,7 @@ import {
   Input,
   Card,
   Icon,
+  Tooltip,
 } from '@social/ui-shared';
 import { Header } from '../../components';
 import { useClientContext } from '../../contexts/client';
@@ -16,6 +17,7 @@ import { Utils } from '../../utils';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { Modal } from '../../components/Modal';
+import Link from 'next/link';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -34,8 +36,10 @@ const passwordSchema = z.object({
 
 export default function Index() {
   const router = useRouter();
-  const { pubky, signUp, saveProfile, getProfile, getRecoveryFile } =
+  const { pubky, seed, setSeed, saveProfile, getProfile, getRecoveryFile } =
     useClientContext();
+
+  const [disposableAccount, setDisposableAccount] = useState(false);
 
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
@@ -44,6 +48,7 @@ export default function Index() {
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const [password, setPassword] = useState('');
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
@@ -59,6 +64,14 @@ export default function Index() {
     name: '',
     bio: '',
   });
+
+  useEffect(() => {
+    if (seed) {
+      setDisposableAccount(true);
+    } else {
+      setDisposableAccount(false);
+    }
+  }, [seed]);
 
   useEffect(() => {
     const handleClickOutsideModal = (event: MouseEvent) => {
@@ -99,7 +112,7 @@ export default function Index() {
       }
     }
     fetchData();
-  }, [signUp, pubky, getProfile]);
+  }, [pubky, getProfile]);
 
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
@@ -228,6 +241,8 @@ export default function Index() {
       element.download = filename;
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
+
+      setSeed(null);
     } catch (error) {
       console.log(error);
     }
@@ -260,6 +275,7 @@ export default function Index() {
 
       const { recoveryFile, filename } = recoveryFileResponse;
       await handleDownloadRecoveryFile({ recoveryFile, filename });
+      Utils.storage.remove('seed');
       setShowModalBackup(false);
     } catch (error) {
       console.log(error);
@@ -365,20 +381,28 @@ export default function Index() {
               ))}
               <Button.Transparent
                 className="w-[40%] mt-2"
-                icon={<Icon.LinkSimple size="16" />}
-                onClick={() => setShowModalLink(true)}
+                icon={
+                  <Icon.LinkSimple
+                    size="16"
+                    color={links.length > 4 ? 'gray' : 'white'}
+                  />
+                }
+                onClick={
+                  links.length > 4 ? undefined : () => setShowModalLink(true)
+                }
+                disabled={links.length > 4}
               >
                 Add link
               </Button.Transparent>
             </div>
           </Card.Primary>
-          <Card.Primary title="Picture">
+          <Card.Primary className="justify-start" title="Picture">
             {image && (
               <div className="relative">
                 <Image
                   width={150}
                   height={150}
-                  className="w-80 h-80 mt-6 rounded-full"
+                  className="w-80 h-80 mt-12 rounded-full"
                   alt="user"
                   src={image}
                 />
@@ -398,24 +422,54 @@ export default function Index() {
               onChange={UploadPic}
               className="hidden"
             />
-            <div className="flex gap-4 pt-[40px]">
-              <Button.Large
-                onClick={() => setShowModalBackup(true)}
-                icon={<Icon.Lock />}
-                variant="secondary"
-              >
-                Backup
-              </Button.Large>
-              <Button.Large
-                onClick={!loading ? () => handleSubmit() : undefined}
-                icon={<Icon.Check />}
-                loading={loading}
-              >
-                Finish
-              </Button.Large>
-            </div>
           </Card.Primary>
           <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
+        </div>
+        <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-12">
+          <Link href="/onboarding/sign-up">
+            <Button.Large
+              icon={<Icon.ArrowLeft />}
+              className="w-[140px]"
+              variant="secondary"
+              onClick={() => router.back()}
+            >
+              Back
+            </Button.Large>
+          </Link>
+          <div className="relative inline-block">
+            <Button.Large
+              icon={<Icon.Lock color={disposableAccount ? ' white' : 'gray'} />}
+              disabled={!disposableAccount}
+              onClick={
+                disposableAccount ? () => setShowModalBackup(true) : undefined
+              }
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+              className="w-[250px]"
+              variant="secondary"
+            >
+              Backup
+            </Button.Large>
+            {showTooltip && !seed && (
+              <Tooltip.Small>
+                <Typography.Body variant="small" className="text-opacity-80">
+                  You have already done the backup,{' '}
+                  <span className="text-white font-bold text-opacity-100">
+                    your seed has been deleted
+                  </span>
+                  .
+                </Typography.Body>
+              </Tooltip.Small>
+            )}
+          </div>
+          <Button.Large
+            onClick={!loading ? () => handleSubmit() : undefined}
+            loading={loading}
+            icon={<Icon.Check />}
+            className="w-[140px] z-20"
+          >
+            Update
+          </Button.Large>
         </div>
       </Content.Grid>
       <Modal.Link

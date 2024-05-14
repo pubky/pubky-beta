@@ -287,8 +287,16 @@ export default function Index() {
             ))}
             <Button.Transparent
               className="w-[40%] mt-2"
-              icon={<Icon.LinkSimple size="16" />}
-              onClick={() => setShowModalLink(true)}
+              icon={
+                <Icon.LinkSimple
+                  size="16"
+                  color={links.length > 4 ? 'gray' : 'white'}
+                />
+              }
+              onClick={
+                links.length > 4 ? undefined : () => setShowModalLink(true)
+              }
+              disabled={links.length > 4}
             >
               Add link
             </Button.Transparent>

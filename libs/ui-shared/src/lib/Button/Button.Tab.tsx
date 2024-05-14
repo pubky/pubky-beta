@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
 interface TabButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  children: string;
+  children: React.ReactNode;
   icon?: React.ReactNode;
   active?: boolean;
   className?: string;

@@ -10,7 +10,9 @@ import {
   IFollowingResponse,
   IFollowersResponse,
   IFriendsResponse,
+  TContacts,
 } from '../../../types';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Index({
   params,
@@ -19,12 +21,18 @@ export default function Index({
 }) {
   const creatorPubky = params.creatorPubky;
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { listFollowing, listFollowers, getUserIndexed } = useClientContext();
   const { contacts, contactsLayout, setContacts } = useFilterContext();
   const [name, setName] = useState('Loading...');
   const [image, setImage] = useState('/images/Userpic.png');
   const [loading, setLoading] = useState(true);
-  const [countContacts, setCountContacts] = useState(0);
+  const [countContacts, setCountContacts] = useState({
+    followers: 0,
+    following: 0,
+    friends: 0,
+  });
   const [loadingContacts, setLoadingContacts] = useState(true);
   const [contactsUsers, setContactsUsers] = useState<
     IFollowingResponse | IFollowersResponse | IFriendsResponse | null
@@ -36,42 +44,39 @@ export default function Index({
         setLoading(true);
         if (!creatorPubky) return;
 
-        let contactsList:
-          | IFollowersResponse
-          | IFollowingResponse
-          | IFriendsResponse
-          | null = null;
+        const contactsFollowers = await listFollowers(creatorPubky);
+        const contactsFollowing = await listFollowing(creatorPubky);
 
-        if (contacts === 'following') {
-          contactsList = await listFollowing(creatorPubky);
-          if (contactsList) setCountContacts(contactsList.count);
-        } else if (contacts === 'followers') {
-          contactsList = await listFollowers(creatorPubky);
-          if (contactsList) setCountContacts(contactsList.count);
-        } else if (contacts === 'friends') {
-          const contactsFollowers = await listFollowers(creatorPubky);
-          const contactsFollowing = await listFollowing(creatorPubky);
+        const followersIds = new Set(
+          contactsFollowers?.followers?.map((follower) =>
+            follower.uri.replace('pubky:', '')
+          ) || []
+        );
 
-          const followersIds = new Set(
-            contactsFollowers?.followers?.map((follower) =>
-              follower.uri.replace('pubky:', '')
-            ) || []
-          );
+        const mutualContacts =
+          contactsFollowing?.following?.filter((user) =>
+            followersIds.has(user.uri.replace('pubky:', ''))
+          ) || [];
 
-          const mutualContacts =
-            contactsFollowing?.following?.filter((user) =>
-              followersIds.has(user.uri.replace('pubky:', ''))
-            ) || [];
+        const contactsFriends = {
+          count: mutualContacts.length,
+          friends: mutualContacts,
+        };
 
-          contactsList = {
-            count: mutualContacts.length,
-            friends: mutualContacts,
-          };
-          if (contactsList) setCountContacts(contactsList.count);
+        if (contactsFollowers && contactsFollowing && contactsFriends) {
+          setCountContacts({
+            followers: contactsFollowers.count,
+            following: contactsFollowing.count,
+            friends: contactsFriends.count,
+          });
         }
 
-        if (contactsList) {
-          setContactsUsers(contactsList);
+        if (contacts === 'following') {
+          setContactsUsers(contactsFollowing);
+        } else if (contacts === 'followers') {
+          setContactsUsers(contactsFollowers);
+        } else if (contacts === 'friends') {
+          setContactsUsers(contactsFriends);
         }
         setLoadingContacts(false);
         setLoading(false);
@@ -101,6 +106,23 @@ export default function Index({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const searchUrl = contacts
+      ? `/contacts/${creatorPubky}?tab=${contacts}`
+      : '/contacts';
+    router.replace(searchUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contacts]);
+
+  useEffect(() => {
+    const search = searchParams.get('tab');
+
+    if (search) {
+      setContacts(search as TContacts);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   let contactsToShow:
     | IFollowingResponse['following']
     | IFollowersResponse['followers']
@@ -126,7 +148,6 @@ export default function Index({
           name={name}
           pubkey={creatorPubky ? creatorPubky.toString() : ''}
           countContacts={countContacts}
-          contactsLayout={contacts}
           loadingContacts={loadingContacts}
         />
         <div className="mb-6">
@@ -136,7 +157,8 @@ export default function Index({
             icon={<Icon.UsersLeft />}
             className="mr-0.5"
           >
-            Followers
+            Followers{' '}
+            {!loadingContacts && `(${countContacts.followers.toString()})`}
           </Button.Tab>
           <Button.Tab
             onClick={() => setContacts('following')}
@@ -144,14 +166,16 @@ export default function Index({
             icon={<Icon.UsersRight />}
             className="mr-0.5"
           >
-            Following
+            Following{' '}
+            {!loadingContacts && `(${countContacts.following.toString()})`}
           </Button.Tab>
           <Button.Tab
             onClick={() => setContacts('friends')}
             active={!loadingContacts && contacts === 'friends'}
             icon={<Icon.Smiley />}
           >
-            Friends
+            Friends{' '}
+            {!loadingContacts && `(${countContacts.friends.toString()})`}
           </Button.Tab>
         </div>
         {loadingContacts || loading ? (

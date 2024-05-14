@@ -11,6 +11,7 @@ import Sidebar from './_SideBar';
 import WhoFollow from './_WhoFollow';
 import Skeleton from './Skeletons';
 import ProtectedRoutes from './_ProtectedRoutes';
+import RemindBackup from './_RemindBackup';
 
 export {
   ActiveFriends,
@@ -26,4 +27,5 @@ export {
   WhoFollow,
   Skeleton,
   ProtectedRoutes,
+  RemindBackup,
 };
