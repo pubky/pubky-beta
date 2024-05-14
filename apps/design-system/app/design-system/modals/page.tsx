@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Button,
   Modal,
@@ -12,6 +12,7 @@ import {
 
 export default function Index() {
   const [show, setShow] = useState(false);
+  const modalTagRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     console.log('show', show);
@@ -22,6 +23,7 @@ export default function Index() {
       <div className={'pb-8'}>
         <Button.Create onClick={() => setShow(true)} />
         <Modal.Root
+          modalRef={modalTagRef}
           show={show}
           closeModal={() => setShow(false)}
           className="max-w-[1200px]"
