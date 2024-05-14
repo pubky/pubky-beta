@@ -142,7 +142,7 @@ export default function Post({
                     alt="user"
                   />
                   <TooltipUI.Root
-                    delay={1000}
+                    delay={200}
                     setShowTooltip={setShowTooltipProfile}
                   >
                     <div className={`justify-start items-center lg:flex gap-4`}>
