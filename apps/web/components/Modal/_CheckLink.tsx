@@ -45,11 +45,13 @@ export default function CheckLink({
       <Modal.CloseAction onClick={() => setShowModalCheckLink(false)} />
       <Modal.Header title="Double-check this link" />
       <Typography.Body className="text-opacity-60" variant="medium">
-        The link is taking you to another site:{' '}
-        <span className="text-white text-opacity-100 font-bold">
-          {clickedLink}
-        </span>
-        . Are you sure you want to continue?
+        The link is taking you to another site:
+        <div className="mt-4 mb-4">
+          <span className="text-white text-opacity-100 font-bold">
+            {clickedLink}
+          </span>
+        </div>
+        Are you sure you want to continue?
       </Typography.Body>
       <div className="flex gap-4 mt-8">
         <Button.Large
