@@ -14,20 +14,52 @@ const passwordSchema = z.object({
 });
 
 export default function RemindBackup() {
-  const { seed, getRecoveryFile } = useClientContext();
-  const [visible, setVisible] = useState(true);
+  const { seed, setSeed, getRecoveryFile } = useClientContext();
+  const [disposableAccount, setDisposableAccount] = useState(false);
+  const [showBackupSuccess, setShowBackupSuccess] = useState(false);
+  const [remindMeLater, setRemindMeLater] = useState(false);
   const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
   const [password, setPassword] = useState('');
   const [showModalBackup, setShowModalBackup] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
   const [errorPassword, setErrorPassword] = useState<string>('');
+  const backupCloseMessage = Utils.storage.get('backup');
 
   const RemindMe = () => {
-    setVisible(false);
-    setTimeout(() => {
-      setVisible(true);
-    }, 300000);
+    setRemindMeLater(true);
+    const timestamp = Date.now() + 300000; // 5min
+    Utils.storage.set('timerRemind', timestamp);
   };
+
+  useEffect(() => {
+    const timestampNow = Date.now();
+    const timestampSaved = Utils.storage.get('timerRemind') as number;
+    if (timestampNow >= timestampSaved) {
+      setRemindMeLater(false);
+    } else {
+      setRemindMeLater(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (seed) {
+      setDisposableAccount(true);
+      setShowBackupSuccess(false);
+    } else {
+      setDisposableAccount(false);
+      if (backupCloseMessage === false) {
+        setShowBackupSuccess(true);
+      }
+    }
+  }, [seed, backupCloseMessage]);
+
+  useEffect(() => {
+    if (backupCloseMessage) {
+      setShowBackupSuccess(false);
+    } else if (backupCloseMessage === false) {
+      setShowBackupSuccess(true);
+    }
+  }, [backupCloseMessage]);
 
   const handleDownloadRecoveryFile = async ({
     recoveryFile,
@@ -45,6 +77,7 @@ export default function RemindBackup() {
       element.download = filename;
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
+      setSeed(null);
     } catch (error) {
       console.log(error);
     }
@@ -83,6 +116,7 @@ export default function RemindBackup() {
       console.log(error);
     } finally {
       setLoadingRecoveryFile(false);
+      setShowBackupSuccess(true);
     }
   };
 
@@ -102,34 +136,66 @@ export default function RemindBackup() {
     };
   }, [modalBackupRef, setShowModalBackup]);
 
+  const Closed = () => {
+    setShowBackupSuccess(false);
+    Utils.storage.set('backup', true);
+  };
+
   return (
     <div
-      className={`${
-        (!visible || !seed) && 'hidden'
-      } max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] w-full m-auto`}
+      className={`max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] w-full m-auto`}
     >
-      <div className="w-full p-12 bg-fuchsia-500 bg-opacity-20 rounded-2xl shadow border border-fuchsia-500 flex-col justify-start items-start gap-6 inline-flex">
-        <Typography.H1 className="text-4xl">Back up your account</Typography.H1>
-        <Typography.Body className="text-opacity-80" variant="medium">
-          Time to back up your account. Without a backup you lose your account
-          if you close your browser!
-        </Typography.Body>
-        <div className="w-[40%] max-w-full flex gap-6">
-          <Button.Large
-            onClick={seed ? () => setShowModalBackup(true) : undefined}
-            icon={<Icon.Lock size="16" />}
-          >
-            Backup now
-          </Button.Large>
-          <Button.Large
-            onClick={RemindMe}
-            variant="secondary"
-            icon={<Icon.Clock size="16" />}
-          >
-            Remind me later
-          </Button.Large>
+      {disposableAccount ? (
+        <div
+          className={`${
+            remindMeLater && 'hidden'
+          } w-full p-12 bg-fuchsia-500 bg-opacity-20 rounded-2xl shadow border border-fuchsia-500 flex-col justify-start items-start gap-6 inline-flex`}
+        >
+          <Typography.H1 className="text-4xl">
+            Back up your account
+          </Typography.H1>
+          <Typography.Body className="text-opacity-80" variant="medium">
+            Time to back up your account. Without a backup you lose your account
+            if you close your browser!
+          </Typography.Body>
+          <div className="w-full xl:w-[40%] max-w-full flex gap-6">
+            <Button.Large
+              onClick={() => setShowModalBackup(true)}
+              icon={<Icon.Lock size="16" />}
+            >
+              Backup now
+            </Button.Large>
+            <Button.Large
+              onClick={RemindMe}
+              variant="secondary"
+              icon={<Icon.Clock size="16" />}
+            >
+              Remind me later
+            </Button.Large>
+          </div>
         </div>
-      </div>
+      ) : (
+        showBackupSuccess && (
+          <div
+            className={` w-full p-4 bg-fuchsia-500 bg-opacity-20 rounded-lg shadow border border-fuchsia-500 flex-col justify-start items-start gap-6 inline-flex`}
+          >
+            <div className="w-full flex justify-between">
+              <div className="flex gap-2">
+                <div className="relative">
+                  <Icon.CheckCircle size="20" />
+                </div>
+                <Typography.Body className="text-opacity-80" variant="small">
+                  Backup successful! Your seed has been deleted and now you can
+                  make login via the chosen recovery method.
+                </Typography.Body>
+              </div>
+              <div className="cursor-pointer" onClick={Closed}>
+                <Icon.X size="20" />
+              </div>
+            </div>
+          </div>
+        )
+      )}
       <Modal.Backup
         loading={loadingRecoveryFile}
         setPassword={setPassword}
