@@ -436,25 +436,20 @@ export default function Index() {
               Back
             </Button.Large>
           </Link>
-          <div className="relative inline-block">
+          <Tooltip.Root setShowTooltip={setShowTooltip}>
             <Button.Large
               icon={<Icon.Lock color={disposableAccount ? ' white' : 'gray'} />}
               disabled={!disposableAccount}
               onClick={
                 disposableAccount ? () => setShowModalBackup(true) : undefined
               }
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
               className="w-[250px]"
               variant="secondary"
             >
               Backup
             </Button.Large>
             {showTooltip && !seed && (
-              <Tooltip.Small
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-              >
+              <Tooltip.Small>
                 <Typography.Body variant="small" className="text-opacity-80">
                   You have already done the backup,{' '}
                   <span className="text-white font-bold text-opacity-100">
@@ -464,7 +459,7 @@ export default function Index() {
                 </Typography.Body>
               </Tooltip.Small>
             )}
-          </div>
+          </Tooltip.Root>
           <Button.Large
             onClick={!loading ? () => handleSubmit() : undefined}
             loading={loading}

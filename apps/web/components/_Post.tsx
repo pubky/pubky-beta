@@ -6,6 +6,7 @@ import {
   Post as PostUI,
   Typography,
   PostUtil,
+  Tooltip as TooltipUI,
 } from '@social/ui-shared';
 
 import Image from 'next/image';
@@ -18,6 +19,7 @@ import { Skeleton } from '.';
 import { useRouter } from 'next/navigation';
 import { useClientContext } from '../contexts/client';
 import { IPost, ITaggedPost, TLayouts, TSize } from '../types';
+import Tooltip from './Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: boolean;
@@ -52,6 +54,7 @@ export default function Post({
   const [showModalTag, setShowModalTag] = useState(false);
   const [showModalDeletePost, setshowModalDeletePost] = useState(false);
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
+  const [showTooltipProfile, setShowTooltipProfile] = useState(false);
 
   useEffect(() => {
     if (post?.tags) {
@@ -138,17 +141,23 @@ export default function Post({
                     src={post?.author?.profile?.image || '/images/Userpic.png'}
                     alt="user"
                   />
-                  <div className={`justify-start items-center lg:flex gap-4`}>
-                    <PostUI.Username
-                      className={`hover:underline hover:decoration-solid`}
-                    >
-                      {post?.author?.profile?.name &&
-                        Utils.minifyText(post?.author?.profile?.name, 24)}
-                    </PostUI.Username>
-                    <Typography.Label className="text-opacity-30">
-                      {Utils.minifyPubky(post?.author?.id)}
-                    </Typography.Label>
-                  </div>
+                  <TooltipUI.Root
+                    delay={1000}
+                    setShowTooltip={setShowTooltipProfile}
+                  >
+                    <div className={`justify-start items-center lg:flex gap-4`}>
+                      <PostUI.Username
+                        className={`hover:underline hover:decoration-solid`}
+                      >
+                        {post?.author?.profile?.name &&
+                          Utils.minifyText(post?.author?.profile?.name, 24)}
+                      </PostUI.Username>
+                      <Typography.Label className="text-opacity-30">
+                        {Utils.minifyPubky(post?.author?.id)}
+                      </Typography.Label>
+                    </div>
+                    {showTooltipProfile && <Tooltip.Profile post={post} />}
+                  </TooltipUI.Root>
                 </div>
                 <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
               </PostUI.Header>
