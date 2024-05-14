@@ -67,6 +67,7 @@ export interface ClientContextType {
   ) => Promise<boolean>;
   searchTags: string[];
   updateStatus: (value: TStatus) => Promise<void>;
+  setSeed: (seed: Seed | null) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPosts: any;
   setSearchTags: (value: string[]) => Promise<IPost | null>;

@@ -761,6 +761,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         getRecoveryFile,
         searchTags,
         setPosts,
+        setSeed,
         setSearchTags,
         follow,
         unfollow,

@@ -36,8 +36,10 @@ const passwordSchema = z.object({
 
 export default function Index() {
   const router = useRouter();
-  const { pubky, seed, signUp, saveProfile, getProfile, getRecoveryFile } =
+  const { pubky, seed, setSeed, saveProfile, getProfile, getRecoveryFile } =
     useClientContext();
+
+  const [disposableAccount, setDisposableAccount] = useState(false);
 
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
@@ -62,6 +64,14 @@ export default function Index() {
     name: '',
     bio: '',
   });
+
+  useEffect(() => {
+    if (seed) {
+      setDisposableAccount(true);
+    } else {
+      setDisposableAccount(false);
+    }
+  }, [seed]);
 
   useEffect(() => {
     const handleClickOutsideModal = (event: MouseEvent) => {
@@ -102,7 +112,7 @@ export default function Index() {
       }
     }
     fetchData();
-  }, [signUp, pubky, getProfile]);
+  }, [pubky, getProfile]);
 
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
@@ -231,6 +241,8 @@ export default function Index() {
       element.download = filename;
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
+
+      setSeed(null);
     } catch (error) {
       console.log(error);
     }
@@ -426,9 +438,11 @@ export default function Index() {
           </Link>
           <div className="relative inline-block">
             <Button.Large
-              icon={<Icon.Lock color={seed ? ' white' : 'gray'} />}
-              disabled={!seed}
-              onClick={seed ? () => setShowModalBackup(true) : undefined}
+              icon={<Icon.Lock color={disposableAccount ? ' white' : 'gray'} />}
+              disabled={!disposableAccount}
+              onClick={
+                disposableAccount ? () => setShowModalBackup(true) : undefined
+              }
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               className="w-[250px]"
@@ -454,7 +468,7 @@ export default function Index() {
             icon={<Icon.Check />}
             className="w-[140px] z-20"
           >
-            Finish
+            Update
           </Button.Large>
         </div>
       </Content.Grid>

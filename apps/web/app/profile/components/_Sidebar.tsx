@@ -28,6 +28,7 @@ export default function Sidebar({
     getUser,
   } = useClientContext();
   const router = useRouter();
+  const [disposableAccount, setDisposableAccount] = useState(false);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
@@ -50,6 +51,14 @@ export default function Sidebar({
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
+
+  useEffect(() => {
+    if (seed) {
+      setDisposableAccount(true);
+    } else {
+      setDisposableAccount(false);
+    }
+  }, [seed]);
 
   useEffect(() => {
     async function fetchData() {
@@ -444,7 +453,9 @@ export default function Sidebar({
         <Button.Medium
           className="w-[200px]"
           onClick={
-            seed ? () => setShowModalLogout(true) : () => router.push('/logout')
+            disposableAccount
+              ? () => setShowModalLogout(true)
+              : () => router.push('/logout')
           }
           icon={<Icon.SignOut />}
         >
