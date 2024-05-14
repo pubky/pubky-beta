@@ -141,7 +141,6 @@ export default function Index() {
           name={name}
           pubkey={pubky ? pubky.toString() : ''}
           countContacts={countContacts}
-          contactsLayout={contacts}
           loadingContacts={loadingContacts}
         />
         <div className="mb-6">

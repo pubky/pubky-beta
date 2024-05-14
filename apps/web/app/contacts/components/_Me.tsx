@@ -17,7 +17,6 @@ interface MeProps extends React.HTMLAttributes<HTMLDivElement> {
   pubkey: string;
   image: string;
   countContacts: CountContacts;
-  contactsLayout: string;
   loadingContacts: boolean;
 }
 
@@ -26,7 +25,6 @@ export default function Me({
   pubkey,
   image,
   countContacts,
-  contactsLayout,
   loadingContacts,
 }: MeProps) {
   const [pubkyText, setPubkyText] = useState('');
@@ -38,7 +36,7 @@ export default function Me({
   }, [pubkey]);
 
   return (
-    <div className="pb-8 sm:pb-12 lg:flex justify-between">
+    <div className="pb-8 sm:pb-12 lg:flex justify-start">
       <div className="gap-6 inline-flex">
         <Link href={profileLink}>
           <div className="gap-3 flex items-center">
@@ -60,10 +58,7 @@ export default function Me({
           </div>
         </Link>
       </div>
-      <div className="mt-6 lg:mt-0 flex gap-12">
-        <div className="hidden lg:block">
-          <DropDown.SortFriends type="text" subtitle="Sort by" />
-        </div>
+      <div className="mt-6 lg:mt-0 ml-12 flex gap-12">
         <div className="flex-col flex">
           <Typography.Label className="text-opacity-30">
             Followers
@@ -99,6 +94,9 @@ export default function Me({
               countContacts.friends
             )}
           </Typography.H2>
+        </div>
+        <div className="hidden lg:block lg:-mt-1">
+          <DropDown.SortFriends type="text" subtitle="Sort by" />
         </div>
       </div>
     </div>
