@@ -17,8 +17,9 @@ const passwordSchema = z.object({
 });
 
 export default function Index() {
-  const { seed, getRecoveryFile } = useClientContext();
+  const { seed, setSeed, getRecoveryFile } = useClientContext();
   const [showModalBackup, setShowModalBackup] = useState(false);
+  const [disposableAccount, setDisposableAccount] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,6 +42,14 @@ export default function Index() {
     };
   }, [modalBackupRef, setShowModalBackup]);
 
+  useEffect(() => {
+    if (seed) {
+      setDisposableAccount(true);
+    } else {
+      setDisposableAccount(false);
+    }
+  }, [seed]);
+
   const handleDownloadRecoveryFile = async ({
     recoveryFile,
     filename,
@@ -57,6 +66,8 @@ export default function Index() {
       element.download = filename;
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
+
+      setSeed(null);
     } catch (error) {
       console.log(error);
     }
@@ -124,23 +135,20 @@ export default function Index() {
               Back
             </Button.Large>
           </Link>
-          <div className="relative inline-block">
+          <Tooltip.Root setShowTooltip={setShowTooltip}>
             <Button.Large
-              icon={<Icon.Lock color={seed ? ' white' : 'gray'} />}
-              disabled={!seed}
-              onClick={seed ? () => setShowModalBackup(true) : undefined}
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
+              icon={<Icon.Lock color={disposableAccount ? ' white' : 'gray'} />}
+              disabled={!disposableAccount}
+              onClick={
+                disposableAccount ? () => setShowModalBackup(true) : undefined
+              }
               className="w-[250px]"
               variant="secondary"
             >
               Backup account
             </Button.Large>
             {showTooltip && !seed && (
-              <Tooltip.Small
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-              >
+              <Tooltip.Small>
                 <Typography.Body variant="small" className="text-opacity-80">
                   You have already done the backup,{' '}
                   <span className="text-white font-bold text-opacity-100">
@@ -150,7 +158,7 @@ export default function Index() {
                 </Typography.Body>
               </Tooltip.Small>
             )}
-          </div>
+          </Tooltip.Root>
           <Link href="/home">
             <Button.Large icon={<Icon.ArrowRight />} className="w-[170px] z-20">
               Start Exploring

@@ -95,7 +95,7 @@ export default function CreateQuickPost() {
     <div className="p-6 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
       <Link
         href="/profile"
-        className="cursor-pointer justify-start items-center gap-2 flex"
+        className="cursor-pointer justify-start items-center gap-4 flex"
       >
         <Image
           width={32}
@@ -108,7 +108,7 @@ export default function CreateQuickPost() {
           className={`hover:underline hover:decoration-solid`}
           variant="medium-bold"
         >
-          {name}
+          {Utils.minifyText(name, 24)}
         </Typography.Body>
         <Typography.Label className="cursor-pointer text-opacity-30">
           {Utils.minifyPubky(handler)}
