@@ -5,8 +5,8 @@ import Link from 'next/link';
 
 interface UserProps extends React.HTMLAttributes<HTMLDivElement> {
   src: string;
-  label: string;
-  username: string;
+  label?: string;
+  username?: string;
   alt?: string;
   width?: number;
   height?: number;

@@ -2,7 +2,7 @@
 
 import { Content, Icon, Typography } from '@social/ui-shared';
 import {
-  // ActiveFriends,
+  ActiveFriends,
   CreatePost,
   CreateQuickPost,
   Header,
@@ -144,8 +144,8 @@ export default function Index() {
         </PostsLayout>
         <Sidebar className="hidden xl:block">
           <WhoFollow />
+          <ActiveFriends />
           <HotTags />
-          {/** <ActiveFriends /> */}
         </Sidebar>
       </Content.Grid>
       <CreatePost />
