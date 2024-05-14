@@ -42,6 +42,9 @@ export default function Post({
 
   const {
     pubky,
+    posts,
+    setPosts,
+    getPost,
     createTag,
     searchTags,
     setSearchTags,
@@ -75,12 +78,28 @@ export default function Post({
     await deleteBookmark(postId, bookmarkId);
   };
 
+  const updatePosts = async () => {
+    const updatedPost = await getPost(post.uri);
+
+    if (!updatedPost) return;
+
+    const updatedPosts = Object.keys(posts).map((key) => {
+      if (posts[key].uri === updatedPost.uri) {
+        return updatedPost;
+      }
+      return posts[key];
+    });
+    setPosts(updatedPosts);
+  };
+
   const handleDeleteTag = async (tag: string) => {
     await deleteTag(post.uri, tag);
+    updatePosts();
   };
 
   const handleAddTag = async (tag: string) => {
     await createTag(post.uri, tag);
+    updatePosts();
   };
 
   const handleTagSearch = (tag: string) => {
