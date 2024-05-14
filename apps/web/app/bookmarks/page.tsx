@@ -2,6 +2,7 @@
 
 import { Content, Icon, Typography } from '@social/ui-shared';
 import {
+  ActiveFriends,
   CreatePost,
   Header,
   HotTags,
@@ -140,6 +141,7 @@ export default function Index() {
         </PostsLayout>
         <Sidebar className="hidden 2xl:block">
           <WhoFollow />
+          <ActiveFriends />
           <HotTags />
         </Sidebar>
       </Content.Grid>
