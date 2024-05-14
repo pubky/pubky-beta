@@ -38,8 +38,6 @@ export default function ActiveFriends() {
           friends: mutualContacts,
         };
 
-        console.log('friends', contactsFriends);
-
         setFriends(contactsFriends);
         setLoading(false);
       } catch (error) {
