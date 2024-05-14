@@ -137,7 +137,10 @@ export default function Index() {
               Backup account
             </Button.Large>
             {showTooltip && !seed && (
-              <Tooltip.Small>
+              <Tooltip.Small
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+              >
                 <Typography.Body variant="small" className="text-opacity-80">
                   You have already done the backup,{' '}
                   <span className="text-white font-bold text-opacity-100">
