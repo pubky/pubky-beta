@@ -52,7 +52,7 @@ export default function Me({
                 {Utils.minifyPubky(pubkyText)}
               </Typography.Label>
               <Typography.H2 className="text-sm sm:text-2xl">
-                {name}
+                {Utils.minifyText(name, 24)}
               </Typography.H2>
             </div>
           </div>

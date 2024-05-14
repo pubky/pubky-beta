@@ -141,7 +141,7 @@ export default function Profile({ post }: ProfileProps) {
   };
 
   return (
-    <Tooltip.Main className="w-[500px]">
+    <Tooltip.Main className="cursor-default w-[500px]">
       <div className="w-full flex justify-between">
         <div className="justify-start items-center gap-4 flex cursor-pointer">
           <PostUI.ImageUser
@@ -222,6 +222,7 @@ export default function Profile({ post }: ProfileProps) {
       <Typography.Body
         variant="medium"
         className="my-6 text-opacity-80 break-all"
+        onClick={(event) => event.stopPropagation()}
       >
         {post?.author?.profile?.bio
           ? Utils.minifyText(post?.author?.profile?.bio, 140)
