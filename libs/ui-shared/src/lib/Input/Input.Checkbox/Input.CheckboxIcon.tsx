@@ -5,11 +5,11 @@ interface CheckboxIconProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const CheckboxIcon = ({
-  icon = <Check size="22" />,
+  icon = <Check size="16" />,
   ...rest
 }: CheckboxIconProps) => {
   return (
-    <div {...rest} className="absolute mt-1 ml-1">
+    <div {...rest} className="absolute justify-self-center self-center">
       {icon}
     </div>
   );

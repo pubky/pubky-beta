@@ -202,6 +202,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       Utils.storage.remove('status');
       Utils.storage.remove('backup');
       Utils.storage.remove('timerRemind');
+      Utils.storage.remove('checkLink');
       setPubky(null);
       setProfile(null);
       setSeed(null);

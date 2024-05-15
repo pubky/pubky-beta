@@ -51,6 +51,7 @@ export default function Sidebar({
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
+  const checkLink = Utils.storage.get('checkLink');
 
   useEffect(() => {
     if (seed) {
@@ -429,10 +430,14 @@ export default function Sidebar({
                     ) : (
                       <div
                         className="cursor-pointer"
-                        onClick={() => {
-                          setShowModalCheckLink(true);
-                          setClickedLink(link.url);
-                        }}
+                        onClick={
+                          checkLink === false
+                            ? () => window.open(link.url, '_blank')
+                            : () => {
+                                setShowModalCheckLink(true);
+                                setClickedLink(link.url);
+                              }
+                        }
                       >
                         <Typography.Body
                           className="hover:text-opacity-80"

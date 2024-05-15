@@ -1,8 +1,9 @@
 'use client';
 
-import { Button, Icon, Modal, Typography } from '@social/ui-shared';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Icon, Input, Modal, Typography } from '@social/ui-shared';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { Utils } from '../../utils';
 
 interface CheckLinkProps {
   showModalCheckLink: boolean;
@@ -16,6 +17,7 @@ export default function CheckLink({
   clickedLink,
 }: CheckLinkProps) {
   const modalCheckLinkRef = useRef<HTMLDivElement>(null);
+  const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
     const handleClickOutsideModalCheckLink = (event: MouseEvent) => {
@@ -35,6 +37,12 @@ export default function CheckLink({
       );
     };
   }, [modalCheckLinkRef, setShowModalCheckLink]);
+
+  const handleCheckboxChange = (newCheckedState: boolean) => {
+    setIsChecked(newCheckedState);
+    Utils.storage.set('checkLink', !newCheckedState);
+  };
+
   return (
     <Modal.Root
       show={showModalCheckLink}
@@ -53,7 +61,7 @@ export default function CheckLink({
         </div>
         Are you sure you want to continue?
       </Typography.Body>
-      <div className="flex gap-4 mt-8">
+      <div className="flex gap-4 my-6">
         <Button.Large
           variant="secondary"
           onClick={() => setShowModalCheckLink(false)}
@@ -69,6 +77,11 @@ export default function CheckLink({
           </Modal.SubmitAction>
         </Link>
       </div>
+      <Input.Checkbox
+        checked={isChecked}
+        onCheckChange={handleCheckboxChange}
+        text="Don't show this again"
+      />
     </Modal.Root>
   );
 }

@@ -4,7 +4,13 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Content, Icon, Typography } from '@social/ui-shared';
-import { CreatePost, Header, Sidebar, WhoFollow } from '../../components';
+import {
+  ActiveFriends,
+  CreatePost,
+  Header,
+  Sidebar,
+  WhoFollow,
+} from '../../components';
 import { HotTags } from './components';
 import { DropDown } from '../../components/DropDown';
 import { useClientContext } from '../../contexts/client';
@@ -177,7 +183,7 @@ export default function Index() {
         </div>
         <Sidebar className="self-start sticky top-[160px] hidden xl:block w-[20%]">
           <WhoFollow />
-          {/** <ActiveFriends /> */}
+          <ActiveFriends />
         </Sidebar>{' '}
       </Content.Grid>
       <CreatePost />
