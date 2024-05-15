@@ -1,15 +1,20 @@
 import React from 'react';
 import { CheckboxIcon } from './Input.CheckboxIcon';
-import { twMerge } from 'tailwind-merge'; // Ensure you've installed tailwind-merge
+import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../Typography';
 
 interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
   checked: boolean;
   disabled?: boolean;
+  onCheckChange?: (checked: boolean) => void;
+  text?: string;
 }
 
 export const Checkbox = ({
   checked,
   disabled = false,
+  onCheckChange,
+  text,
   ...rest
 }: CheckboxProps) => {
   const cssStyles = twMerge(
@@ -21,16 +26,33 @@ export const Checkbox = ({
       : 'bg-white bg-opacity-10 border-white border-opacity-30'
   );
 
+  const handleInputChange = () => {
+    if (!disabled && onCheckChange) {
+      onCheckChange(!checked);
+    }
+  };
+
   return (
-    <label className={twMerge(disabled ? 'cursor-default' : 'cursor-pointer')}>
+    <label
+      className={twMerge(
+        'flex gap-3',
+        disabled ? 'cursor-default' : 'cursor-pointer'
+      )}
+    >
       <span className={cssStyles}>{checked && <CheckboxIcon />}</span>
       <input
         {...rest}
         type="checkbox"
+        onChange={handleInputChange}
         checked={checked}
         disabled={disabled}
         className="hidden"
       />
+      {text && (
+        <Typography.Body variant="medium" className="mt-1 text-opacity-60">
+          {text}
+        </Typography.Body>
+      )}
     </label>
   );
 };
