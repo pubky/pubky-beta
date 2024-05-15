@@ -55,9 +55,13 @@ export default function Post({
   } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
-  const [showModalDeletePost, setshowModalDeletePost] = useState(false);
+  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
   const [showTooltipProfile, setShowTooltipProfile] = useState(false);
+
+  useEffect(() => {
+    console.log(post);
+  }, [post]);
 
   useEffect(() => {
     if (post?.tags) {
@@ -68,14 +72,18 @@ export default function Post({
 
   const handleDeletePost = async (postId: string) => {
     await deletePost(postId);
+    updatePosts();
   };
 
   const handleAddBookmark = async (postId: string) => {
     await createBookmark(postId);
+    console.log('handleAddBookmark', postId);
+    await updatePosts();
   };
 
   const handleDeleteBookmark = async (postId: string, bookmarkId: string) => {
     await deleteBookmark(postId, bookmarkId);
+    await updatePosts();
   };
 
   const updatePosts = async () => {
@@ -85,6 +93,7 @@ export default function Post({
 
     const updatedPosts = Object.keys(posts).map((key) => {
       if (posts[key].uri === updatedPost.uri) {
+        console.log(updatedPost);
         return updatedPost;
       }
       return posts[key];
@@ -317,7 +326,7 @@ export default function Post({
                     onClick={(event) => {
                       event.stopPropagation();
                       //handleDeletePost(post.id);
-                      setshowModalDeletePost(true);
+                      setShowModalDeletePost(true);
                     }}
                   />
                 )}
@@ -338,7 +347,7 @@ export default function Post({
       />
       <Modal.DeletePost
         showModalDeletePost={showModalDeletePost}
-        setShowModalDeletePost={setshowModalDeletePost}
+        setShowModalDeletePost={setShowModalDeletePost}
         handleDeletePost={handleDeletePost}
         postId={post.id}
       />
