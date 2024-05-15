@@ -18,7 +18,7 @@ export const Checkbox = ({
   ...rest
 }: CheckboxProps) => {
   const cssStyles = twMerge(
-    'inline-block w-8 h-8 rounded-lg border',
+    'grid w-6 h-6 rounded-md border',
     disabled
       ? 'bg-white bg-opacity-10 border-white border-opacity-10'
       : checked
@@ -35,7 +35,7 @@ export const Checkbox = ({
   return (
     <label
       className={twMerge(
-        'flex gap-3',
+        'flex gap-2',
         disabled ? 'cursor-default' : 'cursor-pointer'
       )}
     >
@@ -49,7 +49,7 @@ export const Checkbox = ({
         className="hidden"
       />
       {text && (
-        <Typography.Body variant="medium" className="mt-1 text-opacity-60">
+        <Typography.Body variant="medium" className="text-opacity-50">
           {text}
         </Typography.Body>
       )}
