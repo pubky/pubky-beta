@@ -124,6 +124,7 @@ export default function CreateQuickPost() {
               setContent(e.target.value)
             }
             value={content}
+            maxLength={280}
             onFocus={() => setTextArea(true)}
             className={`w-full ${
               arrayTags.length > 0 ? 'xl:w-[450px]' : 'xl:w-[650px]'

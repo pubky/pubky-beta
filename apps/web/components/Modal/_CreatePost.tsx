@@ -163,6 +163,7 @@ export default function CreatePost({
               <div className="h-full">
                 <Input.TextArea
                   className="no-scrollbar h-[240px]"
+                  maxLength={280}
                   placeholder="Write content, drop an image, or paste a link"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setContent(e.target.value)
