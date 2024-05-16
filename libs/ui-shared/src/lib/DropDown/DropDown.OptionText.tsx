@@ -7,6 +7,7 @@ interface OptionTextProps extends React.HTMLAttributes<HTMLDivElement> {
   textOption?: string;
   iconText?: string;
   subtitle?: string;
+  disabled?: boolean;
 }
 
 export const OptionText = ({
@@ -14,6 +15,7 @@ export const OptionText = ({
   textOption,
   iconText,
   subtitle,
+  disabled = false,
   ...rest
 }: OptionTextProps) => {
   const baseCSS = `w-full flex items-center justify-between cursor-pointer`;
@@ -26,7 +28,14 @@ export const OptionText = ({
         <Typography.Label className="text-opacity-30">
           {subtitle}
         </Typography.Label>
-        <Typography.H2 variant="light">
+        <Typography.H2
+          className={
+            disabled
+              ? 'text-white text-opacity-30 cursor-default'
+              : 'text-white'
+          }
+          variant="light"
+        >
           {iconText} {textOption}
         </Typography.H2>
       </div>
@@ -35,10 +44,11 @@ export const OptionText = ({
           arrowStyle,
           textOption ? (subtitle ? 'mt-6' : 'mt-1') : 'mt-0.5',
           isOpen ? 'rotate-180' : 'rotate-0',
+          disabled && 'cursor-default',
           rest.className
         )}
       >
-        <Icon.DropdownIcon />
+        <Icon.DropdownIcon color={disabled ? 'gray' : 'white'} />
       </div>
     </div>
   );

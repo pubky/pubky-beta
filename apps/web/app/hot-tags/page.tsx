@@ -135,7 +135,7 @@ export default function Index() {
         <div className="flex-col inline-flex gap-3">
           <div className="flex gap-6 mb-6">
             <DropDown.HotTagsReach type="text" subtitle="Reach" />
-            <DropDown.TagsTimeframe type="text" subtitle="Timeframe" />
+            <DropDown.TagsTimeframe disabled type="text" subtitle="Timeframe" />
           </div>
           {loading ? (
             <div>

@@ -96,7 +96,7 @@ export default function Me({
           </Typography.H2>
         </div>
         <div className="hidden lg:block lg:-mt-1">
-          <DropDown.SortFriends type="text" subtitle="Sort by" />
+          <DropDown.SortFriends disabled type="text" subtitle="Sort by" />
         </div>
       </div>
     </div>

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import {
   Content,
   Typography,
@@ -215,9 +214,13 @@ export default function Index() {
               <Input.Word placeholder="11." />
               <Input.Word placeholder="12." />
             </div>
-            <Link href="" className="mt-4 lg:mt-0" id="onboarding-sign-up-link">
-              <Button.Large icon={<Icon.Key size="16" />}>Sign in</Button.Large>
-            </Link>
+            <Button.Large
+              disabled
+              className="mt-4 lg:mt-0"
+              icon={<Icon.Key size="16" color="gray" />}
+            >
+              Sign in
+            </Button.Large>
           </Card.Primary>
         </div>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-4.png" />
