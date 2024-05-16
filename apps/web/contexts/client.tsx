@@ -340,7 +340,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const createBookmark = async (uri: string): Promise<IBookmark | null> => {
+  const createBookmark = async (
+    id: string,
+    uri: string
+  ): Promise<IBookmark | null> => {
     try {
       const pk = await isLoggedIn();
 
@@ -353,6 +356,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`Put bookmark:${pk} failed: ${result.error.message}`);
 
+      const newPosts = JSON.parse(JSON.stringify(posts));
+      newPosts[id].bookmark = { id: uri };
+      setPosts(newPosts);
+
       return result.value as IBookmark;
     } catch (error) {
       console.log(error);
@@ -361,6 +368,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   };
 
   const deleteBookmark = async (
+    id: string,
     uri: string,
     bookmarkId: string
   ): Promise<IBookmark | null> => {
@@ -377,6 +385,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         throw new Error(
           `Delete bookmark:${pk} failed: ${result.error.message}`
         );
+
+      const newPosts = JSON.parse(JSON.stringify(posts));
+      delete newPosts[id].bookmark.id;
+      setPosts(newPosts);
 
       return result.value as IBookmark;
     } catch (error) {

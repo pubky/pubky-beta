@@ -70,14 +70,16 @@ export default function Post({
     await deletePost(postId);
   };
 
-  const handleAddBookmark = async (postId: string) => {
-    await createBookmark(postId);
-    await updatePosts();
+  const handleAddBookmark = async (postId: string, uri: string) => {
+    await createBookmark(postId, uri);
   };
 
-  const handleDeleteBookmark = async (postId: string, bookmarkId: string) => {
-    await deleteBookmark(postId, bookmarkId);
-    await updatePosts();
+  const handleDeleteBookmark = async (
+    postId: string,
+    postUri: string,
+    bookmarkId: string
+  ) => {
+    await deleteBookmark(postId, postUri, bookmarkId);
   };
 
   const updatePosts = async () => {
@@ -303,8 +305,12 @@ export default function Post({
                   onClick={(event) => {
                     event.stopPropagation();
                     post?.bookmark?.id
-                      ? handleDeleteBookmark(post.uri, post.bookmark.id)
-                      : handleAddBookmark(post.uri);
+                      ? handleDeleteBookmark(
+                          post.id,
+                          post.uri,
+                          post.bookmark.id
+                        )
+                      : handleAddBookmark(post.id, post.uri);
                   }}
                 />
                 {post?.author?.id === pubky && (

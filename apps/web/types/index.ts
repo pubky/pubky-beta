@@ -34,9 +34,10 @@ export interface TClientContext {
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string) => Promise<IPost | null>;
   deletePost: (postId: string) => Promise<IDeletePost | null>;
-  createBookmark: (postId: string) => Promise<IBookmark | null>;
+  createBookmark: (id: string, uri: string) => Promise<IBookmark | null>;
   deleteBookmark: (
-    postId: string,
+    id: string,
+    uri: string,
     bookmarkId: string
   ) => Promise<IBookmark | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
