@@ -1,45 +1,13 @@
 'use client';
 
-import { Content, Icon, Typography } from '@social/ui-shared';
-import {
-  ActiveFriends,
-  CreatePost,
-  CreateQuickPost,
-  Header,
-  HotTags,
-  Post,
-  PostsLayout,
-  RemindBackup,
-  Sidebar,
-  WhoFollow,
-} from '../../components';
-// import { DropDown } from '../components/DropDown';
 import { useEffect, useRef, useState } from 'react';
+import { Content, Icon, Typography } from '@social/ui-shared';
+
+import * as Components from '../../components';
+import { Filter } from '../../components/Filter';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost, INewPost } from '../../types';
-import { Filter } from '../../components/Filter';
-
-{
-  /**const layouts = {
-  sidebar: {
-    layout: 'grid-cols-3',
-    posts: 'col-span-3 xl:col-span-2 flex-col inline-flex gap-6',
-  },
-  grid: {
-    layout: 'lg:grid-cols-2 xl:grid-cols-3',
-    posts: '',
-  },
-  columns: {
-    layout: 'md:grid-cols-2',
-    posts: '',
-  },
-  list: {
-    layout: 'grid-cols-1',
-    posts: '',
-  },
-}; */
-}
 
 const Loading = (posts: number) => (
   <div className="flex w-full justify-center flex-col">
@@ -105,33 +73,23 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reach]);
 
-  {
-    /**const postsLayoutClassName =
-    layout === 'sidebar'
-      ? layouts[layout].posts
-      : `grid ${layouts[layout].layout} gap-6`;
-  const sidebarClassName = `hidden ${
-    layout === 'sidebar' && 'xl:inline-flex w-full'
-  }`; */
-  }
-
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Streams" />
-      <RemindBackup />
+      <Components.Header className="hidden md:block" title="Streams" />
+      <Components.RemindBackup />
       <Content.Grid className={'grid grid-cols-5 gap-6'}>
-        <Sidebar className="hidden lg:block">
+        <Components.Sidebar className="hidden lg:block">
           <Filter.Reach />
           <Filter.Sort />
           <div className="self-start sticky top-[160px]">
             <Filter.Layout />
             <Filter.Content />
           </div>
-        </Sidebar>
-        <PostsLayout className="col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-6">
-          <CreateQuickPost />
+        </Components.Sidebar>
+        <Components.PostsLayout className="col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-6">
+          <Components.CreateQuickPost />
           {Object.keys(posts).map((key) => (
-            <Post key={posts[key].id} post={posts[key]} />
+            <Components.Post key={posts[key].id} post={posts[key]} />
           ))}
           {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
@@ -141,14 +99,14 @@ export default function Index() {
             </div>
           )}
           {loading && Loading(Object.keys(posts).length)}
-        </PostsLayout>
-        <Sidebar className="hidden xl:block">
-          <WhoFollow />
-          <ActiveFriends />
-          <HotTags />
-        </Sidebar>
+        </Components.PostsLayout>
+        <Components.Sidebar className="hidden xl:block">
+          <Components.WhoFollow />
+          <Components.ActiveFriends />
+          <Components.HotTags />
+        </Components.Sidebar>
       </Content.Grid>
-      <CreatePost />
+      <Components.CreatePost />
       <div ref={loader} />
     </Content.Main>
   );

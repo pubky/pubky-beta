@@ -1,5 +1,10 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { twMerge } from 'tailwind-merge';
+
 import {
   Icon,
   Button,
@@ -9,14 +14,9 @@ import {
   Tooltip as TooltipUI,
 } from '@social/ui-shared';
 
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
 import Repost from './_Repost';
 import { Utils } from '../utils';
-import { Skeleton } from '.';
-import { useRouter } from 'next/navigation';
 import { useClientContext } from '../contexts/client';
 import { IPost, ITaggedPost, TLayouts, TSize } from '../types';
 import Tooltip from './Tooltip';
@@ -43,25 +43,21 @@ export default function Post({
   const {
     pubky,
     posts,
-    setPosts,
-    getPost,
-    createTag,
     searchTags,
+    setPosts,
     setSearchTags,
+    getPost,
     deleteTag,
     deletePost,
-    createBookmark,
     deleteBookmark,
+    createBookmark,
+    createTag,
   } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
   const [showTooltipProfile, setShowTooltipProfile] = useState(false);
-
-  useEffect(() => {
-    console.log(post);
-  }, [post]);
 
   useEffect(() => {
     if (post?.tags) {
@@ -72,12 +68,10 @@ export default function Post({
 
   const handleDeletePost = async (postId: string) => {
     await deletePost(postId);
-    updatePosts();
   };
 
   const handleAddBookmark = async (postId: string) => {
     await createBookmark(postId);
-    console.log('handleAddBookmark', postId);
     await updatePosts();
   };
 
@@ -92,10 +86,7 @@ export default function Post({
     if (!updatedPost) return;
 
     const updatedPosts = Object.keys(posts).map((key) => {
-      if (posts[key].uri === updatedPost.uri) {
-        console.log(updatedPost);
-        return updatedPost;
-      }
+      if (posts[key].uri === updatedPost.uri) return updatedPost;
       return posts[key];
     });
     setPosts(updatedPosts);
@@ -122,8 +113,6 @@ export default function Post({
     }
     router.push('/search');
   };
-
-  if (!post) return <Skeleton.Post />;
 
   return (
     <div>
@@ -325,7 +314,6 @@ export default function Post({
                     icon={<Icon.Trash size="16" />}
                     onClick={(event) => {
                       event.stopPropagation();
-                      //handleDeletePost(post.id);
                       setShowModalDeletePost(true);
                     }}
                   />

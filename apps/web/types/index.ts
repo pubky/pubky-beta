@@ -17,7 +17,7 @@ export type TContactsLayout = 'ranking' | 'list';
 export type TContent = 'all' | 'posts' | 'images' | 'videos' | 'links';
 export type TTimeframe = 'today' | 'month' | 'all';
 
-export interface ClientContextType {
+export interface TClientContext {
   hotTags: ITaggedPost[] | null;
   mostFollowed: IMostFollowed[] | null;
   recommendedProfiles: IRecommendedProfiles[] | null;
