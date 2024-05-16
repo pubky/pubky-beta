@@ -201,18 +201,18 @@ export default function Index() {
             text="Enter your recovery phrase from any (paper) backup (less secure)."
           >
             <div className="my-6 grid grid-rows-6 grid-flow-col gap-1">
-              <Input.Word placeholder="1." />
-              <Input.Word placeholder="2." />
-              <Input.Word placeholder="3." />
-              <Input.Word placeholder="4." />
-              <Input.Word placeholder="5." />
-              <Input.Word placeholder="6." />
-              <Input.Word placeholder="7." />
-              <Input.Word placeholder="8." />
-              <Input.Word placeholder="9." />
-              <Input.Word placeholder="10." />
-              <Input.Word placeholder="11." />
-              <Input.Word placeholder="12." />
+              <Input.Word placeholder="1." disabled />
+              <Input.Word placeholder="2." disabled />
+              <Input.Word placeholder="3." disabled />
+              <Input.Word placeholder="4." disabled />
+              <Input.Word placeholder="5." disabled />
+              <Input.Word placeholder="6." disabled />
+              <Input.Word placeholder="7." disabled />
+              <Input.Word placeholder="8." disabled />
+              <Input.Word placeholder="9." disabled />
+              <Input.Word placeholder="10." disabled />
+              <Input.Word placeholder="11." disabled />
+              <Input.Word placeholder="12." disabled />
             </div>
             <Button.Large
               disabled
