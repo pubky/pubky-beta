@@ -5,9 +5,16 @@ interface WordProps extends React.HTMLAttributes<HTMLInputElement> {
   children?: string;
   error?: string;
   required?: boolean;
+  disabled?: boolean;
 }
 
-export const Word = ({ children, error, required, ...rest }: WordProps) => {
+export const Word = ({
+  children,
+  error,
+  required,
+  disabled,
+  ...rest
+}: WordProps) => {
   const baseCSS =
     'w-full bg-white bg-opacity-10  px-4 py-3 rounded-lg outline-none text-white placeholder:text-white placeholder:text-opacity-50 placeholder:font-semibold justify-start items-start gap-[5px] inline-flex';
 
@@ -25,6 +32,7 @@ export const Word = ({ children, error, required, ...rest }: WordProps) => {
           rest.className,
           error ? inputWithErrorStyle : ''
         )}
+        disabled={disabled}
         value={children}
       />
       {error && <div className={errorCSS}>{error}</div>}

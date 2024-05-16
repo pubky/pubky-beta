@@ -208,8 +208,9 @@ export default function Backup({
                 src="/images/file.png"
               />
               <Button.Large
-                icon={<Icon.FileText />}
-                onClick={() => setPhrase(true)}
+                icon={<Icon.FileText color="gray" />}
+                disabled
+                // onClick={() => setPhrase(true)}
               >
                 Recovery Phrase
               </Button.Large>
