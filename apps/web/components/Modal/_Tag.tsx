@@ -20,7 +20,7 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
   const modalTagRef = useRef<HTMLDivElement>(null);
-  const { createTag } = useClientContext();
+  const { createTag, posts, setPosts, getPost } = useClientContext();
   const [tag, setTag] = useState('');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [sendingTags, setSendingTags] = useState(false);
@@ -51,6 +51,9 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
       for (const tag of arrayTags) {
         await createTag(post.uri, tag);
       }
+
+      updatePosts();
+
       setShowModalTag(false);
       setArrayTags([]);
       setTag('');
@@ -82,7 +85,21 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
     }
   };
 
-  const handleRemoveTag = (indexToRemove: number) => {
+  const updatePosts = async () => {
+    const updatedPost = await getPost(post.uri);
+
+    if (!updatedPost) return;
+
+    const updatedPosts = Object.keys(posts).map((key) => {
+      if (posts[key].uri === updatedPost.uri) {
+        return updatedPost;
+      }
+      return posts[key];
+    });
+    setPosts(updatedPosts);
+  };
+
+  const handleRemoveTag = async (indexToRemove: number) => {
     setArrayTags(arrayTags.filter((_, index) => index !== indexToRemove));
     if (arrayTags.length <= 4) {
       setTagsError(false);
