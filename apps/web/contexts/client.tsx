@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck
 
 'use client';
@@ -23,7 +21,7 @@ import {
   IFeed,
   TLayouts,
   TStatus,
-  ClientContextType,
+  TClientContext,
   IProfile,
   IDeletePost,
   INewPost,
@@ -37,19 +35,14 @@ import { Utils } from '../utils/';
 const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
 const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY || '';
 
-const ClientContext = createContext<ClientContextType>({} as ClientContextType);
+const ClientContext = createContext<TClientContext>({} as TClientContext);
 
-// Cache invalidation here seems a bit hacky and should be better
-// done somewhere else, the relay? accept a storage to the client?
 const homeserverUrlCache = Utils.storage.get('homeserverUrl');
 const homeserverUrl =
   homeserverUrlCache?.timestamp > Date.now() - 60 * 60 * 1000
     ? homeserverUrlCache.url
     : undefined;
 console.log({ homeserverUrl });
-
-// Calling the client as soon as possible, because... we want to find the server as soon as possible!
-// and we aren't really switching homeserver according to the user settings any time soon.
 
 const client = new Client(HOMESERVER, {
   relay: PKARR_RELAY,
@@ -347,7 +340,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const createBookmark = async (uri: string): Promise<IBookmark | null> => {
+  const createBookmark = async (
+    id: string,
+    uri: string
+  ): Promise<IBookmark | null> => {
     try {
       const pk = await isLoggedIn();
 
@@ -360,6 +356,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`Put bookmark:${pk} failed: ${result.error.message}`);
 
+      const newPosts = JSON.parse(JSON.stringify(posts));
+      newPosts[id].bookmark = { id: uri };
+      setPosts(newPosts);
+
       return result.value as IBookmark;
     } catch (error) {
       console.log(error);
@@ -368,6 +368,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   };
 
   const deleteBookmark = async (
+    id: string,
     uri: string,
     bookmarkId: string
   ): Promise<IBookmark | null> => {
@@ -384,6 +385,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         throw new Error(
           `Delete bookmark:${pk} failed: ${result.error.message}`
         );
+
+      const newPosts = JSON.parse(JSON.stringify(posts));
+      delete newPosts[id].bookmark.id;
+      setPosts(newPosts);
 
       return result.value as IBookmark;
     } catch (error) {
@@ -584,6 +589,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`Delete post:${pk} failed: ${result.error.message}`);
 
+      const newPosts = JSON.parse(JSON.stringify(posts));
+      delete newPosts[postId];
+      setPosts(newPosts);
+
       return result.value as IDeletePost;
     } catch (error) {
       console.log(error);
@@ -668,10 +677,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     tags?: string[]
   ): Promise<IFeed | null> => {
     try {
-      // TODO: find a way to memoize the client across page refresh
-      // that will basically require extracting the internal caches,
-      // and load it in subsequent client instances.
-
       const pk = await isLoggedIn();
 
       if (!pk) throw new Error('Get global posts failed: not logged in.');

@@ -1,5 +1,10 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { twMerge } from 'tailwind-merge';
+
 import {
   Icon,
   Button,
@@ -9,14 +14,9 @@ import {
   Tooltip as TooltipUI,
 } from '@social/ui-shared';
 
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { Modal } from './Modal';
 import Repost from './_Repost';
 import { Utils } from '../utils';
-import { Skeleton } from '.';
-import { useRouter } from 'next/navigation';
 import { useClientContext } from '../contexts/client';
 import { IPost, ITaggedPost, TLayouts, TSize } from '../types';
 import Tooltip from './Tooltip';
@@ -42,17 +42,20 @@ export default function Post({
 
   const {
     pubky,
-    createTag,
+    posts,
     searchTags,
+    setPosts,
     setSearchTags,
+    getPost,
     deleteTag,
     deletePost,
-    createBookmark,
     deleteBookmark,
+    createBookmark,
+    createTag,
   } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
-  const [showModalDeletePost, setshowModalDeletePost] = useState(false);
+  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
   const [showTooltipProfile, setShowTooltipProfile] = useState(false);
 
@@ -67,20 +70,38 @@ export default function Post({
     await deletePost(postId);
   };
 
-  const handleAddBookmark = async (postId: string) => {
-    await createBookmark(postId);
+  const handleAddBookmark = async (postId: string, uri: string) => {
+    await createBookmark(postId, uri);
   };
 
-  const handleDeleteBookmark = async (postId: string, bookmarkId: string) => {
-    await deleteBookmark(postId, bookmarkId);
+  const handleDeleteBookmark = async (
+    postId: string,
+    postUri: string,
+    bookmarkId: string
+  ) => {
+    await deleteBookmark(postId, postUri, bookmarkId);
+  };
+
+  const updatePosts = async () => {
+    const updatedPost = await getPost(post.uri);
+
+    if (!updatedPost) return;
+
+    const updatedPosts = Object.keys(posts).map((key) => {
+      if (posts[key].uri === updatedPost.uri) return updatedPost;
+      return posts[key];
+    });
+    setPosts(updatedPosts);
   };
 
   const handleDeleteTag = async (tag: string) => {
     await deleteTag(post.uri, tag);
+    updatePosts();
   };
 
   const handleAddTag = async (tag: string) => {
     await createTag(post.uri, tag);
+    updatePosts();
   };
 
   const handleTagSearch = (tag: string) => {
@@ -94,8 +115,6 @@ export default function Post({
     }
     router.push('/search');
   };
-
-  if (!post) return <Skeleton.Post />;
 
   return (
     <div>
@@ -286,8 +305,12 @@ export default function Post({
                   onClick={(event) => {
                     event.stopPropagation();
                     post?.bookmark?.id
-                      ? handleDeleteBookmark(post.uri, post.bookmark.id)
-                      : handleAddBookmark(post.uri);
+                      ? handleDeleteBookmark(
+                          post.id,
+                          post.uri,
+                          post.bookmark.id
+                        )
+                      : handleAddBookmark(post.id, post.uri);
                   }}
                 />
                 {post?.author?.id === pubky && (
@@ -297,8 +320,7 @@ export default function Post({
                     icon={<Icon.Trash size="16" />}
                     onClick={(event) => {
                       event.stopPropagation();
-                      //handleDeletePost(post.id);
-                      setshowModalDeletePost(true);
+                      setShowModalDeletePost(true);
                     }}
                   />
                 )}
@@ -319,7 +341,7 @@ export default function Post({
       />
       <Modal.DeletePost
         showModalDeletePost={showModalDeletePost}
-        setShowModalDeletePost={setshowModalDeletePost}
+        setShowModalDeletePost={setShowModalDeletePost}
         handleDeletePost={handleDeletePost}
         postId={post.id}
       />
