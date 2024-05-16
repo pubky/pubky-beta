@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../contexts/client';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import {
   Content,
   Typography,
@@ -202,22 +201,26 @@ export default function Index() {
             text="Enter your recovery phrase from any (paper) backup (less secure)."
           >
             <div className="my-6 grid grid-rows-6 grid-flow-col gap-1">
-              <Input.Word placeholder="1." />
-              <Input.Word placeholder="2." />
-              <Input.Word placeholder="3." />
-              <Input.Word placeholder="4." />
-              <Input.Word placeholder="5." />
-              <Input.Word placeholder="6." />
-              <Input.Word placeholder="7." />
-              <Input.Word placeholder="8." />
-              <Input.Word placeholder="9." />
-              <Input.Word placeholder="10." />
-              <Input.Word placeholder="11." />
-              <Input.Word placeholder="12." />
+              <Input.Word placeholder="1." disabled />
+              <Input.Word placeholder="2." disabled />
+              <Input.Word placeholder="3." disabled />
+              <Input.Word placeholder="4." disabled />
+              <Input.Word placeholder="5." disabled />
+              <Input.Word placeholder="6." disabled />
+              <Input.Word placeholder="7." disabled />
+              <Input.Word placeholder="8." disabled />
+              <Input.Word placeholder="9." disabled />
+              <Input.Word placeholder="10." disabled />
+              <Input.Word placeholder="11." disabled />
+              <Input.Word placeholder="12." disabled />
             </div>
-            <Link href="" className="mt-4 lg:mt-0" id="onboarding-sign-up-link">
-              <Button.Large icon={<Icon.Key size="16" />}>Sign in</Button.Large>
-            </Link>
+            <Button.Large
+              disabled
+              className="mt-4 lg:mt-0"
+              icon={<Icon.Key size="16" color="gray" />}
+            >
+              Sign in
+            </Button.Large>
           </Card.Primary>
         </div>
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-4.png" />

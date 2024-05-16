@@ -7,9 +7,14 @@ import { DropDown } from '..';
 interface SortFriends {
   type?: 'icon' | 'text';
   subtitle?: string;
+  disabled?: boolean;
 }
 
-export default function SortFriends({ type = 'icon', subtitle }: SortFriends) {
+export default function SortFriends({
+  type = 'icon',
+  subtitle,
+  disabled = false,
+}: SortFriends) {
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const labels = {
@@ -34,6 +39,7 @@ export default function SortFriends({ type = 'icon', subtitle }: SortFriends) {
       labelIcon="Sort"
       type={type}
       subtitle={subtitle}
+      disabled={disabled}
     >
       <DropDownUI.Content
         title="Sort"

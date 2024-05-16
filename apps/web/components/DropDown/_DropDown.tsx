@@ -16,6 +16,7 @@ interface DropDownProps extends React.HTMLAttributes<HTMLDivElement> {
   labelIcon?: string;
   type?: 'icon' | 'text';
   subtitle?: string;
+  disabled?: boolean;
 }
 
 export default function DropDown({
@@ -26,6 +27,7 @@ export default function DropDown({
   labelIcon,
   type,
   subtitle,
+  disabled = false,
   ...rest
 }: DropDownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -50,17 +52,19 @@ export default function DropDown({
     <DropDownUI.Root {...rest} reference={dropdownRef}>
       {type === 'text' ? (
         <DropDownUI.OptionText
-          onClick={() => setOpen(!open)}
+          onClick={disabled ? undefined : () => setOpen(!open)}
           isOpen={open}
           textOption={value.textOption}
           iconText={value.iconText}
           subtitle={subtitle}
+          disabled={disabled}
         />
       ) : (
         <DropDownUI.Button
           iconOption={value.iconOption}
           labelIcon={labelIcon}
-          onClick={() => setOpen(!open)}
+          onClick={disabled ? undefined : () => setOpen(!open)}
+          disabled={disabled}
         />
       )}
       {children}

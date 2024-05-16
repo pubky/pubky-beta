@@ -8,9 +8,14 @@ import { useFilterContext } from '../../contexts/filters';
 interface TagsTime {
   type?: 'icon' | 'text';
   subtitle?: string;
+  disabled?: boolean;
 }
 
-export default function TagsTimeframe({ type = 'icon', subtitle }: TagsTime) {
+export default function TagsTimeframe({
+  type = 'icon',
+  subtitle,
+  disabled = false,
+}: TagsTime) {
   const { timeframe, setTimeframe } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
 
@@ -34,6 +39,7 @@ export default function TagsTimeframe({ type = 'icon', subtitle }: TagsTime) {
       labelIcon="Sort"
       type={type}
       subtitle={subtitle}
+      disabled={disabled}
     >
       <DropDownUI.Content
         title="Timeframe"
