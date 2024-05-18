@@ -177,7 +177,7 @@ export default function RemindBackup() {
       ) : (
         showBackupSuccess && (
           <div
-            className={` w-full p-4 bg-fuchsia-500 bg-opacity-20 rounded-lg shadow border border-fuchsia-500 flex-col justify-start items-start gap-6 inline-flex`}
+            className={`w-full p-4 bg-fuchsia-500 bg-opacity-20 rounded-lg shadow border border-fuchsia-500 flex-col justify-start items-start gap-6 inline-flex`}
           >
             <div className="w-full flex justify-between">
               <div className="flex gap-2">

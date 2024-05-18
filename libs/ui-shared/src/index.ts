@@ -1,5 +1,6 @@
 // Use this file to export React client components (e.g. those with 'use client' directive) or other non-server utilities
 
+import { Alert } from './lib/Alert';
 import { Typography } from './lib/Typography';
 import { Icon } from './lib/Icon';
 import { Button } from './lib/Button';
@@ -17,6 +18,7 @@ import { Tooltip } from './lib/Tooltip';
 import { SideCard } from './lib/SideCard';
 
 export {
+  Alert,
   Typography,
   Icon,
   Button,
