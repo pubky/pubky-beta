@@ -12,6 +12,7 @@ import {
   Typography,
   PostUtil,
   Tooltip as TooltipUI,
+  Alert,
 } from '@social/ui-shared';
 
 import { Modal } from './Modal';
@@ -58,6 +59,7 @@ export default function Post({
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
   const [showTooltipProfile, setShowTooltipProfile] = useState(false);
+  const [showDeleteMessage, setShowDeleteMessage] = useState(false);
 
   useEffect(() => {
     if (post?.tags) {
@@ -67,6 +69,8 @@ export default function Post({
   }, [post?.tags]);
 
   const handleDeletePost = async (postId: string) => {
+    setShowDeleteMessage(true);
+    setTimeout(() => setShowDeleteMessage(false), 2000);
     await deletePost(postId);
   };
 
@@ -329,6 +333,11 @@ export default function Post({
           </div>
         </PostUI.Root>
       </div>
+      {showDeleteMessage && (
+        <Alert.Message icon={<Icon.CheckCircle size="20" />}>
+          Post successfully deleted!
+        </Alert.Message>
+      )}
       <Repost
         post={post}
         showModalRepost={showModalRepost}
