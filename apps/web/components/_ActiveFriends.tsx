@@ -79,7 +79,7 @@ export default function ActiveFriends() {
                     label={Utils.minifyPubky(friend.uri.replace('pubky:', ''))}
                   />
                   {index !== friends.friends.length - 1 && (
-                    <Content.Divider className="my-3" />
+                    <Content.Divider className="my-2" />
                   )}
                 </div>
               );
