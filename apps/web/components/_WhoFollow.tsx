@@ -170,7 +170,8 @@ export default function WhoFollow() {
                     ) : initLoadingFollowers ? (
                       <SideCard.FollowAction
                         disabled
-                        icon={<Icon.LoadingSpin size="20" />}
+                        icon={<Icon.LoadingSpin size="16" />}
+                        variant="small"
                       />
                     ) : isFollowed ? (
                       <SideCard.FollowAction
@@ -181,7 +182,8 @@ export default function WhoFollow() {
                         }
                         disabled={loadingFollowers[recommendedProfile.id]}
                         loading={loadingFollowers[recommendedProfile.id]}
-                        icon={<Icon.Minus size="20" />}
+                        icon={<Icon.Minus size="16" />}
+                        variant="small"
                       />
                     ) : (
                       <SideCard.FollowAction
@@ -192,12 +194,13 @@ export default function WhoFollow() {
                         }
                         disabled={loadingFollowers[recommendedProfile.id]}
                         loading={loadingFollowers[recommendedProfile.id]}
-                        icon={<Icon.Plus size="20" />}
+                        icon={<Icon.Plus size="16" />}
+                        variant="small"
                       />
                     )}
                   </SideCard.User>
                   {index !== recommendedProfiles.length - 1 && (
-                    <Content.Divider className="my-3" />
+                    <Content.Divider className="my-2" />
                   )}
                 </div>
               );
