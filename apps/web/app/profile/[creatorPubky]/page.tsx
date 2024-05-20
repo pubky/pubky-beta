@@ -100,7 +100,7 @@ export default function Index({
     <Content.Main>
       <Header className="hidden md:block" title="Profile" />
       <div>
-        <Content.Grid className="flex flex-col text-start lg:flex-row items-center sm:justify-between relative z-10">
+        <Content.Grid className="flex flex-col text-start lg:flex-row items-center sm:justify-between relative">
           <ProfileCommon.Handle
             username={Utils.minifyText(name, 17)}
             className="order-2 lg:order-1"

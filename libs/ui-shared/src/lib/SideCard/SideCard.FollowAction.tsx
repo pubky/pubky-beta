@@ -7,21 +7,34 @@ interface FollowAction extends React.HTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode;
   disabled?: boolean;
   loading?: boolean;
+  variant?: 'normal' | 'small';
 }
 
 export const FollowAction = ({
   text,
   icon = <Icon.UserPlus size="16" />,
   loading = false,
+  variant = 'normal',
   ...rest
 }: FollowAction) => {
   return (
-    <Button.Medium
-      {...rest}
-      icon={loading ? <Icon.LoadingSpin size="16" /> : icon}
-      className={twMerge(`w-[50px]`, rest.className)}
-    >
-      {text}
-    </Button.Medium>
+    <div>
+      {variant === 'normal' ? (
+        <Button.Medium
+          {...rest}
+          icon={loading ? <Icon.LoadingSpin size="16" /> : icon}
+          className={twMerge(`w-[50px] h-[50px]`, rest.className)}
+        >
+          {text}
+        </Button.Medium>
+      ) : (
+        <Button.Action
+          {...rest}
+          variant="custom"
+          icon={loading ? <Icon.LoadingSpin size="16" /> : icon}
+          className={twMerge(`w-[40px] h-[40px]`, rest.className)}
+        />
+      )}
+    </div>
   );
 };

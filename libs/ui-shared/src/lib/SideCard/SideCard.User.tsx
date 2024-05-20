@@ -34,15 +34,15 @@ export const User = ({
         rest.className
       )}
     >
-      <Link href={`profile/${uri}`} className="gap-4 inline-flex ">
+      <Link href={`profile/${uri}`} className="gap-2 inline-flex ">
         <Image
           width={width}
           height={height}
-          className="w-[48px] h-[48px] rounded-full"
+          className="w-[40px] h-[40px] rounded-full"
           alt={alt}
           src={src}
         />
-        <div className="flex-col justify-start items-start gap-1 inline-flex">
+        <div className="flex-col justify-start items-start inline-flex">
           <Typography.Body variant="medium-bold">{username}</Typography.Body>
           <Typography.Label className="text-opacity-30 -mt-1">
             {label}
