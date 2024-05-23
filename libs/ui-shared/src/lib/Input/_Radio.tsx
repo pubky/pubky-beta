@@ -1,6 +1,6 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Check } from '../Icon/Icon.System';
+import { Check } from '../Icon/_System';
 
 interface Option {
   label?: string;

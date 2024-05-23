@@ -1,5 +1,5 @@
 import { Card } from '../Card';
-import { Title } from './DropDown.Title';
+import { Title } from './_Title';
 
 import { twMerge } from 'tailwind-merge';
 

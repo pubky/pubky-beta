@@ -1,4 +1,4 @@
-import { Primary } from './Card.Primary';
+import { Primary } from './_Primary';
 
 export const Card = {
   Primary,

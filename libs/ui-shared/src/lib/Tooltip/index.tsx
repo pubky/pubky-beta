@@ -1,6 +1,6 @@
-import { Main } from './Tooltip.Main';
-import { Small } from './Tooltip.Small';
-import { Root } from './Tooltip.Root';
+import { Main } from './_Main';
+import { Small } from './_Small';
+import { Root } from './_Root';
 
 export const Tooltip = {
   Main,

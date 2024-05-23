@@ -1,20 +1,20 @@
-import { Checkbox } from './Input.Checkbox/Input.Checkbox';
-import { CheckboxIcon } from './Input.Checkbox/Input.CheckboxIcon';
-import { Cursor } from './Input.Cursor';
-import { CursorArea } from './Input.CursorArea';
-import { Label } from './Input.Label';
-import { Radio } from './Input.Radio';
-import { Search } from './Input.Search/Input.Search';
-import { SearchActions } from './Input.Search/Input.SearchActions';
-import { SearchInput } from './Input.Search/Input.SearchInput';
-import { SearchTag } from './Input.Search/Input.SearchTag';
-import { SearchTags } from './Input.Search/Input.SearchTags';
-import { Select } from './Input.Select';
-import { Switch } from './Input.Switch';
-import { Text } from './Input.Text';
-import { TextArea } from './Input.TextArea';
-import { UploadFile } from './Input.UploadFile';
-import { Word } from './Input.Word';
+import { Checkbox } from './Input.Checkbox/_Checkbox';
+import { CheckboxIcon } from './Input.Checkbox/_CheckboxIcon';
+import { Cursor } from './_Cursor';
+import { CursorArea } from './_CursorArea';
+import { Label } from './_Label';
+import { Radio } from './_Radio';
+import { Search } from './Input.Search/_Search';
+import { SearchActions } from './Input.Search/_SearchActions';
+import { SearchInput } from './Input.Search/_SearchInput';
+import { SearchTag } from './Input.Search/_SearchTag';
+import { SearchTags } from './Input.Search/_SearchTags';
+import { Select } from './_Select';
+import { Switch } from './_Switch';
+import { Text } from './_Text';
+import { TextArea } from './_TextArea';
+import { UploadFile } from './_UploadFile';
+import { Word } from './_Word';
 
 export const Input = {
   Checkbox,

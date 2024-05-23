@@ -1,14 +1,14 @@
-import { Actions } from './Post.Actions';
-import { MainCard } from './Post.Card';
-import { Content } from './Post.Content';
-import { Footer } from './Post.Footer';
-import { Header } from './Post.Header';
-import { ImageUser } from './Post.Image';
-import { RepostCard } from './Post.RepostCard';
-import { Root } from './Post.Root';
-import { Time } from './Post.Time';
-import { Username } from './Post.Username';
-import { UserPic } from './Post.UserPic';
+import { Actions } from './_Actions';
+import { MainCard } from './_Card';
+import { Content } from './_Content';
+import { Footer } from './_Footer';
+import { Header } from './_Header';
+import { ImageUser } from './_Image';
+import { RepostCard } from './_RepostCard';
+import { Root } from './_Root';
+import { Time } from './_Time';
+import { Username } from './_Username';
+import { UserPic } from './_UserPic';
 
 export const Post = {
   Actions,
