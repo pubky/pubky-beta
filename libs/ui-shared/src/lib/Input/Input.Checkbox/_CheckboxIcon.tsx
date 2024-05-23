@@ -1,4 +1,4 @@
-import { Check } from '../../Icon/Icon.System';
+import { Check } from '../../Icon/_System';
 
 interface CheckboxIconProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;

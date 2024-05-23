@@ -1,7 +1,7 @@
-import { Action } from './Header.Action';
-import { Root } from './Header.Root';
-import { Logo } from './Header.Logo';
-import { Title } from './Header.Title';
+import { Action } from './_Action';
+import { Root } from './_Root';
+import { Logo } from './_Logo';
+import { Title } from './_Title';
 
 export const Header = {
   Action,

@@ -1,8 +1,8 @@
-import { Bg } from './Menu.Bg';
-import { Header } from './Menu.Header';
-import { ImageMenu } from './Menu.Image';
-import { Root } from './Menu.Root';
-import { Section } from './Menu.Section';
+import { Bg } from './_Bg';
+import { Header } from './_Header';
+import { ImageMenu } from './_Image';
+import { Root } from './_Root';
+import { Section } from './_Section';
 
 export const Menu = {
   Bg,

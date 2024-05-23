@@ -1,5 +1,5 @@
-import { Contacts } from './List.Contacts';
-import { Primary } from './List.Primary';
+import { Contacts } from './_Contacts';
+import { Primary } from './_Primary';
 
 export const List = {
   Contacts,

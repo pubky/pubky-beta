@@ -1,8 +1,8 @@
-import { Root } from './Modal.Root';
-import { CloseAction } from './Modal.CloseAction';
-import { Content } from './Modal.Content';
-import { Header } from './Modal.Header';
-import { SubmitAction } from './Modal.SubmitAction';
+import { Root } from './_Root';
+import { CloseAction } from './_CloseAction';
+import { Content } from './_Content';
+import { Header } from './_Header';
+import { SubmitAction } from './_SubmitAction';
 
 export const Modal = {
   CloseAction,

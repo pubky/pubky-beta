@@ -1,4 +1,4 @@
-import { Message } from './Alert.Message';
+import { Message } from './_Message';
 
 export const Alert = {
   Message,

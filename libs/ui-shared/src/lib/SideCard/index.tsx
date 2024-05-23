@@ -1,11 +1,11 @@
-import { Action } from './SideCard.Action';
-import { Content } from './SideCard.Content';
-import { FollowAction } from './SideCard.FollowAction';
-import { Header } from './SideCard.Header';
-import { Item } from './SideCard.Item';
-import { Rank } from './SideCard.Rank';
-import { User } from './SideCard.User';
-import { UserDetails } from './SiderCard.UserDetails';
+import { Action } from './_Action';
+import { Content } from './_Content';
+import { FollowAction } from './_FollowAction';
+import { Header } from './_Header';
+import { Item } from './_Item';
+import { Rank } from './_Rank';
+import { User } from './_User';
+import { UserDetails } from './_UserDetails';
 
 export const SideCard = {
   Action,

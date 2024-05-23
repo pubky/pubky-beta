@@ -1,10 +1,10 @@
-import { Divider } from './Content.Divider';
-import { Grid } from './Content.Grid';
-import { LinksStoreApp } from './Content.LinksStoreApp';
-import { Main } from './Content.Main';
-import { MainBg } from './Content.MainBg';
-import { Profile } from './Content.Profile';
-import { Stepper } from './Content.Stepper';
+import { Divider } from './_Divider';
+import { Grid } from './_Grid';
+import { LinksStoreApp } from './_LinksStoreApp';
+import { Main } from './_Main';
+import { MainBg } from './_MainBg';
+import { Profile } from './_Profile';
+import { Stepper } from './_Stepper';
 
 export const Content = {
   Divider,
