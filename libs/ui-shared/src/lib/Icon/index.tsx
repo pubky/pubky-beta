@@ -5,8 +5,8 @@ import {
   ArrowRight,
   DropdownIcon,
   Repost,
-} from './Icon.Arrow';
-import { Tag } from './Icon.Commerce';
+} from './_Arrow';
+import { Tag } from './_Commerce';
 import {
   Pencil,
   Stack,
@@ -15,8 +15,8 @@ import {
   SquareHalf,
   ThreeColumns,
   Eye,
-} from './Icon.Design';
-import { Plus, Minus, X } from './Icon.Math';
+} from './_Design';
+import { Plus, Minus, X } from './_Math';
 import {
   ImageSquare,
   MusicNotesSimple,
@@ -25,7 +25,7 @@ import {
   Play,
   Podcast,
   SlidersHorizontal,
-} from './Icon.Media';
+} from './_Media';
 import {
   NoteBlank,
   Clipboard,
@@ -36,7 +36,7 @@ import {
   Trash,
   File,
   FileText,
-} from './Icon.Office';
+} from './_Office';
 import {
   DotsNine,
   LinkSimple,
@@ -48,17 +48,10 @@ import {
   LoadingSpin,
   DownloadSimple,
   SignOut,
-} from './Icon.System';
-import {
-  Android,
-  Iphone,
-  Pubky,
-  Twitter,
-  Telegram,
-  Youtube,
-} from './Icon.Social';
-import { Clock, Calendar } from './Icon.Time';
-import { Globe } from './Icon.Maps';
+} from './_System';
+import { Android, Iphone, Pubky, Twitter, Telegram, Youtube } from './_Social';
+import { Clock, Calendar } from './_Time';
+import { Globe } from './_Maps';
 import {
   UserPlus,
   UserMinus,
@@ -66,17 +59,17 @@ import {
   UsersLeft,
   UsersRight,
   Smiley,
-} from './Icon.People';
+} from './_People';
 import {
   Asterisk,
   PaperPlaneRight,
   ChatCircleText,
   Broadcast,
   Envelope,
-} from './Icon.Communication';
-import { Activity } from './Icon.Health';
-import { Fire } from './Icon.Weather';
-import { Key, Lock, Warning } from './Icon.Security';
+} from './_Communication';
+import { Activity } from './_Health';
+import { Fire } from './_Weather';
+import { Key, Lock, Warning } from './_Security';
 
 export const Icon = {
   Android,

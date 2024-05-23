@@ -1,5 +1,5 @@
 import { twMerge } from 'tailwind-merge';
-import { HeaderTitle } from './SideCard.HeaderTitle';
+import { HeaderTitle } from './_HeaderTitle';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLHeadingElement> {
   title: string;

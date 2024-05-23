@@ -1,10 +1,10 @@
-import { Large } from './Button.Large';
-import { Medium } from './Button.Medium';
-import { Tab } from './Button.Tab';
-import { Action } from './Button.Action/Button.Action';
-import { Create } from './Button.Create';
-import { Tile } from './Button.Tile';
-import { Transparent } from './Button.Transparent';
+import { Large } from './_Large';
+import { Medium } from './_Medium';
+import { Tab } from './_Tab';
+import { Action } from './Button.Action/_Action';
+import { Create } from './_Create';
+import { Tile } from './_Tile';
+import { Transparent } from './_Transparent';
 
 export const Button = {
   Action,

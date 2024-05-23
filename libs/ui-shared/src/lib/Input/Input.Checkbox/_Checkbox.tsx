@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckboxIcon } from './Input.CheckboxIcon';
+import { CheckboxIcon } from './_CheckboxIcon';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../Typography';
 

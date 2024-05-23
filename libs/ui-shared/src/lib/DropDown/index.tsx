@@ -1,9 +1,9 @@
-import { Button } from './DropDown.Button';
-import { Content } from './DropDown.Content';
-import { Item } from './DropDown.Item';
-import { OptionText } from './DropDown.OptionText';
-import { Root } from './DropDown.Root';
-import { Title } from './DropDown.Title';
+import { Button } from './_Button';
+import { Content } from './_Content';
+import { Item } from './_Item';
+import { OptionText } from './_OptionText';
+import { Root } from './_Root';
+import { Title } from './_Title';
 
 export const DropDown = {
   Button,
