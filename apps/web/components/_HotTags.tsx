@@ -6,6 +6,7 @@ import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { useClientContext } from '../contexts/client';
 import { useEffect, useState } from 'react';
 import { ITaggedPost } from '../types';
+import { Utils } from '../utils';
 
 export default function HotTags() {
   const router = useRouter();
@@ -69,7 +70,7 @@ export default function HotTags() {
                   key={index}
                   onClick={() => handleTagSearch(tag.tag)}
                   rank={index + 1}
-                  tag={`#${tag.tag}`}
+                  tag={`#${Utils.minifyText(tag.tag, 8)}`}
                   color="fuchsia"
                   counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
                 />
