@@ -4,7 +4,7 @@ import CreateQuickPost from './_CreateQuickPost';
 import DropDown from './DropDown/_DropDown';
 import Header from './_Header';
 import HotTags from './_HotTags';
-import Post from './_Post';
+import Post from './Post';
 import PostsLayout from './_PostsLayout';
 import Repost from './_Repost';
 import Sidebar from './_SideBar';
