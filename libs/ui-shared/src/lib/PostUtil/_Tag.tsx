@@ -75,7 +75,7 @@ export const Tag = ({
     <button
       {...rest}
       className={twMerge(
-        `border h-8 px-3 py-1 rounded-full cursor-pointer`,
+        `border h-8 px-3 py-1 rounded-full cursor-pointer text-center`,
         cssClasses,
         rest.className
       )}

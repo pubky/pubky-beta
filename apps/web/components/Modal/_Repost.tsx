@@ -7,7 +7,7 @@ import {
   PostUtil,
   Typography,
 } from '@social/ui-shared';
-import Post from '../_Post';
+import Post from '../Post';
 import { IPost } from '../../types';
 
 interface RepostProps {
