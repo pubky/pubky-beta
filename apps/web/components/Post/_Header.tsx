@@ -50,7 +50,15 @@ export default function Header({ post }: PostProps) {
           {showTooltipProfile && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
-      <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
+      <div
+        className="justify-end cursor-pointer grow"
+        onClick={(event) => {
+          event.stopPropagation();
+          router.push(Utils.encodePostUri(post?.uri));
+        }}
+      >
+        <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
+      </div>
     </PostUI.Header>
   );
 }
