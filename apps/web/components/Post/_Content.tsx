@@ -10,18 +10,16 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   fullContent?: boolean;
 }
 
-export default function Post({ post, fullContent = false }: PostProps) {
+export default function Content({ post, fullContent = false }: PostProps) {
   return (
-    <div className="lg:inline-flex gap-12">
-      <div className={post?.tags?.length > 0 ? 'lg:w-[60%]' : 'w-full'}>
-        <PostUI.Content
-          text={
-            fullContent
-              ? post?.post?.content
-              : Utils.minifyText(post?.post?.content, 140)
-          }
-        />
-      </div>
+    <div className="w-full">
+      <PostUI.Content
+        text={
+          fullContent
+            ? post?.post?.content
+            : Utils.minifyText(post?.post?.content, 140)
+        }
+      />
     </div>
   );
 }

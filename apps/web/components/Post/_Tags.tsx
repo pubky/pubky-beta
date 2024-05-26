@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
-import { Icon, Button, Post as PostUI, PostUtil } from '@social/ui-shared';
+import { Post as PostUI, PostUtil } from '@social/ui-shared';
 import { useClientContext } from '../../contexts/client';
 import { IPost, ITaggedPost } from '../../types';
 import { Utils } from './../../utils';
@@ -14,18 +12,8 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Tags({ post }: PostProps) {
-  const router = useRouter();
-
-  const {
-    pubky,
-    posts,
-    searchTags,
-    setPosts,
-    setSearchTags,
-    getPost,
-    deleteTag,
-    createTag,
-  } = useClientContext();
+  const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
+    useClientContext();
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
 
   useEffect(() => {
@@ -57,70 +45,77 @@ export default function Tags({ post }: PostProps) {
     updatePosts();
   };
 
-  const handleTagSearch = (tag: string) => {
-    if (searchTags.includes(tag)) return;
+  // const handleTagSearch = (tag: string) => {
+  //   if (searchTags.includes(tag)) return;
 
-    if (searchTags.length < 3) {
-      setSearchTags([...searchTags, tag]);
-    } else {
-      const newSearchTags = [...searchTags.slice(1), tag];
-      setSearchTags(newSearchTags);
-    }
-    router.push('/search');
-  };
+  //   if (searchTags.length < 3) {
+  //     setSearchTags([...searchTags, tag]);
+  //   } else {
+  //     const newSearchTags = [...searchTags.slice(1), tag];
+  //     setSearchTags(newSearchTags);
+  //   }
+  //   router.push('/search');
+  // };
+
+  if (post?.tags?.length === 0) {
+    return <></>;
+  }
 
   return (
-    <div>
-      {post?.tags?.length > 0 && (
-        <div className={`flex-col inline-flex gap-4 mt-6 lg:mt-0`}>
-          {sortedTags.slice(0, 3).map((tagObj, index) => {
-            const isTagFound = tagObj.from.some(
-              (fromItem) => fromItem.author.id === pubky
-            );
+    <div className="mt-6">
+      <div className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
+        {sortedTags.map((tagObj, index) => {
+          const isTagFound = tagObj.from.some(
+            (fromItem) => fromItem.author.id === pubky
+          );
 
-            return (
-              <PostUI.Footer key={index}>
-                <PostUtil.Tag
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleTagSearch(tagObj.tag);
-                  }}
-                  clicked={isTagFound}
-                  color="fuchsia"
-                >
-                  #{Utils.minifyText(tagObj.tag)}
-                </PostUtil.Tag>
-                <Button.Action
-                  variant="custom"
-                  size="small"
-                  icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    isTagFound
-                      ? handleDeleteTag(tagObj.tag)
-                      : handleAddTag(tagObj.tag);
-                  }}
+          return (
+            <PostUI.Footer key={index}>
+              <PostUtil.Tag
+                // onClick={(event) => {
+                //   event.stopPropagation();
+                //   handleTagSearch(tagObj.tag);
+                // }}
+                clicked={isTagFound}
+                color="fuchsia"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  isTagFound
+                    ? handleDeleteTag(tagObj.tag)
+                    : handleAddTag(tagObj.tag);
+                }}
+              >
+                #{Utils.minifyText(tagObj.tag.replace(' ', ''))} ({tagObj.count}
+                )
+              </PostUtil.Tag>
+              {/* <Button.Action
+                variant="custom"
+                size="small"
+                icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  isTagFound
+                    ? handleDeleteTag(tagObj.tag)
+                    : handleAddTag(tagObj.tag);
+                }}
+              /> */}
+              {/* <PostUtil.Counter counter={tagObj.count} /> */}
+              {/* {tagObj?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
+                <Image
+                  width={32}
+                  height={32}
+                  alt={`pic-${fromIndex + 1}`}
+                  key={fromIndex}
+                  className={`w-[32px] h-[32px] rounded-full ${
+                    fromIndex !== 0 ? '-ml-5' : ''
+                  }`}
+                  src={fromItem.author?.profile?.image || '/images/Userpic.png'}
                 />
-                <PostUtil.Counter counter={tagObj.count} />
-                {tagObj?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
-                  <Image
-                    width={32}
-                    height={32}
-                    alt={`pic-${fromIndex + 1}`}
-                    key={fromIndex}
-                    className={`w-[32px] h-[32px] rounded-full ${
-                      fromIndex !== 0 ? '-ml-5' : ''
-                    }`}
-                    src={
-                      fromItem.author?.profile?.image || '/images/Userpic.png'
-                    }
-                  />
-                ))}
-              </PostUI.Footer>
-            );
-          })}
-        </div>
-      )}
+              ))} */}
+            </PostUI.Footer>
+          );
+        })}
+      </div>
     </div>
   );
 }
