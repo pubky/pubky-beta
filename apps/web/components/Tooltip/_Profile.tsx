@@ -55,7 +55,7 @@ export default function Profile({ post }: ProfileProps) {
 
         if (followersList) {
           setFollowersImages(
-            followersList.followers.slice(0, 5).map((user) => ({
+            followersList.followers.slice(0, 3).map((user) => ({
               alt: 'user-pic',
               src: user?.profile?.image || '/images/Userpic.png',
             }))
@@ -98,7 +98,7 @@ export default function Profile({ post }: ProfileProps) {
 
         if (followingList) {
           setFollowingImages(
-            followingList.following.slice(0, 5).map((user) => ({
+            followingList.following.slice(0, 3).map((user) => ({
               alt: 'user-pic',
               src: user?.profile?.image || '/images/Userpic.png',
             }))
@@ -141,19 +141,18 @@ export default function Profile({ post }: ProfileProps) {
   };
 
   return (
-    <Tooltip.Main className="cursor-default w-[500px]">
-      <div className="w-full flex justify-between">
+    <Tooltip.Main className="cursor-default w-[300px]">
+      <div className="w-full flex flex-col justify-between">
         <div className="justify-start items-center gap-4 flex cursor-pointer">
           <PostUI.ImageUser
             src={post?.author?.profile?.image || '/images/Userpic.png'}
             alt="user"
           />
-          <div className={`justify-start items-center lg:flex gap-4`}>
+          <div className={`flex flex-col justify-start`}>
             <PostUI.Username
               className={`hover:underline hover:decoration-solid`}
             >
-              {post?.author?.profile?.name &&
-                Utils.minifyText(post?.author?.profile?.name, 12)}
+              {post?.author?.profile?.name && post?.author?.profile?.name}
             </PostUI.Username>
             <Typography.Label className="text-opacity-30">
               {Utils.minifyPubky(post?.author?.id)}
@@ -162,14 +161,14 @@ export default function Profile({ post }: ProfileProps) {
         </div>
         <div>
           {initLoadingFollowed ? (
-            <Button.Medium
+            <Button.Transparent
               loading={initLoadingFollowed}
-              className={post?.author?.id === pubky ? 'hidden' : 'w-full'}
+              className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
             >
               Loading
-            </Button.Medium>
+            </Button.Transparent>
           ) : followed ? (
-            <Button.Medium
+            <Button.Transparent
               onClick={
                 loadingFollowed
                   ? undefined
@@ -180,14 +179,13 @@ export default function Profile({ post }: ProfileProps) {
               }
               disabled={loadingFollowed}
               loading={loadingFollowed}
-              variant="default"
               icon={<Icon.UserMinus size="16" />}
-              className={post?.author?.id === pubky ? 'hidden' : 'w-full'}
+              className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
             >
               Unfollow
-            </Button.Medium>
+            </Button.Transparent>
           ) : (
-            <Button.Medium
+            <Button.Transparent
               onClick={
                 loadingFollowed
                   ? undefined
@@ -198,30 +196,29 @@ export default function Profile({ post }: ProfileProps) {
               }
               disabled={loadingFollowed}
               loading={loadingFollowed}
-              variant="default"
               icon={<Icon.UserPlus size="16" />}
-              className={post?.author?.id === pubky ? 'hidden' : 'w-full'}
+              className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
             >
               Follow
-            </Button.Medium>
+            </Button.Transparent>
           )}
           {post?.author?.id === pubky && (
-            <Button.Medium
-              variant="default"
+            <Button.Transparent
               icon={<Icon.GearSix size="16" />}
               onClick={(event) => {
                 event.stopPropagation();
                 router.push('/settings');
               }}
+              className="mt-3"
             >
               Edit profile
-            </Button.Medium>
+            </Button.Transparent>
           )}
         </div>
       </div>
       <Typography.Body
         variant="medium"
-        className="my-6 text-opacity-80 break-all"
+        className="my-3 text-opacity-80 break-all"
         onClick={(event) => event.stopPropagation()}
       >
         {post?.author?.profile?.bio
@@ -230,7 +227,7 @@ export default function Profile({ post }: ProfileProps) {
       </Typography.Body>
       <div className="grid grid-cols-2 gap-6 justify-start">
         {loadingFollowers ? (
-          <div className="flex w-full justify-center">
+          <div className="flex w-full justify-center min-h-[64px] items-center">
             <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
           </div>
         ) : (
@@ -260,7 +257,7 @@ export default function Profile({ post }: ProfileProps) {
           </div>
         )}
         {loadingFollowing ? (
-          <div className="flex w-full justify-center">
+          <div className="flex w-full justify-center min-h-[64px] items-center">
             <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
           </div>
         ) : (
