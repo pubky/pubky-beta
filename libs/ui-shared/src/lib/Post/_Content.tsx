@@ -38,7 +38,7 @@ export const Content = ({ children, text }: ContentProps) => {
   }
 
   useEffect(() => {
-    const splitInLines = text.split(' ');
+    const splitInLines = text.replace('\n', ' ').split(' ');
     if (splitInLines.length >= 1) {
       splitInLines.forEach((line) => {
         checkForLink(line);
