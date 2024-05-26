@@ -38,10 +38,10 @@ export const Content = ({ children, text }: ContentProps) => {
   }
 
   useEffect(() => {
-    const splitInLines = text.replace('\n', ' ').split(' ');
+    const splitInLines = text.split(' ');
     if (splitInLines.length >= 1) {
       splitInLines.forEach((line) => {
-        checkForLink(line);
+        checkForLink(line.trim());
       });
     }
   }, [text]);
@@ -106,7 +106,7 @@ export const Content = ({ children, text }: ContentProps) => {
       <LinkParser
         watchers={watchers as []}
         parseNewLine={true}
-        newLineWatcher="\\n"
+        newLineWatcher={`\\n`}
       >
         {text}
       </LinkParser>
@@ -117,7 +117,6 @@ export const Content = ({ children, text }: ContentProps) => {
             height="315"
             src={`https://www.youtube.com/embed/${videoId}`}
             title="YouTube video player"
-            frameBorder="0"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           ></iframe>
