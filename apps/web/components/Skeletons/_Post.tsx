@@ -37,9 +37,7 @@ export default function Post({ size = 'normal', ...rest }: PostProps) {
             </PostUI.Header>
             <div className={'block'}>
               <PostUI.Content
-                text={
-                  <div className="h-2.5 bg-gray-300 dark:bg-gray-700 bg-opacity-50 dark:bg-opacity-50 rounded-full  w-32"></div>
-                }
+                text={''}
                 className={size === 'full' ? 'lg:text-xl' : 'w-full'}
               />
               <PostUI.Footer className={size === 'full' ? 'mt-6' : 'mt-6'}>
