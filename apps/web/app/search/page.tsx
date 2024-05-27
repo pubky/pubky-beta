@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Content, Icon, Typography } from '@social/ui-shared';
 import {
-  // ActiveFriends,
+  ActiveFriends,
   CreatePost,
   Header,
   HotTags,
@@ -13,38 +13,17 @@ import {
   Sidebar,
   WhoFollow,
 } from '../../components';
-// import { DropDown } from '../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost } from '../../types';
 import { Filter } from '../../components/Filter';
 
-{
-  /**const layouts = {
-  sidebar: {
-    layout: 'grid-cols-3',
-    posts: 'col-span-3 xl:col-span-2 flex-col inline-flex gap-6',
-  },
-  grid: {
-    layout: 'lg:grid-cols-2 xl:grid-cols-3',
-    posts: '',
-  },
-  columns: {
-    layout: 'md:grid-cols-2',
-    posts: '',
-  },
-  list: {
-    layout: 'grid-cols-1',
-    posts: '',
-  },
-};*/
-}
-
 export default function Index() {
   const router = useRouter();
-  // const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const { layout, reach } = useFilterContext();
-  const { listGlobalPosts, searchTags, posts, setPosts } = useClientContext();
+  const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } =
+    useClientContext();
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -98,15 +77,15 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reach, searchTags]);
 
-  // useEffect(() => {
-  //   const search = searchParams.get('tags');
+  useEffect(() => {
+    const search = searchParams.get('tags');
 
-  //   if (search) {
-  //     const tagsArray = search.split(',');
-  //     setSearchTags(tagsArray);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [searchParams]);
+    if (search) {
+      const tagsArray = search.split(',');
+      setSearchTags(tagsArray);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   useEffect(() => {
     const searchTagsString = searchTags.join(',');
@@ -183,8 +162,8 @@ export default function Index() {
         </PostsLayout>
         <Sidebar className="hidden 2xl:block">
           <WhoFollow />
+          <ActiveFriends />
           <HotTags />
-          {/** <ActiveFriends /> */}
         </Sidebar>
       </Content.Grid>
       <CreatePost />

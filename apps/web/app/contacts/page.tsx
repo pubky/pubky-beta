@@ -10,18 +10,15 @@ import {
   IFollowingResponse,
   IFollowersResponse,
   IFriendsResponse,
-  // TContacts,
+  TContacts,
 } from '../../types';
-import {
-  useRouter,
-  // useSearchParams
-} from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Index() {
   const { pubky, listFollowing, listFollowers, getProfile } =
     useClientContext();
   const router = useRouter();
-  // const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const { contacts, contactsLayout, setContacts } = useFilterContext();
   const [name, setName] = useState('Loading...');
   const [image, setImage] = useState('/images/Userpic.png');
@@ -111,14 +108,14 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contacts]);
 
-  // useEffect(() => {
-  //   const search = searchParams.get('tab');
+  useEffect(() => {
+    const search = searchParams.get('tab');
 
-  //   if (search) {
-  //     setContacts(search as TContacts);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [searchParams]);
+    if (search) {
+      setContacts(search as TContacts);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   let contactsToShow:
     | IFollowingResponse['following']

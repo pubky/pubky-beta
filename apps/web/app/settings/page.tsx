@@ -48,7 +48,7 @@ export default function Index() {
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [showTooltip, setShowTooltip] = useState('');
+  const [showTooltip, setShowTooltip] = useState(false);
   const [password, setPassword] = useState('');
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
@@ -436,7 +436,7 @@ export default function Index() {
               Back
             </Button.Large>
           </Link>
-          <Tooltip.Root setShowTooltip={setShowTooltip}>
+          <Tooltip.RootSmall setShowTooltip={setShowTooltip}>
             <Button.Large
               icon={<Icon.Lock color={disposableAccount ? ' white' : 'gray'} />}
               disabled={!disposableAccount}
@@ -459,7 +459,7 @@ export default function Index() {
                 </Typography.Body>
               </Tooltip.Small>
             )}
-          </Tooltip.Root>
+          </Tooltip.RootSmall>
           <Button.Large
             onClick={!loading ? () => handleSubmit() : undefined}
             loading={loading}

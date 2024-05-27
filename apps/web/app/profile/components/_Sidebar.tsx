@@ -1,7 +1,14 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Icon, Typography, Post, SideCard, Button } from '@social/ui-shared';
+import {
+  Icon,
+  Typography,
+  Post,
+  SideCard,
+  Button,
+  Tooltip,
+} from '@social/ui-shared';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../contexts/client';
@@ -51,6 +58,7 @@ export default function Sidebar({
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
+  const [copied, setCopied] = useState(false);
   const checkLink = Utils.storage.get('checkLink');
 
   useEffect(() => {
@@ -197,6 +205,20 @@ export default function Sidebar({
     }
   };
 
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(`pk:${pubky}`)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.error('Unable to copy to clipboard:', error);
+      });
+  };
+
   return (
     <div className="self-start sticky top-[160px] col-span-1 hidden flex-col justify-start items-start gap-6 xl:inline-flex">
       {loading ? (
@@ -204,21 +226,32 @@ export default function Sidebar({
       ) : (
         <div className="w-full">
           <SideCard.Content className="flex-col gap-3 inline-flex">
-            <div className="justify-start items-center gap-3 inline-flex">
-              <Image
-                width={40}
-                height={40}
-                className="w-[40px] h-[40px] rounded-full"
-                src={image}
-                alt="user-pic"
-              />
-              <div>
-                <Typography.H2 className="-mb-1">
-                  {Utils.minifyText(name, 15)}
-                </Typography.H2>
-                <Typography.Label className="text-opacity-50">
-                  {pubky ? Utils.minifyPubky(pubky) : 'Loading...'}
-                </Typography.Label>
+            <div className="justify-start items-center inline-flex justify-between">
+              <div className="justify-start items-center gap-3 inline-flex">
+                <Image
+                  width={40}
+                  height={40}
+                  className="w-[40px] h-[40px] rounded-full"
+                  src={image}
+                  alt="user-pic"
+                />
+                <div>
+                  <Typography.H2 className="-mb-1">
+                    {Utils.minifyText(name, 15)}
+                  </Typography.H2>
+                  <Typography.Label className="text-opacity-50">
+                    {pubky ? Utils.minifyPubky(pubky) : 'Loading...'}
+                  </Typography.Label>
+                </div>
+              </div>
+              <div className="cursor-pointer" onClick={handleCopy}>
+                {copied && (
+                  <Tooltip.Small className="w-[30%] py-2 px-2 inline-flex gap-2 justify-center items-center translate-x-full">
+                    <Icon.CheckCircle />
+                    <Typography.Body variant='small'>Copied</Typography.Body>
+                  </Tooltip.Small>
+                )}
+                <Icon.LinkSimple />
               </div>
             </div>
             <Typography.Body
