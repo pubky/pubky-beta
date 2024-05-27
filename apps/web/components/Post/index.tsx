@@ -2,7 +2,6 @@
 
 import { Post as PostUI } from '@social/ui-shared';
 
-import { Utils } from '../../utils';
 import { IPost, TLayouts, TSize } from '../../types';
 import Tags from './_Tags';
 import Actions from './_Actions';
@@ -29,7 +28,7 @@ export default function Post({
   return (
     <div>
       <div className="flex flex-col">
-        <PostUI.Root href={Utils.encodePostUri(post?.uri)}>
+        <PostUI.Root>
           <div>
             {/* {repost && (
               <PostUI.RepostCard>

@@ -48,7 +48,7 @@ export default function Index() {
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [showTooltip, setShowTooltip] = useState('');
   const [password, setPassword] = useState('');
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);

@@ -55,7 +55,7 @@ export default function ReplyForm() {
                 )}
               </div>
             </Post.Header>
-            <Post.Content>
+            <Post.Content text="">
               <Input.CursorArea
                 className="text-2xl h-8"
                 placeholder="Post your reply"
