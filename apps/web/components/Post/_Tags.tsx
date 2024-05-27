@@ -2,16 +2,22 @@
 
 import { useEffect, useState } from 'react';
 
-import { Post as PostUI, PostUtil } from '@social/ui-shared';
+import {
+  Post as PostUI,
+  PostUtil,
+  Tooltip as TooltipUI,
+} from '@social/ui-shared';
 import { useClientContext } from '../../contexts/client';
 import { IPost, ITaggedPost } from '../../types';
 import { Utils } from './../../utils';
+import Tooltip from '../Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
 }
 
 export default function Tags({ post }: PostProps) {
+  const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
     useClientContext();
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
@@ -71,23 +77,32 @@ export default function Tags({ post }: PostProps) {
 
           return (
             <PostUI.Footer key={index}>
-              <PostUtil.Tag
-                // onClick={(event) => {
-                //   event.stopPropagation();
-                //   handleTagSearch(tagObj.tag);
-                // }}
-                clicked={isTagFound}
-                color="fuchsia"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  isTagFound
-                    ? handleDeleteTag(tagObj.tag)
-                    : handleAddTag(tagObj.tag);
-                }}
+              <TooltipUI.Root
+                delay={200}
+                setShowTooltip={setShowTooltipProfile}
+                tagId={tagObj.tag}
               >
-                #{Utils.minifyText(tagObj.tag.replace(' ', ''))} ({tagObj.count}
-                )
-              </PostUtil.Tag>
+                {showTooltipProfile === tagObj.tag && (
+                  <Tooltip.Tag tags={tagObj} />
+                )}
+                <PostUtil.Tag
+                  // onClick={(event) => {
+                  //   event.stopPropagation();
+                  //   handleTagSearch(tagObj.tag);
+                  // }}
+                  clicked={isTagFound}
+                  color="fuchsia"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    isTagFound
+                      ? handleDeleteTag(tagObj.tag)
+                      : handleAddTag(tagObj.tag);
+                  }}
+                >
+                  #{Utils.minifyText(tagObj.tag.replace(' ', ''))} (
+                  {tagObj.count})
+                </PostUtil.Tag>
+              </TooltipUI.Root>
               {/* <Button.Action
                 variant="custom"
                 size="small"
