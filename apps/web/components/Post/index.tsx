@@ -51,7 +51,7 @@ export default function Post({
               <Header post={post} />
               <div className="ml-[57px]">
                 <Content post={post} fullContent={fullContent} />
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-col md:flex-row justify-between">
                   <Tags post={post} />
                   <div className="grow" />
                   <Actions post={post} />
