@@ -20,7 +20,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function Header({ post }: PostProps) {
   const router = useRouter();
 
-  const [showTooltipProfile, setShowTooltipProfile] = useState(false);
+  const [showTooltipProfile, setShowTooltipProfile] = useState('');
 
   return (
     <PostUI.Header>
@@ -35,7 +35,11 @@ export default function Header({ post }: PostProps) {
           src={post?.author?.profile?.image || '/images/Userpic.png'}
           alt="user"
         />
-        <TooltipUI.Root delay={200} setShowTooltip={setShowTooltipProfile}>
+        <TooltipUI.Root
+          delay={200}
+          tagId="1"
+          setShowTooltip={setShowTooltipProfile}
+        >
           <div className={`justify-start items-center lg:flex gap-4`}>
             <PostUI.Username
               className={`hover:underline hover:decoration-solid`}
@@ -47,7 +51,7 @@ export default function Header({ post }: PostProps) {
               {Utils.minifyPubky(post?.author?.id)}
             </Typography.Label>
           </div>
-          {showTooltipProfile && <Tooltip.Profile post={post} />}
+          {showTooltipProfile !== '' && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
       <div

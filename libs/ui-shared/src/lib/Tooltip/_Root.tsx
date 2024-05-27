@@ -5,14 +5,16 @@ import { twMerge } from 'tailwind-merge';
 
 interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  setShowTooltip: (show: boolean) => void;
+  setShowTooltip: (tagId: string) => void;
   delay?: number;
+  tagId?: string;
 }
 
 export const Root = ({
   children,
   setShowTooltip,
   delay,
+  tagId = '',
   ...rest
 }: RootProps) => {
   const [timeout, setTimeout] = useState<number | null>(null);
@@ -21,11 +23,11 @@ export const Root = ({
   const handleMouseEnter = () => {
     if (delay) {
       const timeoutId = window.setTimeout(() => {
-        setShowTooltip(true);
+        setShowTooltip(tagId);
       }, delay);
       setTimeout(timeoutId);
     } else {
-      setShowTooltip(true);
+      setShowTooltip(tagId);
     }
   };
 
@@ -34,7 +36,7 @@ export const Root = ({
       clearTimeout(timeout);
       setTimeout(null);
     }
-    setShowTooltip(false);
+    setShowTooltip('');
   };
   return (
     <div
