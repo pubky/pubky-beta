@@ -41,6 +41,18 @@ export default function Actions({ post }: PostProps) {
   return (
     <div>
       <PostUI.Actions>
+        {post?.author?.id === pubky && (
+          <Button.Action
+            size="small"
+            variant="custom"
+            className="bg-red-500 hover:bg-red-400 bg-opacity-100"
+            icon={<Icon.Trash size="16" />}
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowModalDeletePost(true);
+            }}
+          />
+        )}
         <Button.Action
           size="small"
           variant="custom"
@@ -83,17 +95,6 @@ export default function Actions({ post }: PostProps) {
               : handleAddBookmark(post.id, post.uri);
           }}
         />
-        {post?.author?.id === pubky && (
-          <Button.Action
-            size="small"
-            variant="custom"
-            icon={<Icon.Trash size="16" />}
-            onClick={(event) => {
-              event.stopPropagation();
-              setShowModalDeletePost(true);
-            }}
-          />
-        )}
       </PostUI.Actions>
       {showDeleteMessage && (
         <Alert.Message icon={<Icon.CheckCircle size="20" />}>

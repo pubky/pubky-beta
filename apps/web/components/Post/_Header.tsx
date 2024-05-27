@@ -34,6 +34,8 @@ export default function Header({ post }: PostProps) {
         <PostUI.ImageUser
           src={post?.author?.profile?.image || '/images/Userpic.png'}
           alt="user"
+          width={42}
+          height={42}
         />
         <TooltipUI.Root
           delay={200}

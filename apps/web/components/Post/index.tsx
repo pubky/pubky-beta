@@ -1,7 +1,5 @@
 'use client';
 
-import { twMerge } from 'tailwind-merge';
-
 import { Post as PostUI } from '@social/ui-shared';
 
 import { Utils } from '../../utils';
@@ -30,7 +28,7 @@ export default function Post({
 }: PostProps) {
   return (
     <div>
-      <div className="gap-6 flex flex-col">
+      <div className="flex flex-col">
         <PostUI.Root href={Utils.encodePostUri(post?.uri)}>
           <div>
             {/* {repost && (
@@ -49,20 +47,16 @@ export default function Post({
                 <PostUI.Time>3m</PostUI.Time>
               </PostUI.RepostCard>
             )} */}
-            <PostUI.MainCard
-              borderRadius={
-                repost
-                  ? 'rounded-bl-2xl rounded-br-2xl'
-                  : 'rounded-2xl flex-grow'
-              }
-              className={twMerge(rest.className)}
-            >
+            <PostUI.MainCard className={rest.className}>
               <Header post={post} />
-              <div>
+              <div className="ml-[57px]">
                 <Content post={post} fullContent={fullContent} />
-                <Tags post={post} />
+                <div className="flex flex-row justify-between">
+                  <Tags post={post} />
+                  <div className="grow" />
+                  <Actions post={post} />
+                </div>
               </div>
-              <Actions post={post} />
             </PostUI.MainCard>
           </div>
         </PostUI.Root>

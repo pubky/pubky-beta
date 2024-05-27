@@ -21,7 +21,10 @@ export const ImageUser = ({
       {...rest}
       width={width}
       height={height}
-      className={twMerge(`rounded-full w-[32px] h-[32px]`, rest.className)}
+      className={twMerge(
+        `rounded-full w-[${width}px] h-[${height}px]`,
+        rest.className
+      )}
       alt={alt}
       src={src}
     />
