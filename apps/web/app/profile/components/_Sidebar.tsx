@@ -40,6 +40,7 @@ export default function Sidebar({
   const [bio, setBio] = useState('No bio.');
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
   const [image, setImage] = useState('/images/Userpic.png');
+  const [pubkyUser, setPubkyUser] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
@@ -148,9 +149,11 @@ export default function Sidebar({
 
           if (userProfile) {
             profile = userProfile?.profile;
+            setPubkyUser(creatorPubky);
           }
         } else {
           const userProfile = await getProfile();
+          setPubkyUser(pubky || '');
 
           if (userProfile) {
             profile = userProfile;
@@ -207,7 +210,7 @@ export default function Sidebar({
 
   const handleCopy = () => {
     navigator.clipboard
-      .writeText(`pk:${pubky}`)
+      .writeText(`pk:${pubkyUser}`)
       .then(() => {
         setCopied(true);
         setTimeout(() => {
@@ -240,7 +243,7 @@ export default function Sidebar({
                     {Utils.minifyText(name, 15)}
                   </Typography.H2>
                   <Typography.Label className="text-opacity-50">
-                    {pubky ? Utils.minifyPubky(pubky) : 'Loading...'}
+                    {pubkyUser ? Utils.minifyPubky(pubkyUser) : 'Loading...'}
                   </Typography.Label>
                 </div>
               </div>
@@ -248,7 +251,7 @@ export default function Sidebar({
                 {copied && (
                   <Tooltip.Small className="w-[30%] py-2 px-2 inline-flex gap-2 justify-center items-center translate-x-full">
                     <Icon.CheckCircle />
-                    <Typography.Body variant='small'>Copied</Typography.Body>
+                    <Typography.Body variant="small">Copied</Typography.Body>
                   </Tooltip.Small>
                 )}
                 <Icon.LinkSimple />
