@@ -89,7 +89,11 @@ export default function Index() {
         <Components.PostsLayout className="col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-6">
           <Components.CreateQuickPost />
           {Object.keys(posts).map((key) => (
-            <Components.Post key={posts[key].id} post={posts[key]} />
+            <Components.Post
+              fullContent
+              key={posts[key].id}
+              post={posts[key]}
+            />
           ))}
           {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">

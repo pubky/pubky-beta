@@ -102,7 +102,7 @@ export const Content = ({ children, text }: ContentProps) => {
   ];
 
   return (
-    <div className="text-white">
+    <div className="text-white break-words">
       <LinkParser
         watchers={watchers as []}
         parseNewLine={true}

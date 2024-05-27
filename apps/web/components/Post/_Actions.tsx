@@ -45,7 +45,7 @@ export default function Actions({ post }: PostProps) {
           <Button.Action
             size="small"
             variant="custom"
-            className="bg-red-500 hover:bg-red-400 bg-opacity-100"
+            className="bg-red-500 bg-opacity-30 hover:bg-opacity-80"
             icon={<Icon.Trash size="16" />}
             onClick={(event) => {
               event.stopPropagation();

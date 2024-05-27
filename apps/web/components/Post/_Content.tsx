@@ -10,7 +10,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   fullContent?: boolean;
 }
 
-export default function Content({ post, fullContent = false }: PostProps) {
+export default function Content({ post, fullContent = true }: PostProps) {
   return (
     <div className="w-full">
       <PostUI.Content
