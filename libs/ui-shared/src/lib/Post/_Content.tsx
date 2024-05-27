@@ -124,7 +124,7 @@ export const Content = ({ children, text }: ContentProps) => {
       )}
       {preview && !videoId && !tweetId && <LinkPreview url={preview} />}
       {tweetId && (
-        <div className="flex overflow-hidden justify-center">
+        <div className="flex overflow-hidden justify-start -mt-2 -mb-6">
           <Tweet id={tweetId} />
         </div>
       )}

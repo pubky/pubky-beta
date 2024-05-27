@@ -9,7 +9,7 @@ export const Header = ({ children, ...rest }: HeaderProps) => {
     <div
       {...rest}
       className={twMerge(
-        `pb-6 justify-start items-start inline-flex`,
+        `pb-2 justify-start items-start inline-flex`,
         rest.className
       )}
     >
