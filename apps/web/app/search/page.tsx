@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Content, Icon, Typography } from '@social/ui-shared';
 import {
@@ -18,7 +18,7 @@ import { useFilterContext } from '../../contexts/filters';
 import { IPost } from '../../types';
 import { Filter } from '../../components/Filter';
 
-export default function Index() {
+const SearchContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { layout, reach } = useFilterContext();
@@ -96,16 +96,6 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTags]);
 
-  {
-    /**const postsLayoutClassName =
-    layout === 'sidebar'
-      ? layouts[layout].posts
-      : `grid ${layouts[layout].layout} gap-6`;
-  const sidebarClassName = `hidden ${
-    layout === 'sidebar' && 'xl:inline-flex w-full'
-  }`; */
-  }
-
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Search" />
@@ -169,5 +159,13 @@ export default function Index() {
       <CreatePost />
       <div ref={loader} />
     </Content.Main>
+  );
+};
+
+export default function Index() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchContent />
+    </Suspense>
   );
 }
