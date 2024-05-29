@@ -99,7 +99,7 @@ export default function Tags({ post }: PostProps) {
                       : handleAddTag(tagObj.tag);
                   }}
                 >
-                  #{Utils.minifyText(tagObj.tag.replace(' ', ''))} (
+                  {Utils.minifyText(tagObj.tag.replace(' ', ''))} (
                   {tagObj.count})
                 </PostUtil.Tag>
               </TooltipUI.Root>

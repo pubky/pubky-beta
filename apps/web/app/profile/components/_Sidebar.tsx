@@ -318,7 +318,7 @@ export default function Sidebar({
           <div className="flex-col gap-3 inline-flex">
             <Post.Footer className="mt-0">
               <PostUtil.Tag clicked color="amber">
-                #Bitcoin
+                Bitcoin
               </PostUtil.Tag>
               <Button.Action
                 variant="custom"

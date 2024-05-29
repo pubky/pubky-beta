@@ -125,7 +125,7 @@ const SearchContent = () => {
               <Typography.H2 className="font-normal">
                 {searchTags.map((searchTag, index) => (
                   <span key={`tag-${searchTag}`}>
-                    #{searchTag}
+                    {searchTag}
                     {index !== searchTags.length - 1 && ', '}
                   </span>
                 ))}

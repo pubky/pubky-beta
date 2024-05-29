@@ -68,7 +68,7 @@ export default function SearchInputCard({
                   color="fuchsia"
                   className="mr-2 my-1"
                 >
-                  #{searchTag}
+                  {searchTag}
                 </PostUtil.Tag>
               ))}
             </div>
@@ -92,7 +92,7 @@ export default function SearchInputCard({
                     color="fuchsia"
                     className="mr-2 my-1"
                   >
-                    #{tag.tag}
+                    {tag.tag}
                   </PostUtil.Tag>
                 ))}
               </div>

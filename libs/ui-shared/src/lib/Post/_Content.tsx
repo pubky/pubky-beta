@@ -63,12 +63,12 @@ export const Content = ({ children, text }: ContentProps) => {
       type: 'startsWith',
       watchFor: '#',
       render: (tag: string) => (
-        <a
+        <span
           className="text-fuchsia-500 break-all"
-          href={`search?tags=${tag.replace('#', '').replace(/\s+/g, '')}`}
+          //href={`search?tags=${tag.replace('#', '').replace(/\s+/g, '')}`}
         >
           {tag}
-        </a>
+        </span>
       ),
     },
     {

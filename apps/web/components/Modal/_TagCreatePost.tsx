@@ -146,7 +146,7 @@ export default function TagCreatePost({
                         color="fuchsia"
                         className="mr-2 my-1"
                       >
-                        #{tag}
+                        {tag}
                       </PostUtil.Tag>
                     ))}
                   </div>
@@ -160,7 +160,7 @@ export default function TagCreatePost({
             <div>
               <Input.Label value="Add tag" />
               <Input.Text
-                placeholder="#"
+                placeholder="tag"
                 value={tag}
                 className="w-[380px]"
                 onChange={handleChange}

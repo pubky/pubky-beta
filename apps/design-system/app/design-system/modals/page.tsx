@@ -55,40 +55,40 @@ export default function Index() {
               <Typography.H2>Suggested Tags</Typography.H2>
               <div className="justify-start items-start">
                 <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
-                  #Bitcoin
+                  Bitcoin
                 </PostUtil.Tag>
                 <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
-                  #Satoshi
+                  Satoshi
                 </PostUtil.Tag>
                 <PostUtil.Tag clicked color="red" className="mr-2 my-1">
-                  #P2P
+                  P2P
                 </PostUtil.Tag>
                 <PostUtil.Tag clicked color="blue" className="mr-2 my-1">
-                  #Keys
+                  Keys
                 </PostUtil.Tag>
                 <PostUtil.Tag clicked color="blue" className="mr-2 my-1">
-                  #Scalability
+                  Scalability
                 </PostUtil.Tag>
                 <PostUtil.Tag clicked color="green" className="mr-2 my-1">
-                  #Whitepaper
+                  Whitepaper
                 </PostUtil.Tag>
                 <PostUtil.Tag clicked color="cyan" className="mr-2 my-1">
-                  #PoW
+                  PoW
                 </PostUtil.Tag>
                 <PostUtil.Tag clicked color="yellow" className="mr-2 my-1">
-                  #Cryptography
+                  Cryptography
                 </PostUtil.Tag>
                 <PostUtil.Tag clicked color="fuchsia" className="mr-2 my-1">
-                  #Quote
+                  Quote
                 </PostUtil.Tag>
                 <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
-                  #Bitcointalk
+                  Bitcointalk
                 </PostUtil.Tag>
               </div>
               <div className="flex-col w-full items-start flex">
                 <Input.Label value="Add tag:" />
                 <Input.Text
-                  placeholder="#"
+                  placeholder="Tag"
                   action={
                     <Button.Action
                       variant="custom"
