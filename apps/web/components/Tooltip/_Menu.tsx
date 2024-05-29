@@ -1,0 +1,201 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { Alert, Icon, Tooltip } from '@social/ui-shared';
+import { useClientContext } from '../../contexts/client';
+import { IPost } from '../../types';
+import { useRouter } from 'next/navigation';
+import { Utils } from '../../../web/utils';
+import Modal from '../Modal';
+
+interface TooltipMenuProps {
+  post: IPost;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
+  const {
+    pubky,
+    follow,
+    unfollow,
+    listFollowers,
+    createBookmark,
+    deleteBookmark,
+    deletePost,
+  } = useClientContext();
+  const tooltipMenuRef = useRef<HTMLDivElement>(null);
+  const [followed, setFollowed] = useState(false);
+  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
+  const [loadingFollowed, setLoadingFollowed] = useState(false);
+  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
+  const [showDeleteMessage, setShowDeleteMessage] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleClickOutsideTooltip = (event: MouseEvent) => {
+      if (
+        tooltipMenuRef.current &&
+        !tooltipMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutsideTooltip);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideTooltip);
+    };
+  }, [tooltipMenuRef, setShowMenu]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const pubkey = post?.author?.id || pubky;
+
+        if (!pubkey) return;
+
+        const followersList = await listFollowers(pubkey);
+
+        if (followersList) {
+          setInitLoadingFollowed(false);
+
+          const isFollowed = followersList.followers.some(
+            (user) => user.uri.replace('pubky:', '') === pubky
+          );
+
+          setFollowed(isFollowed);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, [post?.author?.id, pubky, listFollowers]);
+
+  const followUser = async () => {
+    if (!post?.author?.id) return;
+
+    setLoadingFollowed(true);
+    try {
+      const result = await follow(post?.author?.id);
+      setFollowed(result);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingFollowed(false);
+    }
+  };
+
+  const unfollowUser = async () => {
+    if (!post?.author?.id) return;
+
+    setLoadingFollowed(true);
+    try {
+      const result = await unfollow(post?.author?.id);
+      setFollowed(!result);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingFollowed(false);
+    }
+  };
+
+  const handleAddBookmark = async (postId: string, uri: string) => {
+    await createBookmark(postId, uri);
+  };
+
+  const handleDeleteBookmark = async (
+    postId: string,
+    postUri: string,
+    bookmarkId: string
+  ) => {
+    await deleteBookmark(postId, postUri, bookmarkId);
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    setShowDeleteMessage(true);
+    setTimeout(() => setShowDeleteMessage(false), 2000);
+    await deletePost(postId);
+  };
+
+  const renderFollowButton = () => {
+    if (post?.author?.id === pubky) return null;
+
+    if (initLoadingFollowed) {
+      return (
+        <Tooltip.Item icon={<Icon.LoadingSpin size="24" />}>
+          Loading
+        </Tooltip.Item>
+      );
+    }
+
+    return followed ? (
+      <Tooltip.Item
+        onClick={loadingFollowed ? undefined : unfollowUser}
+        loading={loadingFollowed}
+        icon={<Icon.UserMinus size="24" />}
+      >
+        Unfollow {Utils.minifyText(post?.author?.profile?.name)}
+      </Tooltip.Item>
+    ) : (
+      <Tooltip.Item
+        onClick={loadingFollowed ? undefined : followUser}
+        loading={loadingFollowed}
+        icon={<Icon.UserPlus size="24" />}
+      >
+        Follow {Utils.minifyText(post?.author?.profile?.name)}
+      </Tooltip.Item>
+    );
+  };
+
+  return (
+    <div ref={tooltipMenuRef}>
+      <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[90%] -translate-y-[13px] cursor-default w-[300px]">
+        {renderFollowButton()}
+        {post?.author?.id === pubky && (
+          <Tooltip.Item
+            onClick={() => router.push('/settings')}
+            icon={<Icon.GearSix size="24" />}
+          >
+            Edit profile
+          </Tooltip.Item>
+        )}
+        <Tooltip.Item
+          icon={
+            <Icon.BookmarkSimple
+              size="24"
+              opacity={post?.bookmark?.id ? '1' : '0.2'}
+            />
+          }
+          onClick={() => {
+            post?.bookmark?.id
+              ? handleDeleteBookmark(post.id, post.uri, post.bookmark.id)
+              : handleAddBookmark(post.id, post.uri);
+          }}
+        >
+          {post?.bookmark?.id ? 'Remove Bookmark' : 'Add Bookmark'}
+        </Tooltip.Item>
+        {post?.author?.id === pubky && (
+          <Tooltip.Item
+            onClick={() => setShowModalDeletePost(true)}
+            icon={<Icon.Trash size="24" color={'#EF4444'} />}
+            cssText="text-red-500"
+          >
+            Delete post
+          </Tooltip.Item>
+        )}
+      </Tooltip.Main>
+      {showDeleteMessage && (
+        <Alert.Message icon={<Icon.CheckCircle size="20" />}>
+          Post successfully deleted!
+        </Alert.Message>
+      )}
+      <Modal.DeletePost
+        showModalDeletePost={showModalDeletePost}
+        setShowModalDeletePost={setShowModalDeletePost}
+        handleDeletePost={handleDeletePost}
+        postId={post.id}
+      />
+    </div>
+  );
+}

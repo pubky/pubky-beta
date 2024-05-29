@@ -48,7 +48,7 @@ export default function Post({
             )} */}
             <PostUI.MainCard className={rest.className}>
               <Header post={post} />
-              <div className="ml-[57px]">
+              <div className="ml-[47px]">
                 <Content post={post} fullContent={fullContent} />
                 <div className="flex flex-col md:flex-row justify-between">
                   <Tags post={post} />

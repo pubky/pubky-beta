@@ -47,6 +47,8 @@ import {
   GearSix,
   LoadingSpin,
   DownloadSimple,
+  DotsThree,
+  DotsThreeVertical,
   SignOut,
 } from './_System';
 import { Android, Iphone, Pubky, Twitter, Telegram, Youtube } from './_Social';
@@ -91,6 +93,8 @@ export const Icon = {
   DownloadSimple,
   DropdownIcon,
   DotsNine,
+  DotsThree,
+  DotsThreeVertical,
   Envelope,
   Eye,
   File,
