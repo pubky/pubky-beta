@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Icon, Button, Post as PostUI, Alert } from '@social/ui-shared';
+import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
 import { Modal } from '../Modal';
 import Repost from '../_Repost';
@@ -13,18 +13,9 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Actions({ post }: PostProps) {
-  const { pubky, deletePost, deleteBookmark, createBookmark } =
-    useClientContext();
+  const { deleteBookmark, createBookmark } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
-  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
-  const [showDeleteMessage, setShowDeleteMessage] = useState(false);
-
-  const handleDeletePost = async (postId: string) => {
-    setShowDeleteMessage(true);
-    setTimeout(() => setShowDeleteMessage(false), 2000);
-    await deletePost(postId);
-  };
 
   const handleAddBookmark = async (postId: string, uri: string) => {
     await createBookmark(postId, uri);
@@ -41,18 +32,6 @@ export default function Actions({ post }: PostProps) {
   return (
     <div>
       <PostUI.Actions>
-        {post?.author?.id === pubky && (
-          <Button.Action
-            size="small"
-            variant="custom"
-            className="bg-red-500 bg-opacity-30 hover:bg-opacity-80"
-            icon={<Icon.Trash size="16" />}
-            onClick={(event) => {
-              event.stopPropagation();
-              setShowModalDeletePost(true);
-            }}
-          />
-        )}
         <Button.Action
           size="small"
           variant="custom"
@@ -96,11 +75,6 @@ export default function Actions({ post }: PostProps) {
           }}
         />
       </PostUI.Actions>
-      {showDeleteMessage && (
-        <Alert.Message icon={<Icon.CheckCircle size="20" />}>
-          Post successfully deleted!
-        </Alert.Message>
-      )}
       <Repost
         post={post}
         showModalRepost={showModalRepost}
@@ -110,12 +84,6 @@ export default function Actions({ post }: PostProps) {
         post={post}
         showModalTag={showModalTag}
         setShowModalTag={setShowModalTag}
-      />
-      <Modal.DeletePost
-        showModalDeletePost={showModalDeletePost}
-        setShowModalDeletePost={setShowModalDeletePost}
-        handleDeletePost={handleDeletePost}
-        postId={post.id}
       />
     </div>
   );

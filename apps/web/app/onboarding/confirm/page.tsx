@@ -24,7 +24,7 @@ export default function Index() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string>('');
-  const [showTooltip, setShowTooltip] = useState('');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     const handleClickOutsideModal = (event: MouseEvent) => {
@@ -135,7 +135,7 @@ export default function Index() {
               Back
             </Button.Large>
           </Link>
-          <Tooltip.Root setShowTooltip={setShowTooltip} tagId="0">
+          <Tooltip.RootSmall setShowTooltip={setShowTooltip}>
             <Button.Large
               icon={<Icon.Lock color={disposableAccount ? ' white' : 'gray'} />}
               disabled={!disposableAccount}
@@ -158,7 +158,7 @@ export default function Index() {
                 </Typography.Body>
               </Tooltip.Small>
             )}
-          </Tooltip.Root>
+          </Tooltip.RootSmall>
           <Link href="/home">
             <Button.Large icon={<Icon.ArrowRight />} className="w-[170px] z-20">
               Start Exploring

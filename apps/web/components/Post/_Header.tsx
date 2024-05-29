@@ -7,6 +7,7 @@ import {
   Post as PostUI,
   Typography,
   Tooltip as TooltipUI,
+  Icon,
 } from '@social/ui-shared';
 
 import { Utils } from '../../utils';
@@ -21,6 +22,7 @@ export default function Header({ post }: PostProps) {
   const router = useRouter();
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
 
   return (
     <PostUI.Header>
@@ -34,8 +36,6 @@ export default function Header({ post }: PostProps) {
         <PostUI.ImageUser
           src={post?.author?.profile?.image || '/images/Userpic.png'}
           alt="user"
-          width={42}
-          height={42}
         />
         <TooltipUI.Root
           delay={200}
@@ -64,6 +64,15 @@ export default function Header({ post }: PostProps) {
         }}
       >
         <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
+      </div>
+      <div className="relative">
+        {showMenu && <Tooltip.Menu post={post} setShowMenu={setShowMenu} />}
+        <div
+          className="mt-1 ml-2 cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"
+          onClick={() => setShowMenu(true)}
+        >
+          <Icon.DotsThree size="24" color="gray" />
+        </div>
       </div>
     </PostUI.Header>
   );

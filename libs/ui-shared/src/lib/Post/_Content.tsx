@@ -65,7 +65,7 @@ export const Content = ({ children, text }: ContentProps) => {
       render: (tag: string) => (
         <a
           className="text-fuchsia-500 break-all"
-          href={`search?tags=${tag.replace('#', '')}`}
+          href={`search?tags=${tag.replace('#', '').replace(/\s+/g, '')}`}
         >
           {tag}
         </a>

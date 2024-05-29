@@ -4,7 +4,7 @@ export const minifyPubky = (pubky: string | null) => {
 
   const handler = pubky.slice(0, 4) + '...' + pubky.slice(-4);
 
-  return `@${handler}`;
+  return `pk:${handler}`;
 };
 
 export default minifyPubky;
