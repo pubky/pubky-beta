@@ -9,11 +9,12 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { useClientContext } from '../contexts/client';
 import { Utils } from '../utils';
 import Image from 'next/image';
 import { INewPost } from '../types';
-import Link from 'next/link';
 import Modal from './Modal';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
@@ -27,6 +28,7 @@ export default function CreateQuickPost() {
   const [content, setContent] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
+  const [showEmojis, setShowEmojis] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [textArea, setTextArea] = useState(false);
   const [preview, setPreview] = useState('');
@@ -204,6 +206,25 @@ export default function CreateQuickPost() {
                 variant="custom"
                 icon={<Icon.ImageSquare size="32" />}
               />
+              <Button.Action
+                variant="custom"
+                icon={<Icon.Smiley size="32" />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowEmojis(true);
+                }}
+              />
+              {showEmojis && (
+                <div className="absolute translate-y-[10%] translate-x-[30%] z-10">
+                  <EmojiPicker
+                    theme={Theme.DARK}
+                    emojiStyle={EmojiStyle.TWITTER}
+                    onEmojiClick={(emojiObject) =>
+                      setContent(content + emojiObject.emoji)
+                    }
+                  />
+                </div>
+              )}
               <Button.Medium
                 className="w-[158px]"
                 variant="line"

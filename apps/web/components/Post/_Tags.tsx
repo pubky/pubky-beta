@@ -97,7 +97,9 @@ export default function Tags({ post }: PostProps) {
                   //   handleTagSearch(tagObj.tag);
                   // }}
                   className={
-                    isTagFound ? 'hover:border-red-500 hover:bg-red-500' : ''
+                    isTagFound
+                      ? 'hover:border-red-500 hover:bg-red-500 hover:bg-opacity-50'
+                      : ''
                   }
                   clicked={isTagFound}
                   color="fuchsia"
@@ -107,7 +109,7 @@ export default function Tags({ post }: PostProps) {
                       : handleAddTag(tagObj.tag)
                   }
                 >
-                  {Utils.minifyText(tagObj.tag.replace(' ', ''), 10)} (
+                  {Utils.minifyText(tagObj.tag.replace(' ', ''))} (
                   {tagObj.count})
                 </PostUtil.Tag>
               </TooltipUI.Root>
