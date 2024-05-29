@@ -96,6 +96,9 @@ export default function Tags({ post }: PostProps) {
                   //   event.stopPropagation();
                   //   handleTagSearch(tagObj.tag);
                   // }}
+                  className={
+                    isTagFound ? 'hover:border-red-500 hover:bg-red-500' : ''
+                  }
                   clicked={isTagFound}
                   color="fuchsia"
                   onClick={() =>
