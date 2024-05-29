@@ -6,11 +6,13 @@ import {
   Post as PostUI,
   PostUtil,
   Tooltip as TooltipUI,
+  Typography,
 } from '@social/ui-shared';
 import { useClientContext } from '../../contexts/client';
 import { IPost, ITaggedPost } from '../../types';
 import { Utils } from './../../utils';
 import Tooltip from '../Tooltip';
+import Modal from '../Modal';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
@@ -21,6 +23,7 @@ export default function Tags({ post }: PostProps) {
   const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
     useClientContext();
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
+  const [showModalTags, setShowModalTags] = useState(false);
 
   useEffect(() => {
     if (post?.tags) {
@@ -68,7 +71,7 @@ export default function Tags({ post }: PostProps) {
   }
 
   return (
-    <div className="mt-6">
+    <div className="mt-6" onClick={(event) => event.stopPropagation()}>
       <div className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
         {sortedTags.map((tagObj, index) => {
           const isTagFound = tagObj.from.some(
@@ -92,14 +95,13 @@ export default function Tags({ post }: PostProps) {
                   // }}
                   clicked={isTagFound}
                   color="fuchsia"
-                  onClick={(event) => {
-                    event.stopPropagation();
+                  onClick={() =>
                     isTagFound
                       ? handleDeleteTag(tagObj.tag)
-                      : handleAddTag(tagObj.tag);
-                  }}
+                      : handleAddTag(tagObj.tag)
+                  }
                 >
-                  {Utils.minifyText(tagObj.tag.replace(' ', ''))} (
+                  {Utils.minifyText(tagObj.tag.replace(' ', ''), 10)} (
                   {tagObj.count})
                 </PostUtil.Tag>
               </TooltipUI.Root>
@@ -130,7 +132,19 @@ export default function Tags({ post }: PostProps) {
             </PostUI.Footer>
           );
         })}
+        <Typography.Body
+          onClick={() => setShowModalTags(true)}
+          className="text-fuchsia-500 text-opacity-50 hover:text-opacity-80 mt-3 font-medium"
+          variant="small"
+        >
+          Show all
+        </Typography.Body>
       </div>
+      <Modal.Tags
+        post={post}
+        showModalTags={showModalTags}
+        setShowModalTags={setShowModalTags}
+      />
     </div>
   );
 }

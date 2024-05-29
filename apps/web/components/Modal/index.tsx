@@ -8,6 +8,7 @@ import Repost from './_Repost';
 import SearchInputCard from './_SearchInputCard';
 import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
+import Tags from './_Tags';
 
 export const Modal = {
   Backup,
@@ -20,6 +21,7 @@ export const Modal = {
   SearchInputCard,
   Tag,
   TagCreatePost,
+  Tags,
 };
 
 export default Modal;
