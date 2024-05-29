@@ -71,7 +71,10 @@ export default function Tags({ post }: PostProps) {
   }
 
   return (
-    <div className="mt-6" onClick={(event) => event.stopPropagation()}>
+    <div
+      className="mt-6 cursor-default"
+      onClick={(event) => event.stopPropagation()}
+    >
       <div className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
         {sortedTags.map((tagObj, index) => {
           const isTagFound = tagObj.from.some(
@@ -134,7 +137,7 @@ export default function Tags({ post }: PostProps) {
         })}
         <Typography.Body
           onClick={() => setShowModalTags(true)}
-          className="text-fuchsia-500 text-opacity-50 hover:text-opacity-80 mt-3 font-medium"
+          className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80 mt-3 font-medium"
           variant="small"
         >
           Show all
