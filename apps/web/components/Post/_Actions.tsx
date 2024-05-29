@@ -69,8 +69,9 @@ export default function Actions({ post }: PostProps) {
           variant="custom"
           icon={
             <Icon.BookmarkSimple
-              opacity={post?.bookmark?.id ? '1' : '0.2'}
               size="16"
+              opacity={post?.bookmark?.id ? 1 : 0.5}
+              color={post?.bookmark?.id ? '#d946efc9' : 'white'}
             />
           }
           onClick={() =>
