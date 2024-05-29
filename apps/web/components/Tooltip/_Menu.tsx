@@ -50,15 +50,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
   useEffect(() => {
     async function fetchData() {
       try {
-        let pubkey;
-
-        if (post?.author?.id) {
-          pubkey = post?.author?.id;
-        }
-
-        if (!pubkey) {
-          pubkey = pubky;
-        }
+        const pubkey = post?.author?.id || pubky;
 
         if (!pubkey) return;
 
@@ -67,44 +59,44 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
         if (followersList) {
           setInitLoadingFollowed(false);
 
-          followersList.followers.forEach((user) => {
-            const uri = user.uri.replace('pubky:', '');
-            if (uri === pubky) {
-              setFollowed(true);
-            }
-          });
+          const isFollowed = followersList.followers.some(
+            (user) => user.uri.replace('pubky:', '') === pubky
+          );
+
+          setFollowed(isFollowed);
         }
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [followed, post?.author?.id]);
+  }, [post?.author?.id, pubky, listFollowers]);
 
   const followUser = async () => {
-    try {
-      if (!post?.author?.id) return;
-      setLoadingFollowed(true);
+    if (!post?.author?.id) return;
 
+    setLoadingFollowed(true);
+    try {
       const result = await follow(post?.author?.id);
       setFollowed(result);
-      setLoadingFollowed(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingFollowed(false);
     }
   };
 
   const unfollowUser = async () => {
-    try {
-      if (!post?.author?.id) return;
-      setLoadingFollowed(true);
+    if (!post?.author?.id) return;
 
+    setLoadingFollowed(true);
+    try {
       const result = await unfollow(post?.author?.id);
       setFollowed(!result);
-      setLoadingFollowed(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingFollowed(false);
     }
   };
 
@@ -126,35 +118,40 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
     await deletePost(postId);
   };
 
+  const renderFollowButton = () => {
+    if (post?.author?.id === pubky) return null;
+
+    if (initLoadingFollowed) {
+      return (
+        <Tooltip.Item icon={<Icon.LoadingSpin size="24" />}>
+          Loading
+        </Tooltip.Item>
+      );
+    }
+
+    return followed ? (
+      <Tooltip.Item
+        onClick={loadingFollowed ? undefined : unfollowUser}
+        loading={loadingFollowed}
+        icon={<Icon.UserMinus size="24" />}
+      >
+        Unfollow {Utils.minifyText(post?.author?.profile?.name)}
+      </Tooltip.Item>
+    ) : (
+      <Tooltip.Item
+        onClick={loadingFollowed ? undefined : followUser}
+        loading={loadingFollowed}
+        icon={<Icon.UserPlus size="24" />}
+      >
+        Follow {Utils.minifyText(post?.author?.profile?.name)}
+      </Tooltip.Item>
+    );
+  };
+
   return (
     <div ref={tooltipMenuRef}>
-      <Tooltip.Main className="px-4 py-6 bottom-0 -translate-x-[90%] cursor-default w-[300px]">
-        {initLoadingFollowed ? (
-          <Tooltip.Item
-            className={post?.author?.id === pubky ? 'hidden' : ''}
-            icon={<Icon.LoadingSpin size="24" />}
-          >
-            Loading
-          </Tooltip.Item>
-        ) : followed ? (
-          <Tooltip.Item
-            onClick={loadingFollowed ? undefined : () => unfollowUser()}
-            loading={loadingFollowed}
-            className={post?.author?.id === pubky ? 'hidden' : ''}
-            icon={<Icon.UserMinus size="24" />}
-          >
-            Unfollow {Utils.minifyText(post?.author?.profile?.name)}
-          </Tooltip.Item>
-        ) : (
-          <Tooltip.Item
-            onClick={loadingFollowed ? undefined : () => followUser()}
-            loading={loadingFollowed}
-            className={post?.author?.id === pubky ? 'hidden' : ''}
-            icon={<Icon.UserPlus size="24" />}
-          >
-            Follow {Utils.minifyText(post?.author?.profile?.name)}
-          </Tooltip.Item>
-        )}
+      <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[90%] -translate-y-[13px] cursor-default w-[300px]">
+        {renderFollowButton()}
         {post?.author?.id === pubky && (
           <Tooltip.Item
             onClick={() => router.push('/settings')}
@@ -176,7 +173,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
               : handleAddBookmark(post.id, post.uri);
           }}
         >
-          Save to bookmarks
+          {post?.bookmark?.id ? 'Remove Bookmark' : 'Add Bookmark'}
         </Tooltip.Item>
         {post?.author?.id === pubky && (
           <Tooltip.Item
