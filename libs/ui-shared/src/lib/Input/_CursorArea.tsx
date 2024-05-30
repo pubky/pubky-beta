@@ -33,7 +33,7 @@ export const CursorArea = ({
   const inputWithErrorStyle = `border border-red-500`;
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <textarea
         {...rest}
         ref={textareaRef}

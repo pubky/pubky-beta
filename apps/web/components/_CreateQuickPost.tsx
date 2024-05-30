@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Button,
-  Icon,
-  Input,
-  Post,
-  PostUtil,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, Input, Post, Typography } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
@@ -123,6 +116,7 @@ export default function CreateQuickPost() {
         !wrapperRef.current.contains(event.target as Node)
       ) {
         setTextArea(false);
+        setShowEmojis(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -219,9 +213,10 @@ export default function CreateQuickPost() {
                   <EmojiPicker
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.TWITTER}
-                    onEmojiClick={(emojiObject) =>
-                      setContent(content + emojiObject.emoji)
-                    }
+                    onEmojiClick={(emojiObject) => {
+                      setContent(content + emojiObject.emoji);
+                      setShowEmojis(false);
+                    }}
                   />
                 </div>
               )}
@@ -240,22 +235,6 @@ export default function CreateQuickPost() {
                 Publish post
               </Button.Medium>
             </Post.Actions>
-          )}
-        </div>
-        <div>
-          {arrayTags.length > 0 && (
-            <div className="justify-start items-start">
-              {arrayTags.map((tag, index) => (
-                <PostUtil.Tag
-                  key={index}
-                  clicked
-                  color="fuchsia"
-                  className="mr-2 my-1"
-                >
-                  {tag}
-                </PostUtil.Tag>
-              ))}
-            </div>
           )}
         </div>
       </div>
