@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Utils } from '../../utils';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
 import { Modal } from '../Modal';
@@ -13,6 +15,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Actions({ post }: PostProps) {
+  const router = useRouter();
   const { deleteBookmark, createBookmark } = useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
@@ -30,15 +33,17 @@ export default function Actions({ post }: PostProps) {
   };
 
   return (
-    <div>
+    <div
+      className="cursor-default"
+      onClick={(event) => event.stopPropagation()}
+    >
       <PostUI.Actions>
         <Button.Action
           size="small"
           variant="custom"
           icon={<Icon.Tag size="16" />}
           counter={post?.tags?.length}
-          onClick={(event) => {
-            event.stopPropagation();
+          onClick={() => {
             setShowModalTag(true);
           }}
         />
@@ -47,6 +52,7 @@ export default function Actions({ post }: PostProps) {
           variant="custom"
           icon={<Icon.ChatCircleText size="16" />}
           counter={0}
+          onClick={() => router.push(Utils.encodePostUri(post?.uri))}
         />
         {/* <Button.Action
           size="small"
@@ -67,12 +73,11 @@ export default function Actions({ post }: PostProps) {
               size="16"
             />
           }
-          onClick={(event) => {
-            event.stopPropagation();
+          onClick={() =>
             post?.bookmark?.id
               ? handleDeleteBookmark(post.id, post.uri, post.bookmark.id)
-              : handleAddBookmark(post.id, post.uri);
-          }}
+              : handleAddBookmark(post.id, post.uri)
+          }
         />
       </PostUI.Actions>
       <Repost

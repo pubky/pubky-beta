@@ -12,7 +12,10 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Content({ post, fullContent = true }: PostProps) {
   return (
-    <div className="w-full">
+    <div
+      className="w-full cursor-text"
+      onClick={(event) => event.stopPropagation()}
+    >
       <PostUI.Content
         text={
           fullContent

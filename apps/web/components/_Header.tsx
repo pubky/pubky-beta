@@ -97,18 +97,18 @@ export default function Header({ title, className }: HeaderProps) {
 
   const handleSearchTag = () => {
     const trimmedValue = inputValue.trim();
-    if (trimmedValue.startsWith('#')) {
-      if (searchTags.includes(trimmedValue.slice(1))) return;
+    //if (trimmedValue.startsWith('#')) {
+    if (searchTags.includes(trimmedValue.slice(0))) return;
 
-      if (searchTags.length < 3) {
-        setSearchTags([...searchTags, trimmedValue.slice(1)]);
-      } else {
-        const newSearchTags = [...searchTags.slice(1), trimmedValue.slice(1)];
-        setSearchTags(newSearchTags);
-      }
-      setInputValue('');
-      router.push('/search');
+    if (searchTags.length < 3) {
+      setSearchTags([...searchTags, trimmedValue.slice(0)]);
+    } else {
+      const newSearchTags = [...searchTags.slice(0), trimmedValue.slice(0)];
+      setSearchTags(newSearchTags);
     }
+    setInputValue('');
+    router.push('/search');
+    // }
   };
 
   return (
@@ -130,7 +130,7 @@ export default function Header({ title, className }: HeaderProps) {
                 key={index}
                 onClick={() => handleRemoveTag(index)}
                 actions={[<Icon.X key={index} />]}
-                value={`# ${searchTag}`}
+                value={`${searchTag}`}
                 className="mr-2"
               />
             ))}

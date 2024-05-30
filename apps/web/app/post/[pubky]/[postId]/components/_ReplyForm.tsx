@@ -77,7 +77,7 @@ export default function ReplyForm() {
             </div>
             <Post.Footer className="mt-4">
               {/* <PostUtil.Tag clicked color="amber">
-                #Bitcoin
+                Bitcoin
               </PostUtil.Tag> */}
               <Button.Action
                 variant="custom"

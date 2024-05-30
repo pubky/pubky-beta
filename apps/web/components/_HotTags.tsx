@@ -70,7 +70,7 @@ export default function HotTags() {
                   key={index}
                   onClick={() => handleTagSearch(tag.tag)}
                   rank={index + 1}
-                  tag={`#${Utils.minifyText(tag.tag, 8)}`}
+                  tag={`${Utils.minifyText(tag.tag, 8)}`}
                   color="fuchsia"
                   counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
                 />
