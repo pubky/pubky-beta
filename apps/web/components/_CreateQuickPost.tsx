@@ -28,6 +28,7 @@ export default function CreateQuickPost() {
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -126,6 +127,23 @@ export default function CreateQuickPost() {
     };
   }, [wrapperRef]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRefEmojis.current &&
+        !wrapperRefEmojis.current.contains(event.target as Node)
+      ) {
+        setTextArea(false);
+        setShowEmojis(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [wrapperRefEmojis]);
+
   return (
     <div className="p-6 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
       <Link
@@ -209,13 +227,15 @@ export default function CreateQuickPost() {
                 }}
               />
               {showEmojis && (
-                <div className="absolute translate-y-[10%] translate-x-[30%] z-10">
+                <div
+                  className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                  ref={wrapperRefEmojis}
+                >
                   <EmojiPicker
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.TWITTER}
                     onEmojiClick={(emojiObject) => {
                       setContent(content + emojiObject.emoji);
-                      setShowEmojis(false);
                     }}
                   />
                 </div>
