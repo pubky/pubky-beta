@@ -179,7 +179,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       await client.ready();
 
       return await client.seedRecovery.recoveryFile(
-        'recovery_file',
+        'pubky_recovery',
         seed,
         password
       );
