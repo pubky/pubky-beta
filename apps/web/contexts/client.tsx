@@ -513,8 +513,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const result = await client.social.graph.follow(pkLogged, pk);
 
-      if (!result.ok)
-        throw new Error(`Post follow:${pk} failed: ${result.error.message}`);
+      if (!result.ok) {
+        router.push('/logout');
+        throw new Error(`Follow:${pk} failed: ${result.error.message}`);
+      }
 
       return true;
     } catch (error) {
@@ -535,8 +537,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const result = await client.social.graph.unfollow(pkLogged, pk);
 
-      if (!result.ok)
+      if (!result.ok) {
+        router.push('/logout');
         throw new Error(`Unfollow:${pk} failed: ${result.error.message}`);
+      }
 
       return true;
     } catch (error) {
