@@ -49,23 +49,17 @@ export default function Header({ post }: PostProps) {
               {post?.author?.profile?.name &&
                 Utils.minifyText(post?.author?.profile?.name, 24)}
             </PostUI.Username>
-            <Typography.Label className="text-opacity-30">
+            <Typography.Label className="cursor-pointer text-opacity-30">
               {Utils.minifyPubky(post?.author?.id)}
             </Typography.Label>
           </div>
           {showTooltipProfile !== '' && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
-      <div
-        className="justify-end cursor-pointer grow"
-        onClick={(event) => {
-          event.stopPropagation();
-          router.push(Utils.encodePostUri(post?.uri));
-        }}
-      >
+      <div className="justify-end cursor-pointer grow">
         <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
       </div>
-      <div className="relative">
+      <div className="relative" onClick={(event) => event.stopPropagation()}>
         {showMenu && <Tooltip.Menu post={post} setShowMenu={setShowMenu} />}
         <div
           className="mt-1 ml-2 cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"

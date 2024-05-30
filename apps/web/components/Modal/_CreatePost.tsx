@@ -242,7 +242,7 @@ export default function CreatePost({
                     color="fuchsia"
                     className="mr-2 my-1"
                   >
-                    #{tag}
+                    {tag}
                   </PostUtil.Tag>
                 ))}
               </div>
@@ -254,7 +254,7 @@ export default function CreatePost({
             <div className="hidden lg:flex flex-col w-full items-start">
               <Input.Label value="Add tag:" />
               <Input.Text
-                placeholder="#"
+                placeholder="Tag"
                 value={tag}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}

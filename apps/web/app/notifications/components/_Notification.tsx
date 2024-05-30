@@ -30,7 +30,7 @@ export default function Notification() {
           clicked={false}
           color="fuchsia"
         >
-          #Bitcoin
+          Bitcoin
         </PostUtil.Tag>
       </div>
       <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex">

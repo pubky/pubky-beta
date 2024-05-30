@@ -172,7 +172,7 @@ export default function CreateQuickPost() {
                   color="fuchsia"
                   className="mr-2 my-1"
                 >
-                  #{tag}
+                  {tag}
                 </PostUtil.Tag>
               ))}
             </div>
