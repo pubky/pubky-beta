@@ -229,7 +229,7 @@ export default function Tags({
                   return (
                     <div
                       key={userIndex}
-                      className="w-full flex gap-24 justify-between"
+                      className="w-full flex justify-between"
                     >
                       <SideCard.User
                         uri={user?.author?.uri.replace('pubky:', '')}
@@ -246,7 +246,7 @@ export default function Tags({
                       />
                       {pubkeyUser ? (
                         <Button.Medium
-                          className="bg-transparent cursor-default"
+                          className="w-[154px] bg-transparent cursor-default"
                           icon={<Icon.Check />}
                         >
                           Me
@@ -255,6 +255,7 @@ export default function Tags({
                         <Button.Medium
                           disabled
                           icon={<Icon.LoadingSpin size="16" />}
+                          className="w-[154px]"
                         >
                           Loading
                         </Button.Medium>
@@ -268,6 +269,7 @@ export default function Tags({
                           disabled={loadingFollowers[user?.author?.id]}
                           loading={loadingFollowers[user?.author?.id]}
                           icon={<Icon.UserMinus size="16" />}
+                          className="w-[154px]"
                         >
                           Unfollow
                         </Button.Medium>
@@ -281,6 +283,7 @@ export default function Tags({
                           disabled={loadingFollowers[user?.author?.id]}
                           loading={loadingFollowers[user?.author?.id]}
                           icon={<Icon.UserPlus size="16" />}
+                          className="w-[154px]"
                         >
                           Follow
                         </Button.Medium>
