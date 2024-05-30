@@ -15,8 +15,8 @@ interface UserProps extends React.HTMLAttributes<HTMLDivElement> {
   uri: string;
 }
 export const User = ({
-  width = 48,
-  height = 48,
+  width = 40,
+  height = 40,
   image,
   alt = 'user',
   src,
@@ -38,7 +38,8 @@ export const User = ({
         <Image
           width={width}
           height={height}
-          className="w-[40px] h-[40px] rounded-full"
+          className="rounded-full max-w-none h-none"
+          style={{ width: `${width}px`, height: `${height}px` }}
           alt={alt}
           src={src}
         />
