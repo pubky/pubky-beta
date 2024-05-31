@@ -34,7 +34,7 @@ export const User = ({
         rest.className
       )}
     >
-      <Link href={`profile/${uri}`} className="gap-2 inline-flex ">
+      <Link href={`/profile/${uri}`} className="gap-2 inline-flex ">
         <Image
           width={width}
           height={height}
