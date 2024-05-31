@@ -4,6 +4,7 @@ import { Content } from './_Content';
 import { Footer } from './_Footer';
 import { Header } from './_Header';
 import { ImageUser } from './_Image';
+import LinkPreview from './_Preview';
 import { RepostCard } from './_RepostCard';
 import { Root } from './_Root';
 import { Time } from './_Time';
@@ -17,6 +18,7 @@ export const Post = {
   Footer,
   Header,
   ImageUser,
+  LinkPreview,
   RepostCard,
   Root,
   Time,
