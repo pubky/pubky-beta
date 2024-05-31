@@ -56,6 +56,8 @@ export default function CreateQuickPost() {
       } else {
         setTweetId('');
       }
+    } else {
+      setPreview('');
     }
   }
 
