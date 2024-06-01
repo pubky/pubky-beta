@@ -15,6 +15,8 @@ import Image from 'next/image';
 import { INewPost } from '../types';
 import Link from 'next/link';
 import Modal from './Modal';
+import getYouTubeID from 'get-youtube-id';
+import { Tweet } from 'react-tweet';
 
 export default function CreateQuickPost() {
   const { pubky, getProfile, createPost, setPosts, createTag } =
@@ -27,7 +29,41 @@ export default function CreateQuickPost() {
   const [showModalTag, setShowModalTag] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [textArea, setTextArea] = useState(false);
+  const [preview, setPreview] = useState('');
+  const [videoId, setVideoId] = useState('');
+  const [tweetId, setTweetId] = useState('');
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  function checkForLink(text: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const url = text.match(urlRegex);
+    if (url) {
+      setPreview(url[0]);
+
+      const youtubeId = getYouTubeID(text);
+      if (youtubeId) {
+        setVideoId(youtubeId);
+      } else {
+        setVideoId('');
+      }
+
+      const twitterRegex =
+        /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/;
+      const twitterMatch = text.match(twitterRegex);
+      if (twitterMatch) {
+        const tweetId = twitterMatch[3];
+        setTweetId(tweetId);
+      } else {
+        setTweetId('');
+      }
+    } else {
+      setPreview('');
+    }
+  }
+
+  useEffect(() => {
+    checkForLink(content);
+  }, [content]);
 
   async function fetchProfile() {
     try {
@@ -68,6 +104,9 @@ export default function CreateQuickPost() {
       }
       setArrayTags([]);
       setContent('');
+      setPreview('');
+      setVideoId('');
+      setTweetId('');
     } catch (error) {
       console.log(error);
     } finally {
@@ -131,6 +170,26 @@ export default function CreateQuickPost() {
             } ${textArea ? 'h-auto' : 'h-[25px]'} mt-4`}
             placeholder="What's in your mind?"
           />
+          {videoId && (
+            <div className="relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
+              <iframe
+                width="100%"
+                height="315"
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title="YouTube video player"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          )}
+          {preview && !videoId && !tweetId && (
+            <Post.LinkPreview url={preview} />
+          )}
+          {tweetId && (
+            <div className="flex overflow-hidden justify-start -mt-2 -mb-6">
+              <Tweet id={tweetId} />
+            </div>
+          )}
           {(textArea || arrayTags.length > 0) && (
             <Post.Actions>
               <Button.Action

@@ -72,6 +72,7 @@ import {
 import { Activity } from './_Health';
 import { Fire } from './_Weather';
 import { Key, Lock, Warning } from './_Security';
+import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether } from './_Tag';
 
 export const Icon = {
   Android,
@@ -82,7 +83,10 @@ export const Icon = {
   ArrowUpRight,
   Asterisk,
   Bell,
+  Bitcoin,
+  Bitkit,
   BookmarkSimple,
+  Blocktank,
   Broadcast,
   Calendar,
   ChatCircleText,
@@ -127,6 +131,8 @@ export const Icon = {
   Repost,
   SignOut,
   SlidersHorizontal,
+  Synonym,
+  Slashtags,
   Smiley,
   SquaresFour,
   SquareHalf,
@@ -135,6 +141,7 @@ export const Icon = {
   Telegram,
   ThreeColumns,
   Twitter,
+  Tether,
   Trash,
   UsersLeft,
   UserMinus,

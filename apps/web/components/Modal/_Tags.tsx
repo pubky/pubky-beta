@@ -8,6 +8,7 @@ import {
   SideCard,
   Button,
   Icon,
+  Typography,
 } from '@social/ui-shared';
 import { IPost, ITaggedPost } from '../../types';
 import { Utils } from '../../utils';
@@ -17,12 +18,16 @@ interface TagsProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTags: boolean;
   setShowModalTags: React.Dispatch<React.SetStateAction<boolean>>;
   post: IPost;
+  handleAddTag: (tag: string) => Promise<void>;
+  handleDeleteTag: (tag: string) => Promise<void>;
 }
 
 export default function Tags({
   showModalTags,
   setShowModalTags,
   post,
+  handleAddTag,
+  handleDeleteTag,
 }: TagsProps) {
   const { pubky, listFollowing, follow, unfollow } = useClientContext();
   const modalTagsRef = useRef<HTMLDivElement>(null);
@@ -39,6 +44,28 @@ export default function Tags({
 
   const handleTagClick = (tag: ITaggedPost) => {
     setSelectedTag(tag);
+  };
+
+  const isTagFound = selectedTag?.from.some(
+    (fromItem) => fromItem.author.id === pubky
+  );
+
+  const iconTag = isTagFound ? (
+    <Icon.Minus size="14" color="gray" />
+  ) : (
+    <Icon.Plus size="14" color="gray" />
+  );
+
+  const buttonTextTag = isTagFound ? 'Remove me' : 'Add me';
+
+  const handleTagAction = () => {
+    if (selectedTag) {
+      if (isTagFound) {
+        handleDeleteTag(selectedTag.tag);
+      } else {
+        handleAddTag(selectedTag.tag);
+      }
+    }
   };
 
   useEffect(() => {
@@ -178,6 +205,20 @@ export default function Tags({
                   );
                 })}
               </div>
+              {selectedTag && (
+                <div
+                  onClick={handleTagAction}
+                  className="flex items-center gap-1 cursor-pointer"
+                >
+                  {iconTag}
+                  <Typography.Body
+                    className="text-opacity-50 hover:text-opacity-80"
+                    variant="small"
+                  >
+                    {buttonTextTag}
+                  </Typography.Body>
+                </div>
+              )}
             </div>
             <div className="no-scrollbar flex-col gap-4 inline-flex overflow-y-auto h-44">
               {selectedTag &&
@@ -188,7 +229,7 @@ export default function Tags({
                   return (
                     <div
                       key={userIndex}
-                      className="w-full flex gap-36 justify-between"
+                      className="w-full flex justify-between"
                     >
                       <SideCard.User
                         uri={user?.author?.uri.replace('pubky:', '')}
@@ -205,7 +246,7 @@ export default function Tags({
                       />
                       {pubkeyUser ? (
                         <Button.Medium
-                          className="bg-transparent"
+                          className="w-[154px] bg-transparent cursor-default"
                           icon={<Icon.Check />}
                         >
                           Me
@@ -214,6 +255,7 @@ export default function Tags({
                         <Button.Medium
                           disabled
                           icon={<Icon.LoadingSpin size="16" />}
+                          className="w-[154px]"
                         >
                           Loading
                         </Button.Medium>
@@ -227,6 +269,7 @@ export default function Tags({
                           disabled={loadingFollowers[user?.author?.id]}
                           loading={loadingFollowers[user?.author?.id]}
                           icon={<Icon.UserMinus size="16" />}
+                          className="w-[154px]"
                         >
                           Unfollow
                         </Button.Medium>
@@ -240,6 +283,7 @@ export default function Tags({
                           disabled={loadingFollowers[user?.author?.id]}
                           loading={loadingFollowers[user?.author?.id]}
                           icon={<Icon.UserPlus size="16" />}
+                          className="w-[154px]"
                         >
                           Follow
                         </Button.Medium>

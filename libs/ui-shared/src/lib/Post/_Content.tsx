@@ -5,11 +5,21 @@ import LinkParser from 'react-link-parser';
 import { Tweet } from 'react-tweet';
 import LinkPreview from './_Preview';
 import getYouTubeID from 'get-youtube-id';
+import { Icon } from '../Icon';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string;
   children?: React.ReactNode;
 }
+
+const tagsIcons: { [key: string]: JSX.Element } = {
+  '#synonym': <Icon.Synonym size="24" />,
+  '#slashtags': <Icon.Slashtags size="24" />,
+  '#blocktank': <Icon.Blocktank size="24" />,
+  '#bitkit': <Icon.Bitkit size="24" />,
+  '#bitcoin': <Icon.Bitcoin size="24" />,
+  '#tether': <Icon.Tether size="24" />,
+};
 
 export const Content = ({ children, text }: ContentProps) => {
   const [preview, setPreview] = useState('');
@@ -62,14 +72,15 @@ export const Content = ({ children, text }: ContentProps) => {
     {
       type: 'startsWith',
       watchFor: '#',
-      render: (tag: string) => (
-        <span
-          className="text-fuchsia-500 break-all"
-          //href={`search?tags=${tag.replace('#', '').replace(/\s+/g, '')}`}
-        >
-          {tag}
-        </span>
-      ),
+      render: (tag: string) => {
+        const trimmedTag = tag.trim().toLowerCase();
+        const icon = tagsIcons[trimmedTag];
+        return (
+          <span className="text-fuchsia-500 break-all inline-flex items-center gap-1">
+            {tag} {icon && <span>{icon}</span>}
+          </span>
+        );
+      },
     },
     {
       watchFor: 'link',
@@ -91,11 +102,11 @@ export const Content = ({ children, text }: ContentProps) => {
       render: (url: string) => (
         <a
           className="text-fuchsia-500 break-all"
-          href={`mailto:${url}`}
+          href={`mailto:${url.trim()}`}
           target="_blank"
           rel="noreferrer noopener"
         >
-          {url.replace('@', '[at]')}
+          {url}
         </a>
       ),
     },
