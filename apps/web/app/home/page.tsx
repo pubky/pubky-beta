@@ -1,29 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Content, Icon, Typography } from '@social/ui-shared';
+import { Content, Typography } from '@social/ui-shared';
 
 import * as Components from '../../components';
+import Skeletons from '../../components/Skeletons';
 import { Filter } from '../../components/Filter';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost, INewPost } from '../../types';
-
-const Loading = (posts: number) => (
-  <div className="flex w-full justify-center flex-col">
-    <div
-      className={`flex w-full justify-center ${posts === 0 ? 'mt-10' : 'mt-2'}`}
-    >
-      <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-    </div>
-    <Typography.Body
-      variant="medium-bold"
-      className="col-span-3 flex mt-2 justify-center items-center gap-6 text-opacity-20"
-    >
-      Loading Posts
-    </Typography.Body>
-  </div>
-);
 
 export default function Index() {
   const { reach } = useFilterContext();
@@ -102,7 +87,7 @@ export default function Index() {
               </Typography.H2>
             </div>
           )}
-          {loading && Loading(Object.keys(posts).length)}
+          {loading && <Skeletons.Simple />}
         </Components.PostsLayout>
         <Components.Sidebar className="hidden xl:block">
           <Components.WhoFollow />

@@ -1,10 +1,11 @@
 'use client';
 
-import { Icon, Typography } from '@social/ui-shared';
+import { Typography } from '@social/ui-shared';
 import { Post, PostsLayout } from '../../../components';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../contexts/client';
 import { IPost } from '../../../types';
+import Skeletons from '../../../components/Skeletons';
 
 interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky?: string;
@@ -48,17 +49,7 @@ export default function Contact({ creatorPubky }: ContactsProps) {
           />
         ))
       ) : loading ? (
-        <div className="mb-4 flex-row">
-          <div className={`flex w-full justify-center mt-10`}>
-            <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-          </div>
-          <Typography.Body
-            variant="medium-bold"
-            className="col-span-3 mt-4 flex justify-center items-center gap-6 text-opacity-20"
-          >
-            Loading Posts
-          </Typography.Body>
-        </div>
+        <Skeletons.Simple />
       ) : (
         <Typography.H2 className="font-normal text-opacity-20">
           No posts yet.
