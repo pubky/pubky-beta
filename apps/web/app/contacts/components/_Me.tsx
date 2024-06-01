@@ -49,7 +49,7 @@ export default function Me({
             />
             <div className="flex-col inline-flex">
               <Typography.Label className="text-opacity-30">
-                {Utils.minifyPubky(pubkyText)}
+                {pubkyText}
               </Typography.Label>
               <Typography.H2 className="text-sm sm:text-2xl">
                 {Utils.minifyText(name, 24)}

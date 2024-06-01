@@ -147,6 +147,8 @@ export default function Tags({ post }: PostProps) {
         post={post}
         showModalTags={showModalTags}
         setShowModalTags={setShowModalTags}
+        handleAddTag={handleAddTag}
+        handleDeleteTag={handleDeleteTag}
       />
     </div>
   );
