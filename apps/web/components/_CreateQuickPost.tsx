@@ -1,11 +1,9 @@
 'use client';
 
-import { Button, Icon, Input, Post, Typography } from '@social/ui-shared';
+import { Button, Icon, Input, Post } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { useClientContext } from '../contexts/client';
-import { Utils } from '../utils';
 import Image from 'next/image';
 import { INewPost } from '../types';
 import Modal from './Modal';
@@ -16,14 +14,11 @@ export default function CreateQuickPost() {
   const { pubky, getProfile, createPost, setPosts, createTag } =
     useClientContext();
   const [pic, setPic] = useState('/images/Userpic.png');
-  const [name, setName] = useState('Loading...');
-  const [handler, setHandler] = useState('');
   const [content, setContent] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
-  const [textArea, setTextArea] = useState(false);
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
@@ -80,8 +75,6 @@ export default function CreateQuickPost() {
 
       if (userProfile) {
         setPic(userProfile?.image || '/images/Userpic.png');
-        setName(userProfile?.name || 'Loading...');
-        setHandler(pubky);
       }
     } catch (error) {
       console.log(error);
@@ -105,7 +98,9 @@ export default function CreateQuickPost() {
         for (const tag of arrayTags) {
           await createTag(newPost.uri, tag);
         }
+
         const userProfile = await getProfile();
+
         if (userProfile) {
           newPost.tags = arrayTags.map((tag) => ({
             tag,
@@ -115,6 +110,7 @@ export default function CreateQuickPost() {
                 id: `${pubky}`,
                 createdAt: Date.now(),
                 indexedAt: Date.now(),
+
                 author: {
                   id: `${pubky}`,
                   uri: `pubky:${pubky}`,
@@ -125,7 +121,7 @@ export default function CreateQuickPost() {
           }));
         }
         setPosts((prev: INewPost) => ({
-          ...{ [newPost.uri]: newPost },
+          ...{ [newPost.id]: newPost },
           ...prev,
         }));
       }
@@ -147,7 +143,6 @@ export default function CreateQuickPost() {
         wrapperRef.current &&
         !wrapperRef.current.contains(event.target as Node)
       ) {
-        setTextArea(false);
         setShowEmojis(false);
       }
     };
@@ -156,7 +151,7 @@ export default function CreateQuickPost() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [wrapperRef]);
+  }, [wrapperRef, content]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -164,7 +159,6 @@ export default function CreateQuickPost() {
         wrapperRefEmojis.current &&
         !wrapperRefEmojis.current.contains(event.target as Node)
       ) {
-        setTextArea(false);
         setShowEmojis(false);
       }
     };
@@ -176,11 +170,8 @@ export default function CreateQuickPost() {
   }, [wrapperRefEmojis]);
 
   return (
-    <div className="p-6 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
-      <Link
-        href="/profile"
-        className="cursor-pointer justify-start items-center gap-4 flex"
-      >
+    <div className="p-6 mb-4 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
+      <div className="absolute justify-start items-center gap-4 flex">
         <Image
           width={32}
           height={32}
@@ -188,7 +179,7 @@ export default function CreateQuickPost() {
           alt="user-image"
           src={pic}
         />
-        <Typography.Body
+        {/* <Typography.Body
           className={`hover:underline hover:decoration-solid`}
           variant="medium-bold"
         >
@@ -196,11 +187,11 @@ export default function CreateQuickPost() {
         </Typography.Body>
         <Typography.Label className="cursor-pointer text-opacity-30">
           {Utils.minifyPubky(handler)}
-        </Typography.Label>
-      </Link>
+        </Typography.Label> */}
+      </div>
       <div
         ref={wrapperRef}
-        className="w-full flex justify-between gap-6 items-start flex-col"
+        className="pl-12 -mt-[10px] w-full flex justify-between gap-6 items-start flex-col"
       >
         <Input.CursorArea
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -208,10 +199,7 @@ export default function CreateQuickPost() {
           }
           value={content}
           maxLength={280}
-          onFocus={() => setTextArea(true)}
-          className={`w-full ${
-            arrayTags.length > 0 ? 'xl:w-[450px]' : 'xl:w-[650px]'
-          } ${textArea ? 'h-auto' : 'h-[25px]'} mt-4`}
+          className={`w-full h-auto mt-4`}
           placeholder="What's in your mind?"
         />
         {videoId && (
@@ -250,58 +238,56 @@ export default function CreateQuickPost() {
             ))}
           </div>
         )}
-        {(textArea || arrayTags.length > 0) && (
-          <Post.Actions>
-            <Button.Action
-              variant="custom"
-              icon={<Icon.Tag size="32" />}
-              onClick={(event) => {
-                event.stopPropagation();
-                setShowModalTag(true);
-              }}
-            />
-            {/* <Button.Action
+        <Post.Actions className="w-full">
+          <Button.Action
+            variant="custom"
+            icon={<Icon.Tag size="32" />}
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowModalTag(true);
+            }}
+          />
+          {/* <Button.Action
               variant="custom"
               icon={<Icon.ImageSquare size="32" />}
             /> */}
-            <Button.Action
-              variant="custom"
-              icon={<Icon.Smiley size="32" />}
-              onClick={(event) => {
-                event.stopPropagation();
-                setShowEmojis(true);
-              }}
-            />
-            {showEmojis && (
-              <div
-                className="absolute translate-y-[10%] translate-x-[30%] z-10"
-                ref={wrapperRefEmojis}
-              >
-                <EmojiPicker
-                  theme={Theme.DARK}
-                  emojiStyle={EmojiStyle.TWITTER}
-                  onEmojiClick={(emojiObject) => {
-                    setContent(content + emojiObject.emoji);
-                  }}
-                />
-              </div>
-            )}
-            <Button.Medium
-              className="w-[158px]"
-              variant="line"
-              icon={
-                <Icon.PaperPlaneRight color={!content ? 'gray' : 'white'} />
-              }
-              disabled={!content}
-              loading={sendingPost}
-              onClick={
-                content && !sendingPost ? () => handleSubmit() : undefined
-              }
+          <Button.Action
+            variant="custom"
+            icon={<Icon.Smiley size="32" />}
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowEmojis(true);
+            }}
+          />
+          {showEmojis && (
+            <div
+              className="absolute translate-y-[10%] translate-x-[30%] z-10"
+              ref={wrapperRefEmojis}
             >
-              Publish post
-            </Button.Medium>
-          </Post.Actions>
-        )}
+              <EmojiPicker
+                theme={Theme.DARK}
+                emojiStyle={EmojiStyle.TWITTER}
+                onEmojiClick={(emojiObject) => {
+                  setContent(content + emojiObject.emoji);
+                }}
+              />
+            </div>
+          )}
+          <div className="grow" />
+          <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
+            {content.length} / 280
+          </div>
+          <Button.Medium
+            className="w-[158px]"
+            variant="line"
+            icon={<Icon.PaperPlaneRight color={!content ? 'gray' : 'white'} />}
+            disabled={!content}
+            loading={sendingPost}
+            onClick={content && !sendingPost ? () => handleSubmit() : undefined}
+          >
+            Publish post
+          </Button.Medium>
+        </Post.Actions>
       </div>
       <Modal.TagCreatePost
         arrayTags={arrayTags}
