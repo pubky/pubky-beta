@@ -76,9 +76,14 @@ export const Content = ({ children, text }: ContentProps) => {
         const trimmedTag = tag.trim().toLowerCase();
         const icon = tagsIcons[trimmedTag];
         return (
-          <span className="text-fuchsia-500 break-all inline-flex items-center gap-1">
-            {tag} {icon && <span>{icon}</span>}
-          </span>
+          <a
+            className="text-fuchsia-500 break-all inline-flex mr-1"
+            href={`/search?tags=${tag.replace('#', '').trim()}`}
+            target="_self"
+            rel="noreferrer"
+          >
+            {tag} {icon && <span className="ml-1">{icon}</span>}
+          </a>
         );
       },
     },

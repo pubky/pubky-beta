@@ -3,25 +3,36 @@
 import { useEffect, useState } from 'react';
 
 import {
+  Button,
+  Icon,
   Post as PostUI,
   PostUtil,
   Tooltip as TooltipUI,
-  Typography,
 } from '@social/ui-shared';
 import { useClientContext } from '../../contexts/client';
 import { IPost, ITaggedPost } from '../../types';
 import { Utils } from './../../utils';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
+import { useRouter } from 'next/navigation';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
 }
 
 export default function Tags({ post }: PostProps) {
+  const router = useRouter();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
-  const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
-    useClientContext();
+  const {
+    pubky,
+    posts,
+    setPosts,
+    getPost,
+    deleteTag,
+    createTag,
+    searchTags,
+    setSearchTags,
+  } = useClientContext();
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
   const [showModalTags, setShowModalTags] = useState(false);
 
@@ -54,17 +65,17 @@ export default function Tags({ post }: PostProps) {
     updatePosts();
   };
 
-  // const handleTagSearch = (tag: string) => {
-  //   if (searchTags.includes(tag)) return;
+  const handleTagSearch = (tag: string) => {
+    if (searchTags.includes(tag)) return;
 
-  //   if (searchTags.length < 3) {
-  //     setSearchTags([...searchTags, tag]);
-  //   } else {
-  //     const newSearchTags = [...searchTags.slice(1), tag];
-  //     setSearchTags(newSearchTags);
-  //   }
-  //   router.push('/search');
-  // };
+    if (searchTags.length < 3) {
+      setSearchTags([...searchTags, tag]);
+    } else {
+      const newSearchTags = [...searchTags.slice(1), tag];
+      setSearchTags(newSearchTags);
+    }
+    router.push('/search');
+  };
 
   if (post?.tags?.length === 0) {
     return <></>;
@@ -92,23 +103,31 @@ export default function Tags({ post }: PostProps) {
                   <Tooltip.Tag tags={tagObj} />
                 )}
                 <PostUtil.Tag
-                  // onClick={(event) => {
-                  //   event.stopPropagation();
-                  //   handleTagSearch(tagObj.tag);
-                  // }}
-                  className={
-                    isTagFound
-                      ? 'hover:border-red-500 hover:bg-red-500 hover:bg-opacity-50'
-                      : ''
-                  }
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleTagSearch(tagObj.tag);
+                  }}
                   clicked={isTagFound}
                   color="fuchsia"
-                  onClick={() =>
-                    isTagFound
-                      ? handleDeleteTag(tagObj.tag)
-                      : handleAddTag(tagObj.tag)
-                  }
+                  // onClick={() =>
+                  //   isTagFound
+                  //     ? handleDeleteTag(tagObj.tag)
+                  //     : handleAddTag(tagObj.tag)
+                  // }
+                  className="flex flex-col pl-9"
                 >
+                  <Button.Action
+                    variant="custom"
+                    size="small"
+                    className="absolute -left-9 transform -translate-y-[21px] scale-75"
+                    icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      isTagFound
+                        ? handleDeleteTag(tagObj.tag)
+                        : handleAddTag(tagObj.tag);
+                    }}
+                  />
                   {Utils.minifyText(tagObj.tag.replace(' ', ''))} (
                   {tagObj.count})
                 </PostUtil.Tag>
@@ -123,9 +142,9 @@ export default function Tags({ post }: PostProps) {
                     ? handleDeleteTag(tagObj.tag)
                     : handleAddTag(tagObj.tag);
                 }}
-              /> */}
-              {/* <PostUtil.Counter counter={tagObj.count} /> */}
-              {/* {tagObj?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
+              />
+              <PostUtil.Counter counter={tagObj.count} />
+              {tagObj?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
                 <Image
                   width={32}
                   height={32}
@@ -140,13 +159,13 @@ export default function Tags({ post }: PostProps) {
             </PostUI.Footer>
           );
         })}
-        <Typography.Body
+        <Button.Action
+          variant="custom"
+          size="small"
+          icon={<Icon.ListBullets />}
           onClick={() => setShowModalTags(true)}
-          className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80 mt-3 font-medium"
-          variant="small"
-        >
-          Show all
-        </Typography.Body>
+          className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+        />
       </div>
       <Modal.Tags
         post={post}
