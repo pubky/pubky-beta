@@ -1,16 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Icon, Tooltip, Post, Typography, Button } from '@social/ui-shared';
+import { Icon, Tooltip, Post, Typography } from '@social/ui-shared';
 import { ITaggedPost } from '../../types';
-import { useRouter } from 'next/navigation';
 
 interface TagProps {
   tags: ITaggedPost;
 }
 
 export default function Tag({ tags }: TagProps) {
-  const router = useRouter();
   const [loadingFollowers, setLoadingFollowers] = useState(true);
 
   const [followersImages, setFollowersImages] = useState<
@@ -41,20 +39,10 @@ export default function Tag({ tags }: TagProps) {
             <div className="inline-flex gap-2">
               <Typography.Label>{tags?.count}</Typography.Label>
               <Typography.Label className="text-opacity-50 text-[10px]">
-                Users Tagged
+                Tagged by
               </Typography.Label>
             </div>
             <Post.UserPic images={followersImages} />
-            <Button.Transparent
-              icon={<Icon.Tag />}
-              onClick={(event) => {
-                event.stopPropagation();
-                router.push(`/search?tags=${tags.tag}`);
-              }}
-              className="w-full"
-            >
-              View All
-            </Button.Transparent>
           </div>
         )}
       </div>
