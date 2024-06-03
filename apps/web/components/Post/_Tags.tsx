@@ -159,7 +159,7 @@ export default function Tags({ post }: PostProps) {
         <Button.Action
           variant="custom"
           size="small"
-          icon={<Icon.ListBullets />}
+          icon={<Icon.Stack />}
           onClick={() => setShowModalTags(true)}
           className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
         />
