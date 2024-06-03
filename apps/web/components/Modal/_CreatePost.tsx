@@ -200,7 +200,7 @@ export default function CreatePost({
       /> */}
       {/* <Modal.Header title="New Post" /> */}
       <Modal.Content className="flex flex-row gap-6">
-        <div className="rounded-2xl flex-col justify-start items-start inline-flex">
+        <div className="rounded-2xl flex-col justify-start items-start inline-flex w-full min-w-[300px] md:min-w-[500px]">
           <div className="absolute justify-start items-center gap-4 flex">
             <Image
               width={32}
