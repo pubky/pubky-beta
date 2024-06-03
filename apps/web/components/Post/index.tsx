@@ -22,7 +22,7 @@ export default function Post({
   size = 'full',
   post,
   layout,
-  fullContent = false,
+  fullContent = true,
   ...rest
 }: PostProps) {
   return (
