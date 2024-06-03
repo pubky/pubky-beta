@@ -117,15 +117,15 @@ export const Content = ({ children, text }: ContentProps) => {
     },
   ];
 
+  const lines = text.split('\n').map((line, index) => (
+    <div key={index} className="min-h-[10px]">
+      <LinkParser watchers={watchers as []}>{line}</LinkParser>
+    </div>
+  ));
+
   return (
     <div className="text-white break-words">
-      <LinkParser
-        watchers={watchers as []}
-        parseNewLine={true}
-        newLineWatcher={`\\n`}
-      >
-        {text}
-      </LinkParser>
+      {lines}
       {videoId && (
         <div className="relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
           <iframe
