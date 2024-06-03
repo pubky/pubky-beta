@@ -1,7 +1,7 @@
 import { Typography } from '../Typography';
 import { twMerge } from 'tailwind-merge';
 
-interface TagProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   clicked: boolean;
   color?: string;
   children: React.ReactNode;
@@ -72,10 +72,10 @@ export const Tag = ({
   }
 
   return (
-    <button
+    <div
       {...rest}
       className={twMerge(
-        `border h-8 px-3 py-1 rounded-full cursor-pointer text-center`,
+        `inline-flex border h-8 px-3 py-1 rounded-full cursor-pointer text-center`,
         cssClasses,
         rest.className
       )}
@@ -86,6 +86,6 @@ export const Tag = ({
         </Typography.Body>
         {action}
       </div>
-    </button>
+    </div>
   );
 };

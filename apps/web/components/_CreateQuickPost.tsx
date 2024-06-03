@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Icon, Input, Post } from '@social/ui-shared';
+import { Button, Icon, Input, Post, PostUtil } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { useClientContext } from '../contexts/client';
@@ -9,6 +9,7 @@ import { INewPost } from '../types';
 import Modal from './Modal';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
+import { Utils } from '../utils';
 
 export default function CreateQuickPost() {
   const { pubky, getProfile, createPost, setPosts, createTag } =
@@ -198,7 +199,7 @@ export default function CreateQuickPost() {
             setContent(e.target.value)
           }
           value={content}
-          maxLength={280}
+          maxLength={300}
           className={`w-full h-auto mt-4`}
           placeholder="What's in your mind?"
         />
@@ -227,14 +228,23 @@ export default function CreateQuickPost() {
         {arrayTags.length > 0 && (
           <div className="inline-flex gap-2 mt-2">
             {arrayTags.map((tag, index) => (
-              <Button.Medium
+              <PostUtil.Tag
                 key={index}
-                onClick={() =>
-                  setArrayTags((prev) => prev.filter((item) => item !== tag))
-                }
+                clicked={false}
+                color="fuchsia"
+                className="flex flex-col pl-9"
               >
-                {tag}
-              </Button.Medium>
+                <Button.Action
+                  variant="custom"
+                  size="small"
+                  className="absolute -left-9 transform -translate-y-[21px] scale-75"
+                  icon={<Icon.Minus />}
+                  onClick={() =>
+                    setArrayTags((prev) => prev.filter((item) => item !== tag))
+                  }
+                />
+                {Utils.minifyText(tag.replace(' ', ''))}
+              </PostUtil.Tag>
             ))}
           </div>
         )}
@@ -247,10 +257,6 @@ export default function CreateQuickPost() {
               setShowModalTag(true);
             }}
           />
-          {/* <Button.Action
-              variant="custom"
-              icon={<Icon.ImageSquare size="32" />}
-            /> */}
           <Button.Action
             variant="custom"
             icon={<Icon.Smiley size="32" />}
@@ -258,6 +264,11 @@ export default function CreateQuickPost() {
               event.stopPropagation();
               setShowEmojis(true);
             }}
+          />
+          <Button.Action
+            variant="custom"
+            disabled
+            icon={<Icon.ImageSquare color={'gray'} size="32" />}
           />
           {showEmojis && (
             <div
@@ -275,7 +286,7 @@ export default function CreateQuickPost() {
           )}
           <div className="grow" />
           <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
-            {content.length} / 280
+            {content.length} / 300
           </div>
           <Button.Medium
             className="w-[158px]"
