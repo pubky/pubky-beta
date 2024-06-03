@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import {
-  Button,
-  Card,
-  Icon,
-  Input,
-  Modal,
-  PostUtil,
-  Typography,
-} from '@social/ui-shared';
-import { z } from 'zod';
+import { Button, Icon, Input, Modal, Post, PostUtil } from '@social/ui-shared';
+import { useEffect, useRef, useState } from 'react';
+import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { useClientContext } from '../../contexts/client';
+import Image from 'next/image';
+import { Modal as ModalComponent } from '.';
 import { INewPost } from '../../types';
+import getYouTubeID from 'get-youtube-id';
+import { Tweet } from 'react-tweet';
+import { Utils } from '../../utils';
+import { useAlertContext } from '../../contexts/alerts';
 
 interface CreatePostProps {
   showModalPost: boolean;
@@ -19,29 +17,87 @@ interface CreatePostProps {
   setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface FormErrors {
-  [fieldName: string]: string[];
-}
-
-const postSchema = z.object({
-  content: z.string(),
-});
-
 export default function CreatePost({
   showModalPost,
   setShowModalPost,
   modalPostRef,
   setShowModalLink,
 }: CreatePostProps) {
-  const { createPost, createTag, setPosts } = useClientContext();
+  const { pubky, getProfile, createPost, setPosts, createTag } =
+    useClientContext();
+  const { setContent, setShow } = useAlertContext();
+  const [pic, setPic] = useState('/images/Userpic.png');
+  const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
-  const [content, setContent] = useState('');
-  const [tag, setTag] = useState('');
+  const [showModalTag, setShowModalTag] = useState(false);
+  const [showEmojis, setShowEmojis] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
-  const [tagsError, setTagsError] = useState(false);
-  const [errors, setErrors] = useState({
-    content: '',
-  });
+  const [preview, setPreview] = useState('');
+  const [videoId, setVideoId] = useState('');
+  const [tweetId, setTweetId] = useState('');
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+
+  const checkForLink = (text: string) => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const url = text.match(urlRegex);
+      if (url) {
+        setPreview(url[0]);
+
+        const youtubeId = getYouTubeID(text);
+        if (youtubeId) {
+          setVideoId(youtubeId);
+        } else {
+          setVideoId('');
+        }
+
+        const twitterRegex =
+          /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/;
+        const twitterMatch = text.match(twitterRegex);
+        if (twitterMatch) {
+          const tweetId = twitterMatch[3];
+          setTweetId(tweetId);
+        } else {
+          setTweetId('');
+        }
+      } else {
+        setPreview('');
+      }
+    }, 1000);
+
+    setDebounceTimeout(timeout);
+  };
+
+  useEffect(() => {
+    checkForLink(contentPost);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentPost]);
+
+  async function fetchProfile() {
+    try {
+      if (!pubky) return;
+      const userProfile = await getProfile();
+
+      if (userProfile) {
+        setPic(userProfile?.image || '/images/Userpic.png');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubky]);
 
   const handleSubmit = async () => {
     if (sendingPost) {
@@ -49,47 +105,47 @@ export default function CreatePost({
     }
     try {
       setSendingPost(true);
-      setErrors({
-        content: '',
-      });
-      const result = postSchema.safeParse({
-        content,
-      });
 
-      if (!result.success) {
-        const newErrors: FormErrors = result.error.flatten().fieldErrors;
-
-        const errorMessages = Object.keys(newErrors).reduce(
-          (acc: { [key: string]: string }, key) => {
-            acc[key] = newErrors[key].join(', ');
-            return acc;
-          },
-          {}
-        );
-
-        setErrors((prev) => ({ ...prev, ...errorMessages }));
-        return;
-      }
-      try {
-        const newPost = await createPost(content);
-        if (newPost) {
-          for (const tag of arrayTags) {
-            await createTag(newPost.uri, tag);
-          }
-
-          setPosts((prev: INewPost) => ({
-            ...{ [newPost.uri]: newPost },
-            ...prev,
-          }));
-
-          setShowModalPost(false);
-          setArrayTags([]);
-          setTag('');
-          setContent('');
+      const newPost = await createPost(contentPost);
+      if (newPost) {
+        for (const tag of arrayTags) {
+          await createTag(newPost.uri, tag);
         }
-      } catch (error) {
-        console.log(error);
+
+        const userProfile = await getProfile();
+
+        if (userProfile) {
+          newPost.tags = arrayTags.map((tag) => ({
+            tag,
+            count: 1,
+            from: [
+              {
+                id: `${pubky}`,
+                createdAt: Date.now(),
+                indexedAt: Date.now(),
+
+                author: {
+                  id: `${pubky}`,
+                  uri: `pubky:${pubky}`,
+                  profile: userProfile,
+                },
+              },
+            ],
+          }));
+        }
+        setPosts((prev: INewPost) => ({
+          ...{ [newPost.id]: newPost },
+          ...prev,
+        }));
       }
+      setArrayTags([]);
+      setContentPost('');
+      setPreview('');
+      setVideoId('');
+      setTweetId('');
+      setShowModalPost(false);
+      setContent('Post created!');
+      setShow(true);
     } catch (error) {
       console.log(error);
     } finally {
@@ -97,39 +153,37 @@ export default function CreatePost({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.replace(/\s/g, '');
-    setTag(valueWithoutSpaces);
-  };
-
-  const handleAddTag = () => {
-    if (arrayTags.length >= 4) {
-      setTagsError(true);
-    } else {
-      const trimmedTag = tag.trim();
-      if (trimmedTag !== '') {
-        if (!arrayTags.includes(trimmedTag)) {
-          setTag('');
-          setArrayTags([...arrayTags, trimmedTag]);
-        } else {
-          setTag('');
-        }
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojis(false);
       }
-    }
-  };
+    };
+    document.addEventListener('mousedown', handleClickOutside);
 
-  const handleRemoveTag = (indexToRemove: number) => {
-    setArrayTags(arrayTags.filter((_, index) => index !== indexToRemove));
-    if (arrayTags.length <= 4) {
-      setTagsError(false);
-    }
-  };
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [wrapperRef, contentPost]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleAddTag();
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRefEmojis.current &&
+        !wrapperRefEmojis.current.contains(event.target as Node)
+      ) {
+        setShowEmojis(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [wrapperRefEmojis]);
 
   return (
     <Modal.Root
@@ -138,152 +192,152 @@ export default function CreatePost({
       closeModal={() => {
         setShowModalPost(false);
         setArrayTags([]);
-        setTag('');
-        setTagsError(false);
       }}
       className="max-w-[1200px]"
     >
-      <Modal.CloseAction
+      {/* <Modal.CloseAction
         onClick={() => {
           setShowModalPost(false);
           setArrayTags([]);
-          setTag('');
           setContent('');
-          setTagsError(false);
         }}
-      />
-      <Modal.Header title="New Post" />
-      <Modal.Content className="inline-flex flex-col mt-6 gap-2 lg:grid lg:grid-cols-3 lg:gap-6">
-        <div className="col-span-2">
-          <div>
-            <Card.Primary
-              background="bg-white bg-opacity-10"
-              className="scrollbar-thin scrollbar-webkit overflow-x-auto h-[285px] border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg flex flex-col"
-            >
-              <div className="h-full">
-                <Input.TextArea
-                  className="no-scrollbar h-[240px]"
-                  maxLength={280}
-                  placeholder="Write content, drop an image, or paste a link"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setContent(e.target.value)
-                  }
-                  defaultValue={content}
-                  error={errors.content}
-                />
-              </div>
-              {/**<div className="hidden lg:flex relative">
-                  <img
-                    className="max-w-full rounded-lg"
-                    alt="image"
-                    src="/images/user.png"
-                  />
-                   <Button.Action
-                      variant="custom"
-                      icon={<Icon.X size="24" />}
-                      className='-ml-6 -mt-5'
-                    />
-                </div>
-                <div>
-                  <Content.Divider />
-                 <div className='flex'>
-                  <Typography.H2>
-                    Weighing Options of Bitcoin Private Key Management
-                  </Typography.H2>
-                  <Button.Action
-                      variant="custom"
-                      icon={<Icon.X size="24" />}
-                    />
-                    </div>
-                  <Typography.Caption className="text-white text-opacity-80">
-                    https://bitcoinmagazine.com/
-                  </Typography.Caption>
-                  <img
-                    alt="postImage"
-                    src="/images/user.png"
-                    className="mt-6 max-w-full rounded-2xl"
-                  />
-  </div>*/}
-            </Card.Primary>
-          </div>
-          <div className="gap-3 flex mt-9">
-            <Button.Action
-              variant="image"
-              label="Image"
-              onClick={() => console.log('button clicked 1')}
-              className="hidden lg:flex"
+      /> */}
+      {/* <Modal.Header title="New Post" /> */}
+      <Modal.Content className="flex flex-row gap-6">
+        <div className="rounded-2xl flex-col justify-start items-start inline-flex w-full min-w-[300px] md:min-w-[500px]">
+          <div className="absolute justify-start items-center gap-4 flex">
+            <Image
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-full"
+              alt="user-image"
+              src={pic}
             />
-            {/** <Button.Action
-              variant="link"
-              label="Link"
-              onClick={() => {
-                setShowModalLink(true);
-              }}
-              className="hidden lg:flex"
-            />*/}
           </div>
-        </div>
-        <div className="flex-col inline-flex justify-between">
-          <div className="flex-col justify-start items-start gap-5  inline-flex">
-            <Typography.H2 className="hidden lg:block">
-              {arrayTags.length > 0 ? 'Your Tags' : 'Add Tags'}
-            </Typography.H2>
-            {arrayTags.length > 0 ? (
-              <div className="hidden lg:block justify-start items-start">
+          <div
+            ref={wrapperRef}
+            className="pl-12 -mt-[10px] w-full flex justify-between gap-6 items-start flex-col"
+          >
+            <Input.CursorArea
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setContentPost(e.target.value)
+              }
+              value={contentPost}
+              maxLength={300}
+              className={`w-full h-auto mt-4`}
+              placeholder="What's in your mind?"
+            />
+            {videoId && (
+              <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
+                <iframe
+                  width="100%"
+                  height="315"
+                  src={`https://www.youtube.com/embed/${videoId}`}
+                  title="YouTube video player"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )}
+            {preview && !videoId && !tweetId && (
+              <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
+                <Post.LinkPreview url={preview} />
+              </div>
+            )}
+            {tweetId && (
+              <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
+                <Tweet id={tweetId} />
+              </div>
+            )}
+            {arrayTags.length > 0 && (
+              <div className="inline-flex gap-2 mt-2">
                 {arrayTags.map((tag, index) => (
                   <PostUtil.Tag
                     key={index}
-                    action={
-                      <div onClick={() => handleRemoveTag(index)}>
-                        <Icon.X size="20" />
-                      </div>
-                    }
-                    clicked
+                    clicked={false}
                     color="fuchsia"
-                    className="mr-2 my-1"
+                    className="flex flex-col pl-9"
                   >
-                    {tag}
+                    <Button.Action
+                      variant="custom"
+                      size="small"
+                      className="absolute -left-9 transform -translate-y-[21px] scale-75"
+                      icon={<Icon.Minus />}
+                      onClick={() =>
+                        setArrayTags((prev) =>
+                          prev.filter((item) => item !== tag)
+                        )
+                      }
+                    />
+                    {Utils.minifyText(tag.replace(' ', ''))}
                   </PostUtil.Tag>
                 ))}
               </div>
-            ) : (
-              <Typography.Body variant="small" className="text-opacity-30">
-                No tags yet
-              </Typography.Body>
             )}
-            <div className="hidden lg:flex flex-col w-full items-start">
-              <Input.Label value="Add tag:" />
-              <Input.Text
-                placeholder="Tag"
-                value={tag}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                action={
-                  <Button.Action
-                    variant="custom"
-                    icon={<Icon.Plus size="20" />}
-                    onClick={handleAddTag}
+            <Post.Actions className="w-full">
+              <Button.Action
+                variant="custom"
+                icon={<Icon.Tag size="32" />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowModalTag(true);
+                }}
+              />
+              <Button.Action
+                variant="custom"
+                icon={<Icon.Smiley size="32" />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowEmojis(true);
+                }}
+              />
+              <Button.Action
+                variant="custom"
+                disabled
+                icon={<Icon.ImageSquare color={'gray'} size="32" />}
+              />
+              {showEmojis && (
+                <div
+                  className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                  ref={wrapperRefEmojis}
+                >
+                  <EmojiPicker
+                    theme={Theme.DARK}
+                    emojiStyle={EmojiStyle.TWITTER}
+                    onEmojiClick={(emojiObject) => {
+                      setContentPost(contentPost + emojiObject.emoji);
+                    }}
+                  />
+                </div>
+              )}
+              <div className="grow" />
+              <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
+                {contentPost.length} / 300
+              </div>
+              <Button.Medium
+                className="w-[158px]"
+                variant="line"
+                icon={
+                  <Icon.PaperPlaneRight
+                    color={!contentPost ? 'gray' : 'white'}
                   />
                 }
-              />
-            </div>
+                disabled={!contentPost}
+                loading={sendingPost}
+                onClick={
+                  contentPost && !sendingPost ? () => handleSubmit() : undefined
+                }
+              >
+                Publish post
+              </Button.Medium>
+            </Post.Actions>
           </div>
-          {tagsError && (
-            <Typography.Body variant="small" className="text-[#e95164]">
-              Max 4 tags
-            </Typography.Body>
-          )}
-          <div className="w-full mt-6">
-            <Modal.SubmitAction
-              disabled={!content}
-              loading={sendingPost}
-              onClick={
-                content && !sendingPost ? () => handleSubmit() : undefined
-              }
-            >
-              Publish Post
-            </Modal.SubmitAction>
-          </div>
+          <ModalComponent.TagCreatePost
+            arrayTags={arrayTags}
+            setArrayTags={setArrayTags}
+            showModalTag={showModalTag}
+            setShowModalTag={setShowModalTag}
+          />
         </div>
       </Modal.Content>
     </Modal.Root>

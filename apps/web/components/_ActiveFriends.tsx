@@ -1,14 +1,13 @@
 'use client';
 
-// import { useRouter } from 'next/navigation';
-import { Content, Icon, SideCard, Typography } from '@social/ui-shared';
+import { Content, SideCard, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../contexts/client';
 import { Utils } from '../utils';
 import { IFriendsResponse } from '../types';
+import Skeletons from './Skeletons';
 
 export default function ActiveFriends() {
-  // const router = useRouter();
   const { pubky, listFollowers, listFollowing } = useClientContext();
   const [friends, setFriends] = useState<IFriendsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,17 +52,7 @@ export default function ActiveFriends() {
       <SideCard.Header title="Active Friends" />
       <SideCard.Content>
         {loading ? (
-          <>
-            <div className="flex w-full justify-center">
-              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-            </div>
-            <Typography.Body
-              variant="medium-bold"
-              className="col-span-3 mt-2 flex justify-center items-center gap-6 text-opacity-20"
-            >
-              Loading Active Friends
-            </Typography.Body>
-          </>
+          <Skeletons.Simple />
         ) : friends && friends.friends.length > 0 ? (
           <>
             {friends.friends.slice(0, 3).map((friend, index: number) => {
@@ -84,11 +73,6 @@ export default function ActiveFriends() {
                 </div>
               );
             })}
-            {/** <SideCard.Action
-              onClick={() => router.push('/active-friends')}
-              icon={<Icon.UsersLeft size="20" />}
-              text="See all"
-          />*/}
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">

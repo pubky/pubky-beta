@@ -6,10 +6,8 @@ interface PostsLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function PostsLayout({ children, ...rest }: PostsLayoutProps) {
   return (
-    <>
-      <div {...rest} className={twMerge(rest.className)}>
-        {children}
-      </div>
-    </>
+    <div {...rest} className={twMerge(rest.className)}>
+      {children}
+    </div>
   );
 }

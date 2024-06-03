@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { DropDown } from '../../../components/DropDown';
 import { useClientContext } from '../../../contexts/client';
 import { Utils } from '../../../utils';
-import { useEffect, useState } from 'react';
 
 interface CountContacts {
   followers: number;
@@ -27,13 +26,8 @@ export default function Me({
   countContacts,
   loadingContacts,
 }: MeProps) {
-  const [pubkyText, setPubkyText] = useState('');
   const { pubky } = useClientContext();
   const profileLink = pubkey === pubky ? '/profile' : `/profile/${pubkey}`;
-
-  useEffect(() => {
-    setPubkyText(Utils.minifyPubky(pubkey));
-  }, [pubkey]);
 
   return (
     <div className="pb-8 sm:pb-12 lg:flex justify-start">
@@ -48,12 +42,12 @@ export default function Me({
               alt="user-pic"
             />
             <div className="flex-col inline-flex">
-              <Typography.Label className="text-opacity-30">
-                {pubkyText}
-              </Typography.Label>
               <Typography.H2 className="text-sm sm:text-2xl">
                 {Utils.minifyText(name, 24)}
               </Typography.H2>
+              <Typography.Label className="text-opacity-30">
+                {Utils.minifyPubky(pubkey)}
+              </Typography.Label>
             </div>
           </div>
         </Link>

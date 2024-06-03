@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useClientContext } from '../contexts/client';
 import { Utils } from '../utils';
 import { IRecommendedProfiles } from '../types';
+import Skeletons from './Skeletons';
 
 export default function WhoFollow() {
   const { pubky, getRecommendedProfiles, follow, unfollow, listFollowing } =
@@ -129,17 +130,7 @@ export default function WhoFollow() {
       <SideCard.Header title="Who to follow" />
       <SideCard.Content>
         {loading ? (
-          <>
-            <div className="flex w-full justify-center">
-              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-            </div>
-            <Typography.Body
-              variant="medium-bold"
-              className="col-span-3 mt-2 flex justify-center items-center gap-6 text-opacity-20"
-            >
-              Loading Who to follow
-            </Typography.Body>
-          </>
+          <Skeletons.Simple />
         ) : recommendedProfiles && recommendedProfiles.length > 0 ? (
           recommendedProfiles
             .slice(0, 3)

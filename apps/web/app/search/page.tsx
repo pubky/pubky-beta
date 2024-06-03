@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Content, Icon, Typography } from '@social/ui-shared';
+import { Content, Typography } from '@social/ui-shared';
 import {
   ActiveFriends,
   CreatePost,
@@ -17,6 +17,7 @@ import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { IPost } from '../../types';
 import { Filter } from '../../components/Filter';
+import Skeletons from '../../components/Skeletons';
 
 const SearchContent = () => {
   const router = useRouter();
@@ -132,23 +133,7 @@ const SearchContent = () => {
               </Typography.H2>
             </div>
           )}
-          {loading && (
-            <div className="flex w-full justify-center flex-col">
-              <div
-                className={`flex w-full justify-center ${
-                  Object.keys(posts).length === 0 ? 'mt-10' : 'mt-2'
-                }`}
-              >
-                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-              </div>
-              <Typography.Body
-                variant="medium-bold"
-                className="col-span-3 mt-2 flex justify-center items-center gap-6 text-opacity-20"
-              >
-                Loading Posts
-              </Typography.Body>
-            </div>
-          )}
+          {loading && <Skeletons.Simple />}
         </PostsLayout>
         <Sidebar className="hidden 2xl:block">
           <WhoFollow />

@@ -44,14 +44,14 @@ export default function List({
             className="rounded-full w-[48px] h-[48px]"
           />
           <div className="flex-col justify-center items-start gap-1 inline-flex">
-            <Typography.Label className="text-opacity-30 -mb-1">
-              {Utils.minifyPubky(contactId)}
-            </Typography.Label>
             <Typography.Body variant="medium-bold">
               {contact.profile.name
                 ? Utils.minifyText(contact.profile.name, 12)
                 : ''}
             </Typography.Body>
+            <Typography.Label className="text-opacity-30 -mb-1">
+              {Utils.minifyPubky(contactId)}
+            </Typography.Label>
           </div>
         </Link>
         <div className="lg:flex justify-start items-center lg:w-full">

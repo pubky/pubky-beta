@@ -1,3 +1,4 @@
+import copyToClipboard from './_copytoClipboard';
 import decodePostUri from './_decodePostUIri';
 import encodePostUri from './_encodePostUri';
 import minifyPubky from './_minifyPubky';
@@ -14,4 +15,5 @@ export const Utils = {
   minifyText,
   timeAgo,
   statusHelper,
+  copyToClipboard,
 };
