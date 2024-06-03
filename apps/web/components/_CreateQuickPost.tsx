@@ -10,12 +10,14 @@ import Modal from './Modal';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
 import { Utils } from '../utils';
+import { useAlertContext } from '../contexts/alerts';
 
 export default function CreateQuickPost() {
   const { pubky, getProfile, createPost, setPosts, createTag } =
     useClientContext();
+  const { setContent, setShow } = useAlertContext();
   const [pic, setPic] = useState('/images/Userpic.png');
-  const [content, setContent] = useState('');
+  const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
@@ -65,9 +67,9 @@ export default function CreateQuickPost() {
   };
 
   useEffect(() => {
-    checkForLink(content);
+    checkForLink(contentPost);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content]);
+  }, [contentPost]);
 
   async function fetchProfile() {
     try {
@@ -94,7 +96,7 @@ export default function CreateQuickPost() {
     try {
       setSendingPost(true);
 
-      const newPost = await createPost(content);
+      const newPost = await createPost(contentPost);
       if (newPost) {
         for (const tag of arrayTags) {
           await createTag(newPost.uri, tag);
@@ -127,10 +129,12 @@ export default function CreateQuickPost() {
         }));
       }
       setArrayTags([]);
-      setContent('');
+      setContentPost('');
       setPreview('');
       setVideoId('');
       setTweetId('');
+      setContent('Post created!');
+      setShow(true);
     } catch (error) {
       console.log(error);
     } finally {
@@ -152,7 +156,7 @@ export default function CreateQuickPost() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [wrapperRef, content]);
+  }, [wrapperRef, contentPost]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -196,9 +200,9 @@ export default function CreateQuickPost() {
       >
         <Input.CursorArea
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-            setContent(e.target.value)
+            setContentPost(e.target.value)
           }
-          value={content}
+          value={contentPost}
           maxLength={300}
           className={`w-full h-auto mt-4`}
           placeholder="What's in your mind?"
@@ -279,22 +283,26 @@ export default function CreateQuickPost() {
                 theme={Theme.DARK}
                 emojiStyle={EmojiStyle.TWITTER}
                 onEmojiClick={(emojiObject) => {
-                  setContent(content + emojiObject.emoji);
+                  setContentPost(contentPost + emojiObject.emoji);
                 }}
               />
             </div>
           )}
           <div className="grow" />
           <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
-            {content.length} / 300
+            {contentPost.length} / 300
           </div>
           <Button.Medium
             className="w-[158px]"
             variant="line"
-            icon={<Icon.PaperPlaneRight color={!content ? 'gray' : 'white'} />}
-            disabled={!content}
+            icon={
+              <Icon.PaperPlaneRight color={!contentPost ? 'gray' : 'white'} />
+            }
+            disabled={!contentPost}
             loading={sendingPost}
-            onClick={content && !sendingPost ? () => handleSubmit() : undefined}
+            onClick={
+              contentPost && !sendingPost ? () => handleSubmit() : undefined
+            }
           >
             Publish post
           </Button.Medium>
