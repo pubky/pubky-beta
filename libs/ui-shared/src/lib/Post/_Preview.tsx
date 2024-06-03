@@ -56,7 +56,7 @@ function LinkPreview({ url }: { url: string }) {
   };
 
   return (
-    <div>
+    <div className="w-full">
       {(previewData.title || previewData.description) &&
         (previewData.image ? (
           <div

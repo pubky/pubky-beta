@@ -1,69 +1,75 @@
 'use client';
 
-import {
-  Button,
-  Icon,
-  Input,
-  Post,
-  PostUtil,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, Input, Post, PostUtil } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
+import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { useClientContext } from '../contexts/client';
-import { Utils } from '../utils';
 import Image from 'next/image';
 import { INewPost } from '../types';
-import Link from 'next/link';
 import Modal from './Modal';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
+import { Utils } from '../utils';
+import { useAlertContext } from '../contexts/alerts';
 
 export default function CreateQuickPost() {
   const { pubky, getProfile, createPost, setPosts, createTag } =
     useClientContext();
+  const { setContent, setShow } = useAlertContext();
   const [pic, setPic] = useState('/images/Userpic.png');
-  const [name, setName] = useState('Loading...');
-  const [handler, setHandler] = useState('');
-  const [content, setContent] = useState('');
+  const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
+  const [showEmojis, setShowEmojis] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
-  const [textArea, setTextArea] = useState(false);
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
-  function checkForLink(text: string) {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const url = text.match(urlRegex);
-    if (url) {
-      setPreview(url[0]);
-
-      const youtubeId = getYouTubeID(text);
-      if (youtubeId) {
-        setVideoId(youtubeId);
-      } else {
-        setVideoId('');
-      }
-
-      const twitterRegex =
-        /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/;
-      const twitterMatch = text.match(twitterRegex);
-      if (twitterMatch) {
-        const tweetId = twitterMatch[3];
-        setTweetId(tweetId);
-      } else {
-        setTweetId('');
-      }
-    } else {
-      setPreview('');
+  const checkForLink = (text: string) => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
     }
-  }
+
+    const timeout = setTimeout(() => {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const url = text.match(urlRegex);
+      if (url) {
+        setPreview(url[0]);
+
+        const youtubeId = getYouTubeID(text);
+        if (youtubeId) {
+          setVideoId(youtubeId);
+        } else {
+          setVideoId('');
+        }
+
+        const twitterRegex =
+          /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/;
+        const twitterMatch = text.match(twitterRegex);
+        if (twitterMatch) {
+          const tweetId = twitterMatch[3];
+          setTweetId(tweetId);
+        } else {
+          setTweetId('');
+        }
+      } else {
+        setPreview('');
+      }
+    }, 1000);
+
+    setDebounceTimeout(timeout);
+  };
 
   useEffect(() => {
-    checkForLink(content);
-  }, [content]);
+    checkForLink(contentPost);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentPost]);
 
   async function fetchProfile() {
     try {
@@ -72,8 +78,6 @@ export default function CreateQuickPost() {
 
       if (userProfile) {
         setPic(userProfile?.image || '/images/Userpic.png');
-        setName(userProfile?.name || 'Loading...');
-        setHandler(pubky);
       }
     } catch (error) {
       console.log(error);
@@ -92,21 +96,45 @@ export default function CreateQuickPost() {
     try {
       setSendingPost(true);
 
-      const newPost = await createPost(content);
+      const newPost = await createPost(contentPost);
       if (newPost) {
         for (const tag of arrayTags) {
           await createTag(newPost.uri, tag);
         }
+
+        const userProfile = await getProfile();
+
+        if (userProfile) {
+          newPost.tags = arrayTags.map((tag) => ({
+            tag,
+            count: 1,
+            from: [
+              {
+                id: `${pubky}`,
+                createdAt: Date.now(),
+                indexedAt: Date.now(),
+
+                author: {
+                  id: `${pubky}`,
+                  uri: `pubky:${pubky}`,
+                  profile: userProfile,
+                },
+              },
+            ],
+          }));
+        }
         setPosts((prev: INewPost) => ({
-          ...{ [newPost.uri]: newPost },
+          ...{ [newPost.id]: newPost },
           ...prev,
         }));
       }
       setArrayTags([]);
-      setContent('');
+      setContentPost('');
       setPreview('');
       setVideoId('');
       setTweetId('');
+      setContent('Post created!');
+      setShow(true);
     } catch (error) {
       console.log(error);
     } finally {
@@ -120,7 +148,7 @@ export default function CreateQuickPost() {
         wrapperRef.current &&
         !wrapperRef.current.contains(event.target as Node)
       ) {
-        setTextArea(false);
+        setShowEmojis(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -128,14 +156,27 @@ export default function CreateQuickPost() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [wrapperRef]);
+  }, [wrapperRef, contentPost]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRefEmojis.current &&
+        !wrapperRefEmojis.current.contains(event.target as Node)
+      ) {
+        setShowEmojis(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [wrapperRefEmojis]);
 
   return (
-    <div className="p-6 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
-      <Link
-        href="/profile"
-        className="cursor-pointer justify-start items-center gap-4 flex"
-      >
+    <div className="p-6 mb-4 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
+      <div className="absolute justify-start items-center gap-4 flex">
         <Image
           width={32}
           height={32}
@@ -143,7 +184,7 @@ export default function CreateQuickPost() {
           alt="user-image"
           src={pic}
         />
-        <Typography.Body
+        {/* <Typography.Body
           className={`hover:underline hover:decoration-solid`}
           variant="medium-bold"
         >
@@ -151,92 +192,121 @@ export default function CreateQuickPost() {
         </Typography.Body>
         <Typography.Label className="cursor-pointer text-opacity-30">
           {Utils.minifyPubky(handler)}
-        </Typography.Label>
-      </Link>
+        </Typography.Label> */}
+      </div>
       <div
         ref={wrapperRef}
-        className="w-full flex justify-between gap-6 items-start flex-col xl:flex-row"
+        className="pl-12 -mt-[10px] w-full flex justify-between gap-6 items-start flex-col"
       >
-        <div>
-          <Input.CursorArea
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setContent(e.target.value)
-            }
-            value={content}
-            maxLength={280}
-            onFocus={() => setTextArea(true)}
-            className={`w-full ${
-              arrayTags.length > 0 ? 'xl:w-[450px]' : 'xl:w-[650px]'
-            } ${textArea ? 'h-auto' : 'h-[25px]'} mt-4`}
-            placeholder="What's in your mind?"
-          />
-          {videoId && (
-            <div className="relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
-              <iframe
-                width="100%"
-                height="315"
-                src={`https://www.youtube.com/embed/${videoId}`}
-                title="YouTube video player"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          )}
-          {preview && !videoId && !tweetId && (
+        <Input.CursorArea
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            setContentPost(e.target.value)
+          }
+          value={contentPost}
+          maxLength={300}
+          className={`w-full h-auto mt-4`}
+          placeholder="What's in your mind?"
+        />
+        {videoId && (
+          <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
+            <iframe
+              width="100%"
+              height="315"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title="YouTube video player"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
+        {preview && !videoId && !tweetId && (
+          <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
             <Post.LinkPreview url={preview} />
-          )}
-          {tweetId && (
-            <div className="flex overflow-hidden justify-start -mt-2 -mb-6">
-              <Tweet id={tweetId} />
-            </div>
-          )}
-          {(textArea || arrayTags.length > 0) && (
-            <Post.Actions>
-              <Button.Action
-                variant="custom"
-                icon={<Icon.Tag size="32" />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setShowModalTag(true);
+          </div>
+        )}
+        {tweetId && (
+          <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
+            <Tweet id={tweetId} />
+          </div>
+        )}
+        {arrayTags.length > 0 && (
+          <div className="inline-flex gap-2 mt-2">
+            {arrayTags.map((tag, index) => (
+              <PostUtil.Tag
+                key={index}
+                clicked={false}
+                color="fuchsia"
+                className="flex flex-col pl-9"
+              >
+                <Button.Action
+                  variant="custom"
+                  size="small"
+                  className="absolute -left-9 transform -translate-y-[21px] scale-75"
+                  icon={<Icon.Minus />}
+                  onClick={() =>
+                    setArrayTags((prev) => prev.filter((item) => item !== tag))
+                  }
+                />
+                {Utils.minifyText(tag.replace(' ', ''))}
+              </PostUtil.Tag>
+            ))}
+          </div>
+        )}
+        <Post.Actions className="w-full">
+          <Button.Action
+            variant="custom"
+            icon={<Icon.Tag size="32" />}
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowModalTag(true);
+            }}
+          />
+          <Button.Action
+            variant="custom"
+            icon={<Icon.Smiley size="32" />}
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowEmojis(true);
+            }}
+          />
+          <Button.Action
+            variant="custom"
+            disabled
+            icon={<Icon.ImageSquare color={'gray'} size="32" />}
+          />
+          {showEmojis && (
+            <div
+              className="absolute translate-y-[10%] translate-x-[30%] z-10"
+              ref={wrapperRefEmojis}
+            >
+              <EmojiPicker
+                theme={Theme.DARK}
+                emojiStyle={EmojiStyle.TWITTER}
+                onEmojiClick={(emojiObject) => {
+                  setContentPost(contentPost + emojiObject.emoji);
                 }}
               />
-              <Button.Action
-                variant="custom"
-                icon={<Icon.ImageSquare size="32" />}
-              />
-              <Button.Medium
-                className="w-[158px]"
-                variant="line"
-                icon={
-                  <Icon.PaperPlaneRight color={!content ? 'gray' : 'white'} />
-                }
-                disabled={!content}
-                loading={sendingPost}
-                onClick={
-                  content && !sendingPost ? () => handleSubmit() : undefined
-                }
-              >
-                Publish post
-              </Button.Medium>
-            </Post.Actions>
-          )}
-        </div>
-        <div>
-          {arrayTags.length > 0 && (
-            <div className="justify-start items-start">
-              {arrayTags.map((tag, index) => (
-                <PostUtil.Tag
-                  key={index}
-                  clicked
-                  color="fuchsia"
-                  className="mr-2 my-1"
-                >
-                  {tag}
-                </PostUtil.Tag>
-              ))}
             </div>
           )}
-        </div>
+          <div className="grow" />
+          <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
+            {contentPost.length} / 300
+          </div>
+          <Button.Medium
+            className="w-[158px]"
+            variant="line"
+            icon={
+              <Icon.PaperPlaneRight color={!contentPost ? 'gray' : 'white'} />
+            }
+            disabled={!contentPost}
+            loading={sendingPost}
+            onClick={
+              contentPost && !sendingPost ? () => handleSubmit() : undefined
+            }
+          >
+            Publish post
+          </Button.Medium>
+        </Post.Actions>
       </div>
       <Modal.TagCreatePost
         arrayTags={arrayTags}

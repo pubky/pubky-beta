@@ -1,7 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { Utils } from '../../utils';
 import { Post as PostUI } from '@social/ui-shared';
 
 import { IPost, TLayouts, TSize } from '../../types';
@@ -24,17 +22,13 @@ export default function Post({
   size = 'full',
   post,
   layout,
-  fullContent = false,
+  fullContent = true,
   ...rest
 }: PostProps) {
-  const router = useRouter();
   return (
     <div>
       <div className="flex flex-col">
-        <PostUI.Root
-          className="cursor-pointer"
-          onClick={() => router.push(Utils.encodePostUri(post?.uri))}
-        >
+        <PostUI.Root>
           <div>
             {/* {repost && (
               <PostUI.RepostCard>

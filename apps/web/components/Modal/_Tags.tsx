@@ -1,15 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import {
-  PostUtil,
-  Modal,
-  Input,
-  SideCard,
-  Button,
-  Icon,
-  Typography,
-} from '@social/ui-shared';
+import { PostUtil, Modal, SideCard, Button, Icon } from '@social/ui-shared';
 import { IPost, ITaggedPost } from '../../types';
 import { Utils } from '../../utils';
 import { useClientContext } from '../../contexts/client';
@@ -50,13 +42,13 @@ export default function Tags({
     (fromItem) => fromItem.author.id === pubky
   );
 
-  const iconTag = isTagFound ? (
-    <Icon.Minus size="14" color="gray" />
-  ) : (
-    <Icon.Plus size="14" color="gray" />
-  );
+  // const iconTag = isTagFound ? (
+  //   <Icon.Minus size="14" color="gray" />
+  // ) : (
+  //   <Icon.Plus size="14" color="gray" />
+  // );
 
-  const buttonTextTag = isTagFound ? 'Remove me' : 'Add me';
+  // const buttonTextTag = isTagFound ? 'Remove me' : 'Add me';
 
   const handleTagAction = () => {
     if (selectedTag) {
@@ -189,7 +181,6 @@ export default function Tags({
         <Modal.Content className="block">
           <div className="w-full flex-col gap-8 inline-flex">
             <div className="w-full flex-col gap-2 inline-flex">
-              <Input.SearchInput placeholder="Search" />
               <div className="no-scrollbar mt-2 gap-2 inline-flex overflow-x-auto whitespace-nowrap">
                 {post?.tags.map((tag, index) => {
                   return (
@@ -205,7 +196,7 @@ export default function Tags({
                   );
                 })}
               </div>
-              {selectedTag && (
+              {/* {selectedTag && (
                 <div
                   onClick={handleTagAction}
                   className="flex items-center gap-1 cursor-pointer"
@@ -218,7 +209,7 @@ export default function Tags({
                     {buttonTextTag}
                   </Typography.Body>
                 </div>
-              )}
+              )} */}
             </div>
             <div className="no-scrollbar flex-col gap-4 inline-flex overflow-y-auto h-44">
               {selectedTag &&
@@ -246,10 +237,11 @@ export default function Tags({
                       />
                       {pubkeyUser ? (
                         <Button.Medium
-                          className="w-[154px] bg-transparent cursor-default"
-                          icon={<Icon.Check />}
+                          className="w-[154px] bg-red-500 hover:bg-red-600"
+                          icon={<Icon.Trash />}
+                          onClick={handleTagAction}
                         >
-                          Me
+                          Remove
                         </Button.Medium>
                       ) : initLoadingFollowers ? (
                         <Button.Medium

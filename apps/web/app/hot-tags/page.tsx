@@ -154,7 +154,7 @@ export default function Index() {
               <div className="flex gap-3" key={index}>
                 <HotTags.Rank
                   rank={index + 1}
-                  tag={`${tag.tag}`}
+                  tag={tag.tag}
                   onClick={() => handleTagSearch(tag.tag)}
                   color="fuchsia"
                   counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}

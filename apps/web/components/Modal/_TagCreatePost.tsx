@@ -9,6 +9,7 @@ import {
   Input,
   Typography,
 } from '@social/ui-shared';
+import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
@@ -26,6 +27,8 @@ export default function TagCreatePost({
   const modalTagRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
   const [tagsError, setTagsError] = useState(false);
+  const [showEmojis, setShowEmojis] = useState(false);
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideModalTag = (event: MouseEvent) => {
@@ -77,6 +80,22 @@ export default function TagCreatePost({
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRefEmojis.current &&
+        !wrapperRefEmojis.current.contains(event.target as Node)
+      ) {
+        setShowEmojis(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [wrapperRefEmojis]);
+
   return (
     <Modal.Root
       modalRef={modalTagRef}
@@ -85,7 +104,7 @@ export default function TagCreatePost({
         setShowModalTag(false);
         setTagsError(false);
       }}
-      className="w-[480px]"
+      className="w-full"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -93,10 +112,10 @@ export default function TagCreatePost({
           setTagsError(false);
         }}
       />
-      <div className="items-stretch flex-col inline-flex gap-12">
+      <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <Modal.Header title="Tag" />
-        <Modal.Content className="block">
-          <div className="flex-col gap-6 inline-flex">
+        <Modal.Content className="flex flex-row w-full">
+          <div className="flex-col inline-flex">
             {/**  <div>
               <Typography.Label className="text-opacity-30 font-medium">
                 Emotag
@@ -128,9 +147,9 @@ export default function TagCreatePost({
               </div>
             </div>*/}
             <div>
-              <Typography.Label className="text-opacity-30 font-medium">
+              {/* <Typography.Label className="text-opacity-30 font-medium">
                 {arrayTags.length > 0 ? 'Your Tags' : 'ADD TAGS'}
-              </Typography.Label>
+              </Typography.Label> */}
               <div className="mt-2 justify-start items-start">
                 {arrayTags.length > 0 ? (
                   <div className="hidden lg:block justify-start items-start">
@@ -152,27 +171,50 @@ export default function TagCreatePost({
                   </div>
                 ) : (
                   <Typography.Body variant="small" className="text-opacity-30">
-                    No tags yet
+                    Not tagged yet.
                   </Typography.Body>
                 )}
               </div>
             </div>
-            <div>
-              <Input.Label value="Add tag" />
+            <div className="flex flex-row w-full mt-4">
+              <Button.Action
+                variant="custom"
+                icon={<Icon.Smiley size="32" />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowEmojis(true);
+                }}
+                className="mr-3 mt-3"
+              />
+              {showEmojis && (
+                <div
+                  className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                  ref={wrapperRefEmojis}
+                >
+                  <EmojiPicker
+                    theme={Theme.DARK}
+                    emojiStyle={EmojiStyle.TWITTER}
+                    onEmojiClick={(emojiObject) => {
+                      setTag(tag + emojiObject.emoji);
+                      setShowEmojis(false);
+                    }}
+                  />
+                </div>
+              )}
+              <div className="grow"></div>
+              {/* <Input.Label value="Add tag" /> */}
               <Input.Text
                 placeholder="tag"
                 value={tag}
-                className="w-[380px]"
+                className=""
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 action={
-                  <Button.Medium
-                    icon={<Icon.Plus size="16" />}
-                    className="w-[101px]"
+                  <Button.Action
+                    icon={<Icon.Plus size="18" />}
+                    variant="custom"
                     onClick={handleAddTag}
-                  >
-                    Add
-                  </Button.Medium>
+                  />
                 }
               />
             </div>

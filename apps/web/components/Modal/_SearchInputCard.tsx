@@ -79,7 +79,7 @@ export default function SearchInputCard({
             Hot tags
           </Typography.Label>
           {loading ? (
-            <Skeleton.HotTags />
+            <Skeleton.Simple />
           ) : (
             hotTags &&
             hotTags.length > 0 && (

@@ -3,6 +3,7 @@ import './global.css';
 import { ClientWrapper } from '../contexts/client';
 import { FilterWrapper } from '../contexts/filters';
 import { ProtectedRoutes } from '../components';
+import { AlertWrapper } from '../contexts/alerts';
 
 export const metadata = {
   title: 'Pubky',
@@ -19,7 +20,9 @@ export default function RootLayout({
       <body>
         <FilterWrapper>
           <ClientWrapper>
-            <ProtectedRoutes>{children}</ProtectedRoutes>
+            <AlertWrapper>
+              <ProtectedRoutes>{children}</ProtectedRoutes>
+            </AlertWrapper>
           </ClientWrapper>
         </FilterWrapper>
       </body>

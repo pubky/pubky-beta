@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Icon, Tooltip } from '@social/ui-shared';
-import { useClientContext } from '../../contexts/client';
-import { IPost } from '../../types';
+import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
+import { useClientContext } from '../../contexts/client';
+import { useAlertContext } from '../../contexts/alerts';
+import { IPost } from '../../types';
 import { Utils } from '../../../web/utils';
 import Modal from '../Modal';
 
@@ -28,7 +29,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
-  const [showDeleteMessage, setShowDeleteMessage] = useState(false);
+  const { setContent, setShow } = useAlertContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -113,8 +114,8 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
   };
 
   const handleDeletePost = async (postId: string) => {
-    setShowDeleteMessage(true);
-    setTimeout(() => setShowDeleteMessage(false), 2000);
+    setContent('Post deleted successfully');
+    setShow(true);
     await deletePost(postId);
   };
 
@@ -149,53 +150,72 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
   };
 
   return (
-    <div ref={tooltipMenuRef}>
-      <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[90%] -translate-y-[13px] cursor-default w-[300px]">
-        {renderFollowButton()}
-        {post?.author?.id === pubky && (
+    <>
+      <div ref={tooltipMenuRef}>
+        <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[200px]">
+          {renderFollowButton()}
+          {post?.author?.id === pubky && (
+            <Tooltip.Item
+              onClick={() => router.push('/settings')}
+              icon={<Icon.GearSix size="20" />}
+            >
+              Edit profile
+            </Tooltip.Item>
+          )}
           <Tooltip.Item
-            onClick={() => router.push('/settings')}
-            icon={<Icon.GearSix size="24" />}
+            onClick={() => Utils.copyToClipboard(`pk:${post.author.id}`)}
+            icon={<Icon.Clipboard size="20" />}
           >
-            Edit profile
+            Copy user Pubky
           </Tooltip.Item>
-        )}
-        <Tooltip.Item
-          icon={
-            <Icon.BookmarkSimple
-              size="24"
-              opacity={post?.bookmark?.id ? '1' : '0.2'}
-            />
-          }
-          onClick={() => {
-            post?.bookmark?.id
-              ? handleDeleteBookmark(post.id, post.uri, post.bookmark.id)
-              : handleAddBookmark(post.id, post.uri);
-          }}
-        >
-          {post?.bookmark?.id ? 'Remove Bookmark' : 'Add Bookmark'}
-        </Tooltip.Item>
-        {post?.author?.id === pubky && (
           <Tooltip.Item
-            onClick={() => setShowModalDeletePost(true)}
-            icon={<Icon.Trash size="24" color={'#EF4444'} />}
-            cssText="text-red-500"
+            onClick={() =>
+              Utils.copyToClipboard(
+                `${window.location.origin}/post/${post.author.id}/${post.id}`
+              )
+            }
+            icon={<Icon.Clipboard size="20" />}
           >
-            Delete post
+            Copy post link
           </Tooltip.Item>
-        )}
-      </Tooltip.Main>
-      {showDeleteMessage && (
-        <Alert.Message icon={<Icon.CheckCircle size="20" />}>
-          Post successfully deleted!
-        </Alert.Message>
-      )}
-      <Modal.DeletePost
-        showModalDeletePost={showModalDeletePost}
-        setShowModalDeletePost={setShowModalDeletePost}
-        handleDeletePost={handleDeletePost}
-        postId={post.id}
-      />
-    </div>
+          <Tooltip.Item
+            onClick={() => Utils.copyToClipboard(post.post.content)}
+            icon={<Icon.Clipboard size="20" />}
+          >
+            Copy post text
+          </Tooltip.Item>
+          <Tooltip.Item
+            icon={
+              <Icon.BookmarkSimple
+                size="20"
+                opacity={post?.bookmark?.id ? '1' : '0.2'}
+              />
+            }
+            onClick={() => {
+              post?.bookmark?.id
+                ? handleDeleteBookmark(post.id, post.uri, post.bookmark.id)
+                : handleAddBookmark(post.id, post.uri);
+            }}
+          >
+            {post?.bookmark?.id ? 'Remove Bookmark' : 'Add Bookmark'}
+          </Tooltip.Item>
+          {post?.author?.id === pubky && (
+            <Tooltip.Item
+              onClick={() => setShowModalDeletePost(true)}
+              icon={<Icon.Trash size="20" color={'#EF4444'} />}
+              cssText="text-red-500"
+            >
+              Delete post
+            </Tooltip.Item>
+          )}
+        </Tooltip.Main>
+        <Modal.DeletePost
+          showModalDeletePost={showModalDeletePost}
+          setShowModalDeletePost={setShowModalDeletePost}
+          handleDeletePost={handleDeletePost}
+          postId={post.id}
+        />
+      </div>
+    </>
   );
 }

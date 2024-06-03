@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Content, Icon, Typography } from '@social/ui-shared';
+import { Content, Typography } from '@social/ui-shared';
 import { Profile } from './components';
 import { CreatePost, Header, Post, PostsLayout } from '../../components';
 import { useClientContext } from '../../contexts/client';
 import { Utils } from '../../utils';
 import { IPost, INewPost } from '../../types';
+import Skeletons from '../../components/Skeletons';
 
 export default function Index() {
   const { pubky, listUserFeed, getUserIndexed, posts, setPosts } =
@@ -114,23 +115,7 @@ export default function Index() {
               </Typography.H2>
             </div>
           )}
-          {loading && (
-            <>
-              <div
-                className={`flex w-full justify-center ${
-                  Object.keys(posts).length === 0 ? 'mt-10' : 'mt-2'
-                }`}
-              >
-                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-              </div>
-              <Typography.Body
-                variant="medium-bold"
-                className="col-span-3 flex -mt-2 justify-center items-center gap-6 text-opacity-20"
-              >
-                Loading Posts
-              </Typography.Body>
-            </>
-          )}
+          {loading && <Skeletons.Simple />}
         </PostsLayout>
         <Profile.Sidebar />
       </Content.Grid>

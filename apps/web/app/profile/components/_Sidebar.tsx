@@ -18,6 +18,7 @@ import { IFollowingResponse, IFollowersResponse } from '../../../types';
 import Image from 'next/image';
 import { DropDown } from '../../../components/DropDown';
 import { Modal } from '../../../components/Modal';
+import Skeletons from '../../../components/Skeletons';
 
 export default function Sidebar({
   creatorPubky,
@@ -229,7 +230,7 @@ export default function Sidebar({
       ) : (
         <div className="w-full">
           <SideCard.Content className="flex-col gap-3 inline-flex">
-            <div className="justify-start items-center inline-flex justify-between">
+            <div className="items-center inline-flex justify-between">
               <div className="justify-start items-center gap-3 inline-flex">
                 <Image
                   width={40}
@@ -334,19 +335,7 @@ export default function Sidebar({
       <div>
         <SideCard.Header title="Contacts" />
         {loadingFollowers ? (
-          <SideCard.Content>
-            <>
-              <div className="flex w-full justify-center">
-                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-              </div>
-              <Typography.Body
-                variant="medium-bold"
-                className="col-span-3 m-2 flex justify-center items-center gap-6 text-opacity-20"
-              >
-                Loading Contacts
-              </Typography.Body>
-            </>
-          </SideCard.Content>
+          <Skeletons.Simple />
         ) : (
           <SideCard.Content className="grid grid-cols-2 gap-12 justify-start">
             {loadingFollowers ? (
