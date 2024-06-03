@@ -142,7 +142,7 @@ export default function Index() {
         </Card.Primary>
         <Card.Primary title="Contacts" className="justify-start min-h-[400px]">
           {loadingContacts ? (
-            <Skeleton.ContactsList />
+            <Skeleton.Simple />
           ) : contacts.length > 0 ? (
             <List.Contacts contacts={contacts} />
           ) : (
