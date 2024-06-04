@@ -177,7 +177,10 @@ export default function Index() {
       links.forEach((link, index) => {
         if (link.url) {
           let validationResult;
-          if (link.title === 'email' || link.title === 'mail') {
+          if (
+            link.title.toLowerCase() === 'email' ||
+            link.title.toLowerCase() === 'mail'
+          ) {
             validationResult = z
               .string()
               .email({ message: 'Invalid email address' })
@@ -362,14 +365,16 @@ export default function Index() {
                     value={link.url}
                     error={errors[`link${index}` as keyof typeof errors]}
                     action={
-                      index > 1 && (
-                        <div
-                          className="mt-3 cursor-pointer"
-                          onClick={() => handleRemoveLink(index)}
-                        >
-                          <Icon.Trash color="gray" />
-                        </div>
-                      )
+                      <div
+                        className={`${
+                          errors[`link${index}` as keyof typeof errors]
+                            ? 'mt-0'
+                            : 'mt-2'
+                        } cursor-pointer`}
+                        onClick={() => handleRemoveLink(index)}
+                      >
+                        <Icon.Trash color="gray" />
+                      </div>
                     }
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const updatedLinks = [...links];
@@ -390,7 +395,7 @@ export default function Index() {
                 onClick={
                   links.length > 4 ? undefined : () => setShowModalLink(true)
                 }
-                disabled={links.length > 4}
+                disabled={links.length > 3}
               >
                 Add link
               </Button.Transparent>
