@@ -56,7 +56,7 @@ export default function CheckLink({
         The link is taking you to another site:
         <div className="mt-4 mb-4">
           <span className="text-white text-opacity-100 font-bold">
-            {clickedLink}
+            {Utils.minifyText(clickedLink, 50)}
           </span>
         </div>
         Are you sure you want to continue?

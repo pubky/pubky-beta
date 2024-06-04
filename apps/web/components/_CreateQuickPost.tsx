@@ -20,6 +20,7 @@ export default function CreateQuickPost() {
   const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
+  const [textArea, setTextArea] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [preview, setPreview] = useState('');
@@ -149,6 +150,7 @@ export default function CreateQuickPost() {
         !wrapperRef.current.contains(event.target as Node)
       ) {
         setShowEmojis(false);
+        setTextArea(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -204,6 +206,7 @@ export default function CreateQuickPost() {
           }
           value={contentPost}
           maxLength={300}
+          onClick={() => setTextArea(true)}
           className={`w-full h-auto mt-4`}
           placeholder="What's in your mind?"
         />
@@ -252,61 +255,63 @@ export default function CreateQuickPost() {
             ))}
           </div>
         )}
-        <Post.Actions className="w-full">
-          <Button.Action
-            variant="custom"
-            icon={<Icon.Tag size="32" />}
-            onClick={(event) => {
-              event.stopPropagation();
-              setShowModalTag(true);
-            }}
-          />
-          <Button.Action
-            variant="custom"
-            icon={<Icon.Smiley size="32" />}
-            onClick={(event) => {
-              event.stopPropagation();
-              setShowEmojis(true);
-            }}
-          />
-          <Button.Action
-            variant="custom"
-            disabled
-            icon={<Icon.ImageSquare color={'gray'} size="32" />}
-          />
-          {showEmojis && (
-            <div
-              className="absolute translate-y-[10%] translate-x-[30%] z-10"
-              ref={wrapperRefEmojis}
-            >
-              <EmojiPicker
-                theme={Theme.DARK}
-                emojiStyle={EmojiStyle.TWITTER}
-                onEmojiClick={(emojiObject) => {
-                  setContentPost(contentPost + emojiObject.emoji);
-                }}
-              />
+        {(textArea || contentPost || showModalTag || arrayTags.length > 0) && (
+          <Post.Actions className="w-full">
+            <Button.Action
+              variant="custom"
+              icon={<Icon.Tag size="32" />}
+              onClick={(event) => {
+                event.stopPropagation();
+                setShowModalTag(true);
+              }}
+            />
+            <Button.Action
+              variant="custom"
+              icon={<Icon.Smiley size="32" />}
+              onClick={(event) => {
+                event.stopPropagation();
+                setShowEmojis(true);
+              }}
+            />
+            <Button.Action
+              variant="custom"
+              disabled
+              icon={<Icon.ImageSquare color={'gray'} size="32" />}
+            />
+            {showEmojis && (
+              <div
+                className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                ref={wrapperRefEmojis}
+              >
+                <EmojiPicker
+                  theme={Theme.DARK}
+                  emojiStyle={EmojiStyle.TWITTER}
+                  onEmojiClick={(emojiObject) => {
+                    setContentPost(contentPost + emojiObject.emoji);
+                  }}
+                />
+              </div>
+            )}
+            <div className="grow" />
+            <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
+              {contentPost.length} / 300
             </div>
-          )}
-          <div className="grow" />
-          <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
-            {contentPost.length} / 300
-          </div>
-          <Button.Medium
-            className="w-[158px]"
-            variant="line"
-            icon={
-              <Icon.PaperPlaneRight color={!contentPost ? 'gray' : 'white'} />
-            }
-            disabled={!contentPost}
-            loading={sendingPost}
-            onClick={
-              contentPost && !sendingPost ? () => handleSubmit() : undefined
-            }
-          >
-            Publish post
-          </Button.Medium>
-        </Post.Actions>
+            <Button.Medium
+              className="w-[158px]"
+              variant="line"
+              icon={
+                <Icon.PaperPlaneRight color={!contentPost ? 'gray' : 'white'} />
+              }
+              disabled={!contentPost}
+              loading={sendingPost}
+              onClick={
+                contentPost && !sendingPost ? () => handleSubmit() : undefined
+              }
+            >
+              Publish post
+            </Button.Medium>
+          </Post.Actions>
+        )}
       </div>
       <Modal.TagCreatePost
         arrayTags={arrayTags}

@@ -29,6 +29,9 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
+  const [copiedPubky, setCopiedPubky] = useState(false);
+  const [copiedLinkPost, setCopiedLinkPost] = useState(false);
+  const [copiedTextPost, setCopiedTextPost] = useState(false);
   const { setContent, setShow } = useAlertContext();
   const router = useRouter();
 
@@ -47,6 +50,14 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
       document.removeEventListener('mousedown', handleClickOutsideTooltip);
     };
   }, [tooltipMenuRef, setShowMenu]);
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (error) {
+      console.log('Failed to copy: ', error);
+    }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -152,7 +163,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
   return (
     <>
       <div ref={tooltipMenuRef}>
-        <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[200px]">
+        <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]">
           {renderFollowButton()}
           {post?.author?.id === pubky && (
             <Tooltip.Item
@@ -163,26 +174,54 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
             </Tooltip.Item>
           )}
           <Tooltip.Item
-            onClick={() => Utils.copyToClipboard(`pk:${post.author.id}`)}
-            icon={<Icon.Clipboard size="20" />}
-          >
-            Copy user Pubky
-          </Tooltip.Item>
-          <Tooltip.Item
-            onClick={() =>
-              Utils.copyToClipboard(
-                `${window.location.origin}/post/${post.author.id}/${post.id}`
+            onClick={() => {
+              copyToClipboard(`pk:${post.author.id}`);
+              setCopiedPubky(true);
+              setTimeout(() => setCopiedPubky(false), 1000);
+            }}
+            icon={
+              copiedPubky ? (
+                <Icon.CheckCircle size="20" />
+              ) : (
+                <Icon.LinkSimple size="20" />
               )
             }
-            icon={<Icon.Clipboard size="20" />}
           >
-            Copy post link
+            {copiedPubky ? 'Copied' : 'Copy user Pubky'}
           </Tooltip.Item>
           <Tooltip.Item
-            onClick={() => Utils.copyToClipboard(post.post.content)}
-            icon={<Icon.Clipboard size="20" />}
+            onClick={() => {
+              copyToClipboard(
+                `${window.location.origin}/post/${post.author.id}/${post.id}`
+              );
+              setCopiedLinkPost(true);
+              setTimeout(() => setCopiedLinkPost(false), 1000);
+            }}
+            icon={
+              copiedLinkPost ? (
+                <Icon.CheckCircle size="20" />
+              ) : (
+                <Icon.Clipboard size="20" />
+              )
+            }
           >
-            Copy post text
+            {copiedLinkPost ? 'Copied' : 'Copy link post'}
+          </Tooltip.Item>
+          <Tooltip.Item
+            onClick={() => {
+              copyToClipboard(post.post.content);
+              setCopiedTextPost(true);
+              setTimeout(() => setCopiedTextPost(false), 1000);
+            }}
+            icon={
+              copiedTextPost ? (
+                <Icon.CheckCircle size="20" />
+              ) : (
+                <Icon.FileText size="20" />
+              )
+            }
+          >
+            {copiedTextPost ? 'Copied' : 'Copy text post'}
           </Tooltip.Item>
           <Tooltip.Item
             icon={
