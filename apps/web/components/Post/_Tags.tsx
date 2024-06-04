@@ -14,27 +14,18 @@ import { IPost, ITaggedPost } from '../../types';
 import { Utils } from './../../utils';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
-import { useRouter } from 'next/navigation';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
 }
 
 export default function Tags({ post }: PostProps) {
-  const router = useRouter();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
-  const {
-    pubky,
-    posts,
-    setPosts,
-    getPost,
-    deleteTag,
-    createTag,
-    searchTags,
-    setSearchTags,
-  } = useClientContext();
+  const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
+    useClientContext();
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
   const [showModalTags, setShowModalTags] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<ITaggedPost | null>();
 
   useEffect(() => {
     if (post?.tags) {
@@ -65,7 +56,8 @@ export default function Tags({ post }: PostProps) {
     updatePosts();
   };
 
-  const handleTagSearch = (tag: string) => {
+  {
+    /**  const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
 
     if (searchTags.length < 3) {
@@ -79,6 +71,7 @@ export default function Tags({ post }: PostProps) {
 
   if (post?.tags?.length === 0) {
     return <></>;
+  }*/
   }
 
   return (
@@ -97,12 +90,17 @@ export default function Tags({ post }: PostProps) {
                 tagId={tagObj.tag}
               >
                 {showTooltipProfile === tagObj.tag && (
-                  <Tooltip.Tag tags={tagObj} />
+                  <Tooltip.Tag
+                    setSelectedTag={setSelectedTag}
+                    setShowModalTags={setShowModalTags}
+                    tags={tagObj}
+                  />
                 )}
                 <PostUtil.Tag
                   onClick={(event) => {
                     event.stopPropagation();
-                    handleTagSearch(tagObj.tag);
+                    setShowModalTags(true);
+                    setSelectedTag(tagObj);
                   }}
                   clicked={isTagFound}
                   color="fuchsia"
@@ -156,13 +154,15 @@ export default function Tags({ post }: PostProps) {
             </PostUI.Footer>
           );
         })}
-        <Button.Action
-          variant="custom"
-          size="small"
-          icon={<Icon.Stack />}
-          onClick={() => setShowModalTags(true)}
-          className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
-        />
+        {post?.tags?.length > 0 && (
+          <Button.Action
+            variant="custom"
+            size="small"
+            icon={<Icon.ListBullets />}
+            onClick={() => setShowModalTags(true)}
+            className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+          />
+        )}
       </div>
       <Modal.Tags
         post={post}
@@ -170,6 +170,7 @@ export default function Tags({ post }: PostProps) {
         setShowModalTags={setShowModalTags}
         handleAddTag={handleAddTag}
         handleDeleteTag={handleDeleteTag}
+        tag={selectedTag}
       />
     </div>
   );

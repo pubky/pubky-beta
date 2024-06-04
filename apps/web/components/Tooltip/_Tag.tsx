@@ -1,14 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Icon, Tooltip, Post, Typography } from '@social/ui-shared';
+import { useRouter } from 'next/navigation';
+import { Icon, Tooltip, Post, Typography, Button } from '@social/ui-shared';
 import { ITaggedPost } from '../../types';
 
 interface TagProps {
   tags: ITaggedPost;
+  setShowModalTags: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedTag: React.Dispatch<
+    React.SetStateAction<ITaggedPost | null | undefined>
+  >;
 }
 
-export default function Tag({ tags }: TagProps) {
+export default function Tag({
+  tags,
+  setShowModalTags,
+  setSelectedTag,
+}: TagProps) {
+  const router = useRouter();
   const [loadingFollowers, setLoadingFollowers] = useState(true);
 
   const [followersImages, setFollowersImages] = useState<
@@ -42,7 +52,24 @@ export default function Tag({ tags }: TagProps) {
                 Tagged by
               </Typography.Label>
             </div>
-            <Post.UserPic images={followersImages} />
+            <Post.UserPic
+              onClick={() => {
+                setShowModalTags(true);
+                setSelectedTag(tags);
+              }}
+              className="cursor-pointer"
+              images={followersImages}
+            />
+            <Button.Transparent
+              icon={<Icon.Tag />}
+              onClick={(event) => {
+                event.stopPropagation();
+                router.push(`/search?tags=${tags.tag}`);
+              }}
+              className="w-full"
+            >
+              Search tag
+            </Button.Transparent>
           </div>
         )}
       </div>
