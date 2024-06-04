@@ -12,6 +12,7 @@ interface TagsProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
   handleAddTag: (tag: string) => Promise<void>;
   handleDeleteTag: (tag: string) => Promise<void>;
+  tag?: ITaggedPost | null;
 }
 
 export default function Tags({
@@ -20,6 +21,7 @@ export default function Tags({
   post,
   handleAddTag,
   handleDeleteTag,
+  tag,
 }: TagsProps) {
   const { pubky, listFollowing, follow, unfollow } = useClientContext();
   const modalTagsRef = useRef<HTMLDivElement>(null);
@@ -38,27 +40,17 @@ export default function Tags({
     setSelectedTag(tag);
   };
 
-  const isTagFound = selectedTag?.from.some(
-    (fromItem) => fromItem.author.id === pubky
-  );
-
-  // const iconTag = isTagFound ? (
-  //   <Icon.Minus size="14" color="gray" />
-  // ) : (
-  //   <Icon.Plus size="14" color="gray" />
-  // );
-
-  // const buttonTextTag = isTagFound ? 'Remove me' : 'Add me';
-
-  const handleTagAction = () => {
-    if (selectedTag) {
-      if (isTagFound) {
-        handleDeleteTag(selectedTag.tag);
-      } else {
-        handleAddTag(selectedTag.tag);
-      }
+  useEffect(() => {
+    if (tag) {
+      setSelectedTag(tag);
     }
-  };
+  }, [tag]);
+
+  useEffect(() => {
+    if (post?.tags?.length === 0) {
+      setShowModalTags(false);
+    }
+  }, [post?.tags, setShowModalTags]);
 
   useEffect(() => {
     async function fetchFollowing() {
@@ -183,13 +175,29 @@ export default function Tags({
             <div className="w-full flex-col gap-2 inline-flex">
               <div className="no-scrollbar mt-2 gap-2 inline-flex overflow-x-auto whitespace-nowrap">
                 {post?.tags.map((tag, index) => {
+                  const isTagFound = tag.from.some(
+                    (fromItem) => fromItem.author.id === pubky
+                  );
                   return (
                     <PostUtil.Tag
                       key={index}
                       clicked={selectedTag === tag}
                       color="fuchsia"
                       onClick={() => handleTagClick(tag)}
+                      className="flex flex-col pl-9"
                     >
+                      <Button.Action
+                        variant="custom"
+                        size="small"
+                        className="absolute -left-9 transform -translate-y-[21px] scale-75"
+                        icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          isTagFound
+                            ? handleDeleteTag(tag.tag)
+                            : handleAddTag(tag.tag);
+                        }}
+                      />
                       {Utils.minifyText(tag?.tag.replace(' ', ''), 10)} (
                       {tag?.count})
                     </PostUtil.Tag>
@@ -237,11 +245,10 @@ export default function Tags({
                       />
                       {pubkeyUser ? (
                         <Button.Medium
-                          className="w-[154px] bg-red-500 hover:bg-red-600"
-                          icon={<Icon.Trash />}
-                          onClick={handleTagAction}
+                          className="w-[154px] bg-transparent cursor-default"
+                          icon={<Icon.Check />}
                         >
-                          Remove
+                          Me
                         </Button.Medium>
                       ) : initLoadingFollowers ? (
                         <Button.Medium

@@ -1,14 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import {
-  Icon,
-  Typography,
-  Post,
-  SideCard,
-  Button,
-  Tooltip,
-} from '@social/ui-shared';
+import { Icon, Typography, Post, SideCard, Button } from '@social/ui-shared';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../contexts/client';
@@ -19,6 +12,24 @@ import Image from 'next/image';
 import { DropDown } from '../../../components/DropDown';
 import { Modal } from '../../../components/Modal';
 import Skeletons from '../../../components/Skeletons';
+import Tooltip from '../../../components/Tooltip';
+
+const socialLinks = [
+  { name: 'X (twitter)', url: 'https://x.com/@' },
+  { name: 'Telegram', url: 'https://t.me/' },
+  { name: 'Discord', url: 'https://discord.gg/' },
+  { name: 'Instagram', url: 'https://instagram.com/@' },
+  { name: 'Facebook', url: 'https://facebook.com/' },
+  { name: 'LinkedIn', url: 'https://linkedin.com/in/' },
+  { name: 'Github', url: 'https://github.com/' },
+  { name: 'Calendly', url: 'https://calendly.com/' },
+  { name: 'Vimeo', url: 'https://vimeo.com/' },
+  { name: 'Youtube', url: 'https://youtube.com/@' },
+  { name: 'Twitch', url: 'https://twitch.tv/' },
+  { name: 'Pinterest', url: 'https://pinterest.com/' },
+  { name: 'TikTok', url: 'https://tiktok.com/@' },
+  { name: 'Spotify', url: 'https://spotify.com/user/' },
+];
 
 export default function Sidebar({
   creatorPubky,
@@ -60,7 +71,7 @@ export default function Sidebar({
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
-  const [copied, setCopied] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const checkLink = Utils.storage.get('checkLink');
 
   useEffect(() => {
@@ -209,22 +220,22 @@ export default function Sidebar({
     }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard
-      .writeText(`pk:${pubkyUser}`)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => {
-          setCopied(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.error('Unable to copy to clipboard:', error);
-      });
+  const renderSocialUsername = (linkUrl: string) => {
+    const matchingSocialLink = socialLinks.find((socialLink) =>
+      linkUrl.includes(socialLink.url)
+    );
+
+    if (matchingSocialLink) {
+      const usernameStartIndex = linkUrl.lastIndexOf('/') + 1;
+      const username = linkUrl.substring(usernameStartIndex);
+      if (username) return username;
+    }
+
+    return linkUrl || '';
   };
 
   return (
-    <div className="self-start sticky top-[160px] col-span-1 hidden flex-col justify-start items-start gap-6 xl:inline-flex">
+    <div className="self-start sticky top-[160px] col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
       {loading ? (
         <Skeleton.ProfileSidebar />
       ) : (
@@ -248,14 +259,19 @@ export default function Sidebar({
                   </Typography.Label>
                 </div>
               </div>
-              <div className="cursor-pointer" onClick={handleCopy}>
-                {copied && (
-                  <Tooltip.Small className="w-[30%] py-2 px-2 inline-flex gap-2 justify-center items-center translate-x-full">
-                    <Icon.CheckCircle />
-                    <Typography.Body variant="small">Copied</Typography.Body>
-                  </Tooltip.Small>
+              <div className="relative">
+                {showProfileMenu && (
+                  <Tooltip.ProfileMenu
+                    setShowProfileMenu={setShowProfileMenu}
+                    pubky={pubkyUser}
+                  />
                 )}
-                <Icon.LinkSimple />
+                <div
+                  className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"
+                  onClick={() => setShowProfileMenu(true)}
+                >
+                  <Icon.DotsThree size="28" />
+                </div>
               </div>
             </div>
             <Typography.Body
@@ -337,7 +353,7 @@ export default function Sidebar({
         {loadingFollowers ? (
           <Skeletons.Simple />
         ) : (
-          <SideCard.Content className="grid grid-cols-2 gap-12 justify-start">
+          <SideCard.Content className="grid grid-cols-2 gap-12 justify-start mt-2">
             {loadingFollowers ? (
               <div className="flex w-full justify-center">
                 <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
@@ -403,37 +419,35 @@ export default function Sidebar({
           </SideCard.Content>
         )}
       </div>
-      <div>
-        {!creatorPubky || creatorPubky === pubky ? (
-          <>
+      {!creatorPubky || creatorPubky === pubky ? (
+        <div className="flex flex-col gap-2">
+          <SideCard.Header title="Status" />
+          <DropDown.Status />
+        </div>
+      ) : (
+        status &&
+        status !== 'noStatus' && (
+          <div>
             <SideCard.Header title="Status" />
-            <DropDown.Status />
-          </>
-        ) : (
-          status &&
-          status !== 'noStatus' && (
-            <>
-              <SideCard.Header title="Status" />
-              <div className="mt-2 px-4 py-2 bg-white bg-opacity-10 rounded-full">
-                <Typography.Body variant="medium">
-                  {
-                    Utils.statusHelper.emojis[
-                      status as keyof typeof Utils.statusHelper.emojis
-                    ]
-                  }{' '}
-                  {
-                    Utils.statusHelper.labels[
-                      status as keyof typeof Utils.statusHelper.labels
-                    ]
-                  }
-                </Typography.Body>
-              </div>
-            </>
-          )
-        )}
-      </div>
+            <div className="mt-2 px-4 py-2 bg-white bg-opacity-10 rounded-full">
+              <Typography.Body variant="medium">
+                {
+                  Utils.statusHelper.emojis[
+                    status as keyof typeof Utils.statusHelper.emojis
+                  ]
+                }{' '}
+                {
+                  Utils.statusHelper.labels[
+                    status as keyof typeof Utils.statusHelper.labels
+                  ]
+                }
+              </Typography.Body>
+            </div>
+          </div>
+        )
+      )}
       {links.length > 0 && (
-        <div className="flex-col inline-flex gap-4">
+        <div className="flex-col inline-flex gap-1">
           <SideCard.Header title="Links" />
           <div className="flex-col inline-flex gap-2">
             {links.map((link, index) => (
@@ -468,7 +482,7 @@ export default function Sidebar({
                           className="hover:text-opacity-80"
                           variant="small-bold"
                         >
-                          {link.url}
+                          {Utils.minifyText(renderSocialUsername(link.url), 50)}
                         </Typography.Body>
                       </div>
                     )}
