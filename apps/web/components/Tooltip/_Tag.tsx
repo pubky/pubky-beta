@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Icon, Tooltip, Post, Typography, Button } from '@social/ui-shared';
+import { Icon, Tooltip, Post, Typography } from '@social/ui-shared';
 import { ITaggedPost } from '../../types';
+import { Utils } from '../../utils';
 
 interface TagProps {
   tags: ITaggedPost;
@@ -60,16 +61,23 @@ export default function Tag({
               className="cursor-pointer"
               images={followersImages}
             />
-            <Button.Transparent
-              icon={<Icon.Tag />}
+            <div
               onClick={(event) => {
                 event.stopPropagation();
                 router.push(`/search?tags=${tags.tag}`);
               }}
-              className="w-full"
+              className="p-2 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 cursor-pointer flex inline-flex items-center justify-center gap-1"
             >
-              Search tag
-            </Button.Transparent>
+              <div>
+                <Icon.MagnifyingGlass size="16" />
+              </div>
+              <Typography.Body
+                className="text-center text-opacity-80 break-all"
+                variant="small-bold"
+              >
+                {Utils.minifyText(tags.tag, 20)}
+              </Typography.Body>
+            </div>
           </div>
         )}
       </div>
