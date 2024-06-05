@@ -198,7 +198,7 @@ export default function Tags({
                             : handleAddTag(tag.tag);
                         }}
                       />
-                      {Utils.minifyText(tag?.tag.replace(' ', ''), 10)} (
+                      {Utils.minifyText(tag?.tag.replace(' ', ''), 20)} (
                       {tag?.count})
                     </PostUtil.Tag>
                   );

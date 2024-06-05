@@ -5,9 +5,16 @@ interface CursorProps extends React.HTMLAttributes<HTMLInputElement> {
   children?: string;
   error?: string;
   required?: boolean;
+  maxLength?: number;
 }
 
-export const Cursor = ({ children, error, required, ...rest }: CursorProps) => {
+export const Cursor = ({
+  children,
+  error,
+  required,
+  maxLength,
+  ...rest
+}: CursorProps) => {
   const baseCSS = `w-full h-24 bg-transparent rounded-[5px] outline-none text-white text-[17px] placeholder:text-white placeholder:text-opacity-30 font-normal font-InterTight leading-snug tracking-wide`;
 
   const errorCSS = `text-red-500 text-sm mt-2`;
@@ -19,6 +26,7 @@ export const Cursor = ({ children, error, required, ...rest }: CursorProps) => {
       <input
         {...rest}
         required={required}
+        maxLength={maxLength}
         className={twMerge(
           baseCSS,
           rest.className,
