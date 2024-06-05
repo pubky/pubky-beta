@@ -222,7 +222,7 @@ export default function Profile({ post }: ProfileProps) {
         onClick={(event) => event.stopPropagation()}
       >
         {post?.author?.profile?.bio
-          ? Utils.minifyText(post?.author?.profile?.bio, 140)
+          ? Utils.minifyText(post?.author?.profile?.bio, 50)
           : 'No bio.'}
       </Typography.Body>
       <div className="grid grid-cols-2 gap-6 justify-start">

@@ -6,6 +6,7 @@ interface TextProps extends React.HTMLAttributes<HTMLInputElement> {
   error?: string; // Adicione a propriedade error aqui
   required?: boolean;
   value?: string;
+  maxLength?: number;
   type?:
     | 'button'
     | 'checkbox'
@@ -37,6 +38,7 @@ export const Text = ({
   error,
   type = 'text',
   required = false,
+  maxLength,
   value,
   ...rest
 }: TextProps) => {
@@ -51,6 +53,7 @@ export const Text = ({
           {...rest}
           type={type}
           value={value}
+          maxLength={maxLength}
           required={required}
           className={twMerge(
             baseCSS,

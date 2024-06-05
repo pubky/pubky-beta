@@ -278,7 +278,7 @@ export default function Sidebar({
               variant="medium"
               className="text-opacity-80 break-all"
             >
-              {Utils.minifyText(bio, 140)}
+              {Utils.minifyText(bio, 160)}
             </Typography.Body>
             {initLoadingFollowed ? (
               <Button.Medium
