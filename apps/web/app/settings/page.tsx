@@ -325,6 +325,7 @@ export default function Index() {
           placeholder="Your Name"
           className="h-auto text-[40px] font-bold sm:text-[100px]"
           defaultValue={name}
+          maxLength={25}
           autoCorrect="off"
           error={errors.name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -345,6 +346,7 @@ export default function Index() {
                 <Input.TextArea
                   placeholder="Short bio. Tell a bit about yourself."
                   className="h-[290px]"
+                  maxLength={160}
                   defaultValue={bio}
                   error={errors.bio}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>

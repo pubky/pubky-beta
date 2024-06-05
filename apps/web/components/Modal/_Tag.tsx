@@ -141,7 +141,7 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
         setTag('');
         setTagsError(false);
       }}
-      className="w-full"
+      className="w-full w-[430px]"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -223,7 +223,7 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
                   event.stopPropagation();
                   setShowEmojis(true);
                 }}
-                className="mr-3 mt-3"
+                className="mr-3 mt-1.5"
               />
               {showEmojis && (
                 <div
@@ -245,13 +245,15 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
               <Input.Text
                 placeholder="tag"
                 value={tag}
-                className=""
+                className="h-[60px]"
+                maxLength={20}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 action={
                   <Button.Action
                     icon={<Icon.Plus size="18" />}
                     variant="custom"
+                    size="small"
                     onClick={handleAddTag}
                   />
                 }
