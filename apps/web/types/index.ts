@@ -37,7 +37,7 @@ export interface TClientContext {
     content: string,
     uriPost: string,
     rootUri: string
-  ) => Promise<IReply | null>;
+  ) => Promise<ICreateReplyResponse | null>;
   getReplies: (uri: string) => Promise<IReply | null>;
   deletePost: (postId: string) => Promise<IDeletePost | null>;
   createBookmark: (id: string, uri: string) => Promise<IBookmark | null>;

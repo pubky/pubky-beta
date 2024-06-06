@@ -357,18 +357,16 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       await client.ready();
 
-      await client.social.posts.put(pk, {
+      const result = await client.social.posts.put(pk, {
         content: content,
         parent: uriPost,
         root: rootUri,
       });
 
-      const replyResult = await client.social.posts.thread(rootUri);
+      if (!result.ok)
+        throw new Error(`Put reply:${pk} failed: ${result.error.message}`);
 
-      if (!replyResult.ok)
-        throw new Error(`Put reply:${pk} failed: ${replyResult.error.message}`);
-
-      return replyResult.value as ICreateReplyResponse;
+      return result.value as ICreateReplyResponse;
     } catch (error) {
       console.log(error);
       return null;

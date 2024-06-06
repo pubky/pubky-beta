@@ -11,7 +11,8 @@ import { Utils } from '../../../../../utils';
 import { IPost } from '../../../../../types';
 
 export default function ReplyForm({ uri }: { uri: string }) {
-  const { getProfile, pubky, createReply, getPost } = useClientContext();
+  const { getProfile, pubky, createReply, getPost, createTag } =
+    useClientContext();
   const [image, setImage] = useState('/images/Userpic.png');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
@@ -42,9 +43,17 @@ export default function ReplyForm({ uri }: { uri: string }) {
   const handleReply = async () => {
     setSendingReply(true);
     const sendReply = await createReply(contentReply, post.uri, post.uri);
+
     if (sendReply) {
+      for (const tag of arrayTags) {
+        await createTag(sendReply.uri, tag);
+      }
       setSendingReply(false);
       setContentReply('');
+      setPreview('');
+      setVideoId('');
+      setTweetId('');
+      setArrayTags([]);
     }
   };
 
