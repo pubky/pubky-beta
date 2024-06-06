@@ -203,7 +203,7 @@ export default function Replies({ uri }: { uri: string }) {
                           >
                             {pubkeyUser ? (
                               <Button.Medium
-                                className="w-[154px] bg-transparent cursor-default"
+                                className="w-[114px] bg-transparent cursor-default"
                                 icon={<Icon.Check />}
                               >
                                 Me
@@ -212,6 +212,7 @@ export default function Replies({ uri }: { uri: string }) {
                               <Button.Medium
                                 disabled
                                 icon={<Icon.LoadingSpin size="16" />}
+                                className="w-[114px]"
                               >
                                 Loading
                               </Button.Medium>
@@ -227,7 +228,7 @@ export default function Replies({ uri }: { uri: string }) {
                                 }
                                 loading={loadingFollowers[reply.post.author.id]}
                                 icon={<Icon.UserMinus size="16" />}
-                                className="w-[154px]"
+                                className="w-[114px]"
                               >
                                 Unfollow
                               </Button.Medium>
@@ -243,7 +244,7 @@ export default function Replies({ uri }: { uri: string }) {
                                 }
                                 loading={loadingFollowers[reply.post.author.id]}
                                 icon={<Icon.UserPlus size="16" />}
-                                className="w-[154px]"
+                                className="w-[114px]"
                               >
                                 Follow
                               </Button.Medium>
