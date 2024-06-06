@@ -112,6 +112,8 @@ export interface IAuthor {
 
 export interface IPostContent {
   content: string;
+  parent?: string;
+  root?: string;
 }
 
 export interface IPost {

@@ -140,7 +140,7 @@ export default function Replies({ uri }: { uri: string }) {
 
   return (
     <>
-      {!loadingReplies && replies.length === 0 ? (
+      {!loadingReplies && (replies.length === 0 || !replies) ? (
         <Typography.Body className="text-opacity-50 text-center">
           No replies yet
         </Typography.Body>
@@ -152,19 +152,17 @@ export default function Replies({ uri }: { uri: string }) {
               <Skeleton.Simple />
             ) : (
               replies.map((reply) => (
-                <>
-                  {/**<div key={reply.id} className="flex items-center">
-            <div className="border-l-2 h-full border-white border-opacity-10" />
-        <div className="w-6 h-px bg-white bg-opacity-20" />*/}
-                  <Post
-                    key={reply.post.id}
-                    post={reply.post}
-                    size="full"
-                    fullContent
-                  />
-                </>
+                <Post
+                  key={reply.post.id}
+                  post={reply.post}
+                  size="full"
+                  fullContent
+                />
               ))
             )}
+            {/** {/**<div key={reply.id} className="flex items-center">
+            <div className="border-l-2 h-full border-white border-opacity-10" />
+        <div className="w-6 h-px bg-white bg-opacity-20" />
             {/* <div className="flex items-center">
         <div className="border-l-2 h-full border-white border-opacity-10" />
         <div className="border-l-2 h-full ml-6 border-white border-opacity-10" />
