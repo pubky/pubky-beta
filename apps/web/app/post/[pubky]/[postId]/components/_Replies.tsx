@@ -45,9 +45,13 @@ export default function Replies({ uri }: { uri: string }) {
       }
     }
     fetchData();
-    fetchReplies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uri, getPost]);
+
+  useEffect(() => {
+    fetchReplies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [post]);
 
   useEffect(() => {
     async function fetchFollowing() {
@@ -136,7 +140,7 @@ export default function Replies({ uri }: { uri: string }) {
 
   return (
     <>
-      {!loadingReplies && replies.length < 1 ? (
+      {!loadingReplies && replies.length === 0 ? (
         <Typography.Body className="text-opacity-50 text-center">
           No replies yet
         </Typography.Body>
