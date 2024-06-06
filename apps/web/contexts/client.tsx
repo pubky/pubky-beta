@@ -11,6 +11,7 @@ import {
   ISaveProfile,
   ITaggedPost,
   ICreatePostResponse,
+  ICreateReplyResponse,
   ICreateTagResponse,
   IDeleteTagResponse,
   IFollowersResponse,
@@ -338,6 +339,58 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         throw new Error(`Put post:${pk} failed: ${postResult.error.message}`);
 
       return postResult.value as ICreatePostResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const createReply = async (
+    content: string,
+    uriPost: string,
+    rootUri: string
+  ): Promise<IReply | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get profile failed: not logged in.');
+
+      await client.ready();
+
+      await client.social.posts.put(pk, {
+        content: content,
+        parent: uriPost,
+        root: rootUri,
+      });
+
+      const replyResult = await client.social.posts.thread(rootUri);
+
+      if (!replyResult.ok)
+        throw new Error(`Put reply:${pk} failed: ${replyResult.error.message}`);
+
+      return replyResult.value as ICreateReplyResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const getReplies = async (uri: string): Promise<IReply | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get profile failed: not logged in.');
+
+      await client.ready();
+
+      const repliesResult = await client.social.posts.thread(uri);
+
+      if (!repliesResult.ok)
+        throw new Error(
+          `Put reply:${pk} failed: ${repliesResult.error.message}`
+        );
+
+      return repliesResult.value as ICreateReplyResponse;
     } catch (error) {
       console.log(error);
       return null;
@@ -764,6 +817,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         updateStatus,
         isLoggedIn,
         createPost,
+        createReply,
+        getReplies,
         createBookmark,
         deleteBookmark,
         createTag,

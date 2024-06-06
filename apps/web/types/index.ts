@@ -33,6 +33,12 @@ export interface TClientContext {
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string) => Promise<IPost | null>;
+  createReply: (
+    content: string,
+    uriPost: string,
+    rootUri: string
+  ) => Promise<IReply | null>;
+  getReplies: (uri: string) => Promise<IReply | null>;
   deletePost: (postId: string) => Promise<IDeletePost | null>;
   createBookmark: (id: string, uri: string) => Promise<IBookmark | null>;
   deleteBookmark: (
@@ -119,6 +125,11 @@ export interface IPost {
   indexedAt: number;
 }
 
+export interface IReply {
+  post: IPost;
+  replies: [];
+}
+
 export interface BookmarkPost {
   id: string;
 }
@@ -173,6 +184,11 @@ export interface IRecoveryFileResponse {
 }
 
 export interface ICreatePostResponse {
+  id: string;
+  uri: string;
+}
+
+export interface ICreateReplyResponse {
   id: string;
   uri: string;
 }
