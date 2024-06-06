@@ -140,7 +140,7 @@ export default function Replies({ uri }: { uri: string }) {
 
   return (
     <>
-      {!loadingReplies && (replies.length === 0 || !replies) ? (
+      {!loadingReplies && replies.length === 0 ? (
         <Typography.Body className="text-opacity-50 text-center">
           No replies yet
         </Typography.Body>
