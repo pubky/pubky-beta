@@ -5,10 +5,9 @@ import { IPost, IReply } from '../../../../../types';
 import { Post, Skeleton } from '../../../../../components';
 import { Utils } from '../../../../../utils';
 
-export default function Replies({ uri }: { uri: string }) {
-  const { pubky, getPost, getReplies, follow, unfollow, listFollowing } =
+export default function Replies({ post }: { post: IPost }) {
+  const { pubky, getReplies, follow, unfollow, listFollowing } =
     useClientContext();
-  const [post, setPost] = useState<IPost>({} as IPost);
   const [loadingReplies, setLoadingReplies] = useState(true);
   const [replies, setReplies] = useState<IReply[]>([]);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -34,19 +33,6 @@ export default function Replies({ uri }: { uri: string }) {
       setLoadingReplies(false);
     }
   };
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!uri) return;
-      const result = await getPost(uri);
-
-      if (result) {
-        setPost(result);
-      }
-    }
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uri, getPost]);
 
   useEffect(() => {
     fetchReplies();

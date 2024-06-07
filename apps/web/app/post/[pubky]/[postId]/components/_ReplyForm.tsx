@@ -10,16 +10,14 @@ import Modal from '../../../../../components/Modal';
 import { Utils } from '../../../../../utils';
 import { IPost } from '../../../../../types';
 
-export default function ReplyForm({ uri }: { uri: string }) {
-  const { getProfile, pubky, createReply, getPost, createTag } =
-    useClientContext();
+export default function ReplyForm({ post }: { post: IPost }) {
+  const { getProfile, pubky, createReply, createTag } = useClientContext();
   const [image, setImage] = useState('/images/Userpic.png');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [contentReply, setContentReply] = useState('');
-  const [post, setPost] = useState<IPost>({} as IPost);
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
@@ -27,18 +25,6 @@ export default function ReplyForm({ uri }: { uri: string }) {
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!uri) return;
-      const result = await getPost(uri);
-
-      if (result) {
-        setPost(result);
-      }
-    }
-    fetchData();
-  }, [uri, getPost]);
 
   const handleReply = async () => {
     setSendingReply(true);

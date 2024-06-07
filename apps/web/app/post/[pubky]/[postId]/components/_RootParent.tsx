@@ -5,9 +5,8 @@ import { useClientContext } from '../../../../../contexts/client';
 import { Post } from '../../../../../components';
 import { IPost } from '../../../../../types';
 
-export default function RootParent({ uri }: { uri: string }) {
+export default function RootParent({ post }: { post: IPost }) {
   const { getPost, getReplies } = useClientContext();
-  const [post, setPost] = useState<IPost>({} as IPost);
   const [loadingParents, setLoadingParents] = useState(true);
   const [parentURIs, setParentURIs] = useState<string[]>([]);
   const [parentPosts, setParentPosts] = useState<{ [uri: string]: IPost }>({});
@@ -65,18 +64,6 @@ export default function RootParent({ uri }: { uri: string }) {
       console.error('Error fetching parent post:', error);
     }
   };
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!uri) return;
-      const result = await getPost(uri);
-
-      if (result) {
-        setPost(result);
-      }
-    }
-    fetchData();
-  }, [uri, getPost]);
 
   useEffect(() => {
     if (post && post.uri) fetchReplies();
