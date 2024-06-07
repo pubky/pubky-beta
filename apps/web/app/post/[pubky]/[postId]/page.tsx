@@ -4,21 +4,12 @@ import { Content } from '@social/ui-shared';
 import { Post } from './components';
 import { CreatePost, Header } from '../../../../components';
 import { Utils } from '../../../../utils';
-import { useEffect } from 'react';
 
 export default function Index({
   params,
 }: {
   params: { pubky: string; postId: string };
 }) {
-  useEffect(() => {
-    const mainPostElement = document.getElementById('mainPost');
-
-    if (mainPostElement) {
-      mainPostElement.scrollIntoView();
-    }
-  }, []);
-
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Post" />
@@ -26,11 +17,9 @@ export default function Index({
         <Post.RootParent
           uri={Utils.decodePostUri(params.pubky, params.postId)}
         />
-        <div id="mainPost">
-          <Post.MainPost
-            uri={Utils.decodePostUri(params.pubky, params.postId)}
-          />
-        </div>
+
+        <Post.MainPost uri={Utils.decodePostUri(params.pubky, params.postId)} />
+
         <Post.ReplyForm
           uri={Utils.decodePostUri(params.pubky, params.postId)}
         />
