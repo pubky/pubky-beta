@@ -17,7 +17,7 @@ export default function Index({
       if (mainPostElement) {
         const headerHeight =
           document.querySelector('header')?.offsetHeight || 0;
-        const scrollPosition = mainPostElement.offsetTop - headerHeight;
+        const scrollPosition = mainPostElement.offsetTop - headerHeight - 25;
         window.scrollTo({ top: scrollPosition });
       }
     }, 500);
