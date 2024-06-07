@@ -127,7 +127,7 @@ export default function ReplyForm({ post }: { post: IPost }) {
                   }
                   value={contentReply}
                   maxLength={300}
-                  className="text-2xl w-[250px] md:w-[500px] lg:w-[650px]"
+                  className="text-xl w-[250px] md:w-[500px] lg:w-[650px]"
                   placeholder="Post your reply"
                 />
                 {videoId && (
