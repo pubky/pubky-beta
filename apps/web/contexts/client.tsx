@@ -32,7 +32,6 @@ import {
 
 import Client from '@pubky/sdk';
 import { Utils } from '../utils/';
-import { useRouter } from 'next/navigation';
 
 const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
 const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY || '';
@@ -62,7 +61,6 @@ const startClient = async () => {
 startClient();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
   const [pubky, setPubky] = useState<string | null>(
     (Utils.storage.get('pubky') as TStatus) || null
   );
@@ -136,6 +134,17 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       setPubky(pks[0]);
 
       return pks[0];
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  const session = async (): Promise<string | false> => {
+    try {
+      await client.ready();
+      const sessions = await client.session();
+      return sessions;
     } catch (error) {
       console.log(error);
       return false;
@@ -329,7 +338,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       });
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Put post:${pk} failed: ${result.error.message}`);
       }
 
@@ -409,7 +417,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.bookmarks.put(pk, uri);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Put bookmark:${pk} failed: ${result.error.message}`);
       }
 
@@ -439,7 +446,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.bookmarks.delete(pk, uri, bookmarkId);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(
           `Delete bookmark:${pk} failed: ${result.error.message}`
         );
@@ -472,7 +478,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.tags.put(pk, uri, tag);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Put tag:${pk} failed: ${result.error.message}`);
       }
 
@@ -499,7 +504,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.tags.delete(pk, uri, tag);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Delete tag:${pk} failed: ${result.error.message}`);
       }
 
@@ -565,7 +569,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.graph.follow(pkLogged, pk);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Follow:${pk} failed: ${result.error.message}`);
       }
 
@@ -589,7 +592,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.graph.unfollow(pkLogged, pk);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Unfollow:${pk} failed: ${result.error.message}`);
       }
 
@@ -654,7 +656,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.posts.delete(pk, postId);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Delete post:${pk} failed: ${result.error.message}`);
       }
 
@@ -844,6 +845,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         setSearchTags,
         follow,
         unfollow,
+        session,
       }}
     >
       {children}

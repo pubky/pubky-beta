@@ -4,7 +4,7 @@ import { Icon } from '../Icon';
 
 interface SubmitActionProps extends React.HTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode;
-  children: string;
+  children: React.ReactNode;
   disabled?: boolean;
   loading?: boolean;
 }

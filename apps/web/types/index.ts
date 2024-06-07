@@ -50,6 +50,7 @@ export interface TClientContext {
   deleteTag: (uri: string, tag: string) => Promise<IDeleteTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
   isLoggedIn: () => Promise<string | false>;
+  session: () => Promise<string | false>;
   listUserFeed: (
     pubky: string,
     cursor: string,
