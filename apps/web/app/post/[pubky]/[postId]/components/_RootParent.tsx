@@ -97,8 +97,9 @@ export default function RootParent({ uri }: { uri: string }) {
   return (
     <>
       {!loadingParents &&
-        parentURIs.map((parentURI) => {
-          const post = parentPosts[parentURI];
+        parentURIs.map((parentURI, index) => {
+          const reversedIndex = parentURIs.length - 1 - index;
+          const post = parentPosts[parentURIs[reversedIndex]];
           return post ? (
             <Post key={parentURI} post={post} size="full" fullContent />
           ) : null;

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Content } from '@social/ui-shared';
 import { Post } from './components';
 import { CreatePost, Header } from '../../../../components';
@@ -10,6 +11,22 @@ export default function Index({
 }: {
   params: { pubky: string; postId: string };
 }) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const mainPostElement = document.getElementById('mainPost');
+      if (mainPostElement) {
+        const headerHeight =
+          document.querySelector('header')?.offsetHeight || 0;
+        const scrollPosition = mainPostElement.offsetTop - headerHeight;
+        window.scrollTo({ top: scrollPosition });
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [params]);
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Post" />
@@ -18,7 +35,11 @@ export default function Index({
           uri={Utils.decodePostUri(params.pubky, params.postId)}
         />
 
-        <Post.MainPost uri={Utils.decodePostUri(params.pubky, params.postId)} />
+        <div id="mainPost">
+          <Post.MainPost
+            uri={Utils.decodePostUri(params.pubky, params.postId)}
+          />
+        </div>
 
         <Post.ReplyForm
           uri={Utils.decodePostUri(params.pubky, params.postId)}
