@@ -8,9 +8,8 @@ import { Icon, Button, Post, Input, PostUtil } from '@social/ui-shared';
 import { useClientContext } from '../../../../../contexts/client';
 import Modal from '../../../../../components/Modal';
 import { Utils } from '../../../../../utils';
-import { IPost } from '../../../../../types';
 
-export default function ReplyForm({ post }: { post: IPost }) {
+export default function ReplyForm({ uri }: { uri: string }) {
   const { getProfile, pubky, createReply, createTag } = useClientContext();
   const [image, setImage] = useState('/images/Userpic.png');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -28,7 +27,7 @@ export default function ReplyForm({ post }: { post: IPost }) {
 
   const handleReply = async () => {
     setSendingReply(true);
-    const sendReply = await createReply(contentReply, post.uri, post.uri);
+    const sendReply = await createReply(contentReply, uri, uri);
 
     if (sendReply) {
       for (const tag of arrayTags) {

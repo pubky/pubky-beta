@@ -124,6 +124,7 @@ export interface IPost {
   post: IPostContent;
   tags: ITaggedPost[];
   bookmark: BookmarkPost;
+  repliesCount: number;
   createdAt: number;
   indexedAt: number;
 }

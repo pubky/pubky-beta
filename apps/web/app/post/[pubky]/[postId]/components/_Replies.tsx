@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Content, Icon, Button, Typography, SideCard } from '@social/ui-shared';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useClientContext } from '../../../../../contexts/client';
-import { IPost, IReply } from '../../../../../types';
+import { IReply } from '../../../../../types';
 import { Post, Skeleton } from '../../../../../components';
 import { Utils } from '../../../../../utils';
 
-export default function Replies({ post }: { post: IPost }) {
-  const { pubky, getReplies, follow, unfollow, listFollowing } =
-    useClientContext();
+export default function Replies({ repliesResponse }: { repliesResponse: any }) {
+  const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const [loadingReplies, setLoadingReplies] = useState(true);
   const [replies, setReplies] = useState<IReply[]>([]);
+  const [repliesCount, setRepliesCount] = useState<number>();
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
@@ -22,9 +23,8 @@ export default function Replies({ post }: { post: IPost }) {
   const fetchReplies = async () => {
     setLoadingReplies(true);
     try {
-      const repliesResponse = await getReplies(post.uri);
-
       if (repliesResponse) {
+        setRepliesCount(repliesResponse?.post?.repliesCount);
         setReplies(repliesResponse?.replies);
         setLoadingReplies(false);
       }
@@ -37,7 +37,7 @@ export default function Replies({ post }: { post: IPost }) {
   useEffect(() => {
     fetchReplies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [post]);
+  }, [repliesResponse]);
 
   useEffect(() => {
     async function fetchFollowing() {
@@ -126,7 +126,8 @@ export default function Replies({ post }: { post: IPost }) {
 
   return (
     <>
-      {!loadingReplies && replies.length === 0 ? (
+      {repliesCount === 0 ||
+      (replies && !loadingReplies && replies.length === 0) ? (
         <Typography.Body className="text-opacity-50 text-center">
           No replies yet
         </Typography.Body>
@@ -137,6 +138,7 @@ export default function Replies({ post }: { post: IPost }) {
             {loadingReplies ? (
               <Skeleton.Simple />
             ) : (
+              replies &&
               replies.map((reply) => (
                 <Post
                   key={reply.post.id}
@@ -163,6 +165,7 @@ export default function Replies({ post }: { post: IPost }) {
                 {loadingReplies ? (
                   <Skeleton.Simple />
                 ) : (
+                  replies &&
                   replies.map((reply, index) => {
                     if (!seenAuthors.has(reply.post.author.id)) {
                       seenAuthors.add(reply.post.author.id);
@@ -172,9 +175,8 @@ export default function Replies({ post }: { post: IPost }) {
                         followedUser[reply.post.author.id] || false;
 
                       return (
-                        <>
+                        <React.Fragment key={reply.post.author.id}>
                           <SideCard.User
-                            key={reply.post.author.id}
                             uri={reply.post.author.uri}
                             src={
                               reply.post.author.profile.image ||
@@ -237,7 +239,7 @@ export default function Replies({ post }: { post: IPost }) {
                           {index !== replies.length - 1 && (
                             <Content.Divider className="my-2.5" />
                           )}
-                        </>
+                        </React.Fragment>
                       );
                     }
                     return null;

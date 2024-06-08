@@ -13,23 +13,25 @@ export default function Index({
 }: {
   params: { pubky: string; postId: string };
 }) {
-  const { getPost } = useClientContext();
+  const { getReplies } = useClientContext();
   const [post, setPost] = useState<IPost>({} as IPost);
   const [loading, setLoading] = useState(true);
+  const [replies, setReplies] = useState({});
   const uri = Utils.decodePostUri(params.pubky, params.postId);
 
   useEffect(() => {
     async function fetchData() {
       if (!uri) return;
-      const result = await getPost(uri);
+      const result = await getReplies(uri);
 
       if (result) {
-        setPost(result);
+        setPost(result.post);
+        setReplies(result);
         setLoading(false);
       }
     }
     fetchData();
-  }, [uri, getPost]);
+  }, [uri, getReplies]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -51,14 +53,14 @@ export default function Index({
     <Content.Main>
       <Header className="hidden md:block" title="Post" />
       <Content.Grid className="flex justify-between flex-col gap-12">
-        <Post.RootParent post={post} />
+        <Post.RootParent replies={replies} />
 
         <div id="mainPost">
           <Post.MainPost post={post} loading={loading} uri={uri} />
         </div>
 
-        <Post.ReplyForm post={post} />
-        <Post.Replies post={post} />
+        <Post.ReplyForm uri={uri} />
+        <Post.Replies repliesResponse={replies} />
       </Content.Grid>
       <CreatePost />
     </Content.Main>
