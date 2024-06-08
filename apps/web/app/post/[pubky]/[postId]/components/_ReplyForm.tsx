@@ -115,7 +115,7 @@ export default function ReplyForm({ uri }: { uri: string }) {
           <Post.Header>
             <div className="justify-start gap-4 flex">
               <Post.ImageUser
-                className="lg:w-12 lg:h-12 mt-2"
+                className="lg:w-12 lg:h-12 max-w-none h-none mt-2"
                 src={image}
                 alt="user"
               />
