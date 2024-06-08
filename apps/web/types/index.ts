@@ -160,7 +160,7 @@ export interface IUserProfile {
   profile: IProfile;
   tagsCount: number;
   postsCount: number;
-  taggedAs: string[];
+  taggedAs: ITaggedProfile[];
   viewer: IViewer;
 }
 
@@ -224,6 +224,12 @@ export interface IPostFrom {
 }
 
 export interface ITaggedPost {
+  tag: string;
+  count: number;
+  from: IPostFrom[];
+}
+
+export interface ITaggedProfile {
   tag: string;
   count: number;
   from: IPostFrom[];
