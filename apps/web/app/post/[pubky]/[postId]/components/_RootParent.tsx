@@ -3,26 +3,26 @@ import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../../../contexts/client';
 import { Post } from '../../../../../components';
 import { IPost } from '../../../../../types';
+import { Typography } from '@social/ui-shared';
 
 export default function RootParent({ replies }: { replies: any }) {
   const { getPost } = useClientContext();
   const [loadingParents, setLoadingParents] = useState(true);
   const [parentURIs, setParentURIs] = useState<string[]>([]);
-  const [parentPosts, setParentPosts] = useState<{ [uri: string]: IPost }>({});
+  const [parentPosts, setParentPosts] = useState<{
+    [uri: string]: IPost | null;
+  }>({});
 
   const fetchParentURIs = async (
     parentURI: string,
     collectedURIs: string[]
   ): Promise<string[]> => {
     if (!parentURI) return collectedURIs;
-
+    collectedURIs.push(parentURI);
     try {
       const parentPost = await getPost(parentURI);
-      if (parentPost) {
-        collectedURIs.push(parentURI);
-        if (parentPost?.post?.parent) {
-          return await fetchParentURIs(parentPost.post.parent, collectedURIs);
-        }
+      if (parentPost && parentPost?.post?.parent) {
+        return await fetchParentURIs(parentPost.post.parent, collectedURIs);
       }
     } catch (error) {
       console.error('Error fetching parent post:', error);
@@ -59,14 +59,16 @@ export default function RootParent({ replies }: { replies: any }) {
       for (const parentURI of parentURIs) {
         try {
           const contentPost = await getPost(parentURI);
-          if (contentPost) {
-            setParentPosts((prevState) => ({
-              ...prevState,
-              [parentURI]: contentPost,
-            }));
-          }
+          setParentPosts((prevState) => ({
+            ...prevState,
+            [parentURI]: contentPost || null,
+          }));
         } catch (error) {
           console.error('Error fetching parent post:', error);
+          setParentPosts((prevState) => ({
+            ...prevState,
+            [parentURI]: null,
+          }));
         }
       }
     }
@@ -82,7 +84,17 @@ export default function RootParent({ replies }: { replies: any }) {
           const post = parentPosts[parentURIs[reversedIndex]];
           return post ? (
             <Post key={parentURI} post={post} size="full" fullContent />
-          ) : null;
+          ) : (
+            <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
+              <Typography.Body
+                key={parentURI}
+                variant="small"
+                className="text-opacity-50"
+              >
+              This post was not found or has been deleted by its author.
+              </Typography.Body>
+            </div>
+          );
         })}
     </>
   );

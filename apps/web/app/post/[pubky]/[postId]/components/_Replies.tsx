@@ -51,7 +51,7 @@ export default function Replies({ repliesResponse }: { repliesResponse: any }) {
             user.uri.replace('pubky:', '')
           );
           const matchedFollowedIds = replies.filter((reply) =>
-            followingIds.includes(reply.post.author.id)
+            followingIds.includes(reply?.post?.author?.id)
           );
 
           if (matchedFollowedIds.length > 0) {
@@ -124,10 +124,14 @@ export default function Replies({ repliesResponse }: { repliesResponse: any }) {
     }
   };
 
+  const validReplies = replies ? replies.filter((reply) => reply?.post) : [];
+
   return (
     <>
       {repliesCount === 0 ||
-      (replies && !loadingReplies && replies.length === 0) ? (
+      (replies &&
+        !loadingReplies &&
+        (replies.length === 0 || validReplies.length === 0)) ? (
         <Typography.Body className="text-opacity-50 text-center">
           No replies yet
         </Typography.Body>
@@ -139,14 +143,19 @@ export default function Replies({ repliesResponse }: { repliesResponse: any }) {
               <Skeleton.Simple />
             ) : (
               replies &&
-              replies.map((reply) => (
-                <Post
-                  key={reply.post.id}
-                  post={reply.post}
-                  size="full"
-                  fullContent
-                />
-              ))
+              replies.map((reply) => {
+                if (reply?.post) {
+                  return (
+                    <Post
+                      key={reply?.post?.id}
+                      post={reply?.post}
+                      size="full"
+                      fullContent
+                    />
+                  );
+                }
+                return null;
+              })
             )}
             {/** {/**<div key={reply.id} className="flex items-center">
             <div className="border-l-2 h-full border-white border-opacity-10" />
@@ -167,7 +176,7 @@ export default function Replies({ repliesResponse }: { repliesResponse: any }) {
                 ) : (
                   replies &&
                   replies.map((reply, index) => {
-                    if (!seenAuthors.has(reply.post.author.id)) {
+                    if (reply?.post && !seenAuthors.has(reply.post.author.id)) {
                       seenAuthors.add(reply.post.author.id);
                       const pubkeyUser =
                         pubky && reply.post.author.id.includes(pubky);
@@ -179,11 +188,11 @@ export default function Replies({ repliesResponse }: { repliesResponse: any }) {
                           <SideCard.User
                             uri={reply.post.author.uri}
                             src={
-                              reply.post.author.profile.image ||
+                              reply.post.author.profile?.image ||
                               '/images/Userpic.png'
                             }
                             username={Utils.minifyText(
-                              reply.post.author.profile.name
+                              reply.post.author.profile?.name
                             )}
                             label={Utils.minifyPubky(reply.post.author.id)}
                           >
