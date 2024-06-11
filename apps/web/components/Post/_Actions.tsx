@@ -51,7 +51,7 @@ export default function Actions({ post }: PostProps) {
           size="small"
           variant="custom"
           icon={<Icon.ChatCircleText size="16" />}
-          counter={0}
+          counter={post?.repliesCount}
           onClick={() => router.push(Utils.encodePostUri(post?.uri))}
         />
         {/* <Button.Action
