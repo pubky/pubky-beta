@@ -353,6 +353,36 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const createRepost = async (
+    uri: string,
+    content?: string
+  ): Promise<IPost | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get profile failed: not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.posts.put(pk, {
+        content: content ? content : '',
+        embed: {
+          type: 'post',
+          uri: uri,
+        },
+      });
+
+      if (!result.ok) {
+        throw new Error(`Put repost:${pk} failed: ${result.error.message}`);
+      }
+
+      return result.value as ICreateRepostResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const createReply = async (
     content: string,
     uriPost: string,
@@ -816,6 +846,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         updateStatus,
         isLoggedIn,
         createPost,
+        createRepost,
         createReply,
         getReplies,
         createBookmark,

@@ -9,15 +9,24 @@ import { Modal } from '../Modal';
 import Repost from '../_Repost';
 import { useClientContext } from '../../contexts/client';
 import { IPost } from '../../types';
+import Tooltip from '../Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
+  repostId?: string;
+  deleteRepost?: boolean;
 }
 
-export default function Actions({ post }: PostProps) {
+export default function Actions({
+  post,
+  repostId,
+  deleteRepost = false,
+}: PostProps) {
   const router = useRouter();
-  const { deleteBookmark, createBookmark } = useClientContext();
+  const { deleteBookmark, createBookmark, createRepost, deletePost } =
+    useClientContext();
   const [showModalRepost, setShowModalRepost] = useState(false);
+  const [showRepostMenu, setShowRepostMenu] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
 
   const handleAddBookmark = async (postId: string, uri: string) => {
@@ -30,6 +39,14 @@ export default function Actions({ post }: PostProps) {
     bookmarkId: string
   ) => {
     await deleteBookmark(postId, postUri, bookmarkId);
+  };
+
+  const handleRepost = async () => {
+    await createRepost(post.uri);
+  };
+
+  const handleDeleteRepost = async () => {
+    if (repostId) await deletePost(repostId);
   };
 
   return (
@@ -54,16 +71,32 @@ export default function Actions({ post }: PostProps) {
           counter={post?.repliesCount}
           onClick={() => router.push(Utils.encodePostUri(post?.uri))}
         />
-        {/* <Button.Action
-          size="small"
-          variant="custom"
-          icon={<Icon.Repost size="16" />}
-          counter={0}
-          onClick={(event) => {
-            event.stopPropagation();
-            setShowModalRepost(true);
-          }}
-        /> */}
+        <div className="relative">
+          {showRepostMenu && (
+            <Tooltip.RepostMenu
+              setShowRepostMenu={setShowRepostMenu}
+              setShowModalRepost={setShowModalRepost}
+              handleRepost={handleRepost}
+              deleteRepost={deleteRepost}
+              handleDeleteRepost={handleDeleteRepost}
+            />
+          )}
+          <Button.Action
+            size="small"
+            variant="custom"
+            icon={
+              <Icon.Repost
+                size="16"
+                color={deleteRepost ? '#00BA7C' : 'white'}
+              />
+            }
+            counter={post?.repostsCount}
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowRepostMenu(true);
+            }}
+          />
+        </div>
         <Button.Action
           size="small"
           variant="custom"
