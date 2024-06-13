@@ -36,8 +36,8 @@ export default function ReplyForm({
 
   const handleReply = async () => {
     setSendingReply(true);
-    const parentUri = post.post.root ?? uri;
-    const sendReply = await createReply(contentReply, uri, parentUri);
+    const rootUri = post.post.root ?? uri;
+    const sendReply = await createReply(contentReply, uri, rootUri);
 
     updatePost();
     if (sendReply) {
