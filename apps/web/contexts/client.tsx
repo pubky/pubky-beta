@@ -26,6 +26,7 @@ import {
   IProfile,
   IDeletePost,
   INewPost,
+  ICreateRepostResponse,
   IBookmark,
   IRecoveryFileResponse,
 } from '../types';
@@ -343,6 +344,17 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const postResult = await client.social.posts.get(result.value.uri);
 
+      const newPosts = JSON.parse(JSON.stringify(posts));
+      if (newPosts && postResult.value.id) {
+        newPosts[postResult.value.id] = postResult.value;
+
+        const updatedPosts = {
+          [postResult.value.id]: postResult.value,
+          ...newPosts,
+        };
+        setPosts(updatedPosts);
+      }
+
       if (!postResult.ok)
         throw new Error(`Put post:${pk} failed: ${postResult.error.message}`);
 
@@ -374,6 +386,18 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       if (!result.ok) {
         throw new Error(`Put repost:${pk} failed: ${result.error.message}`);
+      }
+
+      const postResult = await client.social.posts.get(result.value.uri);
+      const newPosts = JSON.parse(JSON.stringify(posts));
+      if (newPosts && postResult.value.id) {
+        newPosts[postResult.value.id] = postResult.value;
+
+        const updatedPosts = {
+          [postResult.value.id]: postResult.value,
+          ...newPosts,
+        };
+        setPosts(updatedPosts);
       }
 
       return result.value as ICreateRepostResponse;
