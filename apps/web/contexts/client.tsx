@@ -451,8 +451,15 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       }
 
       const newPosts = JSON.parse(JSON.stringify(posts));
-      newPosts[id].bookmark = { id: uri };
-      setPosts(newPosts);
+
+      if (newPosts && newPosts[id]) {
+        newPosts[id].bookmark = { id: uri };
+        setPosts(newPosts);
+      } else {
+        const newPost = await client.social.posts.get(uri);
+        newPost.bookmark = { id: uri };
+        setPosts(newPost);
+      }
 
       return result.value as IBookmark;
     } catch (error) {
