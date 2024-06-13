@@ -12,9 +12,10 @@ import Modal from '../Modal';
 interface TooltipMenuProps {
   post: IPost;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  repost?: IPost;
 }
 
-export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
+export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   const {
     pubky,
     follow,
@@ -124,10 +125,10 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
     await deleteBookmark(postId, postUri, bookmarkId);
   };
 
-  const handleDeletePost = async (postId: string) => {
+  const handleDeletePost = async () => {
     setContent('Post deleted successfully');
     setShow(true);
-    await deletePost(postId);
+    await deletePost(post?.id);
   };
 
   const renderFollowButton = () => {
@@ -227,14 +228,29 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
             icon={
               <Icon.BookmarkSimple
                 size="20"
-                opacity={post?.bookmark?.id ? '1' : '0.2'}
+                opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.5}
+                color={
+                  repost?.bookmark.id
+                    ? '#d946efc9'
+                    : post?.bookmark?.id
+                    ? '#d946efc9'
+                    : 'white'
+                }
               />
             }
-            onClick={() => {
-              post?.bookmark?.id
+            onClick={() =>
+              repost
+                ? repost.bookmark?.id
+                  ? handleDeleteBookmark(
+                      repost.id,
+                      repost.uri,
+                      repost.bookmark.id
+                    )
+                  : handleAddBookmark(repost.id, repost.uri)
+                : post?.bookmark?.id
                 ? handleDeleteBookmark(post.id, post.uri, post.bookmark.id)
-                : handleAddBookmark(post.id, post.uri);
-            }}
+                : handleAddBookmark(post.id, post.uri)
+            }
           >
             {post?.bookmark?.id ? 'Remove Bookmark' : 'Add Bookmark'}
           </Tooltip.Item>
@@ -252,7 +268,6 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
           showModalDeletePost={showModalDeletePost}
           setShowModalDeletePost={setShowModalDeletePost}
           handleDeletePost={handleDeletePost}
-          postId={post.id}
         />
       </div>
     </>

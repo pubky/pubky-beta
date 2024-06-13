@@ -68,7 +68,7 @@ export default function Sidebar({
   const [image, setImage] = useState('/images/Userpic.png');
   const [profileTags, setProfileTags] = useState<ITaggedProfile[]>([]);
   const [showModalTags, setShowModalTags] = useState(false);
-  const [showModalTag, setShowModalTag] = useState(false);
+  const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -462,7 +462,7 @@ export default function Sidebar({
                   variant="custom"
                   size="small"
                   icon={<Icon.Tag />}
-                  onClick={() => setShowModalTag(true)}
+                  onClick={() => setShowModalProfileTag(true)}
                   className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
                 />
               </div>
@@ -648,11 +648,11 @@ export default function Sidebar({
         handleDeleteTag={handleDeleteProfileTag}
         tag={selectedTag}
       />
-      <Modal.TagCreatePost
+      <Modal.ProfileTag
         arrayTags={arrayTags}
         setArrayTags={setArrayTags}
-        showModalTag={showModalTag}
-        setShowModalTag={setShowModalTag}
+        showModalProfileTag={showModalProfileTag}
+        setShowModalProfileTag={setShowModalProfileTag}
       />
     </>
   );

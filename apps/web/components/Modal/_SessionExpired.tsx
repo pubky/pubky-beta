@@ -47,7 +47,10 @@ export default function SessionExpired({
       </Typography.Body>
       <Modal.SubmitAction
         icon={<Icon.SignOut size="16" />}
-        onClick={() => router.push('/logout')}
+        onClick={() => {
+          router.push('/logout');
+          setShowModal(false);
+        }}
         className="mt-8"
       >
         Logout ({countdown})

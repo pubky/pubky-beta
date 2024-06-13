@@ -9,6 +9,7 @@ import { useClientContext } from '../../../contexts/client';
 import { IPost, INewPost } from '../../../types';
 import { Utils } from '../../../utils';
 import Skeletons from '../../../components/Skeletons';
+import Link from 'next/link';
 
 export default function Index({
   params,
@@ -23,6 +24,7 @@ export default function Index({
   const [name, setName] = useState('Loading...');
   const [handler, setHandler] = useState('');
   const [loading, setLoading] = useState(true);
+  const [userExist, setUserExist] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
 
@@ -39,10 +41,12 @@ export default function Index({
       }
       const userProfile = await getUserIndexed(creatorPubky);
 
-      if (userProfile) {
+      if (userProfile && userProfile.profile) {
         setPic(userProfile.profile?.image || '/images/Userpic.png');
         setName(userProfile.profile?.name || 'Loading...');
         setHandler(creatorPubky);
+      } else {
+        setUserExist(false);
       }
     } catch (error) {
       console.log(error);
@@ -99,39 +103,60 @@ export default function Index({
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Profile" />
-      <div>
-        <Content.Grid className="flex flex-col text-start lg:flex-row items-center sm:justify-between relative">
-          <ProfileCommon.Handle
-            username={Utils.minifyText(name, 17)}
-            className="order-2 lg:order-1"
-            pubkey={Utils.minifyPubky(handler)}
-          />
-          <ProfileCommon.Avatar
-            username={name}
-            src={pic}
-            className="order-1 lg:order-2"
-          />
+      <Header className="hidden md:block" />
+      {userExist ? (
+        <>
+          <div>
+            <Content.Grid className="flex flex-col text-start lg:flex-row items-center sm:justify-between relative">
+              <ProfileCommon.Handle
+                username={Utils.minifyText(name, 17)}
+                className="order-2 lg:order-1"
+                pubkey={Utils.minifyPubky(handler)}
+              />
+              <ProfileCommon.Avatar
+                username={name}
+                src={pic}
+                className="order-1 lg:order-2"
+              />
+            </Content.Grid>
+          </div>
+          <Content.Grid className="grid grid-cols-3 gap-6">
+            <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
+              {Object.keys(posts).map((key) => (
+                <Post key={posts[key].id} post={posts[key]} />
+              ))}
+              {Object.keys(posts).length === 0 && !loading && (
+                <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+                  <Typography.H2 className="font-normal text-opacity-50">
+                    No posts yet.
+                  </Typography.H2>
+                </div>
+              )}
+              {loading && <Skeletons.Simple />}
+            </PostsLayout>
+            <Profile.Sidebar creatorPubky={creatorPubky} />
+          </Content.Grid>
+          <CreatePost />
+          <div ref={loader} />
+        </>
+      ) : (
+        <Content.Grid>
+          <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
+            <Typography.Body
+              variant="small"
+              className="text-opacity-50 text-center"
+            >
+              This profile was not found or has been deleted by its author.
+              <Link
+                href="/home"
+                className="ml-2 text-fuchsia-500 text-opacity-80 hover:text-opacity-100 cursor-pointer"
+              >
+                Go home
+              </Link>
+            </Typography.Body>
+          </div>
         </Content.Grid>
-      </div>
-      <Content.Grid className="grid grid-cols-3 gap-6">
-        <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
-          {Object.keys(posts).map((key) => (
-            <Post key={posts[key].id} post={posts[key]} />
-          ))}
-          {Object.keys(posts).length === 0 && !loading && (
-            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-              <Typography.H2 className="font-normal text-opacity-50">
-                No posts yet.
-              </Typography.H2>
-            </div>
-          )}
-          {loading && <Skeletons.Simple />}
-        </PostsLayout>
-        <Profile.Sidebar creatorPubky={creatorPubky} />
-      </Content.Grid>
-      <CreatePost />
-      <div ref={loader} />
+      )}
     </Content.Main>
   );
 }
