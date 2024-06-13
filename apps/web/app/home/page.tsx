@@ -112,6 +112,8 @@ export default function Index() {
                     fullContent
                     post={parentPost}
                     className="border-0"
+                    line
+                    lineStyle="h-[80%]"
                   />
                 )}
                 <Components.Post fullContent post={post} />

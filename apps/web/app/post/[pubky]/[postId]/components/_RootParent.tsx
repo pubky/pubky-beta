@@ -102,6 +102,7 @@ export default function RootParent({ replies }: { replies: IReply }) {
         size="full"
         fullContent
         className="border-0"
+        line
       />
     ) : (
       <div
