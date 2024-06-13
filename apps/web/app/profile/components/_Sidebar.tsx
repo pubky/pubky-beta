@@ -1,13 +1,25 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Icon, Typography, Post, SideCard, Button } from '@social/ui-shared';
+import {
+  Icon,
+  Typography,
+  Post,
+  SideCard,
+  Button,
+  PostUtil,
+  Tooltip as TooltipUI,
+} from '@social/ui-shared';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../contexts/client';
 import { Skeleton } from '../../../components';
 import { Utils } from '../../../utils';
-import { IFollowingResponse, IFollowersResponse } from '../../../types';
+import {
+  IFollowingResponse,
+  IFollowersResponse,
+  ITaggedProfile,
+} from '../../../types';
 import Image from 'next/image';
 import { DropDown } from '../../../components/DropDown';
 import { Modal } from '../../../components/Modal';
@@ -45,6 +57,8 @@ export default function Sidebar({
     listFollowers,
     listFollowing,
     getUser,
+    createTag,
+    deleteTag,
   } = useClientContext();
   const router = useRouter();
   const [disposableAccount, setDisposableAccount] = useState(false);
@@ -52,6 +66,13 @@ export default function Sidebar({
   const [bio, setBio] = useState('No bio.');
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
   const [image, setImage] = useState('/images/Userpic.png');
+  const [profileTags, setProfileTags] = useState<ITaggedProfile[]>([]);
+  const [showModalTags, setShowModalTags] = useState(false);
+  const [showModalTag, setShowModalTag] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>();
+  const [showTooltipProfile, setShowTooltipProfile] = useState('');
+  const [arrayTags, setArrayTags] = useState<string[]>([]);
+  const [loadingProfileTags, setLoadingProfileTags] = useState(true);
   const [pubkyUser, setPubkyUser] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
@@ -162,13 +183,16 @@ export default function Sidebar({
           if (userProfile) {
             profile = userProfile?.profile;
             setPubkyUser(creatorPubky);
+            setProfileTags(userProfile?.taggedAs);
           }
         } else {
-          const userProfile = await getProfile();
+          if (!pubky) return;
+          const userProfile = await getUser(pubky);
           setPubkyUser(pubky || '');
 
           if (userProfile) {
-            profile = userProfile;
+            profile = userProfile.profile;
+            setProfileTags(userProfile?.taggedAs);
           }
         }
 
@@ -187,6 +211,7 @@ export default function Sidebar({
 
           setLoading(false);
         }
+        setLoadingProfileTags(false);
       } catch (error) {
         console.log(error);
       }
@@ -234,278 +259,378 @@ export default function Sidebar({
     return linkUrl || '';
   };
 
+  const handleAddProfileTag = async (tag: string) => {
+    if ((!creatorPubky || creatorPubky === pubky) && pubky) {
+      await createTag(pubky, tag);
+    } else if (creatorPubky) {
+      await createTag(creatorPubky, tag);
+    }
+  };
+
+  const handleDeleteProfileTag = async (tag: string) => {
+    if ((!creatorPubky || creatorPubky === pubky) && pubky) {
+      await deleteTag(pubky, tag);
+    } else if (creatorPubky) {
+      await deleteTag(creatorPubky, tag);
+    }
+  };
+
+  useEffect(() => {
+    const createTags = async () => {
+      for (const tag of arrayTags) {
+        await handleAddProfileTag(tag);
+      }
+    };
+    createTags();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arrayTags]);
+
   return (
-    <div className="self-start sticky top-[160px] col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
-      {loading ? (
-        <Skeleton.ProfileSidebar />
-      ) : (
-        <div className="w-full">
-          <SideCard.Content className="flex-col gap-3 inline-flex">
-            <div className="items-center inline-flex justify-between">
-              <div className="justify-start items-center gap-3 inline-flex">
-                <Image
-                  width={40}
-                  height={40}
-                  className="w-[40px] h-[40px] rounded-full"
-                  src={image}
-                  alt="user-pic"
-                />
-                <div>
-                  <Typography.H2 className="-mb-1">
-                    {Utils.minifyText(name, 15)}
-                  </Typography.H2>
-                  <Typography.Label className="text-opacity-50">
-                    {pubkyUser ? Utils.minifyPubky(pubkyUser) : 'Loading...'}
-                  </Typography.Label>
-                </div>
-              </div>
-              <div className="relative">
-                {showProfileMenu && (
-                  <Tooltip.ProfileMenu
-                    setShowProfileMenu={setShowProfileMenu}
-                    pubky={pubkyUser}
-                  />
-                )}
-                <div
-                  className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"
-                  onClick={() => setShowProfileMenu(true)}
-                >
-                  <Icon.DotsThree size="28" />
-                </div>
-              </div>
-            </div>
-            <Typography.Body
-              variant="medium"
-              className="text-opacity-80 break-all"
-            >
-              {Utils.minifyText(bio, 160)}
-            </Typography.Body>
-            {initLoadingFollowed ? (
-              <Button.Medium
-                loading={initLoadingFollowed}
-                className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
-                }
-              >
-                Loading
-              </Button.Medium>
-            ) : followed ? (
-              <Button.Medium
-                onClick={loadingFollowed ? undefined : () => unfollowUser()}
-                disabled={loadingFollowed}
-                loading={loadingFollowed}
-                variant="default"
-                icon={<Icon.UserMinus size="16" />}
-                className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
-                }
-              >
-                Unfollow
-              </Button.Medium>
-            ) : (
-              <Button.Medium
-                onClick={loadingFollowed ? undefined : () => followUser()}
-                disabled={loadingFollowed}
-                loading={loadingFollowed}
-                variant="default"
-                icon={<Icon.UserPlus size="16" />}
-                className={
-                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
-                }
-              >
-                Follow
-              </Button.Medium>
-            )}
-            {(!creatorPubky || creatorPubky === pubky) && (
-              <Link href="/settings">
-                <Button.Medium
-                  variant="default"
-                  icon={<Icon.GearSix size="16" />}
-                >
-                  Edit profile
-                </Button.Medium>
-              </Link>
-            )}
-          </SideCard.Content>
-        </div>
-      )}
-      {/**<div>
-        <SideCard.Header title="Tagged as" variantTitle="label" />
-        <SideCard.Content>
-          <div className="flex-col gap-3 inline-flex">
-            <Post.Footer className="mt-0">
-              <PostUtil.Tag clicked color="amber">
-                Bitcoin
-              </PostUtil.Tag>
-              <Button.Action
-                variant="custom"
-                size="small"
-                icon={<Icon.Plus />}
-              />
-              <PostUtil.Counter counter={0} />
-             <Post.UserPic images={images} />
-            </Post.Footer>
-          </div>
-        </SideCard.Content>
-      </div> */}
-      <div>
-        <SideCard.Header title="Contacts" />
-        {loadingFollowers ? (
-          <Skeletons.Simple />
+    <>
+      <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
+        {loading ? (
+          <Skeleton.ProfileSidebar />
         ) : (
-          <SideCard.Content className="grid grid-cols-2 gap-12 justify-start mt-2">
-            {loadingFollowers ? (
-              <div className="flex w-full justify-center">
-                <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
-              </div>
-            ) : (
-              <div
-                onClick={(event) => {
-                  event.stopPropagation();
-                  ((followers?.count ?? 0) > 0 ||
-                    (following?.count ?? 0) > 0) &&
-                    router.push(
-                      `/contacts/${
-                        creatorPubky
-                          ? `${creatorPubky}?tab=followers`
-                          : '?tab=followers'
-                      }`
-                    );
-                }}
-                className={`flex-col gap-3 inline-flex ${
-                  (followers?.count ?? 0) > 0 && 'cursor-pointer'
-                }`}
-              >
-                <div className="inline-flex gap-2">
-                  <Typography.Label>{followers?.count}</Typography.Label>
-                  <Typography.Label className="text-opacity-50">
-                    Followers
-                  </Typography.Label>
-                </div>
-                <Post.UserPic images={followersImages} />
-              </div>
-            )}
-            {loadingFollowing ? (
-              <div className="flex w-full justify-center">
-                <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
-              </div>
-            ) : (
-              <div
-                onClick={(event) => {
-                  event.stopPropagation();
-                  ((followers?.count ?? 0) > 0 ||
-                    (following?.count ?? 0) > 0) &&
-                    router.push(
-                      `/contacts/${
-                        creatorPubky
-                          ? `${creatorPubky}?tab=following`
-                          : '?tab=following'
-                      }`
-                    );
-                }}
-                className={`flex-col gap-3 inline-flex ${
-                  (following?.count ?? 0) > 0 && 'cursor-pointer'
-                }`}
-              >
-                <div className="inline-flex gap-2">
-                  <Typography.Label>{following?.count}</Typography.Label>
-                  <Typography.Label className="text-opacity-50">
-                    Following
-                  </Typography.Label>
-                </div>
-                <Post.UserPic images={followingImages} />
-              </div>
-            )}
-          </SideCard.Content>
-        )}
-      </div>
-      {!creatorPubky || creatorPubky === pubky ? (
-        <div className="flex flex-col gap-2">
-          <SideCard.Header title="Status" />
-          <DropDown.Status />
-        </div>
-      ) : (
-        status &&
-        status !== 'noStatus' && (
-          <div>
-            <SideCard.Header title="Status" />
-            <div className="mt-2 px-4 py-2 bg-white bg-opacity-10 rounded-full">
-              <Typography.Body variant="medium">
-                {
-                  Utils.statusHelper.emojis[
-                    status as keyof typeof Utils.statusHelper.emojis
-                  ]
-                }{' '}
-                {
-                  Utils.statusHelper.labels[
-                    status as keyof typeof Utils.statusHelper.labels
-                  ]
-                }
-              </Typography.Body>
-            </div>
-          </div>
-        )
-      )}
-      {links.length > 0 && (
-        <div className="flex-col inline-flex gap-1">
-          <SideCard.Header title="Links" />
-          <div className="flex-col inline-flex gap-2">
-            {links.map((link, index) => (
-              <div key={index}>
-                {link.url && (
-                  <>
+          <div className="w-full self-start sticky top-[160px] backdrop-blur-3xl z-20 rounded-2xl px-3 py-4">
+            <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
+              <div className="items-center inline-flex justify-between">
+                <div className="justify-start items-center gap-3 inline-flex">
+                  <Image
+                    width={40}
+                    height={40}
+                    className="w-[40px] h-[40px] rounded-full"
+                    src={image}
+                    alt="user-pic"
+                  />
+                  <div>
+                    <Typography.H2 className="-mb-1">
+                      {Utils.minifyText(name, 15)}
+                    </Typography.H2>
                     <Typography.Label className="text-opacity-50">
-                      {link.title}
+                      {pubkyUser ? Utils.minifyPubky(pubkyUser) : 'Loading...'}
                     </Typography.Label>
-                    {link.title === 'email' || link.title === 'mail' ? (
-                      <Link href={`mailto:${link.url}`} target="_blank">
-                        <Typography.Body
-                          className="hover:text-opacity-80"
-                          variant="small-bold"
-                        >
-                          {link.url}
-                        </Typography.Body>
-                      </Link>
-                    ) : (
-                      <div
-                        className="cursor-pointer"
-                        onClick={
-                          checkLink === false
-                            ? () => window.open(link.url, '_blank')
-                            : () => {
-                                setShowModalCheckLink(true);
-                                setClickedLink(link.url);
-                              }
-                        }
-                      >
-                        <Typography.Body
-                          className="hover:text-opacity-80"
-                          variant="small-bold"
-                        >
-                          {Utils.minifyText(renderSocialUsername(link.url), 50)}
-                        </Typography.Body>
-                      </div>
-                    )}
-                  </>
-                )}
+                  </div>
+                </div>
+                <div className="relative">
+                  {showProfileMenu && (
+                    <Tooltip.ProfileMenu
+                      setShowProfileMenu={setShowProfileMenu}
+                      pubky={pubkyUser}
+                    />
+                  )}
+                  <div
+                    className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"
+                    onClick={() => setShowProfileMenu(true)}
+                  >
+                    <Icon.DotsThree size="28" />
+                  </div>
+                </div>
               </div>
-            ))}
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 break-all"
+              >
+                {Utils.minifyText(bio, 160)}
+              </Typography.Body>
+              {initLoadingFollowed ? (
+                <Button.Medium
+                  loading={initLoadingFollowed}
+                  className={
+                    !creatorPubky || creatorPubky === pubky
+                      ? 'hidden'
+                      : 'w-full'
+                  }
+                >
+                  Loading
+                </Button.Medium>
+              ) : followed ? (
+                <Button.Medium
+                  onClick={loadingFollowed ? undefined : () => unfollowUser()}
+                  disabled={loadingFollowed}
+                  loading={loadingFollowed}
+                  variant="default"
+                  icon={<Icon.UserMinus size="16" />}
+                  className={
+                    !creatorPubky || creatorPubky === pubky
+                      ? 'hidden'
+                      : 'w-full'
+                  }
+                >
+                  Unfollow
+                </Button.Medium>
+              ) : (
+                <Button.Medium
+                  onClick={loadingFollowed ? undefined : () => followUser()}
+                  disabled={loadingFollowed}
+                  loading={loadingFollowed}
+                  variant="default"
+                  icon={<Icon.UserPlus size="16" />}
+                  className={
+                    !creatorPubky || creatorPubky === pubky
+                      ? 'hidden'
+                      : 'w-full'
+                  }
+                >
+                  Follow
+                </Button.Medium>
+              )}
+              {(!creatorPubky || creatorPubky === pubky) && (
+                <Link href="/settings">
+                  <Button.Medium
+                    variant="default"
+                    icon={<Icon.GearSix size="16" />}
+                  >
+                    Edit profile
+                  </Button.Medium>
+                </Link>
+              )}
+            </SideCard.Content>
           </div>
+        )}
+        <div className="flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
+          <div>
+            <SideCard.Header title="Tagged as" />
+            {loadingProfileTags ? (
+              <Skeleton.Simple />
+            ) : (
+              <div className="mt-4 justify-start items-start gap-2 flex flex-wrap">
+                {profileTags.length > 0 ? (
+                  <>
+                    {profileTags.map((tag, index) => {
+                      const isTagFound = tag.from.some(
+                        (fromItem) => fromItem.author.id === pubky
+                      );
+                      return (
+                        <TooltipUI.Root
+                          key={index}
+                          delay={200}
+                          setShowTooltip={setShowTooltipProfile}
+                          tagId={tag.tag}
+                        >
+                          {showTooltipProfile === tag.tag && (
+                            <Tooltip.Tag
+                              setSelectedTag={setSelectedTag}
+                              setShowModalTags={setShowModalTags}
+                              tags={tag}
+                            />
+                          )}
+                          <PostUtil.Tag
+                            key={index}
+                            clicked={isTagFound}
+                            onClick={() => {
+                              setShowModalTags(true);
+                              setSelectedTag(tag);
+                            }}
+                            color="fuchsia"
+                            className="flex flex-col pl-9"
+                          >
+                            <Button.Action
+                              variant="custom"
+                              size="small"
+                              className="absolute -left-9 transform -translate-y-[21px] scale-75"
+                              icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                isTagFound
+                                  ? handleDeleteProfileTag(tag.tag)
+                                  : handleAddProfileTag(tag.tag);
+                              }}
+                            />
+                            {Utils.minifyText(tag.tag.replace(' ', ''))} (
+                            {tag.count})
+                          </PostUtil.Tag>
+                        </TooltipUI.Root>
+                      );
+                    })}{' '}
+                    <Button.Action
+                      variant="custom"
+                      size="small"
+                      icon={<Icon.ListBullets />}
+                      onClick={() => setShowModalTags(true)}
+                      className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+                    />
+                  </>
+                ) : (
+                  <Typography.Body
+                    variant="small"
+                    className="flex self-center text-opacity-50"
+                  >
+                    No tags yet
+                  </Typography.Body>
+                )}
+                <Button.Action
+                  variant="custom"
+                  size="small"
+                  icon={<Icon.Tag />}
+                  onClick={() => setShowModalTag(true)}
+                  className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+                />
+              </div>
+            )}
+          </div>
+          <div>
+            <SideCard.Header title="Contacts" />
+            {loadingFollowers ? (
+              <Skeletons.Simple />
+            ) : (
+              <SideCard.Content className="grid grid-cols-2 gap-12 justify-start mt-2">
+                {loadingFollowers ? (
+                  <div className="flex w-full justify-center">
+                    <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
+                  </div>
+                ) : (
+                  <div
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      ((followers?.count ?? 0) > 0 ||
+                        (following?.count ?? 0) > 0) &&
+                        router.push(
+                          `/contacts/${
+                            creatorPubky
+                              ? `${creatorPubky}?tab=followers`
+                              : '?tab=followers'
+                          }`
+                        );
+                    }}
+                    className={`flex-col gap-3 inline-flex ${
+                      (followers?.count ?? 0) > 0 && 'cursor-pointer'
+                    }`}
+                  >
+                    <div className="inline-flex gap-2">
+                      <Typography.Label>{followers?.count}</Typography.Label>
+                      <Typography.Label className="text-opacity-50">
+                        Followers
+                      </Typography.Label>
+                    </div>
+                    <Post.UserPic images={followersImages} />
+                  </div>
+                )}
+                {loadingFollowing ? (
+                  <div className="flex w-full justify-center">
+                    <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
+                  </div>
+                ) : (
+                  <div
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      ((followers?.count ?? 0) > 0 ||
+                        (following?.count ?? 0) > 0) &&
+                        router.push(
+                          `/contacts/${
+                            creatorPubky
+                              ? `${creatorPubky}?tab=following`
+                              : '?tab=following'
+                          }`
+                        );
+                    }}
+                    className={`flex-col gap-3 inline-flex ${
+                      (following?.count ?? 0) > 0 && 'cursor-pointer'
+                    }`}
+                  >
+                    <div className="inline-flex gap-2">
+                      <Typography.Label>{following?.count}</Typography.Label>
+                      <Typography.Label className="text-opacity-50">
+                        Following
+                      </Typography.Label>
+                    </div>
+                    <Post.UserPic images={followingImages} />
+                  </div>
+                )}
+              </SideCard.Content>
+            )}
+          </div>
+          {!creatorPubky || creatorPubky === pubky ? (
+            <div className="flex flex-col gap-2">
+              <SideCard.Header title="Status" />
+              <DropDown.Status />
+            </div>
+          ) : (
+            status &&
+            status !== 'noStatus' && (
+              <div>
+                <SideCard.Header title="Status" />
+                <div className="mt-2 px-4 py-2 bg-white bg-opacity-10 rounded-full">
+                  <Typography.Body variant="medium">
+                    {
+                      Utils.statusHelper.emojis[
+                        status as keyof typeof Utils.statusHelper.emojis
+                      ]
+                    }{' '}
+                    {
+                      Utils.statusHelper.labels[
+                        status as keyof typeof Utils.statusHelper.labels
+                      ]
+                    }
+                  </Typography.Body>
+                </div>
+              </div>
+            )
+          )}
+          {links.length > 0 && (
+            <div className="flex-col inline-flex gap-1">
+              <SideCard.Header title="Links" />
+              <div className="flex-col inline-flex gap-2">
+                {links.map((link, index) => (
+                  <div key={index}>
+                    {link.url && (
+                      <>
+                        <Typography.Label className="text-opacity-50">
+                          {link.title}
+                        </Typography.Label>
+                        {link.title === 'email' || link.title === 'mail' ? (
+                          <Link href={`mailto:${link.url}`} target="_blank">
+                            <Typography.Body
+                              className="hover:text-opacity-80"
+                              variant="small-bold"
+                            >
+                              {link.url}
+                            </Typography.Body>
+                          </Link>
+                        ) : (
+                          <div
+                            className="cursor-pointer"
+                            onClick={
+                              checkLink === false
+                                ? () => window.open(link.url, '_blank')
+                                : () => {
+                                    setShowModalCheckLink(true);
+                                    setClickedLink(link.url);
+                                  }
+                            }
+                          >
+                            <Typography.Body
+                              className="hover:text-opacity-80"
+                              variant="small-bold"
+                            >
+                              {Utils.minifyText(
+                                renderSocialUsername(link.url),
+                                50
+                              )}
+                            </Typography.Body>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {(!creatorPubky || creatorPubky === pubky) && (
+            <Button.Medium
+              className="w-[200px]"
+              onClick={
+                disposableAccount
+                  ? () => setShowModalLogout(true)
+                  : () => router.push('/logout')
+              }
+              icon={<Icon.SignOut />}
+            >
+              Sign out
+            </Button.Medium>
+          )}
         </div>
-      )}
-      {(!creatorPubky || creatorPubky === pubky) && (
-        <Button.Medium
-          className="w-[200px]"
-          onClick={
-            disposableAccount
-              ? () => setShowModalLogout(true)
-              : () => router.push('/logout')
-          }
-          icon={<Icon.SignOut />}
-        >
-          Sign out
-        </Button.Medium>
-      )}
+      </div>
       <Modal.Logout
         showModalLogout={showModalLogout}
         setShowModalLogout={setShowModalLogout}
@@ -515,6 +640,20 @@ export default function Sidebar({
         setShowModalCheckLink={setShowModalCheckLink}
         clickedLink={clickedLink}
       />
-    </div>
+      <Modal.ProfileTags
+        tagsProfile={profileTags}
+        showModalTags={showModalTags}
+        setShowModalTags={setShowModalTags}
+        handleAddTag={handleAddProfileTag}
+        handleDeleteTag={handleDeleteProfileTag}
+        tag={selectedTag}
+      />
+      <Modal.TagCreatePost
+        arrayTags={arrayTags}
+        setArrayTags={setArrayTags}
+        showModalTag={showModalTag}
+        setShowModalTag={setShowModalTag}
+      />
+    </>
   );
 }
