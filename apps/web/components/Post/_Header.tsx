@@ -16,9 +16,10 @@ import Tooltip from '../Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
+  repostView?: boolean;
 }
 
-export default function Header({ post }: PostProps) {
+export default function Header({ post, repostView = false }: PostProps) {
   const router = useRouter();
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
@@ -62,15 +63,17 @@ export default function Header({ post }: PostProps) {
       >
         <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
       </div>
-      <div className="relative" onClick={(event) => event.stopPropagation()}>
-        {showMenu && <Tooltip.Menu post={post} setShowMenu={setShowMenu} />}
-        <div
-          className="mt-1 ml-2 cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"
-          onClick={() => setShowMenu(true)}
-        >
-          <Icon.DotsThree size="24" color="gray" />
+      {!repostView && (
+        <div className="relative" onClick={(event) => event.stopPropagation()}>
+          {showMenu && <Tooltip.Menu post={post} setShowMenu={setShowMenu} />}
+          <div
+            className="mt-1 ml-2 cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"
+            onClick={() => setShowMenu(true)}
+          >
+            <Icon.DotsThree size="24" color="gray" />
+          </div>
         </div>
-      </div>
+      )}
     </PostUI.Header>
   );
 }

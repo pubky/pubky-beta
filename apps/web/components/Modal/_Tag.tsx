@@ -245,7 +245,7 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
               <Input.Text
                 placeholder="tag"
                 value={tag}
-                className="h-[60px]"
+                className="h-[60px] w-full"
                 maxLength={20}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}

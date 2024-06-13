@@ -37,6 +37,7 @@ export default function Status({ subtitle }: Status) {
       labelIcon="Sort"
       type={'text'}
       subtitle={subtitle}
+      className={openDropdown ? 'z-20' : ''}
     >
       <DropDownUI.Content
         title="Status"

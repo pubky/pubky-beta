@@ -11,6 +11,7 @@ import {
   ISaveProfile,
   ITaggedPost,
   ICreatePostResponse,
+  ICreateReplyResponse,
   ICreateTagResponse,
   IDeleteTagResponse,
   IFollowersResponse,
@@ -31,7 +32,6 @@ import {
 
 import Client from '@pubky/sdk';
 import { Utils } from '../utils/';
-import { useRouter } from 'next/navigation';
 
 const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
 const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY || '';
@@ -61,7 +61,6 @@ const startClient = async () => {
 startClient();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
   const [pubky, setPubky] = useState<string | null>(
     (Utils.storage.get('pubky') as TStatus) || null
   );
@@ -135,6 +134,17 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       setPubky(pks[0]);
 
       return pks[0];
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  const session = async (): Promise<string | false> => {
+    try {
+      await client.ready();
+      const sessions = await client.session();
+      return sessions;
     } catch (error) {
       console.log(error);
       return false;
@@ -328,7 +338,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       });
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Put post:${pk} failed: ${result.error.message}`);
       }
 
@@ -338,6 +347,86 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         throw new Error(`Put post:${pk} failed: ${postResult.error.message}`);
 
       return postResult.value as ICreatePostResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const createRepost = async (
+    uri: string,
+    content?: string
+  ): Promise<IPost | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get profile failed: not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.posts.put(pk, {
+        content: content ? content : '',
+        embed: {
+          type: 'post',
+          uri: uri,
+        },
+      });
+
+      if (!result.ok) {
+        throw new Error(`Put repost:${pk} failed: ${result.error.message}`);
+      }
+
+      return result.value as ICreateRepostResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const createReply = async (
+    content: string,
+    uriPost: string,
+    rootUri: string
+  ): Promise<IReply | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get profile failed: not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.posts.put(pk, {
+        content: content,
+        parent: uriPost,
+        root: rootUri,
+      });
+
+      if (!result.ok)
+        throw new Error(`Put reply:${pk} failed: ${result.error.message}`);
+
+      return result.value as ICreateReplyResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const getReplies = async (uri: string): Promise<IReply | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get profile failed: not logged in.');
+
+      await client.ready();
+
+      const repliesResult = await client.social.posts.thread(uri);
+
+      if (!repliesResult.ok)
+        throw new Error(
+          `Put reply:${pk} failed: ${repliesResult.error.message}`
+        );
+
+      return repliesResult.value as ICreateReplyResponse;
     } catch (error) {
       console.log(error);
       return null;
@@ -358,7 +447,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.bookmarks.put(pk, uri);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Put bookmark:${pk} failed: ${result.error.message}`);
       }
 
@@ -388,7 +476,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.bookmarks.delete(pk, uri, bookmarkId);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(
           `Delete bookmark:${pk} failed: ${result.error.message}`
         );
@@ -421,7 +508,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.tags.put(pk, uri, tag);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Put tag:${pk} failed: ${result.error.message}`);
       }
 
@@ -448,7 +534,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.tags.delete(pk, uri, tag);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Delete tag:${pk} failed: ${result.error.message}`);
       }
 
@@ -514,7 +599,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.graph.follow(pkLogged, pk);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Follow:${pk} failed: ${result.error.message}`);
       }
 
@@ -538,7 +622,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.graph.unfollow(pkLogged, pk);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Unfollow:${pk} failed: ${result.error.message}`);
       }
 
@@ -603,7 +686,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.posts.delete(pk, postId);
 
       if (!result.ok) {
-        router.push('/logout');
         throw new Error(`Delete post:${pk} failed: ${result.error.message}`);
       }
 
@@ -764,6 +846,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         updateStatus,
         isLoggedIn,
         createPost,
+        createRepost,
+        createReply,
+        getReplies,
         createBookmark,
         deleteBookmark,
         createTag,
@@ -791,6 +876,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         setSearchTags,
         follow,
         unfollow,
+        session,
       }}
     >
       {children}
