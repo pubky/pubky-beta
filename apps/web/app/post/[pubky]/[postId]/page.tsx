@@ -79,7 +79,7 @@ export default function Index({
               <Post.MainPost post={post} loading={loading} uri={uri} />
             </div>
 
-            <Post.ReplyForm uri={uri} updatePost={handleUpdatePost} />
+            <Post.ReplyForm uri={uri} post={post} updatePost={handleUpdatePost} />
             <Post.Replies repliesResponse={replies} />
           </>
         ) : (
