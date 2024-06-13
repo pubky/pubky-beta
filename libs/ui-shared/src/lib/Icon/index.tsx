@@ -9,6 +9,7 @@ import {
 import { Tag } from './_Commerce';
 import {
   Pencil,
+  PencilLine,
   Stack,
   GridFour,
   SquaresFour,
@@ -124,6 +125,7 @@ export const Icon = {
   PaperPlaneRight,
   Pause,
   Pencil,
+  PencilLine,
   Play,
   Plus,
   Podcast,

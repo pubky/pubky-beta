@@ -33,6 +33,13 @@ export interface TClientContext {
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string) => Promise<IPost | null>;
+  createRepost: (uri: string, content?: string) => Promise<IPost | null>;
+  createReply: (
+    content: string,
+    uriPost: string,
+    rootUri: string
+  ) => Promise<ICreateReplyResponse | null>;
+  getReplies: (uri: string) => Promise<IReply | null>;
   deletePost: (postId: string) => Promise<IDeletePost | null>;
   createBookmark: (id: string, uri: string) => Promise<IBookmark | null>;
   deleteBookmark: (
@@ -44,6 +51,7 @@ export interface TClientContext {
   deleteTag: (uri: string, tag: string) => Promise<IDeleteTagResponse | null>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
   isLoggedIn: () => Promise<string | false>;
+  session: () => Promise<string | false>;
   listUserFeed: (
     pubky: string,
     cursor: string,
@@ -106,6 +114,15 @@ export interface IAuthor {
 
 export interface IPostContent {
   content: string;
+  parent?: string;
+  root?: string;
+  embed?: EmbedContent;
+}
+
+export interface EmbedContent {
+  post: IPost;
+  type: string;
+  uri: string;
 }
 
 export interface IPost {
@@ -115,8 +132,15 @@ export interface IPost {
   post: IPostContent;
   tags: ITaggedPost[];
   bookmark: BookmarkPost;
+  repliesCount: number;
+  repostsCount: number;
   createdAt: number;
   indexedAt: number;
+}
+
+export interface IReply {
+  post: IPost;
+  replies: [];
 }
 
 export interface BookmarkPost {
@@ -145,7 +169,7 @@ export interface IUserProfile {
   profile: IProfile;
   tagsCount: number;
   postsCount: number;
-  taggedAs: string[];
+  taggedAs: ITaggedProfile[];
   viewer: IViewer;
 }
 
@@ -177,6 +201,16 @@ export interface ICreatePostResponse {
   uri: string;
 }
 
+export interface ICreateRepostResponse {
+  id: string;
+  uri: string;
+}
+
+export interface ICreateReplyResponse {
+  id: string;
+  uri: string;
+}
+
 export interface ICreateTagResponse {
   id: string;
   uri: string;
@@ -204,6 +238,12 @@ export interface IPostFrom {
 }
 
 export interface ITaggedPost {
+  tag: string;
+  count: number;
+  from: IPostFrom[];
+}
+
+export interface ITaggedProfile {
   tag: string;
   count: number;
   from: IPostFrom[];

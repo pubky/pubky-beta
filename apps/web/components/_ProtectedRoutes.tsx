@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useClientContext } from '../contexts/client';
 import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import Modal from './Modal';
 
 export default function ProtectedRoutes({
   children,
@@ -12,30 +14,30 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn } = useClientContext();
+  const { isLoggedIn, session } = useClientContext();
+  const [showModal, setShowModal] = useState(false);
+  const protectedRoutes = [
+    '/contacts',
+    '/followers',
+    '/home',
+    '/hot-tags',
+    '/notifications',
+    '/post',
+    '/profile',
+    '/search',
+    '/settings',
+  ];
+
+  const redirectLoggedUser = ['/onboarding', '/login', '/sign-up'];
+
+  const notRedirectUser = [
+    '/onboarding/welcome',
+    '/onboarding/permissions',
+    '/onboarding/confirm',
+    '/onboarding/sign-up',
+  ];
 
   useEffect(() => {
-    const protectedRoutes = [
-      '/contacts',
-      '/followers',
-      '/home',
-      '/hot-tags',
-      '/notifications',
-      '/post',
-      '/profile',
-      '/search',
-      '/settings',
-    ];
-
-    const redirectLoggedUser = ['/onboarding', '/login', '/sign-up'];
-
-    const notRedirectUser = [
-      '/onboarding/welcome',
-      '/onboarding/permissions',
-      '/onboarding/confirm',
-      '/onboarding/sign-up',
-    ];
-
     const isProtected = protectedRoutes.includes(pathname);
 
     const checkLogin = async () => {
@@ -57,7 +59,32 @@ export default function ProtectedRoutes({
     };
 
     checkLogin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, router, pathname]);
+
+  useEffect(() => {
+    const isProtected = protectedRoutes.includes(pathname);
+
+    if (!isProtected) {
+      return;
+    }
+
+    const checkLoginStatus = async () => {
+      const loggedIn: any = await session();
+      if (loggedIn && typeof loggedIn === 'object' && 'users' in loggedIn) {
+        if (Object.keys(loggedIn.users).length > 0) {
+          setShowModal(false);
+        } else {
+          setShowModal(true);
+        }
+      } else {
+        setShowModal(true);
+      }
+    };
+
+    checkLoginStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, pathname]);
 
   return (
     <>
@@ -65,6 +92,12 @@ export default function ProtectedRoutes({
         <NextTopLoader color="#FD00FF" />
       </div>
       {children}
+      {showModal && (
+        <Modal.SessionExpired
+          setShowModal={setShowModal}
+          showModal={showModal}
+        />
+      )}
     </>
   );
 }
