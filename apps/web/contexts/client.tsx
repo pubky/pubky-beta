@@ -365,7 +365,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       await client.ready();
 
       const result = await client.social.posts.put(pk, {
-        content: content ? content : '',
+        content: content && content,
         embed: {
           type: 'post',
           uri: uri,

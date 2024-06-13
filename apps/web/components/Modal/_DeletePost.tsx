@@ -6,15 +6,13 @@ import { useEffect, useRef } from 'react';
 interface DeletePostProps {
   showModalDeletePost: boolean;
   setShowModalDeletePost: React.Dispatch<React.SetStateAction<boolean>>;
-  handleDeletePost: (postId: string) => void;
-  postId: string;
+  handleDeletePost: () => void;
 }
 
 export default function DeletePost({
   showModalDeletePost,
   setShowModalDeletePost,
   handleDeletePost,
-  postId,
 }: DeletePostProps) {
   const modalDeletePostRef = useRef<HTMLDivElement>(null);
 
@@ -58,7 +56,7 @@ export default function DeletePost({
         <Modal.SubmitAction
           icon={<Icon.Trash size="16" />}
           onClick={() => {
-            handleDeletePost(postId);
+            handleDeletePost();
             setShowModalDeletePost(false);
           }}
         >

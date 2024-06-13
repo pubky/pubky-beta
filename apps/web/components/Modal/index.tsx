@@ -4,6 +4,7 @@ import CreatePost from './_CreatePost';
 import DeletePost from './_DeletePost';
 import Link from './_Link';
 import Logout from './_Logout';
+import ProfileTag from './_ProfileTag';
 import ProfileTags from './_ProfileTags';
 import Repost from './_Repost';
 import SearchInputCard from './_SearchInputCard';
@@ -19,6 +20,7 @@ export const Modal = {
   DeletePost,
   Link,
   Logout,
+  ProfileTag,
   ProfileTags,
   Repost,
   SearchInputCard,
