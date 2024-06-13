@@ -8,12 +8,15 @@ import { Icon, Button, Post, Input, PostUtil } from '@social/ui-shared';
 import { useClientContext } from '../../../../../contexts/client';
 import Modal from '../../../../../components/Modal';
 import { Utils } from '../../../../../utils';
+import { IPost } from '../../../../../types';
 
 export default function ReplyForm({
   uri,
+  post,
   updatePost,
 }: {
   uri: string;
+  post: IPost;
   updatePost: () => void;
 }) {
   const { getProfile, pubky, createReply, createTag } = useClientContext();
@@ -33,7 +36,8 @@ export default function ReplyForm({
 
   const handleReply = async () => {
     setSendingReply(true);
-    const sendReply = await createReply(contentReply, uri, uri);
+    const rootUri = post.post.root ?? uri;
+    const sendReply = await createReply(contentReply, uri, rootUri);
 
     updatePost();
     if (sendReply) {
