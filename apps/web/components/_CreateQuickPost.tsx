@@ -136,6 +136,7 @@ export default function CreateQuickPost() {
       setTweetId('');
       setContent('Post created!');
       setShow(true);
+      setTextArea(false);
     } catch (error) {
       console.log(error);
     } finally {

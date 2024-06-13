@@ -16,10 +16,15 @@ import Tooltip from '../Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
+  repost?: IPost;
   repostView?: boolean;
 }
 
-export default function Header({ post, repostView = false }: PostProps) {
+export default function Header({
+  post,
+  repost,
+  repostView = false,
+}: PostProps) {
   const router = useRouter();
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
@@ -65,7 +70,13 @@ export default function Header({ post, repostView = false }: PostProps) {
       </div>
       {!repostView && (
         <div className="relative" onClick={(event) => event.stopPropagation()}>
-          {showMenu && <Tooltip.Menu post={post} setShowMenu={setShowMenu} />}
+          {showMenu && (
+            <Tooltip.Menu
+              post={post}
+              repost={repost}
+              setShowMenu={setShowMenu}
+            />
+          )}
           <div
             className="mt-1 ml-2 cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"
             onClick={() => setShowMenu(true)}

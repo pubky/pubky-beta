@@ -16,6 +16,7 @@ import { Tweet } from 'react-tweet';
 import { Utils } from '../../utils';
 import { IPost } from '../../types';
 import Post from '../Post';
+import { useAlertContext } from '../../contexts/alerts';
 
 interface CreateRepostProps {
   showModalRepost: boolean;
@@ -31,6 +32,7 @@ export default function Repost({
   post,
 }: CreateRepostProps) {
   const { pubky, getProfile, createRepost, createTag } = useClientContext();
+  const { setContent, setShow } = useAlertContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [contentRepost, setContentRepost] = useState('');
   const [sendingRepost, setSendingRepost] = useState(false);
@@ -123,6 +125,8 @@ export default function Repost({
       setVideoId('');
       setTweetId('');
       setShowModalRepost(false);
+      setContent('Repost created!');
+      setShow(true);
     } catch (error) {
       console.log(error);
     } finally {
