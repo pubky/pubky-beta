@@ -8,6 +8,7 @@ import { Utils } from '../../../../utils';
 import { IPost } from '../../../../types';
 import { useClientContext } from '../../../../contexts/client';
 import Link from 'next/link';
+import { useAlertContext } from '../../../../contexts/alerts';
 
 export default function Index({
   params,
@@ -15,6 +16,7 @@ export default function Index({
   params: { pubky: string; postId: string };
 }) {
   const { getReplies } = useClientContext();
+  const { setContent, setShow } = useAlertContext();
   const [post, setPost] = useState<IPost>({} as IPost);
   const [showPost, setShowPost] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -60,6 +62,8 @@ export default function Index({
     if (result) {
       setPost(result.post);
       setReplies(result);
+      setContent('Reply created!');
+      setShow(true);
     }
   };
 

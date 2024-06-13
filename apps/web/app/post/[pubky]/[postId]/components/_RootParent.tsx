@@ -76,26 +76,22 @@ export default function RootParent({ replies }: { replies: any }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentURIs]);
 
-  return (
-    <>
-      {!loadingParents &&
-        parentURIs.map((parentURI, index) => {
-          const reversedIndex = parentURIs.length - 1 - index;
-          const post = parentPosts[parentURIs[reversedIndex]];
-          return post ? (
-            <Post key={parentURI} post={post} size="full" fullContent />
-          ) : (
-            <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
-              <Typography.Body
-                key={parentURI}
-                variant="small"
-                className="text-opacity-50"
-              >
-              This post was not found or has been deleted by its author.
-              </Typography.Body>
-            </div>
-          );
-        })}
-    </>
-  );
+  if (loadingParents) return <div>Loading...</div>;
+
+  return parentURIs.map((parentURI, index) => {
+    const reversedIndex = parentURIs.length - 1 - index;
+    const post = parentPosts[parentURIs[reversedIndex]];
+    return post ? (
+      <Post key={parentURI} post={post} size="full" fullContent />
+    ) : (
+      <div
+        key={parentURI}
+        className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]"
+      >
+        <Typography.Body variant="small" className="text-opacity-50">
+          This post was not found or has been deleted by its author.
+        </Typography.Body>
+      </div>
+    );
+  });
 }

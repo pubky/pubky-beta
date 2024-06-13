@@ -1,6 +1,11 @@
 'use client';
 
-import { Icon, Post as PostUI, Tooltip as TooltipUI } from '@social/ui-shared';
+import {
+  Icon,
+  Post as PostUI,
+  Tooltip as TooltipUI,
+  Typography,
+} from '@social/ui-shared';
 
 import { IPost, TLayouts, TSize } from '../../types';
 import Tags from './_Tags';
@@ -12,6 +17,7 @@ import { Utils } from '../../utils';
 import { useState } from 'react';
 import Tooltip from '../Tooltip';
 import { useClientContext } from '../../contexts/client';
+import { useAlertContext } from '../../contexts/alerts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -30,9 +36,16 @@ export default function Post({
   fullContent = true,
   ...rest
 }: PostProps) {
-  const { pubky } = useClientContext();
+  const { pubky, deletePost } = useClientContext();
+  const { setContent, setShow } = useAlertContext();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const router = useRouter();
+
+  const handleDeletePost = async () => {
+    await deletePost(post?.id);
+    setContent('Post deleted successfully');
+    setShow(true);
+  };
 
   return (
     <div className="w-full">
@@ -45,15 +58,27 @@ export default function Post({
                   <Header post={post} />
                   <div className="ml-[47px]">
                     <Content post={post} fullContent={fullContent} />
-                    <PostUI.MainCard className="p-4 border rounded-lg mt-4">
-                      <Header post={post?.post?.embed?.post} repostView />
-                      <div className="ml-[47px]">
-                        <Content
-                          post={post?.post?.embed?.post}
-                          fullContent={fullContent}
-                        />
+                    {post?.post.embed.post ? (
+                      <PostUI.MainCard className="p-4 border rounded-lg mt-4">
+                        <Header post={post?.post?.embed?.post} repostView />
+                        <div className="ml-[47px]">
+                          <Content
+                            post={post?.post?.embed?.post}
+                            fullContent={fullContent}
+                          />
+                        </div>
+                      </PostUI.MainCard>
+                    ) : (
+                      <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
+                        <Typography.Body
+                          variant="small"
+                          className="text-opacity-50"
+                        >
+                          This post was not found or has been deleted by its
+                          author.
+                        </Typography.Body>
                       </div>
-                    </PostUI.MainCard>
+                    )}
                     <div className="flex flex-col md:flex-row justify-between">
                       {!repostView && <Tags post={post} />}
                       <div className="grow" />
@@ -76,33 +101,59 @@ export default function Post({
                           router.push(`/profile/${post?.author.id}`)
                         }
                       >
-                        {Utils.minifyText(post?.author?.profile?.name)} reposted
+                        {Utils.minifyText(post?.author?.profile?.name)} reposted{' '}
                       </PostUI.Username>
                       {showTooltipProfile !== '' && (
                         <Tooltip.Profile post={post} />
                       )}
                     </TooltipUI.Root>
+                    {!post?.post.embed.post && (
+                      <Typography.Body
+                        variant="small-bold"
+                        className="cursor-pointer text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
+                        onClick={handleDeletePost}
+                      >
+                        Undo repost
+                      </Typography.Body>
+                    )}
                   </PostUI.RepostCard>
-                  <PostUI.MainCard className={rest.className}>
-                    <Header post={post?.post?.embed?.post} />
-                    <div className="ml-[47px]">
-                      <Content
-                        post={post?.post?.embed?.post}
-                        fullContent={fullContent}
-                      />
-                      <div className="flex flex-col md:flex-row justify-between">
-                        {!repostView && <Tags post={post?.post?.embed?.post} />}
-                        <div className="grow" />
-                        {!repostView && (
-                          <Actions
-                            post={post?.post?.embed?.post}
-                            repostId={post?.id}
-                            deleteRepost={post?.author.id === pubky}
-                          />
-                        )}
+                  {post?.post.embed.post ? (
+                    <PostUI.MainCard className={rest.className}>
+                      <Header post={post?.post?.embed?.post} repost={post} />
+                      <div className="ml-[47px]">
+                        <Content
+                          post={post?.post?.embed?.post}
+                          fullContent={fullContent}
+                        />
+                        <div className="flex flex-col md:flex-row justify-between">
+                          {!repostView && (
+                            <Tags post={post?.post?.embed?.post} />
+                          )}
+                          <div className="grow" />
+                          {!repostView && (
+                            <Actions
+                              post={post?.post?.embed?.post}
+                              repost={post}
+                              deleteRepost={post?.author.id === pubky}
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </PostUI.MainCard>
+                    </PostUI.MainCard>
+                  ) : (
+                    <>
+                      <div className="mx-[47px] px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
+                        <Typography.Body
+                          variant="small"
+                          className="text-opacity-50"
+                        >
+                          This post was not found or has been deleted by its
+                          author.
+                        </Typography.Body>
+                      </div>
+                      <div className="border-0 border-b-[1px] border-white border-opacity-10 mt-6" />
+                    </>
+                  )}
                 </>
               )
             ) : (
