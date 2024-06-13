@@ -16,7 +16,7 @@ export default function MainPost({
       {loading ? (
         <Skeletons.Simple />
       ) : (
-        <Post key={uri} post={post} size="full" fullContent />
+        <Post key={uri} post={post} size="full" fullContent className='border-0'/>
       )}
     </>
   );
