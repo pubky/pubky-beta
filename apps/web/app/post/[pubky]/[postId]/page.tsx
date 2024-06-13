@@ -55,6 +55,14 @@ export default function Index({
     };
   }, []);
 
+  const handleUpdatePost = async () => {
+    const result = await getReplies(uri);
+    if (result) {
+      setPost(result.post);
+      setReplies(result);
+    }
+  };
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Post" />
@@ -67,7 +75,7 @@ export default function Index({
               <Post.MainPost post={post} loading={loading} uri={uri} />
             </div>
 
-            <Post.ReplyForm uri={uri} />
+            <Post.ReplyForm uri={uri} updatePost={handleUpdatePost} />
             <Post.Replies repliesResponse={replies} />
           </>
         ) : (

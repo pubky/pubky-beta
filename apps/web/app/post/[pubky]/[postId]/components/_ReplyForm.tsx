@@ -9,7 +9,13 @@ import { useClientContext } from '../../../../../contexts/client';
 import Modal from '../../../../../components/Modal';
 import { Utils } from '../../../../../utils';
 
-export default function ReplyForm({ uri }: { uri: string }) {
+export default function ReplyForm({
+  uri,
+  updatePost,
+}: {
+  uri: string;
+  updatePost: () => void;
+}) {
   const { getProfile, pubky, createReply, createTag } = useClientContext();
   const [image, setImage] = useState('/images/Userpic.png');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -29,6 +35,7 @@ export default function ReplyForm({ uri }: { uri: string }) {
     setSendingReply(true);
     const sendReply = await createReply(contentReply, uri, uri);
 
+    updatePost();
     if (sendReply) {
       for (const tag of arrayTags) {
         await createTag(sendReply.uri, tag);
@@ -179,7 +186,7 @@ export default function ReplyForm({ uri }: { uri: string }) {
               </Post.Content>
             </div>
           </Post.Header>
-          <div className="flex gap-3 inline-flex  mt-6 xl:mt-0">
+          <div className="gap-3 inline-flex  mt-6 xl:mt-0">
             <div className="text-opacity-30 text-white text-sm mt-4 mr-2 whitespace-nowrap">
               {contentReply.length} / 300
             </div>
