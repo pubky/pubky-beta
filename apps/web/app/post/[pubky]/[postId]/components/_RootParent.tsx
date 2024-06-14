@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../../../contexts/client';
-import { Post } from '../../../../../components';
+import { Post, Skeleton } from '../../../../../components';
 import { IPost, IReply } from '../../../../../types';
 import { Typography } from '@social/ui-shared';
 
@@ -88,7 +88,7 @@ export default function RootParent({ replies }: { replies: IReply }) {
   );
 
   if (!allParentPostsLoaded) {
-    return <div>Loading...</div>;
+    return <Skeleton.Simple />;
   }
 
   return parentURIs.map((parentURI, index) => {
