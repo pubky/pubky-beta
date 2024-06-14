@@ -98,7 +98,7 @@ export default function Post({
                 </PostUI.MainCard>
               ) : (
                 <>
-                  <PostUI.RepostCard>
+                  <PostUI.RepostCard className="relative z-10">
                     <Icon.Repost size="16" />
                     <TooltipUI.Root
                       delay={200}
