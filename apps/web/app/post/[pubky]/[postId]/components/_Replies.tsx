@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Content, Icon, Button, Typography, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { useClientContext } from '../../../../../contexts/client';
@@ -6,11 +5,15 @@ import { IReply } from '../../../../../types';
 import { Post, Skeleton } from '../../../../../components';
 import { Utils } from '../../../../../utils';
 
-export default function Replies({ repliesResponse }: { repliesResponse: any }) {
+export default function Replies({
+  repliesResponse,
+  loading,
+}: {
+  repliesResponse: IReply;
+  loading: boolean;
+}) {
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
-  const [loadingReplies, setLoadingReplies] = useState(true);
   const [replies, setReplies] = useState<IReply[]>([]);
-  const [repliesCount, setRepliesCount] = useState<number>();
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
@@ -21,16 +24,12 @@ export default function Replies({ repliesResponse }: { repliesResponse: any }) {
   const seenAuthors = new Set<string>();
 
   const fetchReplies = async () => {
-    setLoadingReplies(true);
     try {
       if (repliesResponse) {
-        setRepliesCount(repliesResponse?.post?.repliesCount);
-        setReplies(repliesResponse?.replies);
-        setLoadingReplies(false);
+        setReplies(repliesResponse?.replies || []);
       }
     } catch (error) {
       console.error('Error:', error);
-      setLoadingReplies(false);
     }
   };
 
@@ -124,14 +123,31 @@ export default function Replies({ repliesResponse }: { repliesResponse: any }) {
     }
   };
 
-  const validReplies = replies ? replies.filter((reply) => reply?.post) : [];
+  const renderReplies = (replies: IReply[], depth: number = 0) => {
+    return replies.map((reply) => (
+      <div key={reply.post.id}>
+        <Post
+          post={reply.post}
+          size="full"
+          fullContent
+          className={`pl-0 ${
+            depth > 0 || reply.replies.length > 0 ? 'border-0' : ''
+          }`}
+        />
+        {reply.replies && reply.replies.length > 0 && (
+          <div className="ml-[47px]">
+            {renderReplies(reply.replies, depth + 1)}
+          </div>
+        )}
+      </div>
+    ));
+  };
 
   return (
     <>
-      {repliesCount === 0 ||
-      (replies &&
-        !loadingReplies &&
-        (replies.length === 0 || validReplies.length === 0)) ? (
+      {loading ? (
+        <Skeleton.Simple />
+      ) : replies && replies.length === 0 ? (
         <Typography.Body className="text-opacity-50 text-center">
           No replies yet
         </Typography.Body>
@@ -139,121 +155,78 @@ export default function Replies({ repliesResponse }: { repliesResponse: any }) {
         <div className="grid gap-6 md:grid-cols-3">
           <div className="flex-col gap-6 inline-flex col-span-2">
             <Typography.H2>Replies</Typography.H2>
-            {loadingReplies ? (
-              <Skeleton.Simple />
-            ) : (
-              replies &&
-              replies.map((reply) => {
-                if (reply?.post) {
-                  return (
-                    <Post
-                      key={reply?.post?.id}
-                      post={reply?.post}
-                      size="full"
-                      fullContent
-                    />
-                  );
-                }
-                return null;
-              })
-            )}
-            {/** {/**<div key={reply.id} className="flex items-center">
-            <div className="border-l-2 h-full border-white border-opacity-10" />
-        <div className="w-6 h-px bg-white bg-opacity-20" />
-            {/* <div className="flex items-center">
-        <div className="border-l-2 h-full border-white border-opacity-10" />
-        <div className="border-l-2 h-full ml-6 border-white border-opacity-10" />
-        <div className="w-6 h-px bg-white bg-opacity-20" />
-        <Post />
-      </div> */}
+            {renderReplies(replies)}
           </div>
           <div className="hidden flex-col gap-6 xl:inline-flex col-span-1 self-start sticky top-[160px]">
             <div>
               <SideCard.Header title="Participants" />
               <SideCard.Content>
-                {loadingReplies ? (
-                  <Skeleton.Simple />
-                ) : (
-                  replies &&
-                  replies.map((reply, index) => {
-                    if (reply?.post && !seenAuthors.has(reply.post.author.id)) {
-                      seenAuthors.add(reply.post.author.id);
-                      const pubkeyUser =
-                        pubky && reply.post.author.id.includes(pubky);
-                      const isFollowed =
-                        followedUser[reply.post.author.id] || false;
+                {replies.map((reply, index) => {
+                  if (reply.post && !seenAuthors.has(reply.post.author.id)) {
+                    seenAuthors.add(reply.post.author.id);
+                    const pubkeyUser =
+                      pubky && reply.post.author.id.includes(pubky);
+                    const isFollowed =
+                      followedUser[reply.post.author.id] || false;
 
-                      return (
-                        <React.Fragment key={reply.post.author.id}>
-                          <SideCard.User
-                            uri={reply.post.author.uri}
-                            src={
-                              reply.post.author.profile?.image ||
-                              '/images/Userpic.png'
-                            }
-                            username={Utils.minifyText(
-                              reply.post.author.profile?.name
-                            )}
-                            label={Utils.minifyPubky(reply.post.author.id)}
-                          >
-                            {pubkeyUser ? (
-                              <Button.Medium
-                                className="w-[114px] bg-transparent cursor-default"
-                                icon={<Icon.Check />}
-                              >
-                                Me
-                              </Button.Medium>
-                            ) : initLoadingFollowers ? (
-                              <Button.Medium
-                                disabled
-                                icon={<Icon.LoadingSpin size="16" />}
-                                className="w-[114px]"
-                              >
-                                Loading
-                              </Button.Medium>
-                            ) : isFollowed ? (
-                              <Button.Medium
-                                onClick={
-                                  loadingFollowers[reply.post.author.id]
-                                    ? undefined
-                                    : () => unfollowUser(reply.post.author.id)
-                                }
-                                disabled={
-                                  loadingFollowers[reply.post.author.id]
-                                }
-                                loading={loadingFollowers[reply.post.author.id]}
-                                icon={<Icon.UserMinus size="16" />}
-                                className="w-[114px]"
-                              >
-                                Unfollow
-                              </Button.Medium>
-                            ) : (
-                              <Button.Medium
-                                onClick={
-                                  loadingFollowers[reply.post.author.id]
-                                    ? undefined
-                                    : () => followUser(reply.post.author.id)
-                                }
-                                disabled={
-                                  loadingFollowers[reply.post.author.id]
-                                }
-                                loading={loadingFollowers[reply.post.author.id]}
-                                icon={<Icon.UserPlus size="16" />}
-                                className="w-[114px]"
-                              >
-                                Follow
-                              </Button.Medium>
-                            )}
-                          </SideCard.User>
-                          {index !== replies.length - 1 && (
-                            <Content.Divider className="my-2.5" />
+                    return (
+                      <React.Fragment key={reply.post.author.id}>
+                        <SideCard.User
+                          uri={reply.post.author.uri}
+                          src={
+                            reply.post.author.profile?.image ||
+                            '/images/Userpic.png'
+                          }
+                          username={Utils.minifyText(
+                            reply.post.author.profile?.name
                           )}
-                        </React.Fragment>
-                      );
-                    }
-                    return null;
-                  })
-                )}
+                          label={Utils.minifyPubky(reply.post.author.id)}
+                        >
+                          {pubkeyUser ? (
+                            <Button.Medium
+                              className="w-[114px] bg-transparent cursor-default"
+                              icon={<Icon.Check />}
+                            >
+                              Me
+                            </Button.Medium>
+                          ) : initLoadingFollowers ? (
+                            <Button.Medium
+                              disabled
+                              icon={<Icon.LoadingSpin size="16" />}
+                              className="w-[114px]"
+                            >
+                              Loading
+                            </Button.Medium>
+                          ) : isFollowed ? (
+                            <Button.Medium
+                              onClick={() => unfollowUser(reply.post.author.id)}
+                              disabled={loadingFollowers[reply.post.author.id]}
+                              loading={loadingFollowers[reply.post.author.id]}
+                              icon={<Icon.UserMinus size="16" />}
+                              className="w-[114px]"
+                            >
+                              Unfollow
+                            </Button.Medium>
+                          ) : (
+                            <Button.Medium
+                              onClick={() => followUser(reply.post.author.id)}
+                              disabled={loadingFollowers[reply.post.author.id]}
+                              loading={loadingFollowers[reply.post.author.id]}
+                              icon={<Icon.UserPlus size="16" />}
+                              className="w-[114px]"
+                            >
+                              Follow
+                            </Button.Medium>
+                          )}
+                        </SideCard.User>
+                        {index !== replies.length - 1 && (
+                          <Content.Divider className="my-2.5" />
+                        )}
+                      </React.Fragment>
+                    );
+                  }
+                  return null;
+                })}
               </SideCard.Content>
             </div>
           </div>

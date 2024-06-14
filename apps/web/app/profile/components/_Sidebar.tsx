@@ -173,50 +173,52 @@ export default function Sidebar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [creatorPubky]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        let profile = null;
-        if (creatorPubky) {
-          const userProfile = await getUser(creatorPubky);
+  async function fetchProfile() {
+    try {
+      let profile = null;
+      if (creatorPubky) {
+        const userProfile = await getUser(creatorPubky);
 
-          if (userProfile) {
-            profile = userProfile?.profile;
-            setPubkyUser(creatorPubky);
-            setProfileTags(userProfile?.taggedAs);
-          }
-        } else {
-          if (!pubky) return;
-          const userProfile = await getUser(pubky);
-          setPubkyUser(pubky || '');
-
-          if (userProfile) {
-            profile = userProfile.profile;
-            setProfileTags(userProfile?.taggedAs);
-          }
+        if (userProfile) {
+          profile = userProfile?.profile;
+          setPubkyUser(creatorPubky);
+          setProfileTags(userProfile?.taggedAs);
         }
+      } else {
+        if (!pubky) return;
+        const userProfile = await getUser(pubky);
+        setPubkyUser(pubky || '');
 
-        if (profile) {
-          setName(profile?.name || '');
-          setBio(profile?.bio || 'No bio.');
-          setImage(profile?.image || '/images/Userpic.png');
-          if (profile.status && profile.status in Utils.statusHelper.labels) {
-            setStatus(profile.status);
-          } else {
-            setStatus('noStatus');
-          }
-          setLinks(
-            profile?.links.map((link) => ({ title: link.title, url: link.url }))
-          );
-
-          setLoading(false);
+        if (userProfile) {
+          profile = userProfile.profile;
+          setProfileTags(userProfile?.taggedAs);
         }
-        setLoadingProfileTags(false);
-      } catch (error) {
-        console.log(error);
       }
+
+      if (profile) {
+        setName(profile?.name || '');
+        setBio(profile?.bio || 'No bio.');
+        setImage(profile?.image || '/images/Userpic.png');
+        if (profile.status && profile.status in Utils.statusHelper.labels) {
+          setStatus(profile.status);
+        } else {
+          setStatus('noStatus');
+        }
+        setLinks(
+          profile?.links.map((link) => ({ title: link.title, url: link.url }))
+        );
+
+        setLoading(false);
+      }
+      setLoadingProfileTags(false);
+    } catch (error) {
+      console.log(error);
     }
-    fetchData();
+  }
+
+  useEffect(() => {
+    fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky, getProfile, getUser, creatorPubky]);
 
   const followUser = async () => {
@@ -260,18 +262,22 @@ export default function Sidebar({
   };
 
   const handleAddProfileTag = async (tag: string) => {
-    if ((!creatorPubky || creatorPubky === pubky) && pubky) {
-      await createTag(pubky, tag);
-    } else if (creatorPubky) {
-      await createTag(creatorPubky, tag);
+    const pubKeyToUse =
+      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+
+    if (pubKeyToUse) {
+      await createTag(pubKeyToUse, tag);
+      fetchProfile();
     }
   };
 
   const handleDeleteProfileTag = async (tag: string) => {
-    if ((!creatorPubky || creatorPubky === pubky) && pubky) {
-      await deleteTag(pubky, tag);
-    } else if (creatorPubky) {
-      await deleteTag(creatorPubky, tag);
+    const pubKeyToUse =
+      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+
+    if (pubKeyToUse) {
+      await deleteTag(pubKeyToUse, tag);
+      fetchProfile();
     }
   };
 

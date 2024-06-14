@@ -204,6 +204,7 @@ export default function ProfileTag({
             setTagsError(false);
             setContent('Profile tags added!');
             setShow(true);
+            setArrayTags([]);
           }}
         >
           Apply Tags
