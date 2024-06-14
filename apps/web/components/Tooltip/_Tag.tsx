@@ -31,7 +31,7 @@ export default function Tag({
       setFollowersImages(
         tags.from.slice(0, 6).map((user) => ({
           alt: 'user-pic',
-          src: user.author.profile.image ?? '/images/Userpic.png',
+          src: user?.author?.profile?.image ?? '/images/Userpic.png',
         }))
       );
       setLoadingFollowers(false);
