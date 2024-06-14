@@ -13,7 +13,6 @@ export default function Replies({
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const [loadingReplies, setLoadingReplies] = useState(true);
   const [replies, setReplies] = useState<IReply[]>([]);
-  const [repliesCount, setRepliesCount] = useState<number | undefined>();
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
@@ -27,7 +26,6 @@ export default function Replies({
     setLoadingReplies(true);
     try {
       if (repliesResponse) {
-        setRepliesCount(repliesResponse?.post?.repliesCount);
         setReplies(repliesResponse?.replies || []);
       }
     } catch (error) {
@@ -128,30 +126,30 @@ export default function Replies({
   };
 
   const renderReplies = (replies: IReply[], depth: number = 0) => {
-    return replies.map((reply) => {
-      return (
-        <div key={reply.post.id}>
-          <Post
-            post={reply.post}
-            size="full"
-            fullContent
-            className={depth > 0 || reply.replies.length > 0 ? 'border-0' : ''}
-          />
-          {reply.replies && reply.replies.length > 0 && (
-            <div className="ml-[47px]">
-              {renderReplies(reply.replies, depth + 1)}
-            </div>
-          )}
-        </div>
-      );
-    });
+    return replies.map((reply) => (
+      <div key={reply.post.id}>
+        <Post
+          post={reply.post}
+          size="full"
+          fullContent
+          className={`pl-0 ${
+            depth > 0 || reply.replies.length > 0 ? 'border-0' : ''
+          }`}
+        />
+        {reply.replies && reply.replies.length > 0 && (
+          <div className="ml-[47px]">
+            {renderReplies(reply.replies, depth + 1)}
+          </div>
+        )}
+      </div>
+    ));
   };
 
   return (
     <>
       {loadingReplies ? (
         <Skeleton.Simple />
-      ) : repliesCount === 0 || (replies && replies.length === 0) ? (
+      ) : replies && replies.length === 0 ? (
         <Typography.Body className="text-opacity-50 text-center">
           No replies yet
         </Typography.Body>
