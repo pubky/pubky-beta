@@ -20,7 +20,7 @@ export const Primary = ({
   refCard,
   ...rest
 }: CardProps) => {
-  const baseCSS = `w-full z-10 p-8 shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
+  const baseCSS = `w-full p-8 shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
 
   return (
     <div
