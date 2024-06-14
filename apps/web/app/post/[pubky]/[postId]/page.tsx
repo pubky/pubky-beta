@@ -69,7 +69,7 @@ export default function Index({
               updatePost={handleUpdatePost}
             />
 
-            <Post.Replies repliesResponse={replies} />
+            <Post.Replies repliesResponse={replies} loading={loading} />
           </>
         ) : (
           <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">

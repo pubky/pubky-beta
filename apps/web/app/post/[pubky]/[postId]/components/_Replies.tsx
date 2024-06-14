@@ -7,11 +7,12 @@ import { Utils } from '../../../../../utils';
 
 export default function Replies({
   repliesResponse,
+  loading,
 }: {
   repliesResponse: IReply;
+  loading: boolean;
 }) {
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
-  const [loadingReplies, setLoadingReplies] = useState(true);
   const [replies, setReplies] = useState<IReply[]>([]);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
@@ -23,15 +24,12 @@ export default function Replies({
   const seenAuthors = new Set<string>();
 
   const fetchReplies = async () => {
-    setLoadingReplies(true);
     try {
       if (repliesResponse) {
         setReplies(repliesResponse?.replies || []);
       }
     } catch (error) {
       console.error('Error:', error);
-    } finally {
-      setLoadingReplies(false);
     }
   };
 
@@ -147,7 +145,7 @@ export default function Replies({
 
   return (
     <>
-      {loadingReplies ? (
+      {loading ? (
         <Skeleton.Simple />
       ) : replies && replies.length === 0 ? (
         <Typography.Body className="text-opacity-50 text-center">
