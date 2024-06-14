@@ -1,5 +1,6 @@
 'use client';
 
+import { twMerge } from 'tailwind-merge';
 import {
   Icon,
   Post as PostUI,
@@ -26,6 +27,8 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
   layout?: TLayouts;
   fullContent?: boolean;
+  line?: boolean;
+  lineStyle?: string;
 }
 
 export default function Post({
@@ -34,12 +37,16 @@ export default function Post({
   post,
   layout,
   fullContent = true,
+  line,
+  lineStyle,
   ...rest
 }: PostProps) {
   const { pubky, deletePost } = useClientContext();
   const { setContent, setShow } = useAlertContext();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const router = useRouter();
+  const lineBaseCSS =
+    'absolute ml-[16px] mt-[31px] border-l-2 h-full border-neutral-800';
 
   const handleDeletePost = async () => {
     await deletePost(post?.id);
@@ -61,6 +68,9 @@ export default function Post({
                     {post?.post.embed.post ? (
                       <PostUI.MainCard className="p-4 border rounded-lg mt-4">
                         <Header post={post?.post?.embed?.post} repostView />
+                        {line && (
+                          <div className={twMerge(lineBaseCSS, lineStyle)} />
+                        )}
                         <div className="ml-[47px]">
                           <Content
                             post={post?.post?.embed?.post}
@@ -120,6 +130,9 @@ export default function Post({
                   {post?.post.embed.post ? (
                     <PostUI.MainCard className={rest.className}>
                       <Header post={post?.post?.embed?.post} repost={post} />
+                      {line && (
+                        <div className={twMerge(lineBaseCSS, lineStyle)} />
+                      )}
                       <div className="ml-[47px]">
                         <Content
                           post={post?.post?.embed?.post}
@@ -159,6 +172,7 @@ export default function Post({
             ) : (
               <PostUI.MainCard className={rest.className}>
                 <Header post={post} repostView={repostView} />
+                {line && <div className={twMerge(lineBaseCSS, lineStyle)} />}
                 <div className="ml-[47px]">
                   <Content post={post} fullContent={fullContent} />
                   <div className="flex flex-col md:flex-row justify-between">
