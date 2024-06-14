@@ -13,7 +13,7 @@ export const MainCard = ({
   children,
   ...rest
 }: CardProps) => {
-  const baseCSS = `-mt-6 w-full z-10 p-6 pr-5 pl-5 shadow border-0 border-b-[1px] border-white border-opacity-10 flex-col justify-between inline-flex`;
+  const baseCSS = `relative -mt-6 w-full p-6 pr-5 pl-5 shadow border-0 border-b-[1px] border-white border-opacity-10 flex-col justify-between inline-flex`;
   return (
     <Card.Primary
       {...rest}

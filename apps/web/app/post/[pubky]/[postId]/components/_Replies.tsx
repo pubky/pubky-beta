@@ -133,6 +133,7 @@ export default function Replies({
           className={`pl-0 ${
             depth > 0 || reply.replies.length > 0 ? 'border-0' : ''
           }`}
+          line={reply.replies.length > 0}
         />
         {reply.replies && reply.replies.length > 0 && (
           <div className="ml-[47px]">
