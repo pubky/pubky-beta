@@ -107,7 +107,7 @@ export default function Post({
                         <Tooltip.Profile post={post} />
                       )}
                     </TooltipUI.Root>
-                    {!post?.post.embed.post && (
+                    {!post?.post.embed.post && post?.author.id === pubky && (
                       <Typography.Body
                         variant="small-bold"
                         className="cursor-pointer text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"

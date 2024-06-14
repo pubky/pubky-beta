@@ -7,8 +7,8 @@ export default function Sort() {
       <SideCard.Item
         label="Recent"
         value="recent"
-        disabled
-        icon={<Icon.Asterisk color="gray" />}
+        selected
+        icon={<Icon.Asterisk />}
       />
       <SideCard.Item
         label="Popularity"

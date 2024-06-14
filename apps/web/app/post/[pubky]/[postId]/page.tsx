@@ -5,7 +5,7 @@ import { Content, Typography } from '@social/ui-shared';
 import { Post } from './components';
 import { CreatePost, Header } from '../../../../components';
 import { Utils } from '../../../../utils';
-import { IPost } from '../../../../types';
+import { IPost, IReply } from '../../../../types';
 import { useClientContext } from '../../../../contexts/client';
 import Link from 'next/link';
 import { useAlertContext } from '../../../../contexts/alerts';
@@ -20,7 +20,7 @@ export default function Index({
   const [post, setPost] = useState<IPost>({} as IPost);
   const [showPost, setShowPost] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [replies, setReplies] = useState({});
+  const [replies, setReplies] = useState<IReply>({} as IReply);
   const uri = Utils.decodePostUri(params.pubky, params.postId);
 
   useEffect(() => {
@@ -41,22 +41,6 @@ export default function Index({
     fetchData();
   }, [uri, getReplies]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const mainPostElement = document.getElementById('mainPost');
-      if (mainPostElement) {
-        const headerHeight =
-          document.querySelector('header')?.offsetHeight || 0;
-        const scrollPosition = mainPostElement.offsetTop - headerHeight - 25;
-        window.scrollTo({ top: scrollPosition });
-      }
-    }, 500);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
-
   const handleUpdatePost = async () => {
     const result = await getReplies(uri);
     if (result) {
@@ -73,14 +57,19 @@ export default function Index({
       <Content.Grid className="flex justify-between flex-col gap-12">
         {showPost ? (
           <>
-            <Post.RootParent replies={replies} />
+            {replies?.post?.post?.parent && (
+              <Post.RootParent replies={replies} />
+            )}
 
-            <div id="mainPost">
-              <Post.MainPost post={post} loading={loading} uri={uri} />
-            </div>
+            <Post.MainPost post={post} loading={loading} uri={uri} />
 
-            <Post.ReplyForm uri={uri} post={post} updatePost={handleUpdatePost} />
-            <Post.Replies repliesResponse={replies} />
+            <Post.ReplyForm
+              uri={uri}
+              post={post}
+              updatePost={handleUpdatePost}
+            />
+
+            <Post.Replies repliesResponse={replies} loading={loading} />
           </>
         ) : (
           <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
