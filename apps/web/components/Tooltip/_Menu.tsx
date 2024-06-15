@@ -252,7 +252,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
                 : handleAddBookmark(post.id, post.uri)
             }
           >
-            {repost?.bookmark.id
+            {repost?.bookmark?.id
               ? 'Remove Bookmark'
               : post?.bookmark?.id
               ? 'Remove Bookmark'
