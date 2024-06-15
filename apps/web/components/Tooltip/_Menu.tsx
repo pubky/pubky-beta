@@ -252,7 +252,11 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
                 : handleAddBookmark(post.id, post.uri)
             }
           >
-            {post?.bookmark?.id ? 'Remove Bookmark' : 'Add Bookmark'}
+            {repost?.bookmark?.id
+              ? 'Remove Bookmark'
+              : post?.bookmark?.id
+              ? 'Remove Bookmark'
+              : 'Add Bookmark'}
           </Tooltip.Item>
           {post?.author?.id === pubky && (
             <Tooltip.Item
