@@ -56,6 +56,7 @@ export default function Tags({
     async function fetchFollowing() {
       try {
         if (!pubky) return;
+        if (!showModalTags) return;
 
         const following = await listFollowing(pubky);
 
@@ -86,7 +87,7 @@ export default function Tags({
     }
 
     fetchFollowing();
-  }, [pubky, listFollowing, post]);
+  }, [pubky, listFollowing, post, showModalTags]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
