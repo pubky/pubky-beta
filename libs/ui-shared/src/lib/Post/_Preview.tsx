@@ -71,13 +71,17 @@ function LinkPreview({ url }: { url: string }) {
           >
             <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 p-4">
               <Typography.Body variant="large-bold">
-                {previewData.title}
+                {previewData.title.length > 40
+                  ? previewData.title.slice(0, 40) + '...'
+                  : previewData.title}
               </Typography.Body>
               <Typography.Body
                 variant="small"
                 className="text-opacity-60 font-normal mt-1"
               >
-                {previewData.description}
+                {previewData.description.length > 150
+                  ? previewData.description.slice(0, 150) + '...'
+                  : previewData.description}
               </Typography.Body>
             </div>
           </div>
