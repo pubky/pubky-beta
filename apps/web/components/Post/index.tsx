@@ -45,13 +45,17 @@ export default function Post({
   const { setContent, setShow } = useAlertContext();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const router = useRouter();
-  const lineBaseCSS =
-    'absolute ml-[16px] mt-[31px] border-l-2 h-full border-neutral-800';
+  const lineBaseCSS = 'absolute ml-[16px] border-l-2 h-full border-neutral-800';
 
   const handleDeletePost = async () => {
-    await deletePost(post?.id);
-    setContent('Post deleted successfully');
-    setShow(true);
+    const result = await deletePost(post?.id);
+    if (result) {
+      setContent('Post deleted successfully');
+      setShow(true);
+    } else {
+      setContent('Something wrong. Try again', 'warning');
+      setShow(true);
+    }
   };
 
   return (

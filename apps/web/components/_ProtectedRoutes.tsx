@@ -16,6 +16,7 @@ export default function ProtectedRoutes({
   const pathname = usePathname();
   const { isLoggedIn, session } = useClientContext();
   const [showModal, setShowModal] = useState(false);
+  const [showServerDown, setShowServerDown] = useState(false);
   const protectedRoutes = [
     '/contacts',
     '/followers',
@@ -63,22 +64,23 @@ export default function ProtectedRoutes({
   }, [isLoggedIn, router, pathname]);
 
   useEffect(() => {
-    const isProtected = protectedRoutes.includes(pathname);
-
-    if (!isProtected) {
-      return;
-    }
-
     const checkLoginStatus = async () => {
       const loggedIn: any = await session();
-      if (loggedIn && typeof loggedIn === 'object' && 'users' in loggedIn) {
+      const isProtected = protectedRoutes.includes(pathname);
+
+      if (
+        isProtected &&
+        loggedIn &&
+        typeof loggedIn === 'object' &&
+        'users' in loggedIn
+      ) {
         if (Object.keys(loggedIn.users).length > 0) {
           setShowModal(false);
         } else {
           setShowModal(true);
         }
-      } else {
-        setShowModal(true);
+      } else if (loggedIn === false) {
+        setShowServerDown(true);
       }
     };
 
@@ -96,6 +98,12 @@ export default function ProtectedRoutes({
         <Modal.SessionExpired
           setShowModal={setShowModal}
           showModal={showModal}
+        />
+      )}
+      {showServerDown && (
+        <Modal.ServerDown
+          setShowModal={setShowServerDown}
+          showModal={showServerDown}
         />
       )}
     </>

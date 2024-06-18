@@ -13,6 +13,7 @@ import {
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../contexts/client';
+import { useAlertContext } from '../../../contexts/alerts';
 import { Skeleton } from '../../../components';
 import { Utils } from '../../../utils';
 import {
@@ -61,6 +62,7 @@ export default function Sidebar({
     deleteTag,
   } = useClientContext();
   const router = useRouter();
+  const { setContent, setShow } = useAlertContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
@@ -266,7 +268,14 @@ export default function Sidebar({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await createTag(pubKeyToUse, tag);
+      const result = await createTag(pubKeyToUse, tag);
+      if (result) {
+        setContent('Profile tags added!');
+        setShow(true);
+      } else {
+        setContent('Something wrong. Try again', 'warning');
+        setShow(true);
+      }
       fetchProfile();
     }
   };
@@ -281,15 +290,11 @@ export default function Sidebar({
     }
   };
 
-  useEffect(() => {
-    const createTags = async () => {
-      for (const tag of arrayTags) {
-        await handleAddProfileTag(tag);
-      }
-    };
-    createTags();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [arrayTags]);
+  const AddTags = async () => {
+    for (const tag of arrayTags) {
+      await handleAddProfileTag(tag);
+    }
+  };
 
   return (
     <>
@@ -662,6 +667,7 @@ export default function Sidebar({
         setArrayTags={setArrayTags}
         showModalProfileTag={showModalProfileTag}
         setShowModalProfileTag={setShowModalProfileTag}
+        AddTags={AddTags}
       />
     </>
   );
