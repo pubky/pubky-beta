@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Content, Icon, Typography } from '@social/ui-shared';
+import { Content, Typography } from '@social/ui-shared';
 import {
   ActiveFriends,
   CreatePost,
@@ -16,6 +16,7 @@ import { DropDown } from '../../components/DropDown';
 import { useClientContext } from '../../contexts/client';
 import { useFilterContext } from '../../contexts/filters';
 import { ITaggedPost } from '../../types';
+import Skeletons from '../../components/Skeletons';
 
 export default function Index() {
   const router = useRouter();
@@ -131,23 +132,15 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="w-52 xl:w-80 hidden md:block" title="Hot Tags" />
-      <Content.Grid className='flex justify-between items-start inline-flex"'>
-        <div className="flex-col inline-flex gap-3">
+      <Content.Grid className='flex w-full justify-between items-start inline-flex"'>
+        <div className="w-full flex-col inline-flex gap-3">
           <div className="flex gap-6 mb-6">
             <DropDown.HotTagsReach type="text" subtitle="Reach" />
             <DropDown.TagsTimeframe disabled type="text" subtitle="Timeframe" />
           </div>
           {loading ? (
-            <div>
-              <div className="flex w-full justify-center">
-                <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-              </div>
-              <Typography.Body
-                variant="medium-bold"
-                className="col-span-3 mt-2 flex justify-center items-center gap-6 text-opacity-20"
-              >
-                Loading Hot Tags
-              </Typography.Body>
+            <div className="w-full">
+              <Skeletons.Simple />
             </div>
           ) : hotTags.length > 0 ? (
             hotTags.map((tag, index) => (

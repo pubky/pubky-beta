@@ -295,7 +295,10 @@ export default function Sidebar({
     <>
       <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
         {loading ? (
-          <Skeleton.ProfileSidebar />
+          <div className="w-full flex-col justify-start items-start xl:inline-flex lg:ml-3">
+            <SideCard.Header title="Profile" />
+            <Skeleton.Simple />
+          </div>
         ) : (
           <div className="w-full self-start sticky top-[160px] backdrop-blur-3xl z-20 rounded-2xl px-3 py-4">
             <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
@@ -393,8 +396,8 @@ export default function Sidebar({
             </SideCard.Content>
           </div>
         )}
-        <div className="flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
-          <div>
+        <div className="w-full flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
+          <div className="w-full">
             <SideCard.Header title="Tagged as" />
             {loadingProfileTags ? (
               <Skeleton.Simple />
@@ -474,7 +477,7 @@ export default function Sidebar({
               </div>
             )}
           </div>
-          <div>
+          <div className="w-full">
             <SideCard.Header title="Contacts" />
             {loadingFollowers ? (
               <Skeletons.Simple />
