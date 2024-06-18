@@ -153,7 +153,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
         loading={loadingFollowed}
         icon={<Icon.UserMinus size="24" />}
       >
-        Unfollow {Utils.minifyText(post?.author?.profile?.name)}
+        Unfollow {Utils.minifyText(post?.author?.profile?.name, 10)}
       </Tooltip.Item>
     ) : (
       <Tooltip.Item
