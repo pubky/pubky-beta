@@ -128,14 +128,17 @@ export default function CreateQuickPost() {
           ...{ [newPost.id]: newPost },
           ...prev,
         }));
+        setContent('Post created!');
+        setShow(true);
+      } else {
+        setContent('Something wrong. Try again', 'warning');
+        setShow(true);
       }
       setArrayTags([]);
       setContentPost('');
       setPreview('');
       setVideoId('');
       setTweetId('');
-      setContent('Post created!');
-      setShow(true);
       setTextArea(false);
     } catch (error) {
       console.log(error);

@@ -126,9 +126,14 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   };
 
   const handleDeletePost = async () => {
-    setContent('Post deleted successfully');
-    setShow(true);
-    await deletePost(post?.id);
+    const result = await deletePost(post?.id);
+    if (result) {
+      setContent('Post deleted successfully');
+      setShow(true);
+    } else {
+      setContent('Something wrong. Try again', 'warning');
+      setShow(true);
+    }
   };
 
   const renderFollowButton = () => {
