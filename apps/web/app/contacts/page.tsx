@@ -13,6 +13,7 @@ import {
   TContacts,
 } from '../../types';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Skeletons from '../../components/Skeletons';
 
 const ContactsContent = () => {
   const { pubky, listFollowing, listFollowers, getProfile } =
@@ -174,15 +175,7 @@ const ContactsContent = () => {
         </div>
         {loadingContacts || loading ? (
           <div className="mt-12">
-            <div className="flex w-full justify-center">
-              <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-            </div>
-            <Typography.Body
-              variant="medium-bold"
-              className="col-span-3 m-2 flex justify-center items-center gap-6 text-opacity-20"
-            >
-              Loading Contacts
-            </Typography.Body>
+            <Skeletons.Simple />
           </div>
         ) : contactsUsers?.count ?? 0 > 0 ? (
           contactsLayout === 'list' ? (
