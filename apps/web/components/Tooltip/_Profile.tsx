@@ -218,7 +218,7 @@ export default function Profile({ post }: ProfileProps) {
       </div>
       <Typography.Body
         variant="medium"
-        className="my-3 text-opacity-80 break-all"
+        className="my-3 text-opacity-80"
         onClick={(event) => event.stopPropagation()}
       >
         {post?.author?.profile?.bio

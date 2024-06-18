@@ -72,7 +72,7 @@ export default function Tag({
                 <Icon.MagnifyingGlass size="16" />
               </div>
               <Typography.Body
-                className="text-center text-opacity-80 break-all"
+                className="text-center text-opacity-80"
                 variant="small-bold"
               >
                 {Utils.minifyText(tags.tag, 20)}
