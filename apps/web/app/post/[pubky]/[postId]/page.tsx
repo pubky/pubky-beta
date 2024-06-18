@@ -48,6 +48,9 @@ export default function Index({
       setReplies(result);
       setContent('Reply created!');
       setShow(true);
+    } else {
+      setContent('Something wrong. Try again', 'warning');
+      setShow(true);
     }
   };
 

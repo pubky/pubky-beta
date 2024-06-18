@@ -10,13 +10,13 @@ import {
   Typography,
 } from '@social/ui-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
-import { useAlertContext } from '../../contexts/alerts';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalProfileTag: boolean;
   setShowModalProfileTag: React.Dispatch<React.SetStateAction<boolean>>;
   arrayTags: string[];
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
+  AddTags: () => void;
 }
 
 export default function ProfileTag({
@@ -24,9 +24,9 @@ export default function ProfileTag({
   setShowModalProfileTag,
   arrayTags,
   setArrayTags,
+  AddTags,
 }: ProfileTagProps) {
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
-  const { setContent, setShow } = useAlertContext();
   const [tag, setTag] = useState('');
   const [tagsError, setTagsError] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
@@ -202,9 +202,9 @@ export default function ProfileTag({
           onClick={() => {
             setShowModalProfileTag(false);
             setTagsError(false);
-            setContent('Profile tags added!');
-            setShow(true);
             setArrayTags([]);
+            handleAddTag();
+            AddTags();
           }}
         >
           Apply Tags

@@ -5,12 +5,31 @@ import { Typography } from '../Typography';
 interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
   children: string;
+  variant?: 'default' | 'warning';
 }
 
-export const Message = ({ icon, children, ...rest }: MessageProps) => {
-  const baseCSS = `fixed bottom-8 left-1/2 transform -translate-x-1/2 py-2 px-4 bg-[#793288] rounded-md shadow border border-fuchsia-500`;
+export const Message = ({
+  icon,
+  children,
+  variant = 'default',
+  ...rest
+}: MessageProps) => {
+  const baseCSS = `fixed bottom-8 left-1/2 transform -translate-x-1/2 py-2 px-4 rounded-md shadow border`;
+
+  let variantCSS = '';
+
+  switch (variant) {
+    case 'warning':
+      variantCSS = 'bg-yellow-600 border-yellow-500';
+      break;
+    case 'default':
+    default:
+      variantCSS = 'bg-[#793288] border-fuchsia-500';
+      break;
+  }
+
   return (
-    <div {...rest} className={twMerge(baseCSS, rest.className)}>
+    <div {...rest} className={twMerge(baseCSS, variantCSS, rest.className)}>
       <div className="flex gap-2">
         {icon && <div className="relative">{icon}</div>}
         <Typography.Body className="text-opacity-80" variant="small">

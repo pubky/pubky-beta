@@ -137,6 +137,11 @@ export default function CreatePost({
           ...{ [newPost.id]: newPost },
           ...prev,
         }));
+        setContent('Post created!');
+        setShow(true);
+      } else {
+        setContent('Something wrong. Try again', 'warning');
+        setShow(true);
       }
       setArrayTags([]);
       setContentPost('');
@@ -144,8 +149,6 @@ export default function CreatePost({
       setVideoId('');
       setTweetId('');
       setShowModalPost(false);
-      setContent('Post created!');
-      setShow(true);
     } catch (error) {
       console.log(error);
     } finally {

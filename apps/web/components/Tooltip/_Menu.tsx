@@ -126,9 +126,14 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   };
 
   const handleDeletePost = async () => {
-    setContent('Post deleted successfully');
-    setShow(true);
-    await deletePost(post?.id);
+    const result = await deletePost(post?.id);
+    if (result) {
+      setContent('Post deleted successfully');
+      setShow(true);
+    } else {
+      setContent('Something wrong. Try again', 'warning');
+      setShow(true);
+    }
   };
 
   const renderFollowButton = () => {
@@ -148,7 +153,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
         loading={loadingFollowed}
         icon={<Icon.UserMinus size="24" />}
       >
-        Unfollow {Utils.minifyText(post?.author?.profile?.name)}
+        Unfollow {Utils.minifyText(post?.author?.profile?.name, 10)}
       </Tooltip.Item>
     ) : (
       <Tooltip.Item

@@ -42,6 +42,7 @@ export default function Header({
         <PostUI.ImageUser
           src={post?.author?.profile?.image || '/images/Userpic.png'}
           alt="user"
+          className="z-[1]"
         />
         <TooltipUI.Root
           delay={200}
