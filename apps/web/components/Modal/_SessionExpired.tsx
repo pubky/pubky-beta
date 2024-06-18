@@ -14,7 +14,7 @@ export default function SessionExpired({
   setShowModal,
 }: SessionExpiredProps) {
   const router = useRouter();
-  const modalLogoutRef = useRef<HTMLDivElement>(null);
+  const modalSessionExpiredRef = useRef<HTMLDivElement>(null);
   const [countdown, setCountdown] = useState(10);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function SessionExpired({
   return (
     <Modal.Root
       show={showModal}
-      modalRef={modalLogoutRef}
+      modalRef={modalSessionExpiredRef}
       className="w-[480px]"
     >
       <Modal.Header title="Session expired" />

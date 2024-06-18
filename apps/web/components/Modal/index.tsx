@@ -8,6 +8,7 @@ import ProfileTag from './_ProfileTag';
 import ProfileTags from './_ProfileTags';
 import Repost from './_Repost';
 import SearchInputCard from './_SearchInputCard';
+import ServerDown from './_ServerDown';
 import SessionExpired from './_SessionExpired';
 import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
@@ -24,6 +25,7 @@ export const Modal = {
   ProfileTags,
   Repost,
   SearchInputCard,
+  ServerDown,
   SessionExpired,
   Tag,
   TagCreatePost,

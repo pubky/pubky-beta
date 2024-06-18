@@ -44,16 +44,26 @@ export default function Actions({
   };
 
   const handleRepost = async () => {
-    await createRepost(post.uri);
-    setContent('Repost created!');
-    setShow(true);
+    const result = await createRepost(post.uri);
+    if (result) {
+      setContent('Repost created!');
+      setShow(true);
+    } else {
+      setContent('Something wrong. Try again', 'warning');
+      setShow(true);
+    }
   };
 
   const handleDeleteRepost = async () => {
     if (repost?.id) {
-      await deletePost(repost?.id);
-      setContent('Repost deleted!');
-      setShow(true);
+      const result = await deletePost(repost?.id);
+      if (result) {
+        setContent('Repost deleted!');
+        setShow(true);
+      } else {
+        setContent('Something wrong. Try again', 'warning');
+        setShow(true);
+      }
     }
   };
 

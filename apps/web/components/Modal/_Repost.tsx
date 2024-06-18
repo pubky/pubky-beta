@@ -118,6 +118,11 @@ export default function Repost({
         for (const tag of arrayTags) {
           await createTag(newRepost.uri, tag);
         }
+        setContent('Repost created!');
+        setShow(true);
+      } else {
+        setContent('Something wrong. Try again', 'warning');
+        setShow(true);
       }
       setArrayTags([]);
       setContentRepost('');
@@ -125,8 +130,6 @@ export default function Repost({
       setVideoId('');
       setTweetId('');
       setShowModalRepost(false);
-      setContent('Repost created!');
-      setShow(true);
     } catch (error) {
       console.log(error);
     } finally {
