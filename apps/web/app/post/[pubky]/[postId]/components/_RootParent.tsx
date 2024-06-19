@@ -103,6 +103,7 @@ export default function RootParent({ replies }: { replies: IReply }) {
         fullContent
         className="border-0"
         line
+        lineStyle="mt-6"
       />
     ) : (
       <div
