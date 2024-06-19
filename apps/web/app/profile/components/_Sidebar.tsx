@@ -96,6 +96,7 @@ export default function Sidebar({
   const [clickedLink, setClickedLink] = useState('');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const checkLink = Utils.storage.get('checkLink');
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     if (seed) {
@@ -296,6 +297,22 @@ export default function Sidebar({
     }
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <>
       <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
@@ -305,7 +322,11 @@ export default function Sidebar({
             <Skeleton.Simple />
           </div>
         ) : (
-          <div className="w-full self-start sticky top-[120px] backdrop-blur-3xl z-20 rounded-2xl px-3 py-4">
+          <div
+            className={`w-full self-start sticky top-[120px] bg-[#020203] ${
+              scrolled && 'border'
+            } border-white border-opacity-10 z-20 rounded-2xl px-3 py-4`}
+          >
             <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
               <div className="items-center inline-flex justify-between">
                 <div className="justify-start items-center gap-3 inline-flex">
