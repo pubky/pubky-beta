@@ -305,7 +305,7 @@ export default function Sidebar({
             <Skeleton.Simple />
           </div>
         ) : (
-          <div className="w-full self-start sticky top-[160px] backdrop-blur-3xl z-20 rounded-2xl px-3 py-4">
+          <div className="w-full self-start sticky top-[120px] backdrop-blur-3xl z-20 rounded-2xl px-3 py-4">
             <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
               <div className="items-center inline-flex justify-between">
                 <div className="justify-start items-center gap-3 inline-flex">
@@ -340,10 +340,7 @@ export default function Sidebar({
                   </div>
                 </div>
               </div>
-              <Typography.Body
-                variant="medium"
-                className="text-opacity-80"
-              >
+              <Typography.Body variant="medium" className="text-opacity-80">
                 {Utils.minifyText(bio, 160)}
               </Typography.Body>
               {initLoadingFollowed ? (

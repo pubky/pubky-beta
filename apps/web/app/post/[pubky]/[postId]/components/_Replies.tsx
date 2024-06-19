@@ -158,7 +158,7 @@ export default function Replies({
             <Typography.H2>Replies</Typography.H2>
             {renderReplies(replies)}
           </div>
-          <div className="hidden flex-col gap-6 xl:inline-flex col-span-1 self-start sticky top-[160px]">
+          <div className="hidden flex-col gap-6 xl:inline-flex col-span-1 self-start sticky top-[120px]">
             <div>
               <SideCard.Header title="Participants" />
               <SideCard.Content>

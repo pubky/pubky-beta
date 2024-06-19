@@ -104,7 +104,7 @@ const SearchContent = () => {
         <Sidebar className="hidden xl:block">
           <Filter.Reach />
           <Filter.Sort />
-          <div className="self-start sticky top-[160px]">
+          <div className="self-start sticky top-[120px]">
             <Filter.Layout />
             <Filter.Content />
           </div>

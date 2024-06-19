@@ -174,7 +174,7 @@ export default function Index() {
             </Typography.H2>
           )}
         </div>
-        <Sidebar className="self-start sticky top-[160px] hidden xl:block w-[20%]">
+        <Sidebar className="self-start sticky top-[120px] hidden xl:block w-[20%]">
           <WhoFollow />
           <ActiveFriends />
         </Sidebar>{' '}

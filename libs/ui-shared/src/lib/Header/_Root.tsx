@@ -1,3 +1,6 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface HeaderRootProps extends React.HTMLAttributes<HTMLElement> {
@@ -6,15 +9,31 @@ interface HeaderRootProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export const Root = ({ children, ...rest }: HeaderRootProps) => {
-  const baseCSS =
-    'w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] h-3.5 sm:h-[144px] bg-transparent bg-opacity-50 mx-auto py-12 gap-6 flex items-center justify-between';
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const baseCSS = `w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] ${
+    scrolled ? 'h-1.5 sm:h-[14px]' : 'h-3.5 sm:h-[144px]'
+  } transition-all duration-100 bg-transparent bg-opacity-50 mx-auto py-12 gap-6 flex items-center justify-between`;
 
   return (
     <div
-      className={twMerge(
-        'sticky top-0 z-50 backdrop-blur-[80px]',
-        rest.className
-      )}
+      className={twMerge('sticky top-0 z-50 backdrop-blur-xl', rest.className)}
     >
       <header {...rest} className={twMerge(baseCSS, rest.className)}>
         {children}
