@@ -443,7 +443,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       await client.ready();
 
-      const repliesResult = await client.social.posts.thread(uri);
+      const repliesResult = await client.social.posts.thread(uri, {
+        viewerId: pk,
+      });
 
       if (!repliesResult.ok)
         throw new Error(
