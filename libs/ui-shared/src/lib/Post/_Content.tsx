@@ -28,18 +28,19 @@ export const Content = ({ children, text }: ContentProps) => {
 
   function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const url = text.match(urlRegex);
-    if (url) {
-      setPreview(url[0]);
+    const urls = text.match(urlRegex);
+    if (urls) {
+      const url = urls[0];
+      setPreview(url);
 
-      const youtubeId = getYouTubeID(text);
+      const youtubeId = getYouTubeID(url);
       if (youtubeId) {
         setVideoId(youtubeId);
       }
 
       const twitterRegex =
-        /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/;
-      const twitterMatch = text.match(twitterRegex);
+        /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
+      const twitterMatch = url.match(twitterRegex);
       if (twitterMatch) {
         const tweetId = twitterMatch[3];
         setTweetId(tweetId);

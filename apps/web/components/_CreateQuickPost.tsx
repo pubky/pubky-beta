@@ -39,11 +39,12 @@ export default function CreateQuickPost() {
 
     const timeout = setTimeout(() => {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
-      const url = text.match(urlRegex);
-      if (url) {
-        setPreview(url[0]);
+      const urls = text.match(urlRegex);
+      if (urls) {
+        const url = urls[0];
+        setPreview(url);
 
-        const youtubeId = getYouTubeID(text);
+        const youtubeId = getYouTubeID(url);
         if (youtubeId) {
           setVideoId(youtubeId);
         } else {
@@ -51,8 +52,8 @@ export default function CreateQuickPost() {
         }
 
         const twitterRegex =
-          /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/;
-        const twitterMatch = text.match(twitterRegex);
+          /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
+        const twitterMatch = url.match(twitterRegex);
         if (twitterMatch) {
           const tweetId = twitterMatch[3];
           setTweetId(tweetId);
@@ -61,6 +62,8 @@ export default function CreateQuickPost() {
         }
       } else {
         setPreview('');
+        setVideoId('');
+        setTweetId('');
       }
     }, 1000);
 

@@ -46,7 +46,7 @@ export default function HotTags() {
   };
 
   return (
-    <div className="self-start sticky top-[160px] col-span-1">
+    <div className="self-start sticky top-[120px] col-span-1">
       <SideCard.Header title="Hot tags">
         {/**<DropDown.TagsTimeframe type="text" />*/}
       </SideCard.Header>
