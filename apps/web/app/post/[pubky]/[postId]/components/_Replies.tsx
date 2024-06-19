@@ -173,7 +173,7 @@ export default function Replies({
                     return (
                       <React.Fragment key={reply.post.author.id}>
                         <SideCard.User
-                          uri={reply.post.author.uri}
+                          uri={reply.post.author.id}
                           src={
                             reply.post.author.profile?.image ||
                             '/images/Userpic.png'
