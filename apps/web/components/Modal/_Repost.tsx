@@ -7,7 +7,11 @@ import {
   PostUtil,
 } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
-import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import EmojiPicker, {
+  EmojiClickData,
+  EmojiStyle,
+  Theme,
+} from 'emoji-picker-react';
 import { useClientContext } from '../../contexts/client';
 import Image from 'next/image';
 import { Modal as ModalComponent } from '.';
@@ -42,6 +46,7 @@ export default function Repost({
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -169,6 +174,14 @@ export default function Repost({
     };
   }, [wrapperRefEmojis]);
 
+  const handleEmojiClick = (emojiObject: EmojiClickData) => {
+    const textBeforeCursor = contentRepost.slice(0, cursorPosition);
+    const textAfterCursor = contentRepost.slice(cursorPosition);
+    const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
+    setContentRepost(newText);
+    setCursorPosition(cursorPosition + emojiObject.emoji.length);
+  };
+
   return (
     <Modal.Root
       modalRef={modalRepostRef}
@@ -195,9 +208,13 @@ export default function Repost({
             className="pl-12 -mt-[10px] w-full flex justify-between gap-6 items-start flex-col"
           >
             <Input.CursorArea
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setContentRepost(e.target.value)
-              }
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                setContentRepost(e.target.value);
+                setCursorPosition(e.target.selectionStart);
+              }}
+              onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+                setCursorPosition(e.currentTarget.selectionStart);
+              }}
               value={contentRepost}
               maxLength={300}
               className={`w-full h-auto mt-4`}
@@ -285,9 +302,7 @@ export default function Repost({
                   <EmojiPicker
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.TWITTER}
-                    onEmojiClick={(emojiObject) => {
-                      setContentRepost(contentRepost + emojiObject.emoji);
-                    }}
+                    onEmojiClick={handleEmojiClick}
                   />
                 </div>
               )}

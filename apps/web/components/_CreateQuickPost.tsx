@@ -2,7 +2,11 @@
 
 import { Button, Icon, Input, Post, PostUtil } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
-import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import EmojiPicker, {
+  EmojiClickData,
+  EmojiStyle,
+  Theme,
+} from 'emoji-picker-react';
 import { useClientContext } from '../contexts/client';
 import Image from 'next/image';
 import { INewPost } from '../types';
@@ -31,6 +35,7 @@ export default function CreateQuickPost() {
   );
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
 
   const checkForLink = (text: string) => {
     if (debounceTimeout) {
@@ -117,7 +122,6 @@ export default function CreateQuickPost() {
                 id: `${pubky}`,
                 createdAt: Date.now(),
                 indexedAt: Date.now(),
-
                 author: {
                   id: `${pubky}`,
                   uri: `pubky:${pubky}`,
@@ -183,6 +187,14 @@ export default function CreateQuickPost() {
     };
   }, [wrapperRefEmojis]);
 
+  const handleEmojiClick = (emojiObject: EmojiClickData) => {
+    const textBeforeCursor = contentPost.slice(0, cursorPosition);
+    const textAfterCursor = contentPost.slice(cursorPosition);
+    const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
+    setContentPost(newText);
+    setCursorPosition(cursorPosition + emojiObject.emoji.length);
+  };
+
   return (
     <div className="p-6 mb-4 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
       <div className="absolute justify-start items-center gap-4 flex">
@@ -193,28 +205,23 @@ export default function CreateQuickPost() {
           alt="user-image"
           src={pic}
         />
-        {/* <Typography.Body
-          className={`hover:underline hover:decoration-solid`}
-          variant="medium-bold"
-        >
-          {Utils.minifyText(name, 24)}
-        </Typography.Body>
-        <Typography.Label className="cursor-pointer text-opacity-30">
-          {Utils.minifyPubky(handler)}
-        </Typography.Label> */}
       </div>
       <div
         ref={wrapperRef}
         className="pl-12 -mt-[10px] w-full flex justify-between gap-6 items-start flex-col"
       >
         <Input.CursorArea
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-            setContentPost(e.target.value)
-          }
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setContentPost(e.target.value);
+            setCursorPosition(e.target.selectionStart);
+          }}
+          onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+            setCursorPosition(e.currentTarget.selectionStart);
+          }}
           value={contentPost}
           maxLength={300}
           onClick={() => setTextArea(true)}
-          className={`w-full h-auto mt-4`}
+          className="w-full h-auto mt-4"
           placeholder="What's in your mind?"
         />
         {videoId && (
@@ -293,9 +300,7 @@ export default function CreateQuickPost() {
                 <EmojiPicker
                   theme={Theme.DARK}
                   emojiStyle={EmojiStyle.TWITTER}
-                  onEmojiClick={(emojiObject) => {
-                    setContentPost(contentPost + emojiObject.emoji);
-                  }}
+                  onEmojiClick={handleEmojiClick}
                 />
               </div>
             )}

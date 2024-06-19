@@ -1,7 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import EmojiPicker, {
+  EmojiClickData,
+  EmojiStyle,
+  Theme,
+} from 'emoji-picker-react';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
 import { Icon, Button, Post, Input, PostUtil } from '@social/ui-shared';
@@ -30,6 +34,7 @@ export default function ReplyForm({
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -122,6 +127,14 @@ export default function ReplyForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contentReply]);
 
+  const handleEmojiClick = (emojiObject: EmojiClickData) => {
+    const textBeforeCursor = contentReply.slice(0, cursorPosition);
+    const textAfterCursor = contentReply.slice(cursorPosition);
+    const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
+    setContentReply(newText);
+    setCursorPosition(cursorPosition + emojiObject.emoji.length);
+  };
+
   return (
     <Post.Root>
       <Post.MainCard className="w-full px-8 py-6 bg-transparent border border-opacity-30 border-dashed rounded-2xl">
@@ -135,9 +148,13 @@ export default function ReplyForm({
               />
               <Post.Content text="">
                 <Input.CursorArea
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setContentReply(e.target.value)
-                  }
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    setContentReply(e.target.value);
+                    setCursorPosition(e.target.selectionStart);
+                  }}
+                  onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+                    setCursorPosition(e.currentTarget.selectionStart);
+                  }}
                   value={contentReply}
                   maxLength={300}
                   className="h-[25px] text-xl w-[250px] md:w-[500px] lg:w-[650px]"
@@ -235,9 +252,7 @@ export default function ReplyForm({
                   <EmojiPicker
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.TWITTER}
-                    onEmojiClick={(emojiObject) => {
-                      setContentReply(contentReply + emojiObject.emoji);
-                    }}
+                    onEmojiClick={handleEmojiClick}
                   />
                 </div>
               )}

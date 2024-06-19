@@ -1,7 +1,6 @@
 import { Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
-import { DropDown } from '../../../components/DropDown';
 import { useClientContext } from '../../../contexts/client';
 import { Utils } from '../../../utils';
 
@@ -89,9 +88,9 @@ export default function Me({
             )}
           </Typography.H2>
         </div>
-        <div className="hidden lg:block lg:-mt-1">
+        {/**<div className="hidden lg:block lg:-mt-1">
           <DropDown.SortFriends disabled type="text" subtitle="Sort by" />
-        </div>
+        </div>*/}
       </div>
     </div>
   );
