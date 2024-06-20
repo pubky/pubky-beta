@@ -371,7 +371,10 @@ export default function Sidebar({
                   </div>
                 </div>
               </div>
-              <Typography.Body variant="medium" className="text-opacity-80">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 break-words"
+              >
                 {Utils.minifyText(bio, 160)}
               </Typography.Body>
               {initLoadingFollowed ? (
