@@ -270,14 +270,7 @@ export default function Sidebar({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      const result = await createTag(pubKeyToUse, tag);
-      if (result) {
-        setContent('Profile tags added!');
-        setShow(true);
-      } else {
-        setContent('Something wrong. Try again', 'warning');
-        setShow(true);
-      }
+      await createTag(pubKeyToUse, tag);
       fetchProfile();
     }
   };
@@ -300,10 +293,15 @@ export default function Sidebar({
         await handleAddProfileTag(tag);
       }
 
+      setContent('Profile tags added!');
+      setShow(true);
+
       setLoadingAddProfileTags(false);
     } catch (err) {
       console.error(err);
       setLoadingAddProfileTags(false);
+      setContent('Profile tags added!');
+      setShow(true);
     }
   };
 

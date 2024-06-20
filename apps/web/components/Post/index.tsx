@@ -105,7 +105,10 @@ export default function Post({
                 </PostUI.MainCard>
               ) : (
                 <>
-                  <PostUI.RepostCard className="relative z-10">
+                  <PostUI.RepostCard
+                    className="relative z-10"
+                    onClick={(event) => event.stopPropagation()}
+                  >
                     <Icon.Repost size="16" />
                     <TooltipUI.Root
                       delay={200}
