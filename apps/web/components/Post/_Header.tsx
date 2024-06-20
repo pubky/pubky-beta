@@ -63,10 +63,7 @@ export default function Header({
           {showTooltipProfile !== '' && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
-      <div
-        className="justify-end cursor-pointer grow"
-        onClick={() => router.push(Utils.encodePostUri(post?.uri))}
-      >
+      <div className="justify-end grow">
         <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
       </div>
       {!repostView && (
