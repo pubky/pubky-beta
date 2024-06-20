@@ -75,6 +75,7 @@ export default function Sidebar({
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [loadingProfileTags, setLoadingProfileTags] = useState(true);
+  const [loadingAddProfileTags, setLoadingAddProfileTags] = useState(false);
   const [pubkyUser, setPubkyUser] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
@@ -269,14 +270,7 @@ export default function Sidebar({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      const result = await createTag(pubKeyToUse, tag);
-      if (result) {
-        setContent('Profile tags added!');
-        setShow(true);
-      } else {
-        setContent('Something wrong. Try again', 'warning');
-        setShow(true);
-      }
+      await createTag(pubKeyToUse, tag);
       fetchProfile();
     }
   };
@@ -292,8 +286,22 @@ export default function Sidebar({
   };
 
   const AddTags = async () => {
-    for (const tag of arrayTags) {
-      await handleAddProfileTag(tag);
+    try {
+      setLoadingAddProfileTags(true);
+
+      for (const tag of arrayTags) {
+        await handleAddProfileTag(tag);
+      }
+
+      setContent('Profile tags added!');
+      setShow(true);
+
+      setLoadingAddProfileTags(false);
+    } catch (err) {
+      console.error(err);
+      setLoadingAddProfileTags(false);
+      setContent('Profile tags added!');
+      setShow(true);
     }
   };
 
@@ -361,7 +369,10 @@ export default function Sidebar({
                   </div>
                 </div>
               </div>
-              <Typography.Body variant="medium" className="text-opacity-80">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 break-words"
+              >
                 {Utils.minifyText(bio, 160)}
               </Typography.Body>
               {initLoadingFollowed ? (
@@ -686,6 +697,7 @@ export default function Sidebar({
         showModalProfileTag={showModalProfileTag}
         setShowModalProfileTag={setShowModalProfileTag}
         AddTags={AddTags}
+        loadingAddProfileTags={loadingAddProfileTags}
       />
     </>
   );

@@ -17,6 +17,7 @@ interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   arrayTags: string[];
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
   AddTags: () => void;
+  loadingAddProfileTags: boolean;
 }
 
 export default function ProfileTag({
@@ -25,6 +26,7 @@ export default function ProfileTag({
   arrayTags,
   setArrayTags,
   AddTags,
+  loadingAddProfileTags,
 }: ProfileTagProps) {
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
@@ -81,6 +83,19 @@ export default function ProfileTag({
       handleAddTag();
     }
   };
+
+  const handleSubmitTags = () => {
+    setTagsError(false);
+    handleAddTag();
+    AddTags();
+  };
+
+  useEffect(() => {
+    if (!loadingAddProfileTags) {
+      setShowModalProfileTag(false);
+      setArrayTags([]);
+    }
+  }, [loadingAddProfileTags, setShowModalProfileTag, setArrayTags]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -171,7 +186,6 @@ export default function ProfileTag({
                 </div>
               )}
               <div className="grow"></div>
-              {/* <Input.Label value="Add tag" /> */}
               <Input.Text
                 placeholder="tag"
                 value={tag}
@@ -199,13 +213,8 @@ export default function ProfileTag({
         <Modal.SubmitAction
           icon={<Icon.Check color={arrayTags.length > 0 ? 'white' : 'gray'} />}
           disabled={arrayTags.length === 0}
-          onClick={() => {
-            setShowModalProfileTag(false);
-            setTagsError(false);
-            setArrayTags([]);
-            handleAddTag();
-            AddTags();
-          }}
+          onClick={handleSubmitTags}
+          loading={loadingAddProfileTags}
         >
           Apply Tags
         </Modal.SubmitAction>
