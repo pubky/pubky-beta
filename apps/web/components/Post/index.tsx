@@ -59,7 +59,10 @@ export default function Post({
   };
 
   return (
-    <div className="w-full">
+    <div
+      className="w-full cursor-pointer"
+      onClick={() => router.push(Utils.encodePostUri(post?.uri))}
+    >
       <div className="flex flex-col">
         <PostUI.Root>
           <div>

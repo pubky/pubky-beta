@@ -75,6 +75,7 @@ export default function Sidebar({
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [loadingProfileTags, setLoadingProfileTags] = useState(true);
+  const [loadingAddProfileTags, setLoadingAddProfileTags] = useState(false);
   const [pubkyUser, setPubkyUser] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
@@ -292,8 +293,17 @@ export default function Sidebar({
   };
 
   const AddTags = async () => {
-    for (const tag of arrayTags) {
-      await handleAddProfileTag(tag);
+    try {
+      setLoadingAddProfileTags(true);
+
+      for (const tag of arrayTags) {
+        await handleAddProfileTag(tag);
+      }
+
+      setLoadingAddProfileTags(false);
+    } catch (err) {
+      console.error(err);
+      setLoadingAddProfileTags(false);
     }
   };
 
@@ -686,6 +696,7 @@ export default function Sidebar({
         showModalProfileTag={showModalProfileTag}
         setShowModalProfileTag={setShowModalProfileTag}
         AddTags={AddTags}
+        loadingAddProfileTags={loadingAddProfileTags}
       />
     </>
   );
