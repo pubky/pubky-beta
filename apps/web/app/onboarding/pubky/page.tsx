@@ -31,7 +31,7 @@ export default function Index() {
       <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">
         Share your pubky with your friends so they can follow you.
       </Typography.PageTitle>
-      <div className="my-12 w-full h-[434px] sm:h-[534px] p-8 bg-transparent rounded-2xl shadow border border-white border-opacity-20 backdrop-blur-[50px] flex-col justify-center items-center gap-8 inline-flex">
+      <div className="my-6 w-full flex-col justify-center items-center inline-flex">
         <div className="flex-col justify-center items-center flex">
           <Image
             width={284}
