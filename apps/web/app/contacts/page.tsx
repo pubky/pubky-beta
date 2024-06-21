@@ -147,15 +147,6 @@ const ContactsContent = () => {
         />
         <div className="mb-6">
           <Button.Tab
-            onClick={() => setContacts('followers')}
-            active={!loadingContacts && contacts === 'followers'}
-            icon={<Icon.UsersLeft />}
-            className="mr-0.5"
-          >
-            Followers{' '}
-            {!loadingContacts && `(${countContacts.followers.toString()})`}
-          </Button.Tab>
-          <Button.Tab
             onClick={() => setContacts('following')}
             active={!loadingContacts && contacts === 'following'}
             icon={<Icon.UsersRight />}
@@ -163,6 +154,15 @@ const ContactsContent = () => {
           >
             Following{' '}
             {!loadingContacts && `(${countContacts.following.toString()})`}
+          </Button.Tab>
+          <Button.Tab
+            onClick={() => setContacts('followers')}
+            active={!loadingContacts && contacts === 'followers'}
+            icon={<Icon.UsersLeft />}
+            className="mr-0.5"
+          >
+            Followers{' '}
+            {!loadingContacts && `(${countContacts.followers.toString()})`}
           </Button.Tab>
           <Button.Tab
             onClick={() => setContacts('friends')}
