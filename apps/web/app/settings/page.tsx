@@ -323,7 +323,7 @@ export default function Index() {
       <Content.Grid>
         <Input.Cursor
           placeholder="Your Name"
-          className="h-auto text-[40px] font-bold sm:text-[100px]"
+          className="h-auto text-[40px] font-bold sm:text-[100px] -mt-[50px]"
           defaultValue={name}
           maxLength={25}
           autoCorrect="off"
@@ -345,7 +345,7 @@ export default function Index() {
               >
                 <Input.TextArea
                   placeholder="Short bio. Tell a bit about yourself."
-                  className="h-[290px]"
+                  className="h-[240px]"
                   maxLength={160}
                   defaultValue={bio}
                   error={errors.bio}

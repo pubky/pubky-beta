@@ -223,7 +223,7 @@ export default function Index() {
     <Onboarding.Layout currentStep={2}>
       <Input.Cursor
         placeholder="Your Name"
-        className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px]"
+        className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px] -mt-[50px]"
         defaultValue={name ? name : ''}
         autoFocus
         id="onboarding-name-input"
@@ -246,7 +246,7 @@ export default function Index() {
             >
               <Input.TextArea
                 placeholder="Short bio. Tell a bit about yourself."
-                className="h-[290px]"
+                className="h-[240px]"
                 id="onboarding-bio-input"
                 defaultValue={bio ? bio : ''}
                 error={errors.bio}
