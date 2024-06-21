@@ -517,37 +517,6 @@ export default function Sidebar({
               <Skeletons.Simple />
             ) : (
               <SideCard.Content className="grid grid-cols-2 gap-12 justify-start mt-2">
-                {loadingFollowers ? (
-                  <div className="flex w-full justify-center">
-                    <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
-                  </div>
-                ) : (
-                  <div
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      ((followers?.count ?? 0) > 0 ||
-                        (following?.count ?? 0) > 0) &&
-                        router.push(
-                          `/contacts/${
-                            creatorPubky
-                              ? `${creatorPubky}?tab=followers`
-                              : '?tab=followers'
-                          }`
-                        );
-                    }}
-                    className={`flex-col gap-3 inline-flex ${
-                      (followers?.count ?? 0) > 0 && 'cursor-pointer'
-                    }`}
-                  >
-                    <div className="inline-flex gap-2">
-                      <Typography.Label>{followers?.count}</Typography.Label>
-                      <Typography.Label className="text-opacity-50">
-                        Followers
-                      </Typography.Label>
-                    </div>
-                    <Post.UserPic images={followersImages} />
-                  </div>
-                )}
                 {loadingFollowing ? (
                   <div className="flex w-full justify-center">
                     <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
@@ -577,6 +546,37 @@ export default function Sidebar({
                       </Typography.Label>
                     </div>
                     <Post.UserPic images={followingImages} />
+                  </div>
+                )}
+                {loadingFollowers ? (
+                  <div className="flex w-full justify-center">
+                    <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
+                  </div>
+                ) : (
+                  <div
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      ((followers?.count ?? 0) > 0 ||
+                        (following?.count ?? 0) > 0) &&
+                        router.push(
+                          `/contacts/${
+                            creatorPubky
+                              ? `${creatorPubky}?tab=followers`
+                              : '?tab=followers'
+                          }`
+                        );
+                    }}
+                    className={`flex-col gap-3 inline-flex ${
+                      (followers?.count ?? 0) > 0 && 'cursor-pointer'
+                    }`}
+                  >
+                    <div className="inline-flex gap-2">
+                      <Typography.Label>{followers?.count}</Typography.Label>
+                      <Typography.Label className="text-opacity-50">
+                        Followers
+                      </Typography.Label>
+                    </div>
+                    <Post.UserPic images={followersImages} />
                   </div>
                 )}
               </SideCard.Content>
