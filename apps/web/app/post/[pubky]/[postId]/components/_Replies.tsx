@@ -2,15 +2,13 @@ import { Content, Icon, Button, Typography, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { useClientContext } from '../../../../../contexts/client';
 import { IReply } from '../../../../../types';
-import { Post, Skeleton } from '../../../../../components';
+import { Post } from '../../../../../components';
 import { Utils } from '../../../../../utils';
 
 export default function Replies({
   repliesResponse,
-  loading,
 }: {
   repliesResponse: IReply;
-  loading: boolean;
 }) {
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const [replies, setReplies] = useState<IReply[]>([]);
@@ -146,9 +144,7 @@ export default function Replies({
 
   return (
     <>
-      {loading ? (
-        <Skeleton.Simple />
-      ) : replies && replies.length === 0 ? (
+      {replies && replies.length === 0 ? (
         <Typography.Body className="text-opacity-50 text-center">
           No replies yet
         </Typography.Body>
