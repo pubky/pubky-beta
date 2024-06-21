@@ -3,12 +3,17 @@
 import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { Post } from './components';
-import { CreatePost, Header } from '../../../../components';
+import {
+  CreatePost,
+  Header,
+  Post as PostComponent,
+} from '../../../../components';
 import { Utils } from '../../../../utils';
 import { IPost, IReply } from '../../../../types';
 import { useClientContext } from '../../../../contexts/client';
 import Link from 'next/link';
 import { useAlertContext } from '../../../../contexts/alerts';
+import Skeletons from '../../../../components/Skeletons';
 
 export default function Index({
   params,
@@ -64,15 +69,25 @@ export default function Index({
               <Post.RootParent replies={replies} />
             )}
 
-            <Post.MainPost post={post} loading={loading} uri={uri} />
+            {loading && <Skeletons.Simple />}
 
-            <Post.ReplyForm
-              uri={uri}
-              post={post}
-              updatePost={handleUpdatePost}
-            />
-
-            <Post.Replies repliesResponse={replies} loading={loading} />
+            {!loading && (
+              <>
+                <PostComponent
+                  key={uri}
+                  post={post}
+                  size="full"
+                  fullContent
+                  className="border-0"
+                />
+                <Post.ReplyForm
+                  uri={uri}
+                  post={post}
+                  updatePost={handleUpdatePost}
+                />
+                <Post.Replies repliesResponse={replies} />
+              </>
+            )}
           </>
         ) : (
           <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
