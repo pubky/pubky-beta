@@ -54,18 +54,6 @@ export default function Me({
       <div className="mt-6 lg:mt-0 ml-12 flex gap-12">
         <div className="flex-col flex">
           <Typography.Label className="text-opacity-30">
-            Followers
-          </Typography.Label>
-          <Typography.H2>
-            {loadingContacts ? (
-              <Icon.LoadingSpin size="24" />
-            ) : (
-              countContacts.followers
-            )}
-          </Typography.H2>
-        </div>
-        <div className="flex-col flex">
-          <Typography.Label className="text-opacity-30">
             Following
           </Typography.Label>
           <Typography.H2>
@@ -73,6 +61,18 @@ export default function Me({
               <Icon.LoadingSpin size="24" />
             ) : (
               countContacts.following
+            )}
+          </Typography.H2>
+        </div>
+        <div className="flex-col flex">
+          <Typography.Label className="text-opacity-30">
+            Followers
+          </Typography.Label>
+          <Typography.H2>
+            {loadingContacts ? (
+              <Icon.LoadingSpin size="24" />
+            ) : (
+              countContacts.followers
             )}
           </Typography.H2>
         </div>

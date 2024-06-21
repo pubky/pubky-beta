@@ -226,36 +226,6 @@ export default function Profile({ post }: ProfileProps) {
           : 'No bio.'}
       </Typography.Body>
       <div className="grid grid-cols-2 gap-6 justify-start">
-        {loadingFollowers ? (
-          <div className="flex w-full justify-center min-h-[64px] items-center">
-            <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
-          </div>
-        ) : (
-          <div
-            onClick={(event) => {
-              event.stopPropagation();
-              ((followers?.count ?? 0) > 0 || (following?.count ?? 0) > 0) &&
-                router.push(
-                  `/contacts/${
-                    post?.author?.id
-                      ? `${post?.author?.id}?tab=followers`
-                      : '?tab=followers'
-                  }`
-                );
-            }}
-            className={`flex-col gap-3 inline-flex ${
-              (followers?.count ?? 0) > 0 && 'cursor-pointer'
-            }`}
-          >
-            <div className="inline-flex gap-2">
-              <Typography.Label>{followers?.count}</Typography.Label>
-              <Typography.Label className="text-opacity-50">
-                Followers
-              </Typography.Label>
-            </div>
-            <PostUI.UserPic images={followersImages} />
-          </div>
-        )}
         {loadingFollowing ? (
           <div className="flex w-full justify-center min-h-[64px] items-center">
             <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
@@ -284,6 +254,36 @@ export default function Profile({ post }: ProfileProps) {
               </Typography.Label>
             </div>
             <PostUI.UserPic images={followingImages} />
+          </div>
+        )}
+        {loadingFollowers ? (
+          <div className="flex w-full justify-center min-h-[64px] items-center">
+            <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
+          </div>
+        ) : (
+          <div
+            onClick={(event) => {
+              event.stopPropagation();
+              ((followers?.count ?? 0) > 0 || (following?.count ?? 0) > 0) &&
+                router.push(
+                  `/contacts/${
+                    post?.author?.id
+                      ? `${post?.author?.id}?tab=followers`
+                      : '?tab=followers'
+                  }`
+                );
+            }}
+            className={`flex-col gap-3 inline-flex ${
+              (followers?.count ?? 0) > 0 && 'cursor-pointer'
+            }`}
+          >
+            <div className="inline-flex gap-2">
+              <Typography.Label>{followers?.count}</Typography.Label>
+              <Typography.Label className="text-opacity-50">
+                Followers
+              </Typography.Label>
+            </div>
+            <PostUI.UserPic images={followersImages} />
           </div>
         )}
       </div>
