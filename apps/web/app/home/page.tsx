@@ -36,6 +36,10 @@ export default function Index() {
     const results = await listGlobalPosts(pointer, reach);
 
     if (results && results.feed) {
+      const parentUris = new Set(
+        results.feed.map((post) => post.post.parent).filter(Boolean)
+      );
+
       const newPostsTemp = await Promise.all(
         results.feed.map(async (post: IPost) => {
           let parentPost: IPost | null = null;
@@ -50,7 +54,11 @@ export default function Index() {
         })
       );
 
-      const postsMap = newPostsTemp.reduce((acc: INewPost, post) => {
+      const filteredPosts = newPostsTemp.filter(
+        (post) => !parentUris.has(post.uri)
+      );
+
+      const postsMap = filteredPosts.reduce((acc: INewPost, post) => {
         acc[post.id] = post;
         return acc;
       }, {});
