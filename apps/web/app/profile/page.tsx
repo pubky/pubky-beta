@@ -5,16 +5,21 @@ import { Content, Typography } from '@social/ui-shared';
 import { Profile } from './components';
 import { CreatePost, Header, Post, PostsLayout } from '../../components';
 import { useClientContext } from '../../contexts/client';
-import { Utils } from '../../utils';
+// import { Utils } from '../../utils';
 import { IPost, INewPost } from '../../types';
 import Skeletons from '../../components/Skeletons';
 
 export default function Index() {
-  const { pubky, listUserFeed, getUserIndexed, posts, setPosts } =
-    useClientContext();
-  const [pic, setPic] = useState('/images/Userpic.png');
-  const [name, setName] = useState('Loading...');
-  const [handler, setHandler] = useState('');
+  const {
+    pubky,
+    listUserFeed,
+    // getUserIndexed,
+    posts,
+    setPosts,
+  } = useClientContext();
+  // const [pic, setPic] = useState('/images/Userpic.png');
+  // const [name, setName] = useState('Loading...');
+  // const [handler, setHandler] = useState('');
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -47,20 +52,20 @@ export default function Index() {
     }
   }
 
-  async function fetchProfile() {
-    try {
-      if (!pubky) return;
-      const userProfile = await getUserIndexed(pubky);
+  // async function fetchProfile() {
+  //   try {
+  //     if (!pubky) return;
+  //     const userProfile = await getUserIndexed(pubky);
 
-      if (userProfile) {
-        setPic(userProfile.profile?.image || '/images/Userpic.png');
-        setName(userProfile.profile?.name || 'Loading...');
-        setHandler(pubky);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  //     if (userProfile) {
+  //       setPic(userProfile.profile?.image || '/images/Userpic.png');
+  //       setName(userProfile.profile?.name || 'Loading...');
+  //       setHandler(pubky);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -81,7 +86,7 @@ export default function Index() {
 
   useEffect(() => {
     setPosts({} as INewPost);
-    fetchProfile();
+    // fetchProfile();
     fetchPosts('');
     /* eslint-disable react-hooks/exhaustive-deps */
   }, []);
@@ -89,7 +94,7 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Profile" />
-      <div>
+      {/* <div>
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center sm:justify-between relative">
           <Profile.Handle
             username={Utils.minifyText(name, 15)}
@@ -102,9 +107,9 @@ export default function Index() {
             className="order-1 lg:order-2"
           />
         </Content.Grid>
-      </div>
+      </div> */}
       <Content.Grid className="grid grid-cols-3 gap-4">
-        <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
+        <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6 mt-7">
           {Object.keys(posts).map((key) => (
             <Post key={posts[key].id} post={posts[key]} />
           ))}

@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { Profile } from '../components';
-import { Profile as ProfileCommon } from '../components';
+// import { Profile as ProfileCommon } from '../components';
 import { CreatePost, Header, Post, PostsLayout } from '../../../components';
 import { useClientContext } from '../../../contexts/client';
 import { IPost, INewPost } from '../../../types';
-import { Utils } from '../../../utils';
+// import { Utils } from '../../../utils';
 import Skeletons from '../../../components/Skeletons';
 import Link from 'next/link';
 
@@ -16,13 +16,19 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
-  const { pubky, getUserIndexed, getProfile, listUserFeed, posts, setPosts } =
-    useClientContext();
+  const {
+    pubky,
+    getUserIndexed,
+    // getProfile,
+    listUserFeed,
+    posts,
+    setPosts,
+  } = useClientContext();
   const creatorPubky = params.creatorPubky;
 
-  const [pic, setPic] = useState('/images/Userpic.png');
-  const [name, setName] = useState('Loading...');
-  const [handler, setHandler] = useState('');
+  // const [pic, setPic] = useState('/images/Userpic.png');
+  // const [name, setName] = useState('Loading...');
+  // const [handler, setHandler] = useState('');
   const [loading, setLoading] = useState(true);
   const [userExist, setUserExist] = useState(true);
   const [cursor, setCursor] = useState('');
@@ -31,20 +37,20 @@ export default function Index({
   async function fetchProfile() {
     try {
       if (pubky === creatorPubky) {
-        const userProfile = await getProfile();
-        if (userProfile) {
-          setPic(userProfile.image || '/images/Userpic.png');
-          setName(userProfile.name || 'Loading...');
-          setHandler(pubky);
-        }
+        // const userProfile = await getProfile();
+        // if (userProfile) {
+        //   setPic(userProfile.image || '/images/Userpic.png');
+        //   setName(userProfile.name || 'Loading...');
+        //   setHandler(pubky);
+        // }
         return;
       }
       const userProfile = await getUserIndexed(creatorPubky);
 
       if (userProfile && userProfile.profile) {
-        setPic(userProfile.profile?.image || '/images/Userpic.png');
-        setName(userProfile.profile?.name || 'Loading...');
-        setHandler(creatorPubky);
+        // setPic(userProfile.profile?.image || '/images/Userpic.png');
+        // setName(userProfile.profile?.name || 'Loading...');
+        // setHandler(creatorPubky);
       } else {
         setUserExist(false);
       }
@@ -106,7 +112,7 @@ export default function Index({
       <Header className="hidden md:block" />
       {userExist ? (
         <>
-          <div>
+          {/* <div>
             <Content.Grid className="flex flex-col text-start lg:flex-row items-center sm:justify-between relative">
               <ProfileCommon.Handle
                 username={Utils.minifyText(name, 17)}
@@ -119,9 +125,9 @@ export default function Index({
                 className="order-1 lg:order-2"
               />
             </Content.Grid>
-          </div>
+          </div> */}
           <Content.Grid className="grid grid-cols-3 gap-6">
-            <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6">
+            <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6 mt-7">
               {Object.keys(posts).map((key) => (
                 <Post key={posts[key].id} post={posts[key]} />
               ))}
