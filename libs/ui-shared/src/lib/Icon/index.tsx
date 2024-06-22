@@ -61,6 +61,7 @@ import {
   UserRectangle,
   UsersLeft,
   UsersRight,
+  UserCircle,
   Smiley,
 } from './_People';
 import {
@@ -149,6 +150,7 @@ export const Icon = {
   UserMinus,
   UsersRight,
   UserPlus,
+  UserCircle,
   UserRectangle,
   Warning,
   Youtube,

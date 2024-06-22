@@ -75,7 +75,7 @@ export default function ProfileMenu({
             copied ? (
               <Icon.CheckCircle size="20" />
             ) : (
-              <Icon.LinkSimple size="20" />
+              <Icon.UserCircle size="20" />
             )
           }
         >

@@ -189,7 +189,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               copiedPubky ? (
                 <Icon.CheckCircle size="20" />
               ) : (
-                <Icon.LinkSimple size="20" />
+                <Icon.UserCircle size="20" />
               )
             }
           >
@@ -207,7 +207,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               copiedLinkPost ? (
                 <Icon.CheckCircle size="20" />
               ) : (
-                <Icon.Clipboard size="20" />
+                <Icon.LinkSimple size="20" />
               )
             }
           >
