@@ -14,6 +14,7 @@ import {
 } from '../../../types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Skeletons from '../../../components/Skeletons';
 
 export default function Index({
   params,
@@ -87,6 +88,11 @@ export default function Index({
       }
     }
     fetchData();
+
+    const searchUrl = contacts
+      ? `/contacts/${creatorPubky}?tab=${contacts}`
+      : '/contacts';
+    router.replace(searchUrl);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contacts]);
 
@@ -109,14 +115,6 @@ export default function Index({
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    const searchUrl = contacts
-      ? `/contacts/${creatorPubky}?tab=${contacts}`
-      : '/contacts';
-    router.replace(searchUrl);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contacts]);
 
   useEffect(() => {
     const search = searchParams.get('tab');
@@ -149,52 +147,50 @@ export default function Index({
       <Content.Grid>
         {userExist ? (
           <>
-            <Contacts.Me
-              image={image}
-              name={name}
-              pubkey={creatorPubky ? creatorPubky.toString() : ''}
-              countContacts={countContacts}
-              loadingContacts={loadingContacts}
-            />
-            <div className="mb-6">
-              <Button.Tab
-                onClick={() => setContacts('following')}
-                active={!loadingContacts && contacts === 'following'}
-                icon={<Icon.UsersRight />}
-                className="mr-0.5"
-              >
-                Following{' '}
-                {!loadingContacts && `(${countContacts.following.toString()})`}
-              </Button.Tab>
-              <Button.Tab
-                onClick={() => setContacts('followers')}
-                active={!loadingContacts && contacts === 'followers'}
-                icon={<Icon.UsersLeft />}
-                className="mr-0.5"
-              >
-                Followers{' '}
-                {!loadingContacts && `(${countContacts.followers.toString()})`}
-              </Button.Tab>
-              <Button.Tab
-                onClick={() => setContacts('friends')}
-                active={!loadingContacts && contacts === 'friends'}
-                icon={<Icon.Smiley />}
-              >
-                Friends{' '}
-                {!loadingContacts && `(${countContacts.friends.toString()})`}
-              </Button.Tab>
-            </div>
+            {!loading && (
+              <Contacts.Me
+                image={image}
+                name={name}
+                pubkey={creatorPubky ? creatorPubky.toString() : ''}
+                countContacts={countContacts}
+                loadingContacts={loadingContacts}
+              />
+            )}
+            {!loading && (
+              <div className="mb-6">
+                <Button.Tab
+                  onClick={() => setContacts('following')}
+                  active={!loadingContacts && contacts === 'following'}
+                  icon={<Icon.UsersRight />}
+                  className="mr-0.5"
+                >
+                  Following{' '}
+                  {!loadingContacts &&
+                    `(${countContacts.following.toString()})`}
+                </Button.Tab>
+                <Button.Tab
+                  onClick={() => setContacts('followers')}
+                  active={!loadingContacts && contacts === 'followers'}
+                  icon={<Icon.UsersLeft />}
+                  className="mr-0.5"
+                >
+                  Followers{' '}
+                  {!loadingContacts &&
+                    `(${countContacts.followers.toString()})`}
+                </Button.Tab>
+                <Button.Tab
+                  onClick={() => setContacts('friends')}
+                  active={!loadingContacts && contacts === 'friends'}
+                  icon={<Icon.Smiley />}
+                >
+                  Friends{' '}
+                  {!loadingContacts && `(${countContacts.friends.toString()})`}
+                </Button.Tab>
+              </div>
+            )}
             {loadingContacts || loading ? (
               <div className="mt-12">
-                <div className="flex w-full justify-center">
-                  <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
-                </div>
-                <Typography.Body
-                  variant="medium-bold"
-                  className="col-span-3 m-2 flex justify-center items-center gap-6 text-opacity-20"
-                >
-                  Loading Contacts
-                </Typography.Body>
+                <Skeletons.Simple />
               </div>
             ) : contactsUsers?.count ?? 0 > 0 ? (
               contactsLayout === 'list' ? (

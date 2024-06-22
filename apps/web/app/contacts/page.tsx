@@ -37,6 +37,24 @@ const ContactsContent = () => {
   useEffect(() => {
     async function fetchData() {
       try {
+        const userProfile = await getProfile();
+
+        if (userProfile) {
+          setName(userProfile.name || '');
+          setImage(userProfile.image || '/images/Userpic.png');
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
         setLoading(true);
         if (!pubky) return;
 
@@ -82,28 +100,6 @@ const ContactsContent = () => {
       }
     }
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contacts]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const userProfile = await getProfile();
-
-        if (userProfile) {
-          setName(userProfile.name || '');
-          setImage(userProfile.image || '/images/Userpic.png');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     const searchUrl = contacts ? `/contacts?tab=${contacts}` : '/contacts';
     router.replace(searchUrl);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,41 +134,45 @@ const ContactsContent = () => {
     <Content.Main>
       <Header className="hidden md:block" title="Contacts" />
       <Content.Grid>
-        <Contacts.Me
-          image={image}
-          name={name}
-          pubkey={pubky ? pubky.toString() : ''}
-          countContacts={countContacts}
-          loadingContacts={loadingContacts}
-        />
-        <div className="mb-6">
-          <Button.Tab
-            onClick={() => setContacts('following')}
-            active={!loadingContacts && contacts === 'following'}
-            icon={<Icon.UsersRight />}
-            className="mr-0.5"
-          >
-            Following{' '}
-            {!loadingContacts && `(${countContacts.following.toString()})`}
-          </Button.Tab>
-          <Button.Tab
-            onClick={() => setContacts('followers')}
-            active={!loadingContacts && contacts === 'followers'}
-            icon={<Icon.UsersLeft />}
-            className="mr-0.5"
-          >
-            Followers{' '}
-            {!loadingContacts && `(${countContacts.followers.toString()})`}
-          </Button.Tab>
-          <Button.Tab
-            onClick={() => setContacts('friends')}
-            active={!loadingContacts && contacts === 'friends'}
-            icon={<Icon.Smiley />}
-          >
-            Friends{' '}
-            {!loadingContacts && `(${countContacts.friends.toString()})`}
-          </Button.Tab>
-        </div>
+        {pubky && !loading && (
+          <Contacts.Me
+            image={image}
+            name={name}
+            pubkey={pubky ? pubky.toString() : ''}
+            countContacts={countContacts}
+            loadingContacts={loadingContacts}
+          />
+        )}
+        {!loading && (
+          <div className="mb-6">
+            <Button.Tab
+              onClick={() => setContacts('following')}
+              active={!loadingContacts && contacts === 'following'}
+              icon={<Icon.UsersRight />}
+              className="mr-0.5"
+            >
+              Following{' '}
+              {!loadingContacts && `(${countContacts.following.toString()})`}
+            </Button.Tab>
+            <Button.Tab
+              onClick={() => setContacts('followers')}
+              active={!loadingContacts && contacts === 'followers'}
+              icon={<Icon.UsersLeft />}
+              className="mr-0.5"
+            >
+              Followers{' '}
+              {!loadingContacts && `(${countContacts.followers.toString()})`}
+            </Button.Tab>
+            <Button.Tab
+              onClick={() => setContacts('friends')}
+              active={!loadingContacts && contacts === 'friends'}
+              icon={<Icon.Smiley />}
+            >
+              Friends{' '}
+              {!loadingContacts && `(${countContacts.friends.toString()})`}
+            </Button.Tab>
+          </div>
+        )}
         {loadingContacts || loading ? (
           <div className="mt-12">
             <Skeletons.Simple />
