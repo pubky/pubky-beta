@@ -150,7 +150,7 @@ export default function Index() {
                   tag={tag.tag}
                   onClick={() => handleTagSearch(tag.tag)}
                   color="fuchsia"
-                  counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
+                  counter={`${tag.count}`}
                 />
                 {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
                   <Image
