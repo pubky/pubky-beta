@@ -18,7 +18,9 @@ export default function Index() {
   const [parentPosts, setParentPosts] = useState<{
     [key: string]: IPost | null;
   }>({});
+  const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const loader = useRef(null);
+  const filterContentRef = useRef(null);
 
   const fetchParentPost = async (parentUri: string): Promise<IPost | null> => {
     try {
@@ -85,15 +87,35 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reach]);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsFilterContentVisible(entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+    if (filterContentRef.current) {
+      observer.observe(filterContentRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Content.Main>
       <Components.Header className="hidden md:block" title="Streams" />
       <Components.RemindBackup />
       <Content.Grid className={'grid grid-cols-5 gap-6'}>
         <Components.Sidebar className="hidden lg:block">
-          <Filter.Reach />
-          <Filter.Sort />
-          <div className="self-start sticky top-[120px]">
+          <div
+            className={`self-start ${
+              isFilterContentVisible ? '' : 'sticky top-[120px]'
+            }`}
+          >
+            <Filter.Reach />
+            <Filter.Sort />
+          </div>
+          <div ref={filterContentRef}>
             <Filter.Layout />
             <Filter.Content />
           </div>
