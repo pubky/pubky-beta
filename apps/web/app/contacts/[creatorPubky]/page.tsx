@@ -147,7 +147,7 @@ export default function Index({
       <Content.Grid>
         {userExist ? (
           <>
-            {!loading && (
+            {!loadingContacts && (
               <Contacts.Me
                 image={image}
                 name={name}
@@ -156,7 +156,7 @@ export default function Index({
                 loadingContacts={loadingContacts}
               />
             )}
-            {!loading && (
+            {!loadingContacts && (
               <div className="mb-6">
                 <Button.Tab
                   onClick={() => setContacts('following')}

@@ -134,7 +134,7 @@ const ContactsContent = () => {
     <Content.Main>
       <Header className="hidden md:block" title="Contacts" />
       <Content.Grid>
-        {pubky && !loading && (
+        {pubky && !loadingContacts && (
           <Contacts.Me
             image={image}
             name={name}
@@ -143,7 +143,7 @@ const ContactsContent = () => {
             loadingContacts={loadingContacts}
           />
         )}
-        {!loading && (
+        {!loadingContacts && (
           <div className="mb-6">
             <Button.Tab
               onClick={() => setContacts('following')}
