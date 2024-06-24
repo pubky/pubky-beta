@@ -57,7 +57,7 @@ export default function List({
         <div className="lg:flex justify-start items-center lg:w-full">
           <Typography.Body
             variant="small"
-            className="lg:px-12 text-opacity-80 leading-[18px]"
+            className="lg:px-12 text-opacity-80 leading-[18px] break-words"
           >
             {contact.profile.bio}
           </Typography.Body>
