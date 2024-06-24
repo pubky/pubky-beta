@@ -6,7 +6,7 @@ import Link from 'next/link';
 interface UserProps extends React.HTMLAttributes<HTMLDivElement> {
   src: string;
   label?: string;
-  username?: string;
+  username?: string | JSX.Element;
   alt?: string;
   width?: number;
   height?: number;

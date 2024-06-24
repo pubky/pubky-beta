@@ -5,7 +5,7 @@ import { Icon } from '../Icon';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLAnchorElement> {
   src: string;
-  username: string;
+  username: string | JSX.Element;
   handler?: string;
   width?: number;
   height?: number;

@@ -8,7 +8,7 @@ import getYouTubeID from 'get-youtube-id';
 import { Icon } from '../Icon';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
-  text: string;
+  text: string | JSX.Element;
   children?: React.ReactNode;
 }
 
@@ -49,9 +49,9 @@ export const Content = ({ children, text }: ContentProps) => {
   }
 
   useEffect(() => {
-    const splitInLines = text.split(' ');
+    const splitInLines = text.toString().split(' ');
     if (splitInLines.length >= 1) {
-      splitInLines.forEach((line) => {
+      splitInLines.forEach((line: string) => {
         checkForLink(line.trim());
       });
     }
@@ -119,6 +119,7 @@ export const Content = ({ children, text }: ContentProps) => {
   ];
 
   const lines = text
+    .toString()
     .slice(0, 300)
     .split('\n')
     .map((line, index) => (
@@ -130,7 +131,7 @@ export const Content = ({ children, text }: ContentProps) => {
   return (
     <div className="text-white break-words">
       {lines}
-      {text.length > 300 && '...'}
+      {text.toString().length > 300 && '...'}
       {videoId && (
         <div className="relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
           <iframe
