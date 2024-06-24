@@ -348,9 +348,9 @@ export default function Sidebar({
         ) : (
           <div
             className={`w-full self-start ${
-              isSignOutVisible ? '' : 'sticky top-[120px]'
+              isSignOutVisible ? 'border-0' : 'sticky top-[120px] border'
             } bg-[#020203] ${
-              scrolled && 'border'
+              !scrolled && 'border-0'
             } border-white border-opacity-10 z-20 rounded-2xl px-3 py-4`}
           >
             <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
