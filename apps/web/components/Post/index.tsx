@@ -45,7 +45,8 @@ export default function Post({
   const { setContent, setShow } = useAlertContext();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const router = useRouter();
-  const lineBaseCSS = 'absolute ml-[16px] border-l-2 h-full border-neutral-800';
+  const lineBaseCSS =
+    'absolute ml-[15.5px] border-l-2 h-full border-neutral-800';
 
   const handleDeletePost = async () => {
     const result = await deletePost(post?.id);

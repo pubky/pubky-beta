@@ -4,24 +4,20 @@ import React from 'react';
 
 interface SearchTagProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
-  color: string;
-  actions: React.ReactNode[];
+  action?: React.ReactNode;
 }
 
-export const SearchTag = ({
-  value,
-  color = 'bg-black',
-  actions,
-  ...rest
-}: SearchTagProps) => {
-  const baseCSS = `cursor-pointer items-center px-2 py-1 backdrop-blur-lg justify-start gap-1 inline-flex rounded-lg`;
+export const SearchTag = ({ value, action, ...rest }: SearchTagProps) => {
+  const baseCSS = `inline-flex border h-8 px-3 py-1 rounded-full cursor-pointer text-center bg-[#391941] border-fuchsia-500 border-opacity-60 rounded-full`;
 
   return (
-    <div {...rest} className={twMerge(baseCSS, color, rest.className)}>
-      <Typography.Body variant="small-bold">{value}</Typography.Body>
-      {actions.map((action, index) => (
-        <div key={index}>{action}</div>
-      ))}
+    <div {...rest} className={twMerge(baseCSS, rest.className)}>
+      <div className="flex gap-2">
+        <Typography.Body className="text-fuchsia-200" variant="small-bold">
+          {value}
+        </Typography.Body>
+        {action}
+      </div>
     </div>
   );
 };

@@ -111,6 +111,12 @@ export default function Header({ title, className }: HeaderProps) {
     // }
   };
 
+  const handleRemoveTag = (indexToRemove: number) => {
+    const newTags = [...searchTags];
+    newTags.splice(indexToRemove, 1);
+    setSearchTags(newTags);
+  };
+
   return (
     <HeaderUI.Root>
       <HeaderUI.Logo link={logoLink} />
@@ -122,31 +128,38 @@ export default function Header({ title, className }: HeaderProps) {
         }
         onKeyDown={handleKeyDown}
       >
-        {/**{searchTags && (
+        {searchTags && (
           <Input.SearchTags className="hidden sm:block">
             {searchTags.map((searchTag, index) => (
               <Input.SearchTag
-                color="bg-amber-500 bg-opacity-30"
                 key={index}
                 onClick={() => handleRemoveTag(index)}
-                actions={[<Icon.X key={index} />]}
+                action={
+                  <div className="mt-[3px]">
+                    <Icon.X key={index} />
+                  </div>
+                }
                 value={`${searchTag}`}
                 className="mr-2"
               />
             ))}
           </Input.SearchTags>
-        )}*/}
+        )}
         <Input.SearchInput
           placeholder="Search"
           className="hidden sm:block"
           onClick={() => setSearchInputCard(true)}
+          disabled={!!searchTags.length}
         />
         <Modal.SearchInputCard
           className={searchInputCard ? 'hidden xl:block' : 'hidden'}
           refCard={refSearchInputCard}
         />
         <Input.SearchActions className="hidden sm:flex">
-          <div className="cursor-pointer" onClick={handleSearchTag}>
+          <div
+            className={inputValue && 'cursor-pointer'}
+            onClick={inputValue ? handleSearchTag : undefined}
+          >
             <Icon.MagnifyingGlass />
           </div>
         </Input.SearchActions>
