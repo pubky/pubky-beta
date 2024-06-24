@@ -108,6 +108,12 @@ export default function Index() {
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   useEffect(() => {
     async function fetchData() {
       const loggedIn = await isLoggedIn();
@@ -169,6 +175,7 @@ export default function Index() {
                   error={errors.password}
                   placeholder="••••••••••••"
                   id="onboarding-password-input"
+                  onKeyDown={handleKeyDown}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setPassword(e.target.value)
                   }
