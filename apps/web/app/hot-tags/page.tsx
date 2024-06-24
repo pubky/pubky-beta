@@ -30,11 +30,13 @@ export default function Index() {
   } = useClientContext();
   const { hotTagsReach } = useFilterContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
+  const [loadingReachTags, setLoadingReachTags] = useState(false);
   const [loading, setLoading] = useState(true);
 
   async function fetchTags() {
     try {
       if (!pubky) return;
+      setLoadingReachTags(true);
 
       let filteredTags;
       const result = await getHotTags();
@@ -102,11 +104,11 @@ export default function Index() {
 
       if (filteredTags) {
         setHotTags(filteredTags);
-        setLoading(false);
       } else if (result) {
         setHotTags(result);
-        setLoading(false);
       }
+      setLoading(false);
+      setLoadingReachTags(false);
     } catch (error) {
       console.log(error);
     }
@@ -143,31 +145,35 @@ export default function Index() {
               <Skeletons.Simple />
             </div>
           ) : hotTags.length > 0 ? (
-            hotTags.map((tag, index) => (
-              <div className="flex gap-3" key={index}>
-                <HotTags.Rank
-                  rank={index + 1}
-                  tag={tag.tag}
-                  onClick={() => handleTagSearch(tag.tag)}
-                  color="fuchsia"
-                  counter={`${tag.count} ${tag.count > 1 ? ' users' : ' user'}`}
-                />
-                {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
-                  <Image
-                    width={32}
-                    height={32}
-                    alt={`pic-${fromIndex + 1}`}
-                    key={fromIndex}
-                    className={`w-[32px] h-[32px] rounded-full ${
-                      fromIndex !== 0 ? '-ml-5' : ''
-                    }`}
-                    src={
-                      fromItem.author?.profile?.image || '/images/Userpic.png'
-                    }
+            loadingReachTags ? (
+              <Skeletons.Simple />
+            ) : (
+              hotTags.map((tag, index) => (
+                <div className="flex gap-3" key={index}>
+                  <HotTags.Rank
+                    rank={index + 1}
+                    tag={tag.tag}
+                    onClick={() => handleTagSearch(tag.tag)}
+                    color="fuchsia"
+                    counter={`${tag.count}`}
                   />
-                ))}
-              </div>
-            ))
+                  {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
+                    <Image
+                      width={32}
+                      height={32}
+                      alt={`pic-${fromIndex + 1}`}
+                      key={fromIndex}
+                      className={`w-[32px] h-[32px] rounded-full ${
+                        fromIndex !== 0 ? '-ml-5' : ''
+                      }`}
+                      src={
+                        fromItem.author?.profile?.image || '/images/Userpic.png'
+                      }
+                    />
+                  ))}
+                </div>
+              ))
+            )
           ) : (
             <Typography.H2 className="text-center font-normal text-opacity-50">
               No tags yet.
