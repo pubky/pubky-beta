@@ -11,7 +11,7 @@ import Skeletons from './Skeletons';
 
 export default function HotTags() {
   const router = useRouter();
-  const { getHotTags, setSearchTags, searchTags } = useClientContext();
+  const { getHotTags } = useClientContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +33,8 @@ export default function HotTags() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleTagSearch = (tag: string) => {
+  {
+    /** const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
 
     if (searchTags.length < 3) {
@@ -44,6 +45,8 @@ export default function HotTags() {
     }
     router.push('/search');
   };
+  */
+  }
 
   return (
     <div className="self-start sticky top-[120px] col-span-1">
@@ -59,7 +62,7 @@ export default function HotTags() {
               {hotTags.slice(0, 8).map((tag, index) => (
                 <SideCard.Rank
                   key={index}
-                  onClick={() => handleTagSearch(tag.tag)}
+                  onClick={() => router.push(`/search?tags=${tag.tag}`)}
                   rank={index + 1}
                   tag={Utils.minifyText(tag.tag, 15)}
                   color="fuchsia"

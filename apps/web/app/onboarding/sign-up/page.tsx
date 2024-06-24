@@ -302,7 +302,7 @@ export default function Index() {
             </Button.Transparent>
           </div>
         </Card.Primary>
-        <Card.Primary className="justify-start" title="Picture">
+        <Card.Primary className="justify-start z-10" title="Picture">
           {image && (
             <div className="relative">
               <Image
