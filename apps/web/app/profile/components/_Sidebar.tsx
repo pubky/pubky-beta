@@ -339,9 +339,9 @@ export default function Sidebar({
               <div className="items-center inline-flex justify-between">
                 <div className="justify-start items-center gap-3 inline-flex">
                   <Image
-                    width={40}
-                    height={40}
-                    className="w-[40px] h-[40px] rounded-full"
+                    width={50}
+                    height={50}
+                    className="w-[50px] h-[50px] rounded-full"
                     src={image}
                     alt="user-pic"
                   />
@@ -358,11 +358,11 @@ export default function Sidebar({
                   {showProfileMenu && (
                     <Tooltip.ProfileMenu
                       setShowProfileMenu={setShowProfileMenu}
-                      pubky={pubkyUser}
+                      creatorPubky={pubkyUser}
                     />
                   )}
                   <div
-                    className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"
+                    className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10 -mt-[10px]"
                     onClick={() => setShowProfileMenu(true)}
                   >
                     <Icon.DotsThree size="28" />
@@ -417,7 +417,7 @@ export default function Sidebar({
                   Follow
                 </Button.Medium>
               )}
-              {(!creatorPubky || creatorPubky === pubky) && (
+              {/* {(!creatorPubky || creatorPubky === pubky) && (
                 <Link href="/settings">
                   <Button.Medium
                     variant="default"
@@ -426,7 +426,7 @@ export default function Sidebar({
                     Edit profile
                   </Button.Medium>
                 </Link>
-              )}
+              )} */}
             </SideCard.Content>
           </div>
         )}
