@@ -4,7 +4,7 @@ import { Content } from '.';
 
 interface ProfileProps extends React.HTMLAttributes<HTMLDivElement> {
   profile: {
-    name: string;
+    name: string | JSX.Element;
     image: string;
     handler: string;
     bio?: string;
