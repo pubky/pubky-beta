@@ -20,11 +20,11 @@ export const Rank = ({
   const baseCSS = 'justify-start items-center gap-3 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <PostUtil.Counter counter={rank} />
+      {/* <PostUtil.Counter counter={rank} /> */}
       <PostUtil.Tag clicked={false} color={color}>
         {tag}
       </PostUtil.Tag>
-      {counter && <PostUtil.Counter className="w-[87px]" counter={counter} />}
+      {counter && <PostUtil.Counter counter={counter} />}
       {images && <Post.UserPic images={images} />}
     </div>
   );
