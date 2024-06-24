@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { Card, Icon, PostUtil, Typography } from '@social/ui-shared';
+import { Card, PostUtil, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useClientContext } from '../../contexts/client';
@@ -14,7 +14,7 @@ export default function SearchInputCard({
   ...rest
 }: SearchInputCardProps) {
   const router = useRouter();
-  const { hotTags, searchTags, setSearchTags } = useClientContext();
+  const { hotTags } = useClientContext();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +23,8 @@ export default function SearchInputCard({
     }
   }, [hotTags]);
 
-  const handleTagSearch = (tag: string) => {
+  {
+    /** const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
 
     if (searchTags.length < 3) {
@@ -33,13 +34,16 @@ export default function SearchInputCard({
       setSearchTags(newSearchTags);
     }
     router.push('/search');
-  };
+  };*/
+  }
 
-  const handleRemoveTag = (indexToRemove: number) => {
+  {
+    /**  const handleRemoveTag = (indexToRemove: number) => {
     const newTags = [...searchTags];
     newTags.splice(indexToRemove, 1);
     setSearchTags(newTags);
-  };
+  };*/
+  }
 
   return (
     <Card.Primary
@@ -49,7 +53,7 @@ export default function SearchInputCard({
       background="bg-gradient-to-t from-[#07040a] to-[#1b1820]"
     >
       <div className="flex-col gap-6 inline-flex">
-        {searchTags.length > 0 && (
+        {/**{searchTags.length > 0 && (
           <div>
             <Typography.Label className="text-opacity-30">
               Searched tags
@@ -73,7 +77,7 @@ export default function SearchInputCard({
               ))}
             </div>
           </div>
-        )}
+        )}*/}
         <div>
           <Typography.Label className="text-opacity-30">
             Hot tags
@@ -88,7 +92,7 @@ export default function SearchInputCard({
                   <PostUtil.Tag
                     key={index}
                     clicked={false}
-                    onClick={() => handleTagSearch(tag.tag)}
+                    onClick={() => router.push(`/search?tags=${tag.tag}`)}
                     color="fuchsia"
                     className="mr-2 my-1"
                   >

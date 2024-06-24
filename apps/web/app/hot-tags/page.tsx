@@ -20,14 +20,8 @@ import Skeletons from '../../components/Skeletons';
 
 export default function Index() {
   const router = useRouter();
-  const {
-    pubky,
-    getHotTags,
-    setSearchTags,
-    searchTags,
-    listFollowers,
-    listFollowing,
-  } = useClientContext();
+  const { pubky, getHotTags, listFollowers, listFollowing } =
+    useClientContext();
   const { hotTagsReach } = useFilterContext();
   const [hotTags, setHotTags] = useState<ITaggedPost[]>([]);
   const [loadingReachTags, setLoadingReachTags] = useState(false);
@@ -119,7 +113,8 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hotTagsReach]);
 
-  const handleTagSearch = (tag: string) => {
+  {
+    /** const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
 
     if (searchTags.length < 3) {
@@ -130,6 +125,8 @@ export default function Index() {
     }
     router.push('/search');
   };
+  */
+  }
 
   return (
     <Content.Main>
@@ -138,7 +135,7 @@ export default function Index() {
         <div className="w-full flex-col inline-flex gap-3">
           <div className="flex gap-6 mb-6">
             <DropDown.HotTagsReach type="text" subtitle="Reach" />
-            <DropDown.TagsTimeframe disabled type="text" subtitle="Timeframe" />
+            {/**<DropDown.TagsTimeframe disabled type="text" subtitle="Timeframe" />*/}
           </div>
           {loading ? (
             <div className="w-full">
@@ -153,9 +150,11 @@ export default function Index() {
                   <HotTags.Rank
                     rank={index + 1}
                     tag={tag.tag}
-                    onClick={() => handleTagSearch(tag.tag)}
+                    onClick={() => router.push(`/search?tags=${tag.tag}`)}
                     color="fuchsia"
-                    counter={`${tag.count}`}
+                    counter={`${tag.count} ${
+                      tag.count > 1 ? ' users' : ' user'
+                    }`}
                   />
                   {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
                     <Image
