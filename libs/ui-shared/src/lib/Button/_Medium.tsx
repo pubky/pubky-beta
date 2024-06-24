@@ -9,6 +9,7 @@ interface MediumButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
   loading?: boolean;
   className?: string;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 export const Medium = ({
@@ -52,6 +53,7 @@ export const Medium = ({
   return (
     <button
       {...rest}
+      ref={rest.ref}
       className={twMerge(cssButton, cssColorButton, rest.className)}
     >
       {loading ? <Icon.LoadingSpin size="16" /> : icon && <div>{icon}</div>}
