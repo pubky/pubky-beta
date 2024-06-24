@@ -4,7 +4,7 @@ import { Post } from '../Post';
 
 interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
   rank: number;
-  tag: string;
+  tag: string | JSX.Element;
   color: string;
   counter?: React.ReactNode;
   images?: { alt: string; src: string }[];

@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '@social/ui-shared';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
-  username: string;
+  username: string | JSX.Element;
   pubkey?: string;
 }
 
