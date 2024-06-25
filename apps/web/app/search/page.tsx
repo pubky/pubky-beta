@@ -22,7 +22,7 @@ import Skeletons from '../../components/Skeletons';
 const SearchContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { layout, reach } = useFilterContext();
+  const { layout, reach, sort } = useFilterContext();
   const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } =
     useClientContext();
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,7 @@ const SearchContent = () => {
       return;
     }
 
-    const results = await listGlobalPosts(pointer, reach, searchTags);
+    const results = await listGlobalPosts(pointer, reach, sort, searchTags);
 
     if (results && results.feed) {
       if (cursor) {
@@ -76,7 +76,7 @@ const SearchContent = () => {
     setPosts([]);
     fetchData('', searchTags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reach, searchTags]);
+  }, [reach, sort, searchTags]);
 
   useEffect(() => {
     const search = searchParams.get('tags');

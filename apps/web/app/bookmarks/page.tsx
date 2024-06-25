@@ -40,7 +40,7 @@ import Skeletons from '../../components/Skeletons';
 }
 
 export default function Index() {
-  const { reach } = useFilterContext();
+  const { reach, sort } = useFilterContext();
   const { listGlobalPosts, posts, setPosts } = useClientContext();
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
@@ -51,7 +51,7 @@ export default function Index() {
   const fetchData = async (pointer: string) => {
     setLoading(true);
 
-    const results = await listGlobalPosts(pointer, reach);
+    const results = await listGlobalPosts(pointer, reach, sort);
 
     if (results && results.feed) {
       const newPostsTemp = results.feed.reduce((acc: INewPost, post: IPost) => {
@@ -89,7 +89,7 @@ export default function Index() {
     setCursor('');
     fetchData('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reach]);
+  }, [reach, sort]);
 
   {
     /**const postsLayoutClassName =
