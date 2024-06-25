@@ -11,7 +11,7 @@ import {
   Tooltip as TooltipUI,
 } from '@social/ui-shared';
 import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useClientContext } from '../../../contexts/client';
 import { useAlertContext } from '../../../contexts/alerts';
 import { Skeleton } from '../../../components';
@@ -98,8 +98,6 @@ export default function Sidebar({
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const checkLink = Utils.storage.get('checkLink');
   const [scrolled, setScrolled] = useState(false);
-  const signOutButtonRef = useRef(null);
-  const [isSignOutVisible, setIsSignOutVisible] = useState(true);
 
   useEffect(() => {
     if (seed) {
@@ -323,20 +321,6 @@ export default function Sidebar({
     };
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        setIsSignOutVisible(entry.isIntersecting);
-      },
-      { threshold: 0 }
-    );
-    if (signOutButtonRef.current) {
-      observer.observe(signOutButtonRef.current);
-    }
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <>
       <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
@@ -347,10 +331,8 @@ export default function Sidebar({
           </div>
         ) : (
           <div
-            className={`w-full self-start ${
-              isSignOutVisible ? 'border-0' : 'sticky top-[120px] border'
-            } bg-[#020203] ${
-              !scrolled && 'border-0'
+            className={`w-full self-start sticky top-[120px] bg-[#020203] ${
+              scrolled && 'border'
             } border-white border-opacity-10 z-20 rounded-2xl px-3 py-4`}
           >
             <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
@@ -678,7 +660,7 @@ export default function Sidebar({
             </div>
           )}
           {(!creatorPubky || creatorPubky === pubky) && (
-            <div ref={signOutButtonRef}>
+            <div>
               <Button.Medium
                 className="w-[200px]"
                 onClick={
