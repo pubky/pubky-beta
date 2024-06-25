@@ -816,6 +816,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const listGlobalPosts = async (
     cursor: string,
     reach: 'following' | 'all' | 'followers' | 'friends',
+    sort: 'recent' | 'popularity',
     tags?: string[]
   ): Promise<IFeed | null> => {
     try {
@@ -830,6 +831,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         cursor: cursor,
         reach: reach ? reach : 'all',
         tags: tags,
+        sort: sort ? sort : 'recent',
       });
 
       if (!result.ok)
