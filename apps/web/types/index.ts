@@ -9,8 +9,8 @@ export type TStatus =
   | 'sick'
   | 'noStatus';
 export type TSize = 'full' | 'normal';
-export type TSort = 'recent' | 'tags' | 'activity';
 export type TReach = 'following' | 'followers' | 'friends' | 'all';
+export type TSort = 'recent' | 'popularity';
 export type THotTagsReach = 'following' | 'followers' | 'friends' | 'all';
 export type TContacts = 'following' | 'followers' | 'friends';
 export type TContactsLayout = 'ranking' | 'list';
@@ -66,6 +66,7 @@ export interface TClientContext {
   listGlobalPosts: (
     cursor: string,
     reach: TReach,
+    sort: TSort,
     tags?: string[]
   ) => Promise<IFeed | null>;
   getPost: (uri: string) => Promise<IPost | null>;
