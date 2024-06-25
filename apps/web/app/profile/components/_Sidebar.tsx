@@ -327,7 +327,9 @@ export default function Sidebar({
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        setIsSignOutVisible(entry.isIntersecting);
+        if (window.scrollY > 700) {
+          setIsSignOutVisible(entry.isIntersecting);
+        }
       },
       { threshold: 0 }
     );
