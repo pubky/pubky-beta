@@ -131,8 +131,16 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         return false;
       }
 
-      Utils.storage.set('pubky', pks[0]);
-      setPubky(pks[0]);
+      if (pks[0]) {
+        const profile = await getUser(pks[0]);
+        if (profile.profile) {
+          Utils.storage.set('pubky', pks[0]);
+          setPubky(pks[0]);
+        } else {
+          await client.logout(pks[0]);
+          return undefined;
+        }
+      }
 
       return pks[0];
     } catch (error) {
@@ -259,7 +267,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const getProfile = async (): Promise<IProfile | null> => {
     try {
       const pk = await isLoggedIn();
-      if (!pk) throw new Error('Logged in failed : not logged in.');
+      if (pk === undefined) return undefined;
+      else if (!pk) throw new Error('Logged in failed : not logged in.');
 
       if (profile) return profile;
 
@@ -856,10 +865,14 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(`Sign up failed: ${result.error.message}`);
 
-      Utils.storage.set('pubky', result.value);
-      setPubky(result.value);
+      const profile = await getProfile();
 
-      return true;
+      if (profile) {
+        Utils.storage.set('pubky', result.value);
+        setPubky(result.value);
+      }
+
+      return profile;
     } catch (error) {
       console.log(error);
       return false;
