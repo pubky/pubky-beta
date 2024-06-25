@@ -73,7 +73,7 @@ export interface TClientContext {
   decryptRecoveryFile: (
     password: string,
     recoveryFile: Buffer
-  ) => Promise<boolean>;
+  ) => Promise<IProfile | undefined>;
   searchTags: string[];
   updateStatus: (value: TStatus) => Promise<void>;
   setSeed: (seed: Seed | null) => void;
