@@ -22,6 +22,7 @@ export default function CreateQuickPost() {
   const { setContent, setShow } = useAlertContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [contentPost, setContentPost] = useState('');
+  const [isValidContent, setIsValidContent] = useState(false);
   const [sendingPost, setSendingPost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [textArea, setTextArea] = useState(false);
@@ -214,6 +215,7 @@ export default function CreateQuickPost() {
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setContentPost(e.target.value);
             setCursorPosition(e.target.selectionStart);
+            setIsValidContent(Utils.isValidContent(e.target.value));
           }}
           onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
             setCursorPosition(e.currentTarget.selectionStart);
@@ -221,7 +223,7 @@ export default function CreateQuickPost() {
           value={contentPost}
           maxLength={300}
           onClick={() => setTextArea(true)}
-          className="w-full h-auto mt-4"
+          className="w-full max-h-[300px] h-auto mt-4"
           placeholder="What's in your mind?"
         />
         {videoId && (
@@ -312,12 +314,16 @@ export default function CreateQuickPost() {
               className="w-[158px]"
               variant="line"
               icon={
-                <Icon.PaperPlaneRight color={!contentPost ? 'gray' : 'white'} />
+                <Icon.PaperPlaneRight
+                  color={!isValidContent ? 'gray' : 'white'}
+                />
               }
-              disabled={!contentPost}
+              disabled={!isValidContent}
               loading={sendingPost}
               onClick={
-                contentPost && !sendingPost ? () => handleSubmit() : undefined
+                isValidContent && !sendingPost
+                  ? () => handleSubmit()
+                  : undefined
               }
             >
               Publish post

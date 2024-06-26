@@ -32,6 +32,7 @@ export default function CreatePost({
   const { setContent, setShow } = useAlertContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [contentPost, setContentPost] = useState('');
+  const [isValidContent, setIsValidContent] = useState(false);
   const [sendingPost, setSendingPost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
@@ -222,7 +223,7 @@ export default function CreatePost({
         }}
       /> */}
       {/* <Modal.Header title="New Post" /> */}
-      <Modal.Content className="flex flex-row gap-6">
+      <Modal.Content className="flex flex-row gap-6 max-h-[500px] overflow-y-auto">
         <div className="rounded-2xl flex-col justify-start items-start inline-flex w-full min-w-[300px] md:min-w-[500px]">
           <div className="absolute justify-start items-center gap-4 flex">
             <Image
@@ -241,13 +242,14 @@ export default function CreatePost({
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                 setContentPost(e.target.value);
                 setCursorPosition(e.target.selectionStart);
+                setIsValidContent(Utils.isValidContent(e.target.value));
               }}
               onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
                 setCursorPosition(e.currentTarget.selectionStart);
               }}
               value={contentPost}
               maxLength={300}
-              className={`w-full h-auto mt-4`}
+              className={`w-full max-h-[300px] h-auto mt-4`}
               placeholder="What's in your mind?"
             />
             {videoId && (
@@ -297,61 +299,6 @@ export default function CreatePost({
                 ))}
               </div>
             )}
-            <Post.Actions className="w-full">
-              <Button.Action
-                variant="custom"
-                icon={<Icon.Tag size="32" />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setShowModalTag(true);
-                }}
-              />
-              <Button.Action
-                variant="custom"
-                icon={<Icon.Smiley size="32" />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setShowEmojis(true);
-                }}
-              />
-              <Button.Action
-                variant="custom"
-                disabled
-                icon={<Icon.ImageSquare color={'gray'} size="32" />}
-              />
-              {showEmojis && (
-                <div
-                  className="absolute translate-y-[10%] translate-x-[30%] z-10"
-                  ref={wrapperRefEmojis}
-                >
-                  <EmojiPicker
-                    theme={Theme.DARK}
-                    emojiStyle={EmojiStyle.TWITTER}
-                    onEmojiClick={handleEmojiClick}
-                  />
-                </div>
-              )}
-              <div className="grow" />
-              <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
-                {contentPost.length} / 300
-              </div>
-              <Button.Medium
-                className="w-[158px]"
-                variant="line"
-                icon={
-                  <Icon.PaperPlaneRight
-                    color={!contentPost ? 'gray' : 'white'}
-                  />
-                }
-                disabled={!contentPost}
-                loading={sendingPost}
-                onClick={
-                  contentPost && !sendingPost ? () => handleSubmit() : undefined
-                }
-              >
-                Publish post
-              </Button.Medium>
-            </Post.Actions>
           </div>
           <ModalComponent.TagCreatePost
             arrayTags={arrayTags}
@@ -361,6 +308,59 @@ export default function CreatePost({
           />
         </div>
       </Modal.Content>
+      <Post.Actions className="w-full">
+        <Button.Action
+          variant="custom"
+          icon={<Icon.Tag size="32" />}
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowModalTag(true);
+          }}
+        />
+        <Button.Action
+          variant="custom"
+          icon={<Icon.Smiley size="32" />}
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowEmojis(true);
+          }}
+        />
+        <Button.Action
+          variant="custom"
+          disabled
+          icon={<Icon.ImageSquare color={'gray'} size="32" />}
+        />
+        {showEmojis && (
+          <div
+            className="absolute translate-y-[10%] translate-x-[30%] z-10"
+            ref={wrapperRefEmojis}
+          >
+            <EmojiPicker
+              theme={Theme.DARK}
+              emojiStyle={EmojiStyle.TWITTER}
+              onEmojiClick={handleEmojiClick}
+            />
+          </div>
+        )}
+        <div className="grow" />
+        <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
+          {contentPost.length} / 300
+        </div>
+        <Button.Medium
+          className="w-[158px]"
+          variant="line"
+          icon={
+            <Icon.PaperPlaneRight color={!isValidContent ? 'gray' : 'white'} />
+          }
+          disabled={!isValidContent}
+          loading={sendingPost}
+          onClick={
+            isValidContent && !sendingPost ? () => handleSubmit() : undefined
+          }
+        >
+          Publish post
+        </Button.Medium>
+      </Post.Actions>
     </Modal.Root>
   );
 }
