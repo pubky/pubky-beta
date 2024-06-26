@@ -694,8 +694,8 @@ export default function Sidebar({
               </div>
             </div>
           )}
-          {(!creatorPubky || creatorPubky === pubky) && (
-            <div ref={signOutButtonRef}>
+          <div ref={signOutButtonRef}>
+            {(!creatorPubky || creatorPubky === pubky) && (
               <Button.Medium
                 className="w-[200px]"
                 onClick={
@@ -707,8 +707,8 @@ export default function Sidebar({
               >
                 Sign out
               </Button.Medium>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
       <Modal.Logout
