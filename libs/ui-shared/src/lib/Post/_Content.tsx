@@ -48,8 +48,13 @@ export const Content = ({ children, text }: ContentProps) => {
     }
   }
 
+  const cleanText = (text: string) => {
+    return text.replace(/\n{3,}/g, '\n\n');
+  };
+
   useEffect(() => {
-    const splitInLines = text.toString().split(' ');
+    const cleanedText = cleanText(text.toString());
+    const splitInLines = cleanedText.split(' ');
     if (splitInLines.length >= 1) {
       splitInLines.forEach((line: string) => {
         checkForLink(line.trim());
@@ -118,8 +123,7 @@ export const Content = ({ children, text }: ContentProps) => {
     },
   ];
 
-  const lines = text
-    .toString()
+  const lines = cleanText(text.toString())
     .slice(0, 300)
     .split('\n')
     .map((line, index) => (
