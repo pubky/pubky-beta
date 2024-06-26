@@ -173,9 +173,17 @@ export default function Index() {
                 className="h-[422px]"
                 defaultValue={bio}
                 error={errors.bio}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setBio(e.target.value)
-                }
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  if (e.target.value === '') {
+                    setBio('');
+                  }
+                  if (Utils.isValidContent(e.target.value)) {
+                    const cleanedBio = Utils.cleanText(e.target.value);
+                    setBio(cleanedBio);
+                  } else {
+                    setBio('');
+                  }
+                }}
               />
             </Card.Primary>
           </Card.Primary>
