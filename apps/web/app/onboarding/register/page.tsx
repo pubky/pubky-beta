@@ -174,9 +174,6 @@ export default function Index() {
                 defaultValue={bio}
                 error={errors.bio}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                  if (e.target.value === '') {
-                    setBio('');
-                  }
                   if (Utils.isValidContent(e.target.value)) {
                     const cleanedBio = Utils.cleanText(e.target.value);
                     setBio(cleanedBio);
