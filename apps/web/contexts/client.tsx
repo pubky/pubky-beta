@@ -20,8 +20,6 @@ import {
   IRecommendedProfiles,
   IPost,
   IFeed,
-  TLayouts,
-  TStatus,
   TClientContext,
   IProfile,
   IDeletePost,
@@ -63,13 +61,10 @@ startClient();
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
-    (Utils.storage.get('pubky') as TStatus) || null
+    (Utils.storage.get('pubky') as string) || null
   );
   const [seed, setSeed] = useState<string | null>(
     Utils.storage.get('seed') || null
-  );
-  const [status, setStatus] = useState<TStatus | null>(
-    (Utils.storage.get('status') as TLayouts) || 'noStatus'
   );
   const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
   const [mostFollowed, setMostFollowed] = useState<IMostFollowed[] | null>(
@@ -97,7 +92,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       };
 
       Utils.storage.set('profile', updatedProfile);
-      Utils.storage.set('status', value);
 
       const result = await client.social.profile.put(pubky, updatedProfile);
 
@@ -105,8 +99,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         throw new Error(
           `Update status:${pubky} failed: ${result.error.message}`
         );
-
-      setStatus(value);
     } catch (error) {
       console.log(error);
     }
@@ -213,14 +205,12 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       Utils.storage.remove('pubky');
       Utils.storage.remove('profile');
       Utils.storage.remove('seed');
-      Utils.storage.remove('status');
       Utils.storage.remove('backup');
       Utils.storage.remove('timerRemind');
       Utils.storage.remove('checkLink');
       setPubky(null);
       setProfile(null);
       setSeed(null);
-      setStatus(null);
 
       await client.ready();
 
@@ -890,7 +880,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         seed,
         profile,
         posts,
-        status,
         updateStatus,
         isLoggedIn,
         createPost,

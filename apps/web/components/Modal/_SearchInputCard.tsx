@@ -3,7 +3,6 @@ import { Card, PostUtil, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useClientContext } from '../../contexts/client';
-import { Skeleton } from '..';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -79,14 +78,15 @@ export default function SearchInputCard({
           </div>
         )}*/}
         <div>
-          <Typography.Label className="text-opacity-30">
-            Hot tags
-          </Typography.Label>
           {loading ? (
-            <Skeleton.Simple />
-          ) : (
-            hotTags &&
-            hotTags.length > 0 && (
+            <Typography.Body variant="small" className="text-opacity-30">
+              Loading...
+            </Typography.Body>
+          ) : hotTags && hotTags.length > 0 ? (
+            <>
+              <Typography.Label className="text-opacity-30">
+                Hot tags
+              </Typography.Label>
               <div className="mt-2 justify-start items-start">
                 {hotTags.slice(0, 10).map((tag, index) => (
                   <PostUtil.Tag
@@ -100,7 +100,11 @@ export default function SearchInputCard({
                   </PostUtil.Tag>
                 ))}
               </div>
-            )
+            </>
+          ) : (
+            <Typography.Body variant="small" className="text-opacity-30">
+              No tags yet
+            </Typography.Body>
           )}
         </div>
         {/**<div>
