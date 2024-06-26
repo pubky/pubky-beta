@@ -43,11 +43,10 @@ export default function List({
             alt={`follower-pic-${index + 1}`}
             className="rounded-full w-[48px] h-[48px]"
           />
-          <div className="flex-col justify-center items-start gap-1 inline-flex">
+          <div className="flex-col justify-center items-start inline-flex">
             <Typography.Body variant="medium-bold">
-              {contact.profile.name
-                ? Utils.minifyText(contact.profile.name, 12)
-                : ''}
+              {contact.profile.name &&
+                Utils.minifyText(contact?.profile?.name, 12)}
             </Typography.Body>
             <Typography.Label className="text-opacity-30 -mb-1">
               {Utils.minifyPubky(contactId)}

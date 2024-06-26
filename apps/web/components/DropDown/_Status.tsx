@@ -5,13 +5,15 @@ import { DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
 import { useClientContext } from '../../contexts/client';
 import { emojis, labels } from '../../utils/_statusHelper';
+import { TStatus } from '../../types';
 
-interface Status {
+interface StatusProps {
+  status?: TStatus;
   subtitle?: string;
 }
 
-export default function Status({ subtitle }: Status) {
-  const { status, updateStatus } = useClientContext();
+export default function Status({ status, subtitle }: StatusProps) {
+  const { updateStatus } = useClientContext();
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const [dropdownValue, setDropdownValue] = useState({
@@ -26,8 +28,7 @@ export default function Status({ subtitle }: Status) {
       textOption: status ? labels[status] : labels.noStatus,
       iconText: status ? emojis[status] : emojis.noStatus,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [status]);
 
   return (
     <DropDown
