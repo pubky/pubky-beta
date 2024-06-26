@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import Link from 'next/link';
 import { Modal } from '../../../components/Modal';
+import { Utils } from '../../../utils';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -250,9 +251,17 @@ export default function Index() {
                 id="onboarding-bio-input"
                 defaultValue={bio ? bio : ''}
                 error={errors.bio}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setBio(e.target.value)
-                }
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  if (e.target.value === '') {
+                    setBio('');
+                  }
+                  if (Utils.isValidContent(e.target.value)) {
+                    const cleanedBio = Utils.cleanText(e.target.value);
+                    setBio(cleanedBio);
+                  } else {
+                    setBio('');
+                  }
+                }}
               />
             </Card.Primary>
           </div>
