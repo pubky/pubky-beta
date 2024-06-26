@@ -29,6 +29,7 @@ export default function ReplyForm({
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  const [isValidContent, setIsValidContent] = useState(false);
   const [contentReply, setContentReply] = useState('');
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
@@ -151,13 +152,14 @@ export default function ReplyForm({
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                     setContentReply(e.target.value);
                     setCursorPosition(e.target.selectionStart);
+                    setIsValidContent(Utils.isValidContent(e.target.value));
                   }}
                   onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
                     setCursorPosition(e.currentTarget.selectionStart);
                   }}
                   value={contentReply}
                   maxLength={300}
-                  className="h-[25px] text-xl w-[250px] md:w-[500px] lg:w-[650px]"
+                  className="h-[25px] max-h-[300px] text-xl w-[250px] md:w-[500px] lg:w-[650px]"
                   placeholder="Post your reply"
                 />
                 {videoId && (
@@ -218,12 +220,16 @@ export default function ReplyForm({
               className="w-[158px]"
               variant="line"
               icon={
-                <Icon.ChatCircleText color={!contentReply ? 'gray' : 'white'} />
+                <Icon.ChatCircleText
+                  color={!isValidContent ? 'gray' : 'white'}
+                />
               }
-              disabled={!contentReply}
+              disabled={!isValidContent}
               loading={sendingReply}
               onClick={
-                contentReply && !sendingReply ? () => handleReply() : undefined
+                isValidContent && !sendingReply
+                  ? () => handleReply()
+                  : undefined
               }
             >
               Reply

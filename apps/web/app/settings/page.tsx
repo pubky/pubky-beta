@@ -349,9 +349,14 @@ export default function Index() {
                   maxLength={160}
                   defaultValue={bio}
                   error={errors.bio}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setBio(e.target.value)
-                  }
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    if (Utils.isValidContent(e.target.value)) {
+                      const cleanedBio = Utils.cleanText(e.target.value);
+                      setBio(cleanedBio);
+                    } else {
+                      setBio('');
+                    }
+                  }}
                 />
               </Card.Primary>
             </div>
