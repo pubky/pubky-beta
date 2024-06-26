@@ -39,6 +39,7 @@ export default function Repost({
   const { setContent, setShow } = useAlertContext();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [contentRepost, setContentRepost] = useState('');
+  const [isValidContent, setIsValidContent] = useState(false);
   const [sendingRepost, setSendingRepost] = useState(false);
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
@@ -192,7 +193,7 @@ export default function Repost({
       }}
       className="max-w-[1200px]"
     >
-      <Modal.Content className="flex flex-row gap-6">
+      <Modal.Content className="flex flex-row gap-6 max-h-[500px] overflow-y-auto">
         <div className="rounded-2xl flex-col justify-start items-start inline-flex w-full min-w-[300px] md:min-w-[500px]">
           <div className="absolute justify-start items-center gap-4 flex">
             <Image
@@ -211,13 +212,14 @@ export default function Repost({
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                 setContentRepost(e.target.value);
                 setCursorPosition(e.target.selectionStart);
+                setIsValidContent(Utils.isValidContent(e.target.value));
               }}
               onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
                 setCursorPosition(e.currentTarget.selectionStart);
               }}
               value={contentRepost}
               maxLength={300}
-              className={`w-full h-auto mt-4`}
+              className={`w-full max-h-[300px] h-auto mt-4`}
               placeholder="What's in your mind?"
             />
             {videoId && (
@@ -272,59 +274,6 @@ export default function Repost({
                 ))}
               </div>
             )}
-            <PostElement.Actions className="w-full">
-              <Button.Action
-                variant="custom"
-                icon={<Icon.Tag size="32" />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setShowModalTag(true);
-                }}
-              />
-              <Button.Action
-                variant="custom"
-                icon={<Icon.Smiley size="32" />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setShowEmojis(true);
-                }}
-              />
-              <Button.Action
-                variant="custom"
-                disabled
-                icon={<Icon.ImageSquare color={'gray'} size="32" />}
-              />
-              {showEmojis && (
-                <div
-                  className="absolute translate-y-[10%] translate-x-[30%] z-10"
-                  ref={wrapperRefEmojis}
-                >
-                  <EmojiPicker
-                    theme={Theme.DARK}
-                    emojiStyle={EmojiStyle.TWITTER}
-                    onEmojiClick={handleEmojiClick}
-                  />
-                </div>
-              )}
-              <div className="grow" />
-              <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
-                {contentRepost.length} / 300
-              </div>
-              <Button.Medium
-                className="w-[158px]"
-                variant="line"
-                icon={<Icon.Repost color={!contentRepost ? 'gray' : 'white'} />}
-                disabled={!contentRepost}
-                loading={sendingRepost}
-                onClick={
-                  contentRepost && !sendingRepost
-                    ? () => handleSubmitRepost()
-                    : undefined
-                }
-              >
-                Repost
-              </Button.Medium>
-            </PostElement.Actions>
           </div>
           <ModalComponent.TagCreatePost
             arrayTags={arrayTags}
@@ -334,6 +283,59 @@ export default function Repost({
           />
         </div>
       </Modal.Content>
+      <PostElement.Actions className="w-full">
+        <Button.Action
+          variant="custom"
+          icon={<Icon.Tag size="32" />}
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowModalTag(true);
+          }}
+        />
+        <Button.Action
+          variant="custom"
+          icon={<Icon.Smiley size="32" />}
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowEmojis(true);
+          }}
+        />
+        <Button.Action
+          variant="custom"
+          disabled
+          icon={<Icon.ImageSquare color={'gray'} size="32" />}
+        />
+        {showEmojis && (
+          <div
+            className="absolute translate-y-[10%] translate-x-[30%] z-10"
+            ref={wrapperRefEmojis}
+          >
+            <EmojiPicker
+              theme={Theme.DARK}
+              emojiStyle={EmojiStyle.TWITTER}
+              onEmojiClick={handleEmojiClick}
+            />
+          </div>
+        )}
+        <div className="grow" />
+        <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
+          {contentRepost.length} / 300
+        </div>
+        <Button.Medium
+          className="w-[158px]"
+          variant="line"
+          icon={<Icon.Repost color={!isValidContent ? 'gray' : 'white'} />}
+          disabled={!isValidContent}
+          loading={sendingRepost}
+          onClick={
+            isValidContent && !sendingRepost
+              ? () => handleSubmitRepost()
+              : undefined
+          }
+        >
+          Repost
+        </Button.Medium>
+      </PostElement.Actions>
     </Modal.Root>
   );
 }
