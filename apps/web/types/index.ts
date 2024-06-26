@@ -25,7 +25,6 @@ export interface TClientContext {
   pubky: string | null;
   seed: Seed | null;
   posts: INewPost;
-  status: TStatus;
   signUp: (profile: IProfilePubkyProps) => Promise<ISignUpResponse | false>;
   getRecoveryFile: (password: string) => Promise<IRecoveryFileResponse | null>;
   logout: () => Promise<boolean>;
@@ -104,7 +103,7 @@ export interface IProfile {
   bio: string;
   image: string;
   links: ILink[];
-  status?: string;
+  status?: TStatus;
 }
 
 export interface IAuthor {

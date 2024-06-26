@@ -130,7 +130,7 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Header className="w-52 xl:w-80 hidden md:block" title="Hot Tags" />
+      <Header className="hidden md:block" title="Hot&nbsp;Tags" />
       <Content.Grid className='flex w-full justify-between items-start inline-flex"'>
         <div className="w-full flex-col inline-flex gap-3">
           <div className="flex gap-6 mb-6">
@@ -152,9 +152,7 @@ export default function Index() {
                     tag={tag.tag}
                     onClick={() => router.push(`/search?tags=${tag.tag}`)}
                     color="fuchsia"
-                    counter={`${tag.count} ${
-                      tag.count > 1 ? ' users' : ' user'
-                    }`}
+                    counter={`${tag.count}`}
                   />
                   {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
                     <Image

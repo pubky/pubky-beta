@@ -20,6 +20,7 @@ import {
   IFollowingResponse,
   IFollowersResponse,
   ITaggedProfile,
+  TStatus,
 } from '../../../types';
 import Image from 'next/image';
 import { DropDown } from '../../../components/DropDown';
@@ -77,7 +78,7 @@ export default function Sidebar({
   const [loadingProfileTags, setLoadingProfileTags] = useState(true);
   const [loadingAddProfileTags, setLoadingAddProfileTags] = useState(false);
   const [pubkyUser, setPubkyUser] = useState('');
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState<TStatus | undefined>();
   const [loading, setLoading] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [loadingFollowing, setLoadingFollowing] = useState(true);
@@ -189,6 +190,14 @@ export default function Sidebar({
           profile = userProfile?.profile;
           setPubkyUser(creatorPubky);
           setProfileTags(userProfile?.taggedAs);
+          if (
+            userProfile?.profile?.status &&
+            userProfile?.profile?.status in Utils.statusHelper.labels
+          ) {
+            setStatus(userProfile?.profile?.status);
+          } else {
+            setStatus('noStatus');
+          }
         }
       } else {
         if (!pubky) return;
@@ -605,7 +614,13 @@ export default function Sidebar({
           {!creatorPubky || creatorPubky === pubky ? (
             <div className="flex flex-col gap-2">
               <SideCard.Header title="Status" />
-              <DropDown.Status />
+              {status ? (
+                <DropDown.Status status={status} />
+              ) : (
+                <Typography.Body className="text-opacity-50" variant="small">
+                  Loading Status...
+                </Typography.Body>
+              )}
             </div>
           ) : (
             status &&
