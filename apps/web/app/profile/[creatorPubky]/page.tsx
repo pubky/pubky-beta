@@ -16,8 +16,15 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
-  const { pubky, getUserIndexed, getProfile, listUserFeed, posts, setPosts } =
-    useClientContext();
+  const {
+    pubky,
+    getUserIndexed,
+    getProfile,
+    listUserFeed,
+    getPost,
+    posts,
+    setPosts,
+  } = useClientContext();
   const creatorPubky = params.creatorPubky;
 
   const [pic, setPic] = useState('/images/Userpic.png');
@@ -26,6 +33,9 @@ export default function Index({
   const [loading, setLoading] = useState(true);
   const [userExist, setUserExist] = useState(true);
   const [cursor, setCursor] = useState('');
+  const [parentPosts, setParentPosts] = useState<{
+    [key: string]: IPost | null;
+  }>({});
   const loader = useRef(null);
 
   async function fetchProfile() {
@@ -60,21 +70,42 @@ export default function Index({
       const results = await listUserFeed(creatorPubky, pointer);
 
       if (results && results.feed) {
-        const newPostsTemp = results.feed.reduce(
-          (acc: INewPost, post: IPost) => {
-            acc[post.id] = post;
-            return acc;
-          },
-          {}
+        const newPostsTemp = await Promise.all(
+          results.feed.map(async (post: IPost) => {
+            let parentPost: IPost | null = null;
+            if (post.post.parent) {
+              parentPost = await fetchParentPost(post.post.parent);
+              setParentPosts((prev) => ({
+                ...prev,
+                [post.post.parent!]: parentPost,
+              }));
+            }
+            return post;
+          })
         );
 
-        setPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
+        const postsMap = newPostsTemp.reduce((acc: INewPost, post) => {
+          acc[post.id] = post;
+          return acc;
+        }, {});
+
+        setPosts((prev: INewPost) => ({ ...prev, ...postsMap }));
 
         setCursor(results.cursor);
       }
       setLoading(false);
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async function fetchParentPost(parentUri: string): Promise<IPost | null> {
+    try {
+      const parentPost = await getPost(parentUri);
+      return parentPost;
+    } catch (error) {
+      console.error('Error fetching parent post:', error);
+      return null;
     }
   }
 
@@ -122,9 +153,36 @@ export default function Index({
           </div>
           <Content.Grid className="grid grid-cols-3 gap-6">
             <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6  mt-[10px]">
-              {Object.keys(posts).map((key) => (
-                <Post key={posts[key].id} post={posts[key]} />
-              ))}
+              {Object.keys(posts).map((key) => {
+                const post = posts[key];
+                const parentUri = post.post.parent;
+                const parentPost = parentUri ? parentPosts[parentUri] : null;
+
+                return (
+                  <div key={post.id}>
+                    {parentPost ? (
+                      <Post
+                        fullContent
+                        post={parentPost}
+                        className="border-0"
+                        line
+                      />
+                    ) : parentUri ? (
+                      <div className="relative ml-4 mb-8 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
+                        <Typography.Body
+                          variant="small"
+                          className="text-opacity-50"
+                        >
+                          This post was not found or has been deleted by its
+                          author.
+                        </Typography.Body>
+                        <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[35px]" />
+                      </div>
+                    ) : null}
+                    <Post fullContent post={post} />
+                  </div>
+                );
+              })}
               {Object.keys(posts).length === 0 && !loading && (
                 <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
                   <Typography.H2 className="font-normal text-opacity-50">
