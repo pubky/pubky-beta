@@ -22,7 +22,7 @@ export default function ServerDown({
     >
       <Modal.Header title="Server down" />
       <Typography.Body className="text-opacity-60" variant="medium">
-        Please contact the team for assistance
+        Please check your internet connection or contact the team for assistance
       </Typography.Body>
     </Modal.Root>
   );
