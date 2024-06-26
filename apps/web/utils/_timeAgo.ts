@@ -1,5 +1,8 @@
-export function timeAgo(date: number) {
-  if (!date) return '';
+export function timeAgo(timestamp: number) {
+  if (!timestamp) return '';
+
+  const date = timestamp.toString().length > 13 ? timestamp / 1000 : timestamp;
+
   const seconds = Math.floor(
     (new Date().getTime() - new Date(date).getTime()) / 1000
   );
