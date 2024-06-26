@@ -249,7 +249,7 @@ export default function CreatePost({
               }}
               value={contentPost}
               maxLength={300}
-              className={`w-full max-h-[300px] h-auto mt-4`}
+              className={`w-full h-auto mt-4`}
               placeholder="What's in your mind?"
             />
             {videoId && (
