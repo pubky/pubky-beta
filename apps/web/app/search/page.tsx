@@ -27,6 +27,8 @@ const SearchContent = () => {
     useClientContext();
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
+  const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
+  const filterContentRef = useRef(null);
   const loader = useRef(null);
   const tagMessage =
     searchTags.length > 1
@@ -97,14 +99,34 @@ const SearchContent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTags]);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsFilterContentVisible(entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+    if (filterContentRef.current) {
+      observer.observe(filterContentRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Search" />
       <Content.Grid className={'grid grid-cols-5 gap-6'}>
         <Sidebar className="hidden xl:block">
-          <Filter.Reach />
-          <Filter.Sort />
-          <div className="self-start sticky top-[120px]">
+          <div
+            className={`self-start ${
+              isFilterContentVisible ? '' : 'sticky top-[120px]'
+            }`}
+          >
+            <Filter.Reach />
+            <Filter.Sort />
+          </div>
+          <div ref={filterContentRef}>
             <Filter.Layout />
             <Filter.Content />
           </div>
