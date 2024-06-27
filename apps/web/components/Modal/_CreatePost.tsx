@@ -249,8 +249,9 @@ export default function CreatePost({
               }}
               value={contentPost}
               maxLength={300}
+              autoFocus
               className={`w-full h-auto mt-4`}
-              placeholder="What's in your mind?"
+              placeholder="What's on your mind?"
             />
             {videoId && (
               <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
