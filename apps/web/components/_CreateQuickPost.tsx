@@ -224,7 +224,7 @@ export default function CreateQuickPost() {
           maxLength={300}
           onClick={() => setTextArea(true)}
           className="w-full max-h-[300px] h-auto mt-4"
-          placeholder="What's in your mind?"
+          placeholder="What's on your mind?"
         />
         {videoId && (
           <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
