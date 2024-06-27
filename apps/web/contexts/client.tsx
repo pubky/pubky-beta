@@ -602,11 +602,16 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const getPost = async (uri: string): Promise<IPost | null> => {
     try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get profile failed: not logged in.');
       if (!uri) throw new Error('Get list posts failed');
 
       await client.ready();
 
-      const result = await client.social.posts.get(uri);
+      const result = await client.social.posts.get(uri, {
+        viewerId: pk,
+      });
 
       if (!result.ok)
         throw new Error(`Get post failed: ${result.error.message}`);
