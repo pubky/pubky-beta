@@ -251,9 +251,10 @@ export default function Index() {
                 id="onboarding-bio-input"
                 defaultValue={bio ? bio : ''}
                 error={errors.bio}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                  if (Utils.isValidContent(e.target.value)) {
-                    const cleanedBio = Utils.cleanText(e.target.value);
+                onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  if (Utils.isValidContent(target.value)) {
+                    const cleanedBio = Utils.cleanText(target.value);
                     setBio(cleanedBio);
                   } else {
                     setBio('');

@@ -69,7 +69,7 @@ export const Content = ({ children, text }: ContentProps) => {
       render: (pk: string) => (
         <a
           className="text-fuchsia-500 break-all"
-          href={`/profile/${pk.replace('pk:', '')}`}
+          href={`/profile/${pk.replace('pk:', '').trim()}`}
         >
           {pk}
         </a>
