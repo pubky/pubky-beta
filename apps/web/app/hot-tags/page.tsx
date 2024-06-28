@@ -130,7 +130,7 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Hot&nbsp;Tags" />
+      <Header className="hidden md:block" title="HotTags" />
       <Content.Grid className='flex w-full justify-between items-start inline-flex"'>
         <div className="w-full flex-col inline-flex gap-3">
           <div className="flex gap-6 mb-6">

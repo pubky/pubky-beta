@@ -177,7 +177,7 @@ export default function Header({ title, className }: HeaderProps) {
           <Button.Action
             variant="menu"
             label="Hot&#160;Tags"
-            active={title === `Hot Tags`}
+            active={title === `HotTags`}
             icon={<Icon.Tag size="24" />}
           />
         </Link>
