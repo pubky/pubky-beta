@@ -1,15 +1,14 @@
 export function timeAgo(timestamp: number) {
   if (!timestamp) return '';
 
-  const date = timestamp.toString().length > 13 ? timestamp / 1000 : timestamp;
-
-  const seconds = Math.floor(
-    (new Date().getTime() - new Date(date).getTime()) / 1000
-  );
-
-  if (seconds < 10) {
-    return 'Now';
+  const now = new Date().getTime();
+  if (timestamp > now) {
+    timestamp = timestamp / 1000;
+  } else if (timestamp < 10000000000) {
+    timestamp = timestamp * 1000;
   }
+
+  const seconds = Math.floor((now - new Date(timestamp).getTime()) / 1000);
 
   let interval = seconds / 31536000;
   let number = Math.floor(interval);
