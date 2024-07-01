@@ -51,6 +51,12 @@ export default function Link({
     setShowHints(false);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !disabled) {
+      handleAddLink();
+    }
+  };
+
   return (
     <Modal.Root
       show={showModalLink}
@@ -88,6 +94,7 @@ export default function Link({
               <Input.Text
                 placeholder="Add label"
                 value={title}
+                onKeyDown={handleKeyDown}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setTitle(e.target.value)
                 }
@@ -111,6 +118,7 @@ export default function Link({
               <Input.Text
                 placeholder="Add url"
                 value={url}
+                onKeyDown={handleKeyDown}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setUrl(e.target.value)
                 }
