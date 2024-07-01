@@ -189,6 +189,14 @@ export default function Header({ title, className }: HeaderProps) {
             icon={<Icon.UsersLeft size="24" />}
           />
         </Link>
+        <Link href="/notifications">
+          <Button.Action
+            variant="menu"
+            label="Notifications"
+            active={title === 'Notifications'}
+            icon={<Icon.Bell size="24" />}
+          />
+        </Link>
         <Link href="/bookmarks">
           <Button.Action
             variant="menu"

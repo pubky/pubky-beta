@@ -12,16 +12,16 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Notifications" />
-      <Content.Grid className="gap-6 flex justify-between">
+      <Content.Grid className="flex w-full justify-between items-start gap-12">
         <Notifications.Root>
           <Notifications.Notification />
           <Notifications.Notification />
           <Notifications.Notification />
         </Notifications.Root>
-        <Sidebar className="hidden xl:flex">
+        <Sidebar className="self-start sticky top-[120px] hidden xl:block w-[20%]">
           <WhoFollow />
           <HotTags />
-        </Sidebar>
+        </Sidebar>{' '}
       </Content.Grid>
       <CreatePost />
       <CreatePost />
