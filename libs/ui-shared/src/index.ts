@@ -7,6 +7,7 @@ import { Button } from './lib/Button';
 import { Input } from './lib/Input';
 import { Modal } from './lib/Modal';
 import { PostUtil } from './lib/PostUtil';
+import { Preview } from './lib/Preview';
 import { Header } from './lib/Header';
 import { Content } from './lib/Content';
 import { Card } from './lib/Card';
@@ -25,6 +26,7 @@ export {
   Input,
   Modal,
   PostUtil,
+  Preview,
   Header,
   Content,
   Card,

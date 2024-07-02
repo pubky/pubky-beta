@@ -1,4 +1,12 @@
-import { Button, Icon, Input, Modal, Post, PostUtil } from '@social/ui-shared';
+import {
+  Button,
+  Icon,
+  Input,
+  Modal,
+  Post,
+  PostUtil,
+  Preview,
+} from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, {
   EmojiClickData,
@@ -40,6 +48,7 @@ export default function CreatePost({
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
+  const [githubUrl, setGithubUrl] = useState('');
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
@@ -75,10 +84,18 @@ export default function CreatePost({
         } else {
           setTweetId('');
         }
+        const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
+        const githubMatch = url.match(githubRegex);
+        if (githubMatch) {
+          setGithubUrl(githubMatch[0]);
+        } else {
+          setGithubUrl('');
+        }
       } else {
         setPreview('');
         setVideoId('');
         setTweetId('');
+        setGithubUrl('');
       }
     }, 1000);
 
@@ -157,6 +174,7 @@ export default function CreatePost({
       setPreview('');
       setVideoId('');
       setTweetId('');
+      setGithubUrl('');
       setShowModalPost(false);
     } catch (error) {
       console.log(error);
@@ -265,7 +283,7 @@ export default function CreatePost({
                 ></iframe>
               </div>
             )}
-            {preview && !videoId && !tweetId && (
+            {preview && !videoId && !tweetId && !githubUrl && (
               <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
                 <Post.LinkPreview url={preview} />
               </div>
@@ -275,6 +293,7 @@ export default function CreatePost({
                 <Tweet id={tweetId} />
               </div>
             )}
+            {githubUrl && <Preview.GitHub url={githubUrl} />}
             {arrayTags.length > 0 && (
               <div className="inline-flex gap-2 mt-2">
                 {arrayTags.map((tag, index) => (

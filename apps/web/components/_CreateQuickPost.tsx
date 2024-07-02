@@ -1,6 +1,13 @@
 'use client';
 
-import { Button, Icon, Input, Post, PostUtil } from '@social/ui-shared';
+import {
+  Button,
+  Icon,
+  Input,
+  Post,
+  PostUtil,
+  Preview,
+} from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, {
   EmojiClickData,
@@ -31,6 +38,7 @@ export default function CreateQuickPost() {
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
+  const [githubUrl, setGithubUrl] = useState('');
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -66,10 +74,19 @@ export default function CreateQuickPost() {
         } else {
           setTweetId('');
         }
+
+        const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
+        const githubMatch = url.match(githubRegex);
+        if (githubMatch) {
+          setGithubUrl(githubMatch[0]);
+        } else {
+          setGithubUrl('');
+        }
       } else {
         setPreview('');
         setVideoId('');
         setTweetId('');
+        setGithubUrl('');
       }
     }, 1000);
 
@@ -147,6 +164,7 @@ export default function CreateQuickPost() {
       setPreview('');
       setVideoId('');
       setTweetId('');
+      setGithubUrl('');
       setTextArea(false);
     } catch (error) {
       console.log(error);
@@ -238,7 +256,7 @@ export default function CreateQuickPost() {
             ></iframe>
           </div>
         )}
-        {preview && !videoId && !tweetId && (
+        {preview && !videoId && !tweetId && !githubUrl && (
           <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
             <Post.LinkPreview url={preview} />
           </div>
@@ -248,6 +266,7 @@ export default function CreateQuickPost() {
             <Tweet id={tweetId} />
           </div>
         )}
+        {githubUrl && <Preview.GitHub url={githubUrl} />}
         {arrayTags.length > 0 && (
           <div className="inline-flex gap-2 mt-2">
             {arrayTags.map((tag, index) => (

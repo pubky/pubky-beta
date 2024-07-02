@@ -8,7 +8,14 @@ import EmojiPicker, {
 } from 'emoji-picker-react';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
-import { Icon, Button, Post, Input, PostUtil } from '@social/ui-shared';
+import {
+  Icon,
+  Button,
+  Post,
+  Input,
+  PostUtil,
+  Preview,
+} from '@social/ui-shared';
 import { useClientContext } from '../../../../../contexts/client';
 import Modal from '../../../../../components/Modal';
 import { Utils } from '../../../../../utils';
@@ -34,6 +41,7 @@ export default function ReplyForm({
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
+  const [githubUrl, setGithubUrl] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
@@ -55,6 +63,7 @@ export default function ReplyForm({
       setPreview('');
       setVideoId('');
       setTweetId('');
+      setGithubUrl('');
       setArrayTags([]);
     }
   };
@@ -87,10 +96,18 @@ export default function ReplyForm({
         } else {
           setTweetId('');
         }
+        const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
+        const githubMatch = url.match(githubRegex);
+        if (githubMatch) {
+          setGithubUrl(githubMatch[0]);
+        } else {
+          setGithubUrl('');
+        }
       } else {
         setPreview('');
         setVideoId('');
         setTweetId('');
+        setGithubUrl('');
       }
     }, 1000);
 
@@ -174,7 +191,7 @@ export default function ReplyForm({
                     ></iframe>
                   </div>
                 )}
-                {preview && !videoId && !tweetId && (
+                {preview && !videoId && !tweetId && !githubUrl && (
                   <div className="flex w-full overflow-hidden justify-start">
                     <Post.LinkPreview url={preview} />
                   </div>
@@ -184,6 +201,7 @@ export default function ReplyForm({
                     <Tweet id={tweetId} />
                   </div>
                 )}
+                {githubUrl && <Preview.GitHub url={githubUrl} />}
                 {arrayTags.length > 0 && (
                   <div className="inline-flex gap-2 mt-6">
                     {arrayTags.map((tag, index) => (
