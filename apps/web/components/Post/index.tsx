@@ -128,15 +128,16 @@ export default function Post({
                         <Tooltip.Profile post={post} />
                       )}
                     </TooltipUI.Root>
-                    {!post?.post.embed.post && post?.author.id === pubky && (
-                      <Typography.Body
-                        variant="small-bold"
-                        className="cursor-pointer text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
-                        onClick={handleDeletePost}
-                      >
-                        Undo repost
-                      </Typography.Body>
-                    )}
+                    {(!post?.post.content || !post?.post.embed.post) &&
+                      post?.author.id === pubky && (
+                        <Typography.Body
+                          variant="small-bold"
+                          className="cursor-pointer text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
+                          onClick={handleDeletePost}
+                        >
+                          Undo repost
+                        </Typography.Body>
+                      )}
                   </PostUI.RepostCard>
                   {post?.post.embed.post ? (
                     <PostUI.MainCard className={rest.className}>
