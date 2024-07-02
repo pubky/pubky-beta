@@ -105,13 +105,15 @@ export default function Actions({
             icon={
               <Icon.Repost
                 size="16"
-                color={deleteRepost ? '#00BA7C' : 'white'}
+                color="white"
+                //color={deleteRepost ? '#00BA7C' : 'white'}
               />
             }
             counter={post?.repostsCount}
             onClick={(event) => {
               event.stopPropagation();
-              setShowRepostMenu(true);
+              //setShowRepostMenu(true);
+              setShowModalRepost(true);
             }}
           />
         </div>
@@ -148,6 +150,7 @@ export default function Actions({
       </PostUI.Actions>
       <Repost
         post={post}
+        handleRepost={handleRepost}
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
       />

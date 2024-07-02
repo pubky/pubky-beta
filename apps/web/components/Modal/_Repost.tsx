@@ -27,6 +27,7 @@ interface CreateRepostProps {
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   modalRepostRef: React.RefObject<HTMLDivElement>;
   post: IPost;
+  handleRepost: () => Promise<void>;
 }
 
 export default function Repost({
@@ -34,6 +35,7 @@ export default function Repost({
   setShowModalRepost,
   modalRepostRef,
   post,
+  handleRepost,
 }: CreateRepostProps) {
   const { pubky, getProfile, createRepost, createTag } = useClientContext();
   const { setContent, setShow } = useAlertContext();
@@ -221,7 +223,7 @@ export default function Repost({
               maxLength={300}
               autoFocus
               className={`w-full h-auto mt-4`}
-              placeholder="Add a comment"
+              placeholder="Optional comment"
             />
             {videoId && (
               <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
@@ -325,14 +327,27 @@ export default function Repost({
         <Button.Medium
           className="w-[158px]"
           variant="line"
-          icon={<Icon.Repost color={!isValidContent ? 'gray' : 'white'} />}
-          disabled={!isValidContent}
+          icon={<Icon.Repost color="white" />}
           loading={sendingRepost}
           onClick={
-            isValidContent && !sendingRepost
-              ? () => handleSubmitRepost()
+            !sendingRepost
+              ? isValidContent
+                ? () => handleSubmitRepost()
+                : () => {
+                    setSendingRepost(true);
+                    handleRepost();
+                    setShowModalRepost(false);
+                    setSendingRepost(false);
+                  }
               : undefined
           }
+          //icon={<Icon.Repost color={!isValidContent ? 'gray' : 'white'} />}
+          //disabled={!isValidContent}
+          //onClick={
+          //  isValidContent && !sendingRepost
+          //</PostElement.Actions>    ? () => handleSubmitRepost()
+          //    : undefined
+          // }
         >
           Repost
         </Button.Medium>
