@@ -18,6 +18,7 @@ import {
   Eye,
 } from './_Design';
 import { Plus, Minus, X } from './_Math';
+import { GitFork } from './_Development';
 import {
   ImageSquare,
   MusicNotesSimple,
@@ -107,6 +108,7 @@ export const Icon = {
   FileText,
   Fire,
   GearSix,
+  GitFork,
   Globe,
   GridFour,
   Iphone,

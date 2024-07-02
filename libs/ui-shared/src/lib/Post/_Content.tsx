@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import LinkParser from 'react-link-parser';
 import { Tweet } from 'react-tweet';
 import LinkPreview from './_Preview';
+import { GitHub } from '../Preview/Github';
 import getYouTubeID from 'get-youtube-id';
 import { Icon } from '../Icon';
 
@@ -25,6 +26,7 @@ export const Content = ({ children, text }: ContentProps) => {
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
+  const [githubUrl, setGithubUrl] = useState('');
 
   function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -44,6 +46,12 @@ export const Content = ({ children, text }: ContentProps) => {
       if (twitterMatch) {
         const tweetId = twitterMatch[3];
         setTweetId(tweetId);
+      }
+
+      const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
+      const githubMatch = url.match(githubRegex);
+      if (githubMatch) {
+        setGithubUrl(githubMatch[0]);
       }
     }
   }
@@ -148,12 +156,15 @@ export const Content = ({ children, text }: ContentProps) => {
           ></iframe>
         </div>
       )}
-      {preview && !videoId && !tweetId && <LinkPreview url={preview} />}
+      {preview && !videoId && !tweetId && !githubUrl && (
+        <LinkPreview url={preview} />
+      )}
       {tweetId && (
         <div className="flex overflow-hidden justify-start -mt-2 -mb-6">
           <Tweet id={tweetId} />
         </div>
       )}
+      {githubUrl && <GitHub url={githubUrl} />}
       {children}
     </div>
   );
