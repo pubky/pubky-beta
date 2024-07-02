@@ -10,6 +10,10 @@ export function timeAgo(timestamp: number) {
 
   const seconds = Math.floor((now - new Date(timestamp).getTime()) / 1000);
 
+  if (seconds < 60) {
+    return 'Now';
+  }
+
   let interval = seconds / 31536000;
   let number = Math.floor(interval);
 

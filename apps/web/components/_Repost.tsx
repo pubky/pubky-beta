@@ -8,12 +8,14 @@ interface RepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   post: IPost;
+  handleRepost: () => Promise<void>;
 }
 
 export default function Repost({
   showModalRepost,
   setShowModalRepost,
   post,
+  handleRepost,
 }: RepostProps) {
   const modalRepostRef = useRef<HTMLDivElement>(null);
 
@@ -39,6 +41,7 @@ export default function Repost({
       showModalRepost={showModalRepost}
       setShowModalRepost={setShowModalRepost}
       modalRepostRef={modalRepostRef}
+      handleRepost={handleRepost}
     />
   );
 }

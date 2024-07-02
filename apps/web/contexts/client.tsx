@@ -156,12 +156,13 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     userProfile: IProfilePubkyProps
   ): Promise<ISignUpResponse | false> => {
     try {
-      const seed = Client.crypto.generateSeed();
+      const generatedSeed = Client.crypto.generateSeed();
+      const seed = Utils.uint8ArrayToBase64(generatedSeed);
       Utils.storage.set('seed', seed);
       setSeed(seed);
       await client.ready();
 
-      const result = await client.signup(seed); // seed is zeroed
+      const result = await client.signup(generatedSeed); // seed is zeroed
 
       if (!result.ok) throw new Error(`Signup failed: ${result.error.message}`);
 
@@ -189,9 +190,12 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     try {
       await client.ready();
 
+      const base64Seed = Utils.storage.get('seed');
+      const uint8ArraySeed = Utils.base64ToUint8Array(base64Seed);
+
       return await client.seedRecovery.recoveryFile(
         'pubky_recovery',
-        seed,
+        uint8ArraySeed,
         password
       );
     } catch (error) {
