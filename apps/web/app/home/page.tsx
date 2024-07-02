@@ -124,7 +124,7 @@ export default function Index() {
           <Components.CreateQuickPost />
           {Object.keys(posts).map((key) => {
             const post = posts[key];
-            const parentUri = post.post.parent;
+            const parentUri = post?.post?.parent;
             const parentPost = parentUri ? parentPosts[parentUri] : null;
 
             return (
