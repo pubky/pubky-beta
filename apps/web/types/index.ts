@@ -56,12 +56,7 @@ export interface TClientContext {
     cursor: string,
     limit?: number
   ) => Promise<IFeed | null>;
-  listBookmarkedPosts: (
-    cursor: string,
-    reach: TReach,
-    sort: TSort,
-    tags?: string[]
-  ) => Promise<IFeed | null>;
+  listBookmarkedPosts: (cursor: string, sort: TSort) => Promise<IFeed | null>;
   listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
   listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
   getMostFollowed: () => Promise<IMostFollowed[] | null>;
