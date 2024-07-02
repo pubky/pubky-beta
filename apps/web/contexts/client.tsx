@@ -812,6 +812,39 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const listBookmarkedPosts = async (
+    cursor: string,
+    reach: 'following' | 'all' | 'followers' | 'friends',
+    sort: 'recent' | 'popularity',
+    tags?: string[]
+  ): Promise<IFeed | null> => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get bookmarked posts failed: not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.streams.bookmarksFeed(pk, {
+        limit: 6,
+        cursor: cursor,
+        reach: reach ? reach : 'all',
+        tags: tags,
+        sort: sort ? sort : 'recent',
+      });
+
+      if (!result.ok)
+        throw new Error(
+          `Get bookmarked posts: ${cursor} failed: ${result.error.message}`
+        );
+
+      return result.value as unknown as IFeed;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const listGlobalPosts = async (
     cursor: string,
     reach: 'following' | 'all' | 'followers' | 'friends',
@@ -903,6 +936,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         getHotTags,
         getPost,
         listUserFeed,
+        listBookmarkedPosts,
         signUp,
         logout,
         saveProfile,

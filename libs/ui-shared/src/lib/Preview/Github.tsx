@@ -20,7 +20,6 @@ export const GitHub = ({ url }: GitHubProps) => {
           `https://api.github.com/repos/${url.split('github.com/')[1]}`
         );
         const data = await response.json();
-        console.log('data', data);
         setRepoData(data);
 
         const avatarResponse = await fetch(data.owner.avatar_url);
@@ -68,21 +67,27 @@ export const GitHub = ({ url }: GitHubProps) => {
         />
         <div>
           <Typography.Body variant="large-bold">
-            {repoData.full_name}
+            {repoData.full_name.length > 40
+              ? repoData.full_name.slice(0, 40) + '...'
+              : repoData.full_name}
           </Typography.Body>
           <Typography.Body variant="small" className="opacity-80">
-            {repoData.description}
+            {repoData.description.length > 150
+              ? repoData.description.slice(0, 150) + '...'
+              : repoData.description}
           </Typography.Body>
           <div className="flex gap-4">
             <div className="flex gap-1">
-              {`⭐`}
+              <span className="text-[15px]" role="img" aria-label="star">
+                ⭐
+              </span>
               <Typography.Body variant="small">
                 {repoData.stargazers_count}
               </Typography.Body>
             </div>
             <div className="flex gap-1">
               <div className="flex items-center">
-                <Icon.GitFork size="16" />
+                <Icon.GitFork size="15" />
               </div>
               <Typography.Body variant="small">
                 {repoData.forks_count}
@@ -90,7 +95,7 @@ export const GitHub = ({ url }: GitHubProps) => {
             </div>
             <div className="flex gap-1">
               <div className="flex items-center">
-                <Icon.Eye size="16" />
+                <Icon.Eye size="15" />
               </div>
               <Typography.Body variant="small">
                 {repoData.subscribers_count}
