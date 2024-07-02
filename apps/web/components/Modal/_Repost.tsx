@@ -162,22 +162,6 @@ export default function Repost({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRef, contentRepost]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
         wrapperRefEmojis.current &&
         !wrapperRefEmojis.current.contains(event.target as Node)
       ) {
