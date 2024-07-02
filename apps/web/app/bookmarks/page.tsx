@@ -51,7 +51,7 @@ export default function Index() {
   const fetchData = async (pointer: string) => {
     setLoading(true);
 
-    const results = await listBookmarkedPosts(pointer, reach, sort);
+    const results = await listBookmarkedPosts(pointer, sort);
 
     if (results && results.feed) {
       const newPostsTemp = results.feed.reduce((acc: INewPost, post: IPost) => {

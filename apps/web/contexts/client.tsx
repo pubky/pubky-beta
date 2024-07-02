@@ -814,9 +814,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const listBookmarkedPosts = async (
     cursor: string,
-    reach: 'following' | 'all' | 'followers' | 'friends',
-    sort: 'recent' | 'popularity',
-    tags?: string[]
+    sort: 'recent' | 'popularity'
   ): Promise<IFeed | null> => {
     try {
       const pk = await isLoggedIn();
@@ -828,8 +826,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.streams.bookmarksFeed(pk, {
         limit: 6,
         cursor: cursor,
-        reach: reach ? reach : 'all',
-        tags: tags,
         sort: sort ? sort : 'recent',
       });
 
