@@ -61,7 +61,7 @@ function LinkPreview({ url }: { url: string }) {
         (previewData.image ? (
           <div
             onClick={handleClick}
-            className="relative cursor-pointer border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden"
+            className="w-full max-w-[700px] relative cursor-pointer border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden"
             style={{
               height: '350px',
               backgroundImage: `url(${previewData.image})`,

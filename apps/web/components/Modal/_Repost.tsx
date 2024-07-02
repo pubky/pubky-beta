@@ -5,6 +5,7 @@ import {
   Modal,
   Post as PostElement,
   PostUtil,
+  Preview,
 } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, {
@@ -49,6 +50,7 @@ export default function Repost({
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
+  const [githubUrl, setGithubUrl] = useState('');
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
@@ -83,8 +85,19 @@ export default function Repost({
         } else {
           setTweetId('');
         }
+
+        const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
+        const githubMatch = text.match(githubRegex);
+        if (githubMatch) {
+          setGithubUrl(githubMatch[0]);
+        } else {
+          setGithubUrl('');
+        }
       } else {
         setPreview('');
+        setVideoId('');
+        setTweetId('');
+        setGithubUrl('');
       }
     }, 1000);
 
@@ -137,6 +150,7 @@ export default function Repost({
       setPreview('');
       setVideoId('');
       setTweetId('');
+      setGithubUrl('');
       setShowModalRepost(false);
     } catch (error) {
       console.log(error);
@@ -237,7 +251,7 @@ export default function Repost({
                 ></iframe>
               </div>
             )}
-            {preview && !videoId && !tweetId && (
+            {preview && !videoId && !tweetId && !githubUrl && (
               <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
                 <PostElement.LinkPreview url={preview} />
               </div>
@@ -247,6 +261,7 @@ export default function Repost({
                 <Tweet id={tweetId} />
               </div>
             )}
+            {githubUrl && <Preview.GitHub url={githubUrl} />}
             <Post
               post={post}
               repostView
