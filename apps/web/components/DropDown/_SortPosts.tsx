@@ -11,8 +11,7 @@ export default function SortPosts() {
 
   const icons = {
     recent: <Icon.Asterisk size="24" />,
-    tags: <Icon.Tag size="24" />,
-    activity: <Icon.Fire size="24" />,
+    popularity: <Icon.Fire size="24" />,
     loading: <Icon.LoadingSpin className="animate-spin" />,
   };
   const [dropdownValue, setDropdownValue] = useState({
@@ -56,30 +55,16 @@ export default function SortPosts() {
           }}
         />
         <DropDownUI.Item
-          label="Tags"
-          value="tags"
-          selected={sort === 'tags'}
-          icon={<Icon.Tag size="24" />}
-          onClick={() => {
-            setDropdownValue({
-              value: 'tags',
-              iconOption: <Icon.Tag size="24" />,
-            });
-            setSort('tags');
-            setOpenDropdown(false);
-          }}
-        />
-        <DropDownUI.Item
-          label="Activity"
-          value="activity"
-          selected={sort === 'activity'}
+          label="Popularity"
+          value="popularity"
+          selected={sort === 'popularity'}
           icon={<Icon.Fire size="24" />}
           onClick={() => {
             setDropdownValue({
-              value: 'activity',
+              value: 'popularity',
               iconOption: <Icon.Fire size="24" />,
             });
-            setSort('activity');
+            setSort('popularity');
             setOpenDropdown(false);
           }}
         />
