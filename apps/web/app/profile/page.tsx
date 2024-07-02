@@ -131,7 +131,7 @@ export default function Index() {
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6 mt-[10px]">
           {Object.keys(posts).map((key) => {
             const post = posts[key];
-            const parentUri = post.post.parent;
+            const parentUri = post?.post?.parent;
             const parentPost = parentUri ? parentPosts[parentUri] : null;
 
             return (

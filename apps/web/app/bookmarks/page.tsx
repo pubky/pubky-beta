@@ -125,7 +125,6 @@ export default function Index() {
               isFilterContentVisible ? '' : 'sticky top-[120px]'
             }`}
           >
-            <Filter.Reach />
             <Filter.Sort />
           </div>
           <div ref={filterContentRef}>
