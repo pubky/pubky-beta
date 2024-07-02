@@ -41,7 +41,7 @@ import Skeletons from '../../components/Skeletons';
 
 export default function Index() {
   const { reach, sort } = useFilterContext();
-  const { listGlobalPosts, posts, setPosts } = useClientContext();
+  const { listBookmarkedPosts, posts, setPosts } = useClientContext();
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
@@ -51,7 +51,7 @@ export default function Index() {
   const fetchData = async (pointer: string) => {
     setLoading(true);
 
-    const results = await listGlobalPosts(pointer, reach, sort);
+    const results = await listBookmarkedPosts(pointer, reach, sort);
 
     if (results && results.feed) {
       const newPostsTemp = results.feed.reduce((acc: INewPost, post: IPost) => {
