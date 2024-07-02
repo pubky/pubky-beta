@@ -4,6 +4,7 @@ import CreateQuickPost from './_CreateQuickPost';
 import DropDown from './DropDown/_DropDown';
 import Header from './_Header';
 import HotTags from './_HotTags';
+import LinkPreviewer from './_LinkPreviewer';
 import Post from './Post';
 import PostsLayout from './_PostsLayout';
 import Repost from './_Repost';
@@ -20,6 +21,7 @@ export {
   DropDown,
   Header,
   HotTags,
+  LinkPreviewer,
   Post,
   PostsLayout,
   Repost,

@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Button,
-  Icon,
-  Input,
-  Post,
-  PostUtil,
-  Preview,
-} from '@social/ui-shared';
+import { Button, Icon, Input, Post, PostUtil } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, {
   EmojiClickData,
@@ -18,10 +11,9 @@ import { useClientContext } from '../contexts/client';
 import Image from 'next/image';
 import { INewPost } from '../types';
 import Modal from './Modal';
-import getYouTubeID from 'get-youtube-id';
-import { Tweet } from 'react-tweet';
 import { Utils } from '../utils';
 import { useAlertContext } from '../contexts/alerts';
+import LinkPreviewer from './_LinkPreviewer';
 
 export default function CreateQuickPost() {
   const { pubky, getProfile, createPost, setPosts, createTag } =
@@ -35,68 +27,9 @@ export default function CreateQuickPost() {
   const [textArea, setTextArea] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
-  const [preview, setPreview] = useState('');
-  const [videoId, setVideoId] = useState('');
-  const [tweetId, setTweetId] = useState('');
-  const [githubUrl, setGithubUrl] = useState('');
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
-
-  const checkForLink = (text: string) => {
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
-    }
-
-    const timeout = setTimeout(() => {
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      const urls = text.match(urlRegex);
-      if (urls) {
-        const url = urls[0];
-        setPreview(url);
-
-        const youtubeId = getYouTubeID(url);
-        if (youtubeId) {
-          setVideoId(youtubeId);
-        } else {
-          setVideoId('');
-        }
-
-        const twitterRegex =
-          /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
-        const twitterMatch = url.match(twitterRegex);
-        if (twitterMatch) {
-          const tweetId = twitterMatch[3];
-          setTweetId(tweetId);
-        } else {
-          setTweetId('');
-        }
-
-        const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
-        const githubMatch = url.match(githubRegex);
-        if (githubMatch) {
-          setGithubUrl(githubMatch[0]);
-        } else {
-          setGithubUrl('');
-        }
-      } else {
-        setPreview('');
-        setVideoId('');
-        setTweetId('');
-        setGithubUrl('');
-      }
-    }, 1000);
-
-    setDebounceTimeout(timeout);
-  };
-
-  useEffect(() => {
-    checkForLink(contentPost);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contentPost]);
 
   async function fetchProfile() {
     try {
@@ -161,10 +94,6 @@ export default function CreateQuickPost() {
       }
       setArrayTags([]);
       setContentPost('');
-      setPreview('');
-      setVideoId('');
-      setTweetId('');
-      setGithubUrl('');
       setTextArea(false);
     } catch (error) {
       console.log(error);
@@ -244,29 +173,7 @@ export default function CreateQuickPost() {
           className="w-full max-h-[300px] h-auto mt-4"
           placeholder="What's on your mind?"
         />
-        {videoId && (
-          <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
-            <iframe
-              width="100%"
-              height="315"
-              src={`https://www.youtube.com/embed/${videoId}`}
-              title="YouTube video player"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-        )}
-        {preview && !videoId && !tweetId && !githubUrl && (
-          <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
-            <Post.LinkPreview url={preview} />
-          </div>
-        )}
-        {tweetId && (
-          <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
-            <Tweet id={tweetId} />
-          </div>
-        )}
-        {githubUrl && <Preview.GitHub url={githubUrl} />}
+        <LinkPreviewer content={contentPost} />
         {arrayTags.length > 0 && (
           <div className="inline-flex gap-2 mt-2">
             {arrayTags.map((tag, index) => (
