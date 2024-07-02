@@ -5,7 +5,6 @@ import {
   Modal,
   Post as PostElement,
   PostUtil,
-  Preview,
 } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, {
@@ -16,12 +15,11 @@ import EmojiPicker, {
 import { useClientContext } from '../../contexts/client';
 import Image from 'next/image';
 import { Modal as ModalComponent } from '.';
-import getYouTubeID from 'get-youtube-id';
-import { Tweet } from 'react-tweet';
 import { Utils } from '../../utils';
 import { IPost } from '../../types';
 import Post from '../Post';
 import { useAlertContext } from '../../contexts/alerts';
+import LinkPreviewer from '../../components/_LinkPreviewer';
 
 interface CreateRepostProps {
   showModalRepost: boolean;
@@ -47,67 +45,9 @@ export default function Repost({
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
-  const [preview, setPreview] = useState('');
-  const [videoId, setVideoId] = useState('');
-  const [tweetId, setTweetId] = useState('');
-  const [githubUrl, setGithubUrl] = useState('');
   const [cursorPosition, setCursorPosition] = useState<number>(0);
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
-
-  const checkForLink = (text: string) => {
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
-    }
-
-    const timeout = setTimeout(() => {
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      const url = text.match(urlRegex);
-      if (url) {
-        setPreview(url[0]);
-
-        const youtubeId = getYouTubeID(text);
-        if (youtubeId) {
-          setVideoId(youtubeId);
-        } else {
-          setVideoId('');
-        }
-
-        const twitterRegex =
-          /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/;
-        const twitterMatch = text.match(twitterRegex);
-        if (twitterMatch) {
-          const tweetId = twitterMatch[3];
-          setTweetId(tweetId);
-        } else {
-          setTweetId('');
-        }
-
-        const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
-        const githubMatch = text.match(githubRegex);
-        if (githubMatch) {
-          setGithubUrl(githubMatch[0]);
-        } else {
-          setGithubUrl('');
-        }
-      } else {
-        setPreview('');
-        setVideoId('');
-        setTweetId('');
-        setGithubUrl('');
-      }
-    }, 1000);
-
-    setDebounceTimeout(timeout);
-  };
-
-  useEffect(() => {
-    checkForLink(contentRepost);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contentRepost]);
 
   async function fetchProfile() {
     try {
@@ -147,10 +87,6 @@ export default function Repost({
       }
       setArrayTags([]);
       setContentRepost('');
-      setPreview('');
-      setVideoId('');
-      setTweetId('');
-      setGithubUrl('');
       setShowModalRepost(false);
     } catch (error) {
       console.log(error);
@@ -223,29 +159,7 @@ export default function Repost({
               className={`w-full h-auto mt-4`}
               placeholder="Optional comment"
             />
-            {videoId && (
-              <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
-                <iframe
-                  width="100%"
-                  height="315"
-                  src={`https://www.youtube.com/embed/${videoId}`}
-                  title="YouTube video player"
-                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            )}
-            {preview && !videoId && !tweetId && !githubUrl && (
-              <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
-                <PostElement.LinkPreview url={preview} />
-              </div>
-            )}
-            {tweetId && (
-              <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
-                <Tweet id={tweetId} />
-              </div>
-            )}
-            {githubUrl && <Preview.GitHub url={githubUrl} />}
+            <LinkPreviewer content={contentRepost} />
             <Post
               post={post}
               repostView

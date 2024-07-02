@@ -6,20 +6,12 @@ import EmojiPicker, {
   EmojiStyle,
   Theme,
 } from 'emoji-picker-react';
-import getYouTubeID from 'get-youtube-id';
-import { Tweet } from 'react-tweet';
-import {
-  Icon,
-  Button,
-  Post,
-  Input,
-  PostUtil,
-  Preview,
-} from '@social/ui-shared';
+import { Icon, Button, Post, Input, PostUtil } from '@social/ui-shared';
 import { useClientContext } from '../../../../../contexts/client';
 import Modal from '../../../../../components/Modal';
 import { Utils } from '../../../../../utils';
 import { IPost } from '../../../../../types';
+import LinkPreviewer from '../../../../../components/_LinkPreviewer';
 
 export default function ReplyForm({
   uri,
@@ -38,15 +30,8 @@ export default function ReplyForm({
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [isValidContent, setIsValidContent] = useState(false);
   const [contentReply, setContentReply] = useState('');
-  const [preview, setPreview] = useState('');
-  const [videoId, setVideoId] = useState('');
-  const [tweetId, setTweetId] = useState('');
-  const [githubUrl, setGithubUrl] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
 
   const handleReply = async () => {
     setSendingReply(true);
@@ -60,58 +45,8 @@ export default function ReplyForm({
       }
       setSendingReply(false);
       setContentReply('');
-      setPreview('');
-      setVideoId('');
-      setTweetId('');
-      setGithubUrl('');
       setArrayTags([]);
     }
-  };
-
-  const checkForLink = (text: string) => {
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
-    }
-
-    const timeout = setTimeout(() => {
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      const urls = text.match(urlRegex);
-      if (urls) {
-        const url = urls[0];
-        setPreview(url);
-
-        const youtubeId = getYouTubeID(url);
-        if (youtubeId) {
-          setVideoId(youtubeId);
-        } else {
-          setVideoId('');
-        }
-
-        const twitterRegex =
-          /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
-        const twitterMatch = url.match(twitterRegex);
-        if (twitterMatch) {
-          const tweetId = twitterMatch[3];
-          setTweetId(tweetId);
-        } else {
-          setTweetId('');
-        }
-        const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
-        const githubMatch = url.match(githubRegex);
-        if (githubMatch) {
-          setGithubUrl(githubMatch[0]);
-        } else {
-          setGithubUrl('');
-        }
-      } else {
-        setPreview('');
-        setVideoId('');
-        setTweetId('');
-        setGithubUrl('');
-      }
-    }, 1000);
-
-    setDebounceTimeout(timeout);
   };
 
   useEffect(() => {
@@ -139,11 +74,6 @@ export default function ReplyForm({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [wrapperRefEmojis]);
-
-  useEffect(() => {
-    checkForLink(contentReply);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contentReply]);
 
   const handleEmojiClick = (emojiObject: EmojiClickData) => {
     const textBeforeCursor = contentReply.slice(0, cursorPosition);
@@ -179,29 +109,7 @@ export default function ReplyForm({
                   className="h-[25px] max-h-[300px] text-xl w-[250px] md:w-[500px] lg:w-[650px]"
                   placeholder="Post your reply"
                 />
-                {videoId && (
-                  <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
-                    <iframe
-                      width="100%"
-                      height="315"
-                      src={`https://www.youtube.com/embed/${videoId}`}
-                      title="YouTube video player"
-                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                )}
-                {preview && !videoId && !tweetId && !githubUrl && (
-                  <div className="flex w-full overflow-hidden justify-start">
-                    <Post.LinkPreview url={preview} />
-                  </div>
-                )}
-                {tweetId && (
-                  <div className="flex w-full overflow-hidden justify-start">
-                    <Tweet id={tweetId} />
-                  </div>
-                )}
-                {githubUrl && <Preview.GitHub url={githubUrl} />}
+                <LinkPreviewer content={contentReply} />
                 {arrayTags.length > 0 && (
                   <div className="inline-flex gap-2 mt-6">
                     {arrayTags.map((tag, index) => (
