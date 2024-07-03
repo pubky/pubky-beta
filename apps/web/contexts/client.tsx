@@ -79,6 +79,27 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [posts, setPosts] = useState<INewPost>({} as INewPost);
   const [searchTags, setSearchTags] = useState<string[]>([]);
 
+  const getNotifications = async () => {
+    try {
+      const pkLogged = await isLoggedIn();
+
+      if (!pkLogged) throw new Error('Not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.notifications.get(pkLogged);
+      console.log(result);
+      if (!result.ok) {
+        throw new Error(`Follow:${pk} failed: ${result.error.message}`);
+      }
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
   const updateStatus = async (value: TStatus) => {
     try {
       if (!pubky) throw new Error('Pubky required');
@@ -953,6 +974,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         follow,
         unfollow,
         session,
+        getNotifications,
       }}
     >
       {children}

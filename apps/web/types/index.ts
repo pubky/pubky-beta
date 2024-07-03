@@ -83,6 +83,7 @@ export interface TClientContext {
   setSearchTags: (value: string[]) => Promise<IPost | null>;
   follow: (pk: string) => Promise<boolean>;
   unfollow: (pk: string) => Promise<boolean>;
+  getNotifications: () => Promise<void>;
 }
 
 interface Seed {

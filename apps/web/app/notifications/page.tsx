@@ -1,3 +1,5 @@
+'use client';
+
 import { Content } from '@social/ui-shared';
 import {
   CreatePost,
@@ -7,8 +9,22 @@ import {
   WhoFollow,
 } from '../../components';
 import { Notifications } from './components';
+import { useClientContext } from './../../contexts/client';
+import { useEffect } from 'react';
 
 export default function Index() {
+  const { getNotifications } = useClientContext();
+
+  const fetchNotifications = async () => {
+    const data = await getNotifications();
+    console.log(data);
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Notifications" />
