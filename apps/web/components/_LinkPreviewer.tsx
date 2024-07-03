@@ -14,44 +14,55 @@ export default function LinkPreviewer({ content }: LinkPreviewerProps) {
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
 
   const checkForLink = (text: string) => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
     try {
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      const urls = text.match(urlRegex);
-      if (urls) {
-        const url = urls[0];
-        setPreview(url);
+      const timeout = setTimeout(() => {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const urls = text.match(urlRegex);
+        if (urls) {
+          const url = urls[0];
+          setPreview(url);
 
-        const youtubeId = getYouTubeID(url);
-        if (youtubeId) {
-          setVideoId(youtubeId);
+          const youtubeId = getYouTubeID(url);
+          if (youtubeId) {
+            setVideoId(youtubeId);
+          } else {
+            setVideoId('');
+          }
+
+          const twitterRegex =
+            /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
+          const twitterMatch = url.match(twitterRegex);
+          if (twitterMatch) {
+            const tweetId = twitterMatch[3];
+            setTweetId(tweetId);
+          } else {
+            setTweetId('');
+          }
+          const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
+          const githubMatch = url.match(githubRegex);
+          if (githubMatch) {
+            setGithubUrl(githubMatch[0]);
+          } else {
+            setGithubUrl('');
+          }
         } else {
+          setPreview('');
           setVideoId('');
-        }
-
-        const twitterRegex =
-          /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
-        const twitterMatch = url.match(twitterRegex);
-        if (twitterMatch) {
-          const tweetId = twitterMatch[3];
-          setTweetId(tweetId);
-        } else {
           setTweetId('');
-        }
-        const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
-        const githubMatch = url.match(githubRegex);
-        if (githubMatch) {
-          setGithubUrl(githubMatch[0]);
-        } else {
           setGithubUrl('');
         }
-      } else {
-        setPreview('');
-        setVideoId('');
-        setTweetId('');
-        setGithubUrl('');
-      }
+      }, 100);
+
+      setDebounceTimeout(timeout);
     } catch (err) {
       console.log(err);
     }
