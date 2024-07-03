@@ -3,6 +3,7 @@ import cleanText from './_cleanText';
 import copyToClipboard from './_copytoClipboard';
 import decodePostUri from './_decodePostUIri';
 import encodePostUri from './_encodePostUri';
+import extractHashtags from './_extractHashtags';
 import isValidContent from './_isValidContent';
 import minifyPubky from './_minifyPubky';
 import minifyText from './_minifyText';
@@ -16,6 +17,7 @@ export const Utils = {
   cleanText,
   decodePostUri,
   encodePostUri,
+  extractHashtags,
   isValidContent,
   minifyPubky,
   storage,

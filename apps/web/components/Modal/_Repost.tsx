@@ -74,9 +74,12 @@ export default function Repost({
     try {
       setSendingRepost(true);
 
+      const hashtags = Utils.extractHashtags(contentRepost);
+      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+
       const newRepost = await createRepost(post.uri, contentRepost);
       if (newRepost) {
-        for (const tag of arrayTags) {
+        for (const tag of updatedTags) {
           await createTag(newRepost.uri, tag);
         }
         setContent('Repost created!');

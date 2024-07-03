@@ -56,16 +56,19 @@ export default function CreateQuickPost() {
     try {
       setSendingPost(true);
 
+      const hashtags = Utils.extractHashtags(contentPost);
+      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+
       const newPost = await createPost(contentPost);
       if (newPost) {
-        for (const tag of arrayTags) {
+        for (const tag of updatedTags) {
           await createTag(newPost.uri, tag);
         }
 
         const userProfile = await getProfile();
 
         if (userProfile) {
-          newPost.tags = arrayTags.map((tag) => ({
+          newPost.tags = updatedTags.map((tag) => ({
             tag,
             count: 1,
             from: [

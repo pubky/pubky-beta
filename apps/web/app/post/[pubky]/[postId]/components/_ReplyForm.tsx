@@ -36,16 +36,20 @@ export default function ReplyForm({
   const handleReply = async () => {
     setSendingReply(true);
     const rootUri = post.post.root ? post.post.root : uri;
+
+    const hashtags = Utils.extractHashtags(contentReply);
+    const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+
     const sendReply = await createReply(contentReply, uri, rootUri);
 
-    updatePost();
     if (sendReply) {
-      for (const tag of arrayTags) {
+      for (const tag of updatedTags) {
         await createTag(sendReply.uri, tag);
       }
       setSendingReply(false);
       setContentReply('');
       setArrayTags([]);
+      updatePost();
     }
   };
 
