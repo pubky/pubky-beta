@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Contacts } from '.';
 import { IFollower, IFollowing, IFriend, LoadingContacts } from '@/types';
-import { useClientContext } from '@/contexts/client';
-import { useFilterContext } from '@/contexts/filters';
+import { useClientContext, useFilterContext } from '@/contexts';
 
 export default function Contact({
   contacts,

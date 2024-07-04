@@ -9,7 +9,7 @@ import {
   Input,
   Typography,
 } from '@social/ui-shared';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { IPost } from '@/types';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 

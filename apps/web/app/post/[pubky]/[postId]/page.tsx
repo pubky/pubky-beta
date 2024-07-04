@@ -6,8 +6,7 @@ import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Post as PostComponent } from '@/components';
 import { Utils } from '@social/utils-shared';
 import { IPost, IReply } from '@/types';
-import { useClientContext } from '@/contexts/client';
-import { useAlertContext } from '@/contexts/alerts';
+import { useClientContext, useAlertContext } from '@/contexts';
 import Skeletons from '@/components/Skeletons';
 import { Post } from './components';
 

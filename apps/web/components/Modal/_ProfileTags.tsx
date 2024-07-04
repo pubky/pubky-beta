@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { PostUtil, Modal, SideCard, Button, Icon } from '@social/ui-shared';
 import { ITaggedPost, ITaggedProfile } from '@/types';
 import { Utils } from '@social/utils-shared';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 
 interface ProfileTagsProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTags: boolean;

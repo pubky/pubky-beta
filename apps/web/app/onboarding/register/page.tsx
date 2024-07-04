@@ -12,7 +12,7 @@ import {
   Card,
   Icon,
 } from '@social/ui-shared';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { Onboarding } from '../components';
 

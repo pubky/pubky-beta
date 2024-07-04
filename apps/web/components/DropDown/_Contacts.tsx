@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
-import { useFilterContext } from '@/contexts/filters';
+import { useFilterContext } from '@/contexts';
 
 export default function Contacts() {
   const { contacts, setContacts } = useFilterContext();

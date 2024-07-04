@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
 

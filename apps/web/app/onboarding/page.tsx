@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
 import { ILinkPubky } from '@/types';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 
 export default function Index() {
   const { signUp } = useClientContext();

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { Post, Skeleton } from '@/components';
 import { IPost, IReply } from '@/types';
 import { Typography } from '@social/ui-shared';

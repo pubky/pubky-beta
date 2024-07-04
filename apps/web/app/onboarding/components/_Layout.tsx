@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Content, Header } from '@social/ui-shared';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 
 interface LayoutOnboardingProps {
   children: React.ReactNode;

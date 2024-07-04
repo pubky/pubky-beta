@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import {
   Content,
   Typography,

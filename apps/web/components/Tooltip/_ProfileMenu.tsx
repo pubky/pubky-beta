@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;

@@ -17,8 +17,7 @@ import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import Tooltip from '../Tooltip';
-import { useClientContext } from '@/contexts/client';
-import { useAlertContext } from '@/contexts/alerts';
+import { useClientContext, useAlertContext } from '@/contexts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;

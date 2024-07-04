@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Post, PostsLayout } from '@/components';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { IPost, INewPost } from '@/types';
 import Skeletons from '@/components/Skeletons';

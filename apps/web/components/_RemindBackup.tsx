@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import Modal from './Modal';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 
 const passwordSchema = z.object({

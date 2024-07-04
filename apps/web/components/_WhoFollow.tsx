@@ -2,7 +2,7 @@
 
 import { Content, Icon, SideCard, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { IRecommendedProfiles } from '@/types';
 import Skeletons from './Skeletons';

@@ -1,9 +1,7 @@
 import './global.css';
 
-import { ClientWrapper } from '@/contexts/client';
-import { FilterWrapper } from '@/contexts/filters';
+import { AlertWrapper, ClientWrapper, FilterWrapper } from '@/contexts';
 import { ProtectedRoutes } from '@/components';
-import { AlertWrapper } from '@/contexts/alerts';
 
 export const metadata = {
   title: 'Pubky',

@@ -12,13 +12,12 @@ import EmojiPicker, {
   EmojiStyle,
   Theme,
 } from 'emoji-picker-react';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext, useAlertContext } from '@/contexts';
 import Image from 'next/image';
 import { Modal as ModalComponent } from '.';
 import { Utils } from '@social/utils-shared';
 import { IPost } from '@/types';
 import Post from '../Post';
-import { useAlertContext } from '@/contexts/alerts';
 import LinkPreviewer from '@/components/_LinkPreviewer';
 
 interface CreateRepostProps {

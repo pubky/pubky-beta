@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { Onboarding } from '../components';
 
 export default function Index() {

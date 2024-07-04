@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';

@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { useClientContext } from '@/contexts/client';
-import { useAlertContext } from '@/contexts/alerts';
+import { useClientContext, useAlertContext } from '@/contexts';
 import { IPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';

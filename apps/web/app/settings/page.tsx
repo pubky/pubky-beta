@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from '@social/ui-shared';
 import { Header } from '@/components';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';

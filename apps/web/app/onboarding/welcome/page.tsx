@@ -13,7 +13,7 @@ import {
   List,
 } from '@social/ui-shared';
 import { Onboarding } from '../components';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { Skeleton } from '@/components';
 import { Utils } from '@social/utils-shared';
 

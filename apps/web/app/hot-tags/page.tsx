@@ -13,8 +13,7 @@ import {
 } from '@/components';
 import { HotTags } from './components';
 import { DropDown } from '@/components/DropDown';
-import { useClientContext } from '@/contexts/client';
-import { useFilterContext } from '@/contexts/filters';
+import { useClientContext, useFilterContext } from '@/contexts';
 import { ITaggedPost } from '@/types';
 import Skeletons from '@/components/Skeletons';
 

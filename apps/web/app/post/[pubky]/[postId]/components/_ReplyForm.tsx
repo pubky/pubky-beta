@@ -7,7 +7,7 @@ import EmojiPicker, {
   Theme,
 } from 'emoji-picker-react';
 import { Icon, Button, Post, Input, PostUtil } from '@social/ui-shared';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import { IPost } from '@/types';

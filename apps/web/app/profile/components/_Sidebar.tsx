@@ -13,8 +13,7 @@ import {
   PostUtil,
   Tooltip as TooltipUI,
 } from '@social/ui-shared';
-import { useClientContext } from '@/contexts/client';
-import { useAlertContext } from '@/contexts/alerts';
+import { useClientContext, useAlertContext } from '@/contexts';
 import { Skeleton } from '@/components';
 import { Utils } from '@social/utils-shared';
 import {

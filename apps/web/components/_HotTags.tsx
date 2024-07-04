@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { SideCard, Typography } from '@social/ui-shared';
 // import { DropDown } from '../components/DropDown';
-import { useClientContext } from '@/contexts/client';
+import { useClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';

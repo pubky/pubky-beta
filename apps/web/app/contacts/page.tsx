@@ -5,8 +5,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import { CreatePost, Header } from '@/components';
 import Skeletons from '@/components/Skeletons';
-import { useClientContext } from '@/contexts/client';
-import { useFilterContext } from '@/contexts/filters';
+import { useClientContext, useFilterContext } from '@/contexts';
 import {
   IFollowingResponse,
   IFollowersResponse,

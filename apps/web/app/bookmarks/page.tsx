@@ -12,8 +12,7 @@ import {
   Sidebar,
   WhoFollow,
 } from '@/components/index';
-import { useClientContext } from '@/contexts/client';
-import { useFilterContext } from '@/contexts/filters';
+import { useClientContext, useFilterContext } from '@/contexts';
 import { IPost, INewPost } from '@/types/index';
 import { Filter } from '@/components/Filter/index';
 import Skeletons from '@/components/Skeletons';
