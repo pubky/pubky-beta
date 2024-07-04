@@ -7,13 +7,12 @@ import EmojiPicker, {
   EmojiStyle,
   Theme,
 } from 'emoji-picker-react';
-import { useClientContext } from '../contexts/client';
+import { useClientContext, useAlertContext } from '@/contexts';
 import Image from 'next/image';
-import { INewPost } from '../types';
-import Modal from './Modal';
-import { Utils } from '../utils';
-import { useAlertContext } from '../contexts/alerts';
-import LinkPreviewer from './_LinkPreviewer';
+import { INewPost } from '@/types';
+import Modal from '../Modal';
+import { Utils } from '@social/utils-shared';
+import LinkPreviewer from '../LinkPreview';
 
 export default function CreateQuickPost() {
   const { pubky, getProfile, createPost, setPosts, createTag } =

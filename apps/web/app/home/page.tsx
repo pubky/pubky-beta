@@ -3,12 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 
-import * as Components from '../../components';
-import Skeletons from '../../components/Skeletons';
-import { Filter } from '../../components/Filter';
-import { useClientContext } from '../../contexts/client';
-import { useFilterContext } from '../../contexts/filters';
-import { IPost, INewPost } from '../../types';
+import * as Components from '@/components';
+import Skeletons from '@/components/Skeletons';
+import { Filter } from '@/components/Filter';
+import { useClientContext, useFilterContext } from '@/contexts';
+import { IPost, INewPost } from '@/types';
 
 export default function Index() {
   const { reach, sort } = useFilterContext();

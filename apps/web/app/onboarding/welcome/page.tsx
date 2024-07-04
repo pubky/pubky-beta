@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import {
   Content,
   Typography,
@@ -12,10 +13,9 @@ import {
   List,
 } from '@social/ui-shared';
 import { Onboarding } from '../components';
-import { useClientContext } from '../../../contexts/client';
-import { Utils } from '../../../utils';
-import { Skeleton } from '../../../components';
-import { useRouter } from 'next/navigation';
+import { useClientContext } from '@/contexts';
+import { Skeleton } from '@/components';
+import { Utils } from '@social/utils-shared';
 
 export default function Index() {
   const router = useRouter();

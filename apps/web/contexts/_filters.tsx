@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { Utils } from '../utils';
+import { Utils } from '@social/utils-shared';
 import {
   TContacts,
   TContactsLayout,

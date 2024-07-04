@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
-import { useClientContext } from '../../contexts/client';
-import { emojis, labels } from '../../utils/_statusHelper';
-import { TStatus } from '../../types';
+import { useClientContext } from '@/contexts';
+import { TStatus } from '@/types';
+import { Utils } from '@social/utils-shared';
 
 interface StatusProps {
   status?: TStatus;
@@ -13,6 +13,7 @@ interface StatusProps {
 }
 
 export default function Status({ status, subtitle }: StatusProps) {
+  const { labels, emojis } = Utils.statusHelper;
   const { updateStatus } = useClientContext();
   const [openDropdown, setOpenDropdown] = useState(false);
 

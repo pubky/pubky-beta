@@ -1,7 +1,7 @@
 import { Icon, SideCard } from '@social/ui-shared';
-import { useFilterContext } from '../../contexts/filters';
+import { useFilterContext } from '@/contexts';
 import { useEffect, useState } from 'react';
-import { TSort } from '../../types';
+import { TSort } from '@/types';
 
 export default function Sort() {
   const { sort, setSort } = useFilterContext();

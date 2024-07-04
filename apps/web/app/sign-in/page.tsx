@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useClientContext } from '../../contexts/client';
+import { z } from 'zod';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useClientContext } from '@/contexts';
 import {
   Content,
   Typography,
@@ -12,8 +14,6 @@ import {
   Input,
   Header,
 } from '@social/ui-shared';
-import { z } from 'zod';
-import Image from 'next/image';
 
 interface FormErrors {
   [fieldName: string]: string[];

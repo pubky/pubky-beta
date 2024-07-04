@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
-import { Utils } from '../../../utils';
-import { IFollower, LoadingContacts } from '../../../types';
+import { Utils } from '@social/utils-shared';
+import { IFollower, LoadingContacts } from '@/types';
 
 interface ContactsList {
   index: string;

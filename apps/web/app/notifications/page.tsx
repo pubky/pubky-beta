@@ -1,11 +1,5 @@
 import { Content } from '@social/ui-shared';
-import {
-  CreatePost,
-  Header,
-  HotTags,
-  Sidebar,
-  WhoFollow,
-} from '../../components';
+import { CreatePost, Header, HotTags, Sidebar, WhoFollow } from '@/components';
 import { Notifications } from './components';
 
 export default function Index() {

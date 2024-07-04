@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { z } from 'zod';
+import { useEffect, useState } from 'react';
 import {
   Content,
   Typography,
@@ -10,10 +12,8 @@ import {
   Card,
   Icon,
 } from '@social/ui-shared';
-import { useClientContext } from '../../../contexts/client';
-import { Utils } from '../../../utils';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
+import { useClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
 import { Onboarding } from '../components';
 
 interface FormErrors {

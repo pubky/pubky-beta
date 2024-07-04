@@ -2,15 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
 import { Modal } from '../Modal';
-import Repost from '../_Repost';
-import { useClientContext } from '../../contexts/client';
-import { IPost } from '../../types';
+import Repost from '../Repost';
+import { useClientContext, useAlertContext } from '@/contexts';
+import { IPost } from '@/types';
 import Tooltip from '../Tooltip';
-import { useAlertContext } from '../../contexts/alerts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;

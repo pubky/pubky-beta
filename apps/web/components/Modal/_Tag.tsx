@@ -9,8 +9,8 @@ import {
   Input,
   Typography,
 } from '@social/ui-shared';
-import { useClientContext } from '../../contexts/client';
-import { IPost } from '../../types';
+import { useClientContext } from '@/contexts';
+import { IPost } from '@/types';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {

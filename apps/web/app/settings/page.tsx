@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { z } from 'zod';
+import { useEffect, useRef, useState } from 'react';
 import {
   Content,
   Typography,
@@ -11,13 +13,11 @@ import {
   Icon,
   Tooltip,
 } from '@social/ui-shared';
-import { Header } from '../../components';
-import { useClientContext } from '../../contexts/client';
-import { Utils } from '../../utils';
+import { Header } from '@/components';
+import { useClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import { Modal } from '../../components/Modal';
-import Link from 'next/link';
+import { Modal } from '@/components/Modal';
 
 interface FormErrors {
   [fieldName: string]: string[];

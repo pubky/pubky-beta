@@ -1,19 +1,14 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
+import { CreatePost, Header, Post as PostComponent } from '@/components';
+import { Utils } from '@social/utils-shared';
+import { IPost, IReply } from '@/types';
+import { useClientContext, useAlertContext } from '@/contexts';
+import Skeletons from '@/components/Skeletons';
 import { Post } from './components';
-import {
-  CreatePost,
-  Header,
-  Post as PostComponent,
-} from '../../../../components';
-import { Utils } from '../../../../utils';
-import { IPost, IReply } from '../../../../types';
-import { useClientContext } from '../../../../contexts/client';
-import Link from 'next/link';
-import { useAlertContext } from '../../../../contexts/alerts';
-import Skeletons from '../../../../components/Skeletons';
 
 export default function Index({
   params,
