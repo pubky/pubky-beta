@@ -5,7 +5,7 @@ import { useClientContext } from '@/contexts';
 import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
-import Modal from './Modal';
+import Modal from '../Modal';
 
 export default function ProtectedRoutes({
   children,

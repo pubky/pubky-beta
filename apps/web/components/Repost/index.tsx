@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Modal } from './Modal';
+import { Modal } from '../Modal';
 import { IPost } from '@/types';
 
 interface RepostProps {

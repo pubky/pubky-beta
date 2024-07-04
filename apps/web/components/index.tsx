@@ -1,18 +1,18 @@
-import ActiveFriends from './_ActiveFriends';
-import CreatePost from './_CreatePost';
-import CreateQuickPost from './_CreateQuickPost';
+import ActiveFriends from './AtiveFriends';
+import CreatePost from './CreatePost';
+import CreateQuickPost from './CreateQuickPost';
 import DropDown from './DropDown/_DropDown';
-import Header from './_Header';
-import HotTags from './_HotTags';
-import LinkPreviewer from './_LinkPreviewer';
+import Header from './Header';
+import HotTags from './HotTags';
+import LinkPreviewer from './LinkPreview';
 import Post from './Post';
-import PostsLayout from './_PostsLayout';
-import Repost from './_Repost';
-import Sidebar from './_SideBar';
-import WhoFollow from './_WhoFollow';
+import PostsLayout from './PostsLayout';
+import Repost from './Repost';
+import Sidebar from './Sidebar';
+import WhoFollow from './WhoFollow';
 import Skeleton from './Skeletons';
-import ProtectedRoutes from './_ProtectedRoutes';
-import RemindBackup from './_RemindBackup';
+import ProtectedRoutes from './ProtectedRoutes';
+import RemindBackup from './RemindBackup';
 
 export {
   ActiveFriends,

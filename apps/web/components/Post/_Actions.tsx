@@ -6,7 +6,7 @@ import { Utils } from '@social/utils-shared';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
 import { Modal } from '../Modal';
-import Repost from '../_Repost';
+import Repost from '../Repost';
 import { useClientContext, useAlertContext } from '@/contexts';
 import { IPost } from '@/types';
 import Tooltip from '../Tooltip';

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { IRecommendedProfiles } from '@/types';
-import Skeletons from './Skeletons';
+import Skeletons from '../Skeletons';
 
 export default function WhoFollow() {
   const { pubky, getRecommendedProfiles, follow, unfollow, listFollowing } =

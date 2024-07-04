@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { Modal as ModalComponent } from '.';
 import { INewPost } from '@/types';
 import { Utils } from '@social/utils-shared';
-import LinkPreviewer from '../_LinkPreviewer';
+import LinkPreviewer from '../LinkPreview';
 
 interface CreatePostProps {
   showModalPost: boolean;

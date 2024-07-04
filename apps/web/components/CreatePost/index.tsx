@@ -2,7 +2,7 @@
 
 import { Button } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
-import { Modal } from './Modal';
+import { Modal } from '../Modal';
 
 export default function CreatePost() {
   const [showModalPost, setShowModalPost] = useState(false);

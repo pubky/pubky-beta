@@ -7,7 +7,7 @@ import { useClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
-import Skeletons from './Skeletons';
+import Skeletons from '../Skeletons';
 
 export default function HotTags() {
   const router = useRouter();
