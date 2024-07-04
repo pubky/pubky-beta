@@ -191,7 +191,7 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
               </Typography.Label> */}
               <div className="mb-2 justify-start items-start">
                 {arrayTags.length > 0 ? (
-                  <div className="hidden lg:block justify-start items-start">
+                  <div className="justify-start items-start">
                     {arrayTags.map((tag, index) => (
                       <PostUtil.Tag
                         key={index}

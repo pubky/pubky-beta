@@ -31,7 +31,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       const results = await getNotifications();
-      console.log("results", results);
       if (results) setNotifications(results.feed);
     } catch (err) {
       console.error(err);
@@ -42,7 +41,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
+    const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

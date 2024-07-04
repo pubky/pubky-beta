@@ -142,6 +142,7 @@ export default function Index() {
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6 mt-[10px]">
+          <Profile.NotificationsProfile />
           {Object.keys(posts).map((key) => {
             const post = posts[key];
             const parentUri = post?.post?.parent;
