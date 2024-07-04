@@ -10,9 +10,10 @@ import {
   Icon,
   Button,
   Menu,
+  PostUtil,
 } from '@social/ui-shared';
 import { Modal } from '../Modal';
-import { useClientContext } from '@/contexts';
+import { useClientContext, useNotificationsContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 
 interface HeaderProps {
@@ -24,6 +25,7 @@ export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
   const { pubky, getProfile, isLoggedIn, setSearchTags, searchTags } =
     useClientContext();
+  const { notifications } = useNotificationsContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
@@ -188,6 +190,20 @@ export default function Header({ title, className }: HeaderProps) {
             active={title === 'Contacts'}
             icon={<Icon.UsersLeft size="24" />}
           />
+        </Link>
+        <Link href="/notifications" className="relative">
+          <Button.Action
+            variant="menu"
+            label="Notifications"
+            active={title === 'Notifications'}
+            icon={<Icon.Bell size="24" />}
+          />
+          {notifications && (
+            <PostUtil.Counter
+              className="absolute text-center top-4 -right-2 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
+              counter={notifications.length}
+            />
+          )}
         </Link>
         <Link href="/bookmarks">
           <Button.Action
