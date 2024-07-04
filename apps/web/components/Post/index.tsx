@@ -106,7 +106,7 @@ export default function Post({
               ) : (
                 <>
                   <PostUI.RepostCard
-                    className="relative z-10"
+                    className="relative z-10 hover:z-50"
                     onClick={(event) => event.stopPropagation()}
                   >
                     <Icon.Repost size="16" />
