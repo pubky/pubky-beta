@@ -48,23 +48,26 @@ export default function CreateQuickPost() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (content: string) => {
     if (sendingPost) {
       return;
     }
     try {
       setSendingPost(true);
 
-      const newPost = await createPost(contentPost);
+      const hashtags = Utils.extractHashtags(content);
+      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+
+      const newPost = await createPost(content);
       if (newPost) {
-        for (const tag of arrayTags) {
+        for (const tag of updatedTags) {
           await createTag(newPost.uri, tag);
         }
 
         const userProfile = await getProfile();
 
         if (userProfile) {
-          newPost.tags = arrayTags.map((tag) => ({
+          newPost.tags = updatedTags.map((tag) => ({
             tag,
             count: 1,
             from: [
@@ -133,6 +136,25 @@ export default function CreateQuickPost() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [wrapperRefEmojis]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === 'Enter' &&
+        isValidContent
+      ) {
+        handleSubmit(contentPost);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isValidContent, contentPost]);
 
   const handleEmojiClick = (emojiObject: EmojiClickData) => {
     const textBeforeCursor = contentPost.slice(0, cursorPosition);
@@ -247,7 +269,7 @@ export default function CreateQuickPost() {
               loading={sendingPost}
               onClick={
                 isValidContent && !sendingPost
-                  ? () => handleSubmit()
+                  ? () => handleSubmit(contentPost)
                   : undefined
               }
             >

@@ -66,16 +66,18 @@ export default function Repost({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
 
-  const handleSubmitRepost = async () => {
+  const handleSubmitRepost = async (content: string) => {
     if (sendingRepost) {
       return;
     }
     try {
       setSendingRepost(true);
+      const hashtags = Utils.extractHashtags(content);
+      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newRepost = await createRepost(post.uri, contentRepost);
+      const newRepost = await createRepost(post.uri, content);
       if (newRepost) {
-        for (const tag of arrayTags) {
+        for (const tag of updatedTags) {
           await createTag(newRepost.uri, tag);
         }
         setContent('Repost created!');
@@ -109,6 +111,25 @@ export default function Repost({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [wrapperRefEmojis]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === 'Enter' &&
+        isValidContent
+      ) {
+        handleSubmitRepost(contentRepost);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isValidContent, contentRepost]);
 
   const handleEmojiClick = (emojiObject: EmojiClickData) => {
     const textBeforeCursor = contentRepost.slice(0, cursorPosition);
@@ -244,7 +265,7 @@ export default function Repost({
           onClick={
             !sendingRepost
               ? isValidContent
-                ? () => handleSubmitRepost()
+                ? () => handleSubmitRepost(contentRepost)
                 : () => {
                     setSendingRepost(true);
                     handleRepost();

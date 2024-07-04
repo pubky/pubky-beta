@@ -60,6 +60,7 @@ export interface TClientContext {
   listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
   listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
   getMostFollowed: () => Promise<IMostFollowed[] | null>;
+  getNotifications: () => Promise<NotificationsResponse | null>;
   getRecommendedProfiles: (
     pk: string
   ) => Promise<IRecommendedProfiles[] | null>;
@@ -83,6 +84,37 @@ export interface TClientContext {
   setSearchTags: (value: string[]) => Promise<IPost | null>;
   follow: (pk: string) => Promise<boolean>;
   unfollow: (pk: string) => Promise<boolean>;
+}
+
+export interface NotificationsResponse {
+  feed: INotification[];
+  newest: string;
+  oldest: string;
+}
+
+interface BodyNotification {
+  followedBy?: string;
+  unfollowedBy?: string;
+  taggedBy?: string;
+  tag?: string;
+  repliedBy?: string;
+  parentPostUri?: string;
+  postUri?: string;
+  replyUri?: string;
+  repostedBy?: string;
+  embedUri?: string;
+  repostUri?: string;
+  deleteType?: IReply;
+  deletedBy?: string;
+  deletedUri?: string;
+  linkedUri?: string;
+}
+
+export interface INotification {
+  body: BodyNotification;
+  id: string;
+  timestamp: number;
+  type: string;
 }
 
 interface Seed {
