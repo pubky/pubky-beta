@@ -191,20 +191,6 @@ export default function Header({ title, className }: HeaderProps) {
             icon={<Icon.UsersLeft size="24" />}
           />
         </Link>
-        <Link href="/notifications" className="relative">
-          <Button.Action
-            variant="menu"
-            label="Notifications"
-            active={title === 'Notifications'}
-            icon={<Icon.Bell size="24" />}
-          />
-          {notifications && (
-            <PostUtil.Counter
-              className="absolute text-center top-4 -right-2 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
-              counter={notifications.length}
-            />
-          )}
-        </Link>
         <Link href="/bookmarks">
           <Button.Action
             variant="menu"
@@ -222,12 +208,12 @@ export default function Header({ title, className }: HeaderProps) {
           />
         </Link>
         <Link href="/profile" className="w-[48px] relative">
-          {/* {notifications && (
-        <PostUtil.Counter
-          className="absolute text-center top-6 right-6 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
-          counter={notifications}
-        />
-      )} */}
+          {notifications.length !== 0 && (
+            <PostUtil.Counter
+              className="absolute text-center top-4 -right-2 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
+              counter={notifications.length}
+            />
+          )}
           <Image
             width={48}
             height={48}
