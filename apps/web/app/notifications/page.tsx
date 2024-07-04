@@ -1,7 +1,6 @@
 'use client';
 
-import { Content } from '@social/ui-shared';
-
+import { Content, Typography } from '@social/ui-shared';
 import { useNotificationsContext } from '@/contexts';
 import {
   CreatePost,
@@ -12,17 +11,27 @@ import {
   WhoFollow,
 } from '@/components';
 import { Notifications } from './components';
+import { useState, useEffect } from 'react';
 
 export default function Index() {
   const { notifications, loading } = useNotificationsContext();
+  const [loadingNotifications, setLoadingNotifications] = useState(true);
+
+  useEffect(() => {
+    if (!loading) setLoadingNotifications(loading);
+  }, [loading]);
 
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Notifications" />
       <Content.Grid className="flex w-full justify-between items-start gap-12">
         <Notifications.Root>
-          {loading ? (
+          {loadingNotifications ? (
             <Skeleton.Simple />
+          ) : notifications.length === 0 ? (
+            <Typography.Body variant="small" className="text-opacity-50">
+              No notifications yet
+            </Typography.Body>
           ) : (
             notifications.map((notification, index) => (
               <Notifications.Notification

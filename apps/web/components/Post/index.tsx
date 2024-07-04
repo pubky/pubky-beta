@@ -106,7 +106,7 @@ export default function Post({
               ) : (
                 <>
                   <PostUI.RepostCard
-                    className="relative z-50"
+                    className="relative"
                     onClick={(event) => event.stopPropagation()}
                   >
                     <Icon.Repost size="16" />
@@ -116,7 +116,7 @@ export default function Post({
                       setShowTooltip={setShowTooltipProfile}
                     >
                       <PostUI.Username
-                        className="text-[13px] text-opacity-80 cursor-pointer hover:underline hover:decoration-solid z-10"
+                        className="text-[13px] text-opacity-80 cursor-pointer hover:underline hover:decoration-solid"
                         onClick={() =>
                           router.push(`/profile/${post?.author.id}`)
                         }

@@ -136,7 +136,7 @@ export default function ProfileTag({
             <div>
               <div className="mt-2 justify-start items-start">
                 {arrayTags.length > 0 ? (
-                  <div className="hidden lg:block justify-start items-start">
+                  <div className="justify-start items-start">
                     {arrayTags.map((tag, index) => (
                       <PostUtil.Tag
                         key={index}
