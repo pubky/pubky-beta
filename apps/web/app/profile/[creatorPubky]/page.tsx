@@ -63,11 +63,16 @@ export default function Index({
     }
   }
 
-  async function fetchPosts(pointer: string) {
+  async function fetchPosts(
+    pointer: string,
+    cancellationToken: { cancelled: boolean }
+  ) {
     try {
       setLoading(true);
       if (!creatorPubky) return;
       const results = await listUserFeed(creatorPubky, pointer);
+
+      if (cancellationToken.cancelled) return;
 
       if (results && results.feed) {
         const newPostsTemp = await Promise.all(
@@ -113,7 +118,11 @@ export default function Index({
     const observer = new IntersectionObserver(
       async (entries) => {
         if (entries[0].isIntersecting && cursor) {
-          fetchPosts(cursor);
+          const cancellationToken = { cancelled: false };
+          fetchPosts(cursor, cancellationToken);
+          return () => {
+            cancellationToken.cancelled = true;
+          };
         }
       },
       { threshold: 1 }
@@ -128,7 +137,11 @@ export default function Index({
   useEffect(() => {
     setPosts({} as INewPost);
     fetchProfile();
-    fetchPosts(cursor);
+    const cancellationToken = { cancelled: false };
+    fetchPosts('', cancellationToken);
+    return () => {
+      cancellationToken.cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

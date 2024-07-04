@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface MainProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -6,10 +8,37 @@ interface MainProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Main = ({ children, ...rest }: MainProps) => {
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState<'top' | 'bottom'>('top');
+
+  useEffect(() => {
+    const tooltipElement = tooltipRef.current;
+    if (tooltipElement) {
+      const rect = tooltipElement.getBoundingClientRect();
+      if (rect.top < 0) {
+        setPosition('bottom');
+      } else {
+        setPosition('top');
+      }
+    }
+  }, []);
+
   const baseCSS =
-    'w-full absolute bottom-full left-1/2 transform -translate-x-1/2 translate-y-[10px] bg-gradient-to-b from-[#07040a] to-[#1b1820] text-white px-8 py-6 rounded-[20px] shadow-md z-50';
+    'w-full absolute left-1/2 transform -translate-x-1/2 bg-gradient-to-b from-[#07040a] to-[#1b1820] text-white px-8 py-6 rounded-[20px] shadow-md z-50';
+
+  const topPositionCSS = 'bottom-full translate-y-[10px]';
+  const bottomPositionCSS = 'top-full -translate-y-[10px]';
+
   return (
-    <div {...rest} className={twMerge(baseCSS, rest.className)}>
+    <div
+      ref={tooltipRef}
+      {...rest}
+      className={twMerge(
+        baseCSS,
+        position === 'top' ? topPositionCSS : bottomPositionCSS,
+        rest.className
+      )}
+    >
       {children}
     </div>
   );

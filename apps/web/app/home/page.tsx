@@ -31,10 +31,15 @@ export default function Index() {
     }
   };
 
-  const fetchData = async (pointer: string) => {
+  const fetchData = async (
+    pointer: string,
+    cancellationToken: { cancelled: boolean }
+  ) => {
     setLoading(true);
 
     const results = await listGlobalPosts(pointer, reach, sort);
+
+    if (cancellationToken.cancelled) return;
 
     if (results && results.feed) {
       const newPostsTemp = await Promise.all(
@@ -67,7 +72,11 @@ export default function Index() {
     const observer = new IntersectionObserver(
       async (entries) => {
         if (entries[0].isIntersecting && cursor) {
-          fetchData(cursor);
+          const cancellationToken = { cancelled: false };
+          fetchData(cursor, cancellationToken);
+          return () => {
+            cancellationToken.cancelled = true;
+          };
         }
       },
       { threshold: 0 }
@@ -82,7 +91,11 @@ export default function Index() {
   useEffect(() => {
     setPosts({} as INewPost);
     setCursor('');
-    fetchData('');
+    const cancellationToken = { cancelled: false };
+    fetchData('', cancellationToken);
+    return () => {
+      cancellationToken.cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reach, sort]);
 

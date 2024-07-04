@@ -91,6 +91,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     try {
       const result = await follow(post?.author?.id);
       setFollowed(result);
+      setShowMenu(false);
     } catch (error) {
       console.log(error);
     } finally {
@@ -105,6 +106,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     try {
       const result = await unfollow(post?.author?.id);
       setFollowed(!result);
+      setShowMenu(false);
     } catch (error) {
       console.log(error);
     } finally {
@@ -114,6 +116,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
 
   const handleAddBookmark = async (postId: string, uri: string) => {
     await createBookmark(postId, uri);
+    setShowMenu(false);
   };
 
   const handleDeleteBookmark = async (
@@ -122,6 +125,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     bookmarkId: string
   ) => {
     await deleteBookmark(postId, postUri, bookmarkId);
+    setShowMenu(false);
   };
 
   const handleDeletePost = async () => {
@@ -133,6 +137,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       setContent('Something wrong. Try again', 'warning');
       setShow(true);
     }
+    setShowMenu(false);
   };
 
   const renderFollowButton = () => {
@@ -172,7 +177,10 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           {renderFollowButton()}
           {post?.author?.id === pubky && (
             <Tooltip.Item
-              onClick={() => router.push('/settings')}
+              onClick={() => {
+                router.push('/settings');
+                setShowMenu(false);
+              }}
               icon={<Icon.GearSix size="20" />}
             >
               Edit profile
@@ -183,6 +191,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               copyToClipboard(`pk:${post.author.id}`);
               setCopiedPubky(true);
               setTimeout(() => setCopiedPubky(false), 1000);
+              setShowMenu(false);
             }}
             icon={
               copiedPubky ? (
@@ -201,6 +210,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               );
               setCopiedLinkPost(true);
               setTimeout(() => setCopiedLinkPost(false), 1000);
+              setShowMenu(false);
             }}
             icon={
               copiedLinkPost ? (
@@ -217,6 +227,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               copyToClipboard(post.post.content);
               setCopiedTextPost(true);
               setTimeout(() => setCopiedTextPost(false), 1000);
+              setShowMenu(false);
             }}
             icon={
               copiedTextPost ? (

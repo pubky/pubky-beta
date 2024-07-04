@@ -33,19 +33,22 @@ export default function ReplyForm({
   const [sendingReply, setSendingReply] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
 
-  const handleReply = async () => {
+  const handleReply = async (content: string) => {
     setSendingReply(true);
     const rootUri = post.post.root ? post.post.root : uri;
-    const sendReply = await createReply(contentReply, uri, rootUri);
+    const sendReply = await createReply(content, uri, rootUri);
 
-    updatePost();
+    const hashtags = Utils.extractHashtags(content);
+    const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+
     if (sendReply) {
-      for (const tag of arrayTags) {
+      for (const tag of updatedTags) {
         await createTag(sendReply.uri, tag);
       }
       setSendingReply(false);
       setContentReply('');
       setArrayTags([]);
+      updatePost();
     }
   };
 
@@ -74,6 +77,25 @@ export default function ReplyForm({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [wrapperRefEmojis]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === 'Enter' &&
+        isValidContent
+      ) {
+        handleReply(contentReply);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isValidContent, contentReply]);
 
   const handleEmojiClick = (emojiObject: EmojiClickData) => {
     const textBeforeCursor = contentReply.slice(0, cursorPosition);
@@ -154,7 +176,7 @@ export default function ReplyForm({
               loading={sendingReply}
               onClick={
                 isValidContent && !sendingReply
-                  ? () => handleReply()
+                  ? () => handleReply(contentReply)
                   : undefined
               }
             >

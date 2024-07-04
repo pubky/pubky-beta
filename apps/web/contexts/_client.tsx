@@ -604,6 +604,28 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const getNotifications = async () => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Get Notifications: not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.notifications.get(pk);
+
+      if (!result.ok)
+        throw new Error(
+          `GET notifications:${pk} failed: ${result.error.message}`
+        );
+
+      return result.value;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const getPost = async (uri: string): Promise<IPost | null> => {
     try {
       const pk = await isLoggedIn();
@@ -924,6 +946,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         createRepost,
         createReply,
         getReplies,
+        getNotifications,
         createBookmark,
         deleteBookmark,
         createTag,
