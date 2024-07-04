@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon, Tooltip, Post, Typography } from '@social/ui-shared';
 import { ITaggedPost } from '../../types';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 
 interface TagProps {
   tags: ITaggedPost;
@@ -66,7 +66,7 @@ export default function Tag({
                 event.stopPropagation();
                 router.push(`/search?tags=${tags.tag}`);
               }}
-              className="p-2 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 cursor-pointer flex inline-flex items-center justify-center gap-1"
+              className="p-2 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 cursor-pointer inline-flex items-center justify-center gap-1"
             >
               <div>
                 <Icon.MagnifyingGlass size="16" />

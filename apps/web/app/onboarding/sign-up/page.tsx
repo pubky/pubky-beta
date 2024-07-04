@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import Link from 'next/link';
 import { Modal } from '../../../components/Modal';
-import { Utils } from '../../../utils';
+import { Utils } from '@social/utils-shared';
 
 interface FormErrors {
   [fieldName: string]: string[];

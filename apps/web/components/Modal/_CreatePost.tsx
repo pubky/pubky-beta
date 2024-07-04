@@ -9,7 +9,7 @@ import { useClientContext } from '../../contexts/client';
 import Image from 'next/image';
 import { Modal as ModalComponent } from '.';
 import { INewPost } from '../../types';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 import { useAlertContext } from '../../contexts/alerts';
 import LinkPreviewer from '../_LinkPreviewer';
 

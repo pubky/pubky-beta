@@ -30,7 +30,7 @@ import {
 } from '../types';
 
 import Client from '@pubky/sdk';
-import { Utils } from '../utils/';
+import { Utils } from '@social/utils-shared';
 
 const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
 const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY || '';

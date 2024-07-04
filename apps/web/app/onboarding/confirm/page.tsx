@@ -8,7 +8,7 @@ import { Onboarding } from '../components';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Modal } from '../../../components/Modal';
-import { Utils } from '../../../utils';
+import { Utils } from '@social/utils-shared';
 
 const passwordSchema = z.object({
   password: z

@@ -11,7 +11,7 @@ import { useClientContext } from '../contexts/client';
 import Image from 'next/image';
 import { INewPost } from '../types';
 import Modal from './Modal';
-import { Utils } from '../utils';
+import { Utils } from '@social/utils-shared';
 import { useAlertContext } from '../contexts/alerts';
 import LinkPreviewer from './_LinkPreviewer';
 

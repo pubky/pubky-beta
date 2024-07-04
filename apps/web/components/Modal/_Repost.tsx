@@ -15,7 +15,7 @@ import EmojiPicker, {
 import { useClientContext } from '../../contexts/client';
 import Image from 'next/image';
 import { Modal as ModalComponent } from '.';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 import { IPost } from '../../types';
 import Post from '../Post';
 import { useAlertContext } from '../../contexts/alerts';

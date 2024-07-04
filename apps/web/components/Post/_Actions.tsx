@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
 import { Modal } from '../Modal';

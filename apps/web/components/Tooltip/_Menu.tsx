@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useClientContext } from '../../contexts/client';
 import { useAlertContext } from '../../contexts/alerts';
 import { IPost } from '../../types';
-import { Utils } from '../../../web/utils';
+import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
 
 interface TooltipMenuProps {

@@ -15,7 +15,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useClientContext } from '../../../contexts/client';
 import { useAlertContext } from '../../../contexts/alerts';
 import { Skeleton } from '../../../components';
-import { Utils } from '../../../utils';
+import { Utils } from '@social/utils-shared';
 import {
   IFollowingResponse,
   IFollowersResponse,

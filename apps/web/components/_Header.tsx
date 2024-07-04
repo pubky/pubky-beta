@@ -13,7 +13,7 @@ import {
 } from '@social/ui-shared';
 import { Modal } from './Modal';
 import { useClientContext } from '../contexts/client';
-import { Utils } from '../utils';
+import { Utils } from '@social/utils-shared';
 
 interface HeaderProps {
   title?: React.ReactNode;

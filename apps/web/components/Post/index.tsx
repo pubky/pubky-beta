@@ -14,7 +14,7 @@ import Actions from './_Actions';
 import Header from './_Header';
 import Content from './_Content';
 import { useRouter } from 'next/navigation';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import Tooltip from '../Tooltip';
 import { useClientContext } from '../../contexts/client';

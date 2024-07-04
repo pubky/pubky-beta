@@ -6,7 +6,7 @@ import { SideCard, Typography } from '@social/ui-shared';
 import { useClientContext } from '../contexts/client';
 import { useEffect, useState } from 'react';
 import { ITaggedPost } from '../types';
-import { Utils } from '../utils';
+import { Utils } from '@social/utils-shared';
 import Skeletons from './Skeletons';
 
 export default function HotTags() {

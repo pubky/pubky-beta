@@ -8,7 +8,7 @@ import {
   Header,
   Post as PostComponent,
 } from '../../../../components';
-import { Utils } from '../../../../utils';
+import { Utils } from '@social/utils-shared';
 import { IPost, IReply } from '../../../../types';
 import { useClientContext } from '../../../../contexts/client';
 import Link from 'next/link';

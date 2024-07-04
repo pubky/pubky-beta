@@ -9,7 +9,7 @@ import EmojiPicker, {
 import { Icon, Button, Post, Input, PostUtil } from '@social/ui-shared';
 import { useClientContext } from '../../../../../contexts/client';
 import Modal from '../../../../../components/Modal';
-import { Utils } from '../../../../../utils';
+import { Utils } from '@social/utils-shared';
 import { IPost } from '../../../../../types';
 import LinkPreviewer from '../../../../../components/_LinkPreviewer';
 

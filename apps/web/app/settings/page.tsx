@@ -13,7 +13,7 @@ import {
 } from '@social/ui-shared';
 import { Header } from '../../components';
 import { useClientContext } from '../../contexts/client';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { Modal } from '../../components/Modal';

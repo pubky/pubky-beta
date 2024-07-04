@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { PostUtil, Modal, SideCard, Button, Icon } from '@social/ui-shared';
 import { ITaggedPost, ITaggedProfile } from '../../types';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 import { useClientContext } from '../../contexts/client';
 
 interface ProfileTagsProps extends React.HTMLAttributes<HTMLDivElement> {
