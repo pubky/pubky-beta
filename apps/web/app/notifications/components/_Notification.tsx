@@ -32,11 +32,11 @@ const notificationType = {
     icon: <Icon.Tag size="16" />,
     text: 'tagged your profile as',
   },
-  mention: {
-    type: 'mention',
-    icon: <Icon.Eye size="16" />,
-    text: 'mentioned you in',
-  },
+  //mention: {
+  //  type: 'mention',
+  //icon: <Icon.Eye size="16" />,
+  // text: 'mentioned you in',
+  //},
   reply: {
     type: 'reply',
     icon: <Icon.ChatCircleText size="16" />,
@@ -47,11 +47,11 @@ const notificationType = {
     icon: <Icon.Repost size="16" />,
     text: 'reposted your post',
   },
-  post_deleted: {
-    type: 'post_deleted',
-    icon: <Icon.Trash size="16" />,
-    text: 'deleted his post',
-  },
+  //post_deleted: {
+  //  type: 'post_deleted',
+  //  icon: <Icon.Trash size="16" />,
+  //  text: 'deleted his post',
+  //},
 };
 
 type NotificationTypeKey = keyof typeof notificationType;
