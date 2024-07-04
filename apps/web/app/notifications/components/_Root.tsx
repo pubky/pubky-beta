@@ -9,13 +9,10 @@ export default function Root({ children, ...rest }: RootProps) {
   return (
     <div
       {...rest}
-      className={twMerge(
-        'w-[2000px] flex-col gap-6 inline-flex',
-        rest.className
-      )}
+      className={twMerge('w-full flex-col gap-6 inline-flex', rest.className)}
     >
       <div className="flex-col gap-6 flex">
-        <Typography.H2>New Notifications</Typography.H2>
+        <Typography.H2>Notifications</Typography.H2>
         <div className="flex-col flex">{children}</div>
       </div>
     </div>

@@ -1,41 +1,258 @@
+import { useState, useEffect } from 'react';
+import { Utils } from '@social/utils-shared';
 import Image from 'next/image';
 import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
+import { useClientContext } from '@/contexts';
+import { INotification, IUserProfile } from '@/types';
+import Link from 'next/link';
 
-export default function Notification() {
+const notificationType = {
+  follow: {
+    type: 'follow',
+    icon: <Icon.UserPlus size="16" />,
+    text: 'followed you',
+  },
+  new_friend: {
+    type: 'new_friend',
+    icon: <Icon.UsersLeft size="16" />,
+    text: 'is your friend now',
+  },
+  lost_friend: {
+    type: 'lost_friend',
+    icon: <Icon.UserMinus size="16" />,
+    text: 'is not your friend anymore',
+  },
+  tag_post: {
+    type: 'tag_post',
+    icon: <Icon.Tag size="16" />,
+    text: 'tagged your post as',
+  },
+  tag_profile: {
+    type: 'tag_profile',
+    icon: <Icon.Tag size="16" />,
+    text: 'tagged your profile as',
+  },
+  mention: {
+    type: 'mention',
+    icon: <Icon.Eye size="16" />,
+    text: 'mentioned you in',
+  },
+  reply: {
+    type: 'reply',
+    icon: <Icon.ChatCircleText size="16" />,
+    text: 'replied your post',
+  },
+  repost: {
+    type: 'repost',
+    icon: <Icon.Repost size="16" />,
+    text: 'reposted your post',
+  },
+  post_deleted: {
+    type: 'post_deleted',
+    icon: <Icon.Trash size="16" />,
+    text: 'deleted his post',
+  },
+};
+
+type NotificationTypeKey = keyof typeof notificationType;
+
+function formatUri(uri: string): string {
+  const uriParts = uri.split('/');
+  if (uriParts.length === 4) {
+    const userId = uriParts[0].replace('pubky:', '');
+    const postId = uriParts[3];
+    return `/post/${userId}/${postId}`;
+  }
+  return '';
+}
+
+export default function Notification({
+  notification,
+}: {
+  notification: INotification;
+}) {
+  const { getUser } = useClientContext();
+  const [user, setUser] = useState<IUserProfile>();
+
+  async function fetchProfile(userId: string) {
+    try {
+      const userProfile = await getUser(userId);
+      if (userProfile) {
+        setUser(userProfile);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    let userId: string | undefined;
+    if (
+      notification.type === notificationType.follow.type ||
+      notification.type === notificationType.new_friend.type ||
+      notification.type === notificationType.lost_friend.type
+    ) {
+      userId = notification.body.followedBy || notification.body.unfollowedBy;
+    } else if (
+      notification.type === notificationType.tag_profile.type ||
+      notification.type === notificationType.tag_post.type
+    ) {
+      userId = notification.body.taggedBy;
+    } else if (notification.type === notificationType.reply.type) {
+      userId = notification.body.repliedBy;
+    } else if (notification.type === notificationType.repost.type) {
+      userId = notification.body.repostedBy;
+    }
+
+    if (userId) {
+      fetchProfile(userId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notification, getUser]);
+
+  const currentNotificationType =
+    notificationType[notification.type as NotificationTypeKey];
+
+  if (!currentNotificationType) {
+    return null;
+  }
+
+  const userId =
+    notification.body.followedBy ||
+    notification.body.unfollowedBy ||
+    notification.body.taggedBy ||
+    notification.body.repliedBy ||
+    notification.body.repostedBy;
+
+  const postLink =
+    notification.type === notificationType.tag_post.type &&
+    notification.body.postUri
+      ? formatUri(notification.body.postUri)
+      : '';
+
+  const replyLink =
+    notification.type === notificationType.reply.type &&
+    notification.body.replyUri
+      ? formatUri(notification.body.replyUri)
+      : '';
+
+  const parentPostReplyLink =
+    notification.type === notificationType.reply.type &&
+    notification.body.parentPostUri
+      ? formatUri(notification.body.parentPostUri)
+      : '';
+
+  const repostLink =
+    notification.type === notificationType.repost.type &&
+    notification.body.repostUri
+      ? formatUri(notification.body.repostUri)
+      : '';
+
+  const embedLink =
+    notification.type === notificationType.repost.type &&
+    notification.body.embedUri
+      ? formatUri(notification.body.embedUri)
+      : '';
+
   return (
-    <div className="p-3 border-t border-white border-opacity-10 justify-between items-start flex flex-row">
+    <div className="p-3 border-b border-white border-opacity-10 justify-between items-start flex flex-row">
       <div className="flex gap-4 flex-col sm:flex-row">
-        <div className="flex gap-4 flex-row">
-          <Button.Action
-            size="small"
-            variant="custom"
-            icon={<Icon.Tag />}
-            disabled
-          />
-          <Image
-            width={32}
-            height={32}
-            className="rounded-full"
-            alt="user-pic"
-            src={'/images/Userpic.png'}
-          />
+        <Button.Action
+          size="small"
+          variant="custom"
+          icon={currentNotificationType.icon}
+          disabled
+        />
+        <div className="flex gap-2 items-center">
+          {userId && (
+            <Link
+              href={`/profile/${userId}`}
+              className="flex gap-2 items-center"
+            >
+              {user && (
+                <Image
+                  width={32}
+                  height={32}
+                  className="w-[32px] h-[32px] rounded-full"
+                  alt="user-pic"
+                  src={user.profile.image || '/images/Userpic.png'}
+                />
+              )}
+              <Typography.Body variant="medium-bold">
+                {user ? Utils.minifyText(user.profile.name, 40) : 'Loading...'}
+              </Typography.Body>
+            </Link>
+          )}
+          <Typography.Body variant="medium-bold" className="text-opacity-50">
+            {currentNotificationType.text}
+          </Typography.Body>
+          {(notification.type === notificationType.tag_profile.type ||
+            notification.type === notificationType.tag_post.type) && (
+            <PostUtil.Tag
+              className="hidden sm:block"
+              clicked={false}
+              color="fuchsia"
+            >
+              {notification.body.tag}
+            </PostUtil.Tag>
+          )}
+          {postLink && (
+            <Link href={postLink}>
+              <Typography.Body
+                variant="small"
+                className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+              >
+                View post
+              </Typography.Body>
+            </Link>
+          )}
+          {replyLink && parentPostReplyLink && (
+            <>
+              <Link href={replyLink}>
+                <Typography.Body
+                  variant="small"
+                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                >
+                  View Reply
+                </Typography.Body>
+              </Link>
+              <Typography.Body variant="small">{' - '}</Typography.Body>
+              <Link href={parentPostReplyLink}>
+                <Typography.Body
+                  variant="small"
+                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                >
+                  View Post
+                </Typography.Body>
+              </Link>
+            </>
+          )}
+          {repostLink && embedLink && (
+            <>
+              <Link href={repostLink}>
+                <Typography.Body
+                  variant="small"
+                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                >
+                  View Repost
+                </Typography.Body>
+              </Link>
+              <Typography.Body variant="small">{' - '}</Typography.Body>
+              <Link href={embedLink}>
+                <Typography.Body
+                  variant="small"
+                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                >
+                  View Post
+                </Typography.Body>
+              </Link>
+            </>
+          )}
         </div>
-        <Typography.Body variant="medium-bold">John tagged</Typography.Body>
-        <Typography.Body variant="medium-bold" className="text-opacity-50">
-          {' '}
-          post Let&apos;I have said it...Let&apos; as{' '}
-        </Typography.Body>
-        <PostUtil.Tag
-          className="hidden sm:block"
-          clicked={false}
-          color="fuchsia"
-        >
-          Bitcoin
-        </PostUtil.Tag>
       </div>
       <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex">
         <Typography.Caption className="text-white text-opacity-50">
-          1m
+          {Utils.timeAgo(notification.timestamp)}
         </Typography.Caption>
       </div>
     </div>

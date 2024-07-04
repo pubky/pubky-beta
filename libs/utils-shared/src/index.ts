@@ -1,6 +1,7 @@
 import base64ToUint8Array from './lib/Conversion/base64ToUint8Array';
 import cleanText from './lib/Text/cleanText';
 import copyToClipboard from './lib/Helper/copyToClipboard';
+import extractHashtags from './lib/Helper/extractHashtags';
 import decodePostUri from './lib/URI/decodePostUIri';
 import encodePostUri from './lib/URI/encodePostUri';
 import isValidContent from './lib/Text/isValidContent';
@@ -17,6 +18,7 @@ export const Utils = {
   decodePostUri,
   encodePostUri,
   isValidContent,
+  extractHashtags,
   minifyPubky,
   storage,
   minifyText,
