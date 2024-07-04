@@ -1,11 +1,11 @@
 'use client';
 
 import { Typography } from '@social/ui-shared';
-import { Post, PostsLayout } from '../../../components';
+import { Post, PostsLayout } from '@/components';
 import { useEffect, useState } from 'react';
-import { useClientContext } from '../../../contexts/client';
-import { IPost } from '../../../types';
-import Skeletons from '../../../components/Skeletons';
+import { useClientContext } from '@/contexts/client';
+import { IPost } from '@/types';
+import Skeletons from '@/components/Skeletons';
 
 interface ContactsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky?: string;

@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
-import { Profile } from './components';
-import { CreatePost, Header, Post, PostsLayout } from '../../components';
-import { useClientContext } from '../../contexts/client';
+import { CreatePost, Header, Post, PostsLayout } from '@/components';
+import { useClientContext } from '@/contexts/client';
 import { Utils } from '@social/utils-shared';
-import { IPost, INewPost } from '../../types';
-import Skeletons from '../../components/Skeletons';
+import { IPost, INewPost } from '@/types';
+import Skeletons from '@/components/Skeletons';
+import { Profile } from './components';
 
 export default function Index() {
   const { pubky, listUserFeed, getUserIndexed, getPost, posts, setPosts } =

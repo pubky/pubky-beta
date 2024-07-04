@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@/*": ["apps/web/*"],
       "@social/ui-shared": ["libs/ui-shared/src/index.ts"],
       "@social/utils-shared": ["libs/utils-shared/src/index.ts"]
     }

@@ -2,7 +2,7 @@ import { useRouter } from 'next/navigation';
 import { Card, PostUtil, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { useClientContext } from '../../contexts/client';
+import { useClientContext } from '@/contexts/client';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;

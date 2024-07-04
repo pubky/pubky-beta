@@ -10,13 +10,13 @@ import {
   Header,
   Sidebar,
   WhoFollow,
-} from '../../components';
+} from '@/components';
 import { HotTags } from './components';
-import { DropDown } from '../../components/DropDown';
-import { useClientContext } from '../../contexts/client';
-import { useFilterContext } from '../../contexts/filters';
-import { ITaggedPost } from '../../types';
-import Skeletons from '../../components/Skeletons';
+import { DropDown } from '@/components/DropDown';
+import { useClientContext } from '@/contexts/client';
+import { useFilterContext } from '@/contexts/filters';
+import { ITaggedPost } from '@/types';
+import Skeletons from '@/components/Skeletons';
 
 export default function Index() {
   const router = useRouter();

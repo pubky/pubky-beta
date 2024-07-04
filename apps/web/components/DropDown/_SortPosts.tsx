@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
-import { useFilterContext } from '../../contexts/filters';
+import { useFilterContext } from '@/contexts/filters';
 
 export default function SortPosts() {
   const { sort, setSort } = useFilterContext();

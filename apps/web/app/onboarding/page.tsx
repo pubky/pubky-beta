@@ -2,12 +2,11 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { ILinkPubky } from '../../types';
-
-import { useClientContext } from '../../contexts/client';
-import { useEffect, useState } from 'react';
+import { ILinkPubky } from '@/types';
+import { useClientContext } from '@/contexts/client';
 
 export default function Index() {
   const { signUp } = useClientContext();

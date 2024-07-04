@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon, Tooltip, Post, Typography } from '@social/ui-shared';
-import { ITaggedPost } from '../../types';
+import { ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 
 interface TagProps {

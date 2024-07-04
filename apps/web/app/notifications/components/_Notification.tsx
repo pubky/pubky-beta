@@ -1,5 +1,5 @@
-import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
 import Image from 'next/image';
+import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
 
 export default function Notification() {
   return (

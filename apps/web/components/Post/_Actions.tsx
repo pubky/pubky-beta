@@ -7,10 +7,10 @@ import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
 import { Modal } from '../Modal';
 import Repost from '../_Repost';
-import { useClientContext } from '../../contexts/client';
-import { IPost } from '../../types';
+import { useClientContext } from '@/contexts/client';
+import { IPost } from '@/types';
 import Tooltip from '../Tooltip';
-import { useAlertContext } from '../../contexts/alerts';
+import { useAlertContext } from '@/contexts/alerts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;

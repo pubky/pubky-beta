@@ -1,19 +1,19 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
-import { CreatePost, Header } from '../../components';
-import { Contacts } from './components';
-import { useClientContext } from '../../contexts/client';
-import { useFilterContext } from '../../contexts/filters';
+import { CreatePost, Header } from '@/components';
+import Skeletons from '@/components/Skeletons';
+import { useClientContext } from '@/contexts/client';
+import { useFilterContext } from '@/contexts/filters';
 import {
   IFollowingResponse,
   IFollowersResponse,
   IFriendsResponse,
   TContacts,
-} from '../../types';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Skeletons from '../../components/Skeletons';
+} from '@/types';
+import { Contacts } from './components';
 
 const ContactsContent = () => {
   const { pubky, listFollowing, listFollowers, getProfile } =

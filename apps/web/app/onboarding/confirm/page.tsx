@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { z } from 'zod';
-import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
-import { useClientContext } from '../../../contexts/client';
-import { Onboarding } from '../components';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Modal } from '../../../components/Modal';
+import { z } from 'zod';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
+import { useClientContext } from '@/contexts/client';
+import { Modal } from '@/components/Modal';
+import { Onboarding } from '../components';
 
 const passwordSchema = z.object({
   password: z

@@ -1,6 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState, useRef } from 'react';
 import {
   Icon,
   Typography,
@@ -10,23 +13,20 @@ import {
   PostUtil,
   Tooltip as TooltipUI,
 } from '@social/ui-shared';
-import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
-import { useClientContext } from '../../../contexts/client';
-import { useAlertContext } from '../../../contexts/alerts';
-import { Skeleton } from '../../../components';
+import { useClientContext } from '@/contexts/client';
+import { useAlertContext } from '@/contexts/alerts';
+import { Skeleton } from '@/components';
 import { Utils } from '@social/utils-shared';
 import {
   IFollowingResponse,
   IFollowersResponse,
   ITaggedProfile,
   TStatus,
-} from '../../../types';
-import Image from 'next/image';
-import { DropDown } from '../../../components/DropDown';
-import { Modal } from '../../../components/Modal';
-import Skeletons from '../../../components/Skeletons';
-import Tooltip from '../../../components/Tooltip';
+} from '@/types';
+import { DropDown } from '@/components/DropDown';
+import { Modal } from '@/components/Modal';
+import Skeletons from '@/components/Skeletons';
+import Tooltip from '@/components/Tooltip';
 
 const socialLinks = [
   { name: 'X (twitter)', url: 'https://x.com/@' },

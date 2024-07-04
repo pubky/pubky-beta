@@ -9,8 +9,8 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { IPost, IFollowingResponse, IFollowersResponse } from '../../types';
-import { useClientContext } from '../../contexts/client';
+import { IPost, IFollowingResponse, IFollowersResponse } from '@/types';
+import { useClientContext } from '@/contexts/client';
 import { useRouter } from 'next/navigation';
 
 interface ProfileProps {

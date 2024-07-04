@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import {
   ActiveFriends,
@@ -10,13 +11,12 @@ import {
   PostsLayout,
   Sidebar,
   WhoFollow,
-} from '../../components';
-import { useEffect, useRef, useState } from 'react';
-import { useClientContext } from '../../contexts/client';
-import { useFilterContext } from '../../contexts/filters';
-import { IPost, INewPost } from '../../types';
-import { Filter } from '../../components/Filter';
-import Skeletons from '../../components/Skeletons';
+} from '@/components/index';
+import { useClientContext } from '@/contexts/client';
+import { useFilterContext } from '@/contexts/filters';
+import { IPost, INewPost } from '@/types/index';
+import { Filter } from '@/components/Filter/index';
+import Skeletons from '@/components/Skeletons';
 
 {
   /**const layouts = {

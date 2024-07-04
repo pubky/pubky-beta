@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
-import { useClientContext } from '../../contexts/client';
-import { TStatus } from '../../types';
+import { useClientContext } from '@/contexts/client';
+import { TStatus } from '@/types';
 import { Utils } from '@social/utils-shared';
 
 interface StatusProps {

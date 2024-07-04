@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useClientContext } from '../../../../../contexts/client';
-import { Post, Skeleton } from '../../../../../components';
-import { IPost, IReply } from '../../../../../types';
+import { useClientContext } from '@/contexts/client';
+import { Post, Skeleton } from '@/components';
+import { IPost, IReply } from '@/types';
 import { Typography } from '@social/ui-shared';
 
 interface ParentPostState {

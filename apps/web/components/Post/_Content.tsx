@@ -3,7 +3,7 @@
 import { Post as PostUI } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
-import { IPost } from '../../types';
+import { IPost } from '@/types';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;

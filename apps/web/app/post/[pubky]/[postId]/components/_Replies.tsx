@@ -1,8 +1,8 @@
 import { Content, Icon, Button, Typography, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
-import { useClientContext } from '../../../../../contexts/client';
-import { IReply } from '../../../../../types';
-import { Post } from '../../../../../components';
+import { useClientContext } from '@/contexts/client';
+import { IReply } from '@/types';
+import { Post } from '@/components';
 import { Utils } from '@social/utils-shared';
 
 export default function Replies({

@@ -9,8 +9,8 @@ import {
   PostUtil,
   Tooltip as TooltipUI,
 } from '@social/ui-shared';
-import { useClientContext } from '../../contexts/client';
-import { IPost, ITaggedPost } from '../../types';
+import { useClientContext } from '@/contexts/client';
+import { IPost, ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';

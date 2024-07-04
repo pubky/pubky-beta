@@ -11,7 +11,7 @@ import {
 } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
-import { IPost } from '../../types';
+import { IPost } from '@/types';
 import Tooltip from '../Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {

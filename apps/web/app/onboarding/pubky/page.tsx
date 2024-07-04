@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Button, Icon, Typography } from '@social/ui-shared';
-import { Onboarding } from '../components';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useClientContext } from '../../../contexts/client';
+import { useState } from 'react';
+import { Button, Icon, Typography } from '@social/ui-shared';
+import { useClientContext } from '@/contexts/client';
+import { Onboarding } from '../components';
 
 export default function Index() {
   const { pubky } = useClientContext();
