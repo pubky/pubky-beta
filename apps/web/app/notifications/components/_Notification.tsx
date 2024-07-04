@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function Notification() {
   return (
-    <div className="p-3 border-t border-white border-opacity-10 justify-between items-start flex flex-row">
+    <div className="p-3 border-b border-white border-opacity-10 justify-between items-start flex flex-row">
       <div className="flex gap-4 flex-col sm:flex-row">
         <div className="flex gap-4 flex-row">
           <Button.Action

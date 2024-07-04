@@ -60,6 +60,7 @@ export interface TClientContext {
   listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
   listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
   getMostFollowed: () => Promise<IMostFollowed[] | null>;
+  getNotifications: () => Promise<void>;
   getRecommendedProfiles: (
     pk: string
   ) => Promise<IRecommendedProfiles[] | null>;
