@@ -1,6 +1,11 @@
 import './global.css';
 
-import { AlertWrapper, ClientWrapper, FilterWrapper } from '@/contexts';
+import {
+  AlertWrapper,
+  ClientWrapper,
+  FilterWrapper,
+  NotificationsWrapper,
+} from '@/contexts';
 import { ProtectedRoutes } from '@/components';
 
 export const metadata = {
@@ -19,7 +24,9 @@ export default function RootLayout({
         <FilterWrapper>
           <ClientWrapper>
             <AlertWrapper>
-              <ProtectedRoutes>{children}</ProtectedRoutes>
+              <NotificationsWrapper>
+                <ProtectedRoutes>{children}</ProtectedRoutes>
+              </NotificationsWrapper>
             </AlertWrapper>
           </ClientWrapper>
         </FilterWrapper>

@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Content } from '@social/ui-shared';
 
-import { useClientContext } from '@/contexts';
-import { INotification } from '@/types';
+import { useNotificationsContext } from '@/contexts';
 import {
   CreatePost,
   Header,
@@ -16,27 +14,7 @@ import {
 import { Notifications } from './components';
 
 export default function Index() {
-  const { getNotifications } = useClientContext();
-  const [notifications, setNotifications] = useState<INotification[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchNotifications = async () => {
-    try {
-      setLoading(true);
-      const results = await getNotifications();
-      console.log('results', results);
-      if (results) setNotifications(results.feed);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { notifications, loading } = useNotificationsContext();
 
   return (
     <Content.Main>
