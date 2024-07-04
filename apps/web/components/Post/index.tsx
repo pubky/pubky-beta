@@ -8,17 +8,16 @@ import {
   Typography,
 } from '@social/ui-shared';
 
-import { IPost, TLayouts, TSize } from '../../types';
+import { IPost, TLayouts, TSize } from '@/types';
 import Tags from './_Tags';
 import Actions from './_Actions';
 import Header from './_Header';
 import Content from './_Content';
 import { useRouter } from 'next/navigation';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import Tooltip from '../Tooltip';
-import { useClientContext } from '../../contexts/client';
-import { useAlertContext } from '../../contexts/alerts';
+import { useClientContext, useAlertContext } from '@/contexts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;

@@ -7,11 +7,11 @@ import EmojiPicker, {
   Theme,
 } from 'emoji-picker-react';
 import { Icon, Button, Post, Input, PostUtil } from '@social/ui-shared';
-import { useClientContext } from '../../../../../contexts/client';
-import Modal from '../../../../../components/Modal';
-import { Utils } from '../../../../../utils';
-import { IPost } from '../../../../../types';
-import LinkPreviewer from '../../../../../components/_LinkPreviewer';
+import { useClientContext } from '@/contexts';
+import Modal from '@/components/Modal';
+import { Utils } from '@social/utils-shared';
+import { IPost } from '@/types';
+import LinkPreviewer from '@/components/LinkPreview';
 
 export default function ReplyForm({
   uri,

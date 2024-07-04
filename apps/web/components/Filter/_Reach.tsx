@@ -1,7 +1,7 @@
 import { Icon, SideCard } from '@social/ui-shared';
-import { useFilterContext } from '../../contexts/filters';
+import { useFilterContext } from '@/contexts';
 import { useEffect, useState } from 'react';
-import { TReach } from '../../types';
+import { TReach } from '@/types';
 
 export default function Reach() {
   const { reach, setReach } = useFilterContext();

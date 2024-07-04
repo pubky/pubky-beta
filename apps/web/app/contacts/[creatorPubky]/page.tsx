@@ -1,20 +1,20 @@
 'use client';
 
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
-import { CreatePost, Header } from '../../../components';
+import { CreatePost, Header } from '@/components';
+import Skeletons from '@/components/Skeletons';
+import { useClientContext, useFilterContext } from '@/contexts';
 import { Contacts } from '../components';
-import { useClientContext } from '../../../contexts/client';
-import { useFilterContext } from '../../../contexts/filters';
 import {
   IFollowingResponse,
   IFollowersResponse,
   IFriendsResponse,
   TContacts,
-} from '../../../types';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import Skeletons from '../../../components/Skeletons';
+} from '@/types';
 
 export default function Index({
   params,

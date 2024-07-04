@@ -5,13 +5,12 @@ import EmojiPicker, {
   EmojiStyle,
   Theme,
 } from 'emoji-picker-react';
-import { useClientContext } from '../../contexts/client';
+import { useClientContext, useAlertContext } from '@/contexts';
 import Image from 'next/image';
 import { Modal as ModalComponent } from '.';
-import { INewPost } from '../../types';
-import { Utils } from '../../utils';
-import { useAlertContext } from '../../contexts/alerts';
-import LinkPreviewer from '../_LinkPreviewer';
+import { INewPost } from '@/types';
+import { Utils } from '@social/utils-shared';
+import LinkPreviewer from '../LinkPreview';
 
 interface CreatePostProps {
   showModalPost: boolean;

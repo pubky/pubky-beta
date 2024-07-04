@@ -1,8 +1,8 @@
 import { Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useClientContext } from '../../../contexts/client';
-import { Utils } from '../../../utils';
+import { useClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
 
 interface CountContacts {
   followers: number;

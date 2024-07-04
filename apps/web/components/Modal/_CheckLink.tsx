@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Icon, Input, Modal, Typography } from '@social/ui-shared';
 import Link from 'next/link';
-import { Utils } from '../../utils';
+import { Utils } from '@social/utils-shared';
 
 interface CheckLinkProps {
   showModalCheckLink: boolean;

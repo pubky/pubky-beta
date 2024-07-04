@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Content, Header, Icon, Typography } from '@social/ui-shared';
-import { useClientContext } from '../../contexts/client';
+import { useClientContext } from '@/contexts';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';

@@ -8,9 +8,9 @@ import {
   Button,
   Typography,
 } from '@social/ui-shared';
-import { Utils } from '../../utils';
-import { IPost, IFollowingResponse, IFollowersResponse } from '../../types';
-import { useClientContext } from '../../contexts/client';
+import { Utils } from '@social/utils-shared';
+import { IPost, IFollowingResponse, IFollowersResponse } from '@/types';
+import { useClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 
 interface ProfileProps {

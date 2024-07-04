@@ -1,9 +1,9 @@
 import { useRouter } from 'next/navigation';
 import { Button, Content, Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
-import { Utils } from '../../../utils';
+import { Utils } from '@social/utils-shared';
 import { Contacts } from '.';
-import { IFollower, LoadingContacts } from '../../../types';
+import { IFollower, LoadingContacts } from '@/types';
 
 interface ContactsRanking {
   index: string;

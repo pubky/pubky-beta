@@ -2,10 +2,10 @@
 
 import { Content, SideCard, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
-import { useClientContext } from '../contexts/client';
-import { Utils } from '../utils';
-import { IFriendsResponse } from '../types';
-import Skeletons from './Skeletons';
+import { useClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
+import { IFriendsResponse } from '@/types';
+import Skeletons from '../Skeletons';
 
 export default function ActiveFriends() {
   const { pubky, listFollowers, listFollowing } = useClientContext();
