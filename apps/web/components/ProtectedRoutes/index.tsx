@@ -14,7 +14,7 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, session } = useClientContext();
+  const { isLoggedIn, session, setSearchTags } = useClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
   const protectedRoutes = [
@@ -87,6 +87,12 @@ export default function ProtectedRoutes({
     checkLoginStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, pathname]);
+
+  useEffect(() => {
+    if (pathname !== '/search') {
+      setSearchTags([]);
+    }
+  }, [pathname, setSearchTags]);
 
   return (
     <>
