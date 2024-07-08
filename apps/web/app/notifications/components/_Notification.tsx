@@ -56,16 +56,6 @@ const notificationType = {
 
 type NotificationTypeKey = keyof typeof notificationType;
 
-function formatUri(uri: string): string {
-  const uriParts = uri.split('/');
-  if (uriParts.length === 4) {
-    const userId = uriParts[0].replace('pubky:', '');
-    const postId = uriParts[3];
-    return `/post/${userId}/${postId}`;
-  }
-  return '';
-}
-
 export default function Notification({
   notification,
 }: {
@@ -127,31 +117,31 @@ export default function Notification({
   const postLink =
     notification.type === notificationType.tag_post.type &&
     notification.body.postUri
-      ? formatUri(notification.body.postUri)
+      ? Utils.encodePostUri(notification.body.postUri)
       : '';
 
   const replyLink =
     notification.type === notificationType.reply.type &&
     notification.body.replyUri
-      ? formatUri(notification.body.replyUri)
+      ? Utils.encodePostUri(notification.body.replyUri)
       : '';
 
   const parentPostReplyLink =
     notification.type === notificationType.reply.type &&
     notification.body.parentPostUri
-      ? formatUri(notification.body.parentPostUri)
+      ? Utils.encodePostUri(notification.body.parentPostUri)
       : '';
 
   const repostLink =
     notification.type === notificationType.repost.type &&
     notification.body.repostUri
-      ? formatUri(notification.body.repostUri)
+      ? Utils.encodePostUri(notification.body.repostUri)
       : '';
 
   const embedLink =
     notification.type === notificationType.repost.type &&
     notification.body.embedUri
-      ? formatUri(notification.body.embedUri)
+      ? Utils.encodePostUri(notification.body.embedUri)
       : '';
 
   return (

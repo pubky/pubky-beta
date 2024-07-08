@@ -100,7 +100,6 @@ export default function RootParent({ replies }: { replies: IReply }) {
         key={parentURI}
         post={post.post}
         size="full"
-        fullContent
         className="border-0"
         line
         lineStyle="mt-6"

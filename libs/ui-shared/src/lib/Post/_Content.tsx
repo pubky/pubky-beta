@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import LinkParser from 'react-link-parser';
+import { Utils } from '@social/utils-shared';
 import { Tweet } from 'react-tweet';
 import LinkPreview from './_Preview';
 import { GitHub } from '../Preview/Github';
@@ -10,7 +11,9 @@ import { Icon } from '../Icon';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string | JSX.Element;
+  uri: string;
   children?: React.ReactNode;
+  fullContent?: boolean;
 }
 
 const tagsIcons: { [key: string]: JSX.Element } = {
@@ -22,7 +25,12 @@ const tagsIcons: { [key: string]: JSX.Element } = {
   '#tether': <Icon.Tether size="24" />,
 };
 
-export const Content = ({ children, text }: ContentProps) => {
+export const Content = ({
+  children,
+  uri,
+  text,
+  fullContent = false,
+}: ContentProps) => {
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
@@ -131,19 +139,30 @@ export const Content = ({ children, text }: ContentProps) => {
     },
   ];
 
-  const lines = cleanText(text.toString())
-    .slice(0, 300)
-    .split('\n')
-    .map((line, index) => (
-      <div key={index} className="min-h-[10px]">
-        <LinkParser watchers={watchers as []}>{line}</LinkParser>
-      </div>
-    ));
+  const cleanedText = cleanText(text.toString());
+  const contentText = fullContent
+    ? cleanedText
+    : Utils.minifyContent(cleanedText, 10);
+
+  const lines = contentText.split('\n').map((line, index) => (
+    <div key={index} className="min-h-[10px]">
+      <LinkParser watchers={watchers as []}>{line}</LinkParser>
+    </div>
+  ));
+
+  const showMore = !fullContent && contentText.includes('...');
 
   return (
     <div className="text-white break-words">
       {lines}
-      {text.toString().length > 300 && '...'}
+      {showMore && (
+        <a
+          href={Utils.encodePostUri(uri)}
+          className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+        >
+          Show more
+        </a>
+      )}
       {videoId && (
         <div className="relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
           <iframe

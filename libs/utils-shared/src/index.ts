@@ -5,6 +5,7 @@ import extractHashtags from './lib/Helper/extractHashtags';
 import decodePostUri from './lib/URI/decodePostUIri';
 import encodePostUri from './lib/URI/encodePostUri';
 import isValidContent from './lib/Text/isValidContent';
+import minifyContent from './lib/Text/minifyContent';
 import minifyPubky from './lib/Text/minifyPubky';
 import storage from './lib/Storage/storage';
 import timeAgo from './lib/Helper/timeAgo';
@@ -18,6 +19,7 @@ export const Utils = {
   decodePostUri,
   encodePostUri,
   isValidContent,
+  minifyContent,
   extractHashtags,
   minifyPubky,
   storage,

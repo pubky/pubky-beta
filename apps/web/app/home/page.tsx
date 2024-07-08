@@ -143,7 +143,6 @@ export default function Index() {
               <div key={post.id}>
                 {parentPost ? (
                   <Components.Post
-                    fullContent
                     post={parentPost}
                     className="border-0"
                     line
@@ -159,7 +158,7 @@ export default function Index() {
                     <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[35px]" />
                   </div>
                 ) : null}
-                <Components.Post fullContent post={post} />
+                <Components.Post post={post} />
               </div>
             );
           })}

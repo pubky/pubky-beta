@@ -127,7 +127,6 @@ export default function Replies({
         <Post
           post={reply.post}
           size="full"
-          fullContent
           className={`pl-0 ${
             depth > 0 || reply.replies.length > 0 ? 'border-0' : ''
           }`}
