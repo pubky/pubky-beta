@@ -160,7 +160,7 @@ export const Content = ({ children, text }: ContentProps) => {
         <LinkPreview url={preview} />
       )}
       {tweetId && (
-        <div className="flex overflow-hidden justify-start -mt-2 -mb-6">
+        <div className="no-scrollbar my-4 max-h-[500px] w-full max-w-[384px] overflow-y-auto">
           <Tweet id={tweetId} />
         </div>
       )}
