@@ -35,7 +35,7 @@ export default function Post({
   size = 'full',
   post,
   layout,
-  fullContent = true,
+  fullContent = false,
   line,
   lineStyle,
   ...rest

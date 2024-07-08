@@ -151,12 +151,7 @@ export default function Index() {
             return (
               <div key={post.id}>
                 {parentPost ? (
-                  <Post
-                    fullContent
-                    post={parentPost}
-                    className="border-0"
-                    line
-                  />
+                  <Post post={parentPost} className="border-0" line />
                 ) : parentUri ? (
                   <div className="relative ml-4 mb-8 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
                     <Typography.Body
@@ -168,7 +163,7 @@ export default function Index() {
                     <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[35px]" />
                   </div>
                 ) : null}
-                <Post fullContent post={post} />
+                <Post post={post} />
               </div>
             );
           })}
