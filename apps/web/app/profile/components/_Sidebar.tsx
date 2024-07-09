@@ -399,7 +399,7 @@ export default function Sidebar({
               </div>
               <Typography.Body
                 variant="medium"
-                className="text-opacity-80 break-words"
+                className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
               >
                 {Utils.minifyText(bio, 160)}
               </Typography.Body>
