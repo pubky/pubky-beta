@@ -218,7 +218,7 @@ export default function Profile({ post }: ProfileProps) {
       </div>
       <Typography.Body
         variant="medium"
-        className="my-3 text-opacity-80 break-words"
+        className="scrollbar-thin scrollbar-webkit my-3 text-opacity-80 break-words max-h-[150px] overflow-y-auto"
         onClick={(event) => event.stopPropagation()}
       >
         {post?.author?.profile?.bio
