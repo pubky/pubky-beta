@@ -140,9 +140,8 @@ export const Content = ({
   ];
 
   const cleanedText = cleanText(text.toString());
-  const contentText = fullContent
-    ? cleanedText
-    : Utils.minifyContent(cleanedText, 10);
+  const minifiedContent = Utils.minifyContent(cleanedText, 10);
+  const contentText = fullContent ? cleanedText : minifiedContent;
 
   const lines = contentText.split('\n').map((line, index) => (
     <div key={index} className="min-h-[10px]">
@@ -150,7 +149,7 @@ export const Content = ({
     </div>
   ));
 
-  const showMore = !fullContent && contentText.includes('...');
+  const showMore = !fullContent && cleanedText !== minifiedContent;
 
   return (
     <div className="text-white break-words">
@@ -164,7 +163,7 @@ export const Content = ({
         </a>
       )}
       {videoId && (
-        <div className="relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
+        <div className="w-full max-w-[560px] relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
           <iframe
             width="100%"
             height="315"
@@ -179,7 +178,7 @@ export const Content = ({
         <LinkPreview url={preview} />
       )}
       {tweetId && (
-        <div className="no-scrollbar my-4 max-h-[500px] w-full max-w-[384px] overflow-y-auto">
+        <div className="no-scrollbar max-h-[500px] w-full max-w-[384px] overflow-y-auto">
           <Tweet id={tweetId} />
         </div>
       )}
