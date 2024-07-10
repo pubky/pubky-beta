@@ -155,7 +155,7 @@ export default function Backup({
             </Typography.H2>
             <Input.Label className="mt-4" value="Password" />
             <Input.Text
-              className="h-[70px] mt-3"
+              className="h-[70px] mt-1"
               type="password"
               error={errors}
               placeholder="••••••••••••"

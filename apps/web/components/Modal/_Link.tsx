@@ -62,7 +62,7 @@ export default function Link({
       show={showModalLink}
       closeModal={() => setShowModalLink(false)}
       modalRef={modalLinkRef}
-      className="w-[480px] h-[480px] justify-start"
+      className="w-[592px] h-[480px] justify-start"
     >
       <Modal.CloseAction onClick={() => setShowModalLink(false)} />
       <Modal.Header title="Add Profile Link" />
@@ -93,6 +93,7 @@ export default function Link({
               <Input.Label value="Label" />
               <Input.Text
                 placeholder="Add label"
+                className="mt-1"
                 value={title}
                 onKeyDown={handleKeyDown}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -117,6 +118,7 @@ export default function Link({
               <Input.Label value="Url" />
               <Input.Text
                 placeholder="Add url"
+                className="mt-1"
                 value={url}
                 onKeyDown={handleKeyDown}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

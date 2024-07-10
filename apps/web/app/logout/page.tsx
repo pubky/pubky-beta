@@ -20,13 +20,13 @@ export default function Index() {
     <Content.Main>
       <Header.Root>
         <Header.Logo />
-        <Header.Title />
+        <Header.Title titleHeader="Signed out" />
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Bye bye!</Typography.Display>
-        <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">
-          You have successfully logged out.
-        </Typography.PageTitle>
+        <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
+          You have signed out from Pubky. See you soon!
+        </Typography.H2>
         <div className="my-6 w-full flex-col justify-center items-center inline-flex">
           <div className="flex-col justify-center items-center flex">
             <Image
@@ -39,9 +39,13 @@ export default function Index() {
           </div>
         </div>
         <div className="flex-col justify-center items-center flex">
-          <Link href="/sign-in" className="w-full sm:w-80" id="logout-link">
-            <Button.Large icon={<Icon.Key size="16" />}>
-              Sign in again
+          <Link
+            href="/sign-in"
+            className="w-full sm:w-[154px]"
+            id="logout-link"
+          >
+            <Button.Large variant="secondary" icon={<Icon.Key size="16" />}>
+              Sign back in
             </Button.Large>
           </Link>
         </div>
