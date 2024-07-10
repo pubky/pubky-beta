@@ -140,9 +140,9 @@ export default function Index() {
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Sign in to Pubky</Typography.Display>
-        <Typography.PageTitle className="text-opacity-50 mt-4 sm:mt-0">
+        <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
           Choose to sign in with a QR, recovery file, or recovery phrase
-        </Typography.PageTitle>
+        </Typography.H2>
         <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           <Card.Primary
             title="Sign in with Bitkit"
@@ -168,7 +168,7 @@ export default function Index() {
                   required
                   error={errors.recoveryFile}
                   fileName={fileName}
-                  className="mt-3"
+                  className="mt-1"
                   id="file_input"
                   onChange={UploadRecoveryFile}
                 />
@@ -176,7 +176,7 @@ export default function Index() {
               <div>
                 <Input.Label className="mt-4" value="Password" />
                 <Input.Text
-                  className="h-[70px] mt-3"
+                  className="h-[70px] mt-1"
                   type="password"
                   error={errors.password}
                   placeholder="••••••••••••"
@@ -189,14 +189,11 @@ export default function Index() {
               </div>
             </div>
             {loginError && (
-              <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-[#e95164] bg-[#e95164] bg-opacity-10">
-                <Typography.Body
-                  className="text-[#e95164]"
-                  variant="small-bold"
-                >
+              <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
+                <Typography.Body className="text-red-600" variant="small-bold">
                   Recovery password or recovery file incorrect
                 </Typography.Body>
-                <Icon.Warning color="#e95164" />
+                <Icon.Warning color="#dc2626" />
               </div>
             )}
             {userNotFound && (

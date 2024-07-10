@@ -332,9 +332,12 @@ export default function Index() {
             setName(e.target.value)
           }
         />
-        <Typography.PageTitle className="-mt-4 text-opacity-50 break-words">
+        <Typography.H2
+          variant="light"
+          className="-mt-4 text-opacity-50 break-words"
+        >
           {handler}
-        </Typography.PageTitle>
+        </Typography.H2>
         <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           <Card.Primary className="justify-start gap-4" title="Profile">
             <div>

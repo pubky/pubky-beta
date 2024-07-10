@@ -13,10 +13,10 @@ export default function Index() {
   return (
     <Onboarding.Layout currentStep={2}>
       <Typography.Display>Welcome!</Typography.Display>
-      <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">
+      <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
         Allow Pubky to read your profile and contacts for a more seamless
         experience.
-      </Typography.PageTitle>
+      </Typography.H2>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Permissions">
           <List.Primary

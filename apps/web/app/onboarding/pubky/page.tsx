@@ -28,9 +28,9 @@ export default function Index() {
   return (
     <Onboarding.Layout currentStep={3}>
       <Typography.Display>Your pubky</Typography.Display>
-      <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">
+      <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
         Share your pubky with your friends so they can follow you.
-      </Typography.PageTitle>
+      </Typography.H2>
       <div className="my-6 w-full flex-col justify-center items-center inline-flex">
         <div className="flex-col justify-center items-center flex">
           <Image
