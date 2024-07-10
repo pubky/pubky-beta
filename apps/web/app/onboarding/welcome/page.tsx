@@ -129,9 +129,9 @@ export default function Index() {
           )}
         </span>
       </Typography.Display>
-      <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">
+      <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
         Your contacts and profile information are ready to be used in Pubky.
-      </Typography.PageTitle>
+      </Typography.H2>
       <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary className="min-h-[400px]">
           {loading ? (

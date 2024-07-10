@@ -11,9 +11,9 @@ export default function Custom404() {
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Lost in the Rabbit Hole</Typography.Display>
-        <Typography.PageTitle className="text-opacity-50 mt-4 sm:mt-0">
+        <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
           The page or content you are looking for is not available
-        </Typography.PageTitle>
+        </Typography.H2>
         <Link href="/home">
           <Button.Large className="sm:w-80 w-full mt-12 relative z-10">
             Return home

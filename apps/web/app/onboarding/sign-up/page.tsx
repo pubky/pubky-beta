@@ -224,7 +224,7 @@ export default function Index() {
     <Onboarding.Layout currentStep={2}>
       <Input.Cursor
         placeholder="Your Name"
-        className="h-14 text-[40px] font-bold sm:h-[174px] sm:text-[100px] -mt-[50px]"
+        className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px]"
         defaultValue={name ? name : ''}
         autoFocus
         id="onboarding-name-input"
@@ -234,16 +234,16 @@ export default function Index() {
         }
         error={errors.name}
       />
-      <Typography.PageTitle className="text-opacity-50 mt-4 sm:mt-0">
+      <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
         Enter your bio, add some links, and upload a user picture.
-      </Typography.PageTitle>
+      </Typography.H2>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary className="justify-start gap-4" title="Profile">
           <div>
             <Input.Label value="Short bio" />
             <Card.Primary
-              background="bg-white bg-opacity-10"
-              className="border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg mt-2"
+              background="bg-transparent"
+              className="border border-white border-opacity-30 border-dashed mt-2"
             >
               <Input.TextArea
                 placeholder="Short bio. Tell a bit about yourself."
@@ -293,7 +293,7 @@ export default function Index() {
               </div>
             ))}
             <Button.Transparent
-              className="w-[40%] mt-2"
+              className="w-[35%] mt-2"
               icon={
                 <Icon.LinkSimple
                   size="16"

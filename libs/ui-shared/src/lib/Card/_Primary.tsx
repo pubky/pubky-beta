@@ -14,13 +14,13 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Primary = ({
   title,
   text,
-  background = 'bg-gradient-to-b from-[#07040a] to-[#1b1820] opacity-90',
+  background = 'bg-white bg-opacity-10',
   borderRadius = 'rounded-2xl',
   children,
   refCard,
   ...rest
 }: CardProps) => {
-  const baseCSS = `w-full p-8 shadow border border-white border-opacity-20 flex-col justify-between inline-flex`;
+  const baseCSS = `w-full p-8 shadow flex-col justify-between inline-flex`;
 
   return (
     <div

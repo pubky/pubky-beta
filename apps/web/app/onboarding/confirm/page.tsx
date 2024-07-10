@@ -111,9 +111,9 @@ export default function Index() {
     <>
       <Onboarding.Layout currentStep={4}>
         <Typography.Display>Ready to go!</Typography.Display>
-        <Typography.PageTitle className="text-opacity-50 mt-4 lg:mt-0">
+        <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
           Welcome to Pubky. Your keys, your content, your rules.
-        </Typography.PageTitle>
+        </Typography.H2>
         <div className="my-12 w-full flex-col justify-center items-center inline-flex">
           <div className="flex-col justify-center items-center flex">
             <Image
@@ -160,7 +160,7 @@ export default function Index() {
             )}
           </Tooltip.RootSmall>
           <Link href="/home">
-            <Button.Large icon={<Icon.ArrowRight />} className="w-[170px] z-20">
+            <Button.Large icon={<Icon.Check />} className="w-[170px] z-20">
               Start Exploring
             </Button.Large>
           </Link>

@@ -14,10 +14,9 @@ export const UploadFile = ({
   fileName,
   ...rest
 }: UploadFileProps) => {
-  const baseCSS = `w-full p-5 bg-white bg-opacity-10 rounded-lg shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] 
-  border border-white border-opacity-10 flex justify-between items-center`;
+  const baseCSS = `w-full h-[70px] p-6 rounded-2xl border border-white border-opacity-30 border-dashed flex justify-between items-center`;
 
-  const errorCSS = `text-red-500 text-sm mt-2`;
+  const errorCSS = `text-red-600 text-sm mt-2`;
 
   return (
     <div className="relative w-full">
@@ -26,7 +25,7 @@ export const UploadFile = ({
         className={twMerge(
           baseCSS,
           rest.className,
-          error ? 'border-red-500 border-opacity-100' : ''
+          error ? 'border-red-600 border-opacity-100' : ''
         )}
       >
         <Typography.Body className="text-opacity-30" variant="medium">
@@ -35,7 +34,7 @@ export const UploadFile = ({
             : fileName}
         </Typography.Body>
         <div
-          className="cursor-pointer flex gap-2 rounded-full py-2 px-4 bg-white bg-opacity-10 hover:bg-opacity-20 ml-auto"
+          className="cursor-pointer flex gap-2 rounded-full py-2 px-3 bg-white bg-opacity-10 hover:bg-opacity-20 ml-auto"
           onClick={() => {
             const fileInput = document.getElementById('fileInput');
             if (fileInput) {
