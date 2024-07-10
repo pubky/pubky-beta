@@ -1,6 +1,6 @@
 'use client';
 
-import { Content, Icon, SideCard, Typography } from '@social/ui-shared';
+import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
@@ -128,7 +128,7 @@ export default function WhoFollow() {
   return (
     <div className="mb-6">
       <SideCard.Header title="Who to follow" />
-      <SideCard.Content>
+      <SideCard.Content className="flex flex-col gap-2">
         {loading ? (
           <Skeletons.Simple />
         ) : recommendedProfiles && recommendedProfiles.length > 0 ? (
@@ -190,9 +190,6 @@ export default function WhoFollow() {
                       />
                     )}
                   </SideCard.User>
-                  {index !== recommendedProfiles.length - 1 && (
-                    <Content.Divider className="my-2" />
-                  )}
                 </div>
               );
             })

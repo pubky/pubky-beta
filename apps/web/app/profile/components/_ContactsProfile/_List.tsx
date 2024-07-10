@@ -41,7 +41,7 @@ export default function List({
             height={48}
             src={contact?.profile?.image || '/images/Userpic.png'}
             alt={`follower-pic-${index + 1}`}
-            className="rounded-full w-[48px] h-[48px]"
+            className="rounded-full w-[48px] h-[48px] max-w-none"
           />
           <div className="flex-col justify-center items-start inline-flex">
             <Typography.Body variant="medium-bold">

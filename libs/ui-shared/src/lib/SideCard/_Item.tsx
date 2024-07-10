@@ -23,7 +23,7 @@ export const Item = ({
   const disabledCSS = disabled
     ? 'cursor-default'
     : 'hover:bg-white hover:bg-opacity-10';
-  const baseCSS = `w-full h-12 py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] items-center justify-between inline-flex`;
+  const baseCSS = `w-full h-12 py-2 shadow backdrop-blur-[10px] items-center justify-between inline-flex`;
 
   return (
     <button

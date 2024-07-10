@@ -157,8 +157,11 @@ export default function TagCreatePost({
                       <PostUtil.Tag
                         key={index}
                         action={
-                          <div onClick={() => handleRemoveTag(index)}>
-                            <Icon.X size="20" />
+                          <div
+                            className="flex items-center"
+                            onClick={() => handleRemoveTag(index)}
+                          >
+                            <Icon.X size="16" />
                           </div>
                         }
                         clicked

@@ -41,6 +41,7 @@ import {
 } from './_Office';
 import {
   DotsNine,
+  Link,
   LinkSimple,
   MagnifyingGlass,
   Check,
@@ -51,6 +52,7 @@ import {
   DownloadSimple,
   DotsThree,
   DotsThreeVertical,
+  DotsThreeOutline,
   SignOut,
 } from './_System';
 import { Android, Iphone, Pubky, Twitter, Telegram, Youtube } from './_Social';
@@ -102,6 +104,7 @@ export const Icon = {
   DotsNine,
   DotsThree,
   DotsThreeVertical,
+  DotsThreeOutline,
   Envelope,
   Eye,
   File,
@@ -115,6 +118,7 @@ export const Icon = {
   ImageSquare,
   Key,
   LinkSimple,
+  Link,
   List,
   ListBullets,
   ListNumbers,

@@ -1,6 +1,13 @@
 'use client';
 
-import { Button, Icon, Input, Post, PostUtil } from '@social/ui-shared';
+import {
+  Button,
+  Icon,
+  Input,
+  Post,
+  PostUtil,
+  Typography,
+} from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, {
   EmojiClickData,
@@ -13,11 +20,14 @@ import { INewPost } from '@/types';
 import Modal from '../Modal';
 import { Utils } from '@social/utils-shared';
 import LinkPreviewer from '../LinkPreview';
+import { useRouter } from 'next/navigation';
 
 export default function CreateQuickPost() {
   const { pubky, getProfile, createPost, setPosts, createTag } =
     useClientContext();
+  const router = useRouter();
   const { setContent, setShow } = useAlertContext();
+  const [name, setName] = useState('');
   const [pic, setPic] = useState('/images/Userpic.png');
   const [contentPost, setContentPost] = useState('');
   const [isValidContent, setIsValidContent] = useState(false);
@@ -37,6 +47,7 @@ export default function CreateQuickPost() {
 
       if (userProfile) {
         setPic(userProfile?.image || '/images/Userpic.png');
+        setName(userProfile?.name);
       }
     } catch (error) {
       console.log(error);
@@ -166,7 +177,7 @@ export default function CreateQuickPost() {
 
   return (
     <div className="p-6 mb-4 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
-      <div className="absolute justify-start items-center gap-4 flex">
+      <div className="justify-start items-center gap-3 flex">
         <Image
           width={32}
           height={32}
@@ -174,10 +185,33 @@ export default function CreateQuickPost() {
           alt="user-image"
           src={pic}
         />
+        {name && pubky ? (
+          <div
+            className="cursor-pointer flex gap-4 items-center"
+            onClick={() => router.push('/profile')}
+          >
+            <Typography.Body
+              className={`hover:underline hover:decoration-solid`}
+              variant="medium-bold"
+            >
+              {Utils.minifyText(name, 24)}
+            </Typography.Body>
+            <div className="flex gap-1 cursor-pointer">
+              <Icon.CheckCircle size="16" color="gray" />
+              <Typography.Label className="text-opacity-30">
+                {Utils.minifyPubky(pubky)}
+              </Typography.Label>
+            </div>
+          </div>
+        ) : (
+          <Typography.Body variant="medium-bold" className="text-opacity-50">
+            Loading...
+          </Typography.Body>
+        )}
       </div>
       <div
         ref={wrapperRef}
-        className="pl-12 -mt-[10px] w-full flex justify-between gap-6 items-start flex-col"
+        className="w-full flex justify-between gap-6 items-start flex-col"
       >
         <Input.CursorArea
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -195,31 +229,49 @@ export default function CreateQuickPost() {
           placeholder="What's on your mind?"
         />
         <LinkPreviewer content={contentPost} />
-        {arrayTags.length > 0 && (
-          <div className="inline-flex gap-2 mt-2">
-            {arrayTags.map((tag, index) => (
-              <PostUtil.Tag
-                key={index}
-                clicked={false}
-                color="fuchsia"
-                className="flex flex-col pl-9"
-              >
-                <Button.Action
-                  variant="custom"
-                  size="small"
-                  className="absolute -left-9 transform -translate-y-[21px] scale-75"
-                  icon={<Icon.Minus />}
-                  onClick={() =>
-                    setArrayTags((prev) => prev.filter((item) => item !== tag))
-                  }
-                />
-                {Utils.minifyText(tag.replace(' ', ''))}
-              </PostUtil.Tag>
-            ))}
-          </div>
-        )}
         {(textArea || contentPost || showModalTag || arrayTags.length > 0) && (
           <Post.Actions className="w-full">
+            {arrayTags.length > 0 && (
+              <div className="inline-flex gap-2">
+                {arrayTags.map((tag, index) => (
+                  <PostUtil.Tag
+                    key={index}
+                    clicked
+                    color="fuchsia"
+                    action={
+                      <div
+                        className="flex items-center"
+                        onClick={() =>
+                          setArrayTags((prev) =>
+                            prev.filter((item) => item !== tag)
+                          )
+                        }
+                      >
+                        <Icon.X size="16" />
+                      </div>
+                    }
+                  >
+                    {Utils.minifyText(tag.replace(' ', ''))}
+                  </PostUtil.Tag>
+                ))}
+              </div>
+            )}
+            {showEmojis && (
+              <div
+                className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                ref={wrapperRefEmojis}
+              >
+                <EmojiPicker
+                  theme={Theme.DARK}
+                  emojiStyle={EmojiStyle.TWITTER}
+                  onEmojiClick={handleEmojiClick}
+                />
+              </div>
+            )}
+            <div className="grow" />
+            <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
+              {contentPost.length} / 300
+            </div>
             <Button.Action
               variant="custom"
               icon={<Icon.Tag size="32" />}
@@ -241,24 +293,8 @@ export default function CreateQuickPost() {
               disabled
               icon={<Icon.ImageSquare color={'gray'} size="32" />}
             />
-            {showEmojis && (
-              <div
-                className="absolute translate-y-[10%] translate-x-[30%] z-10"
-                ref={wrapperRefEmojis}
-              >
-                <EmojiPicker
-                  theme={Theme.DARK}
-                  emojiStyle={EmojiStyle.TWITTER}
-                  onEmojiClick={handleEmojiClick}
-                />
-              </div>
-            )}
-            <div className="grow" />
-            <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
-              {contentPost.length} / 300
-            </div>
             <Button.Medium
-              className="w-[158px]"
+              className="w-[104px]"
               variant="line"
               icon={
                 <Icon.PaperPlaneRight
@@ -273,7 +309,7 @@ export default function CreateQuickPost() {
                   : undefined
               }
             >
-              Publish post
+              Post
             </Button.Medium>
           </Post.Actions>
         )}

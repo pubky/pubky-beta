@@ -1,6 +1,7 @@
 import { twMerge } from 'tailwind-merge';
 import { PostUtil } from '../PostUtil';
 import { Post } from '../Post';
+import { Typography } from '../Typography';
 
 interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
   rank: number;
@@ -20,11 +21,15 @@ export const Rank = ({
   const baseCSS = 'justify-start items-center gap-3 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      {/* <PostUtil.Counter counter={rank} /> */}
-      <PostUtil.Tag clicked={false} color={color}>
-        {tag}
+      <PostUtil.Tag clicked={false} color="fuchsia">
+        <div className="flex gap-2 items-center">
+          {tag}
+          <Typography.Caption variant="bold" className="text-opacity-30">
+            {counter}
+          </Typography.Caption>
+        </div>
       </PostUtil.Tag>
-      {counter && <PostUtil.Counter counter={counter} />}
+      {/**{counter && <PostUtil.Counter counter={counter} />}*/}
       {images && <Post.UserPic images={images} />}
     </div>
   );

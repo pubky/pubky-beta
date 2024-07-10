@@ -159,62 +159,6 @@ export default function Profile({ post }: ProfileProps) {
             </Typography.Label>
           </div>
         </div>
-        <div>
-          {initLoadingFollowed ? (
-            <Button.Transparent
-              loading={initLoadingFollowed}
-              className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
-            >
-              Loading
-            </Button.Transparent>
-          ) : followed ? (
-            <Button.Transparent
-              onClick={
-                loadingFollowed
-                  ? undefined
-                  : (event) => {
-                      event.stopPropagation();
-                      unfollowUser();
-                    }
-              }
-              disabled={loadingFollowed}
-              loading={loadingFollowed}
-              icon={<Icon.UserMinus size="16" />}
-              className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
-            >
-              Unfollow
-            </Button.Transparent>
-          ) : (
-            <Button.Transparent
-              onClick={
-                loadingFollowed
-                  ? undefined
-                  : (event) => {
-                      event.stopPropagation();
-                      followUser();
-                    }
-              }
-              disabled={loadingFollowed}
-              loading={loadingFollowed}
-              icon={<Icon.UserPlus size="16" />}
-              className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
-            >
-              Follow
-            </Button.Transparent>
-          )}
-          {post?.author?.id === pubky && (
-            <Button.Transparent
-              icon={<Icon.GearSix size="16" />}
-              onClick={(event) => {
-                event.stopPropagation();
-                router.push('/settings');
-              }}
-              className="mt-3"
-            >
-              Edit profile
-            </Button.Transparent>
-          )}
-        </div>
       </div>
       <Typography.Body
         variant="medium"
@@ -285,6 +229,62 @@ export default function Profile({ post }: ProfileProps) {
             </div>
             <PostUI.UserPic images={followersImages} />
           </div>
+        )}
+      </div>
+      <div>
+        {initLoadingFollowed ? (
+          <Button.Transparent
+            loading={initLoadingFollowed}
+            className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
+          >
+            Loading
+          </Button.Transparent>
+        ) : followed ? (
+          <Button.Transparent
+            onClick={
+              loadingFollowed
+                ? undefined
+                : (event) => {
+                    event.stopPropagation();
+                    unfollowUser();
+                  }
+            }
+            disabled={loadingFollowed}
+            loading={loadingFollowed}
+            icon={<Icon.UserMinus size="16" />}
+            className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
+          >
+            Unfollow
+          </Button.Transparent>
+        ) : (
+          <Button.Transparent
+            onClick={
+              loadingFollowed
+                ? undefined
+                : (event) => {
+                    event.stopPropagation();
+                    followUser();
+                  }
+            }
+            disabled={loadingFollowed}
+            loading={loadingFollowed}
+            icon={<Icon.UserPlus size="16" />}
+            className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
+          >
+            Follow
+          </Button.Transparent>
+        )}
+        {post?.author?.id === pubky && (
+          <Button.Transparent
+            icon={<Icon.GearSix size="16" />}
+            onClick={(event) => {
+              event.stopPropagation();
+              router.push('/settings');
+            }}
+            className="mt-3"
+          >
+            Edit profile
+          </Button.Transparent>
         )}
       </div>
     </Tooltip.Main>

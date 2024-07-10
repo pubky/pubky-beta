@@ -8,6 +8,7 @@ import {
   Post as PostUI,
   PostUtil,
   Tooltip as TooltipUI,
+  Typography,
 } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import { IPost, ITaggedPost } from '@/types';
@@ -25,6 +26,7 @@ export default function Tags({ post }: PostProps) {
     useClientContext();
   const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
   const [showModalTags, setShowModalTags] = useState(false);
+  const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<ITaggedPost | null>();
 
   useEffect(() => {
@@ -80,6 +82,15 @@ export default function Tags({ post }: PostProps) {
       onClick={(event) => event.stopPropagation()}
     >
       <div className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
+        <Button.Action
+          size="small"
+          variant="custom"
+          icon={<Icon.Tag size="16" />}
+          counter={post?.tags?.length}
+          onClick={() => {
+            setShowModalTag(true);
+          }}
+        />
         {sortedTags.map((tagObj, index) => {
           const isTagFound = tagObj.from.some(
             (fromItem) => fromItem.author.id === pubky
@@ -100,34 +111,23 @@ export default function Tags({ post }: PostProps) {
                   />
                 )}
                 <PostUtil.Tag
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setShowModalTags(true);
-                    setSelectedTag(tagObj);
-                  }}
                   clicked={isTagFound}
                   color="fuchsia"
-                  // onClick={() =>
-                  //   isTagFound
-                  //     ? handleDeleteTag(tagObj.tag)
-                  //     : handleAddTag(tagObj.tag)
-                  // }
-                  className="flex flex-col pl-9"
+                  onClick={() =>
+                    isTagFound
+                      ? handleDeleteTag(tagObj.tag)
+                      : handleAddTag(tagObj.tag)
+                  }
                 >
-                  <Button.Action
-                    variant="custom"
-                    size="small"
-                    className="absolute -left-9 transform -translate-y-[21px] scale-75"
-                    icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      isTagFound
-                        ? handleDeleteTag(tagObj.tag)
-                        : handleAddTag(tagObj.tag);
-                    }}
-                  />
-                  {Utils.minifyText(tagObj.tag.replace(' ', ''), 7)} (
-                  {tagObj.count})
+                  <div className="flex gap-2 items-center">
+                    {Utils.minifyText(tagObj.tag.replace(' ', ''), 7)}
+                    <Typography.Caption
+                      variant="bold"
+                      className="text-opacity-30"
+                    >
+                      {tagObj.count}
+                    </Typography.Caption>
+                  </div>
                 </PostUtil.Tag>
               </TooltipUI.Root>
               {/* <Button.Action
@@ -174,6 +174,11 @@ export default function Tags({ post }: PostProps) {
         handleAddTag={handleAddTag}
         handleDeleteTag={handleDeleteTag}
         tag={selectedTag}
+      />
+      <Modal.Tag
+        post={post}
+        showModalTag={showModalTag}
+        setShowModalTag={setShowModalTag}
       />
     </div>
   );

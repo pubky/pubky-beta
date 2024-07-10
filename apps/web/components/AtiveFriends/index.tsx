@@ -1,6 +1,6 @@
 'use client';
 
-import { Content, SideCard, Typography } from '@social/ui-shared';
+import { SideCard, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
@@ -50,7 +50,7 @@ export default function ActiveFriends() {
   return (
     <div className="my-6">
       <SideCard.Header title="Active Friends" />
-      <SideCard.Content>
+      <SideCard.Content className="flex flex-col gap-2">
         {loading ? (
           <Skeletons.Simple />
         ) : friends && friends.friends.length > 0 ? (
@@ -67,9 +67,6 @@ export default function ActiveFriends() {
                     }
                     label={Utils.minifyPubky(friend.uri.replace('pubky:', ''))}
                   />
-                  {index !== friends.friends.length - 1 && (
-                    <Content.Divider className="my-2" />
-                  )}
                 </div>
               );
             })}
