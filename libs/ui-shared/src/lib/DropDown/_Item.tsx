@@ -11,7 +11,7 @@ interface ItemProps extends React.HTMLAttributes<HTMLButtonElement> {
 }
 
 export const Item = ({ icon, label, value, selected, ...rest }: ItemProps) => {
-  const baseCSS = `w-60 h-12 py-2 shadow border-b border-white border-opacity-10 backdrop-blur-[10px] items-center justify-between inline-flex hover:bg-white hover:bg-opacity-10`;
+  const baseCSS = `w-60 h-12 py-2 shadow backdrop-blur-[10px] items-center justify-between inline-flex hover:bg-white hover:bg-opacity-10`;
 
   return (
     <button {...rest} key={value} className={twMerge(baseCSS, rest.className)}>

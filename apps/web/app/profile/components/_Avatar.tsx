@@ -15,11 +15,7 @@ export default function Avatar({
 }: AvatarProps) {
   return (
     <div {...rest} className={rest.className}>
-      <img
-        alt={username}
-        src={src}
-        className={'rounded-full w-[240px] h-[240px]'}
-      />
+      <img alt={username} src={src} className={'rounded-full w-32 h-32'} />
       <div className="absolute right-0 top-36 text-[110px]">{status}</div>
     </div>
   );

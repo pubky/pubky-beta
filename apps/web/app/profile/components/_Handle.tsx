@@ -1,22 +1,252 @@
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '@social/ui-shared';
+import { Button, Icon, Typography } from '@social/ui-shared';
+import { useClientContext } from '@/contexts';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Modal from '@/components/Modal';
+import { Utils } from '@social/utils-shared';
+import { DropDown } from '@/components/DropDown';
+import { TStatus } from '@/types';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   username: string | JSX.Element;
-  pubkey?: string;
+  pubkey: string;
+  creatorPubky?: string | null;
+  status?: TStatus;
 }
 
-export default function Handle({ username, pubkey, ...rest }: HandleProps) {
+export default function Handle({
+  username,
+  pubkey,
+  creatorPubky,
+  status,
+  ...rest
+}: HandleProps) {
+  const { pubky, seed, follow, unfollow, listFollowers } = useClientContext();
+  const router = useRouter();
+  const [disposableAccount, setDisposableAccount] = useState(false);
+  const [showModalLogout, setShowModalLogout] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [copiedUrl, setCopiedUrl] = useState(false);
+  const [followed, setFollowed] = useState(false);
+  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
+  const [loadingFollowed, setLoadingFollowed] = useState(false);
+
+  const copyProfileUrlToClipboard = async () => {
+    try {
+      setCopiedUrl(true);
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/profile/${pubkey}`
+      );
+      setTimeout(() => setCopiedUrl(false), 1000);
+    } catch (error) {
+      console.log('Failed to copy: ', error);
+    }
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      setCopied(true);
+      await navigator.clipboard.writeText(`pk:${pubkey}`);
+      setTimeout(() => setCopied(false), 1000);
+    } catch (error) {
+      console.log('Failed to copy: ', error);
+    }
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let pubkey = creatorPubky;
+
+        if (!pubkey) {
+          pubkey = pubky;
+        }
+
+        if (!pubkey) return;
+
+        const followersList = await listFollowers(pubkey);
+
+        if (followersList) {
+          setInitLoadingFollowed(false);
+
+          followersList.followers.forEach((user) => {
+            const uri = user.uri.replace('pubky:', '');
+            if (uri === pubky) {
+              setFollowed(true);
+            }
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [followed, creatorPubky]);
+
+  const followUser = async () => {
+    try {
+      if (!creatorPubky) return;
+      setLoadingFollowed(true);
+
+      const result = await follow(creatorPubky);
+      setFollowed(result);
+      setLoadingFollowed(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const unfollowUser = async () => {
+    try {
+      if (!creatorPubky) return;
+      setLoadingFollowed(true);
+
+      const result = await unfollow(creatorPubky);
+      setFollowed(!result);
+      setLoadingFollowed(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (seed) {
+      setDisposableAccount(true);
+    } else {
+      setDisposableAccount(false);
+    }
+  }, [seed]);
+
   return (
-    <div {...rest} className={twMerge('mt-6', rest.className)}>
-      <Typography.Display className="sm:leading-[120px]">
-        {username}
-      </Typography.Display>
-      {pubkey && (
-        <Typography.H2 className="text-left text-opacity-50">
-          {pubkey}
-        </Typography.H2>
+    <div {...rest} className={twMerge(rest.className)}>
+      {username && pubkey ? (
+        <>
+          <Typography.Display className="text-left">
+            {Utils.minifyText(username.toString(), 15)}
+          </Typography.Display>
+          <div className="-mt-4 inline-flex flex-row gap-2">
+            {creatorPubky && (
+              <>
+                {initLoadingFollowed ? (
+                  <Button.Large
+                    loading={initLoadingFollowed}
+                    className={
+                      !creatorPubky || creatorPubky === pubky
+                        ? 'hidden'
+                        : 'w-[104px] h-8 px-3 py-2'
+                    }
+                  >
+                    Loading
+                  </Button.Large>
+                ) : followed ? (
+                  <Button.Large
+                    onClick={loadingFollowed ? undefined : () => unfollowUser()}
+                    disabled={loadingFollowed}
+                    loading={loadingFollowed}
+                    icon={<Icon.UserMinus size="16" />}
+                    className={
+                      !creatorPubky || creatorPubky === pubky
+                        ? 'hidden'
+                        : 'w-[104px] h-8 px-3 py-2'
+                    }
+                  >
+                    Unfollow
+                  </Button.Large>
+                ) : (
+                  <Button.Large
+                    onClick={loadingFollowed ? undefined : () => followUser()}
+                    disabled={loadingFollowed}
+                    loading={loadingFollowed}
+                    icon={<Icon.UserPlus size="16" />}
+                    className={
+                      !creatorPubky || creatorPubky === pubky
+                        ? 'hidden'
+                        : 'w-[104px] h-8 px-3 py-2'
+                    }
+                  >
+                    Follow
+                  </Button.Large>
+                )}
+              </>
+            )}
+            {(!creatorPubky || creatorPubky === pubky) && (
+              <>
+                <Button.Medium
+                  className="w-32 h-8"
+                  onClick={
+                    disposableAccount
+                      ? () => setShowModalLogout(true)
+                      : () => router.push('/logout')
+                  }
+                  icon={<Icon.SignOut />}
+                >
+                  Sign out
+                </Button.Medium>
+                <Button.Medium
+                  className="w-[75px] h-8"
+                  onClick={() => router.push('/settings')}
+                  icon={<Icon.Pencil size="16" />}
+                >
+                  Edit
+                </Button.Medium>
+              </>
+            )}
+            <Button.Medium
+              className="w-[156px] h-8"
+              onClick={() => copyToClipboard()}
+              icon={
+                copied ? <Icon.CheckCircle size="20" /> : <Icon.Key size="16" />
+              }
+            >
+              {copied ? 'Copied' : Utils.minifyPubky(pubkey)}
+            </Button.Medium>
+            <Button.Medium
+              className="w-[95px] h-8"
+              onClick={() => copyProfileUrlToClipboard()}
+              icon={<Icon.LinkSimple size="16" />}
+            >
+              {copiedUrl ? 'Copied' : 'Link'}
+            </Button.Medium>
+            {!creatorPubky || creatorPubky === pubky ? (
+              <div className="flex flex-col gap-2">
+                {status ? (
+                  <DropDown.Status status={status} />
+                ) : (
+                  <Typography.Body className="text-opacity-50" variant="small">
+                    Loading Status...
+                  </Typography.Body>
+                )}
+              </div>
+            ) : (
+              status &&
+              status !== 'noStatus' && (
+                <Typography.Body variant="medium" className="mt-1">
+                  {
+                    Utils.statusHelper.emojis[
+                      status as keyof typeof Utils.statusHelper.emojis
+                    ]
+                  }{' '}
+                  {
+                    Utils.statusHelper.labels[
+                      status as keyof typeof Utils.statusHelper.labels
+                    ]
+                  }
+                </Typography.Body>
+              )
+            )}
+          </div>
+        </>
+      ) : (
+        <Typography.Display className="text-left">
+          Loading...
+        </Typography.Display>
       )}
+      <Modal.Logout
+        showModalLogout={showModalLogout}
+        setShowModalLogout={setShowModalLogout}
+      />
     </div>
   );
 }

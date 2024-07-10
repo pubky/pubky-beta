@@ -1,7 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { PostUtil, Modal, SideCard, Button, Icon } from '@social/ui-shared';
+import {
+  PostUtil,
+  Modal,
+  SideCard,
+  Button,
+  Icon,
+  Typography,
+} from '@social/ui-shared';
 import { ITaggedPost, ITaggedProfile } from '@/types';
 import { Utils } from '@social/utils-shared';
 import { useClientContext } from '@/contexts';
@@ -175,31 +182,25 @@ export default function Tags({
             <div className="w-full flex-col gap-2 inline-flex">
               <div className="no-scrollbar mt-2 gap-2 inline-flex overflow-x-auto whitespace-nowrap">
                 {tagsProfile.map((tag, index) => {
-                  const isTagFound = tag.from.some(
-                    (fromItem) => fromItem.author.id === pubky
-                  );
+                  //const isTagFound = tag.from.some(
+                  //  (fromItem) => fromItem.author.id === pubky
+                  // );
                   return (
                     <PostUtil.Tag
                       key={index}
                       clicked={selectedTag === tag}
                       color="fuchsia"
                       onClick={() => handleTagClick(tag)}
-                      className="flex flex-col pl-9"
                     >
-                      <Button.Action
-                        variant="custom"
-                        size="small"
-                        className="absolute -left-9 transform -translate-y-[21px] scale-75"
-                        icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          isTagFound
-                            ? handleDeleteTag(tag.tag)
-                            : handleAddTag(tag.tag);
-                        }}
-                      />
-                      {Utils.minifyText(tag?.tag.replace(' ', ''), 20)} (
-                      {tag?.count})
+                      <div className="flex gap-2 items-center">
+                        {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                        <Typography.Caption
+                          variant="bold"
+                          className="text-opacity-30"
+                        >
+                          {tag.count}
+                        </Typography.Caption>
+                      </div>
                     </PostUtil.Tag>
                   );
                 })}

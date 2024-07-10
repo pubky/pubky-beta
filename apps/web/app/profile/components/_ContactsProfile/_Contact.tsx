@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Contacts } from '.';
 import { IFollower, IFollowing, IFriend, LoadingContacts } from '@/types';
-import { useClientContext, useFilterContext } from '@/contexts';
+import { useClientContext } from '@/contexts';
+import List from './_List';
 
 export default function Contact({
   contacts,
@@ -11,7 +11,6 @@ export default function Contact({
   contacts: IFollower[] | IFollowing[] | IFriend[] | [];
 }) {
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
-  const { contactsLayout } = useFilterContext();
   const [initLoadingContacts, setInitLoadingContacts] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
   const [followed, setFollowed] = useState<{
@@ -100,32 +99,18 @@ export default function Contact({
 
           return (
             <div key={`contact-${index}`} className="w-full">
-              {contactsLayout === 'ranking' ? (
-                <Contacts.Ranking
-                  index={`rank-${contact.uri}`}
-                  contactId={contactId}
-                  contact={contact as IFollower}
-                  showDivider={contacts.length - 1 !== index}
-                  initLoadingContacts={initLoadingContacts}
-                  isFollowed={isFollowed}
-                  loadingContacts={loadingContacts}
-                  followUser={followUser}
-                  unfollowUser={unfollowUser}
-                />
-              ) : (
-                <Contacts.List
-                  index={`list-${contact.uri}`}
-                  contactId={contactId}
-                  contact={contact as IFollower}
-                  showDivider={contacts.length - 1 !== index}
-                  pubkeyUser={pubkeyUser}
-                  initLoadingContacts={initLoadingContacts}
-                  isFollowed={isFollowed}
-                  loadingContacts={loadingContacts}
-                  followUser={followUser}
-                  unfollowUser={unfollowUser}
-                />
-              )}
+              <List
+                index={`list-${contact.uri}`}
+                contactId={contactId}
+                contact={contact as IFollower}
+                showDivider={contacts.length - 1 !== index}
+                pubkeyUser={pubkeyUser}
+                initLoadingContacts={initLoadingContacts}
+                isFollowed={isFollowed}
+                loadingContacts={loadingContacts}
+                followUser={followUser}
+                unfollowUser={unfollowUser}
+              />
             </div>
           );
         })}

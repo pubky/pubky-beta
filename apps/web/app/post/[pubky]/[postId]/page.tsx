@@ -79,8 +79,8 @@ export default function Index({
                   uri={uri}
                   post={post}
                   updatePost={handleUpdatePost}
+                  replies={replies}
                 />
-                <Post.Replies repliesResponse={replies} />
               </>
             )}
           </>

@@ -74,7 +74,7 @@ export default function Post({
                     <Content post={post} fullContent={fullContent} />
                     {post?.post.embed.post ? (
                       <PostUI.MainCard className="p-4 border rounded-lg mt-4">
-                        <Header post={post?.post?.embed?.post} repostView />
+                        <Header post={post?.post?.embed?.post} />
                         {line && (
                           <div className={twMerge(lineBaseCSS, lineStyle)} />
                         )}
@@ -140,7 +140,7 @@ export default function Post({
                   </PostUI.RepostCard>
                   {post?.post.embed.post ? (
                     <PostUI.MainCard className={rest.className}>
-                      <Header post={post?.post?.embed?.post} repost={post} />
+                      <Header post={post?.post?.embed?.post} />
                       {line && (
                         <div className={twMerge(lineBaseCSS, lineStyle)} />
                       )}
@@ -182,7 +182,7 @@ export default function Post({
               )
             ) : (
               <PostUI.MainCard className={rest.className}>
-                <Header post={post} repostView={repostView} />
+                <Header post={post} />
                 {line && <div className={twMerge(lineBaseCSS, lineStyle)} />}
                 <div className="ml-[47px]">
                   <Content post={post} fullContent={fullContent} />

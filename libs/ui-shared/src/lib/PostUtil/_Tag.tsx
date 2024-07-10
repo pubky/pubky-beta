@@ -75,7 +75,7 @@ export const Tag = ({
     <div
       {...rest}
       className={twMerge(
-        `inline-flex border h-8 px-3 py-1 rounded-full cursor-pointer text-center`,
+        `inline-flex border h-8 px-3 py-1 rounded-lg cursor-pointer text-center`,
         cssClasses,
         rest.className
       )}

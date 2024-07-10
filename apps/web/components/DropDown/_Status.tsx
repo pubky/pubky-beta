@@ -29,6 +29,7 @@ export default function Status({ status, subtitle }: StatusProps) {
       textOption: status ? labels[status] : labels.noStatus,
       iconText: status ? emojis[status] : emojis.noStatus,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   return (
@@ -41,12 +42,7 @@ export default function Status({ status, subtitle }: StatusProps) {
       subtitle={subtitle}
       className={openDropdown ? 'z-20' : ''}
     >
-      <DropDownUI.Content
-        title="Status"
-        subtitle="Set your current status"
-        isOpen={openDropdown}
-        className="right-0 bottom-0"
-      >
+      <DropDownUI.Content isOpen={openDropdown} className="right-0 top-0">
         <DropDownUI.Item
           label="Available"
           value="available"
