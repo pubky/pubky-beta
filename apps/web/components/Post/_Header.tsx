@@ -7,7 +7,6 @@ import {
   Post as PostUI,
   Typography,
   Tooltip as TooltipUI,
-  Icon,
 } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
@@ -16,19 +15,12 @@ import Tooltip from '../Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
-  repost?: IPost;
-  repostView?: boolean;
 }
 
-export default function Header({
-  post,
-  repost,
-  repostView = false,
-}: PostProps) {
+export default function Header({ post }: PostProps) {
   const router = useRouter();
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
-  const [showMenu, setShowMenu] = useState(false);
 
   return (
     <PostUI.Header>
@@ -66,23 +58,6 @@ export default function Header({
       <div className="justify-end grow">
         <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
       </div>
-      {!repostView && (
-        <div className="relative" onClick={(event) => event.stopPropagation()}>
-          {showMenu && (
-            <Tooltip.Menu
-              post={post}
-              repost={repost}
-              setShowMenu={setShowMenu}
-            />
-          )}
-          <div
-            className="mt-1 ml-2 cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10"
-            onClick={() => setShowMenu(true)}
-          >
-            <Icon.DotsThree size="24" color="gray" />
-          </div>
-        </div>
-      )}
     </PostUI.Header>
   );
 }

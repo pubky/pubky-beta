@@ -21,9 +21,9 @@ export const Root = ({
         <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-70 flex justify-center items-center">
           <div ref={modalRef}>
             <Card.Primary
-              background="bg-gradient-to-b from-[#07040a] to-black opacity-100"
+              background="bg-gradient-to-br from-black to-[#07040a] opacity-100"
               className={twMerge(
-                `w-full h-full p-12 rounded-2xl shadow border border-fuchsia-500 border-opacity-30 flex-col inline-flex`,
+                `w-full h-full p-12 rounded-2xl shadow border border-white border-opacity-30 flex-col inline-flex`,
                 rest.className
               )}
             >

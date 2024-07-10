@@ -17,7 +17,7 @@ export const Item = ({
   cssText,
   ...rest
 }: ItemProps) => {
-  const baseCSS = 'w-full h-12 items-center justify-between inline-flex';
+  const baseCSS = 'w-full h-10 items-center justify-between inline-flex';
   return (
     <button {...rest} className={twMerge(baseCSS, rest.className)}>
       <div className="w-full p-2 hover:bg-white hover:bg-opacity-10 rounded-lg flex gap-4 items-center">

@@ -323,7 +323,7 @@ export default function Index() {
       <Content.Grid>
         <Input.Cursor
           placeholder="Your Name"
-          className="h-auto text-[40px] font-bold sm:text-[100px] -mt-[50px]"
+          className="h-auto text-[40px] font-bold sm:text-[64px]"
           defaultValue={name}
           maxLength={25}
           autoCorrect="off"
@@ -343,8 +343,8 @@ export default function Index() {
             <div>
               <Input.Label value="Short bio" />
               <Card.Primary
-                background="bg-white bg-opacity-10"
-                className="border border-white border-opacity-10 shadow-[0_4px_8px_0_rgba(0,0,0,0.32)_inset] rounded-lg mt-2"
+                background="bg-transparent"
+                className="border border-white border-opacity-30 border-dashed mt-2"
               >
                 <Input.TextArea
                   placeholder="Short bio. Tell a bit about yourself."

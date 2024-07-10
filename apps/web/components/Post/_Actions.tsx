@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
-import { Modal } from '../Modal';
 import Repost from '../Repost';
 import { useClientContext, useAlertContext } from '@/contexts';
 import { IPost } from '@/types';
@@ -26,9 +25,9 @@ export default function Actions({
   const { deleteBookmark, createBookmark, createRepost, deletePost } =
     useClientContext();
   const { setContent, setShow } = useAlertContext();
+  const [showMenu, setShowMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showRepostMenu, setShowRepostMenu] = useState(false);
-  const [showModalTag, setShowModalTag] = useState(false);
 
   const handleAddBookmark = async (postId: string, uri: string) => {
     await createBookmark(postId, uri);
@@ -72,15 +71,6 @@ export default function Actions({
       onClick={(event) => event.stopPropagation()}
     >
       <PostUI.Actions>
-        <Button.Action
-          size="small"
-          variant="custom"
-          icon={<Icon.Tag size="16" />}
-          counter={post?.tags?.length}
-          onClick={() => {
-            setShowModalTag(true);
-          }}
-        />
         <Button.Action
           size="small"
           variant="custom"
@@ -146,17 +136,30 @@ export default function Actions({
               : handleAddBookmark(post.id, post.uri)
           }
         />
+        <div className="relative" onClick={(event) => event.stopPropagation()}>
+          {showMenu && (
+            <Tooltip.Menu
+              post={post}
+              repost={repost}
+              setShowMenu={setShowMenu}
+            />
+          )}
+          <Button.Action
+            size="small"
+            variant="custom"
+            icon={<Icon.DotsThreeOutline size="16" color="white" />}
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowMenu(true);
+            }}
+          />
+        </div>
       </PostUI.Actions>
       <Repost
         post={post}
         handleRepost={handleRepost}
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
-      />
-      <Modal.Tag
-        post={post}
-        showModalTag={showModalTag}
-        setShowModalTag={setShowModalTag}
       />
     </div>
   );

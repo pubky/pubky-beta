@@ -183,14 +183,6 @@ export default function Header({ title, className }: HeaderProps) {
             icon={<Icon.Tag size="24" />}
           />
         </Link>
-        <Link href="/contacts">
-          <Button.Action
-            variant="menu"
-            label="Contacts"
-            active={title === 'Contacts'}
-            icon={<Icon.UsersLeft size="24" />}
-          />
-        </Link>
         <Link href="/bookmarks">
           <Button.Action
             variant="menu"
@@ -210,7 +202,7 @@ export default function Header({ title, className }: HeaderProps) {
         <Link href="/profile" className="w-[48px] relative">
           {notifications.length !== 0 && (
             <PostUtil.Counter
-              className="absolute text-center top-4 -right-2 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
+              className="absolute text-center bottom-0 right-0 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
               counter={notifications.length}
             />
           )}
@@ -263,12 +255,6 @@ export default function Header({ title, className }: HeaderProps) {
                 href="/hot-tags"
                 icon={<Icon.Tag size="24" />}
                 text="Hot Tags"
-                onClick={() => setDrawerOpen(false)}
-              />
-              <Menu.Section
-                href="/contacts"
-                icon={<Icon.UsersLeft />}
-                text="Contacts"
                 onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section

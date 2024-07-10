@@ -8,7 +8,7 @@ interface SearchTagProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const SearchTag = ({ value, action, ...rest }: SearchTagProps) => {
-  const baseCSS = `inline-flex border h-8 px-3 py-1 rounded-full cursor-pointer text-center bg-[#391941] border-fuchsia-500 border-opacity-60 rounded-full`;
+  const baseCSS = `inline-flex border h-8 px-3 py-1 rounded-lg cursor-pointer text-center bg-[#391941] border-fuchsia-500 border-opacity-60`;
 
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>

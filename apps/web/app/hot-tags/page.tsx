@@ -12,10 +12,10 @@ import {
   WhoFollow,
 } from '@/components';
 import { HotTags } from './components';
-import { DropDown } from '@/components/DropDown';
 import { useClientContext, useFilterContext } from '@/contexts';
 import { ITaggedPost } from '@/types';
 import Skeletons from '@/components/Skeletons';
+import Filter from '@/components/Filter';
 
 export default function Index() {
   const router = useRouter();
@@ -130,12 +130,12 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="HotTags" />
-      <Content.Grid className='flex w-full justify-between items-start inline-flex"'>
-        <div className="w-full flex-col inline-flex gap-3">
-          <div className="flex gap-6 mb-6">
-            <DropDown.HotTagsReach type="text" subtitle="Reach" />
-            {/**<DropDown.TagsTimeframe disabled type="text" subtitle="Timeframe" />*/}
-          </div>
+      <Content.Grid className="grid grid-cols-5 gap-4">
+        <Sidebar className="self-start sticky top-[120px] hidden xl:block">
+          <Filter.HotTagsReach />
+          <Filter.TagsTimeFrame />
+        </Sidebar>
+        <div className="w-full flex-col inline-flex gap-3 col-span-5 xl:col-span-4 2xl:col-span-3">
           {loading ? (
             <div className="w-full">
               <Skeletons.Simple />
@@ -176,10 +176,10 @@ export default function Index() {
             </Typography.H2>
           )}
         </div>
-        <Sidebar className="self-start sticky top-[120px] hidden xl:block w-[20%]">
+        <Sidebar className="hidden xl:block">
           <WhoFollow />
           <ActiveFriends />
-        </Sidebar>{' '}
+        </Sidebar>
       </Content.Grid>
       <CreatePost />
     </Content.Main>
