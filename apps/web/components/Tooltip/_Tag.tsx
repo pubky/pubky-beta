@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Icon, Tooltip, Post, Typography } from '@social/ui-shared';
+import { Icon, Tooltip, Typography, PostUtil } from '@social/ui-shared';
 import { ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
+import Image from 'next/image';
 
 interface TagProps {
   tags: ITaggedPost;
   setShowModalTags: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedTag: React.Dispatch<
+  setSelectedTag?: React.Dispatch<
     React.SetStateAction<ITaggedPost | null | undefined>
   >;
 }
@@ -21,19 +22,12 @@ export default function Tag({
 }: TagProps) {
   const router = useRouter();
   const [loadingFollowers, setLoadingFollowers] = useState(true);
-
-  const [followersImages, setFollowersImages] = useState<
-    { alt: string; src: string }[]
-  >([]);
+  const images = tags.from.map((fromItem) => fromItem.author.profile.image);
+  const displayedImages = images.slice(0, 5);
+  const extraImagesCount = images.length - displayedImages.length;
 
   useEffect(() => {
     if (tags?.count) {
-      setFollowersImages(
-        tags.from.slice(0, 6).map((user) => ({
-          alt: 'user-pic',
-          src: user?.author?.profile?.image ?? '/images/Userpic.png',
-        }))
-      );
       setLoadingFollowers(false);
     }
   }, [tags]);
@@ -53,14 +47,31 @@ export default function Tag({
                 Tagged by
               </Typography.Label>
             </div>
-            <Post.UserPic
+            <div
               onClick={() => {
                 setShowModalTags(true);
-                setSelectedTag(tags);
+                setSelectedTag && setSelectedTag(tags);
               }}
-              className="cursor-pointer"
-              images={followersImages}
-            />
+              className="cursor-pointer flex items-center"
+            >
+              {displayedImages.map((image, imageIndex) => (
+                <Image
+                  width={32}
+                  height={32}
+                  key={imageIndex}
+                  className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                    imageIndex > 0 && '-ml-2'
+                  }`}
+                  alt={`tag-${imageIndex + 1}`}
+                  src={image}
+                />
+              ))}
+              {extraImagesCount > 0 && (
+                <PostUtil.Counter className="-ml-2">
+                  +{extraImagesCount}
+                </PostUtil.Counter>
+              )}
+            </div>
             <div
               onClick={(event) => {
                 event.stopPropagation();

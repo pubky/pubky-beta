@@ -231,6 +231,37 @@ export const MagnifyingGlass = ({
   </svg>
 );
 
+export const MagnifyingGlassLeft = ({
+  size = '14',
+  color = 'white',
+}: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 14 14"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      opacity="0.2"
+      d="M6.25 11.5C9.1495 11.5 11.5 9.1495 11.5 6.25C11.5 3.35051 9.1495 1 6.25 1C3.35051 1 1 3.35051 1 6.25C1 9.1495 3.35051 11.5 6.25 11.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M6.25 1.5C3.62665 1.5 1.5 3.62665 1.5 6.25C1.5 8.87335 3.62665 11 6.25 11C8.87335 11 11 8.87335 11 6.25C11 3.62665 8.87335 1.5 6.25 1.5ZM0.5 6.25C0.5 3.07436 3.07436 0.5 6.25 0.5C9.42564 0.5 12 3.07436 12 6.25C12 9.42564 9.42564 12 6.25 12C3.07436 12 0.5 9.42564 0.5 6.25Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M9.60934 9.60897C9.8046 9.41371 10.1212 9.41371 10.3164 9.60897L13.354 12.6465C13.5492 12.8418 13.5492 13.1584 13.354 13.3536C13.1587 13.5489 12.8421 13.5489 12.6469 13.3536L9.60934 10.3161C9.41408 10.1208 9.41408 9.80423 9.60934 9.60897Z"
+      fill={color}
+    />
+  </svg>
+);
+
 export const Check = ({ size = '16', color = 'white' }: IconProps) => (
   <svg
     width={size}

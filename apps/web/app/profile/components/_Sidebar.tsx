@@ -6,23 +6,18 @@ import { useEffect, useState, useRef } from 'react';
 import {
   Icon,
   Typography,
-  Post,
   SideCard,
   Button,
   PostUtil,
   Tooltip as TooltipUI,
 } from '@social/ui-shared';
-import { useClientContext, useAlertContext } from '@/contexts';
+import { useClientContext } from '@/contexts';
 import { Skeleton } from '@/components';
 import { Utils } from '@social/utils-shared';
-import {
-  IFollowingResponse,
-  IFollowersResponse,
-  ITaggedProfile,
-} from '@/types';
+import { ITaggedProfile } from '@/types';
 import { Modal } from '@/components/Modal';
-import Skeletons from '@/components/Skeletons';
 import Tooltip from '@/components/Tooltip';
+import { useRouter } from 'next/navigation';
 
 const socialLinks = [
   {
@@ -109,36 +104,22 @@ export default function Sidebar({
     unfollow,
     getProfile,
     listFollowers,
-    listFollowing,
     getUser,
     createTag,
     deleteTag,
   } = useClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const router = useRouter();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('No bio.');
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
   const [image, setImage] = useState('/images/Userpic.png');
   const [profileTags, setProfileTags] = useState<ITaggedProfile[]>([]);
-  const [showModalTags, setShowModalTags] = useState(false);
+  const [showUsersTag, setShowUsersTag] = useState(false);
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
-  const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [loadingProfileTags, setLoadingProfileTags] = useState(true);
-  const [loadingAddProfileTags, setLoadingAddProfileTags] = useState(false);
   const [pubkyUser, setPubkyUser] = useState('');
   const [loading, setLoading] = useState(true);
-  const [loadingFollowers, setLoadingFollowers] = useState(true);
-  const [loadingFollowing, setLoadingFollowing] = useState(true);
-  const [following, setFollowing] = useState<IFollowingResponse | null>(null);
-  const [followers, setFollowers] = useState<IFollowersResponse | null>(null);
-  const [followersImages, setFollowersImages] = useState<
-    { alt: string; src: string }[]
-  >([]);
-  const [followingImages, setFollowingImages] = useState<
-    { alt: string; src: string }[]
-  >([]);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
@@ -164,14 +145,6 @@ export default function Sidebar({
         const followersList = await listFollowers(pubkey);
 
         if (followersList) {
-          setFollowersImages(
-            followersList.followers.slice(0, 5).map((user) => ({
-              alt: 'user-pic',
-              src: user?.profile?.image || '/images/Userpic.png',
-            }))
-          );
-          setFollowers(followersList);
-          setLoadingFollowers(false);
           setInitLoadingFollowed(false);
 
           followersList.followers.forEach((user) => {
@@ -188,37 +161,6 @@ export default function Sidebar({
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [followed, creatorPubky]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        let pubkey = creatorPubky;
-
-        if (!pubkey) {
-          pubkey = pubky;
-        }
-
-        if (!pubkey) return;
-
-        const followingList = await listFollowing(pubkey);
-
-        if (followingList) {
-          setFollowingImages(
-            followingList.following.slice(0, 5).map((user) => ({
-              alt: 'user-pic',
-              src: user?.profile?.image || '/images/Userpic.png',
-            }))
-          );
-          setFollowing(followingList);
-          setLoadingFollowing(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [creatorPubky]);
 
   async function fetchProfile() {
     try {
@@ -320,26 +262,6 @@ export default function Sidebar({
     if (pubKeyToUse) {
       await deleteTag(pubKeyToUse, tag);
       fetchProfile();
-    }
-  };
-
-  const AddTags = async () => {
-    try {
-      setLoadingAddProfileTags(true);
-
-      for (const tag of arrayTags) {
-        await handleAddProfileTag(tag);
-      }
-
-      setContent('Profile tags added!');
-      setShow(true);
-
-      setLoadingAddProfileTags(false);
-    } catch (err) {
-      console.error(err);
-      setLoadingAddProfileTags(false);
-      setContent('Profile tags added!');
-      setShow(true);
     }
   };
 
@@ -495,118 +417,108 @@ export default function Sidebar({
             </>
           )}
           <div className="w-full">
-            <SideCard.Header title="Tagged as" />
+            <SideCard.Header title="Tagged" />
             {loadingProfileTags ? (
               <Skeleton.Simple />
             ) : (
-              <div className="mt-4 justify-start items-start gap-2 flex flex-wrap">
+              <div className="mt-4 justify-start items-start gap-2 flex flex-col">
                 {profileTags.length > 0 ? (
                   <>
                     {profileTags.map((tag, index) => {
                       const isTagFound = tag.from.some(
                         (fromItem) => fromItem.author.id === pubky
                       );
-                      return (
-                        <TooltipUI.Root
-                          key={index}
-                          delay={200}
-                          setShowTooltip={setShowTooltipProfile}
-                          tagId={tag.tag}
-                        >
-                          {showTooltipProfile === tag.tag && (
-                            <Tooltip.Tag
-                              setSelectedTag={setSelectedTag}
-                              setShowModalTags={setShowModalTags}
-                              tags={tag}
-                            />
-                          )}
-                          <PostUtil.Tag
-                            key={index}
-                            clicked={isTagFound}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              isTagFound
-                                ? handleDeleteProfileTag(tag.tag)
-                                : handleAddProfileTag(tag.tag);
-                            }}
-                            color="fuchsia"
-                          >
-                            <div className="flex gap-2 items-center">
-                              {Utils.minifyText(tag.tag.replace(' ', ''), 7)}
-                              <Typography.Caption
-                                variant="bold"
-                                className="text-opacity-30"
-                              >
-                                {tag.count}
-                              </Typography.Caption>
-                            </div>
-                          </PostUtil.Tag>
-                        </TooltipUI.Root>
+
+                      const images = tag.from.map(
+                        (fromItem) => fromItem.author.profile.image
                       );
-                    })}{' '}
-                    <Button.Action
-                      variant="custom"
-                      size="small"
-                      icon={<Icon.ListBullets />}
-                      onClick={() => setShowModalTags(true)}
-                      className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
-                    />
+                      const displayedImages = images.slice(0, 5);
+                      const extraImagesCount =
+                        images.length - displayedImages.length;
+
+                      return (
+                        <div className="flex gap-2" key={index}>
+                          <TooltipUI.Root
+                            delay={200}
+                            setShowTooltip={setShowTooltipProfile}
+                            tagId={tag.tag}
+                          >
+                            {showTooltipProfile === tag.tag && (
+                              <Tooltip.Tag
+                                setShowModalTags={setShowModalProfileTag}
+                                tags={tag}
+                              />
+                            )}
+                            <PostUtil.Tag
+                              key={index}
+                              clicked={isTagFound}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                isTagFound
+                                  ? handleDeleteProfileTag(tag.tag)
+                                  : handleAddProfileTag(tag.tag);
+                              }}
+                              color="fuchsia"
+                            >
+                              <div className="flex gap-2 items-center">
+                                {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                                <Typography.Caption
+                                  variant="bold"
+                                  className="text-opacity-30"
+                                >
+                                  {tag.count}
+                                </Typography.Caption>
+                              </div>
+                            </PostUtil.Tag>
+                          </TooltipUI.Root>
+                          <Button.Action
+                            variant="custom"
+                            size="small"
+                            icon={<Icon.MagnifyingGlassLeft size="14" />}
+                            onClick={() =>
+                              router.push(`/search?tags=${tag.tag}`)
+                            }
+                            className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+                          />
+                          <div
+                            onClick={() => setShowModalProfileTag(true)}
+                            className="cursor-pointer flex items-center"
+                          >
+                            {displayedImages.map((image, imageIndex) => (
+                              <Image
+                                width={32}
+                                height={32}
+                                key={index}
+                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                                  imageIndex > 0 && '-ml-2'
+                                }`}
+                                alt={`tag-${imageIndex + 1}`}
+                                src={image}
+                              />
+                            ))}
+                            {extraImagesCount > 0 && (
+                              <PostUtil.Counter className="-ml-2">
+                                +{extraImagesCount}
+                              </PostUtil.Counter>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </>
                 ) : (
-                  <Typography.Body
-                    variant="small"
-                    className="flex self-center text-opacity-50"
-                  >
+                  <Typography.Body variant="small" className="text-opacity-50">
                     No tags yet
                   </Typography.Body>
                 )}
-                <Button.Action
-                  variant="custom"
-                  size="small"
-                  icon={<Icon.Tag />}
+                <Button.Medium
+                  className="mt-2 w-[50%] h-8 inline-flex items-center"
                   onClick={() => setShowModalProfileTag(true)}
-                  className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
-                />
+                  icon={<Icon.Tag size="16" />}
+                >
+                  Tag {Utils.minifyText(name, 12)}
+                </Button.Medium>
               </div>
-            )}
-          </div>
-          <div className="w-full">
-            <SideCard.Header title="Contacts" />
-            {loadingFollowers ? (
-              <Skeletons.Simple />
-            ) : (
-              <SideCard.Content className="grid grid-cols-2 gap-12 justify-start mt-2">
-                {loadingFollowers ? (
-                  <div className="flex w-full justify-center">
-                    <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
-                  </div>
-                ) : (
-                  <div className={`flex-col gap-3 inline-flex`}>
-                    <div className="inline-flex gap-2">
-                      <Typography.Label>{followers?.count}</Typography.Label>
-                      <Typography.Label className="text-opacity-50">
-                        Followers
-                      </Typography.Label>
-                    </div>
-                    <Post.UserPic images={followersImages} />
-                  </div>
-                )}
-                {loadingFollowing ? (
-                  <div className="flex w-full justify-center">
-                    <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
-                  </div>
-                ) : (
-                  <div className={`flex-col gap-3 inline-flex`}>
-                    <div className="inline-flex gap-2">
-                      <Typography.Label>{following?.count}</Typography.Label>
-                      <Typography.Label className="text-opacity-50">
-                        Following
-                      </Typography.Label>
-                    </div>
-                    <Post.UserPic images={followingImages} />
-                  </div>
-                )}
-              </SideCard.Content>
             )}
           </div>
           {links.length > 0 && (
@@ -680,21 +592,17 @@ export default function Sidebar({
         setShowModalCheckLink={setShowModalCheckLink}
         clickedLink={clickedLink}
       />
-      <Modal.ProfileTags
-        tagsProfile={profileTags}
-        showModalTags={showModalTags}
-        setShowModalTags={setShowModalTags}
-        handleAddTag={handleAddProfileTag}
-        handleDeleteTag={handleDeleteProfileTag}
-        tag={selectedTag}
-      />
       <Modal.ProfileTag
-        arrayTags={arrayTags}
-        setArrayTags={setArrayTags}
+        profileTags={profileTags}
         showModalProfileTag={showModalProfileTag}
         setShowModalProfileTag={setShowModalProfileTag}
-        AddTags={AddTags}
-        loadingAddProfileTags={loadingAddProfileTags}
+        handleAddProfileTag={handleAddProfileTag}
+        handleDeleteProfileTag={handleDeleteProfileTag}
+        setShowUsersTag={setShowUsersTag}
+        showUsersTag={showUsersTag}
+        pubkyUser={pubkyUser}
+        name={name}
+        image={image}
       />
     </>
   );
