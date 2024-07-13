@@ -146,3 +146,21 @@ export const ArrowRight = ({ size = '16', color = 'white' }: IconProps) => (
     />
   </svg>
 );
+
+export const CaretRight = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path opacity="0.2" d="M12 6L22 16L12 26V6Z" fill={color} />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M11.6173 5.07612C11.991 4.92134 12.4211 5.00689 12.7071 5.29289L22.7071 15.2929C23.0976 15.6834 23.0976 16.3166 22.7071 16.7071L12.7071 26.7071C12.4211 26.9931 11.991 27.0787 11.6173 26.9239C11.2436 26.7691 11 26.4045 11 26V6C11 5.59554 11.2436 5.2309 11.6173 5.07612ZM13 8.41421V23.5858L20.5858 16L13 8.41421Z"
+      fill={color}
+    />
+  </svg>
+);

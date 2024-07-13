@@ -5,6 +5,7 @@ import {
   ArrowRight,
   DropdownIcon,
   Repost,
+  CaretRight,
 } from './_Arrow';
 import { Tag } from './_Commerce';
 import {
@@ -44,6 +45,7 @@ import {
   Link,
   LinkSimple,
   MagnifyingGlass,
+  MagnifyingGlassLeft,
   Check,
   CheckCircle,
   Bell,
@@ -94,6 +96,7 @@ export const Icon = {
   Blocktank,
   Broadcast,
   Calendar,
+  CaretRight,
   ChatCircleText,
   Check,
   CheckCircle,
@@ -125,6 +128,7 @@ export const Icon = {
   LoadingSpin,
   Lock,
   MagnifyingGlass,
+  MagnifyingGlassLeft,
   Minus,
   MusicNotesSimple,
   Newspaper,

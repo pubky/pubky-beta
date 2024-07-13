@@ -138,6 +138,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         </div>
       )}
       {loading && <Skeletons.Simple />}
+      <div ref={loader} />
     </>
   );
 }

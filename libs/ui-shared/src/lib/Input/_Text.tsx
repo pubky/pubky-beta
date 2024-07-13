@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface TextProps extends React.HTMLAttributes<HTMLInputElement> {
   action?: React.ReactNode;
-  error?: string; // Adicione a propriedade error aqui
+  error?: string;
   required?: boolean;
   value?: string;
   maxLength?: number;
