@@ -29,7 +29,7 @@ const profileSchema = z.object({
     .max(24, { message: 'Maximum length 24 characters' }),
   bio: z
     .string()
-    .max(140, { message: 'Maximum length 140 characters' })
+    .max(160, { message: 'Maximum length 160 characters' })
     .optional(),
 });
 
@@ -250,6 +250,7 @@ export default function Index() {
                 className="h-[240px]"
                 id="onboarding-bio-input"
                 defaultValue={bio ? bio : ''}
+                maxLength={160}
                 error={errors.bio}
                 onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
                   const target = e.target as HTMLTextAreaElement;

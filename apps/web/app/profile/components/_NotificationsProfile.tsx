@@ -1,12 +1,19 @@
 import { Notifications } from '@/app/notifications/components';
 import { Skeleton } from '@/components';
-import { useNotificationsContext } from '@/contexts';
+import { INotification } from '@/types';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-export default function NotificationsProfile() {
-  const { notifications, loading } = useNotificationsContext();
+type NotificationsProps = {
+  notifications: INotification[];
+  loading: boolean;
+};
+
+export default function NotificationsProfile({
+  notifications,
+  loading,
+}: NotificationsProps) {
   const [loadingNotifications, setLoadingNotifications] = useState(true);
 
   useEffect(() => {
