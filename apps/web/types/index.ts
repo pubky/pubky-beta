@@ -201,6 +201,9 @@ interface IViewer {}
 export interface IUserProfile {
   profile: IProfile;
   tagsCount: number;
+  followersCount: number;
+  followingCount: number;
+  friendsCount: number;
   postsCount: number;
   taggedAs: ITaggedProfile[];
   viewer: IViewer;

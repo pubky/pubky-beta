@@ -7,6 +7,7 @@ import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import { DropDown } from '@/components/DropDown';
 import { TStatus } from '@/types';
+import Tooltip from '@/components/Tooltip';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   username: string | JSX.Element;
@@ -26,6 +27,7 @@ export default function Handle({
   const router = useRouter();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [followed, setFollowed] = useState(false);
@@ -202,6 +204,20 @@ export default function Handle({
             >
               {copied ? 'Copied' : Utils.minifyPubky(pubkey)}
             </Button.Medium>
+            <div className="relative">
+              {showProfileMenu && (
+                <Tooltip.ProfileMenu
+                  setShowProfileMenu={setShowProfileMenu}
+                  creatorPubky={creatorPubky ?? pubkey}
+                />
+              )}
+              <Button.Action
+                size="small"
+                variant="custom"
+                icon={<Icon.DotsThreeOutline size="16" />}
+                onClick={() => setShowProfileMenu(true)}
+              />
+            </div>
             <Button.Medium
               className="w-[95px] h-8"
               onClick={() => copyProfileUrlToClipboard()}

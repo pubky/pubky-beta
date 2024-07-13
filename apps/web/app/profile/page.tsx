@@ -13,18 +13,31 @@ export default function Index() {
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('');
   const [handler, setHandler] = useState('');
+  const [countPosts, setCountPosts] = useState<number>();
+  const [countContacts, setCountContacts] = useState({
+    followers: 0,
+    following: 0,
+    friends: 0,
+  });
   const loader = useRef(null);
 
   async function fetchProfile() {
     try {
       if (!pubky) return;
       const userProfile = await getUserIndexed(pubky);
+      console.log('userProfile', userProfile);
 
       if (userProfile) {
         setPic(userProfile.profile?.image || '/images/Userpic.png');
         setName(userProfile.profile?.name || 'Loading...');
         setHandler(pubky);
         setStatus(userProfile.profile?.status);
+        setCountPosts(userProfile.postsCount);
+        setCountContacts({
+          followers: userProfile.followersCount,
+          following: userProfile.followersCount,
+          friends: userProfile.friendsCount,
+        });
       }
     } catch (error) {
       console.log(error);
@@ -52,7 +65,10 @@ export default function Index() {
       </div>
       <Content.Grid className="grid grid-cols-3 gap-4">
         <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6 mt-[10px]">
-          <Profile.FilterTabs />
+          <Profile.FilterTabs
+            countContacts={countContacts}
+            countPosts={countPosts}
+          />
         </PostsLayout>
         <Profile.Sidebar />
       </Content.Grid>

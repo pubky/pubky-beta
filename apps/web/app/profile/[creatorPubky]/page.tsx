@@ -14,13 +14,19 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
-  const { pubky, getUserIndexed, getProfile, setPosts } = useClientContext();
+  const { pubky, getUserIndexed, setPosts } = useClientContext();
   const creatorPubky = params.creatorPubky;
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [status, setStatus] = useState<TStatus | undefined>();
   const [name, setName] = useState('');
   const [handler, setHandler] = useState('');
+  const [countPosts, setCountPosts] = useState<number>();
+  const [countContacts, setCountContacts] = useState({
+    followers: 0,
+    following: 0,
+    friends: 0,
+  });
   const [userExist, setUserExist] = useState(true);
 
   const loader = useRef(null);
@@ -28,12 +34,19 @@ export default function Index({
   async function fetchProfile() {
     try {
       if (pubky === creatorPubky) {
-        const userProfile = await getProfile();
-        if (userProfile) {
+        const user = await getUserIndexed(pubky);
+        const userProfile = user?.profile;
+        if (userProfile && user) {
           setPic(userProfile.image || '/images/Userpic.png');
           setName(userProfile.name || 'Loading...');
           setHandler(pubky);
           setStatus(userProfile.status);
+          setCountPosts(user.postsCount);
+          setCountContacts({
+            followers: user.followersCount,
+            following: user.followersCount,
+            friends: user.friendsCount,
+          });
         }
         return;
       }
@@ -44,6 +57,12 @@ export default function Index({
         setName(userProfile.profile?.name || 'Loading...');
         setHandler(creatorPubky);
         setStatus(userProfile.profile?.status);
+        setCountPosts(userProfile.postsCount);
+        setCountContacts({
+          followers: userProfile.followersCount,
+          following: userProfile.followersCount,
+          friends: userProfile.friendsCount,
+        });
       } else {
         setUserExist(false);
       }
@@ -77,7 +96,11 @@ export default function Index({
           </div>
           <Content.Grid className="grid grid-cols-3 gap-6">
             <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6  mt-[10px]">
-              <Profile.FilterTabs creatorPubky={creatorPubky} />
+              <Profile.FilterTabs
+                countContacts={countContacts}
+                countPosts={countPosts}
+                creatorPubky={creatorPubky}
+              />
             </PostsLayout>
             <Profile.Sidebar creatorPubky={creatorPubky} />
           </Content.Grid>
