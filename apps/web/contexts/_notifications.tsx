@@ -23,7 +23,7 @@ const NotificationsContext = createContext<NotificationsContextType>({
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
-  const { getNotifications } = useClientContext();
+  const { pubky, getNotifications } = useClientContext();
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,7 +44,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pubky]);
 
   return (
     <NotificationsContext.Provider

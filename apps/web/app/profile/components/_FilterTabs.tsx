@@ -3,6 +3,7 @@ import { Icon, Typography } from '@social/ui-shared';
 import { Profile } from './';
 import { Skeleton } from '@/components';
 import ContactsProfile from './_ContactsProfile/ContactsProfile';
+import { useClientContext, useNotificationsContext } from '@/contexts';
 
 const tabs = [
   {
@@ -58,9 +59,20 @@ const tabs = [
 
 export default function FilterTabs({
   creatorPubky,
+  countPosts,
+  countContacts,
 }: {
   creatorPubky?: string;
+  countPosts: number | undefined;
+  countContacts: {
+    followers: number;
+    following: number;
+    friends: number;
+  };
 }) {
+  const { notifications, loading: loadingNotifications } =
+    useNotificationsContext();
+  const { pubky } = useClientContext();
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -72,7 +84,8 @@ export default function FilterTabs({
     if (foundTab) {
       setActiveTab(foundTab.id);
     } else {
-      const defaultTab = creatorPubky ? tabs[1] : tabs[0];
+      const defaultTab =
+        !creatorPubky || creatorPubky === pubky ? tabs[0] : tabs[1];
       setActiveTab(defaultTab.id);
       params.set('tab', defaultTab.key);
       window.history.replaceState(
@@ -82,7 +95,7 @@ export default function FilterTabs({
       );
     }
     setLoading(false);
-  }, [creatorPubky]);
+  }, [creatorPubky, pubky]);
 
   const handleTabClick = (id: number, key: string) => {
     if (!loading) {
@@ -97,11 +110,32 @@ export default function FilterTabs({
     }
   };
 
+  const getTabNumber = (key: string) => {
+    switch (key) {
+      case 'notifications':
+        return notifications.length;
+      case 'posts':
+        return countPosts || 0;
+      case 'followers':
+        return countContacts.followers || 0;
+      case 'following':
+        return countContacts.following || 0;
+      case 'friends':
+        return countContacts.friends || 0;
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       <div className="flex gap-4">
         {tabs.map((tab) => {
-          if (creatorPubky && tab.key === 'notifications') {
+          if (
+            creatorPubky &&
+            creatorPubky !== pubky &&
+            tab.key === 'notifications'
+          ) {
             return null;
           }
           const isActive = activeTab === tab.id;
@@ -117,9 +151,15 @@ export default function FilterTabs({
             >
               {tab.icon(isActive, loading)}
               <Typography.Caption
+                variant="bold"
                 className={isActive && !loading ? '' : 'text-opacity-30'}
               >
                 {tab.label}
+                {tab.key && (
+                  <span className="ml-2 text-white text-opacity-30">
+                    {getTabNumber(tab.key)}
+                  </span>
+                )}
               </Typography.Caption>
             </div>
           );
@@ -129,9 +169,12 @@ export default function FilterTabs({
         <Skeleton.Simple />
       ) : (
         <>
-          {creatorPubky
-            ? null
-            : activeTab === 0 && <Profile.NotificationsProfile />}
+          {(!creatorPubky || creatorPubky === pubky) && activeTab === 0 && (
+            <Profile.NotificationsProfile
+              notifications={notifications}
+              loading={loadingNotifications}
+            />
+          )}
           {activeTab === 1 && <Profile.Posts creatorPubky={creatorPubky} />}
           {activeTab === 2 && (
             <ContactsProfile creatorPubky={creatorPubky} contacts="followers" />

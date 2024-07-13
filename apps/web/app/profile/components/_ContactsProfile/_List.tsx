@@ -46,7 +46,7 @@ export default function List({
           <div className="flex-col justify-center items-start inline-flex">
             <Typography.Body variant="medium-bold">
               {contact.profile.name &&
-                Utils.minifyText(contact?.profile?.name, 12)}
+                Utils.minifyText(contact?.profile?.name, 10)}
             </Typography.Body>
             <Typography.Label className="text-opacity-30 -mb-1">
               {Utils.minifyPubky(contactId)}
@@ -58,7 +58,7 @@ export default function List({
             variant="small"
             className="lg:px-12 text-opacity-80 leading-[18px] break-words"
           >
-            {contact.profile.bio}
+            {Utils.minifyContent(contact?.profile?.bio, 1)}
           </Typography.Body>
         </div>
         <div className="flex-col justify-start items-start gap-1 inline-flex">

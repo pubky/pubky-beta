@@ -34,37 +34,37 @@ const socialLinks = [
   {
     name: 'Discord',
     url: 'https://discord.gg/',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
   {
     name: 'Instagram',
     url: 'https://instagram.com/@',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
   {
     name: 'Facebook',
     url: 'https://facebook.com/',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
   {
     name: 'LinkedIn',
     url: 'https://linkedin.com/in/',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
   {
     name: 'Github',
     url: 'https://github.com/',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
   {
     name: 'Calendly',
     url: 'https://calendly.com/',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
   {
     name: 'Vimeo',
     url: 'https://vimeo.com/',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
   {
     name: 'Youtube',
@@ -74,18 +74,22 @@ const socialLinks = [
   {
     name: 'Twitch',
     url: 'https://twitch.tv/',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
   {
     name: 'Pinterest',
     url: 'https://pinterest.com/',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
-  { name: 'TikTok', url: 'https://tiktok.com/@' },
+  {
+    name: 'TikTok',
+    url: 'https://tiktok.com/@',
+    icon: <Icon.Link size="16" />,
+  },
   {
     name: 'Spotify',
     url: 'https://spotify.com/user/',
-    icon: <Icon.Twitter size="16" />,
+    icon: <Icon.Link size="16" />,
   },
 ];
 
@@ -374,116 +378,92 @@ export default function Sidebar({
   return (
     <>
       <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
-        {loading ? (
-          <div className="w-full flex-col justify-start items-start xl:inline-flex lg:ml-3">
-            <SideCard.Header title="Bio" />
-            <Skeleton.Simple />
-          </div>
-        ) : (
-          <>
-            <div className="flex flex-col gap-2">
-              <SideCard.Header title="Bio" />
-              <Typography.Body
-                variant="medium"
-                className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
-              >
-                {Utils.minifyText(bio, 160)}
-              </Typography.Body>
-            </div>
-            <div
-              className={`w-full self-start ${
-                isSignOutVisible
-                  ? 'border-0 hidden'
-                  : 'block sticky top-[120px] border'
-              } ${
-                !scrolled && 'border-0'
-              } border-white border-opacity-10 z-20 rounded-2xl px-3 py-4`}
-            >
-              <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
-                <div className="items-center inline-flex justify-between">
-                  <div className="justify-start items-center gap-3 inline-flex">
-                    <Image
-                      width={50}
-                      height={50}
-                      className="w-[50px] h-[50px] rounded-full"
-                      src={image}
-                      alt="user-pic"
-                    />
-                    <div>
-                      <Typography.H2 className="-mb-1">
-                        {Utils.minifyText(name, 15)}
-                      </Typography.H2>
-                      <Typography.Label className="text-opacity-50">
-                        {pubkyUser
-                          ? Utils.minifyPubky(pubkyUser)
-                          : 'Loading...'}
-                      </Typography.Label>
-                    </div>
-                  </div>
-                  <div className="relative">
-                    {showProfileMenu && (
-                      <Tooltip.ProfileMenu
-                        setShowProfileMenu={setShowProfileMenu}
-                        creatorPubky={pubkyUser}
-                      />
-                    )}
-                    <div
-                      className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10 p-2 -mt-[10px]"
-                      onClick={() => setShowProfileMenu(true)}
-                    >
-                      <Icon.DotsThreeOutline size="20" />
-                    </div>
-                  </div>
+        <div
+          className={`w-full self-start ${
+            isSignOutVisible
+              ? 'border-0 hidden'
+              : 'block sticky top-[120px] border'
+          } ${
+            !scrolled && 'border-0'
+          } border-white border-opacity-10 z-20 rounded-2xl px-3 py-4`}
+        >
+          <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
+            <div className="items-center inline-flex justify-between">
+              <div className="justify-start items-center gap-3 inline-flex">
+                <Image
+                  width={50}
+                  height={50}
+                  className="w-[50px] h-[50px] rounded-full"
+                  src={image}
+                  alt="user-pic"
+                />
+                <div>
+                  <Typography.H2 className="-mb-1">
+                    {Utils.minifyText(name, 15)}
+                  </Typography.H2>
+                  <Typography.Label className="text-opacity-50">
+                    {pubkyUser ? Utils.minifyPubky(pubkyUser) : 'Loading...'}
+                  </Typography.Label>
                 </div>
-                <Typography.Body
-                  variant="medium"
-                  className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
-                >
-                  {Utils.minifyText(bio, 160)}
-                </Typography.Body>
-                {initLoadingFollowed ? (
-                  <Button.Medium
-                    loading={initLoadingFollowed}
-                    className={
-                      !creatorPubky || creatorPubky === pubky
-                        ? 'hidden'
-                        : 'w-full'
-                    }
-                  >
-                    Loading
-                  </Button.Medium>
-                ) : followed ? (
-                  <Button.Medium
-                    onClick={loadingFollowed ? undefined : () => unfollowUser()}
-                    disabled={loadingFollowed}
-                    loading={loadingFollowed}
-                    variant="default"
-                    icon={<Icon.UserMinus size="16" />}
-                    className={
-                      !creatorPubky || creatorPubky === pubky
-                        ? 'hidden'
-                        : 'w-full'
-                    }
-                  >
-                    Unfollow
-                  </Button.Medium>
-                ) : (
-                  <Button.Medium
-                    onClick={loadingFollowed ? undefined : () => followUser()}
-                    disabled={loadingFollowed}
-                    loading={loadingFollowed}
-                    variant="default"
-                    icon={<Icon.UserPlus size="16" />}
-                    className={
-                      !creatorPubky || creatorPubky === pubky
-                        ? 'hidden'
-                        : 'w-full'
-                    }
-                  >
-                    Follow
-                  </Button.Medium>
+              </div>
+              <div className="relative">
+                {showProfileMenu && (
+                  <Tooltip.ProfileMenu
+                    setShowProfileMenu={setShowProfileMenu}
+                    creatorPubky={pubkyUser}
+                  />
                 )}
-                {/* {(!creatorPubky || creatorPubky === pubky) && (
+                <div
+                  className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10 p-2 -mt-[10px]"
+                  onClick={() => setShowProfileMenu(true)}
+                >
+                  <Icon.DotsThreeOutline size="20" />
+                </div>
+              </div>
+            </div>
+            <Typography.Body
+              variant="medium"
+              className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
+            >
+              {Utils.minifyText(bio, 160)}
+            </Typography.Body>
+            {initLoadingFollowed ? (
+              <Button.Medium
+                loading={initLoadingFollowed}
+                className={
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
+                }
+              >
+                Loading
+              </Button.Medium>
+            ) : followed ? (
+              <Button.Medium
+                onClick={loadingFollowed ? undefined : () => unfollowUser()}
+                disabled={loadingFollowed}
+                loading={loadingFollowed}
+                variant="default"
+                icon={<Icon.UserMinus size="16" />}
+                className={
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
+                }
+              >
+                Unfollow
+              </Button.Medium>
+            ) : (
+              <Button.Medium
+                onClick={loadingFollowed ? undefined : () => followUser()}
+                disabled={loadingFollowed}
+                loading={loadingFollowed}
+                variant="default"
+                icon={<Icon.UserPlus size="16" />}
+                className={
+                  !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
+                }
+              >
+                Follow
+              </Button.Medium>
+            )}
+            {/* {(!creatorPubky || creatorPubky === pubky) && (
                 <Link href="/settings">
                   <Button.Medium
                     variant="default"
@@ -493,11 +473,27 @@ export default function Sidebar({
                   </Button.Medium>
                 </Link>
               )} */}
-              </SideCard.Content>
-            </div>
-          </>
-        )}
+          </SideCard.Content>
+        </div>
         <div className="w-full flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
+          {loading ? (
+            <div className="w-full">
+              <SideCard.Header title="Bio" />
+              <Skeleton.Simple />
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-col gap-2">
+                <SideCard.Header title="Bio" />
+                <Typography.Body
+                  variant="medium"
+                  className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
+                >
+                  {Utils.minifyText(bio, 160)}
+                </Typography.Body>
+              </div>
+            </>
+          )}
           <div className="w-full">
             <SideCard.Header title="Tagged as" />
             {loadingProfileTags ? (
@@ -580,21 +576,6 @@ export default function Sidebar({
               <Skeletons.Simple />
             ) : (
               <SideCard.Content className="grid grid-cols-2 gap-12 justify-start mt-2">
-                {loadingFollowing ? (
-                  <div className="flex w-full justify-center">
-                    <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
-                  </div>
-                ) : (
-                  <div className={`flex-col gap-3 inline-flex`}>
-                    <div className="inline-flex gap-2">
-                      <Typography.Label>{following?.count}</Typography.Label>
-                      <Typography.Label className="text-opacity-50">
-                        Following
-                      </Typography.Label>
-                    </div>
-                    <Post.UserPic images={followingImages} />
-                  </div>
-                )}
                 {loadingFollowers ? (
                   <div className="flex w-full justify-center">
                     <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
@@ -608,6 +589,21 @@ export default function Sidebar({
                       </Typography.Label>
                     </div>
                     <Post.UserPic images={followersImages} />
+                  </div>
+                )}
+                {loadingFollowing ? (
+                  <div className="flex w-full justify-center">
+                    <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
+                  </div>
+                ) : (
+                  <div className={`flex-col gap-3 inline-flex`}>
+                    <div className="inline-flex gap-2">
+                      <Typography.Label>{following?.count}</Typography.Label>
+                      <Typography.Label className="text-opacity-50">
+                        Following
+                      </Typography.Label>
+                    </div>
+                    <Post.UserPic images={followingImages} />
                   </div>
                 )}
               </SideCard.Content>
@@ -635,7 +631,8 @@ export default function Sidebar({
                           ) : (
                             <Icon.Link size="16" />
                           )}
-                          {link.title === 'email' || link.title === 'mail' ? (
+                          {link.title.toLocaleLowerCase() === 'email' ||
+                          link.title.toLocaleLowerCase() === 'mail' ? (
                             <Link href={`mailto:${link.url}`} target="_blank">
                               <Typography.Body
                                 className="text-opacity-80 hover:text-opacity-100"

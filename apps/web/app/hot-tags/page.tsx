@@ -171,9 +171,11 @@ export default function Index() {
               ))
             )
           ) : (
-            <Typography.H2 className="text-center font-normal text-opacity-50">
-              No tags yet.
-            </Typography.H2>
+            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+              <Typography.H2 className="font-normal text-opacity-50">
+                No tags yet.
+              </Typography.H2>
+            </div>
           )}
         </div>
         <Sidebar className="hidden xl:block">

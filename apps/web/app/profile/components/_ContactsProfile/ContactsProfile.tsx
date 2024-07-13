@@ -32,11 +32,8 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
 
         let contactsFollowers;
         let contactsFollowing;
-        console.log('her2');
-        console.log('creatorpubky', creatorPubky);
 
         if (creatorPubky) {
-          console.log('here');
           contactsFollowers = await listFollowers(creatorPubky);
           contactsFollowing = await listFollowing(creatorPubky);
         } else {
