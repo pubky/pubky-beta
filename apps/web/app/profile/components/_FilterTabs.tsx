@@ -155,7 +155,7 @@ export default function FilterTabs({
                 className={isActive && !loading ? '' : 'text-opacity-30'}
               >
                 {tab.label}
-                {tab.key && (
+                {!loading && tab.key && (
                   <span className="ml-2 text-white text-opacity-30">
                     {getTabNumber(tab.key)}
                   </span>
