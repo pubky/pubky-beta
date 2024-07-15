@@ -197,7 +197,7 @@ export default function Tag({
       />
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <Modal.Header title="Tag Post" />
-        <Modal.Content className="flex flex-row w-full">
+        <Modal.Content className="flex flex-col w-full">
           <div className="flex gap-6">
             <div>
               {showEmojis && (
@@ -260,7 +260,6 @@ export default function Tag({
                   Max 4 tags
                 </Typography.Body>
               )}
-              {post && <Post className="mt-4" post={post} repostView />}
             </div>
             <div className="justify-start items-start gap-2 flex flex-col overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-webkit">
               {tags.length > 0 ? (
@@ -459,6 +458,13 @@ export default function Tag({
               )}
             </div>
           </div>
+          {post && (
+            <Post
+              className="mt-4 overflow-y-auto max-h-[300px]"
+              post={post}
+              repostView
+            />
+          )}
         </Modal.Content>
       </div>
     </Modal.Root>
