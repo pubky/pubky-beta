@@ -163,7 +163,7 @@ export default function Repost({
       />
       <Modal.Header title="Repost" />
       <div className="p-6 mt-6 rounded-2xl border-dashed border border-white border-opacity-30">
-        <Modal.Content className="flex flex-row gap-6 max-h-[500px] overflow-y-auto">
+        <Modal.Content className="flex flex-row gap-6 max-h-[300px] overflow-y-auto">
           <div className="rounded-2xl flex-col justify-start items-start inline-flex w-full min-w-[300px] md:min-w-[500px]">
             <div className="justify-start items-center gap-3 flex">
               <Image

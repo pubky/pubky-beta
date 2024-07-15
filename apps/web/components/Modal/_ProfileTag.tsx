@@ -271,7 +271,7 @@ export default function ProfileTag({
                       const images = tag.from.map(
                         (fromItem) => fromItem.author.profile.image
                       );
-                      const displayedImages = images.slice(0, 5);
+                      const displayedImages = images.slice(0, 4);
                       const extraImagesCount =
                         images.length - displayedImages.length;
 
