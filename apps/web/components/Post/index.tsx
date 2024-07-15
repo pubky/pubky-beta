@@ -2,6 +2,7 @@
 
 import { twMerge } from 'tailwind-merge';
 import {
+  Button,
   Icon,
   Post as PostUI,
   Tooltip as TooltipUI,
@@ -44,8 +45,8 @@ export default function Post({
   const { setContent, setShow } = useAlertContext();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const router = useRouter();
-  const lineBaseCSS =
-    'absolute ml-[15.5px] border-l-2 h-full border-neutral-800';
+  const lineBaseCSS = 'absolute border-l-2 h-full border-neutral-800';
+  const lineHorizontalCSS = 'absolute w-3.5 border-t-2 border-neutral-800';
 
   const handleDeletePost = async () => {
     const result = await deletePost(post?.id);
@@ -70,15 +71,15 @@ export default function Post({
               post?.post.content ? (
                 <PostUI.MainCard className={rest.className}>
                   <Header post={post} />
-                  <div className="ml-[47px]">
+                  <div>
                     <Content post={post} fullContent={fullContent} />
                     {post?.post.embed.post ? (
-                      <PostUI.MainCard className="p-4 border rounded-lg mt-4">
+                      <PostUI.MainCard className="mt-4">
                         <Header post={post?.post?.embed?.post} />
                         {line && (
                           <div className={twMerge(lineBaseCSS, lineStyle)} />
                         )}
-                        <div className="ml-[47px]">
+                        <div>
                           <Content
                             post={post?.post?.embed?.post}
                             fullContent={fullContent}
@@ -109,42 +110,56 @@ export default function Post({
                     className="relative z-10 hover:z-50"
                     onClick={(event) => event.stopPropagation()}
                   >
-                    <Icon.Repost size="16" />
-                    <TooltipUI.Root
-                      delay={200}
-                      tagId="1"
-                      setShowTooltip={setShowTooltipProfile}
-                    >
-                      <PostUI.Username
-                        className="text-[13px] text-opacity-80 cursor-pointer hover:underline hover:decoration-solid"
-                        onClick={() =>
-                          router.push(`/profile/${post?.author.id}`)
-                        }
+                    <div className="flex gap-2 items-center">
+                      <Button.Action
+                        className="bg-black bg-opacity-100 hover:bg-opacity-100 cursor-default"
+                        size="small"
+                        variant="custom"
+                        icon={<Icon.Repost size="16" />}
+                      />
+                      <TooltipUI.Root
+                        delay={200}
+                        tagId="1"
+                        setShowTooltip={setShowTooltipProfile}
                       >
-                        {Utils.minifyText(post?.author?.profile?.name)} reposted{' '}
-                      </PostUI.Username>
-                      {showTooltipProfile !== '' && (
-                        <Tooltip.Profile post={post} />
-                      )}
-                    </TooltipUI.Root>
-                    {(!post?.post.content || !post?.post.embed.post) &&
-                      post?.author.id === pubky && (
-                        <Typography.Body
-                          variant="small-bold"
-                          className="cursor-pointer text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
-                          onClick={handleDeletePost}
+                        <PostUI.Username
+                          className="text-[13px] text-opacity-80 cursor-pointer hover:underline hover:decoration-solid"
+                          onClick={() =>
+                            router.push(`/profile/${post?.author.id}`)
+                          }
                         >
-                          Undo repost
-                        </Typography.Body>
-                      )}
+                          {Utils.minifyText(post?.author?.profile?.name)}{' '}
+                          reposted{' '}
+                        </PostUI.Username>
+                        {showTooltipProfile !== '' && (
+                          <Tooltip.Profile post={post} />
+                        )}
+                      </TooltipUI.Root>
+                      {(!post?.post.content || !post?.post.embed.post) &&
+                        post?.author.id === pubky && (
+                          <Typography.Body
+                            variant="small-bold"
+                            className="cursor-pointer text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
+                            onClick={handleDeletePost}
+                          >
+                            Undo repost
+                          </Typography.Body>
+                        )}
+                    </div>
+                    <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
                   </PostUI.RepostCard>
                   {post?.post.embed.post ? (
-                    <PostUI.MainCard className={rest.className}>
+                    <PostUI.MainCard
+                      className={twMerge(
+                        'rounded-tl-none rounded-tr-none',
+                        rest.className
+                      )}
+                    >
                       <Header post={post?.post?.embed?.post} />
                       {line && (
                         <div className={twMerge(lineBaseCSS, lineStyle)} />
                       )}
-                      <div className="ml-[47px]">
+                      <div>
                         <Content
                           post={post?.post?.embed?.post}
                           fullContent={fullContent}
@@ -181,18 +196,27 @@ export default function Post({
                 </>
               )
             ) : (
-              <PostUI.MainCard className={rest.className}>
-                <Header post={post} />
-                {line && <div className={twMerge(lineBaseCSS, lineStyle)} />}
-                <div className="ml-[47px]">
-                  <Content post={post} fullContent={fullContent} />
-                  <div className="flex flex-col md:flex-row justify-between">
-                    {!repostView && <Tags post={post} />}
-                    <div className="grow" />
-                    {!repostView && <Actions post={post} />}
+              <div className="flex items-center relative">
+                {line && (
+                  <>
+                    <div className={twMerge(lineBaseCSS, lineStyle)} />
+                    <div className={twMerge(lineHorizontalCSS)} />
+                  </>
+                )}
+                <PostUI.MainCard
+                  className={twMerge(line && 'ml-[15px]', rest.className)}
+                >
+                  <Header post={post} />
+                  <div>
+                    <Content post={post} fullContent={fullContent} />
+                    <div className="flex flex-col md:flex-row justify-between">
+                      {!repostView && <Tags post={post} />}
+                      <div className="grow" />
+                      {!repostView && <Actions post={post} />}
+                    </div>
                   </div>
-                </div>
-              </PostUI.MainCard>
+                </PostUI.MainCard>
+              </div>
             )}
           </div>
         </PostUI.Root>

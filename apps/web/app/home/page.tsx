@@ -132,7 +132,7 @@ export default function Index() {
             <Filter.Content />
           </div>
         </Components.Sidebar>
-        <Components.PostsLayout className="col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-6">
+        <Components.PostsLayout className="col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-3">
           <Components.CreateQuickPost />
           {Object.keys(posts).map((key) => {
             const post = posts[key];
@@ -140,12 +140,11 @@ export default function Index() {
             const parentPost = parentUri ? parentPosts[parentUri] : null;
 
             return (
-              <div key={post.id}>
+              <div className="flex flex-col gap-3" key={post.id}>
                 {parentPost ? (
                   <Components.Post
                     post={parentPost}
-                    className="border-0"
-                    line
+                    className="rounded-bl-none"
                   />
                 ) : parentUri ? (
                   <div className="relative ml-4 mb-8 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
@@ -155,10 +154,10 @@ export default function Index() {
                     >
                       This post was not found or has been deleted by its author.
                     </Typography.Body>
-                    <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[35px]" />
+                    <div className="absolute -ml-1 mt-2 border-l-2 border-neutral-800 h-[44px]" />
                   </div>
                 ) : null}
-                <Components.Post post={post} />
+                <Components.Post post={post} line={parentPost ? true : false} />
               </div>
             );
           })}
