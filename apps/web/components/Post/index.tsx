@@ -45,7 +45,7 @@ export default function Post({
   const { setContent, setShow } = useAlertContext();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const router = useRouter();
-  const lineBaseCSS = `absolute border-l-2 h-full border-neutral-800 after:content-[' '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
+  const lineBaseCSS = `absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1.5px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
   const lineHorizontalCSS =
     'absolute ml-[1px] w-3.5 border-t-2 border-neutral-800';
 

@@ -46,9 +46,9 @@ export default function List({
           <div className="flex-col justify-center items-start inline-flex">
             <Typography.Body variant="medium-bold">
               {contact.profile.name &&
-                Utils.minifyText(contact?.profile?.name, 10)}
+                Utils.minifyText(contact?.profile?.name, 8)}
             </Typography.Body>
-            <Typography.Label className="text-opacity-30 -mb-1">
+            <Typography.Label className="text-opacity-30">
               {Utils.minifyPubky(contactId)}
             </Typography.Label>
           </div>
@@ -80,7 +80,7 @@ export default function List({
         <div className="flex gap-4">
           {pubkeyUser ? (
             <Button.Medium
-              className="w-[154px] bg-transparent cursor-default"
+              className="w-[104px] bg-transparent cursor-default"
               icon={<Icon.Check />}
             >
               Me
@@ -99,7 +99,7 @@ export default function List({
               disabled={loadingContacts[contactId]}
               loading={loadingContacts[contactId]}
               icon={<Icon.UserMinus size="16" />}
-              className="w-[154px]"
+              className="w-[104px]"
             >
               Unfollow
             </Button.Medium>
@@ -113,7 +113,7 @@ export default function List({
               disabled={loadingContacts[contactId]}
               loading={loadingContacts[contactId]}
               icon={<Icon.UserPlus size="16" />}
-              className="w-[154px]"
+              className="w-[104px]"
             >
               Follow
             </Button.Medium>

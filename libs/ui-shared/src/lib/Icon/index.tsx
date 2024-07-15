@@ -6,6 +6,7 @@ import {
   DropdownIcon,
   Repost,
   CaretRight,
+  CaretUp,
 } from './_Arrow';
 import { Tag } from './_Commerce';
 import {
@@ -97,6 +98,7 @@ export const Icon = {
   Broadcast,
   Calendar,
   CaretRight,
+  CaretUp,
   ChatCircleText,
   Check,
   CheckCircle,
