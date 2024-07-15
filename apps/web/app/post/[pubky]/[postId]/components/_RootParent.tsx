@@ -100,9 +100,8 @@ export default function RootParent({ replies }: { replies: IReply }) {
         key={parentURI}
         post={post.post}
         size="full"
-        className="border-0"
-        line
-        lineStyle="mt-6"
+        className={index === 0 ? 'rounded-bl-none' : ''}
+        line={!(index === 0)}
       />
     ) : (
       <div

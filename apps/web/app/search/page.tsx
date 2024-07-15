@@ -130,7 +130,7 @@ const SearchContent = () => {
             <Filter.Content />
           </div>
         </Sidebar>
-        <PostsLayout className="col-span-5 xl:col-span-4 2xl:col-span-3 flex-col inline-flex gap-6">
+        <PostsLayout className="col-span-5 xl:col-span-4 2xl:col-span-3 flex-col inline-flex gap-3">
           {Object.keys(posts).map((key, index) => (
             <Post
               key={`${index}-${posts[key].id}`}

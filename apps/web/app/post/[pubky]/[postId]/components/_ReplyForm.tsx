@@ -143,7 +143,7 @@ export default function ReplyForm({
   return (
     <div ref={wrapperRef} className="grid gap-6 md:grid-cols-3">
       <Post.Root className="col-span-2">
-        <Post.MainCard className="w-full px-8 py-6 bg-transparent border border-opacity-30 border-dashed rounded-2xl">
+        <Post.MainCard className="w-full px-8 py-6 bg-transparent border border-white border-opacity-30 border-dashed rounded-2xl">
           <div className="contents inline-flex gap-12">
             <Post.Header>
               <div className="justify-start gap-4 inline-flex flex-col">

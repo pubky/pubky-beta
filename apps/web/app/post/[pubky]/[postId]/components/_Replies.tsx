@@ -27,14 +27,19 @@ export default function Replies({
 
   const renderReplies = (replies: IReply[], depth: number = 0) => {
     return replies.map((reply) => (
-      <div key={reply.post.id}>
+      <div className="flex flex-col gap-3" key={reply.post.id}>
         <Post
           post={reply.post}
           size="full"
-          className={`pl-0 ${
-            depth > 0 || reply.replies.length > 0 ? 'border-0' : ''
-          }`}
-          line={reply.replies.length > 0}
+          //className={`${
+          //  depth > 0 || reply.replies.length > 0 ? 'border-0' : ''
+          //}`}
+          line={
+            !reply.post.post.parent ||
+            reply.post.post.parent === reply.post.post.root
+              ? false
+              : true
+          }
         />
         {reply.replies && reply.replies.length > 0 && (
           <div className="ml-[47px]">
@@ -48,11 +53,11 @@ export default function Replies({
   return (
     <>
       {replies && replies.length === 0 ? (
-        <Typography.Body className="text-opacity-50 text-center mt-6">
+        <Typography.Body className="text-opacity-50 text-center mt-[100px]">
           No replies yet
         </Typography.Body>
       ) : (
-        <div className="flex-col gap-6 inline-flex w-full mt-6">
+        <div className="flex-col gap-3 inline-flex w-full mt-6">
           <Typography.H2>Replies</Typography.H2>
           {renderReplies(replies)}
         </div>
