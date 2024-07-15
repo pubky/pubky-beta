@@ -199,10 +199,23 @@ export default function Handle({
               className="w-[156px] h-8"
               onClick={() => copyToClipboard()}
               icon={
-                copied ? <Icon.CheckCircle size="20" /> : <Icon.Key size="16" />
+                copied ? <Icon.CheckCircle size="16" /> : <Icon.Key size="16" />
               }
             >
               {copied ? 'Copied' : Utils.minifyPubky(pubkey)}
+            </Button.Medium>
+            <Button.Medium
+              className="w-[95px] h-8"
+              onClick={() => copyProfileUrlToClipboard()}
+              icon={
+                copiedUrl ? (
+                  <Icon.CheckCircle size="16" />
+                ) : (
+                  <Icon.LinkSimple size="16" />
+                )
+              }
+            >
+              {copiedUrl ? 'Copied' : 'Link'}
             </Button.Medium>
             <div className="relative">
               {showProfileMenu && (
@@ -218,13 +231,6 @@ export default function Handle({
                 onClick={() => setShowProfileMenu(true)}
               />
             </div>
-            <Button.Medium
-              className="w-[95px] h-8"
-              onClick={() => copyProfileUrlToClipboard()}
-              icon={<Icon.LinkSimple size="16" />}
-            >
-              {copiedUrl ? 'Copied' : 'Link'}
-            </Button.Medium>
             {!creatorPubky || creatorPubky === pubky ? (
               <div className="flex flex-col gap-2">
                 {status ? (
