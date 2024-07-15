@@ -151,6 +151,7 @@ export default function Notification({
           size="small"
           variant="custom"
           icon={currentNotificationType.icon}
+          className="bg-gradient border border-white border-opacity-30"
           disabled
         />
         <div className="flex gap-2 items-center">
@@ -169,7 +170,7 @@ export default function Notification({
                 />
               )}
               <Typography.Body variant="medium-bold">
-                {user ? Utils.minifyText(user.profile.name, 40) : 'Loading...'}
+                {user ? Utils.minifyText(user.profile.name, 20) : 'Loading...'}
               </Typography.Body>
             </Link>
           )}

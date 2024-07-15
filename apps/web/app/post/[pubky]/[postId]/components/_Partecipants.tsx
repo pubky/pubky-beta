@@ -1,4 +1,4 @@
-import { Icon, Button, Typography, SideCard } from '@social/ui-shared';
+import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { useClientContext } from '@/contexts';
 import { IReply } from '@/types';
@@ -124,16 +124,64 @@ export default function Partecipants({
     <div className="hidden flex-col gap-6 xl:inline-flex col-span-1 self-start sticky top-[120px]">
       <div>
         <SideCard.Header title="Participants" />
-        {replies && replies.length === 0 && (
-          <Typography.Body variant="small" className="text-opacity-50 mt-4">
-            No partecipants yet
-          </Typography.Body>
-        )}
         <SideCard.Content>
-          {replies.map((reply, index) => {
-            if (reply.post && !seenAuthors.has(reply.post.author.id)) {
+          <SideCard.User
+            uri={repliesResponse?.post?.author?.id}
+            src={
+              repliesResponse?.post?.author?.profile?.image ||
+              '/images/Userpic.png'
+            }
+            username={Utils.minifyText(
+              repliesResponse?.post?.author?.profile?.name
+            )}
+            label={Utils.minifyPubky(repliesResponse?.post?.author?.id)}
+            className="mb-2"
+          >
+            {pubky === repliesResponse?.post?.author?.id ? (
+              <Button.Medium
+                className="w-[114px] bg-transparent cursor-default"
+                icon={<Icon.Check />}
+              >
+                Me
+              </Button.Medium>
+            ) : initLoadingFollowers ? (
+              <Button.Medium
+                disabled
+                icon={<Icon.LoadingSpin size="16" />}
+                className="w-[114px]"
+              >
+                Loading
+              </Button.Medium>
+            ) : followedUser[repliesResponse?.post?.author?.id] ? (
+              <Button.Medium
+                onClick={() => unfollowUser(repliesResponse?.post?.author?.id)}
+                disabled={loadingFollowers[repliesResponse?.post?.author?.id]}
+                loading={loadingFollowers[repliesResponse?.post?.author?.id]}
+                icon={<Icon.UserMinus size="16" />}
+                className="w-[114px]"
+              >
+                Unfollow
+              </Button.Medium>
+            ) : (
+              <Button.Medium
+                onClick={() => followUser(repliesResponse?.post?.author?.id)}
+                disabled={loadingFollowers[repliesResponse?.post?.author?.id]}
+                loading={loadingFollowers[repliesResponse?.post?.author?.id]}
+                icon={<Icon.UserPlus size="16" />}
+                className="w-[114px]"
+              >
+                Follow
+              </Button.Medium>
+            )}
+          </SideCard.User>
+          {replies.map((reply) => {
+            if (
+              reply.post &&
+              !seenAuthors.has(reply.post.author.id) &&
+              reply.post.author.id !== pubky
+            ) {
               seenAuthors.add(reply.post.author.id);
-              const pubkeyUser = pubky && reply.post.author.id.includes(pubky);
+              const pubkeyUser = pubky === reply.post.author.id;
               const isFollowed = followedUser[reply.post.author.id] || false;
 
               return (
@@ -145,6 +193,7 @@ export default function Partecipants({
                     }
                     username={Utils.minifyText(reply.post.author.profile?.name)}
                     label={Utils.minifyPubky(reply.post.author.id)}
+                    className="mb-2"
                   >
                     {pubkeyUser ? (
                       <Button.Medium
