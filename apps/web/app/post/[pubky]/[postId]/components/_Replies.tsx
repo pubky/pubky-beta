@@ -40,6 +40,7 @@ export default function Replies({
               ? false
               : true
           }
+          lineStyle="after:-ml-[2px]"
         />
         {reply.replies && reply.replies.length > 0 && (
           <div className="ml-[47px]">

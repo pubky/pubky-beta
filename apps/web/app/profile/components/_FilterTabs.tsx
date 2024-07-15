@@ -9,50 +9,31 @@ const tabs = [
   {
     id: 0,
     key: 'notifications',
-    icon: (isActive: boolean, loading: boolean) => (
-      <Icon.Bell size="24" color={isActive && !loading ? 'white' : 'gray'} />
-    ),
+    icon: <Icon.Bell size="24" color="white" />,
     label: 'Notifications',
   },
   {
     id: 1,
     key: 'posts',
-    icon: (isActive: boolean, loading: boolean) => (
-      <Icon.FileText
-        size="24"
-        color={isActive && !loading ? 'white' : 'gray'}
-      />
-    ),
+    icon: <Icon.FileText size="24" color="white" />,
     label: 'Posts',
   },
   {
     id: 2,
     key: 'followers',
-    icon: (isActive: boolean, loading: boolean) => (
-      <Icon.UsersLeft
-        size="24"
-        color={isActive && !loading ? 'white' : 'gray'}
-      />
-    ),
+    icon: <Icon.UsersLeft size="24" color="white" />,
     label: 'Followers',
   },
   {
     id: 3,
     key: 'following',
-    icon: (isActive: boolean, loading: boolean) => (
-      <Icon.UsersRight
-        size="24"
-        color={isActive && !loading ? 'white' : 'gray'}
-      />
-    ),
+    icon: <Icon.UsersRight size="24" color="white" />,
     label: 'Following',
   },
   {
     id: 4,
     key: 'friends',
-    icon: (isActive: boolean, loading: boolean) => (
-      <Icon.Smiley size="24" color={isActive && !loading ? 'white' : 'gray'} />
-    ),
+    icon: <Icon.Smiley size="24" color="white" />,
     label: 'Friends',
   },
 ];
@@ -129,7 +110,7 @@ export default function FilterTabs({
 
   return (
     <>
-      <div className="flex gap-4">
+      <div className="flex gap-4 mb-4">
         {tabs.map((tab) => {
           if (
             creatorPubky &&
@@ -146,14 +127,11 @@ export default function FilterTabs({
               className={`w-full h-12 px-3 border-b-2 justify-center items-center gap-2 inline-flex cursor-pointer ${
                 isActive && !loading
                   ? 'border-white'
-                  : 'border-white border-opacity-30'
+                  : 'border-white border-opacity-10 hover:border-opacity-50'
               }`}
             >
-              {tab.icon(isActive, loading)}
-              <Typography.Caption
-                variant="bold"
-                className={isActive && !loading ? '' : 'text-opacity-30'}
-              >
+              {tab.icon}
+              <Typography.Caption variant="bold">
                 {tab.label}
                 {!loading && tab.key && (
                   <span className="ml-2 text-white text-opacity-30">
