@@ -513,11 +513,11 @@ export default function Sidebar({
                   </Typography.Body>
                 )}
                 <Button.Medium
-                  className="mt-2 w-[50%] h-8 inline-flex items-center"
+                  className="mt-2 w-auto h-8 inline-flex items-center"
                   onClick={() => setShowModalProfileTag(true)}
                   icon={<Icon.Tag size="16" />}
                 >
-                  Tag {Utils.minifyText(name, 12)}
+                  Tag {Utils.minifyText(name, 22)}
                 </Button.Medium>
               </div>
             )}

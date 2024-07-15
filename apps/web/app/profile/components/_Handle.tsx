@@ -128,7 +128,7 @@ export default function Handle({
           <Typography.Display className="text-left">
             {Utils.minifyText(username.toString(), 15)}
           </Typography.Display>
-          <div className="-mt-4 inline-flex flex-row gap-2">
+          <div className="-mt-4 inline-flex flex-row gap-3">
             {creatorPubky && (
               <>
                 {initLoadingFollowed ? (
@@ -137,7 +137,7 @@ export default function Handle({
                     className={
                       !creatorPubky || creatorPubky === pubky
                         ? 'hidden'
-                        : 'w-[104px] h-8 px-3 py-2'
+                        : 'w-auto h-8 px-3 py-2'
                     }
                   >
                     Loading
@@ -151,7 +151,7 @@ export default function Handle({
                     className={
                       !creatorPubky || creatorPubky === pubky
                         ? 'hidden'
-                        : 'w-[104px] h-8 px-3 py-2'
+                        : 'w-auto h-8 px-3 py-2'
                     }
                   >
                     Unfollow
@@ -165,7 +165,7 @@ export default function Handle({
                     className={
                       !creatorPubky || creatorPubky === pubky
                         ? 'hidden'
-                        : 'w-[104px] h-8 px-3 py-2'
+                        : 'w-auto h-8 px-3 py-2'
                     }
                   >
                     Follow
@@ -176,7 +176,7 @@ export default function Handle({
             {(!creatorPubky || creatorPubky === pubky) && (
               <>
                 <Button.Medium
-                  className="w-32 h-8"
+                  className="px-3 w-21 h-8"
                   onClick={
                     disposableAccount
                       ? () => setShowModalLogout(true)
@@ -187,7 +187,7 @@ export default function Handle({
                   Sign out
                 </Button.Medium>
                 <Button.Medium
-                  className="w-[75px] h-8"
+                  className="px-3 w-auto h-8"
                   onClick={() => router.push('/settings')}
                   icon={<Icon.Pencil size="16" />}
                 >
@@ -196,7 +196,7 @@ export default function Handle({
               </>
             )}
             <Button.Medium
-              className="w-[156px] h-8"
+              className="px-3 w-auto h-8"
               onClick={() => copyToClipboard()}
               icon={
                 copied ? <Icon.CheckCircle size="16" /> : <Icon.Key size="16" />
@@ -205,7 +205,7 @@ export default function Handle({
               {copied ? 'Copied' : Utils.minifyPubky(pubkey)}
             </Button.Medium>
             <Button.Medium
-              className="w-[95px] h-8"
+              className="px-3 w-auto h-8"
               onClick={() => copyProfileUrlToClipboard()}
               icon={
                 copiedUrl ? (
