@@ -24,15 +24,14 @@ export default function Tags({ post }: PostProps) {
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
     useClientContext();
-  const [sortedTags, setSortedTags] = useState<ITaggedPost[]>([]);
-  const [showModalTags, setShowModalTags] = useState(false);
+  const [tags, setTags] = useState<ITaggedPost[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedPost | null>();
+  const [selectedTag, setSelectedTag] = useState<ITaggedPost | null>(null);
 
   useEffect(() => {
     if (post?.tags) {
-      const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
-      setSortedTags(sortedTags);
+      //const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
+      setTags(post.tags);
     }
   }, [post?.tags]);
 
@@ -91,7 +90,7 @@ export default function Tags({ post }: PostProps) {
             setShowModalTag(true);
           }}
         />
-        {sortedTags.map((tagObj, index) => {
+        {tags.map((tagObj, index) => {
           const isTagFound = tagObj.from.some(
             (fromItem) => fromItem.author.id === pubky
           );
@@ -106,7 +105,7 @@ export default function Tags({ post }: PostProps) {
                 {showTooltipProfile === tagObj.tag && (
                   <Tooltip.Tag
                     setSelectedTag={setSelectedTag}
-                    setShowModalTags={setShowModalTags}
+                    setShowModalTags={setShowModalTag}
                     tags={tagObj}
                   />
                 )}
@@ -157,28 +156,16 @@ export default function Tags({ post }: PostProps) {
             </PostUI.Footer>
           );
         })}
-        {post?.tags?.length > 0 && (
-          <Button.Action
-            variant="custom"
-            size="small"
-            icon={<Icon.ListBullets />}
-            onClick={() => setShowModalTags(true)}
-            className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
-          />
-        )}
       </div>
-      <Modal.Tags
-        post={post}
-        showModalTags={showModalTags}
-        setShowModalTags={setShowModalTags}
-        handleAddTag={handleAddTag}
-        handleDeleteTag={handleDeleteTag}
-        tag={selectedTag}
-      />
       <Modal.Tag
         post={post}
+        tags={tags}
+        handleAddTag={handleAddTag}
+        handleDeleteTag={handleDeleteTag}
         showModalTag={showModalTag}
         setShowModalTag={setShowModalTag}
+        selectedTag={selectedTag}
+        setSelectedTag={setSelectedTag}
       />
     </div>
   );

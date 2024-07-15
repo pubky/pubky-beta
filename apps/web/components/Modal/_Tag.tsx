@@ -8,26 +8,137 @@ import {
   Modal,
   Input,
   Typography,
+  SideCard,
 } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
-import { IPost } from '@/types';
+import { IPost, ITaggedPost } from '@/types';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import { Utils } from '@social/utils-shared';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import Post from '../Post';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
+  tags: ITaggedPost[];
   post: IPost;
+  handleAddTag: (tag: string) => Promise<void>;
+  handleDeleteTag: (tag: string) => Promise<void>;
+  selectedTag?: ITaggedPost | null;
+  setSelectedTag?: React.Dispatch<React.SetStateAction<ITaggedPost | null>>;
 }
 
-export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
+export default function Tag({
+  showModalTag,
+  setShowModalTag,
+  tags,
+  post,
+  handleAddTag,
+  handleDeleteTag,
+  selectedTag,
+  setSelectedTag,
+}: TagProps) {
+  const router = useRouter();
   const modalTagRef = useRef<HTMLDivElement>(null);
-  const { createTag, posts, setPosts, getPost } = useClientContext();
+  const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const [tag, setTag] = useState('');
-  const [arrayTags, setArrayTags] = useState<string[]>([]);
-  const [sendingTags, setSendingTags] = useState(false);
+  const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
+  const [loadingFollowers, setLoadingFollowers] = useState<{
+    [pubky: string]: boolean;
+  }>({});
+  const [followedUser, setFollowedUser] = useState<{
+    [pubky: string]: boolean;
+  }>({});
   const [tagsError, setTagsError] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function fetchFollowing() {
+      try {
+        if (!pubky) return;
+
+        const following = await listFollowing(pubky);
+
+        if (following) {
+          const followingIds = following.following.map((user) =>
+            user.uri.replace('pubky:', '')
+          );
+
+          const matchedFollowedIds = tags
+            .flatMap((tag) => tag.from)
+            .filter((profile) => followingIds.includes(profile.author.id));
+
+          if (matchedFollowedIds.length > 0) {
+            setInitLoadingFollowers(false);
+            matchedFollowedIds.forEach((followed) => {
+              setFollowedUser((prevState) => ({
+                ...prevState,
+                [followed.author.id]: true,
+              }));
+            });
+          } else {
+            setInitLoadingFollowers(false);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchFollowing();
+  }, [pubky, listFollowing, tags]);
+
+  const followUser = async (pubkyFollow: string) => {
+    try {
+      if (!pubkyFollow) return;
+
+      setLoadingFollowers((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyFollow]: true,
+      }));
+
+      const result = await follow(pubkyFollow);
+
+      setFollowedUser((prevState) => ({
+        ...prevState,
+        [pubkyFollow]: result,
+      }));
+
+      setLoadingFollowers((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyFollow]: false,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const unfollowUser = async (pubkyUnfollow: string) => {
+    try {
+      if (!pubkyUnfollow) return;
+
+      setLoadingFollowers((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyUnfollow]: true,
+      }));
+
+      const result = await unfollow(pubkyUnfollow);
+
+      setFollowedUser((prevState) => ({
+        ...prevState,
+        [pubkyUnfollow]: !result,
+      }));
+
+      setLoadingFollowers((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyUnfollow]: false,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutsideModalTag = (event: MouseEvent) => {
@@ -45,74 +156,9 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
     };
   }, [modalTagRef, setShowModalTag]);
 
-  const handleSubmit = async () => {
-    if (sendingTags) {
-      return;
-    }
-    try {
-      setSendingTags(true);
-      for (const tag of arrayTags) {
-        await createTag(post.uri, tag);
-      }
-
-      updatePosts();
-
-      setShowModalTag(false);
-      setArrayTags([]);
-      setTag('');
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSendingTags(false);
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const valueWithoutSpaces = e.target.value.replace(/\s/g, '');
     setTag(valueWithoutSpaces);
-  };
-
-  const handleAddTag = () => {
-    if (arrayTags.length >= 4) {
-      setTagsError(true);
-    } else {
-      const trimmedTag = tag.trim();
-      if (trimmedTag !== '') {
-        if (!arrayTags.includes(trimmedTag)) {
-          setTag('');
-          setArrayTags([...arrayTags, trimmedTag]);
-        } else {
-          setTag('');
-        }
-      }
-    }
-  };
-
-  const updatePosts = async () => {
-    const updatedPost = await getPost(post.uri);
-
-    if (!updatedPost) return;
-
-    const updatedPosts = Object.keys(posts).map((key) => {
-      if (posts[key].uri === updatedPost.uri) {
-        return updatedPost;
-      }
-      return posts[key];
-    });
-    setPosts(updatedPosts);
-  };
-
-  const handleRemoveTag = async (indexToRemove: number) => {
-    setArrayTags(arrayTags.filter((_, index) => index !== indexToRemove));
-    if (arrayTags.length <= 4) {
-      setTagsError(false);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleAddTag();
-    }
   };
 
   useEffect(() => {
@@ -137,94 +183,23 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
       show={showModalTag}
       closeModal={() => {
         setShowModalTag(false);
-        setArrayTags([]);
         setTag('');
         setTagsError(false);
       }}
-      className="w-full w-[430px]"
+      className="w-full w-[792px]"
     >
       <Modal.CloseAction
         onClick={() => {
           setShowModalTag(false);
-          setArrayTags([]);
           setTag('');
           setTagsError(false);
         }}
       />
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
-        <Modal.Header title="Tag" />
+        <Modal.Header title="Tag Post" />
         <Modal.Content className="flex flex-row w-full">
-          <div className="flex-col inline-flex">
-            {/**  <div>
-              <Typography.Label className="text-opacity-30 font-medium">
-                Emotag
-              </Typography.Label>
-              <div className="mt-2 gap-2 inline-flex">
-                <PostUtil.Tag clicked={false} color="red">
-                  🔥
-                </PostUtil.Tag>
-                <PostUtil.Tag clicked={false} color="cyan">
-                  👀
-                </PostUtil.Tag>
-                <PostUtil.Tag clicked={false} color="purple">
-                  😂
-                </PostUtil.Tag>
-                <PostUtil.Tag clicked={false} color="yellow">
-                  👍
-                </PostUtil.Tag>
-                <PostUtil.Tag clicked={false} color="blue">
-                  ⭐
-                </PostUtil.Tag>
-                <PostUtil.Tag clicked={false} color="green">
-                  🙏
-                </PostUtil.Tag>
-                <Button.Action
-                  size="small"
-                  variant="custom"
-                  icon={<Icon.Smiley />}
-                />
-              </div>
-            </div>*/}
+          <div className="flex gap-6">
             <div>
-              {/* <Typography.Label className="text-opacity-30 font-medium">
-                {arrayTags.length > 0 ? 'Your Tags' : 'ADD TAGS'}
-              </Typography.Label> */}
-              <div className="mb-2 justify-start items-start">
-                {arrayTags.length > 0 ? (
-                  <div className="justify-start items-start">
-                    {arrayTags.map((tag, index) => (
-                      <PostUtil.Tag
-                        key={index}
-                        action={
-                          <div onClick={() => handleRemoveTag(index)}>
-                            <Icon.X size="20" />
-                          </div>
-                        }
-                        clicked
-                        color="fuchsia"
-                        className="mr-2 my-1"
-                      >
-                        {tag}
-                      </PostUtil.Tag>
-                    ))}
-                  </div>
-                ) : (
-                  <Typography.Body variant="small" className="text-opacity-30">
-                    Not tagged yet.
-                  </Typography.Body>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-row w-full mt-4">
-              <Button.Action
-                variant="custom"
-                icon={<Icon.Smiley size="32" />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setShowEmojis(true);
-                }}
-                className="mr-3 mt-1.5"
-              />
               {showEmojis && (
                 <div
                   className="absolute translate-y-[10%] translate-x-[30%] z-10"
@@ -240,42 +215,251 @@ export default function Tag({ showModalTag, setShowModalTag, post }: TagProps) {
                   />
                 </div>
               )}
-              <div className="grow"></div>
-              {/* <Input.Label value="Add tag" /> */}
+              <Input.Label value="New tag" />
               <Input.Text
                 placeholder="tag"
                 value={tag}
-                className="h-[60px] w-full"
+                className="w-96 mt-2 flex items-center"
                 maxLength={20}
                 onChange={handleChange}
-                onKeyDown={handleKeyDown}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === 'Enter') {
+                    handleAddTag(tag);
+                    setTag('');
+                  }
+                }}
                 action={
-                  <Button.Action
-                    icon={<Icon.Plus size="18" />}
-                    variant="custom"
-                    size="small"
-                    onClick={handleAddTag}
-                  />
+                  <div className="flex gap-2">
+                    <Button.Action
+                      icon={<Icon.Plus size="18" />}
+                      className={tag ? 'flex' : 'hidden'}
+                      variant="custom"
+                      size="medium"
+                      onClick={() => {
+                        handleAddTag(tag);
+                        setTag('');
+                      }}
+                    />
+                    <Button.Action
+                      variant="custom"
+                      icon={<Icon.Smiley size="32" />}
+                      size="medium"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setShowEmojis(true);
+                      }}
+                    />
+                  </div>
                 }
               />
+              {tagsError && (
+                <Typography.Body
+                  variant="small"
+                  className="text-[#e95164] mt-4"
+                >
+                  Max 4 tags
+                </Typography.Body>
+              )}
+              {post && <Post className="mt-4" post={post} repostView />}
             </div>
-            {tagsError && (
-              <Typography.Body variant="small" className="text-[#e95164] mt-4">
-                Max 4 tags
-              </Typography.Body>
-            )}
+            <div className="justify-start items-start gap-2 flex flex-col overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-webkit">
+              {tags.length > 0 ? (
+                <>
+                  {!selectedTag &&
+                    tags.map((tag, index) => {
+                      const isTagFound = tag.from.some(
+                        (fromItem) => fromItem.author.id === pubky
+                      );
+
+                      const images = tag.from.map(
+                        (fromItem) => fromItem.author.profile.image
+                      );
+                      const displayedImages = images.slice(0, 4);
+                      const extraImagesCount =
+                        images.length - displayedImages.length;
+
+                      return (
+                        <div className="flex gap-2" key={index}>
+                          <PostUtil.Tag
+                            key={index}
+                            clicked={isTagFound}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              isTagFound
+                                ? handleDeleteTag(tag.tag)
+                                : handleAddTag(tag.tag);
+                            }}
+                            color="fuchsia"
+                          >
+                            <div className="flex gap-2 items-center">
+                              {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                              <Typography.Caption
+                                variant="bold"
+                                className="text-opacity-30"
+                              >
+                                {tag.count}
+                              </Typography.Caption>
+                            </div>
+                          </PostUtil.Tag>
+
+                          <Button.Action
+                            variant="custom"
+                            size="small"
+                            icon={<Icon.MagnifyingGlassLeft size="14" />}
+                            onClick={() =>
+                              router.push(`/search?tags=${tag.tag}`)
+                            }
+                            className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+                          />
+                          <div
+                            onClick={() =>
+                              setSelectedTag && setSelectedTag(tag)
+                            }
+                            className="cursor-pointer flex items-center"
+                          >
+                            {displayedImages.map((image, imageIndex) => (
+                              <Image
+                                width={32}
+                                height={32}
+                                key={imageIndex}
+                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                                  imageIndex > 0 && '-ml-2'
+                                }`}
+                                alt={`tag-${imageIndex + 1}`}
+                                src={image}
+                              />
+                            ))}
+                            {extraImagesCount > 0 && (
+                              <>
+                                <PostUtil.Counter className="-ml-2">
+                                  +{extraImagesCount}
+                                </PostUtil.Counter>
+                              </>
+                            )}
+                            <Button.Action
+                              variant="custom"
+                              icon={<Icon.CaretRight size="16" />}
+                              className="-ml-2"
+                              size="small"
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  {selectedTag && (
+                    <>
+                      <div className="flex gap-2 items-center mb-2">
+                        <div
+                          onClick={() => setSelectedTag && setSelectedTag(null)}
+                          className="cursor-pointer"
+                        >
+                          <Icon.ArrowLeft size="16" />
+                        </div>
+                        {selectedTag && (
+                          <PostUtil.Tag
+                            clicked={selectedTag.from.some(
+                              (fromItem) => fromItem.author.id === pubky
+                            )}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              selectedTag.from.some(
+                                (fromItem) => fromItem.author.id === pubky
+                              )
+                                ? handleDeleteTag(selectedTag.tag)
+                                : handleAddTag(selectedTag.tag);
+                            }}
+                            color="fuchsia"
+                          >
+                            <div className="flex gap-2 items-center">
+                              {Utils.minifyText(
+                                selectedTag.tag.replace(' ', ''),
+                                20
+                              )}
+                              <Typography.Caption
+                                variant="bold"
+                                className="text-opacity-30"
+                              >
+                                {selectedTag.count}
+                              </Typography.Caption>
+                            </div>
+                          </PostUtil.Tag>
+                        )}
+                      </div>
+                      {selectedTag.from.map((user, userIndex) => {
+                        const pubkeyUser =
+                          pubky && user?.author?.id.includes(pubky);
+                        const isFollowed =
+                          followedUser[user?.author?.id] || false;
+                        return (
+                          <div
+                            key={userIndex}
+                            className="w-full flex justify-between gap-10"
+                          >
+                            <SideCard.User
+                              uri={user?.author?.uri.replace('pubky:', '')}
+                              src={
+                                user?.author?.profile?.image ||
+                                '/images/Userpic.png'
+                              }
+                              username={
+                                user?.author?.profile?.name &&
+                                Utils.minifyText(user?.author?.profile?.name)
+                              }
+                              label={Utils.minifyPubky(
+                                user.author.uri.replace('pubky:', '')
+                              )}
+                            />
+                            {pubkeyUser ? (
+                              <SideCard.FollowAction
+                                text="Me"
+                                icon={<Icon.Check />}
+                                className="bg-transparent cursor-default"
+                              />
+                            ) : initLoadingFollowers ? (
+                              <SideCard.FollowAction
+                                disabled
+                                icon={<Icon.LoadingSpin size="16" />}
+                                variant="small"
+                              />
+                            ) : isFollowed ? (
+                              <SideCard.FollowAction
+                                onClick={
+                                  loadingFollowers[user?.author?.id]
+                                    ? undefined
+                                    : () => unfollowUser(user?.author?.id)
+                                }
+                                disabled={loadingFollowers[user?.author?.id]}
+                                loading={loadingFollowers[user?.author?.id]}
+                                icon={<Icon.Minus size="16" />}
+                                variant="small"
+                              />
+                            ) : (
+                              <SideCard.FollowAction
+                                onClick={
+                                  loadingFollowers[user?.author?.id]
+                                    ? undefined
+                                    : () => followUser(user?.author?.id)
+                                }
+                                disabled={loadingFollowers[user?.author?.id]}
+                                loading={loadingFollowers[user?.author?.id]}
+                                icon={<Icon.Plus size="16" />}
+                                variant="small"
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
+                </>
+              ) : (
+                <Typography.Body variant="small" className="text-opacity-30">
+                  Not tags yet.
+                </Typography.Body>
+              )}
+            </div>
           </div>
         </Modal.Content>
-        <Modal.SubmitAction
-          icon={<Icon.Check color={arrayTags.length > 0 ? 'white' : 'gray'} />}
-          disabled={arrayTags.length === 0}
-          onClick={
-            arrayTags.length > 0 && !sendingTags ? handleSubmit : undefined
-          }
-          loading={sendingTags}
-        >
-          Apply Tags
-        </Modal.SubmitAction>
       </div>
     </Modal.Root>
   );
