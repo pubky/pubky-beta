@@ -114,13 +114,13 @@ export default function Sidebar({
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
   const [image, setImage] = useState('/images/Userpic.png');
   const [profileTags, setProfileTags] = useState<ITaggedProfile[]>([]);
-  const [showUsersTag, setShowUsersTag] = useState(false);
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [loadingProfileTags, setLoadingProfileTags] = useState(true);
   const [pubkyUser, setPubkyUser] = useState('');
   const [loading, setLoading] = useState(true);
   const [followed, setFollowed] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);
@@ -446,6 +446,7 @@ export default function Sidebar({
                             {showTooltipProfile === tag.tag && (
                               <Tooltip.Tag
                                 setShowModalTags={setShowModalProfileTag}
+                                setSelectedTag={setSelectedTag}
                                 tags={tag}
                               />
                             )}
@@ -598,8 +599,8 @@ export default function Sidebar({
         setShowModalProfileTag={setShowModalProfileTag}
         handleAddProfileTag={handleAddProfileTag}
         handleDeleteProfileTag={handleDeleteProfileTag}
-        setShowUsersTag={setShowUsersTag}
-        showUsersTag={showUsersTag}
+        selectedTag={selectedTag}
+        setSelectedTag={setSelectedTag}
         pubkyUser={pubkyUser}
         name={name}
         image={image}

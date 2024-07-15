@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon, Tooltip, Typography, PostUtil } from '@social/ui-shared';
-import { ITaggedPost } from '@/types';
+import { ITaggedPost, ITaggedProfile } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Image from 'next/image';
 
@@ -11,7 +11,7 @@ interface TagProps {
   tags: ITaggedPost;
   setShowModalTags: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedTag?: React.Dispatch<
-    React.SetStateAction<ITaggedPost | null | undefined>
+    React.SetStateAction<ITaggedPost | ITaggedProfile | null>
   >;
 }
 
@@ -23,7 +23,7 @@ export default function Tag({
   const router = useRouter();
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const images = tags.from.map((fromItem) => fromItem.author.profile.image);
-  const displayedImages = images.slice(0, 5);
+  const displayedImages = images.slice(0, 4);
   const extraImagesCount = images.length - displayedImages.length;
 
   useEffect(() => {
