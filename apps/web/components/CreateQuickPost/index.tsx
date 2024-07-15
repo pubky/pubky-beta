@@ -232,7 +232,7 @@ export default function CreateQuickPost() {
         {(textArea || contentPost || showModalTag || arrayTags.length > 0) && (
           <Post.Actions className="w-full">
             {arrayTags.length > 0 && (
-              <div className="inline-flex gap-2">
+              <div className="gap-2 flex h-full items-center">
                 {arrayTags.map((tag, index) => (
                   <PostUtil.Tag
                     key={index}

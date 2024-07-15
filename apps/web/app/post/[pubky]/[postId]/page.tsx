@@ -57,7 +57,7 @@ export default function Index({
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Post" />
-      <Content.Grid className="flex justify-between flex-col gap-6">
+      <Content.Grid className="flex justify-between flex-col gap-3">
         {showPost ? (
           <>
             {replies?.post?.post?.parent && (
@@ -75,12 +75,14 @@ export default function Index({
                   fullContent
                   line={replies?.post?.post?.parent ? true : false}
                 />
-                <Post.ReplyForm
-                  uri={uri}
-                  post={post}
-                  updatePost={handleUpdatePost}
-                  replies={replies}
-                />
+                <div className="mt-3">
+                  <Post.ReplyForm
+                    uri={uri}
+                    post={post}
+                    updatePost={handleUpdatePost}
+                    replies={replies}
+                  />
+                </div>
               </>
             )}
           </>
