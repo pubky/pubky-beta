@@ -131,7 +131,7 @@ export default function Index() {
             <Filter.Content />
           </div>
         </Sidebar>
-        <PostsLayout className="col-span-5 xl:col-span-4 2xl:col-span-3 flex-col inline-flex gap-6">
+        <PostsLayout className="col-span-5 xl:col-span-4 2xl:col-span-3 flex-col inline-flex gap-3">
           {Object.keys(posts).map((key) => (
             <Post key={posts[key].id} post={posts[key]} />
           ))}

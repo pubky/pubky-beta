@@ -220,11 +220,7 @@ export default function Repost({
                 placeholder="Optional comment"
               />
               <LinkPreviewer content={contentRepost} />
-              <Post
-                post={post}
-                repostView
-                className="p-4 border rounded-lg mt-2"
-              />
+              <Post post={post} repostView className="mt-2" />
             </div>
             <ModalComponent.TagCreatePost
               arrayTags={arrayTags}
