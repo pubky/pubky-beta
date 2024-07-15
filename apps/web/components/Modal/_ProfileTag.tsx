@@ -23,8 +23,8 @@ interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   profileTags: ITaggedProfile[];
   handleAddProfileTag: (tag: string) => void;
   handleDeleteProfileTag: (tag: string) => void;
-  showUsersTag: boolean;
-  setShowUsersTag: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedTag?: ITaggedProfile | null;
+  setSelectedTag?: React.Dispatch<React.SetStateAction<ITaggedProfile | null>>;
   pubkyUser?: string;
   name?: string;
   image?: string;
@@ -36,7 +36,8 @@ export default function ProfileTag({
   profileTags,
   handleAddProfileTag,
   handleDeleteProfileTag,
-  setShowUsersTag,
+  selectedTag,
+  setSelectedTag,
   pubkyUser,
   name,
   image,
@@ -46,7 +47,6 @@ export default function ProfileTag({
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>();
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
@@ -310,10 +310,9 @@ export default function ProfileTag({
                             className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
                           />
                           <div
-                            onClick={() => {
-                              setSelectedTag(tag);
-                              setShowUsersTag(true);
-                            }}
+                            onClick={() =>
+                              setSelectedTag && setSelectedTag(tag)
+                            }
                             className="cursor-pointer flex items-center"
                           >
                             {displayedImages.map((image, imageIndex) => (
@@ -333,14 +332,14 @@ export default function ProfileTag({
                                 <PostUtil.Counter className="-ml-2">
                                   +{extraImagesCount}
                                 </PostUtil.Counter>
-                                <Button.Action
-                                  variant="custom"
-                                  icon={<Icon.CaretRight size="16" />}
-                                  className="-ml-2"
-                                  size="small"
-                                />
                               </>
                             )}
+                            <Button.Action
+                              variant="custom"
+                              icon={<Icon.CaretRight size="16" />}
+                              className="-ml-2"
+                              size="small"
+                            />
                           </div>
                         </div>
                       );
@@ -349,7 +348,7 @@ export default function ProfileTag({
                     <>
                       <div className="flex gap-2 items-center mb-2">
                         <div
-                          onClick={() => setSelectedTag(null)}
+                          onClick={() => setSelectedTag && setSelectedTag(null)}
                           className="cursor-pointer"
                         >
                           <Icon.ArrowLeft size="16" />
