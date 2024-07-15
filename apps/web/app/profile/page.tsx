@@ -25,7 +25,6 @@ export default function Index() {
     try {
       if (!pubky) return;
       const userProfile = await getUserIndexed(pubky);
-      console.log('userProfile', userProfile);
 
       if (userProfile) {
         setPic(userProfile.profile?.image || '/images/Userpic.png');
