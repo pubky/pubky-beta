@@ -147,13 +147,12 @@ export default function Index() {
               hotTags.map((tag, index) => (
                 <div className="flex gap-3" key={index}>
                   <HotTags.Rank
-                    rank={index + 1}
                     tag={tag.tag}
                     onClick={() => router.push(`/search?tags=${tag.tag}`)}
                     color="fuchsia"
                     counter={`${tag.count}`}
                   />
-                  {tag?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
+                  {tag?.from.slice(0, 15).map((fromItem, fromIndex: number) => (
                     <Image
                       width={32}
                       height={32}
