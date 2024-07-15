@@ -232,6 +232,7 @@ export default function ProfileTag({
                       icon={<Icon.Plus size="18" />}
                       variant="custom"
                       size="medium"
+                      className={tag ? 'flex' : 'hidden'}
                       onClick={() => {
                         handleAddProfileTag(tag);
                         setTag('');
