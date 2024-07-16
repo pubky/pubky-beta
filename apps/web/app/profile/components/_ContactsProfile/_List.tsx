@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { Button, Content, Icon, Typography } from '@social/ui-shared';
+import { Button, Content, Icon, PostUtil, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import { Utils } from '@social/utils-shared';
-import { IFollower, LoadingContacts } from '@/types';
+import { IFollower, IUserProfile, LoadingContacts } from '@/types';
+import { useClientContext } from '@/contexts';
 
 interface ContactsList {
   index: string;
@@ -13,6 +14,7 @@ interface ContactsList {
   initLoadingContacts: boolean;
   isFollowed: boolean;
   loadingContacts: LoadingContacts;
+  profile: IUserProfile | undefined;
   followUser: (pubkyFollow: string) => Promise<void>;
   unfollowUser: (pubkyUnfollow: string) => Promise<void>;
 }
@@ -25,10 +27,32 @@ export default function List({
   initLoadingContacts,
   isFollowed,
   loadingContacts,
+  profile,
   pubkeyUser,
   followUser,
   unfollowUser,
 }: ContactsList) {
+  const { pubky, createTag, deleteTag } = useClientContext();
+
+  const handleAddProfileTag = async (tag: string) => {
+    const creatorPubky = contactId;
+    const pubKeyToUse =
+      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+
+    if (pubKeyToUse) {
+      await createTag(pubKeyToUse, tag);
+    }
+  };
+
+  const handleDeleteProfileTag = async (tag: string) => {
+    const creatorPubky = contactId;
+    const pubKeyToUse =
+      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+
+    if (pubKeyToUse) {
+      await deleteTag(pubKeyToUse, tag);
+    }
+  };
   return (
     <div key={index} className="w-full">
       <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
@@ -53,28 +77,51 @@ export default function List({
             </Typography.Label>
           </div>
         </Link>
-        <div className="lg:flex justify-start items-center lg:w-full">
-          <Typography.Body
-            variant="small"
-            className="lg:px-12 text-opacity-80 leading-[18px] break-words"
-          >
-            {Utils.minifyContent(contact?.profile?.bio, 1)}
+        <div className="lg:flex justify-end gap-2 items-center lg:w-full">
+          {profile?.taggedAs.map((tag, index) => {
+            const isTagFound = tag.from.some(
+              (fromItem) => fromItem.author.id === pubky
+            );
+
+            return (
+              <PostUtil.Tag
+                key={index}
+                clicked={isTagFound}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  isTagFound
+                    ? handleDeleteProfileTag(tag.tag)
+                    : handleAddProfileTag(tag.tag);
+                }}
+                color="fuchsia"
+              >
+                <div className="flex gap-2 items-center">
+                  {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                  <Typography.Caption
+                    variant="bold"
+                    className="text-opacity-30"
+                  >
+                    {tag.count}
+                  </Typography.Caption>
+                </div>
+              </PostUtil.Tag>
+            );
+          })}
+        </div>
+        <div className="flex-col justify-start items-start gap-1 inline-flex">
+          <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+            Tags
+          </Typography.Label>
+          <Typography.Body variant="medium-bold">
+            {profile?.tagsCount}
           </Typography.Body>
         </div>
         <div className="flex-col justify-start items-start gap-1 inline-flex">
           <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-            Followers
+            Posts
           </Typography.Label>
           <Typography.Body variant="medium-bold">
-            {contact.followersCount}
-          </Typography.Body>
-        </div>
-        <div className="flex-col justify-start items-start gap-1 inline-flex">
-          <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-            Following
-          </Typography.Label>
-          <Typography.Body variant="medium-bold">
-            {contact.followingCount}
+            {profile?.postsCount}
           </Typography.Body>
         </div>
         <div className="flex gap-4">

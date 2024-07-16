@@ -1,7 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { IFollower, IFollowing, IFriend, LoadingContacts } from '@/types';
+import {
+  IFollower,
+  IFollowing,
+  IFriend,
+  IUserProfile,
+  LoadingContacts,
+} from '@/types';
 import { useClientContext } from '@/contexts';
 import List from './_List';
 
@@ -10,12 +16,12 @@ export default function Contact({
 }: {
   contacts: IFollower[] | IFollowing[] | IFriend[] | [];
 }) {
-  const { pubky, follow, unfollow, listFollowing } = useClientContext();
+  const { pubky, follow, unfollow, listFollowing, getUserIndexed } =
+    useClientContext();
   const [initLoadingContacts, setInitLoadingContacts] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
-  const [followed, setFollowed] = useState<{
-    [pubky: string]: boolean;
-  }>({});
+  const [profiles, setProfiles] = useState<{ [key: string]: IUserProfile }>({});
+  const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
 
   useEffect(() => {
     async function fetchData() {
@@ -44,6 +50,37 @@ export default function Contact({
     }
     fetchData();
   }, [pubky, listFollowing, contacts]);
+
+  useEffect(() => {
+    async function fetchProfiles() {
+      if (contacts && contacts.length > 0) {
+        const profilePromises = contacts.map(async (contact) => {
+          const contactId = contact.uri.replace('pubky:', '');
+          const userProfile = await fetchProfile(contactId);
+          return { contactId, userProfile };
+        });
+
+        const profilesArray = await Promise.all(profilePromises);
+        const profilesMap: { [key: string]: IUserProfile } =
+          profilesArray.reduce((acc, { contactId, userProfile }) => {
+            if (userProfile) {
+              acc[contactId] = userProfile;
+            }
+            return acc;
+          }, {} as { [key: string]: IUserProfile });
+
+        setProfiles(profilesMap);
+      }
+    }
+
+    fetchProfiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contacts]);
+
+  async function fetchProfile(pubky: string): Promise<IUserProfile | null> {
+    const userProfile = await getUserIndexed(pubky);
+    return userProfile;
+  }
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -96,11 +133,13 @@ export default function Contact({
           const pubkeyUser = pubky && contact.uri.includes(pubky);
           const contactId = contact.uri.replace('pubky:', '');
           const isFollowed = followed[contactId] || false;
+          const profile = profiles[contactId];
 
           return (
             <div key={`contact-${index}`} className="w-full">
               <List
                 index={`list-${contact.uri}`}
+                profile={profile}
                 contactId={contactId}
                 contact={contact as IFollower}
                 showDivider={contacts.length - 1 !== index}
