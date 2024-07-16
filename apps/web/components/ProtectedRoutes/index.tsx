@@ -18,7 +18,6 @@ export default function ProtectedRoutes({
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
   const protectedRoutes = [
-    '/contacts',
     '/followers',
     '/home',
     '/hot-tags',

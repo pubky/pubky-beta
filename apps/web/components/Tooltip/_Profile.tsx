@@ -181,7 +181,7 @@ export default function Profile({ post }: ProfileProps) {
               event.stopPropagation();
               ((followers?.count ?? 0) > 0 || (following?.count ?? 0) > 0) &&
                 router.push(
-                  `/contacts/${
+                  `/profile/${
                     post?.author?.id
                       ? `${post?.author?.id}?tab=following`
                       : '?tab=following'
@@ -211,7 +211,7 @@ export default function Profile({ post }: ProfileProps) {
               event.stopPropagation();
               ((followers?.count ?? 0) > 0 || (following?.count ?? 0) > 0) &&
                 router.push(
-                  `/contacts/${
+                  `/profile/${
                     post?.author?.id
                       ? `${post?.author?.id}?tab=followers`
                       : '?tab=followers'
