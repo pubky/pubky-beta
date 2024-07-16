@@ -152,7 +152,8 @@ export default function Profile({ post }: ProfileProps) {
             <PostUI.Username
               className={`hover:underline hover:decoration-solid`}
             >
-              {post?.author?.profile?.name && post?.author?.profile?.name}
+              {post?.author?.profile?.name &&
+                Utils.minifyText(post?.author?.profile?.name, 12)}
             </PostUI.Username>
             <Typography.Label className="text-opacity-30">
               {Utils.minifyPubky(post?.author?.id)}
