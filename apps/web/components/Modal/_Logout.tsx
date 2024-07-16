@@ -36,7 +36,7 @@ export default function Logout({
       show={showModalLogout}
       closeModal={() => setShowModalLogout(false)}
       modalRef={modalLogoutRef}
-      className="w-[480px]"
+      className="w-[588px]"
     >
       <Modal.CloseAction onClick={() => setShowModalLogout(false)} />
       <Modal.Header title="Sign out?" />

@@ -18,7 +18,7 @@ export default function ServerDown({
     <Modal.Root
       show={showModal}
       modalRef={modalServerDownRef}
-      className="w-[480px]"
+      className="w-[588px]"
     >
       <Modal.Header title="Server down" />
       <Typography.Body className="text-opacity-60" variant="medium">

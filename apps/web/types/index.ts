@@ -77,7 +77,7 @@ export interface TClientContext {
     recoveryFile: Buffer
   ) => Promise<IProfile | undefined>;
   searchTags: string[];
-  updateStatus: (value: TStatus) => Promise<void>;
+  updateStatus: (value: TStatus | string) => Promise<void>;
   setSeed: (seed: Seed | null) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPosts: any;
