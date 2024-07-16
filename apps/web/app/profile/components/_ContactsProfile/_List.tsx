@@ -96,7 +96,7 @@ export default function List({
                 color="fuchsia"
               >
                 <div className="flex gap-2 items-center">
-                  {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                  {Utils.minifyText(tag.tag.replace(' ', ''), 10)}
                   <Typography.Caption
                     variant="bold"
                     className="text-opacity-30"
