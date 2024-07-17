@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Content, Typography } from '@social/ui-shared';
+import { Content, Icon, Menu, Typography } from '@social/ui-shared';
 import {
   ActiveFriends,
   CreatePost,
@@ -39,13 +39,15 @@ import Skeletons from '@/components/Skeletons';
 }
 
 export default function Index() {
-  const { reach, sort } = useFilterContext();
+  const { reach, sort, layout } = useFilterContext();
   const { listBookmarkedPosts, posts, setPosts } = useClientContext();
+  const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const loader = useRef(null);
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const filterContentRef = useRef(null);
+  const drawerFilterRef = useRef<HTMLDivElement>(null);
 
   const fetchData = async (pointer: string) => {
     setLoading(true);
@@ -114,26 +116,66 @@ export default function Index() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutsideDrawer = (event: MouseEvent) => {
+      {
+        if (
+          drawerFilterRef.current &&
+          !drawerFilterRef.current.contains(event.target as Node)
+        ) {
+          setDrawerFilterOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideDrawer);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideDrawer);
+    };
+  }, [drawerFilterRef]);
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Bookmarks" />
-      <Content.Grid className={'grid grid-cols-5 gap-4'}>
-        <Sidebar className="hidden xl:block">
+      {layout === 'wide' && (
+        <div className="sticky top-[160px]">
           <div
-            className={`self-start ${
-              isFilterContentVisible ? '' : 'sticky top-[120px]'
-            }`}
+            onClick={() => setDrawerFilterOpen(true)}
+            className="cursor-pointer absolute p-5 bg-white bg-opacity-10 rounded-tr-[48px] rounded-br-[48px] justify-center items-center gap-2 inline-flex"
           >
-            <Filter.Sort />
+            <Icon.SlidersHorizontal />
           </div>
-          <div ref={filterContentRef}>
-            <Filter.Layout />
-            <Filter.Content />
-          </div>
-        </Sidebar>
-        <PostsLayout className="col-span-5 xl:col-span-4 2xl:col-span-3 flex-col inline-flex gap-3">
+        </div>
+      )}
+      <Content.Grid className={'grid grid-cols-5 gap-4'}>
+        {layout !== 'wide' && (
+          <Sidebar className="hidden xl:block">
+            <div
+              className={`self-start ${
+                isFilterContentVisible ? '' : 'sticky top-[120px]'
+              }`}
+            >
+              <Filter.Sort />
+            </div>
+            <div ref={filterContentRef}>
+              <Filter.Layout />
+              <Filter.Content />
+            </div>
+          </Sidebar>
+        )}
+        <PostsLayout
+          className={`${
+            layout === 'wide'
+              ? 'col-span-5'
+              : 'col-span-5 lg:col-span-4 xl:col-span-3'
+          } flex-col inline-flex gap-3`}
+        >
           {Object.keys(posts).map((key) => (
-            <Post key={posts[key].id} post={posts[key]} />
+            <Post
+              largeView={layout === 'wide'}
+              key={posts[key].id}
+              post={posts[key]}
+            />
           ))}
           {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
@@ -144,12 +186,26 @@ export default function Index() {
           )}
           {loading && <Skeletons.Simple />}
         </PostsLayout>
-        <Sidebar className="hidden 2xl:block">
-          <WhoFollow />
-          <ActiveFriends />
-          <HotTags />
-        </Sidebar>
+        {layout !== 'wide' && (
+          <Sidebar className="hidden xl:block">
+            <WhoFollow />
+            <ActiveFriends />
+            <HotTags />
+          </Sidebar>
+        )}
       </Content.Grid>
+      <Menu.Root
+        position="left"
+        drawerRef={drawerFilterRef}
+        drawerOpen={drawerFilterOpen}
+      >
+        <div className="overflow-y-auto max-h-full no-scrollbar">
+          <Filter.Reach />
+          <Filter.Sort />
+          <Filter.Layout setDrawerFilterOpen={setDrawerFilterOpen} />
+          <Filter.Content />
+        </div>
+      </Menu.Root>
       <CreatePost />
       <div ref={loader} />
     </Content.Main>

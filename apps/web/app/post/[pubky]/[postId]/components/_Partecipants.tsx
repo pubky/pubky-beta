@@ -178,7 +178,7 @@ export default function Partecipants({
             if (
               reply.post &&
               !seenAuthors.has(reply.post.author.id) &&
-              reply.post.author.id !== pubky
+              reply.post.author.id !== repliesResponse?.post?.author?.id
             ) {
               seenAuthors.add(reply.post.author.id);
               const pubkeyUser = pubky === reply.post.author.id;

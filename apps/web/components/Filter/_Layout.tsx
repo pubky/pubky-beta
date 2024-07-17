@@ -1,27 +1,46 @@
 import { Icon, SideCard } from '@social/ui-shared';
+import { useFilterContext } from '@/contexts';
+import { useEffect, useState } from 'react';
+import { TLayouts } from '@/types';
 
-export default function Layout() {
+interface LayoutProps {
+  setDrawerFilterOpen?: (open: boolean) => void;
+}
+
+export default function Layout({ setDrawerFilterOpen }: LayoutProps) {
+  const { layout, setLayout } = useFilterContext();
+  const [loading, setLoading] = useState(true);
+
+  const icons = {
+    columns: <Icon.ThreeColumns />,
+    wide: <Icon.SquaresFour />,
+    visual: <Icon.Smiley color="gray" />,
+  };
+
+  useEffect(() => {
+    setLayout(layout ? layout : 'columns');
+    setLoading(false);
+  }, [layout, setLayout]);
+
+  const handleItemClick = (value: TLayouts) => {
+    setLayout(value);
+    setDrawerFilterOpen && setDrawerFilterOpen(false);
+  };
+
   return (
     <div className="mb-6">
       <SideCard.Header title="Layout" />
-      <SideCard.Item
-        label="Columns"
-        value="columns"
-        selected
-        icon={<Icon.ThreeColumns />}
-      />
-      <SideCard.Item
-        label="Wide"
-        value="wide"
-        disabled
-        icon={<Icon.SquaresFour color="gray" />}
-      />
-      <SideCard.Item
-        label="Visual"
-        value="visual"
-        disabled
-        icon={<Icon.Smiley color="gray" />}
-      />
+      {Object.entries(icons).map(([key, icon]) => (
+        <SideCard.Item
+          key={key}
+          label={key.charAt(0).toUpperCase() + key.slice(1)}
+          value={key}
+          selected={loading ? false : layout === key}
+          icon={icon}
+          onClick={() => key !== 'visual' && handleItemClick(key as TLayouts)}
+          disabled={key === 'visual'}
+        />
+      ))}
     </div>
   );
 }

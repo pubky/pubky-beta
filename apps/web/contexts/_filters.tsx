@@ -34,7 +34,7 @@ type FilterContextType = {
 };
 
 const FilterContext = createContext<FilterContextType>({
-  layout: 'sidebar',
+  layout: 'columns',
   setLayout: () => {},
   sort: 'recent',
   setSort: () => {},
@@ -54,7 +54,7 @@ const FilterContext = createContext<FilterContextType>({
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [layout, setLayout] = useState<TLayouts>(
-    (Utils.storage.get('layout') as TLayouts) || 'sidebar'
+    (Utils.storage.get('layout') as TLayouts) || 'columns'
   );
   const [sort, setSort] = useState<TSort>(
     (Utils.storage.get('sort') as TSort) || 'recent'

@@ -63,9 +63,11 @@ export default function ActiveFriends() {
                     src={friend?.profile?.image || '/images/Userpic.png'}
                     username={
                       friend?.profile?.name &&
-                      Utils.minifyText(friend?.profile?.name, 8)
+                      Utils.minifyText(friend?.profile?.name, 15)
                     }
-                    label={Utils.minifyPubky(friend.uri.replace('pubky:', ''))}
+                    // label={Utils.minifyPubky(friend.uri.replace('pubky:', ''))}
+                    postsCount={friend.postsCount}
+                    tagsCount={friend.tagsCount}
                   />
                 </div>
               );

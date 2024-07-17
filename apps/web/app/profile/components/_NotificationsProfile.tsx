@@ -39,9 +39,9 @@ export default function NotificationsProfile({
           <Link href={'/notifications'}>
             <Button.Medium
               icon={<Icon.Bell size="16" />}
-              className="mt-4 mb-8 md:w-[30%]"
+              className="mt-4 mb-8 w-auto"
             >
-              Show Notifications
+              Show All Notifications
             </Button.Medium>
           </Link>
         </div>
