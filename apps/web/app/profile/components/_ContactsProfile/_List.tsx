@@ -57,7 +57,7 @@ export default function List({
     <div key={index} className="w-full">
       <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
         <Link
-          className="flex gap-4 lg:w-[450px] xl:w-[350px]"
+          className="flex gap-2 lg:w-[450px] xl:w-[350px]"
           href={`/profile/${contactId}`}
         >
           <Image
@@ -72,7 +72,7 @@ export default function List({
               {contact.profile.name &&
                 Utils.minifyText(contact?.profile?.name, 8)}
             </Typography.Body>
-            <Typography.Label className="text-opacity-30">
+            <Typography.Label className="text-opacity-30 -mt-1">
               {Utils.minifyPubky(contactId)}
             </Typography.Label>
           </div>
