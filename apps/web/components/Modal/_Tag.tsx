@@ -274,10 +274,10 @@ export default function Tag({
                     );
 
                     const images = tag.from.map((fromItem) => {
-                      if (fromItem.author?.profile?.image === null) {
-                        return '/images/Userpic.png';
+                      if (fromItem.author?.profile?.image) {
+                        return fromItem.author?.profile?.image;
                       }
-                      return fromItem.author?.profile?.image;
+                      return '/images/Userpic.png';
                     });
                     const displayedImages =
                       expandedTags === index ? images : images.slice(0, 4);

@@ -272,9 +272,12 @@ export default function ProfileTag({
                       (fromItem) => fromItem.author.id === pubky
                     );
 
-                    const images = tag.from.map(
-                      (fromItem) => fromItem.author.profile.image
-                    );
+                    const images = tag.from.map((fromItem) => {
+                      if (fromItem.author?.profile?.image) {
+                        return fromItem.author.profile.image;
+                      }
+                      return '/images/Userpic.png';
+                    });
                     const displayedImages =
                       expandedTags === index ? images : images.slice(0, 4);
                     const extraImagesCount =
