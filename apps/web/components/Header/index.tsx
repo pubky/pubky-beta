@@ -148,7 +148,7 @@ export default function Header({ title, className }: HeaderProps) {
           </Input.SearchTags>
         )}
         <Input.SearchInput
-          placeholder="Search"
+          placeholder={!searchTags.length ? 'Search' : ''}
           className="hidden sm:block"
           onClick={() => setSearchInputCard(true)}
           disabled={!!searchTags.length}
