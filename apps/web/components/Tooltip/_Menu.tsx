@@ -197,7 +197,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               copiedPubky ? (
                 <Icon.CheckCircle size="20" />
               ) : (
-                <Icon.UserCircle size="20" />
+                <Icon.Key size="20" />
               )
             }
           >

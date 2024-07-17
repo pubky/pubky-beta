@@ -80,7 +80,7 @@ export default function ProfileMenu({
             copied ? (
               <Icon.CheckCircle size="20" />
             ) : (
-              <Icon.UserCircle size="20" />
+              <Icon.Key size="20" />
             )
           }
         >

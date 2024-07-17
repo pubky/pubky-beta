@@ -517,7 +517,10 @@ export default function Sidebar({
                   onClick={() => setShowModalProfileTag(true)}
                   icon={<Icon.Tag size="16" />}
                 >
-                  Tag {Utils.minifyText(name, 22)}
+                  Tag{' '}
+                  {!creatorPubky || creatorPubky === pubky
+                    ? 'yourself'
+                    : Utils.minifyText(name, 22)}
                 </Button.Medium>
               </div>
             )}
@@ -549,7 +552,7 @@ export default function Sidebar({
                             <Link href={`mailto:${link.url}`} target="_blank">
                               <Typography.Body
                                 className="text-opacity-80 hover:text-opacity-100"
-                                variant="small-bold"
+                                variant="small"
                               >
                                 {link.url}
                               </Typography.Body>
@@ -568,7 +571,7 @@ export default function Sidebar({
                             >
                               <Typography.Body
                                 className="text-opacity-80 hover:text-opacity-100"
-                                variant="small-bold"
+                                variant="small"
                               >
                                 {Utils.minifyText(
                                   renderSocialUsername(link.url),

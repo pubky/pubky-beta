@@ -152,7 +152,8 @@ export default function Profile({ post }: ProfileProps) {
             <PostUI.Username
               className={`hover:underline hover:decoration-solid`}
             >
-              {post?.author?.profile?.name && post?.author?.profile?.name}
+              {post?.author?.profile?.name &&
+                Utils.minifyText(post?.author?.profile?.name, 12)}
             </PostUI.Username>
             <Typography.Label className="text-opacity-30">
               {Utils.minifyPubky(post?.author?.id)}
@@ -180,7 +181,7 @@ export default function Profile({ post }: ProfileProps) {
               event.stopPropagation();
               ((followers?.count ?? 0) > 0 || (following?.count ?? 0) > 0) &&
                 router.push(
-                  `/contacts/${
+                  `/profile/${
                     post?.author?.id
                       ? `${post?.author?.id}?tab=following`
                       : '?tab=following'
@@ -210,7 +211,7 @@ export default function Profile({ post }: ProfileProps) {
               event.stopPropagation();
               ((followers?.count ?? 0) > 0 || (following?.count ?? 0) > 0) &&
                 router.push(
-                  `/contacts/${
+                  `/profile/${
                     post?.author?.id
                       ? `${post?.author?.id}?tab=followers`
                       : '?tab=followers'
