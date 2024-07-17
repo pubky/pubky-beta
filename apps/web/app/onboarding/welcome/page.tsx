@@ -87,8 +87,8 @@ export default function Index() {
         setContacts(
           followers.followers.map((user: any, index: any) => ({
             alt: 'contact-pic-' + (index + 1),
-            src: user.profile.image,
-            name: user.profile.name,
+            src: user.profile.image || '/images/Userpic.png',
+            name: user.profile.name || '',
             handler: Utils.minifyPubky(user.uri.replace('pubky:', '')),
           }))
         );

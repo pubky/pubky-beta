@@ -7,9 +7,14 @@ import { IPost } from '@/types';
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
   fullContent?: boolean;
+  largeView?: boolean;
 }
 
-export default function Content({ post, fullContent = false }: PostProps) {
+export default function Content({
+  post,
+  fullContent = false,
+  largeView = false,
+}: PostProps) {
   return (
     <div
       className="w-full cursor-text"
@@ -19,6 +24,7 @@ export default function Content({ post, fullContent = false }: PostProps) {
         text={post?.post?.content}
         uri={post?.uri}
         fullContent={fullContent}
+        largeView={largeView}
       />
     </div>
   );

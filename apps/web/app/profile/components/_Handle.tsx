@@ -121,6 +121,22 @@ export default function Handle({
     }
   }, [seed]);
 
+  const extractEmojiAndText = (status: string) => {
+    const emojiRegex =
+      /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Emoji_Modifier_Base})(\p{Emoji_Modifier})?/gu;
+    const emojiMatch = status.match(emojiRegex);
+    if (emojiMatch) {
+      const emoji = emojiMatch[0];
+      const text = status.replace(emoji, '').trim();
+      return { emoji, text };
+    }
+    return { emoji: '', text: status };
+  };
+
+  const { emoji, text } = status
+    ? extractEmojiAndText(status)
+    : { emoji: '', text: '' };
+
   return (
     <div {...rest} className={twMerge(rest.className)}>
       {username && pubkey ? (
@@ -245,16 +261,25 @@ export default function Handle({
               status &&
               status !== 'noStatus' && (
                 <Typography.Body variant="medium" className="mt-1">
-                  {
-                    Utils.statusHelper.emojis[
-                      status as keyof typeof Utils.statusHelper.emojis
-                    ]
-                  }{' '}
-                  {
-                    Utils.statusHelper.labels[
-                      status as keyof typeof Utils.statusHelper.labels
-                    ]
-                  }
+                  {emoji && (
+                    <>
+                      {emoji} {text}
+                    </>
+                  )}
+                  {!emoji && (
+                    <>
+                      {
+                        Utils.statusHelper.emojis[
+                          status as keyof typeof Utils.statusHelper.emojis
+                        ]
+                      }{' '}
+                      {
+                        Utils.statusHelper.labels[
+                          status as keyof typeof Utils.statusHelper.labels
+                        ]
+                      }
+                    </>
+                  )}
                 </Typography.Body>
               )
             )}

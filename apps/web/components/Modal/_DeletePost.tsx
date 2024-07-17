@@ -39,7 +39,7 @@ export default function DeletePost({
       show={showModalDeletePost}
       closeModal={() => setShowModalDeletePost(false)}
       modalRef={modalDeletePostRef}
-      className="w-[480px]"
+      className="w-[588px]"
     >
       <Modal.CloseAction onClick={() => setShowModalDeletePost(false)} />
       <Modal.Header title="Delete Post" />
@@ -60,7 +60,7 @@ export default function DeletePost({
             setShowModalDeletePost(false);
           }}
         >
-          Yes, delete
+          Delete Post
         </Modal.SubmitAction>
       </div>
     </Modal.Root>

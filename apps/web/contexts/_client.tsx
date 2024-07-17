@@ -79,7 +79,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [posts, setPosts] = useState<INewPost>({} as INewPost);
   const [searchTags, setSearchTags] = useState<string[]>([]);
 
-  const updateStatus = async (value: TStatus) => {
+  const updateStatus = async (value: TStatus | string) => {
     try {
       if (!pubky) throw new Error('Pubky required');
       if (!profile) throw new Error('Profile required');

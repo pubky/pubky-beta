@@ -18,9 +18,10 @@ import Modal from '../Modal';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
+  largeView?: boolean;
 }
 
-export default function Tags({ post }: PostProps) {
+export default function Tags({ post, largeView = false }: PostProps) {
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
     useClientContext();
@@ -90,46 +91,47 @@ export default function Tags({ post }: PostProps) {
             setShowModalTag(true);
           }}
         />
-        {tags.map((tagObj, index) => {
-          const isTagFound = tagObj.from.some(
-            (fromItem) => fromItem.author.id === pubky
-          );
+        {!largeView &&
+          tags.map((tagObj, index) => {
+            const isTagFound = tagObj.from.some(
+              (fromItem) => fromItem.author.id === pubky
+            );
 
-          return (
-            <PostUI.Footer key={index}>
-              <TooltipUI.Root
-                delay={200}
-                setShowTooltip={setShowTooltipProfile}
-                tagId={tagObj.tag}
-              >
-                {showTooltipProfile === tagObj.tag && (
-                  <Tooltip.Tag
-                    setSelectedTag={setSelectedTag}
-                    setShowModalTags={setShowModalTag}
-                    tags={tagObj}
-                  />
-                )}
-                <PostUtil.Tag
-                  clicked={isTagFound}
-                  color="fuchsia"
-                  onClick={() =>
-                    isTagFound
-                      ? handleDeleteTag(tagObj.tag)
-                      : handleAddTag(tagObj.tag)
-                  }
+            return (
+              <PostUI.Footer key={index}>
+                <TooltipUI.Root
+                  delay={200}
+                  setShowTooltip={setShowTooltipProfile}
+                  tagId={tagObj.tag}
                 >
-                  <div className="flex gap-2 items-center">
-                    {Utils.minifyText(tagObj.tag.replace(' ', ''), 7)}
-                    <Typography.Caption
-                      variant="bold"
-                      className="text-opacity-30"
-                    >
-                      {tagObj.count}
-                    </Typography.Caption>
-                  </div>
-                </PostUtil.Tag>
-              </TooltipUI.Root>
-              {/* <Button.Action
+                  {showTooltipProfile === tagObj.tag && (
+                    <Tooltip.Tag
+                      setSelectedTag={setSelectedTag}
+                      setShowModalTags={setShowModalTag}
+                      tags={tagObj}
+                    />
+                  )}
+                  <PostUtil.Tag
+                    clicked={isTagFound}
+                    color="fuchsia"
+                    onClick={() =>
+                      isTagFound
+                        ? handleDeleteTag(tagObj.tag)
+                        : handleAddTag(tagObj.tag)
+                    }
+                  >
+                    <div className="flex gap-2 items-center">
+                      {Utils.minifyText(tagObj.tag.replace(' ', ''), 7)}
+                      <Typography.Caption
+                        variant="bold"
+                        className="text-opacity-30"
+                      >
+                        {tagObj.count}
+                      </Typography.Caption>
+                    </div>
+                  </PostUtil.Tag>
+                </TooltipUI.Root>
+                {/* <Button.Action
                 variant="custom"
                 size="small"
                 icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
@@ -153,9 +155,9 @@ export default function Tags({ post }: PostProps) {
                   src={fromItem.author?.profile?.image || '/images/Userpic.png'}
                 />
               ))} */}
-            </PostUI.Footer>
-          );
-        })}
+              </PostUI.Footer>
+            );
+          })}
       </div>
       <Modal.Tag
         post={post}

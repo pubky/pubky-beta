@@ -19,9 +19,11 @@ import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import Tooltip from '../Tooltip';
 import { useClientContext, useAlertContext } from '@/contexts';
+import TagsLargeView from './_TagsLargeView';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
+  largeView?: boolean;
   bookmark?: boolean;
   size?: TSize;
   post: IPost;
@@ -33,6 +35,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Post({
   repostView = false,
+  largeView = false,
   size = 'full',
   post,
   layout,
@@ -70,7 +73,7 @@ export default function Post({
           <div>
             {post?.post.embed && !repostView ? (
               post?.post.content ? (
-                <PostUI.MainCard className={rest.className}>
+                <PostUI.MainCard className={twMerge(rest.className)}>
                   <Header post={post} />
                   <div>
                     <Content post={post} fullContent={fullContent} />
@@ -205,17 +208,33 @@ export default function Post({
                   </>
                 )}
                 <PostUI.MainCard
-                  className={twMerge(line && 'ml-[15px]', rest.className)}
+                  className={twMerge(
+                    line && 'ml-[15px]',
+                    largeView && 'p-12 flex inline-flex flex-row gap-12',
+                    rest.className
+                  )}
                 >
-                  <Header post={post} />
-                  <div>
-                    <Content post={post} fullContent={fullContent} />
-                    <div className="flex flex-col md:flex-row justify-between">
-                      {!repostView && <Tags post={post} />}
-                      <div className="grow" />
-                      {!repostView && <Actions post={post} />}
+                  <div className="flex-col justify-between inline-flex">
+                    <Header post={post} largeView={largeView} />
+                    <div>
+                      <Content
+                        largeView={largeView}
+                        post={post}
+                        fullContent={fullContent}
+                      />
+                      <div
+                        className={`flex flex-col md:flex-row ${
+                          largeView ? 'gap-2' : 'justify-between'
+                        }`}
+                      >
+                        {!repostView && (
+                          <Tags largeView={largeView} post={post} />
+                        )}
+                        {!repostView && <Actions post={post} />}
+                      </div>
                     </div>
                   </div>
+                  {largeView && <TagsLargeView post={post} />}
                 </PostUI.MainCard>
               </div>
             )}

@@ -14,6 +14,7 @@ interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   uri: string;
   children?: React.ReactNode;
   fullContent?: boolean;
+  largeView?: boolean;
 }
 
 const tagsIcons: { [key: string]: JSX.Element } = {
@@ -30,6 +31,7 @@ export const Content = ({
   uri,
   text,
   fullContent = false,
+  largeView = false,
 }: ContentProps) => {
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
@@ -144,7 +146,7 @@ export const Content = ({
   const contentText = fullContent ? cleanedText : minifiedContent;
 
   const lines = contentText.split('\n').map((line, index) => (
-    <div key={index} className="min-h-[10px]">
+    <div key={index} className={`${largeView && 'text-2xl mt-4'} min-h-[10px]`}>
       <LinkParser watchers={watchers as []}>{line}</LinkParser>
     </div>
   ));

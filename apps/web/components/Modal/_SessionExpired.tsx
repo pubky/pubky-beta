@@ -39,7 +39,7 @@ export default function SessionExpired({
     <Modal.Root
       show={showModal}
       modalRef={modalSessionExpiredRef}
-      className="w-[480px]"
+      className="w-[588px]"
     >
       <Modal.Header title="Session expired" />
       <Typography.Body className="text-opacity-60" variant="medium">

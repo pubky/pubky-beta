@@ -72,6 +72,7 @@ export default function Index({
                   key={uri}
                   post={post}
                   size="full"
+                  largeView={true}
                   fullContent
                   line={replies?.post?.post?.parent ? true : false}
                 />

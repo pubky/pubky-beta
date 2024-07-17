@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Utils } from '@social/utils-shared';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
 import Repost from '../Repost';
 import { useClientContext, useAlertContext } from '@/contexts';
 import { IPost } from '@/types';
 import Tooltip from '../Tooltip';
+import Modal from '../Modal';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
@@ -21,12 +20,12 @@ export default function Actions({
   repost,
   deleteRepost = false,
 }: PostProps) {
-  const router = useRouter();
   const { deleteBookmark, createBookmark, createRepost, deletePost } =
     useClientContext();
   const { setContent, setShow } = useAlertContext();
   const [showMenu, setShowMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
+  const [showModalReply, setShowModalReply] = useState(false);
   const [showRepostMenu, setShowRepostMenu] = useState(false);
 
   const handleAddBookmark = async (postId: string, uri: string) => {
@@ -76,7 +75,10 @@ export default function Actions({
           variant="custom"
           icon={<Icon.ChatCircleText size="16" />}
           counter={post?.repliesCount}
-          onClick={() => router.push(Utils.encodePostUri(post?.uri))}
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowModalReply(true);
+          }}
         />
         <div className="relative">
           {showRepostMenu && (
@@ -160,6 +162,11 @@ export default function Actions({
         handleRepost={handleRepost}
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
+      />
+      <Modal.CreateReply
+        post={post}
+        showModalReply={showModalReply}
+        setShowModalReply={setShowModalReply}
       />
     </div>
   );

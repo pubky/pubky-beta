@@ -60,7 +60,7 @@ export default function Index({
         setCountPosts(userProfile.postsCount);
         setCountContacts({
           followers: userProfile.followersCount,
-          following: userProfile.followersCount,
+          following: userProfile.followingCount,
           friends: userProfile.friendsCount,
         });
       } else {
