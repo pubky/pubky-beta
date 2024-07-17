@@ -23,10 +23,10 @@ export default function Tag({
   const router = useRouter();
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const images = tags.from.map((fromItem) => {
-    if (fromItem.author?.profile?.image === null) {
-      return '/images/Userpic.png';
+    if (fromItem.author?.profile?.image) {
+      return fromItem.author?.profile?.image;
     }
-    return fromItem.author?.profile?.image;
+    return '/images/Userpic.png';
   });
   const displayedImages = images.slice(0, 4);
   const extraImagesCount = images.length - displayedImages.length;
