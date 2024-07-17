@@ -5,6 +5,8 @@ import extractHashtags from './lib/Helper/extractHashtags';
 import decodePostUri from './lib/URI/decodePostUIri';
 import encodePostUri from './lib/URI/encodePostUri';
 import isValidContent from './lib/Text/isValidContent';
+import generateRandomColor from './lib/Helper/generateRandomColor';
+import hexToRgba from './lib/Helper/hetToRgba';
 import minifyContent from './lib/Text/minifyContent';
 import minifyPubky from './lib/Text/minifyPubky';
 import storage from './lib/Storage/storage';
@@ -19,6 +21,8 @@ export const Utils = {
   decodePostUri,
   encodePostUri,
   isValidContent,
+  generateRandomColor,
+  hexToRgba,
   minifyContent,
   extractHashtags,
   minifyPubky,

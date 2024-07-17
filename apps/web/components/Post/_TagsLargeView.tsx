@@ -209,7 +209,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   )}
                   <PostUtil.Tag
                     clicked={isTagFound}
-                    color="fuchsia"
+                    color={tagObj.tag && Utils.generateRandomColor(tagObj.tag)}
                     onClick={() =>
                       isTagFound
                         ? handleDeleteTag(tagObj.tag)

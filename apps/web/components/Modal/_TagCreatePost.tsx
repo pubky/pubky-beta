@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@social/ui-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import { Utils } from '@social/utils-shared';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
@@ -165,7 +166,7 @@ export default function TagCreatePost({
                           </div>
                         }
                         clicked
-                        color="fuchsia"
+                        color={tag && Utils.generateRandomColor(tag)}
                         className="mr-2 my-1"
                       >
                         {tag}

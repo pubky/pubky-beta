@@ -215,7 +215,7 @@ export default function ReplyForm({
                           <PostUtil.Tag
                             key={index}
                             clicked
-                            color="fuchsia"
+                            color={tag && Utils.generateRandomColor(tag)}
                             action={
                               <div
                                 className="flex items-center"

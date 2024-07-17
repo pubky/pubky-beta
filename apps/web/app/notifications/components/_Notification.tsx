@@ -180,9 +180,12 @@ export default function Notification({
           {(notification.type === notificationType.tag_profile.type ||
             notification.type === notificationType.tag_post.type) && (
             <PostUtil.Tag
+              color={
+                notification.body.tag &&
+                Utils.generateRandomColor(notification.body.tag)
+              }
               className="hidden sm:block"
               clicked={false}
-              color="fuchsia"
             >
               {notification.body.tag}
             </PostUtil.Tag>

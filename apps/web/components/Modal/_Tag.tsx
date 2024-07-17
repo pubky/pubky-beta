@@ -295,7 +295,7 @@ export default function Tag({
                               ? handleDeleteTag(tag.tag)
                               : handleAddTag(tag.tag);
                           }}
-                          color="fuchsia"
+                          color={tag.tag && Utils.generateRandomColor(tag.tag)}
                         >
                           <div className="flex gap-2 items-center">
                             {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
@@ -390,7 +390,6 @@ export default function Tag({
                                 ? handleDeleteTag(selectedTag.tag)
                                 : handleAddTag(selectedTag.tag);
                             }}
-                            color="fuchsia"
                           >
                             <div className="flex gap-2 items-center">
                               {Utils.minifyText(

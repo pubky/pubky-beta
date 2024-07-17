@@ -1,3 +1,6 @@
+'use client';
+
+import React, { useState } from 'react';
 import { Typography } from '../Typography';
 import { twMerge } from 'tailwind-merge';
 
@@ -8,67 +11,51 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   action?: React.ReactNode;
 }
 
+const hexToRgba = (hex: string, alpha: number) => {
+  const [r, g, b] = hex.match(/\w\w/g)!.map((x) => parseInt(x, 16));
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 export const Tag = ({
   clicked = false,
-  color,
+  color = 'fuchsia',
   children,
   action,
   ...rest
 }: TagProps) => {
-  let cssClasses = clicked
-    ? 'bg-white bg-opacity-20 border-transparent border-white'
-    : 'bg-white bg-opacity-20 border-transparent hover:bg-opacity-30';
-  let cssText = 'text-white';
+  const [isHovered, setIsHovered] = useState(false);
 
-  switch (color) {
-    case 'yellow':
-      cssClasses = clicked
-        ? 'bg-yellow-400 bg-opacity-30 border-transparent border-yellow-400'
-        : 'bg-yellow-400 bg-opacity-30 border-transparent hover:bg-opacity-60';
-      cssText = 'text-yellow-200';
-      break;
-    case 'amber':
-      cssClasses = clicked
-        ? 'bg-amber-500 bg-opacity-30 border-amber-500'
-        : 'bg-amber-500 bg-opacity-30 border-transparent hover:bg-opacity-60';
-      cssText = 'text-amber-300';
-      break;
-    case 'red':
-      cssClasses = clicked
-        ? 'bg-red-600 bg-opacity-30 border-red-600'
-        : 'bg-red-600 bg-opacity-30 border-transparent hover:bg-opacity-60';
-      cssText = 'text-red-400';
-      break;
-    case 'fuchsia':
-      cssClasses = clicked
-        ? 'bg-fuchsia-500 bg-opacity-20 border-fuchsia-500 border-opacity-60'
-        : 'bg-fuchsia-500 bg-opacity-10 border-transparent hover:bg-opacity-60';
-      cssText = 'text-fuchsia-200';
-      break;
-    case 'blue':
-      cssClasses = clicked
-        ? 'bg-blue-600 bg-opacity-30 border-blue-600'
-        : 'bg-blue-600 bg-opacity-30 border-transparent hover:bg-opacity-60';
-      cssText = 'text-blue-400';
-      break;
-    case 'cyan':
-      cssClasses = clicked
-        ? 'bg-cyan-400 bg-opacity-30 border-cyan-400'
-        : 'bg-cyan-400 bg-opacity-30 border-transparent hover:bg-opacity-60';
-      cssText = 'text-cyan-200';
-      break;
-    case 'green':
-      cssClasses = clicked
-        ? 'bg-green-500 bg-opacity-30 border-green-500'
-        : 'bg-green-500 bg-opacity-30 border-transparent hover:bg-opacity-60';
-      cssText = 'text-green-300';
-      break;
-    case 'purple':
-      cssClasses = clicked
-        ? 'bg-purple-500 bg-opacity-20 border-purple-500'
-        : 'bg-purple-500 bg-opacity-20 border-transparent hover:bg-opacity-30';
-      cssText = 'text-purple-300';
-      break;
+  const isCustomColor = color && !['fuchsia'].includes(color);
+
+  let cssClasses = clicked ? 'border-opacity-60' : 'border-transparent';
+  let cssText = 'text-white';
+  let style: React.CSSProperties = {};
+
+  if (isCustomColor) {
+    style = clicked
+      ? {
+          backgroundColor: hexToRgba(color, 0.3),
+          borderColor: hexToRgba(color, 0.6),
+        }
+      : {
+          backgroundColor: hexToRgba(color, 0.3),
+          borderColor: 'transparent',
+        };
+
+    if (!clicked && isHovered) {
+      style.backgroundColor = hexToRgba(color, 0.6);
+    }
+
+    cssText = 'text-white';
+  } else {
+    switch (color) {
+      case 'fuchsia':
+        cssClasses = clicked
+          ? 'bg-fuchsia-500 bg-opacity-20 border-fuchsia-500 border-opacity-60'
+          : 'bg-fuchsia-500 bg-opacity-10 border-transparent hover:bg-opacity-60';
+        cssText = 'text-fuchsia-200';
+        break;
+    }
   }
 
   return (
@@ -79,6 +66,9 @@ export const Tag = ({
         cssClasses,
         rest.className
       )}
+      style={style}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex gap-2">
         <Typography.Body className={cssText} variant="small-bold">
