@@ -183,9 +183,12 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             (fromItem) => fromItem.author.id === pubky
           );
 
-          const images = tagObj.from.map(
-            (fromItem) => fromItem.author.profile.image
-          );
+          const images = tagObj.from.map((fromItem) => {
+            if (fromItem.author?.profile?.image) {
+              return fromItem.author.profile.image;
+            }
+            return '/images/Userpic.png';
+          });
           const displayedImages = images.slice(0, 4);
           const extraImagesCount = images.length - displayedImages.length;
 
