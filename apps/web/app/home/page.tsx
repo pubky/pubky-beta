@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Content, Icon, Menu, Typography } from '@social/ui-shared';
+import { Content, Menu, Typography } from '@social/ui-shared';
 
 import * as Components from '@/components';
 import Skeletons from '@/components/Skeletons';
@@ -138,14 +138,9 @@ export default function Index() {
       <Components.Header className="hidden md:block" title="Streams" />
       <Components.RemindBackup />
       {layout === 'wide' && (
-        <div className="sticky top-[160px]">
-          <div
-            onClick={() => setDrawerFilterOpen(true)}
-            className="cursor-pointer absolute p-5 bg-white bg-opacity-10 rounded-tr-[48px] rounded-br-[48px] justify-center items-center gap-2 inline-flex"
-          >
-            <Icon.SlidersHorizontal />
-          </div>
-        </div>
+        <Components.ButtonFilters
+          onClick={() => setDrawerFilterOpen(true)}
+        />
       )}
       <Content.Grid className={'grid grid-cols-5 gap-6'}>
         {layout !== 'wide' && (

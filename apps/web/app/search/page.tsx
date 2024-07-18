@@ -2,9 +2,10 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Content, Icon, Menu, Typography } from '@social/ui-shared';
+import { Content, Menu, Typography } from '@social/ui-shared';
 import {
   ActiveFriends,
+  ButtonFilters,
   CreatePost,
   Header,
   HotTags,
@@ -136,14 +137,7 @@ const SearchContent = () => {
     <Content.Main>
       <Header className="hidden md:block" title="Search" />
       {layout === 'wide' && (
-        <div className="sticky top-[160px]">
-          <div
-            onClick={() => setDrawerFilterOpen(true)}
-            className="cursor-pointer absolute p-5 bg-white bg-opacity-10 rounded-tr-[48px] rounded-br-[48px] justify-center items-center gap-2 inline-flex"
-          >
-            <Icon.SlidersHorizontal />
-          </div>
-        </div>
+        <ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       )}
       <Content.Grid className={'grid grid-cols-5 gap-6'}>
         {layout !== 'wide' && (
