@@ -5,6 +5,7 @@ import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import { INotification, IUserProfile } from '@/types';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const notificationType = {
   follow: {
@@ -61,6 +62,7 @@ export default function Notification({
 }: {
   notification: INotification;
 }) {
+  const router = useRouter();
   const { getUser } = useClientContext();
   const [user, setUser] = useState<IUserProfile>();
 
@@ -184,7 +186,9 @@ export default function Notification({
                 notification.body.tag &&
                 Utils.generateRandomColor(notification.body.tag)
               }
-              className="hidden sm:block"
+              onClick={() =>
+                router.push(`/search?tags=${notification.body.tag}`)
+              }
               clicked={false}
             >
               {notification.body.tag}
