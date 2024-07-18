@@ -13,8 +13,8 @@ export default function Layout({ setDrawerFilterOpen }: LayoutProps) {
 
   const icons = {
     columns: <Icon.ThreeColumns />,
-    wide: <Icon.SquaresFour />,
-    visual: <Icon.Smiley color="gray" />,
+    wide: <Icon.List />,
+    visual: <Icon.SquaresFour color="gray" />,
   };
 
   useEffect(() => {
