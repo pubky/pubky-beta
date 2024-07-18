@@ -34,7 +34,7 @@ type FilterContextType = {
 };
 
 const FilterContext = createContext<FilterContextType>({
-  layout: 'sidebar',
+  layout: 'columns',
   setLayout: () => {},
   sort: 'recent',
   setSort: () => {},
@@ -53,8 +53,9 @@ const FilterContext = createContext<FilterContextType>({
 });
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
+  const [isInitialized, setIsInitialized] = useState(false);
   const [layout, setLayout] = useState<TLayouts>(
-    (Utils.storage.get('layout') as TLayouts) || 'sidebar'
+    (Utils.storage.get('layout') as TLayouts) || 'columns'
   );
   const [sort, setSort] = useState<TSort>(
     (Utils.storage.get('sort') as TSort) || 'recent'
@@ -88,6 +89,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     Utils.storage.set('contactsLayout', contactsLayout);
     Utils.storage.set('content', content);
     Utils.storage.set('timeframe', timeframe);
+    setIsInitialized(true);
   }, [
     layout,
     sort,
@@ -98,6 +100,8 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     content,
     timeframe,
   ]);
+
+  if (!isInitialized) return null;
 
   return (
     <FilterContext.Provider

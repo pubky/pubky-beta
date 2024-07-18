@@ -59,7 +59,7 @@ export default function Replies({
         </Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full mt-6">
-          <Typography.H2>Replies</Typography.H2>
+          {/**<Typography.H2>Replies</Typography.H2>*/}
           {renderReplies(replies)}
         </div>
       )}

@@ -3,6 +3,7 @@ import { Card, PostUtil, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -68,7 +69,6 @@ export default function SearchInputCard({
                     </div>
                   }
                   onClick={() => handleRemoveTag(index)}
-                  color="fuchsia"
                   className="mr-2 my-1"
                 >
                   {searchTag}
@@ -93,7 +93,7 @@ export default function SearchInputCard({
                     key={index}
                     clicked={false}
                     onClick={() => router.push(`/search?tags=${tag.tag}`)}
-                    color="fuchsia"
+                    color={tag.tag && Utils.generateRandomColor(tag.tag)}
                     className="mr-2 my-1"
                   >
                     {tag.tag}

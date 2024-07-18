@@ -113,7 +113,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
                   )}
                   <PostUtil.Tag
                     clicked={isTagFound}
-                    color="fuchsia"
+                    color={tagObj.tag && Utils.generateRandomColor(tagObj.tag)}
                     onClick={() =>
                       isTagFound
                         ? handleDeleteTag(tagObj.tag)

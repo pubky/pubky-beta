@@ -1,6 +1,7 @@
-import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../Typography';
 import React from 'react';
+import { PostUtil } from '../../PostUtil';
+import { Utils } from '@social/utils-shared';
+import { twMerge } from 'tailwind-merge';
 
 interface SearchTagProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
@@ -8,16 +9,15 @@ interface SearchTagProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const SearchTag = ({ value, action, ...rest }: SearchTagProps) => {
-  const baseCSS = `inline-flex border h-8 px-3 py-1 rounded-lg cursor-pointer text-center bg-[#391941] border-fuchsia-500 border-opacity-60`;
-
   return (
-    <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <div className="flex gap-2">
-        <Typography.Body className="text-fuchsia-200" variant="small-bold">
-          {value}
-        </Typography.Body>
-        {action}
-      </div>
-    </div>
+    <PostUtil.Tag
+      {...rest}
+      action={action}
+      className={twMerge(rest.className)}
+      color={value && Utils.generateRandomColor(value)}
+      clicked
+    >
+      {value}
+    </PostUtil.Tag>
   );
 };

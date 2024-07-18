@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@social/ui-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import { Utils } from '@social/utils-shared';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
@@ -115,7 +116,7 @@ export default function TagCreatePost({
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <Modal.Header title="Tag" />
         <Modal.Content className="flex flex-row w-[350px]">
-          <div className="flex-col inline-flex">
+          <div className="w-full flex-col inline-flex">
             {/**  <div>
               <Typography.Label className="text-opacity-30 font-medium">
                 Emotag
@@ -165,7 +166,7 @@ export default function TagCreatePost({
                           </div>
                         }
                         clicked
-                        color="fuchsia"
+                        color={tag && Utils.generateRandomColor(tag)}
                         className="mr-2 my-1"
                       >
                         {tag}
@@ -180,15 +181,6 @@ export default function TagCreatePost({
               </div>
             </div>
             <div className="flex flex-row w-full mt-4">
-              <Button.Action
-                variant="custom"
-                icon={<Icon.Smiley size="32" />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setShowEmojis(true);
-                }}
-                className="mr-3 mt-1.5"
-              />
               {showEmojis && (
                 <div
                   className="absolute translate-y-[10%] translate-x-[30%] z-10"
@@ -204,22 +196,32 @@ export default function TagCreatePost({
                   />
                 </div>
               )}
-              <div className="grow"></div>
               {/* <Input.Label value="Add tag" /> */}
               <Input.Text
                 placeholder="tag"
                 value={tag}
-                className="h-[60px]"
                 maxLength={20}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 action={
-                  <Button.Action
-                    icon={<Icon.Plus size="18" />}
-                    variant="custom"
-                    size="small"
-                    onClick={handleAddTag}
-                  />
+                  <div className="flex gap-2">
+                    <Button.Action
+                      icon={<Icon.Plus size="18" />}
+                      variant="custom"
+                      size="medium"
+                      className={tag ? 'flex' : 'hidden'}
+                      onClick={handleAddTag}
+                    />
+                    <Button.Action
+                      variant="custom"
+                      icon={<Icon.Smiley size="32" />}
+                      size="medium"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setShowEmojis(true);
+                      }}
+                    />
+                  </div>
                 }
               />
             </div>
@@ -230,7 +232,7 @@ export default function TagCreatePost({
             )}
           </div>
         </Modal.Content>
-        <Modal.SubmitAction
+        {/**<Modal.SubmitAction
           icon={<Icon.Check color={arrayTags.length > 0 ? 'white' : 'gray'} />}
           disabled={arrayTags.length === 0}
           onClick={() => {
@@ -239,7 +241,7 @@ export default function TagCreatePost({
           }}
         >
           Apply Tags
-        </Modal.SubmitAction>
+        </Modal.SubmitAction>*/}
       </div>
     </Modal.Root>
   );

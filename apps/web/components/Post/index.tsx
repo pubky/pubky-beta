@@ -73,40 +73,57 @@ export default function Post({
           <div>
             {post?.post.embed && !repostView ? (
               post?.post.content ? (
-                <PostUI.MainCard className={twMerge(rest.className)}>
-                  <Header post={post} />
-                  <div>
-                    <Content post={post} fullContent={fullContent} />
-                    {post?.post.embed.post ? (
-                      <PostUI.MainCard className="mt-4">
-                        <Header post={post?.post?.embed?.post} />
-                        {line && (
-                          <div className={twMerge(lineBaseCSS, lineStyle)} />
-                        )}
-                        <div>
-                          <Content
-                            post={post?.post?.embed?.post}
-                            fullContent={fullContent}
-                          />
+                <PostUI.MainCard
+                  className={twMerge(
+                    largeView && 'p-12 flex inline-flex flex-row gap-12',
+                    rest.className
+                  )}
+                >
+                  <div className="flex-col justify-between inline-flex">
+                    <Header post={post} largeView={largeView} />
+                    <div>
+                      <Content
+                        largeView={largeView}
+                        post={post}
+                        fullContent={fullContent}
+                      />
+                      {post?.post.embed.post ? (
+                        <PostUI.MainCard className="mt-4">
+                          <Header post={post?.post?.embed?.post} />
+                          {line && (
+                            <div className={twMerge(lineBaseCSS, lineStyle)} />
+                          )}
+                          <div>
+                            <Content
+                              post={post?.post?.embed?.post}
+                              fullContent={fullContent}
+                            />
+                          </div>
+                        </PostUI.MainCard>
+                      ) : (
+                        <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
+                          <Typography.Body
+                            variant="small"
+                            className="text-opacity-50"
+                          >
+                            This post was not found or has been deleted by its
+                            author.
+                          </Typography.Body>
                         </div>
-                      </PostUI.MainCard>
-                    ) : (
-                      <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
-                        <Typography.Body
-                          variant="small"
-                          className="text-opacity-50"
-                        >
-                          This post was not found or has been deleted by its
-                          author.
-                        </Typography.Body>
+                      )}
+                      <div
+                        className={`flex flex-col md:flex-row ${
+                          largeView ? 'gap-2' : 'justify-between'
+                        }`}
+                      >
+                        {!repostView && (
+                          <Tags largeView={largeView} post={post} />
+                        )}
+                        {!repostView && <Actions post={post} />}
                       </div>
-                    )}
-                    <div className="flex flex-col md:flex-row justify-between">
-                      {!repostView && <Tags post={post} />}
-                      <div className="grow" />
-                      {!repostView && <Actions post={post} />}
                     </div>
                   </div>
+                  {largeView && <TagsLargeView post={post} />}
                 </PostUI.MainCard>
               ) : (
                 <>
@@ -156,32 +173,37 @@ export default function Post({
                     <PostUI.MainCard
                       className={twMerge(
                         'rounded-tl-none rounded-tr-none',
+                        largeView && 'p-12 flex inline-flex flex-row gap-12',
                         rest.className
                       )}
                     >
-                      <Header post={post?.post?.embed?.post} />
-                      {line && (
-                        <div className={twMerge(lineBaseCSS, lineStyle)} />
-                      )}
-                      <div>
-                        <Content
+                      <div className="flex-col justify-between inline-flex">
+                        <Header
                           post={post?.post?.embed?.post}
-                          fullContent={fullContent}
+                          largeView={largeView}
                         />
-                        <div className="flex flex-col md:flex-row justify-between">
-                          {!repostView && (
-                            <Tags post={post?.post?.embed?.post} />
-                          )}
-                          <div className="grow" />
-                          {!repostView && (
-                            <Actions
-                              post={post?.post?.embed?.post}
-                              repost={post}
-                              deleteRepost={post?.author.id === pubky}
-                            />
-                          )}
+                        {line && (
+                          <div className={twMerge(lineBaseCSS, lineStyle)} />
+                        )}
+                        <div>
+                          <Content
+                            largeView={largeView}
+                            post={post?.post?.embed?.post}
+                            fullContent={fullContent}
+                          />
+                          <div
+                            className={`flex flex-col md:flex-row ${
+                              largeView ? 'gap-2' : 'justify-between'
+                            }`}
+                          >
+                            {!repostView && (
+                              <Tags largeView={largeView} post={post} />
+                            )}
+                            {!repostView && <Actions post={post} />}
+                          </div>
                         </div>
                       </div>
+                      {largeView && <TagsLargeView post={post} />}
                     </PostUI.MainCard>
                   ) : (
                     <>

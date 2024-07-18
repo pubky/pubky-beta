@@ -22,7 +22,13 @@ import { Utils } from '@social/utils-shared';
 import LinkPreviewer from '../LinkPreview';
 import { useRouter } from 'next/navigation';
 
-export default function CreateQuickPost() {
+interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
+  largeView?: boolean;
+}
+
+export default function CreateQuickPost({
+  largeView = false,
+}: CreateQuickPostProps) {
   const { pubky, getProfile, createPost, setPosts, createTag } =
     useClientContext();
   const router = useRouter();
@@ -176,12 +182,18 @@ export default function CreateQuickPost() {
   };
 
   return (
-    <div className="p-6 mb-4 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
+    <div
+      className={`${
+        largeView ? 'p-12' : 'p-6'
+      } mb-4 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
+    >
       <div className="justify-start items-center gap-3 flex">
         <Image
-          width={32}
-          height={32}
-          className="w-8 h-8 rounded-full"
+          width={largeView ? 48 : 32}
+          height={largeView ? 48 : 32}
+          className={`${
+            largeView ? 'w-[48px] h-[48px]' : 'w-[32px] h-[32px]'
+          } rounded-full`}
           alt="user-image"
           src={pic}
         />
@@ -191,7 +203,9 @@ export default function CreateQuickPost() {
             onClick={() => router.push('/profile')}
           >
             <Typography.Body
-              className={`hover:underline hover:decoration-solid`}
+              className={`${
+                largeView && 'text-2xl'
+              } hover:underline hover:decoration-solid`}
               variant="medium-bold"
             >
               {Utils.minifyText(name, 24)}
@@ -225,7 +239,9 @@ export default function CreateQuickPost() {
           value={contentPost}
           maxLength={300}
           onClick={() => setTextArea(true)}
-          className="w-full max-h-[300px] h-auto mt-4"
+          className={`w-full max-h-[300px] h-auto mt-4 ${
+            largeView && 'text-2xl min-h-[50px]'
+          }`}
           placeholder="What's on your mind?"
         />
         <LinkPreviewer content={contentPost} />
@@ -237,7 +253,7 @@ export default function CreateQuickPost() {
                   <PostUtil.Tag
                     key={index}
                     clicked
-                    color="fuchsia"
+                    color={tag && Utils.generateRandomColor(tag)}
                     action={
                       <div
                         className="flex items-center"
