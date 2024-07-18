@@ -1,6 +1,7 @@
 import ActiveFriends from './AtiveFriends';
 import CreatePost from './CreatePost';
 import CreateQuickPost from './CreateQuickPost';
+import ButtonFilters from './ButtonFiltersDrawer/Index';
 import DropDown from './DropDown/_DropDown';
 import Header from './Header';
 import HotTags from './HotTags';
@@ -18,6 +19,7 @@ export {
   ActiveFriends,
   CreatePost,
   CreateQuickPost,
+  ButtonFilters,
   DropDown,
   Header,
   HotTags,

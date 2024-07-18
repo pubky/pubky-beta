@@ -1,4 +1,4 @@
-export type TLayouts = 'grid' | 'columns' | 'list' | 'sidebar';
+export type TLayouts = 'columns' | 'wide' | 'visual';
 export type TStatus =
   | 'available'
   | 'away'
@@ -309,6 +309,8 @@ export interface IFollowing {
   createdAt: number;
   followersCount: number;
   followingCount: number;
+  tagsCount: number;
+  postsCount: number;
   indexedAt: number;
   uri: string;
   profile: IProfileSimplified;
@@ -318,6 +320,10 @@ export interface IFriend {
   createdAt: number;
   indexedAt: number;
   uri: string;
+  followersCount: number;
+  followingCount: number;
+  tagsCount: number;
+  postsCount: number;
   profile: IProfileSimplified;
 }
 

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
 import {
   ActiveFriends,
   CreatePost,
@@ -149,7 +150,7 @@ export default function Index() {
                   <HotTags.Rank
                     tag={tag.tag}
                     onClick={() => router.push(`/search?tags=${tag.tag}`)}
-                    color="fuchsia"
+                    color={tag.tag && Utils.generateRandomColor(tag.tag)}
                     counter={`${tag.count}`}
                   />
                   {tag?.from.slice(0, 15).map((fromItem, fromIndex: number) => (

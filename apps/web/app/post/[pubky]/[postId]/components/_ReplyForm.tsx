@@ -143,13 +143,13 @@ export default function ReplyForm({
   return (
     <div ref={wrapperRef} className="grid gap-6 md:grid-cols-3">
       <Post.Root className="col-span-2">
-        <Post.MainCard className="w-full px-8 py-6 bg-transparent border border-white border-opacity-30 border-dashed rounded-2xl">
+        <Post.MainCard className="w-full p-6 bg-transparent border border-white border-opacity-30 border-dashed rounded-2xl">
           <div className="contents inline-flex gap-12">
             <Post.Header>
-              <div className="justify-start gap-4 inline-flex flex-col">
-                <div className="flex gap-2 items-end">
+              <div className="justify-start gap-1 inline-flex flex-col">
+                <div className="flex gap-2 items-center">
                   <Post.ImageUser
-                    className="lg:w-12 lg:h-12 max-w-none h-none mt-2"
+                    className="lg:w-12 lg:h-12 max-w-none h-none"
                     src={image}
                     alt="user"
                   />
@@ -196,7 +196,7 @@ export default function ReplyForm({
                     value={contentReply}
                     maxLength={300}
                     className="h-[25px] max-h-[300px] w-[250px] md:w-[500px] lg:w-[650px]"
-                    placeholder="What else do you want to add about this topic?"
+                    placeholder="What are your thoughts on this?"
                   />
                   <LinkPreviewer content={contentReply} />
                 </Post.Content>
@@ -215,7 +215,7 @@ export default function ReplyForm({
                           <PostUtil.Tag
                             key={index}
                             clicked
-                            color="fuchsia"
+                            color={tag && Utils.generateRandomColor(tag)}
                             action={
                               <div
                                 className="flex items-center"

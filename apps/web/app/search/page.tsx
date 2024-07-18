@@ -2,9 +2,10 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Content, Typography } from '@social/ui-shared';
+import { Content, Menu, Typography } from '@social/ui-shared';
 import {
   ActiveFriends,
+  ButtonFilters,
   CreatePost,
   Header,
   HotTags,
@@ -24,10 +25,12 @@ const SearchContent = () => {
   const { layout, reach, sort } = useFilterContext();
   const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } =
     useClientContext();
+  const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const filterContentRef = useRef(null);
+  const drawerFilterRef = useRef<HTMLDivElement>(null);
   const loader = useRef(null);
   const tagMessage =
     searchTags.length > 1
@@ -112,30 +115,59 @@ const SearchContent = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutsideDrawer = (event: MouseEvent) => {
+      {
+        if (
+          drawerFilterRef.current &&
+          !drawerFilterRef.current.contains(event.target as Node)
+        ) {
+          setDrawerFilterOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideDrawer);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideDrawer);
+    };
+  }, [drawerFilterRef]);
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Search" />
+      {layout === 'wide' && (
+        <ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
+      )}
       <Content.Grid className={'grid grid-cols-5 gap-6'}>
-        <Sidebar className="hidden xl:block">
-          <div
-            className={`self-start ${
-              isFilterContentVisible ? '' : 'sticky top-[120px]'
-            }`}
-          >
-            <Filter.Reach />
-            <Filter.Sort />
-          </div>
-          <div ref={filterContentRef}>
-            <Filter.Layout />
-            <Filter.Content />
-          </div>
-        </Sidebar>
-        <PostsLayout className="col-span-5 xl:col-span-4 2xl:col-span-3 flex-col inline-flex gap-3">
+        {layout !== 'wide' && (
+          <Sidebar className="hidden xl:block">
+            <div
+              className={`self-start ${
+                isFilterContentVisible ? '' : 'sticky top-[120px]'
+              }`}
+            >
+              <Filter.Reach />
+              <Filter.Sort />
+            </div>
+            <div ref={filterContentRef}>
+              <Filter.Layout />
+              <Filter.Content />
+            </div>
+          </Sidebar>
+        )}
+        <PostsLayout
+          className={`${
+            layout === 'wide'
+              ? 'col-span-5'
+              : 'col-span-5 lg:col-span-4 xl:col-span-3'
+          } flex-col inline-flex gap-3`}
+        >
           {Object.keys(posts).map((key, index) => (
             <Post
               key={`${index}-${posts[key].id}`}
               post={posts[key]}
-              size={layout === 'list' ? 'full' : 'normal'}
+              largeView={layout === 'wide'}
               layout={layout}
             />
           ))}
@@ -156,12 +188,26 @@ const SearchContent = () => {
           )}
           {loading && <Skeletons.Simple />}
         </PostsLayout>
-        <Sidebar className="hidden 2xl:block">
-          <WhoFollow />
-          <ActiveFriends />
-          <HotTags />
-        </Sidebar>
+        {layout !== 'wide' && (
+          <Sidebar className="hidden 2xl:block">
+            <WhoFollow />
+            <ActiveFriends />
+            <HotTags />
+          </Sidebar>
+        )}
       </Content.Grid>
+      <Menu.Root
+        position="left"
+        drawerRef={drawerFilterRef}
+        drawerOpen={drawerFilterOpen}
+      >
+        <div className="overflow-y-auto max-h-full no-scrollbar">
+          <Filter.Reach />
+          <Filter.Sort />
+          <Filter.Layout setDrawerFilterOpen={setDrawerFilterOpen} />
+          <Filter.Content />
+        </div>
+      </Menu.Root>
       <CreatePost />
       <div ref={loader} />
     </Content.Main>

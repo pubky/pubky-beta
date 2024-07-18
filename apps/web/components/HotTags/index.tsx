@@ -65,7 +65,7 @@ export default function HotTags() {
                   onClick={() => router.push(`/search?tags=${tag.tag}`)}
                   rank={index + 1}
                   tag={Utils.minifyText(tag.tag, 15)}
-                  color="fuchsia"
+                  color={tag.tag && Utils.generateRandomColor(tag.tag)}
                   counter={`${tag.count}`}
                 />
               ))}

@@ -459,7 +459,9 @@ export default function Sidebar({
                                   ? handleDeleteProfileTag(tag.tag)
                                   : handleAddProfileTag(tag.tag);
                               }}
-                              color="fuchsia"
+                              color={
+                                tag.tag && Utils.generateRandomColor(tag.tag)
+                              }
                             >
                               <div className="flex gap-2 items-center">
                                 {Utils.minifyText(tag.tag.replace(' ', ''), 20)}

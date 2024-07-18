@@ -54,34 +54,34 @@ export default function Index() {
             <div className="flex-col justify-start items-start gap-5 mt-4 inline-flex">
               <Typography.H2>Suggested Tags</Typography.H2>
               <div className="justify-start items-start">
-                <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   Bitcoin
                 </PostUtil.Tag>
-                <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   Satoshi
                 </PostUtil.Tag>
-                <PostUtil.Tag clicked color="red" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   P2P
                 </PostUtil.Tag>
-                <PostUtil.Tag clicked color="blue" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   Keys
                 </PostUtil.Tag>
-                <PostUtil.Tag clicked color="blue" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   Scalability
                 </PostUtil.Tag>
-                <PostUtil.Tag clicked color="green" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   Whitepaper
                 </PostUtil.Tag>
-                <PostUtil.Tag clicked color="cyan" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   PoW
                 </PostUtil.Tag>
-                <PostUtil.Tag clicked color="yellow" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   Cryptography
                 </PostUtil.Tag>
-                <PostUtil.Tag clicked color="fuchsia" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   Quote
                 </PostUtil.Tag>
-                <PostUtil.Tag clicked color="amber" className="mr-2 my-1">
+                <PostUtil.Tag clicked className="mr-2 my-1">
                   Bitcointalk
                 </PostUtil.Tag>
               </div>

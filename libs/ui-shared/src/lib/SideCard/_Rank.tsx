@@ -21,7 +21,7 @@ export const Rank = ({
   const baseCSS = 'justify-start items-center gap-3 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <PostUtil.Tag clicked={false} color="fuchsia">
+      <PostUtil.Tag clicked={false} color={color}>
         <div className="flex gap-2 items-center">
           {tag}
           <Typography.Caption variant="bold" className="text-opacity-30">
