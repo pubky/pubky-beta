@@ -9,7 +9,6 @@ import {
   SideCard,
   Button,
   PostUtil,
-  Tooltip as TooltipUI,
 } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import { Skeleton } from '@/components';
@@ -115,7 +114,7 @@ export default function Sidebar({
   const [image, setImage] = useState('/images/Userpic.png');
   const [profileTags, setProfileTags] = useState<ITaggedProfile[]>([]);
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
-  const [showTooltipProfile, setShowTooltipProfile] = useState('');
+  //const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [loadingProfileTags, setLoadingProfileTags] = useState(true);
   const [pubkyUser, setPubkyUser] = useState('');
   const [loading, setLoading] = useState(true);
@@ -438,7 +437,7 @@ export default function Sidebar({
 
                       return (
                         <div className="flex gap-2" key={index}>
-                          <TooltipUI.Root
+                          {/**<TooltipUI.Root
                             delay={200}
                             setShowTooltip={setShowTooltipProfile}
                             tagId={tag.tag}
@@ -449,31 +448,31 @@ export default function Sidebar({
                                 setSelectedTag={setSelectedTag}
                                 tags={tag}
                               />
-                            )}
-                            <PostUtil.Tag
-                              key={index}
-                              clicked={isTagFound}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                isTagFound
-                                  ? handleDeleteProfileTag(tag.tag)
-                                  : handleAddProfileTag(tag.tag);
-                              }}
-                              color={
-                                tag.tag && Utils.generateRandomColor(tag.tag)
-                              }
-                            >
-                              <div className="flex gap-2 items-center">
-                                {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
-                                <Typography.Caption
-                                  variant="bold"
-                                  className="text-opacity-30"
-                                >
-                                  {tag.count}
-                                </Typography.Caption>
-                              </div>
-                            </PostUtil.Tag>
-                          </TooltipUI.Root>
+                            )}*/}
+                          <PostUtil.Tag
+                            key={index}
+                            clicked={isTagFound}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              isTagFound
+                                ? handleDeleteProfileTag(tag.tag)
+                                : handleAddProfileTag(tag.tag);
+                            }}
+                            color={
+                              tag.tag && Utils.generateRandomColor(tag.tag)
+                            }
+                          >
+                            <div className="flex gap-2 items-center">
+                              {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                              <Typography.Caption
+                                variant="bold"
+                                className="text-opacity-30"
+                              >
+                                {tag.count}
+                              </Typography.Caption>
+                            </div>
+                          </PostUtil.Tag>
+                          {/**</div></TooltipUI.Root>*/}
                           <Button.Action
                             variant="custom"
                             size="small"
