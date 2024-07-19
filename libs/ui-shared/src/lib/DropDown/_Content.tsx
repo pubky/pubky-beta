@@ -17,7 +17,7 @@ export const Content = ({
   isOpen = false,
   ...rest
 }: ContentProps) => {
-  const baseCSS = `w-[282px] bg-gradient-to-br from-black to-[#0e0e18] border border-white border-opacity-30 mt-8 absolute z-10 px-6 pt-3 pb-6 opacity-100`;
+  const baseCSS = `w-[282px] bg-[#05050A] border border-white border-opacity-30 mt-8 absolute z-10 px-6 pt-3 pb-6 opacity-100`;
 
   return (
     <div>
