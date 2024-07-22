@@ -695,6 +695,27 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const searchUsers = async (text: string) => {
+    try {
+      const pk = await isLoggedIn();
+
+      if (!pk) throw new Error('Not logged in.');
+
+      await client.ready();
+
+      const result = await client.social.search.profiles(text, pk);
+
+      if (!result.ok) {
+        throw new Error(`Search failed: ${result.error.message}`);
+      }
+
+      return result.value;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const listFollowing = async (
     pk: string
   ): Promise<IFollowingResponse | null> => {
@@ -973,6 +994,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         setPosts,
         setSeed,
         setSearchTags,
+        searchUsers,
         follow,
         unfollow,
         session,
