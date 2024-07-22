@@ -66,7 +66,7 @@ export default function ProfileMenu({
         {pubky === creatorPubky && (
           <Tooltip.Item
             onClick={() => {
-              router.push('/settings');
+              router.push('/settings/edit');
               setShowProfileMenu(false);
             }}
             icon={<Icon.GearSix size="20" />}
@@ -77,11 +77,7 @@ export default function ProfileMenu({
         <Tooltip.Item
           onClick={() => copyToClipboard(creatorPubky)}
           icon={
-            copied ? (
-              <Icon.CheckCircle size="20" />
-            ) : (
-              <Icon.Key size="20" />
-            )
+            copied ? <Icon.CheckCircle size="20" /> : <Icon.Key size="20" />
           }
         >
           {copied ? 'Copied' : 'Copy user Pubky'}

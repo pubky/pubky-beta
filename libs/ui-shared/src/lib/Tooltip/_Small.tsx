@@ -7,7 +7,7 @@ interface SmallProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Small = ({ children, ...rest }: SmallProps) => {
   const baseCSS =
-    'w-full absolute bottom-full left-1/2 transform -translate-x-1/2 translate-y-[10px]  bg-gradient-to-br from-black to-[#0e0e18] text-white px-8 py-6 rounded-md shadow-md z-50';
+    'w-full absolute bottom-full left-1/2 transform -translate-x-1/2 translate-y-[10px] bg-gradient-to-br from-black to-[#0e0e18] border border-white border-opacity-30 text-white px-8 py-6 rounded-md shadow-md z-50';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       {children}

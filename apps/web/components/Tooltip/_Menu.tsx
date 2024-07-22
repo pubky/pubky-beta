@@ -178,7 +178,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           {post?.author?.id === pubky && (
             <Tooltip.Item
               onClick={() => {
-                router.push('/settings');
+                router.push('/settings/edit');
                 setShowMenu(false);
               }}
               icon={<Icon.GearSix size="20" />}
