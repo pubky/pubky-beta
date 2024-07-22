@@ -22,6 +22,7 @@ export default function Index({
   const [name, setName] = useState('');
   const [handler, setHandler] = useState('');
   const [countPosts, setCountPosts] = useState<number>();
+  const [loading, setLoading] = useState(true);
   const [countContacts, setCountContacts] = useState({
     followers: 0,
     following: 0,
@@ -66,6 +67,7 @@ export default function Index({
       } else {
         setUserExist(false);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -100,6 +102,7 @@ export default function Index({
                 countContacts={countContacts}
                 countPosts={countPosts}
                 creatorPubky={creatorPubky}
+                loading={loading}
               />
             </PostsLayout>
             <Profile.Sidebar creatorPubky={creatorPubky} />
