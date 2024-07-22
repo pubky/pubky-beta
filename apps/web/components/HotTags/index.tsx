@@ -72,6 +72,7 @@ export default function HotTags() {
             </div>
             <SideCard.Action
               onClick={() => router.push('/hot-tags')}
+              className="mt-4"
               text="Explore All"
             />
           </>
