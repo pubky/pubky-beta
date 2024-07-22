@@ -25,7 +25,11 @@ const socialLinks = [
     url: 'https://x.com/@',
     icon: <Icon.Twitter size="16" />,
   },
-  { name: 'Telegram', url: 'https://t.me/', icon: <Icon.Telegram size="16" /> },
+  {
+    name: 'Telegram',
+    url: 'https://t.me/',
+    icon: <Icon.Telegram width="16" height="16" />,
+  },
   {
     name: 'Discord',
     url: 'https://discord.gg/',
@@ -64,7 +68,7 @@ const socialLinks = [
   {
     name: 'Youtube',
     url: 'https://youtube.com/@',
-    icon: <Icon.Youtube size="16" />,
+    icon: <Icon.Youtube width="16" height="16" />,
   },
   {
     name: 'Twitch',
