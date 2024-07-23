@@ -22,6 +22,7 @@ export default function Index({
   const [name, setName] = useState('');
   const [handler, setHandler] = useState('');
   const [countPosts, setCountPosts] = useState<number>();
+  const [loading, setLoading] = useState(true);
   const [countContacts, setCountContacts] = useState({
     followers: 0,
     following: 0,
@@ -66,6 +67,7 @@ export default function Index({
       } else {
         setUserExist(false);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -95,11 +97,12 @@ export default function Index({
             </Content.Grid>
           </div>
           <Content.Grid className="grid grid-cols-3 gap-6">
-            <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-6  mt-[10px]">
+            <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-3 mt-[10px]">
               <Profile.FilterTabs
                 countContacts={countContacts}
                 countPosts={countPosts}
                 creatorPubky={creatorPubky}
+                loading={loading}
               />
             </PostsLayout>
             <Profile.Sidebar creatorPubky={creatorPubky} />

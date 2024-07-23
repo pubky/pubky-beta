@@ -1,6 +1,6 @@
 'use client';
 
-import { Icon, Input, Modal, Typography } from '@social/ui-shared';
+import { Icon, Input, Modal, Typography, Button } from '@social/ui-shared';
 import { useState } from 'react';
 
 const socialLinks = [
@@ -57,6 +57,17 @@ export default function Link({
     }
   };
 
+  const handleClipboardClick = () => {
+    navigator.clipboard
+      .readText()
+      .then((text) => {
+        setUrl(text);
+      })
+      .catch((error) => {
+        console.error('Failed to read clipboard contents: ', error);
+      });
+  };
+
   return (
     <Modal.Root
       show={showModalLink}
@@ -102,7 +113,7 @@ export default function Link({
                 action={
                   <div
                     onClick={() => setShowHints(true)}
-                    className="cursor-pointer"
+                    className="mt-2 cursor-pointer"
                   >
                     <Typography.Body
                       variant="small-bold"
@@ -123,6 +134,14 @@ export default function Link({
                 onKeyDown={handleKeyDown}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setUrl(e.target.value)
+                }
+                action={
+                  <Button.Action
+                    variant="custom"
+                    size="small"
+                    onClick={handleClipboardClick}
+                    icon={<Icon.Clipboard size="20" />}
+                  />
                 }
               />
             </div>

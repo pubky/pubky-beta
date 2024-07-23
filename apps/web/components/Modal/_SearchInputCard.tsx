@@ -50,7 +50,7 @@ export default function SearchInputCard({
       {...rest}
       refCard={refCard}
       className={twMerge('absolute top-16', rest.className)}
-      background="bg-gradient-to-t from-[#07040a] to-[#1b1820]"
+      background="bg-[#05050A] border border-white border-opacity-30"
     >
       <div className="flex-col gap-6 inline-flex">
         {/**{searchTags.length > 0 && (

@@ -153,7 +153,7 @@ export default function Notification({
           size="small"
           variant="custom"
           icon={currentNotificationType.icon}
-          className="bg-gradient border border-white border-opacity-30"
+          className="bg-gradient-none border border-white border-opacity-30"
           disabled
         />
         <div className="flex gap-2 items-center">
