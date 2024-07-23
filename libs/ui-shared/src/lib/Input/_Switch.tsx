@@ -6,9 +6,9 @@ interface SwitchProps
     React.InputHTMLAttributes<HTMLInputElement>,
     'checked' | 'onChange'
   > {
-  checked: boolean;
+  checked?: boolean;
   disabled?: boolean;
-  onChange: (checked: boolean) => void;
+  onChange?: (checked: boolean) => void;
 }
 
 export const Switch = ({
@@ -19,7 +19,7 @@ export const Switch = ({
 }: SwitchProps) => {
   const toggleSwitch = () => {
     if (!disabled) {
-      onChange(!checked);
+      onChange && onChange(!checked);
     }
   };
 
@@ -45,7 +45,7 @@ export const Switch = ({
         {...rest}
         type="checkbox"
         className="sr-only"
-        onChange={toggleSwitch}
+        onChange={onChange && toggleSwitch}
         disabled={disabled} // Explicitly setting disabled prop for clarity
       />
       <span className={switchStyles.spanClass}>

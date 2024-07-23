@@ -285,7 +285,7 @@ export default function Profile({ post }: ProfileProps) {
             icon={<Icon.GearSix size="16" />}
             onClick={(event) => {
               event.stopPropagation();
-              router.push('/settings');
+              router.push('/settings/edit');
             }}
             className="mt-3"
           >
