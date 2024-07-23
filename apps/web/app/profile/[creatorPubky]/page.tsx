@@ -14,7 +14,7 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
-  const { pubky, getUserIndexed, setPosts } = useClientContext();
+  const { getUserIndexed, setPosts } = useClientContext();
   const creatorPubky = params.creatorPubky;
 
   const [pic, setPic] = useState('/images/Userpic.png');
@@ -34,23 +34,6 @@ export default function Index({
 
   async function fetchProfile() {
     try {
-      if (pubky === creatorPubky) {
-        const user = await getUserIndexed(pubky);
-        const userProfile = user?.profile;
-        if (userProfile && user) {
-          setPic(userProfile.image || '/images/Userpic.png');
-          setName(userProfile.name || 'Loading...');
-          setHandler(pubky);
-          setStatus(userProfile.status);
-          setCountPosts(user.postsCount);
-          setCountContacts({
-            followers: user.followersCount,
-            following: user.followersCount,
-            friends: user.friendsCount,
-          });
-        }
-        return;
-      }
       const userProfile = await getUserIndexed(creatorPubky);
 
       if (userProfile && userProfile.profile) {

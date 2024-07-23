@@ -48,7 +48,7 @@ export default function TagCreatePost({
   }, [modalTagRef, setShowModalTag]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.replace(/\s/g, '');
+    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '');
     setTag(valueWithoutSpaces);
   };
 
