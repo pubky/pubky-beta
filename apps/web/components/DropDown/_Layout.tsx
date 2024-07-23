@@ -9,10 +9,9 @@ export default function Layout() {
   const { layout, setLayout } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
-    sidebar: <Icon.SquareHalf />,
-    list: <Icon.List />,
-    grid: <Icon.DotsNine />,
-    columns: <Icon.SquaresFour />,
+    columns: <Icon.ThreeColumns />,
+    wide: <Icon.List />,
+    visual: <Icon.SquaresFour color="gray" />,
     loading: <Icon.LoadingSpin className="animate-spin" />,
   };
   const [dropdownValue, setDropdownValue] = useState({
@@ -22,8 +21,8 @@ export default function Layout() {
 
   useEffect(() => {
     setDropdownValue({
-      value: layout ? layout : 'sidebar',
-      iconOption: layout ? icons[layout] : icons.sidebar,
+      value: layout ? layout : 'columns',
+      iconOption: layout ? icons[layout] : icons.columns,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -42,58 +41,44 @@ export default function Layout() {
         isOpen={openDropdown}
       >
         <DropDownUI.Item
-          label="Sidebar"
-          value="sidebar"
-          selected={layout === 'sidebar'}
-          icon={<Icon.SquareHalf />}
-          onClick={() => {
-            setDropdownValue({
-              value: 'sidebar',
-              iconOption: <Icon.SquareHalf />,
-            });
-            setLayout('sidebar');
-            setOpenDropdown(false);
-          }}
-        />
-        <DropDownUI.Item
-          label="List"
-          value="list"
-          selected={layout === 'list'}
-          icon={<Icon.List />}
-          onClick={() => {
-            setDropdownValue({
-              value: 'list',
-              iconOption: <Icon.List />,
-            });
-            setLayout('list');
-            setOpenDropdown(false);
-          }}
-        />
-        <DropDownUI.Item
-          label="Grid"
-          value="grid"
-          selected={layout === 'grid'}
-          icon={<Icon.DotsNine />}
-          onClick={() => {
-            setDropdownValue({
-              value: 'grid',
-              iconOption: <Icon.DotsNine />,
-            });
-            setLayout('grid');
-            setOpenDropdown(false);
-          }}
-        />
-        <DropDownUI.Item
           label="Columns"
           value="columns"
           selected={layout === 'columns'}
-          icon={<Icon.SquaresFour />}
+          icon={<Icon.ThreeColumns />}
           onClick={() => {
             setDropdownValue({
               value: 'columns',
-              iconOption: <Icon.SquaresFour />,
+              iconOption: <Icon.ThreeColumns />,
             });
             setLayout('columns');
+            setOpenDropdown(false);
+          }}
+        />
+        <DropDownUI.Item
+          label="Wide"
+          value="wide"
+          selected={layout === 'wide'}
+          icon={<Icon.List />}
+          onClick={() => {
+            setDropdownValue({
+              value: 'wide',
+              iconOption: <Icon.List />,
+            });
+            setLayout('wide');
+            setOpenDropdown(false);
+          }}
+        />
+        <DropDownUI.Item
+          label="Visual"
+          value="visual"
+          selected={layout === 'visual'}
+          icon={<Icon.SquaresFour />}
+          onClick={() => {
+            setDropdownValue({
+              value: 'visual',
+              iconOption: <Icon.SquaresFour />,
+            });
+            setLayout('visual');
             setOpenDropdown(false);
           }}
         />
