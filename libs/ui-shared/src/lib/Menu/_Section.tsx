@@ -14,7 +14,7 @@ export const Section = ({
   href,
   icon,
   text,
-  counter,
+  counter = 0,
   ...rest
 }: SectionProps) => {
   const baseCSS =
@@ -27,10 +27,9 @@ export const Section = ({
       </div>
       {counter && (
         <div>
-          <PostUtil.Counter
-            className="border-fuchsia-500 border-opacity-100"
-            counter={counter}
-          />
+          <PostUtil.Counter className="border-fuchsia-500 border-opacity-100">
+            {counter}
+          </PostUtil.Counter>
         </div>
       )}
     </Link>
