@@ -11,7 +11,7 @@ import { Icon } from '../Icon';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string | JSX.Element;
-  uri: string;
+  uri?: string;
   children?: React.ReactNode;
   fullContent?: boolean;
   largeView?: boolean;
@@ -28,7 +28,7 @@ const tagsIcons: { [key: string]: JSX.Element } = {
 
 export const Content = ({
   children,
-  uri,
+  uri = '',
   text,
   fullContent = false,
   largeView = false,
