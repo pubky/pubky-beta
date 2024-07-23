@@ -98,19 +98,27 @@ export default function Header({ title, className }: HeaderProps) {
   };
 
   const handleSearchTag = () => {
-    const trimmedValue = inputValue.toLowerCase().trim();
-    //if (trimmedValue.startsWith('#')) {
-    if (searchTags.includes(trimmedValue.slice(0))) return;
-
-    if (searchTags.length < 3) {
-      setSearchTags([...searchTags, trimmedValue.slice(0)]);
+    if (
+      (inputValue.startsWith('pk:') && inputValue.length === 55) ||
+      inputValue.length === 52
+    ) {
+      const profileId = inputValue.replace(/^pk:/, '');
+      router.push(`/profile/${profileId}`);
     } else {
-      const newSearchTags = [...searchTags.slice(0), trimmedValue.slice(0)];
-      setSearchTags(newSearchTags);
+      const trimmedValue = inputValue.trim();
+      //if (trimmedValue.startsWith('#')) {
+      if (searchTags.includes(trimmedValue.slice(0))) return;
+
+      if (searchTags.length < 3) {
+        setSearchTags([...searchTags, trimmedValue.slice(0)]);
+      } else {
+        const newSearchTags = [...searchTags.slice(0), trimmedValue.slice(0)];
+        setSearchTags(newSearchTags);
+      }
+      setInputValue('');
+      router.push('/search');
+      // }
     }
-    setInputValue('');
-    router.push('/search');
-    // }
   };
 
   const handleRemoveTag = (indexToRemove: number) => {
@@ -156,6 +164,7 @@ export default function Header({ title, className }: HeaderProps) {
         <Modal.SearchInputCard
           className={searchInputCard ? 'hidden xl:block' : 'hidden'}
           refCard={refSearchInputCard}
+          inputValue={inputValue}
         />
         <Input.SearchActions className="hidden sm:flex">
           <div

@@ -17,7 +17,7 @@ import {
 import { useClientContext } from '@/contexts';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
-import { IPost } from '@/types';
+import { IPost, IUserProfile } from '@/types';
 import LinkPreviewer from '@/components/LinkPreview';
 import Partecipants from './_Partecipants';
 import { IReply } from '@/types';
@@ -36,7 +36,8 @@ export default function ReplyForm({
   replies: IReply;
 }) {
   const router = useRouter();
-  const { getProfile, pubky, createReply, createTag } = useClientContext();
+  const { getProfile, pubky, createReply, createTag, searchUsers } =
+    useClientContext();
   const [image, setImage] = useState('/images/Userpic.png');
   const [name, setName] = useState('');
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -49,6 +50,69 @@ export default function ReplyForm({
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
+  const handleUserClick = (userId: string) => {
+    const regex = /@\w+/;
+    const newContent = contentReply.replace(regex, `pk:${userId}`);
+
+    setContentReply(newContent);
+    setSearchedUsers([]);
+  };
+
+  const searchProfiles = async (text: string) => {
+    try {
+      const result = await searchUsers(text);
+      return result || [];
+    } catch (error) {
+      console.error('Error searching profiles:', error);
+      return [];
+    }
+  };
+
+  const searchUsername = async (content: string) => {
+    const pkMatches = content.match(/(pk:[^\s]+)/g);
+    const atMatches = content.match(/(@[^\s]+)/g);
+
+    const searchQueries = [...(pkMatches || []), ...(atMatches || [])];
+
+    if (searchQueries.length === 0) {
+      setSearchedUsers([]);
+      return;
+    }
+
+    let results: IUserProfile[] = [];
+
+    for (const query of searchQueries) {
+      if (query.startsWith('@')) {
+        const username = query.slice(1);
+        const searchResult = await searchUsers(username);
+        results = [...results, ...(searchResult || [])];
+      } else if (query.startsWith('pk:')) {
+        const searchResult = await searchProfiles(query);
+        results = [...results, ...(searchResult || [])];
+      }
+    }
+    setSearchedUsers(results.length > 0 ? results : []);
+  };
+
+  useEffect(() => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      searchUsername(contentReply);
+    }, 500);
+
+    setDebounceTimeout(timeout);
+
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentReply]);
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
@@ -181,23 +245,31 @@ export default function ReplyForm({
                   )}
                 </div>
                 <Post.Content text="">
-                  <Input.CursorArea
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                      setContentReply(e.target.value);
-                      setCursorPosition(e.target.selectionStart);
-                      setIsValidContent(Utils.isValidContent(e.target.value));
-                    }}
-                    onSelect={(
-                      e: React.SyntheticEvent<HTMLTextAreaElement>
-                    ) => {
-                      setCursorPosition(e.currentTarget.selectionStart);
-                    }}
-                    onClick={() => setTextArea(true)}
-                    value={contentReply}
-                    maxLength={300}
-                    className="h-[25px] max-h-[300px] w-[250px] md:w-[500px] lg:w-[650px]"
-                    placeholder="What are your thoughts on this?"
-                  />
+                  <div className="w-full relative">
+                    <Input.CursorArea
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        setContentReply(e.target.value);
+                        setCursorPosition(e.target.selectionStart);
+                        setIsValidContent(Utils.isValidContent(e.target.value));
+                      }}
+                      onSelect={(
+                        e: React.SyntheticEvent<HTMLTextAreaElement>
+                      ) => {
+                        setCursorPosition(e.currentTarget.selectionStart);
+                      }}
+                      onClick={() => setTextArea(true)}
+                      value={contentReply}
+                      maxLength={300}
+                      className="h-[25px] max-h-[300px] w-[250px] md:w-[500px] lg:w-[650px]"
+                      placeholder="What are your thoughts on this?"
+                    />
+                    {searchedUsers.length > 0 && (
+                      <Modal.SearchedUsersCard
+                        handleUserClick={handleUserClick}
+                        searchedUsers={searchedUsers}
+                      />
+                    )}
+                  </div>
                   <LinkPreviewer content={contentReply} />
                 </Post.Content>
               </div>

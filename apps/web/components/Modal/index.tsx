@@ -7,6 +7,7 @@ import Link from './_Link';
 import Logout from './_Logout';
 import ProfileTag from './_ProfileTag';
 import Repost from './_Repost';
+import SearchedUsersCard from './_SearchedUsersCard';
 import SearchInputCard from './_SearchInputCard';
 import ServerDown from './_ServerDown';
 import SessionExpired from './_SessionExpired';
@@ -23,6 +24,7 @@ export const Modal = {
   Logout,
   ProfileTag,
   Repost,
+  SearchedUsersCard,
   SearchInputCard,
   ServerDown,
   SessionExpired,

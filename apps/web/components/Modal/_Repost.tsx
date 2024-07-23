@@ -2,7 +2,7 @@ import {
   Button,
   Icon,
   Input,
-  Modal,
+  Modal as ModalUI,
   Post as PostElement,
   PostUtil,
   Typography,
@@ -15,9 +15,9 @@ import EmojiPicker, {
 } from 'emoji-picker-react';
 import { useClientContext, useAlertContext } from '@/contexts';
 import Image from 'next/image';
-import { Modal as ModalComponent } from '.';
+import Modal, { Modal as ModalComponent } from '.';
 import { Utils } from '@social/utils-shared';
-import { IPost } from '@/types';
+import { IPost, IUserProfile } from '@/types';
 import Post from '../Post';
 import LinkPreviewer from '@/components/LinkPreview';
 import { useRouter } from 'next/navigation';
@@ -38,7 +38,8 @@ export default function Repost({
   handleRepost,
 }: CreateRepostProps) {
   const router = useRouter();
-  const { pubky, getProfile, createRepost, createTag } = useClientContext();
+  const { pubky, getProfile, createRepost, createTag, searchUsers } =
+    useClientContext();
   const { setContent, setShow } = useAlertContext();
   const [name, setName] = useState('');
   const [pic, setPic] = useState('/images/Userpic.png');
@@ -51,6 +52,69 @@ export default function Repost({
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
+  const handleUserClick = (userId: string) => {
+    const regex = /@\w+/;
+    const newContent = contentRepost.replace(regex, `pk:${userId}`);
+
+    setContentRepost(newContent);
+    setSearchedUsers([]);
+  };
+
+  const searchProfiles = async (text: string) => {
+    try {
+      const result = await searchUsers(text);
+      return result || [];
+    } catch (error) {
+      console.error('Error searching profiles:', error);
+      return [];
+    }
+  };
+
+  const searchUsername = async (content: string) => {
+    const pkMatches = content.match(/(pk:[^\s]+)/g);
+    const atMatches = content.match(/(@[^\s]+)/g);
+
+    const searchQueries = [...(pkMatches || []), ...(atMatches || [])];
+
+    if (searchQueries.length === 0) {
+      setSearchedUsers([]);
+      return;
+    }
+
+    let results: IUserProfile[] = [];
+
+    for (const query of searchQueries) {
+      if (query.startsWith('@')) {
+        const username = query.slice(1);
+        const searchResult = await searchUsers(username);
+        results = [...results, ...(searchResult || [])];
+      } else if (query.startsWith('pk:')) {
+        const searchResult = await searchProfiles(query);
+        results = [...results, ...(searchResult || [])];
+      }
+    }
+    setSearchedUsers(results.length > 0 ? results : []);
+  };
+
+  useEffect(() => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      searchUsername(contentRepost);
+    }, 500);
+
+    setDebounceTimeout(timeout);
+
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentRepost]);
 
   async function fetchProfile() {
     try {
@@ -145,7 +209,7 @@ export default function Repost({
   };
 
   return (
-    <Modal.Root
+    <ModalUI.Root
       modalRef={modalRepostRef}
       show={showModalRepost}
       closeModal={() => {
@@ -154,16 +218,16 @@ export default function Repost({
       }}
       className="w-[792px] max-w-[1200px]"
     >
-      <Modal.CloseAction
+      <ModalUI.CloseAction
         onClick={() => {
           setShowModalRepost(false);
           setArrayTags([]);
           setContent('');
         }}
       />
-      <Modal.Header title="Repost" />
+      <ModalUI.Header title="Repost" />
       <div className="p-6 mt-6 rounded-2xl border-dashed border border-white border-opacity-30">
-        <Modal.Content className="flex flex-row gap-6 max-h-[300px] overflow-y-auto">
+        <ModalUI.Content className="flex flex-row gap-6 max-h-[300px] overflow-y-auto">
           <div className="rounded-2xl flex-col justify-start items-start inline-flex w-full min-w-[300px] md:min-w-[500px]">
             <div className="justify-start items-center gap-3 flex">
               <Image
@@ -204,21 +268,29 @@ export default function Repost({
               ref={wrapperRef}
               className="w-full flex justify-between gap-6 items-start flex-col"
             >
-              <Input.CursorArea
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                  setContentRepost(e.target.value);
-                  setCursorPosition(e.target.selectionStart);
-                  setIsValidContent(Utils.isValidContent(e.target.value));
-                }}
-                onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-                  setCursorPosition(e.currentTarget.selectionStart);
-                }}
-                value={contentRepost}
-                maxLength={300}
-                autoFocus
-                className={`w-full h-auto mt-4`}
-                placeholder="Optional comment"
-              />
+              <div className="w-full relative">
+                <Input.CursorArea
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    setContentRepost(e.target.value);
+                    setCursorPosition(e.target.selectionStart);
+                    setIsValidContent(Utils.isValidContent(e.target.value));
+                  }}
+                  onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+                    setCursorPosition(e.currentTarget.selectionStart);
+                  }}
+                  value={contentRepost}
+                  maxLength={300}
+                  autoFocus
+                  className={`w-full h-auto mt-4`}
+                  placeholder="Optional comment"
+                />
+                {searchedUsers.length > 0 && (
+                  <Modal.SearchedUsersCard
+                    handleUserClick={handleUserClick}
+                    searchedUsers={searchedUsers}
+                  />
+                )}
+              </div>
               <LinkPreviewer content={contentRepost} />
               <Post post={post} repostView className="mt-2" />
             </div>
@@ -229,7 +301,7 @@ export default function Repost({
               setShowModalTag={setShowModalTag}
             />
           </div>
-        </Modal.Content>
+        </ModalUI.Content>
         <PostElement.Actions className="w-full">
           {arrayTags.length > 0 && (
             <div className="inline-flex gap-2 mt-2">
@@ -322,6 +394,6 @@ export default function Repost({
           </Button.Medium>
         </PostElement.Actions>
       </div>
-    </Modal.Root>
+    </ModalUI.Root>
   );
 }
