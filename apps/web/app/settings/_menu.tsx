@@ -47,7 +47,7 @@ export default function Menu({ selectedItem, setSelectedItem }: MenuProps) {
           ? 'opacity-20'
           : isSelected
           ? 'cursor-pointer opacity-100'
-          : 'cursor-pointer hover:bg-white hover:bg-opacity-10 hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
+          : 'cursor-pointer border-b border-transparent hover:bg-white hover:bg-opacity-10 hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
 
         return (
           <div
