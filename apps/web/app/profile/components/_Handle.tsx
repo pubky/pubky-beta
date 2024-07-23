@@ -227,7 +227,7 @@ export default function Handle({
                 copiedUrl ? (
                   <Icon.CheckCircle size="16" />
                 ) : (
-                  <Icon.LinkSimple size="16" />
+                  <Icon.Link size="16" />
                 )
               }
             >

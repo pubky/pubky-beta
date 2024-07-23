@@ -42,6 +42,7 @@ export default function FilterTabs({
   creatorPubky,
   countPosts,
   countContacts,
+  loading,
 }: {
   creatorPubky?: string;
   countPosts: number | undefined;
@@ -50,12 +51,13 @@ export default function FilterTabs({
     following: number;
     friends: number;
   };
+  loading: boolean;
 }) {
   const { notifications, loading: loadingNotifications } =
     useNotificationsContext();
   const { pubky } = useClientContext();
   const [activeTab, setActiveTab] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loadingTab, setLoadingTab] = useState(true);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -75,11 +77,11 @@ export default function FilterTabs({
         `${window.location.pathname}?${params.toString()}`
       );
     }
-    setLoading(false);
+    setLoadingTab(false);
   }, [creatorPubky, pubky]);
 
   const handleTabClick = (id: number, key: string) => {
-    if (!loading) {
+    if (!loadingTab) {
       setActiveTab(id);
       const params = new URLSearchParams(window.location.search);
       params.set('tab', key);

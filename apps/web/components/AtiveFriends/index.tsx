@@ -1,6 +1,6 @@
 'use client';
 
-import { SideCard, Typography } from '@social/ui-shared';
+import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
@@ -72,6 +72,11 @@ export default function ActiveFriends() {
                 </div>
               );
             })}
+            <SideCard.Action
+              icon={<Icon.UsersLeft size="16" color="gray" />}
+              disabled
+              text="See All"
+            />
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">

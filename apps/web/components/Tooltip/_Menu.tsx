@@ -201,7 +201,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               )
             }
           >
-            {copiedPubky ? 'Copied' : 'Copy user Pubky'}
+            {copiedPubky ? 'Copied' : 'Copy user pubky'}
           </Tooltip.Item>
           <Tooltip.Item
             onClick={() => {
@@ -216,11 +216,11 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               copiedLinkPost ? (
                 <Icon.CheckCircle size="20" />
               ) : (
-                <Icon.LinkSimple size="20" />
+                <Icon.Link size="20" />
               )
             }
           >
-            {copiedLinkPost ? 'Copied' : 'Copy link post'}
+            {copiedLinkPost ? 'Copied' : 'Copy link to post'}
           </Tooltip.Item>
           <Tooltip.Item
             onClick={() => {
@@ -237,7 +237,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               )
             }
           >
-            {copiedTextPost ? 'Copied' : 'Copy text post'}
+            {copiedTextPost ? 'Copied' : 'Copy text of post'}
           </Tooltip.Item>
           <Tooltip.Item
             icon={

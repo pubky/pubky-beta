@@ -108,22 +108,26 @@ export default function List({
             );
           })}
         </div>
-        <div className="flex-col justify-start items-start gap-1 inline-flex">
-          <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-            Tags
-          </Typography.Label>
-          <Typography.Body variant="medium-bold">
-            {profile?.tagsCount}
-          </Typography.Body>
-        </div>
-        <div className="flex-col justify-start items-start gap-1 inline-flex">
-          <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-            Posts
-          </Typography.Label>
-          <Typography.Body variant="medium-bold">
-            {profile?.postsCount}
-          </Typography.Body>
-        </div>
+        {profile?.tagsCount && (
+          <div className="flex-col justify-start items-start gap-1 inline-flex">
+            <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+              Tags
+            </Typography.Label>
+            <Typography.Body variant="medium-bold">
+              {profile?.tagsCount}
+            </Typography.Body>
+          </div>
+        )}
+        {profile?.postsCount && (
+          <div className="flex-col justify-start items-start gap-1 inline-flex">
+            <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+              Posts
+            </Typography.Label>
+            <Typography.Body variant="medium-bold">
+              {profile?.postsCount}
+            </Typography.Body>
+          </div>
+        )}
         <div className="flex gap-4">
           {pubkeyUser ? (
             <Button.Medium

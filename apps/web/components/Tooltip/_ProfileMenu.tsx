@@ -80,16 +80,12 @@ export default function ProfileMenu({
             copied ? <Icon.CheckCircle size="20" /> : <Icon.Key size="20" />
           }
         >
-          {copied ? 'Copied' : 'Copy user Pubky'}
+          {copied ? 'Copied' : 'Copy user pubky'}
         </Tooltip.Item>
         <Tooltip.Item
           onClick={() => copyProfileUrlToClipboard(creatorPubky)}
           icon={
-            copiedUrl ? (
-              <Icon.CheckCircle size="20" />
-            ) : (
-              <Icon.LinkSimple size="20" />
-            )
+            copiedUrl ? <Icon.CheckCircle size="20" /> : <Icon.Link size="20" />
           }
         >
           {copiedUrl ? 'Copied' : 'Copy profile link'}

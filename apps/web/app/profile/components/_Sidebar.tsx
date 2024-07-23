@@ -24,7 +24,11 @@ const socialLinks = [
     url: 'https://x.com/@',
     icon: <Icon.Twitter size="16" />,
   },
-  { name: 'Telegram', url: 'https://t.me/', icon: <Icon.Telegram size="16" /> },
+  {
+    name: 'Telegram',
+    url: 'https://t.me/',
+    icon: <Icon.Telegram width="16" height="16" />,
+  },
   {
     name: 'Discord',
     url: 'https://discord.gg/',
@@ -63,7 +67,7 @@ const socialLinks = [
   {
     name: 'Youtube',
     url: 'https://youtube.com/@',
-    icon: <Icon.Youtube size="16" />,
+    icon: <Icon.Youtube width="16" height="16" />,
   },
   {
     name: 'Twitch',
@@ -346,7 +350,7 @@ export default function Sidebar({
               variant="medium"
               className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
             >
-              {Utils.minifyText(bio, 160)}
+              {bio}
             </Typography.Body>
             {initLoadingFollowed ? (
               <Button.Medium
@@ -410,7 +414,7 @@ export default function Sidebar({
                   variant="medium"
                   className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
                 >
-                  {Utils.minifyText(bio, 160)}
+                  {bio}
                 </Typography.Body>
               </div>
             </>
@@ -490,7 +494,7 @@ export default function Sidebar({
                               <Image
                                 width={32}
                                 height={32}
-                                key={index}
+                                key={`${tag.tag}-${imageIndex}`}
                                 className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
                                   imageIndex > 0 && '-ml-2'
                                 }`}
