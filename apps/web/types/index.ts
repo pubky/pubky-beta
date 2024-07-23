@@ -103,6 +103,7 @@ interface BodyNotification {
   postUri?: string;
   replyUri?: string;
   repostedBy?: string;
+  mentionedBy?: string;
   embedUri?: string;
   repostUri?: string;
   deleteType?: IReply;
