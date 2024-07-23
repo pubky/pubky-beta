@@ -9,12 +9,17 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { IPost, IFollowingResponse, IFollowersResponse } from '@/types';
+import {
+  IPost,
+  IFollowingResponse,
+  IFollowersResponse,
+  IPostFrom,
+} from '@/types';
 import { useClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 
 interface ProfileProps {
-  post: IPost;
+  post: IPost | IPostFrom;
 }
 
 export default function Profile({ post }: ProfileProps) {
