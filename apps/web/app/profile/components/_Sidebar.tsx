@@ -351,7 +351,7 @@ export default function Sidebar({
               variant="medium"
               className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
             >
-              {Utils.minifyText(bio, 160)}
+              {bio}
             </Typography.Body>
             {initLoadingFollowed ? (
               <Button.Medium
@@ -415,7 +415,7 @@ export default function Sidebar({
                   variant="medium"
                   className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
                 >
-                  {Utils.minifyText(bio, 160)}
+                  {bio}
                 </Typography.Body>
               </div>
             </>
@@ -428,7 +428,7 @@ export default function Sidebar({
               <div className="mt-4 justify-start items-start gap-2 flex flex-col">
                 {profileTags.length > 0 ? (
                   <>
-                    {profileTags.map((tag, index) => {
+                    {profileTags.map((tag) => {
                       const isTagFound = tag.from.some(
                         (fromItem) => fromItem.author.id === pubky
                       );
@@ -441,7 +441,7 @@ export default function Sidebar({
                         images.length - displayedImages.length;
 
                       return (
-                        <div className="flex gap-2" key={index}>
+                        <div className="flex gap-2" key={tag.tag}>
                           <TooltipUI.Root
                             delay={200}
                             setShowTooltip={setShowTooltipProfile}
@@ -455,7 +455,7 @@ export default function Sidebar({
                               />
                             )}
                             <PostUtil.Tag
-                              key={index}
+                              key={tag.tag}
                               clicked={isTagFound}
                               onClick={(event) => {
                                 event.stopPropagation();
@@ -495,7 +495,7 @@ export default function Sidebar({
                               <Image
                                 width={32}
                                 height={32}
-                                key={index}
+                                key={`${tag.tag}-${imageIndex}`}
                                 className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
                                   imageIndex > 0 && '-ml-2'
                                 }`}
