@@ -1,5 +1,12 @@
 # Pubky App
 
+### Introduction
+
+Pubky app represents a practical and working example to show how to interact with [Pubky Core](https://vigilant-adventure-y6k6ere.pages.github.io/Pubky-Core/Introduction) to create simple or complex applications, integrating the underlying technology with user interfaces that guarantee the end user a clean and efficient experience.
+The purpose of the Pubky app is to manage the data and show it correctly to the user, to allow him to interact with it and add new data.
+
+For a deeper dive on the Pubky app please refer to our [Knowledge Base](https://vigilant-adventure-y6k6ere.pages.github.io/PubKy-App/Introduction)
+
 This is the frontend application for the Pubky Social.
 
 - [Setup Env Variables](#gear-setup-env-variables)
