@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react';
 
 export default function Index() {
   const { notifications, loading } = useNotificationsContext();
+  console.log("NOTIFICATIONS", notifications);
   const [loadingNotifications, setLoadingNotifications] = useState(true);
 
   useEffect(() => {

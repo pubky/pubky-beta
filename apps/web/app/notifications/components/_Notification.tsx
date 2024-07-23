@@ -33,11 +33,11 @@ const notificationType = {
     icon: <Icon.Tag size="16" />,
     text: 'tagged your profile as',
   },
-  //mention: {
-  //  type: 'mention',
-  //icon: <Icon.Eye size="16" />,
-  // text: 'mentioned you in',
-  //},
+  mention: {
+    type: 'mention',
+    icon: <Icon.Eye size="16" />,
+    text: 'mentioned you in',
+  },
   reply: {
     type: 'reply',
     icon: <Icon.ChatCircleText size="16" />,
