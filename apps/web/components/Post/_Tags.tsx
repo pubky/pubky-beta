@@ -22,7 +22,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Tags({ post, largeView = false }: PostProps) {
-  const [showTooltipProfile, setShowTooltipProfile] = useState('');
+  const [showTooltipTag, setShowTooltipTag] = useState('');
   const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
     useClientContext();
   const [tags, setTags] = useState<ITaggedPost[]>([]);
@@ -101,11 +101,11 @@ export default function Tags({ post, largeView = false }: PostProps) {
               <PostUI.Footer key={index}>
                 <TooltipUI.Root
                   delay={200}
-                  setShowTooltip={setShowTooltipProfile}
+                  setShowTooltip={setShowTooltipTag}
                   tagId={tagObj.tag}
                 >
-                  {showTooltipProfile === tagObj.tag && (
-                    <Tooltip.Tag
+                  {showTooltipTag === tagObj.tag && (
+                    <Tooltip.Tag2
                       setSelectedTag={setSelectedTag}
                       setShowModalTags={setShowModalTag}
                       tags={tagObj}
