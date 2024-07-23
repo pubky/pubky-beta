@@ -98,7 +98,7 @@ export default function Header({ title, className }: HeaderProps) {
   };
 
   const handleSearchTag = () => {
-    const trimmedValue = inputValue.trim();
+    const trimmedValue = inputValue.toLowerCase().trim();
     //if (trimmedValue.startsWith('#')) {
     if (searchTags.includes(trimmedValue.slice(0))) return;
 
