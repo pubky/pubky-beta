@@ -2,7 +2,7 @@ import {
   Button,
   Icon,
   Input,
-  Modal,
+  Modal as ModalUI,
   Post,
   PostUtil,
   Typography,
@@ -15,8 +15,8 @@ import EmojiPicker, {
 } from 'emoji-picker-react';
 import { useClientContext, useAlertContext } from '@/contexts';
 import Image from 'next/image';
-import { Modal as ModalComponent } from '.';
-import { INewPost } from '@/types';
+import Modal, { Modal as ModalComponent } from '.';
+import { INewPost, IUserProfile } from '@/types';
 import { Utils } from '@social/utils-shared';
 import LinkPreviewer from '../LinkPreview';
 import { useRouter } from 'next/navigation';
@@ -35,7 +35,7 @@ export default function CreatePost({
   setShowModalLink,
 }: CreatePostProps) {
   const router = useRouter();
-  const { pubky, getProfile, createPost, setPosts, createTag } =
+  const { pubky, getProfile, createPost, setPosts, createTag, searchUsers } =
     useClientContext();
   const { setContent, setShow } = useAlertContext();
   const [name, setName] = useState('');
@@ -49,6 +49,56 @@ export default function CreatePost({
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+
+  const handleUserClick = (userId: string) => {
+    const regex = /@\w+/;
+    const newContent = contentPost.replace(regex, `pk:${userId}`);
+
+    setContentPost(newContent);
+    setSearchedUsers([]);
+  };
+
+  const searchProfiles = async (text: string) => {
+    try {
+      const result = await searchUsers(text);
+      return result || [];
+    } catch (error) {
+      console.error('Error searching profiles:', error);
+      return [];
+    }
+  };
+
+  const searchUsername = async (content: string) => {
+    const pkMatches = content.match(/(pk:[^\s]+)/g);
+    const atMatches = content.match(/(@[^\s]+)/g);
+
+    const searchQueries = [...(pkMatches || []), ...(atMatches || [])];
+
+    if (searchQueries.length === 0) {
+      setSearchedUsers([]);
+      return;
+    }
+
+    let results: IUserProfile[] = [];
+
+    for (const query of searchQueries) {
+      if (query.startsWith('@')) {
+        const username = query.slice(1);
+        const searchResult = await searchUsers(username);
+        results = [...results, ...(searchResult || [])];
+      } else if (query.startsWith('pk:')) {
+        const searchResult = await searchProfiles(query);
+        results = [...results, ...(searchResult || [])];
+      }
+    }
+    setSearchedUsers(results.length > 0 ? results : []);
+  };
+
+  useEffect(() => {
+    searchUsername(contentPost);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentPost]);
 
   async function fetchProfile() {
     try {
@@ -170,7 +220,7 @@ export default function CreatePost({
   };
 
   return (
-    <Modal.Root
+    <ModalUI.Root
       modalRef={modalPostRef}
       show={showModalPost}
       closeModal={() => {
@@ -179,16 +229,16 @@ export default function CreatePost({
       }}
       className="w-[792px] max-w-[1200px]"
     >
-      <Modal.CloseAction
+      <ModalUI.CloseAction
         onClick={() => {
           setShowModalPost(false);
           setArrayTags([]);
           setContent('');
         }}
       />
-      <Modal.Header title="New Post" />
+      <ModalUI.Header title="New Post" />
       <div className="p-6 mt-6 rounded-2xl border-dashed border border-white border-opacity-30">
-        <Modal.Content className="flex flex-row gap-6 max-h-[300px] overflow-y-auto">
+        <ModalUI.Content className="flex flex-row gap-6 max-h-[300px] overflow-y-auto">
           <div className="rounded-2xl flex-col justify-start items-start inline-flex w-full min-w-[300px] md:min-w-[500px]">
             <div className="justify-start items-center gap-3 flex">
               <Image
@@ -229,21 +279,29 @@ export default function CreatePost({
               ref={wrapperRef}
               className="w-full flex justify-between gap-6 items-start flex-col"
             >
-              <Input.CursorArea
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                  setContentPost(e.target.value);
-                  setCursorPosition(e.target.selectionStart);
-                  setIsValidContent(Utils.isValidContent(e.target.value));
-                }}
-                onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-                  setCursorPosition(e.currentTarget.selectionStart);
-                }}
-                value={contentPost}
-                maxLength={300}
-                autoFocus
-                className={`w-full h-auto mt-4`}
-                placeholder="What's on your mind?"
-              />
+              <div className="w-full relative">
+                <Input.CursorArea
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    setContentPost(e.target.value);
+                    setCursorPosition(e.target.selectionStart);
+                    setIsValidContent(Utils.isValidContent(e.target.value));
+                  }}
+                  onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+                    setCursorPosition(e.currentTarget.selectionStart);
+                  }}
+                  value={contentPost}
+                  maxLength={300}
+                  autoFocus
+                  className={`w-full h-auto mt-4`}
+                  placeholder="What's on your mind?"
+                />
+                {searchedUsers.length > 0 && (
+                  <Modal.SearchedUsersCard
+                    handleUserClick={handleUserClick}
+                    searchedUsers={searchedUsers}
+                  />
+                )}
+              </div>
               <LinkPreviewer content={contentPost} />
             </div>
             <ModalComponent.TagCreatePost
@@ -253,7 +311,7 @@ export default function CreatePost({
               setShowModalTag={setShowModalTag}
             />
           </div>
-        </Modal.Content>
+        </ModalUI.Content>
         <Post.Actions className="w-full">
           {arrayTags.length > 0 && (
             <div className="inline-flex gap-2 mt-2">
@@ -337,6 +395,6 @@ export default function CreatePost({
           </Button.Medium>
         </Post.Actions>
       </div>
-    </Modal.Root>
+    </ModalUI.Root>
   );
 }

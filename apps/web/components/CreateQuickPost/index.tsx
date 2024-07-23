@@ -16,7 +16,7 @@ import EmojiPicker, {
 } from 'emoji-picker-react';
 import { useClientContext, useAlertContext } from '@/contexts';
 import Image from 'next/image';
-import { INewPost } from '@/types';
+import { INewPost, IUserProfile } from '@/types';
 import Modal from '../Modal';
 import { Utils } from '@social/utils-shared';
 import LinkPreviewer from '../LinkPreview';
@@ -29,7 +29,7 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function CreateQuickPost({
   largeView = false,
 }: CreateQuickPostProps) {
-  const { pubky, getProfile, createPost, setPosts, createTag } =
+  const { pubky, getProfile, createPost, setPosts, createTag, searchUsers } =
     useClientContext();
   const router = useRouter();
   const { setContent, setShow } = useAlertContext();
@@ -45,6 +45,56 @@ export default function CreateQuickPost({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+
+  const handleUserClick = (userId: string) => {
+    const regex = /@\w+/;
+    const newContent = contentPost.replace(regex, `pk:${userId}`);
+
+    setContentPost(newContent);
+    setSearchedUsers([]);
+  };
+
+  const searchProfiles = async (text: string) => {
+    try {
+      const result = await searchUsers(text);
+      return result || [];
+    } catch (error) {
+      console.error('Error searching profiles:', error);
+      return [];
+    }
+  };
+
+  const searchUsername = async (content: string) => {
+    const pkMatches = content.match(/(pk:[^\s]+)/g);
+    const atMatches = content.match(/(@[^\s]+)/g);
+
+    const searchQueries = [...(pkMatches || []), ...(atMatches || [])];
+
+    if (searchQueries.length === 0) {
+      setSearchedUsers([]);
+      return;
+    }
+
+    let results: IUserProfile[] = [];
+
+    for (const query of searchQueries) {
+      if (query.startsWith('@')) {
+        const username = query.slice(1);
+        const searchResult = await searchUsers(username);
+        results = [...results, ...(searchResult || [])];
+      } else if (query.startsWith('pk:')) {
+        const searchResult = await searchProfiles(query);
+        results = [...results, ...(searchResult || [])];
+      }
+    }
+    setSearchedUsers(results.length > 0 ? results : []);
+  };
+
+  useEffect(() => {
+    searchUsername(contentPost);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentPost]);
 
   async function fetchProfile() {
     try {
@@ -227,23 +277,31 @@ export default function CreateQuickPost({
         ref={wrapperRef}
         className="w-full flex justify-between gap-6 items-start flex-col"
       >
-        <Input.CursorArea
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            setContentPost(e.target.value);
-            setCursorPosition(e.target.selectionStart);
-            setIsValidContent(Utils.isValidContent(e.target.value));
-          }}
-          onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-            setCursorPosition(e.currentTarget.selectionStart);
-          }}
-          value={contentPost}
-          maxLength={300}
-          onClick={() => setTextArea(true)}
-          className={`w-full max-h-[300px] h-auto mt-4 ${
-            largeView && 'text-2xl min-h-[50px]'
-          }`}
-          placeholder="What's on your mind?"
-        />
+        <div className="w-full relative">
+          <Input.CursorArea
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              setContentPost(e.target.value);
+              setCursorPosition(e.target.selectionStart);
+              setIsValidContent(Utils.isValidContent(e.target.value));
+            }}
+            onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+              setCursorPosition(e.currentTarget.selectionStart);
+            }}
+            value={contentPost}
+            maxLength={300}
+            onClick={() => setTextArea(true)}
+            className={`w-full max-h-[300px] h-auto mt-4 ${
+              largeView && 'text-2xl min-h-[50px]'
+            }`}
+            placeholder="What's on your mind?"
+          />
+          {searchedUsers.length > 0 && (
+            <Modal.SearchedUsersCard
+              handleUserClick={handleUserClick}
+              searchedUsers={searchedUsers}
+            />
+          )}
+        </div>
         <LinkPreviewer content={contentPost} />
         {(textArea || contentPost || showModalTag || arrayTags.length > 0) && (
           <Post.Actions className="w-full">
