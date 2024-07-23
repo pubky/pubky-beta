@@ -8,6 +8,7 @@ import LinkPreview from './_Preview';
 import { GitHub } from '../Preview/Github';
 import getYouTubeID from 'get-youtube-id';
 import { Icon } from '../Icon';
+import { useClientContext } from '../../../../../apps/web/contexts/_client';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string | JSX.Element;
@@ -33,6 +34,7 @@ export const Content = ({
   fullContent = false,
   largeView = false,
 }: ContentProps) => {
+  const { getUserIndexed } = useClientContext();
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
@@ -84,14 +86,39 @@ export const Content = ({
     {
       type: 'startsWith',
       watchFor: 'pk:',
-      render: (pk: string) => (
-        <a
-          className="text-fuchsia-500 break-all"
-          href={`/profile/${pk.replace('pk:', '').trim()}`}
-        >
-          {pk}
-        </a>
-      ),
+      render: (pk: string) => {
+        const [userName, setUserName] = useState<string | null>(null);
+
+        useEffect(() => {
+          const fetchUser = async () => {
+            const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
+            if (pkMatch) {
+              const pkFound = pkMatch[0];
+              const result = await getUserIndexed(
+                pkFound.replace('pk:', '').trim()
+              );
+              if (result) setUserName(result?.profile?.name);
+            }
+          };
+          fetchUser();
+        }, [pk]);
+
+        const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
+        const pkPart = pkMatch?.[0]?.replace('pk:', '').trim() || '';
+        const remainingPart = pk.replace(pkMatch?.[0] || '', '').trim();
+
+        return (
+          <>
+            <a
+              className="text-fuchsia-500 break-all"
+              href={`/profile/${pkPart}`}
+            >
+              {userName ? `@${userName}` : 'Loading...'}
+            </a>
+            {remainingPart}
+          </>
+        );
+      },
     },
     {
       type: 'startsWith',

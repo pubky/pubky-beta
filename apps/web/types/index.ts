@@ -82,6 +82,7 @@ export interface TClientContext {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPosts: any;
   setSearchTags: (value: string[]) => Promise<IPost | null>;
+  searchUsers: (text: string) => Promise<IUserProfile[] | null>;
   follow: (pk: string) => Promise<boolean>;
   unfollow: (pk: string) => Promise<boolean>;
 }
@@ -206,6 +207,7 @@ export interface IUserProfile {
   friendsCount: number;
   postsCount: number;
   taggedAs: ITaggedProfile[];
+  userId: string;
   viewer: IViewer;
 }
 
