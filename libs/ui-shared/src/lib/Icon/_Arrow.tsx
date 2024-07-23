@@ -182,3 +182,20 @@ export const CaretUp = ({ size = '32', color = 'white' }: IconProps) => (
     />
   </svg>
 );
+
+export const Next = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M11.2929 6.29289C11.6834 5.90237 12.3166 5.90237 12.7071 6.29289L21.7071 15.2929C22.0976 15.6834 22.0976 16.3166 21.7071 16.7071L12.7071 25.7071C12.3166 26.0976 11.6834 26.0976 11.2929 25.7071C10.9024 25.3166 10.9024 24.6834 11.2929 24.2929L19.5858 16L11.2929 7.70711C10.9024 7.31658 10.9024 6.68342 11.2929 6.29289Z"
+      fill={color}
+    />
+  </svg>
+);
