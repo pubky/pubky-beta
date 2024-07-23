@@ -3,6 +3,7 @@ import Profile from './_Profile';
 import ProfileMenu from './_ProfileMenu';
 import RepostMenu from './_RepostMenu';
 import Tag from './_Tag';
+import Tag2 from './_Tag2';
 
 export const Tooltip = {
   Menu,
@@ -10,6 +11,7 @@ export const Tooltip = {
   ProfileMenu,
   RepostMenu,
   Tag,
+  Tag2,
 };
 
 export default Tooltip;
