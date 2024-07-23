@@ -8,7 +8,7 @@ import LinkPreview from './_Preview';
 import { GitHub } from '../Preview/Github';
 import getYouTubeID from 'get-youtube-id';
 import { Icon } from '../Icon';
-import { useClientContext } from '../../../../../apps/web/contexts/';
+import { useClientContext } from '../../../../../apps/web/contexts/_client';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string | JSX.Element;

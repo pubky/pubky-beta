@@ -67,14 +67,14 @@ export default function Index() {
         </Typography.H2>
         <div className="relative flex gap-3">
           <Link id="onboarding-sign-in-link" href="/onboarding/sign-in">
-            <Button.Large className="sm:w-[162px] w-full mt-12 relative z-20">
+            <Button.Large className="mt-12 relative z-20">
               Let&apos;s get started
             </Button.Large>
           </Link>
           <Button.Large
             onClick={!loading ? () => handleSubmit() : undefined}
             variant="secondary"
-            className="w-[12%] mt-12 relative z-20"
+            className="w-auto mt-12 relative z-20"
             loading={loading}
           >
             Explore first
