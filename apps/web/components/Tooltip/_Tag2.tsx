@@ -42,10 +42,11 @@ export default function Tag2({
     <TooltipUI.Main className="z-40 w-full min-w-[250px] shadow-none px-0 pt-5 pb-0 bg-gradient-to-br from-transparent to-transparent border-0 cursor-default -translate-x-[15%] translate-y-[80px]">
       <div className="flex gap-6 justify-start w-full">
         {loadingFollowers ? (
-          <div className="flex w-full justify-center min-h-[64px] items-center">
-            <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
-          </div>
+          <></>
         ) : (
+          // <div className="flex w-full justify-center min-h-[64px] items-center">
+          //   <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
+          // </div>
           <div
             onClick={() => {
               setShowModalTags(true);
@@ -70,7 +71,7 @@ export default function Tag2({
                     imageIndex > 0 && '-ml-2'
                   }`}
                   alt={`tag-${imageIndex + 1}`}
-                  src={image}
+                  src={image ? image : '/images/Userpic.png'}
                 />
 
                 {showTooltipProfile === imageIndex && (
