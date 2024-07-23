@@ -50,6 +50,9 @@ export default function CreatePost({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
 
   const handleUserClick = (userId: string) => {
     const regex = /@\w+/;
@@ -96,7 +99,17 @@ export default function CreatePost({
   };
 
   useEffect(() => {
-    searchUsername(contentPost);
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      searchUsername(contentPost);
+    }, 500);
+
+    setDebounceTimeout(timeout);
+
+    return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contentPost]);
 
