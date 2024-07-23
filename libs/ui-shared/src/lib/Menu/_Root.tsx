@@ -14,7 +14,7 @@ export const Root = ({
   ...rest
 }: RootProps) => {
   const positionDrawer = position === 'left' ? 'left-0' : 'right-0';
-  const baseCSS = `${positionDrawer} w-[80%] md:w-[385px] fixed top-0 z-50 h-screen transition-transform p-12 bg-gradient-to-br from-black to-[#0e0e18] shadow border-r border-white border-opacity-20 justify-start items-start`;
+  const baseCSS = `${positionDrawer} w-[80%] md:w-[385px] fixed top-0 z-50 h-screen transition-transform p-12 bg-[#05050A] shadow border-r border-white border-opacity-20 justify-start items-start`;
   const drawer = drawerOpen ? '' : 'translate-x-full hidden';
   return (
     <div
