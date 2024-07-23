@@ -66,7 +66,7 @@ export default function ProfileMenu({
         {pubky === creatorPubky && (
           <Tooltip.Item
             onClick={() => {
-              router.push('/settings');
+              router.push('/settings/edit');
               setShowProfileMenu(false);
             }}
             icon={<Icon.GearSix size="20" />}

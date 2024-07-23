@@ -7,6 +7,7 @@ import {
   Repost,
   CaretRight,
   CaretUp,
+  Next,
 } from './_Arrow';
 import { Tag } from './_Commerce';
 import {
@@ -29,6 +30,7 @@ import {
   Play,
   Podcast,
   SlidersHorizontal,
+  SpeakerSimpleSlash,
 } from './_Media';
 import {
   NoteBlank,
@@ -50,6 +52,7 @@ import {
   Check,
   CheckCircle,
   Bell,
+  BellSimple,
   GearSix,
   LoadingSpin,
   DownloadSimple,
@@ -60,8 +63,9 @@ import {
 } from './_System';
 import { Android, Iphone, Pubky, Twitter, Telegram, Youtube } from './_Social';
 import { Clock, Calendar } from './_Time';
-import { Globe } from './_Maps';
+import { Globe, GlobeSimple } from './_Maps';
 import {
+  User,
   UserPlus,
   UserMinus,
   UserRectangle,
@@ -79,7 +83,7 @@ import {
 } from './_Communication';
 import { Activity } from './_Health';
 import { Fire } from './_Weather';
-import { Key, Lock, Warning } from './_Security';
+import { Key, Lock, Warning, Shield, Question } from './_Security';
 import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether } from './_Tag';
 
 export const Icon = {
@@ -91,6 +95,7 @@ export const Icon = {
   ArrowUpRight,
   Asterisk,
   Bell,
+  BellSimple,
   Bitcoin,
   Bitkit,
   BookmarkSimple,
@@ -118,6 +123,7 @@ export const Icon = {
   GearSix,
   GitFork,
   Globe,
+  GlobeSimple,
   GridFour,
   Iphone,
   ImageSquare,
@@ -134,6 +140,7 @@ export const Icon = {
   Minus,
   MusicNotesSimple,
   Newspaper,
+  Next,
   NoteBlank,
   PaperPlaneRight,
   Pause,
@@ -143,14 +150,17 @@ export const Icon = {
   Plus,
   Podcast,
   Pubky,
+  Question,
   Repost,
   SignOut,
   SlidersHorizontal,
+  Shield,
   Synonym,
   Slashtags,
   Smiley,
   SquaresFour,
   SquareHalf,
+  SpeakerSimpleSlash,
   Stack,
   Tag,
   Telegram,
@@ -158,6 +168,7 @@ export const Icon = {
   Twitter,
   Tether,
   Trash,
+  User,
   UsersLeft,
   UserMinus,
   UsersRight,

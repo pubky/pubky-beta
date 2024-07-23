@@ -204,7 +204,7 @@ export default function Handle({
                 </Button.Medium>
                 <Button.Medium
                   className="px-3 w-auto h-8"
-                  onClick={() => router.push('/settings')}
+                  onClick={() => router.push('/settings/edit')}
                   icon={<Icon.Pencil size="16" />}
                 >
                   Edit
