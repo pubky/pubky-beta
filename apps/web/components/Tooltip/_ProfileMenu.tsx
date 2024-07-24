@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { useClientContext } from '@/contexts';
+import { useClientContext, useToastContext } from '@/contexts';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,9 +16,8 @@ export default function ProfileMenu({
 }: TooltipProfileMenuProps) {
   const router = useRouter();
   const { pubky } = useClientContext();
+  const { setContent, setShow } = useToastContext();
   const tooltipProfileMenuRef = useRef<HTMLDivElement>(null);
-  const [copied, setCopied] = useState(false);
-  const [copiedUrl, setCopiedUrl] = useState(false);
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
@@ -38,9 +37,7 @@ export default function ProfileMenu({
 
   const copyToClipboard = async (pubky: string) => {
     try {
-      setCopied(true);
       await navigator.clipboard.writeText(`pk:${pubky}`);
-      setTimeout(() => setCopied(false), 1000);
       setShowProfileMenu(false);
     } catch (error) {
       console.log('Failed to copy: ', error);
@@ -49,11 +46,9 @@ export default function ProfileMenu({
 
   const copyProfileUrlToClipboard = async (pubky: string) => {
     try {
-      setCopiedUrl(true);
       await navigator.clipboard.writeText(
         `${window.location.origin}/profile/${pubky}`
       );
-      setTimeout(() => setCopiedUrl(false), 1000);
       setShowProfileMenu(false);
     } catch (error) {
       console.log('Failed to copy: ', error);
@@ -75,20 +70,24 @@ export default function ProfileMenu({
           </Tooltip.Item>
         )}
         <Tooltip.Item
-          onClick={() => copyToClipboard(creatorPubky)}
-          icon={
-            copied ? <Icon.CheckCircle size="20" /> : <Icon.Key size="20" />
-          }
+          onClick={() => {
+            setContent(`pk:${creatorPubky}`, 'pubky');
+            setShow(true);
+            copyToClipboard(creatorPubky);
+          }}
+          icon={<Icon.Key size="20" />}
         >
-          {copied ? 'Copied' : 'Copy user pubky'}
+          Copy user pubky
         </Tooltip.Item>
         <Tooltip.Item
-          onClick={() => copyProfileUrlToClipboard(creatorPubky)}
-          icon={
-            copiedUrl ? <Icon.CheckCircle size="20" /> : <Icon.Link size="20" />
-          }
+          onClick={() => {
+            setContent(`${window.location.origin}/profile/${pubky}`, 'link');
+            setShow(true);
+            copyProfileUrlToClipboard(creatorPubky);
+          }}
+          icon={<Icon.Link size="20" />}
         >
-          {copiedUrl ? 'Copied' : 'Copy profile link'}
+          Copy profile link
         </Tooltip.Item>
       </Tooltip.Main>
     </div>

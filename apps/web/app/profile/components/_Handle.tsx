@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
+import { useClientContext, useToastContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/Modal';
@@ -24,23 +24,20 @@ export default function Handle({
   ...rest
 }: HandleProps) {
   const { pubky, seed, follow, unfollow, listFollowers } = useClientContext();
+  const { setContent, setShow } = useToastContext();
   const router = useRouter();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [copiedUrl, setCopiedUrl] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
 
   const copyProfileUrlToClipboard = async () => {
     try {
-      setCopiedUrl(true);
       await navigator.clipboard.writeText(
         `${window.location.origin}/profile/${pubkey}`
       );
-      setTimeout(() => setCopiedUrl(false), 1000);
     } catch (error) {
       console.log('Failed to copy: ', error);
     }
@@ -48,9 +45,7 @@ export default function Handle({
 
   const copyToClipboard = async () => {
     try {
-      setCopied(true);
       await navigator.clipboard.writeText(`pk:${pubkey}`);
-      setTimeout(() => setCopied(false), 1000);
     } catch (error) {
       console.log('Failed to copy: ', error);
     }
@@ -213,25 +208,28 @@ export default function Handle({
             )}
             <Button.Medium
               className="px-3 w-auto h-8"
-              onClick={() => copyToClipboard()}
-              icon={
-                copied ? <Icon.CheckCircle size="16" /> : <Icon.Key size="16" />
-              }
+              onClick={() => {
+                setContent(`pk:${pubkey}`, 'pubky');
+                setShow(true);
+                copyToClipboard();
+              }}
+              icon={<Icon.Key size="16" />}
             >
-              {copied ? 'Copied' : Utils.minifyPubky(pubkey)}
+              {Utils.minifyPubky(pubkey)}
             </Button.Medium>
             <Button.Medium
               className="px-3 w-auto h-8"
-              onClick={() => copyProfileUrlToClipboard()}
-              icon={
-                copiedUrl ? (
-                  <Icon.CheckCircle size="16" />
-                ) : (
-                  <Icon.Link size="16" />
-                )
-              }
+              onClick={() => {
+                setContent(
+                  `${window.location.origin}/profile/${pubkey}`,
+                  'link'
+                );
+                setShow(true);
+                copyProfileUrlToClipboard();
+              }}
+              icon={<Icon.Link size="16" />}
             >
-              {copiedUrl ? 'Copied' : 'Link'}
+              Link
             </Button.Medium>
             <div className="relative">
               {showProfileMenu && (

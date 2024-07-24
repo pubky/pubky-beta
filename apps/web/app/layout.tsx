@@ -5,6 +5,7 @@ import {
   ClientWrapper,
   FilterWrapper,
   NotificationsWrapper,
+  ToastWrapper,
 } from '@/contexts';
 import { ProtectedRoutes } from '@/components';
 
@@ -25,7 +26,9 @@ export default function RootLayout({
           <ClientWrapper>
             <AlertWrapper>
               <NotificationsWrapper>
-                <ProtectedRoutes>{children}</ProtectedRoutes>
+                <ToastWrapper>
+                  <ProtectedRoutes>{children}</ProtectedRoutes>
+                </ToastWrapper>
               </NotificationsWrapper>
             </AlertWrapper>
           </ClientWrapper>

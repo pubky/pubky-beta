@@ -139,7 +139,7 @@ export default function Post({
                         icon={<Icon.Repost size="16" />}
                       />
                       <TooltipUI.Root
-                        delay={200}
+                        delay={500}
                         tagId="1"
                         setShowTooltip={setShowTooltipProfile}
                       >

@@ -442,7 +442,7 @@ export default function Sidebar({
                       return (
                         <div className="flex gap-2" key={index}>
                           {/**<TooltipUI.Root
-                            delay={200}
+                            delay={500}
                             setShowTooltip={setShowTooltipProfile}
                             tagId={tag.tag}
                           >
