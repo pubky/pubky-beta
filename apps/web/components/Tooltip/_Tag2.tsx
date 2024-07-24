@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Icon, Tooltip as TooltipUI, PostUtil } from '@social/ui-shared';
+import { Tooltip as TooltipUI, PostUtil } from '@social/ui-shared';
 import { ITaggedPost, ITaggedProfile } from '@/types';
 import Image from 'next/image';
 import Tooltip from '.';
@@ -39,7 +39,7 @@ export default function Tag2({
   }, [tags]);
 
   return (
-    <TooltipUI.Main className="z-40 w-full min-w-[250px] shadow-none px-0 pt-5 pb-0 bg-gradient-to-br from-transparent to-transparent border-0 cursor-default -translate-x-[15%] translate-y-[80px]">
+    <TooltipUI.Main className="z-40 w-full min-w-[250px] shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-[15%] translate-y-[80px]">
       <div className="flex gap-6 justify-start w-full">
         {loadingFollowers ? (
           <></>
