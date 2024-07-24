@@ -146,9 +146,15 @@ export default function Profile({ post }: ProfileProps) {
   };
 
   return (
-    <Tooltip.Main className="cursor-default w-[300px]">
+    <Tooltip.Main
+      onClick={(event) => event.stopPropagation()}
+      className="cursor-default w-[300px]"
+    >
       <div className="w-full flex flex-col justify-between">
-        <div className="justify-start items-center gap-4 flex cursor-pointer">
+        <div
+          onClick={() => router.push(`/profile/${post?.author?.id}`)}
+          className="justify-start items-center gap-2 flex cursor-pointer"
+        >
           <PostUI.ImageUser
             src={post?.author?.profile?.image || '/images/Userpic.png'}
             alt="user"
@@ -160,7 +166,7 @@ export default function Profile({ post }: ProfileProps) {
               {post?.author?.profile?.name &&
                 Utils.minifyText(post?.author?.profile?.name, 12)}
             </PostUI.Username>
-            <Typography.Label className="text-opacity-30">
+            <Typography.Label className="text-opacity-30 -mt-1">
               {Utils.minifyPubky(post?.author?.id)}
             </Typography.Label>
           </div>
