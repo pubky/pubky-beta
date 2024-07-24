@@ -100,7 +100,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
             return (
               <PostUI.Footer key={index}>
                 <TooltipUI.Root
-                  delay={200}
+                  delay={800}
                   setShowTooltip={setShowTooltipTag}
                   tagId={tagObj.tag}
                 >
