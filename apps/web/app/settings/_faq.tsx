@@ -17,7 +17,7 @@ export default function Faq() {
       {faqQuestions.map((question, index) => (
         <div
           key={index}
-          onClick={() => router.push('/settings?tab=help')}
+          onClick={() => router.push('/settings?section=help')}
           className="cursor-pointer relative w-full p-6 rounded-2xl border border-white border-opacity-20 hover:border-opacity-30 flex-col justify-start items-start gap-6 inline-flex"
         >
           <Typography.Body variant="medium-bold">{question}</Typography.Body>
@@ -29,7 +29,7 @@ export default function Faq() {
       <Button.Medium
         icon={<Icon.Question size="16" color="gray" />}
         className="py-2 px-3 h-8"
-        onClick={() => router.push('/settings?tab=help')}
+        onClick={() => router.push('/settings?section=help')}
       >
         More FAQ
       </Button.Medium>
