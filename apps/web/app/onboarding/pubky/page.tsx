@@ -2,27 +2,20 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
+import { useClientContext, useToastContext } from '@/contexts';
 import { Onboarding } from '../components';
 
 export default function Index() {
   const { pubky } = useClientContext();
-  const [copied, setCopied] = useState(false);
+  const { setContent, setShow } = useToastContext();
 
-  const handleCopy = () => {
-    navigator.clipboard
-      .writeText(`pk:${pubky}`)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => {
-          setCopied(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.error('Unable to copy to clipboard:', error);
-      });
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(`pk:${pubky}`);
+    } catch (error) {
+      console.log('Failed to copy: ', error);
+    }
   };
 
   return (
@@ -60,12 +53,16 @@ export default function Index() {
           </Button.Large>
         </Link>
         <Button.Large
-          icon={copied ? <Icon.Check /> : <Icon.Clipboard />}
+          icon={<Icon.Clipboard />}
           className="w-[250px]"
           variant="secondary"
-          onClick={handleCopy}
+          onClick={() => {
+            setContent(`pk:${pubky}`, 'pubky');
+            setShow(true);
+            handleCopy();
+          }}
         >
-          {copied ? 'Copied' : 'Copy pubky to clipboard'}
+          Copy pubky to clipboard
         </Button.Large>
         <Link href="/onboarding/confirm">
           <Button.Large icon={<Icon.ArrowRight />} className="w-[140px] z-20">
