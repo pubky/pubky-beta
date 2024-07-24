@@ -27,9 +27,11 @@ export default function Index() {
           {selectedItem === 'notifications' && <Section.Notifications />}
           {selectedItem === 'privacy_safety' && <Section.PrivacySafety />}
           {selectedItem === 'muted_users' && <Section.MutedUsers />}
+          {selectedItem === 'language' && <Section.Language />}
+          {selectedItem === 'help' && <Section.Help />}
         </div>
         <Components.Sidebar className="hidden xl:block">
-          <Faq />
+          {selectedItem !== 'help' && <Faq />}
           <Version />
         </Components.Sidebar>
       </Content.Grid>

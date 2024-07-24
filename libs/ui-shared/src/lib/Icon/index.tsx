@@ -22,6 +22,7 @@ import {
 } from './_Design';
 import { Plus, Minus, X } from './_Math';
 import { GitFork } from './_Development';
+import { UnitedStates, Spain, Germany, France, Italy } from './_Flag';
 import {
   ImageSquare,
   MusicNotesSimple,
@@ -119,13 +120,16 @@ export const Icon = {
   Eye,
   File,
   FileText,
+  France,
   Fire,
   GearSix,
   GitFork,
   Globe,
   GlobeSimple,
   GridFour,
+  Germany,
   Iphone,
+  Italy,
   ImageSquare,
   Key,
   LinkSimple,
@@ -157,6 +161,7 @@ export const Icon = {
   Shield,
   Synonym,
   Slashtags,
+  Spain,
   Smiley,
   SquaresFour,
   SquareHalf,
@@ -168,6 +173,7 @@ export const Icon = {
   Twitter,
   Tether,
   Trash,
+  UnitedStates,
   User,
   UsersLeft,
   UserMinus,

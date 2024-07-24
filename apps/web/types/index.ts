@@ -10,6 +10,7 @@ export type TStatus =
   | 'noStatus';
 export type TSize = 'full' | 'normal';
 export type TReach = 'following' | 'followers' | 'friends' | 'all';
+export type TLanguage = 'english' | 'spanish' | 'german' | 'french' | 'italian';
 export type TSort = 'recent' | 'popularity';
 export type THotTagsReach = 'following' | 'followers' | 'friends' | 'all';
 export type TContacts = 'following' | 'followers' | 'friends';

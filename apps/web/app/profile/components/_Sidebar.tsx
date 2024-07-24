@@ -350,7 +350,7 @@ export default function Sidebar({
               variant="medium"
               className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
             >
-              {bio}
+              {Utils.minifyText(bio, 160)}
             </Typography.Body>
             {initLoadingFollowed ? (
               <Button.Medium
@@ -414,7 +414,7 @@ export default function Sidebar({
                   variant="medium"
                   className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
                 >
-                  {bio}
+                  {Utils.minifyText(bio, 160)}
                 </Typography.Body>
               </div>
             </>
