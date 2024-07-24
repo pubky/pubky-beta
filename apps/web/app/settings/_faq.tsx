@@ -1,4 +1,5 @@
 import { Button, Icon, SideCard, Typography } from '@social/ui-shared';
+import { useRouter } from 'next/navigation';
 
 const faqQuestions = [
   'How can I update my profile information?',
@@ -9,13 +10,15 @@ const faqQuestions = [
 ];
 
 export default function Faq() {
+  const router = useRouter();
   return (
-    <div className="w-full flex-col justify-start items-start gap-2 inline-flex">
+    <div className="w-full flex-col justify-start items-start gap-2 inline-flex mb-8">
       <SideCard.Header title="FAQ" />
       {faqQuestions.map((question, index) => (
         <div
           key={index}
-          className="relative w-full p-6 rounded-2xl border border-white border-opacity-20 flex-col justify-start items-start gap-6 inline-flex"
+          onClick={() => router.push('/settings?section=help')}
+          className="cursor-pointer relative w-full p-6 rounded-2xl border border-white border-opacity-20 hover:border-opacity-30 flex-col justify-start items-start gap-6 inline-flex"
         >
           <Typography.Body variant="medium-bold">{question}</Typography.Body>
           <div className="absolute right-3 bottom-3">
@@ -26,7 +29,7 @@ export default function Faq() {
       <Button.Medium
         icon={<Icon.Question size="16" color="gray" />}
         className="py-2 px-3 h-8"
-        disabled
+        onClick={() => router.push('/settings?section=help')}
       >
         More FAQ
       </Button.Medium>

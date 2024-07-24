@@ -56,6 +56,7 @@ export default function DropDown({
           isOpen={open}
           textOption={value.textOption}
           iconText={value.iconText}
+          iconOption={value.iconOption}
           subtitle={subtitle}
           disabled={disabled}
         />

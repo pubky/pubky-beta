@@ -6,6 +6,7 @@ interface OptionTextProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean;
   textOption?: string;
   iconText?: string;
+  iconOption?: React.ReactNode;
   subtitle?: string;
   disabled?: boolean;
 }
@@ -14,6 +15,7 @@ export const OptionText = ({
   isOpen,
   textOption,
   iconText,
+  iconOption,
   subtitle,
   disabled = false,
   ...rest
@@ -29,14 +31,14 @@ export const OptionText = ({
           {subtitle}
         </Typography.Label>
         <Typography.H2
-          className={
+          className={`flex gap-2 items-center ${
             disabled
               ? 'text-white text-opacity-30 cursor-default'
               : 'text-white'
-          }
+          }`}
           variant="light"
         >
-          {iconText} {textOption}
+          {iconText} {iconOption} {textOption}
         </Typography.H2>
       </div>
       <div

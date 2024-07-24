@@ -23,12 +23,10 @@ const menuItems: Record<
   language: {
     icon: <Icon.GlobeSimple size="24" />,
     label: 'Language',
-    disabled: true,
   },
   help: {
     icon: <Icon.Question size="24" />,
     label: 'Help',
-    disabled: true,
   },
 };
 

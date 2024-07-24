@@ -5,6 +5,7 @@ import {
   useNotificationsContext,
   NotificationsWrapper,
 } from './_notifications';
+import { useToastContext, ToastWrapper } from './_toast';
 
 export {
   useAlertContext,
@@ -15,4 +16,6 @@ export {
   ClientWrapper,
   FilterWrapper,
   NotificationsWrapper,
+  useToastContext,
+  ToastWrapper,
 };

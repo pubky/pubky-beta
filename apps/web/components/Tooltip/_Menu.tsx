@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { useClientContext, useAlertContext } from '@/contexts';
+import { useClientContext, useAlertContext, useToastContext } from '@/contexts';
 import { IPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
@@ -24,14 +24,13 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     deleteBookmark,
     deletePost,
   } = useClientContext();
+  const { setContent: setContentToast, setShow: setShowToast } =
+    useToastContext();
   const tooltipMenuRef = useRef<HTMLDivElement>(null);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
-  const [copiedPubky, setCopiedPubky] = useState(false);
-  const [copiedLinkPost, setCopiedLinkPost] = useState(false);
-  const [copiedTextPost, setCopiedTextPost] = useState(false);
   const { setContent, setShow } = useAlertContext();
   const router = useRouter();
 
@@ -170,6 +169,48 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     );
   };
 
+  const handleBookmarks = (
+    repost: IPost | undefined,
+    post: IPost,
+    handleAddBookmark: (postId: string, uri: string) => Promise<void>,
+    handleDeleteBookmark: (
+      postId: string,
+      postUri: string,
+      bookmarkId: string
+    ) => Promise<void>,
+    setContentToast: (
+      content: React.ReactNode,
+      variant?: 'bookmark' | 'pubky' | 'link'
+    ) => void,
+    setShowToast: (show: boolean) => void
+  ) => {
+    const isBookmarked = repost ? repost.bookmark?.id : post?.bookmark?.id;
+
+    if (repost) {
+      if (isBookmarked) {
+        handleDeleteBookmark(repost.id, repost.uri, repost.bookmark.id);
+      } else {
+        handleAddBookmark(repost.id, repost.uri);
+      }
+    } else if (post) {
+      if (isBookmarked) {
+        handleDeleteBookmark(post.id, post.uri, post.bookmark.id);
+      } else {
+        handleAddBookmark(post.id, post.uri);
+      }
+    }
+
+    if (!isBookmarked) {
+      setContentToast(
+        `This post by ${
+          repost ? repost?.author?.profile?.name : post?.author?.profile?.name
+        } was saved to your bookmarks.`,
+        'bookmark'
+      );
+      setShowToast(true);
+    }
+  };
+
   return (
     <>
       <div ref={tooltipMenuRef}>
@@ -189,55 +230,46 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           <Tooltip.Item
             onClick={() => {
               copyToClipboard(`pk:${post.author.id}`);
-              setCopiedPubky(true);
-              setTimeout(() => setCopiedPubky(false), 1000);
+              setContentToast(`pk:${post.author.id}`, 'pubky');
+              setShowToast(true);
               setShowMenu(false);
             }}
-            icon={
-              copiedPubky ? (
-                <Icon.CheckCircle size="20" />
-              ) : (
-                <Icon.Key size="20" />
-              )
-            }
+            icon={<Icon.Key size="20" />}
           >
-            {copiedPubky ? 'Copied' : 'Copy user pubky'}
+            Copy user pubky
           </Tooltip.Item>
           <Tooltip.Item
             onClick={() => {
               copyToClipboard(
                 `${window.location.origin}/post/${post.author.id}/${post.id}`
               );
-              setCopiedLinkPost(true);
-              setTimeout(() => setCopiedLinkPost(false), 1000);
+              setContentToast(
+                Utils.minifyText(
+                  `${window.location.origin}/post/${post.author.id}/${post.id}`,
+                  80
+                ),
+                'link'
+              );
+              setShowToast(true);
               setShowMenu(false);
             }}
-            icon={
-              copiedLinkPost ? (
-                <Icon.CheckCircle size="20" />
-              ) : (
-                <Icon.Link size="20" />
-              )
-            }
+            icon={<Icon.Link size="20" />}
           >
-            {copiedLinkPost ? 'Copied' : 'Copy link to post'}
+            Copy link to post
           </Tooltip.Item>
           <Tooltip.Item
             onClick={() => {
               copyToClipboard(post.post.content);
-              setCopiedTextPost(true);
-              setTimeout(() => setCopiedTextPost(false), 1000);
+              setContentToast(
+                Utils.minifyContent(post.post.content, 1),
+                'text'
+              );
+              setShowToast(true);
               setShowMenu(false);
             }}
-            icon={
-              copiedTextPost ? (
-                <Icon.CheckCircle size="20" />
-              ) : (
-                <Icon.FileText size="20" />
-              )
-            }
+            icon={<Icon.FileText size="20" />}
           >
-            {copiedTextPost ? 'Copied' : 'Copy text of post'}
+            Copy text of post
           </Tooltip.Item>
           <Tooltip.Item
             icon={
@@ -254,17 +286,14 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               />
             }
             onClick={() =>
-              repost
-                ? repost.bookmark?.id
-                  ? handleDeleteBookmark(
-                      repost.id,
-                      repost.uri,
-                      repost.bookmark.id
-                    )
-                  : handleAddBookmark(repost.id, repost.uri)
-                : post?.bookmark?.id
-                ? handleDeleteBookmark(post.id, post.uri, post.bookmark.id)
-                : handleAddBookmark(post.id, post.uri)
+              handleBookmarks(
+                repost,
+                post,
+                handleAddBookmark,
+                handleDeleteBookmark,
+                setContentToast,
+                setShowToast
+              )
             }
           >
             {repost?.bookmark?.id
