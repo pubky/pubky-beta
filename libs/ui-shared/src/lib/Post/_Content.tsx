@@ -105,7 +105,7 @@ export const Content = ({
 
         const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
         const pkPart = pkMatch?.[0]?.replace('pk:', '').trim() || '';
-        const remainingPart = pk.replace(pkMatch?.[0] || '', '').trim();
+        const remainingPart = pk.replace(pkMatch?.[0] || '', '');
 
         return (
           <>

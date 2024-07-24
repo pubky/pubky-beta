@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
 import Repost from '../Repost';
-import { useClientContext, useAlertContext } from '@/contexts';
+import { useClientContext, useAlertContext, useToastContext } from '@/contexts';
 import { IPost } from '@/types';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
@@ -23,6 +23,8 @@ export default function Actions({
   const { deleteBookmark, createBookmark, createRepost, deletePost } =
     useClientContext();
   const { setContent, setShow } = useAlertContext();
+  const { setContent: setContentToast, setShow: setShowToast } =
+    useToastContext();
   const [showMenu, setShowMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
@@ -61,6 +63,48 @@ export default function Actions({
         setContent('Something wrong. Try again', 'warning');
         setShow(true);
       }
+    }
+  };
+
+  const handleBookmarks = (
+    repost: IPost | undefined,
+    post: IPost,
+    handleAddBookmark: (postId: string, uri: string) => Promise<void>,
+    handleDeleteBookmark: (
+      postId: string,
+      postUri: string,
+      bookmarkId: string
+    ) => Promise<void>,
+    setContentToast: (
+      content: React.ReactNode,
+      variant?: 'bookmark' | 'pubky' | 'link'
+    ) => void,
+    setShowToast: (show: boolean) => void
+  ) => {
+    const isBookmarked = repost ? repost.bookmark?.id : post?.bookmark?.id;
+
+    if (repost) {
+      if (isBookmarked) {
+        handleDeleteBookmark(repost.id, repost.uri, repost.bookmark.id);
+      } else {
+        handleAddBookmark(repost.id, repost.uri);
+      }
+    } else {
+      if (isBookmarked) {
+        handleDeleteBookmark(post.id, post.uri, post.bookmark.id);
+      } else {
+        handleAddBookmark(post.id, post.uri);
+      }
+    }
+
+    if (!isBookmarked) {
+      setContentToast(
+        `This post by ${
+          repost ? repost?.author?.profile?.name : post?.author?.profile?.name
+        } was saved to your bookmarks.`,
+        'bookmark'
+      );
+      setShowToast(true);
     }
   };
 
@@ -114,7 +158,7 @@ export default function Actions({
           icon={
             <Icon.BookmarkSimple
               size="16"
-              opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.5}
+              opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
               color={
                 repost?.bookmark?.id
                   ? '#d946efc9'
@@ -125,17 +169,14 @@ export default function Actions({
             />
           }
           onClick={() =>
-            repost
-              ? repost.bookmark?.id
-                ? handleDeleteBookmark(
-                    repost.id,
-                    repost.uri,
-                    repost.bookmark.id
-                  )
-                : handleAddBookmark(repost.id, repost.uri)
-              : post?.bookmark?.id
-              ? handleDeleteBookmark(post.id, post.uri, post.bookmark.id)
-              : handleAddBookmark(post.id, post.uri)
+            handleBookmarks(
+              repost,
+              post,
+              handleAddBookmark,
+              handleDeleteBookmark,
+              setContentToast,
+              setShowToast
+            )
           }
         />
         <div className="relative" onClick={(event) => event.stopPropagation()}>

@@ -8,13 +8,11 @@ import {
   Input,
   Post as PostUI,
   PostUtil,
-  Tooltip as TooltipUI,
   Typography,
 } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import { IPost, ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
-import Tooltip from '../Tooltip';
 import Modal from '../Modal';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -26,7 +24,6 @@ interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const router = useRouter();
-  const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
     useClientContext();
   const [tags, setTags] = useState<ITaggedPost[]>([]);
@@ -195,38 +192,25 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           return (
             <PostUI.Footer key={index}>
               <div className="flex gap-2">
-                <TooltipUI.Root
-                  delay={200}
-                  setShowTooltip={setShowTooltipProfile}
-                  tagId={tagObj.tag}
+                <PostUtil.Tag
+                  clicked={isTagFound}
+                  color={tagObj.tag && Utils.generateRandomColor(tagObj.tag)}
+                  onClick={() =>
+                    isTagFound
+                      ? handleDeleteTag(tagObj.tag)
+                      : handleAddTag(tagObj.tag)
+                  }
                 >
-                  {showTooltipProfile === tagObj.tag && (
-                    <Tooltip.Tag
-                      setSelectedTag={setSelectedTag}
-                      setShowModalTags={setShowModalTag}
-                      tags={tagObj}
-                    />
-                  )}
-                  <PostUtil.Tag
-                    clicked={isTagFound}
-                    color={tagObj.tag && Utils.generateRandomColor(tagObj.tag)}
-                    onClick={() =>
-                      isTagFound
-                        ? handleDeleteTag(tagObj.tag)
-                        : handleAddTag(tagObj.tag)
-                    }
-                  >
-                    <div className="flex gap-2 items-center">
-                      {Utils.minifyText(tagObj.tag.replace(' ', ''), 7)}
-                      <Typography.Caption
-                        variant="bold"
-                        className="text-opacity-30"
-                      >
-                        {tagObj.count}
-                      </Typography.Caption>
-                    </div>
-                  </PostUtil.Tag>
-                </TooltipUI.Root>
+                  <div className="flex gap-2 items-center">
+                    {Utils.minifyText(tagObj.tag.replace(' ', ''), 7)}
+                    <Typography.Caption
+                      variant="bold"
+                      className="text-opacity-30"
+                    >
+                      {tagObj.count}
+                    </Typography.Caption>
+                  </div>
+                </PostUtil.Tag>
                 <Button.Action
                   variant="custom"
                   size="small"

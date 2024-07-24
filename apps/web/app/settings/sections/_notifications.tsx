@@ -52,7 +52,7 @@ export default function Notifications() {
             <Typography.Body variant="small-bold">
               Someone mentioned your profile
             </Typography.Body>
-            <Input.Switch disabled />
+            <Input.Switch checked disabled />
           </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
             <Typography.Body variant="small-bold">

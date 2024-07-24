@@ -40,7 +40,7 @@ export default function Header({ post, largeView = false }: PostProps) {
           className="z-[1]"
         />
         <TooltipUI.Root
-          delay={200}
+          delay={500}
           tagId="1"
           setShowTooltip={setShowTooltipProfile}
         >

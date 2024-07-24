@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Content } from '@social/ui-shared';
-
 import * as Components from '@/components';
 import Menu from './_menu';
 import { Section } from './sections';
@@ -10,7 +10,22 @@ import Faq from './_faq';
 import Version from './_version';
 
 export default function Index() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedItem, setSelectedItem] = useState<string | null>('account');
+
+  useEffect(() => {
+    const section = searchParams.get('section');
+    if (section) {
+      setSelectedItem(section);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (selectedItem) {
+      router.replace(`/settings?section=${selectedItem}`);
+    }
+  }, [selectedItem, router]);
 
   return (
     <Content.Main>
@@ -20,16 +35,17 @@ export default function Index() {
           <Menu selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
         </Components.Sidebar>
         <div
-          className={`col-span-5 lg:col-span-4 xl:col-span-3
-           flex-col inline-flex gap-3`}
+          className={`col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-3`}
         >
           {selectedItem === 'account' && <Section.Account />}
           {selectedItem === 'notifications' && <Section.Notifications />}
           {selectedItem === 'privacy_safety' && <Section.PrivacySafety />}
           {selectedItem === 'muted_users' && <Section.MutedUsers />}
+          {selectedItem === 'language' && <Section.Language />}
+          {selectedItem === 'help' && <Section.Help />}
         </div>
         <Components.Sidebar className="hidden xl:block">
-          <Faq />
+          {selectedItem !== 'help' && <Faq />}
           <Version />
         </Components.Sidebar>
       </Content.Grid>
