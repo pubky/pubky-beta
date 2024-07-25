@@ -345,7 +345,11 @@ export default function CreateQuickPost({
             )}
             {showEmojis && (
               <div
-                className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                className={`absolute translate-y-[10%] ${
+                  largeView
+                    ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
+                    : 'translate-x-[30%]'
+                } z-10`}
                 ref={wrapperRefEmojis}
               >
                 <EmojiPicker
