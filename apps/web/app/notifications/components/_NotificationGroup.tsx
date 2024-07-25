@@ -6,6 +6,7 @@ import { useClientContext } from '@/contexts';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Utils } from '@social/utils-shared';
+import { useRouter } from 'next/navigation';
 
 export default function NotificationGroup({
   group,
@@ -13,6 +14,7 @@ export default function NotificationGroup({
   group: INotification[];
 }) {
   const { getUser } = useClientContext();
+  const router = useRouter();
   const [users, setUsers] = useState<IUserProfile[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const firstNotification = group[0];
@@ -29,6 +31,10 @@ export default function NotificationGroup({
       } else if (notificationType === 'lost_friend') {
         userIds = group
           .map((notification) => notification.body.unfollowedBy)
+          .filter((userId): userId is string => !!userId);
+      } else if (notificationType === 'tag_profile') {
+        userIds = group
+          .map((notification) => notification.body.taggedBy)
           .filter((userId): userId is string => !!userId);
       }
 
@@ -51,7 +57,8 @@ export default function NotificationGroup({
     if (
       notificationType === 'follow' ||
       notificationType === 'new_friend' ||
-      notificationType === 'lost_friend'
+      notificationType === 'lost_friend' ||
+      notificationType === 'tag_profile'
     ) {
       fetchProfiles();
     }
@@ -136,6 +143,88 @@ export default function NotificationGroup({
           </Typography.Caption>
         </div>
       </div>
+    );
+  }
+
+  if (notificationType === 'tag_profile') {
+    const tagsByUser: { [userId: string]: string[] } = {};
+
+    group.forEach((notification) => {
+      const taggedBy = notification.body.taggedBy;
+      const tag = notification.body.tag;
+
+      if (taggedBy && tag) {
+        if (!tagsByUser[taggedBy]) {
+          tagsByUser[taggedBy] = [];
+        }
+        tagsByUser[taggedBy].push(tag);
+      }
+    });
+
+    return (
+      <>
+        {Object.keys(tagsByUser).map((userId, index) => {
+          const tags = tagsByUser[userId];
+          const user = users.find((u) => u.userId === userId);
+          const lastNotificationTimestamp = group[group.length - 1].timestamp;
+
+          if (!user) return null;
+
+          return (
+            <div
+              key={index}
+              className="p-3 border-b border-white border-opacity-10 justify-between items-start flex flex-row"
+            >
+              <div className="flex gap-4 items-center">
+                <Button.Action
+                  size="small"
+                  variant="custom"
+                  icon={<Icon.UserPlus size="16" />}
+                  className="bg-gradient-none border border-white border-opacity-30"
+                  disabled
+                />
+                <div className="flex items-center gap-2">
+                  <Image
+                    width={32}
+                    height={32}
+                    className="max-w-none w-[32px] h-[32px] rounded-full shadow justify-center items-center flex"
+                    alt={`user-${user.userId}`}
+                    src={user.profile.image || '/images/Userpic.png'}
+                  />
+                  <Typography.Body variant="medium-bold">
+                    <Link
+                      href={`/profile/${user.userId}`}
+                      className="hover:underline"
+                    >
+                      {Utils.minifyText(user?.profile?.name, 15)}
+                    </Link>{' '}
+                    <span className="text-white text-opacity-50">
+                      tagged your profile with{' '}
+                    </span>
+                  </Typography.Body>
+                  {tags.map((tag, tagIndex) => (
+                    <PostUtil.Tag
+                      key={tagIndex}
+                      color={Utils.generateRandomColor(tag)}
+                      onClick={() => router.push(`/search?tags=${tag}`)}
+                      clicked={false}
+                    >
+                      {tag}
+                    </PostUtil.Tag>
+                  ))}
+                </div>
+              </div>
+              <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex">
+                <Typography.Caption className="items-center flex gap-2 text-white text-opacity-50">
+                  <Icon.Clock size="13" color="gray" />
+                  {lastNotificationTimestamp &&
+                    Utils.timeAgo(lastNotificationTimestamp)}
+                </Typography.Caption>
+              </div>
+            </div>
+          );
+        })}
+      </>
     );
   }
 
