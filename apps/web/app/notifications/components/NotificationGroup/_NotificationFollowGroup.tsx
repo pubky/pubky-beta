@@ -68,7 +68,7 @@ export default function NotificationFollowGroup({
   const images = users.map((user) =>
     user.profile.image ? user.profile.image : '/images/Userpic.png'
   );
-  const displayedImages = images.slice(0, 4);
+  const displayedImages = images.slice(0, 3);
   const extraImagesCount = images.length - displayedImages.length;
   const lastNotificationTimestamp = group[group.length - 1].timestamp;
 
