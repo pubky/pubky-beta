@@ -57,52 +57,40 @@ function LinkPreview({ url }: { url: string }) {
 
   return (
     <div className="w-full">
-      {(previewData.title || previewData.description) &&
-        (previewData.image ? (
-          <div
-            onClick={handleClick}
-            className="w-full max-w-[700px] relative cursor-pointer border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden"
-            style={{
-              height: '350px',
-              backgroundImage: `url(${previewData.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          >
-            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 p-4">
-              <Typography.Body variant="large-bold">
-                {previewData.title.length > 40
-                  ? previewData.title.slice(0, 40) + '...'
-                  : previewData.title}
-              </Typography.Body>
-              <Typography.Body
-                variant="small"
-                className="text-opacity-60 font-normal mt-1"
-              >
-                {previewData.description.length > 150
-                  ? previewData.description.slice(0, 150) + '...'
-                  : previewData.description}
-              </Typography.Body>
-            </div>
-          </div>
-        ) : (
-          <div
-            onClick={handleClick}
-            className="relative cursor-pointer border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden"
-          >
-            <div className="bg-black bg-opacity-40 p-4">
-              <Typography.Body variant="large-bold">
-                {previewData.title}
-              </Typography.Body>
-              <Typography.Body
-                variant="small"
-                className="text-opacity-60 font-normal mt-1"
-              >
-                {previewData.description}
-              </Typography.Body>
-            </div>
-          </div>
-        ))}
+      <div
+        onClick={handleClick}
+        className="cursor-pointer w-full mt-4 p-6 bg-white bg-opacity-10 border border-transparent hover:border-white hover:border-opacity-30 rounded-xl justify-between items-start inline-flex"
+      >
+        <div className="grow shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
+          {previewData.title && (
+            <Typography.H2>
+              {previewData.title.length > 40
+                ? previewData.title.slice(0, 40) + '...'
+                : previewData.title}
+            </Typography.H2>
+          )}
+          {previewData.description ? (
+            <Typography.Body variant="small" className="text-opacity-80">
+              {' '}
+              {previewData.description.length > 150
+                ? previewData.description.slice(0, 150) + '...'
+                : previewData.description}
+            </Typography.Body>
+          ) : (
+            <Typography.Body variant="small" className="text-opacity-80">
+              {' '}
+              {url.length > 60 ? url.slice(0, 60) + '...' : url}
+            </Typography.Body>
+          )}
+        </div>
+        {previewData.image && (
+          <img
+            alt="preview-link"
+            className="w-40 h-[90px] rounded-lg"
+            src={previewData.image}
+          />
+        )}
+      </div>
     </div>
   );
 }
