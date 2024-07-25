@@ -7,11 +7,13 @@ import Image from 'next/image';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 
-interface NotificationFollowGroupProps {
-    group: INotification[];
-  }
+interface NotificationTagGroupProps {
+  group: INotification[];
+}
 
-export default function NotificationTagGroup({ group }: NotificationFollowGroupProps) {
+export default function NotificationTagGroup({
+  group,
+}: NotificationTagGroupProps) {
   const { getUser } = useClientContext();
   const [users, setUsers] = useState<IUserProfile[]>([]);
   const router = useRouter();
@@ -38,27 +40,26 @@ export default function NotificationTagGroup({ group }: NotificationFollowGroupP
       setUsers(uniqueUsers);
     };
 
-    if (
-      notificationType === 'tag_profile' ||
-      notificationType === 'tag_post'
-    ) {
+    if (notificationType === 'tag_profile' || notificationType === 'tag_post') {
       fetchProfiles();
     }
   }, [group, getUser, notificationType]);
 
-  const tagsByUserAndPost: { [key: string]: string[] } = {};
+  const tagsByUserAndPost: {
+    [key: string]: { tags: string[]; postUri?: string };
+  } = {};
 
   group.forEach((notification) => {
     const taggedBy = notification.body.taggedBy;
     const tag = notification.body.tag;
     const postUri = notification.body.postUri;
 
-    if (taggedBy && tag && postUri) {
-      const key = `${taggedBy}-${postUri}`;
+    if (taggedBy && tag) {
+      const key = `${taggedBy}-${postUri || ''}`;
       if (!tagsByUserAndPost[key]) {
-        tagsByUserAndPost[key] = [];
+        tagsByUserAndPost[key] = { tags: [], postUri };
       }
-      tagsByUserAndPost[key].push(tag);
+      tagsByUserAndPost[key].tags.push(tag);
     }
   });
 
@@ -66,7 +67,7 @@ export default function NotificationTagGroup({ group }: NotificationFollowGroupP
     <>
       {Object.keys(tagsByUserAndPost).map((key, index) => {
         const [userId, postUri] = key.split('-');
-        const tags = tagsByUserAndPost[key];
+        const { tags } = tagsByUserAndPost[key];
         const user = users.find((u) => u.userId === userId);
         const lastNotificationTimestamp = group[group.length - 1].timestamp;
         const postLink = postUri ? Utils.encodePostUri(postUri) : null;
@@ -107,7 +108,7 @@ export default function NotificationTagGroup({ group }: NotificationFollowGroupP
                     with{' '}
                   </span>
                 </Typography.Body>
-                <div className='flex-wrap flex gap-2'>
+                <div className="flex-wrap flex gap-2">
                   {tags.map((tag, tagIndex) => (
                     <PostUtil.Tag
                       key={tagIndex}

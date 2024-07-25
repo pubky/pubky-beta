@@ -12,14 +12,18 @@ export default function NotificationGroup({
   const notificationType = group[0].type;
 
   if (
-    notificationType === 'follow' ||
-    notificationType === 'new_friend' ||
-    notificationType === 'lost_friend'
+    (notificationType === 'follow' ||
+      notificationType === 'new_friend' ||
+      notificationType === 'lost_friend') &&
+    group.length > 1
   ) {
     return <NotificationFollowGroup group={group} />;
   }
 
-  if (notificationType === 'tag_profile' || notificationType === 'tag_post') {
+  if (
+    (notificationType === 'tag_profile' || notificationType === 'tag_post') &&
+    group.length > 1
+  ) {
     return <NotificationTagGroup group={group} />;
   }
 
