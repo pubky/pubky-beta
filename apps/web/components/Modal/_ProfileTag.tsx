@@ -223,6 +223,7 @@ export default function ProfileTag({
                 value={tag}
                 className="w-96 mt-2 flex items-center"
                 maxLength={20}
+                autoFocus
                 onChange={handleChange}
                 onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key === 'Enter') {

@@ -39,7 +39,7 @@ export default function Tag2({
   }, [tags]);
 
   return (
-    <TooltipUI.Main className="z-40 w-full min-w-[250px] shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-[12%] translate-y-[70px]">
+    <TooltipUI.Main className="z-40 w-full w-auto left-auto shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-0 translate-y-[70px]">
       <div className="flex gap-6 justify-start w-full">
         {loadingFollowers ? (
           <></>
@@ -61,7 +61,7 @@ export default function Tag2({
                   height={32}
                   key={imageIndex}
                   onClick={() => setShowTooltipProfile(imageIndex)}
-                  className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                  className={`max-w-none w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
                     imageIndex > 0 && '-ml-2'
                   }`}
                   alt={`tag-${imageIndex + 1}`}
