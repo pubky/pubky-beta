@@ -6,12 +6,26 @@ interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   className?: string;
 }
 
-export const Title = ({ titleHeader, ...rest }: HeaderProps) => {
+const getTitle = (titleHeader: React.ReactNode) => {
+  if (titleHeader === 'Feed') {
+    return null;
+  }
+  if (titleHeader === 'HotTags') {
+    return 'Hot\u00A0Tags';
+  }
+  return titleHeader;
+};
+
+export const Title = ({ titleHeader, className, ...rest }: HeaderProps) => {
+  const title = getTitle(titleHeader);
+
   return (
-    <div {...rest} className={twMerge('grow', rest.className)}>
-      <Typography.PageTitle className="text-opacity-50">
-        {titleHeader}
-      </Typography.PageTitle>
+    <div {...rest} className={twMerge('grow', className)}>
+      {title && (
+        <Typography.PageTitle className="text-opacity-50">
+          {title}
+        </Typography.PageTitle>
+      )}
     </div>
   );
 };

@@ -133,7 +133,7 @@ export default function FilterTabs({
               }`}
             >
               {tab.icon}
-              <Typography.Caption variant="bold">
+              <Typography.Caption className="tracking-normal" variant="bold">
                 {tab.label}
                 {!loading && tab.key && (
                   <span className="ml-2 text-white text-opacity-30">
