@@ -75,7 +75,7 @@ export default function Post({
               post?.post.content ? (
                 <PostUI.MainCard
                   className={twMerge(
-                    largeView && 'p-12 flex inline-flex flex-row gap-12',
+                    largeView && 'p-12 inline-flex flex-row gap-12',
                     rest.className
                   )}
                 >
@@ -173,7 +173,7 @@ export default function Post({
                     <PostUI.MainCard
                       className={twMerge(
                         'rounded-tl-none rounded-tr-none',
-                        largeView && 'p-12 flex inline-flex flex-row gap-12',
+                        largeView && 'p-12 inline-flex flex-row gap-12',
                         rest.className
                       )}
                     >
