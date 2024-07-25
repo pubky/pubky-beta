@@ -6,4 +6,7 @@
 
 body {
   background-color: #05050a;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }

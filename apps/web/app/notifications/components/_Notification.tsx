@@ -33,11 +33,11 @@ const notificationType = {
     icon: <Icon.Tag size="16" />,
     text: 'tagged your profile as',
   },
-  //mention: {
-  //  type: 'mention',
-  //icon: <Icon.Eye size="16" />,
-  // text: 'mentioned you in',
-  //},
+  mention: {
+    type: 'mention',
+    icon: <Icon.Eye size="16" />,
+    text: 'mentioned you in a post',
+  },
   reply: {
     type: 'reply',
     icon: <Icon.ChatCircleText size="16" />,
@@ -48,11 +48,11 @@ const notificationType = {
     icon: <Icon.Repost size="16" />,
     text: 'reposted your post',
   },
-  //post_deleted: {
-  //  type: 'post_deleted',
-  //  icon: <Icon.Trash size="16" />,
-  //  text: 'deleted his post',
-  //},
+  // post_deleted: {
+  //   type: 'post_deleted',
+  //   icon: <Icon.Trash size="16" />,
+  //   text: 'deleted his post',
+  // },
 };
 
 type NotificationTypeKey = keyof typeof notificationType;
@@ -94,6 +94,8 @@ export default function Notification({
       userId = notification.body.repliedBy;
     } else if (notification.type === notificationType.repost.type) {
       userId = notification.body.repostedBy;
+    } else if (notification.type === notificationType.mention.type) {
+      userId = notification.body.mentionedBy;
     }
 
     if (userId) {
@@ -114,10 +116,12 @@ export default function Notification({
     notification.body.unfollowedBy ||
     notification.body.taggedBy ||
     notification.body.repliedBy ||
-    notification.body.repostedBy;
+    notification.body.repostedBy ||
+    notification.body.mentionedBy;
 
   const postLink =
-    notification.type === notificationType.tag_post.type &&
+    (notification.type === notificationType.tag_post.type ||
+      notification.type === notificationType.mention.type) &&
     notification.body.postUri
       ? Utils.encodePostUri(notification.body.postUri)
       : '';

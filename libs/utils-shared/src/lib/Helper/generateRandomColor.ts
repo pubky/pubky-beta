@@ -1,5 +1,5 @@
 export const generateRandomColor = (str: string) => {
-  if (str === 'bitcoin' || str === 'Bitcoin') {
+  if (str.toLowerCase() === 'bitcoin') {
     return '#FF9900';
   }
 

@@ -135,12 +135,10 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Components.Header className="hidden md:block" title="Streams" />
+      <Components.Header className="hidden md:block" title="Feed" />
       <Components.RemindBackup />
       {layout === 'wide' && (
-        <Components.ButtonFilters
-          onClick={() => setDrawerFilterOpen(true)}
-        />
+        <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       )}
       <Content.Grid className={'grid grid-cols-5 gap-6'}>
         {layout !== 'wide' && (

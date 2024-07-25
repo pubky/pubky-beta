@@ -175,7 +175,7 @@ export default function TagCreatePost({
                   </div>
                 ) : (
                   <Typography.Body variant="small" className="text-opacity-30">
-                    Not tagged yet.
+                    Not tags yet.
                   </Typography.Body>
                 )}
               </div>
@@ -202,6 +202,7 @@ export default function TagCreatePost({
                 value={tag}
                 maxLength={20}
                 onChange={handleChange}
+                autoFocus
                 onKeyDown={handleKeyDown}
                 action={
                   <div className="flex gap-2">

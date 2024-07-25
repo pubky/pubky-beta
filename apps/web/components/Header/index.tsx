@@ -179,8 +179,8 @@ export default function Header({ title, className }: HeaderProps) {
         <Link href="/home">
           <Button.Action
             variant="menu"
-            label="Streams"
-            active={title === 'Streams'}
+            //label="Feed"
+            active={title === 'Feed'}
             icon={<Icon.Activity size="24" />}
           />
         </Link>
@@ -245,14 +245,12 @@ export default function Header({ title, className }: HeaderProps) {
                 text="Streams"
                 onClick={() => setDrawerOpen(false)}
               />
-              {/**
               <Menu.Section
                 href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
-                counter={5}
+                counter={notifications.length}
               />
-              */}
               <Menu.Section
                 href="/bookmarks"
                 icon={<Icon.BookmarkSimple />}
