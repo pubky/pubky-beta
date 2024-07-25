@@ -12,17 +12,25 @@ function groupNotifications(
 ): NotificationGroup[] {
   const groupedNotifications: NotificationGroup[] = [];
   let currentGroup: NotificationGroup = [];
+  let previousNotification: INotification | null = null;
 
   notifications.forEach((notification) => {
     if (
       currentGroup.length === 0 ||
-      currentGroup[0].type === notification.type
+      (previousNotification &&
+        previousNotification.type === notification.type &&
+        previousNotification.body.taggedBy === notification.body.taggedBy &&
+        previousNotification.body.postUri === notification.body.postUri)
     ) {
       currentGroup.push(notification);
     } else {
-      groupedNotifications.push(currentGroup);
+      if (currentGroup.length > 0) {
+        groupedNotifications.push(currentGroup);
+      }
       currentGroup = [notification];
     }
+
+    previousNotification = notification;
   });
 
   if (currentGroup.length > 0) {
