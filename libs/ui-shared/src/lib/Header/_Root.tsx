@@ -33,7 +33,7 @@ export const Root = ({ children, ...rest }: HeaderRootProps) => {
   return (
     <div
       className={twMerge(
-        'sticky top-0 z-50 backdrop-blur-[80px]',
+        'fixed w-full top-0 z-50 backdrop-blur-[80px]',
         rest.className
       )}
     >
