@@ -32,7 +32,10 @@ export default function NotificationGroup({
         userIds = group
           .map((notification) => notification.body.unfollowedBy)
           .filter((userId): userId is string => !!userId);
-      } else if (notificationType === 'tag_profile') {
+      } else if (
+        notificationType === 'tag_profile' ||
+        notificationType === 'tag_post'
+      ) {
         userIds = group
           .map((notification) => notification.body.taggedBy)
           .filter((userId): userId is string => !!userId);
@@ -58,7 +61,8 @@ export default function NotificationGroup({
       notificationType === 'follow' ||
       notificationType === 'new_friend' ||
       notificationType === 'lost_friend' ||
-      notificationType === 'tag_profile'
+      notificationType === 'tag_profile' ||
+      notificationType === 'tag_post'
     ) {
       fetchProfiles();
     }
@@ -146,27 +150,31 @@ export default function NotificationGroup({
     );
   }
 
-  if (notificationType === 'tag_profile') {
-    const tagsByUser: { [userId: string]: string[] } = {};
+  if (notificationType === 'tag_profile' || notificationType === 'tag_post') {
+    const tagsByUserAndPost: { [key: string]: string[] } = {};
 
     group.forEach((notification) => {
       const taggedBy = notification.body.taggedBy;
       const tag = notification.body.tag;
+      const postUri = notification.body.postUri;
 
-      if (taggedBy && tag) {
-        if (!tagsByUser[taggedBy]) {
-          tagsByUser[taggedBy] = [];
+      if (taggedBy && tag && postUri) {
+        const key = `${taggedBy}-${postUri}`;
+        if (!tagsByUserAndPost[key]) {
+          tagsByUserAndPost[key] = [];
         }
-        tagsByUser[taggedBy].push(tag);
+        tagsByUserAndPost[key].push(tag);
       }
     });
 
     return (
       <>
-        {Object.keys(tagsByUser).map((userId, index) => {
-          const tags = tagsByUser[userId];
+        {Object.keys(tagsByUserAndPost).map((key, index) => {
+          const [userId, postUri] = key.split('-');
+          const tags = tagsByUserAndPost[key];
           const user = users.find((u) => u.userId === userId);
           const lastNotificationTimestamp = group[group.length - 1].timestamp;
+          const postLink = postUri ? Utils.encodePostUri(postUri) : null;
 
           if (!user) return null;
 
@@ -199,7 +207,9 @@ export default function NotificationGroup({
                       {Utils.minifyText(user?.profile?.name, 15)}
                     </Link>{' '}
                     <span className="text-white text-opacity-50">
-                      tagged your profile with{' '}
+                      tagged your{' '}
+                      {notificationType === 'tag_profile' ? 'profile' : 'post'}{' '}
+                      with{' '}
                     </span>
                   </Typography.Body>
                   {tags.map((tag, tagIndex) => (
@@ -212,6 +222,16 @@ export default function NotificationGroup({
                       {tag}
                     </PostUtil.Tag>
                   ))}
+                  {postLink && (
+                    <Link href={postLink}>
+                      <Typography.Body
+                        variant="small"
+                        className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                      >
+                        View post
+                      </Typography.Body>
+                    </Link>
+                  )}
                 </div>
               </div>
               <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex">
