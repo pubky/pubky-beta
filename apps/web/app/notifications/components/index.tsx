@@ -1,5 +1,5 @@
 import Notification from './_Notification';
-import NotificationGroup from './_NotificationGroup';
+import NotificationGroup from './NotificationGroup';
 import Root from './_Root';
 
 export const Notifications = {
