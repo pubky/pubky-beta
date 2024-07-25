@@ -19,32 +19,43 @@ export default function NotificationGroup({
   const notificationType = firstNotification.type;
 
   useEffect(() => {
-    if (notificationType === 'follow') {
-      const fetchProfiles = async () => {
-        const userIds = group
-          .map((notification) => notification.body.followedBy)
-          .filter((userId): userId is string => !!userId);
+    const fetchProfiles = async () => {
+      // Extract user IDs based on the notification type
+      const userIds = group
+        .map((notification) => notification.body.followedBy)
+        .filter((userId): userId is string => !!userId);
 
-        const userProfiles = await Promise.all(
-          userIds.map((userId) => getUser(userId))
-        );
+      const userProfiles = await Promise.all(
+        userIds.map((userId) => getUser(userId))
+      );
 
-        const uniqueUsers = Array.from(
-          new Map(
-            userProfiles
-              .filter((profile): profile is IUserProfile => !!profile)
-              .map((user) => [user.userId, user])
-          ).values()
-        );
+      const uniqueUsers = Array.from(
+        new Map(
+          userProfiles
+            .filter((profile): profile is IUserProfile => !!profile)
+            .map((user) => [user.userId, user])
+        ).values()
+      );
 
-        setUsers(uniqueUsers);
-        setLoading(false);
-      };
+      setUsers(uniqueUsers);
+      setLoading(false);
+    };
+
+    if (notificationType === 'follow' || notificationType === 'new_friend') {
       fetchProfiles();
     }
   }, [group, getUser, notificationType]);
 
-  if (notificationType === 'follow') {
+  if (notificationType === 'follow' || notificationType === 'new_friend') {
+    if (loading) {
+      return (
+        <div className="p-3 border-b border-white border-opacity-10 flex justify-between items-center">
+          <Typography.Body variant="medium-bold">Loading...</Typography.Body>
+        </div>
+      );
+    }
+
+    // Extract unique images
     const images = users.map((user) =>
       user.profile.image ? user.profile.image : '/images/Userpic.png'
     );
@@ -71,7 +82,7 @@ export default function NotificationGroup({
                 className={`max-w-none w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
                   index > 0 && '-ml-4'
                 }`}
-                alt={`tag-${index + 1}`}
+                alt={`user-${index + 1}`}
                 src={image}
               />
             ))}
@@ -81,20 +92,22 @@ export default function NotificationGroup({
               </PostUtil.Counter>
             )}
             <Typography.Body variant="medium-bold">
-              {loading
-                ? 'Loading... '
-                : users.map((user, index) => (
-                    <span key={user.userId}>
-                      <Link
-                        href={`/profile/${user.userId}`}
-                        className="hover:underline"
-                      >
-                        {Utils.minifyText(user?.profile?.name, 15)}
-                      </Link>
-                      {index < users.length - 1 ? ', ' : ' '}
-                    </span>
-                  ))}
-              <span className="text-white text-opacity-50">followed you</span>
+              {users.map((user, index) => (
+                <span key={user.userId}>
+                  <Link
+                    href={`/profile/${user.userId}`}
+                    className="hover:underline"
+                  >
+                    {Utils.minifyText(user?.profile?.name, 15)}
+                  </Link>
+                  {index < users.length - 1 ? ', ' : ' '}
+                </span>
+              ))}{' '}
+              <span className="text-white text-opacity-50">
+                {notificationType === 'follow'
+                  ? 'followed you'
+                  : 'are your friends now'}
+              </span>
             </Typography.Body>
           </div>
         </div>
