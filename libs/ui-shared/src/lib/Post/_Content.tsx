@@ -207,7 +207,7 @@ export const Content = ({
         <LinkPreview url={preview} />
       )}
       {tweetId && (
-        <div className="no-scrollbar max-h-[500px] w-full max-w-[384px] overflow-y-auto">
+        <div className="no-scrollbar w-full max-w-[384px] overflow-y-auto">
           <Tweet id={tweetId} />
         </div>
       )}
