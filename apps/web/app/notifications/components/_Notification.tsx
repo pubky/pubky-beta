@@ -175,7 +175,10 @@ export default function Notification({
                   src={user.profile.image || '/images/Userpic.png'}
                 />
               )}
-              <Typography.Body variant="medium-bold">
+              <Typography.Body
+                className="hover:underline"
+                variant="medium-bold"
+              >
                 {user ? Utils.minifyText(user.profile.name, 20) : 'Loading...'}
               </Typography.Body>
             </Link>

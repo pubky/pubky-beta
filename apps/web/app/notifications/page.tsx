@@ -12,14 +12,47 @@ import {
 } from '@/components';
 import { Notifications } from './components';
 import { useState, useEffect } from 'react';
+import { INotification } from '@/types';
+
+type NotificationGroup = INotification[];
+
+function groupNotifications(
+  notifications: INotification[]
+): NotificationGroup[] {
+  const groupedNotifications: NotificationGroup[] = [];
+  let currentGroup: NotificationGroup = [];
+
+  notifications.forEach((notification) => {
+    if (
+      currentGroup.length === 0 ||
+      currentGroup[0].type === notification.type
+    ) {
+      currentGroup.push(notification);
+    } else {
+      groupedNotifications.push(currentGroup);
+      currentGroup = [notification];
+    }
+  });
+
+  if (currentGroup.length > 0) {
+    groupedNotifications.push(currentGroup);
+  }
+
+  return groupedNotifications;
+}
 
 export default function Index() {
   const { notifications, loading } = useNotificationsContext();
   const [loadingNotifications, setLoadingNotifications] = useState(true);
-
+  const [groupedNotifications, setGroupedNotifications] = useState<
+    NotificationGroup[]
+  >([]);
   useEffect(() => {
-    if (!loading) setLoadingNotifications(loading);
-  }, [loading]);
+    if (!loading) {
+      setLoadingNotifications(false);
+      setGroupedNotifications(groupNotifications(notifications));
+    }
+  }, [loading, notifications]);
 
   return (
     <Content.Main>
@@ -28,16 +61,13 @@ export default function Index() {
         <Notifications.Root>
           {loadingNotifications ? (
             <Skeleton.Simple />
-          ) : notifications.length === 0 ? (
+          ) : groupedNotifications.length === 0 ? (
             <Typography.Body variant="small" className="text-opacity-50">
               No notifications yet
             </Typography.Body>
           ) : (
-            notifications.map((notification, index) => (
-              <Notifications.Notification
-                key={index}
-                notification={notification}
-              />
+            groupedNotifications.map((group, index) => (
+              <Notifications.NotificationGroup key={index} group={group} />
             ))
           )}
         </Notifications.Root>
