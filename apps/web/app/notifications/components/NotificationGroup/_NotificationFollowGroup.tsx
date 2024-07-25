@@ -101,18 +101,19 @@ export default function NotificationFollowGroup({
             </PostUtil.Counter>
           )}
           <Typography.Body variant="medium-bold">
-            {users.map((user, index) => (
+            {users.slice(0, 3).map((user, index) => (
               <span key={user.userId}>
                 <Link
                   href={`/profile/${user.userId}`}
                   className="hover:underline"
                 >
-                  {Utils.minifyText(user?.profile?.name, 15)}
+                  {Utils.minifyText(user?.profile?.name, 12)}
                 </Link>
-                {index < users.length - 1 ? ', ' : ' '}
+                {index < Math.min(users.length, 3) - 1 ? ', ' : ' '}
               </span>
-            ))}{' '}
+            ))}
             <span className="text-white text-opacity-50">
+              {users.length > 3 && ` and other ${users.length - 3}`}{' '}
               {notificationType === 'follow'
                 ? 'followed you'
                 : notificationType === 'new_friend'
