@@ -20,10 +20,17 @@ export default function NotificationGroup({
 
   useEffect(() => {
     const fetchProfiles = async () => {
-      // Extract user IDs based on the notification type
-      const userIds = group
-        .map((notification) => notification.body.followedBy)
-        .filter((userId): userId is string => !!userId);
+      let userIds: string[] = [];
+
+      if (notificationType === 'follow' || notificationType === 'new_friend') {
+        userIds = group
+          .map((notification) => notification.body.followedBy)
+          .filter((userId): userId is string => !!userId);
+      } else if (notificationType === 'lost_friend') {
+        userIds = group
+          .map((notification) => notification.body.unfollowedBy)
+          .filter((userId): userId is string => !!userId);
+      }
 
       const userProfiles = await Promise.all(
         userIds.map((userId) => getUser(userId))
@@ -41,12 +48,20 @@ export default function NotificationGroup({
       setLoading(false);
     };
 
-    if (notificationType === 'follow' || notificationType === 'new_friend') {
+    if (
+      notificationType === 'follow' ||
+      notificationType === 'new_friend' ||
+      notificationType === 'lost_friend'
+    ) {
       fetchProfiles();
     }
   }, [group, getUser, notificationType]);
 
-  if (notificationType === 'follow' || notificationType === 'new_friend') {
+  if (
+    notificationType === 'follow' ||
+    notificationType === 'new_friend' ||
+    notificationType === 'lost_friend'
+  ) {
     if (loading) {
       return (
         <div className="p-3 border-b border-white border-opacity-10 flex justify-between items-center">
@@ -106,7 +121,9 @@ export default function NotificationGroup({
               <span className="text-white text-opacity-50">
                 {notificationType === 'follow'
                   ? 'followed you'
-                  : 'are your friends now'}
+                  : notificationType === 'new_friend'
+                  ? 'are your friends now'
+                  : 'are not your friend anymore'}
               </span>
             </Typography.Body>
           </div>
