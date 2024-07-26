@@ -16,14 +16,14 @@ type NotificationsContextType = {
   fetchNotifications: () => Promise<void>;
 };
 
-const mergeConsecutiveFollowNotifications = (
+const mergeConsecutiveNotifications = (
   notifications: INotification[]
 ): (INotification | INotification[])[] => {
   const mergedNotifications: (INotification | INotification[])[] = [];
   let currentFollowNotifications: INotification[] = [];
 
   notifications.forEach((notification) => {
-    if (notification.type === 'follow') {
+    if (notification.type === 'follow' || notification.type === 'new_friend') {
       if (currentFollowNotifications.length > 0) {
         if (
           notification.timestamp -
@@ -80,7 +80,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
               notification.type as keyof typeof notificationPreferences
             ]
         );
-        const mergedNotifications = mergeConsecutiveFollowNotifications(
+        const mergedNotifications = mergeConsecutiveNotifications(
           filteredNotifications
         );
         setNotifications(mergedNotifications);
@@ -94,7 +94,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 10000); // Modificato l'intervallo per una frequenza più pratica
+    const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);

@@ -38,6 +38,13 @@ export default function NotificationGroup({
 
   const displayedUsers = users.slice(0, 3);
   const remainingUsersCount = users.length - displayedUsers.length;
+  const notificationType = notifications[0].type;
+  const message =
+    notificationType === 'follow'
+      ? 'followed you'
+      : notificationType === 'new_friend'
+      ? 'are your friends now'
+      : '';
 
   return (
     <div className="p-3 border-b border-white border-opacity-10 justify-between items-start flex flex-row">
@@ -78,7 +85,7 @@ export default function NotificationGroup({
             </Typography.Body>
           )}
           <Typography.Body variant="medium-bold" className="text-opacity-50">
-            followed you
+            {message}
           </Typography.Body>
         </div>
       </div>
