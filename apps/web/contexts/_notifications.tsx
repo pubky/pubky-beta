@@ -8,7 +8,7 @@ import {
   ReactNode,
 } from 'react';
 import { INotification } from '@/types';
-import { useClientContext } from '@/contexts';
+import { useClientContext, useFilterContext } from '@/contexts';
 
 type NotificationsContextType = {
   notifications: INotification[];
@@ -24,6 +24,7 @@ const NotificationsContext = createContext<NotificationsContextType>({
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { pubky, getNotifications } = useClientContext();
+  const { notificationPreferences } = useFilterContext();
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +32,15 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       const results = await getNotifications();
-      if (results) setNotifications(results.feed);
+      if (results) {
+        const filteredNotifications = results.feed.filter(
+          (notification: INotification) =>
+            notificationPreferences[
+              notification.type as keyof typeof notificationPreferences
+            ]
+        );
+        setNotifications(filteredNotifications);
+      }
     } catch (err) {
       console.error(err);
     } finally {
