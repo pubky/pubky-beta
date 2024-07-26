@@ -30,7 +30,7 @@ export default function NotificationsProfile({
         </Typography.H2>
       ) : (
         <div>
-          {notifications.map((notification, index) => {
+          {notifications.slice(0, 10).map((notification, index) => {
             if (Array.isArray(notification)) {
               if (
                 notification[0].type === 'follow' ||
