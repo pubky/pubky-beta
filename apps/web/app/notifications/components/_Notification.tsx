@@ -48,11 +48,11 @@ const notificationType = {
     icon: <Icon.Repost size="16" />,
     text: 'reposted your post',
   },
-  // post_deleted: {
-  //   type: 'post_deleted',
-  //   icon: <Icon.Trash size="16" />,
-  //   text: 'deleted his post',
-  // },
+  post_deleted: {
+    type: 'post_deleted',
+    icon: <Icon.Trash size="16" />,
+    text: 'deleted a post',
+  },
 };
 
 type NotificationTypeKey = keyof typeof notificationType;
@@ -96,6 +96,8 @@ export default function Notification({
       userId = notification.body.repostedBy;
     } else if (notification.type === notificationType.mention.type) {
       userId = notification.body.mentionedBy;
+    } else if (notification.type === notificationType.post_deleted.type) {
+      userId = notification.body.deletedBy;
     }
 
     if (userId) {
@@ -117,7 +119,8 @@ export default function Notification({
     notification.body.taggedBy ||
     notification.body.repliedBy ||
     notification.body.repostedBy ||
-    notification.body.mentionedBy;
+    notification.body.mentionedBy ||
+    notification.body.deletedBy;
 
   const postLink =
     (notification.type === notificationType.tag_post.type ||
@@ -148,6 +151,13 @@ export default function Notification({
     notification.type === notificationType.repost.type &&
     notification.body.embedUri
       ? Utils.encodePostUri(notification.body.embedUri)
+      : '';
+
+  const deletedPostLink =
+    (notification.body.deleteType === 'reply_parent' ||
+      notification.body.deleteType === 'repost_embed') &&
+    notification.body.linkedUri
+      ? Utils.encodePostUri(notification.body.linkedUri)
       : '';
 
   return (
@@ -182,6 +192,10 @@ export default function Notification({
           )}
           <Typography.Body variant="medium-bold" className="text-opacity-50">
             {currentNotificationType.text}
+            {notification.type === notificationType.post_deleted.type &&
+              (notification.body.deleteType === 'reply_parent'
+                ? ' you replied'
+                : ' you reposted')}
           </Typography.Body>
           {(notification.type === notificationType.tag_profile.type ||
             notification.type === notificationType.tag_post.type) && (
@@ -250,6 +264,19 @@ export default function Notification({
               </Link>
             </>
           )}
+          {notification.type === notificationType.post_deleted.type &&
+            deletedPostLink && (
+              <Link href={deletedPostLink}>
+                <Typography.Body
+                  variant="small"
+                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                >
+                  {notification.body.deleteType === 'reply_parent'
+                    ? 'View reply'
+                    : 'View repost'}
+                </Typography.Body>
+              </Link>
+            )}
         </div>
       </div>
       <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex">

@@ -56,9 +56,15 @@ export default function Notifications() {
           </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
             <Typography.Body variant="small-bold">
-              Someone deleted a post you replied/repost
+              Someone deleted a post you replied
             </Typography.Body>
-            <Input.Switch disabled />
+            <Input.Switch checked disabled />
+          </div>
+          <div className="w-full h-8 justify-between items-center inline-flex">
+            <Typography.Body variant="small-bold">
+              Someone deleted a post you repost
+            </Typography.Body>
+            <Input.Switch checked disabled />
           </div>
         </div>
       </div>
