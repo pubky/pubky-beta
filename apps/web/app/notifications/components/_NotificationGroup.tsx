@@ -24,8 +24,10 @@ export default function NotificationGroup({
             getUser(notification.body.followedBy!)
           )
         );
-        console.log("users", userProfiles);
-        setUsers(userProfiles);
+        const validProfiles = userProfiles.filter(
+          (profile): profile is IUserProfile => profile !== null
+        );
+        setUsers(validProfiles);
       } catch (error) {
         console.log(error);
       }
@@ -33,6 +35,9 @@ export default function NotificationGroup({
 
     fetchProfiles();
   }, [notifications, getUser]);
+
+  const displayedUsers = users.slice(0, 3);
+  const remainingUsersCount = users.length - displayedUsers.length;
 
   return (
     <div className="p-3 border-b border-white border-opacity-10 justify-between items-start flex flex-row">
@@ -45,7 +50,7 @@ export default function NotificationGroup({
           disabled
         />
         <div className="flex gap-2 items-center flex-wrap">
-          {users.map((user, index) => (
+          {displayedUsers.map((user, index) => (
             <Link
               key={index}
               href={`/profile/${user.userId}`}
@@ -63,10 +68,15 @@ export default function NotificationGroup({
                 variant="medium-bold"
               >
                 {Utils.minifyText(user.profile.name, 20)}
-                {index < users.length - 1 && <span>, </span>}
+                {index < displayedUsers.length - 1 && <span>, </span>}
               </Typography.Body>
             </Link>
           ))}
+          {remainingUsersCount > 0 && (
+            <Typography.Body variant="medium-bold" className="text-opacity-50">
+              and other {remainingUsersCount}
+            </Typography.Body>
+          )}
           <Typography.Body variant="medium-bold" className="text-opacity-50">
             followed you
           </Typography.Body>

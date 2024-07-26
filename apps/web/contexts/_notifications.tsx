@@ -11,7 +11,7 @@ import { INotification } from '@/types';
 import { useClientContext, useFilterContext } from '@/contexts';
 
 type NotificationsContextType = {
-  notifications: INotification[];
+  notifications: (INotification | INotification[])[];
   loading: boolean;
   fetchNotifications: () => Promise<void>;
 };
@@ -54,6 +54,7 @@ const mergeConsecutiveFollowNotifications = (
 
   return mergedNotifications;
 };
+
 const NotificationsContext = createContext<NotificationsContextType>({
   notifications: [],
   loading: true,
@@ -63,7 +64,9 @@ const NotificationsContext = createContext<NotificationsContextType>({
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { pubky, getNotifications } = useClientContext();
   const { notificationPreferences } = useFilterContext();
-  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [notifications, setNotifications] = useState<
+    (INotification | INotification[])[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   const fetchNotifications = async () => {
@@ -80,7 +83,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         const mergedNotifications = mergeConsecutiveFollowNotifications(
           filteredNotifications
         );
-        console.log("marged", mergedNotifications);
         setNotifications(mergedNotifications);
       }
     } catch (err) {
