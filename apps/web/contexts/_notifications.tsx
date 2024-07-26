@@ -24,7 +24,9 @@ const mergeConsecutiveNotifications = (
   let currentNewFriendNotifications: INotification[] = [];
   let currentLostFriendNotifications: INotification[] = [];
   let currentTagProfileNotifications: INotification[] = [];
+  let currentTagPostNotifications: INotification[] = [];
   let currentTaggedBy: string | null = null;
+  let currentPostUri: string | null = null;
 
   notifications.forEach((notification) => {
     const addCurrentNotifications = () => {
@@ -44,6 +46,12 @@ const mergeConsecutiveNotifications = (
         mergedNotifications.push(currentTagProfileNotifications);
         currentTagProfileNotifications = [];
         currentTaggedBy = null;
+      }
+      if (currentTagPostNotifications.length > 0) {
+        mergedNotifications.push(currentTagPostNotifications);
+        currentTagPostNotifications = [];
+        currentTaggedBy = null;
+        currentPostUri = null;
       }
     };
 
@@ -104,6 +112,23 @@ const mergeConsecutiveNotifications = (
         currentTagProfileNotifications = [notification];
         currentTaggedBy = notification.body.taggedBy || null;
       }
+    } else if (notification.type === 'tag_post') {
+      if (
+        currentTaggedBy === notification.body.taggedBy &&
+        currentPostUri === notification.body.postUri &&
+        currentTagPostNotifications.length > 0 &&
+        notification.timestamp -
+          currentTagPostNotifications[currentTagPostNotifications.length - 1]
+            .timestamp <=
+          10000
+      ) {
+        currentTagPostNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentTagPostNotifications = [notification];
+        currentTaggedBy = notification.body.taggedBy || null;
+        currentPostUri = notification.body.postUri || null;
+      }
     } else {
       addCurrentNotifications();
       mergedNotifications.push(notification);
@@ -127,6 +152,12 @@ const mergeConsecutiveNotifications = (
       mergedNotifications.push(currentTagProfileNotifications);
       currentTagProfileNotifications = [];
       currentTaggedBy = null;
+    }
+    if (currentTagPostNotifications.length > 0) {
+      mergedNotifications.push(currentTagPostNotifications);
+      currentTagPostNotifications = [];
+      currentTaggedBy = null;
+      currentPostUri = null;
     }
   };
 
