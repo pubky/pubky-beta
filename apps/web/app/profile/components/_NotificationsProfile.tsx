@@ -30,12 +30,23 @@ export default function NotificationsProfile({
         </Typography.H2>
       ) : (
         <div>
-          {notifications.slice(0, 10).map((notification, index) => (
-            <Notifications.Notification
-              key={index}
-              notification={notification}
-            />
-          ))}
+          {notifications.slice(0, 10).map((notification, index) => {
+            if (Array.isArray(notification)) {
+              return (
+                <Notifications.NotificationGroup
+                  key={index}
+                  notifications={notification}
+                />
+              );
+            } else {
+              return (
+                <Notifications.Notification
+                  key={index}
+                  notification={notification}
+                />
+              );
+            }
+          })}
           <Link href={'/notifications'}>
             <Button.Medium
               icon={<Icon.Bell size="16" />}
