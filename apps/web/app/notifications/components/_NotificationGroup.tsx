@@ -23,7 +23,9 @@ export default function NotificationGroup({
         setLoading(true);
         const userProfiles = await Promise.all(
           notifications.map((notification) =>
-            getUser(notification.body.followedBy!)
+            notification.type === 'lost_friend'
+              ? getUser(notification.body.unfollowedBy!)
+              : getUser(notification.body.followedBy!)
           )
         );
         const validProfiles = userProfiles.filter(
@@ -43,12 +45,26 @@ export default function NotificationGroup({
   const displayedUsers = users.slice(0, 3);
   const remainingUsersCount = users.length - displayedUsers.length;
   const notificationType = notifications[0].type;
+
   const message =
     notificationType === 'follow'
       ? 'followed you'
       : notificationType === 'new_friend'
       ? 'are your friends now'
+      : notificationType === 'lost_friend'
+      ? 'are not your friends anymore'
       : '';
+
+  const icon =
+    notificationType === 'follow' ? (
+      <Icon.UserPlus size="16" />
+    ) : notificationType === 'new_friend' ? (
+      <Icon.UsersLeft size="16" />
+    ) : notificationType === 'lost_friend' ? (
+      <Icon.UserMinus size="16" />
+    ) : (
+      ''
+    );
 
   return (
     <div className="p-3 border-b border-white border-opacity-10 justify-between items-start flex flex-row">
@@ -56,7 +72,7 @@ export default function NotificationGroup({
         <Button.Action
           size="small"
           variant="custom"
-          icon={<Icon.UserPlus size="16" />}
+          icon={icon}
           className="bg-gradient-none border border-white border-opacity-30"
           disabled
         />

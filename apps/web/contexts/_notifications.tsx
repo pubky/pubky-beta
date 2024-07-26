@@ -21,35 +21,80 @@ const mergeConsecutiveNotifications = (
 ): (INotification | INotification[])[] => {
   const mergedNotifications: (INotification | INotification[])[] = [];
   let currentFollowNotifications: INotification[] = [];
+  let currentNewFriendNotifications: INotification[] = [];
+  let currentLostFriendNotifications: INotification[] = [];
 
   notifications.forEach((notification) => {
-    if (notification.type === 'follow' || notification.type === 'new_friend') {
-      if (currentFollowNotifications.length > 0) {
-        if (
-          notification.timestamp -
-            currentFollowNotifications[currentFollowNotifications.length - 1]
-              .timestamp <=
-          10000
-        ) {
-          currentFollowNotifications.push(notification);
-        } else {
-          mergedNotifications.push(currentFollowNotifications);
-          currentFollowNotifications = [notification];
-        }
-      } else {
-        currentFollowNotifications = [notification];
-      }
-    } else {
+    const addCurrentNotifications = () => {
       if (currentFollowNotifications.length > 0) {
         mergedNotifications.push(currentFollowNotifications);
         currentFollowNotifications = [];
       }
+      if (currentNewFriendNotifications.length > 0) {
+        mergedNotifications.push(currentNewFriendNotifications);
+        currentNewFriendNotifications = [];
+      }
+      if (currentLostFriendNotifications.length > 0) {
+        mergedNotifications.push(currentLostFriendNotifications);
+        currentLostFriendNotifications = [];
+      }
+    };
+
+    if (notification.type === 'follow') {
+      if (
+        currentFollowNotifications.length > 0 &&
+        notification.timestamp -
+          currentFollowNotifications[currentFollowNotifications.length - 1]
+            .timestamp <=
+          10000
+      ) {
+        currentFollowNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentFollowNotifications = [notification];
+      }
+    } else if (notification.type === 'new_friend') {
+      if (
+        currentNewFriendNotifications.length > 0 &&
+        notification.timestamp -
+          currentNewFriendNotifications[
+            currentNewFriendNotifications.length - 1
+          ].timestamp <=
+          10000
+      ) {
+        currentNewFriendNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentNewFriendNotifications = [notification];
+      }
+    } else if (notification.type === 'lost_friend') {
+      if (
+        currentLostFriendNotifications.length > 0 &&
+        notification.timestamp -
+          currentLostFriendNotifications[
+            currentLostFriendNotifications.length - 1
+          ].timestamp <=
+          10000
+      ) {
+        currentLostFriendNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentLostFriendNotifications = [notification];
+      }
+    } else {
+      addCurrentNotifications();
       mergedNotifications.push(notification);
     }
   });
 
   if (currentFollowNotifications.length > 0) {
     mergedNotifications.push(currentFollowNotifications);
+  }
+  if (currentNewFriendNotifications.length > 0) {
+    mergedNotifications.push(currentNewFriendNotifications);
+  }
+  if (currentLostFriendNotifications.length > 0) {
+    mergedNotifications.push(currentLostFriendNotifications);
   }
 
   return mergedNotifications;
