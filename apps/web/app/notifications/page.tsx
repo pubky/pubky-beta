@@ -35,12 +35,26 @@ export default function Index() {
           ) : (
             notifications.map((notification, index) => {
               if (Array.isArray(notification)) {
-                return (
-                  <Notifications.NotificationGroup
-                    key={index}
-                    notifications={notification}
-                  />
-                );
+                const firstNotificationType = notification[0]?.type;
+                if (
+                  firstNotificationType === 'follow' ||
+                  firstNotificationType === 'new_friend' ||
+                  firstNotificationType === 'lost_friend'
+                ) {
+                  return (
+                    <Notifications.NotificationGroup
+                      key={index}
+                      notifications={notification}
+                    />
+                  );
+                } else if (firstNotificationType === 'tag_profile') {
+                  return (
+                    <Notifications.NotificationTagGroup
+                      key={index}
+                      notifications={notification}
+                    />
+                  );
+                }
               } else {
                 return (
                   <Notifications.Notification
@@ -49,6 +63,7 @@ export default function Index() {
                   />
                 );
               }
+              return null;
             })
           )}
         </Notifications.Root>

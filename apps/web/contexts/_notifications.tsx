@@ -23,6 +23,8 @@ const mergeConsecutiveNotifications = (
   let currentFollowNotifications: INotification[] = [];
   let currentNewFriendNotifications: INotification[] = [];
   let currentLostFriendNotifications: INotification[] = [];
+  let currentTagProfileNotifications: INotification[] = [];
+  let currentTaggedBy: string | null = null;
 
   notifications.forEach((notification) => {
     const addCurrentNotifications = () => {
@@ -37,6 +39,11 @@ const mergeConsecutiveNotifications = (
       if (currentLostFriendNotifications.length > 0) {
         mergedNotifications.push(currentLostFriendNotifications);
         currentLostFriendNotifications = [];
+      }
+      if (currentTagProfileNotifications.length > 0) {
+        mergedNotifications.push(currentTagProfileNotifications);
+        currentTagProfileNotifications = [];
+        currentTaggedBy = null;
       }
     };
 
@@ -81,21 +88,49 @@ const mergeConsecutiveNotifications = (
         addCurrentNotifications();
         currentLostFriendNotifications = [notification];
       }
+    } else if (notification.type === 'tag_profile') {
+      if (
+        currentTaggedBy === notification.body.taggedBy &&
+        currentTagProfileNotifications.length > 0 &&
+        notification.timestamp -
+          currentTagProfileNotifications[
+            currentTagProfileNotifications.length - 1
+          ].timestamp <=
+          10000
+      ) {
+        currentTagProfileNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentTagProfileNotifications = [notification];
+        currentTaggedBy = notification.body.taggedBy || null;
+      }
     } else {
       addCurrentNotifications();
       mergedNotifications.push(notification);
     }
   });
 
-  if (currentFollowNotifications.length > 0) {
-    mergedNotifications.push(currentFollowNotifications);
-  }
-  if (currentNewFriendNotifications.length > 0) {
-    mergedNotifications.push(currentNewFriendNotifications);
-  }
-  if (currentLostFriendNotifications.length > 0) {
-    mergedNotifications.push(currentLostFriendNotifications);
-  }
+  const addCurrentNotifications = () => {
+    if (currentFollowNotifications.length > 0) {
+      mergedNotifications.push(currentFollowNotifications);
+      currentFollowNotifications = [];
+    }
+    if (currentNewFriendNotifications.length > 0) {
+      mergedNotifications.push(currentNewFriendNotifications);
+      currentNewFriendNotifications = [];
+    }
+    if (currentLostFriendNotifications.length > 0) {
+      mergedNotifications.push(currentLostFriendNotifications);
+      currentLostFriendNotifications = [];
+    }
+    if (currentTagProfileNotifications.length > 0) {
+      mergedNotifications.push(currentTagProfileNotifications);
+      currentTagProfileNotifications = [];
+      currentTaggedBy = null;
+    }
+  };
+
+  addCurrentNotifications();
 
   return mergedNotifications;
 };
