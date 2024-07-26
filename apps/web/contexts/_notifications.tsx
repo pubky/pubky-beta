@@ -16,6 +16,44 @@ type NotificationsContextType = {
   fetchNotifications: () => Promise<void>;
 };
 
+const mergeConsecutiveFollowNotifications = (
+  notifications: INotification[]
+): (INotification | INotification[])[] => {
+  const mergedNotifications: (INotification | INotification[])[] = [];
+  let currentFollowNotifications: INotification[] = [];
+
+  notifications.forEach((notification) => {
+    if (notification.type === 'follow') {
+      if (currentFollowNotifications.length > 0) {
+        if (
+          notification.timestamp -
+            currentFollowNotifications[currentFollowNotifications.length - 1]
+              .timestamp <=
+          10000
+        ) {
+          currentFollowNotifications.push(notification);
+        } else {
+          mergedNotifications.push(currentFollowNotifications);
+          currentFollowNotifications = [notification];
+        }
+      } else {
+        currentFollowNotifications = [notification];
+      }
+    } else {
+      if (currentFollowNotifications.length > 0) {
+        mergedNotifications.push(currentFollowNotifications);
+        currentFollowNotifications = [];
+      }
+      mergedNotifications.push(notification);
+    }
+  });
+
+  if (currentFollowNotifications.length > 0) {
+    mergedNotifications.push(currentFollowNotifications);
+  }
+
+  return mergedNotifications;
+};
 const NotificationsContext = createContext<NotificationsContextType>({
   notifications: [],
   loading: true,
@@ -39,7 +77,11 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
               notification.type as keyof typeof notificationPreferences
             ]
         );
-        setNotifications(filteredNotifications);
+        const mergedNotifications = mergeConsecutiveFollowNotifications(
+          filteredNotifications
+        );
+        console.log("marged", mergedNotifications);
+        setNotifications(mergedNotifications);
       }
     } catch (err) {
       console.error(err);
@@ -50,7 +92,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 10000);
+    const interval = setInterval(fetchNotifications, 10000); // Modificato l'intervallo per una frequenza più pratica
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);

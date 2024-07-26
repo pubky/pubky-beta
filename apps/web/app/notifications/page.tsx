@@ -33,12 +33,23 @@ export default function Index() {
               No notifications yet
             </Typography.Body>
           ) : (
-            notifications.map((notification, index) => (
-              <Notifications.Notification
-                key={index}
-                notification={notification}
-              />
-            ))
+            notifications.map((notification, index) => {
+              if (Array.isArray(notification)) {
+                return (
+                  <Notifications.NotificationGroup
+                    key={index}
+                    notifications={notification}
+                  />
+                );
+              } else {
+                return (
+                  <Notifications.Notification
+                    key={index}
+                    notification={notification}
+                  />
+                );
+              }
+            })
           )}
         </Notifications.Root>
         <Sidebar className="self-start sticky top-[120px] hidden xl:block w-[20%]">
