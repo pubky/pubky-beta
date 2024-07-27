@@ -50,9 +50,13 @@ export default function NotificationGroup({
     notificationType === 'follow'
       ? 'followed you'
       : notificationType === 'new_friend'
-      ? 'are your friends now'
+      ? notifications.length > 1
+        ? 'are your friends now'
+        : 'is your friend now'
       : notificationType === 'lost_friend'
-      ? 'are not your friends anymore'
+      ? notifications.length > 1
+        ? 'are not your friends anymore'
+        : 'is not your friend anymore'
       : '';
 
   const icon =
