@@ -107,7 +107,7 @@ interface BodyNotification {
   mentionedBy?: string;
   embedUri?: string;
   repostUri?: string;
-  deleteType?: IReply;
+  deleteType?: string | IReply;
   deletedBy?: string;
   deletedUri?: string;
   linkedUri?: string;
