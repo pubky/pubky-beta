@@ -30,12 +30,43 @@ export default function NotificationsProfile({
         </Typography.H2>
       ) : (
         <div>
-          {notifications.slice(0, 10).map((notification, index) => (
-            <Notifications.Notification
-              key={index}
-              notification={notification}
-            />
-          ))}
+          {notifications.slice(0, 10).map((notification, index) => {
+            if (Array.isArray(notification)) {
+              if (
+                notification[0].type === 'follow' ||
+                notification[0].type === 'new_friend' ||
+                notification[0].type === 'lost_friend'
+              ) {
+                return (
+                  <Notifications.NotificationGroup
+                    key={index}
+                    notifications={notification}
+                  />
+                );
+              } else if (notification[0].type === 'tag_profile') {
+                return (
+                  <Notifications.NotificationTagGroup
+                    key={index}
+                    notifications={notification}
+                  />
+                );
+              } else if (notification[0].type === 'tag_post') {
+                return (
+                  <Notifications.NotificationTagPostGroup
+                    key={index}
+                    notifications={notification}
+                  />
+                );
+              }
+            } else {
+              return (
+                <Notifications.Notification
+                  key={index}
+                  notification={notification}
+                />
+              );
+            }
+          })}
           <Link href={'/notifications'}>
             <Button.Medium
               icon={<Icon.Bell size="16" />}

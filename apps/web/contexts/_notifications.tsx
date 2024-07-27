@@ -11,9 +11,159 @@ import { INotification } from '@/types';
 import { useClientContext, useFilterContext } from '@/contexts';
 
 type NotificationsContextType = {
-  notifications: INotification[];
+  notifications: (INotification | INotification[])[];
   loading: boolean;
   fetchNotifications: () => Promise<void>;
+};
+
+const mergeConsecutiveNotifications = (
+  notifications: INotification[]
+): (INotification | INotification[])[] => {
+  const mergedNotifications: (INotification | INotification[])[] = [];
+  let currentFollowNotifications: INotification[] = [];
+  let currentNewFriendNotifications: INotification[] = [];
+  let currentLostFriendNotifications: INotification[] = [];
+  let currentTagProfileNotifications: INotification[] = [];
+  let currentTagPostNotifications: INotification[] = [];
+  let currentTaggedBy: string | null = null;
+  let currentPostUri: string | null = null;
+
+  notifications.forEach((notification) => {
+    const addCurrentNotifications = () => {
+      if (currentFollowNotifications.length > 0) {
+        mergedNotifications.push(currentFollowNotifications);
+        currentFollowNotifications = [];
+      }
+      if (currentNewFriendNotifications.length > 0) {
+        mergedNotifications.push(currentNewFriendNotifications);
+        currentNewFriendNotifications = [];
+      }
+      if (currentLostFriendNotifications.length > 0) {
+        mergedNotifications.push(currentLostFriendNotifications);
+        currentLostFriendNotifications = [];
+      }
+      if (currentTagProfileNotifications.length > 0) {
+        mergedNotifications.push(currentTagProfileNotifications);
+        currentTagProfileNotifications = [];
+        currentTaggedBy = null;
+      }
+      if (currentTagPostNotifications.length > 0) {
+        mergedNotifications.push(currentTagPostNotifications);
+        currentTagPostNotifications = [];
+        currentTaggedBy = null;
+        currentPostUri = null;
+      }
+    };
+
+    if (notification.type === 'follow') {
+      if (
+        currentFollowNotifications.length > 0 &&
+        notification.timestamp -
+          currentFollowNotifications[currentFollowNotifications.length - 1]
+            .timestamp <=
+          10000
+      ) {
+        currentFollowNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentFollowNotifications = [notification];
+      }
+    } else if (notification.type === 'new_friend') {
+      if (
+        currentNewFriendNotifications.length > 0 &&
+        notification.timestamp -
+          currentNewFriendNotifications[
+            currentNewFriendNotifications.length - 1
+          ].timestamp <=
+          10000
+      ) {
+        currentNewFriendNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentNewFriendNotifications = [notification];
+      }
+    } else if (notification.type === 'lost_friend') {
+      if (
+        currentLostFriendNotifications.length > 0 &&
+        notification.timestamp -
+          currentLostFriendNotifications[
+            currentLostFriendNotifications.length - 1
+          ].timestamp <=
+          10000
+      ) {
+        currentLostFriendNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentLostFriendNotifications = [notification];
+      }
+    } else if (notification.type === 'tag_profile') {
+      if (
+        currentTaggedBy === notification.body.taggedBy &&
+        currentTagProfileNotifications.length > 0 &&
+        notification.timestamp -
+          currentTagProfileNotifications[
+            currentTagProfileNotifications.length - 1
+          ].timestamp <=
+          10000
+      ) {
+        currentTagProfileNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentTagProfileNotifications = [notification];
+        currentTaggedBy = notification.body.taggedBy || null;
+      }
+    } else if (notification.type === 'tag_post') {
+      if (
+        currentTaggedBy === notification.body.taggedBy &&
+        currentPostUri === notification.body.postUri &&
+        currentTagPostNotifications.length > 0 &&
+        notification.timestamp -
+          currentTagPostNotifications[currentTagPostNotifications.length - 1]
+            .timestamp <=
+          10000
+      ) {
+        currentTagPostNotifications.push(notification);
+      } else {
+        addCurrentNotifications();
+        currentTagPostNotifications = [notification];
+        currentTaggedBy = notification.body.taggedBy || null;
+        currentPostUri = notification.body.postUri || null;
+      }
+    } else {
+      addCurrentNotifications();
+      mergedNotifications.push(notification);
+    }
+  });
+
+  const addCurrentNotifications = () => {
+    if (currentFollowNotifications.length > 0) {
+      mergedNotifications.push(currentFollowNotifications);
+      currentFollowNotifications = [];
+    }
+    if (currentNewFriendNotifications.length > 0) {
+      mergedNotifications.push(currentNewFriendNotifications);
+      currentNewFriendNotifications = [];
+    }
+    if (currentLostFriendNotifications.length > 0) {
+      mergedNotifications.push(currentLostFriendNotifications);
+      currentLostFriendNotifications = [];
+    }
+    if (currentTagProfileNotifications.length > 0) {
+      mergedNotifications.push(currentTagProfileNotifications);
+      currentTagProfileNotifications = [];
+      currentTaggedBy = null;
+    }
+    if (currentTagPostNotifications.length > 0) {
+      mergedNotifications.push(currentTagPostNotifications);
+      currentTagPostNotifications = [];
+      currentTaggedBy = null;
+      currentPostUri = null;
+    }
+  };
+
+  addCurrentNotifications();
+
+  return mergedNotifications;
 };
 
 const NotificationsContext = createContext<NotificationsContextType>({
@@ -25,7 +175,9 @@ const NotificationsContext = createContext<NotificationsContextType>({
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { pubky, getNotifications } = useClientContext();
   const { notificationPreferences } = useFilterContext();
-  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [notifications, setNotifications] = useState<
+    (INotification | INotification[])[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   const fetchNotifications = async () => {
@@ -39,7 +191,10 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
               notification.type as keyof typeof notificationPreferences
             ]
         );
-        setNotifications(filteredNotifications);
+        const mergedNotifications = mergeConsecutiveNotifications(
+          filteredNotifications
+        );
+        setNotifications(mergedNotifications);
       }
     } catch (err) {
       console.error(err);
