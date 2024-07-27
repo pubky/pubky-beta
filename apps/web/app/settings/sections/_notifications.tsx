@@ -1,6 +1,38 @@
+import { useState, useEffect } from 'react';
+import { useFilterContext } from '@/contexts';
 import { Icon, Input, Typography } from '@social/ui-shared';
 
+const defaultPreferences = {
+  follow: true,
+  new_friend: true,
+  lost_friend: true,
+  tag_post: true,
+  tag_profile: true,
+  mention: true,
+  reply: true,
+  repost: true,
+  post_deleted: true,
+};
+
+type NotificationType = keyof typeof defaultPreferences;
+
 export default function Notifications() {
+  const { notificationPreferences, setNotificationPreferences } =
+    useFilterContext();
+  const [preferences, setPreferences] = useState(defaultPreferences);
+
+  useEffect(() => {
+    if (notificationPreferences) {
+      setPreferences(notificationPreferences);
+    }
+  }, [notificationPreferences]);
+
+  const handleToggle = (type: NotificationType) => {
+    const updatedPreferences = { ...preferences, [type]: !preferences[type] };
+    setPreferences(updatedPreferences);
+    setNotificationPreferences(updatedPreferences);
+  };
+
   return (
     <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
@@ -12,62 +44,47 @@ export default function Notifications() {
           Please select which notifications you want to receive on Pubky.
         </Typography.Body>
         <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl shadow backdrop-blur-[50px] flex-col justify-start items-start gap-6 inline-flex">
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Someone tagged your post
-            </Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Someone tagged your profile
-            </Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">New follower</Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">New friend</Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">Lost friend</Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              New reply to your post
-            </Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              New repost to your post
-            </Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Someone mentioned your profile
-            </Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Someone deleted a post you replied
-            </Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
-          <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Someone deleted a post you repost
-            </Typography.Body>
-            <Input.Switch checked disabled />
-          </div>
+          {Object.keys(preferences).map((type) => (
+            <div
+              key={type}
+              className="w-full h-8 justify-between items-center inline-flex"
+            >
+              <Typography.Body variant="small-bold">
+                {getNotificationLabel(type as NotificationType)}
+              </Typography.Body>
+              <Input.Switch
+                checked={preferences[type as NotificationType]}
+                onChange={() => handleToggle(type as NotificationType)}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
+
+const getNotificationLabel = (type: NotificationType) => {
+  switch (type) {
+    case 'follow':
+      return 'New follower';
+    case 'new_friend':
+      return 'New friend';
+    case 'lost_friend':
+      return 'Lost friend';
+    case 'tag_post':
+      return 'Someone tagged your post';
+    case 'tag_profile':
+      return 'Someone tagged your profile';
+    case 'mention':
+      return 'Someone mentioned your profile';
+    case 'reply':
+      return 'New reply to your post';
+    case 'repost':
+      return 'New repost to your post';
+    case 'post_deleted':
+      return 'Someone deleted a post you replied/reposted';
+    default:
+      return '';
+  }
+};

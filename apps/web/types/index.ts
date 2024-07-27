@@ -113,6 +113,18 @@ interface BodyNotification {
   linkedUri?: string;
 }
 
+export type NotificationPreferences = {
+  follow: boolean;
+  new_friend: boolean;
+  lost_friend: boolean;
+  tag_post: boolean;
+  tag_profile: boolean;
+  mention: boolean;
+  reply: boolean;
+  repost: boolean;
+  post_deleted: boolean;
+};
+
 export interface INotification {
   body: BodyNotification;
   id: string;

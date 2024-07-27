@@ -33,12 +33,43 @@ export default function Index() {
               No notifications yet
             </Typography.Body>
           ) : (
-            notifications.map((notification, index) => (
-              <Notifications.Notification
-                key={index}
-                notification={notification}
-              />
-            ))
+            notifications.map((notification, index) => {
+              if (Array.isArray(notification)) {
+                if (
+                  notification[0].type === 'follow' ||
+                  notification[0].type === 'new_friend' ||
+                  notification[0].type === 'lost_friend'
+                ) {
+                  return (
+                    <Notifications.NotificationGroup
+                      key={index}
+                      notifications={notification}
+                    />
+                  );
+                } else if (notification[0].type === 'tag_profile') {
+                  return (
+                    <Notifications.NotificationTagGroup
+                      key={index}
+                      notifications={notification}
+                    />
+                  );
+                } else if (notification[0].type === 'tag_post') {
+                  return (
+                    <Notifications.NotificationTagPostGroup
+                      key={index}
+                      notifications={notification}
+                    />
+                  );
+                }
+              } else {
+                return (
+                  <Notifications.Notification
+                    key={index}
+                    notification={notification}
+                  />
+                );
+              }
+            })
           )}
         </Notifications.Root>
         <Sidebar className="self-start sticky top-[120px] hidden xl:block w-[20%]">
