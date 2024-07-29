@@ -308,7 +308,7 @@ export default function ReplyForm({
                     )}
                     {showEmojis && (
                       <div
-                        className="absolute translate-y-[-100%] translate-x-[-70%] z-10"
+                        className="absolute translate-y-[10%] translate-x-[55%] z-10"
                         ref={wrapperRefEmojis}
                       >
                         <EmojiPicker
