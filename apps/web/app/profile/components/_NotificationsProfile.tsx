@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 type NotificationsProps = {
-  notifications: INotification[];
+  notifications: INotification[] | (INotification | INotification[])[];
   loading: boolean;
 };
 
