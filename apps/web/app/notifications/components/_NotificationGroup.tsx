@@ -15,12 +15,10 @@ export default function NotificationGroup({
 }: NotificationGroupProps) {
   const { getUser } = useClientContext();
   const [users, setUsers] = useState<IUserProfile[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        setLoading(true);
         const userProfiles = await Promise.all(
           notifications.map((notification) =>
             notification.type === 'lost_friend'
@@ -34,8 +32,6 @@ export default function NotificationGroup({
         setUsers(validProfiles);
       } catch (error) {
         console.log(error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -81,32 +77,35 @@ export default function NotificationGroup({
           disabled
         />
         <div className="flex gap-2 items-center flex-wrap">
-          {loading ? (
-            <Typography.Body variant="medium-bold">Loading...</Typography.Body>
-          ) : (
-            displayedUsers.map((user, index) => (
-              <Link
-                key={index}
-                href={`/profile/${user.userId}`}
-                className="flex gap-2 items-center"
-              >
-                <Image
-                  width={32}
-                  height={32}
-                  className="w-[32px] h-[32px] rounded-full"
-                  alt="user-pic"
-                  src={user.profile.image || '/images/Userpic.png'}
-                />
-                <Typography.Body
-                  className="hover:underline hover:decoration-solid"
-                  variant="medium-bold"
-                >
-                  {Utils.minifyText(user.profile.name, 20)}
-                  {index < displayedUsers.length - 1 && <span>, </span>}
+          {displayedUsers.map((user, index) => (
+            <div key={index}>
+              {!user ? (
+                <Typography.Body variant="medium-bold">
+                  Loading...
                 </Typography.Body>
-              </Link>
-            ))
-          )}
+              ) : (
+                <Link
+                  href={`/profile/${user.userId}`}
+                  className="flex gap-2 items-center"
+                >
+                  <Image
+                    width={32}
+                    height={32}
+                    className="w-[32px] h-[32px] rounded-full"
+                    alt="user-pic"
+                    src={user.profile.image || '/images/Userpic.png'}
+                  />
+                  <Typography.Body
+                    className="hover:underline hover:decoration-solid"
+                    variant="medium-bold"
+                  >
+                    {Utils.minifyText(user.profile.name, 20)}
+                    {index < displayedUsers.length - 1 && <span>, </span>}
+                  </Typography.Body>
+                </Link>
+              )}
+            </div>
+          ))}
           {remainingUsersCount > 0 && (
             <Typography.Body variant="medium-bold" className="text-opacity-50">
               and other {remainingUsersCount}
