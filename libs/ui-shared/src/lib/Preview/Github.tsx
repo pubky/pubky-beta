@@ -84,60 +84,62 @@ export const GitHub = ({ url }: GitHubProps) => {
       rel="noopener noreferrer"
       className="w-full max-w-[700px] p-4 border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden block"
     >
-      <div className="flex items-center">
-        <img
-          src={ownerAvatar}
-          alt="Owner Avatar"
-          className="w-12 h-12 rounded-full mr-4"
-        />
-        <div>
-          <Typography.Body variant="large-bold">
-            {repoData.full_name && repoData.full_name.length > 40
-              ? repoData.full_name.slice(0, 40) + '...'
-              : repoData.full_name}
-          </Typography.Body>
-          <Typography.Body variant="small" className="opacity-80">
-            {repoData.description && repoData.description.length > 150
-              ? repoData.description.slice(0, 150) + '...'
-              : repoData.description}
-          </Typography.Body>
-          <div className="flex gap-4">
-            <div className="flex gap-1">
-              <span className="text-[15px]" role="img" aria-label="star">
-                ⭐
-              </span>
-              <Typography.Body variant="small">
-                {repoData.stargazers_count}
-              </Typography.Body>
-            </div>
-            <div className="flex gap-1">
-              <div className="flex items-center">
-                <Icon.GitFork size="15" />
+      <div className="flex justify-between">
+        <div className="flex items-center">
+          <img
+            src={ownerAvatar}
+            alt="Owner Avatar"
+            className="w-12 h-12 rounded-full mr-4"
+          />
+          <div>
+            <Typography.Body variant="large-bold">
+              {repoData.full_name && repoData.full_name.length > 40
+                ? repoData.full_name.slice(0, 40) + '...'
+                : repoData.full_name}
+            </Typography.Body>
+            <Typography.Body variant="small" className="opacity-80">
+              {repoData.description && repoData.description.length > 150
+                ? repoData.description.slice(0, 150) + '...'
+                : repoData.description}
+            </Typography.Body>
+            <div className="flex gap-4">
+              <div className="flex gap-1">
+                <span className="text-[15px]" role="img" aria-label="star">
+                  ⭐
+                </span>
+                <Typography.Body variant="small">
+                  {repoData.stargazers_count}
+                </Typography.Body>
               </div>
-              <Typography.Body variant="small">
-                {repoData.forks_count}
-              </Typography.Body>
-            </div>
-            <div className="flex gap-1">
-              <div className="flex items-center">
-                <Icon.Eye size="15" />
+              <div className="flex gap-1">
+                <div className="flex items-center">
+                  <Icon.GitFork size="15" />
+                </div>
+                <Typography.Body variant="small">
+                  {repoData.forks_count}
+                </Typography.Body>
               </div>
-              <Typography.Body variant="small">
-                {repoData.subscribers_count}
-              </Typography.Body>
+              <div className="flex gap-1">
+                <div className="flex items-center">
+                  <Icon.Eye size="15" />
+                </div>
+                <Typography.Body variant="small">
+                  {repoData.subscribers_count}
+                </Typography.Body>
+              </div>
             </div>
           </div>
         </div>
+        {previewImage && (
+          <div>
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="w-40 h-[90px] rounded-lg"
+            />
+          </div>
+        )}
       </div>
-      {previewImage && (
-        <div className="mt-4">
-          <img
-            src={previewImage}
-            alt="Preview"
-            className="rounded-lg max-h-[350px]"
-          />
-        </div>
-      )}
     </a>
   );
 };
