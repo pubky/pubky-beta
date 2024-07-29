@@ -61,7 +61,7 @@ export default function Index({
         {showPost ? (
           <>
             {replies?.post?.post?.parent && (
-              <Post.RootParent replies={replies} />
+              <Post.NavigatorParent replies={replies} />
             )}
 
             {loading && <Skeletons.Simple />}
@@ -74,7 +74,7 @@ export default function Index({
                   size="full"
                   largeView={true}
                   fullContent
-                  line={replies?.post?.post?.parent ? true : false}
+                  //line={replies?.post?.post?.parent ? true : false}
                 />
                 <div className="mt-3">
                   <Post.ReplyForm
