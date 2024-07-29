@@ -3,6 +3,7 @@ import { useClientContext } from '@/contexts';
 import { Skeleton } from '@/components';
 import { IPost, IReply } from '@/types';
 import { Content } from '@social/ui-shared';
+import Skeletons from '@/components/Skeletons';
 
 interface NavigatorParentProps {
   [uri: string]: {
@@ -92,10 +93,16 @@ export default function NavigatorParent({ replies }: { replies: IReply }) {
   }
 
   return (
-    <Content.StepperReplies
-      className="mb-4"
-      postUri={replies.post.uri}
-      urls={parentURIs.slice().reverse()}
-    />
+    <>
+      {parentURIs && parentURIs.length > 0 ? (
+        <Content.StepperReplies
+          className="mb-4"
+          postUri={replies.post.uri}
+          urls={parentURIs.slice().reverse()}
+        />
+      ) : (
+        <Skeletons.Simple />
+      )}
+    </>
   );
 }
