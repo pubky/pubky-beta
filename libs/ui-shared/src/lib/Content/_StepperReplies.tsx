@@ -6,32 +6,32 @@ import { Utils } from '@social/utils-shared';
 
 interface StepperRepliesProps extends React.HTMLAttributes<HTMLDivElement> {
   urls: string[];
-  rootParent: string;
+  postUri: string;
   className?: string;
 }
 
 export const StepperReplies = ({
   urls,
-  rootParent,
+  postUri,
   ...rest
 }: StepperRepliesProps) => {
-  const renderStep = (stepNumber: number, url?: string) => {
+  const renderStep = (stepNumber: number, url: string) => {
     const isFirstStep = stepNumber === 0;
-    const currentStep = urls.length;
-    const isLastStep = stepNumber === urls.length;
+    const currentStep = urls.length + 1;
+    const isLastStep = stepNumber === currentStep - 1;
 
     const baseCSS =
       'cursor-pointer w-8 h-8 justify-center items-center border rounded-[32px] flex-col gap-2 inline-flex';
     const activeStep = `
       ${
-        stepNumber < currentStep
+        stepNumber < currentStep - 1
           ? 'bg-fuchsia-500 bg-opacity-60 border-fuchsia-500'
-          : stepNumber === currentStep
+          : stepNumber === currentStep - 1
           ? 'bg-fuchsia-500 bg-opacity-20 border-fuchsia-500'
           : 'border-white border-opacity-30'
       }`;
     const activeLine = `${
-      stepNumber < currentStep
+      stepNumber < currentStep - 1
         ? 'bg-fuchsia-500 bg-opacity-60'
         : 'bg-white bg-opacity-30'
     }`;
@@ -40,7 +40,7 @@ export const StepperReplies = ({
       <React.Fragment key={stepNumber}>
         <Link
           className={`${baseCSS} ${activeStep} `}
-          href={Utils.encodePostUri((window.location.href = url || rootParent))}
+          href={Utils.encodePostUri(url)}
         >
           {isFirstStep ? (
             <Icon.ArrowLeft size="16" />
@@ -54,8 +54,8 @@ export const StepperReplies = ({
   };
 
   const stepComponents = [
-    renderStep(0, rootParent),
-    ...urls.map((url, index) => renderStep(index + 1, url)),
+    ...urls.map((url, index) => renderStep(index, url)),
+    renderStep(urls.length, postUri),
   ];
 
   const numberOfSteps = urls.length + 1;

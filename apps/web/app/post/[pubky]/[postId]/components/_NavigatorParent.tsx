@@ -94,8 +94,8 @@ export default function NavigatorParent({ replies }: { replies: IReply }) {
   return (
     <Content.StepperReplies
       className="mb-4"
-      rootParent={parentURIs[0]}
-      urls={parentURIs}
+      postUri={replies.post.uri}
+      urls={parentURIs.slice().reverse()}
     />
   );
 }
