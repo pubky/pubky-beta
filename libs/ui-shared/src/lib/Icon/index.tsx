@@ -12,6 +12,7 @@ import {
 import { Tag } from './_Commerce';
 import {
   Pencil,
+  Ellipse,
   PencilLine,
   Stack,
   GridFour,
@@ -118,6 +119,7 @@ export const Icon = {
   DotsThreeOutline,
   Envelope,
   Eye,
+  Ellipse,
   File,
   FileText,
   France,

@@ -5,6 +5,7 @@ import { Main } from './_Main';
 import { MainBg } from './_MainBg';
 import { Profile } from './_Profile';
 import { Stepper } from './_Stepper';
+import { StepperReplies } from './_StepperReplies';
 
 export const Content = {
   Divider,
@@ -14,4 +15,5 @@ export const Content = {
   MainBg,
   Profile,
   Stepper,
+  StepperReplies,
 };

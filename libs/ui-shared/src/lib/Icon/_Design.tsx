@@ -37,6 +37,18 @@ export const Pencil = ({ size = '48', color = 'white' }: IconProps) => (
   </svg>
 );
 
+export const Ellipse = ({ size = '16', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="8" cy="8" r="7.5" stroke={color} />
+  </svg>
+);
+
 export const PencilLine = ({ size = '32', color = 'white' }: IconProps) => (
   <svg
     width={size}
