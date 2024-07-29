@@ -16,21 +16,17 @@ export default function NotificationTagPostGroup({
 }: NotificationTagPostGroupProps) {
   const { getUser } = useClientContext();
   const [user, setUser] = useState<IUserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        setLoading(true);
         const userProfile = await getUser(notifications[0].body.taggedBy!);
         if (userProfile) {
           setUser(userProfile);
         }
       } catch (error) {
         console.log(error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -50,29 +46,27 @@ export default function NotificationTagPostGroup({
           disabled
         />
         <div className="flex gap-2 items-center flex-wrap">
-          {loading ? (
+          {!user ? (
             <Typography.Body variant="medium-bold">Loading...</Typography.Body>
           ) : (
-            user && (
-              <Link
-                href={`/profile/${user.userId}`}
-                className="flex gap-2 items-center"
+            <Link
+              href={`/profile/${user.userId}`}
+              className="flex gap-2 items-center"
+            >
+              <Image
+                width={32}
+                height={32}
+                className="w-[32px] h-[32px] rounded-full"
+                alt="user-pic"
+                src={user.profile.image || '/images/Userpic.png'}
+              />
+              <Typography.Body
+                className="hover:underline hover:decoration-solid"
+                variant="medium-bold"
               >
-                <Image
-                  width={32}
-                  height={32}
-                  className="w-[32px] h-[32px] rounded-full"
-                  alt="user-pic"
-                  src={user.profile.image || '/images/Userpic.png'}
-                />
-                <Typography.Body
-                  className="hover:underline hover:decoration-solid"
-                  variant="medium-bold"
-                >
-                  {Utils.minifyText(user.profile.name, 20)}
-                </Typography.Body>
-              </Link>
-            )
+                {Utils.minifyText(user.profile.name, 20)}
+              </Typography.Body>
+            </Link>
           )}
           <Typography.Body variant="medium-bold" className="text-opacity-50">
             tagged your post as

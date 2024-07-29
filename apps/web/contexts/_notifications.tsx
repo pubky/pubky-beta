@@ -56,43 +56,58 @@ const mergeConsecutiveNotifications = (
     };
 
     if (notification.type === 'follow') {
+      const alreadyFollowing = currentFollowNotifications.some(
+        (n) => n.body.followedBy === notification.body.followedBy
+      );
+
       if (
+        !alreadyFollowing &&
         currentFollowNotifications.length > 0 &&
         notification.timestamp -
           currentFollowNotifications[currentFollowNotifications.length - 1]
             .timestamp <=
-          10000
+          3600000
       ) {
         currentFollowNotifications.push(notification);
-      } else {
+      } else if (!alreadyFollowing) {
         addCurrentNotifications();
         currentFollowNotifications = [notification];
       }
     } else if (notification.type === 'new_friend') {
+      const alreadyNewFriend = currentNewFriendNotifications.some(
+        (n) => n.body.followedBy === notification.body.followedBy
+      );
+
       if (
+        !alreadyNewFriend &&
         currentNewFriendNotifications.length > 0 &&
         notification.timestamp -
           currentNewFriendNotifications[
             currentNewFriendNotifications.length - 1
           ].timestamp <=
-          10000
+          3600000
       ) {
         currentNewFriendNotifications.push(notification);
-      } else {
+      } else if (!alreadyNewFriend) {
         addCurrentNotifications();
         currentNewFriendNotifications = [notification];
       }
     } else if (notification.type === 'lost_friend') {
+      const alreadyLostFriend = currentLostFriendNotifications.some(
+        (n) => n.body.unfollowedBy === notification.body.unfollowedBy
+      );
+
       if (
+        !alreadyLostFriend &&
         currentLostFriendNotifications.length > 0 &&
         notification.timestamp -
           currentLostFriendNotifications[
             currentLostFriendNotifications.length - 1
           ].timestamp <=
-          10000
+          3600000
       ) {
         currentLostFriendNotifications.push(notification);
-      } else {
+      } else if (!alreadyLostFriend) {
         addCurrentNotifications();
         currentLostFriendNotifications = [notification];
       }
@@ -104,7 +119,7 @@ const mergeConsecutiveNotifications = (
           currentTagProfileNotifications[
             currentTagProfileNotifications.length - 1
           ].timestamp <=
-          10000
+          3600000
       ) {
         currentTagProfileNotifications.push(notification);
       } else {
@@ -120,7 +135,7 @@ const mergeConsecutiveNotifications = (
         notification.timestamp -
           currentTagPostNotifications[currentTagPostNotifications.length - 1]
             .timestamp <=
-          10000
+          3600000
       ) {
         currentTagPostNotifications.push(notification);
       } else {
