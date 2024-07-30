@@ -4,6 +4,7 @@ import Language from './_language';
 import MutedUsers from './_muted';
 import Notifications from './_notifications';
 import PrivacySafety from './_privacy';
+import Wallet from './_wallet';
 
 export const Section = {
   Account,
@@ -12,4 +13,5 @@ export const Section = {
   MutedUsers,
   Notifications,
   PrivacySafety,
+  Wallet,
 };

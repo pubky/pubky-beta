@@ -3,6 +3,7 @@ import CheckLink from './_CheckLink';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
 import DeletePost from './_DeletePost';
+import LNAddress from './_LNAddress';
 import Link from './_Link';
 import Logout from './_Logout';
 import ProfileTag from './_ProfileTag';
@@ -20,6 +21,7 @@ export const Modal = {
   CreatePost,
   CreateReply,
   DeletePost,
+  LNAddress,
   Link,
   Logout,
   ProfileTag,

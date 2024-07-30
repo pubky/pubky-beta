@@ -79,6 +79,7 @@ export interface TClientContext {
   ) => Promise<IProfile | undefined>;
   searchTags: string[];
   updateStatus: (value: TStatus | string) => Promise<void>;
+  updateLNAddress: (value: string) => Promise<void>;
   setSeed: (seed: Seed | null) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPosts: any;
@@ -152,6 +153,7 @@ export interface IProfile {
   image: string;
   links: ILink[];
   status?: TStatus;
+  ln_address?: string;
 }
 
 export interface IAuthor {

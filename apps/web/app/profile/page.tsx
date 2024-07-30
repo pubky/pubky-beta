@@ -10,6 +10,7 @@ import { Profile } from './components';
 export default function Index() {
   const { pubky, getUserIndexed } = useClientContext();
   const [status, setStatus] = useState<TStatus | undefined>();
+  const [lnAddress, setLnAddress] = useState<string>();
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('');
   const [handler, setHandler] = useState('');
@@ -31,6 +32,7 @@ export default function Index() {
         setPic(userProfile.profile?.image || '/images/Userpic.png');
         setName(userProfile.profile?.name || 'Loading...');
         setHandler(pubky);
+        setLnAddress(userProfile.profile.ln_address);
         setStatus(userProfile.profile?.status);
         setCountPosts(userProfile.postsCount);
         setCountContacts({
@@ -61,6 +63,7 @@ export default function Index() {
             username={name}
             pubkey={handler}
             status={status}
+            lnAddress={lnAddress}
           />
         </Content.Grid>
       </div>

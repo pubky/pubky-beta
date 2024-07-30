@@ -19,6 +19,7 @@ export default function Index({
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [status, setStatus] = useState<TStatus | undefined>();
+  const [lnAddress, setLnAddress] = useState<string>();
   const [name, setName] = useState('');
   const [handler, setHandler] = useState('');
   const [countPosts, setCountPosts] = useState<number>();
@@ -40,6 +41,7 @@ export default function Index({
         setPic(userProfile.profile?.image || '/images/Userpic.png');
         setName(userProfile.profile?.name || 'Loading...');
         setHandler(creatorPubky);
+        setLnAddress(userProfile.profile.ln_address);
         setStatus(userProfile.profile?.status);
         setCountPosts(userProfile.postsCount);
         setCountContacts({
@@ -76,6 +78,7 @@ export default function Index({
                 pubkey={handler}
                 creatorPubky={creatorPubky}
                 status={status}
+                lnAddress={lnAddress}
               />
             </Content.Grid>
           </div>

@@ -14,6 +14,7 @@ interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   pubkey: string;
   creatorPubky?: string | null;
   status?: TStatus;
+  lnAddress?: string;
 }
 
 export default function Handle({
@@ -21,6 +22,7 @@ export default function Handle({
   pubkey,
   creatorPubky,
   status,
+  lnAddress,
   ...rest
 }: HandleProps) {
   const { pubky, seed, follow, unfollow, listFollowers } = useClientContext();
@@ -29,6 +31,7 @@ export default function Handle({
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showLNAddressModal, setShowLNAddressModal] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
@@ -231,6 +234,14 @@ export default function Handle({
             >
               Link
             </Button.Medium>
+            {lnAddress && (
+              <Button.Action
+                size="small"
+                variant="custom"
+                icon={<Icon.Lightning size="16" />}
+                onClick={() => setShowLNAddressModal(true)}
+              />
+            )}
             <div className="relative">
               {showProfileMenu && (
                 <Tooltip.ProfileMenu
@@ -291,6 +302,11 @@ export default function Handle({
       <Modal.Logout
         showModalLogout={showModalLogout}
         setShowModalLogout={setShowModalLogout}
+      />
+      <Modal.LNAddress
+        showModal={showLNAddressModal}
+        setShowModal={setShowLNAddressModal}
+        lnAddress={lnAddress}
       />
     </div>
   );

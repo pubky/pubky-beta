@@ -62,6 +62,7 @@ import {
   DotsThreeVertical,
   DotsThreeOutline,
   SignOut,
+  Wallet,
 } from './_System';
 import {
   Android,
@@ -101,7 +102,7 @@ import {
   Envelope,
 } from './_Communication';
 import { Activity } from './_Health';
-import { Fire } from './_Weather';
+import { Fire, Lightning } from './_Weather';
 import { Key, Lock, Warning, Shield, Question } from './_Security';
 import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether } from './_Tag';
 
@@ -162,6 +163,7 @@ export const Icon = {
   List,
   ListBullets,
   ListNumbers,
+  Lightning,
   LoadingSpin,
   Lock,
   MagnifyingGlass,
@@ -210,6 +212,7 @@ export const Icon = {
   UserPlus,
   UserCircle,
   UserRectangle,
+  Wallet,
   Warning,
   Youtube,
   X,
