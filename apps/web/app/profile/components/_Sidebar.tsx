@@ -132,7 +132,6 @@ export default function Sidebar({
   const checkLink = Utils.storage.get('checkLink');
   const [scrolled, setScrolled] = useState(false);
   const signOutButtonRef = useRef(null);
-  const [isSignOutVisible, setIsSignOutVisible] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -270,7 +269,8 @@ export default function Sidebar({
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 300) {
+      console.log(window.scrollY);
+      if (window.scrollY > 700) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -284,30 +284,12 @@ export default function Sidebar({
     };
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (window.scrollY > 500) {
-          setIsSignOutVisible(entry.isIntersecting);
-        }
-      },
-      { threshold: 0 }
-    );
-    if (signOutButtonRef.current) {
-      observer.observe(signOutButtonRef.current);
-    }
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <>
       <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
         <div
           className={`w-full self-start ${
-            isSignOutVisible
-              ? 'border-0 hidden'
-              : 'block sticky top-[120px] border'
+            !scrolled ? 'border' : 'block sticky top-[120px] border'
           } ${
             !scrolled && 'border-0'
           } border-white border-opacity-10 z-20 rounded-2xl px-3 py-4`}
