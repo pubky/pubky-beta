@@ -12,11 +12,9 @@ export default function Wallet() {
   const [loading, setLoading] = useState(true);
 
   const handleSubmit = () => {
-    if (lnAddress) {
-      updateLNAddress(lnAddress);
-      setContent('Lightning Address added successfully!');
-      setShow(true);
-    }
+    updateLNAddress(lnAddress);
+    setContent('Lightning Address added successfully!');
+    setShow(true);
   };
 
   async function fetchProfile() {
@@ -60,14 +58,12 @@ export default function Wallet() {
               setLnAddress(e.target.value);
             }}
             action={
-              lnAddress && (
-                <div
-                  className="rounded-full p-2 bg-white bg-opacity-10 hover:bg-opacity-20 cursor-pointer"
-                  onClick={() => handleSubmit()}
-                >
-                  <Icon.Plus size="16" />
-                </div>
-              )
+              <div
+                className="rounded-full p-2 bg-white bg-opacity-10 hover:bg-opacity-20 cursor-pointer"
+                onClick={() => handleSubmit()}
+              >
+                <Icon.Plus size="16" />
+              </div>
             }
           />
         )}
