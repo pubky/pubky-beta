@@ -593,7 +593,7 @@ export default function Sidebar({
               </div>
             </div>
           )}
-          <div ref={signOutButtonRef} />
+          <div className="mt-[300px]" ref={signOutButtonRef} />
         </div>
       </div>
       <Modal.CheckLink
