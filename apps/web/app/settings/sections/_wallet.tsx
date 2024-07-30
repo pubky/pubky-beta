@@ -18,6 +18,13 @@ export default function Wallet() {
   };
 
   const handleSubmit = () => {
+    if (lnAddress === '') {
+      updateLNAddress('');
+      setContent('Lightning Address removed');
+      setShow(true);
+      setError(false);
+      return;
+    }
     if (!validateLNAddress(lnAddress)) {
       setError(true);
       return;
