@@ -10,11 +10,22 @@ export default function Wallet() {
   const [profile, setProfile] = useState<IUserProfile>();
   const [lnAddress, setLnAddress] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const validateLNAddress = (address: string) => {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(address);
+  };
 
   const handleSubmit = () => {
+    if (!validateLNAddress(lnAddress)) {
+      setError(true);
+      return;
+    }
     updateLNAddress(lnAddress);
     setContent('Lightning Address added successfully!');
     setShow(true);
+    setError(false);
   };
 
   async function fetchProfile() {
@@ -36,6 +47,12 @@ export default function Wallet() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
     <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
@@ -53,10 +70,13 @@ export default function Wallet() {
           <Input.Text
             className="h-[70px]"
             placeholder={'Add lightning address'}
+            onKeyDown={handleKeyDown}
             defaultValue={profile?.profile.ln_address}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setLnAddress(e.target.value);
+              if (error) setError(false);
             }}
+            error={error ? 'Invalid lightning address' : ''}
             action={
               <div
                 className="rounded-full p-2 bg-white bg-opacity-10 hover:bg-opacity-20 cursor-pointer"
