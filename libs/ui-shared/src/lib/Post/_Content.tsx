@@ -244,24 +244,33 @@ export const Content = ({
       )}
       {githubUrl && <GitHub url={githubUrl} />}
       {fileContents.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div
+          className={`mt-4 grid gap-4 ${
+            fileContents.length === 1
+              ? 'grid-cols-1'
+              : fileContents.length === 2
+              ? 'grid-cols-2'
+              : 'grid-cols-2'
+          }`}
+        >
           {fileContents.map((file, index) => (
             <div
               key={index}
-              className="relative cursor-pointer"
+              className={`relative cursor-pointer ${
+                fileContents.length === 3 && index === 0 ? 'col-span-2' : ''
+              }`}
               onClick={() => openModal(index)}
             >
               <img
                 src={file.urls.main}
                 alt={`Fetched file ${index}`}
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full max-h-[418px] object-cover rounded-lg"
               />
             </div>
           ))}
         </div>
       )}
       {children}
-
       {showModal && fileContents.length > 0 && (
         <FilesCarousel
           fileContents={fileContents}

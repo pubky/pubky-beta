@@ -67,7 +67,7 @@ export default function FilesCarousel({
       <img
         src={fileContents[currentImageIndex].urls.main}
         alt={`Modal view ${currentImageIndex}`}
-        className="w-full h-full object-contain"
+        className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
       />
       <div
         className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
