@@ -13,7 +13,7 @@ import { IFileContent } from '@/types';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string | JSX.Element;
-  fileUri?: string;
+  files?: { [key: string]: { fileId: string; fileUri: string } };
   uri?: string;
   children?: React.ReactNode;
   fullContent?: boolean;
@@ -31,7 +31,7 @@ const tagsIcons: { [key: string]: JSX.Element } = {
 
 export const Content = ({
   children,
-  fileUri = '',
+  files,
   uri = '',
   text,
   fullContent = false,
@@ -42,7 +42,7 @@ export const Content = ({
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
-  const [file, setFile] = useState<IFileContent>();
+  const [fileContents, setFileContents] = useState<IFileContent[]>([]);
 
   function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -87,17 +87,23 @@ export const Content = ({
   }, [text]);
 
   useEffect(() => {
-    const fetchFile = async () => {
-      if (fileUri) {
-        const fetchedFile = await getFile(fileUri);
-        if (fetchedFile) {
-          setFile(fetchedFile);
-        }
+    const fetchFiles = async () => {
+      if (files) {
+        const fileUris = Object.values(files).map((file) => file.fileUri);
+        const fetchedFiles = await Promise.all(
+          fileUris.map(async (fileUri) => {
+            const fetchedFile = await getFile(fileUri);
+            return fetchedFile ? fetchedFile : null;
+          })
+        );
+        setFileContents(
+          fetchedFiles.filter((file) => file !== null) as IFileContent[]
+        );
       }
     };
 
-    fetchFile();
-  }, [fileUri, getFile]);
+    fetchFiles();
+  }, [files, getFile]);
 
   const watchers = [
     {
@@ -229,13 +235,17 @@ export const Content = ({
         </div>
       )}
       {githubUrl && <GitHub url={githubUrl} />}
-      {file && (
-        <div className="mt-4">
-          <img
-            src={file.urls.main}
-            alt="Fetched file"
-            className="max-w-full max-h-[216px] rounded-lg"
-          />
+      {fileContents.length > 0 && (
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
+          {fileContents.map((file, index) => (
+            <div key={index} className="relative">
+              <img
+                src={file.urls.main}
+                alt={`Fetched file ${index}`}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+          ))}
         </div>
       )}
       {children}

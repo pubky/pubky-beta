@@ -52,7 +52,7 @@ export default function ReplyForm({
   const [sendingReply, setSendingReply] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -119,7 +119,7 @@ export default function ReplyForm({
   const handleReply = async (content: string) => {
     setSendingReply(true);
     const rootUri = post.post.root ? post.post.root : uri;
-    const sendReply = await createReply(content, uri, rootUri, selectedFile);
+    const sendReply = await createReply(content, uri, rootUri, selectedFiles);
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
@@ -131,7 +131,7 @@ export default function ReplyForm({
       setSendingReply(false);
       setContentReply('');
       setArrayTags([]);
-      setSelectedFile(null);
+      setSelectedFiles([]);
       updatePost();
     }
   };
@@ -208,8 +208,15 @@ export default function ReplyForm({
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
-    setSelectedFile(file);
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files).slice(0, 3 - selectedFiles.length);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   return (
@@ -279,19 +286,23 @@ export default function ReplyForm({
                     )}
                   </div>
                   <LinkPreviewer content={contentReply} />
-                  {selectedFile && (
-                    <div className="relative mt-4">
-                      <div
-                        onClick={() => setSelectedFile(null)}
-                        className="absolute top-2.5 left-2.5 w-12 h-12 p-3 bg-[#05050a] bg-opacity-50 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
-                      >
-                        <Icon.Trash size="24" />
-                      </div>
-                      <img
-                        src={URL.createObjectURL(selectedFile)}
-                        alt="Selected file"
-                        className="max-w-full max-h-[216px] rounded-lg"
-                      />
+                  {selectedFiles.length > 0 && (
+                    <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {selectedFiles.map((file, index) => (
+                        <div key={index} className="relative">
+                          <div
+                            onClick={() => removeFile(index)}
+                            className="absolute top-2.5 right-2.5 w-12 h-12 p-3 bg-[#05050a] bg-opacity-50 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
+                          >
+                            <Icon.Trash size="24" />
+                          </div>
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={`Selected file ${index + 1}`}
+                            className="max-w-full max-h-[216px] rounded-lg"
+                          />
+                        </div>
+                      ))}
                     </div>
                   )}
                 </Post.Content>
@@ -368,10 +379,11 @@ export default function ReplyForm({
                       accept="image/*"
                       className="hidden"
                       onChange={handleFileChange}
+                      multiple
                     />
                   </Button.Action>
                   <Button.Medium
-                    className="w-[158px]"
+                    className="w-auto"
                     variant="line"
                     icon={
                       <Icon.ChatCircleText

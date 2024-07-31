@@ -32,17 +32,17 @@ export interface TClientContext {
   getProfile: () => Promise<IProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string, file?: File | null) => Promise<IPost | null>;
+  createPost: (content: string, files?: File[]) => Promise<IPost | null>;
   createRepost: (
     uri: string,
     content?: string,
-    file?: File | null
+    file?: File[]
   ) => Promise<IPost | null>;
   createReply: (
     content: string,
     uriPost: string,
     rootUri: string,
-    file?: File | null
+    file?: File[]
   ) => Promise<ICreateReplyResponse | null>;
   getFile: (uri: string) => Promise<IFileContent | null>;
   deleteFile: (id: string) => Promise<boolean>;
@@ -172,8 +172,7 @@ export interface IPostContent {
   parent?: string;
   root?: string;
   embed?: EmbedContent;
-  fileUri?: string;
-  fileId?: string;
+  files?: { [key: string]: { fileId: string; fileUri: string } };
 }
 
 export interface IFileContent {

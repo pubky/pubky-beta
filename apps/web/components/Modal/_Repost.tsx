@@ -54,7 +54,7 @@ export default function Repost({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -146,7 +146,7 @@ export default function Repost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newRepost = await createRepost(post.uri, content, selectedFile);
+      const newRepost = await createRepost(post.uri, content, selectedFiles);
 
       if (newRepost) {
         for (const tag of updatedTags) {
@@ -161,7 +161,7 @@ export default function Repost({
       setArrayTags([]);
       setContentRepost('');
       setShowModalRepost(false);
-      setSelectedFile(null);
+      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {
@@ -213,8 +213,15 @@ export default function Repost({
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
-    setSelectedFile(file);
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files).slice(0, 3 - selectedFiles.length);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   return (
@@ -301,19 +308,23 @@ export default function Repost({
                 )}
               </div>
               <LinkPreviewer content={contentRepost} />
-              {selectedFile && (
-                <div className="relative mt-4">
-                  <div
-                    onClick={() => setSelectedFile(null)}
-                    className="absolute top-2.5 right-2.5 w-12 h-12 p-3 bg-[#05050a] bg-opacity-50 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
-                  >
-                    <Icon.Trash size="24" />
-                  </div>
-                  <img
-                    src={URL.createObjectURL(selectedFile)}
-                    alt="Selected file"
-                    className="max-w-full max-h-[216px] rounded-lg"
-                  />
+              {selectedFiles.length > 0 && (
+                <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {selectedFiles.map((file, index) => (
+                    <div key={index} className="relative">
+                      <div
+                        onClick={() => removeFile(index)}
+                        className="absolute top-2.5 right-2.5 w-12 h-12 p-3 bg-[#05050a] bg-opacity-50 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
+                      >
+                        <Icon.Trash size="24" />
+                      </div>
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Selected file ${index + 1}`}
+                        className="max-w-full max-h-[216px] rounded-lg"
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
               <Post post={post} repostView className="mt-2" />
@@ -395,10 +406,11 @@ export default function Repost({
               accept="image/*"
               className="hidden"
               onChange={handleFileChange}
+              multiple
             />
           </Button.Action>
           <Button.Medium
-            className="w-[158px]"
+            className="w-auto"
             variant="line"
             icon={<Icon.Repost color="white" />}
             loading={sendingRepost}
