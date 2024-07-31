@@ -268,13 +268,13 @@ export const Content = ({
                   <video
                     src={file.urls.main}
                     controls
-                    className="w-auto h-auto max-w-full max-h-[418px] object-cover rounded-lg"
+                    className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                   />
                 ) : (
                   <img
                     src={file.urls.main}
                     alt={`Fetched file ${index}`}
-                    className="w-auto h-auto max-w-full max-h-[418px] object-cover rounded-lg"
+                    className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                   />
                 )}
               </div>
