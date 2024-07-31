@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -24,6 +23,7 @@ import Partecipants from './_Partecipants';
 import { IReply } from '@/types';
 import { useRouter } from 'next/navigation';
 import Replies from './_Replies';
+import FilePreview from '@/components/FilePreview';
 
 export default function ReplyForm({
   uri,
@@ -289,19 +289,12 @@ export default function ReplyForm({
                   {selectedFiles.length > 0 && (
                     <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                       {selectedFiles.map((file, index) => (
-                        <div key={index} className="relative">
-                          <div
-                            onClick={() => removeFile(index)}
-                            className="cursor-pointer absolute top-2.5 right-2.5 w-10 h-10 p-3 bg-[#05050a] bg-opacity-50 hover:bg-opacity-30 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
-                          >
-                            <Icon.Trash size="20" />
-                          </div>
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt={`Selected file ${index + 1}`}
-                            className="max-w-full max-h-[216px] rounded-lg"
-                          />
-                        </div>
+                        <FilePreview
+                          key={index}
+                          file={file}
+                          index={index}
+                          removeFile={removeFile}
+                        />
                       ))}
                     </div>
                   )}
