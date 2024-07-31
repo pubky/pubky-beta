@@ -10,6 +10,7 @@ import getYouTubeID from 'get-youtube-id';
 import { Icon } from '../Icon';
 import { useClientContext } from '../../../../../apps/web/contexts/_client';
 import { IFileContent } from '@/types';
+import FilesCarousel from '../../../../../apps/web/components/Modal/_FilesCarousel';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string | JSX.Element;
@@ -43,6 +44,8 @@ export const Content = ({
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [fileContents, setFileContents] = useState<IFileContent[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -104,6 +107,11 @@ export const Content = ({
 
     fetchFiles();
   }, [files, getFile]);
+
+  const openModal = (index: number) => {
+    setCurrentImageIndex(index);
+    setShowModal(true);
+  };
 
   const watchers = [
     {
@@ -238,7 +246,11 @@ export const Content = ({
       {fileContents.length > 0 && (
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
           {fileContents.map((file, index) => (
-            <div key={index} className="relative">
+            <div
+              key={index}
+              className="relative cursor-pointer"
+              onClick={() => openModal(index)}
+            >
               <img
                 src={file.urls.main}
                 alt={`Fetched file ${index}`}
@@ -249,6 +261,16 @@ export const Content = ({
         </div>
       )}
       {children}
+
+      {showModal && fileContents.length > 0 && (
+        <FilesCarousel
+          fileContents={fileContents}
+          currentImageIndex={currentImageIndex}
+          setCurrentImageIndex={setCurrentImageIndex}
+          showModal={showModal}
+          setShowModal={setShowModal}
+        />
+      )}
     </div>
   );
 };

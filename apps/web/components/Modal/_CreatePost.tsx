@@ -338,9 +338,9 @@ export default function CreatePost({
                     <div key={index} className="relative">
                       <div
                         onClick={() => removeFile(index)}
-                        className="absolute top-2.5 right-2.5 w-12 h-12 p-3 bg-[#05050a] bg-opacity-50 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
+                        className="cursor-pointer absolute top-2.5 right-2.5 w-10 h-10 p-3 bg-[#05050a] bg-opacity-50 hover:bg-opacity-30 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
                       >
-                        <Icon.Trash size="24" />
+                        <Icon.Trash size="20" />
                       </div>
                       <img
                         src={URL.createObjectURL(file)}
