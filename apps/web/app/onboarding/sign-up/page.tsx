@@ -298,13 +298,13 @@ export default function Index() {
               icon={
                 <Icon.LinkSimple
                   size="16"
-                  color={links.length > 4 ? 'gray' : 'white'}
+                  color={links.length > 3 ? 'gray' : 'white'}
                 />
               }
               onClick={
-                links.length > 4 ? undefined : () => setShowModalLink(true)
+                links.length > 3 ? undefined : () => setShowModalLink(true)
               }
-              disabled={links.length > 4}
+              disabled={links.length > 3}
             >
               Add link
             </Button.Transparent>

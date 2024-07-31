@@ -32,37 +32,37 @@ const socialLinks = [
   {
     name: 'Discord',
     url: 'https://discord.gg/',
-    icon: <Icon.Link size="16" />,
+    icon: <Icon.Discord size="16" />,
   },
   {
     name: 'Instagram',
     url: 'https://instagram.com/@',
-    icon: <Icon.Link size="16" />,
+    icon: <Icon.Instagram size="16" />,
   },
   {
     name: 'Facebook',
     url: 'https://facebook.com/',
-    icon: <Icon.Link size="16" />,
+    icon: <Icon.Facebook size="16" />,
   },
   {
     name: 'LinkedIn',
     url: 'https://linkedin.com/in/',
-    icon: <Icon.Link size="16" />,
+    icon: <Icon.LinkedIn size="16" />,
   },
   {
     name: 'Github',
     url: 'https://github.com/',
-    icon: <Icon.Link size="16" />,
+    icon: <Icon.Github size="16" />,
   },
   {
     name: 'Calendly',
     url: 'https://calendly.com/',
-    icon: <Icon.Link size="16" />,
+    icon: <Icon.Calendly size="16" />,
   },
   {
-    name: 'Vimeo',
-    url: 'https://vimeo.com/',
-    icon: <Icon.Link size="16" />,
+    name: 'Medium',
+    url: 'https://medium.com/@',
+    icon: <Icon.Medium size="16" />,
   },
   {
     name: 'Youtube',
@@ -72,22 +72,17 @@ const socialLinks = [
   {
     name: 'Twitch',
     url: 'https://twitch.tv/',
-    icon: <Icon.Link size="16" />,
-  },
-  {
-    name: 'Pinterest',
-    url: 'https://pinterest.com/',
-    icon: <Icon.Link size="16" />,
+    icon: <Icon.Twitch size="16" />,
   },
   {
     name: 'TikTok',
     url: 'https://tiktok.com/@',
-    icon: <Icon.Link size="16" />,
+    icon: <Icon.TikTok size="16" />,
   },
   {
     name: 'Spotify',
     url: 'https://spotify.com/user/',
-    icon: <Icon.Link size="16" />,
+    icon: <Icon.Spotify size="16" />,
   },
 ];
 
