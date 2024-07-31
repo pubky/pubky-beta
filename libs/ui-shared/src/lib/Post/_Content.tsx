@@ -264,7 +264,7 @@ export const Content = ({
               <img
                 src={file.urls.main}
                 alt={`Fetched file ${index}`}
-                className="w-full max-h-[418px] object-cover rounded-lg"
+                className="w-auto h-auto max-w-full max-h-[418px] object-cover rounded-lg"
               />
             </div>
           ))}
