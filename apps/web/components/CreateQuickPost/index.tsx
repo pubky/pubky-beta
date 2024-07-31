@@ -415,7 +415,7 @@ export default function CreateQuickPost({
               <input
                 id="fileInput"
                 type="file"
-                accept="image/*"
+                accept="image/*,video/*"
                 className="hidden"
                 onChange={handleFileChange}
                 multiple

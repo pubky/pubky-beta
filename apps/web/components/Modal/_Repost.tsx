@@ -396,7 +396,7 @@ export default function Repost({
             <input
               id="fileInput"
               type="file"
-              accept="image/*"
+              accept="image/*,video/*"
               className="hidden"
               onChange={handleFileChange}
               multiple

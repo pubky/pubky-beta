@@ -13,6 +13,8 @@ const FilePreview: React.FC<FilePreviewProps> = ({
   index,
   removeFile,
 }) => {
+  const isVideo = file.type.startsWith('video');
+
   return (
     <div className="relative">
       <div
@@ -21,11 +23,19 @@ const FilePreview: React.FC<FilePreviewProps> = ({
       >
         <Icon.Trash size="20" />
       </div>
-      <img
-        src={URL.createObjectURL(file)}
-        alt={`Selected file ${index + 1}`}
-        className="max-w-full max-h-[216px] rounded-lg"
-      />
+      {isVideo ? (
+        <video
+          src={URL.createObjectURL(file)}
+          controls
+          className="max-w-full max-h-[216px] rounded-lg"
+        />
+      ) : (
+        <img
+          src={URL.createObjectURL(file)}
+          alt={`Selected file ${index + 1}`}
+          className="max-w-full max-h-[216px] rounded-lg"
+        />
+      )}
     </div>
   );
 };

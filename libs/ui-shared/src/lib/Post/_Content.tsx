@@ -253,21 +253,33 @@ export const Content = ({
               : 'grid-cols-2'
           }`}
         >
-          {fileContents.map((file, index) => (
-            <div
-              key={index}
-              className={`relative cursor-pointer ${
-                fileContents.length === 3 && index === 0 ? 'col-span-2' : ''
-              }`}
-              onClick={() => openModal(index)}
-            >
-              <img
-                src={file.urls.main}
-                alt={`Fetched file ${index}`}
-                className="w-auto h-auto max-w-full max-h-[418px] object-cover rounded-lg"
-              />
-            </div>
-          ))}
+          {fileContents.map((file, index) => {
+            const isVideo = file.contentType.startsWith('video');
+
+            return (
+              <div
+                key={index}
+                className={`relative cursor-pointer ${
+                  fileContents.length === 3 && index === 0 ? 'col-span-2' : ''
+                }`}
+                onClick={() => openModal(index)}
+              >
+                {isVideo ? (
+                  <video
+                    src={file.urls.main}
+                    controls
+                    className="w-auto h-auto max-w-full max-h-[418px] object-cover rounded-lg"
+                  />
+                ) : (
+                  <img
+                    src={file.urls.main}
+                    alt={`Fetched file ${index}`}
+                    className="w-auto h-auto max-w-full max-h-[418px] object-cover rounded-lg"
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
       {children}
