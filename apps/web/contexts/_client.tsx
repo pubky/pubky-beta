@@ -80,26 +80,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [posts, setPosts] = useState<INewPost>({} as INewPost);
   const [searchTags, setSearchTags] = useState<string[]>([]);
 
-  {
-    /** const deleteFile = async (fileId: string) => {
-    try {
-      if (!pubky) throw new Error('Pubky required');
-
-      await client.ready();
-
-      const result = await client.social.files.delete(pubky, fileId);
-
-      if (!result.ok) throw new Error(`Delete failed: ${result.error.message}`);
-
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
-  };
-  */
-  }
-
   const updateStatus = async (value: TStatus | string) => {
     try {
       if (!pubky) throw new Error('Pubky required');
@@ -362,6 +342,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       await client.ready();
 
+      let fileId: string | undefined;
       let fileUri: string | undefined;
 
       if (file) {
@@ -377,6 +358,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
             `File upload failed: ${fileUploadResult.error.message}`
           );
         }
+        fileId = fileUploadResult.value.id;
         fileUri = fileUploadResult.value.uri;
       }
 
@@ -384,6 +366,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         content,
       };
 
+      if (fileId) {
+        postPayload.fileId = fileId;
+      }
       if (fileUri) {
         postPayload.fileUri = fileUri;
       }
@@ -428,6 +413,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       await client.ready();
 
+      let fileId: string | undefined;
       let fileUri: string | undefined;
 
       if (file) {
@@ -443,6 +429,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
             `File upload failed: ${fileUploadResult.error.message}`
           );
         }
+        fileId = fileUploadResult.value.id;
         fileUri = fileUploadResult.value.uri;
       }
 
@@ -454,6 +441,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         },
       };
 
+      if (fileId) {
+        postPayload.fileId = fileId;
+      }
       if (fileUri) {
         repostPayload.fileUri = fileUri;
       }
@@ -499,6 +489,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       await client.ready();
 
+      let fileId: string | undefined;
       let fileUri: string | undefined;
 
       if (file) {
@@ -514,6 +505,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
             `File upload failed: ${fileUploadResult.error.message}`
           );
         }
+        fileId = fileUploadResult.value.id;
         fileUri = fileUploadResult.value.uri;
       }
 
@@ -523,6 +515,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         root: rootUri,
       };
 
+      if (fileId) {
+        postPayload.fileId = fileId;
+      }
       if (fileUri) {
         replyPayload.fileUri = fileUri;
       }
@@ -552,6 +547,23 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.log(error);
       return null;
+    }
+  };
+
+  const deleteFile = async (id: string) => {
+    try {
+      if (!pubky) throw new Error('Pubky required');
+
+      await client.ready();
+
+      const result = await client.social.files.delete(pubky, id);
+
+      if (!result.ok) throw new Error(`Delete failed: ${result.error.message}`);
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   };
 
@@ -1084,6 +1096,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         createRepost,
         createReply,
         getFile,
+        deleteFile,
         getReplies,
         getNotifications,
         createBookmark,

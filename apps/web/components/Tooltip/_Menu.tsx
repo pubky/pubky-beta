@@ -23,6 +23,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     createBookmark,
     deleteBookmark,
     deletePost,
+    deleteFile,
   } = useClientContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
@@ -128,6 +129,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   };
 
   const handleDeletePost = async () => {
+    if (post?.post?.fileId) await deleteFile(post.post.fileId);
     const result = await deletePost(post?.id);
     if (result) {
       setContent('Post deleted successfully');

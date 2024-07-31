@@ -45,6 +45,7 @@ export interface TClientContext {
     file?: File | null
   ) => Promise<ICreateReplyResponse | null>;
   getFile: (uri: string) => Promise<IFileContent | null>;
+  deleteFile: (id: string) => Promise<boolean>;
   getReplies: (uri: string) => Promise<IReply | null>;
   deletePost: (postId: string) => Promise<IDeletePost | null>;
   createBookmark: (id: string, uri: string) => Promise<IBookmark | null>;
@@ -172,6 +173,7 @@ export interface IPostContent {
   root?: string;
   embed?: EmbedContent;
   fileUri?: string;
+  fileId?: string;
 }
 
 export interface IFileContent {
