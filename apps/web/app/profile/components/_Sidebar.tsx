@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Icon,
   Typography,
@@ -131,7 +131,6 @@ export default function Sidebar({
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const checkLink = Utils.storage.get('checkLink');
   const [scrolled, setScrolled] = useState(false);
-  const signOutButtonRef = useRef(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -269,7 +268,7 @@ export default function Sidebar({
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 700) {
+      if (window.scrollY > 1100) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -288,7 +287,7 @@ export default function Sidebar({
       <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
         <div
           className={`w-full self-start ${
-            !scrolled ? 'border' : 'block sticky top-[120px] border'
+            !scrolled ? 'border hidden' : 'block sticky top-[120px] border'
           } ${
             !scrolled && 'border-0'
           } border-white border-opacity-10 z-20 rounded-2xl px-3 py-4`}
@@ -574,7 +573,6 @@ export default function Sidebar({
               </div>
             </div>
           )}
-          <div className="mt-[300px]" ref={signOutButtonRef} />
         </div>
       </div>
       <Modal.CheckLink
