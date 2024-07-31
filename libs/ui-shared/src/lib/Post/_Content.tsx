@@ -45,7 +45,7 @@ export const Content = ({
   const [githubUrl, setGithubUrl] = useState('');
   const [fileContents, setFileContents] = useState<IFileContent[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentFileIndex, setCurrentFileIndex] = useState(0);
 
   function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -109,7 +109,7 @@ export const Content = ({
   }, [files, getFile]);
 
   const openModal = (index: number) => {
-    setCurrentImageIndex(index);
+    setCurrentFileIndex(index);
     setShowModal(true);
   };
 
@@ -286,8 +286,8 @@ export const Content = ({
       {showModal && fileContents.length > 0 && (
         <FilesCarousel
           fileContents={fileContents}
-          currentImageIndex={currentImageIndex}
-          setCurrentImageIndex={setCurrentImageIndex}
+          currentFileIndex={currentFileIndex}
+          setCurrentFileIndex={setCurrentFileIndex}
           showModal={showModal}
           setShowModal={setShowModal}
         />

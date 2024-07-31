@@ -9,27 +9,27 @@ interface FilesCarouselProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   fileContents: IFileContent[];
-  currentImageIndex: number;
-  setCurrentImageIndex: React.Dispatch<React.SetStateAction<number>>;
+  currentFileIndex: number;
+  setCurrentFileIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function FilesCarousel({
   showModal,
   setShowModal,
   fileContents,
-  currentImageIndex,
-  setCurrentImageIndex,
+  currentFileIndex,
+  setCurrentFileIndex,
 }: FilesCarouselProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const showPreviousImage = () => {
-    setCurrentImageIndex((prevIndex) =>
+  const showPreviousFile = () => {
+    setCurrentFileIndex((prevIndex) =>
       prevIndex === 0 ? fileContents.length - 1 : prevIndex - 1
     );
   };
 
-  const showNextImage = () => {
-    setCurrentImageIndex((prevIndex) =>
+  const showNextFile = () => {
+    setCurrentFileIndex((prevIndex) =>
       prevIndex === fileContents.length - 1 ? 0 : prevIndex + 1
     );
   };
@@ -50,6 +50,9 @@ export default function FilesCarousel({
     };
   }, [modalRef, setShowModal]);
 
+  const currentFile = fileContents[currentFileIndex];
+  const isVideo = currentFile.contentType.startsWith('video');
+
   return (
     <Modal.Root
       show={showModal}
@@ -61,33 +64,33 @@ export default function FilesCarousel({
       {fileContents.length > 1 && (
         <div
           className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
-          onClick={showPreviousImage}
+          onClick={showPreviousFile}
         >
           <Icon.ArrowLeft size="16" />
         </div>
       )}
-      {fileContents[currentImageIndex].contentType.startsWith('video') ? (
+      {isVideo ? (
         <video
-          src={fileContents[currentImageIndex].urls.main}
+          src={currentFile.urls.main}
           controls
           className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
         />
       ) : (
         <img
-          src={fileContents[currentImageIndex].urls.main}
-          alt={`Modal view ${currentImageIndex}`}
+          src={currentFile.urls.main}
+          alt={`Modal view ${currentFileIndex}`}
           className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
         />
       )}
       <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
         <Typography.Body className="text-opacity-80" variant="small">{`${
-          currentImageIndex + 1
+          currentFileIndex + 1
         } / ${fileContents.length}`}</Typography.Body>
       </div>
       {fileContents.length > 1 && (
         <div
           className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
-          onClick={showNextImage}
+          onClick={showNextFile}
         >
           <Icon.ArrowRight size="16" />
         </div>
