@@ -374,16 +374,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       }
 
       const result = await client.social.posts.put(pk, postPayload);
-      const newPosts = JSON.parse(JSON.stringify(posts));
-      if (newPosts && result.value.id) {
-        newPosts[result.value.id] = result.value;
-
-        const updatedPosts = {
-          [result.value.id]: result.value,
-          ...newPosts,
-        };
-        setPosts(updatedPosts);
-      }
 
       if (!result.ok) {
         throw new Error(`Put post:${pk} failed: ${result.error.message}`);
@@ -455,16 +445,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       }
 
       const repostResult = await client.social.posts.get(result.value.uri);
-      const newPosts = JSON.parse(JSON.stringify(posts));
-      if (newPosts && postResult.value.id) {
-        newPosts[postResult.value.id] = postResult.value;
-
-        const updatedPosts = {
-          [postResult.value.id]: postResult.value,
-          ...newPosts,
-        };
-        setPosts(updatedPosts);
-      }
 
       if (!repostResult.ok)
         throw new Error(`Get repost:${pk} failed: ${postResult.error.message}`);
