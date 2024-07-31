@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Icon, Modal } from '@social/ui-shared';
+import { Icon, Modal, Typography } from '@social/ui-shared';
 import { IFileContent } from '@/types';
 
 interface FilesCarouselProps {
@@ -58,23 +58,40 @@ export default function FilesCarousel({
       className="relative w-[60vw] h-[70vh]"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
-      <div
-        className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
-        onClick={showPreviousImage}
-      >
-        <Icon.ArrowLeft size="16" />
+      {fileContents.length > 1 && (
+        <div
+          className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
+          onClick={showPreviousImage}
+        >
+          <Icon.ArrowLeft size="16" />
+        </div>
+      )}
+      {fileContents[currentImageIndex].contentType.startsWith('video') ? (
+        <video
+          src={fileContents[currentImageIndex].urls.main}
+          controls
+          className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
+        />
+      ) : (
+        <img
+          src={fileContents[currentImageIndex].urls.main}
+          alt={`Modal view ${currentImageIndex}`}
+          className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
+        />
+      )}
+      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+        <Typography.Body className="text-opacity-80" variant="small">{`${
+          currentImageIndex + 1
+        } / ${fileContents.length}`}</Typography.Body>
       </div>
-      <img
-        src={fileContents[currentImageIndex].urls.main}
-        alt={`Modal view ${currentImageIndex}`}
-        className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
-      />
-      <div
-        className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
-        onClick={showNextImage}
-      >
-        <Icon.ArrowRight size="16" />
-      </div>
+      {fileContents.length > 1 && (
+        <div
+          className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
+          onClick={showNextImage}
+        >
+          <Icon.ArrowRight size="16" />
+        </div>
+      )}
     </Modal.Root>
   );
 }
