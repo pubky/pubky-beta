@@ -9,9 +9,11 @@ import { GitHub } from '../Preview/Github';
 import getYouTubeID from 'get-youtube-id';
 import { Icon } from '../Icon';
 import { useClientContext } from '../../../../../apps/web/contexts/_client';
+import { IFileContent } from '@/types';
 
 interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string | JSX.Element;
+  fileUri?: string;
   uri?: string;
   children?: React.ReactNode;
   fullContent?: boolean;
@@ -29,16 +31,18 @@ const tagsIcons: { [key: string]: JSX.Element } = {
 
 export const Content = ({
   children,
+  fileUri = '',
   uri = '',
   text,
   fullContent = false,
   largeView = false,
 }: ContentProps) => {
-  const { getUserIndexed } = useClientContext();
+  const { getUserIndexed, getFile } = useClientContext();
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
+  const [file, setFile] = useState<IFileContent>();
 
   function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -81,6 +85,19 @@ export const Content = ({
       });
     }
   }, [text]);
+
+  useEffect(() => {
+    const fetchFile = async () => {
+      if (fileUri) {
+        const fetchedFile = await getFile(fileUri);
+        if (fetchedFile) {
+          setFile(fetchedFile);
+        }
+      }
+    };
+
+    fetchFile();
+  }, [fileUri, getFile]);
 
   const watchers = [
     {
@@ -212,6 +229,15 @@ export const Content = ({
         </div>
       )}
       {githubUrl && <GitHub url={githubUrl} />}
+      {file && (
+        <div className="mt-4">
+          <img
+            src={file.urls.main}
+            alt="Fetched file"
+            className="max-w-full max-h-[216px] rounded-lg"
+          />
+        </div>
+      )}
       {children}
     </div>
   );

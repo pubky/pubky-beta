@@ -32,13 +32,19 @@ export interface TClientContext {
   getProfile: () => Promise<IProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string) => Promise<IPost | null>;
-  createRepost: (uri: string, content?: string) => Promise<IPost | null>;
+  createPost: (content: string, file?: File | null) => Promise<IPost | null>;
+  createRepost: (
+    uri: string,
+    content?: string,
+    file?: File | null
+  ) => Promise<IPost | null>;
   createReply: (
     content: string,
     uriPost: string,
-    rootUri: string
+    rootUri: string,
+    file?: File | null
   ) => Promise<ICreateReplyResponse | null>;
+  getFile: (uri: string) => Promise<IFileContent | null>;
   getReplies: (uri: string) => Promise<IReply | null>;
   deletePost: (postId: string) => Promise<IDeletePost | null>;
   createBookmark: (id: string, uri: string) => Promise<IBookmark | null>;
@@ -165,6 +171,25 @@ export interface IPostContent {
   parent?: string;
   root?: string;
   embed?: EmbedContent;
+  fileUri?: string;
+}
+
+export interface IFileContent {
+  contentType: string;
+  createdAt: number;
+  id: string;
+  indexedAt: number;
+  metadata: Record<string, string>;
+  owner: {
+    id: string;
+    uri: string;
+  };
+  size: number;
+  src: string;
+  uri: string;
+  urls: {
+    main: string;
+  };
 }
 
 export interface EmbedContent {

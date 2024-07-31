@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import {
@@ -46,6 +47,7 @@ export default function CreateQuickPost({
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -138,7 +140,8 @@ export default function CreateQuickPost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content);
+      const newPost = await createPost(content, selectedFile);
+
       if (newPost) {
         for (const tag of updatedTags) {
           await createTag(newPost.uri, tag);
@@ -177,6 +180,7 @@ export default function CreateQuickPost({
       setArrayTags([]);
       setContentPost('');
       setTextArea(false);
+      setSelectedFile(null);
     } catch (error) {
       console.log(error);
     } finally {
@@ -242,6 +246,11 @@ export default function CreateQuickPost({
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
     setContentPost(newText);
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setSelectedFile(file);
   };
 
   return (
@@ -316,6 +325,21 @@ export default function CreateQuickPost({
           )}
         </div>
         <LinkPreviewer content={contentPost} />
+        {selectedFile && (
+          <div className="relative mt-4">
+            <div
+              onClick={() => setSelectedFile(null)}
+              className="absolute top-2.5 right-2.5 w-12 h-12 p-3 bg-[#05050a] bg-opacity-50 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
+            >
+              <Icon.Trash size="24" />
+            </div>
+            <img
+              src={URL.createObjectURL(selectedFile)}
+              alt="Selected file"
+              className="max-w-full max-h-[216px] rounded-lg"
+            />
+          </div>
+        )}
         {(textArea || contentPost || showModalTag || arrayTags.length > 0) && (
           <Post.Actions className="w-full">
             {arrayTags.length > 0 && (
@@ -381,9 +405,17 @@ export default function CreateQuickPost({
             />
             <Button.Action
               variant="custom"
-              disabled
-              icon={<Icon.ImageSquare color={'gray'} size="32" />}
-            />
+              icon={<Icon.ImageSquare size="32" />}
+              onClick={() => document.getElementById('fileInput')?.click()}
+            >
+              <input
+                id="fileInput"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </Button.Action>
             <Button.Medium
               className="w-[104px]"
               variant="line"

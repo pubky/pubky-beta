@@ -22,6 +22,7 @@ export default function Content({
     >
       <PostUI.Content
         text={post?.post?.content}
+        fileUri={post?.post?.fileUri}
         uri={post?.uri}
         fullContent={fullContent}
         largeView={largeView}

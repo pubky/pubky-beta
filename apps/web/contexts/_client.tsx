@@ -27,6 +27,7 @@ import {
   ICreateRepostResponse,
   IBookmark,
   IRecoveryFileResponse,
+  IFileContent,
 } from '../types';
 
 import Client from '@pubky/sdk';
@@ -78,6 +79,26 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   );
   const [posts, setPosts] = useState<INewPost>({} as INewPost);
   const [searchTags, setSearchTags] = useState<string[]>([]);
+
+  {
+    /** const deleteFile = async (fileId: string) => {
+    try {
+      if (!pubky) throw new Error('Pubky required');
+
+      await client.ready();
+
+      const result = await client.social.files.delete(pubky, fileId);
+
+      if (!result.ok) throw new Error(`Delete failed: ${result.error.message}`);
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+  */
+  }
 
   const updateStatus = async (value: TStatus | string) => {
     try {
@@ -330,7 +351,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const createPost = async (content: string): Promise<IPost | null> => {
+  const createPost = async (
+    content: string,
+    file?: File
+  ): Promise<IPost | null> => {
     try {
       const pk = await isLoggedIn();
 
@@ -338,26 +362,49 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       await client.ready();
 
-      const result = await client.social.posts.put(pk, {
-        content: content,
-      });
+      let fileUri: string | undefined;
+
+      if (file) {
+        const fileContent = await file.arrayBuffer();
+        const fileUploadResult = await client.social.files.upload(pk, {
+          content: Buffer.from(fileContent),
+          contentType: file.type,
+          size: file.size,
+        });
+
+        if (!fileUploadResult.ok) {
+          throw new Error(
+            `File upload failed: ${fileUploadResult.error.message}`
+          );
+        }
+        fileUri = fileUploadResult.value.uri;
+      }
+
+      const postPayload = {
+        content,
+      };
+
+      if (fileUri) {
+        postPayload.fileUri = fileUri;
+      }
+
+      const result = await client.social.posts.put(pk, postPayload);
+      const newPosts = JSON.parse(JSON.stringify(posts));
+      if (newPosts && result.value.id) {
+        newPosts[result.value.id] = result.value;
+
+        const updatedPosts = {
+          [result.value.id]: result.value,
+          ...newPosts,
+        };
+        setPosts(updatedPosts);
+      }
 
       if (!result.ok) {
         throw new Error(`Put post:${pk} failed: ${result.error.message}`);
       }
 
       const postResult = await client.social.posts.get(result.value.uri);
-
-      const newPosts = JSON.parse(JSON.stringify(posts));
-      if (newPosts && postResult.value.id) {
-        newPosts[postResult.value.id] = postResult.value;
-
-        const updatedPosts = {
-          [postResult.value.id]: postResult.value,
-          ...newPosts,
-        };
-        setPosts(updatedPosts);
-      }
 
       if (!postResult.ok)
         throw new Error(`Put post:${pk} failed: ${postResult.error.message}`);
@@ -371,7 +418,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const createRepost = async (
     uri: string,
-    content?: string
+    content?: string,
+    file?: File
   ): Promise<IPost | null> => {
     try {
       const pk = await isLoggedIn();
@@ -380,19 +428,43 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       await client.ready();
 
-      const result = await client.social.posts.put(pk, {
+      let fileUri: string | undefined;
+
+      if (file) {
+        const fileContent = await file.arrayBuffer();
+        const fileUploadResult = await client.social.files.upload(pk, {
+          content: Buffer.from(fileContent),
+          contentType: file.type,
+          size: file.size,
+        });
+
+        if (!fileUploadResult.ok) {
+          throw new Error(
+            `File upload failed: ${fileUploadResult.error.message}`
+          );
+        }
+        fileUri = fileUploadResult.value.uri;
+      }
+
+      const repostPayload = {
         content: content && content,
         embed: {
           type: 'post',
           uri: uri,
         },
-      });
+      };
+
+      if (fileUri) {
+        repostPayload.fileUri = fileUri;
+      }
+
+      const result = await client.social.posts.put(pk, repostPayload);
 
       if (!result.ok) {
         throw new Error(`Put repost:${pk} failed: ${result.error.message}`);
       }
 
-      const postResult = await client.social.posts.get(result.value.uri);
+      const repostResult = await client.social.posts.get(result.value.uri);
       const newPosts = JSON.parse(JSON.stringify(posts));
       if (newPosts && postResult.value.id) {
         newPosts[postResult.value.id] = postResult.value;
@@ -404,6 +476,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         setPosts(updatedPosts);
       }
 
+      if (!repostResult.ok)
+        throw new Error(`Get repost:${pk} failed: ${postResult.error.message}`);
+
       return result.value as ICreateRepostResponse;
     } catch (error) {
       console.log(error);
@@ -414,7 +489,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const createReply = async (
     content: string,
     uriPost: string,
-    rootUri: string
+    rootUri: string,
+    file?: File
   ): Promise<IReply | null> => {
     try {
       const pk = await isLoggedIn();
@@ -423,16 +499,56 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       await client.ready();
 
-      const result = await client.social.posts.put(pk, {
-        content: content,
+      let fileUri: string | undefined;
+
+      if (file) {
+        const fileContent = await file.arrayBuffer();
+        const fileUploadResult = await client.social.files.upload(pk, {
+          content: Buffer.from(fileContent),
+          contentType: file.type,
+          size: file.size,
+        });
+
+        if (!fileUploadResult.ok) {
+          throw new Error(
+            `File upload failed: ${fileUploadResult.error.message}`
+          );
+        }
+        fileUri = fileUploadResult.value.uri;
+      }
+
+      const replyPayload = {
+        content,
         parent: uriPost,
         root: rootUri,
-      });
+      };
+
+      if (fileUri) {
+        replyPayload.fileUri = fileUri;
+      }
+
+      const result = await client.social.posts.put(pk, replyPayload);
 
       if (!result.ok)
         throw new Error(`Put reply:${pk} failed: ${result.error.message}`);
 
       return result.value as ICreateReplyResponse;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const getFile = async (uri: string) => {
+    try {
+      await client.ready();
+
+      const result = await client.social.files.get(uri);
+
+      if (!result.ok)
+        throw new Error(`Get file failed: ${result.error.message}`);
+
+      return result.value as IFileContent;
     } catch (error) {
       console.log(error);
       return null;
@@ -967,6 +1083,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         createPost,
         createRepost,
         createReply,
+        getFile,
         getReplies,
         getNotifications,
         createBookmark,

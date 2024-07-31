@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import {
   Button,
   Icon,
@@ -53,6 +54,7 @@ export default function Repost({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -144,7 +146,8 @@ export default function Repost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newRepost = await createRepost(post.uri, content);
+      const newRepost = await createRepost(post.uri, content, selectedFile);
+
       if (newRepost) {
         for (const tag of updatedTags) {
           await createTag(newRepost.uri, tag);
@@ -158,6 +161,7 @@ export default function Repost({
       setArrayTags([]);
       setContentRepost('');
       setShowModalRepost(false);
+      setSelectedFile(null);
     } catch (error) {
       console.log(error);
     } finally {
@@ -206,6 +210,11 @@ export default function Repost({
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
     setContentRepost(newText);
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setSelectedFile(file);
   };
 
   return (
@@ -292,6 +301,21 @@ export default function Repost({
                 )}
               </div>
               <LinkPreviewer content={contentRepost} />
+              {selectedFile && (
+                <div className="relative mt-4">
+                  <div
+                    onClick={() => setSelectedFile(null)}
+                    className="absolute top-2.5 right-2.5 w-12 h-12 p-3 bg-[#05050a] bg-opacity-50 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
+                  >
+                    <Icon.Trash size="24" />
+                  </div>
+                  <img
+                    src={URL.createObjectURL(selectedFile)}
+                    alt="Selected file"
+                    className="max-w-full max-h-[216px] rounded-lg"
+                  />
+                </div>
+              )}
               <Post post={post} repostView className="mt-2" />
             </div>
             <ModalComponent.TagCreatePost
@@ -362,9 +386,17 @@ export default function Repost({
           />
           <Button.Action
             variant="custom"
-            disabled
-            icon={<Icon.ImageSquare color={'gray'} size="32" />}
-          />
+            icon={<Icon.ImageSquare size="32" />}
+            onClick={() => document.getElementById('fileInput')?.click()}
+          >
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </Button.Action>
           <Button.Medium
             className="w-[158px]"
             variant="line"

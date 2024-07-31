@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -51,6 +52,7 @@ export default function ReplyForm({
   const [sendingReply, setSendingReply] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -117,7 +119,7 @@ export default function ReplyForm({
   const handleReply = async (content: string) => {
     setSendingReply(true);
     const rootUri = post.post.root ? post.post.root : uri;
-    const sendReply = await createReply(content, uri, rootUri);
+    const sendReply = await createReply(content, uri, rootUri, selectedFile);
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
@@ -129,6 +131,7 @@ export default function ReplyForm({
       setSendingReply(false);
       setContentReply('');
       setArrayTags([]);
+      setSelectedFile(null);
       updatePost();
     }
   };
@@ -204,6 +207,11 @@ export default function ReplyForm({
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setSelectedFile(file);
+  };
+
   return (
     <div ref={wrapperRef} className="grid gap-6 md:grid-cols-3">
       <Post.Root className="col-span-2">
@@ -271,6 +279,21 @@ export default function ReplyForm({
                     )}
                   </div>
                   <LinkPreviewer content={contentReply} />
+                  {selectedFile && (
+                    <div className="relative mt-4">
+                      <div
+                        onClick={() => setSelectedFile(null)}
+                        className="absolute top-2.5 left-2.5 w-12 h-12 p-3 bg-[#05050a] bg-opacity-50 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
+                      >
+                        <Icon.Trash size="24" />
+                      </div>
+                      <img
+                        src={URL.createObjectURL(selectedFile)}
+                        alt="Selected file"
+                        className="max-w-full max-h-[216px] rounded-lg"
+                      />
+                    </div>
+                  )}
                 </Post.Content>
               </div>
             </Post.Header>
@@ -334,9 +357,19 @@ export default function ReplyForm({
                   />
                   <Button.Action
                     variant="custom"
-                    disabled
-                    icon={<Icon.ImageSquare color={'gray'} size="22" />}
-                  />
+                    icon={<Icon.ImageSquare size="22" />}
+                    onClick={() =>
+                      document.getElementById('fileInput')?.click()
+                    }
+                  >
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </Button.Action>
                   <Button.Medium
                     className="w-[158px]"
                     variant="line"
