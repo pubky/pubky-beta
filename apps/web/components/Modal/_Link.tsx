@@ -12,10 +12,9 @@ const socialLinks = [
   { name: 'LinkedIn', url: 'https://linkedin.com/in/' },
   { name: 'Github', url: 'https://github.com/' },
   { name: 'Calendly', url: 'https://calendly.com/' },
-  { name: 'Vimeo', url: 'https://vimeo.com/' },
+  { name: 'Medium', url: 'https://medium.com/@' },
   { name: 'Youtube', url: 'https://youtube.com/@' },
   { name: 'Twitch', url: 'https://twitch.tv/' },
-  { name: 'Pinterest', url: 'https://pinterest.com/' },
   { name: 'TikTok', url: 'https://tiktok.com/@' },
   { name: 'Spotify', url: 'https://spotify.com/user/' },
 ];
