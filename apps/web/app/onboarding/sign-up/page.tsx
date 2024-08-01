@@ -40,7 +40,7 @@ export default function Index() {
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState('/images/Userpic.png');
+  const [image, setImage] = useState<File | string>('/images/Userpic.png');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<
@@ -88,11 +88,7 @@ export default function Index() {
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      setImage(file);
     }
   };
 
@@ -318,7 +314,9 @@ export default function Index() {
                 height={150}
                 className="w-80 h-80 mt-12 rounded-full"
                 alt="user"
-                src={image}
+                src={
+                  typeof image === 'string' ? image : URL.createObjectURL(image)
+                }
               />
               <Button.Transparent
                 icon={getButtonIconImage()}
