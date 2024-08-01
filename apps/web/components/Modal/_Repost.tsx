@@ -204,8 +204,10 @@ export default function Repost({
     const textBeforeCursor = contentRepost.slice(0, cursorPosition);
     const textAfterCursor = contentRepost.slice(cursorPosition);
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
+
     setContentRepost(newText);
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
+    setIsValidContent(Utils.isValidContent(newText));
   };
 
   return (
