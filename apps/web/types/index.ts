@@ -231,7 +231,7 @@ export interface ISaveProfile {
 
 export interface IProfilePubkyProps {
   bio: string | undefined;
-  image: string | File;
+  image: string | undefined | File;
   links: ILinkPubky | undefined;
   name: string | undefined;
 }
