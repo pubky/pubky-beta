@@ -259,7 +259,7 @@ export default function ReplyForm({
                     </Typography.Body>
                   )}
                 </div>
-                <Post.Content text="">
+                <div className="mt-2">
                   <div className="w-full relative">
                     <Input.CursorArea
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -298,7 +298,7 @@ export default function ReplyForm({
                       ))}
                     </div>
                   )}
-                </Post.Content>
+                </div>
               </div>
             </Post.Header>
             <div className="gap-3 inline-flex">
