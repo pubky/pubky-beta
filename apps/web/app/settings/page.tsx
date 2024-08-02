@@ -40,6 +40,7 @@ export default function Index() {
           {selectedItem === 'account' && <Section.Account />}
           {selectedItem === 'notifications' && <Section.Notifications />}
           {selectedItem === 'privacy_safety' && <Section.PrivacySafety />}
+          {selectedItem === 'career' && <Section.Career />}
           {selectedItem === 'muted_users' && <Section.MutedUsers />}
           {selectedItem === 'language' && <Section.Language />}
           {selectedItem === 'help' && <Section.Help />}

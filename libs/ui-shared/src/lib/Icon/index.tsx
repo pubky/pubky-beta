@@ -20,6 +20,7 @@ import {
   SquareHalf,
   ThreeColumns,
   Eye,
+  CV,
 } from './_Design';
 import { Plus, Minus, X } from './_Math';
 import { GitFork } from './_Development';
@@ -129,6 +130,7 @@ export const Icon = {
   CheckCircle,
   Clipboard,
   Clock,
+  CV,
   Discord,
   DownloadSimple,
   DropdownIcon,

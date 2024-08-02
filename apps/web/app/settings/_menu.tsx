@@ -16,6 +16,10 @@ const menuItems: Record<
     icon: <Icon.Shield size="24" />,
     label: 'Privacy & Safety',
   },
+  career: {
+    icon: <Icon.CV size="24" />,
+    label: 'Career',
+  },
   muted_users: {
     icon: <Icon.SpeakerSimpleSlash size="24" />,
     label: 'Muted users',
