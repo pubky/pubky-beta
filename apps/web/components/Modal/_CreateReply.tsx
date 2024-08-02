@@ -21,6 +21,7 @@ import { Utils } from '@social/utils-shared';
 import LinkPreviewer from '../LinkPreview';
 import { useRouter } from 'next/navigation';
 import Post from '../Post';
+import FilePreview from '../FilePreview';
 
 interface CreateReplyProps {
   showModalReply: boolean;
@@ -50,6 +51,7 @@ export default function CreateReply({
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const modalReplyRef = useRef<HTMLDivElement>(null);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -143,7 +145,13 @@ export default function CreateReply({
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
       const rootUri = post.post.root ? post.post.root : post.uri;
 
-      const newReply = await createReply(content, post.uri, rootUri);
+      const newReply = await createReply(
+        content,
+        post.uri,
+        rootUri,
+        selectedFiles
+      );
+
       if (newReply) {
         for (const tag of updatedTags) {
           await createTag(newReply.uri, tag);
@@ -157,6 +165,7 @@ export default function CreateReply({
       setArrayTags([]);
       setContentReply('');
       setShowModalReply(false);
+      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {
@@ -223,6 +232,18 @@ export default function CreateReply({
       document.removeEventListener('mousedown', handleClickOutsideModals);
     };
   }, [modalReplyRef, setShowModalReply]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files).slice(0, 3 - selectedFiles.length);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
 
   return (
     <ModalUI.Root
@@ -321,6 +342,18 @@ export default function CreateReply({
                   )}
                 </div>
                 <LinkPreviewer content={contentReply} />
+                {selectedFiles.length > 0 && (
+                  <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {selectedFiles.map((file, index) => (
+                      <FilePreview
+                        key={index}
+                        file={file}
+                        index={index}
+                        removeFile={removeFile}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
               <ModalComponent.TagCreatePost
                 arrayTags={arrayTags}
@@ -390,11 +423,20 @@ export default function CreateReply({
             />
             <Button.Action
               variant="custom"
-              disabled
-              icon={<Icon.ImageSquare color={'gray'} size="32" />}
-            />
+              icon={<Icon.ImageSquare size="32" />}
+              onClick={() => document.getElementById('fileInput')?.click()}
+            >
+              <input
+                id="fileInput"
+                type="file"
+                accept="image/*,video/*"
+                className="hidden"
+                onChange={handleFileChange}
+                multiple
+              />
+            </Button.Action>
             <Button.Medium
-              className="w-[104px]"
+              className="w-auto"
               variant="line"
               icon={
                 <Icon.ChatCircleText

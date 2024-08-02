@@ -23,6 +23,7 @@ import Partecipants from './_Partecipants';
 import { IReply } from '@/types';
 import { useRouter } from 'next/navigation';
 import Replies from './_Replies';
+import FilePreview from '@/components/FilePreview';
 
 export default function ReplyForm({
   uri,
@@ -51,6 +52,7 @@ export default function ReplyForm({
   const [sendingReply, setSendingReply] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -117,7 +119,7 @@ export default function ReplyForm({
   const handleReply = async (content: string) => {
     setSendingReply(true);
     const rootUri = post.post.root ? post.post.root : uri;
-    const sendReply = await createReply(content, uri, rootUri);
+    const sendReply = await createReply(content, uri, rootUri, selectedFiles);
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
@@ -129,6 +131,7 @@ export default function ReplyForm({
       setSendingReply(false);
       setContentReply('');
       setArrayTags([]);
+      setSelectedFiles([]);
       updatePost();
     }
   };
@@ -204,6 +207,18 @@ export default function ReplyForm({
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files).slice(0, 3 - selectedFiles.length);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
   return (
     <div ref={wrapperRef} className="grid gap-6 md:grid-cols-3">
       <Post.Root className="col-span-2">
@@ -244,7 +259,7 @@ export default function ReplyForm({
                     </Typography.Body>
                   )}
                 </div>
-                <Post.Content text="">
+                <div className="mt-2">
                   <div className="w-full relative">
                     <Input.CursorArea
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -271,7 +286,19 @@ export default function ReplyForm({
                     )}
                   </div>
                   <LinkPreviewer content={contentReply} />
-                </Post.Content>
+                  {selectedFiles.length > 0 && (
+                    <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {selectedFiles.map((file, index) => (
+                        <FilePreview
+                          key={index}
+                          file={file}
+                          index={index}
+                          removeFile={removeFile}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </Post.Header>
             <div className="gap-3 inline-flex">
@@ -334,11 +361,22 @@ export default function ReplyForm({
                   />
                   <Button.Action
                     variant="custom"
-                    disabled
-                    icon={<Icon.ImageSquare color={'gray'} size="22" />}
-                  />
+                    icon={<Icon.ImageSquare size="22" />}
+                    onClick={() =>
+                      document.getElementById('fileInput')?.click()
+                    }
+                  >
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept="image/*,video/*"
+                      className="hidden"
+                      onChange={handleFileChange}
+                      multiple
+                    />
+                  </Button.Action>
                   <Button.Medium
-                    className="w-[158px]"
+                    className="w-auto"
                     variant="line"
                     icon={
                       <Icon.ChatCircleText
