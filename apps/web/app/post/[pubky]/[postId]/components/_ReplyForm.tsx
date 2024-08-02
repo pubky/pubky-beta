@@ -203,8 +203,10 @@ export default function ReplyForm({
     const textBeforeCursor = contentReply.slice(0, cursorPosition);
     const textAfterCursor = contentReply.slice(cursorPosition);
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
+
     setContentReply(newText);
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
+    setIsValidContent(Utils.isValidContent(newText));
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
