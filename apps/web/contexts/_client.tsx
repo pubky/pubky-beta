@@ -171,6 +171,32 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       Utils.storage.set('pubky', pk);
       setPubky(pk);
 
+      if (userProfile.image instanceof File) {
+        const file = userProfile.image;
+        const fileContent = await file.arrayBuffer();
+        const fileUploadResult = await client.social.files.upload(pk, {
+          content: Buffer.from(fileContent),
+          contentType: file.type,
+          size: file.size,
+        });
+
+        if (!fileUploadResult.ok) {
+          throw new Error(
+            `File upload failed: ${fileUploadResult.error.message}`
+          );
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const { uri } = fileUploadResult.value;
+        if (uri) {
+          const uploadedFile = await getFile(uri);
+          if (!uploadedFile)
+            throw new Error(`Get file failed: ${uploadedFile.error.message}`);
+          userProfile.image = uploadedFile.urls.main;
+        }
+      }
+
       const pubkeyProfile = _toPubkeyProfile(userProfile);
 
       await client.social.profile.put(pk, pubkeyProfile);
@@ -239,11 +265,37 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     try {
       const pk = await isLoggedIn();
 
-      if (!pk) throw new Error('Logged in failed : not logged in.');
-
-      const pubkeyProfile = _toPubkeyProfile(userProfile);
+      if (!pk) throw new Error('Logged in failed: not logged in.');
 
       await client.ready();
+
+      if (userProfile.image instanceof File) {
+        const file = userProfile.image;
+        const fileContent = await file.arrayBuffer();
+        const fileUploadResult = await client.social.files.upload(pk, {
+          content: Buffer.from(fileContent),
+          contentType: file.type,
+          size: file.size,
+        });
+
+        if (!fileUploadResult.ok) {
+          throw new Error(
+            `File upload failed: ${fileUploadResult.error.message}`
+          );
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const { uri } = fileUploadResult.value;
+        if (uri) {
+          const uploadedFile = await getFile(uri);
+          if (!uploadedFile)
+            throw new Error(`Get file failed: ${uploadedFile.error.message}`);
+          userProfile.image = uploadedFile.urls.main;
+        }
+      }
+
+      const pubkeyProfile = _toPubkeyProfile(userProfile);
 
       const result = await client.social.profile.put(pk, pubkeyProfile);
 
@@ -251,12 +303,45 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       Utils.storage.set('profile', pubkeyProfile);
 
       if (!result.ok)
-        throw new Error(`Save profile:${pk} failed: ${result.error.message}`);
+        throw new Error(`Save profile: ${pk} failed: ${result.error.message}`);
 
       return result.value as ISaveProfile;
     } catch (error) {
       console.log(error);
       return null;
+    }
+  };
+
+  const getFile = async (uri: string) => {
+    try {
+      await client.ready();
+
+      const result = await client.social.files.get(uri);
+
+      if (!result.ok)
+        throw new Error(`Get file failed: ${result.error.message}`);
+
+      return result.value as IFileContent;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const deleteFile = async (id: string) => {
+    try {
+      if (!pubky) throw new Error('Pubky required');
+
+      await client.ready();
+
+      const result = await client.social.files.delete(pubky, id);
+
+      if (!result.ok) throw new Error(`Delete failed: ${result.error.message}`);
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   };
 
@@ -1112,6 +1197,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         getMostFollowed,
         getRecommendedProfiles,
         getRecoveryFile,
+        getFile,
+        deleteFile,
         searchTags,
         setPosts,
         setSeed,

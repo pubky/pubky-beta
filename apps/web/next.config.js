@@ -13,6 +13,9 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  images: {
+    domains: ['localhost', 'staging.pubky.app', 'pubky.app'],
+  },
   async redirects() {
     return [
       {

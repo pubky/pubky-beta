@@ -56,6 +56,8 @@ export interface TClientContext {
   ) => Promise<IBookmark | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
   deleteTag: (uri: string, tag: string) => Promise<IDeleteTagResponse | null>;
+  getFile: (uri: string) => Promise<IFileContent | null>;
+  deleteFile: (id: string) => Promise<boolean>;
   getHotTags: () => Promise<ITaggedPost[] | null>;
   isLoggedIn: () => Promise<string | false>;
   session: () => Promise<string | false>;
@@ -93,6 +95,24 @@ export interface TClientContext {
   searchUsers: (text: string) => Promise<IUserProfile[] | null>;
   follow: (pk: string) => Promise<boolean>;
   unfollow: (pk: string) => Promise<boolean>;
+}
+
+export interface IFileContent {
+  contentType: string;
+  createdAt: number;
+  id: string;
+  indexedAt: number;
+  metadata: Record<string, string>;
+  owner: {
+    id: string;
+    uri: string;
+  };
+  size: number;
+  src: string;
+  uri: string;
+  urls: {
+    main: string;
+  };
 }
 
 export interface NotificationsResponse {
@@ -257,7 +277,7 @@ export interface ISaveProfile {
 
 export interface IProfilePubkyProps {
   bio: string | undefined;
-  image: string | undefined;
+  image: string | undefined | File;
   links: ILinkPubky | undefined;
   name: string | undefined;
 }

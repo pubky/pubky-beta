@@ -3,6 +3,7 @@ import cleanText from './lib/Text/cleanText';
 import copyToClipboard from './lib/Helper/copyToClipboard';
 import extractHashtags from './lib/Helper/extractHashtags';
 import decodePostUri from './lib/URI/decodePostUIri';
+import encodeImageId from './lib/URI/encodeImageId';
 import encodePostUri from './lib/URI/encodePostUri';
 import isValidContent from './lib/Text/isValidContent';
 import generateRandomColor from './lib/Helper/generateRandomColor';
@@ -19,6 +20,7 @@ export const Utils = {
   base64ToUint8Array,
   cleanText,
   decodePostUri,
+  encodeImageId,
   encodePostUri,
   isValidContent,
   generateRandomColor,
