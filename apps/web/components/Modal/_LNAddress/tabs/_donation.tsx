@@ -1,24 +1,22 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Button, Icon, Modal, Typography } from '@social/ui-shared';
+import { useState } from 'react';
+import { Button, Icon, Typography } from '@social/ui-shared';
 import QRCode from 'qrcode.react';
 import Image from 'next/image';
 
-interface LNAddressProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+interface DonationProps {
   lnAddress?: string;
+  donationConfirmed: boolean;
+  setDonationConfirmed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function LNAddress({
-  showModal,
-  setShowModal,
+export default function Donation({
   lnAddress,
-}: LNAddressProps) {
-  const modalRef = useRef<HTMLDivElement>(null);
+  donationConfirmed,
+  setDonationConfirmed,
+}: DonationProps) {
   const [copiedLNAddress, setCopiedLNAddress] = useState(false);
-  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [checkingPayment, setCheckingPayment] = useState(false);
 
   const handleCopy = async () => {
@@ -37,38 +35,18 @@ export default function LNAddress({
     setCheckingPayment(true);
     setTimeout(() => {
       setCheckingPayment(false);
-      setPaymentConfirmed(true);
+      setDonationConfirmed(true);
     }, 3000);
   };
 
-  useEffect(() => {
-    const handleClickOutsideModal = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        setShowModal(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModal);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModal);
-    };
-  }, [modalRef, setShowModal]);
-
   return (
-    <Modal.Root
-      show={showModal}
-      closeModal={() => setShowModal(false)}
-      modalRef={modalRef}
-      className={`w-[450px] ${
-        paymentConfirmed &&
-        `bg-cover bg-center bg-[url('/images/bg-confetti.gif')]`
+    <div
+      className={`${
+        donationConfirmed &&
+        `rounded-lg bg-cover bg-center bg-[url('/images/bg-confetti.gif')]`
       }`}
     >
-      <Modal.CloseAction onClick={() => setShowModal(false)} />
-      {paymentConfirmed ? (
+      {donationConfirmed ? (
         <div className="flex flex-col items-center">
           <Image
             alt="confirm"
@@ -77,14 +55,14 @@ export default function LNAddress({
             width={256}
           />
           <Typography.Body variant="large-bold" className="mt-4">
-            Payment successful
+            Donation sent successfully
           </Typography.Body>
           <Typography.Body
-            onClick={() => setPaymentConfirmed(false)}
+            onClick={() => setDonationConfirmed(false)}
             variant="small"
             className="cursor-pointer text-opacity-60 hover:text-opacity-80 underline underline-offset-1"
           >
-            Send another
+            Send another donation
           </Typography.Body>
         </div>
       ) : (
@@ -139,11 +117,11 @@ export default function LNAddress({
               variant="small"
               className="cursor-pointer mt-2 text-opacity-60 hover:text-opacity-80 underline underline-offset-1"
             >
-              Check payment
+              Sent donation?
             </Typography.Body>
           )}
         </div>
       )}
-    </Modal.Root>
+    </div>
   );
 }

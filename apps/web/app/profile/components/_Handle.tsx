@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import { DropDown } from '@/components/DropDown';
-import { TStatus } from '@/types';
+import { IService, TStatus } from '@/types';
 import Tooltip from '@/components/Tooltip';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -15,6 +15,7 @@ interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky?: string | null;
   status?: TStatus;
   lnAddress?: string;
+  services?: IService[];
 }
 
 export default function Handle({
@@ -23,6 +24,7 @@ export default function Handle({
   creatorPubky,
   status,
   lnAddress,
+  services,
   ...rest
 }: HandleProps) {
   const { pubky, seed, follow, unfollow, listFollowers } = useClientContext();
@@ -307,6 +309,7 @@ export default function Handle({
         showModal={showLNAddressModal}
         setShowModal={setShowLNAddressModal}
         lnAddress={lnAddress}
+        services={services}
       />
     </div>
   );

@@ -80,6 +80,7 @@ export interface TClientContext {
   searchTags: string[];
   updateStatus: (value: TStatus | string) => Promise<void>;
   updateLNAddress: (value: string) => Promise<void>;
+  updateServices: (services: IService[]) => Promise<void>;
   setSeed: (seed: Seed | null) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPosts: any;
@@ -154,6 +155,7 @@ export interface IProfile {
   links: ILink[];
   status?: TStatus;
   ln_address?: string;
+  services?: IService[];
 }
 
 export interface IAuthor {
@@ -231,11 +233,19 @@ export interface ISaveProfile {
   uri: string;
 }
 
+export interface IService {
+  title: string;
+  contact: string;
+  price: string;
+  description: string;
+}
+
 export interface IProfilePubkyProps {
   bio: string | undefined;
   image: string | undefined;
   links: ILinkPubky | undefined;
   name: string | undefined;
+  services?: IService[];
 }
 
 export interface ISignUpResponse {

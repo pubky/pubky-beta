@@ -27,6 +27,7 @@ import {
   ICreateRepostResponse,
   IBookmark,
   IRecoveryFileResponse,
+  IService,
 } from '../types';
 
 import Client from '@pubky/sdk';
@@ -123,6 +124,31 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok)
         throw new Error(
           `Update LN address:${pubky} failed: ${result.error.message}`
+        );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateServices = async (services: IService[]) => {
+    try {
+      if (!pubky) throw new Error('Pubky required');
+      if (!profile) throw new Error('Profile required');
+
+      await client.ready();
+
+      const updatedProfile = {
+        ...profile,
+        services: services,
+      };
+
+      Utils.storage.set('profile', updatedProfile);
+
+      const result = await client.social.profile.put(pubky, updatedProfile);
+
+      if (!result.ok)
+        throw new Error(
+          `Update services:${pubky} failed: ${result.error.message}`
         );
     } catch (error) {
       console.log(error);
@@ -989,6 +1015,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         posts,
         updateStatus,
         updateLNAddress,
+        updateServices,
         isLoggedIn,
         createPost,
         createRepost,

@@ -20,6 +20,8 @@ import {
   SquareHalf,
   ThreeColumns,
   Eye,
+  Product,
+  Donation,
 } from './_Design';
 import { Plus, Minus, X } from './_Math';
 import { GitFork } from './_Development';
@@ -131,6 +133,7 @@ export const Icon = {
   Clipboard,
   Clock,
   Discord,
+  Donation,
   DownloadSimple,
   DropdownIcon,
   DotsNine,
@@ -181,6 +184,7 @@ export const Icon = {
   Play,
   Plus,
   Podcast,
+  Product,
   Pubky,
   Question,
   Repost,
