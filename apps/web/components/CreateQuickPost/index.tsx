@@ -244,8 +244,10 @@ export default function CreateQuickPost({
     const textBeforeCursor = contentPost.slice(0, cursorPosition);
     const textAfterCursor = contentPost.slice(cursorPosition);
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
+
     setContentPost(newText);
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
+    setIsValidContent(Utils.isValidContent(newText));
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
