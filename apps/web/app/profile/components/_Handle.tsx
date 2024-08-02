@@ -238,7 +238,7 @@ export default function Handle({
               <Button.Action
                 size="small"
                 variant="custom"
-                icon={<Icon.Lightning size="16" />}
+                icon={<Icon.Lightning size="16" color="#D946EF" />}
                 onClick={() => setShowLNAddressModal(true)}
               />
             )}

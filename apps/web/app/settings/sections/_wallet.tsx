@@ -54,6 +54,10 @@ export default function Wallet() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (profile?.profile.ln_address) setLnAddress(profile?.profile.ln_address);
+  }, [profile?.profile.ln_address]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSubmit();
@@ -86,7 +90,9 @@ export default function Wallet() {
             error={error ? 'Invalid lightning address' : ''}
             action={
               <div
-                className="rounded-full p-2 bg-white bg-opacity-10 hover:bg-opacity-20 cursor-pointer"
+                className={`${
+                  error && 'mb-2'
+                } rounded-full p-2 bg-white bg-opacity-10 hover:bg-opacity-20 cursor-pointer`}
                 onClick={() => handleSubmit()}
               >
                 <Icon.Plus size="16" />
