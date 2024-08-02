@@ -2,12 +2,11 @@
 
 ### Introduction
 
-Pubky app represents a practical and working example to show how to interact with [Pubky Core](https://vigilant-adventure-y6k6ere.pages.github.io/Pubky-Core/Introduction) to create simple or complex applications, integrating the underlying technology with user interfaces that guarantee the end user a clean and efficient experience.
-The purpose of the Pubky app is to manage the data and show it correctly to the user, to allow him to interact with it and add new data.
+Pubky App is a social-media-like experience built over [Pubky Core](https://notes.pubky.app//Pubky-Core/Introduction). It serves as a working example on how to build over Pubky Core to create simple or complex applications. Its social components (profiles, tagging, etc) are intended for re-use in any other Pubky application that requires of social features.
 
-For a deeper dive on the Pubky app please refer to our [Knowledge Base](https://vigilant-adventure-y6k6ere.pages.github.io/PubKy-App/Introduction)
+For a deeper dive on the Pubky app please refer to our [Notes](https://notes.pubky.app/Pubky-App/Introduction)
 
-This is the frontend application for the Pubky Social.
+This repository holds the frontend application for the social Pubky App. For the specialized backend (aggregator/indexer/API) check out [Pubky-Nexus](https://github.com/pubky/pubky-nexus)
 
 - [Setup Env Variables](#gear-setup-env-variables)
   - [Testnet Configuration](#test_tube-testnet-configuration)
