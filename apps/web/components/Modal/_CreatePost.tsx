@@ -20,6 +20,7 @@ import { INewPost, IUserProfile } from '@/types';
 import { Utils } from '@social/utils-shared';
 import LinkPreviewer from '../LinkPreview';
 import { useRouter } from 'next/navigation';
+import FilePreview from '../FilePreview';
 
 interface CreatePostProps {
   showModalPost: boolean;
@@ -50,6 +51,7 @@ export default function CreatePost({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -142,7 +144,8 @@ export default function CreatePost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content);
+      const newPost = await createPost(content, selectedFiles);
+
       if (newPost) {
         for (const tag of updatedTags) {
           await createTag(newPost.uri, tag);
@@ -182,6 +185,7 @@ export default function CreatePost({
       setArrayTags([]);
       setContentPost('');
       setShowModalPost(false);
+      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {
@@ -230,6 +234,18 @@ export default function CreatePost({
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
     setContentPost(newText);
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files).slice(0, 3 - selectedFiles.length);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   return (
@@ -316,6 +332,18 @@ export default function CreatePost({
                 )}
               </div>
               <LinkPreviewer content={contentPost} />
+              {selectedFiles.length > 0 && (
+                <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {selectedFiles.map((file, index) => (
+                    <FilePreview
+                      key={index}
+                      file={file}
+                      index={index}
+                      removeFile={removeFile}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
             <ModalComponent.TagCreatePost
               arrayTags={arrayTags}
@@ -385,11 +413,20 @@ export default function CreatePost({
           />
           <Button.Action
             variant="custom"
-            disabled
-            icon={<Icon.ImageSquare color={'gray'} size="32" />}
-          />
+            icon={<Icon.ImageSquare size="32" />}
+            onClick={() => document.getElementById('fileInput')?.click()}
+          >
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={handleFileChange}
+              multiple
+            />
+          </Button.Action>
           <Button.Medium
-            className="w-[104px]"
+            className="w-auto"
             variant="line"
             icon={
               <Icon.PaperPlaneRight

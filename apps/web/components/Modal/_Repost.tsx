@@ -21,6 +21,7 @@ import { IPost, IUserProfile } from '@/types';
 import Post from '../Post';
 import LinkPreviewer from '@/components/LinkPreview';
 import { useRouter } from 'next/navigation';
+import FilePreview from '../FilePreview';
 
 interface CreateRepostProps {
   showModalRepost: boolean;
@@ -53,6 +54,7 @@ export default function Repost({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -144,7 +146,8 @@ export default function Repost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newRepost = await createRepost(post.uri, content);
+      const newRepost = await createRepost(post.uri, content, selectedFiles);
+
       if (newRepost) {
         for (const tag of updatedTags) {
           await createTag(newRepost.uri, tag);
@@ -158,6 +161,7 @@ export default function Repost({
       setArrayTags([]);
       setContentRepost('');
       setShowModalRepost(false);
+      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {
@@ -206,6 +210,18 @@ export default function Repost({
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
     setContentRepost(newText);
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files).slice(0, 3 - selectedFiles.length);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   return (
@@ -292,6 +308,18 @@ export default function Repost({
                 )}
               </div>
               <LinkPreviewer content={contentRepost} />
+              {selectedFiles.length > 0 && (
+                <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {selectedFiles.map((file, index) => (
+                    <FilePreview
+                      key={index}
+                      file={file}
+                      index={index}
+                      removeFile={removeFile}
+                    />
+                  ))}
+                </div>
+              )}
               <Post post={post} repostView className="mt-2" />
             </div>
             <ModalComponent.TagCreatePost
@@ -362,11 +390,20 @@ export default function Repost({
           />
           <Button.Action
             variant="custom"
-            disabled
-            icon={<Icon.ImageSquare color={'gray'} size="32" />}
-          />
+            icon={<Icon.ImageSquare size="32" />}
+            onClick={() => document.getElementById('fileInput')?.click()}
+          >
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={handleFileChange}
+              multiple
+            />
+          </Button.Action>
           <Button.Medium
-            className="w-[158px]"
+            className="w-auto"
             variant="line"
             icon={<Icon.Repost color="white" />}
             loading={sendingRepost}
