@@ -27,7 +27,7 @@ const profileSchema = z.object({
 });
 
 export default function Index() {
-  const { saveProfile } = useClientContext();
+  const { saveProfile, deleteFile } = useClientContext();
 
   const router = useRouter();
 
@@ -186,6 +186,8 @@ export default function Index() {
       }
     } else {
       setImage('/images/Userpic.png');
+      const idImage = Utils.encodeImageId(image);
+      if (idImage) deleteFile(idImage);
     }
   };
 

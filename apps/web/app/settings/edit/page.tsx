@@ -29,7 +29,7 @@ const profileSchema = z.object({
 
 export default function Index() {
   const router = useRouter();
-  const { pubky, saveProfile, getProfile } = useClientContext();
+  const { pubky, saveProfile, getProfile, deleteFile } = useClientContext();
 
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
@@ -202,6 +202,8 @@ export default function Index() {
       }
     } else {
       setImage('/images/Userpic.png');
+      const idImage = Utils.encodeImageId(image);
+      if (idImage) deleteFile(idImage);
     }
   };
 
