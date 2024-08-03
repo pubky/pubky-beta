@@ -87,7 +87,7 @@ export default function LNAddress({
         >
           <Icon.Product size="16" />
           <Typography.Caption className="tracking-normal" variant="bold">
-            Product & Services
+            Products & Services
           </Typography.Caption>
         </div>
         <div

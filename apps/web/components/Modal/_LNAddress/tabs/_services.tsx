@@ -56,7 +56,7 @@ export default function Services({
 
   return (
     <>
-      <Modal.Header title="Services" />
+      <Modal.Header title="Products & Services" />
       <div className="mt-4 flex">
         {selectedService === null ? (
           <div className="w-full">
