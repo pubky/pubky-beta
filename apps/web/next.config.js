@@ -14,7 +14,20 @@ const nextConfig = {
     svgr: false,
   },
   images: {
-    domains: ['localhost', 'staging.pubky.app', 'pubky.app'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: 'staging.pubky.app',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pubky.app',
+      },
+    ],
   },
   async redirects() {
     return [

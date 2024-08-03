@@ -661,39 +661,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getFile = async (uri: string) => {
-    try {
-      await client.ready();
-
-      const result = await client.social.files.get(uri);
-
-      if (!result.ok)
-        throw new Error(`Get file failed: ${result.error.message}`);
-
-      return result.value as IFileContent;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
-
-  const deleteFile = async (id: string) => {
-    try {
-      if (!pubky) throw new Error('Pubky required');
-
-      await client.ready();
-
-      const result = await client.social.files.delete(pubky, id);
-
-      if (!result.ok) throw new Error(`Delete failed: ${result.error.message}`);
-
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
-  };
-
   const getReplies = async (uri: string): Promise<IReply | null> => {
     try {
       const pk = await isLoggedIn();
@@ -1250,8 +1217,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         getMostFollowed,
         getRecommendedProfiles,
         getRecoveryFile,
-        getFile,
-        deleteFile,
         searchTags,
         setPosts,
         setSeed,
