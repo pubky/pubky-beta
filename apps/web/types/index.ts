@@ -32,13 +32,20 @@ export interface TClientContext {
   getProfile: () => Promise<IProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string) => Promise<IPost | null>;
-  createRepost: (uri: string, content?: string) => Promise<IPost | null>;
+  createPost: (content: string, files?: File[]) => Promise<IPost | null>;
+  createRepost: (
+    uri: string,
+    content?: string,
+    file?: File[]
+  ) => Promise<IPost | null>;
   createReply: (
     content: string,
     uriPost: string,
-    rootUri: string
+    rootUri: string,
+    file?: File[]
   ) => Promise<ICreateReplyResponse | null>;
+  getFile: (uri: string) => Promise<IFileContent | null>;
+  deleteFile: (id: string) => Promise<boolean>;
   getReplies: (uri: string) => Promise<IReply | null>;
   deletePost: (postId: string) => Promise<IDeletePost | null>;
   createBookmark: (id: string, uri: string) => Promise<IBookmark | null>;
@@ -86,6 +93,24 @@ export interface TClientContext {
   searchUsers: (text: string) => Promise<IUserProfile[] | null>;
   follow: (pk: string) => Promise<boolean>;
   unfollow: (pk: string) => Promise<boolean>;
+}
+
+export interface IFileContent {
+  contentType: string;
+  createdAt: number;
+  id: string;
+  indexedAt: number;
+  metadata: Record<string, string>;
+  owner: {
+    id: string;
+    uri: string;
+  };
+  size: number;
+  src: string;
+  uri: string;
+  urls: {
+    main: string;
+  };
 }
 
 export interface NotificationsResponse {
@@ -165,6 +190,7 @@ export interface IPostContent {
   parent?: string;
   root?: string;
   embed?: EmbedContent;
+  files?: { [key: string]: { fileId: string; fileUri: string } };
 }
 
 export interface EmbedContent {
@@ -231,7 +257,7 @@ export interface ISaveProfile {
 
 export interface IProfilePubkyProps {
   bio: string | undefined;
-  image: string | undefined;
+  image: string | undefined | File;
   links: ILinkPubky | undefined;
   name: string | undefined;
 }

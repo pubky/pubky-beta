@@ -23,6 +23,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     createBookmark,
     deleteBookmark,
     deletePost,
+    deleteFile,
   } = useClientContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
@@ -128,17 +129,30 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   };
 
   const handleDeletePost = async () => {
-    const result = await deletePost(post?.id);
-    if (result) {
-      setContent('Post deleted successfully');
-      setShow(true);
-    } else {
-      setContent('Something wrong. Try again', 'warning');
-      setShow(true);
-    }
-    setShowMenu(false);
-  };
+    try {
+      if (post?.post?.files) {
+        const fileDeletions = Object.values(post.post.files).map(
+          async (file) => {
+            await deleteFile(file.fileId);
+          }
+        );
+        await Promise.all(fileDeletions);
+      }
 
+      const result = await deletePost(post?.id);
+
+      if (result) {
+        setContent('Post deleted successfully');
+      } else {
+        setContent('Something wrong. Try again', 'warning');
+      }
+      setShow(true);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setShowMenu(false);
+    }
+  };
   const renderFollowButton = () => {
     if (post?.author?.id === pubky) return null;
 

@@ -35,6 +35,7 @@ interface ActionButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
   active?: boolean;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const Action = ({
@@ -45,6 +46,7 @@ export const Action = ({
   icon,
   disabled = false,
   active = false,
+  children,
   ...rest
 }: ActionButtonProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -161,6 +163,7 @@ export const Action = ({
             {counter}
           </ActionUI.Counter>
         )}
+        {children}
       </ActionUI.Button>
       {isHovered && label && (
         <ActionUI.LabelRoot className={labelClasses}>
