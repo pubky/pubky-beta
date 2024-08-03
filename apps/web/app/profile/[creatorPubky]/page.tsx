@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { useClientContext } from '@/contexts';
-import { INewPost, TStatus } from '@/types';
+import { IExperienceComplete, INewPost, TStatus } from '@/types';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
 
@@ -19,6 +19,7 @@ export default function Index({
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [status, setStatus] = useState<TStatus | undefined>();
+  const [experience, setExperience] = useState<IExperienceComplete>();
   const [name, setName] = useState('');
   const [handler, setHandler] = useState('');
   const [countPosts, setCountPosts] = useState<number>();
@@ -40,6 +41,7 @@ export default function Index({
         setPic(userProfile.profile?.image || '/images/Userpic.png');
         setName(userProfile.profile?.name || 'Loading...');
         setHandler(creatorPubky);
+        setExperience(userProfile?.profile?.experience);
         setStatus(userProfile.profile?.status);
         setCountPosts(userProfile.postsCount);
         setCountContacts({
@@ -76,6 +78,8 @@ export default function Index({
                 pubkey={handler}
                 creatorPubky={creatorPubky}
                 status={status}
+                experience={experience}
+                pic={pic}
               />
             </Content.Grid>
           </div>

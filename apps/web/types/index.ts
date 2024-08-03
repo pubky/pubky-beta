@@ -30,6 +30,11 @@ export interface TClientContext {
   getRecoveryFile: (password: string) => Promise<IRecoveryFileResponse | null>;
   logout: () => Promise<boolean>;
   getProfile: () => Promise<IProfile | null>;
+  updateExperiences: (
+    experiences: IExperience[],
+    cv?: File,
+    contact?: string
+  ) => Promise<void>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
   createPost: (content: string, files?: File[]) => Promise<IPost | null>;
@@ -177,6 +182,17 @@ export interface IProfile {
   image: string;
   links: ILink[];
   status?: TStatus;
+  experience?: {
+    cv: File;
+    contact: string;
+    experiences: IExperience[];
+  };
+}
+
+export interface IExperienceComplete {
+  cv?: File;
+  contact?: string;
+  experiences: IExperience[];
 }
 
 export interface IAuthor {
@@ -249,6 +265,24 @@ export interface IUserProfile {
   taggedAs: ITaggedProfile[];
   userId: string;
   viewer: IViewer;
+}
+
+export interface IExperience {
+  title: string;
+  employmentType: string;
+  companyName: string;
+  location: string;
+  locationType: string;
+  currentlyWorking: boolean;
+  startDate: {
+    month: string;
+    year: string;
+  };
+  endDate: {
+    month: string;
+    year: string;
+  };
+  description: string;
 }
 
 export interface ISaveProfile {

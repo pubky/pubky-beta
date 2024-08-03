@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import { DropDown } from '@/components/DropDown';
-import { TStatus } from '@/types';
+import { IExperienceComplete, TStatus } from '@/types';
 import Tooltip from '@/components/Tooltip';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,6 +14,8 @@ interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   pubkey: string;
   creatorPubky?: string | null;
   status?: TStatus;
+  experience?: IExperienceComplete;
+  pic?: string;
 }
 
 export default function Handle({
@@ -21,6 +23,8 @@ export default function Handle({
   pubkey,
   creatorPubky,
   status,
+  experience,
+  pic,
   ...rest
 }: HandleProps) {
   const { pubky, seed, follow, unfollow, listFollowers } = useClientContext();
@@ -28,6 +32,7 @@ export default function Handle({
   const router = useRouter();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
+  const [showProfileCareer, setShowProfileCareer] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
@@ -231,6 +236,14 @@ export default function Handle({
             >
               Link
             </Button.Medium>
+            {experience && experience.experiences.length > 0 && (
+              <Button.Action
+                size="small"
+                variant="custom"
+                icon={<Icon.CV size="16" />}
+                onClick={() => setShowProfileCareer(true)}
+              />
+            )}
             <div className="relative">
               {showProfileMenu && (
                 <Tooltip.ProfileMenu
@@ -291,6 +304,14 @@ export default function Handle({
       <Modal.Logout
         showModalLogout={showModalLogout}
         setShowModalLogout={setShowModalLogout}
+      />
+      <Modal.ProfileCareer
+        showModal={showProfileCareer}
+        setShowModal={setShowProfileCareer}
+        experience={experience}
+        username={username}
+        creatorPubky={creatorPubky}
+        pic={pic}
       />
     </div>
   );

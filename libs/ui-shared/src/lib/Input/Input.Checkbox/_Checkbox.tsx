@@ -35,7 +35,7 @@ export const Checkbox = ({
   return (
     <label
       className={twMerge(
-        'flex gap-2',
+        'relative flex gap-2',
         disabled ? 'cursor-default' : 'cursor-pointer'
       )}
     >
