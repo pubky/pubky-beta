@@ -60,8 +60,15 @@ export default function ProductsServices() {
           </Typography.Body>
           <Button.Transparent
             className="mt-2 w-auto"
-            icon={<Icon.Product size="16" color={'white'} />}
-            onClick={() => setModalService(true)}
+            icon={
+              <Icon.Product
+                size="16"
+                color={services.length > 5 ? 'gray' : 'white'}
+              />
+            }
+            onClick={
+              services.length > 5 ? undefined : () => setModalService(true)
+            }
           >
             Add product/service
           </Button.Transparent>
