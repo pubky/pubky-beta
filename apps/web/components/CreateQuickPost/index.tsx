@@ -21,6 +21,7 @@ import Modal from '../Modal';
 import { Utils } from '@social/utils-shared';
 import LinkPreviewer from '../LinkPreview';
 import { useRouter } from 'next/navigation';
+import FilePreview from '../FilePreview';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -46,6 +47,7 @@ export default function CreateQuickPost({
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -138,7 +140,8 @@ export default function CreateQuickPost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content);
+      const newPost = await createPost(content, selectedFiles);
+
       if (newPost) {
         for (const tag of updatedTags) {
           await createTag(newPost.uri, tag);
@@ -177,6 +180,7 @@ export default function CreateQuickPost({
       setArrayTags([]);
       setContentPost('');
       setTextArea(false);
+      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {
@@ -240,8 +244,22 @@ export default function CreateQuickPost({
     const textBeforeCursor = contentPost.slice(0, cursorPosition);
     const textAfterCursor = contentPost.slice(cursorPosition);
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
+
     setContentPost(newText);
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
+    setIsValidContent(Utils.isValidContent(newText));
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files).slice(0, 3 - selectedFiles.length);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   return (
@@ -316,6 +334,18 @@ export default function CreateQuickPost({
           )}
         </div>
         <LinkPreviewer content={contentPost} />
+        {selectedFiles.length > 0 && (
+          <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {selectedFiles.map((file, index) => (
+              <FilePreview
+                key={index}
+                file={file}
+                index={index}
+                removeFile={removeFile}
+              />
+            ))}
+          </div>
+        )}
         {(textArea || contentPost || showModalTag || arrayTags.length > 0) && (
           <Post.Actions className="w-full">
             {arrayTags.length > 0 && (
@@ -381,11 +411,20 @@ export default function CreateQuickPost({
             />
             <Button.Action
               variant="custom"
-              disabled
-              icon={<Icon.ImageSquare color={'gray'} size="32" />}
-            />
+              icon={<Icon.ImageSquare size="32" />}
+              onClick={() => document.getElementById('fileInput')?.click()}
+            >
+              <input
+                id="fileInput"
+                type="file"
+                accept="image/*,video/*"
+                className="hidden"
+                onChange={handleFileChange}
+                multiple
+              />
+            </Button.Action>
             <Button.Medium
-              className="w-[104px]"
+              className="w-auto"
               variant="line"
               icon={
                 <Icon.PaperPlaneRight

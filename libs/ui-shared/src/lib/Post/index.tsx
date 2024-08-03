@@ -1,6 +1,5 @@
 import { Actions } from './_Actions';
 import { MainCard } from './_Card';
-import { Content } from './_Content';
 import { Footer } from './_Footer';
 import { Header } from './_Header';
 import { ImageUser } from './_Image';
@@ -14,7 +13,6 @@ import { UserPic } from './_UserPic';
 export const Post = {
   Actions,
   MainCard,
-  Content,
   Footer,
   Header,
   ImageUser,

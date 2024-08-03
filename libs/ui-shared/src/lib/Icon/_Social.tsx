@@ -334,9 +334,9 @@ export const TikTok = ({ size = '24', color = 'white' }: IconProps) => (
     xmlns="http://www.w3.org/2000/svg"
     width={size}
     height={size}
-    shape-rendering="geometricPrecision"
-    text-rendering="geometricPrecision"
-    image-rendering="optimizeQuality"
+    shapeRendering="geometricPrecision"
+    textRendering="geometricPrecision"
+    imageRendering="optimizeQuality"
     fillRule="evenodd"
     clipRule="evenodd"
     viewBox="0 0 449.45 515.38"
@@ -353,9 +353,9 @@ export const Spotify = ({ size = '24', color = 'white' }: IconProps) => (
     xmlns="http://www.w3.org/2000/svg"
     width={size}
     height={size}
-    shape-rendering="geometricPrecision"
-    text-rendering="geometricPrecision"
-    image-rendering="optimizeQuality"
+    shapeRendering="geometricPrecision"
+    textRendering="geometricPrecision"
+    imageRendering="optimizeQuality"
     fillRule="evenodd"
     clipRule="evenodd"
     viewBox="0 0 512 511.992"
