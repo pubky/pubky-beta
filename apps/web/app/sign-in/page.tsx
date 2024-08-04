@@ -171,6 +171,7 @@ export default function Index() {
                   className="mt-1"
                   id="file_input"
                   onChange={UploadRecoveryFile}
+                  accept=".pkarr"
                 />
               </div>
               <div>

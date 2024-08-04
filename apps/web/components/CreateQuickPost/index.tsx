@@ -252,8 +252,20 @@ export default function CreateQuickPost({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
+    const maxSizeInMB = 6;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
     if (files) {
-      const newFiles = Array.from(files).slice(0, 3 - selectedFiles.length);
+      const validFiles = Array.from(files).filter((file) => {
+        if (file.size > maxSizeInBytes) {
+          setContent('The maximum allowed size is 6 MB', 'warning');
+          setShow(true);
+          return false;
+        }
+        return true;
+      });
+
+      const newFiles = validFiles.slice(0, 3 - selectedFiles.length);
       setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
     }
   };

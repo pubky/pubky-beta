@@ -6,12 +6,14 @@ interface UploadFileProps extends React.HTMLAttributes<HTMLInputElement> {
   error?: string;
   required?: boolean;
   fileName?: string;
+  accept?: string;
 }
 
 export const UploadFile = ({
   error,
   required = false,
   fileName,
+  accept,
   ...rest
 }: UploadFileProps) => {
   const baseCSS = `w-full h-[70px] p-6 rounded-2xl border border-white border-opacity-30 border-dashed flex justify-between items-center`;
@@ -54,6 +56,7 @@ export const UploadFile = ({
         required={required}
         id="fileInput"
         className="hidden"
+        accept={accept}
       />
       {error && <div className={errorCSS}>{error}</div>}
     </div>
