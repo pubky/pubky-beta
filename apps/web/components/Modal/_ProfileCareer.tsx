@@ -105,16 +105,16 @@ export default function ProfileCareer({
         <div>
           <div className="flex gap-6 items-center">
             {experience.cv && typeof experience?.cv === 'string' && (
-              <div className="mt-6 flex gap-2 items-center opacity-80 hover:opacity-100 cursor-pointer px-4 py-2 border border-white border-opacity-30 hover:border-opacity-50 border-dashed rounded-2xl">
+              <div
+                onClick={() => {
+                  if (typeof experience?.cv === 'string') {
+                    window.open(experience.cv, '_blank');
+                  }
+                }}
+                className="mt-6 flex gap-2 items-center opacity-80 hover:opacity-100 cursor-pointer px-4 py-2 border border-white border-opacity-30 hover:border-opacity-50 border-dashed rounded-2xl"
+              >
                 <Icon.Eye size="16" />
-                <Typography.Body
-                  variant="small"
-                  onClick={() => {
-                    if (typeof experience?.cv === 'string') {
-                      window.open(experience.cv, '_blank');
-                    }
-                  }}
-                >
+                <Typography.Body variant="small">
                   CV_
                   {typeof username === 'string'
                     ? Utils.minifyText(username, 16)
@@ -123,7 +123,7 @@ export default function ProfileCareer({
               </div>
             )}
             {experience.contact && (
-              <Typography.Body className='mt-6' variant="medium-bold">
+              <Typography.Body className="mt-6" variant="medium-bold">
                 {experience.contact}
               </Typography.Body>
             )}
