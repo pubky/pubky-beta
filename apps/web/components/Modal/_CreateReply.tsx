@@ -454,13 +454,17 @@ export default function CreateReply({
               variant="line"
               icon={
                 <Icon.ChatCircleText
-                  color={!isValidContent ? 'gray' : 'white'}
+                  color={
+                    !isValidContent && selectedFiles.length === 0
+                      ? 'gray'
+                      : 'white'
+                  }
                 />
               }
-              disabled={!isValidContent}
+              disabled={!isValidContent && selectedFiles.length === 0}
               loading={sendingReply}
               onClick={
-                isValidContent && !sendingReply
+                (isValidContent || selectedFiles.length > 0) && !sendingReply
                   ? () => handleSubmit(contentReply)
                   : undefined
               }

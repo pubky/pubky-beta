@@ -423,7 +423,7 @@ export default function Repost({
             loading={sendingRepost}
             onClick={
               !sendingRepost
-                ? isValidContent
+                ? isValidContent || selectedFiles.length > 0
                   ? () => handleSubmitRepost(contentRepost)
                   : () => {
                       setSendingRepost(true);

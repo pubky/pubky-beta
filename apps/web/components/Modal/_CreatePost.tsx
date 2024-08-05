@@ -444,13 +444,17 @@ export default function CreatePost({
             variant="line"
             icon={
               <Icon.PaperPlaneRight
-                color={!isValidContent ? 'gray' : 'white'}
+                color={
+                  !isValidContent && selectedFiles.length === 0
+                    ? 'gray'
+                    : 'white'
+                }
               />
             }
-            disabled={!isValidContent}
+            disabled={!isValidContent && selectedFiles.length === 0}
             loading={sendingPost}
             onClick={
-              isValidContent && !sendingPost
+              (isValidContent || selectedFiles.length > 0) && !sendingPost
                 ? () => handleSubmit(contentPost)
                 : undefined
             }
