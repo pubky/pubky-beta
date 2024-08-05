@@ -43,6 +43,9 @@ module.exports = {
             display: 'none',
           },
         },
+        '.break-words': {
+          wordBreak: 'break-word',
+        },
       };
 
       addUtilities(newUtilities, ['responsive', 'hover']);

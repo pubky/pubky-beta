@@ -3,16 +3,14 @@
 
 import { useClientContext } from '@/contexts';
 import { IFileContent, IPost } from '@/types';
-import { Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import getYouTubeID from 'get-youtube-id';
 import LinkPreview from 'libs/ui-shared/src/lib/Post/_Preview';
 import { GitHub } from 'libs/ui-shared/src/lib/Preview/Github';
 import { useEffect, useState } from 'react';
-import LinkParser from 'react-link-parser';
 import { Tweet } from 'react-tweet';
 import FilesCarousel from '../Modal/_FilesCarousel';
-import ProfileLink from './_ProfileLink';
+import Parsing from '../Content/_Parsing';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
@@ -20,15 +18,6 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
   children?: React.ReactNode;
 }
-
-const tagsIcons: { [key: string]: JSX.Element } = {
-  '#synonym': <Icon.Synonym size="24" />,
-  '#slashtags': <Icon.Slashtags size="24" />,
-  '#blocktank': <Icon.Blocktank size="24" />,
-  '#bitkit': <Icon.Bitkit size="24" />,
-  '#bitcoin': <Icon.Bitcoin size="24" />,
-  '#tether': <Icon.Tether size="24" />,
-};
 
 export default function Content({
   post,
@@ -114,78 +103,20 @@ export default function Content({
     setShowModal(true);
   };
 
-  const watchers = [
-    {
-      type: 'startsWith',
-      watchFor: 'pk:',
-      render: (pk: string) => <ProfileLink pk={pk} />,
-    },
-    {
-      type: 'startsWith',
-      watchFor: '#',
-      render: (tag: string) => {
-        const trimmedTag = tag.trim().toLowerCase();
-        const icon = tagsIcons[trimmedTag];
-        return (
-          <a
-            className="text-fuchsia-500 break-all inline-flex mr-1"
-            href={`/search?tags=${tag.replace('#', '').trim()}`}
-            target="_self"
-            rel="noreferrer"
-          >
-            {tag} {icon && <span className="ml-1">{icon}</span>}
-          </a>
-        );
-      },
-    },
-    {
-      watchFor: 'link',
-      render: (url: string) => {
-        return (
-          <a
-            className="text-fuchsia-500 break-all"
-            href={url}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {url}
-          </a>
-        );
-      },
-    },
-    {
-      watchFor: 'email',
-      render: (url: string) => (
-        <a
-          className="text-fuchsia-500 break-all"
-          href={`mailto:${url.trim()}`}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          {url}
-        </a>
-      ),
-    },
-  ];
-
   const cleanedText = cleanText(text.toString());
   const minifiedContent = Utils.minifyContent(cleanedText, 10);
   const contentText = fullContent ? cleanedText : minifiedContent;
 
-  const lines = contentText.split('\n').map((line, index) => (
-    <div key={index} className={`${largeView && 'text-2xl mt-4'} min-h-[10px]`}>
-      <LinkParser watchers={watchers as []}>{line}</LinkParser>
-    </div>
-  ));
-
   const showMore = !fullContent && cleanedText !== minifiedContent;
+
   return (
     <div
       className="w-full cursor-text"
       onClick={(event) => event.stopPropagation()}
     >
       <div className="text-white break-words">
-        {lines}
+        <Parsing>{contentText}</Parsing>
+
         {showMore && (
           <a
             href={Utils.encodePostUri(uri)}
