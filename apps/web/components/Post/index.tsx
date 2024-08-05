@@ -72,7 +72,7 @@ export default function Post({
         <PostUI.Root>
           <div>
             {post?.post.embed && !repostView ? (
-              post?.post.content ? (
+              post?.post.content || post?.post.files ? (
                 <PostUI.MainCard
                   className={twMerge(
                     largeView && 'p-12 inline-flex flex-row gap-12',

@@ -17,6 +17,7 @@ import { ITaggedProfile } from '@/types';
 import { Modal } from '@/components/Modal';
 import Tooltip from '@/components/Tooltip';
 import { useRouter } from 'next/navigation';
+import Parsing from '@/components/Content/_Parsing';
 
 const socialLinks = [
   {
@@ -325,7 +326,7 @@ export default function Sidebar({
               variant="medium"
               className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
             >
-              {Utils.minifyText(bio, 160)}
+              <Parsing>{bio}</Parsing>
             </Typography.Body>
             {initLoadingFollowed ? (
               <Button.Medium
@@ -389,7 +390,7 @@ export default function Sidebar({
                   variant="medium"
                   className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
                 >
-                  {Utils.minifyText(bio, 160)}
+                  <Parsing>{bio}</Parsing>
                 </Typography.Body>
               </div>
             </>
