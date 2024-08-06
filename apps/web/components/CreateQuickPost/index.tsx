@@ -48,6 +48,7 @@ export default function CreateQuickPost({
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -274,6 +275,94 @@ export default function CreateQuickPost({
     setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      if (!textArea) return;
+
+      const items = event.clipboardData?.items;
+      if (items) {
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (item.kind === 'file') {
+            const file = item.getAsFile();
+            if (
+              file &&
+              (file.type.startsWith('image/') || file.type.startsWith('video/'))
+            ) {
+              if (selectedFiles.length < 3) {
+                setSelectedFiles((prevFiles) => [...prevFiles, file]);
+              } else {
+                setContent('Maximum of 3 files can be uploaded', 'warning');
+                setShow(true);
+              }
+            } else {
+              setContent('File not supported', 'warning');
+              setShow(true);
+            }
+          }
+        }
+      }
+    };
+
+    document.addEventListener('paste', handlePaste);
+
+    return () => {
+      document.removeEventListener('paste', handlePaste);
+    };
+  }, [selectedFiles, setContent, setShow, textArea]);
+
+  const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.dataTransfer.items && event.dataTransfer.items.length > 0) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = 'copy';
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(false);
+
+    const files = event.dataTransfer.files;
+    const maxSizeInMB = 6;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+    if (files) {
+      const validFiles = Array.from(files).filter((file) => {
+        const isValidType =
+          file.type.startsWith('image/') || file.type.startsWith('video/');
+        if (!isValidType) {
+          setContent('File not supported', 'warning');
+          setShow(true);
+          return false;
+        }
+        if (file.size > maxSizeInBytes) {
+          setContent('The maximum allowed size is 6 MB', 'warning');
+          setShow(true);
+          return false;
+        }
+        return true;
+      });
+
+      const newFiles = validFiles.slice(0, 3 - selectedFiles.length);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+    }
+  };
+
   return (
     <div
       className={`${
@@ -320,7 +409,13 @@ export default function CreateQuickPost({
         ref={wrapperRef}
         className="w-full flex justify-between gap-6 items-start flex-col"
       >
-        <div className="w-full relative">
+        <div
+          onDragEnter={handleDragEnter}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className="w-full relative"
+        >
           <Input.CursorArea
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
               setContentPost(e.target.value);
@@ -338,6 +433,11 @@ export default function CreateQuickPost({
             }`}
             placeholder="What's on your mind?"
           />
+          {isDragging && (
+            <div className="flex justify-center items-center z-50">
+              <Icon.Plus size="64" color="gray" />
+            </div>
+          )}
           {searchedUsers.length > 0 && (
             <Modal.SearchedUsersCard
               handleUserClick={handleUserClick}
