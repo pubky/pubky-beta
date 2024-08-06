@@ -8,6 +8,9 @@ import Skeletons from '@/components/Skeletons';
 import { Filter } from '@/components/Filter';
 import { useClientContext, useFilterContext } from '@/contexts';
 import { IPost, INewPost } from '@/types';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import Image from 'next/image';
+import L from 'leaflet';
 
 export default function Index() {
   const { reach, sort, layout } = useFilterContext();
@@ -132,6 +135,106 @@ export default function Index() {
       document.removeEventListener('mousedown', handleClickOutsideDrawer);
     };
   }, [drawerFilterRef]);
+
+  if (layout === 'map') {
+    return (
+      <Content.Main>
+        <Components.Header title="Map" />
+        <Components.RemindBackup />
+        <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
+        <Content.Grid className={'grid grid-cols-5 gap-6'}>
+          <Components.PostsLayout className="col-span-5 flex-col inline-flex gap-3">
+            <Components.CreateQuickPost largeView={false} />
+            <div className="rounded-[15px] overflow-hidden col-span-3 flex justify-center">
+              <MapContainer
+                center={{
+                  lat: 21.505,
+                  lng: -0.09,
+                }}
+                zoom={3}
+                scrollWheelZoom={true}
+                style={{
+                  height: 'calc(100vh - 400px)',
+                  width: '100%',
+                  zIndex: 0,
+                }}
+                markerZoomAnimation={true}
+              >
+                <TileLayer
+                  // className="display-none"
+                  attribution=""
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {Object.keys(posts).map((key) => {
+                  const post = posts[key];
+                  if (post?.post?.marker === undefined) return;
+
+                  const customIcon = L.icon({
+                    iconUrl: post.author.profile.image,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                  });
+
+                  return (
+                    <Marker
+                      key={post.id}
+                      position={post.post.marker}
+                      icon={customIcon}
+                    >
+                      <Popup autoClose={true} autoPan={true}>
+                        <div
+                          style={{
+                            width: '200px',
+                            height: 'auto',
+                            padding: '12px',
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            borderRadius: '15px',
+                            color: 'white',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                          }}
+                        >
+                          <Typography.Body variant="small">
+                            {post.post.content}
+                          </Typography.Body>
+                          <div className="flex justify-center items-center gap-2">
+                            <Image
+                              src={post.author.profile.image}
+                              alt={post.author.profile.name}
+                              width={32}
+                              height={32}
+                              className="rounded-full"
+                            />
+                            <Typography.Body variant="small">
+                              {post.author.profile.name}
+                            </Typography.Body>
+                          </div>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                })}
+              </MapContainer>
+            </div>
+          </Components.PostsLayout>
+        </Content.Grid>
+        <Menu.Root
+          position="left"
+          drawerRef={drawerFilterRef}
+          drawerOpen={drawerFilterOpen}
+        >
+          <div className="overflow-y-auto max-h-full no-scrollbar">
+            <Filter.Reach />
+            <Filter.Sort />
+            <Filter.Layout setDrawerFilterOpen={setDrawerFilterOpen} />
+            <Filter.Content />
+          </div>
+        </Menu.Root>
+        {/* <div ref={loader} /> */}
+      </Content.Main>
+    );
+  }
 
   return (
     <Content.Main>

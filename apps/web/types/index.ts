@@ -1,4 +1,6 @@
-export type TLayouts = 'columns' | 'wide' | 'visual';
+import { LatLng } from 'leaflet';
+
+export type TLayouts = 'columns' | 'wide' | 'visual' | 'map';
 export type TStatus =
   | 'available'
   | 'away'
@@ -32,7 +34,11 @@ export interface TClientContext {
   getProfile: () => Promise<IProfile | null>;
   saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
   getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string, files?: File[]) => Promise<IPost | null>;
+  createPost: (
+    content: string,
+    files?: File[],
+    marker?: LatLng
+  ) => Promise<IPost | null>;
   createRepost: (
     uri: string,
     content?: string,
@@ -187,6 +193,7 @@ export interface IAuthor {
 
 export interface IPostContent {
   content: string;
+  marker: LatLng;
   parent?: string;
   root?: string;
   embed?: EmbedContent;

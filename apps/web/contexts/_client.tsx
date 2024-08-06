@@ -29,6 +29,7 @@ import {
   IRecoveryFileResponse,
   IFileContent,
 } from '../types';
+import { LatLng } from 'leaflet';
 
 import Client from '@pubky/sdk';
 import { Utils } from '@social/utils-shared';
@@ -418,7 +419,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
   const createPost = async (
     content: string,
-    files?: File[]
+    files?: File[],
+    marker?: LatLng
   ): Promise<IPost | null> => {
     try {
       const pk = await isLoggedIn();
@@ -453,6 +455,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const postPayload = {
         content,
+        marker,
       };
 
       if (uploadedFiles.length > 0) {

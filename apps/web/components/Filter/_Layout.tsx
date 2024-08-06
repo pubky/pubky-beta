@@ -14,6 +14,7 @@ export default function Layout({ setDrawerFilterOpen }: LayoutProps) {
   const icons = {
     columns: <Icon.ThreeColumns />,
     wide: <Icon.List />,
+    map: <Icon.Globe size="24" />,
     visual: <Icon.SquaresFour color="gray" />,
   };
 

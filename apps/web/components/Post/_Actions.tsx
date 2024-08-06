@@ -29,6 +29,7 @@ export default function Actions({
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
   const [showRepostMenu, setShowRepostMenu] = useState(false);
+  const [showModalMap, setShowModalMap] = useState(false);
 
   const handleAddBookmark = async (postId: string, uri: string) => {
     await createBookmark(postId, uri);
@@ -114,6 +115,23 @@ export default function Actions({
       onClick={(event) => event.stopPropagation()}
     >
       <PostUI.Actions>
+        {post?.post?.marker && (
+          <Button.Action
+            size="small"
+            variant="custom"
+            icon={
+              <Icon.Globe
+                size="16"
+                opacity={post?.post?.marker ? 1 : 0.2}
+                color={post?.post?.marker ? '#d946efc9' : 'gray'}
+              />
+            }
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowModalMap(true);
+            }}
+          />
+        )}
         <Button.Action
           size="small"
           variant="custom"
@@ -208,6 +226,11 @@ export default function Actions({
         post={post}
         showModalReply={showModalReply}
         setShowModalReply={setShowModalReply}
+      />
+      <Modal.MapViewMarker
+        marker={post?.post?.marker}
+        showModal={showModalMap}
+        setShowModal={setShowModalMap}
       />
     </div>
   );

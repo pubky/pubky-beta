@@ -22,6 +22,7 @@ import { Utils } from '@social/utils-shared';
 import LinkPreviewer from '../LinkPreview';
 import { useRouter } from 'next/navigation';
 import FilePreview from '../FilePreview';
+import { LatLng } from 'leaflet';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -42,6 +43,7 @@ export default function CreateQuickPost({
   const [showModalTag, setShowModalTag] = useState(false);
   const [textArea, setTextArea] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
+  const [showModalMap, setShowModalMap] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
@@ -51,6 +53,8 @@ export default function CreateQuickPost({
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
+  const [center, setCenter] = useState(undefined as LatLng | undefined);
+  const [marker, setMarker] = useState(undefined as LatLng | undefined);
 
   const handleUserClick = (userId: string) => {
     const regex = /@\w+/;
@@ -140,7 +144,7 @@ export default function CreateQuickPost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, selectedFiles);
+      const newPost = await createPost(content, selectedFiles, marker);
 
       if (newPost) {
         for (const tag of updatedTags) {
@@ -172,11 +176,11 @@ export default function CreateQuickPost({
           ...prev,
         }));
         setContent('Post created!');
-        setShow(true);
       } else {
         setContent('Something wrong. Try again', 'warning');
-        setShow(true);
       }
+      setMarker(undefined);
+      setShow(true);
       setArrayTags([]);
       setContentPost('');
       setTextArea(false);
@@ -435,6 +439,14 @@ export default function CreateQuickPost({
                 multiple
               />
             </Button.Action>
+            <Button.Action
+              variant="custom"
+              icon={<Icon.Globe color={marker ? 'green' : 'white'} size="32" />}
+              onClick={(event) => {
+                event.stopPropagation();
+                setShowModalMap(true);
+              }}
+            />
             <Button.Medium
               className="w-auto"
               variant="line"
@@ -460,6 +472,14 @@ export default function CreateQuickPost({
           </Post.Actions>
         )}
       </div>
+      <Modal.MapCreateMarker
+        marker={marker}
+        setMarker={setMarker}
+        center={center}
+        setCenter={setCenter}
+        showModal={showModalMap}
+        setShowModal={setShowModalMap}
+      />
       <Modal.TagCreatePost
         arrayTags={arrayTags}
         setArrayTags={setArrayTags}

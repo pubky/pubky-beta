@@ -13,6 +13,8 @@ import ServerDown from './_ServerDown';
 import SessionExpired from './_SessionExpired';
 import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
+import MapCreateMarker from './_MapCreateMarker';
+import MapViewMarker from './_MapViewMarker';
 
 export const Modal = {
   Backup,
@@ -30,6 +32,8 @@ export const Modal = {
   SessionExpired,
   Tag,
   TagCreatePost,
+  MapCreateMarker,
+  MapViewMarker,
 };
 
 export default Modal;
