@@ -35,6 +35,7 @@ export default function Index() {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [image, setImage] = useState<File | string>('/images/Userpic.png');
+  const [prevImage, setPrevImage] = useState<string>('');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
@@ -75,6 +76,7 @@ export default function Index() {
           setName(userProfile.name);
           setBio(userProfile.bio);
           setImage(userProfile.image || '/images/Userpic.png');
+          setPrevImage(userProfile.image || '/images/Userpic.png');
           if (userProfile.links.length > 0) setLinks(userProfile.links);
         }
       } catch (error) {
@@ -188,6 +190,15 @@ export default function Index() {
         links: linksObject,
       });
 
+      if (
+        prevImage &&
+        prevImage !== '/images/Userpic.png' &&
+        prevImage !== image
+      ) {
+        const idImage = Utils.encodeImageId(prevImage);
+        if (idImage) await deleteFile(idImage);
+      }
+
       router.push('/profile');
     } catch (error) {
       console.log(error);
@@ -202,8 +213,6 @@ export default function Index() {
       }
     } else {
       setImage('/images/Userpic.png');
-      const idImage = Utils.encodeImageId(image);
-      if (idImage) deleteFile(idImage);
     }
   };
 
