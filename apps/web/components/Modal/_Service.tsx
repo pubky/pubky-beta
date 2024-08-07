@@ -1,6 +1,5 @@
 'use client';
 
-import { useClientContext } from '@/contexts';
 import { IService } from '@/types';
 import { Icon, Input, Modal } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
@@ -18,7 +17,6 @@ export default function Service({
   services,
   setServices,
 }: ServiceProps) {
-  const { updateServices } = useClientContext();
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
@@ -58,7 +56,7 @@ export default function Service({
 
     const updatedServicesUser = [...servicesArray, newService];
 
-    updateServices(updatedServicesUser);
+    //updateServices(updatedServicesUser);
 
     setServices(updatedServicesUser);
     setTitle('');
@@ -130,9 +128,7 @@ export default function Service({
       </div>
       <div className="w-full mt-4">
         <Modal.SubmitAction
-          icon={
-            <Icon.Product size="16" color={!disabled ? 'white' : 'gray'} />
-          }
+          icon={<Icon.Product size="16" color={!disabled ? 'white' : 'gray'} />}
           onClick={!disabled ? handleAddService : undefined}
           disabled={disabled}
         >

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
+import { useAlertContext, useClientContext } from '@/contexts';
 import { IService, IUserProfile } from '@/types';
 import { Skeleton } from '@/components';
 import Modal from '@/components/Modal';
@@ -8,9 +8,11 @@ import DropDown from '@/components/DropDown';
 
 export default function ProductsServices() {
   const { pubky, getUserIndexed, updateServices } = useClientContext();
+  const { setContent, setShow } = useAlertContext();
   const [services, setServices] = useState<IService[]>([]);
   const [profile, setProfile] = useState<IUserProfile>();
   const [loading, setLoading] = useState(true);
+  const [loadingServices, setLoadingServices] = useState(false);
   const [modalService, setModalService] = useState(false);
   const [openServiceId, setOpenServiceId] = useState<number | null>(null);
 
@@ -39,6 +41,23 @@ export default function ProductsServices() {
 
   const toggleServiceOpen = (index: number) => {
     setOpenServiceId(openServiceId === index ? null : index);
+  };
+
+  const handleSubmitServices = async () => {
+    setLoadingServices(true);
+    try {
+      if (services) {
+        await updateServices(services);
+        setContent('Services updated!');
+        setShow(true);
+      }
+    } catch (error) {
+      console.error('Failed to update services', error);
+      setContent('Failed to update services', 'warning');
+      setShow(true);
+    } finally {
+      setLoadingServices(false);
+    }
   };
 
   const removeService = (index: number) => {
@@ -90,6 +109,18 @@ export default function ProductsServices() {
               ))
             )}
           </div>
+          {services.length > 0 && (
+            <div className="w-full flex justify-end mt-4">
+              <Button.Large
+                icon={<Icon.Check size="16" />}
+                className="w-auto h-[40px]"
+                onClick={handleSubmitServices}
+                loading={loadingServices}
+              >
+                Save
+              </Button.Large>
+            </div>
+          )}
         </div>
       </div>
       <Modal.Service
