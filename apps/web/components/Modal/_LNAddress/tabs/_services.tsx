@@ -59,7 +59,7 @@ export default function Services({
       <Modal.Header title="Products & Services" />
       <div className="mt-4 flex">
         {selectedService === null ? (
-          <div className="w-full">
+          <div className="w-full flex flex-col gap-4">
             {services && services.length > 0 ? (
               services.map((service, index) => (
                 <DropDown.Service
@@ -84,7 +84,7 @@ export default function Services({
               {paymentConfirmed ? (
                 <div
                   className={
-                    "rounded-lg bg-cover bg-center bg-[url('/images/bg-confetti.gif')]"
+                    "rounded-lg bg-cover bg-center"
                   }
                 >
                   <div className="flex flex-col items-center">
@@ -172,8 +172,11 @@ export default function Services({
             </div>
             <div className="w-1/2 p-4">
               <div className="flex flex-col gap-2">
-                <div className="flex items-center w-full justify-between">
-                  <Typography.Body className="text-left" variant="large-bold">
+                <div className="flex items-center gap-4 w-full justify-between">
+                  <Typography.Body
+                    className="text-left break-words"
+                    variant="large-bold"
+                  >
                     {services && services[selectedService].title}
                   </Typography.Body>
                   <Typography.Body

@@ -105,7 +105,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateLNAddress = async (value: string) => {
+  const updateWalletServices = async (value?: string, services?: IService[]) => {
     try {
       if (!pubky) throw new Error('Pubky required');
       if (!profile) throw new Error('Profile required');
@@ -115,30 +115,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const updatedProfile = {
         ...profile,
         ln_address: value,
-      };
-
-      Utils.storage.set('profile', updatedProfile);
-
-      const result = await client.social.profile.put(pubky, updatedProfile);
-
-      if (!result.ok)
-        throw new Error(
-          `Update LN address:${pubky} failed: ${result.error.message}`
-        );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const updateServices = async (services: IService[]) => {
-    try {
-      if (!pubky) throw new Error('Pubky required');
-      if (!profile) throw new Error('Profile required');
-
-      await client.ready();
-
-      const updatedProfile = {
-        ...profile,
         services: services,
       };
 
@@ -1184,8 +1160,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         profile,
         posts,
         updateStatus,
-        updateLNAddress,
-        updateServices,
+        updateWalletServices,
         isLoggedIn,
         createPost,
         createRepost,

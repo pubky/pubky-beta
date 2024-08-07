@@ -86,8 +86,7 @@ export interface TClientContext {
   ) => Promise<IProfile | undefined>;
   searchTags: string[];
   updateStatus: (value: TStatus | string) => Promise<void>;
-  updateLNAddress: (value: string) => Promise<void>;
-  updateServices: (services: IService[]) => Promise<void>;
+  updateWalletServices: (value?: string, services?: IService[]) => Promise<void>;
   setSeed: (seed: Seed | null) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPosts: any;

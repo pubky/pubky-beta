@@ -43,7 +43,7 @@ export default function Donation({
     <div
       className={`${
         donationConfirmed &&
-        `rounded-lg bg-cover bg-center bg-[url('/images/bg-confetti.gif')]`
+        `rounded-lg bg-cover bg-center`
       }`}
     >
       {donationConfirmed ? (
