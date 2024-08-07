@@ -31,6 +31,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   fullContent?: boolean;
   line?: boolean;
   lineStyle?: string;
+  hidePK?: boolean;
 }
 
 export default function Post({
@@ -42,6 +43,7 @@ export default function Post({
   fullContent = false,
   line,
   lineStyle,
+  hidePK = false,
   ...rest
 }: PostProps) {
   const { pubky, deletePost } = useClientContext();
@@ -80,7 +82,7 @@ export default function Post({
                   )}
                 >
                   <div className="flex-col justify-between inline-flex">
-                    <Header post={post} largeView={largeView} />
+                    <Header post={post} largeView={largeView} hidePK={hidePK} />
                     <div>
                       <Content
                         largeView={largeView}
@@ -89,7 +91,10 @@ export default function Post({
                       />
                       {post?.post.embed.post ? (
                         <PostUI.MainCard className="mt-4">
-                          <Header post={post?.post?.embed?.post} />
+                          <Header
+                            post={post?.post?.embed?.post}
+                            hidePK={hidePK}
+                          />
                           {line && (
                             <div className={twMerge(lineBaseCSS, lineStyle)} />
                           )}
@@ -181,6 +186,7 @@ export default function Post({
                         <Header
                           post={post?.post?.embed?.post}
                           largeView={largeView}
+                          hidePK={hidePK}
                         />
                         {line && (
                           <div className={twMerge(lineBaseCSS, lineStyle)} />
@@ -237,7 +243,7 @@ export default function Post({
                   )}
                 >
                   <div className="flex-col justify-between inline-flex">
-                    <Header post={post} largeView={largeView} />
+                    <Header post={post} largeView={largeView} hidePK={hidePK} />
                     <div>
                       <Content
                         largeView={largeView}

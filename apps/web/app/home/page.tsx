@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Content, Menu, Typography } from '@social/ui-shared';
+import { Content, Icon, Menu, Typography } from '@social/ui-shared';
 
 import * as Components from '@/components';
 import Skeletons from '@/components/Skeletons';
@@ -9,7 +9,6 @@ import { Filter } from '@/components/Filter';
 import { useClientContext, useFilterContext } from '@/contexts';
 import { IPost, INewPost } from '@/types';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import Image from 'next/image';
 import L from 'leaflet';
 
 export default function Index() {
@@ -25,6 +24,7 @@ export default function Index() {
   const loader = useRef(null);
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
+  const [loadingMorePosts, setLoadingMorePosts] = useState(false);
 
   const fetchParentPost = async (parentUri: string): Promise<IPost | null> => {
     try {
@@ -45,7 +45,6 @@ export default function Index() {
     const results = await listGlobalPosts(pointer, reach, sort);
 
     if (cancellationToken.cancelled) return;
-
     if (results && results.feed) {
       const newPostsTemp = await Promise.all(
         results.feed.map(async (post: IPost) => {
@@ -74,6 +73,7 @@ export default function Index() {
   };
 
   useEffect(() => {
+    if (layout === 'map') return;
     const observer = new IntersectionObserver(
       async (entries) => {
         if (entries[0].isIntersecting && cursor) {
@@ -102,7 +102,7 @@ export default function Index() {
       cancellationToken.cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reach, sort]);
+  }, [reach, sort, layout]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -136,6 +136,18 @@ export default function Index() {
     };
   }, [drawerFilterRef]);
 
+  useEffect(() => {
+    if (layout === 'map') {
+      setTimeout(() => {
+        setLoadingMorePosts(true);
+        fetchData(cursor, { cancelled: false });
+      }, 5000);
+      setLoadingMorePosts(false);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [layout, cursor]);
+
   if (layout === 'map') {
     return (
       <Content.Main>
@@ -144,6 +156,11 @@ export default function Index() {
         <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
         <Content.Grid className={'grid grid-cols-5 gap-6'}>
           <Components.PostsLayout className="col-span-5 flex-col inline-flex gap-3">
+            {loadingMorePosts && (
+              <div className="fixed bottom-0 left-0 w-full p-4 text-center text-gray-500 justify-center flex flex-row">
+                <Icon.LoadingSpin size="24" className="animate-spin" />
+              </div>
+            )}
             <Components.CreateQuickPost largeView={false} />
             <div className="rounded-[15px] overflow-hidden col-span-3 flex justify-center">
               <MapContainer
@@ -161,7 +178,6 @@ export default function Index() {
                 markerZoomAnimation={true}
               >
                 <TileLayer
-                  // className="display-none"
                   attribution=""
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
@@ -173,6 +189,7 @@ export default function Index() {
                     iconUrl: post.author.profile.image,
                     iconSize: [32, 32],
                     iconAnchor: [16, 32],
+                    iconRetinaUrl: post.author.profile.image,
                   });
 
                   return (
@@ -181,34 +198,30 @@ export default function Index() {
                       position={post.post.marker}
                       icon={customIcon}
                     >
-                      <Popup autoClose={true} autoPan={true}>
-                        <div
-                          style={{
-                            width: '200px',
-                            height: 'auto',
-                            padding: '12px',
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            borderRadius: '15px',
-                            color: 'white',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '8px',
-                          }}
-                        >
-                          <Typography.Body variant="small">
-                            {post.post.content}
-                          </Typography.Body>
-                          <div className="flex justify-center items-center gap-2">
-                            <Image
-                              src={post.author.profile.image}
-                              alt={post.author.profile.name}
-                              width={32}
-                              height={32}
-                              className="rounded-full"
+                      <Popup
+                        autoClose={true}
+                        autoPan={true}
+                        className="opacity-0"
+                      >
+                        <div className="flex flex-col gap-3" key={post.id}>
+                          <div
+                            style={{
+                              width: '400px',
+                              height: 'auto',
+                              padding: '12px',
+                              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                              borderRadius: '15px',
+                              color: 'white',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '8px',
+                            }}
+                          >
+                            <Components.Post
+                              post={post}
+                              className="rounded-bl-none"
+                              hidePK={true}
                             />
-                            <Typography.Body variant="small">
-                              {post.author.profile.name}
-                            </Typography.Body>
                           </div>
                         </div>
                       </Popup>
