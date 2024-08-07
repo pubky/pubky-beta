@@ -468,6 +468,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         throw new Error(`Put post:${pk} failed: ${result.error.message}`);
       }
 
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const postResult = await client.social.posts.get(result.value.uri);
 
       if (!postResult.ok)
@@ -535,6 +537,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!result.ok) {
         throw new Error(`Put repost:${pk} failed: ${result.error.message}`);
       }
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const repostResult = await client.social.posts.get(result.value.uri);
 
