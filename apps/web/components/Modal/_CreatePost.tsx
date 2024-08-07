@@ -107,6 +107,10 @@ export default function CreatePost({
           setContent={setContentPost}
           isValidContent={isValidContent}
           setIsValidContent={setIsValidContent}
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          arrayTags={arrayTags}
+          setArrayTags={setArrayTags}
           button={
             <Button.Medium
               className="w-auto"

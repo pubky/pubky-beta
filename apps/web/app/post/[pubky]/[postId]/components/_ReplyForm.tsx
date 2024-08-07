@@ -63,6 +63,10 @@ export default function ReplyForm({
           placeHolder="What are your thoughts on this?"
           isValidContent={isValidContent}
           setIsValidContent={setIsValidContent}
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          arrayTags={arrayTags}
+          setArrayTags={setArrayTags}
           button={
             <Button.Medium
               className="w-auto"

@@ -37,6 +37,10 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   setIsValidContent: React.Dispatch<React.SetStateAction<boolean>>;
   placeHolder?: string;
   children?: React.ReactNode;
+  selectedFiles: File[];
+  setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  arrayTags: string[];
+  setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export default function CreateContent({
@@ -52,6 +56,10 @@ export default function CreateContent({
   isValidContent,
   setIsValidContent,
   placeHolder = "What's on your mind?",
+  selectedFiles,
+  setSelectedFiles,
+  arrayTags,
+  setArrayTags,
   children,
 }: CreateContentProps) {
   const { pubky, getProfile, searchUsers } = useClientContext();
@@ -61,12 +69,10 @@ export default function CreateContent({
   const [pic, setPic] = useState('/images/Userpic.png');
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
-  const [arrayTags, setArrayTags] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null

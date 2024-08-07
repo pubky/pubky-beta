@@ -118,6 +118,10 @@ export default function CreateReply({
             setContent={setContentReply}
             isValidContent={isValidContent}
             setIsValidContent={setIsValidContent}
+            selectedFiles={selectedFiles}
+            setSelectedFiles={setSelectedFiles}
+            arrayTags={arrayTags}
+            setArrayTags={setArrayTags}
             button={
               <Button.Medium
                 className="w-auto"

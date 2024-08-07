@@ -81,6 +81,7 @@ export default function CreateQuickPost({
       setSendingPost(false);
     }
   };
+
   return (
     <CreateContent
       largeView={largeView}
@@ -89,6 +90,10 @@ export default function CreateQuickPost({
       setContent={setContentPost}
       setTextArea={setTextArea}
       isValidContent={isValidContent}
+      selectedFiles={selectedFiles}
+      setSelectedFiles={setSelectedFiles}
+      arrayTags={arrayTags}
+      setArrayTags={setArrayTags}
       setIsValidContent={setIsValidContent}
       button={
         <Button.Medium

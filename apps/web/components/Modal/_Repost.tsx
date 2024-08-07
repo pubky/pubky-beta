@@ -89,6 +89,10 @@ export default function Repost({
           setContent={setContentRepost}
           isValidContent={isValidContent}
           setIsValidContent={setIsValidContent}
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          arrayTags={arrayTags}
+          setArrayTags={setArrayTags}
           placeHolder="Optional comment"
           button={
             <Button.Medium
