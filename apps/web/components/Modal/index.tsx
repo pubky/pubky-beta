@@ -3,6 +3,7 @@ import CheckLink from './_CheckLink';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
 import DeletePost from './_DeletePost';
+import LNAddress from './_LNAddress';
 import Link from './_Link';
 import Logout from './_Logout';
 import ProfileTag from './_ProfileTag';
@@ -10,6 +11,7 @@ import Repost from './_Repost';
 import SearchedUsersCard from './_SearchedUsersCard';
 import SearchInputCard from './_SearchInputCard';
 import ServerDown from './_ServerDown';
+import Service from './_Service';
 import SessionExpired from './_SessionExpired';
 import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
@@ -20,6 +22,7 @@ export const Modal = {
   CreatePost,
   CreateReply,
   DeletePost,
+  LNAddress,
   Link,
   Logout,
   ProfileTag,
@@ -27,6 +30,7 @@ export const Modal = {
   SearchedUsersCard,
   SearchInputCard,
   ServerDown,
+  Service,
   SessionExpired,
   Tag,
   TagCreatePost,

@@ -20,6 +20,8 @@ import {
   SquareHalf,
   ThreeColumns,
   Eye,
+  Product,
+  Donation,
 } from './_Design';
 import { Plus, Minus, X } from './_Math';
 import { GitFork } from './_Development';
@@ -62,6 +64,7 @@ import {
   DotsThreeVertical,
   DotsThreeOutline,
   SignOut,
+  Wallet,
 } from './_System';
 import {
   Android,
@@ -101,7 +104,7 @@ import {
   Envelope,
 } from './_Communication';
 import { Activity } from './_Health';
-import { Fire } from './_Weather';
+import { Fire, Lightning } from './_Weather';
 import { Key, Lock, Warning, Shield, Question } from './_Security';
 import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether } from './_Tag';
 
@@ -130,6 +133,7 @@ export const Icon = {
   Clipboard,
   Clock,
   Discord,
+  Donation,
   DownloadSimple,
   DropdownIcon,
   DotsNine,
@@ -159,6 +163,7 @@ export const Icon = {
   LinkSimple,
   LinkedIn,
   Link,
+  Lightning,
   List,
   ListBullets,
   ListNumbers,
@@ -179,6 +184,7 @@ export const Icon = {
   Play,
   Plus,
   Podcast,
+  Product,
   Pubky,
   Question,
   Repost,
@@ -211,6 +217,7 @@ export const Icon = {
   UserCircle,
   UserRectangle,
   Warning,
+  Wallet,
   Youtube,
   X,
 };

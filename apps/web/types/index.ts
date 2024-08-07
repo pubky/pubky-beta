@@ -86,6 +86,8 @@ export interface TClientContext {
   ) => Promise<IProfile | undefined>;
   searchTags: string[];
   updateStatus: (value: TStatus | string) => Promise<void>;
+  updateLNAddress: (value: string) => Promise<void>;
+  updateServices: (services: IService[]) => Promise<void>;
   setSeed: (seed: Seed | null) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPosts: any;
@@ -111,6 +113,13 @@ export interface IFileContent {
   urls: {
     main: string;
   };
+}
+
+export interface IService {
+  title: string;
+  contact: string;
+  price: string;
+  description: string;
 }
 
 export interface NotificationsResponse {
@@ -177,6 +186,8 @@ export interface IProfile {
   image: string;
   links: ILink[];
   status?: TStatus;
+  ln_address?: string;
+  services?: IService[];
 }
 
 export interface IAuthor {

@@ -12,6 +12,14 @@ const menuItems: Record<
     icon: <Icon.BellSimple size="24" />,
     label: 'Notifications',
   },
+  wallet: {
+    icon: <Icon.Wallet size="24" />,
+    label: 'Wallet',
+  },
+  products_services: {
+    icon: <Icon.Product size="24" />,
+    label: 'Products & Services',
+  },
   privacy_safety: {
     icon: <Icon.Shield size="24" />,
     label: 'Privacy & Safety',

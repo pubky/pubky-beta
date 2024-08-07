@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { useClientContext } from '@/contexts';
-import { INewPost, TStatus } from '@/types';
+import { INewPost, IService, TStatus } from '@/types';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
 
@@ -19,6 +19,8 @@ export default function Index({
 
   const [pic, setPic] = useState('/images/Userpic.png');
   const [status, setStatus] = useState<TStatus | undefined>();
+  const [lnAddress, setLnAddress] = useState<string>();
+  const [services, setServices] = useState<IService[] | undefined>([]);
   const [name, setName] = useState('');
   const [handler, setHandler] = useState('');
   const [countPosts, setCountPosts] = useState<number>();
@@ -41,6 +43,8 @@ export default function Index({
         setName(userProfile.profile?.name || 'Loading...');
         setHandler(creatorPubky);
         setStatus(userProfile.profile?.status);
+        setLnAddress(userProfile.profile.ln_address);
+        setServices(userProfile?.profile?.services);
         setCountPosts(userProfile.postsCount);
         setCountContacts({
           followers: userProfile.followersCount,
@@ -76,6 +80,8 @@ export default function Index({
                 pubkey={handler}
                 creatorPubky={creatorPubky}
                 status={status}
+                lnAddress={lnAddress}
+                services={services}
               />
             </Content.Grid>
           </div>

@@ -6,6 +6,7 @@ import Languages from './_Languages';
 import Layout from './_Layout';
 import Question from './_Question';
 import Reach from './_Reach';
+import Service from './_Service';
 import SortFriends from './_SortFriends';
 import SortPosts from './_SortPosts';
 import Status from './_Status';
@@ -20,6 +21,7 @@ export const DropDown = {
   Layout,
   Question,
   Reach,
+  Service,
   SortFriends,
   SortPosts,
   Status,

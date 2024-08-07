@@ -24,3 +24,14 @@ export const Fire = ({ size = '24', color = 'white' }: IconProps) => (
     />
   </svg>
 );
+
+export const Lightning = ({ size = '24', color = 'white' }: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+  >
+    <path fill={color} d="M8 24l3-9h-9l14-15-3 9h9l-14 15z" />
+  </svg>
+);

@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Content } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { useClientContext } from '@/contexts';
-import { TStatus } from '@/types';
+import { IService, TStatus } from '@/types';
 import { Profile } from './components';
 
 export default function Index() {
   const { pubky, getUserIndexed } = useClientContext();
   const [status, setStatus] = useState<TStatus | undefined>();
+  const [lnAddress, setLnAddress] = useState<string>();
+  const [services, setServices] = useState<IService[] | undefined>([]);
   const [pic, setPic] = useState('/images/Userpic.png');
   const [name, setName] = useState('');
   const [handler, setHandler] = useState('');
@@ -26,11 +28,14 @@ export default function Index() {
     try {
       if (!pubky) return;
       const userProfile = await getUserIndexed(pubky);
+      console.log('user', userProfile);
 
       if (userProfile) {
         setPic(userProfile.profile?.image || '/images/Userpic.png');
         setName(userProfile.profile?.name || 'Loading...');
         setHandler(pubky);
+        setLnAddress(userProfile.profile.ln_address);
+        setServices(userProfile?.profile?.services);
         setStatus(userProfile.profile?.status);
         setCountPosts(userProfile.postsCount);
         setCountContacts({
@@ -61,6 +66,8 @@ export default function Index() {
             username={name}
             pubkey={handler}
             status={status}
+            lnAddress={lnAddress}
+            services={services}
           />
         </Content.Grid>
       </div>

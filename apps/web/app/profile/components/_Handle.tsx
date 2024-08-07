@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import { DropDown } from '@/components/DropDown';
-import { TStatus } from '@/types';
+import { IService, TStatus } from '@/types';
 import Tooltip from '@/components/Tooltip';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,6 +14,8 @@ interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   pubkey: string;
   creatorPubky?: string | null;
   status?: TStatus;
+  lnAddress?: string;
+  services?: IService[];
 }
 
 export default function Handle({
@@ -21,6 +23,8 @@ export default function Handle({
   pubkey,
   creatorPubky,
   status,
+  lnAddress,
+  services,
   ...rest
 }: HandleProps) {
   const { pubky, seed, follow, unfollow, listFollowers } = useClientContext();
@@ -29,6 +33,7 @@ export default function Handle({
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showLNAddressModal, setShowLNAddressModal] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
@@ -231,6 +236,14 @@ export default function Handle({
             >
               Link
             </Button.Medium>
+            {lnAddress && (
+              <Button.Action
+                size="small"
+                variant="custom"
+                icon={<Icon.Lightning size="16" color="#D946EF" />}
+                onClick={() => setShowLNAddressModal(true)}
+              />
+            )}
             <div className="relative">
               {showProfileMenu && (
                 <Tooltip.ProfileMenu
@@ -291,6 +304,12 @@ export default function Handle({
       <Modal.Logout
         showModalLogout={showModalLogout}
         setShowModalLogout={setShowModalLogout}
+      />
+      <Modal.LNAddress
+        showModal={showLNAddressModal}
+        setShowModal={setShowLNAddressModal}
+        lnAddress={lnAddress}
+        services={services}
       />
     </div>
   );
