@@ -48,7 +48,8 @@ export interface TClientContext {
     content: string,
     uriPost: string,
     rootUri: string,
-    file?: File[]
+    file?: File[],
+    marker?: LatLng
   ) => Promise<ICreateReplyResponse | null>;
   getFile: (uri: string) => Promise<IFileContent | null>;
   deleteFile: (id: string) => Promise<boolean>;

@@ -24,6 +24,7 @@ import { IReply } from '@/types';
 import { useRouter } from 'next/navigation';
 import Replies from './_Replies';
 import FilePreview from '@/components/FilePreview';
+import { LatLng } from 'leaflet';
 
 export default function ReplyForm({
   uri,
@@ -57,6 +58,9 @@ export default function ReplyForm({
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
+  const [center, setCenter] = useState(undefined as LatLng | undefined);
+  const [marker, setMarker] = useState(undefined as LatLng | undefined);
+  const [showModalMap, setShowModalMap] = useState(false);
 
   const handleUserClick = (userId: string) => {
     const regex = /@\w+/;
@@ -120,7 +124,13 @@ export default function ReplyForm({
   const handleReply = async (content: string) => {
     setSendingReply(true);
     const rootUri = post.post.root ? post.post.root : uri;
-    const sendReply = await createReply(content, uri, rootUri, selectedFiles);
+    const sendReply = await createReply(
+      content,
+      uri,
+      rootUri,
+      selectedFiles,
+      marker
+    );
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
@@ -129,6 +139,7 @@ export default function ReplyForm({
       for (const tag of updatedTags) {
         await createTag(sendReply.uri, tag);
       }
+      setMarker(undefined);
       setSendingReply(false);
       setContentReply('');
       setArrayTags([]);
@@ -390,6 +401,19 @@ export default function ReplyForm({
                       multiple
                     />
                   </Button.Action>
+                  <Button.Action
+                    variant="custom"
+                    icon={
+                      <Icon.Globe
+                        color={marker ? 'green' : 'white'}
+                        size="32"
+                      />
+                    }
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setShowModalMap(true);
+                    }}
+                  />
                   <Button.Medium
                     className="w-auto"
                     variant="line"
@@ -419,6 +443,14 @@ export default function ReplyForm({
           </div>
         </Post.MainCard>
         <Replies repliesResponse={replies} />
+        <Modal.MapCreateMarker
+          marker={marker}
+          setMarker={setMarker}
+          center={center}
+          setCenter={setCenter}
+          showModal={showModalMap}
+          setShowModal={setShowModalMap}
+        />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}

@@ -43,7 +43,6 @@ export default function CreateQuickPost({
   const [showModalTag, setShowModalTag] = useState(false);
   const [textArea, setTextArea] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
-  const [showModalMap, setShowModalMap] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
@@ -55,6 +54,7 @@ export default function CreateQuickPost({
   );
   const [center, setCenter] = useState(undefined as LatLng | undefined);
   const [marker, setMarker] = useState(undefined as LatLng | undefined);
+  const [showModalMap, setShowModalMap] = useState(false);
 
   const handleUserClick = (userId: string) => {
     const regex = /@\w+/;

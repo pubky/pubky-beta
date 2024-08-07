@@ -555,7 +555,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     content: string,
     uriPost: string,
     rootUri: string,
-    files?: File[]
+    files?: File[],
+    marker?: LatLng
   ): Promise<IReply | null> => {
     try {
       const pk = await isLoggedIn();
@@ -590,6 +591,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const replyPayload = {
         content,
+        marker: marker,
         parent: uriPost,
         root: rootUri,
       };
