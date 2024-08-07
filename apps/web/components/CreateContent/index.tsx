@@ -71,6 +71,7 @@ export default function CreateContent({
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -235,11 +236,19 @@ export default function CreateContent({
 
       const newFiles = validFiles.slice(0, 3 - selectedFiles.length);
       setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+
+      const newFilePreviews = newFiles.map((file) => URL.createObjectURL(file));
+      setFilePreviews((prevPreviews) =>
+        [...prevPreviews, ...newFilePreviews].slice(0, 3)
+      );
     }
   };
 
   const removeFile = (index: number) => {
     setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setFilePreviews((prevPreviews) =>
+      prevPreviews.filter((_, i) => i !== index)
+    );
   };
 
   useEffect(() => {
@@ -279,7 +288,7 @@ export default function CreateContent({
     return () => {
       document.removeEventListener('paste', handlePaste);
     };
-  }, [selectedFiles, setContentAlert, setShow, textArea]);
+  }, [selectedFiles, setContentAlert, setShow, textArea, setSelectedFiles]);
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -423,6 +432,7 @@ export default function CreateContent({
               <FilePreview
                 key={index}
                 file={file}
+                filePreview={filePreviews[index]}
                 index={index}
                 removeFile={removeFile}
               />
