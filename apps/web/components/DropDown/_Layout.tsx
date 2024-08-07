@@ -11,6 +11,7 @@ export default function Layout() {
   const icons = {
     columns: <Icon.ThreeColumns />,
     wide: <Icon.List />,
+    map: <Icon.Globe />,
     visual: <Icon.SquaresFour color="gray" />,
     loading: <Icon.LoadingSpin className="animate-spin" />,
   };
@@ -65,6 +66,20 @@ export default function Layout() {
               iconOption: <Icon.List />,
             });
             setLayout('wide');
+            setOpenDropdown(false);
+          }}
+        />
+        <DropDownUI.Item
+          label="Map"
+          value="map"
+          selected={layout === 'map'}
+          icon={<Icon.List />}
+          onClick={() => {
+            setDropdownValue({
+              value: 'map',
+              iconOption: <Icon.Globe />,
+            });
+            setLayout('map');
             setOpenDropdown(false);
           }}
         />

@@ -93,11 +93,11 @@ export default function MapLayout() {
   }, [drawerFilterRef]);
 
   useEffect(() => {
+    setLoadingMorePosts(true);
     setTimeout(() => {
-      setLoadingMorePosts(true);
       fetchData(cursor, { cancelled: false });
-    }, 5000);
-    setLoadingMorePosts(false);
+      setLoadingMorePosts(false);
+    }, 3000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor]);
 
@@ -108,11 +108,22 @@ export default function MapLayout() {
       <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       <Content.Grid className={'grid grid-cols-5 gap-6'}>
         <Components.PostsLayout className="col-span-5 flex-col inline-flex gap-3">
-          {loadingMorePosts && (
-            <div className="fixed bottom-0 left-0 w-full p-4 text-center text-gray-500 justify-center flex flex-row">
-              <Icon.LoadingSpin size="24" className="animate-spin" />
-            </div>
-          )}
+          <div
+            className={`transition-all fixed bottom-0 left-0 w-full p-4 text-center text-gray-500 justify-center flex flex-row`}
+          >
+            {loadingMorePosts && (
+              <div className="flex flex-row">
+                <Icon.LoadingSpin size="24" className="animate-bounce" />
+                <span className="ml-1">Waiting for more posts...</span>
+              </div>
+            )}
+            {!loadingMorePosts && (
+              <div className="flex flex-row">
+                <Icon.ArrowUp size="24" className="animate-bounce" />
+                <span className="ml-1">Updating markers...</span>
+              </div>
+            )}
+          </div>
           <Components.CreateQuickPost largeView={false} />
           <div className="rounded-[15px] overflow-hidden col-span-3 flex justify-center">
             <MapContainer
