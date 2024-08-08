@@ -133,6 +133,16 @@ const SearchContent = () => {
     };
   }, [drawerFilterRef]);
 
+  function getPostsLayoutClass(layout: string) {
+    return layout === 'wide'
+      ? 'col-span-5'
+      : 'col-span-5 lg:col-span-4 xl:col-span-3';
+  }
+
+  function getSidebarClass(isFilterContentVisible: boolean) {
+    return isFilterContentVisible ? '' : 'sticky top-[120px]';
+  }
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Search" />
@@ -143,9 +153,9 @@ const SearchContent = () => {
         {layout !== 'wide' && (
           <Sidebar className="hidden xl:block">
             <div
-              className={`self-start ${
-                isFilterContentVisible ? '' : 'sticky top-[120px]'
-              }`}
+              className={`self-start ${getSidebarClass(
+                isFilterContentVisible
+              )}`}
             >
               <Filter.Reach />
               <Filter.Sort />
@@ -157,11 +167,9 @@ const SearchContent = () => {
           </Sidebar>
         )}
         <PostsLayout
-          className={`${
-            layout === 'wide'
-              ? 'col-span-5'
-              : 'col-span-5 lg:col-span-4 xl:col-span-3'
-          } flex-col inline-flex gap-3`}
+          className={`${getPostsLayoutClass(
+            layout
+          )} flex-col inline-flex gap-3`}
         >
           {Object.keys(posts).map((key, index) => (
             <Post
