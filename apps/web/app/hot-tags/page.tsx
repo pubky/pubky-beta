@@ -128,6 +128,45 @@ export default function Index() {
   */
   }
 
+  function renderTags(hotTags: ITaggedPost[], loadingReachTags: boolean) {
+    if (loadingReachTags) {
+      return <Skeletons.Simple />;
+    }
+
+    if (hotTags.length > 0) {
+      return hotTags.map((tag, index) => (
+        <div className="flex gap-3" key={index}>
+          <HotTags.Rank
+            tag={tag.tag}
+            onClick={() => router.push(`/search?tags=${tag.tag}`)}
+            color={tag.tag && Utils.generateRandomColor(tag.tag)}
+            counter={`${tag.count}`}
+          />
+          {tag?.from.slice(0, 15).map((fromItem, fromIndex) => (
+            <Image
+              width={32}
+              height={32}
+              alt={`pic-${fromIndex + 1}`}
+              key={fromIndex}
+              className={`w-[32px] h-[32px] rounded-full ${
+                fromIndex !== 0 ? '-ml-5' : ''
+              }`}
+              src={fromItem.author?.profile?.image || '/images/Userpic.png'}
+            />
+          ))}
+        </div>
+      ));
+    }
+
+    return (
+      <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+        <Typography.H2 className="font-normal text-opacity-50">
+          No tags yet.
+        </Typography.H2>
+      </div>
+    );
+  }
+
   return (
     <Content.Main>
       <Header className="hidden md:block" title="HotTags" />
@@ -141,41 +180,8 @@ export default function Index() {
             <div className="w-full">
               <Skeletons.Simple />
             </div>
-          ) : hotTags.length > 0 ? (
-            loadingReachTags ? (
-              <Skeletons.Simple />
-            ) : (
-              hotTags.map((tag, index) => (
-                <div className="flex gap-3" key={index}>
-                  <HotTags.Rank
-                    tag={tag.tag}
-                    onClick={() => router.push(`/search?tags=${tag.tag}`)}
-                    color={tag.tag && Utils.generateRandomColor(tag.tag)}
-                    counter={`${tag.count}`}
-                  />
-                  {tag?.from.slice(0, 15).map((fromItem, fromIndex: number) => (
-                    <Image
-                      width={32}
-                      height={32}
-                      alt={`pic-${fromIndex + 1}`}
-                      key={fromIndex}
-                      className={`w-[32px] h-[32px] rounded-full ${
-                        fromIndex !== 0 ? '-ml-5' : ''
-                      }`}
-                      src={
-                        fromItem.author?.profile?.image || '/images/Userpic.png'
-                      }
-                    />
-                  ))}
-                </div>
-              ))
-            )
           ) : (
-            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-              <Typography.H2 className="font-normal text-opacity-50">
-                No tags yet.
-              </Typography.H2>
-            </div>
+            renderTags(hotTags, loadingReachTags)
           )}
         </div>
         <Sidebar className="hidden xl:block">
