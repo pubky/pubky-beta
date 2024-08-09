@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Icon, Input, Post, PostUtil } from '@social/ui-shared';
+import { Button, Icon, Post, PostUtil } from '@social/ui-shared';
 import EmojiPicker, {
   EmojiClickData,
   EmojiStyle,
