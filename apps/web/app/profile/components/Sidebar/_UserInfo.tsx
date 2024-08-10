@@ -1,13 +1,13 @@
-import Image from 'next/image';
 import { Typography, Button, Icon, SideCard } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import Parsing from '@/components/Content/_Parsing';
 import { useClientContext } from '@/contexts';
+import { ImageByUri } from '@/components/ImageByUri';
 
 interface UserInfoProps {
   scrolled: boolean;
-  image: string;
+  uriImage: string;
   name: string;
   creatorPubky: string | null | undefined;
   pubkyUser: string;
@@ -23,7 +23,7 @@ interface UserInfoProps {
 
 export default function UserInfo({
   scrolled,
-  image,
+  uriImage,
   name,
   creatorPubky,
   pubkyUser,
@@ -75,11 +75,11 @@ export default function UserInfo({
       <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
         <div className="items-center inline-flex justify-between">
           <div className="justify-start items-center gap-3 inline-flex">
-            <Image
+            <ImageByUri
               width={50}
               height={50}
               className="w-[50px] h-[50px] rounded-full"
-              src={image}
+              uri={uriImage}
               alt="user-pic"
             />
             <div>

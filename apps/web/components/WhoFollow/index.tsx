@@ -142,7 +142,7 @@ export default function WhoFollow() {
                 <div key={index}>
                   <SideCard.User
                     uri={recommendedProfile.id}
-                    src={
+                    uriImage={
                       recommendedProfile?.profile?.image ||
                       '/images/Userpic.png'
                     }

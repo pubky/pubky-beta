@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { z } from 'zod';
 import { useEffect, useRef, useState } from 'react';
@@ -17,6 +16,7 @@ import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';
+import { ImageByUri } from '@/components/ImageByUri';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -35,6 +35,7 @@ export default function Index() {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [image, setImage] = useState<File | string>('/images/Userpic.png');
+  const [prevImage, setPrevImage] = useState<string>('');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
@@ -75,6 +76,7 @@ export default function Index() {
           setName(userProfile.name);
           setBio(userProfile.bio);
           setImage(userProfile.image || '/images/Userpic.png');
+          setPrevImage(userProfile.image || '/images/Userpic.png');
           if (userProfile.links.length > 0) setLinks(userProfile.links);
         }
       } catch (error) {
@@ -188,6 +190,15 @@ export default function Index() {
         links: linksObject,
       });
 
+      if (
+        prevImage &&
+        prevImage !== '/images/Userpic.png' &&
+        prevImage !== image
+      ) {
+        const idImage = Utils.encodeImageId(prevImage);
+        if (idImage) await deleteFile(idImage);
+      }
+
       router.push('/profile');
     } catch (error) {
       console.log(error);
@@ -202,8 +213,6 @@ export default function Index() {
       }
     } else {
       setImage('/images/Userpic.png');
-      const idImage = Utils.encodeImageId(image);
-      if (idImage) deleteFile(idImage);
     }
   };
 
@@ -324,16 +333,12 @@ export default function Index() {
           <Card.Primary className="justify-start z-10" title="Picture">
             {image && (
               <div className="relative">
-                <Image
+                <ImageByUri
                   width={150}
                   height={150}
                   className="w-80 h-80 mt-12 rounded-full"
                   alt="user"
-                  src={
-                    typeof image === 'string'
-                      ? image
-                      : URL.createObjectURL(image)
-                  }
+                  uri={image}
                 />
                 <Button.Transparent
                   icon={getButtonIconImage()}

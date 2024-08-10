@@ -12,10 +12,10 @@ import {
 } from '@social/ui-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { ITaggedProfile } from '@/types';
-import Image from 'next/image';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { useClientContext } from '@/contexts';
+import { ImageByUri } from '../ImageByUri';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalProfileTag: boolean;
@@ -27,7 +27,7 @@ interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   setSelectedTag?: React.Dispatch<React.SetStateAction<ITaggedProfile | null>>;
   pubkyUser?: string;
   name?: string;
-  image?: string;
+  uriImage?: string;
 }
 
 export default function ProfileTag({
@@ -40,7 +40,7 @@ export default function ProfileTag({
   setSelectedTag,
   pubkyUser,
   name,
-  image,
+  uriImage,
 }: ProfileTagProps) {
   const router = useRouter();
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
@@ -251,11 +251,11 @@ export default function ProfileTag({
                   </div>
                 }
               />
-              {name && image && pubkyUser && (
+              {name && uriImage && pubkyUser && (
                 <SideCard.User
                   uri={pubkyUser}
                   className="mt-6"
-                  src={image || '/images/Userpic.png'}
+                  uriImage={uriImage || '/images/Userpic.png'}
                   username={Utils.minifyText(name, 16)}
                   label={Utils.minifyPubky(pubkyUser)}
                 />
@@ -320,7 +320,7 @@ export default function ProfileTag({
                             className="cursor-pointer flex items-center"
                           >
                             {displayedImages.map((image, imageIndex) => (
-                              <Image
+                              <ImageByUri
                                 width={32}
                                 height={32}
                                 key={imageIndex}
@@ -328,7 +328,7 @@ export default function ProfileTag({
                                   imageIndex > 0 && '-ml-2'
                                 }`}
                                 alt={`tag-${imageIndex + 1}`}
-                                src={image}
+                                uri={image}
                               />
                             ))}
                             {extraImagesCount > 0 && (
@@ -415,7 +415,7 @@ export default function ProfileTag({
                           >
                             <SideCard.User
                               uri={user?.author?.uri.replace('pubky:', '')}
-                              src={
+                              uriImage={
                                 user?.author?.profile?.image ||
                                 '/images/Userpic.png'
                               }

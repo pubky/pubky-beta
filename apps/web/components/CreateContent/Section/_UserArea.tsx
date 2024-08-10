@@ -2,30 +2,30 @@
 
 import { Icon, Typography } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
-import Image from 'next/image';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
+import { ImageByUri } from '@/components/ImageByUri';
 
 interface UserAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView: boolean;
-  pic: string;
+  uriPic: string;
   name: string;
 }
 
-export default function UserArea({ largeView, pic, name }: UserAreaProps) {
+export default function UserArea({ largeView, uriPic, name }: UserAreaProps) {
   const { pubky } = useClientContext();
   const router = useRouter();
 
   return (
     <div className="justify-start items-center gap-3 flex">
-      <Image
+      <ImageByUri
         width={largeView ? 48 : 32}
         height={largeView ? 48 : 32}
         className={`${
           largeView ? 'w-[48px] h-[48px]' : 'w-[32px] h-[32px]'
         } rounded-full`}
         alt="user-image"
-        src={pic}
+        uri={uriPic}
       />
       {name && pubky ? (
         <div

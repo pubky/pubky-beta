@@ -152,7 +152,7 @@ export default function Sidebar({
       <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
         <UserInfo
           scrolled={scrolled}
-          image={image}
+          uriImage={image}
           name={name}
           creatorPubky={creatorPubky}
           pubkyUser={pubkyUser}
@@ -200,7 +200,7 @@ export default function Sidebar({
         setSelectedTag={setSelectedTag}
         pubkyUser={pubkyUser}
         name={name}
-        image={image}
+        uriImage={image}
       />
     </>
   );

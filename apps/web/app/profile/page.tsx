@@ -50,7 +50,7 @@ export default function Index() {
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center gap-8 relative">
           <Profile.Avatar
             username={profile?.profile?.name || 'Loading...'}
-            src={profile?.profile?.image || '/images/Userpic.png'}
+            uriImage={profile?.profile?.image}
           />
           <Profile.Handle
             className="-mt-4"
