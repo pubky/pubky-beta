@@ -160,7 +160,7 @@ export default function Index() {
             )}
           </Tooltip.RootSmall>
           <Link href="/home">
-            <Button.Large icon={<Icon.Check />} className="w-[170px] z-20">
+            <Button.Large id="onboarding-start-exploring-btn" icon={<Icon.Check />} className="w-[170px] z-20">
               Start Exploring
             </Button.Large>
           </Link>

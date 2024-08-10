@@ -58,7 +58,7 @@ export default function Index() {
     <Content.Main background="bg-black" className="pb-0">
       <Header.Root>
         <Header.Logo link={logoLink} />
-        <Header.Action>Sign in</Header.Action>
+        <Header.Action id="onboarding-sign-in-btn">Sign in</Header.Action>
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Become the algorithm</Typography.Display>
@@ -66,7 +66,7 @@ export default function Index() {
           Your keys, your content, your rules. Social publishing, reimagined.
         </Typography.H2>
         <div className="relative flex gap-3">
-          <Link id="onboarding-sign-in-link" href="/onboarding/sign-in">
+          <Link id="onboarding-get-started-link" href="/onboarding/sign-in">
             <Button.Large className="mt-12 relative z-20">
               Let&apos;s get started
             </Button.Large>

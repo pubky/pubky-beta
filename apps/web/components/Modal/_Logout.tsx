@@ -45,6 +45,7 @@ export default function Logout({
       </Typography.Body>
       <div className="flex gap-4 mt-8">
         <Button.Large
+          id="logout-modal-sign-out-btn"
           variant="secondary"
           icon={<Icon.SignOut size="16" />}
           onClick={() => router.push(`/logout`)}
@@ -52,6 +53,7 @@ export default function Logout({
           Yes, sign out
         </Button.Large>
         <Modal.SubmitAction
+          id="logout-modal-backup-btn"
           icon={<Icon.Lock size="16" />}
           onClick={() => router.push(`/settings`)}
         >
