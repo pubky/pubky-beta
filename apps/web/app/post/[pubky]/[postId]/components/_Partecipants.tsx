@@ -222,7 +222,7 @@ export default function Partecipants({
         <SideCard.Content>
           <SideCard.User
             uri={repliesResponse?.post?.author?.id}
-            src={
+            uriImage={
               repliesResponse?.post?.author?.profile?.image ||
               '/images/Userpic.png'
             }
@@ -246,7 +246,7 @@ export default function Partecipants({
                 <React.Fragment key={authorId}>
                   <SideCard.User
                     uri={authorId}
-                    src={
+                    uriImage={
                       reply.post.author.profile?.image || '/images/Userpic.png'
                     }
                     username={Utils.minifyText(reply.post.author.profile?.name)}

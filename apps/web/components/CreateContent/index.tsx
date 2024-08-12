@@ -236,7 +236,7 @@ export default function CreateContent({
         largeView ? 'p-12' : 'p-6'
       } w-full mb-4 rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
     >
-      <Section.UserArea pic={pic} name={name} largeView={largeView} />
+      <Section.UserArea uriPic={pic} name={name} largeView={largeView} />
       <div
         ref={wrapperRef}
         className="w-full flex justify-between gap-6 items-start flex-col"

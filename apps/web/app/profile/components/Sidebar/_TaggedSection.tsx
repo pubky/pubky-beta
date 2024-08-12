@@ -1,4 +1,5 @@
 import { Skeleton } from '@/components';
+import { ImageByUri } from '@/components/ImageByUri';
 import { useClientContext } from '@/contexts';
 import { ITaggedProfile } from '@/types';
 import {
@@ -9,7 +10,6 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface TaggedSectionProps {
@@ -102,7 +102,7 @@ export default function TaggedSection({
                       className="cursor-pointer flex items-center"
                     >
                       {displayedImages.map((image, imageIndex) => (
-                        <Image
+                        <ImageByUri
                           width={32}
                           height={32}
                           key={`${tag.tag}-${imageIndex}`}
@@ -110,7 +110,7 @@ export default function TaggedSection({
                             imageIndex > 0 && '-ml-2'
                           }`}
                           alt={`tag-${imageIndex + 1}`}
-                          src={image}
+                          uri={image}
                         />
                       ))}
                       {extraImagesCount > 0 && (

@@ -165,6 +165,24 @@ export const CaretRight = ({ size = '32', color = 'white' }: IconProps) => (
   </svg>
 );
 
+export const CaretLeft = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path opacity="0.2" d="M20 26L10 16L20 6V26Z" fill={color} />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M20.3827 5.07612C20.7564 5.2309 21 5.59554 21 6V26C21 26.4045 20.7564 26.7691 20.3827 26.9239C20.009 27.0787 19.5789 26.9931 19.2929 26.7071L9.29289 16.7071C8.90237 16.3166 8.90237 15.6834 9.29289 15.2929L19.2929 5.29289C19.5789 5.00689 20.009 4.92134 20.3827 5.07612ZM11.4142 16L19 23.5858V8.41421L11.4142 16Z"
+      fill={color}
+    />
+  </svg>
+);
+
 export const CaretUp = ({ size = '32', color = 'white' }: IconProps) => (
   <svg
     width={size}

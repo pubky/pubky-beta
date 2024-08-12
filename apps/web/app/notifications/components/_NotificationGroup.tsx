@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Utils } from '@social/utils-shared';
-import Image from 'next/image';
 import { Icon, Typography, Button } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import { INotification, IUserProfile } from '@/types';
 import Link from 'next/link';
+import { ImageByUri } from '@/components/ImageByUri';
 
 type NotificationGroupProps = {
   notifications: INotification[];
@@ -88,12 +88,12 @@ export default function NotificationGroup({
                   href={`/profile/${user.userId}`}
                   className="flex gap-2 items-center"
                 >
-                  <Image
+                  <ImageByUri
                     width={32}
                     height={32}
                     className="w-[32px] h-[32px] rounded-full"
                     alt="user-pic"
-                    src={user.profile.image || '/images/Userpic.png'}
+                    uri={user.profile.image || '/images/Userpic.png'}
                   />
                   <Typography.Body
                     className="hover:underline hover:decoration-solid"
