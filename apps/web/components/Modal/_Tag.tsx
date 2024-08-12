@@ -14,9 +14,9 @@ import { useClientContext } from '@/contexts';
 import { IPost, ITaggedPost } from '@/types';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Post from '../Post';
+import { ImageByUri } from '../ImageByUri';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
@@ -322,7 +322,7 @@ export default function Tag({
                             className="cursor-pointer flex items-center"
                           >
                             {displayedImages.map((image, imageIndex) => (
-                              <Image
+                              <ImageByUri
                                 width={32}
                                 height={32}
                                 key={imageIndex}
@@ -330,7 +330,7 @@ export default function Tag({
                                   imageIndex > 0 && '-ml-2'
                                 }`}
                                 alt={`tag-${imageIndex + 1}`}
-                                src={image}
+                                uri={image}
                               />
                             ))}
                             {extraImagesCount > 0 && (
@@ -417,7 +417,7 @@ export default function Tag({
                           >
                             <SideCard.User
                               uri={user?.author?.uri.replace('pubky:', '')}
-                              src={
+                              uriImage={
                                 user?.author?.profile?.image ||
                                 '/images/Userpic.png'
                               }

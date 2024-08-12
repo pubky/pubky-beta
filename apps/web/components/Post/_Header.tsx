@@ -38,7 +38,7 @@ export default function Header({
         }}
       >
         <PostUI.ImageUser
-          src={post?.author?.profile?.image || '/images/Userpic.png'}
+          uriImage={post?.author?.profile?.image || '/images/Userpic.png'}
           alt="user"
           width={largeView ? 48 : 32}
           height={largeView ? 48 : 32}

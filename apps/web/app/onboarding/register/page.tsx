@@ -2,13 +2,11 @@
 
 import { z } from 'zod';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Content, Button, Input, Icon } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
-import { Utils } from '@social/utils-shared';
 import { Onboarding } from '../components';
 import { Card } from './Card';
 
@@ -28,7 +26,7 @@ const profileSchema = z.object({
 });
 
 export default function Index() {
-  const { saveProfile, deleteFile } = useClientContext();
+  const { saveProfile } = useClientContext();
 
   const router = useRouter();
 
@@ -68,22 +66,6 @@ export default function Index() {
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
     setShowModalLink(false);
-  };
-
-  const handleRemoveLink = (indexToRemove: number) => {
-    setLinks((prevLinks) => {
-      const updatedLinks = prevLinks.filter(
-        (_, index) => index !== indexToRemove
-      );
-      return updatedLinks;
-    });
-  };
-
-  const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImage(file);
-    }
   };
 
   const handleSubmit = async () => {
@@ -177,35 +159,6 @@ export default function Index() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleUploadImage = () => {
-    if (image === '/images/Userpic.png') {
-      const fileInput = document.getElementById('fileInput');
-      if (fileInput) {
-        fileInput.click();
-      }
-    } else {
-      setImage('/images/Userpic.png');
-      const idImage = Utils.encodeImageId(image);
-      if (idImage) deleteFile(idImage);
-    }
-  };
-
-  const getButtonIconImage = () => {
-    return image === '/images/Userpic.png' ? (
-      <Icon.File size="16" />
-    ) : (
-      <Icon.Trash size="16" />
-    );
-  };
-
-  const getButtonLabelImage = () => {
-    return image === '/images/Userpic.png' ? 'Choose file' : undefined;
-  };
-
-  const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-[154px]' : 'w-[60px]';
   };
 
   return (

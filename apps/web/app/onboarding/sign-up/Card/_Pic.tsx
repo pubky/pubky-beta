@@ -1,7 +1,5 @@
-import { useClientContext } from '@/contexts';
-import { Button, Card, Icon, Input } from '@social/ui-shared';
-import { Utils } from '@social/utils-shared';
-import Image from 'next/image';
+import { ImageByUri } from '@/components/ImageByUri';
+import { Button, Card, Icon } from '@social/ui-shared';
 
 interface PicProps {
   image: File | string;
@@ -9,8 +7,6 @@ interface PicProps {
 }
 
 export default function Pic({ image, setImage }: PicProps) {
-  const { deleteFile } = useClientContext();
-
   const handleUploadImage = () => {
     if (image === '/images/Userpic.png') {
       const fileInput = document.getElementById('fileInput');
@@ -19,8 +15,8 @@ export default function Pic({ image, setImage }: PicProps) {
       }
     } else {
       setImage('/images/Userpic.png');
-      const idImage = Utils.encodeImageId(image);
-      if (idImage) deleteFile(idImage);
+      //const idImage = Utils.encodeImageId(image);
+      //if (idImage) deleteFile(idImage);
     }
   };
 
@@ -51,12 +47,12 @@ export default function Pic({ image, setImage }: PicProps) {
     <Card.Primary className="justify-start z-10" title="Picture">
       {image && (
         <div className="relative">
-          <Image
+          <ImageByUri
             width={150}
             height={150}
             className="w-80 h-80 mt-12 rounded-full"
             alt="user"
-            src={typeof image === 'string' ? image : URL.createObjectURL(image)}
+            uri={image}
           />
           <Button.Transparent
             icon={getButtonIconImage()}

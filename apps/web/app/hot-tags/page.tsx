@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
@@ -17,6 +16,7 @@ import { useClientContext, useFilterContext } from '@/contexts';
 import { ITaggedPost } from '@/types';
 import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
+import { ImageByUri } from '@/components/ImageByUri';
 
 export default function Index() {
   const router = useRouter();
@@ -143,7 +143,7 @@ export default function Index() {
             counter={`${tag.count}`}
           />
           {tag?.from.slice(0, 15).map((fromItem, fromIndex) => (
-            <Image
+            <ImageByUri
               width={32}
               height={32}
               alt={`pic-${fromIndex + 1}`}
@@ -151,7 +151,7 @@ export default function Index() {
               className={`w-[32px] h-[32px] rounded-full ${
                 fromIndex !== 0 ? '-ml-5' : ''
               }`}
-              src={fromItem.author?.profile?.image || '/images/Userpic.png'}
+              uri={fromItem.author?.profile?.image || '/images/Userpic.png'}
             />
           ))}
         </div>
