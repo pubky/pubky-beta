@@ -16,9 +16,14 @@ import Tooltip from '../Tooltip';
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
   largeView?: boolean;
+  repostView?: boolean;
 }
 
-export default function Header({ post, largeView = false }: PostProps) {
+export default function Header({
+  post,
+  largeView = false,
+  repostView = false,
+}: PostProps) {
   const router = useRouter();
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
@@ -33,7 +38,7 @@ export default function Header({ post, largeView = false }: PostProps) {
         }}
       >
         <PostUI.ImageUser
-          src={post?.author?.profile?.image || '/images/Userpic.png'}
+          uriImage={post?.author?.profile?.image || '/images/Userpic.png'}
           alt="user"
           width={largeView ? 48 : 32}
           height={largeView ? 48 : 32}
@@ -53,9 +58,11 @@ export default function Header({ post, largeView = false }: PostProps) {
               {post?.author?.profile?.name &&
                 Utils.minifyText(post?.author?.profile?.name, 24)}
             </PostUI.Username>
-            <Typography.Label className="cursor-pointer text-opacity-30">
-              {Utils.minifyPubky(post?.author?.id)}
-            </Typography.Label>
+            {!repostView && (
+              <Typography.Label className="cursor-pointer text-opacity-30">
+                {Utils.minifyPubky(post?.author?.id)}
+              </Typography.Label>
+            )}
           </div>
           {showTooltipProfile !== '' && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>

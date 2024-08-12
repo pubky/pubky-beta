@@ -1,0 +1,81 @@
+import { Button, Card, Icon, Input } from '@social/ui-shared';
+
+interface Errors {
+  name: string;
+  bio: string;
+}
+
+interface Link {
+  title: string;
+  url: string;
+  placeHolder?: string;
+}
+
+interface LinksProps {
+  links: Link[];
+  setLinks: React.Dispatch<React.SetStateAction<Link[]>>;
+  setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
+  errors: Errors;
+}
+
+export default function Links({
+  links,
+  setLinks,
+  setShowModalLink,
+  errors,
+}: LinksProps) {
+  const handleRemoveLink = (indexToRemove: number) => {
+    setLinks((prevLinks) => {
+      const updatedLinks = prevLinks.filter(
+        (_, index) => index !== indexToRemove
+      );
+      return updatedLinks;
+    });
+  };
+
+  return (
+    <Card.Primary className="justify-start" title="Links">
+      <div className="flex-col inline-flex gap-4 mt-4">
+        {links.map((link, index) => (
+          <div key={index}>
+            <Input.Label value={link.title} />
+            <Input.Text
+              className="h-[70px] mt-2"
+              placeholder={link.placeHolder}
+              value={link.url}
+              error={errors[`link${index}` as keyof typeof errors]}
+              action={
+                index > 1 && (
+                  <div
+                    className="mt-3 cursor-pointer"
+                    onClick={() => handleRemoveLink(index)}
+                  >
+                    <Icon.Trash color="gray" />
+                  </div>
+                )
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const updatedLinks = [...links];
+                updatedLinks[index].url = e.target.value;
+                setLinks(updatedLinks);
+              }}
+            />
+          </div>
+        ))}
+        <Button.Transparent
+          className="w-auto mt-2"
+          icon={
+            <Icon.LinkSimple
+              size="16"
+              color={links.length > 3 ? 'gray' : 'white'}
+            />
+          }
+          onClick={links.length > 3 ? undefined : () => setShowModalLink(true)}
+          disabled={links.length > 3}
+        >
+          Add link
+        </Button.Transparent>
+      </div>
+    </Card.Primary>
+  );
+}

@@ -1,0 +1,121 @@
+import { Button, Card, Icon, Input, Typography } from '@social/ui-shared';
+import { useRouter } from 'next/navigation';
+
+interface Errors {
+  password: string;
+  recoveryFile: string;
+}
+
+interface RecoveryFileProps {
+  errors: Errors;
+  fileName: string;
+  setFileName: React.Dispatch<React.SetStateAction<string>>;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+  loginError: boolean;
+  userNotFound: boolean;
+  loading: boolean;
+  handleSubmit: () => void;
+  setRecoveryFile: React.Dispatch<React.SetStateAction<Buffer | null>>;
+}
+
+export default function RecoveryFile({
+  errors,
+  fileName,
+  setFileName,
+  setPassword,
+  loginError,
+  userNotFound,
+  loading,
+  handleSubmit,
+  setRecoveryFile,
+}: RecoveryFileProps) {
+  const router = useRouter();
+
+  const UploadRecoveryFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFileName(event.target.files[0].name);
+    }
+
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setRecoveryFile(Buffer.from(reader.result as ArrayBuffer));
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
+  return (
+    <Card.Primary
+      title="Recovery File"
+      text="Upload your Pubky recovery file and enter your password."
+    >
+      <div className="flex-col inline-flex gap-4">
+        <div>
+          <Input.Label className="mt-4" value="Recovery file" />
+          <Input.UploadFile
+            required
+            error={errors.recoveryFile}
+            fileName={fileName}
+            className="mt-1"
+            id="file_input"
+            onChange={UploadRecoveryFile}
+            accept=".pkarr"
+          />
+        </div>
+        <div>
+          <Input.Label className="mt-4" value="Password" />
+          <Input.Text
+            className="h-[70px] mt-1"
+            type="password"
+            error={errors.password}
+            placeholder="••••••••••••"
+            id="onboarding-password-input"
+            onKeyDown={handleKeyDown}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+          />
+        </div>
+      </div>
+      {loginError && (
+        <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
+          <Typography.Body className="text-red-600" variant="small-bold">
+            Recovery password or recovery file incorrect
+          </Typography.Body>
+          <Icon.Warning color="#dc2626" />
+        </div>
+      )}
+      {userNotFound && (
+        <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-fuchsia-500 bg-fuchsia-500 bg-opacity-10">
+          <Typography.Body className="text-fuchsia-500" variant="small-bold">
+            Your profile was not found, please{' '}
+            <span
+              onClick={() => router.push('/onboarding/sign-in')}
+              className="text-white text-opacity-90 hover:text-opacity-100 cursor-pointer"
+            >
+              create a new one
+            </span>
+          </Typography.Body>
+          <Icon.Warning color="#d946ef" />
+        </div>
+      )}
+      <Button.Large
+        onClick={!loading ? () => handleSubmit() : undefined}
+        icon={<Icon.Key size="16" />}
+        loading={loading}
+        className="mt-4"
+        id="onboarding-sign-in-button"
+      >
+        Sign in
+      </Button.Large>
+    </Card.Primary>
+  );
+}

@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { z } from 'zod';
 import { useEffect, useRef, useState } from 'react';
@@ -17,6 +16,7 @@ import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';
+import { ImageByUri } from '@/components/ImageByUri';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -333,16 +333,12 @@ export default function Index() {
           <Card.Primary className="justify-start z-10" title="Picture">
             {image && (
               <div className="relative">
-                <Image
+                <ImageByUri
                   width={150}
                   height={150}
                   className="w-80 h-80 mt-12 rounded-full"
                   alt="user"
-                  src={
-                    typeof image === 'string'
-                      ? image
-                      : URL.createObjectURL(image)
-                  }
+                  uri={image}
                 />
                 <Button.Transparent
                   icon={getButtonIconImage()}

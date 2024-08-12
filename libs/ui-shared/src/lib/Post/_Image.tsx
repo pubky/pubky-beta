@@ -1,11 +1,11 @@
 import { twMerge } from 'tailwind-merge';
-import Image from 'next/image';
+import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
 
 type ImageProps = {
   width?: number;
   height?: number;
   alt: string;
-  src: string;
+  uriImage: string;
   className?: string;
 };
 
@@ -13,18 +13,18 @@ export const ImageUser = ({
   width = 32,
   height = 32,
   alt = 'userpic',
-  src,
+  uriImage,
   ...rest
 }: ImageProps) => {
   return (
-    <Image
+    <ImageByUri
       {...rest}
       width={width}
       height={height}
       style={{ width: `${width}px`, height: `${height}px` }}
       className={twMerge(`rounded-full`, rest.className)}
       alt={alt}
-      src={src}
+      uri={uriImage}
     />
   );
 };
