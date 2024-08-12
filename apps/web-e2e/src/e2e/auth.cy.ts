@@ -3,7 +3,7 @@ import path = require('path');
 
 describe('onboarding', () => {
   beforeEach(() => {
-    cy.viewport(1920, 1080);
+    cy.viewport(1280, 720); //cy.viewport(1920, 1080);
   });
 
   it('should onboard a new user, go to home and logout', () => {

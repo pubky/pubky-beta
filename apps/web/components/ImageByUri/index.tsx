@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useClientContext } from '@/contexts';
 
 interface ImageByUriProps {
+  id?: string;
   uri: string | File | undefined;
   alt: string;
   width: number;
@@ -15,6 +16,7 @@ interface ImageByUriProps {
 }
 
 const ImageByUri = ({
+  id,
   uri,
   alt,
   width,
@@ -65,6 +67,7 @@ const ImageByUri = ({
 
   return (
     <Image
+      id={id}
       src={imageUrl || '/images/Userpic.png'}
       alt={alt}
       width={width}

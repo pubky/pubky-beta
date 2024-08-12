@@ -6,5 +6,7 @@ export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { cypressDir: 'src' }),
     baseUrl: 'http://localhost:4200',
+    defaultCommandTimeout: 30_000,
+    video: true
   },
 });

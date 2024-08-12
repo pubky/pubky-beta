@@ -212,13 +212,14 @@ export default function Header({ title, className }: HeaderProps) {
             icon={<Icon.GearSix size="24" />}
           />
         </Link>
-        <Link id="header-profile-pic-link" href="/profile" className="w-[48px] relative">
+        <Link href="/profile" className="w-[48px] relative">
           {notifications.length !== 0 && (
             <PostUtil.Counter className="w-6 h-6 absolute text-center bottom-0 right-0 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100">
               {notifications.length}
             </PostUtil.Counter>
           )}
           <ImageByUri
+            id="header-profile-pic"
             width={48}
             height={48}
             className={`rounded-full w-[48px] h-[48px]`}

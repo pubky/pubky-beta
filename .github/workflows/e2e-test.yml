@@ -1,0 +1,78 @@
+name: e2e-test
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+        with:
+          path: pubky-app
+
+      - name: Checkout skunk-works
+        uses: actions/checkout@v4
+        with:
+          repository: pubky/skunk-works
+          path: skunk-works
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Run skunk-works
+        working-directory: skunk-works
+        run: |
+          npm install
+          npm run link
+          cp ./.env.example ./services/backend/.env
+          npm run backend &
+
+      # todo: run in prod mode
+      # - name: Run pubky-app frontend
+      #   working-directory: pubky-app
+      #   run: |
+      #     cp ./.env.example ./.env
+      #     npm install
+      #     npm link @pubky/sdk
+      #     npm run start:dev &
+
+      # - name: Wait for services to start
+      #   run: sleep 5
+
+      # - name: Run e2e tests
+      #   working-directory: pubky-app/apps/web-e2e
+      #   run: npx cypress run --browser chrome
+
+      - name: Build pubky-app frontend
+        working-directory: pubky-app
+        run: |
+          cp ./.env.example ./.env
+          npm install
+          npm link @pubky/sdk
+
+      - name: Run e2e tests
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: pubky-app/apps/web-e2e
+          config-file: cypress.config.ts
+          spec: src/e2e/auth.cy.ts
+          browser: chrome
+          install: false
+          start: npm run start:dev
+          wait-on: 'http://localhost:4200'
+
+      - name: Upload screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: pubky-app/dist/cypress/apps/web-e2e/screenshots
+
+      - name: Upload videos
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos
+          path: pubky-app/dist/cypress/apps/web-e2e/videos
