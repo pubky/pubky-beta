@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Content, Menu, Typography } from '@social/ui-shared';
-
 import * as Components from '@/components';
 import Skeletons from '@/components/Skeletons';
 import { Filter } from '@/components/Filter';
@@ -117,13 +116,11 @@ export default function Index() {
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
-      {
-        if (
-          drawerFilterRef.current &&
-          !drawerFilterRef.current.contains(event.target as Node)
-        ) {
-          setDrawerFilterOpen(false);
-        }
+      if (
+        drawerFilterRef.current &&
+        !drawerFilterRef.current.contains(event.target as Node)
+      ) {
+        setDrawerFilterOpen(false);
       }
     };
 
@@ -133,6 +130,58 @@ export default function Index() {
     };
   }, [drawerFilterRef]);
 
+  function renderParentPost(
+    parentPost: IPost,
+    parentUri: string | undefined,
+    layout: string
+  ) {
+    if (parentPost) {
+      return (
+        <Components.Post
+          post={parentPost}
+          className="rounded-bl-none"
+          largeView={layout === 'wide'}
+        />
+      );
+    }
+
+    if (parentUri) {
+      return (
+        <div className="relative ml-4 mb-8 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
+          <Typography.Body variant="small" className="text-opacity-50">
+            This post was not found or has been deleted by its author.
+          </Typography.Body>
+          <div className="absolute -ml-1 mt-2 border-l-2 border-neutral-800 h-[44px]" />
+        </div>
+      );
+    }
+
+    return null;
+  }
+
+  function renderPost(post: IPost, parentPost: IPost | null, layout: string) {
+    return (
+      <div className="flex flex-col gap-3" key={post.id}>
+        {parentPost && renderParentPost(parentPost, post?.post?.parent, layout)}
+        <Components.Post
+          largeView={layout === 'wide'}
+          post={post}
+          line={Boolean(parentPost)}
+        />
+      </div>
+    );
+  }
+
+  function getPostsLayoutClass(layout: string) {
+    return layout === 'wide'
+      ? 'col-span-5'
+      : 'col-span-5 lg:col-span-4 xl:col-span-3';
+  }
+
+  function getSidebarClass(isFilterContentVisible: boolean) {
+    return isFilterContentVisible ? '' : 'sticky top-[120px]';
+  }
+
   return (
     <Content.Main>
       <Components.Header className="hidden md:block" title="Feed" />
@@ -140,13 +189,13 @@ export default function Index() {
       {layout === 'wide' && (
         <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       )}
-      <Content.Grid className={'grid grid-cols-5 gap-6'}>
+      <Content.Grid className="grid grid-cols-5 gap-6">
         {layout !== 'wide' && (
           <Components.Sidebar className="hidden lg:block">
             <div
-              className={`self-start ${
-                isFilterContentVisible ? '' : 'sticky top-[120px]'
-              }`}
+              className={`self-start ${getSidebarClass(
+                isFilterContentVisible
+              )}`}
             >
               <Filter.Reach />
               <Filter.Sort />
@@ -158,11 +207,9 @@ export default function Index() {
           </Components.Sidebar>
         )}
         <Components.PostsLayout
-          className={`${
-            layout === 'wide'
-              ? 'col-span-5'
-              : 'col-span-5 lg:col-span-4 xl:col-span-3'
-          } flex-col inline-flex gap-3`}
+          className={`${getPostsLayoutClass(
+            layout
+          )} flex-col inline-flex gap-3`}
         >
           <Components.CreateQuickPost largeView={layout === 'wide'} />
           {Object.keys(posts).map((key) => {
@@ -170,32 +217,7 @@ export default function Index() {
             const parentUri = post?.post?.parent;
             const parentPost = parentUri ? parentPosts[parentUri] : null;
 
-            return (
-              <div className="flex flex-col gap-3" key={post.id}>
-                {parentPost ? (
-                  <Components.Post
-                    post={parentPost}
-                    className="rounded-bl-none"
-                    largeView={layout === 'wide'}
-                  />
-                ) : parentUri ? (
-                  <div className="relative ml-4 mb-8 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
-                    <Typography.Body
-                      variant="small"
-                      className="text-opacity-50"
-                    >
-                      This post was not found or has been deleted by its author.
-                    </Typography.Body>
-                    <div className="absolute -ml-1 mt-2 border-l-2 border-neutral-800 h-[44px]" />
-                  </div>
-                ) : null}
-                <Components.Post
-                  largeView={layout === 'wide'}
-                  post={post}
-                  line={parentPost ? true : false}
-                />
-              </div>
-            );
+            return renderPost(post, parentPost, layout);
           })}
           {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">

@@ -71,8 +71,8 @@ export default function Post({
       <div className="flex flex-col">
         <PostUI.Root>
           <div>
-            {post?.post.embed && !repostView ? (
-              post?.post.content || post?.post.files ? (
+            {post?.post?.embed && !repostView ? (
+              post?.post?.content || post?.post?.files ? (
                 <PostUI.MainCard
                   className={twMerge(
                     largeView && 'p-12 inline-flex flex-row gap-12',
@@ -237,7 +237,11 @@ export default function Post({
                   )}
                 >
                   <div className="flex-col justify-between inline-flex">
-                    <Header post={post} largeView={largeView} />
+                    <Header
+                      post={post}
+                      largeView={largeView}
+                      repostView={repostView}
+                    />
                     <div>
                       <Content
                         largeView={largeView}

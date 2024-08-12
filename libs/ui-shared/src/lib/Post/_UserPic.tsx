@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
 import { twMerge } from 'tailwind-merge';
 
 interface UserPicProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -12,7 +12,7 @@ export const UserPic = ({ images, ...rest }: UserPicProps) => {
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       {images &&
         images.map((image, index) => (
-          <Image
+          <ImageByUri
             width={32}
             height={32}
             key={index}
@@ -20,7 +20,7 @@ export const UserPic = ({ images, ...rest }: UserPicProps) => {
               index > 0 && '-ml-2'
             }`}
             alt={image.alt ? image.alt : `image-${index + 1}`}
-            src={image.src}
+            uri={image.src}
           />
         ))}
     </div>

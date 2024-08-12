@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   Header as HeaderUI,
   Input,
@@ -15,6 +14,7 @@ import {
 import { Modal } from '../Modal';
 import { useClientContext, useNotificationsContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
+import { ImageByUri } from '../ImageByUri';
 
 interface HeaderProps {
   title?: React.ReactNode;
@@ -214,12 +214,12 @@ export default function Header({ title, className }: HeaderProps) {
               {notifications.length}
             </PostUtil.Counter>
           )}
-          <Image
+          <ImageByUri
             width={48}
             height={48}
             className={`rounded-full w-[48px] h-[48px]`}
             alt="user-pic"
-            src={image}
+            uri={image}
           />
         </Link>
       </div>
@@ -228,13 +228,13 @@ export default function Header({ title, className }: HeaderProps) {
           className="lg:hidden relative cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-          <Menu.ImageMenu src={image} />
+          <Menu.ImageMenu uriImage={image} />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
               href="/profile"
-              src={image}
+              uriImage={image}
               username={Utils.minifyText(name)}
               handler={handler}
             />

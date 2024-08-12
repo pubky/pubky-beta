@@ -43,7 +43,6 @@ export default function CreatePost() {
         showModalPost={showModalPost}
         setShowModalPost={setShowModalPost}
         modalPostRef={modalPostRef}
-        setShowModalLink={setShowModalLink}
       />
       <Modal.Link
         showModalLink={showModalLink}

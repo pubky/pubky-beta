@@ -1,7 +1,6 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { Content, Typography, Button, Icon, Card } from '@social/ui-shared';
+import { Content, Typography } from '@social/ui-shared';
 import { Onboarding } from '../components';
+import { Card } from './Card';
 
 export default function Index() {
   return (
@@ -11,37 +10,8 @@ export default function Index() {
         Join by scanning a QR with Bitkit, or by creating a new pubky.
       </Typography.H2>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-        <Card.Primary
-          title="Join using Bitkit"
-          text="Have Bitkit or another Pubky Core powered wallet? Scan this QR to sign up."
-        >
-          <Image
-            width={320}
-            height={320}
-            className="mt-6"
-            alt="qr"
-            src="/images/qr.png"
-          />
-          <Content.LinksStoreApp />
-        </Card.Primary>
-        <Card.Primary
-          title="New Pubky"
-          text="Another option is to create a new account and profile on Pubky itself (less secure)."
-        >
-          <Image
-            width={320}
-            height={236}
-            alt="visual"
-            src="/images/identity.png"
-          />
-          <Link
-            href="/onboarding/sign-up"
-            className="mt-4 lg:mt-0"
-            id="onboarding-sign-up-link"
-          >
-            <Button.Large icon={<Icon.UserRectangle />}>New pubky</Button.Large>
-          </Link>
-        </Card.Primary>
+        <Card.Join />
+        <Card.NewAccount />
       </div>
       <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image1.png" />
     </Onboarding.Layout>

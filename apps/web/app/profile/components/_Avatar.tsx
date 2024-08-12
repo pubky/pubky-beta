@@ -1,21 +1,27 @@
-/* eslint-disable @next/next/no-img-element */
+import { ImageByUri } from '@/components/ImageByUri';
 
 interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   username?: string;
-  src: string;
+  uriImage: string | undefined;
   alt?: string;
   status?: string;
 }
 
 export default function Avatar({
   username = 'user-pic',
-  src,
+  uriImage,
   status,
   ...rest
 }: AvatarProps) {
   return (
     <div {...rest} className={rest.className}>
-      <img alt={username} src={src} className={'rounded-full w-32 h-32'} />
+      <ImageByUri
+        alt={username}
+        width={128}
+        height={128}
+        className={'rounded-full w-32 h-32'}
+        uri={uriImage}
+      />
       <div className="absolute right-0 top-36 text-[110px]">{status}</div>
     </div>
   );
