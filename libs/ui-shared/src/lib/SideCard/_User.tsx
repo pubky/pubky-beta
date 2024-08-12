@@ -3,9 +3,10 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 import Link from 'next/link';
 import { Icon } from '../Icon';
+import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
 
 interface UserProps extends React.HTMLAttributes<HTMLDivElement> {
-  src: string;
+  uriImage: string;
   label?: string;
   tagsCount?: number;
   postsCount?: number;
@@ -22,7 +23,7 @@ export const User = ({
   height = 40,
   image,
   alt = 'user',
-  src,
+  uriImage,
   username,
   children,
   label,
@@ -40,13 +41,13 @@ export const User = ({
       )}
     >
       <Link href={`/profile/${uri}`} className="gap-2 inline-flex ">
-        <Image
+        <ImageByUri
           width={width}
           height={height}
           className="rounded-full max-w-none h-none"
           style={{ width: `${width}px`, height: `${height}px` }}
           alt={alt}
-          src={src}
+          uri={uriImage}
         />
         <div className="flex-col justify-start items-start inline-flex">
           <Typography.Body variant="medium-bold">{username}</Typography.Body>

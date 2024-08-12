@@ -21,6 +21,10 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'secretproject.nuh.dev',
+      },
+      {
+        protocol: 'https',
         hostname: 'staging.pubky.app',
       },
       {

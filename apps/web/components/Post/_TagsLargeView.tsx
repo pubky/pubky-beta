@@ -14,9 +14,9 @@ import { useClientContext } from '@/contexts';
 import { IPost, ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import { ImageByUri } from '../ImageByUri';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
@@ -223,7 +223,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   className="cursor-pointer flex items-center"
                 >
                   {displayedImages.map((image, imageIndex) => (
-                    <Image
+                    <ImageByUri
                       width={32}
                       height={32}
                       key={index}
@@ -231,7 +231,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                         imageIndex > 0 && '-ml-2'
                       }`}
                       alt={`tag-${imageIndex + 1}`}
-                      src={image}
+                      uri={image}
                     />
                   ))}
                   {extraImagesCount > 0 && (

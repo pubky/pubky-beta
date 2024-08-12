@@ -1,6 +1,6 @@
-import Image from 'next/image';
 import { Typography } from '../Typography';
 import { Content } from '../Content';
+import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
 
 interface Contact extends React.HTMLAttributes<HTMLDivElement> {
   alt: string;
@@ -20,11 +20,11 @@ export const Contacts = ({ contacts }: ContactsListProps) => {
         <div key={index}>
           <Content.Divider />
           <div className="justify-start items-center gap-4 inline-flex">
-            <Image
+            <ImageByUri
               width={48}
               height={48}
               className="w-[48px] h-[48px] rounded-full overflow-hidden"
-              src={contact?.src || '/images/Userpic.png'}
+              uri={contact?.src || '/images/Userpic.png'}
               alt={contact?.alt}
             />
             <div className="flex-col justify-start items-start inline-flex">

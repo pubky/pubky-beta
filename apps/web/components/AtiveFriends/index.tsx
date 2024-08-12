@@ -60,7 +60,7 @@ export default function ActiveFriends() {
                 <div key={index}>
                   <SideCard.User
                     uri={friend.uri.replace('pubky:', '')}
-                    src={friend?.profile?.image || '/images/Userpic.png'}
+                    uriImage={friend?.profile?.image || '/images/Userpic.png'}
                     username={
                       friend?.profile?.name &&
                       Utils.minifyText(friend?.profile?.name, 15)
