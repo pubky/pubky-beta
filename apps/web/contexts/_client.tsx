@@ -186,15 +186,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
           );
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
         const { uri } = fileUploadResult.value;
-        if (uri) {
-          const uploadedFile = await getFile(uri);
-          if (!uploadedFile)
-            throw new Error(`Get file failed: ${uploadedFile.error.message}`);
-          userProfile.image = uploadedFile.urls.main;
-        }
+        userProfile.image = uri;
       }
 
       const pubkeyProfile = _toPubkeyProfile(userProfile);
@@ -284,15 +277,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
           );
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
         const { uri } = fileUploadResult.value;
-        if (uri) {
-          const uploadedFile = await getFile(uri);
-          if (!uploadedFile)
-            throw new Error(`Get file failed: ${uploadedFile.error.message}`);
-          userProfile.image = uploadedFile.urls.main;
-        }
+        userProfile.image = uri;
       }
 
       const pubkeyProfile = _toPubkeyProfile(userProfile);

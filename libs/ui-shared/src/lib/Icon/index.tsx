@@ -6,6 +6,7 @@ import {
   DropdownIcon,
   Repost,
   CaretRight,
+  CaretLeft,
   CaretUp,
   Next,
 } from './_Arrow';
@@ -123,6 +124,7 @@ export const Icon = {
   Calendar,
   Calendly,
   CaretRight,
+  CaretLeft,
   CaretUp,
   ChatCircleText,
   Check,

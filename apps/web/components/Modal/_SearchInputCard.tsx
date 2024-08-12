@@ -87,7 +87,7 @@ export default function SearchInputCard({
             <SideCard.User
               key={user.userId}
               uri={user.userId}
-              src={user.profile?.image || '/images/Userpic.png'}
+              uriImage={user.profile?.image || '/images/Userpic.png'}
               username={Utils.minifyText(user.profile?.name)}
               label={Utils.minifyPubky(user.userId)}
             />

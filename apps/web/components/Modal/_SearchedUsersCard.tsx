@@ -1,7 +1,7 @@
 import { IUserProfile } from '@/types';
 import { Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import Image from 'next/image';
+import { ImageByUri } from '../ImageByUri';
 
 interface SearchedUsersCardProps {
   searchedUsers: IUserProfile[];
@@ -24,13 +24,13 @@ export default function SearchedUsersCard({
           className="cursor-pointer flex gap-2"
           key={user.userId}
         >
-          <Image
+          <ImageByUri
             width={40}
             height={40}
             className="rounded-full max-w-none h-none"
             style={{ width: `${40}px`, height: `${40}px` }}
             alt={'user'}
-            src={user?.profile?.image}
+            uri={user?.profile?.image}
           />
           <div className="flex-col justify-start items-start inline-flex">
             <Typography.Body variant="medium-bold">

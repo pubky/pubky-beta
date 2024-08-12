@@ -1,6 +1,6 @@
-import Image from 'next/image';
 import { Typography } from '../Typography';
 import { Content } from '.';
+import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
 
 interface ProfileProps extends React.HTMLAttributes<HTMLDivElement> {
   profile: {
@@ -30,11 +30,11 @@ export const Profile = ({ profile }: ProfileProps) => {
             {handler}
           </Typography.Label>
         </div>
-        <Image
+        <ImageByUri
           width={64}
           height={64}
           className="w-[64px] h-[64px] rounded-full overflow-hidden"
-          src={image}
+          uri={image}
           alt="Profile Image"
         />
       </div>

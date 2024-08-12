@@ -156,7 +156,7 @@ export default function Profile({ post }: ProfileProps) {
           className="justify-start items-center gap-2 flex cursor-pointer"
         >
           <PostUI.ImageUser
-            src={post?.author?.profile?.image || '/images/Userpic.png'}
+            uriImage={post?.author?.profile?.image || '/images/Userpic.png'}
             alt="user"
           />
           <div className={`flex flex-col justify-start`}>

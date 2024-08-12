@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { Button, Content, Icon, PostUtil, Typography } from '@social/ui-shared';
-import Image from 'next/image';
 import { Utils } from '@social/utils-shared';
 import { IFollower, IUserProfile, LoadingContacts } from '@/types';
 import { useClientContext } from '@/contexts';
+import { ImageByUri } from '@/components/ImageByUri';
 
 interface ContactsList {
   index: string;
@@ -60,10 +60,10 @@ export default function List({
           className="flex gap-2 lg:w-[450px] xl:w-[350px]"
           href={`/profile/${contactId}`}
         >
-          <Image
+          <ImageByUri
             width={48}
             height={48}
-            src={contact?.profile?.image || '/images/Userpic.png'}
+            uri={contact?.profile?.image || '/images/Userpic.png'}
             alt={`follower-pic-${index + 1}`}
             className="rounded-full w-[48px] h-[48px] max-w-none"
           />

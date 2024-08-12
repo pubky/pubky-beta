@@ -1,10 +1,10 @@
 import Avatar from './_Avatar';
-import Handle from './_Handle';
+import Handle from './Handle';
 import HeaderBackground from './_HeaderBackground';
 import FilterTabs from './_FilterTabs';
 import NotificationsProfile from './_NotificationsProfile';
 import Posts from './_Posts';
-import Sidebar from './_Sidebar';
+import Sidebar from './Sidebar';
 
 export const Profile = {
   Avatar,

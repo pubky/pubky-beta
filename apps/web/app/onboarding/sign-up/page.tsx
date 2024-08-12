@@ -2,21 +2,13 @@
 
 import { z } from 'zod';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import {
-  Content,
-  Button,
-  Input,
-  Card,
-  Icon,
-  Typography,
-} from '@social/ui-shared';
+import { Content, Button, Input, Icon, Typography } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
-import { Utils } from '@social/utils-shared';
 import { Onboarding } from '../components';
+import { Card } from './Card';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -34,8 +26,7 @@ const profileSchema = z.object({
 });
 
 export default function Index() {
-  const { signUp, deleteFile } = useClientContext();
-
+  const { signUp } = useClientContext();
   const router = useRouter();
 
   const [name, setName] = useState('');
@@ -74,22 +65,6 @@ export default function Index() {
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
     setShowModalLink(false);
-  };
-
-  const handleRemoveLink = (indexToRemove: number) => {
-    setLinks((prevLinks) => {
-      const updatedLinks = prevLinks.filter(
-        (_, index) => index !== indexToRemove
-      );
-      return updatedLinks;
-    });
-  };
-
-  const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImage(file);
-    }
   };
 
   const handleSubmit = async () => {
@@ -189,35 +164,6 @@ export default function Index() {
     }
   };
 
-  const handleUploadImage = () => {
-    if (image === '/images/Userpic.png') {
-      const fileInput = document.getElementById('fileInput');
-      if (fileInput) {
-        fileInput.click();
-      }
-    } else {
-      setImage('/images/Userpic.png');
-      const idImage = Utils.encodeImageId(image);
-      if (idImage) deleteFile(idImage);
-    }
-  };
-
-  const getButtonIconImage = () => {
-    return image === '/images/Userpic.png' ? (
-      <Icon.File size="16" />
-    ) : (
-      <Icon.Trash size="16" />
-    );
-  };
-
-  const getButtonLabelImage = () => {
-    return image === '/images/Userpic.png' ? 'Choose file' : undefined;
-  };
-
-  const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-[154px]' : 'w-[60px]';
-  };
-
   return (
     <Onboarding.Layout currentStep={2}>
       <Input.Cursor
@@ -236,107 +182,14 @@ export default function Index() {
         Enter your bio, add some links, and upload a user picture.
       </Typography.H2>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-        <Card.Primary className="justify-start gap-4" title="Profile">
-          <div>
-            <Input.Label value="Short bio" />
-            <Card.Primary
-              background="bg-transparent"
-              className="border border-white border-opacity-30 border-dashed mt-2"
-            >
-              <Input.TextArea
-                placeholder="Short bio. Tell a bit about yourself."
-                className="h-[240px]"
-                id="onboarding-bio-input"
-                defaultValue={bio ? bio : ''}
-                maxLength={160}
-                error={errors.bio}
-                onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                  const target = e.target as HTMLTextAreaElement;
-                  if (Utils.isValidContent(target.value)) {
-                    const cleanedBio = Utils.cleanText(target.value);
-                    setBio(cleanedBio);
-                  } else {
-                    setBio('');
-                  }
-                }}
-              />
-            </Card.Primary>
-          </div>
-        </Card.Primary>
-        <Card.Primary className="justify-start" title="Links">
-          <div className="flex-col inline-flex gap-4 mt-4">
-            {links.map((link, index) => (
-              <div key={index}>
-                <Input.Label value={link.title} />
-                <Input.Text
-                  className="h-[70px] mt-2"
-                  placeholder={link.placeHolder}
-                  value={link.url}
-                  error={errors[`link${index}` as keyof typeof errors]}
-                  action={
-                    index > 1 && (
-                      <div
-                        className="mt-3 cursor-pointer"
-                        onClick={() => handleRemoveLink(index)}
-                      >
-                        <Icon.Trash color="gray" />
-                      </div>
-                    )
-                  }
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const updatedLinks = [...links];
-                    updatedLinks[index].url = e.target.value;
-                    setLinks(updatedLinks);
-                  }}
-                />
-              </div>
-            ))}
-            <Button.Transparent
-              className="w-[35%] mt-2"
-              icon={
-                <Icon.LinkSimple
-                  size="16"
-                  color={links.length > 3 ? 'gray' : 'white'}
-                />
-              }
-              onClick={
-                links.length > 3 ? undefined : () => setShowModalLink(true)
-              }
-              disabled={links.length > 3}
-            >
-              Add link
-            </Button.Transparent>
-          </div>
-        </Card.Primary>
-        <Card.Primary className="justify-start z-10" title="Picture">
-          {image && (
-            <div className="relative">
-              <Image
-                width={150}
-                height={150}
-                className="w-80 h-80 mt-12 rounded-full"
-                alt="user"
-                src={
-                  typeof image === 'string' ? image : URL.createObjectURL(image)
-                }
-              />
-              <Button.Transparent
-                icon={getButtonIconImage()}
-                onClick={handleUploadImage}
-                className={`${getButtonWidthImage()} mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
-              >
-                {getButtonLabelImage()}
-              </Button.Transparent>
-            </div>
-          )}
-          <input
-            id="fileInput"
-            type="file"
-            accept="image/*"
-            onChange={UploadPic}
-            className="hidden"
-          />
-        </Card.Primary>
+        <Card.Bio bio={bio} setBio={setBio} errors={errors} />
+        <Card.Links
+          links={links}
+          setLinks={setLinks}
+          setShowModalLink={setShowModalLink}
+          errors={errors}
+        />
+        <Card.Pic image={image} setImage={setImage} />
         <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">

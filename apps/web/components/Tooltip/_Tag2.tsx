@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Tooltip as TooltipUI, PostUtil } from '@social/ui-shared';
 import { ITaggedPost, ITaggedProfile } from '@/types';
-import Image from 'next/image';
 import Tooltip from '.';
+import { ImageByUri } from '../ImageByUri';
 
 interface TagProps {
   tags: ITaggedPost;
@@ -56,7 +56,7 @@ export default function Tag2({
           >
             {displayedImages.map((image, imageIndex) => (
               <>
-                <Image
+                <ImageByUri
                   width={32}
                   height={32}
                   key={imageIndex}
@@ -65,7 +65,7 @@ export default function Tag2({
                     imageIndex > 0 && '-ml-2'
                   }`}
                   alt={`tag-${imageIndex + 1}`}
-                  src={image ? image : '/images/Userpic.png'}
+                  uri={image ? image : '/images/Userpic.png'}
                 />
 
                 {showTooltipProfile === imageIndex && (

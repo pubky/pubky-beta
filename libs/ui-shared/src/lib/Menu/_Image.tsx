@@ -1,10 +1,11 @@
+import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
 import Image from 'next/image';
 
 import { twMerge } from 'tailwind-merge';
 // import { PostUtil } from '../PostUtil';
 
 type Image = {
-  src: string;
+  uriImage: string;
   width?: number;
   height?: number;
   alt?: string;
@@ -13,7 +14,7 @@ type Image = {
 };
 
 export const ImageMenu = ({
-  src,
+  uriImage,
   width = 48,
   height = 48,
   alt = 'user-pic',
@@ -28,13 +29,13 @@ export const ImageMenu = ({
           counter={notifications}
         />
       )} */}
-      <Image
+      <ImageByUri
         {...rest}
         width={48}
         height={48}
         className={twMerge(`rounded-full w-[48px] h-[48px]`, rest.className)}
         alt="user-pic"
-        src={src}
+        uri={uriImage}
       />
     </div>
   );

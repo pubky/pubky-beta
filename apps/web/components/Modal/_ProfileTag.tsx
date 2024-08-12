@@ -12,10 +12,10 @@ import {
 } from '@social/ui-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { ITaggedProfile } from '@/types';
-import Image from 'next/image';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { useClientContext } from '@/contexts';
+import { ImageByUri } from '../ImageByUri';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalProfileTag: boolean;
@@ -27,7 +27,7 @@ interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   setSelectedTag?: React.Dispatch<React.SetStateAction<ITaggedProfile | null>>;
   pubkyUser?: string;
   name?: string;
-  image?: string;
+  uriImage?: string;
 }
 
 export default function ProfileTag({
@@ -40,25 +40,23 @@ export default function ProfileTag({
   setSelectedTag,
   pubkyUser,
   name,
-  image,
+  uriImage,
 }: ProfileTagProps) {
   const router = useRouter();
-  const { pubky } = useClientContext();
+  const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
-  // const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
-  // const [loadingFollowers, setLoadingFollowers] = useState<{
-  //  [pubky: string]: boolean;
-  // }>({});
-  // const [followedUser, setFollowedUser] = useState<{
-  //  [pubky: string]: boolean;
-  // }>({});
-  const [expandedTags, setExpandedTags] = useState<number | null>(null);
+  const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
+  const [loadingFollowers, setLoadingFollowers] = useState<{
+    [pubky: string]: boolean;
+  }>({});
+  const [followedUser, setFollowedUser] = useState<{
+    [pubky: string]: boolean;
+  }>({});
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
-  {
-    /**useEffect(() => {
+  useEffect(() => {
     async function fetchFollowing() {
       try {
         if (!pubky) return;
@@ -143,8 +141,6 @@ export default function ProfileTag({
       console.log(error);
     }
   };
-  */
-  }
 
   useEffect(() => {
     const handleClickOutsideModalTag = (event: MouseEvent) => {
@@ -255,124 +251,115 @@ export default function ProfileTag({
                   </div>
                 }
               />
-              {name && image && pubkyUser && (
+              {name && uriImage && pubkyUser && (
                 <SideCard.User
                   uri={pubkyUser}
                   className="mt-6"
-                  src={image || '/images/Userpic.png'}
+                  uriImage={uriImage || '/images/Userpic.png'}
                   username={Utils.minifyText(name, 16)}
                   label={Utils.minifyPubky(pubkyUser)}
                 />
               )}
             </div>
             <div className="justify-start items-start gap-2 flex flex-col overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-webkit">
+              <Input.Label value={selectedTag ? 'Tagged' : 'Current tags'} />
               {profileTags.length > 0 ? (
                 <>
-                  {profileTags.map((tag, index) => {
-                    const isTagFound = tag.from.some(
-                      (fromItem) => fromItem.author.id === pubky
-                    );
+                  {!selectedTag &&
+                    profileTags.map((tag, index) => {
+                      const isTagFound = tag.from.some(
+                        (fromItem) => fromItem.author.id === pubky
+                      );
 
-                    const images = tag.from.map((fromItem) => {
-                      if (fromItem.author?.profile?.image) {
-                        return fromItem.author.profile.image;
-                      }
-                      return '/images/Userpic.png';
-                    });
-                    const displayedImages =
-                      expandedTags === index ? images : images.slice(0, 4);
-                    const extraImagesCount =
-                      images.length - displayedImages.length;
+                      const images = tag.from.map(
+                        (fromItem) => fromItem.author.profile.image
+                      );
+                      const displayedImages = images.slice(0, 4);
+                      const extraImagesCount =
+                        images.length - displayedImages.length;
 
-                    return (
-                      <div className="flex gap-2" key={index}>
-                        <PostUtil.Tag
-                          key={index}
-                          clicked={isTagFound}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            isTagFound
-                              ? handleDeleteProfileTag(tag.tag)
-                              : handleAddProfileTag(tag.tag);
-                          }}
-                          color={tag.tag && Utils.generateRandomColor(tag.tag)}
-                        >
-                          <div className="flex gap-2 items-center">
-                            {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
-                            <Typography.Caption
-                              variant="bold"
-                              className="text-opacity-30"
-                            >
-                              {tag.count}
-                            </Typography.Caption>
-                          </div>
-                        </PostUtil.Tag>
+                      return (
+                        <div className="flex gap-2" key={index}>
+                          <PostUtil.Tag
+                            key={index}
+                            clicked={isTagFound}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              isTagFound
+                                ? handleDeleteProfileTag(tag.tag)
+                                : handleAddProfileTag(tag.tag);
+                            }}
+                            color={
+                              tag.tag && Utils.generateRandomColor(tag.tag)
+                            }
+                          >
+                            <div className="flex gap-2 items-center">
+                              {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                              <Typography.Caption
+                                variant="bold"
+                                className="text-opacity-30"
+                              >
+                                {tag.count}
+                              </Typography.Caption>
+                            </div>
+                          </PostUtil.Tag>
 
-                        <Button.Action
-                          variant="custom"
-                          size="small"
-                          icon={<Icon.MagnifyingGlassLeft size="14" />}
-                          onClick={() => router.push(`/search?tags=${tag.tag}`)}
-                          className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
-                        />
-                        <div
-                          //onClick={() => setSelectedTag && setSelectedTag(tag)}
-                          className="flex-wrap cursor-default flex items-center"
-                        >
-                          {displayedImages.map((image, imageIndex) => (
-                            <Image
-                              width={32}
-                              height={32}
-                              key={imageIndex}
-                              className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                                imageIndex > 0 && '-ml-2'
-                              }`}
-                              alt={`tag-${imageIndex + 1}`}
-                              src={image}
-                            />
-                          ))}
-                          {extraImagesCount > 0 && expandedTags !== index ? (
-                            <>
-                              <PostUtil.Counter className="-ml-2">
-                                +{extraImagesCount}
-                              </PostUtil.Counter>
-                              <Button.Action
-                                variant="custom"
-                                icon={<Icon.CaretRight size="16" />}
-                                onClick={() => setExpandedTags(index)}
-                                className="-ml-2"
-                                size="small"
-                              />
-                            </>
-                          ) : (
-                            expandedTags === index && (
-                              <Button.Action
-                                variant="custom"
-                                icon={<Icon.CaretUp size="16" />}
-                                onClick={() => setExpandedTags(null)}
-                                className="-ml-2"
-                                size="small"
-                              />
-                            )
-                          )}
-                          {/**<Button.Action
+                          <Button.Action
                             variant="custom"
-                            icon={<Icon.CaretRight size="16" />}
-                            className="-ml-2"
                             size="small"
-                          />*/}
+                            icon={<Icon.MagnifyingGlassLeft size="14" />}
+                            onClick={() =>
+                              router.push(`/search?tags=${tag.tag}`)
+                            }
+                            className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+                          />
+                          <div
+                            onClick={() =>
+                              setSelectedTag && setSelectedTag(tag)
+                            }
+                            className="cursor-pointer flex items-center"
+                          >
+                            {displayedImages.map((image, imageIndex) => (
+                              <ImageByUri
+                                width={32}
+                                height={32}
+                                key={imageIndex}
+                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                                  imageIndex > 0 && '-ml-2'
+                                }`}
+                                alt={`tag-${imageIndex + 1}`}
+                                uri={image}
+                              />
+                            ))}
+                            {extraImagesCount > 0 && (
+                              <>
+                                <PostUtil.Counter className="-ml-2">
+                                  +{extraImagesCount}
+                                </PostUtil.Counter>
+                              </>
+                            )}
+                            <Button.Action
+                              variant="custom"
+                              icon={<Icon.CaretRight size="16" />}
+                              className="-ml-2"
+                              size="small"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                  {/** {selectedTag && (
+                      );
+                    })}
+                  {selectedTag && (
                     <>
                       <div className="flex gap-2 items-center mb-2">
                         <div
                           onClick={() => setSelectedTag && setSelectedTag(null)}
                           className="cursor-pointer"
                         >
-                          <Icon.ArrowLeft size="16" />
+                          <Button.Action
+                            variant="custom"
+                            icon={<Icon.CaretLeft size="16" />}
+                            size="small"
+                          />
                         </div>
                         {selectedTag && (
                           <PostUtil.Tag
@@ -387,6 +374,10 @@ export default function ProfileTag({
                                 ? handleDeleteProfileTag(selectedTag.tag)
                                 : handleAddProfileTag(selectedTag.tag);
                             }}
+                            color={
+                              selectedTag.tag &&
+                              Utils.generateRandomColor(selectedTag.tag)
+                            }
                           >
                             <div className="flex gap-2 items-center">
                               {Utils.minifyText(
@@ -402,6 +393,15 @@ export default function ProfileTag({
                             </div>
                           </PostUtil.Tag>
                         )}
+                        <Button.Action
+                          variant="custom"
+                          size="small"
+                          icon={<Icon.MagnifyingGlassLeft size="14" />}
+                          onClick={() =>
+                            router.push(`/search?tags=${selectedTag.tag}`)
+                          }
+                          className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+                        />
                       </div>
                       {selectedTag.from.map((user, userIndex) => {
                         const pubkeyUser =
@@ -415,7 +415,7 @@ export default function ProfileTag({
                           >
                             <SideCard.User
                               uri={user?.author?.uri.replace('pubky:', '')}
-                              src={
+                              uriImage={
                                 user?.author?.profile?.image ||
                                 '/images/Userpic.png'
                               }
@@ -468,7 +468,7 @@ export default function ProfileTag({
                         );
                       })}
                     </>
-                  )}*/}
+                  )}
                 </>
               ) : (
                 <Typography.Body variant="small" className="text-opacity-50">

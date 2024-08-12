@@ -237,7 +237,11 @@ export default function Post({
                   )}
                 >
                   <div className="flex-col justify-between inline-flex">
-                    <Header post={post} largeView={largeView} />
+                    <Header
+                      post={post}
+                      largeView={largeView}
+                      repostView={repostView}
+                    />
                     <div>
                       <Content
                         largeView={largeView}

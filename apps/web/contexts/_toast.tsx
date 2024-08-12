@@ -41,7 +41,7 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (show) {
-      setTimeout(() => setShow(false), 1000);
+      setTimeout(() => setShow(false), 2000);
     }
   }, [show]);
 
