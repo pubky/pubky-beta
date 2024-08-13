@@ -1,9 +1,13 @@
 import moment = require('moment');
 import path = require('path');
+import { slowCypressDown } from 'cypress-slow-down'
 
 describe('onboarding', () => {
   beforeEach(() => {
-    cy.viewport(1280, 720); //cy.viewport(1920, 1080);
+    cy.viewport(1920, 1080);
+    slowCypressDown(200);
+    // workaround the issue of page content not always loading on first visit
+    cy.visit('/onboarding');
   });
 
   it('should onboard a new user, go to home and logout', () => {
@@ -35,8 +39,9 @@ describe('onboarding', () => {
       { force: true } // force to bypass visibility check of hidden input field
     );
     cy.get('#onboarding-password-input').type('123456');
-
     cy.get('#onboarding-sign-in-button').click();
+
+    cy.location('pathname').should('eq', '/home');
 
     cy.get('#header-profile-pic').click();
     cy.location('pathname').should('eq', '/profile');

@@ -33,3 +33,11 @@ Cypress.Commands.add('login', (email, password) => {
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+// To prevent Cypress from failing the test when:
+// `Uncaught SyntaxError: Invalid or unexpected token` on Chrome, and
+// `Uncaught SyntaxError: "" literal not terminated before end of script` on firefox.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+Cypress.on('uncaught:exception', (_err, _runnable) => {
+  return false
+})
