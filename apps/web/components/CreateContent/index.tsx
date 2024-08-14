@@ -206,7 +206,13 @@ export default function CreateContent({
               (file.type.startsWith('image/') || file.type.startsWith('video/'))
             ) {
               if (selectedFiles.length < 3) {
+                const filePreview = URL.createObjectURL(file);
+
                 setSelectedFiles((prevFiles) => [...prevFiles, file]);
+                setFilePreviews((prevPreviews) => [
+                  ...prevPreviews,
+                  filePreview,
+                ]);
               } else {
                 setContentAlert(
                   'Maximum of 3 files can be uploaded',
@@ -228,7 +234,14 @@ export default function CreateContent({
     return () => {
       document.removeEventListener('paste', handlePaste);
     };
-  }, [selectedFiles, setContentAlert, setShow, textArea, setSelectedFiles]);
+  }, [
+    selectedFiles,
+    setContentAlert,
+    setShow,
+    textArea,
+    setSelectedFiles,
+    setFilePreviews,
+  ]);
 
   return (
     <div
@@ -254,6 +267,7 @@ export default function CreateContent({
           setIsValidContent={setIsValidContent}
           autoFocus={autoFocus}
           placeHolder={placeHolder}
+          setFilePreviews={setFilePreviews}
         />
         <LinkPreviewer content={content} />
         {selectedFiles.length > 0 && (
