@@ -198,6 +198,9 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
+
+      if (!pubky) return;
+
       const results = await getNotifications();
       if (results) {
         const filteredNotifications = results.feed.filter(
