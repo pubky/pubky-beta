@@ -1,4 +1,4 @@
-name: e2e-test
+name: e2e-test-no-matrix
 
 on:
   workflow_dispatch:
@@ -7,9 +7,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chrome, firefox]
 
     steps:
       - name: Checkout this repository
@@ -39,28 +36,55 @@ jobs:
           npm install
           npm link @pubky/sdk
 
-      - name: Run e2e tests (${{ matrix.browser }})
+      - name: Run e2e tests (chrome)
         uses: cypress-io/github-action@v6
         with:
           working-directory: pubky-app/apps/web-e2e
           config-file: cypress.config.ts
           spec: src/e2e/auth.cy.ts
-          browser: ${{ matrix.browser }}
-          summary-title: ${{ matrix.browser }}
+          browser: chrome
+          summary-title: 'Chrome'
           install: false
           start: npm run start:dev
           wait-on: 'http://localhost:4200'
 
-      - name: Upload ${{ matrix.browser }} screenshots
+      - name: Upload chrome screenshots
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: screenshots-${{ matrix.browser }}
+          name: screenshots-chrome
           path: pubky-app/dist/cypress/apps/web-e2e/screenshots
 
-      - name: Upload ${{ matrix.browser }} videos
+      - name: Upload chrome videos
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: videos-${{ matrix.browser }}
+          name: videos-chrome
+          path: pubky-app/dist/cypress/apps/web-e2e/videos
+
+      - name: Run e2e tests (firefox)
+        if: ${{ always() }}
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: pubky-app/apps/web-e2e
+          config-file: cypress.config.ts
+          spec: src/e2e/auth.cy.ts
+          browser: firefox
+          summary-title: 'Firefox'
+          install: false
+          start: npm run start:dev
+          wait-on: 'http://localhost:4200'
+
+      - name: Upload firefox screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-firefox
+          path: pubky-app/dist/cypress/apps/web-e2e/screenshots
+
+      - name: Upload firefox videos
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-firefox
           path: pubky-app/dist/cypress/apps/web-e2e/videos
