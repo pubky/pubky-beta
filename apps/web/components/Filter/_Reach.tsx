@@ -8,10 +8,9 @@ export default function Reach() {
   const [loading, setLoading] = useState(true);
 
   const icons = {
-    following: <Icon.UsersRight />,
-    followers: <Icon.UsersLeft />,
-    friends: <Icon.Smiley />,
     all: <Icon.Broadcast />,
+    following: <Icon.UsersRight />,
+    friends: <Icon.Smiley />,
   };
 
   useEffect(() => {

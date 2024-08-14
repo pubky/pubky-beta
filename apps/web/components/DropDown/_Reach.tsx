@@ -57,20 +57,6 @@ export default function Reach() {
           }}
         />
         <DropDownUI.Item
-          label="Followers"
-          value="followers"
-          selected={reach === 'followers'}
-          icon={<Icon.UsersLeft />}
-          onClick={() => {
-            setDropdownValue({
-              value: 'followers',
-              iconOption: <Icon.UsersLeft />,
-            });
-            setReach('followers');
-            setOpenDropdown(false);
-          }}
-        />
-        <DropDownUI.Item
           label="Friends"
           value="friends"
           selected={reach === 'friends'}
