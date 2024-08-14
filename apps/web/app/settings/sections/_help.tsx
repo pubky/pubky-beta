@@ -66,9 +66,31 @@ export default function Help() {
             />
           );
         })}
-        <div className="mt-4 justify-start items-center gap-2 inline-flex">
+        <div className="w-full h-px bg-white bg-opacity-10 my-6" />
+        <div className="justify-start items-center gap-2 inline-flex">
           <Icon.ChatCircleText size="24" />
-          <Typography.H2>SUPPORT</Typography.H2>
+          <Typography.H2>User Guide</Typography.H2>
+        </div>
+        <Typography.Body variant="medium" className="text-opacity-80">
+          The Pubky User Guide will help you navigate through the app, utilize
+          its key features, and get the most out of your Pubky experience.
+        </Typography.Body>
+        <Button.Large
+          variant="secondary"
+          className="w-auto"
+          onClick={() =>
+            window.open(
+              'https://docs.google.com/document/d/1BHF-rOB31wXsQgC1w7scRaYBlxo9fwu8ygV28x_fEOE/edit?usp=sharing'
+            )
+          }
+          icon={<Icon.FileText width="16" height="16" />}
+        >
+          User Guide
+        </Button.Large>
+        <div className="w-full h-px bg-white bg-opacity-10 my-6" />
+        <div className="justify-start items-center gap-2 inline-flex">
+          <Icon.ChatCircleText size="24" />
+          <Typography.H2>Support</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
           Cannot find the answer you&apos;re looking for? Pubky support will
