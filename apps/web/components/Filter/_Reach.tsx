@@ -10,7 +10,6 @@ export default function Reach() {
   const icons = {
     all: <Icon.Broadcast />,
     following: <Icon.UsersRight />,
-    // followers: <Icon.UsersLeft />,
     friends: <Icon.Smiley />,
   };
 
