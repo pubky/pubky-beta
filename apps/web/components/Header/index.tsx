@@ -106,7 +106,6 @@ export default function Header({ title, className }: HeaderProps) {
       router.push(`/profile/${profileId}`);
     } else {
       const trimmedValue = inputValue.trim();
-      //if (trimmedValue.startsWith('#')) {
       if (searchTags.includes(trimmedValue.slice(0))) return;
 
       if (searchTags.length < 3) {
@@ -117,7 +116,6 @@ export default function Header({ title, className }: HeaderProps) {
       }
       setInputValue('');
       router.push('/search');
-      // }
     }
   };
 
@@ -179,7 +177,6 @@ export default function Header({ title, className }: HeaderProps) {
         <Link href="/home">
           <Button.Action
             variant="menu"
-            //label="Feed"
             active={title === 'Feed'}
             icon={<Icon.Activity size="24" />}
           />
