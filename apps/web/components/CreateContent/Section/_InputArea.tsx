@@ -20,6 +20,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   setIsValidContent: React.Dispatch<React.SetStateAction<boolean>>;
   autoFocus?: boolean;
   placeHolder?: string;
+  setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export default function InputArea({
@@ -35,6 +36,7 @@ export default function InputArea({
   setIsValidContent,
   autoFocus,
   placeHolder,
+  setFilePreviews,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -87,7 +89,12 @@ export default function InputArea({
       });
 
       const newFiles = validFiles.slice(0, 3 - selectedFiles.length);
+      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+
       setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+      setFilePreviews((prevPreviews) =>
+        [...prevPreviews, ...newPreviews].slice(0, 3)
+      );
     }
   };
 
