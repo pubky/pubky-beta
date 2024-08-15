@@ -207,7 +207,7 @@ export default function Header({ title, className }: HeaderProps) {
         </Link>
         <Link href="/profile" className="w-[48px] relative">
           {notifications.length !== 0 && (
-            <PostUtil.Counter className="w-6 h-6 absolute text-center bottom-0 right-0 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100">
+            <PostUtil.Counter className="w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white">
               {notifications.length}
             </PostUtil.Counter>
           )}
