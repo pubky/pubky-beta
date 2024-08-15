@@ -116,7 +116,7 @@ export default function Link({
                   >
                     <Typography.Body
                       variant="small-bold"
-                      className="text-fuchsia-500 text-opacity-80 hover:text-fuchsia-500"
+                      className="text-white text-opacity-80 hover:text-white"
                     >
                       Hint
                     </Typography.Body>

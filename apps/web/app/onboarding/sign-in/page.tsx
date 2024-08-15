@@ -1,4 +1,4 @@
-import { Content, Typography } from '@social/ui-shared';
+import { Typography } from '@social/ui-shared';
 import { Onboarding } from '../components';
 import { Card } from './Card';
 
@@ -13,7 +13,7 @@ export default function Index() {
         <Card.Join />
         <Card.NewAccount />
       </div>
-      <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image1.png" />
+      {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image1.png" />*/}
     </Onboarding.Layout>
   );
 }

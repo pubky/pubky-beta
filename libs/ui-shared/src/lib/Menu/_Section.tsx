@@ -27,7 +27,7 @@ export const Section = ({
       </div>
       {counter && (
         <div>
-          <PostUtil.Counter className="border-fuchsia-500 border-opacity-100">
+          <PostUtil.Counter className="border-white border-opacity-100">
             {counter}
           </PostUtil.Counter>
         </div>

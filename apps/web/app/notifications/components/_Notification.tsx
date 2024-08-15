@@ -219,7 +219,7 @@ export default function Notification({
             <Link href={postLink}>
               <Typography.Body
                 variant="small"
-                className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                className="text-white text-opacity-80 hover:text-opacity-100"
               >
                 View post
               </Typography.Body>
@@ -230,7 +230,7 @@ export default function Notification({
               <Link href={replyLink}>
                 <Typography.Body
                   variant="small"
-                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                  className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   View Reply
                 </Typography.Body>
@@ -239,7 +239,7 @@ export default function Notification({
               <Link href={parentPostReplyLink}>
                 <Typography.Body
                   variant="small"
-                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                  className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   View Post
                 </Typography.Body>
@@ -251,7 +251,7 @@ export default function Notification({
               <Link href={repostLink}>
                 <Typography.Body
                   variant="small"
-                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                  className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   View Repost
                 </Typography.Body>
@@ -260,7 +260,7 @@ export default function Notification({
               <Link href={embedLink}>
                 <Typography.Body
                   variant="small"
-                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                  className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   View Post
                 </Typography.Body>
@@ -272,7 +272,7 @@ export default function Notification({
               <Link href={deletedPostLink}>
                 <Typography.Body
                   variant="small"
-                  className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                  className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   {notification.body.deleteType === 'reply_parent'
                     ? 'View reply'

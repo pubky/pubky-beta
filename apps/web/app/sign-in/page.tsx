@@ -129,7 +129,7 @@ export default function Index() {
           />
           <Card.RecoveryPhrase />
         </div>
-        <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-4.png" />
+        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-4.png" />*/}
       </Content.Grid>
     </Content.Main>
   );

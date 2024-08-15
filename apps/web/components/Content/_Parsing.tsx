@@ -33,7 +33,7 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
         const icon = tagsIcons[trimmedTag];
         return (
           <a
-            className="text-fuchsia-500 break-all inline-flex mr-1"
+            className="text-white break-all inline-flex mr-1"
             href={`/search?tags=${tag.replace('#', '').trim()}`}
             target="_self"
             rel="noreferrer"
@@ -48,7 +48,7 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
       render: (url: string) => {
         return (
           <a
-            className="text-fuchsia-500 break-all"
+            className="text-white break-all"
             href={url}
             target="_blank"
             rel="noreferrer"
@@ -62,7 +62,7 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
       watchFor: 'email',
       render: (url: string) => (
         <a
-          className="text-fuchsia-500 break-all"
+          className="text-white break-all"
           href={`mailto:${url.trim()}`}
           target="_blank"
           rel="noreferrer noopener"

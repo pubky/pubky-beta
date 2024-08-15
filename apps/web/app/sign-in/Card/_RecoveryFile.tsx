@@ -94,8 +94,8 @@ export default function RecoveryFile({
         </div>
       )}
       {userNotFound && (
-        <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-fuchsia-500 bg-fuchsia-500 bg-opacity-10">
-          <Typography.Body className="text-fuchsia-500" variant="small-bold">
+        <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-white bg-white bg-opacity-10">
+          <Typography.Body className="text-white" variant="small-bold">
             Your profile was not found, please{' '}
             <span
               onClick={() => router.push('/onboarding/sign-in')}

@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Card, Button, Icon } from '@social/ui-shared';
 
@@ -8,7 +7,9 @@ export default function NewAccount() {
       title="New Pubky"
       text="Another option is to create a new account and profile on Pubky itself (less secure)."
     >
-      <Image width={320} height={236} alt="visual" src="/images/identity.png" />
+      <div className="flex justify-center items-center p-8">
+        <Icon.Key size="120" />
+      </div>
       <Link
         href="/onboarding/sign-up"
         className="mt-4 lg:mt-0"

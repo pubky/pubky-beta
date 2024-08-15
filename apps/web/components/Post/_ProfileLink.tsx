@@ -24,7 +24,7 @@ function ProfileLink({ pk }: { pk: string }) {
 
   return (
     <>
-      <a className="text-fuchsia-500 break-all" href={`/profile/${pkPart}`}>
+      <a className="text-white break-all" href={`/profile/${pkPart}`}>
         {userName ? `@${userName}` : 'Loading...'}
       </a>
       {remainingPart}

@@ -357,7 +357,7 @@ export default function Index() {
               className="hidden"
             />
           </Card.Primary>
-          <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
+          {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
         </div>
         <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-12">
           <Link href="/onboarding/sign-up">
