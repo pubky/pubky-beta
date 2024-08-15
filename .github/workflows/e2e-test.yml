@@ -48,7 +48,7 @@ jobs:
           browser: ${{ matrix.browser }}
           summary-title: ${{ matrix.browser }}
           install: false
-          start: npm run start:dev
+          start: npm run start:prod
           wait-on: 'http://localhost:4200'
 
       - name: Upload ${{ matrix.browser }} screenshots

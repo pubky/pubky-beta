@@ -7,7 +7,7 @@ describe('onboarding', () => {
     cy.viewport(1920, 1080);
     slowCypressDown(200);
     // workaround the issue of page content not always loading on first visit
-    cy.visit('/onboarding');
+    //cy.visit('/onboarding');
   });
 
   it('should onboard a new user, go to home and logout', () => {
