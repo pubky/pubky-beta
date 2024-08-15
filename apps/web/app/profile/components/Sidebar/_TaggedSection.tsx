@@ -95,7 +95,7 @@ export default function TaggedSection({
                       size="small"
                       icon={<Icon.MagnifyingGlassLeft size="14" />}
                       onClick={() => router.push(`/search?tags=${tag.tag}`)}
-                      className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+                      className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                     />
                     <div
                       onClick={() => setShowModalProfileTag(true)}

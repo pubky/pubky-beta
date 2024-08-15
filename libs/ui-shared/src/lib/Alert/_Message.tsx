@@ -24,7 +24,7 @@ export const Message = ({
       break;
     case 'default':
     default:
-      variantCSS = 'bg-[#793288] border-fuchsia-500';
+      variantCSS = 'bg-[#793288] border-white';
       break;
   }
 

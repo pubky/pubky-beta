@@ -31,10 +31,10 @@ export const Select = ({
   const { baseCSS, iconColor, bodyCSS } = useMemo(() => {
     const sizeCSS = `w-full ${size === 'large' ? 'h-20' : 'h-12'}`;
     const colorBorder = active
-      ? 'border-fuchsia-500'
+      ? 'border-white'
       : 'border-white border-opacity-10';
     const backgroundColor = active
-      ? 'bg-fuchsia-500 bg-opacity-20'
+      ? 'bg-white bg-opacity-20'
       : 'bg-white bg-opacity-10';
     const disabledCSS = disabled
       ? 'bg-opacity-10 cursor-auto'

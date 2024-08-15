@@ -29,9 +29,13 @@ export default function Pic({ image, setImage }: PicProps) {
 
   const getButtonIconImage = () => {
     return image === '/images/Userpic.png' ? (
-      <Icon.File size="16" />
+      <div>
+        <Icon.File size="16" />
+      </div>
     ) : (
-      <Icon.Trash size="16" />
+      <div>
+        <Icon.Trash size="16" />
+      </div>
     );
   };
 
@@ -40,7 +44,7 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-[154px]' : 'w-[60px]';
+    return image === '/images/Userpic.png' ? 'w-[154px]' : 'w-[38px] h-[38px]';
   };
 
   return (

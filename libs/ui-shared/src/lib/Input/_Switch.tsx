@@ -27,7 +27,7 @@ export const Switch = ({
     const baseCSS = `relative inline-flex select-none items-center`;
     const cursorCSS = disabled ? 'cursor-default' : 'cursor-pointer';
     const backgroundCSS = checked
-      ? 'bg-fuchsia-500 bg-opacity-20 border border-fuchsia-500'
+      ? 'bg-white bg-opacity-20 border border-white'
       : 'bg-white bg-opacity-10';
     const dotPositionCSS = checked ? 'translate-x-6' : '';
     const dotColorCSS = disabled ? 'bg-white bg-opacity-30' : 'bg-white';

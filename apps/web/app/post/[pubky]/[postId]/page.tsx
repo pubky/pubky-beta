@@ -66,7 +66,7 @@ export default function Index({
           This post was not found or has been deleted by its author.
           <Link
             href="/home"
-            className="ml-2 text-fuchsia-500 text-opacity-80 hover:text-opacity-100 cursor-pointer"
+            className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
           >
             Go home
           </Link>

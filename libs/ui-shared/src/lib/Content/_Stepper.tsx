@@ -21,14 +21,14 @@ export const Stepper = ({
     const activeStep = `
         ${
           stepNumber < currentStep
-            ? 'bg-fuchsia-500 bg-opacity-60 border-fuchsia-500'
+            ? 'bg-white border-white'
             : stepNumber === currentStep
-            ? 'bg-fuchsia-500 bg-opacity-20 border-fuchsia-500'
+            ? 'bg-white bg-opacity-20 border-white'
             : 'border-white border-opacity-30'
         }`;
     const activeLine = `${
       stepNumber < currentStep
-        ? 'bg-fuchsia-500 bg-opacity-60'
+        ? 'bg-white bg-opacity-60'
         : 'bg-white bg-opacity-30'
     }`;
 
@@ -36,7 +36,7 @@ export const Stepper = ({
       <React.Fragment key={stepNumber}>
         <div className={`${baseCSS} ${activeStep} `}>
           {stepNumber < currentStep ? (
-            <Icon.Check size="20" />
+            <Icon.Check size="20" color="black" />
           ) : (
             <span
               className={`${

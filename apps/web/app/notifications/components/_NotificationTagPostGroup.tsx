@@ -91,7 +91,7 @@ export default function NotificationTagPostGroup({
             <Link href={Utils.encodePostUri(postUrl)}>
               <Typography.Body
                 variant="small"
-                className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+                className="text-white text-opacity-80 hover:text-opacity-100"
               >
                 View post
               </Typography.Body>

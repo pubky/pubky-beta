@@ -313,7 +313,7 @@ export default function Tag({
                             onClick={() =>
                               router.push(`/search?tags=${tag.tag}`)
                             }
-                            className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+                            className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                           />
                           <div
                             onClick={() =>
@@ -402,7 +402,7 @@ export default function Tag({
                           onClick={() =>
                             router.push(`/search?tags=${selectedTag.tag}`)
                           }
-                          className="cursor-pointer text-fuchsia-500 text-opacity-50 hover:text-opacity-80"
+                          className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                         />
                       </div>
                       {selectedTag.from.map((user, userIndex) => {

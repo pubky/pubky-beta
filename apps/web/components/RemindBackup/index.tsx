@@ -149,7 +149,7 @@ export default function RemindBackup() {
         <div
           className={`${
             remindMeLater && 'hidden'
-          } w-full p-12 bg-fuchsia-500 bg-opacity-20 rounded-2xl shadow border border-fuchsia-500 flex-col justify-start items-start gap-6 inline-flex`}
+          } w-full p-12 bg-white bg-opacity-20 rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
         >
           <Typography.H1 className="text-4xl">
             Back up your account
@@ -160,7 +160,7 @@ export default function RemindBackup() {
           </Typography.Body>
           <div className="w-full xl:w-[40%] max-w-full flex gap-6">
             <Button.Large
-              id='remind-backup-now-btn'
+              id="remind-backup-now-btn"
               onClick={() => setShowModalBackup(true)}
               icon={<Icon.Lock size="16" />}
             >
@@ -178,7 +178,7 @@ export default function RemindBackup() {
       ) : (
         showBackupSuccess && (
           <div
-            className={`w-full p-4 bg-fuchsia-500 bg-opacity-20 rounded-lg shadow border border-fuchsia-500 flex-col justify-start items-start gap-6 inline-flex`}
+            className={`w-full p-4 bg-white bg-opacity-20 rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
           >
             <div className="w-full flex justify-between">
               <div className="flex gap-2">

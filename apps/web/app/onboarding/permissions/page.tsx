@@ -1,12 +1,5 @@
 import Link from 'next/link';
-import {
-  Content,
-  Typography,
-  Card,
-  Button,
-  Icon,
-  List,
-} from '@social/ui-shared';
+import { Typography, Card, Button, Icon, List } from '@social/ui-shared';
 import { Onboarding } from '../components';
 
 export default function Index() {
@@ -43,7 +36,7 @@ export default function Index() {
           title="Be aware"
           text="All content, posts, and profile data you create will be openly available to anyone."
         />
-        <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
+        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
         <Link href="/onboarding/sign-in">

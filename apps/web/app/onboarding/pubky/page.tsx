@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { useClientContext, useToastContext } from '@/contexts';
 import { Onboarding } from '../components';
+import Image from 'next/image';
 
 export default function Index() {
   const { pubky } = useClientContext();
@@ -24,18 +24,17 @@ export default function Index() {
       <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
         Share your pubky with your friends so they can follow you.
       </Typography.H2>
-      <div className="my-6 w-full flex-col justify-center items-center inline-flex">
-        <div className="flex-col justify-center items-center flex">
-          <Image
-            width={284}
-            height={284}
-            src="/images/pubky.png"
-            alt="confirm"
-            className="scale-75 sm:scale-100"
-          />
-          <div className="pb-8 justify-center items-center gap-2.5 inline-flex">
+      <div className="relative my-8 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
+        <div className="p-12 flex-col justify-center items-center flex">
+          <div className="p-12">
+            <Icon.Key size="130" />
+            <Image alt="glow" fill src="/images/glow-1.png" />
+          </div>
+          <div className="justify-center items-center gap-2.5 inline-flex">
             {pubky ? (
-              <Typography.H2 variant="light">pk:{pubky}</Typography.H2>
+              <Typography.H2 className="text-[31px] font-light" variant="light">
+                pk:{pubky}
+              </Typography.H2>
             ) : (
               <Icon.LoadingSpin />
             )}
@@ -64,7 +63,7 @@ export default function Index() {
         >
           Copy pubky to clipboard
         </Button.Large>
-        <Link id = "onboarding-confirm-link" href="/onboarding/confirm">
+        <Link id="onboarding-confirm-link" href="/onboarding/confirm">
           <Button.Large icon={<Icon.ArrowRight />} className="w-[140px] z-20">
             Continue
           </Button.Large>
