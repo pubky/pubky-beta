@@ -1,0 +1,66 @@
+name: e2e-test
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+        with:
+          path: pubky-app
+
+      - name: Checkout skunk-works
+        uses: actions/checkout@v4
+        with:
+          repository: pubky/skunk-works
+          path: skunk-works
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Run skunk-works
+        working-directory: skunk-works
+        run: |
+          npm install
+          npm run link
+          cp ./.env.example ./services/backend/.env
+          npm run backend &
+
+      - name: Build pubky-app frontend
+        working-directory: pubky-app
+        run: |
+          cp ./.env.example ./.env
+          npm install
+          npm link @pubky/sdk
+
+      - name: Run e2e tests (${{ matrix.browser }})
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: pubky-app/apps/web-e2e
+          config-file: cypress.config.ts
+          spec: src/e2e/auth.cy.ts
+          browser: ${{ matrix.browser }}
+          summary-title: ${{ matrix.browser }}
+          install: false
+          start: npm run start:prod
+          wait-on: 'http://localhost:4200'
+
+      - name: Upload ${{ matrix.browser }} screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.browser }}
+          path: pubky-app/dist/cypress/apps/web-e2e/screenshots
+
+      - name: Upload ${{ matrix.browser }} videos
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-${{ matrix.browser }}
+          path: pubky-app/dist/cypress/apps/web-e2e/videos

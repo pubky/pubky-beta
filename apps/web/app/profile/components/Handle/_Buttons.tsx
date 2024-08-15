@@ -128,6 +128,7 @@ export default function Buttons({
       {(!creatorPubky || creatorPubky === pubky) && (
         <>
           <Button.Medium
+            id="profile-sign-out-btn"
             className="px-3 w-21 h-8"
             onClick={
               disposableAccount
@@ -139,6 +140,7 @@ export default function Buttons({
             Sign out
           </Button.Medium>
           <Button.Medium
+            id="profile-edit-btn"
             className="px-3 w-auto h-8"
             onClick={() => router.push('/settings/edit')}
             icon={<Icon.Pencil size="16" />}
@@ -148,6 +150,7 @@ export default function Buttons({
         </>
       )}
       <Button.Medium
+        id="profile-copy-pubkey-btn"
         className="px-3 w-auto h-8"
         onClick={() => {
           setContent(`pk:${pubkey}`, 'pubky');
@@ -159,6 +162,7 @@ export default function Buttons({
         {Utils.minifyPubky(pubkey)}
       </Button.Medium>
       <Button.Medium
+        id="profile-copy-link-btn"
         className="px-3 w-auto h-8"
         onClick={() => {
           setContent(`${window.location.origin}/profile/${pubkey}`, 'link');

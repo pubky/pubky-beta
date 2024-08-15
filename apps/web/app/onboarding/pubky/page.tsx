@@ -64,7 +64,7 @@ export default function Index() {
         >
           Copy pubky to clipboard
         </Button.Large>
-        <Link href="/onboarding/confirm">
+        <Link id = "onboarding-confirm-link" href="/onboarding/confirm">
           <Button.Large icon={<Icon.ArrowRight />} className="w-[140px] z-20">
             Continue
           </Button.Large>

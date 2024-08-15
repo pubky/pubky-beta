@@ -73,7 +73,7 @@ export default function Handle({
     <div {...rest} className={twMerge(rest.className)}>
       {username && pubkey ? (
         <>
-          <Typography.Display className="text-left">
+          <Typography.Display id='profile-username-header' className="text-left">
             {Utils.minifyText(username.toString(), 15)}
           </Typography.Display>
           <div className="-mt-4 inline-flex flex-row gap-3">

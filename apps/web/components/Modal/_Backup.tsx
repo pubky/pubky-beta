@@ -155,6 +155,7 @@ export default function Backup({
             </Typography.H2>
             <Input.Label className="mt-4" value="Password" />
             <Input.Text
+              id='backup-recovery-file-password-input'
               className="h-[70px] mt-1"
               type="password"
               error={errors}
@@ -174,6 +175,7 @@ export default function Backup({
               Back
             </Button.Large>
             <Button.Large
+              id='backup-download-recovery-file-btn'
               icon={<Icon.DownloadSimple />}
               onClick={!loading ? () => handleSubmit() : undefined}
               loading={loading}
@@ -227,6 +229,7 @@ export default function Backup({
                 src="/images/security.png"
               />
               <Button.Large
+                id='backup-recovery-file-btn'
                 icon={<Icon.DownloadSimple />}
                 onClick={() => setFile(true)}
               >
