@@ -176,6 +176,7 @@ export default function Header({ title, className }: HeaderProps) {
       <div className="hidden lg:flex gap-4 items-center">
         <Link href="/home">
           <Button.Action
+            id="header-home-btn"
             variant="menu"
             active={title === 'Feed'}
             icon={<Icon.Activity size="24" />}
@@ -183,6 +184,7 @@ export default function Header({ title, className }: HeaderProps) {
         </Link>
         <Link href="/hot-tags">
           <Button.Action
+            id="header-hot-tags-btn"
             variant="menu"
             label="Hot&#160;Tags"
             active={title === `HotTags`}
@@ -191,6 +193,7 @@ export default function Header({ title, className }: HeaderProps) {
         </Link>
         <Link href="/bookmarks">
           <Button.Action
+            id="header-bookmarks-btn"
             variant="menu"
             label="Bookmarks"
             active={title === 'Bookmarks'}
@@ -199,6 +202,7 @@ export default function Header({ title, className }: HeaderProps) {
         </Link>
         <Link href="/settings">
           <Button.Action
+            id="header-settings-btn"
             variant="menu"
             label="Settings"
             active={title === 'Settings'}
@@ -212,6 +216,7 @@ export default function Header({ title, className }: HeaderProps) {
             </PostUtil.Counter>
           )}
           <ImageByUri
+            id="header-profile-pic"
             width={48}
             height={48}
             className={`rounded-full w-[48px] h-[48px]`}

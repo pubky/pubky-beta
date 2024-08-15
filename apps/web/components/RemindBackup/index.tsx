@@ -160,6 +160,7 @@ export default function RemindBackup() {
           </Typography.Body>
           <div className="w-full xl:w-[40%] max-w-full flex gap-6">
             <Button.Large
+              id='remind-backup-now-btn'
               onClick={() => setShowModalBackup(true)}
               icon={<Icon.Lock size="16" />}
             >

@@ -1,0 +1,90 @@
+name: e2e-test-no-matrix
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+        with:
+          path: pubky-app
+
+      - name: Checkout skunk-works
+        uses: actions/checkout@v4
+        with:
+          repository: pubky/skunk-works
+          path: skunk-works
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Run skunk-works
+        working-directory: skunk-works
+        run: |
+          npm install
+          npm run link
+          cp ./.env.example ./services/backend/.env
+          npm run backend &
+
+      - name: Build pubky-app frontend
+        working-directory: pubky-app
+        run: |
+          cp ./.env.example ./.env
+          npm install
+          npm link @pubky/sdk
+
+      - name: Run e2e tests (chrome)
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: pubky-app/apps/web-e2e
+          config-file: cypress.config.ts
+          spec: src/e2e/auth.cy.ts
+          browser: chrome
+          summary-title: 'Chrome'
+          install: false
+          start: npm run start:dev
+          wait-on: 'http://localhost:4200'
+
+      - name: Upload chrome screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-chrome
+          path: pubky-app/dist/cypress/apps/web-e2e/screenshots
+
+      - name: Upload chrome videos
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-chrome
+          path: pubky-app/dist/cypress/apps/web-e2e/videos
+
+      - name: Run e2e tests (firefox)
+        if: ${{ always() }}
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: pubky-app/apps/web-e2e
+          config-file: cypress.config.ts
+          spec: src/e2e/auth.cy.ts
+          browser: firefox
+          summary-title: 'Firefox'
+          install: false
+          start: npm run start:dev
+          wait-on: 'http://localhost:4200'
+
+      - name: Upload firefox screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-firefox
+          path: pubky-app/dist/cypress/apps/web-e2e/screenshots
+
+      - name: Upload firefox videos
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-firefox
+          path: pubky-app/dist/cypress/apps/web-e2e/videos
