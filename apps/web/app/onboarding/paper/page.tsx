@@ -52,7 +52,7 @@ export default function Paper() {
         {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-3.png" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-end items-center inline-flex">
-        <Link href="/onboarding/sign-in">
+        <Link href="/onboarding/sign-in" id="onboarding-sign-in-btn">
           <Button.Large icon={<Icon.ArrowRight />}>Continue</Button.Large>
         </Link>
       </div>
