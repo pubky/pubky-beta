@@ -89,15 +89,15 @@ export const Action = ({
     : 'hover:bg-opacity-20';
 
   const buttonColors: ButtonColors = {
-    all: 'fuchsia-500',
-    posts: 'fuchsia-500',
+    all: 'white',
+    posts: 'white',
     article: 'yellow-400',
     link: 'cyan-400',
     image: 'green-500',
     music: 'blue-600',
     video: 'red-600',
     podcast: 'amber-500',
-    menu: 'fuchsia-500',
+    menu: 'white',
   };
 
   const buttonIcons: Record<string, { icon: React.ReactNode }> = {
@@ -131,11 +131,11 @@ export const Action = ({
   ): { icon: React.ReactNode; background?: string; state?: string } => {
     const baseButton = buttonIcons[variant];
     const background = active
-      ? `bg-${buttonColors[variant]} bg-opacity-30 border-t border-${buttonColors[variant]}`
+      ? `bg-${buttonColors[variant]} bg-opacity-[0.16] border-t border-${buttonColors[variant]}`
       : defaultBg;
     const state = disabled
       ? stateButtonDisabled
-      : `hover:bg-${buttonColors[variant]} hover:bg-opacity-30`;
+      : `hover:bg-${buttonColors[variant]} hover:bg-opacity-[0.16]`;
     return { ...baseButton, background, state };
   };
 
