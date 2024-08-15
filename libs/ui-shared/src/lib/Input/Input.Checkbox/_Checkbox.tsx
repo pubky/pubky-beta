@@ -22,7 +22,7 @@ export const Checkbox = ({
     disabled
       ? 'bg-white bg-opacity-10 border-white border-opacity-10'
       : checked
-      ? 'bg-fuchsia-500 bg-opacity-30 border-fuchsia-500'
+      ? 'bg-white bg-opacity-30 border-white'
       : 'bg-white bg-opacity-10 border-white border-opacity-30'
   );
 

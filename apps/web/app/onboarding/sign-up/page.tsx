@@ -4,7 +4,7 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { Content, Button, Input, Icon, Typography } from '@social/ui-shared';
+import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
@@ -190,7 +190,7 @@ export default function Index() {
           errors={errors}
         />
         <Card.Pic image={image} setImage={setImage} />
-        <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />
+        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
         <Link href="/onboarding/sign-in">

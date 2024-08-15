@@ -156,7 +156,7 @@ export default function Index() {
           title="Data Imported"
           text="Pubky successfully imported your profile and contacts."
         ></Card.Primary>
-        <Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-3.png" />
+        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-3.png" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
         <Link href="/onboarding/permissions">

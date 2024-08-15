@@ -51,8 +51,8 @@ export const Tag = ({
     switch (color) {
       case 'fuchsia':
         cssClasses = clicked
-          ? 'bg-fuchsia-500 bg-opacity-20 border-fuchsia-500 border-opacity-60'
-          : 'bg-fuchsia-500 bg-opacity-10 border-transparent hover:bg-opacity-60';
+          ? 'bg-white bg-opacity-20 border-white border-opacity-60'
+          : 'bg-white bg-opacity-10 border-transparent hover:bg-opacity-60';
         cssText = 'text-fuchsia-200';
         break;
     }

@@ -63,7 +63,7 @@ export default function Links({
           </div>
         ))}
         <Button.Transparent
-          className="w-auto mt-2"
+          className="w-[40%] mt-2"
           icon={
             <Icon.LinkSimple
               size="16"

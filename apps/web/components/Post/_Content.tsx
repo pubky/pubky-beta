@@ -120,7 +120,7 @@ export default function Content({
         {showMore && (
           <a
             href={Utils.encodePostUri(uri)}
-            className="text-fuchsia-500 text-opacity-80 hover:text-opacity-100"
+            className="text-white text-opacity-80 hover:text-opacity-100"
           >
             Show more
           </a>

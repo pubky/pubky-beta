@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { z } from 'zod';
 import { useEffect, useRef, useState } from 'react';
@@ -9,6 +8,7 @@ import { Utils } from '@social/utils-shared';
 import { useClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
+import Image from 'next/image';
 
 const passwordSchema = z.object({
   password: z
@@ -114,15 +114,12 @@ export default function Index() {
         <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
           Welcome to Pubky. Your keys, your content, your rules.
         </Typography.H2>
-        <div className="my-12 w-full flex-col justify-center items-center inline-flex">
-          <div className="flex-col justify-center items-center flex">
-            <Image
-              width={284}
-              height={284}
-              src="/images/confirm.png"
-              alt="confirm"
-              className="scale-75 sm:scale-100"
-            />
+        <div className="relative my-8 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
+          <div className="p-12 flex-col justify-center items-center flex">
+            <div className="p-12">
+              <Icon.CheckCircle size="130" />
+              <Image alt="glow" fill src="/images/glow-1.png" />
+            </div>
           </div>
         </div>
         <div className="w-full max-w-[1200px] justify-between items-center inline-flex">
@@ -160,7 +157,11 @@ export default function Index() {
             )}
           </Tooltip.RootSmall>
           <Link href="/home">
-            <Button.Large id="onboarding-start-exploring-btn" icon={<Icon.Check />} className="w-[170px] z-20">
+            <Button.Large
+              id="onboarding-start-exploring-btn"
+              icon={<Icon.Check />}
+              className="w-[170px] z-20"
+            >
               Start Exploring
             </Button.Large>
           </Link>

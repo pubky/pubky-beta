@@ -96,7 +96,7 @@ export default function ProtectedRoutes({
   return (
     <>
       <div className="z-index-999">
-        <NextTopLoader color="#FD00FF" />
+        <NextTopLoader color="white" />
       </div>
       {children}
       {showModal && (

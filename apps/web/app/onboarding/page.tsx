@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
@@ -55,7 +54,7 @@ export default function Index() {
   };
 
   return (
-    <Content.Main background="bg-black" className="pb-0">
+    <Content.Main>
       <Header.Root>
         <Header.Logo link={logoLink} />
         <Header.Action id="onboarding-sign-in-btn">Sign in</Header.Action>
@@ -66,7 +65,7 @@ export default function Index() {
           Your keys, your content, your rules. Social publishing, reimagined.
         </Typography.H2>
         <div className="relative flex gap-3">
-          <Link id="onboarding-get-started-link" href="/onboarding/sign-in">
+          <Link id="onboarding-get-started-link" href="/onboarding/paper">
             <Button.Large className="mt-12 relative z-20">
               Let&apos;s get started
             </Button.Large>
@@ -79,16 +78,9 @@ export default function Index() {
           >
             Explore first
           </Button.Large>
-          <Image
-            src="/images/explosion.png"
-            alt="explosion"
-            width={768}
-            height={768}
-            className="absolute mt-10 sm:mt-0 xl:right-96 xl:top-14 z-10"
-          />
         </div>
       </Content.Grid>
-      <div className="relative h-screen overflow-hidden">
+      <div className="w-full">
         <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/background-image.png')]" />
       </div>
     </Content.Main>

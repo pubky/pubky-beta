@@ -32,7 +32,7 @@ export default function OnboardingLayout({
   }, [pubky, pathname, isLoggedIn]);
 
   return (
-    <Content.Main>
+    <Content.Main className="pb-0">
       <Header.Root>
         <Header.Logo link={logoLink} />
         <Header.Title titleHeader={'Onboarding'} />

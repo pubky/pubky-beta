@@ -25,7 +25,7 @@ export const ImageMenu = ({
     <div className="w-[48px]">
       {/* {notifications && (
         <PostUtil.Counter
-          className="absolute text-center top-6 right-6 bg-black bg-opacity-60 border-fuchsia-500 border-opacity-100"
+          className="absolute text-center top-6 right-6 bg-black bg-opacity-60 border-white border-opacity-100"
           counter={notifications}
         />
       )} */}

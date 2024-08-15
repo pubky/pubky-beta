@@ -15,8 +15,8 @@ export const Tab = ({
   ...rest
 }: TabButtonProps) => {
   const bgCSS = active
-    ? 'border-t border-fuchsia-500 bg-fuchsia-500 bg-opacity-20'
-    : 'bg-white bg-opacity-10 hover:border-fuchsia-500 hover:bg-fuchsia-500 hover:bg-opacity-20';
+    ? 'border-t border-white bg-white bg-opacity-20'
+    : 'bg-white bg-opacity-10 hover:border-white hover:bg-white hover:bg-opacity-20';
   const baseCSS = `h-12 px-4 py-3 rounded-tl-2xl rounded-tr-2xl justify-center items-center gap-2 inline-flex`;
 
   return (
