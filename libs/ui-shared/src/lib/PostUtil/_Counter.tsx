@@ -12,7 +12,7 @@ export const Counter = ({ children, ...rest }: CounterProps) => {
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       <Typography.Body
-        className="tracking-tight text-opacity-80"
+        className="tracking-tight text-black"
         variant="small-bold"
       >
         {children}
