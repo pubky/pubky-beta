@@ -186,7 +186,7 @@ export default function Tag({
         setTag('');
         setTagsError(false);
       }}
-      className="w-full w-[792px]"
+      className="w-full w-[792px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -261,7 +261,6 @@ export default function Tag({
                   Max 4 tags
                 </Typography.Body>
               )}
-              {post && <Post className="mt-4" post={post} repostView />}
             </div>
             <div className="justify-start items-start gap-2 flex flex-col overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-webkit">
               <Input.Label value={selectedTag ? 'Tagged' : 'Current tags'} />
@@ -480,6 +479,11 @@ export default function Tag({
             </div>
           </div>
         </Modal.Content>
+        {post && (
+          <div>
+            <Post post={post} repostView />
+          </div>
+        )}
       </div>
     </Modal.Root>
   );
