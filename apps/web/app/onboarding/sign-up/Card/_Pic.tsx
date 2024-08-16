@@ -44,7 +44,7 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-[154px]' : 'w-[38px] h-[38px]';
+    return image === '/images/Userpic.png' ? 'w-auto' : 'w-[38px] h-[38px]';
   };
 
   return (

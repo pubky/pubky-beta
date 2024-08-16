@@ -263,6 +263,7 @@ export default function Status({ status, subtitle }: StatusProps) {
             <Input.Text
               className="h-[30px]"
               value={customStatus}
+              placeholder="Add status"
               maxLength={12}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setCustomStatus(e.target.value)

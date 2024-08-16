@@ -8,7 +8,6 @@ import {
   Modal,
   Typography,
 } from '@social/ui-shared';
-import Image from 'next/image';
 import { useState } from 'react';
 
 interface BackupProps {
@@ -117,7 +116,7 @@ export default function Backup({
           <div className="w-full max-w-[796px] mt-4 justify-between items-center inline-flex">
             <Button.Large
               icon={<Icon.ArrowLeft />}
-              className="w-[140px]"
+              className="w-auto"
               variant="secondary"
               onClick={() => {
                 setPhrase(false);
@@ -133,7 +132,7 @@ export default function Backup({
                   ? () => setShowModalBackup(false)
                   : () => setShowWords(true)
               }
-              className="w-[270px]"
+              className="w-auto"
             >
               {showWords ? 'Confirm Recovery Phrase' : 'Reveal Recovery Phrase'}
             </Button.Large>
@@ -155,7 +154,7 @@ export default function Backup({
             </Typography.H2>
             <Input.Label className="mt-4" value="Password" />
             <Input.Text
-              id='backup-recovery-file-password-input'
+              id="backup-recovery-file-password-input"
               className="h-[70px] mt-1"
               type="password"
               error={errors}
@@ -168,18 +167,18 @@ export default function Backup({
           <div className="w-full max-w-[796px] mt-4 justify-between items-center inline-flex">
             <Button.Large
               icon={<Icon.ArrowLeft />}
-              className="w-[140px]"
+              className="w-auto"
               variant="secondary"
               onClick={() => setFile(false)}
             >
               Back
             </Button.Large>
             <Button.Large
-              id='backup-download-recovery-file-btn'
+              id="backup-download-recovery-file-btn"
               icon={<Icon.DownloadSimple />}
               onClick={!loading ? () => handleSubmit() : undefined}
               loading={loading}
-              className="w-[270px]"
+              className="w-auto"
             >
               Download Recovery File
             </Button.Large>
@@ -202,13 +201,9 @@ export default function Backup({
               title="Recovery Phrase"
               text="Write down 12 words to recover your account at a later date."
             >
-              <Image
-                width={202}
-                height={130}
-                alt="file"
-                className="self-center"
-                src="/images/file.png"
-              />
+              <div className="flex justify-center items-center my-10">
+                <Icon.FileText size="128" />
+              </div>
               <Button.Large
                 icon={<Icon.FileText color="gray" />}
                 disabled
@@ -221,15 +216,11 @@ export default function Backup({
               title="Recovery File"
               text="Download a password encrypted, digital file to your computer."
             >
-              <Image
-                width={202}
-                height={130}
-                alt="security"
-                className="self-center"
-                src="/images/security.png"
-              />
+              <div className="flex justify-center items-center my-10">
+                <Icon.DownloadSimple size="128" />
+              </div>
               <Button.Large
-                id='backup-recovery-file-btn'
+                id="backup-recovery-file-btn"
                 icon={<Icon.DownloadSimple />}
                 onClick={() => setFile(true)}
               >

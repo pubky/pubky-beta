@@ -142,70 +142,77 @@ export default function RemindBackup() {
   };
 
   return (
-    <div
-      className={`max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] w-full m-auto`}
-    >
-      {disposableAccount ? (
+    <>
+      {showModalBackup && (
         <div
-          className={`${
-            remindMeLater && 'hidden'
-          } w-full p-12 bg-white bg-opacity-20 rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
+          className={`max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] w-full m-auto mb-6`}
         >
-          <Typography.H1 className="text-4xl">
-            Back up your account
-          </Typography.H1>
-          <Typography.Body className="text-opacity-80" variant="medium">
-            Time to back up your account. Without a backup you lose your account
-            if you close your browser!
-          </Typography.Body>
-          <div className="w-full xl:w-[40%] max-w-full flex gap-6">
-            <Button.Large
-              id="remind-backup-now-btn"
-              onClick={() => setShowModalBackup(true)}
-              icon={<Icon.Lock size="16" />}
+          {disposableAccount ? (
+            <div
+              className={`${
+                remindMeLater && 'hidden'
+              } w-full p-12 bg-white bg-opacity-20 rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
             >
-              Backup now
-            </Button.Large>
-            <Button.Large
-              onClick={RemindMe}
-              variant="secondary"
-              icon={<Icon.Clock size="16" />}
-            >
-              Remind me later
-            </Button.Large>
-          </div>
-        </div>
-      ) : (
-        showBackupSuccess && (
-          <div
-            className={`w-full p-4 bg-white bg-opacity-20 rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
-          >
-            <div className="w-full flex justify-between">
-              <div className="flex gap-2">
-                <div className="relative">
-                  <Icon.CheckCircle size="20" />
-                </div>
-                <Typography.Body className="text-opacity-80" variant="small">
-                  Backup successful! Your seed has been deleted and now you can
-                  make login via the chosen recovery method.
-                </Typography.Body>
-              </div>
-              <div className="cursor-pointer" onClick={Closed}>
-                <Icon.X size="20" />
+              <Typography.H1 className="text-4xl">
+                Back up your account
+              </Typography.H1>
+              <Typography.Body className="text-opacity-80" variant="medium">
+                Time to back up your account. Without a backup you lose your
+                account if you close your browser!
+              </Typography.Body>
+              <div className="w-full xl:w-[40%] max-w-full flex gap-6">
+                <Button.Large
+                  id="remind-backup-now-btn"
+                  onClick={() => setShowModalBackup(true)}
+                  icon={<Icon.Lock size="16" />}
+                >
+                  Backup now
+                </Button.Large>
+                <Button.Large
+                  onClick={RemindMe}
+                  variant="secondary"
+                  icon={<Icon.Clock size="16" />}
+                >
+                  Remind me later
+                </Button.Large>
               </div>
             </div>
-          </div>
-        )
+          ) : (
+            showBackupSuccess && (
+              <div
+                className={`w-full p-4 bg-white bg-opacity-20 rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
+              >
+                <div className="w-full flex justify-between">
+                  <div className="flex gap-2">
+                    <div className="relative">
+                      <Icon.CheckCircle size="20" />
+                    </div>
+                    <Typography.Body
+                      className="text-opacity-80"
+                      variant="small"
+                    >
+                      Backup successful! Your seed has been deleted and now you
+                      can make login via the chosen recovery method.
+                    </Typography.Body>
+                  </div>
+                  <div className="cursor-pointer" onClick={Closed}>
+                    <Icon.X size="20" />
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+          <Modal.Backup
+            loading={loadingRecoveryFile}
+            setPassword={setPassword}
+            handleSubmit={handleRecoveryFile}
+            showModalBackup={showModalBackup}
+            setShowModalBackup={setShowModalBackup}
+            modalBackupRef={modalBackupRef}
+            errors={errorPassword}
+          />
+        </div>
       )}
-      <Modal.Backup
-        loading={loadingRecoveryFile}
-        setPassword={setPassword}
-        handleSubmit={handleRecoveryFile}
-        showModalBackup={showModalBackup}
-        setShowModalBackup={setShowModalBackup}
-        modalBackupRef={modalBackupRef}
-        errors={errorPassword}
-      />
-    </div>
+    </>
   );
 }

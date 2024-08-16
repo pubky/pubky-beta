@@ -59,21 +59,19 @@ export default function Index() {
         <Header.Logo link={logoLink} />
         <Header.Action id="onboarding-sign-in-btn">Sign in</Header.Action>
       </Header.Root>
-      <Content.Grid>
+      <Content.Grid className="relative z-20">
         <Typography.Display>Become the algorithm</Typography.Display>
         <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
           Your keys, your content, your rules. Social publishing, reimagined.
         </Typography.H2>
         <div className="relative flex gap-3">
           <Link id="onboarding-get-started-link" href="/onboarding/paper">
-            <Button.Large className="mt-12 relative z-20">
-              Let&apos;s get started
-            </Button.Large>
+            <Button.Large className="mt-12">Get started</Button.Large>
           </Link>
           <Button.Large
             onClick={!loading ? () => handleSubmit() : undefined}
             variant="secondary"
-            className="w-auto mt-12 relative z-20"
+            className="w-auto mt-12"
             loading={loading}
           >
             Explore first

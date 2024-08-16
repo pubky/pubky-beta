@@ -108,7 +108,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       {Object.keys(posts).map((key) => {
         const post = posts[key];
         const parentUri = post?.post?.parent;
@@ -139,6 +139,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
       )}
       {loading && <Skeletons.Simple />}
       <div ref={loader} />
-    </>
+    </div>
   );
 }

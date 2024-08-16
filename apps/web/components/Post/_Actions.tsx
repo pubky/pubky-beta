@@ -161,9 +161,9 @@ export default function Actions({
               opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
               color={
                 repost?.bookmark?.id
-                  ? '#d946efc9'
+                  ? 'white'
                   : post?.bookmark?.id
-                  ? '#d946efc9'
+                  ? 'white'
                   : 'white'
               }
             />

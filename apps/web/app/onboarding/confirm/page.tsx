@@ -126,7 +126,7 @@ export default function Index() {
           <Link href="/onboarding/pubky">
             <Button.Large
               icon={<Icon.ArrowLeft />}
-              className="w-[170px]"
+              className="w-[175px]"
               variant="secondary"
             >
               Back
@@ -139,7 +139,7 @@ export default function Index() {
               onClick={
                 disposableAccount ? () => setShowModalBackup(true) : undefined
               }
-              className="w-[250px]"
+              className="w-auto"
               variant="secondary"
             >
               Backup account
@@ -160,7 +160,7 @@ export default function Index() {
             <Button.Large
               id="onboarding-start-exploring-btn"
               icon={<Icon.Check />}
-              className="w-[170px] z-20"
+              className="w-[175px] z-20"
             >
               Start Exploring
             </Button.Large>

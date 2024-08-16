@@ -5,7 +5,7 @@ import { Content, Card } from '@social/ui-shared';
 export default function Join() {
   return (
     <Card.Primary
-      title="Join using Bitkit"
+      title="Join with Bitkit"
       text="Have Bitkit or another Pubky Core powered wallet? Scan this QR to sign up."
     >
       <Image

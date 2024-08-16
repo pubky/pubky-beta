@@ -90,7 +90,7 @@ export default function CreatePost({
         setShowModalPost(false);
         //setArrayTags([]);
       }}
-      className="w-[792px] max-w-[1200px]"
+      className="w-[792px] max-h-[600px] overflow-y-auto max-w-[1200px]"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -101,43 +101,47 @@ export default function CreatePost({
       />
       <div className="flex flex-col gap-4">
         <Modal.Header title="New Post" />
-        <CreateContent
-          handleSubmit={handleSubmit}
-          content={contentPost}
-          setContent={setContentPost}
-          isValidContent={isValidContent}
-          setIsValidContent={setIsValidContent}
-          selectedFiles={selectedFiles}
-          setSelectedFiles={setSelectedFiles}
-          arrayTags={arrayTags}
-          setArrayTags={setArrayTags}
-          button={
-            <Button.Medium
-              className="w-auto"
-              variant="line"
-              icon={
-                <Icon.PaperPlaneRight
-                  color={
-                    !isValidContent && selectedFiles.length === 0
-                      ? 'gray'
-                      : 'white'
+        <div className="flex items-center relative">
+          <div className="w-full">
+            <CreateContent
+              handleSubmit={handleSubmit}
+              content={contentPost}
+              setContent={setContentPost}
+              isValidContent={isValidContent}
+              setIsValidContent={setIsValidContent}
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
+              arrayTags={arrayTags}
+              setArrayTags={setArrayTags}
+              button={
+                <Button.Medium
+                  className="w-auto"
+                  variant="line"
+                  icon={
+                    <Icon.PaperPlaneRight
+                      color={
+                        !isValidContent && selectedFiles.length === 0
+                          ? 'gray'
+                          : 'white'
+                      }
+                    />
                   }
-                />
+                  disabled={!isValidContent && selectedFiles.length === 0}
+                  loading={sendingPost}
+                  onClick={
+                    (isValidContent || selectedFiles.length > 0) && !sendingPost
+                      ? () => handleSubmit(contentPost)
+                      : undefined
+                  }
+                >
+                  Post
+                </Button.Medium>
               }
-              disabled={!isValidContent && selectedFiles.length === 0}
-              loading={sendingPost}
-              onClick={
-                (isValidContent || selectedFiles.length > 0) && !sendingPost
-                  ? () => handleSubmit(contentPost)
-                  : undefined
-              }
-            >
-              Post
-            </Button.Medium>
-          }
-          autoFocus
-          visibleTextArea
-        />
+              autoFocus
+              visibleTextArea
+            />
+          </div>
+        </div>
       </div>
     </Modal.Root>
   );
