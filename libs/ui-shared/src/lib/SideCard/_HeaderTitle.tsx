@@ -2,22 +2,22 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
 interface HeaderTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
-  variant?: 'normal' | 'label';
+  variant?: 'light' | 'label';
   children: string;
 }
 export const HeaderTitle = ({
-  variant = 'normal',
+  variant = 'light',
   children,
   ...rest
 }: HeaderTitleProps) => {
-  return variant === 'normal' ? (
-    <Typography.Body
+  return variant === 'light' ? (
+    <Typography.H2
       {...rest}
-      className={twMerge(rest.className)}
-      variant="large-bold"
+      variant="light"
+      className={twMerge('text-opacity-50 font-light', rest.className)}
     >
       {children}
-    </Typography.Body>
+    </Typography.H2>
   ) : (
     <Typography.Label className={twMerge('text-opacity-50', rest.className)}>
       {children}

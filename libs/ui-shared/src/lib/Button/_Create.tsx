@@ -7,8 +7,10 @@ interface CreateButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 }
 
 export const Create = ({ icon, ...rest }: CreateButtonProps) => {
-  const responsiveCSS = 'sm:w-[96px] sm:h-[96px] sm:border-[11px]';
-  const baseCSS = `w-[56px] h-[56px] border-[6px] hover:transition-[transform] hover:duration-[0.3s] hover:ease-[ease] hover:rotate-[20deg] border-white hover:bg-white hover:bg-opacity-30 rounded-[96px] flex items-center justify-center cursor-pointer`;
+  const responsiveCSS = 'sm:w-[96px] sm:h-[96px]';
+  const baseCSS = `w-[56px] h-[56px] border border-white bg-white bg-opacity-20 hover:bg-opacity-30 rounded-[96px] flex items-center justify-center cursor-pointer`;
+  const iconWrapperCSS =
+    'relative transition-transform duration-300 ease-in-out transform scale-75 sm:scale-100 hover:scale-90 sm:hover:scale-125';
   return (
     <button
       {...rest}
@@ -17,8 +19,8 @@ export const Create = ({ icon, ...rest }: CreateButtonProps) => {
       {icon ? (
         icon
       ) : (
-        <div className="relative scale-75 sm:scale-100">
-          <Icon.Pencil />
+        <div className={iconWrapperCSS}>
+          <Icon.Plus size="48" />
         </div>
       )}
     </button>

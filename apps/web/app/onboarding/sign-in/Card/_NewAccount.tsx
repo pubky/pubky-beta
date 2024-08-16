@@ -5,7 +5,7 @@ export default function NewAccount() {
   return (
     <Card.Primary
       title="New Pubky"
-      text="Another option is to create a new account and profile on Pubky itself (less secure)."
+      text="Another option is to create a new account and profile on Pubky itself."
     >
       <div className="flex justify-center items-center p-8">
         <Icon.Key size="120" />

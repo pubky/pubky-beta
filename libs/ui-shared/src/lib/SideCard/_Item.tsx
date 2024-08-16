@@ -1,5 +1,4 @@
 import { Typography } from '../Typography';
-import { Icon } from '../Icon';
 
 import { twMerge } from 'tailwind-merge';
 
@@ -20,9 +19,7 @@ export const Item = ({
   disabled = false,
   ...rest
 }: ItemProps) => {
-  const disabledCSS = disabled
-    ? 'cursor-default'
-    : 'hover:bg-white hover:bg-opacity-10';
+  const disabledCSS = disabled ? 'cursor-default' : '';
   const baseCSS = `w-full h-12 py-2 shadow backdrop-blur-[10px] items-center justify-between inline-flex`;
 
   return (
@@ -32,7 +29,12 @@ export const Item = ({
       className={twMerge(baseCSS, disabledCSS, rest.className)}
     >
       <div className="w-14 justify-start items-center contents">
-        <div className="flex gap-2 items-center">
+        <div
+          className={`flex gap-2 items-center ${
+            !disabled &&
+            (selected ? 'opacity-100' : 'opacity-50 hover:opacity-100')
+          }`}
+        >
           {icon}
           <Typography.Body
             className={disabled ? 'text-opacity-30' : ''}
@@ -41,11 +43,11 @@ export const Item = ({
             {label}
           </Typography.Body>
         </div>
-        {selected && (
+        {/**{selected && (
           <div>
             <Icon.Check size="28" />
           </div>
-        )}
+        )}*/}
       </div>
     </button>
   );

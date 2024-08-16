@@ -154,6 +154,7 @@ export default function Header({ title, className }: HeaderProps) {
           </Input.SearchTags>
         )}
         <Input.SearchInput
+          value={inputValue}
           placeholder={!searchTags.length ? 'Search' : ''}
           className="hidden sm:block"
           onClick={() => setSearchInputCard(true)}
@@ -178,6 +179,7 @@ export default function Header({ title, className }: HeaderProps) {
           <Button.Action
             id="header-home-btn"
             variant="menu"
+            label="Feed"
             active={title === 'Feed'}
             icon={<Icon.Activity size="24" />}
           />
@@ -188,7 +190,7 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Hot&#160;Tags"
             active={title === `HotTags`}
-            icon={<Icon.Tag size="24" />}
+            icon={<Icon.Fire size="24" />}
           />
         </Link>
         <Link href="/bookmarks">
@@ -211,7 +213,10 @@ export default function Header({ title, className }: HeaderProps) {
         </Link>
         <Link href="/profile" className="w-[48px] relative">
           {notifications.length !== 0 && (
-            <PostUtil.Counter className="w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white">
+            <PostUtil.Counter
+              textCSS="tracking-tight text-black font-semibold"
+              className="w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
+            >
               {notifications.length}
             </PostUtil.Counter>
           )}

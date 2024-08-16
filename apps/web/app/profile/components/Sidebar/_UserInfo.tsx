@@ -67,26 +67,24 @@ export default function UserInfo({
   return (
     <div
       className={`w-full self-start ${
-        !scrolled ? 'border hidden' : 'block sticky top-[120px] border'
-      } ${
-        !scrolled && 'border-0'
-      } border-white border-opacity-10 z-20 rounded-2xl px-3 py-4`}
+        !scrolled ? 'hidden' : 'block sticky top-[120px]'
+      } z-20 rounded-2xl px-3 py-4`}
     >
       <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
         <div className="items-center inline-flex justify-between">
           <div className="justify-start items-center gap-3 inline-flex">
             <ImageByUri
-              width={50}
-              height={50}
-              className="w-[50px] h-[50px] rounded-full"
+              width={40}
+              height={40}
+              className="w-[40px] h-[40px] rounded-full"
               uri={uriImage}
               alt="user-pic"
             />
             <div>
-              <Typography.H2 className="-mb-1">
+              <Typography.Body variant="medium-bold" className="-mb-2">
                 {Utils.minifyText(name, 15)}
-              </Typography.H2>
-              <Typography.Label className="text-opacity-50">
+              </Typography.Body>
+              <Typography.Label className="text-[12px] text-opacity-50">
                 {pubkyUser ? Utils.minifyPubky(pubkyUser) : 'Loading...'}
               </Typography.Label>
             </div>
@@ -102,12 +100,12 @@ export default function UserInfo({
               className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10 p-2 -mt-[10px]"
               onClick={() => setShowProfileMenu(true)}
             >
-              <Icon.DotsThreeOutline size="20" />
+              <Icon.DotsThreeOutline size="16" />
             </div>
           </div>
         </div>
         <Typography.Body
-          variant="medium"
+          variant="small"
           className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
         >
           <Parsing>{bio}</Parsing>
@@ -116,7 +114,9 @@ export default function UserInfo({
           <Button.Medium
             loading={initLoadingFollowed}
             className={
-              !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
+              !creatorPubky || creatorPubky === pubky
+                ? 'hidden'
+                : 'w-full h-[35px]'
             }
           >
             Loading
@@ -129,7 +129,9 @@ export default function UserInfo({
             variant="default"
             icon={<Icon.UserMinus size="16" />}
             className={
-              !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
+              !creatorPubky || creatorPubky === pubky
+                ? 'hidden'
+                : 'w-full h-[35px]'
             }
           >
             Unfollow
@@ -142,7 +144,9 @@ export default function UserInfo({
             variant="default"
             icon={<Icon.UserPlus size="16" />}
             className={
-              !creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full'
+              !creatorPubky || creatorPubky === pubky
+                ? 'hidden'
+                : 'w-full h-[35px]'
             }
           >
             Follow

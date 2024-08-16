@@ -73,8 +73,8 @@ export default function Index({
             />
           </Content.Grid>
         </div>
-        <Content.Grid className="grid grid-cols-3 gap-6">
-          <PostsLayout className="flex flex-col col-span-3 xl:col-span-2 gap-3 mt-[10px]">
+        <Content.Grid className="grid grid-cols-5 gap-2">
+          <PostsLayout className="flex flex-col col-span-5 xl:col-span-4 gap-3 mt-[10px]">
             <Profile.FilterTabs
               countContacts={countContacts}
               countPosts={profile?.postsCount}
