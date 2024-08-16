@@ -111,8 +111,8 @@ export default function FilterTabs({
   };
 
   return (
-    <>
-      <div className="flex gap-4 mb-4">
+    <div className="flex gap-4">
+      <div className="w-[300px] self-start sticky top-[120px]">
         {tabs.map((tab) => {
           if (
             creatorPubky &&
@@ -126,47 +126,59 @@ export default function FilterTabs({
             <div
               key={tab.id}
               onClick={() => handleTabClick(tab.id, tab.key)}
-              className={`w-full h-12 px-3 border-b-2 justify-center items-center gap-2 inline-flex cursor-pointer ${
+              className={`w-full h-12 px-3 items-center gap-2 flex justify-between cursor-pointer ${
                 isActive && !loading
-                  ? 'border-white'
-                  : 'border-white border-opacity-10 hover:border-opacity-50'
+                  ? 'opacity-100'
+                  : 'opacity-50 hover:opacity-100'
               }`}
             >
-              {tab.icon}
-              <Typography.Caption className="tracking-normal" variant="bold">
-                {tab.label}
-                {!loading && tab.key && (
+              <div className="flex gap-2 items-center">
+                {tab.icon}
+                <Typography.Caption className="tracking-normal" variant="bold">
+                  {tab.label}
+                </Typography.Caption>
+              </div>
+              {!loading && tab.key && (
+                <Typography.Caption className="tracking-normal" variant="bold">
                   <span className="ml-2 text-white text-opacity-30">
                     {getTabNumber(tab.key)}
                   </span>
-                )}
-              </Typography.Caption>
+                </Typography.Caption>
+              )}
             </div>
           );
         })}
       </div>
-      {loading ? (
-        <Skeleton.Simple />
-      ) : (
-        <>
-          {(!creatorPubky || creatorPubky === pubky) && activeTab === 0 && (
-            <Profile.NotificationsProfile
-              notifications={notifications}
-              loading={loadingNotifications}
-            />
-          )}
-          {activeTab === 1 && <Profile.Posts creatorPubky={creatorPubky} />}
-          {activeTab === 2 && (
-            <ContactsProfile creatorPubky={creatorPubky} contacts="followers" />
-          )}
-          {activeTab === 3 && (
-            <ContactsProfile creatorPubky={creatorPubky} contacts="following" />
-          )}
-          {activeTab === 4 && (
-            <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
-          )}
-        </>
-      )}
-    </>
+      <div className="w-full">
+        {loading ? (
+          <Skeleton.Simple />
+        ) : (
+          <>
+            {(!creatorPubky || creatorPubky === pubky) && activeTab === 0 && (
+              <Profile.NotificationsProfile
+                notifications={notifications}
+                loading={loadingNotifications}
+              />
+            )}
+            {activeTab === 1 && <Profile.Posts creatorPubky={creatorPubky} />}
+            {activeTab === 2 && (
+              <ContactsProfile
+                creatorPubky={creatorPubky}
+                contacts="followers"
+              />
+            )}
+            {activeTab === 3 && (
+              <ContactsProfile
+                creatorPubky={creatorPubky}
+                contacts="following"
+              />
+            )}
+            {activeTab === 4 && (
+              <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 }

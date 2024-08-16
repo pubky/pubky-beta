@@ -289,12 +289,12 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             icon={
               <Icon.BookmarkSimple
                 size="20"
-                opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.5}
+                opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
                 color={
                   repost?.bookmark.id
-                    ? '#d946efc9'
+                    ? 'white'
                     : post?.bookmark?.id
-                    ? '#d946efc9'
+                    ? 'white'
                     : 'white'
                 }
               />

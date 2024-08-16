@@ -82,52 +82,58 @@ export default function Repost({
         }}
       />
       <Modal.Header title="Repost" />
-      <div className="w-full mt-6">
-        <CreateContent
-          handleSubmit={handleSubmitRepost}
-          content={contentRepost}
-          setContent={setContentRepost}
-          isValidContent={isValidContent}
-          setIsValidContent={setIsValidContent}
-          selectedFiles={selectedFiles}
-          setSelectedFiles={setSelectedFiles}
-          arrayTags={arrayTags}
-          setArrayTags={setArrayTags}
-          placeHolder="Optional comment"
-          button={
-            <Button.Medium
-              className="w-auto"
-              variant="line"
-              icon={<Icon.Repost color="white" />}
-              loading={sendingRepost}
-              onClick={
-                !sendingRepost
-                  ? isValidContent || selectedFiles.length > 0
-                    ? () => handleSubmitRepost(contentRepost)
-                    : () => {
-                        setSendingRepost(true);
-                        handleRepost();
-                        setShowModalRepost(false);
-                        setSendingRepost(false);
-                      }
-                  : undefined
-              }
-              //icon={<Icon.Repost color={!isValidContent ? 'gray' : 'white'} />}
-              //disabled={!isValidContent}
-              //onClick={
-              //  isValidContent && !sendingRepost
-              //</PostElement.Actions>    ? () => handleSubmitRepost()
-              //    : undefined
-              // }
-            >
-              Repost
-            </Button.Medium>
-          }
-          autoFocus
-          visibleTextArea
-        >
-          <Post post={post} repostView className="mt-2" />
-        </CreateContent>
+      <div className="flex items-center relative">
+        <div className="w-full mt-6">
+          <CreateContent
+            handleSubmit={handleSubmitRepost}
+            content={contentRepost}
+            setContent={setContentRepost}
+            isValidContent={isValidContent}
+            setIsValidContent={setIsValidContent}
+            selectedFiles={selectedFiles}
+            setSelectedFiles={setSelectedFiles}
+            arrayTags={arrayTags}
+            setArrayTags={setArrayTags}
+            placeHolder="Optional comment"
+            button={
+              <Button.Medium
+                className="w-auto"
+                variant="line"
+                icon={<Icon.Repost color="white" />}
+                loading={sendingRepost}
+                onClick={
+                  !sendingRepost
+                    ? isValidContent || selectedFiles.length > 0
+                      ? () => handleSubmitRepost(contentRepost)
+                      : () => {
+                          setSendingRepost(true);
+                          handleRepost();
+                          setShowModalRepost(false);
+                          setSendingRepost(false);
+                        }
+                    : undefined
+                }
+                //icon={<Icon.Repost color={!isValidContent ? 'gray' : 'white'} />}
+                //disabled={!isValidContent}
+                //onClick={
+                //  isValidContent && !sendingRepost
+                //</PostElement.Actions>    ? () => handleSubmitRepost()
+                //    : undefined
+                // }
+              >
+                Repost
+              </Button.Medium>
+            }
+            autoFocus
+            visibleTextArea
+          >
+            <Post
+              post={post}
+              repostView
+              className="mt-2 max-h-[600px] overflow-y-auto rounded-bl-none"
+            />
+          </CreateContent>
+        </div>
       </div>
     </Modal.Root>
   );

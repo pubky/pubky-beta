@@ -11,7 +11,7 @@ export default function Root({ children, ...rest }: RootProps) {
         <div
           {...rest}
           className={twMerge(
-            `flex-col justify-start items-start flex`,
+            `flex-col justify-start gap-4 items-start flex`,
             rest.className
           )}
         >

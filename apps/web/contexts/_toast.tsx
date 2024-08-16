@@ -56,7 +56,7 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
   const iconToShow = (() => {
     switch (variant) {
       case 'bookmark':
-        return <Icon.BookmarkSimple size="24" opacity={1} color="#d946efc9" />;
+        return <Icon.BookmarkSimple size="24" opacity={1} color="white" />;
       case 'pubky':
         return <Icon.Key size="24" />;
       case 'text':

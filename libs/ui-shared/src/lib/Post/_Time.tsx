@@ -17,7 +17,7 @@ export const Time = ({ children, ...rest }: RootProps) => {
           <Typography.Caption
             {...rest}
             variant="bold"
-            className="text-white text-opacity-30"
+            className="text-white text-opacity-30 uppercase tracking-normal"
           >
             {children}
           </Typography.Caption>

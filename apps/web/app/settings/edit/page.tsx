@@ -218,9 +218,13 @@ export default function Index() {
 
   const getButtonIconImage = () => {
     return image === '/images/Userpic.png' ? (
-      <Icon.File size="16" />
+      <div>
+        <Icon.File size="16" />
+      </div>
     ) : (
-      <Icon.Trash size="16" />
+      <div>
+        <Icon.Trash size="16" />
+      </div>
     );
   };
 
@@ -229,7 +233,7 @@ export default function Index() {
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-[154px]' : 'w-[60px]';
+    return image === '/images/Userpic.png' ? 'w-auto' : 'w-[38px] h-[38px]';
   };
 
   return (

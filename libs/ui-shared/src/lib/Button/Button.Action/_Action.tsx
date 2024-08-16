@@ -167,7 +167,13 @@ export const Action = ({
       </ActionUI.Button>
       {isHovered && label && (
         <ActionUI.LabelRoot className={labelClasses}>
-          <ActionUI.Label className={twMerge(labelSize, color)}>
+          <ActionUI.Label
+            className={twMerge(
+              'text-white text-opacity-100 font-normal tracking-normal',
+              labelSize,
+              color
+            )}
+          >
             {label}
           </ActionUI.Label>
         </ActionUI.LabelRoot>

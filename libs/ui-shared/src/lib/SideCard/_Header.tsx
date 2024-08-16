@@ -4,12 +4,12 @@ import { HeaderTitle } from './_HeaderTitle';
 interface HeaderProps extends React.HTMLAttributes<HTMLHeadingElement> {
   title: string;
   children?: React.ReactNode;
-  variantTitle?: 'normal' | 'label';
+  variantTitle?: 'light' | 'label';
 }
 export const Header = ({
   title,
   children,
-  variantTitle = 'normal',
+  variantTitle = 'light',
   ...rest
 }: HeaderProps) => {
   return (

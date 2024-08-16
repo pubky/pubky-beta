@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button, Content, Icon, PostUtil, Typography } from '@social/ui-shared';
+import { Button, Icon, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { IFollower, IUserProfile, LoadingContacts } from '@/types';
 import { useClientContext } from '@/contexts';
@@ -171,7 +171,6 @@ export default function List({
           )}
         </div>
       </div>
-      {showDivider && <Content.Divider />}
     </div>
   );
 }
