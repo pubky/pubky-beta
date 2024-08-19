@@ -28,7 +28,7 @@ export default function ProtectedRoutes({
     '/settings',
   ];
 
-  const redirectLoggedUser = ['/onboarding', '/login', '/sign-up'];
+  const redirectLoggedUser = ['/onboarding', '/login', '/sign-up', '/sign-in'];
 
   const notRedirectUser = [
     '/onboarding/welcome',

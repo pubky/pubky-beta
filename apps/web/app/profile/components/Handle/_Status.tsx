@@ -31,7 +31,7 @@ export default function Status({ creatorPubky, status }: StatusProps) {
   return (
     <>
       {!creatorPubky || creatorPubky === pubky ? (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col justify-center items-center">
           {status ? (
             <DropDown.Status status={status} />
           ) : (
