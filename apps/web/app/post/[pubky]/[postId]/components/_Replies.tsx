@@ -34,18 +34,16 @@ export default function Replies({
           //className={`${
           //  depth > 0 || reply.replies.length > 0 ? 'border-0' : ''
           //}`}
-          line={
-            !reply.post.post.parent ||
-            reply.post.post.parent === reply.post.post.root
-              ? false
-              : true
-          }
-          lineStyle="after:-ml-[2px]"
+          //line={
+          //  !reply.post.post.parent ||
+          //  reply.post.post.parent === reply.post.post.root
+          //    ? false
+          //    : true
+          //}
+          //lineStyle="after:-ml-[2px]"
         />
         {reply.replies && reply.replies.length > 0 && (
-          <div className="ml-[47px]">
-            {renderReplies(reply.replies, depth + 1)}
-          </div>
+          <div className="ml-6">{renderReplies(reply.replies, depth + 1)}</div>
         )}
       </div>
     ));
@@ -58,7 +56,7 @@ export default function Replies({
           No replies yet
         </Typography.Body>
       ) : (
-        <div className="flex-col gap-3 inline-flex w-full mt-6">
+        <div className="flex-col gap-3 inline-flex w-full mt-3">
           {/**<Typography.H2>Replies</Typography.H2>*/}
           {renderReplies(replies)}
         </div>

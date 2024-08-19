@@ -24,7 +24,7 @@ export const Message = ({
       break;
     case 'default':
     default:
-      variantCSS = 'bg-[#793288] border-white';
+      variantCSS = 'bg-white bg-opacity-20 backdrop-blur-[50px]  border-white';
       break;
   }
 

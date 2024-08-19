@@ -130,7 +130,8 @@ export default function Repost({
             <Post
               post={post}
               repostView
-              className="mt-2 max-h-[600px] overflow-y-auto rounded-bl-none"
+              className="mt-2 max-h-[600px] overflow-y-auto"
+              //rounded-bl-none
             />
           </CreateContent>
         </div>
