@@ -107,7 +107,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     >
       <div className={`flex-col inline-flex gap-2`}>
         <div className="w-96 mb-4 flex gap-2 items-center">
-          <Icon.Tag size="14" />
+          <Icon.Tag size="14" color="white" />
           <Typography.Label className="text-opacity-30">
             {tags.length > 0 ? 'Top tags' : 'Tag Post'}
           </Typography.Label>

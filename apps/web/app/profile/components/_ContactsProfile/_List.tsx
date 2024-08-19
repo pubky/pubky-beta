@@ -56,10 +56,7 @@ export default function List({
   return (
     <div key={index} className="w-full">
       <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
-        <Link
-          className="flex gap-2 lg:w-[450px] xl:w-[350px]"
-          href={`/profile/${contactId}`}
-        >
+        <Link className="flex gap-2 w-full" href={`/profile/${contactId}`}>
           <ImageByUri
             width={48}
             height={48}
