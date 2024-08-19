@@ -99,9 +99,9 @@ export default function NotificationTagPostGroup({
           )}
         </div>
       </div>
-      <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex">
-        <Typography.Caption className="items-center flex gap-2 text-white text-opacity-50">
-          <Icon.Clock size="13" color="gray" />
+      <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex opacity-30">
+        <Typography.Caption className="uppercase items-center flex gap-2 text-white">
+          <Icon.Clock size="13" />
           {Utils.timeAgo(notifications[0].timestamp)}
         </Typography.Caption>
       </div>
