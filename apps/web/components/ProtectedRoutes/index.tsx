@@ -28,7 +28,7 @@ export default function ProtectedRoutes({
     '/settings',
   ];
 
-  const redirectLoggedUser = ['/onboarding', '/login', '/sign-up'];
+  const redirectLoggedUser = ['/onboarding', '/login', '/sign-up', '/sign-in'];
 
   const notRedirectUser = [
     '/onboarding/welcome',
@@ -76,7 +76,8 @@ export default function ProtectedRoutes({
         if (Object.keys(loggedIn.users).length > 0) {
           setShowModal(false);
         } else {
-          setShowModal(true);
+          router.push('/sign-in');
+          //setShowModal(true);
         }
       } else if (loggedIn === false) {
         setShowServerDown(true);

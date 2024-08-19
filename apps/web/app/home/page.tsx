@@ -139,7 +139,7 @@ export default function Index() {
       return (
         <Components.Post
           post={parentPost}
-          className="rounded-bl-none"
+          //className="rounded-bl-none"
           largeView={layout === 'wide'}
         />
       );

@@ -117,7 +117,10 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         return (
           <div className="flex flex-col gap-3" key={post.id}>
             {parentPost ? (
-              <Post post={parentPost} className="rounded-bl-none" />
+              <Post
+                post={parentPost}
+                //className="rounded-bl-none"
+              />
             ) : parentUri ? (
               <div className="relative ml-4 mb-8 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
                 <Typography.Body variant="small" className="text-opacity-50">

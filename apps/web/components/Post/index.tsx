@@ -48,9 +48,11 @@ export default function Post({
   const { setContent, setShow } = useAlertContext();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const router = useRouter();
-  const lineBaseCSS = `absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
+  {
+    /**const lineBaseCSS = `absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS =
-    'absolute ml-[1px] w-3.5 border-t-2 border-neutral-800';
+    'absolute ml-[1px] w-3.5 border-t-2 border-neutral-800';*/
+  }
 
   const handleDeletePost = async () => {
     const result = await deletePost(post?.id);
@@ -91,7 +93,8 @@ export default function Post({
                         <PostUI.MainCard className="mt-4">
                           <Header post={post?.post?.embed?.post} />
                           {line && (
-                            <div className={twMerge(lineBaseCSS, lineStyle)} />
+                            //<div className={twMerge(lineBaseCSS, lineStyle)} />
+                            <></>
                           )}
                           <div>
                             <Content
@@ -172,7 +175,7 @@ export default function Post({
                   {post?.post.embed.post ? (
                     <PostUI.MainCard
                       className={twMerge(
-                        'rounded-tl-none rounded-tr-none',
+                        //'rounded-tl-none rounded-tr-none',
                         largeView && 'p-12 inline-flex flex-row gap-12',
                         rest.className
                       )}
@@ -183,7 +186,8 @@ export default function Post({
                           largeView={largeView}
                         />
                         {line && (
-                          <div className={twMerge(lineBaseCSS, lineStyle)} />
+                          //<div className={twMerge(lineBaseCSS, lineStyle)} />
+                          <></>
                         )}
                         <div>
                           <Content
@@ -225,13 +229,13 @@ export default function Post({
               <div className="flex items-center relative">
                 {line && (
                   <>
-                    <div className={twMerge(lineBaseCSS, lineStyle)} />
-                    <div className={twMerge(lineHorizontalCSS)} />
+                    {/** <div className={twMerge(lineBaseCSS, lineStyle)} />
+                    <div className={twMerge(lineHorizontalCSS)} />*/}
                   </>
                 )}
                 <PostUI.MainCard
                   className={twMerge(
-                    line && 'ml-[15px]',
+                    line && 'ml-6',
                     largeView && 'p-12 flex inline-flex flex-row gap-12',
                     rest.className
                   )}
