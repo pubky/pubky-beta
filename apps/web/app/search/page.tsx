@@ -7,6 +7,7 @@ import {
   ActiveFriends,
   ButtonFilters,
   CreatePost,
+  Feedback,
   Header,
   HotTags,
   Post,
@@ -201,6 +202,7 @@ const SearchContent = () => {
             <WhoFollow />
             <ActiveFriends />
             <HotTags />
+            <Feedback />
           </Sidebar>
         )}
       </Content.Grid>
