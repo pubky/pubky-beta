@@ -49,7 +49,7 @@ export default function Feedback() {
             <div className="flex gap-2 items-center">
               <ImageByUri
                 alt="user"
-                uri={profile?.image ?? '/images/User.png'}
+                uri={profile?.image ?? '/images/Userpic.png'}
                 width={32}
                 height={32}
                 className="rounded-full w-8 h-8"
