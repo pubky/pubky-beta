@@ -6,9 +6,11 @@ import { Icon, Input, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useEffect, useState } from 'react';
 import { ImageByUri } from '../ImageByUri';
+import axios from 'axios';
 
 export default function Feedback() {
   const { pubky, getProfile } = useClientContext();
+  const [message, setMessage] = useState('');
   const [profile, setProfile] = useState<IProfile>();
 
   async function fetchProfile() {
@@ -26,6 +28,18 @@ export default function Feedback() {
     fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
+
+  const handleSubmit = async () => {
+    try {
+      await axios.post('http://localhost:3000/api/chatwoot', {
+        message,
+        email: 'feedback@pubky.app',
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="self-start sticky top-[120px] col-span-1">
       <SideCard.Header title="Feedback" />
@@ -45,14 +59,19 @@ export default function Feedback() {
               </Typography.Body>
             </div>
             <Input.TextArea
-              disabled
+              defaultValue={message}
+              onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                const target = e.target as HTMLTextAreaElement;
+                setMessage(target.value);
+              }}
               placeholder="What do you think about Pubky? Any suggestions?"
             />
           </div>
         </div>
         <SideCard.Action
           icon={<Icon.Envelope size="16" color="gray" />}
-          disabled
+          disabled={!message}
+          onClick={() => (message ? handleSubmit() : undefined)}
           className="mt-4"
           text="Submit application"
         />
