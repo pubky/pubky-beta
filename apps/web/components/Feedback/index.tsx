@@ -7,17 +7,22 @@ import { Utils } from '@social/utils-shared';
 import { useEffect, useState } from 'react';
 import { ImageByUri } from '../ImageByUri';
 import axios from 'axios';
+import Modal from '../Modal';
 
 export default function Feedback() {
   const { pubky, getProfile } = useClientContext();
   const [message, setMessage] = useState('');
   const [profile, setProfile] = useState<IProfile>();
+  const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState(false);
+  const [name, setName] = useState('');
 
   async function fetchProfile() {
     try {
       const userProfile = await getProfile();
       if (userProfile) {
         setProfile(userProfile);
+        setName(userProfile?.name);
       }
     } catch (error) {
       console.log(error);
@@ -31,12 +36,18 @@ export default function Feedback() {
 
   const handleSubmit = async () => {
     try {
+      setMessage('');
       await axios.post('https://synonym.to/api/chatwoot', {
         message,
-        email: 'feedback@pubky.app',
+        name: name,
+        email: `${pubky}@pubky.app`,
+        source: 'pubky',
       });
+      setShowModal(true);
     } catch (error) {
       console.error(error);
+      setError(true);
+      setShowModal(true);
     }
   };
 
@@ -59,7 +70,7 @@ export default function Feedback() {
               </Typography.Body>
             </div>
             <Input.TextArea
-              defaultValue={message}
+              value={message}
               onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
                 const target = e.target as HTMLTextAreaElement;
                 setMessage(target.value);
@@ -76,6 +87,11 @@ export default function Feedback() {
           text="Submit application"
         />
       </SideCard.Content>
+      <Modal.Feedback
+        showModal={showModal}
+        setShowModal={setShowModal}
+        error={error}
+      />
     </div>
   );
 }
