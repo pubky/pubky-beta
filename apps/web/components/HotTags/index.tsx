@@ -67,6 +67,7 @@ export default function HotTags() {
                   tag={Utils.minifyText(tag.tag, 15)}
                   color={tag.tag && Utils.generateRandomColor(tag.tag)}
                   counter={`${tag.count}`}
+                  boxShadow={false}
                 />
               ))}
             </div>

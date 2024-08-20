@@ -202,7 +202,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   }
                 >
                   <div className="flex gap-2 items-center">
-                    {Utils.minifyText(tagObj.tag.replace(' ', ''), 7)}
+                    {Utils.minifyText(tagObj.tag.replace(' ', ''), 14)}
                     <Typography.Caption
                       variant="bold"
                       className="text-opacity-30"

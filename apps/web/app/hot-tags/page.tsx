@@ -141,6 +141,7 @@ export default function Index() {
             onClick={() => router.push(`/search?tags=${tag.tag}`)}
             color={tag.tag && Utils.generateRandomColor(tag.tag)}
             counter={`${tag.count}`}
+            boxShadow={false}
           />
           {tag?.from.slice(0, 15).map((fromItem, fromIndex) => (
             <ImageByUri
@@ -184,7 +185,7 @@ export default function Index() {
             renderTags(hotTags, loadingReachTags)
           )}
         </div>
-        <Sidebar className="hidden xl:block">
+        <Sidebar className="hidden 2xl:block">
           <WhoFollow />
           <ActiveFriends />
         </Sidebar>

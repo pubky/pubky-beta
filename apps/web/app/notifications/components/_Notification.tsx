@@ -211,6 +211,7 @@ export default function Notification({
                 router.push(`/search?tags=${notification.body.tag}`)
               }
               clicked={false}
+              boxShadow={false}
             >
               {notification.body.tag}
             </PostUtil.Tag>

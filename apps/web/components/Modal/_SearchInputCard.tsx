@@ -137,6 +137,7 @@ export default function SearchInputCard({
                       onClick={() => router.push(`/search?tags=${tag.tag}`)}
                       color={tag.tag && Utils.generateRandomColor(tag.tag)}
                       className="mr-2 my-1"
+                      boxShadow={false}
                     >
                       {tag.tag}
                     </PostUtil.Tag>
