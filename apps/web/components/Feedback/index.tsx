@@ -31,7 +31,7 @@ export default function Feedback() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post('http://localhost:3000/api/chatwoot', {
+      await axios.post('https://synonym.to/api/chatwoot', {
         message,
         email: 'feedback@pubky.app',
       });
