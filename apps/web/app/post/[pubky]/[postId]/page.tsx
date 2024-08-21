@@ -5,23 +5,46 @@ import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Post as PostComponent } from '@/components';
 import { Utils } from '@social/utils-shared';
-import { IPost, IReply } from '@/types';
+import { IFileContent, IPost, IReply } from '@/types';
 import { useClientContext, useAlertContext } from '@/contexts';
 import Skeletons from '@/components/Skeletons';
 import { Post } from './components';
+import MetaTags from '@/components/MetaTags';
 
 export default function Index({
   params,
 }: {
   params: { pubky: string; postId: string };
 }) {
-  const { getReplies } = useClientContext();
+  const { getReplies, getFile } = useClientContext();
   const { setContent, setShow } = useAlertContext();
   const [post, setPost] = useState<IPost>({} as IPost);
   const [showPost, setShowPost] = useState(true);
   const [loading, setLoading] = useState(true);
   const [replies, setReplies] = useState<IReply>({} as IReply);
   const uri = Utils.decodePostUri(params.pubky, params.postId);
+  const [file, setFile] = useState<IFileContent | null>();
+  const [typeFile, setTypeFile] = useState<'image' | 'video'>();
+  const fileUri = post?.post?.files ? post?.post?.files[0].fileUri : '';
+
+  useEffect(() => {
+    const FetchFile = async () => {
+      if (fileUri) {
+        const fetchFileResponse = await getFile(fileUri);
+        const isVideo =
+          fetchFileResponse &&
+          fetchFileResponse.contentType.startsWith('video');
+        if (isVideo) {
+          setTypeFile('video');
+        } else {
+          setTypeFile('image');
+        }
+        setFile(fetchFileResponse);
+      }
+    };
+    FetchFile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileUri]);
 
   useEffect(() => {
     async function fetchData() {
@@ -107,6 +130,13 @@ export default function Index({
 
   return (
     <Content.Main>
+      <MetaTags
+        username={post?.author?.profile?.name || 'Pubky App'}
+        description={post?.post?.content || 'Post Description'}
+        url={Utils.encodePostUri(post?.uri)}
+        image={typeFile === 'image' && file ? file.urls.main : ''}
+        video={typeFile === 'video' && file ? file.urls.main : ''}
+      />
       <Header className="hidden md:block" title="Post" />
       <Content.Grid className="flex justify-between flex-col gap-3">
         {content}
