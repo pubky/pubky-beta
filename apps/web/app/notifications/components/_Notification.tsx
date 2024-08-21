@@ -35,7 +35,7 @@ const notificationType = {
   },
   mention: {
     type: 'mention',
-    icon: <Icon.Eye size="16" />,
+    icon: <Icon.Note size="16" />,
     text: 'mentioned you in a post',
   },
   reply: {

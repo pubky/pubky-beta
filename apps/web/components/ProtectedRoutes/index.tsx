@@ -14,7 +14,7 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, session, setSearchTags } = useClientContext();
+  const { isLoggedIn, session, setSearchTags, logout } = useClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
   const protectedRoutes = [
@@ -76,6 +76,7 @@ export default function ProtectedRoutes({
         if (Object.keys(loggedIn.users).length > 0) {
           setShowModal(false);
         } else {
+          await logout();
           router.push('/sign-in');
           //setShowModal(true);
         }
