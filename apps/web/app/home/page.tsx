@@ -17,6 +17,8 @@ export default function Index() {
   const [parentPosts, setParentPosts] = useState<{
     [key: string]: IPost | null;
   }>({});
+  const [repliesMap, setRepliesMap] = useState<{ [key: string]: IPost[] }>({});
+  const [postLevels, setPostLevels] = useState<{ [key: string]: number }>({});
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const loader = useRef(null);
   const filterContentRef = useRef(null);
@@ -39,26 +41,52 @@ export default function Index() {
     setLoading(true);
 
     const results = await listGlobalPosts(pointer, reach, sort);
+    console.log("results", results);
 
     if (cancellationToken.cancelled) return;
 
     if (results && results.feed) {
+      const newRepliesMap: { [key: string]: IPost[] } = {};
+      const newPostLevels: { [key: string]: number } = {};
       const newPostsTemp = await Promise.all(
         results.feed.map(async (post: IPost) => {
           let parentPost: IPost | null = null;
-          if (post.post.parent) {
-            parentPost = await fetchParentPost(post.post.parent);
+          const parentUri = post.post.parent;
+
+          if (parentUri) {
+            parentPost = await fetchParentPost(parentUri);
             setParentPosts((prev) => ({
               ...prev,
-              [post.post.parent!]: parentPost,
+              [parentUri]: parentPost,
             }));
+
+            if (newRepliesMap[parentUri]) {
+              newRepliesMap[parentUri].push(post);
+            } else {
+              newRepliesMap[parentUri] = [post];
+            }
+
+            let level = 1;
+            let currentUri = parentUri;
+            while (parentPosts[currentUri]) {
+              level++;
+              currentUri = parentPosts[currentUri]?.post?.parent || '';
+            }
+            newPostLevels[post.uri] = level;
+          } else {
+            newPostLevels[post.uri] = 0;
+            return post;
           }
-          return post;
         })
       );
 
+      setRepliesMap((prev) => ({ ...prev, ...newRepliesMap }));
+      setPostLevels((prev) => ({ ...prev, ...newPostLevels }));
+
       const postsMap = newPostsTemp.reduce((acc: INewPost, post) => {
-        acc[post.id] = post;
+        if (post) {
+          acc[post.id] = post;
+        }
         return acc;
       }, {});
 
@@ -130,18 +158,15 @@ export default function Index() {
     };
   }, [drawerFilterRef]);
 
-  function renderParentPost(
+  {
+    /** function renderParentPost(
     parentPost: IPost,
     parentUri: string | undefined,
     layout: string
   ) {
     if (parentPost) {
       return (
-        <Components.Post
-          post={parentPost}
-          //className="rounded-bl-none"
-          largeView={layout === 'wide'}
-        />
+        <Components.Post post={parentPost} largeView={layout === 'wide'} />
       );
     }
 
@@ -158,18 +183,49 @@ export default function Index() {
 
     return null;
   }
+    */
+  }
 
-  function renderPost(post: IPost, parentPost: IPost | null, layout: string) {
+  function renderPostWithReplies(
+    post: IPost,
+    layout: string,
+    renderedPosts: Set<string>
+  ) {
+    if (renderedPosts.has(post.uri)) {
+      return null;
+    }
+    renderedPosts.add(post.uri);
+
+    const level = postLevels[post.uri] || 0;
+    const marginClass = level > 0 ? `ml-${level * 6}` : '';
+
     return (
-      <div className="flex flex-col gap-3" key={post.id}>
-        {parentPost && renderParentPost(parentPost, post?.post?.parent, layout)}
+      <div className={`flex flex-col gap-3 ${marginClass}`} key={post.id}>
         <Components.Post
           largeView={layout === 'wide'}
           post={post}
-          line={Boolean(parentPost)}
+          line={Boolean(post?.post?.parent)}
         />
+        {repliesMap[post.uri]?.map((reply) =>
+          renderPostWithReplies(reply, layout, renderedPosts)
+        )}
       </div>
     );
+  }
+
+  function renderPostsInOrder(layout: string) {
+    const renderedPosts = new Set<string>();
+
+    return Object.keys(posts).flatMap((key) => {
+      const post = posts[key];
+      const parentUri = post?.post?.parent;
+
+      if (!parentUri || !renderedPosts.has(parentUri)) {
+        return renderPostWithReplies(post, layout, renderedPosts);
+      }
+
+      return null;
+    });
   }
 
   function getPostsLayoutClass(layout: string) {
@@ -212,13 +268,7 @@ export default function Index() {
           )} flex-col inline-flex gap-3`}
         >
           <Components.CreateQuickPost largeView={layout === 'wide'} />
-          {Object.keys(posts).map((key) => {
-            const post = posts[key];
-            const parentUri = post?.post?.parent;
-            const parentPost = parentUri ? parentPosts[parentUri] : null;
-
-            return renderPost(post, parentPost, layout);
-          })}
+          {renderPostsInOrder(layout)}
           {Object.keys(posts).length === 0 && !loading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
