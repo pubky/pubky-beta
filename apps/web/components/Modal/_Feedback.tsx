@@ -39,7 +39,7 @@ export default function Feedback({
       className="w-[588px]"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
-      <Modal.Header title="Sent Failed" />
+      <Modal.Header title={error ? 'Sent Failed' : 'Feedback Received'} />
       <Typography.Body className="text-opacity-60" variant="medium">
         {error
           ? 'Feedback not sent correctly, please try again.'
