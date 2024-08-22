@@ -46,7 +46,10 @@ export default function Index() {
         </div>
         <Components.Sidebar className="hidden xl:block">
           {selectedItem !== 'help' && <Faq />}
-          <Version />
+          <div className="self-start sticky top-[120px]">
+            <Components.Feedback />
+            <Version />
+          </div>
         </Components.Sidebar>
       </Content.Grid>
     </Content.Main>

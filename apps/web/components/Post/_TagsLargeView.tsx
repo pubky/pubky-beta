@@ -215,7 +215,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   variant="custom"
                   size="small"
                   icon={<Icon.MagnifyingGlassLeft size="14" />}
-                  onClick={() => router.push(`/search?tags=${tagObj}`)}
+                  onClick={() => router.push(`/search?tags=${tagObj.tag}`)}
                   className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                 />
                 <div

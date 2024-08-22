@@ -233,6 +233,7 @@ export default function Index() {
             <Components.WhoFollow />
             <Components.ActiveFriends />
             <Components.HotTags />
+            <Components.Feedback />
           </Components.Sidebar>
         )}
       </Content.Grid>

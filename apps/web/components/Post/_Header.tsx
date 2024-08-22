@@ -42,7 +42,6 @@ export default function Header({
           alt="user"
           width={largeView ? 48 : 32}
           height={largeView ? 48 : 32}
-          className="z-[1]"
         />
         <TooltipUI.Root
           delay={500}

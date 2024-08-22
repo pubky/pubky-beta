@@ -6,6 +6,7 @@ import {
   ActiveFriends,
   ButtonFilters,
   CreatePost,
+  Feedback,
   Header,
   HotTags,
   Post,
@@ -116,6 +117,7 @@ export default function Index() {
           <WhoFollow />
           <ActiveFriends />
           <HotTags />
+          <Feedback />
         </Sidebar>
       );
     }

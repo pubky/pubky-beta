@@ -7,6 +7,7 @@ import { Utils } from '@social/utils-shared';
 import {
   ActiveFriends,
   CreatePost,
+  Feedback,
   Header,
   Sidebar,
   WhoFollow,
@@ -188,6 +189,7 @@ export default function Index() {
         <Sidebar className="hidden 2xl:block">
           <WhoFollow />
           <ActiveFriends />
+          <Feedback />
         </Sidebar>
       </Content.Grid>
       <CreatePost />
