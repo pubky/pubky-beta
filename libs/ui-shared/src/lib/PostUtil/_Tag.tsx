@@ -9,6 +9,7 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   color?: string;
   children: React.ReactNode;
   action?: React.ReactNode;
+  boxShadow?: boolean;
 }
 
 const hexToRgba = (hex: string, alpha: number) => {
@@ -21,6 +22,7 @@ export const Tag = ({
   color = 'fuchsia',
   children,
   action,
+  boxShadow = true,
   ...rest
 }: TagProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -43,7 +45,11 @@ export const Tag = ({
         };
 
     if (!clicked && isHovered) {
-      style.backgroundColor = hexToRgba(color, 0.6);
+      if (boxShadow) {
+        style.boxShadow = `inset 0 0 10px 2px ${hexToRgba(color, 0.6)}`;
+      } else {
+        style.backgroundColor = hexToRgba(color, 0.6);
+      }
     }
 
     cssText = 'text-white';
@@ -62,7 +68,7 @@ export const Tag = ({
     <div
       {...rest}
       className={twMerge(
-        `inline-flex border h-8 px-3 py-1 rounded-lg cursor-pointer text-center`,
+        `inline-flex border h-8 px-3 py-1 rounded-lg cursor-pointer text-center transition-all duration-300`,
         cssClasses,
         rest.className
       )}

@@ -107,7 +107,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     >
       <div className={`flex-col inline-flex gap-2`}>
         <div className="w-96 mb-4 flex gap-2 items-center">
-          <Icon.Tag size="14" />
+          <Icon.Tag size="14" color="white" />
           <Typography.Label className="text-opacity-30">
             {tags.length > 0 ? 'Top tags' : 'Tag Post'}
           </Typography.Label>
@@ -202,7 +202,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   }
                 >
                   <div className="flex gap-2 items-center">
-                    {Utils.minifyText(tagObj.tag.replace(' ', ''), 7)}
+                    {Utils.minifyText(tagObj.tag.replace(' ', ''), 14)}
                     <Typography.Caption
                       variant="bold"
                       className="text-opacity-30"
@@ -215,7 +215,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   variant="custom"
                   size="small"
                   icon={<Icon.MagnifyingGlassLeft size="14" />}
-                  onClick={() => router.push(`/search?tags=${tagObj}`)}
+                  onClick={() => router.push(`/search?tags=${tagObj.tag}`)}
                   className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                 />
                 <div

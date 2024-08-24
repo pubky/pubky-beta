@@ -13,7 +13,7 @@ export const Time = ({ children, ...rest }: RootProps) => {
     <div className={twMerge(baseCSS, rest.className)}>
       {children ? (
         <>
-          <Icon.Clock size="16" color="gray" />
+          <Icon.Clock size="16" color="#FFFFFF4D" />
           <Typography.Caption
             {...rest}
             variant="bold"

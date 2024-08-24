@@ -1,6 +1,6 @@
 'use client';
 
-import { Icon, Typography } from '@social/ui-shared';
+import { Typography } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
@@ -41,7 +41,7 @@ export default function UserArea({ largeView, uriPic, name }: UserAreaProps) {
             {Utils.minifyText(name, 24)}
           </Typography.Body>
           <div className="flex gap-1 cursor-pointer">
-            <Icon.CheckCircle size="16" color="gray" />
+            {/**<Icon.CheckCircle size="16" color="gray" />*/}
             <Typography.Label className="text-opacity-30">
               {Utils.minifyPubky(pubky)}
             </Typography.Label>

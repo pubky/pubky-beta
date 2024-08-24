@@ -35,7 +35,7 @@ const notificationType = {
   },
   mention: {
     type: 'mention',
-    icon: <Icon.Eye size="16" />,
+    icon: <Icon.Note size="16" />,
     text: 'mentioned you in a post',
   },
   reply: {
@@ -211,6 +211,7 @@ export default function Notification({
                 router.push(`/search?tags=${notification.body.tag}`)
               }
               clicked={false}
+              boxShadow={false}
             >
               {notification.body.tag}
             </PostUtil.Tag>

@@ -37,6 +37,7 @@ import {
 } from './_Media';
 import {
   NoteBlank,
+  Note,
   Clipboard,
   BookmarkSimple,
   List,
@@ -174,6 +175,7 @@ export const Icon = {
   Newspaper,
   Next,
   NoteBlank,
+  Note,
   PaperPlaneRight,
   Pause,
   Pencil,

@@ -247,7 +247,7 @@ export default function CreateContent({
     <div
       className={`${
         largeView ? 'p-12' : 'p-6'
-      } w-full rounded-2xl border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
+      } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
     >
       <Section.UserArea uriPic={pic} name={name} largeView={largeView} />
       <div

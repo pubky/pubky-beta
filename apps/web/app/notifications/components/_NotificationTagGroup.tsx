@@ -80,6 +80,7 @@ export default function NotificationTagGroup({
                   router.push(`/search?tags=${notification.body.tag}`)
                 }
                 clicked={false}
+                boxShadow={false}
               >
                 {notification.body.tag}
               </PostUtil.Tag>

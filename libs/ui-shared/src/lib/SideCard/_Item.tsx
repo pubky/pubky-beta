@@ -31,17 +31,15 @@ export const Item = ({
       <div className="w-14 justify-start items-center contents">
         <div
           className={`flex gap-2 items-center ${
-            !disabled &&
-            (selected ? 'opacity-100' : 'opacity-50 hover:opacity-100')
+            disabled
+              ? 'opacity-20'
+              : selected
+              ? 'opacity-100'
+              : 'opacity-50 hover:opacity-100'
           }`}
         >
           {icon}
-          <Typography.Body
-            className={disabled ? 'text-opacity-30' : ''}
-            variant="medium-bold"
-          >
-            {label}
-          </Typography.Body>
+          <Typography.Body variant="medium-bold">{label}</Typography.Body>
         </div>
         {/**{selected && (
           <div>

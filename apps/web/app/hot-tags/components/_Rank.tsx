@@ -6,6 +6,7 @@ interface RankProps extends React.HTMLAttributes<HTMLDivElement> {
   color: string;
   counter: string;
   images?: { alt: string; src: string }[];
+  boxShadow?: boolean;
 }
 
 export default function Rank({
@@ -13,12 +14,13 @@ export default function Rank({
   counter,
   color,
   images,
+  boxShadow,
   ...rest
 }: RankProps) {
   const baseCSS = 'justify-start items-center gap-3 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <PostUtil.Tag clicked={false} color={color}>
+      <PostUtil.Tag boxShadow={boxShadow} clicked={false} color={color}>
         {tag}
       </PostUtil.Tag>
       <PostUtil.Counter className="w-full">{counter} posts</PostUtil.Counter>

@@ -9,6 +9,7 @@ interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
   color: string;
   counter?: React.ReactNode;
   images?: { alt: string; src: string }[];
+  boxShadow?: boolean;
 }
 export const Rank = ({
   rank,
@@ -16,12 +17,13 @@ export const Rank = ({
   counter,
   color,
   images,
+  boxShadow = true,
   ...rest
 }: RankProps) => {
   const baseCSS = 'justify-start items-center gap-3 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <PostUtil.Tag clicked={false} color={color}>
+      <PostUtil.Tag boxShadow={boxShadow} clicked={false} color={color}>
         <div className="flex gap-2 items-center">
           {tag}
           <Typography.Caption variant="bold" className="text-opacity-30">

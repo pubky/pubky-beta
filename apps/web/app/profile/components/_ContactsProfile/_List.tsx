@@ -56,10 +56,7 @@ export default function List({
   return (
     <div key={index} className="w-full">
       <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
-        <Link
-          className="flex gap-2 lg:w-[450px] xl:w-[350px]"
-          href={`/profile/${contactId}`}
-        >
+        <Link className="flex gap-2 w-full" href={`/profile/${contactId}`}>
           <ImageByUri
             width={48}
             height={48}
@@ -108,26 +105,22 @@ export default function List({
             );
           })}
         </div>
-        {profile?.tagsCount && (
-          <div className="flex-col justify-start items-start gap-1 inline-flex">
-            <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-              Tags
-            </Typography.Label>
-            <Typography.Body variant="medium-bold">
-              {profile?.tagsCount}
-            </Typography.Body>
-          </div>
-        )}
-        {profile?.postsCount && (
-          <div className="flex-col justify-start items-start gap-1 inline-flex">
-            <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-              Posts
-            </Typography.Label>
-            <Typography.Body variant="medium-bold">
-              {profile?.postsCount}
-            </Typography.Body>
-          </div>
-        )}
+        <div className="flex-col justify-start items-start gap-1 inline-flex">
+          <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+            Tags
+          </Typography.Label>
+          <Typography.Body variant="medium-bold">
+            {profile?.tagsCount ?? 0}
+          </Typography.Body>
+        </div>
+        <div className="flex-col justify-start items-start gap-1 inline-flex">
+          <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+            Posts
+          </Typography.Label>
+          <Typography.Body variant="medium-bold">
+            {profile?.postsCount ?? 0}
+          </Typography.Body>
+        </div>
         <div className="flex gap-4">
           {pubkeyUser ? (
             <Button.Medium
