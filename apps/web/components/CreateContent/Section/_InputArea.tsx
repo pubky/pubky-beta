@@ -74,7 +74,9 @@ export default function InputArea({
     if (files) {
       const validFiles = Array.from(files).filter((file) => {
         const isValidType =
-          file.type.startsWith('image/') || file.type.startsWith('video/');
+          file.type.startsWith('image/') ||
+          file.type.startsWith('video/') ||
+          file.type === 'application/pdf';
         if (!isValidType) {
           setContentAlert('File not supported', 'warning');
           setShow(true);
