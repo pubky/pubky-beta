@@ -80,6 +80,7 @@ export default function Index({
               countPosts={profile?.postsCount}
               creatorPubky={creatorPubky}
               loading={loading}
+              profile={profile}
             />
           </PostsLayout>
           <Profile.Sidebar creatorPubky={creatorPubky} />

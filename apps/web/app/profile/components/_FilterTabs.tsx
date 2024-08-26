@@ -4,6 +4,8 @@ import { Profile } from './';
 import { Skeleton } from '@/components';
 import ContactsProfile from './_ContactsProfile/ContactsProfile';
 import { useClientContext, useNotificationsContext } from '@/contexts';
+import TaggedAs from './_TaggedAs';
+import { IUserProfile } from '@/types';
 
 const tabs = [
   {
@@ -36,6 +38,12 @@ const tabs = [
     icon: <Icon.Smiley size="24" color="white" />,
     label: 'Friends',
   },
+  {
+    id: 5,
+    key: 'tagged',
+    icon: <Icon.Tag size="24" color="white" />,
+    label: 'Tagged',
+  },
 ];
 
 export default function FilterTabs({
@@ -43,6 +51,7 @@ export default function FilterTabs({
   countPosts,
   countContacts,
   loading,
+  profile,
 }: {
   creatorPubky?: string;
   countPosts: number | undefined;
@@ -52,6 +61,7 @@ export default function FilterTabs({
     friends: number;
   };
   loading: boolean;
+  profile: IUserProfile | undefined;
 }) {
   const { notifications, loading: loadingNotifications } =
     useNotificationsContext();
@@ -105,6 +115,8 @@ export default function FilterTabs({
         return countContacts.following || 0;
       case 'friends':
         return countContacts.friends || 0;
+      case 'tagged':
+        return profile?.taggedAs.length || 0;
       default:
         return null;
     }
@@ -175,6 +187,13 @@ export default function FilterTabs({
             )}
             {activeTab === 4 && (
               <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
+            )}
+            {activeTab === 5 && (
+              <TaggedAs
+                profile={profile}
+                loading={loading}
+                creatorPubky={creatorPubky}
+              />
             )}
           </>
         )}
