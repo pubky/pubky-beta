@@ -66,6 +66,7 @@ export default function Index() {
             countContacts={countContacts}
             countPosts={profile?.postsCount}
             loading={loading}
+            profile={profile}
           />
         </PostsLayout>
         <Profile.Sidebar />

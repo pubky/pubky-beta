@@ -193,6 +193,7 @@ export default function Header({ title, className }: HeaderProps) {
             icon={<Icon.Fire size="24" />}
           />
         </Link>
+        {/**
         <Link href="/bookmarks">
           <Button.Action
             id="header-bookmarks-btn"
@@ -202,6 +203,7 @@ export default function Header({ title, className }: HeaderProps) {
             icon={<Icon.BookmarkSimple size="24" />}
           />
         </Link>
+        */}
         <Link href="/settings">
           <Button.Action
             id="header-settings-btn"
