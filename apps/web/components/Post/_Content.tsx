@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { Tweet } from 'react-tweet';
 import FilesCarousel from '../Modal/_FilesCarousel';
 import Parsing from '../Content/_Parsing';
+import { Button, Icon, Typography } from '@social/ui-shared';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
@@ -157,7 +158,10 @@ export default function Content({
             }`}
           >
             {fileContents.map((file, index) => {
+              console.log('file', file);
               const isVideo = file.contentType.startsWith('video');
+              const isImage = file.contentType.startsWith('image');
+              const isPDF = file.contentType === 'application/pdf';
 
               return (
                 <div
@@ -173,12 +177,38 @@ export default function Content({
                       controls
                       className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                     />
-                  ) : (
+                  ) : isImage ? (
                     <img
                       src={file.urls.main}
                       alt={`Fetched file ${index}`}
                       className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                     />
+                  ) : isPDF ? (
+                    <div
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        window.open(file.urls.main, '_blank');
+                      }}
+                      className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
+                    >
+                      <div className="flex gap-2 items-center">
+                        <Icon.FileText size="20" />
+                        <Typography.Body
+                          className="text-opacity-80"
+                          variant="small-bold"
+                        >
+                          {Utils.minifyText(file.urls.main, 60)}
+                        </Typography.Body>
+                      </div>
+                      <Button.Medium
+                        className="w-auto h-8 px-3 py-2"
+                        icon={<Icon.DownloadSimple size="16" />}
+                      >
+                        Download
+                      </Button.Medium>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">Unsupported file type</p>
                   )}
                 </div>
               );
