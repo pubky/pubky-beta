@@ -16,30 +16,36 @@ const tabs = [
   },
   {
     id: 1,
+    key: 'bookmarks',
+    icon: <Icon.BookmarkSimple size="24" color="white" />,
+    label: 'Bookmarks',
+  },
+  {
+    id: 2,
     key: 'posts',
     icon: <Icon.FileText size="24" color="white" />,
     label: 'Posts',
   },
   {
-    id: 2,
+    id: 3,
     key: 'followers',
     icon: <Icon.UsersLeft size="24" color="white" />,
     label: 'Followers',
   },
   {
-    id: 3,
+    id: 4,
     key: 'following',
     icon: <Icon.UsersRight size="24" color="white" />,
     label: 'Following',
   },
   {
-    id: 4,
+    id: 5,
     key: 'friends',
     icon: <Icon.Smiley size="24" color="white" />,
     label: 'Friends',
   },
   {
-    id: 5,
+    id: 6,
     key: 'tagged',
     icon: <Icon.Tag size="24" color="white" />,
     label: 'Tagged',
@@ -78,7 +84,7 @@ export default function FilterTabs({
       setActiveTab(foundTab.id);
     } else {
       const defaultTab =
-        !creatorPubky || creatorPubky === pubky ? tabs[0] : tabs[1];
+        !creatorPubky || creatorPubky === pubky ? tabs[0] : tabs[2];
       setActiveTab(defaultTab.id);
       params.set('tab', defaultTab.key);
       window.history.replaceState(
@@ -129,7 +135,7 @@ export default function FilterTabs({
           if (
             creatorPubky &&
             creatorPubky !== pubky &&
-            tab.key === 'notifications'
+            (tab.key === 'notifications' || tab.key === 'bookmarks')
           ) {
             return null;
           }
@@ -166,29 +172,35 @@ export default function FilterTabs({
           <Skeleton.Simple />
         ) : (
           <>
-            {(!creatorPubky || creatorPubky === pubky) && activeTab === 0 && (
-              <Profile.NotificationsProfile
-                notifications={notifications}
-                loading={loadingNotifications}
-              />
+            {(!creatorPubky || creatorPubky === pubky) && (
+              <>
+                {activeTab === 0 ? (
+                  <Profile.NotificationsProfile
+                    notifications={notifications}
+                    loading={loadingNotifications}
+                  />
+                ) : (
+                  activeTab === 1 && <Profile.Bookmarks />
+                )}
+              </>
             )}
-            {activeTab === 1 && <Profile.Posts creatorPubky={creatorPubky} />}
-            {activeTab === 2 && (
+            {activeTab === 2 && <Profile.Posts creatorPubky={creatorPubky} />}
+            {activeTab === 3 && (
               <ContactsProfile
                 creatorPubky={creatorPubky}
                 contacts="followers"
               />
             )}
-            {activeTab === 3 && (
+            {activeTab === 4 && (
               <ContactsProfile
                 creatorPubky={creatorPubky}
                 contacts="following"
               />
             )}
-            {activeTab === 4 && (
+            {activeTab === 5 && (
               <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
             )}
-            {activeTab === 5 && (
+            {activeTab === 6 && (
               <TaggedAs
                 profile={profile}
                 loading={loading}
