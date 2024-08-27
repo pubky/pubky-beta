@@ -57,7 +57,7 @@ const onboardAsNewUser = (profileName, profileBio = '') => {
   cy.visit('/onboarding');
 
   cy.get('#onboarding-get-started-link').click();
-  cy.location('pathname').should('eq', '/onboarding/paper');
+  cy.location('pathname').should('eq', '/onboarding/intro');
 
   cy.get('#onboarding-sign-in-btn').click();
   cy.location('pathname').should('eq', '/onboarding/sign-in');
