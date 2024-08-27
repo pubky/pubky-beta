@@ -65,7 +65,7 @@ export default function Index() {
           Your keys, your content, your rules. Social publishing, reimagined.
         </Typography.H2>
         <div className="relative flex gap-3">
-          <Link id="onboarding-get-started-link" href="/onboarding/paper">
+          <Link id="onboarding-get-started-link" href="/onboarding/intro">
             <Button.Large className="mt-12">Get started</Button.Large>
           </Link>
           <Button.Large

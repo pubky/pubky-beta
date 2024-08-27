@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Typography, Button, Icon } from '@social/ui-shared';
 import { Onboarding } from '../components';
 
-export default function Paper() {
+export default function Intro() {
   return (
     <Onboarding.Layout currentStep={0}>
       <Typography.Display>You just want to be free.</Typography.Display>

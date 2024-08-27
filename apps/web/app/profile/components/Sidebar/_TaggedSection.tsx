@@ -1,5 +1,4 @@
 import { Skeleton } from '@/components';
-import { ImageByUri } from '@/components/ImageByUri';
 import { useClientContext } from '@/contexts';
 import { ITaggedProfile } from '@/types';
 import {
@@ -48,12 +47,6 @@ export default function TaggedSection({
                   (fromItem) => fromItem.author.id === pubky
                 );
 
-                const images = tag.from.map(
-                  (fromItem) => fromItem.author.profile.image
-                );
-                const displayedImages = images.slice(0, 4);
-                const extraImagesCount = images.length - displayedImages.length;
-
                 return (
                   <div className="flex gap-2" key={index}>
                     {/**<TooltipUI.Root
@@ -97,28 +90,9 @@ export default function TaggedSection({
                       onClick={() => router.push(`/search?tags=${tag.tag}`)}
                       className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                     />
-                    <div
-                      onClick={() => setShowModalProfileTag(true)}
-                      className="cursor-pointer flex items-center"
-                    >
-                      {displayedImages.map((image, imageIndex) => (
-                        <ImageByUri
-                          width={32}
-                          height={32}
-                          key={`${tag.tag}-${imageIndex}`}
-                          className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                            imageIndex > 0 && '-ml-2'
-                          }`}
-                          alt={`tag-${imageIndex + 1}`}
-                          uri={image}
-                        />
-                      ))}
-                      {extraImagesCount > 0 && (
-                        <PostUtil.Counter className="-ml-2">
-                          +{extraImagesCount}
-                        </PostUtil.Counter>
-                      )}
-                    </div>
+                    <PostUtil.Counter className="w-full">
+                      {tag.count}
+                    </PostUtil.Counter>
                   </div>
                 );
               })}

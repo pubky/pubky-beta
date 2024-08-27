@@ -84,7 +84,7 @@ export default function Feedback() {
           disabled={!message}
           onClick={() => (message ? handleSubmit() : undefined)}
           className="mt-4"
-          text="Submit application"
+          text="Submit Feedback"
         />
       </SideCard.Content>
       <Modal.Feedback
