@@ -288,7 +288,7 @@ export default function Profile({ post }: ProfileProps) {
         )}
         {post?.author?.id === pubky && (
           <Button.Transparent
-            icon={<Icon.GearSix size="16" />}
+            icon={<Icon.Pencil size="16" />}
             onClick={(event) => {
               event.stopPropagation();
               router.push('/settings/edit');

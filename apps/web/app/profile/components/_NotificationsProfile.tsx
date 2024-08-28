@@ -67,14 +67,16 @@ export default function NotificationsProfile({
               );
             }
           })}
-          <Link href={'/notifications'}>
-            <Button.Medium
-              icon={<Icon.Bell size="16" />}
-              className="mt-4 mb-8 w-auto"
-            >
-              Show All Notifications
-            </Button.Medium>
-          </Link>
+          {notifications.length > 10 && (
+            <Link href={'/notifications'}>
+              <Button.Medium
+                icon={<Icon.Bell size="16" />}
+                className="mt-4 mb-8 w-auto"
+              >
+                Show All Notifications
+              </Button.Medium>
+            </Link>
+          )}
         </div>
       )}
     </>

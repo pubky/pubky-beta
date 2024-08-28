@@ -104,7 +104,7 @@ export default function RecoveryFile({
               create a new one
             </span>
           </Typography.Body>
-          <Icon.Warning color="#d946ef" />
+          <Icon.Warning color="white" />
         </div>
       )}
       <Button.Large

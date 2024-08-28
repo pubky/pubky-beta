@@ -64,7 +64,7 @@ export default function ProfileMenu({
               router.push('/settings/edit');
               setShowProfileMenu(false);
             }}
-            icon={<Icon.GearSix size="20" />}
+            icon={<Icon.Pencil size="20" />}
           >
             Edit profile
           </Tooltip.Item>

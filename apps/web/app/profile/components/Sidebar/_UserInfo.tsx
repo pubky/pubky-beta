@@ -156,7 +156,7 @@ export default function UserInfo({
           <Link href="/settings">
             <Button.Medium
               variant="default"
-              icon={<Icon.GearSix size="16" />}
+              icon={<Icon.Pencil size="16" />}
             >
               Edit profile
             </Button.Medium>

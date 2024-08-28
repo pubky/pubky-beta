@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useClientContext } from '@/contexts';
@@ -12,6 +11,7 @@ import { Tweet } from 'react-tweet';
 import FilesCarousel from '../Modal/_FilesCarousel';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Typography } from '@social/ui-shared';
+import Image from 'next/image';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: IPost;
@@ -158,7 +158,6 @@ export default function Content({
             }`}
           >
             {fileContents.map((file, index) => {
-              console.log('file', file);
               const isVideo = file.contentType.startsWith('video');
               const isImage = file.contentType.startsWith('image');
               const isPDF = file.contentType === 'application/pdf';
@@ -178,9 +177,12 @@ export default function Content({
                       className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isImage ? (
-                    <img
+                    <Image
                       src={file.urls.main}
                       alt={`Fetched file ${index}`}
+                      layout="responsive"
+                      width={800}
+                      height={418}
                       className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isPDF ? (
