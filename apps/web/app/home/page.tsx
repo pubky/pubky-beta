@@ -41,7 +41,6 @@ export default function Index() {
     setLoading(true);
 
     const results = await listGlobalPosts(pointer, reach, sort);
-    console.log('results', results);
 
     if (cancellationToken.cancelled) return;
 
