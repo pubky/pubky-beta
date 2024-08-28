@@ -31,6 +31,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'pubky.app',
       },
+      {
+        protocol: 'https',
+        hostname: 'privky.app',
+      },
     ],
   },
   async redirects() {
