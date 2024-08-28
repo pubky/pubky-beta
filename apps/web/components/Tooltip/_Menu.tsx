@@ -236,7 +236,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
                 router.push('/settings/edit');
                 setShowMenu(false);
               }}
-              icon={<Icon.GearSix size="20" />}
+              icon={<Icon.Pencil size="20" />}
             >
               Edit profile
             </Tooltip.Item>
