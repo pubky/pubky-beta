@@ -147,12 +147,14 @@ export default function Post({
                         setShowTooltip={setShowTooltipProfile}
                       >
                         <PostUI.Username
-                          className="text-[13px] text-opacity-80 cursor-pointer hover:underline hover:decoration-solid"
+                          className="text-[13px] text-opacity-80"
                           onClick={() =>
                             router.push(`/profile/${post?.author.id}`)
                           }
                         >
-                          {Utils.minifyText(post?.author?.profile?.name)}{' '}
+                          <span className="cursor-pointer hover:underline hover:decoration-solid">
+                            {Utils.minifyText(post?.author?.profile?.name)}{' '}
+                          </span>
                           reposted{' '}
                         </PostUI.Username>
                         {showTooltipProfile !== '' && (

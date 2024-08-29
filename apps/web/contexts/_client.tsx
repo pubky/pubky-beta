@@ -1092,8 +1092,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       );
 
       if (recoveredSeed.isErr()) {
-        console.log(recoveredSeed.error);
-        return false;
+        return recoveredSeed.error.message;
       }
       const result = await client.login(recoveredSeed.value);
 
@@ -1109,8 +1108,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       return profile;
     } catch (error) {
-      console.log(error);
-      return false;
+      // get error message and return as a string
+      return error.message;
     }
   };
 

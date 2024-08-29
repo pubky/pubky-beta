@@ -23,7 +23,40 @@ export default function Pic({ image, setImage }: PicProps) {
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setImage(file);
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const size = Math.min(img.width, img.height);
+
+        canvas.width = size;
+        canvas.height = size;
+
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(
+            img,
+            (img.width - size) / 2,
+            (img.height - size) / 2,
+            size,
+            size,
+            0,
+            0,
+            size,
+            size
+          );
+
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const croppedFile = new File([blob], file.name, {
+                type: file.type,
+              });
+              setImage(croppedFile);
+            }
+          }, file.type);
+        }
+      };
     }
   };
 

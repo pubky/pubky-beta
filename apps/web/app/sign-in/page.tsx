@@ -31,7 +31,7 @@ export default function Index() {
     password: '',
     recoveryFile: '',
   });
-  const [loginError, setLoginError] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const [userNotFound, setUserNotFound] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -72,14 +72,14 @@ export default function Index() {
       try {
         const loggedIn = await decryptRecoveryFile(password, recoveryFile);
 
-        if (loggedIn) {
+        if (loggedIn && typeof loggedIn === 'object') {
           router.push('/home');
         } else if (loggedIn === undefined) {
           setUserNotFound(true);
-          setLoginError(false);
+          setLoginError('');
           setLoading(false);
         } else {
-          setLoginError(true);
+          setLoginError(loggedIn);
           setUserNotFound(false);
           setLoading(false);
         }

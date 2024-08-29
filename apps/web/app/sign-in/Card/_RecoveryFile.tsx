@@ -11,7 +11,7 @@ interface RecoveryFileProps {
   fileName: string;
   setFileName: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
-  loginError: boolean;
+  loginError: string;
   userNotFound: boolean;
   loading: boolean;
   handleSubmit: () => void;
@@ -86,9 +86,12 @@ export default function RecoveryFile({
         </div>
       </div>
       {loginError && (
-        <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
+        <div className="flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
           <Typography.Body className="text-red-600" variant="small-bold">
-            Recovery password or recovery file incorrect
+            {loginError === 'Invalid encryption key' ||
+            loginError === 'Invalid recovery file'
+              ? 'Recovery password or recovery file incorrect'
+              : loginError}
           </Typography.Body>
           <Icon.Warning color="#dc2626" />
         </div>
@@ -104,7 +107,7 @@ export default function RecoveryFile({
               create a new one
             </span>
           </Typography.Body>
-          <Icon.Warning color="#d946ef" />
+          <Icon.Warning color="white" />
         </div>
       )}
       <Button.Large
