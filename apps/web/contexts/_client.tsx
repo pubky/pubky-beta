@@ -1108,7 +1108,8 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       return profile;
     } catch (error) {
-      return false;
+      // get error message and return as a string
+      return error.message;
     }
   };
 
