@@ -129,13 +129,7 @@ export default function Header({ title, className }: HeaderProps) {
     <HeaderUI.Root>
       <HeaderUI.Logo link={logoLink} />
       <HeaderUI.Title titleHeader={title} className={className} />
-      <Input.Search
-        defaultValue={inputValue}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setInputValue(e.target.value)
-        }
-        onKeyDown={handleKeyDown}
-      >
+      <Input.Search>
         {searchTags && (
           <Input.SearchTags className="hidden sm:block">
             {searchTags.map((searchTag, index) => (
@@ -155,6 +149,10 @@ export default function Header({ title, className }: HeaderProps) {
         )}
         <Input.SearchInput
           value={inputValue}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setInputValue(e.target.value)
+          }
+          onKeyDown={handleKeyDown}
           placeholder={!searchTags.length ? 'Search' : ''}
           className="hidden sm:block"
           onClick={() => setSearchInputCard(true)}
