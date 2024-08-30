@@ -1,0 +1,132 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import {
+  getUserProfile,
+  getUserCounts,
+  getUserFollowers,
+  getUserFollowing,
+  getUserFriends,
+  getUserRelationship,
+  searchUsers,
+  getUserStream,
+  getMostFollowedUsers,
+  getPioneerUsers,
+  getUserTags,
+  searchUsersByUsername,
+} from '../services/userService';
+
+export function useUserProfile(userId: string) {
+  return useQuery({
+    queryKey: ['userProfile', userId],
+    queryFn: () => getUserProfile(userId),
+    initialData: null,
+  });
+}
+
+export function useUserCounts(userId: string) {
+  return useQuery({
+    queryKey: ['userCounts', userId],
+    queryFn: () => getUserCounts(userId),
+  });
+}
+
+export function useUserFollowers(
+  userId: string,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['userFollowers', userId, skip, limit],
+    queryFn: () => getUserFollowers(userId, skip, limit),
+  });
+}
+
+export function useUserFollowing(
+  userId: string,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['userFollowing', userId, skip, limit],
+    queryFn: () => getUserFollowing(userId, skip, limit),
+  });
+}
+
+export function useUserFriends(userId: string, skip?: number, limit?: number) {
+  return useQuery({
+    queryKey: ['userFriends', userId, skip, limit],
+    queryFn: () => getUserFriends(userId, skip, limit),
+  });
+}
+
+export function useUserRelationship(userId: string, viewerId: string) {
+  return useQuery({
+    queryKey: ['userRelationship', userId, viewerId],
+    queryFn: () => getUserRelationship(userId, viewerId),
+  });
+}
+
+export function useSearchUsers(
+  username?: string,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['searchUsers', username, skip, limit],
+    queryFn: () => searchUsers(username, skip, limit),
+  });
+}
+
+export function useUserStream(
+  viewerId?: string,
+  skip?: number,
+  limit?: number,
+  streamType?: string
+) {
+  return useQuery({
+    queryKey: ['userStream', viewerId, skip, limit, streamType],
+    queryFn: () => getUserStream(viewerId, skip, limit, streamType),
+  });
+}
+
+export function useMostFollowedUsers(
+  viewerId?: string,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['mostFollowedUsers', viewerId, skip, limit],
+    queryFn: () => getMostFollowedUsers(viewerId, skip, limit),
+  });
+}
+
+export function usePioneerUsers(
+  viewerId?: string,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['pioneerUsers', viewerId, skip, limit],
+    queryFn: () => getPioneerUsers(viewerId, skip, limit),
+  });
+}
+
+export function useUserTags(userId: string) {
+  return useQuery({
+    queryKey: ['userTags', userId],
+    queryFn: () => getUserTags(userId),
+  });
+}
+
+export function useUsernameSearch(
+  username: string,
+  viewerId?: string,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['usernameSearch', username, viewerId, skip, limit],
+    queryFn: () => searchUsersByUsername(username, viewerId, skip, limit),
+  });
+}

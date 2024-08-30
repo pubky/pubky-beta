@@ -1,0 +1,34 @@
+import { HotTag, TagsByReach, Taggers } from '../types/Tag';
+
+const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
+const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
+
+export async function getHotTags(
+  skip?: number,
+  limit?: number,
+  maxTaggers?: number
+): Promise<HotTag[]> {
+  const queryParams = new URLSearchParams({
+    skip: String(skip),
+    limit: String(limit),
+    max_taggers: String(maxTaggers),
+  });
+  const response = await fetch(`${BASE_URL}/tag/hot?${queryParams}`);
+  if (!response.ok) throw new Error('Failed to fetch hot tags');
+  return response.json();
+}
+
+export async function getTagsByReach(
+  userId: string,
+  reach: string
+): Promise<TagsByReach> {
+  const response = await fetch(`${BASE_URL}/tag/reached/${userId}/${reach}`);
+  if (!response.ok) throw new Error('Failed to fetch tags by reach');
+  return response.json();
+}
+
+export async function getTagTaggers(label: string): Promise<Taggers> {
+  const response = await fetch(`${BASE_URL}/tag/taggers/${label}`);
+  if (!response.ok) throw new Error('Failed to fetch tag taggers');
+  return response.json();
+}
