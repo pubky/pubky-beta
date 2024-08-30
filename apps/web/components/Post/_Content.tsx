@@ -116,7 +116,7 @@ export default function Content({
       onClick={(event) => event.stopPropagation()}
     >
       <div className={`text-white break-words ${largeView && 'text-2xl'}`}>
-        <Parsing>{contentText}</Parsing>
+        <Parsing fullContent={fullContent}>{contentText}</Parsing>
 
         {showMore && (
           <a
