@@ -25,6 +25,7 @@ Create a `.env` file at the root of the project and include the following enviro
 ```
 NEXT_PUBLIC_HOMESERVER=pk:z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo
 NEXT_PUBLIC_PKARR_RELAY=http://localhost:7258
+NEXT_PUBLIC_NEXUS=http://localhost:8080
 ```
 
 ### :earth_americas: Mainnet Configuration
@@ -32,6 +33,7 @@ NEXT_PUBLIC_PKARR_RELAY=http://localhost:7258
 ```
 NEXT_PUBLIC_HOMESERVER=pk:4unkz8qto4xec6jhw9mie9oepgcurirebdx8axyq3o36fanooxxy
 NEXT_PUBLIC_PKARR_RELAY=https://relay.pkarr.org
+NEXT_PUBLIC_NEXUS=http://localhost:8080
 ```
 
 ## :running: Running Scripts
