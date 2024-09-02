@@ -12,7 +12,7 @@ export default function Version() {
         <Skeleton.Simple />
       ) : (
         <Typography.Body variant="medium" className="text-opacity-80">
-          Pubky version v{data?.version} © Synonym Software Ltd
+          {data?.name} v{data?.version} © Synonym Software Ltd
         </Typography.Body>
       )}
     </div>
