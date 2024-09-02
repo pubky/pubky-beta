@@ -7,6 +7,8 @@ export default defineConfig({
     ...nxE2EPreset(__filename, { cypressDir: 'src' }),
     baseUrl: 'http://localhost:4200',
     defaultCommandTimeout: process.env.CI ? 30_000 : 4000,
-    video: true
+    video: true,
+    viewportWidth: 1920,
+    viewportHeight: 1080,
   },
 });

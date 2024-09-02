@@ -44,7 +44,7 @@ jobs:
         with:
           working-directory: pubky-app/apps/web-e2e
           config-file: cypress.config.ts
-          spec: src/e2e/auth.cy.ts
+          spec: src/e2e/**/*.cy.ts
           browser: ${{ matrix.browser }}
           summary-title: ${{ matrix.browser }}
           install: false

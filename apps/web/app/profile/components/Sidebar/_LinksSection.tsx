@@ -147,6 +147,7 @@ export default function LinksSection({
                           }
                         >
                           <Typography.Body
+                            id={`profile-link-${link.title.toLowerCase()}`}
                             className="text-opacity-80 hover:text-opacity-100"
                             variant="small"
                           >

@@ -277,6 +277,7 @@ export default function Index() {
       />
       <Content.Grid>
         <Input.Cursor
+          id="edit-profile-name-input"
           placeholder="Your Name"
           className="h-auto text-[40px] font-bold sm:text-[64px]"
           defaultValue={name}
@@ -302,6 +303,7 @@ export default function Index() {
                 className="border border-white border-opacity-30 border-dashed mt-2"
               >
                 <Input.TextArea
+                  id="edit-profile-bio-input"
                   placeholder="Short bio. Tell a bit about yourself."
                   className="h-[240px]"
                   maxLength={160}
@@ -326,6 +328,7 @@ export default function Index() {
                 <div key={index}>
                   <Input.Label value={link.title} />
                   <Input.Text
+                    id={`edit-profile-link-${link.title.toLowerCase()}-input`}
                     className="h-[70px] mt-2"
                     placeholder={link.placeHolder}
                     value={link.url}
@@ -351,6 +354,7 @@ export default function Index() {
                 </div>
               ))}
               <Button.Transparent
+                id="edit-profile-add-link-btn"
                 className="w-[40%] mt-2"
                 icon={
                   <Icon.LinkSimple
@@ -399,6 +403,7 @@ export default function Index() {
         <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-12">
           <Link href="/onboarding/sign-up">
             <Button.Large
+              id="edit-profile-cancel-btn"
               className="w-auto"
               variant="secondary"
               onClick={() => router.back()}
@@ -407,6 +412,7 @@ export default function Index() {
             </Button.Large>
           </Link>
           <Button.Large
+            id="edit-profile-save-btn"
             onClick={!loading ? () => handleSubmit() : undefined}
             loading={loading}
             className="w-auto z-20"

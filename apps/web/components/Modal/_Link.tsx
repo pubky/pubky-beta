@@ -75,7 +75,7 @@ export default function Link({
       className="w-[592px] h-[480px] justify-start"
     >
       <Modal.CloseAction onClick={() => setShowModalLink(false)} />
-      <Modal.Header title="Add Profile Link" />
+      <Modal.Header id="add-profile-link-header" title="Add Profile Link" />
       {showHints ? (
         <div className="flex flex-wrap gap-1.5 mt-2">
           <div
@@ -102,6 +102,7 @@ export default function Link({
             <div>
               <Input.Label value="Label" />
               <Input.Text
+                id="add-profile-link-label-input"
                 placeholder="Add label"
                 className="mt-1"
                 value={title}
@@ -127,6 +128,7 @@ export default function Link({
             <div>
               <Input.Label value="Url" />
               <Input.Text
+                id="add-profile-link-url-input"
                 placeholder="Add url"
                 className="mt-1"
                 value={url}
@@ -147,6 +149,7 @@ export default function Link({
           </div>
           <div className="w-full mt-4">
             <Modal.SubmitAction
+              id="add-profile-link-submit-btn"
               icon={
                 <Icon.LinkSimple
                   size="16"

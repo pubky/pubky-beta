@@ -14,14 +14,56 @@
 declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    login(email: string, password: string): void;
+    signOut(hasBackup: boolean): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    onboardAsNewUser(profileName: string, profileBio?: string): void;
   }
 }
 
-// -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-  console.log('Custom command example: Login', email, password);
+Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : string = '') => {
+  cy.visit('/onboarding');
+
+  cy.get('#onboarding-get-started-link').click();
+  cy.location('pathname').should('eq', '/onboarding/intro');
+
+  cy.get('#onboarding-sign-in-btn').click();
+  cy.location('pathname').should('eq', '/onboarding/sign-in');
+
+  cy.get('#onboarding-sign-up-link').click();
+  cy.location('pathname').should('eq', '/onboarding/sign-up');
+
+  cy.get('#onboarding-name-input').type(profileName);
+  profileBio ? cy.get('#onboarding-bio-input').type(profileBio) : null;
+
+  cy.get('#onboarding-submit-button').click();
+
+  cy.location('pathname').should('eq', '/onboarding/pubky');
+
+  cy.get('#onboarding-confirm-link').click();
+
+  cy.location('pathname').should('eq', '/onboarding/confirm');
+
+  cy.get('#onboarding-start-exploring-btn').click();
+  cy.location('pathname').should('eq', '/home');
 });
+
+Cypress.Commands.add('signOut', (hasBackedUp : boolean) => {
+  cy.get('#header-profile-pic').click();
+  cy.location('pathname').should('eq', '/profile');
+
+  cy.get('#profile-sign-out-btn').click();
+
+  // sign out model only shows if user has not backed up recovery file
+  if (!hasBackedUp) cy.get('#logout-modal-sign-out-btn').click();
+
+  cy.location('pathname').should('eq', '/logout');
+
+  cy.get('#logout-link').click();
+  cy.location('pathname').should('eq', '/sign-in');
+});
+
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
@@ -33,11 +75,3 @@ Cypress.Commands.add('login', (email, password) => {
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-
-// To prevent Cypress from failing the test when:
-// `Uncaught SyntaxError: Invalid or unexpected token` on Chrome, and
-// `Uncaught SyntaxError: "" literal not terminated before end of script` on firefox.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// Cypress.on('uncaught:exception', (_err, _runnable) => {
-//   return false
-// })
