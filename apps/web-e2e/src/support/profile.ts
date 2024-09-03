@@ -66,3 +66,17 @@ export const editProfileAndVerify = (profileData: Partial<Record<keyof typeof pr
     })
   });
 };
+
+// Stores the clipboard contents to a Mocha alias to be used later in the test
+// see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
+// TODO: test this working in this helper module
+export const savePubkyToAlias = (alias : string) => {
+  cy.window().then((win) => {
+    win.navigator.clipboard.readText().then((text) => {
+      // assert that pubky was copied to clipboard in correct format
+      expect(text).to.match(/^pk:/);
+      // store pubky for later use
+      cy.wrap(text).as(alias);
+    });
+  });
+};

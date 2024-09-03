@@ -20,6 +20,26 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     onboardAsNewUser(profileName: string, profileBio?: string): void;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    backupRecoveryFile(passcode?: string): void;
+  }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    backupRecoveryFile(passcode?: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    deleteDownloadsFolder(): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    deleteFile(filePath: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    renameFile(fromPath: string, toPath: string): void;
+  }
 }
 
 Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : string = '') => {
@@ -62,6 +82,31 @@ Cypress.Commands.add('signOut', (hasBackedUp : boolean) => {
 
   cy.get('#logout-link').click();
   cy.location('pathname').should('eq', '/sign-in');
+});
+
+Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
+      // backup recovery file
+      cy.get('#remind-backup-now-btn').click();
+      cy.get('#backup-recovery-file-btn').click();
+      cy.get('#backup-recovery-file-password-input').type(passcode);
+      cy.get('#backup-download-recovery-file-btn').click();
+});
+
+Cypress.Commands.add('deleteDownloadsFolder', () => {
+  const downloadsFolder = Cypress.config('downloadsFolder');
+  cy.task('deleteFolder', downloadsFolder);
+});
+
+Cypress.Commands.add('deleteFile', (filePath : string) => {
+  cy.task('deleteFile', filePath).then(() => {
+    cy.log(`${filePath} has been deleted`);
+  });
+});
+
+Cypress.Commands.add('renameFile', (fromPath : string, toPath : string) => {
+  cy.task('renameFile', { fromPath, toPath }).then(() => {
+    cy.log(`File has been renamed from ${fromPath} to ${toPath}`);
+  });
 });
 
 //
