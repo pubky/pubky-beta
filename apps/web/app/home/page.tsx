@@ -280,7 +280,7 @@ export default function Index() {
         {layout !== 'wide' && (
           <Components.Sidebar className="hidden xl:block">
             <Components.WhoFollow />
-            <Components.ActiveFriends />
+            <Components.Pioneers />
             <Components.HotTags />
             <Components.Feedback />
           </Components.Sidebar>

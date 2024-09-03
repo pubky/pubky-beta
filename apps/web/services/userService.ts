@@ -171,7 +171,7 @@ export async function getPioneerUsers(
   viewerId?: string,
   skip?: number,
   limit?: number
-): Promise<UserStream> {
+): Promise<UserView[]> {
   const queryParams = new URLSearchParams();
 
   if (viewerId) queryParams.append('viewer_id', viewerId);
