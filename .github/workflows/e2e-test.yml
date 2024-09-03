@@ -46,6 +46,7 @@ jobs:
           config-file: cypress.config.ts
           spec: src/e2e/**/*.cy.ts
           browser: ${{ matrix.browser }}
+          headed: false
           summary-title: ${{ matrix.browser }}
           install: false
           start: npm run start:prod

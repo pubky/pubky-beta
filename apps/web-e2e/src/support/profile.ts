@@ -67,16 +67,22 @@ export const editProfileAndVerify = (profileData: Partial<Record<keyof typeof pr
   });
 };
 
-// Stores the clipboard contents to a Mocha alias to be used later in the test
+// Stores the clipboard contents to an alias for later use
 // see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
-// TODO: test this working in this helper module
-export const savePubkyToAlias = (alias : string) => {
+export const saveCopiedPubkyToAlias = (alias : string) => {
   cy.window().then((win) => {
-    win.navigator.clipboard.readText().then((text) => {
+    // ensure focus is on the window before attempting to read clipboard
+    win.focus();
+    // requires browser to be in focus
+    return win.navigator.clipboard.readText().then((text) => {
       // assert that pubky was copied to clipboard in correct format
       expect(text).to.match(/^pk:/);
-      // store pubky for later use
-      cy.wrap(text).as(alias);
+      return text;
     });
+    // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
+    // so an additional 'then' is needed to guarantee the alias is stored before the next test step
+  }).then((text) => {
+    // store pubky as alias
+    cy.wrap(text).as(alias);
   });
 };
