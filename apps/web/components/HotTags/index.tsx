@@ -46,7 +46,7 @@ export default function HotTags() {
                   rank={index + 1}
                   tag={Utils.minifyText(tag?.label, 15)}
                   color={tag?.label && Utils.generateRandomColor(tag?.label)}
-                  counter={`${tag?.taggers_count}`}
+                  counter={`${tag?.post_count}`}
                   boxShadow={false}
                 />
               ))}
