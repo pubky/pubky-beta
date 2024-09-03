@@ -3,35 +3,15 @@
 import { useRouter } from 'next/navigation';
 import { SideCard, Typography } from '@social/ui-shared';
 // import { DropDown } from '../components/DropDown';
-import { useClientContext } from '@/contexts';
-import { useEffect, useState } from 'react';
-import { ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
+import { useHotTags } from '@/hooks/useTag';
 
 export default function HotTags() {
   const router = useRouter();
-  const { getHotTags } = useClientContext();
-  const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchTags() {
-      try {
-        const result = await getHotTags();
-
-        if (result) {
-          setHotTags(result);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchTags();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data, isLoading, isError } = useHotTags(0, 8);
+  const hotTags = data;
+  if (isError) console.error(isError);
 
   {
     /** const handleTagSearch = (tag: string) => {
@@ -54,7 +34,7 @@ export default function HotTags() {
         {/**<DropDown.TagsTimeframe type="text" />*/}
       </SideCard.Header>
       <SideCard.Content>
-        {loading ? (
+        {isLoading ? (
           <Skeletons.Simple />
         ) : hotTags && hotTags.length > 0 ? (
           <>
@@ -62,11 +42,11 @@ export default function HotTags() {
               {hotTags.slice(0, 8).map((tag, index) => (
                 <SideCard.Rank
                   key={index}
-                  onClick={() => router.push(`/search?tags=${tag.tag}`)}
+                  onClick={() => router.push(`/search?tags=${tag?.label}`)}
                   rank={index + 1}
-                  tag={Utils.minifyText(tag.tag, 15)}
-                  color={tag.tag && Utils.generateRandomColor(tag.tag)}
-                  counter={`${tag.count}`}
+                  tag={Utils.minifyText(tag?.label, 15)}
+                  color={tag?.label && Utils.generateRandomColor(tag?.label)}
+                  counter={`${tag?.taggers_count}`}
                   boxShadow={false}
                 />
               ))}
