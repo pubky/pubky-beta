@@ -1,79 +1,17 @@
-'use client';
-
 import { Icon, SideCard, Typography } from '@social/ui-shared';
-import { useEffect, useState } from 'react';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { IRecommendedProfiles } from '@/types';
 import Skeletons from '../Skeletons';
+import { useMostFollowedUsers } from '@/hooks/useUser';
 
 export default function WhoFollow() {
-  const { pubky, getRecommendedProfiles, follow, unfollow, listFollowing } =
-    useClientContext();
-  const [recommendedProfiles, setRecommendedProfiles] = useState<
-    IRecommendedProfiles[] | null
-  >(null);
-  const [loading, setLoading] = useState(true);
-  const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
-  const [loadingFollowers, setLoadingFollowers] = useState<{
-    [pubky: string]: boolean;
-  }>({});
-  const [followedUser, setFollowedUser] = useState<{
-    [pubky: string]: boolean;
-  }>({});
+  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
+  const { data, isLoading, isError } = useMostFollowedUsers(pubky, 0, 3);
+  const recommendedProfiles = data;
 
-  useEffect(() => {
-    async function fetchFollowed() {
-      try {
-        if (!pubky) return;
-        const result = await getRecommendedProfiles(pubky);
+  if (isError) console.error(isError);
 
-        if (result) {
-          setRecommendedProfiles(result);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    fetchFollowed();
-  }, [getRecommendedProfiles, pubky]);
-
-  useEffect(() => {
-    async function fetchFollowing() {
-      try {
-        if (!pubky || !recommendedProfiles) return;
-
-        const following = await listFollowing(pubky);
-
-        if (following) {
-          const followingIds = following.following.map((user) =>
-            user.uri.replace('pubky:', '')
-          );
-          const matchedFollowedIds = recommendedProfiles.filter((profile) =>
-            followingIds.includes(profile.id)
-          );
-
-          if (matchedFollowedIds.length > 0) {
-            setInitLoadingFollowers(false);
-            matchedFollowedIds.forEach((followed) => {
-              setFollowedUser((prevState) => ({
-                ...prevState,
-                [followed.id]: true,
-              }));
-            });
-          } else {
-            setInitLoadingFollowers(false);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    fetchFollowing();
-  }, [pubky, recommendedProfiles, listFollowing]);
+  {
+    /**
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -124,33 +62,37 @@ export default function WhoFollow() {
       console.log(error);
     }
   };
+  */
+  }
 
   return (
     <div className="mb-6">
       <SideCard.Header title="Who to follow" />
       <SideCard.Content className="flex flex-col gap-2">
-        {loading ? (
+        {isLoading ? (
           <Skeletons.Simple />
         ) : recommendedProfiles && recommendedProfiles.length > 0 ? (
           recommendedProfiles
             .slice(0, 3)
             .map((recommendedProfile, index: number) => {
-              const pubkeyUser = pubky && recommendedProfile.id.includes(pubky);
-              const isFollowed = followedUser[recommendedProfile.id] || false;
+              const pubkeyUser =
+                pubky && recommendedProfile?.details?.id.includes(pubky);
+              const isFollowed =
+                recommendedProfile?.relationship?.following || false;
 
               return (
                 <div key={index}>
                   <SideCard.User
-                    uri={recommendedProfile.id}
+                    uri={recommendedProfile?.details?.id}
                     uriImage={
-                      recommendedProfile?.profile?.image ||
+                      recommendedProfile?.details?.image ||
                       '/images/Userpic.png'
                     }
                     username={Utils.minifyText(
-                      recommendedProfile?.profile?.name,
+                      recommendedProfile?.details?.name,
                       8
                     )}
-                    label={Utils.minifyPubky(recommendedProfile.id)}
+                    label={Utils.minifyPubky(recommendedProfile?.details?.id)}
                   >
                     {pubkeyUser ? (
                       <SideCard.FollowAction
@@ -158,7 +100,7 @@ export default function WhoFollow() {
                         icon={<Icon.Check />}
                         className="bg-transparent cursor-default"
                       />
-                    ) : initLoadingFollowers ? (
+                    ) : isLoading ? (
                       <SideCard.FollowAction
                         disabled
                         icon={<Icon.LoadingSpin size="16" />}
@@ -166,25 +108,25 @@ export default function WhoFollow() {
                       />
                     ) : isFollowed ? (
                       <SideCard.FollowAction
-                        onClick={
-                          loadingFollowers[recommendedProfile.id]
-                            ? undefined
-                            : () => unfollowUser(recommendedProfile.id)
-                        }
-                        disabled={loadingFollowers[recommendedProfile.id]}
-                        loading={loadingFollowers[recommendedProfile.id]}
+                        // onClick={
+                        //  loadingFollowers[recommendedProfile.id]
+                        //   ? undefined
+                        //    : () => unfollowUser(recommendedProfile.id)
+                        //}
+                        //disabled={loadingFollowers[recommendedProfile.id]}
+                        // loading={loadingFollowers[recommendedProfile.id]}
                         icon={<Icon.Minus size="16" />}
                         variant="small"
                       />
                     ) : (
                       <SideCard.FollowAction
-                        onClick={
-                          loadingFollowers[recommendedProfile.id]
-                            ? undefined
-                            : () => followUser(recommendedProfile.id)
-                        }
-                        disabled={loadingFollowers[recommendedProfile.id]}
-                        loading={loadingFollowers[recommendedProfile.id]}
+                        //onClick={
+                        //  loadingFollowers[recommendedProfile.id]
+                        //    ? undefined
+                        //    : () => followUser(recommendedProfile.id)
+                        //}
+                        //disabled={loadingFollowers[recommendedProfile.id]}
+                        //loading={loadingFollowers[recommendedProfile.id]}
                         icon={<Icon.Plus size="16" />}
                         variant="small"
                       />
