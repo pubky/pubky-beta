@@ -1,3 +1,5 @@
+import { TStatus } from ".";
+
 export interface UserCounts {
   followers: number;
   following: number;
@@ -12,7 +14,7 @@ export interface UserDetails {
   indexed_at: number;
   links?: UserLink[];
   name: string;
-  status?: string;
+  status?: TStatus;
 }
 
 export interface UserLink {
