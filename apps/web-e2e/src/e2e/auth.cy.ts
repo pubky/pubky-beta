@@ -24,17 +24,7 @@ describe('onboarding', () => {
     cy.readFile(expectedFilePath).should('exist');
 
     cy.signOut(true);
-
-    cy.location('pathname').should('eq', '/sign-in');
-
-    cy.get('#fileInput').selectFile(
-      expectedFilePath,
-      { force: true } // force to bypass visibility check of hidden input field
-    );
-    cy.get('#onboarding-password-input').type('666942');
-    cy.get('#onboarding-sign-in-button').click();
-
-    cy.location('pathname').should('eq', '/home');
+    cy.signIn(expectedFilePath, '666942');
 
     cy.get('#header-profile-pic').click();
     cy.location('pathname').should('eq', '/profile');

@@ -22,13 +22,13 @@ declare namespace Cypress {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    onboardAsNewUser(profileName: string, profileBio?: string): void;
+    signIn(backupFilename : string, passcode? : string): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    backupRecoveryFile(passcode?: string): void;
+    onboardAsNewUser(profileName: string, profileBio?: string): void;
   }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     backupRecoveryFile(passcode?: string): void;
   }
@@ -101,6 +101,19 @@ Cypress.Commands.add('signOut', (hasBackedUp : boolean) => {
 
   cy.get('#logout-link').click();
   cy.location('pathname').should('eq', '/sign-in');
+});
+
+Cypress.Commands.add('signIn', (backupFilepath : string, passcode = '123456') => {
+  cy.location('pathname').should('eq', '/sign-in');
+
+    cy.get('#fileInput').selectFile(
+      backupFilepath,
+      { force: true } // force to bypass visibility check of hidden input field
+    );
+    cy.get('#onboarding-password-input').type(passcode);
+    cy.get('#onboarding-sign-in-button').click();
+
+    cy.location('pathname').should('eq', '/home');
 });
 
 Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
