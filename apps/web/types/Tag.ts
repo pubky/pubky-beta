@@ -2,11 +2,7 @@ export interface HotTag {
   label: string;
   post_count: number;
   taggers_count: number;
-  taggers_id: {
-    details: {
-      image: string;
-    };
-  }[];
+  taggers_id: string[];
 }
 
 export interface Tag {

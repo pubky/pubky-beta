@@ -17,12 +17,19 @@ import Filter from '@/components/Filter';
 import { ImageByUri } from '@/components/ImageByUri';
 import { HotTag } from '@/types/Tag';
 import { useHotTags } from '@/hooks/useTag';
+import { useUserProfile } from '@/hooks/useUser';
 
 export default function Index() {
   const router = useRouter();
   const { data, isLoading, isError } = useHotTags(0, 10);
   const hotTags = data || [];
   if (isError) console.error(isError);
+
+  const profilesList = hotTags.map((tag) =>
+    tag?.taggers_id.slice(0, 15).map((fromItem) => {
+      return useUserProfile(fromItem);
+    })
+  );
 
   function renderTags(hotTags: HotTag[], loadingReachTags: boolean) {
     if (loadingReachTags) {
@@ -31,9 +38,7 @@ export default function Index() {
 
     if (hotTags.length > 0) {
       return hotTags.map((tag, index) => {
-        //const profiles = tag?.taggers_id
-         // .slice(0, 15)
-         // .map((fromItem) => useUserProfile(fromItem));
+        const profiles = profilesList[index];
 
         return (
           <div className="flex gap-3" key={index}>
@@ -44,7 +49,7 @@ export default function Index() {
               counter={`${tag?.post_count}`}
               boxShadow={false}
             />
-            {tag.taggers_id.map((profile, fromIndex) => (
+            {profiles.map((profile, fromIndex) => (
               <ImageByUri
                 width={32}
                 height={32}
@@ -53,7 +58,7 @@ export default function Index() {
                 className={`w-[32px] h-[32px] rounded-full ${
                   fromIndex !== 0 ? '-ml-5' : ''
                 }`}
-                uri={profile?.details?.image || '/images/Userpic.png'}
+                uri={profile?.data?.details?.image || '/images/Userpic.png'}
               />
             ))}
           </div>
