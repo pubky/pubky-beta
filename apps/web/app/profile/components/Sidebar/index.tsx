@@ -1,41 +1,46 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { ITaggedProfile } from '@/types';
 import { Modal } from '@/components/Modal';
 import UserInfo from './_UserInfo';
 import BioSection from './_BioSection';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
+import { useUserProfile } from '@/hooks/useUser';
 
 export default function Sidebar({
   creatorPubky,
 }: {
   creatorPubky?: string | null;
 }) {
-  const { pubky, getProfile, listFollowers, getUser, createTag, deleteTag } =
-    useClientContext();
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('No bio.');
-  const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
-  const [image, setImage] = useState('/images/Userpic.png');
-  const [profileTags, setProfileTags] = useState<ITaggedProfile[]>([]);
-  const [showModalProfileTag, setShowModalProfileTag] = useState(false);
+  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const usePubky = creatorPubky ?? pubky;
+  const { data, isLoading, isError } = useUserProfile(usePubky);
+  if (isError) console.error(isError);
+  const profile = data;
+  console.log('PROFILESS', data);
+  const name = profile?.details?.name ?? '';
+  const bio = profile?.details?.bio ?? 'No bio.';
+  const links = profile?.details?.links ?? [];
+  const image = profile?.details?.image ?? '/images/Userpic.png';
+  const profileTags = profile?.tags ?? [];
+  //const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   //const [showTooltipProfile, setShowTooltipProfile] = useState('');
-  const [loadingProfileTags, setLoadingProfileTags] = useState(true);
-  const [pubkyUser, setPubkyUser] = useState('');
-  const [loading, setLoading] = useState(true);
+  //const [loadingProfileTags, setLoadingProfileTags] = useState(true);
+  //const [pubkyUser, setPubkyUser] = useState('');
+  //const [loading, setLoading] = useState(true);
   const [followed, setFollowed] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
-  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
+  //const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const checkLink = Utils.storage.get('checkLink') as boolean;
   const [scrolled, setScrolled] = useState(false);
+
+  {
+    /**
 
   useEffect(() => {
     async function fetchData() {
@@ -130,6 +135,8 @@ export default function Sidebar({
       fetchProfile();
     }
   };
+  */
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -155,24 +162,24 @@ export default function Sidebar({
           uriImage={image}
           name={name}
           creatorPubky={creatorPubky}
-          pubkyUser={pubkyUser}
+          pubkyUser={usePubky}
           showProfileMenu={showProfileMenu}
           setShowProfileMenu={setShowProfileMenu}
           bio={bio}
-          initLoadingFollowed={initLoadingFollowed}
+          initLoadingFollowed={isLoading}
           followed={followed}
           setFollowed={setFollowed}
           loadingFollowed={loadingFollowed}
           setLoadingFollowed={setLoadingFollowed}
         />
         <div className="w-full flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
-          <BioSection loading={loading} bio={bio} />
+          <BioSection loading={isLoading} bio={bio} />
           <TaggedSection
             profileTags={profileTags}
-            loadingProfileTags={loadingProfileTags}
-            handleAddProfileTag={handleAddProfileTag}
-            handleDeleteProfileTag={handleDeleteProfileTag}
-            setShowModalProfileTag={setShowModalProfileTag}
+            loadingProfileTags={isLoading}
+            //handleAddProfileTag={handleAddProfileTag}
+            //handleDeleteProfileTag={handleDeleteProfileTag}
+            //setShowModalProfileTag={setShowModalProfileTag}
             creatorPubky={creatorPubky}
             name={name}
           />
@@ -190,6 +197,7 @@ export default function Sidebar({
         setShowModalCheckLink={setShowModalCheckLink}
         clickedLink={clickedLink}
       />
+      {/** 
       <Modal.ProfileTag
         profileTags={profileTags}
         showModalProfileTag={showModalProfileTag}
@@ -202,6 +210,7 @@ export default function Sidebar({
         name={name}
         uriImage={image}
       />
+      */}
     </>
   );
 }
