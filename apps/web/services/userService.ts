@@ -5,9 +5,6 @@ import {
   UserSearch,
   UserStream,
   UserTag,
-  Followers,
-  Following,
-  Friends,
   Relationship,
 } from '../types/User';
 
@@ -42,11 +39,16 @@ export async function getUserFollowers(
   userId: string,
   skip?: number,
   limit?: number
-): Promise<Followers> {
-  const queryParams = new URLSearchParams({
-    skip: String(skip),
-    limit: String(limit),
-  });
+): Promise<string[]> {
+  const queryParams = new URLSearchParams({ userId });
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+
   const response = await fetch(
     `${BASE_URL}/user/${userId}/followers?${queryParams}`
   );
@@ -60,11 +62,15 @@ export async function getUserFollowing(
   userId: string,
   skip?: number,
   limit?: number
-): Promise<Following> {
-  const queryParams = new URLSearchParams({
-    skip: String(skip),
-    limit: String(limit),
-  });
+): Promise<string[]> {
+  const queryParams = new URLSearchParams({ userId });
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
 
   const response = await fetch(
     `${BASE_URL}/user/${userId}/following?${queryParams}`
@@ -79,11 +85,15 @@ export async function getUserFriends(
   userId: string,
   skip?: number,
   limit?: number
-): Promise<Friends> {
-  const queryParams = new URLSearchParams({
-    skip: String(skip),
-    limit: String(limit),
-  });
+): Promise<string[]> {
+  const queryParams = new URLSearchParams({ userId });
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
 
   const response = await fetch(
     `${BASE_URL}/user/${userId}/friends?${queryParams}`
@@ -151,7 +161,7 @@ export async function getMostFollowedUsers(
   viewerId?: string,
   skip?: number,
   limit?: number
-): Promise<UserView[]> {
+): Promise<UserStream> {
   const queryParams = new URLSearchParams();
 
   queryParams.append('viewer_id', viewerId || '');
