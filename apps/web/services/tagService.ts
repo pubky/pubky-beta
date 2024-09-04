@@ -8,11 +8,17 @@ export async function getHotTags(
   limit?: number,
   maxTaggers?: number
 ): Promise<HotTag[]> {
-  const queryParams = new URLSearchParams({
-    skip: String(skip),
-    limit: String(limit),
-    max_taggers: String(maxTaggers),
-  });
+  const queryParams = new URLSearchParams();
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+  if (maxTaggers) {
+    queryParams.append('max_taggers', String(maxTaggers));
+  }
   const response = await fetch(`${BASE_URL}/tag/hot?${queryParams}`);
   if (!response.ok) throw new Error('Failed to fetch hot tags');
   return response.json();
