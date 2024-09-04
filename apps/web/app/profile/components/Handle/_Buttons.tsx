@@ -96,6 +96,7 @@ export default function Buttons({
             </Button.Large>
           ) : followed ? (
             <Button.Large
+              id="profile-unfollow-btn"
               onClick={loadingFollowed ? undefined : () => unfollowUser()}
               disabled={loadingFollowed}
               loading={loadingFollowed}
@@ -110,6 +111,7 @@ export default function Buttons({
             </Button.Large>
           ) : (
             <Button.Large
+              id="profile-follow-btn"
               onClick={loadingFollowed ? undefined : () => followUser()}
               disabled={loadingFollowed}
               loading={loadingFollowed}

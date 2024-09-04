@@ -142,6 +142,7 @@ export default function FilterTabs({
           const isActive = activeTab === tab.id;
           return (
             <div
+              id={`profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() => handleTabClick(tab.id, tab.key)}
               className={`w-full h-12 px-3 items-center gap-2 flex justify-between cursor-pointer ${
@@ -158,7 +159,7 @@ export default function FilterTabs({
               </div>
               {!loading && tab.key && (
                 <Typography.Caption className="tracking-normal" variant="bold">
-                  <span className="ml-2 text-white text-opacity-30">
+                  <span id='counter' className="ml-2 text-white text-opacity-30">
                     {getTabNumber(tab.key)}
                   </span>
                 </Typography.Caption>
