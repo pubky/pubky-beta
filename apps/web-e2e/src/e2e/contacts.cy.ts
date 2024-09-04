@@ -39,6 +39,8 @@ describe('contacts', () => {
     saveCopiedPubkyToAlias('pubky2');
     cy.get('@pubky2').then((ss) => { cy.log(`pubky2: ${ss}`); });
 
+    // new it
+
     // Search for account 1
     cy.get('@pubky1').then((text) => {
       // type pubky for account 1 into search bar and press enter
@@ -55,15 +57,17 @@ describe('contacts', () => {
     cy.get('#profile-follow-btn').should('not.exist');
     cy.get('#profile-unfollow-btn').should('be.visible').and('have.text', 'Unfollow');
 
-    // Check account 1 profile for followers
 
+
+    // Check account 1 profile for updated followers
     // workaround: reload page to get updated counter
     cy.reload();
-    // tag shows number of followers is 1
+    // tab shows number of followers is 1
     cy.get('#profile-tab-followers').find('#counter').should('have.text', 1);
-    cy.get('#profile-tab-followers').click();
 
     // check number of listed followers is 1
+    cy.get('#profile-tab-followers').should('contain.text', 'Followers');
+    cy.get('#profile-tab-followers').click();
     cy.get('#profile-list-root').children().should('have.length', 1)
     cy.get('#profile-list-root').children().first().within(() => {
       // check that account 2 is listed as a follower
@@ -76,9 +80,58 @@ describe('contacts', () => {
       cy.get('#list-me-button').should('be.visible');
     });
 
-    // Check accounts 2 profile (own) for following
+    // check number of listed following is 0
+    cy.get('#profile-tab-following').find('#counter').should('have.text', 0);
+    cy.get('#profile-tab-following').click();
+    // check message is displayed indicating no following
+    cy.get('#profile-tab-content').should('have.text', 'No following yet');
+
+    // check number of listed friends is 0
+    cy.get('#profile-tab-friends').find('#counter').should('have.text', 0);
+    cy.get('#profile-tab-friends').click();
+    // check message is displayed indicating no friends
+    cy.get('#profile-tab-content').should('have.text', 'No friends yet');
+
+
+    // new it
+
+    // Check accounts 2 profile (own) for updated following
+    cy.get('#header-profile-pic').click();
+    // tab shows number of following is 1
+    cy.get('#profile-tab-following').find('#counter').should('have.text', 1);
+
+    // check number of listed following is 1
+    cy.get('#profile-tab-followers').should('contain.text', 'Followers');
+    cy.get('#profile-tab-following').click();
+    cy.get('#profile-list-root').children().should('have.length', 1)
+    cy.get('#profile-list-root').children().first().within(() => {
+      // check that account 1 is listed as a following
+      cy.get('#list-profile-name').should('contain.text', '#1 Frien'); // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
+      // check 0 tags
+      cy.get('#list-tags-counter').should('have.text', 0);
+      // check 0 posts
+      cy.get('#list-posts-counter').should('have.text', 0);
+      // check option to unfollow account 1
+      cy.get('#list-unfollow-button').should('be.visible');
+    });
+
+    // check number of listed followers is 0
+    cy.get('#profile-tab-followers').find('#counter').should('have.text', 0);
+    cy.get('#profile-tab-followers').click();
+    // check message is displayed indicating no followers
+    cy.get('#profile-tab-content').should('have.text', 'No followers yet');
+
+    // check number of listed friends is 0
+    cy.get('#profile-tab-friends').find('#counter').should('have.text', 0);
+    cy.get('#profile-tab-friends').click();
+    // check message is displayed indicating no friends
+    cy.get('#profile-tab-content').should('have.text', 'No friends yet');
 
     // Sign out
+
+
+    // new it
+
 
     // Sign in account 1
     // Check account 1 (own) profile for follower

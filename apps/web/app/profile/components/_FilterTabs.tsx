@@ -168,7 +168,7 @@ export default function FilterTabs({
           );
         })}
       </div>
-      <div className="w-full">
+      <div id='profile-tab-content' className="w-full">
         {loading ? (
           <Skeleton.Simple />
         ) : (
