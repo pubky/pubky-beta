@@ -1,8 +1,7 @@
 import { Skeleton } from '@/components';
 import { ImageByUri } from '@/components/ImageByUri';
-import Modal from '@/components/Modal';
-import { useClientContext } from '@/contexts';
-import { ITaggedProfile, IUserProfile } from '@/types';
+import { useUserProfile } from '@/hooks/useUser';
+import { IUserProfile } from '@/types';
 import {
   Button,
   Icon,
@@ -12,7 +11,6 @@ import {
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 type TaggedAsProps = {
   profile: IUserProfile | undefined;
@@ -26,13 +24,18 @@ export default function TaggedAs({
   loading,
 }: TaggedAsProps) {
   const router = useRouter();
-  const { pubky, deleteTag, createTag } = useClientContext();
-  const [showModalProfileTag, setShowModalProfileTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
-  const name = profile?.profile?.name;
-  const image = profile?.profile?.image;
-  const profileTags = profile?.taggedAs;
+  // const { pubky, deleteTag, createTag } = useClientContext();
+  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const usePubky = creatorPubky ?? pubky;
+  const { data } = useUserProfile(usePubky);
+  const name = data?.details?.name;
+  //const image = data?.details?.image;
+  const profileTags = data?.tags;
+  //const [showModalProfileTag, setShowModalProfileTag] = useState(false);
+  //const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
 
+  {
+    /** 
   const handleAddProfileTag = async (tag: string) => {
     const pubKeyToUse =
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
@@ -50,6 +53,8 @@ export default function TaggedAs({
       await deleteTag(pubKeyToUse, tag);
     }
   };
+  */
+  }
 
   return (
     <div className="w-full">
@@ -61,15 +66,15 @@ export default function TaggedAs({
           {profileTags && profileTags.length > 0 ? (
             <>
               {profileTags.map((tag, index) => {
-                const isTagFound = tag.from.some(
-                  (fromItem) => fromItem.author.id === pubky
+                const isTagFound = tag?.tagged?.some(
+                  (fromItem) => fromItem?.tagger_id === pubky
                 );
 
-                const images = tag.from.map(
-                  (fromItem) => fromItem.author.profile.image
+                const images = tag?.tagged?.map(
+                  (fromItem) => fromItem?.tagger_id?.image
                 );
-                const displayedImages = images.slice(0, 15);
-                const extraImagesCount = images.length - displayedImages.length;
+                const displayedImages = images?.slice(0, 15);
+                const extraImagesCount = images?.length - displayedImages?.length;
 
                 return (
                   <div className="flex gap-2" key={index}>
@@ -88,21 +93,23 @@ export default function TaggedAs({
                     <PostUtil.Tag
                       key={index}
                       clicked={isTagFound}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        isTagFound
-                          ? handleDeleteProfileTag(tag.tag)
-                          : handleAddProfileTag(tag.tag);
-                      }}
-                      color={tag.tag && Utils.generateRandomColor(tag.tag)}
+                      //onClick={(event) => {
+                      //  event.stopPropagation();
+                      //  isTagFound
+                      //   ? handleDeleteProfileTag(tag.tag)
+                      //   : handleAddProfileTag(tag.tag);
+                      //}}
+                      color={
+                        tag?.label && Utils.generateRandomColor(tag?.label)
+                      }
                     >
                       <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                        {Utils.minifyText(tag?.label.replace(' ', ''), 20)}
                         <Typography.Caption
                           variant="bold"
                           className="text-opacity-30"
                         >
-                          {tag.count}
+                          {tag?.tagged?.length}
                         </Typography.Caption>
                       </div>
                     </PostUtil.Tag>
@@ -111,18 +118,18 @@ export default function TaggedAs({
                       variant="custom"
                       size="small"
                       icon={<Icon.MagnifyingGlassLeft size="14" />}
-                      onClick={() => router.push(`/search?tags=${tag.tag}`)}
+                      onClick={() => router.push(`/search?tags=${tag?.label}`)}
                       className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                     />
                     <div
-                      onClick={() => setShowModalProfileTag(true)}
+                      //onClick={() => setShowModalProfileTag(true)}
                       className="cursor-pointer flex items-center"
                     >
-                      {displayedImages.map((image, imageIndex) => (
+                      {displayedImages?.map((image, imageIndex) => (
                         <ImageByUri
                           width={32}
                           height={32}
-                          key={`${tag.tag}-${imageIndex}`}
+                          key={`${tag?.label}-${imageIndex}`}
                           className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
                             imageIndex > 0 && '-ml-2'
                           }`}
@@ -157,6 +164,7 @@ export default function TaggedAs({
           </Button.Medium>*/}
         </div>
       )}
+      {/**
       <Modal.ProfileTag
         profileTags={profileTags ?? []}
         showModalProfileTag={showModalProfileTag}
@@ -169,6 +177,7 @@ export default function TaggedAs({
         name={name}
         uriImage={image}
       />
+       */}
     </div>
   );
 }
