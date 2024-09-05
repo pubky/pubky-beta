@@ -114,6 +114,7 @@ export default function Feedback() {
         error={error}
         setError={setError}
         sent={sent}
+        setSent={setSent}
         profile={profile}
         message={message}
         setMessage={setMessage}

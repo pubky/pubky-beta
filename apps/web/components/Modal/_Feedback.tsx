@@ -14,6 +14,7 @@ interface FeedbackProps {
   error: boolean;
   setError: React.Dispatch<React.SetStateAction<boolean>>;
   sent: boolean;
+  setSent: React.Dispatch<React.SetStateAction<boolean>>;
   profile: IProfile | undefined;
   message: string;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
@@ -27,6 +28,7 @@ export default function Feedback({
   error,
   setError,
   sent,
+  setSent,
   profile,
   message,
   setMessage,
@@ -146,7 +148,14 @@ export default function Feedback({
               icon={
                 error ? <Icon.Warning size="16" /> : <Icon.Check size="16" />
               }
-              onClick={() => (error ? setError(false) : setShowModal(false))}
+              onClick={() => {
+                if (error) {
+                  setError(false);
+                } else {
+                  setSent(false);
+                  setShowModal(false);
+                }
+              }}
             >
               {error ? 'Try again' : "You're welcome!"}
             </Modal.SubmitAction>
