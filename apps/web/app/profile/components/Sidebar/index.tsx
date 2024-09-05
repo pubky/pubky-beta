@@ -166,7 +166,7 @@ export default function Sidebar({
           setLoadingFollowed={setLoadingFollowed}
         />
         <div className="w-full flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
-          <BioSection loading={loading} bio={bio} />
+          <BioSection id="profile-bio-content" loading={loading} bio={bio} />
           <TaggedSection
             profileTags={profileTags}
             loadingProfileTags={loadingProfileTags}

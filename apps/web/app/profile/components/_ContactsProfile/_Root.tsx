@@ -10,6 +10,7 @@ export default function Root({ children, ...rest }: RootProps) {
       <div className="z-auto">
         <div
           {...rest}
+          id='profile-list-root'
           className={twMerge(
             `flex-col justify-start gap-4 items-start flex`,
             rest.className

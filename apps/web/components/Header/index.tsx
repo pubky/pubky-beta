@@ -148,6 +148,7 @@ export default function Header({ title, className }: HeaderProps) {
           </Input.SearchTags>
         )}
         <Input.SearchInput
+          id="header-search-input"
           value={inputValue}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setInputValue(e.target.value)
