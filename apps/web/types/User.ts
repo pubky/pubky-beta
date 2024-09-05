@@ -12,7 +12,7 @@ export interface UserDetails {
   indexed_at: number;
   links?: UserLink[];
   name: string;
-  image: string;
+  image?: string;
   status?: string;
 }
 
