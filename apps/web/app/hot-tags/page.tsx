@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Content, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import {
-  ActiveFriends,
+  Pioneers,
   CreatePost,
   Feedback,
   Header,
@@ -89,7 +89,7 @@ export default function Index() {
         </div>
         <Sidebar className="hidden 2xl:block">
           <WhoFollow />
-          <ActiveFriends />
+          <Pioneers />
           <Feedback />
         </Sidebar>
       </Content.Grid>
