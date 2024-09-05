@@ -4,7 +4,7 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Content, Menu, Typography } from '@social/ui-shared';
 import {
-  ActiveFriends,
+  Pioneers,
   ButtonFilters,
   CreatePost,
   Feedback,
@@ -200,7 +200,7 @@ const SearchContent = () => {
         {layout !== 'wide' && (
           <Sidebar className="hidden 2xl:block">
             <WhoFollow />
-            <ActiveFriends />
+            <Pioneers />
             <HotTags />
             <Feedback />
           </Sidebar>
