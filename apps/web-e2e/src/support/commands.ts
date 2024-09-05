@@ -14,13 +14,52 @@
 declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
+    allowClipboardForChrome(): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
     signOut(hasBackup: boolean): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    signIn(backupFilename : string, passcode? : string): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     onboardAsNewUser(profileName: string, profileBio?: string): void;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    backupRecoveryFile(passcode?: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    deleteDownloadsFolder(): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    deleteFile(filePath: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    renameFile(fromPath: string, toPath: string): void;
+  }
 }
+
+// uses Chrome DevTools Protocol to allow clipboard permissions
+// resolves 'NotAllowedError: Document is not focused.' in CI
+Cypress.Commands.add('allowClipboardForChrome', () => {
+  if (Cypress.browser.family === 'chromium') {
+    Cypress.automation('remote:debugger:protocol', {
+      command: 'Browser.grantPermissions',
+      params: {
+        permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+        origin: window.location.origin,
+      },
+    });
+  };
+});
+
 
 Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : string = '') => {
   cy.visit('/onboarding');
@@ -62,6 +101,44 @@ Cypress.Commands.add('signOut', (hasBackedUp : boolean) => {
 
   cy.get('#logout-link').click();
   cy.location('pathname').should('eq', '/sign-in');
+});
+
+Cypress.Commands.add('signIn', (backupFilepath : string, passcode = '123456') => {
+  cy.location('pathname').should('eq', '/sign-in');
+
+    cy.get('#fileInput').selectFile(
+      backupFilepath,
+      { force: true } // force to bypass visibility check of hidden input field
+    );
+    cy.get('#onboarding-password-input').type(passcode);
+    cy.get('#onboarding-sign-in-button').click();
+
+    cy.location('pathname').should('eq', '/home');
+});
+
+Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
+      // backup recovery file
+      cy.get('#remind-backup-now-btn').click();
+      cy.get('#backup-recovery-file-btn').click();
+      cy.get('#backup-recovery-file-password-input').type(passcode);
+      cy.get('#backup-download-recovery-file-btn').click();
+});
+
+Cypress.Commands.add('deleteDownloadsFolder', () => {
+  const downloadsFolder = Cypress.config('downloadsFolder');
+  cy.task('deleteFolder', downloadsFolder);
+});
+
+Cypress.Commands.add('deleteFile', (filePath : string) => {
+  cy.task('deleteFile', filePath).then(() => {
+    cy.log(`${filePath} has been deleted`);
+  });
+});
+
+Cypress.Commands.add('renameFile', (fromPath : string, toPath : string) => {
+  cy.task('renameFile', { fromPath, toPath }).then(() => {
+    cy.log(`File has been renamed from ${fromPath} to ${toPath}`);
+  });
 });
 
 //

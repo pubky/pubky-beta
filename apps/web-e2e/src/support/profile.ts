@@ -66,3 +66,23 @@ export const editProfileAndVerify = (profileData: Partial<Record<keyof typeof pr
     })
   });
 };
+
+// Stores the clipboard contents to an alias for later use
+// see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
+export const saveCopiedPubkyToAlias = (alias : string) => {
+  cy.window().then((win) => {
+    // ensure focus is on the window before attempting to read clipboard
+    win.focus();
+    // requires browser to be in focus
+    return win.navigator.clipboard.readText().then((text) => {
+      // assert that pubky was copied to clipboard in correct format
+      expect(text).to.match(/^pk:/);
+      return text;
+    });
+    // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
+    // so an additional 'then' is needed to guarantee the alias is stored before the next test step
+  }).then((text) => {
+    // store pubky as alias
+    cy.wrap(text).as(alias);
+  });
+};

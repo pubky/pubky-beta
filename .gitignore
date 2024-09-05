@@ -46,3 +46,6 @@ Thumbs.db
 
 # Env
 .env
+
+# Cypress downloaded files
+apps/web-e2e/cypress/downloads/*
