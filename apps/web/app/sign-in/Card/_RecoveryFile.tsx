@@ -1,5 +1,4 @@
 import { Button, Card, Icon, Input, Typography } from '@social/ui-shared';
-import { useRouter } from 'next/navigation';
 
 interface Errors {
   password: string;
@@ -29,8 +28,6 @@ export default function RecoveryFile({
   handleSubmit,
   setRecoveryFile,
 }: RecoveryFileProps) {
-  const router = useRouter();
-
   const UploadRecoveryFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setFileName(event.target.files[0].name);
@@ -96,7 +93,7 @@ export default function RecoveryFile({
           <Icon.Warning color="#dc2626" />
         </div>
       )}
-      {userNotFound && (
+      {/**userNotFound && (
         <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-white bg-white bg-opacity-10">
           <Typography.Body className="text-white" variant="small-bold">
             Your profile was not found, please{' '}
@@ -109,7 +106,7 @@ export default function RecoveryFile({
           </Typography.Body>
           <Icon.Warning color="white" />
         </div>
-      )}
+      )*/}
       <Button.Large
         onClick={!loading ? () => handleSubmit() : undefined}
         icon={<Icon.Key size="16" />}
