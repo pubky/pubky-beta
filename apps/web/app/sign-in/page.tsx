@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { useClientContext } from '@/contexts';
+import { useAlertContext, useClientContext } from '@/contexts';
 import { Content, Typography, Header } from '@social/ui-shared';
 import { Card } from './Card';
 
@@ -21,6 +21,7 @@ const loginSchema = z.object({
 export default function Index() {
   const router = useRouter();
   const { decryptRecoveryFile } = useClientContext();
+  const { setContent, setShow } = useAlertContext();
   const { pubky, isLoggedIn } = useClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [fileName, setFileName] = useState('recoveryfile.key');
@@ -75,9 +76,12 @@ export default function Index() {
         if (loggedIn && typeof loggedIn === 'object') {
           router.push('/home');
         } else if (loggedIn === undefined) {
+          setContent('Profile not found. Create a new one!', 'warning');
+          setShow(true);
           setUserNotFound(true);
           setLoginError('');
           setLoading(false);
+          router.push('/onboarding/sign-up');
         } else {
           setLoginError(loggedIn);
           setUserNotFound(false);
