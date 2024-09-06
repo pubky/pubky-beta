@@ -13,6 +13,7 @@ import { Select } from './_Select';
 import { Switch } from './_Switch';
 import { Text } from './_Text';
 import { TextArea } from './_TextArea';
+import { TextMenu } from './_TextMenu';
 import { UploadFile } from './_UploadFile';
 import { Word } from './_Word';
 
@@ -32,6 +33,7 @@ export const Input = {
   Switch,
   Text,
   TextArea,
+  TextMenu,
   UploadFile,
   Word,
 };

@@ -28,6 +28,7 @@ import {
   IBookmark,
   IRecoveryFileResponse,
   IFileContent,
+  IExperience,
 } from '../types';
 
 import Client from '@pubky/sdk';
@@ -659,6 +660,67 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateExperiences = async (
+    experiences: IExperience[],
+    cv?: File,
+    contact?: string
+  ) => {
+    try {
+      if (!pubky) throw new Error('Pubky required');
+      if (!profile) throw new Error('Profile required');
+
+      await client.ready();
+
+      if (cv && cv instanceof File) {
+        const file = cv;
+        const fileContent = await file.arrayBuffer();
+        const fileUploadResult = await client.social.files.upload(pubky, {
+          content: Buffer.from(fileContent),
+          contentType: file.type,
+          size: file.size,
+        });
+
+        if (!fileUploadResult.ok) {
+          throw new Error(
+            `File upload failed: ${fileUploadResult.error.message}`
+          );
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const { uri } = fileUploadResult.value;
+        if (uri) {
+          const uploadedFile = await getFile(uri);
+          if (!uploadedFile)
+            throw new Error(`Get file failed: ${uploadedFile.error.message}`);
+          cv = uploadedFile.urls.main;
+        }
+      }
+
+      const experiencesUser = {
+        cv: cv && cv,
+        contact: contact && contact,
+        experiences,
+      };
+
+      const updatedProfile = {
+        ...profile,
+        experience: experiencesUser,
+      };
+
+      Utils.storage.set('profile', updatedProfile);
+
+      const result = await client.social.profile.put(pubky, updatedProfile);
+
+      if (!result.ok)
+        throw new Error(
+          `Update services:${pubky} failed: ${result.error.message}`
+        );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const deleteBookmark = async (
     id: string,
     uri: string,
@@ -1137,6 +1199,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         deleteTag,
         deletePost,
         getHotTags,
+        updateExperiences,
         getPost,
         listUserFeed,
         listBookmarkedPosts,

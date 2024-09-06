@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 import { Content } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { useClientContext } from '@/contexts';
-import { IUserProfile } from '@/types';
+import { IExperienceComplete, IUserProfile } from '@/types';
 import { Profile } from './components';
 
 export default function Index() {
   const { pubky, getUserIndexed } = useClientContext();
   const [profile, setProfile] = useState<IUserProfile | undefined>();
+  const [experience, setExperience] = useState<IExperienceComplete>();
   const [loading, setLoading] = useState(true);
   const [countContacts, setCountContacts] = useState({
     followers: 0,
@@ -26,6 +27,7 @@ export default function Index() {
 
       if (userProfile) {
         setProfile(userProfile);
+        setExperience(userProfile?.profile?.experience);
         setCountContacts({
           followers: userProfile.followersCount,
           following: userProfile.followingCount,
@@ -57,6 +59,8 @@ export default function Index() {
             username={profile?.profile?.name || 'Loading...'}
             pubkey={pubky ? pubky : ''}
             status={profile?.profile?.status}
+            experience={experience}
+            pic={profile?.profile?.image}
           />
         </Content.Grid>
       </div>

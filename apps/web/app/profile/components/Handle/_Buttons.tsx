@@ -3,6 +3,7 @@ import { useClientContext, useToastContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
+import { IExperienceComplete } from '@/types';
 
 interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky: string | null | undefined;
@@ -16,6 +17,8 @@ interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   setShowModalLogout: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
+  experience?: IExperienceComplete;
+  setShowProfileCareer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Buttons({
@@ -30,6 +33,8 @@ export default function Buttons({
   setShowModalLogout,
   setLoadingFollowed,
   setFollowed,
+  experience,
+  setShowProfileCareer,
 }: ButtonsProps) {
   const { pubky, follow, unfollow } = useClientContext();
   const { setContent, setShow } = useToastContext();
@@ -175,6 +180,14 @@ export default function Buttons({
       >
         Link
       </Button.Medium>
+      {experience && experience.experiences.length > 0 && (
+        <Button.Action
+          size="small"
+          variant="custom"
+          icon={<Icon.CV size="16" />}
+          onClick={() => setShowProfileCareer(true)}
+        />
+      )}
       <div className="relative">
         {showProfileMenu && (
           <Tooltip.ProfileMenu

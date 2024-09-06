@@ -4,7 +4,7 @@ import { useClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
-import { TStatus } from '@/types';
+import { IExperienceComplete, TStatus } from '@/types';
 import Buttons from './_Buttons';
 import Status from './_Status';
 
@@ -13,6 +13,8 @@ interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   pubkey: string;
   creatorPubky?: string | null;
   status?: TStatus;
+  experience?: IExperienceComplete;
+  pic?: string;
 }
 
 export default function Handle({
@@ -20,11 +22,14 @@ export default function Handle({
   pubkey,
   creatorPubky,
   status,
+  experience,
+  pic,
   ...rest
 }: HandleProps) {
   const { pubky, seed, listFollowers } = useClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
+  const [showProfileCareer, setShowProfileCareer] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
@@ -73,7 +78,10 @@ export default function Handle({
     <div {...rest} className={twMerge(rest.className)}>
       {username && pubkey ? (
         <>
-          <Typography.Display id='profile-username-header' className="text-left">
+          <Typography.Display
+            id="profile-username-header"
+            className="text-left"
+          >
             {Utils.minifyText(username.toString(), 15)}
           </Typography.Display>
           <div className="-mt-4 inline-flex flex-row gap-3">
@@ -89,6 +97,8 @@ export default function Handle({
               setLoadingFollowed={setLoadingFollowed}
               setFollowed={setFollowed}
               setShowProfileMenu={setShowProfileMenu}
+              experience={experience}
+              setShowProfileCareer={setShowProfileCareer}
             />
             <Status creatorPubky={creatorPubky} status={status} />
           </div>
@@ -101,6 +111,14 @@ export default function Handle({
       <Modal.Logout
         showModalLogout={showModalLogout}
         setShowModalLogout={setShowModalLogout}
+      />
+      <Modal.ProfileCareer
+        showModal={showProfileCareer}
+        setShowModal={setShowProfileCareer}
+        experience={experience}
+        username={username}
+        creatorPubky={creatorPubky}
+        pic={pic}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 import Backup from './_Backup';
+import Career from './_Career';
 import CheckLink from './_CheckLink';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
@@ -6,6 +7,7 @@ import DeletePost from './_DeletePost';
 import Feedback from './_Feedback';
 import Link from './_Link';
 import Logout from './_Logout';
+import ProfileCareer from './_ProfileCareer';
 import ProfileTag from './_ProfileTag';
 import Repost from './_Repost';
 import SearchedUsersCard from './_SearchedUsersCard';
@@ -17,6 +19,7 @@ import TagCreatePost from './_TagCreatePost';
 
 export const Modal = {
   Backup,
+  Career,
   CheckLink,
   CreatePost,
   CreateReply,
@@ -24,6 +27,7 @@ export const Modal = {
   Feedback,
   Link,
   Logout,
+  ProfileCareer,
   ProfileTag,
   Repost,
   SearchedUsersCard,
