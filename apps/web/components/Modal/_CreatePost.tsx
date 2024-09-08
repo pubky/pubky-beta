@@ -104,6 +104,7 @@ export default function CreatePost({
         <div className="flex items-center relative">
           <div className="w-full">
             <CreateContent
+              id='new-post-create-content'
               handleSubmit={handleSubmit}
               content={contentPost}
               setContent={setContentPost}
@@ -115,6 +116,7 @@ export default function CreatePost({
               setArrayTags={setArrayTags}
               button={
                 <Button.Medium
+                  id='post-button'
                   className="w-auto"
                   variant="line"
                   icon={

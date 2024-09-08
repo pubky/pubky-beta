@@ -22,7 +22,7 @@ declare namespace Cypress {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    signIn(backupFilename : string, passcode? : string): void;
+    signIn(backupFilepath : string, passcode? : string): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
@@ -43,6 +43,10 @@ declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     renameFile(fromPath: string, toPath: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    innerTextShouldEq(elem: string, text: string): void;
   }
 }
 
@@ -104,16 +108,21 @@ Cypress.Commands.add('signOut', (hasBackedUp : boolean) => {
 });
 
 Cypress.Commands.add('signIn', (backupFilepath : string, passcode = '123456') => {
+  cy.location('pathname').then((currentPath) => {
+    if (currentPath !== '/sign-in') {
+      cy.visit('/sign-in');
+    };
+  });
   cy.location('pathname').should('eq', '/sign-in');
 
-    cy.get('#fileInput').selectFile(
-      backupFilepath,
-      { force: true } // force to bypass visibility check of hidden input field
-    );
-    cy.get('#onboarding-password-input').type(passcode);
-    cy.get('#onboarding-sign-in-button').click();
+  cy.get('#fileInput').selectFile(
+    backupFilepath,
+    { force: true } // force to bypass visibility check of hidden input field
+  );
+  cy.get('#onboarding-password-input').type(passcode);
+  cy.get('#onboarding-sign-in-button').click();
 
-    cy.location('pathname').should('eq', '/home');
+  cy.location('pathname').should('eq', '/home');
 });
 
 Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
@@ -138,6 +147,13 @@ Cypress.Commands.add('deleteFile', (filePath : string) => {
 Cypress.Commands.add('renameFile', (fromPath : string, toPath : string) => {
   cy.task('renameFile', { fromPath, toPath }).then(() => {
     cy.log(`File has been renamed from ${fromPath} to ${toPath}`);
+  });
+});
+
+// Useful when 'should.be' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldEq', (elem : string, text : string) => {
+  cy.get(elem).should(($elem) => {
+    expect($elem.get(0).innerText).to.eq(text);
   });
 });
 
