@@ -4,7 +4,7 @@ import { slowCypressDown } from 'cypress-slow-down';
 
 describe('onboarding', () => {
   before(() => {
-    slowCypressDown(200);
+    slowCypressDown();
     cy.deleteDownloadsFolder();
   });
 

@@ -4,9 +4,8 @@ import { slowCypressDown } from 'cypress-slow-down';
 
 describe('contacts', () => {
   before(() => {
-    slowCypressDown(200);
+    slowCypressDown();
     cy.deleteDownloadsFolder();
-    cy.allowClipboardForChrome();
   });
 
   it('follow, be followed, and make a friend', () => {

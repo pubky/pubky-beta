@@ -14,10 +14,6 @@
 declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    allowClipboardForChrome(): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
     signOut(hasBackup: boolean): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,21 +45,6 @@ declare namespace Cypress {
     innerTextShouldEq(elem: string, text: string): void;
   }
 }
-
-// uses Chrome DevTools Protocol to allow clipboard permissions
-// resolves 'NotAllowedError: Document is not focused.' in CI
-Cypress.Commands.add('allowClipboardForChrome', () => {
-  if (Cypress.browser.family === 'chromium') {
-    Cypress.automation('remote:debugger:protocol', {
-      command: 'Browser.grantPermissions',
-      params: {
-        permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
-        origin: window.location.origin,
-      },
-    });
-  };
-});
-
 
 Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : string = '') => {
   cy.visit('/onboarding');

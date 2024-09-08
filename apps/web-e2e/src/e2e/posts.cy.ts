@@ -1,12 +1,10 @@
 import { backupDownloadFilePath } from '../support/auth';
-//import { saveCopiedPubkyToAlias } from '../support/profile';
 import { slowCypressDown } from 'cypress-slow-down';
 
 describe('posts', () => {
   before(() => {
-    slowCypressDown(200);
+    slowCypressDown();
     cy.deleteDownloadsFolder();
-    cy.allowClipboardForChrome();
 
     cy.onboardAsNewUser('Poster', "Big on posting.");
     cy.backupRecoveryFile();
@@ -51,7 +49,7 @@ describe('posts', () => {
       cy.innerTextShouldEq('#post-content-text', postContent);
     });
   });
-  
+
   it.skip('can post with maximum character limit (300)', () => { });
   it.skip('can post with emojis', () => { });
   it.skip('can post with image upload', () => { });
