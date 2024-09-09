@@ -162,6 +162,7 @@ export default function FooterArea({
             }}
           />
           <Button.Action
+            id='media-upload-btn'
             variant="custom"
             icon={<Icon.ImageSquare size="32" />}
             onClick={() => document.getElementById('fileInput')?.click()}
