@@ -124,6 +124,7 @@ export default function FooterArea({
           )}
           {showEmojis && (
             <div
+              id='emoji-picker'
               className={`absolute translate-y-[10%] ${
                 largeView
                   ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
@@ -143,6 +144,7 @@ export default function FooterArea({
             {content.length} / 300
           </div>
           <Button.Action
+            id='tag-btn'
             variant="custom"
             icon={<Icon.Tag size="32" />}
             onClick={(event) => {
@@ -151,6 +153,7 @@ export default function FooterArea({
             }}
           />
           <Button.Action
+            id='emoji-btn'
             variant="custom"
             icon={<Icon.Smiley size="32" />}
             onClick={(event) => {

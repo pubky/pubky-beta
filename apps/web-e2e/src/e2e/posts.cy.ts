@@ -22,11 +22,13 @@ describe('posts', () => {
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
+      // input post content within quick post area and submit
       cy.get('textarea').should('have.value', '');
       cy.get('textarea').type(postContent);
       cy.get('#post-button').click();
     });
 
+    // verify the post is displayed correctly in feed
     // second child is the latest post
     cy.get('#posts-feed').children().eq(1).within(() => {
       cy.innerTextShouldEq('#post-content-text', postContent);
@@ -35,8 +37,11 @@ describe('posts', () => {
 
   it('can post from new post', () => {
     const postContent = `I can make a new post! ${Date.now()}`;
+    // click button to display new post modal
     cy.get('#new-post-btn').click();
     cy.get('h1').contains('New Post').should('be.visible');
+
+    // input post content and submit
     cy.get('#new-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
       cy.get('textarea').type(postContent);
@@ -44,7 +49,7 @@ describe('posts', () => {
     });
     cy.get('#modal-root').should('not.exist');
 
-    // second child is the latest post
+    // verify the post is displayed correctly in feed
     cy.get('#posts-feed').children().eq(1).within(() => {
       cy.innerTextShouldEq('#post-content-text', postContent);
     });
@@ -60,17 +65,53 @@ describe('posts', () => {
       `ooooooooooooooooooooooong post! ${Date.now()}`;
 
       cy.get('#quick-post-create-content').within(() => {
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(postContent);
-      cy.get('#post-button').click();
+        cy.get('textarea').should('have.value', '');
+        cy.get('textarea').type(postContent);
+        cy.get('#post-button').click();
     });
 
-    // second child is the latest post
+    // verify the post is displayed correctly in feed
     cy.get('#posts-feed').children().eq(1).within(() => {
       cy.innerTextShouldEq('#post-content-text', postContent);
     });
   });
-  it.skip('can post with emojis', () => { });
+  it('can post with emojis', () => {
+    const postContent = `🇦🇺😎🦎 I can post with emojis! ${Date.now()}`;
+    const postContentWithoutEmoji = ` I can post with emojis! ${Date.now()}`;
+    cy.get('#quick-post-create-content').within(() => {
+      cy.get('textarea').should('have.value', '');
+      // click on textarea to expand to view buttons
+      cy.get('textarea').click();
+
+      // add emojis using emoji picker
+      cy.get('#emoji-btn').click();
+      cy.get('#emoji-picker').should('be.visible');
+      cy.get('#emoji-picker').within(() => {
+        cy.get('button[data-full-name*="australia flag"]').click();
+      })
+      cy.get('#emoji-btn').click();
+      cy.get('#emoji-picker').should('be.visible');
+      cy.get('#emoji-picker').within(() => {
+        cy.get('button[data-full-name*="smiling face with sunglasses"]').click();
+      })
+      cy.get('#emoji-btn').click();
+      cy.get('#emoji-picker').should('be.visible');
+      cy.get('#emoji-picker').within(() => {
+        cy.get('button[data-full-name*="lizard"]').click();
+      })
+
+      // type the rest of the post and submit
+      cy.get('textarea').type(postContentWithoutEmoji);
+      cy.get('#post-button').click();
+    });
+
+    // verify the post is displayed correctly in feed
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.innerTextShouldEq('#post-content-text', postContent);
+    });
+  });
+
+
   it.skip('can post with image upload', () => { });
   it.skip('can post with embedded link', () => { });
   it.skip('can post with profile reference', () => { });
