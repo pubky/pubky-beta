@@ -50,7 +50,26 @@ describe('posts', () => {
     });
   });
 
-  it.skip('can post with maximum character limit (300)', () => { });
+  it('can post with maximum character limit (300)', () => {
+    const postContent =
+      "I can make a really loooooooooooooooooooooooooooooo" +
+      "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      `ooooooooooooooooooooooong post! ${Date.now()}`;
+
+      cy.get('#quick-post-create-content').within(() => {
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(postContent);
+      cy.get('#post-button').click();
+    });
+
+    // second child is the latest post
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.innerTextShouldEq('#post-content-text', postContent);
+    });
+  });
   it.skip('can post with emojis', () => { });
   it.skip('can post with image upload', () => { });
   it.skip('can post with embedded link', () => { });
