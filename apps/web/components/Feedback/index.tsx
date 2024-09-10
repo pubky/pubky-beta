@@ -41,7 +41,6 @@ export default function Feedback() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      setMessage('');
       await axios.post('https://synonym.to/api/chatwoot', {
         message,
         name: name,
@@ -51,6 +50,7 @@ export default function Feedback() {
       setSent(true);
       //setShowModal(true);
       setLoading(false);
+      setMessage('');
     } catch (error) {
       console.error(error);
       setError(true);
