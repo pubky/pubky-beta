@@ -7,12 +7,14 @@ describe('posts', () => {
     slowCypressDown();
     cy.deleteDownloadsFolder();
 
+    // create profile to post from
     cy.onboardAsNewUser('Poster', "Big on posting.");
     cy.backupRecoveryFile();
     cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('poster.pkarr'));
   });
 
   beforeEach(() => {
+    // sign in if not already
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
         cy.signIn(backupDownloadFilePath('poster.pkarr'));
@@ -65,7 +67,6 @@ describe('posts', () => {
         cy.get('textarea').type(postContent);
         cy.innerTextShouldEq('#content-length', '300 / 300');
         cy.get('#post-btn').click();
-
     });
 
     // verify the post is displayed correctly in feed
@@ -122,27 +123,67 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
-  it.skip('can post with embedded link', () => {
+  it('can post with embedded link', () => {
     const link = 'https://www.youtube.com/watch?v=989-7xsRLR4';
+    const embedLink = 'https://www.youtube.com/embed/989-7xsRLR4';
     const postContent = `I can post with an embedded link! ${link} ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
-      // type the post and submit
+      // type the post
       cy.get('textarea').type(postContent);
       // check that the embedded link preview is shown
       cy.get('iframe').should('be.visible');
-      cy.get('iframe').should('have.attr', 'src', link);
+      cy.get('iframe').should('have.attr', 'src', embedLink);
+      // submit
       cy.get('#post-btn').click();
     });
 
     // verify the post text and embedded link is displayed correctly in feed
-    cy.get('#posts-feed').children().first().within(() => {
+    cy.get('#posts-feed').children().eq(1).within(() => {
       cy.innerTextShouldEq('#post-content-text', postContent);
       cy.get('iframe').should('be.visible');
-      cy.get('iframe').should('have.attr', 'src', link);
+      cy.get('iframe').should('have.attr', 'src', embedLink);
     });
   });
 
-  it.skip('can post with profile reference', () => { });
+  // this test can fail if data store is not clean because it relies on a
+  // specific profile to be returned by profile search by username
+  // todo: lookup unique profile username to avoid this issue
+  it('can post with profile reference', () => {
+    // create profile to refer to in a post
+    cy.signOut(true);
+    const jeremysPubkyAlias = 'jPubky';
+    cy.onboardAsNewUser('Jeremy The Poser', "My account will be referenced in a post.", jeremysPubkyAlias);
+    cy.signOut(false);
+    // sign back in as poster
+    cy.signIn(backupDownloadFilePath('poster.pkarr'));
+
+    const postContent = `I can post with a profile reference! ${Date.now()}`;
+    cy.get('#quick-post-create-content').within(() => {
+      cy.get('textarea').should('have.value', '');
+      // type the post and submit
+      // todo: change to upper case J once bug fixed: https://github.com/pubky/pubky-app/issues/457
+      cy.get('textarea').type(postContent + ' @j');
+      // check that profile searched is performed
+      cy.get('#searched-users-card').should('be.visible');
+      cy.get('#searched-users-card').children().its('length').should('be.greaterThan', 0);
+      cy.get('#searched-users-card').children().first().contains('Jeremy The Poser');
+      cy.get('#searched-users-card')
+        .should('be.visible')
+        .children()
+        .should('have.length.greaterThan', 0)
+        .first()
+        .contains('Jeremy The Poser')
+        .click();
+      // verify that the profile reference is added to the post
+      cy.get(`@${jeremysPubkyAlias}`).then((pubky) => {
+        cy.get('textarea').should('have.value', postContent + ` ${pubky}`);
+      });
+      cy.get('#post-btn').click();
+    });
+
+    // verify the post is displayed correctly in feed
+    latestPostInFeedContentEq(postContent + ' @Jeremy The Poser');
+  });
 
 });

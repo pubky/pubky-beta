@@ -1,5 +1,4 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { saveCopiedPubkyToAlias } from '../support/profile';
 import { slowCypressDown } from 'cypress-slow-down';
 
 describe('contacts', () => {
@@ -23,7 +22,7 @@ describe('contacts', () => {
     // Copy and store pubky for account 1
     cy.get('#header-profile-pic').click();
     cy.get('#profile-copy-pubkey-btn').click();
-    saveCopiedPubkyToAlias('pubky1');
+    cy.saveCopiedPubkyToAlias('pubky1');
     // log pubky for account 2
     cy.get('@pubky1').then((ss) => { cy.log(`pubky1: ${ss}`); });
 
@@ -40,7 +39,7 @@ describe('contacts', () => {
     // Copy and store pubky for account 2
     cy.get('#header-profile-pic').click();
     cy.get('#profile-copy-pubkey-btn').click();
-    saveCopiedPubkyToAlias('pubky2');
+    cy.saveCopiedPubkyToAlias('pubky2');
     // log pubky for account 2
     cy.get('@pubky2').then((ss) => { cy.log(`pubky2: ${ss}`); });
 
