@@ -146,14 +146,14 @@ describe('posts', () => {
     });
   });
 
-  // this test can fail if data store is not clean because it relies on a
-  // specific profile to be returned by profile search by username
-  // todo: lookup unique profile username to avoid this issue
   it('can post with profile reference', () => {
     // create profile to refer to in a post
     cy.signOut(true);
-    const jeremysPubkyAlias = 'jPubky';
-    cy.onboardAsNewUser('Jeremy The Poser', "My account will be referenced in a post.", jeremysPubkyAlias);
+    const uniquePrefix = Cypress._.uniqueId();
+    const username = 'Jeremy The Poser';
+    const fullUsername = uniquePrefix + '_' + username;
+    const pubkyAlias = 'jPubky';
+    cy.onboardAsNewUser(fullUsername, "My account will be referenced in a post.", pubkyAlias);
     cy.signOut(false);
     // sign back in as poster
     cy.signIn(backupDownloadFilePath('poster.pkarr'));
@@ -163,27 +163,24 @@ describe('posts', () => {
       cy.get('textarea').should('have.value', '');
       // type the post and submit
       // todo: change to upper case J once bug fixed: https://github.com/pubky/pubky-app/issues/457
-      cy.get('textarea').type(postContent + ' @j');
+      cy.get('textarea').type(postContent + ` @${uniquePrefix}`);
       // check that profile searched is performed
-      cy.get('#searched-users-card').should('be.visible');
-      cy.get('#searched-users-card').children().its('length').should('be.greaterThan', 0);
-      cy.get('#searched-users-card').children().first().contains('Jeremy The Poser');
       cy.get('#searched-users-card')
         .should('be.visible')
         .children()
         .should('have.length.greaterThan', 0)
         .first()
-        .contains('Jeremy The Poser')
+        .contains(uniquePrefix)
         .click();
       // verify that the profile reference is added to the post
-      cy.get(`@${jeremysPubkyAlias}`).then((pubky) => {
+      cy.get(`@${pubkyAlias}`).then((pubky) => {
         cy.get('textarea').should('have.value', postContent + ` ${pubky}`);
       });
       cy.get('#post-btn').click();
     });
 
     // verify the post is displayed correctly in feed
-    latestPostInFeedContentEq(postContent + ' @Jeremy The Poser');
+    latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
   });
 
 });
