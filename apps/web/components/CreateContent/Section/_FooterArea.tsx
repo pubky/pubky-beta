@@ -140,7 +140,7 @@ export default function FooterArea({
             </div>
           )}
           <div className="grow" />
-          <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
+          <div id ='content-length' className="text-opacity-30 text-white text-sm mt-4 mr-2">
             {content.length} / 300
           </div>
           <Button.Action

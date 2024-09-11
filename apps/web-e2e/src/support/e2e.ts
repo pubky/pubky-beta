@@ -15,11 +15,6 @@
 
 // Import commands.ts using ES2015 syntax:
 import './commands';
-// import { slowCypressDown } from 'cypress-slow-down';
-
-// slow down execution more in CI to avoid flaky tests
-// console.log(`CI: ${process.env.CI}`);
-// process.env.CI ? slowCypressDown(1000) : slowCypressDown(75);
 
 // uses Chrome DevTools Protocol to allow clipboard permissions
 // resolves 'NotAllowedError: Document is not focused.' in CI

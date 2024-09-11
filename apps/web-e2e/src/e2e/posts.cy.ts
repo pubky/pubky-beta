@@ -26,7 +26,7 @@ describe('posts', () => {
       // input post content within quick post area and submit
       cy.get('textarea').should('have.value', '');
       cy.get('textarea').type(postContent);
-      cy.get('#post-button').click();
+      cy.get('#post-btn').click();
     });
 
     // verify the post is displayed correctly in feed
@@ -43,7 +43,7 @@ describe('posts', () => {
     cy.get('#new-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
       cy.get('textarea').type(postContent);
-      cy.get('#post-button').click();
+      cy.get('#post-btn').click();
     });
     cy.get('#modal-root').should('not.exist');
 
@@ -63,7 +63,9 @@ describe('posts', () => {
       cy.get('#quick-post-create-content').within(() => {
         cy.get('textarea').should('have.value', '');
         cy.get('textarea').type(postContent);
-        cy.get('#post-button').click();
+        cy.innerTextShouldEq('#content-length', '300 / 300');
+        cy.get('#post-btn').click();
+
     });
 
     // verify the post is displayed correctly in feed
@@ -85,7 +87,7 @@ describe('posts', () => {
 
       // type the rest of the post and submit
       cy.get('textarea').type(postContentWithoutEmoji);
-      cy.get('#post-button').click();
+      cy.get('#post-btn').click();
     });
 
     // verify the post is displayed correctly in feed
@@ -111,7 +113,7 @@ describe('posts', () => {
 
       // type the rest of the post and submit
       cy.get('textarea').type(postContent);
-      cy.get('#post-button').click();
+      cy.get('#post-btn').click();
     });
 
     // todo: verify the image is displayed in the post (fails to display uploaded image here)
@@ -119,7 +121,28 @@ describe('posts', () => {
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
   });
-  it.skip('can post with embedded link', () => { });
+
+  it.skip('can post with embedded link', () => {
+    const link = 'https://www.youtube.com/watch?v=989-7xsRLR4';
+    const postContent = `I can post with an embedded link! ${link} ${Date.now()}`;
+    cy.get('#quick-post-create-content').within(() => {
+      cy.get('textarea').should('have.value', '');
+      // type the post and submit
+      cy.get('textarea').type(postContent);
+      // check that the embedded link preview is shown
+      cy.get('iframe').should('be.visible');
+      cy.get('iframe').should('have.attr', 'src', link);
+      cy.get('#post-btn').click();
+    });
+
+    // verify the post text and embedded link is displayed correctly in feed
+    cy.get('#posts-feed').children().first().within(() => {
+      cy.innerTextShouldEq('#post-content-text', postContent);
+      cy.get('iframe').should('be.visible');
+      cy.get('iframe').should('have.attr', 'src', link);
+    });
+  });
+
   it.skip('can post with profile reference', () => { });
 
 });

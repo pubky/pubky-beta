@@ -98,7 +98,7 @@ export default function Repost({
             placeHolder="Optional comment"
             button={
               <Button.Medium
-                id='repost-button'
+                id='repost-btn'
                 className="w-auto"
                 variant="line"
                 icon={<Icon.Repost color="white" />}

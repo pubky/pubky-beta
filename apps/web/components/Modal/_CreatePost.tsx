@@ -116,7 +116,7 @@ export default function CreatePost({
               setArrayTags={setArrayTags}
               button={
                 <Button.Medium
-                  id='post-button'
+                  id='post-btn'
                   className="w-auto"
                   variant="line"
                   icon={
