@@ -83,6 +83,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
     >
       <div id='tags' className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
         <Button.Action
+          id='tag-btn'
           size="small"
           variant="custom"
           icon={<Icon.Tag size="16" />}

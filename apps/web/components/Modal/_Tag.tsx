@@ -192,6 +192,7 @@ export default function Tag({
       className="w-full w-[792px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
+        id='close-btn'
         onClick={() => {
           setShowModalTag(false);
           setTag('');
@@ -235,6 +236,7 @@ export default function Tag({
                 action={
                   <div className="flex gap-2">
                     <Button.Action
+                      id='add-btn'
                       icon={<Icon.Plus size="18" />}
                       className={tag ? 'flex' : 'hidden'}
                       variant="custom"
@@ -265,7 +267,7 @@ export default function Tag({
                 </Typography.Body>
               )}
             </div>
-            <div className="justify-start items-start gap-2 flex flex-col overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-webkit">
+            <div id='current-tags' className="justify-start items-start gap-2 flex flex-col overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-webkit">
               <Input.Label value={selectedTag ? 'Tagged' : 'Current tags'} />
               {tags.length > 0 ? (
                 <>

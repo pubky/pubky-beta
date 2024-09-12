@@ -224,7 +224,7 @@ describe('posts', () => {
   });
 
   // todo: consider combining with 'can delete a post' test
-  it("cannot delete another profile's post", ()    => {
+  it("cannot delete other profile's post", ()    => {
     // create profile to create a post to try and delete
     cy.signOut(true);
     cy.onboardAsNewUser('Del Boy', "Try delete my post.");
@@ -249,7 +249,7 @@ describe('posts', () => {
     });
   });
 
-it('can post with tags', () => {
+it('can tag whilst creating post', () => {
   const postContent = `I can post with tags! ${Date.now()}`;
   const tag1 = 'alpacas';
   const tag2 = 'llamas';
@@ -257,7 +257,7 @@ it('can post with tags', () => {
 
   cy.get('#quick-post-create-content').within(() => {
     cy.get('textarea').should('have.value', '');
-    // type the post and submit
+    // type the post
     cy.get('textarea').type(postContent);
 
     // add tags to the post
@@ -289,13 +289,70 @@ it('can post with tags', () => {
     cy.get('#post-content-text').innerTextShouldEq(postContent);
 
     // check tags
-    cy.get('#tags').find('#tag-0').should('exist').contains(tag1);
-    cy.get('#tags').find('#tag-1').should('exist').contains(tag2);
-    cy.get('#tags').find('#tag-2').should('exist').contains(tag3);
+    cy.get('#tags').find('#tag-0').contains(tag1);
+    cy.get('#tags').find('#tag-1').contains(tag2);
+    cy.get('#tags').find('#tag-2').contains(tag3);
   });
 });
 
-  // can tag and remove tags from existing post
+it('can tag and remove tags from existing post', () => {
+  const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
+  const tag1 = 'bananas';
+  const tag2 = 'pjammas';
+  const tag3 = 'rastas';
+
+  cy.get('#quick-post-create-content').within(() => {
+    cy.get('textarea').should('have.value', '');
+    // type the post and submit
+    cy.get('textarea').type(postContent);
+    cy.get('#post-btn').click();
+  });
+
+  // add tags to the post
+  cy.get('#tag-btn').click();
+  cy.get('#modal-root').within(() => {
+    cy.get('h1').contains('Tag Post');
+    cy.get('input').type(tag1);
+    cy.get('#add-btn').click();
+    cy.get('input').type(tag2);
+    cy.get('#add-btn').click();
+    cy.get('input').type(tag3);
+    cy.get('#add-btn').click();
+
+    // check current tags in modal
+    cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
+      cy.wrap(divs.eq(0)).contains(tag1);
+      cy.wrap(divs.eq(1)).contains(tag2);
+      cy.wrap(divs.eq(2)).contains(tag3);
+    });
+
+    // close modal
+    cy.get('#close-btn').click();
+  });
+
+  // within the latest post in the feed
+  cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#tags').children().its('length').then((oldLength) => {
+      cy.get('#tags').within(() => {
+        // verify the tags are displayed in the post
+        cy.get('#tag-0').contains(tag1);
+        cy.get('#tag-1').contains(tag2);
+        cy.get('#tag-2').contains(tag3);
+
+        // remove tag from the post
+        cy.get('#tag-1').click();
+      });
+
+      // verify the tag is removed from the post and other tags remain
+      cy.get('#tags').children().should('have.length', oldLength - 1);
+      cy.get('#tags').within(() => {
+        cy.get('#tag-0').should('exist').contains(tag1);
+        cy.get('#tag-1').should('exist').contains(tag3);
+      });
+    });
+  });
+});
+
   // can bookmark and remove bookmark from posts
   // can repost with and without content
 
