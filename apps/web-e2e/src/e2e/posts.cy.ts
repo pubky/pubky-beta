@@ -63,10 +63,10 @@ describe('posts', () => {
       `ooooooooooooooooooooooong post! ${Date.now()}`;
 
       cy.get('#quick-post-create-content').within(() => {
-        cy.get('textarea').should('have.value', '');
-        cy.get('textarea').type(postContent);
-        cy.innerTextShouldEq('#content-length', '300 / 300');
-        cy.get('#post-btn').click();
+        cy.get('textarea').should('have.value', '')
+          .type(postContent)
+        cy.get('#content-length').innerTextShouldEq('300 / 300')
+          .get('#post-btn').click();
     });
 
     // verify the post is displayed correctly in feed
@@ -140,7 +140,7 @@ describe('posts', () => {
 
     // verify the post text and embedded link is displayed correctly in feed
     cy.get('#posts-feed').children().eq(1).within(() => {
-      cy.innerTextShouldEq('#post-content-text', postContent);
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('iframe').should('be.visible');
       cy.get('iframe').should('have.attr', 'src', embedLink);
     });
@@ -182,5 +182,51 @@ describe('posts', () => {
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
   });
+
+  it('can delete a post', () => {
+    const postContent = `I can delete this post! ${Date.now()}`;
+    cy.get('#quick-post-create-content').within(() => {
+      // input post content within quick post area and submit
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(postContent);
+      cy.get('#post-btn').click();
+    });
+
+    // verify the post is displayed correctly in feed
+    latestPostInFeedContentEq(postContent);
+
+    // delete the post
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // open post menu and click delete
+      cy.get('#menu-btn').should('be.visible').click();
+      cy.get('#post-tooltip-menu').should('be.visible').within(() => {
+        cy.get('#delete-post').should('be.visible')
+          .innerTextShouldEq('Delete post')
+          .get('#delete-post').click();
+      });
+
+      // confirm delete in modal
+      cy.get('#modal-root').should('be.visible').within(() => {
+        cy.get('h1').contains('Delete Post');
+        cy.get('#delete-post-btn').click();
+      });
+    });
+
+    // verify post is deleted
+    cy.get('#posts-feed').children().its('length').then((length) => {
+      // if at least 1 post still exists, check it doesn't match the text of the deleted post
+      if (length > 0) {
+        cy.get('#posts-feed').children().eq(1).within(() => {
+          cy.get('#post-content-text').innerTextShouldNotEq(postContent);
+        });
+      }
+    });
+  });
+
+  // cannot delete other profile's post
+  // can create post with tags
+  // can tag and remove tags from existing post
+  // can bookmark and remove bookmark from posts
+  // can repost with and without content
 
 });

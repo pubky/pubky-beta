@@ -11,7 +11,7 @@ export const selectEmoji = (emojiName: string) => {
 export const postInFeedContentEq = (postContent: string, idx: number) => {
   cy.get('#posts-feed').children().eq(idx).within(() => {
     // This approach is necessary for due to additional space inserted before final word.
-    cy.innerTextShouldEq('#post-content-text', postContent);
+    cy.get('#post-content-text').innerTextShouldEq(postContent);
   });
 };
 

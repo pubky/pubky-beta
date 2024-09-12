@@ -115,6 +115,7 @@ export default function Actions({
     >
       <PostUI.Actions>
         <Button.Action
+          id='reply-btn'
           size="small"
           variant="custom"
           icon={<Icon.ChatCircleText size="16" />}
@@ -135,6 +136,7 @@ export default function Actions({
             />
           )}
           <Button.Action
+            id='repost-btn'
             size="small"
             variant="custom"
             icon={
@@ -153,6 +155,7 @@ export default function Actions({
           />
         </div>
         <Button.Action
+          id='bookmark-btn'
           size="small"
           variant="custom"
           icon={
@@ -188,6 +191,7 @@ export default function Actions({
             />
           )}
           <Button.Action
+            id='menu-btn'
             size="small"
             variant="custom"
             icon={<Icon.DotsThreeOutline size="16" color="white" />}
