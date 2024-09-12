@@ -223,7 +223,32 @@ describe('posts', () => {
     });
   });
 
-  // cannot delete other profile's post
+  // todo: consider combining with 'can delete a post' test
+  it("cannot delete another profile's post", ()    => {
+    // create profile to create a post to try and delete
+    cy.signOut(true);
+    cy.onboardAsNewUser('Del Boy', "Try delete my post.");
+    const postContent = `Noone else can delete this post! ${Date.now()}`;
+    cy.get('#quick-post-create-content').within(() => {
+      // input post content within quick post area and submit
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(postContent);
+      cy.get('#post-btn').click();
+    });
+    cy.signOut(false);
+    // sign back in as poster
+    cy.signIn(backupDownloadFilePath('poster.pkarr'));
+
+    // try to delete the post made by the other account
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // open post menu and check delete is not available
+      cy.get('#menu-btn').should('be.visible').click();
+      cy.get('#post-tooltip-menu').should('be.visible').within(() => {
+        cy.get('#delete-post').should('not.exist');
+      });
+    });
+  });
+
   // can create post with tags
   // can tag and remove tags from existing post
   // can bookmark and remove bookmark from posts
