@@ -5,11 +5,10 @@ import { Icon, Button, Post } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
-import { IPost } from '@/types';
 import Partecipants from './_Partecipants';
-import { IReply } from '@/types';
 import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
+import { PostThread, PostView } from '@/types/Post';
 
 export default function ReplyForm({
   uri,
@@ -18,9 +17,9 @@ export default function ReplyForm({
   replies,
 }: {
   uri: string;
-  post: IPost;
+  post: PostView;
   updatePost: () => void;
-  replies: IReply;
+  replies: PostThread | undefined;
 }) {
   const { createReply, createTag } = useClientContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -34,7 +33,7 @@ export default function ReplyForm({
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
-    const rootUri = post.post.root ? post.post.root : uri;
+    const rootUri = post.relationships?.reposted ? post.relationships?.reposted : uri;
     const sendReply = await createReply(content, uri, rootUri, selectedFiles);
 
     const hashtags = Utils.extractHashtags(content);
@@ -101,7 +100,7 @@ export default function ReplyForm({
           setShowModalTag={setShowModalTag}
         />
       </Post.Root>
-      <Partecipants repliesResponse={replies} />
+      <Partecipants author={post.details.author} repliesResponse={replies} />
     </div>
   );
 }

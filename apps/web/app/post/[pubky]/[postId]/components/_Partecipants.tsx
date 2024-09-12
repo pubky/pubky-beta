@@ -1,16 +1,20 @@
 import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { useClientContext } from '@/contexts';
-import { IReply } from '@/types';
 import { Utils } from '@social/utils-shared';
+import { PostThread, PostView } from '@/types/Post';
+import { useUserProfile } from '@/hooks/useUser';
 
 export default function Partecipants({
   repliesResponse,
+  author,
 }: {
-  repliesResponse: IReply;
+  repliesResponse: PostThread | undefined;
+  author: string;
 }) {
   const { pubky, follow, unfollow, listFollowing } = useClientContext();
-  const [replies, setReplies] = useState<IReply[]>([]);
+  const { data: authorData } = useUserProfile(author);
+  const [replies, setReplies] = useState<PostView[]>([]);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
@@ -47,7 +51,7 @@ export default function Partecipants({
             user.uri.replace('pubky:', '')
           );
           const matchedFollowedIds = replies.filter((reply) =>
-            followingIds.includes(reply?.post?.author?.id)
+            followingIds.includes(reply?.details?.author)
           );
 
           if (matchedFollowedIds.length > 0) {
@@ -55,7 +59,7 @@ export default function Partecipants({
             matchedFollowedIds.forEach((followed) => {
               setFollowedUser((prevState) => ({
                 ...prevState,
-                [followed.post.author.id]: true,
+                [followed.details.author]: true,
               }));
             });
           } else {
@@ -121,7 +125,7 @@ export default function Partecipants({
   };
 
   const getAuthorButton = () => {
-    const authorId = repliesResponse?.post?.author?.id;
+    const authorId = authorData ? authorData.details.id : '';
     if (pubky === authorId) {
       return (
         <Button.Medium
@@ -221,36 +225,31 @@ export default function Partecipants({
         <SideCard.Header title="Participants" />
         <SideCard.Content>
           <SideCard.User
-            uri={repliesResponse?.post?.author?.id}
-            uriImage={
-              repliesResponse?.post?.author?.profile?.image ||
-              '/images/Userpic.png'
-            }
-            username={Utils.minifyText(
-              repliesResponse?.post?.author?.profile?.name
-            )}
-            label={Utils.minifyPubky(repliesResponse?.post?.author?.id)}
+            uri={authorData ? authorData.details.id : ''}
+            uriImage={authorData?.details?.image || '/images/Userpic.png'}
+            username={Utils.minifyText(authorData?.details?.name ?? '')}
+            label={Utils.minifyPubky(authorData?.details?.id ?? '')}
             className="mb-2"
           >
             {getAuthorButton()}
           </SideCard.User>
           {replies.map((reply) => {
             if (
-              reply.post &&
-              !seenAuthors.has(reply.post.author.id) &&
-              reply.post.author.id !== repliesResponse?.post?.author?.id
+              reply.details &&
+              !seenAuthors.has(reply.details.author) &&
+              reply.details.author !== authorData?.details.id
             ) {
-              seenAuthors.add(reply.post.author.id);
-              const authorId = reply.post.author.id;
+              seenAuthors.add(reply.details.author);
+              const authorId = reply.details.author;
               return (
                 <React.Fragment key={authorId}>
                   <SideCard.User
                     uri={authorId}
                     uriImage={
-                      reply.post.author.profile?.image || '/images/Userpic.png'
+                      reply.details.author.image || '/images/Userpic.png'
                     }
-                    username={Utils.minifyText(reply.post.author.profile?.name)}
-                    label={Utils.minifyPubky(authorId)}
+                    username={Utils.minifyText(reply.details.author.name)}
+                    label={Utils.minifyPubky(reply.details.author)}
                     className="mb-2"
                   >
                     {getParticipantButton(authorId)}
