@@ -56,6 +56,7 @@ export default function ReplyForm({
     <div ref={wrapperRef} className="grid gap-6 md:grid-cols-3">
       <Post.Root className="col-span-2">
         <CreateContent
+          id='reply-create-content'
           handleSubmit={handleReply}
           content={contentReply}
           setContent={setContentReply}
@@ -69,6 +70,7 @@ export default function ReplyForm({
           setArrayTags={setArrayTags}
           button={
             <Button.Medium
+              id='reply-button'
               className="w-auto"
               variant="line"
               icon={

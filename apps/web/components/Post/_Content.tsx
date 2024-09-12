@@ -115,7 +115,7 @@ export default function Content({
       className="w-full cursor-text"
       onClick={(event) => event.stopPropagation()}
     >
-      <div className={`text-white break-words ${largeView && 'text-2xl'}`}>
+      <div id='post-content-text' className={`text-white break-words ${largeView && 'text-2xl'}`}>
         <Parsing fullContent={fullContent}>{contentText}</Parsing>
 
         {showMore && (

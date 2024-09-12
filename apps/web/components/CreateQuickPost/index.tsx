@@ -84,6 +84,7 @@ export default function CreateQuickPost({
 
   return (
     <CreateContent
+      id='quick-post-create-content'
       largeView={largeView}
       handleSubmit={handleSubmit}
       content={contentPost}
@@ -97,6 +98,7 @@ export default function CreateQuickPost({
       setIsValidContent={setIsValidContent}
       button={
         <Button.Medium
+          id='post-btn'
           className="w-auto"
           variant="line"
           icon={

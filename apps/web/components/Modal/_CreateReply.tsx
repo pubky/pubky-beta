@@ -113,6 +113,7 @@ export default function CreateReply({
         <div className="absolute ml-[1px] w-3.5 border-t-2 border-neutral-800" />
         <div className="w-full ml-[15px] mt-6">
           <CreateContent
+            id='create-reply-create-content'
             handleSubmit={handleSubmit}
             content={contentReply}
             setContent={setContentReply}
@@ -124,6 +125,7 @@ export default function CreateReply({
             setArrayTags={setArrayTags}
             button={
               <Button.Medium
+                id='reply-button'
                 className="w-auto"
                 variant="line"
                 icon={

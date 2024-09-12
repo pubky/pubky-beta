@@ -12,6 +12,10 @@ export default defineConfig({
     video: true,
     viewportWidth: 1920,
     viewportHeight: 1080,
+    env: {
+      // slow down execution more in CI to avoid flaky tests
+      commandDelay: process.env.CI ? 500 : 75
+    },
 
     // Plugins
 

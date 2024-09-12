@@ -1,10 +1,9 @@
-//import path = require('path');
-import { slowCypressDown } from 'cypress-slow-down';
 import { editProfileAndVerify, addLinks } from '../support/profile';
+import { slowCypressDown } from 'cypress-slow-down';
 
 describe('profile', () => {
   before(() => {
-    slowCypressDown(200);
+    slowCypressDown();
   });
 
   beforeEach(() => {

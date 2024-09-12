@@ -29,6 +29,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function CreateContent({
+  id,
   largeView = false,
   autoFocus,
   visibleTextArea = false,
@@ -245,6 +246,7 @@ export default function CreateContent({
 
   return (
     <div
+      id={`${id}`}
       className={`${
         largeView ? 'p-12' : 'p-6'
       } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}

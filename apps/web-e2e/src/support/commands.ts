@@ -14,19 +14,15 @@
 declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    allowClipboardForChrome(): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
     signOut(hasBackup: boolean): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    signIn(backupFilename : string, passcode? : string): void;
+    signIn(backupFilepath : string, passcode? : string): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    onboardAsNewUser(profileName: string, profileBio?: string): void;
+    onboardAsNewUser(profileName: string, profileBio?: string, pubkyAlias?: string): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
@@ -44,24 +40,17 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     renameFile(fromPath: string, toPath: string): void;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    innerTextShouldEq(elem: string, text: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    saveCopiedPubkyToAlias(alias: string): void;
+  }
 }
 
-// uses Chrome DevTools Protocol to allow clipboard permissions
-// resolves 'NotAllowedError: Document is not focused.' in CI
-Cypress.Commands.add('allowClipboardForChrome', () => {
-  if (Cypress.browser.family === 'chromium') {
-    Cypress.automation('remote:debugger:protocol', {
-      command: 'Browser.grantPermissions',
-      params: {
-        permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
-        origin: window.location.origin,
-      },
-    });
-  };
-});
-
-
-Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : string = '') => {
+Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : string = '', pubkyAlias? : string) => {
   cy.visit('/onboarding');
 
   cy.get('#onboarding-get-started-link').click();
@@ -79,6 +68,13 @@ Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : str
   cy.get('#onboarding-submit-button').click();
 
   cy.location('pathname').should('eq', '/onboarding/pubky');
+
+  // store pubky as an alias for future use
+  // will only work if called from before or beforeEach
+  if (pubkyAlias) {
+    cy.get('#onboarding-copy-pubky-btn').click();
+    cy.saveCopiedPubkyToAlias(pubkyAlias);
+  };
 
   cy.get('#onboarding-confirm-link').click();
 
@@ -104,16 +100,21 @@ Cypress.Commands.add('signOut', (hasBackedUp : boolean) => {
 });
 
 Cypress.Commands.add('signIn', (backupFilepath : string, passcode = '123456') => {
+  cy.location('pathname').then((currentPath) => {
+    if (currentPath !== '/sign-in') {
+      cy.visit('/sign-in');
+    };
+  });
   cy.location('pathname').should('eq', '/sign-in');
 
-    cy.get('#fileInput').selectFile(
-      backupFilepath,
-      { force: true } // force to bypass visibility check of hidden input field
-    );
-    cy.get('#onboarding-password-input').type(passcode);
-    cy.get('#onboarding-sign-in-button').click();
+  cy.get('#fileInput').selectFile(
+    backupFilepath,
+    { force: true } // force to bypass visibility check of hidden input field
+  );
+  cy.get('#onboarding-password-input').type(passcode);
+  cy.get('#onboarding-sign-in-button').click();
 
-    cy.location('pathname').should('eq', '/home');
+  cy.location('pathname').should('eq', '/home');
 });
 
 Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
@@ -138,6 +139,34 @@ Cypress.Commands.add('deleteFile', (filePath : string) => {
 Cypress.Commands.add('renameFile', (fromPath : string, toPath : string) => {
   cy.task('renameFile', { fromPath, toPath }).then(() => {
     cy.log(`File has been renamed from ${fromPath} to ${toPath}`);
+  });
+});
+
+// Useful when 'should.be' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldEq', (elem : string, text : string) => {
+  cy.get(elem).should(($elem) => {
+    expect($elem.get(0).innerText).to.eq(text);
+  });
+});
+
+// Stores the clipboard contents to an alias for later use
+// see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
+// note: aliases work in the context of as test and only the first test after before
+Cypress.Commands.add('saveCopiedPubkyToAlias', (alias : string) => {
+  cy.window().then((win) => {
+    // ensure focus is on the window before attempting to read clipboard
+    win.focus();
+    // requires browser to be in focus
+    return win.navigator.clipboard.readText().then((text) => {
+      // assert that pubky was copied to clipboard in correct format
+      expect(text).to.match(/^pk:/);
+      return text;
+    });
+    // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
+    // so an additional 'then' is needed to guarantee the alias is stored before the next test step
+  }).then((text) => {
+    // store pubky as alias
+    cy.wrap(text).as(alias);
   });
 });
 
