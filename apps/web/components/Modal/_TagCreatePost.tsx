@@ -111,6 +111,7 @@ export default function TagCreatePost({
       className="w-full"
     >
       <Modal.CloseAction
+        id='close-btn'
         onClick={() => {
           setShowModalTag(false);
           setTagsError(false);
@@ -210,6 +211,7 @@ export default function TagCreatePost({
                 action={
                   <div className="flex gap-2">
                     <Button.Action
+                      id='add-btn'
                       icon={<Icon.Plus size="18" />}
                       variant="custom"
                       size="medium"
@@ -217,6 +219,7 @@ export default function TagCreatePost({
                       onClick={handleAddTag}
                     />
                     <Button.Action
+                      id='emoji-btn'
                       variant="custom"
                       icon={<Icon.Smiley size="32" />}
                       size="medium"

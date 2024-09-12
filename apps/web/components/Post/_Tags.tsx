@@ -81,7 +81,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
       className="mt-6 cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
-      <div className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
+      <div id='tags' className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
         <Button.Action
           size="small"
           variant="custom"
@@ -112,6 +112,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
                     />
                   )}
                   <PostUtil.Tag
+                    id={`tag-${index}`}
                     clicked={isTagFound}
                     color={tagObj.tag && Utils.generateRandomColor(tagObj.tag)}
                     onClick={() =>

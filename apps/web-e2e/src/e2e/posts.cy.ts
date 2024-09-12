@@ -249,7 +249,52 @@ describe('posts', () => {
     });
   });
 
-  // can create post with tags
+it('can post with tags', () => {
+  const postContent = `I can post with tags! ${Date.now()}`;
+  const tag1 = 'alpacas';
+  const tag2 = 'llamas';
+  const tag3 = 'vicuñas';
+
+  cy.get('#quick-post-create-content').within(() => {
+    cy.get('textarea').should('have.value', '');
+    // type the post and submit
+    cy.get('textarea').type(postContent);
+
+    // add tags to the post
+    cy.get('#tag-btn').click();
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('h1').contains('Tag');
+      cy.get('input').type(tag1);
+      cy.get('#add-btn').should('be.visible').click();
+      cy.get('input').type(tag2);
+      cy.get('#add-btn').should('be.visible').click();
+      cy.get('input').type(tag3);
+      cy.get('#add-btn').should('be.visible').click();
+      cy.get('#close-btn').click();
+    });
+
+    // verify the tags are displayed in the quick post area
+    cy.get('#tags').children().should('have.length', 3);
+    cy.get('#tags').children().eq(0).contains(tag1);
+    cy.get('#tags').children().eq(1).contains(tag2);
+    cy.get('#tags').children().eq(2).contains(tag3);
+
+    // submit the post
+    cy.get('#post-btn').click();
+  });
+
+  // verify the post text and tags are displayed correctly in feed
+  cy.get('#posts-feed').children().eq(1).within(() => {
+    // check text
+    cy.get('#post-content-text').innerTextShouldEq(postContent);
+
+    // check tags
+    cy.get('#tags').find('#tag-0').should('exist').contains(tag1);
+    cy.get('#tags').find('#tag-1').should('exist').contains(tag2);
+    cy.get('#tags').find('#tag-2').should('exist').contains(tag3);
+  });
+});
+
   // can tag and remove tags from existing post
   // can bookmark and remove bookmark from posts
   // can repost with and without content
