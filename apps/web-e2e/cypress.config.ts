@@ -3,6 +3,7 @@ import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 import { defineConfig } from 'cypress';
 
 import { rmdir, unlink, rename } from 'fs';
+import { defaultMs } from './src/support/slow-down';
 
 export default defineConfig({
   e2e: {
@@ -14,7 +15,7 @@ export default defineConfig({
     viewportHeight: 1080,
     env: {
       // slow down execution more in CI to avoid flaky tests
-      commandDelay: process.env.CI ? 500 : 75
+      commandDelay: defaultMs
     },
 
     // Plugins

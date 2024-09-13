@@ -1,6 +1,9 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { slowCypressDown } from 'cypress-slow-down';
+import { slowCypressDown } from 'cypress-slow-down'
+// registers the cy.slowDown and cy.slowDownEnd commands
+import 'cypress-slow-down/commands'
 import { selectEmoji, latestPostInFeedContentEq } from '../support/posts';
+import { defaultMs, fastMs } from '../support/slow-down';
 
 describe('posts', () => {
   before(() => {
@@ -219,7 +222,7 @@ describe('posts', () => {
         cy.get('#posts-feed').children().eq(1).within(() => {
           cy.get('#post-content-text').innerTextShouldNotEq(postContent);
         });
-      }
+      };
     });
   });
 
@@ -249,111 +252,152 @@ describe('posts', () => {
     });
   });
 
-it('can tag whilst creating post', () => {
-  const postContent = `I can post with tags! ${Date.now()}`;
-  const tag1 = 'alpacas';
-  const tag2 = 'llamas';
-  const tag3 = 'vicuñas';
+  it('can tag whilst creating post', () => {
+    const postContent = `I can post with tags! ${Date.now()}`;
+    const tag1 = 'alpacas';
+    const tag2 = 'llamas';
+    const tag3 = 'vicuñas';
 
-  cy.get('#quick-post-create-content').within(() => {
-    cy.get('textarea').should('have.value', '');
-    // type the post
-    cy.get('textarea').type(postContent);
+    cy.get('#quick-post-create-content').within(() => {
+      cy.get('textarea').should('have.value', '');
+      // type the post
+      cy.get('textarea').type(postContent);
+
+      // add tags to the post
+      cy.get('#tag-btn').click();
+      cy.get('#modal-root').should('be.visible').within(() => {
+        cy.get('h1').contains('Tag');
+        cy.get('input').type(tag1);
+        cy.get('#add-btn').should('be.visible').click();
+        cy.get('input').type(tag2);
+        cy.get('#add-btn').should('be.visible').click();
+        cy.get('input').type(tag3);
+        cy.get('#add-btn').should('be.visible').click();
+        cy.get('#close-btn').click();
+      });
+
+      // verify the tags are displayed in the quick post area
+      cy.get('#tags').children().should('have.length', 3);
+      cy.get('#tags').children().eq(0).contains(tag1);
+      cy.get('#tags').children().eq(1).contains(tag2);
+      cy.get('#tags').children().eq(2).contains(tag3);
+
+      // submit the post
+      cy.get('#post-btn').click();
+    });
+
+    // verify the post text and tags are displayed correctly in feed
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // check text
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+
+      // check tags
+      cy.get('#tags').find('#tag-0').contains(tag1);
+      cy.get('#tags').find('#tag-1').contains(tag2);
+      cy.get('#tags').find('#tag-2').contains(tag3);
+    });
+  });
+
+  it('can tag and remove tags from existing post', () => {
+    const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
+    const tag1 = 'bananas';
+    const tag2 = 'pjammas';
+    const tag3 = 'rastas';
+
+    cy.get('#quick-post-create-content').within(() => {
+      cy.get('textarea').should('have.value', '');
+      // type the post and submit
+      cy.get('textarea').type(postContent);
+      cy.get('#post-btn').click();
+    });
 
     // add tags to the post
     cy.get('#tag-btn').click();
-    cy.get('#modal-root').should('be.visible').within(() => {
-      cy.get('h1').contains('Tag');
+    cy.get('#modal-root').within(() => {
+      cy.get('h1').contains('Tag Post');
       cy.get('input').type(tag1);
-      cy.get('#add-btn').should('be.visible').click();
+      cy.get('#add-btn').click();
       cy.get('input').type(tag2);
-      cy.get('#add-btn').should('be.visible').click();
+      cy.get('#add-btn').click();
       cy.get('input').type(tag3);
-      cy.get('#add-btn').should('be.visible').click();
+      cy.get('#add-btn').click();
+
+      // check current tags in modal
+      cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
+        cy.wrap(divs.eq(0)).contains(tag1);
+        cy.wrap(divs.eq(1)).contains(tag2);
+        cy.wrap(divs.eq(2)).contains(tag3);
+      });
+
+      // close modal
       cy.get('#close-btn').click();
     });
 
-    // verify the tags are displayed in the quick post area
-    cy.get('#tags').children().should('have.length', 3);
-    cy.get('#tags').children().eq(0).contains(tag1);
-    cy.get('#tags').children().eq(1).contains(tag2);
-    cy.get('#tags').children().eq(2).contains(tag3);
+    // within the latest post in the feed
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#tags').children().its('length').then((oldLength) => {
+        cy.get('#tags').within(() => {
+          // verify the tags are displayed in the post
+          cy.get('#tag-0').contains(tag1);
+          cy.get('#tag-1').contains(tag2);
+          cy.get('#tag-2').contains(tag3);
 
-    // submit the post
-    cy.get('#post-btn').click();
-  });
+          // remove tag from the post
+          cy.get('#tag-1').click();
+        });
 
-  // verify the post text and tags are displayed correctly in feed
-  cy.get('#posts-feed').children().eq(1).within(() => {
-    // check text
-    cy.get('#post-content-text').innerTextShouldEq(postContent);
-
-    // check tags
-    cy.get('#tags').find('#tag-0').contains(tag1);
-    cy.get('#tags').find('#tag-1').contains(tag2);
-    cy.get('#tags').find('#tag-2').contains(tag3);
-  });
-});
-
-it('can tag and remove tags from existing post', () => {
-  const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
-  const tag1 = 'bananas';
-  const tag2 = 'pjammas';
-  const tag3 = 'rastas';
-
-  cy.get('#quick-post-create-content').within(() => {
-    cy.get('textarea').should('have.value', '');
-    // type the post and submit
-    cy.get('textarea').type(postContent);
-    cy.get('#post-btn').click();
-  });
-
-  // add tags to the post
-  cy.get('#tag-btn').click();
-  cy.get('#modal-root').within(() => {
-    cy.get('h1').contains('Tag Post');
-    cy.get('input').type(tag1);
-    cy.get('#add-btn').click();
-    cy.get('input').type(tag2);
-    cy.get('#add-btn').click();
-    cy.get('input').type(tag3);
-    cy.get('#add-btn').click();
-
-    // check current tags in modal
-    cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
-      cy.wrap(divs.eq(0)).contains(tag1);
-      cy.wrap(divs.eq(1)).contains(tag2);
-      cy.wrap(divs.eq(2)).contains(tag3);
-    });
-
-    // close modal
-    cy.get('#close-btn').click();
-  });
-
-  // within the latest post in the feed
-  cy.get('#posts-feed').children().eq(1).within(() => {
-    cy.get('#tags').children().its('length').then((oldLength) => {
-      cy.get('#tags').within(() => {
-        // verify the tags are displayed in the post
-        cy.get('#tag-0').contains(tag1);
-        cy.get('#tag-1').contains(tag2);
-        cy.get('#tag-2').contains(tag3);
-
-        // remove tag from the post
-        cy.get('#tag-1').click();
-      });
-
-      // verify the tag is removed from the post and other tags remain
-      cy.get('#tags').children().should('have.length', oldLength - 1);
-      cy.get('#tags').within(() => {
-        cy.get('#tag-0').should('exist').contains(tag1);
-        cy.get('#tag-1').should('exist').contains(tag3);
+        // verify the tag is removed from the post and other tags remain
+        cy.get('#tags').children().should('have.length', oldLength - 1);
+        cy.get('#tags').within(() => {
+          cy.get('#tag-0').should('exist').contains(tag1);
+          cy.get('#tag-1').should('exist').contains(tag3);
+        });
       });
     });
   });
-});
 
-  // can bookmark and remove bookmark from posts
-  // can repost with and without content
+  it('can bookmark post then remove bookmark', () => {
+    // create a post to bookmark
+    const postContent = `This post will be bookmarked! ${Date.now()}`;
+    cy.get('#quick-post-create-content').within(() => {
+      // input post content within quick post area and submit
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(postContent);
+      cy.get('#post-btn').click();
+    });
+
+    // bookmark the post
+    cy.slowDown(fastMs);
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#bookmark-btn').click();
+    });
+    // check bookmark toast is shown (before the toast disappears)
+    cy.get('#toast').should('be.visible').find('h2').contains('bookmark')
+    cy.slowDown(defaultMs);
+
+    // verify the post has been bookmarked in the profile page
+    cy.get('#header-profile-pic').click();
+    cy.get('#profile-tab-bookmarks').click();
+    cy.get('#bookmarks-content').children().first().within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+
+      // remove the bookmark
+      cy.get('#bookmark-btn').click();
+    });
+
+    // verify post is not longer listed on profile page
+    cy.reload();
+    cy.get('#bookmarks-content').should('contain.text', 'No bookmarks yet');
+  });
+
+  // it('can repost with and without content', () => {
+  //   // create a post to bookmark
+  //   const postContent = `This post will be reposted! ${Date.now()}`;
+  //   cy.get('#quick-post-create-content').within(() => {
+  //     // input post content within quick post area and submit
+  //     cy.get('textarea').should('have.value', '');
+  //     cy.get('textarea').type(postContent);
+  //     cy.get('#post-btn').click();
+  //   });
 
 });
