@@ -5,15 +5,15 @@ import { useState } from 'react';
 import { useAlertContext } from '@/contexts';
 import Modal from '../../Modal';
 import { Utils } from '@social/utils-shared';
-import { IUserProfile } from '@/types';
+import { UserView } from '@/types/User';
 
 interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedFiles: File[];
   setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   content: string;
   setContent: (content: string) => void;
-  setSearchedUsers: React.Dispatch<React.SetStateAction<IUserProfile[]>>;
-  searchedUsers: IUserProfile[];
+  setSearchedUsers: React.Dispatch<React.SetStateAction<UserView[]>>;
+  searchedUsers: UserView[];
   setCursorPosition: React.Dispatch<React.SetStateAction<number>>;
   setTextArea?: React.Dispatch<React.SetStateAction<boolean>>;
   largeView?: boolean;
