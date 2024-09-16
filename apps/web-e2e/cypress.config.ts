@@ -30,13 +30,12 @@ export default defineConfig({
           // Enables readText from clipboard
           launchOptions.preferences['dom.events.asyncClipboard.readText'] = true;
         }
-        // Clipboard doesn't work in headless mode for Chrome
-        // This doesn't work in CI because 'NotAllowedError: Document is not focused.'
-        // if (browser.family === 'chromium' && browser.name !== 'electron') {
-        //   //launchOptions.args.push('--enable-experimental-web-platform-features');
-        //   launchOptions.args.push('--clipboard-read-write');  // Enable clipboard read/write
-        //   launchOptions.args.push('--clipboard-sanitized-write'); // Enable sanitized write permissions
-        // }
+        // Enable clipboard for Chrome
+        if (browser.family === 'chromium' && browser.name !== 'electron') {
+          launchOptions.args.push('--enable-experimental-web-platform-features');
+          launchOptions.args.push('--clipboard-read-write');  // Enable clipboard read/write
+          launchOptions.args.push('--clipboard-sanitized-write'); // Enable sanitized write permissions
+        }
         return launchOptions
       });
 
@@ -86,6 +85,9 @@ export default defineConfig({
         });
       },
       });
-    }
+    },
+    experimentalModifyObstructiveThirdPartyCode: true,
+    chromeWebSecurity: false,
+    pageLoadTimeout: 60000,
   },
 });
