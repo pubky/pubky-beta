@@ -1,21 +1,26 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Typography } from '@social/ui-shared';
-import { Post } from '@/components';
-import { useClientContext } from '@/contexts';
-import { IPost, INewPost } from '@/types';
-import Skeletons from '@/components/Skeletons';
+import { Post, Skeleton } from '@/components';
+import { usePostStreamByUser } from '@/hooks/usePost';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
-  const { pubky, listUserFeed, getPost, posts, setPosts } = useClientContext();
-  const [loading, setLoading] = useState(true);
-  const [cursor, setCursor] = useState('');
-  const [parentPosts, setParentPosts] = useState<{
-    [key: string]: IPost | null;
-  }>({});
+  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const usePubky = creatorPubky ?? pubky;
+  const { data, isLoading, isError } = usePostStreamByUser(usePubky);
+  console.log('POSTSS', data);
+
+  if (isError) console.error(isError);
+  //const [loading, setLoading] = useState(true);
+  //const [cursor, setCursor] = useState('');
+  //const [parentPosts, setParentPosts] = useState<{
+  //  [key: string]: IPost | null;
+  //}>({});
   const loader = useRef(null);
 
+  {
+    /** 
   async function fetchPosts(
     pointer: string,
     cancellationToken: { cancelled: boolean }
@@ -75,41 +80,43 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
       return null;
     }
   }
+    */
+  }
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && cursor) {
-          const cancellationToken = { cancelled: false };
-          fetchPosts(cursor, cancellationToken);
-          return () => {
-            cancellationToken.cancelled = true;
-          };
-        }
-      },
-      { threshold: 1 }
-    );
-    if (loader.current) {
-      observer.observe(loader.current);
-    }
-    return () => observer.disconnect();
+  //useEffect(() => {
+  //  const observer = new IntersectionObserver(
+  //   (entries) => {
+  //     if (entries[0].isIntersecting && cursor) {
+  //        const cancellationToken = { cancelled: false };
+  //       fetchPosts(cursor, cancellationToken);
+  //       return () => {
+  //          cancellationToken.cancelled = true;
+  //        };
+  //      }
+  //    },
+  //    { threshold: 1 }
+  //  );
+  //  if (loader.current) {
+  //    observer.observe(loader.current);
+  //  }
+  //  return () => observer.disconnect();
 
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, [cursor]);
+  /* eslint-disable react-hooks/exhaustive-deps */
+  //}, [cursor]);
 
-  useEffect(() => {
-    setPosts({} as INewPost);
-    const cancellationToken = { cancelled: false };
-    fetchPosts('', cancellationToken);
-    return () => {
-      cancellationToken.cancelled = true;
-    };
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, []);
+  //useEffect(() => {
+  //  setPosts({} as INewPost);
+  //  const cancellationToken = { cancelled: false };
+  //  fetchPosts('', cancellationToken);
+  //  return () => {
+  //    cancellationToken.cancelled = true;
+  //  };
+  /* eslint-disable react-hooks/exhaustive-deps */
+  // }, []);
 
   return (
     <div className="flex flex-col gap-3">
-      {Object.keys(posts).map((key) => {
+      {/** Object.keys(posts).map((key) => {
         const post = posts[key];
         const parentUri = post?.post?.parent;
         const parentPost = parentUri ? parentPosts[parentUri] : null;
@@ -132,15 +139,18 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
             <Post post={post} line={parentPost ? true : false} />
           </div>
         );
-      })}
-      {Object.keys(posts).length === 0 && !loading && (
+      })*/}
+      {data &&
+        data?.length > 0 &&
+        data.map((post) => <Post key={post.details.id} post={post} />)}
+      {isLoading && <Skeleton.Simple />}
+      {data && data.length === 0 && !isLoading && (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
           <Typography.H2 className="font-normal text-opacity-50">
             No posts yet.
           </Typography.H2>
         </div>
       )}
-      {loading && <Skeletons.Simple />}
       <div ref={loader} />
     </div>
   );
