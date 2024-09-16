@@ -1,19 +1,19 @@
 import { Typography } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
-import { IReply } from '@/types';
 import { Post } from '@/components';
+import { PostThread, PostView } from '@/types/Post';
 
 export default function Replies({
   repliesResponse,
 }: {
-  repliesResponse: IReply;
+  repliesResponse: PostThread | undefined;
 }) {
-  const [replies, setReplies] = useState<IReply[]>([]);
+  const [replies, setReplies] = useState<PostView[]>([]);
 
   const fetchReplies = async () => {
     try {
       if (repliesResponse) {
-        setReplies(repliesResponse?.replies || []);
+        setReplies(repliesResponse.replies || []);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -25,11 +25,11 @@ export default function Replies({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repliesResponse]);
 
-  const renderReplies = (replies: IReply[], depth: number = 0) => {
+  const renderReplies = (replies: PostView[], depth: number = 0) => {
     return replies.map((reply) => (
-      <div className="flex flex-col gap-3" key={reply.post.id}>
+      <div className="flex flex-col gap-3" key={reply?.details?.id}>
         <Post
-          post={reply.post}
+          post={reply}
           size="full"
           //className={`${
           //  depth > 0 || reply.replies.length > 0 ? 'border-0' : ''
@@ -42,9 +42,9 @@ export default function Replies({
           //}
           //lineStyle="after:-ml-[2px]"
         />
-        {reply.replies && reply.replies.length > 0 && (
+        {/**reply.relationships?.replied > 0 && (
           <div className="ml-6">{renderReplies(reply.replies, depth + 1)}</div>
-        )}
+        )*/}
       </div>
     ));
   };
