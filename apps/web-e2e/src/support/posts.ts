@@ -18,3 +18,20 @@ export const postInFeedContentEq = (postContent: string, idx: number) => {
 export const latestPostInFeedContentEq = (postContent: string) => {
   postInFeedContentEq(postContent, 1);
 };
+
+// use within child of #posts-feed
+export const deletePost = () => {
+  // delete the repost
+  cy.get('#menu-btn').should('be.visible').click();
+  cy.get('#post-tooltip-menu').should('be.visible').within(() => {
+    cy.get('#delete-post').should('be.visible')
+      .innerTextShouldEq('Delete post')
+      .get('#delete-post').click();
+  });
+
+  // confirm delete in modal
+  cy.get('#modal-root').should('be.visible').within(() => {
+    cy.get('h1').contains('Delete Post');
+    cy.get('#delete-post-btn').click();
+  });
+};

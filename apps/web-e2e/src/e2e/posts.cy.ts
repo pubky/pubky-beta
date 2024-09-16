@@ -2,7 +2,7 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { selectEmoji, latestPostInFeedContentEq } from '../support/posts';
+import { selectEmoji, latestPostInFeedContentEq, deletePost } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 describe('posts', () => {
@@ -199,26 +199,12 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
 
     // delete the post
-    cy.get('#posts-feed').children().eq(1).within(() => {
-      // open post menu and click delete
-      cy.get('#menu-btn').should('be.visible').click();
-      cy.get('#post-tooltip-menu').should('be.visible').within(() => {
-        cy.get('#delete-post').should('be.visible')
-          .innerTextShouldEq('Delete post')
-          .get('#delete-post').click();
-      });
-
-      // confirm delete in modal
-      cy.get('#modal-root').should('be.visible').within(() => {
-        cy.get('h1').contains('Delete Post');
-        cy.get('#delete-post-btn').click();
-      });
-    });
+    deletePost();
 
     // verify post is deleted
     cy.get('#posts-feed').children().its('length').then((length) => {
       // if at least 1 post still exists, check it doesn't match the text of the deleted post
-      if (length > 0) {
+      if (length > 1) {
         cy.get('#posts-feed').children().eq(1).within(() => {
           cy.get('#post-content-text').innerTextShouldNotEq(postContent);
         });
@@ -356,6 +342,8 @@ describe('posts', () => {
     });
   });
 
+
+  // todo: consider creating user to create the post to bookmark
   it('can bookmark post then remove bookmark', () => {
     // create a post to bookmark
     const postContent = `This post will be bookmarked! ${Date.now()}`;
@@ -390,14 +378,64 @@ describe('posts', () => {
     cy.get('#bookmarks-content').should('contain.text', 'No bookmarks yet');
   });
 
-  // it('can repost with and without content', () => {
-  //   // create a post to bookmark
-  //   const postContent = `This post will be reposted! ${Date.now()}`;
-  //   cy.get('#quick-post-create-content').within(() => {
-  //     // input post content within quick post area and submit
-  //     cy.get('textarea').should('have.value', '');
-  //     cy.get('textarea').type(postContent);
-  //     cy.get('#post-btn').click();
-  //   });
+  // todo: consider creating user to create the post to repost
+  it('can repost with content then delete the repost', () => {
+    // create a post to bookmark
+    const postContent = `This post will be reposted! ${Date.now()}`;
+    const repostContent = 'Reposted with content!';
+    cy.get('#quick-post-create-content').within(() => {
+      // input post content within quick post area and submit
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(postContent);
+      cy.get('#post-btn').click();
+    });
+
+    // repost with content
+    cy.slowDown(fastMs);
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#repost-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('h1').contains('Repost');
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(repostContent);
+      cy.get('#repost-btn').click();
+    });
+
+    // verify the repost with content is displayed correctly in feed
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // check that both the repost text and original post text are displayed
+      const expectedContent = [repostContent, postContent];
+      cy.get('#post-content-text').each((elem, index) => {
+        cy.wrap(elem).innerTextShouldEq(expectedContent[index]);
+      });
+    });
+
+    // delete the repost
+    deletePost();
+
+    // verify the repost is deleted
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // check that first post is the original post
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+    });
+  });
+
+  // can repost without content then undo the repost
+    // repost without content
+
+    // verify the repost without content
+
+    // undo one of the reposts
+
+    // verify undo worked
+
+  // can delete the original post that has been reposted
+
+  // can reply to a post and delete the reply
+
+  // delete original post that has been replied to
 
 });
