@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components';
 import { ImageByUri } from '@/components/ImageByUri';
-import Modal from '@/components/Modal';
+import { useUserProfile } from '@/hooks/useUser';
 import { useClientContext } from '@/contexts';
 import { UserTags, UserView } from '@/types/User';
 import {
@@ -12,7 +12,6 @@ import {
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 type TaggedAsProps = {
   profile: UserView | null;
@@ -26,13 +25,18 @@ export default function TaggedAs({
   loading,
 }: TaggedAsProps) {
   const router = useRouter();
-  const { pubky, deleteTag, createTag } = useClientContext();
-  const [showModalProfileTag, setShowModalProfileTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
-  const name = profile?.details?.name;
-  const image = profile?.details?.image;
-  const profileTags = profile?.tags;
+  // const { pubky, deleteTag, createTag } = useClientContext();
+  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const usePubky = creatorPubky ?? pubky;
+  const { data } = useUserProfile(usePubky);
+  const name = data?.details?.name;
+  //const image = data?.details?.image;
+  const profileTags = data?.tags;
+  //const [showModalProfileTag, setShowModalProfileTag] = useState(false);
+  //const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
 
+  {
+    /** 
   const handleAddProfileTag = async (tag: string) => {
     const pubKeyToUse =
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
@@ -50,6 +54,8 @@ export default function TaggedAs({
       await deleteTag(pubKeyToUse, tag);
     }
   };
+  */
+  }
 
   return (
     <div className="w-full">
@@ -61,13 +67,15 @@ export default function TaggedAs({
           {profileTags && profileTags.length > 0 ? (
             <>
               {profileTags.map((tag, index) => {
-                const isTagFound = tag.tagged.some(
-                  (fromItem) => fromItem.tagger_id === pubky
+                const isTagFound = tag?.tagged?.some(
+                  (fromItem) => fromItem?.tagger_id === pubky
                 );
 
-                const images = tag.tagged.map((fromItem) => fromItem.tagger_id);
-                const displayedImages = images.slice(0, 15);
-                const extraImagesCount = images.length - displayedImages.length;
+                const images = tag?.tagged?.map(
+                  (fromItem) => fromItem?.tagger_id?.image
+                );
+                const displayedImages = images?.slice(0, 15);
+                const extraImagesCount = images?.length - displayedImages?.length;
 
                 return (
                   <div className="flex gap-2" key={index}>
@@ -86,12 +94,12 @@ export default function TaggedAs({
                     <PostUtil.Tag
                       key={index}
                       clicked={isTagFound}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        isTagFound
-                          ? handleDeleteProfileTag(tag?.label)
-                          : handleAddProfileTag(tag?.label);
-                      }}
+                      //onClick={(event) => {
+                      //  event.stopPropagation();
+                      //  isTagFound
+                      //   ? handleDeleteProfileTag(tag.tag)
+                      //   : handleAddProfileTag(tag.tag);
+                      //}}
                       color={
                         tag?.label && Utils.generateRandomColor(tag?.label)
                       }
@@ -102,7 +110,7 @@ export default function TaggedAs({
                           variant="bold"
                           className="text-opacity-30"
                         >
-                          {tag?.tagged.length}
+                          {tag?.tagged?.length}
                         </Typography.Caption>
                       </div>
                     </PostUtil.Tag>
@@ -115,10 +123,10 @@ export default function TaggedAs({
                       className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                     />
                     <div
-                      onClick={() => setShowModalProfileTag(true)}
+                      //onClick={() => setShowModalProfileTag(true)}
                       className="cursor-pointer flex items-center"
                     >
-                      {displayedImages.map((image, imageIndex) => (
+                      {displayedImages?.map((image, imageIndex) => (
                         <ImageByUri
                           width={32}
                           height={32}
@@ -157,6 +165,7 @@ export default function TaggedAs({
           </Button.Medium>*/}
         </div>
       )}
+      {/**
       <Modal.ProfileTag
         profileTags={profileTags ?? []}
         showModalProfileTag={showModalProfileTag}
@@ -169,6 +178,7 @@ export default function TaggedAs({
         name={name}
         uriImage={image}
       />
+       */}
     </div>
   );
 }
