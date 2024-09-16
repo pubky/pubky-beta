@@ -2,7 +2,7 @@ import { Skeleton } from '@/components';
 import { ImageByUri } from '@/components/ImageByUri';
 import Modal from '@/components/Modal';
 import { useClientContext } from '@/contexts';
-import { ITaggedProfile, IUserProfile } from '@/types';
+import { UserTags, UserView } from '@/types/User';
 import {
   Button,
   Icon,
@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 type TaggedAsProps = {
-  profile: IUserProfile | undefined;
+  profile: UserView | null;
   creatorPubky: string | undefined;
   loading: boolean;
 };
@@ -28,10 +28,10 @@ export default function TaggedAs({
   const router = useRouter();
   const { pubky, deleteTag, createTag } = useClientContext();
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
-  const name = profile?.profile?.name;
-  const image = profile?.profile?.image;
-  const profileTags = profile?.taggedAs;
+  const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
+  const name = profile?.details?.name;
+  const image = profile?.details?.image;
+  const profileTags = profile?.tags;
 
   const handleAddProfileTag = async (tag: string) => {
     const pubKeyToUse =
@@ -61,13 +61,11 @@ export default function TaggedAs({
           {profileTags && profileTags.length > 0 ? (
             <>
               {profileTags.map((tag, index) => {
-                const isTagFound = tag.from.some(
-                  (fromItem) => fromItem.author.id === pubky
+                const isTagFound = tag.tagged.some(
+                  (fromItem) => fromItem.tagger_id === pubky
                 );
 
-                const images = tag.from.map(
-                  (fromItem) => fromItem.author.profile.image
-                );
+                const images = tag.tagged.map((fromItem) => fromItem.tagger_id);
                 const displayedImages = images.slice(0, 15);
                 const extraImagesCount = images.length - displayedImages.length;
 
@@ -91,18 +89,20 @@ export default function TaggedAs({
                       onClick={(event) => {
                         event.stopPropagation();
                         isTagFound
-                          ? handleDeleteProfileTag(tag.tag)
-                          : handleAddProfileTag(tag.tag);
+                          ? handleDeleteProfileTag(tag?.label)
+                          : handleAddProfileTag(tag?.label);
                       }}
-                      color={tag.tag && Utils.generateRandomColor(tag.tag)}
+                      color={
+                        tag?.label && Utils.generateRandomColor(tag?.label)
+                      }
                     >
                       <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                        {Utils.minifyText(tag?.label.replace(' ', ''), 20)}
                         <Typography.Caption
                           variant="bold"
                           className="text-opacity-30"
                         >
-                          {tag.count}
+                          {tag?.tagged.length}
                         </Typography.Caption>
                       </div>
                     </PostUtil.Tag>
@@ -111,7 +111,7 @@ export default function TaggedAs({
                       variant="custom"
                       size="small"
                       icon={<Icon.MagnifyingGlassLeft size="14" />}
-                      onClick={() => router.push(`/search?tags=${tag.tag}`)}
+                      onClick={() => router.push(`/search?tags=${tag?.label}`)}
                       className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                     />
                     <div
@@ -122,7 +122,7 @@ export default function TaggedAs({
                         <ImageByUri
                           width={32}
                           height={32}
-                          key={`${tag.tag}-${imageIndex}`}
+                          key={`${tag?.label}-${imageIndex}`}
                           className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
                             imageIndex > 0 && '-ml-2'
                           }`}

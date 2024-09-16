@@ -5,52 +5,31 @@ import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { useClientContext } from '@/contexts';
-import { INewPost, IUserProfile } from '@/types';
+import { INewPost } from '@/types';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
+import { useUserProfile } from '@/hooks/useUser';
 
 export default function Index({
   params,
 }: {
   params: { creatorPubky: string };
 }) {
-  const { getUserIndexed, setPosts } = useClientContext();
+  const { setPosts } = useClientContext();
   const creatorPubky = params.creatorPubky;
-
-  const [profile, setProfile] = useState<IUserProfile | undefined>();
-  const [loading, setLoading] = useState(true);
-  const [countContacts, setCountContacts] = useState({
-    followers: 0,
-    following: 0,
-    friends: 0,
-  });
+  const { data, isLoading, isError } = useUserProfile(creatorPubky);
+  const profile = data;
   const [userExist, setUserExist] = useState(true);
 
   const loader = useRef(null);
-
-  async function fetchProfile() {
-    try {
-      const userProfile = await getUserIndexed(creatorPubky);
-
-      if (userProfile && userProfile.profile) {
-        setProfile(userProfile);
-        setCountContacts({
-          followers: userProfile.followersCount,
-          following: userProfile.followingCount,
-          friends: userProfile.friendsCount,
-        });
-      } else {
-        setUserExist(false);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
+  if (data) {
+    setUserExist(true);
+  } else if (!data || isError) {
+    setUserExist(false);
   }
 
   useEffect(() => {
     setPosts({} as INewPost);
-    fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -61,25 +40,29 @@ export default function Index({
         <div>
           <Content.Grid className="flex flex-col text-start lg:flex-row items-center gap-8 relative">
             <ProfileCommon.Avatar
-              username={profile?.profile?.name || 'Loading...'}
-              uriImage={profile?.profile?.image || '/images/Userpic.png'}
+              username={profile?.details?.name || 'Loading...'}
+              uriImage={profile?.details?.image || '/images/Userpic.png'}
             />
             <ProfileCommon.Handle
               className="-mt-4"
-              username={profile?.profile?.name || 'Loading...'}
+              username={profile?.details?.name || 'Loading...'}
               pubkey={creatorPubky ?? ''}
               creatorPubky={creatorPubky}
-              status={profile?.profile?.status}
+              status={profile?.details?.status}
             />
           </Content.Grid>
         </div>
         <Content.Grid className="grid grid-cols-5 gap-2">
           <PostsLayout className="flex flex-col col-span-5 xl:col-span-4 gap-3 mt-[10px]">
             <Profile.FilterTabs
-              countContacts={countContacts}
-              countPosts={profile?.postsCount}
+              countContacts={{
+                followers: profile?.counts?.followers ?? 0,
+                following: profile?.counts?.following ?? 0,
+                friends: profile?.counts?.friends ?? 0,
+              }}
+              countPosts={profile?.counts?.posts}
+              loading={isLoading}
               creatorPubky={creatorPubky}
-              loading={loading}
               profile={profile}
             />
           </PostsLayout>

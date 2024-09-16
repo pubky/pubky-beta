@@ -6,7 +6,7 @@ import Modal from '../Modal';
 import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
 import { Section } from './Section';
-import { useUsernameSearch } from '@/hooks/useUser';
+import { useUserProfile, useUsernameSearch } from '@/hooks/useUser';
 import { UserView } from '@/types/User';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -48,11 +48,11 @@ export default function CreateContent({
   setArrayTags,
   children,
 }: CreateContentProps) {
-  const { getProfile } = useClientContext();
+  const { searchUsers, getProfile } = useClientContext();
   const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
+  const { data } = useUserProfile(pubky);
+  const profile = data;
   const { setContent: setContentAlert, setShow } = useAlertContext();
-  const [name, setName] = useState('');
-  const [pic, setPic] = useState('/images/Userpic.png');
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -114,25 +114,6 @@ export default function CreateContent({
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
-
-  async function fetchProfile() {
-    try {
-      if (!pubky) return;
-      const userProfile = await getProfile();
-
-      if (userProfile) {
-        setPic(userProfile?.image || '/images/Userpic.png');
-        setName(userProfile?.name);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -251,7 +232,11 @@ export default function CreateContent({
         largeView ? 'p-12' : 'p-6'
       } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
     >
-      <Section.UserArea uriPic={pic} name={name} largeView={largeView} />
+      <Section.UserArea
+        uriPic={profile?.details?.image}
+        name={profile?.details?.name ?? 'Loading...'}
+        largeView={largeView}
+      />
       <div
         ref={wrapperRef}
         className="w-full flex justify-between gap-6 items-start flex-col"
