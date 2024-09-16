@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components';
 import { useClientContext } from '@/contexts';
-import { ITaggedProfile } from '@/types';
+import { UserTags } from '@/types/User';
 import {
   Button,
   Icon,
@@ -12,11 +12,11 @@ import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 
 interface TaggedSectionProps {
-  profileTags: ITaggedProfile[];
+  profileTags: UserTags[];
   loadingProfileTags: boolean;
-  handleAddProfileTag: (tag: string) => void;
-  handleDeleteProfileTag: (tag: string) => void;
-  setShowModalProfileTag: (show: boolean) => void;
+  //handleAddProfileTag: (tag: string) => void;
+  //handleDeleteProfileTag: (tag: string) => void;
+  //setShowModalProfileTag: (show: boolean) => void;
   creatorPubky: string | null | undefined;
   name: string;
 }
@@ -24,9 +24,9 @@ interface TaggedSectionProps {
 export default function TaggedSection({
   profileTags,
   loadingProfileTags,
-  handleAddProfileTag,
-  handleDeleteProfileTag,
-  setShowModalProfileTag,
+  //handleAddProfileTag,
+  //handleDeleteProfileTag,
+  //setShowModalProfileTag,
   creatorPubky,
   name,
 }: TaggedSectionProps) {
@@ -43,8 +43,8 @@ export default function TaggedSection({
           {profileTags.length > 0 ? (
             <>
               {profileTags.map((tag, index) => {
-                const isTagFound = tag.from.some(
-                  (fromItem) => fromItem.author.id === pubky
+                const isTagFound = tag?.tagged?.some(
+                  (fromItem) => fromItem.tagger_id === pubky
                 );
 
                 return (
@@ -64,21 +64,23 @@ export default function TaggedSection({
                     <PostUtil.Tag
                       key={index}
                       clicked={isTagFound}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        isTagFound
-                          ? handleDeleteProfileTag(tag.tag)
-                          : handleAddProfileTag(tag.tag);
-                      }}
-                      color={tag.tag && Utils.generateRandomColor(tag.tag)}
+                      //onClick={(event) => {
+                      //  event.stopPropagation();
+                      //  isTagFound
+                      //   ? handleDeleteProfileTag(tag.tag)
+                      //  : handleAddProfileTag(tag.tag);
+                      //}}
+                      color={
+                        tag?.label && Utils.generateRandomColor(tag?.label)
+                      }
                     >
                       <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                        {Utils.minifyText(tag?.label.replace(' ', ''), 20)}
                         <Typography.Caption
                           variant="bold"
                           className="text-opacity-30"
                         >
-                          {tag.count}
+                          {tag?.tagged?.length}
                         </Typography.Caption>
                       </div>
                     </PostUtil.Tag>
@@ -87,11 +89,11 @@ export default function TaggedSection({
                       variant="custom"
                       size="small"
                       icon={<Icon.MagnifyingGlassLeft size="14" />}
-                      onClick={() => router.push(`/search?tags=${tag.tag}`)}
+                      onClick={() => router.push(`/search?tags=${tag?.label}`)}
                       className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                     />
                     <PostUtil.Counter className="w-full">
-                      {tag.count}
+                      {tag?.tagged?.length}
                     </PostUtil.Counter>
                   </div>
                 );
@@ -104,7 +106,7 @@ export default function TaggedSection({
           )}
           <Button.Medium
             className="mt-2 w-auto h-8 inline-flex items-center"
-            onClick={() => setShowModalProfileTag(true)}
+            //onClick={() => setShowModalProfileTag(true)}
             icon={<Icon.Tag size="16" />}
           >
             Tag{' '}
