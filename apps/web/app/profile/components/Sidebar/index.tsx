@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { ITaggedProfile } from '@/types';
 import { Modal } from '@/components/Modal';
 import UserInfo from './_UserInfo';
 import BioSection from './_BioSection';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
+import { UserTags } from '@/types/User';
 
 export default function Sidebar({
   creatorPubky,
@@ -21,14 +21,14 @@ export default function Sidebar({
   const [bio, setBio] = useState('No bio.');
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
   const [image, setImage] = useState('/images/Userpic.png');
-  const [profileTags, setProfileTags] = useState<ITaggedProfile[]>([]);
+  const [profileTags, setProfileTags] = useState<UserTags[]>([]);
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   //const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [loadingProfileTags, setLoadingProfileTags] = useState(true);
   const [pubkyUser, setPubkyUser] = useState('');
   const [loading, setLoading] = useState(true);
   const [followed, setFollowed] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
+  const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);

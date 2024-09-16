@@ -31,7 +31,7 @@ export function useUserCounts(userId: string) {
   });
 }
 
-export function useUserFollowers(
+export function UseUserFollowers(
   userId: string,
   skip?: number,
   limit?: number
@@ -42,7 +42,7 @@ export function useUserFollowers(
   });
 }
 
-export function useUserFollowing(
+export function UseUserFollowing(
   userId: string,
   skip?: number,
   limit?: number
@@ -53,7 +53,7 @@ export function useUserFollowing(
   });
 }
 
-export function useUserFriends(userId: string, skip?: number, limit?: number) {
+export function UseUserFriends(userId: string, skip?: number, limit?: number) {
   return useQuery({
     queryKey: ['userFriends', userId, skip, limit],
     queryFn: () => getUserFriends(userId, skip, limit),

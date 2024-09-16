@@ -1,3 +1,5 @@
+import { TStatus } from '.';
+
 export interface UserCounts {
   followers: number;
   following: number;
@@ -13,7 +15,7 @@ export interface UserDetails {
   links?: UserLink[];
   name: string;
   image?: string;
-  status?: string;
+  status?: TStatus;
 }
 
 export interface UserLink {

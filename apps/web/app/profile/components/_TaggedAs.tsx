@@ -1,7 +1,8 @@
 import { Skeleton } from '@/components';
 import { ImageByUri } from '@/components/ImageByUri';
 import { useUserProfile } from '@/hooks/useUser';
-import { IUserProfile } from '@/types';
+import { useClientContext } from '@/contexts';
+import { UserTags, UserView } from '@/types/User';
 import {
   Button,
   Icon,
@@ -13,7 +14,7 @@ import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 
 type TaggedAsProps = {
-  profile: IUserProfile | undefined;
+  profile: UserView | null;
   creatorPubky: string | undefined;
   loading: boolean;
 };

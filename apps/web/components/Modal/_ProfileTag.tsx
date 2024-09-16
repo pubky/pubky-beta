@@ -11,20 +11,20 @@ import {
   SideCard,
 } from '@social/ui-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
-import { ITaggedProfile } from '@/types';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { useClientContext } from '@/contexts';
 import { ImageByUri } from '../ImageByUri';
+import { UserTags } from '@/types/User';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalProfileTag: boolean;
   setShowModalProfileTag: React.Dispatch<React.SetStateAction<boolean>>;
-  profileTags: ITaggedProfile[];
+  profileTags: UserTags[];
   handleAddProfileTag: (tag: string) => void;
   handleDeleteProfileTag: (tag: string) => void;
-  selectedTag?: ITaggedProfile | null;
-  setSelectedTag?: React.Dispatch<React.SetStateAction<ITaggedProfile | null>>;
+  selectedTag?: UserTags | null;
+  setSelectedTag?: React.Dispatch<React.SetStateAction<UserTags | null>>;
   pubkyUser?: string;
   name?: string;
   uriImage?: string;
@@ -69,15 +69,15 @@ export default function ProfileTag({
           );
 
           const matchedFollowedIds = profileTags
-            .flatMap((tag) => tag.from)
-            .filter((profile) => followingIds.includes(profile.author.id));
+            .flatMap((tag) => tag.tagged)
+            .filter((profile) => followingIds.includes(profile.tagger_id));
 
           if (matchedFollowedIds.length > 0) {
             setInitLoadingFollowers(false);
             matchedFollowedIds.forEach((followed) => {
               setFollowedUser((prevState) => ({
                 ...prevState,
-                [followed.author.id]: true,
+                [followed.tagger_id]: true,
               }));
             });
           } else {
@@ -270,12 +270,12 @@ export default function ProfileTag({
                 <>
                   {!selectedTag &&
                     profileTags.map((tag, index) => {
-                      const isTagFound = tag.from.some(
-                        (fromItem) => fromItem.author.id === pubky
+                      const isTagFound = tag.tagged.some(
+                        (fromItem) => fromItem.tagger_id === pubky
                       );
 
-                      const images = tag.from.map(
-                        (fromItem) => fromItem.author.profile.image
+                      const images = tag.tagged.map(
+                        (fromItem) => fromItem.tagger_id.image
                       );
                       const displayedImages = images.slice(0, 4);
                       const extraImagesCount =
@@ -289,20 +289,24 @@ export default function ProfileTag({
                             onClick={(event) => {
                               event.stopPropagation();
                               isTagFound
-                                ? handleDeleteProfileTag(tag.tag)
-                                : handleAddProfileTag(tag.tag);
+                                ? handleDeleteProfileTag(tag?.label)
+                                : handleAddProfileTag(tag?.label);
                             }}
                             color={
-                              tag.tag && Utils.generateRandomColor(tag.tag)
+                              tag?.label &&
+                              Utils.generateRandomColor(tag?.label)
                             }
                           >
                             <div className="flex gap-2 items-center">
-                              {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                              {Utils.minifyText(
+                                tag?.label.replace(' ', ''),
+                                20
+                              )}
                               <Typography.Caption
                                 variant="bold"
                                 className="text-opacity-30"
                               >
-                                {tag.count}
+                                {tag?.tagged?.length}
                               </Typography.Caption>
                             </div>
                           </PostUtil.Tag>
@@ -312,7 +316,7 @@ export default function ProfileTag({
                             size="small"
                             icon={<Icon.MagnifyingGlassLeft size="14" />}
                             onClick={() =>
-                              router.push(`/search?tags=${tag.tag}`)
+                              router.push(`/search?tags=${tag?.label}`)
                             }
                             className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                           />
@@ -366,32 +370,32 @@ export default function ProfileTag({
                         </div>
                         {selectedTag && (
                           <PostUtil.Tag
-                            clicked={selectedTag.from.some(
-                              (fromItem) => fromItem.author.id === pubky
+                            clicked={selectedTag.tagged.some(
+                              (fromItem) => fromItem.tagger_id === pubky
                             )}
                             onClick={(event) => {
                               event.stopPropagation();
-                              selectedTag.from.some(
-                                (fromItem) => fromItem.author.id === pubky
+                              selectedTag.tagged.some(
+                                (fromItem) => fromItem.tagger_id === pubky
                               )
-                                ? handleDeleteProfileTag(selectedTag.tag)
-                                : handleAddProfileTag(selectedTag.tag);
+                                ? handleDeleteProfileTag(selectedTag.label)
+                                : handleAddProfileTag(selectedTag.label);
                             }}
                             color={
-                              selectedTag.tag &&
-                              Utils.generateRandomColor(selectedTag.tag)
+                              selectedTag.label &&
+                              Utils.generateRandomColor(selectedTag.label)
                             }
                           >
                             <div className="flex gap-2 items-center">
                               {Utils.minifyText(
-                                selectedTag.tag.replace(' ', ''),
+                                selectedTag.label.replace(' ', ''),
                                 20
                               )}
                               <Typography.Caption
                                 variant="bold"
                                 className="text-opacity-30"
                               >
-                                {selectedTag.count}
+                                {selectedTag.tagged.length}
                               </Typography.Caption>
                             </div>
                           </PostUtil.Tag>
@@ -401,33 +405,33 @@ export default function ProfileTag({
                           size="small"
                           icon={<Icon.MagnifyingGlassLeft size="14" />}
                           onClick={() =>
-                            router.push(`/search?tags=${selectedTag.tag}`)
+                            router.push(`/search?tags=${selectedTag.label}`)
                           }
                           className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                         />
                       </div>
-                      {selectedTag.from.map((user, userIndex) => {
+                      {selectedTag.tagged.map((user, userIndex) => {
                         const pubkeyUser =
-                          pubky && user?.author?.id.includes(pubky);
+                          pubky && user?.tagger_id.includes(pubky);
                         const isFollowed =
-                          followedUser[user?.author?.id] || false;
+                          followedUser[user?.tagger_id] || false;
                         return (
                           <div
                             key={userIndex}
                             className="w-full flex justify-between gap-10"
                           >
                             <SideCard.User
-                              uri={user?.author?.uri.replace('pubky:', '')}
+                              uri={user?.tagger_id.replace('pubky:', '')}
                               uriImage={
-                                user?.author?.profile?.image ||
+                                user?.tagger_id?.image ||
                                 '/images/Userpic.png'
                               }
                               username={
-                                user?.author?.profile?.name &&
-                                Utils.minifyText(user?.author?.profile?.name)
+                                user?.tagger_id?.name &&
+                                Utils.minifyText(user?.tagger_id?.name)
                               }
                               label={Utils.minifyPubky(
-                                user.author.uri.replace('pubky:', '')
+                                user?.tagger_id.replace('pubky:', '')
                               )}
                             />
                             {pubkeyUser ? (
@@ -445,24 +449,24 @@ export default function ProfileTag({
                             ) : isFollowed ? (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.author?.id]
+                                  loadingFollowers[user?.tagger_id]
                                     ? undefined
-                                    : () => unfollowUser(user?.author?.id)
+                                    : () => unfollowUser(user?.tagger_id)
                                 }
-                                disabled={loadingFollowers[user?.author?.id]}
-                                loading={loadingFollowers[user?.author?.id]}
+                                disabled={loadingFollowers[user?.tagger_id]}
+                                loading={loadingFollowers[user?.tagger_id]}
                                 icon={<Icon.Minus size="16" />}
                                 variant="small"
                               />
                             ) : (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.author?.id]
+                                  loadingFollowers[user?.tagger_id]
                                     ? undefined
-                                    : () => followUser(user?.author?.id)
+                                    : () => followUser(user?.tagger_id)
                                 }
-                                disabled={loadingFollowers[user?.author?.id]}
-                                loading={loadingFollowers[user?.author?.id]}
+                                disabled={loadingFollowers[user?.tagger_id]}
+                                loading={loadingFollowers[user?.tagger_id]}
                                 icon={<Icon.Plus size="16" />}
                                 variant="small"
                               />
