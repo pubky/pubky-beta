@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@social/ui-shared';
 
-import { IPost, TLayouts, TSize } from '@/types';
+import { TLayouts, TSize } from '@/types';
 import Tags from './_Tags';
 import Actions from './_Actions';
 import Header from './_Header';
@@ -20,13 +20,15 @@ import { useState } from 'react';
 import Tooltip from '../Tooltip';
 import { useClientContext, useAlertContext } from '@/contexts';
 import TagsLargeView from './_TagsLargeView';
+import { PostView } from '@/types/Post';
+import { useUserProfile } from '@/hooks/useUser';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
   largeView?: boolean;
   bookmark?: boolean;
   size?: TSize;
-  post: IPost;
+  post: PostView;
   layout?: TLayouts;
   fullContent?: boolean;
   line?: boolean;
@@ -46,13 +48,13 @@ export default function Post({
 }: PostProps) {
   const { pubky, deletePost } = useClientContext();
   const { setContent, setShow } = useAlertContext();
+  const { data } = useUserProfile(post?.details.author);
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const router = useRouter();
   {
     /**const lineBaseCSS = `absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS =
-    'absolute ml-[1px] w-3.5 border-t-2 border-neutral-800';*/
-  }
+    'absolute ml-[1px] w-3.5 border-t-2 border-neutral-800';
 
   const handleDeletePost = async () => {
     const result = await deletePost(post?.id);
@@ -64,17 +66,20 @@ export default function Post({
       setShow(true);
     }
   };
+  */
+  }
 
   return (
     <div
       className="w-full cursor-pointer"
-      onClick={() => router.push(Utils.encodePostUri(post?.uri))}
+      onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
     >
       <div className="flex flex-col">
         <PostUI.Root>
           <div>
-            {post?.post?.embed && !repostView ? (
-              post?.post?.content || post?.post?.files ? (
+            {post?.relationships?.reposted && !repostView ? (
+              post?.details?.content ? (
+                // || post?.post?.files
                 <PostUI.MainCard
                   className={twMerge(
                     largeView && 'p-12 inline-flex flex-row gap-12',
@@ -89,7 +94,10 @@ export default function Post({
                         post={post}
                         fullContent={fullContent}
                       />
-                      {post?.post.embed.post ? (
+                      {post?.relationships?.reposted ? (
+                        <>
+                          {/** Show reposted post*/}
+                          {/** 
                         <PostUI.MainCard className="mt-4">
                           <Header post={post?.post?.embed?.post} />
                           {line && (
@@ -103,6 +111,8 @@ export default function Post({
                             />
                           </div>
                         </PostUI.MainCard>
+                        */}
+                        </>
                       ) : (
                         <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
                           <Typography.Body
@@ -149,33 +159,39 @@ export default function Post({
                         <PostUI.Username
                           className="text-[13px] text-opacity-80"
                           onClick={() =>
-                            router.push(`/profile/${post?.author.id}`)
+                            router.push(`/profile/${post?.details?.author}`)
                           }
                         >
                           <span className="cursor-pointer hover:underline hover:decoration-solid">
-                            {Utils.minifyText(post?.author?.profile?.name)}{' '}
+                            {data?.details?.name &&
+                              Utils.minifyText(data?.details?.name)}{' '}
                           </span>
                           reposted{' '}
                         </PostUI.Username>
-                        {showTooltipProfile !== '' && (
+                        {/**showTooltipProfile !== '' && (
                           <Tooltip.Profile post={post} />
-                        )}
+                        )*/}
                       </TooltipUI.Root>
-                      {(!post?.post.content || !post?.post.embed.post) &&
-                        post?.author.id === pubky && (
+                      {(!post?.details?.content ||
+                        !post?.relationships?.reposted) &&
+                        post?.details?.author === pubky && (
                           <Typography.Body
                             variant="small-bold"
                             className="cursor-pointer text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
-                            onClick={handleDeletePost}
+                            //onClick={handleDeletePost}
                           >
                             Undo repost
                           </Typography.Body>
                         )}
                     </div>
-                    <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
+                    <PostUI.Time>
+                      {Utils.timeAgo(post?.details?.indexed_at)}
+                    </PostUI.Time>
                   </PostUI.RepostCard>
-                  {post?.post.embed.post ? (
-                    <PostUI.MainCard
+                  {post?.relationships?.reposted ? (
+                    <>
+                      {/**Show reposted post */}
+                      {/** <PostUI.MainCard
                       className={twMerge(
                         //'rounded-tl-none rounded-tr-none',
                         largeView && 'p-12 inline-flex flex-row gap-12',
@@ -210,7 +226,8 @@ export default function Post({
                         </div>
                       </div>
                       {largeView && <TagsLargeView post={post} />}
-                    </PostUI.MainCard>
+                    </PostUI.MainCard> */}
+                    </>
                   ) : (
                     <>
                       <div className="mx-[47px] px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">

@@ -72,13 +72,21 @@ export async function getPostStream(
   skip?: number,
   limit?: number,
   sorting?: string
-): Promise<PostStream> {
+): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
 
-  queryParams.append('viewer_id', viewerId || '');
-  queryParams.append('skip', String(skip));
-  queryParams.append('limit', String(limit));
-  queryParams.append('sorting', sorting || '');
+  if (viewerId) {
+    queryParams.append('viewer_id', viewerId);
+  }
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+  if (sorting) {
+    queryParams.append('sorting', String(sorting));
+  }
 
   const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
 
@@ -92,12 +100,18 @@ export async function getPostStreamByUser(
   viewerId?: string,
   skip?: number,
   limit?: number
-): Promise<PostStream> {
+): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
 
-  queryParams.append('viewer_id', viewerId || '');
-  queryParams.append('skip', String(skip));
-  queryParams.append('limit', String(limit));
+  if (viewerId) {
+    queryParams.append('viewer_id', viewerId);
+  }
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
 
   const response = await fetch(
     `${BASE_URL}/stream/posts/user/${userId}?${queryParams}`

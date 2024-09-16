@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useClientContext, useAlertContext } from '@/contexts';
-import { IUserProfile } from '@/types';
 import Modal from '../Modal';
 import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
 import { Section } from './Section';
+import { useUserProfile, useUsernameSearch } from '@/hooks/useUser';
+import { UserView } from '@/types/User';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -47,32 +48,33 @@ export default function CreateContent({
   setArrayTags,
   children,
 }: CreateContentProps) {
-  const { pubky, getProfile, searchUsers } = useClientContext();
+  const { searchUsers, getProfile } = useClientContext();
+  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
+  const { data } = useUserProfile(pubky);
+  const profile = data;
   const { setContent: setContentAlert, setShow } = useAlertContext();
-  const [name, setName] = useState('');
-  const [pic, setPic] = useState('/images/Userpic.png');
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
-  const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
 
-  const searchProfiles = async (text: string) => {
+  const searchProfiles = (text: string) => {
     try {
-      const result = await searchUsers(text);
-      return result || [];
+      const { data } = useUsernameSearch(text, pubky, 0, 5);
+      return data || [];
     } catch (error) {
       console.error('Error searching profiles:', error);
       return [];
     }
   };
 
-  const searchUsername = async (content: string) => {
+  const searchUsername = (content: string) => {
     const pkMatches = content.match(/(pk:[^\s]+)/g);
     const atMatches = content.match(/(@[^\s]+)/g);
 
@@ -83,15 +85,15 @@ export default function CreateContent({
       return;
     }
 
-    let results: IUserProfile[] = [];
+    let results: UserView[] = [];
 
     for (const query of searchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const searchResult = await searchUsers(username);
-        results = [...results, ...(searchResult || [])];
+        const { data } = useUsernameSearch(username);
+        results = [...results, ...(data || [])];
       } else if (query.startsWith('pk:')) {
-        const searchResult = await searchProfiles(query);
+        const searchResult = searchProfiles(query);
         results = [...results, ...(searchResult || [])];
       }
     }
@@ -112,25 +114,6 @@ export default function CreateContent({
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
-
-  async function fetchProfile() {
-    try {
-      if (!pubky) return;
-      const userProfile = await getProfile();
-
-      if (userProfile) {
-        setPic(userProfile?.image || '/images/Userpic.png');
-        setName(userProfile?.name);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -249,7 +232,11 @@ export default function CreateContent({
         largeView ? 'p-12' : 'p-6'
       } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
     >
-      <Section.UserArea uriPic={pic} name={name} largeView={largeView} />
+      <Section.UserArea
+        uriPic={profile?.details?.image}
+        name={profile?.details?.name ?? 'Loading...'}
+        largeView={largeView}
+      />
       <div
         ref={wrapperRef}
         className="w-full flex justify-between gap-6 items-start flex-col"

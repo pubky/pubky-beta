@@ -34,7 +34,8 @@ export interface Bookmark {
 
 export interface PostTag {
   label: string;
-  tagged: Tag[];
+  taggers: Tag[];
+  taggers_count: number;
 }
 
 export interface PostStream {
