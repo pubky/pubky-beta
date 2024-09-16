@@ -11,24 +11,25 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
-import { IPost, ITaggedPost } from '@/types';
+import { ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
 import { useRouter } from 'next/navigation';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { ImageByUri } from '../ImageByUri';
+import { PostTag, PostView } from '@/types/Post';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
-  post: IPost;
+  post: PostView;
 }
 
 export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const router = useRouter();
   const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
     useClientContext();
-  const [tags, setTags] = useState<ITaggedPost[]>([]);
+  const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedPost | null>(null);
+  const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
   const [tag, setTag] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
@@ -39,9 +40,11 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
       setTags(post.tags);
     }
   }, [post?.tags]);
+  {
+    /**
 
   const updatePosts = async () => {
-    const updatedPost = await getPost(post.uri);
+    const updatedPost = await getPost(post?.details?.uri);
 
     if (!updatedPost) return;
 
@@ -62,8 +65,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     updatePosts();
   };
 
-  {
-    /**  const handleTagSearch = (tag: string) => {
+    const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
 
     if (searchTags.length < 3) {
@@ -145,7 +147,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               onChange={handleChange}
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === 'Enter') {
-                  handleAddTag(tag);
+                  //handleAddTag(tag);
                   setTag('');
                 }
               }}
@@ -157,7 +159,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     variant="custom"
                     size="medium"
                     onClick={() => {
-                      handleAddTag(tag);
+                      //handleAddTag(tag);
                       setTag('');
                     }}
                   />
@@ -176,38 +178,40 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           </div>
         )}
         {tags.map((tagObj, index) => {
-          const isTagFound = tagObj.from.some(
-            (fromItem) => fromItem.author.id === pubky
+          const isTagFound = tagObj?.taggers.some(
+            (fromItem) => fromItem.tagger_id === pubky
           );
 
-          const images = tagObj.from.map((fromItem) => {
-            if (fromItem.author?.profile?.image) {
-              return fromItem.author.profile.image;
-            }
-            return '/images/Userpic.png';
-          });
-          const displayedImages = images.slice(0, 4);
-          const extraImagesCount = images.length - displayedImages.length;
+          //const images = tagObj.from.map((fromItem) => {
+          // if (fromItem.author?.profile?.image) {
+          //  return fromItem.author.profile.image;
+          //}
+          // return '/images/Userpic.png';
+          //});
+          //const displayedImages = images.slice(0, 4);
+          //const extraImagesCount = images.length - displayedImages.length;
 
           return (
             <PostUI.Footer key={index}>
               <div className="flex gap-2">
                 <PostUtil.Tag
                   clicked={isTagFound}
-                  color={tagObj.tag && Utils.generateRandomColor(tagObj.tag)}
-                  onClick={() =>
-                    isTagFound
-                      ? handleDeleteTag(tagObj.tag)
-                      : handleAddTag(tagObj.tag)
+                  color={
+                    tagObj?.label && Utils.generateRandomColor(tagObj?.label)
                   }
+                  //onClick={() =>
+                  // isTagFound
+                  //  ? handleDeleteTag(tagObj.tag)
+                  //  : handleAddTag(tagObj.tag)
+                  //}
                 >
                   <div className="flex gap-2 items-center">
-                    {Utils.minifyText(tagObj.tag.replace(' ', ''), 14)}
+                    {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
                     <Typography.Caption
                       variant="bold"
                       className="text-opacity-30"
                     >
-                      {tagObj.count}
+                      {tagObj?.taggers_count}
                     </Typography.Caption>
                   </div>
                 </PostUtil.Tag>
@@ -215,9 +219,10 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   variant="custom"
                   size="small"
                   icon={<Icon.MagnifyingGlassLeft size="14" />}
-                  onClick={() => router.push(`/search?tags=${tagObj.tag}`)}
+                  onClick={() => router.push(`/search?tags=${tagObj?.label}`)}
                   className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                 />
+                {/**
                 <div
                   onClick={() => setShowModalTag(true)}
                   className="cursor-pointer flex items-center"
@@ -240,6 +245,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     </PostUtil.Counter>
                   )}
                 </div>
+                */}
               </div>
               {/* <Button.Action
                 variant="custom"
@@ -269,6 +275,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           );
         })}
       </div>
+      {/** 
       <Modal.Tag
         post={post}
         tags={tags}
@@ -279,6 +286,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
       />
+      */}
     </div>
   );
 }

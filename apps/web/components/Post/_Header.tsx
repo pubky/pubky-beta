@@ -10,11 +10,12 @@ import {
 } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
-import { IPost } from '@/types';
 import Tooltip from '../Tooltip';
+import { PostView } from '@/types/Post';
+import { useUserProfile } from '@/hooks/useUser';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
-  post: IPost;
+  post: PostView;
   largeView?: boolean;
   repostView?: boolean;
 }
@@ -25,6 +26,8 @@ export default function Header({
   repostView = false,
 }: PostProps) {
   const router = useRouter();
+  const { data } = useUserProfile(post?.details?.author);
+  console.log('dataUser', data);
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
 
@@ -34,11 +37,11 @@ export default function Header({
         className="justify-start items-center gap-4 flex cursor-pointer"
         onClick={(event) => {
           event.stopPropagation();
-          router.push(`/profile/${post?.author?.id}`);
+          router.push(`/profile/${post?.details?.author}`);
         }}
       >
         <PostUI.ImageUser
-          uriImage={post?.author?.profile?.image || '/images/Userpic.png'}
+          uriImage={data?.details?.image || '/images/Userpic.png'}
           alt="user"
           width={largeView ? 48 : 32}
           height={largeView ? 48 : 32}
@@ -54,20 +57,19 @@ export default function Header({
                 largeView && 'text-2xl'
               } hover:underline hover:decoration-solid`}
             >
-              {post?.author?.profile?.name &&
-                Utils.minifyText(post?.author?.profile?.name, 24)}
+              {data?.details?.name && Utils.minifyText(data?.details?.name, 24)}
             </PostUI.Username>
             {!repostView && (
               <Typography.Label className="cursor-pointer text-opacity-30">
-                {Utils.minifyPubky(post?.author?.id)}
+                {Utils.minifyPubky(post?.details?.author)}
               </Typography.Label>
             )}
           </div>
-          {showTooltipProfile !== '' && <Tooltip.Profile post={post} />}
+          {/** showTooltipProfile !== '' && <Tooltip.Profile post={post} />*/}
         </TooltipUI.Root>
       </div>
       <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
-        {Utils.timeAgo(post?.createdAt)}
+        {Utils.timeAgo(post?.details.indexed_at)}
       </PostUI.Time>
     </PostUI.Header>
   );

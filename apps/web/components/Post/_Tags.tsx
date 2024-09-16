@@ -11,30 +11,31 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { useClientContext } from '@/contexts';
-import { IPost, ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
+import { PostTag, PostView } from '@/types/Post';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
-  post: IPost;
+  post: PostView;
   largeView?: boolean;
 }
 
 export default function Tags({ post, largeView = false }: PostProps) {
   const [showTooltipTag, setShowTooltipTag] = useState('');
-  const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
-    useClientContext();
-  const [tags, setTags] = useState<ITaggedPost[]>([]);
+  const { pubky } = useClientContext();
+  const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedPost | null>(null);
+  const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
 
   useEffect(() => {
     if (post?.tags) {
       //const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
-      setTags(post.tags);
+      setTags(post?.tags);
     }
   }, [post?.tags]);
+  {
+    /**
 
   const updatePosts = async () => {
     const updatedPost = await getPost(post.uri);
@@ -58,8 +59,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
     updatePosts();
   };
 
-  {
-    /**  const handleTagSearch = (tag: string) => {
+   const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
 
     if (searchTags.length < 3) {
@@ -94,8 +94,8 @@ export default function Tags({ post, largeView = false }: PostProps) {
         />
         {!largeView &&
           tags.map((tagObj, index) => {
-            const isTagFound = tagObj.from.some(
-              (fromItem) => fromItem.author.id === pubky
+            const isTagFound = tagObj?.taggers.some(
+              (fromItem) => fromItem.tagger_id === pubky
             );
 
             return (
@@ -103,32 +103,34 @@ export default function Tags({ post, largeView = false }: PostProps) {
                 <TooltipUI.Root
                   delay={800}
                   setShowTooltip={setShowTooltipTag}
-                  tagId={tagObj.tag}
+                  tagId={tagObj?.label}
                 >
-                  {showTooltipTag === tagObj.tag && (
+                  {/**showTooltipTag === tagObj?.label && (
                     <Tooltip.Tag2
                       setSelectedTag={setSelectedTag}
                       setShowModalTags={setShowModalTag}
                       tags={tagObj}
                     />
-                  )}
+                  )*/}
                   <PostUtil.Tag
                     id={`tag-${index}`}
                     clicked={isTagFound}
-                    color={tagObj.tag && Utils.generateRandomColor(tagObj.tag)}
-                    onClick={() =>
-                      isTagFound
-                        ? handleDeleteTag(tagObj.tag)
-                        : handleAddTag(tagObj.tag)
+                    color={
+                      tagObj?.label && Utils.generateRandomColor(tagObj?.label)
                     }
+                    //onClick={() =>
+                    // isTagFound
+                    //  ? handleDeleteTag(tagObj.tag)
+                    //  : handleAddTag(tagObj.tag)
+                    //}
                   >
                     <div className="flex gap-2 items-center">
-                      {Utils.minifyText(tagObj.tag.replace(' ', ''), 14)}
+                      {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
                       <Typography.Caption
                         variant="bold"
                         className="text-opacity-30"
                       >
-                        {tagObj.count}
+                        {tagObj?.taggers_count}
                       </Typography.Caption>
                     </div>
                   </PostUtil.Tag>
@@ -161,6 +163,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
             );
           })}
       </div>
+      {/** 
       <Modal.Tag
         post={post}
         tags={tags}
@@ -171,6 +174,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
       />
+      */}
     </div>
   );
 }

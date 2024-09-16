@@ -8,10 +8,11 @@ import { useClientContext, useAlertContext, useToastContext } from '@/contexts';
 import { IPost } from '@/types';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
+import { PostView } from '@/types/Post';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
-  post: IPost;
-  repost?: IPost;
+  post: PostView;
+  repost?: string;
   deleteRepost?: boolean;
 }
 
@@ -30,7 +31,8 @@ export default function Actions({
   const [showModalReply, setShowModalReply] = useState(false);
   const [showRepostMenu, setShowRepostMenu] = useState(false);
 
-  const handleAddBookmark = async (postId: string, uri: string) => {
+  {
+    /** const handleAddBookmark = async (postId: string, uri: string) => {
     await createBookmark(postId, uri);
   };
 
@@ -107,6 +109,8 @@ export default function Actions({
       setShowToast(true);
     }
   };
+  */
+  }
 
   return (
     <div
@@ -119,14 +123,14 @@ export default function Actions({
           size="small"
           variant="custom"
           icon={<Icon.ChatCircleText size="16" />}
-          counter={post?.repliesCount}
+          counter={post?.counts?.replies}
           onClick={(event) => {
             event.stopPropagation();
             setShowModalReply(true);
           }}
         />
         <div className="relative">
-          {showRepostMenu && (
+          {/**showRepostMenu && (
             <Tooltip.RepostMenu
               setShowRepostMenu={setShowRepostMenu}
               setShowModalRepost={setShowModalRepost}
@@ -134,7 +138,7 @@ export default function Actions({
               deleteRepost={deleteRepost}
               handleDeleteRepost={handleDeleteRepost}
             />
-          )}
+          )*/}
           <Button.Action
             id='repost-btn'
             size="small"
@@ -146,7 +150,7 @@ export default function Actions({
                 //color={deleteRepost ? '#00BA7C' : 'white'}
               />
             }
-            counter={post?.repostsCount}
+            counter={post?.counts?.reposts}
             onClick={(event) => {
               event.stopPropagation();
               //setShowRepostMenu(true);
@@ -161,35 +165,36 @@ export default function Actions({
           icon={
             <Icon.BookmarkSimple
               size="16"
-              opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
+              //opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
               color={
-                repost?.bookmark?.id
-                  ? 'white'
-                  : post?.bookmark?.id
-                  ? 'white'
-                  : 'white'
+                //  repost?.bookmark?.id
+                //   ? 'white'
+                //   : post?.bookmark?.id
+                //   ? 'white'
+                // :
+                'white'
               }
             />
           }
-          onClick={() =>
-            handleBookmarks(
-              repost,
-              post,
-              handleAddBookmark,
-              handleDeleteBookmark,
-              setContentToast,
-              setShowToast
-            )
-          }
+          //onClick={() =>
+          //  handleBookmarks(
+          //    repost,
+          //   post,
+          //   handleAddBookmark,
+          //    handleDeleteBookmark,
+          //   setContentToast,
+          //   setShowToast
+          // )
+          //}
         />
         <div className="relative" onClick={(event) => event.stopPropagation()}>
-          {showMenu && (
+          {/**{showMenu && (
             <Tooltip.Menu
               post={post}
               repost={repost}
               setShowMenu={setShowMenu}
             />
-          )}
+          )}*/}
           <Button.Action
             id='menu-btn'
             size="small"
@@ -202,6 +207,7 @@ export default function Actions({
           />
         </div>
       </PostUI.Actions>
+      {/** 
       <Repost
         post={post}
         handleRepost={handleRepost}
@@ -213,6 +219,7 @@ export default function Actions({
         showModalReply={showModalReply}
         setShowModalReply={setShowModalReply}
       />
+      */}
     </div>
   );
 }

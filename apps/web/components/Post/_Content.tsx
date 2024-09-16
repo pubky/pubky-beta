@@ -1,7 +1,7 @@
 'use client';
 
 import { useClientContext } from '@/contexts';
-import { IFileContent, IPost } from '@/types';
+import { IFileContent } from '@/types';
 import { Utils } from '@social/utils-shared';
 import getYouTubeID from 'get-youtube-id';
 import LinkPreview from 'libs/ui-shared/src/lib/Post/_Preview';
@@ -12,9 +12,10 @@ import FilesCarousel from '../Modal/_FilesCarousel';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
+import { PostView } from '@/types/Post';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
-  post: IPost;
+  post: PostView;
   fullContent?: boolean;
   largeView?: boolean;
   children?: React.ReactNode;
@@ -34,9 +35,9 @@ export default function Content({
   const [fileContents, setFileContents] = useState<IFileContent[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
-  const text = post?.post?.content;
-  const files = post?.post?.files;
-  const uri = post?.uri;
+  const text = post?.details?.content;
+  const files = null; // post?.post?.files;
+  const uri = post?.details?.uri;
 
   function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
