@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { IUserProfile } from '@/types';
+import { useUsernameSearch } from '@/hooks/useUser';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -17,32 +17,19 @@ export default function SearchInputCard({
   ...rest
 }: SearchInputCardProps) {
   const router = useRouter();
-  const { hotTags, searchUsers } = useClientContext();
-  const [searchedUsers, setSearchedUsers] = useState<IUserProfile[] | null>();
+  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
+  const { hotTags } = useClientContext();
+  const { data, isError } = useUsernameSearch(inputValue ?? '', pubky, 0, 10);
+  const searchedUsers = data;
   const [loading, setLoading] = useState(true);
+
+  if (isError) console.error(isError);
 
   useEffect(() => {
     if (hotTags) {
       setLoading(false);
     }
   }, [hotTags]);
-
-  useEffect(() => {
-    if (inputValue) {
-      SearchListUsers(inputValue);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue]);
-
-  const SearchListUsers = async (inputValue: string) => {
-    const result = await searchUsers(inputValue);
-    if (result) {
-      setSearchedUsers(result);
-    } else {
-      setSearchedUsers([]);
-    }
-  };
-
   {
     /** const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
@@ -85,11 +72,11 @@ export default function SearchInputCard({
           </div>
           {searchedUsers.map((user) => (
             <SideCard.User
-              key={user.userId}
-              uri={user.userId}
-              uriImage={user.profile?.image || '/images/Userpic.png'}
-              username={Utils.minifyText(user.profile?.name)}
-              label={Utils.minifyPubky(user.userId)}
+              key={user.details.id}
+              uri={user.details.id}
+              uriImage={user?.details?.image || '/images/Userpic.png'}
+              username={Utils.minifyText(user?.details?.name)}
+              label={Utils.minifyPubky(user?.details?.id)}
             />
           ))}
         </div>
