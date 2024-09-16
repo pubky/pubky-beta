@@ -5,7 +5,7 @@ import { Skeleton } from '@/components';
 import ContactsProfile from './_ContactsProfile/ContactsProfile';
 import { useClientContext, useNotificationsContext } from '@/contexts';
 import TaggedAs from './_TaggedAs';
-import { IUserProfile } from '@/types';
+import { UserView } from '@/types/User';
 
 const tabs = [
   {
@@ -67,7 +67,7 @@ export default function FilterTabs({
     friends: number;
   };
   loading: boolean;
-  profile: IUserProfile | undefined;
+  profile: UserView | null;
 }) {
   const { notifications, loading: loadingNotifications } =
     useNotificationsContext();
@@ -122,7 +122,7 @@ export default function FilterTabs({
       case 'friends':
         return countContacts.friends || 0;
       case 'tagged':
-        return profile?.taggedAs.length || 0;
+        return profile?.tags.length || 0;
       default:
         return null;
     }
