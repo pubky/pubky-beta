@@ -1,15 +1,14 @@
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import { Typography } from '@social/ui-shared';
 import Skeletons from '@/components/Skeletons';
-import { useClientContext } from '@/contexts';
-import {
-  IFollowingResponse,
-  IFollowersResponse,
-  IFriendsResponse,
-  TContacts,
-} from '@/types';
+import { TContacts } from '@/types';
 import Root from './_Root';
 import Contact from './_Contact';
+import {
+  UseUserFollowers,
+  UseUserFollowing,
+  UseUserFriends,
+} from '@/hooks/useUser';
 
 type ContactsContentProps = {
   contacts: TContacts;
@@ -17,7 +16,19 @@ type ContactsContentProps = {
 };
 
 const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
-  const { pubky, listFollowing, listFollowers } = useClientContext();
+  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const usePubky = creatorPubky ?? pubky;
+  const { data, isLoading, isError } =
+    contacts === 'followers'
+      ? UseUserFollowers(usePubky, 0, 10)
+      : contacts === 'following'
+      ? UseUserFollowing(usePubky, 0, 10)
+      : UseUserFriends(usePubky, 0, 10);
+  const contactUsers = data;
+
+  if (isError) console.error(isError);
+  {
+    /** 
   const [loading, setLoading] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState(true);
   const [contactsUsers, setContactsUsers] = useState<
@@ -90,16 +101,18 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
       contactsToShow = contactsUsers.friends || [];
     }
   }
+    */
+  }
 
   return (
     <>
-      {loadingContacts || loading ? (
+      {isLoading ? (
         <div className="mt-12">
           <Skeletons.Simple />
         </div>
-      ) : contactsUsers?.count ?? 0 > 0 ? (
+      ) : contactUsers?.length ?? 0 > 0 ? (
         <Root>
-          <Contact contacts={contactsToShow} />
+          <Contact contacts={contactUsers} isLoading={isLoading} />
         </Root>
       ) : contacts === 'followers' ? (
         <Typography.H2 id='profile-no-followers' className="mt-[100px] font-normal text-opacity-50 text-center">
