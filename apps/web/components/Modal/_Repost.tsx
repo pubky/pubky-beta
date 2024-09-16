@@ -85,6 +85,7 @@ export default function Repost({
       <div className="flex items-center relative">
         <div className="w-full mt-6">
           <CreateContent
+            id='repost-create-content'
             handleSubmit={handleSubmitRepost}
             content={contentRepost}
             setContent={setContentRepost}
@@ -97,6 +98,7 @@ export default function Repost({
             placeHolder="Optional comment"
             button={
               <Button.Medium
+                id='repost-btn'
                 className="w-auto"
                 variant="line"
                 icon={<Icon.Repost color="white" />}

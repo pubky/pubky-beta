@@ -1,6 +1,8 @@
 'use client';
-
- import { Icon, Input, SideCard, Typography } from '@social/ui-shared';
+  
+import { useClientContext } from '@/contexts';
+import { IProfile } from '@/types';
+import { Input, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import { ImageByUri } from '../ImageByUri';
@@ -14,22 +16,28 @@ export default function Feedback() {
   const profile = data;
   const [message, setMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
   const [error, setError] = useState(false);
 
   const handleSubmit = async () => {
     try {
-      setMessage('');
+      setLoading(true);
       await axios.post('https://synonym.to/api/chatwoot', {
         message,
         name: profile?.details?.name,
         email: `${pubky}@pubky.app`,
         source: 'pubky',
       });
-      setShowModal(true);
+      setSent(true);
+      //setShowModal(true);
+      setLoading(false);
+      setMessage('');
     } catch (error) {
       console.error(error);
       setError(true);
-      setShowModal(true);
+      //setShowModal(true);
+      setLoading(false);
     }
   };
 
@@ -50,17 +58,10 @@ export default function Feedback() {
               <Typography.Body variant="medium-bold">
                 {Utils.minifyText(profile?.details?.name ?? 'Loading...', 10)}
               </Typography.Body>
+
             </div>
-            <Input.TextArea
-              value={message}
-              onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                const target = e.target as HTMLTextAreaElement;
-                setMessage(target.value);
-              }}
-              placeholder="What do you think about Pubky? Any suggestions?"
-            />
           </div>
-        </div>
+          {/**
         <SideCard.Action
           icon={<Icon.Envelope size="16" color="gray" />}
           disabled={!message}
@@ -68,12 +69,22 @@ export default function Feedback() {
           className="mt-4"
           text="Submit Feedback"
         />
-      </SideCard.Content>
+        */}
+        </SideCard.Content>
+      </div>
       <Modal.Feedback
         showModal={showModal}
         setShowModal={setShowModal}
         error={error}
+        setError={setError}
+        sent={sent}
+        setSent={setSent}
+        profile={profile}
+        message={message}
+        setMessage={setMessage}
+        handleSubmit={handleSubmit}
+        loading={loading}
       />
-    </div>
+    </>
   );
 }

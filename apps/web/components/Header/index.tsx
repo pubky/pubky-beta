@@ -135,6 +135,7 @@ export default function Header({ title, className }: HeaderProps) {
           </Input.SearchTags>
         )}
         <Input.SearchInput
+          id="header-search-input"
           value={inputValue}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setInputValue(e.target.value)
@@ -166,7 +167,15 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Feed"
             active={title === 'Feed'}
-            icon={<Icon.Activity size="24" />}
+            className={
+              title === 'Feed' ? 'bg-opacity-100 hover:bg-opacity-100' : ''
+            }
+            icon={
+              <Icon.Activity
+                size="24"
+                color={title === 'Feed' ? '#05050a' : 'white'}
+              />
+            }
           />
         </Link>
         <Link href="/hot-tags">
@@ -175,7 +184,15 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Hot&#160;Tags"
             active={title === `HotTags`}
-            icon={<Icon.Fire size="24" />}
+            className={
+              title === 'HotTags' ? 'bg-opacity-100 hover:bg-opacity-100' : ''
+            }
+            icon={
+              <Icon.Fire
+                size="24"
+                color={title === 'HotTags' ? '#05050a' : 'white'}
+              />
+            }
           />
         </Link>
         {/**
@@ -195,7 +212,15 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Settings"
             active={title === 'Settings'}
-            icon={<Icon.GearSix size="24" />}
+            className={
+              title === 'Settings' ? 'bg-opacity-100 hover:bg-opacity-100' : ''
+            }
+            icon={
+              <Icon.GearSix
+                size="24"
+                color={title === 'Settings' ? '#05050a' : 'white'}
+              />
+            }
           />
         </Link>
         <Link href="/profile" className="w-[48px] relative">
@@ -211,7 +236,9 @@ export default function Header({ title, className }: HeaderProps) {
             id="header-profile-pic"
             width={48}
             height={48}
-            className={`rounded-full w-[48px] h-[48px]`}
+            className={`${
+              title === 'Profile' && 'border-2 border-white'
+            } rounded-full w-[48px] h-[48px]`}
             alt="user-pic"
             uri={profile?.details?.image}
           />

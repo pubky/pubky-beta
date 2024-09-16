@@ -115,19 +115,19 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
           <Contact contacts={contactUsers} isLoading={isLoading} />
         </Root>
       ) : contacts === 'followers' ? (
-        <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2 id='profile-no-followers' className="mt-[100px] font-normal text-opacity-50 text-center">
           No followers yet
         </Typography.H2>
       ) : contacts === 'following' ? (
-        <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2 id='profile-no-following' className="mt-[100px] font-normal text-opacity-50 text-center">
           No following yet
         </Typography.H2>
       ) : contacts === 'friends' ? (
-        <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2 id='profile-no-friends' className="mt-[100px] font-normal text-opacity-50 text-center">
           No friends yet
         </Typography.H2>
       ) : (
-        <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2 id='profile-no-contacts' className="mt-[100px] font-normal text-opacity-50 text-center">
           No contacts yet
         </Typography.H2>
       )}

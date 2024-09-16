@@ -14,14 +14,162 @@
 declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    login(email: string, password: string): void;
+    signOut(hasBackup: boolean): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    signIn(backupFilepath : string, passcode? : string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    onboardAsNewUser(profileName: string, profileBio?: string, pubkyAlias?: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    backupRecoveryFile(passcode?: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    deleteDownloadsFolder(): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    deleteFile(filePath: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    renameFile(fromPath: string, toPath: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    innerTextShouldEq(elem: string, text: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    saveCopiedPubkyToAlias(alias: string): void;
   }
 }
 
-// -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-  console.log('Custom command example: Login', email, password);
+Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : string = '', pubkyAlias? : string) => {
+  cy.visit('/onboarding');
+
+  cy.get('#onboarding-get-started-link').click();
+  cy.location('pathname').should('eq', '/onboarding/intro');
+
+  cy.get('#onboarding-sign-in-btn').click();
+  cy.location('pathname').should('eq', '/onboarding/sign-in');
+
+  cy.get('#onboarding-sign-up-link').click();
+  cy.location('pathname').should('eq', '/onboarding/sign-up');
+
+  cy.get('#onboarding-name-input').type(profileName);
+  profileBio ? cy.get('#onboarding-bio-input').type(profileBio) : null;
+
+  cy.get('#onboarding-submit-button').click();
+
+  cy.location('pathname').should('eq', '/onboarding/pubky');
+
+  // store pubky as an alias for future use
+  // will only work if called from before or beforeEach
+  if (pubkyAlias) {
+    cy.get('#onboarding-copy-pubky-btn').click();
+    cy.saveCopiedPubkyToAlias(pubkyAlias);
+  };
+
+  cy.get('#onboarding-confirm-link').click();
+
+  cy.location('pathname').should('eq', '/onboarding/confirm');
+
+  cy.get('#onboarding-start-exploring-btn').click();
+  cy.location('pathname').should('eq', '/home');
 });
+
+Cypress.Commands.add('signOut', (hasBackedUp : boolean) => {
+  cy.get('#header-profile-pic').click();
+  cy.location('pathname').should('eq', '/profile');
+
+  cy.get('#profile-sign-out-btn').click();
+
+  // sign out model only shows if user has not backed up recovery file
+  if (!hasBackedUp) cy.get('#logout-modal-sign-out-btn').click();
+
+  cy.location('pathname').should('eq', '/logout');
+
+  cy.get('#logout-link').click();
+  cy.location('pathname').should('eq', '/sign-in');
+});
+
+Cypress.Commands.add('signIn', (backupFilepath : string, passcode = '123456') => {
+  cy.location('pathname').then((currentPath) => {
+    if (currentPath !== '/sign-in') {
+      cy.visit('/sign-in');
+    };
+  });
+  cy.location('pathname').should('eq', '/sign-in');
+
+  cy.get('#fileInput').selectFile(
+    backupFilepath,
+    { force: true } // force to bypass visibility check of hidden input field
+  );
+  cy.get('#onboarding-password-input').type(passcode);
+  cy.get('#onboarding-sign-in-button').click();
+
+  cy.location('pathname').should('eq', '/home');
+});
+
+Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
+      // backup recovery file
+      cy.get('#remind-backup-now-btn').click();
+      cy.get('#backup-recovery-file-btn').click();
+      cy.get('#backup-recovery-file-password-input').type(passcode);
+      cy.get('#backup-download-recovery-file-btn').click();
+});
+
+Cypress.Commands.add('deleteDownloadsFolder', () => {
+  const downloadsFolder = Cypress.config('downloadsFolder');
+  cy.task('deleteFolder', downloadsFolder);
+});
+
+Cypress.Commands.add('deleteFile', (filePath : string) => {
+  cy.task('deleteFile', filePath).then(() => {
+    cy.log(`${filePath} has been deleted`);
+  });
+});
+
+Cypress.Commands.add('renameFile', (fromPath : string, toPath : string) => {
+  cy.task('renameFile', { fromPath, toPath }).then(() => {
+    cy.log(`File has been renamed from ${fromPath} to ${toPath}`);
+  });
+});
+
+// Useful when 'should.be' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldEq', (elem : string, text : string) => {
+  cy.get(elem).should(($elem) => {
+    expect($elem.get(0).innerText).to.eq(text);
+  });
+});
+
+// Stores the clipboard contents to an alias for later use
+// see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
+// note: aliases work in the context of as test and only the first test after before
+Cypress.Commands.add('saveCopiedPubkyToAlias', (alias : string) => {
+  cy.window().then((win) => {
+    // ensure focus is on the window before attempting to read clipboard
+    win.focus();
+    // requires browser to be in focus
+    return win.navigator.clipboard.readText().then((text) => {
+      // assert that pubky was copied to clipboard in correct format
+      expect(text).to.match(/^pk:/);
+      return text;
+    });
+    // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
+    // so an additional 'then' is needed to guarantee the alias is stored before the next test step
+  }).then((text) => {
+    // store pubky as alias
+    cy.wrap(text).as(alias);
+  });
+});
+
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
@@ -33,11 +181,3 @@ Cypress.Commands.add('login', (email, password) => {
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-
-// To prevent Cypress from failing the test when:
-// `Uncaught SyntaxError: Invalid or unexpected token` on Chrome, and
-// `Uncaught SyntaxError: "" literal not terminated before end of script` on firefox.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// Cypress.on('uncaught:exception', (_err, _runnable) => {
-//   return false
-// })

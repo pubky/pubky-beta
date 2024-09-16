@@ -32,7 +32,7 @@ export default function Index() {
           </div>
           <div className="justify-center items-center gap-2.5 inline-flex">
             {pubky ? (
-              <Typography.H2 className="text-[31px] font-light" variant="light">
+              <Typography.H2 id='onboarding-pubky' className="text-[31px] font-light" variant="light">
                 pk:{pubky}
               </Typography.H2>
             ) : (
@@ -52,6 +52,7 @@ export default function Index() {
           </Button.Large>
         </Link>
         <Button.Large
+          id="onboarding-copy-pubky-btn"
           icon={<Icon.Clipboard />}
           className="w-[250px]"
           variant="secondary"

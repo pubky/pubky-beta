@@ -86,7 +86,7 @@ export default function Index() {
           </Components.Sidebar>
         )}
         <Components.PostsLayout
-          className={`${getPostsLayoutClass(
+          id='posts-feed' className={`${getPostsLayoutClass(
             layout
           )} flex-col inline-flex gap-3`}
         >
