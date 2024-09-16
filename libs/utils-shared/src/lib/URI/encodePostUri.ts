@@ -4,16 +4,16 @@ export const encodePostUri = (uri: string) => {
 
   if (!uri) return '';
 
-  const parts = uri.split('/');
+  const cleanUri = uri.slice(8);
 
-  if (parts.length < 4) return '';
+  const parts = cleanUri.split('/');
 
-  const pubky = parts[0].split(':')[1];
-  const postId = parts[3];
+  const publicKey = parts[0];
+  const postId = parts[parts.length - 1];
 
-  if (!pubky || !postId) return '';
+  const encodedUri = `/post/${publicKey}/${postId}`;
 
-  return `/post/${pubky}/${postId}`;
+  return encodedUri;
 };
 
 export default encodePostUri;
