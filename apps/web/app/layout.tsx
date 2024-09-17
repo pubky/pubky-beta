@@ -12,6 +12,7 @@ import {
   ToastWrapper,
 } from '@/contexts';
 import { ProtectedRoutes } from '@/components';
+import { PubkyClientWrapper } from '@/contexts/_pubky';
 
 export default function RootLayout({
   children,
@@ -23,19 +24,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <QueryClientProvider client={queryClient}>
-          <FilterWrapper>
-            <ClientWrapper>
-              <AlertWrapper>
-                <NotificationsWrapper>
-                  <ToastWrapper>
-                    <ProtectedRoutes>{children}</ProtectedRoutes>
-                  </ToastWrapper>
-                </NotificationsWrapper>
-              </AlertWrapper>
-            </ClientWrapper>
-          </FilterWrapper>
-        </QueryClientProvider>
+        <PubkyClientWrapper>
+          <QueryClientProvider client={queryClient}>
+            <FilterWrapper>
+              <ClientWrapper>
+                <AlertWrapper>
+                  <NotificationsWrapper>
+                    <ToastWrapper>
+                      <ProtectedRoutes>{children}</ProtectedRoutes>
+                    </ToastWrapper>
+                  </NotificationsWrapper>
+                </AlertWrapper>
+              </ClientWrapper>
+            </FilterWrapper>
+          </QueryClientProvider>
+        </PubkyClientWrapper>
       </body>
     </html>
   );
