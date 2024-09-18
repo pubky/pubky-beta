@@ -8,15 +8,16 @@ import BioSection from './_BioSection';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
 import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Sidebar({
   creatorPubky,
 }: {
   creatorPubky?: string | null;
 }) {
-  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const { pubky } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
-  const { data, isLoading, isError } = useUserProfile(usePubky);
+  const { data, isLoading, isError } = useUserProfile(usePubky ?? '');
   if (isError) console.error(isError);
   const profile = data;
   console.log('PROFILESS', data);
@@ -162,7 +163,7 @@ export default function Sidebar({
           uriImage={image}
           name={name}
           creatorPubky={creatorPubky}
-          pubkyUser={usePubky}
+          pubkyUser={usePubky ?? ''}
           showProfileMenu={showProfileMenu}
           setShowProfileMenu={setShowProfileMenu}
           bio={bio}

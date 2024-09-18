@@ -4,13 +4,13 @@ import { useRef } from 'react';
 import { Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
 import Skeletons from '@/components/Skeletons';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { useBookmarkedPosts } from '@/hooks/usePost';
 
 export default function Bookmarks() {
-  const { posts } = useClientContext();
-  const pubky = 'y4euc58gnmxun9wo87gwmanu6kztt9pgw1zz1yp1azp7trrsjamy';
-  const { data, isLoading } = useBookmarkedPosts(pubky, '', 0, 10);
+  //const { posts } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  const { data, isLoading } = useBookmarkedPosts(pubky ?? '', '', 0, 10);
   const results = data;
   const loader = useRef(null);
 

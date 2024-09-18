@@ -4,11 +4,12 @@ import { useRef } from 'react';
 import { Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
 import { usePostStreamByUser } from '@/hooks/usePost';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
-  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const { pubky } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
-  const { data, isLoading, isError } = usePostStreamByUser(usePubky);
+  const { data, isLoading, isError } = usePostStreamByUser(usePubky ?? '');
   console.log('POSTSS', data);
 
   if (isError) console.error(isError);
