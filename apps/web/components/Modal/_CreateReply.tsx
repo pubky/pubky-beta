@@ -125,7 +125,7 @@ export default function CreateReply({
             setArrayTags={setArrayTags}
             button={
               <Button.Medium
-                id='reply-button'
+                id='reply-btn'
                 className="w-auto"
                 variant="line"
                 icon={

@@ -19,6 +19,9 @@ describe('posts', () => {
   });
 
   beforeEach(() => {
+    // in case it gets changed by a test and not reset
+    cy.slowDown(defaultMs);
+
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
@@ -368,12 +371,18 @@ describe('posts', () => {
     cy.get('#posts-feed').children().eq(1).within(() => {
       cy.get('#repost-btn').click();
     });
-    cy.get('#modal-root').should('be.visible').within(() => {
+    cy.get('#modal-root').should('be.visible').within(($modal) => {
       cy.get('h1').contains('Repost');
+      // check that the post content is displayed in the repost modal
+      cy.wrap($modal).contains(postContent);
       cy.get('textarea').should('have.value', '');
       cy.get('textarea').type(repostContent);
       cy.get('#repost-btn').click();
     });
+
+    // check repost message is shown (before the alert disappears)
+    cy.get('#message-alert').should('be.visible').and('contain.text', 'Repost');
+    cy.slowDown(defaultMs);
 
     // verify the repost with content is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
@@ -403,7 +412,6 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // repost without content
-    cy.slowDown(fastMs);
     cy.get('#posts-feed').children().eq(1).within(() => {
       cy.get('#repost-btn').click();
     });
@@ -438,7 +446,6 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // repost
-    cy.slowDown(fastMs);
     cy.get('#posts-feed').children().eq(1).within(() => {
       cy.get('#repost-btn').click();
     });
@@ -463,7 +470,39 @@ describe('posts', () => {
     });
   });
 
-  // can reply to a post and delete the reply
+  // todo: consider creating user to create the post to reply to
+  it('can reply to a post and delete the reply', () => {
+    // create a post to reply to
+    const postContent = `This post will be replied to! ${Date.now()}`;
+    const replyContent = `This is my reply! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // reply to the post
+    cy.slowDown(fastMs);
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#reply-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(($modal) => {
+      cy.get('h1').contains('Reply');
+      // check that the post content is displayed in the reply modal
+      cy.wrap($modal).contains(postContent);
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(replyContent);
+      cy.get('#reply-btn').click();
+    });
+
+    // check reply message is shown (before the alert disappears)
+    cy.get('#message-alert').should('be.visible').and('contain.text', 'Reply');
+    cy.slowDown(defaultMs);
+
+    // verify the reply is displayed correctly in feed
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+    cy.get('#posts-feed').children().eq(1).within(($post) => {
+      cy.wrap($post).innerTextShouldContain(postContent);
+      cy.wrap($post).innerTextShouldContain(replyContent);
+    });
+  });
 
   // can see reply of a deleted post
 
