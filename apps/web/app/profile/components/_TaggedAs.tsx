@@ -1,8 +1,8 @@
 import { Skeleton } from '@/components';
 import { ImageByUri } from '@/components/ImageByUri';
 import { useUserProfile } from '@/hooks/useUser';
-import { useClientContext } from '@/contexts';
-import { UserTags, UserView } from '@/types/User';
+import { usePubkyClientContext } from '@/contexts';
+import { UserView } from '@/types/User';
 import {
   Button,
   Icon,
@@ -26,9 +26,9 @@ export default function TaggedAs({
 }: TaggedAsProps) {
   const router = useRouter();
   // const { pubky, deleteTag, createTag } = useClientContext();
-  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const { pubky } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
-  const { data } = useUserProfile(usePubky);
+  const { data } = useUserProfile(usePubky ?? '');
   const name = data?.details?.name;
   //const image = data?.details?.image;
   const profileTags = data?.tags;
@@ -75,7 +75,8 @@ export default function TaggedAs({
                   (fromItem) => fromItem?.tagger_id?.image
                 );
                 const displayedImages = images?.slice(0, 15);
-                const extraImagesCount = images?.length - displayedImages?.length;
+                const extraImagesCount =
+                  images?.length - displayedImages?.length;
 
                 return (
                   <div className="flex gap-2" key={index}>

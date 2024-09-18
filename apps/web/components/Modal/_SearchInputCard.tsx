@@ -2,7 +2,7 @@ import { useRouter } from 'next/navigation';
 import { Card, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { useClientContext } from '@/contexts';
+import { useClientContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useUsernameSearch } from '@/hooks/useUser';
 
@@ -17,7 +17,7 @@ export default function SearchInputCard({
   ...rest
 }: SearchInputCardProps) {
   const router = useRouter();
-  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
+  const { pubky } = usePubkyClientContext();
   const { hotTags } = useClientContext();
   const { data, isError } = useUsernameSearch(inputValue ?? '', pubky, 0, 10);
   const searchedUsers = data;

@@ -12,7 +12,11 @@ import {
   PostUtil,
 } from '@social/ui-shared';
 import { Modal } from '../Modal';
-import { useClientContext, useNotificationsContext } from '@/contexts';
+import {
+  useClientContext,
+  useNotificationsContext,
+  usePubkyClientContext,
+} from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
 import { useUserProfile } from '@/hooks/useUser';
@@ -25,8 +29,8 @@ interface HeaderProps {
 export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
   const { isLoggedIn, setSearchTags, searchTags } = useClientContext();
-  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
-  const { data } = useUserProfile(pubky);
+  const { pubky } = usePubkyClientContext();
+  const { data } = useUserProfile(pubky ?? '');
   const profile = data;
   const { notifications } = useNotificationsContext();
 
@@ -49,7 +53,7 @@ export default function Header({ title, className }: HeaderProps) {
   }
 
   useEffect(() => {
-    setHandler(Utils.minifyPubky(pubky));
+    setHandler(Utils.minifyPubky(pubky ?? ''));
     fetchLoggedIn();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
@@ -249,13 +253,13 @@ export default function Header({ title, className }: HeaderProps) {
           className="lg:hidden relative cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-          <Menu.ImageMenu uriImage={profile?.details?.image} />
+          <Menu.ImageMenu uriImage={profile?.details?.image ?? ''} />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
               href="/profile"
-              uriImage={profile?.details?.image}
+              uriImage={profile?.details?.image ?? ''}
               username={
                 profile?.details?.name
                   ? Utils.minifyText(profile?.details?.name)

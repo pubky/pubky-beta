@@ -15,7 +15,7 @@
   "dependencies": {
     "@nx/next": "17.2.4",
     "@swc/helpers": "~0.5.2",
-    "@synonymdev/pubky": "^0.1.15",
+    "@synonymdev/pubky": "^0.1.16",
     "@tanstack/react-query": "^5.52.3",
     "axios": "^1.7.4",
     "emoji-picker-react": "^4.9.3",

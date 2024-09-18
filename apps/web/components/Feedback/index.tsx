@@ -7,10 +7,11 @@ import { ImageByUri } from '../ImageByUri';
 import axios from 'axios';
 import Modal from '../Modal';
 import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Feedback() {
-  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
-  const { data } = useUserProfile(pubky);
+  const { pubky } = usePubkyClientContext();
+  const { data } = useUserProfile(pubky ?? '');
   const profile = data;
   const [message, setMessage] = useState('');
   const [showModal, setShowModal] = useState(false);

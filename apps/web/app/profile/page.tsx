@@ -5,10 +5,11 @@ import { Content } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from './components';
 import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Index() {
-  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
-  const { data, isLoading } = useUserProfile(pubky);
+  const { pubky } = usePubkyClientContext();
+  const { data, isLoading } = useUserProfile(pubky ?? '');
   const profile = data;
   const loader = useRef(null);
 
