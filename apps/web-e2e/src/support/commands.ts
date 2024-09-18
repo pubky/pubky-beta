@@ -46,6 +46,10 @@ declare namespace Cypress {
   }
 
   interface Chainable<Subject> {
+    innerTextShouldContain(text: string): Chainable<Subject>;
+  }
+
+  interface Chainable<Subject> {
     innerTextShouldNotEq(text: string): Chainable<Subject>;
   }
 
@@ -151,6 +155,13 @@ Cypress.Commands.add('renameFile', (fromPath : string, toPath : string) => {
 Cypress.Commands.add('innerTextShouldEq', { prevSubject: 'element' }, (subject, text) => {
   cy.wrap(subject).should(($elem) => {
     expect($elem.get(0).innerText).to.eq(text);
+  });
+});
+
+// Useful when 'should.contain' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldContain', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
+    expect($elem.get(0).innerText).to.contain(text);
   });
 });
 

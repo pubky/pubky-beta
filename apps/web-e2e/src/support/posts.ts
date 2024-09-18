@@ -19,6 +19,21 @@ export const latestPostInFeedContentEq = (postContent: string) => {
   postInFeedContentEq(postContent, 1);
 };
 
+export const createQuickPost = (postContent: string, expectedPostLength? : number) => {
+  cy.get('#quick-post-create-content').should('be.visible').within(() => {
+    // input post content within quick post area
+    cy.get('textarea').should('have.value', '')
+      .get('textarea').type(postContent);
+    // verify displayed content length
+    cy.log('postContent.length: ', postContent.length);
+    expectedPostLength
+      ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 300`)
+      : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 300`);
+    // submit
+    cy.get('#post-btn').click();
+  });
+};
+
 // use within child of #posts-feed
 export const deletePost = () => {
   // delete the repost

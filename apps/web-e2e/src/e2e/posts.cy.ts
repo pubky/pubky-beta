@@ -2,8 +2,10 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { selectEmoji, latestPostInFeedContentEq, deletePost } from '../support/posts';
+import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
+
+const username = 'Poster';
 
 describe('posts', () => {
   before(() => {
@@ -11,28 +13,57 @@ describe('posts', () => {
     cy.deleteDownloadsFolder();
 
     // create profile to post from
-    cy.onboardAsNewUser('Poster', "Big on posting.");
+    cy.onboardAsNewUser(username, "Big on posting.");
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('poster.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(username + '.pkarr'));
   });
 
   beforeEach(() => {
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
-        cy.signIn(backupDownloadFilePath('poster.pkarr'));
+        cy.signIn(backupDownloadFilePath(username + '.pkarr'));
       };
     });
   });
 
+  // it('can see repost of a deleted post', () => {
+    // // create a post to bookmark
+    // const postContent = `This post will be reposted without content! ${Date.now()}`;
+    // createQuickPost(postContent);
+
+    // // repost without content
+    // cy.slowDown(fastMs);
+    // cy.get('#posts-feed').children().eq(1).within(() => {
+    //   cy.get('#repost-btn').click();
+    // });
+    // cy.get('#modal-root').should('be.visible').within(() => {
+    //   cy.get('h1').contains('Repost');
+    //   cy.get('textarea').should('have.value', '');
+    //   cy.get('#repost-btn').click();
+    // });
+
+    // // verify the repost without content is displayed correctly in feed
+    // // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    // cy.reload();
+    // cy.get('#posts-feed').children().eq(1).within(($post) => {
+    //   // check that only original post text is displayed and not additional content text
+    //   cy.get('#post-content-text').its('length').should('eq', 1);
+    //   cy.wrap($post).innerTextShouldContain(username + ' reposted');
+
+    //   // undo the repost
+    //   cy.wrap($post).contains('Undo repost').click();
+    // });
+
+    // // verify the repost is deleted
+    // cy.get('#posts-feed').children().eq(1).within(() => {
+    //   cy.get('#post-content-text').innerTextShouldEq(postContent);
+    // });
+  // });
+
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
-    cy.get('#quick-post-create-content').within(() => {
-      // input post content within quick post area and submit
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(postContent);
-      cy.get('#post-btn').click();
-    });
+    createQuickPost(postContent);
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -65,12 +96,7 @@ describe('posts', () => {
       "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
       `ooooooooooooooooooooooong post! ${Date.now()}`;
 
-      cy.get('#quick-post-create-content').within(() => {
-        cy.get('textarea').should('have.value', '')
-          .type(postContent)
-        cy.get('#content-length').innerTextShouldEq('300 / 300')
-          .get('#post-btn').click();
-    });
+    createQuickPost(postContent);
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -89,8 +115,11 @@ describe('posts', () => {
       selectEmoji('smiling face with sunglasses');
       selectEmoji('lizard');
 
-      // type the rest of the post and submit
+      // type the rest of the post
       cy.get('textarea').type(postContentWithoutEmoji);
+      // check displayed content length
+      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 300`)
+      // submit
       cy.get('#post-btn').click();
     });
 
@@ -153,13 +182,13 @@ describe('posts', () => {
     // create profile to refer to in a post
     cy.signOut(true);
     const uniquePrefix = Cypress._.uniqueId();
-    const username = 'Jeremy The Poser';
-    const fullUsername = uniquePrefix + '_' + username;
+    const otherUsername = 'Jeremy The Poser';
+    const fullUsername = uniquePrefix + '_' + otherUsername;
     const pubkyAlias = 'jPubky';
     cy.onboardAsNewUser(fullUsername, "My account will be referenced in a post.", pubkyAlias);
     cy.signOut(false);
     // sign back in as poster
-    cy.signIn(backupDownloadFilePath('poster.pkarr'));
+    cy.signIn(backupDownloadFilePath(username + '.pkarr'));
 
     const postContent = `I can post with a profile reference! ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
@@ -188,12 +217,7 @@ describe('posts', () => {
 
   it('can delete a post', () => {
     const postContent = `I can delete this post! ${Date.now()}`;
-    cy.get('#quick-post-create-content').within(() => {
-      // input post content within quick post area and submit
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(postContent);
-      cy.get('#post-btn').click();
-    });
+    createQuickPost(postContent);
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -218,15 +242,10 @@ describe('posts', () => {
     cy.signOut(true);
     cy.onboardAsNewUser('Del Boy', "Try delete my post.");
     const postContent = `Noone else can delete this post! ${Date.now()}`;
-    cy.get('#quick-post-create-content').within(() => {
-      // input post content within quick post area and submit
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(postContent);
-      cy.get('#post-btn').click();
-    });
+    createQuickPost(postContent);
     cy.signOut(false);
     // sign back in as poster
-    cy.signIn(backupDownloadFilePath('poster.pkarr'));
+    cy.signIn(backupDownloadFilePath(username + '.pkarr'));
 
     // try to delete the post made by the other account
     cy.get('#posts-feed').children().eq(1).within(() => {
@@ -268,6 +287,9 @@ describe('posts', () => {
       cy.get('#tags').children().eq(1).contains(tag2);
       cy.get('#tags').children().eq(2).contains(tag3);
 
+      // check displayed content length
+      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 300`);
+
       // submit the post
       cy.get('#post-btn').click();
     });
@@ -290,12 +312,7 @@ describe('posts', () => {
     const tag2 = 'pjammas';
     const tag3 = 'rastas';
 
-    cy.get('#quick-post-create-content').within(() => {
-      cy.get('textarea').should('have.value', '');
-      // type the post and submit
-      cy.get('textarea').type(postContent);
-      cy.get('#post-btn').click();
-    });
+    createQuickPost(postContent);
 
     // add tags to the post
     cy.get('#tag-btn').click();
@@ -342,17 +359,12 @@ describe('posts', () => {
     });
   });
 
-
   // todo: consider creating user to create the post to bookmark
   it('can bookmark post then remove bookmark', () => {
-    // create a post to bookmark
     const postContent = `This post will be bookmarked! ${Date.now()}`;
-    cy.get('#quick-post-create-content').within(() => {
-      // input post content within quick post area and submit
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(postContent);
-      cy.get('#post-btn').click();
-    });
+
+    // create a post to bookmark
+    createQuickPost(postContent);
 
     // bookmark the post
     cy.slowDown(fastMs);
@@ -381,14 +393,9 @@ describe('posts', () => {
   // todo: consider creating user to create the post to repost
   it('can repost with content then delete the repost', () => {
     // create a post to bookmark
-    const postContent = `This post will be reposted! ${Date.now()}`;
+    const postContent = `This post will be reposted with content! ${Date.now()}`;
     const repostContent = 'Reposted with content!';
-    cy.get('#quick-post-create-content').within(() => {
-      // input post content within quick post area and submit
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(postContent);
-      cy.get('#post-btn').click();
-    });
+    createQuickPost(postContent);
 
     // repost with content
     cy.slowDown(fastMs);
@@ -423,19 +430,43 @@ describe('posts', () => {
     });
   });
 
-  // can repost without content then undo the repost
+  // todo: consider creating user to create the post to repost
+  it('can repost without content then delete the repost', () => {
+    // create a post to bookmark
+    const postContent = `This post will be reposted without content! ${Date.now()}`;
+    createQuickPost(postContent);
+
     // repost without content
+    cy.slowDown(fastMs);
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#repost-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('h1').contains('Repost');
+      cy.get('textarea').should('have.value', '');
+      cy.get('#repost-btn').click();
+    });
 
-    // verify the repost without content
+    // verify the repost without content is displayed correctly in feed
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+    cy.get('#posts-feed').children().eq(1).within(($post) => {
+      // check that only original post text is displayed and not additional content text
+      cy.get('#post-content-text').its('length').should('eq', 1);
+      cy.wrap($post).innerTextShouldContain(username + ' reposted');
 
-    // undo one of the reposts
+      // undo the repost
+      cy.wrap($post).contains('Undo repost').click();
+    });
 
-    // verify undo worked
-
-  // can delete the original post that has been reposted
+    // verify the repost is deleted
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+    });
+  });
 
   // can reply to a post and delete the reply
 
-  // delete original post that has been replied to
+  // can see reply of a deleted post
 
 });
