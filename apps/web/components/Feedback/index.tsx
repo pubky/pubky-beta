@@ -1,6 +1,6 @@
 'use client';
 
-import { SideCard, Typography } from '@social/ui-shared';
+import { Input, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import { ImageByUri } from '../ImageByUri';
@@ -57,6 +57,20 @@ export default function Feedback() {
                 <Typography.Body variant="medium-bold">
                   {Utils.minifyText(profile?.details?.name ?? 'Loading...', 10)}
                 </Typography.Body>
+              </div>
+              <div
+                className="cursor-pointer"
+                onClick={() => setShowModal(true)}
+              >
+                <Input.TextArea
+                  //value={message}
+                  className="pointer-events-none"
+                  //onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                  //  const target = e.target as HTMLTextAreaElement;
+                  //  setMessage(target.value);
+                  //}}
+                  placeholder="What do you think about Pubky? Any suggestions?"
+                />
               </div>
             </div>
           </div>
