@@ -50,6 +50,10 @@ declare namespace Cypress {
   }
 
   interface Chainable<Subject> {
+    innerTextShouldNotContain(text: string): Chainable<Subject>;
+  }
+
+  interface Chainable<Subject> {
     innerTextShouldNotEq(text: string): Chainable<Subject>;
   }
 
@@ -162,6 +166,13 @@ Cypress.Commands.add('innerTextShouldEq', { prevSubject: 'element' }, (subject, 
 Cypress.Commands.add('innerTextShouldContain', { prevSubject: 'element' }, (subject, text) => {
   cy.wrap(subject).should(($elem) => {
     expect($elem.get(0).innerText).to.contain(text);
+  });
+});
+
+// Useful when 'should.not.contain' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldNotContain', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
+    expect($elem.get(0).innerText).to.not.contain(text);
   });
 });
 

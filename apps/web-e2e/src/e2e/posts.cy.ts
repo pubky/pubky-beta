@@ -499,11 +499,49 @@ describe('posts', () => {
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.reload();
     cy.get('#posts-feed').children().eq(1).within(($post) => {
-      cy.wrap($post).innerTextShouldContain(postContent);
-      cy.wrap($post).innerTextShouldContain(replyContent);
+      cy.wrap($post).innerTextShouldContain(postContent)
+                    .innerTextShouldContain(replyContent);
+    });
+
+    // delete the reply (post is at index 1) (menuBtnIdx 1 for reply)
+    deletePost(1, 1);
+
+    // verify the reply is deleted
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+    cy.get('#posts-feed').children().eq(1).within(($post) => {
+      cy.wrap($post).innerTextShouldContain(postContent)
+                    .innerTextShouldNotContain(replyContent);
     });
   });
 
-  // can see reply of a deleted post
+  it('cannot see reply of a deleted post in feed', () => {
+    // create a post to reply to
+    const postContent = `This post will be replied to! ${Date.now()}`;
+    const replyContent = `This is my reply! ${Date.now()}`;
+    createQuickPost(postContent);
 
+    // reply to the post
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#reply-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('textarea').type(replyContent);
+      cy.get('#reply-btn').click();
+    });
+
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+
+    // delete the original post
+    deletePost();
+
+    // verify the reply and original post are no longer displayed in feed
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#post-content-text').innerTextShouldNotContain(replyContent);
+      cy.get('#post-content-text').innerTextShouldNotContain(postContent);
+    });
+
+    // todo: check that reply still shown in own profile page
+  });
 });

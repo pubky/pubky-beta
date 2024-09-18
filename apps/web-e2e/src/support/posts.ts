@@ -34,10 +34,13 @@ export const createQuickPost = (postContent: string, expectedPostLength? : numbe
   });
 };
 
-export const deletePost = (postIdx = 1) => {
+// menuBtnIdx: 0 for original post, 1 for reply
+export const deletePost = (postIdx = 1, menuBtnIdx = 0) => {
   cy.get('#posts-feed').children().eq(postIdx).within(() => {
     // delete the repost
-    cy.get('#menu-btn').should('be.visible').click();
+    // cy.find('#menu-btn').eq(menuBtnIdx).should('be.visible').click();
+    // '[id="menu-btn"]' will find all with id
+    cy.get('[id="menu-btn"]').eq(menuBtnIdx).should('be.visible').click();
     cy.get('#post-tooltip-menu').should('be.visible').within(() => {
       cy.get('#delete-post').should('be.visible')
         .innerTextShouldEq('Delete post')
