@@ -15,7 +15,7 @@ type PubkyClientContextType = {
   pubky: string | undefined;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
-  logout: () => void;
+  logout: () => boolean;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -30,8 +30,19 @@ export function PubkyClientWrapper({
   );
 
   const logout = () => {
-    Utils.storage.remove('pubky_public_key');
-    setPubky(undefined);
+    try {
+      // clear storage and states
+      Utils.storage.remove('pubky_public_key');
+      setPubky(undefined);
+
+      // logout client
+      client.signout(PublicKey.from(pubky));
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   };
 
   const isLoggedIn = async () => {
