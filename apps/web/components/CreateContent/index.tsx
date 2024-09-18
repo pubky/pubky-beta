@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useClientContext, useAlertContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import Modal from '../Modal';
 import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
@@ -49,9 +49,8 @@ export default function CreateContent({
   setArrayTags,
   children,
 }: CreateContentProps) {
-  const { searchUsers, getProfile } = useClientContext();
-  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
-  const { data } = useUserProfile(pubky);
+  const { pubky } = usePubkyClientContext();
+  const { data } = useUserProfile(pubky ?? '');
   const profile = data;
   const { setContent: setContentAlert, setShow } = useAlertContext();
   const [showModalTag, setShowModalTag] = useState(false);
@@ -235,7 +234,7 @@ export default function CreateContent({
       } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
     >
       <Section.UserArea
-        uriPic={profile?.details?.image}
+        uriPic={profile?.details?.image ?? ''}
         name={profile?.details?.name ?? 'Loading...'}
         largeView={largeView}
       />

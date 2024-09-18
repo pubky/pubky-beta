@@ -1,6 +1,7 @@
 import { useAlertContext, AlertWrapper } from './_alerts';
 import { useClientContext, ClientWrapper } from './_client';
 import { useFilterContext, FilterWrapper } from './_filters';
+import { usePubkyClientContext, PubkyClientWrapper } from './_pubky';
 import {
   useNotificationsContext,
   NotificationsWrapper,
@@ -18,4 +19,6 @@ export {
   NotificationsWrapper,
   useToastContext,
   ToastWrapper,
+  usePubkyClientContext,
+  PubkyClientWrapper,
 };

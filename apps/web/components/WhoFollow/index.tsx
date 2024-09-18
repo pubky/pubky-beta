@@ -2,9 +2,10 @@ import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
 import { useMostFollowedUsers } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function WhoFollow() {
-  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
+  const { pubky } = usePubkyClientContext();
   const { data, isLoading, isError } = useMostFollowedUsers(pubky, 0, 3);
   const recommendedProfiles = data;
 

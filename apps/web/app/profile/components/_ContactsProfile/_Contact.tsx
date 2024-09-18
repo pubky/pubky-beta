@@ -7,6 +7,7 @@ import { Button, Icon, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useUserProfile } from '@/hooks/useUser';
 import { UserView } from '@/types/User';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Contact({
   contacts,
@@ -16,7 +17,7 @@ export default function Contact({
   isLoading: false;
 }) {
   const [profiles, setProfiles] = useState<(UserView | null)[]>([]);
-  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const { pubky } = usePubkyClientContext();
 
   useEffect(() => {
     async function fetchProfiles() {

@@ -2,9 +2,10 @@ import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
 import { usePioneerUsers } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Pioneers() {
-  const pubky = '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo';
+  const { pubky } = usePubkyClientContext();
   const { data, isLoading, isError } = usePioneerUsers(pubky, 0, 3);
   const pioneers = data;
 
