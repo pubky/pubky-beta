@@ -1,20 +1,14 @@
 'use client';
 
 import { Button, Content, Header, Icon, Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
-import { useEffect } from 'react';
 import Image from 'next/image';
 
 export default function Index() {
-  const { logout } = useClientContext();
+  const { logout } = usePubkyClientContext();
 
-  useEffect(() => {
-    async function fetchData() {
-      await logout();
-    }
-    fetchData();
-  }, [logout]);
+  logout();
 
   return (
     <Content.Main>
