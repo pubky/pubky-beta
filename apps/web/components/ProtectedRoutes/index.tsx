@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
@@ -14,9 +13,10 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, session, setSearchTags, logout } = useClientContext();
+  const { isLoggedIn } = usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
+  const [loading, setLoading] = useState(true);
   const protectedRoutes = [
     '/followers',
     '/home',
@@ -45,62 +45,39 @@ export default function ProtectedRoutes({
 
       // exceptions for the onboarding process
       if (notRedirectUser.includes(pathname)) {
+        setLoading(false);
         return;
       }
 
       if (!loggedIn && isProtected) {
         router.push('/onboarding');
+        setLoading(false);
         return;
       }
       if (loggedIn && redirectLoggedUser.includes(pathname)) {
         router.push('/home');
+        setLoading(false);
         return;
       }
+      setLoading(false);
     };
 
     checkLogin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, router, pathname]);
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const loggedIn: any = await session();
-      const isProtected = protectedRoutes.includes(pathname);
-
-      if (
-        isProtected &&
-        loggedIn &&
-        typeof loggedIn === 'object' &&
-        'users' in loggedIn
-      ) {
-        if (Object.keys(loggedIn.users).length > 0) {
-          setShowModal(false);
-        } else {
-          await logout();
-          router.push('/sign-in');
-          //setShowModal(true);
-        }
-      } else if (loggedIn === false) {
-        setShowServerDown(true);
-      }
-    };
-
-    checkLoginStatus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, pathname]);
-
-  useEffect(() => {
-    if (pathname !== '/search') {
-      setSearchTags([]);
-    }
-  }, [pathname, setSearchTags]);
-
   return (
     <>
       <div className="z-index-999">
         <NextTopLoader color="white" />
       </div>
-      {children}
+      {loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white" />
+        </div>
+      ) : (
+        children
+      )}
       {showModal && (
         <Modal.SessionExpired
           setShowModal={setShowModal}

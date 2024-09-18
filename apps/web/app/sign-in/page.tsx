@@ -86,7 +86,7 @@ export default function Index() {
   useEffect(() => {
     async function fetchData() {
       const loggedIn = await isLoggedIn();
-      console.log('loggedIn', loggedIn);
+
       if (!loggedIn) {
         setLogoLink('/onboarding');
       } else {
