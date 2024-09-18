@@ -27,40 +27,6 @@ describe('posts', () => {
     });
   });
 
-  // it('can see repost of a deleted post', () => {
-    // // create a post to bookmark
-    // const postContent = `This post will be reposted without content! ${Date.now()}`;
-    // createQuickPost(postContent);
-
-    // // repost without content
-    // cy.slowDown(fastMs);
-    // cy.get('#posts-feed').children().eq(1).within(() => {
-    //   cy.get('#repost-btn').click();
-    // });
-    // cy.get('#modal-root').should('be.visible').within(() => {
-    //   cy.get('h1').contains('Repost');
-    //   cy.get('textarea').should('have.value', '');
-    //   cy.get('#repost-btn').click();
-    // });
-
-    // // verify the repost without content is displayed correctly in feed
-    // // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
-    // cy.reload();
-    // cy.get('#posts-feed').children().eq(1).within(($post) => {
-    //   // check that only original post text is displayed and not additional content text
-    //   cy.get('#post-content-text').its('length').should('eq', 1);
-    //   cy.wrap($post).innerTextShouldContain(username + ' reposted');
-
-    //   // undo the repost
-    //   cy.wrap($post).contains('Undo repost').click();
-    // });
-
-    // // verify the repost is deleted
-    // cy.get('#posts-feed').children().eq(1).within(() => {
-    //   cy.get('#post-content-text').innerTextShouldEq(postContent);
-    // });
-  // });
-
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
@@ -392,7 +358,7 @@ describe('posts', () => {
 
   // todo: consider creating user to create the post to repost
   it('can repost with content then delete the repost', () => {
-    // create a post to bookmark
+    // create a post to repost
     const postContent = `This post will be reposted with content! ${Date.now()}`;
     const repostContent = 'Reposted with content!';
     createQuickPost(postContent);
@@ -432,7 +398,7 @@ describe('posts', () => {
 
   // todo: consider creating user to create the post to repost
   it('can repost without content then delete the repost', () => {
-    // create a post to bookmark
+    // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
 
@@ -462,6 +428,38 @@ describe('posts', () => {
     // verify the repost is deleted
     cy.get('#posts-feed').children().eq(1).within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
+    });
+  });
+
+  it('can see repost of a deleted post', () => {
+    // create a post to repost
+    const postContent = `This post will be reposted without content! ${Date.now()}`;
+    const repostContent = `Reposted with this content! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // repost
+    cy.slowDown(fastMs);
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#repost-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('h1').contains('Repost');
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(repostContent);
+      cy.get('#repost-btn').click();
+    });
+
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+
+    // delete the original post (index 2 as the repost is at index 1)
+    deletePost(2);
+
+    // verify the repost is still displayed in feed
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // check that only the repost text is displayed and not the original content text
+      cy.get('#post-content-text').its('length').should('eq', 1);
+      cy.get('#post-content-text').innerTextShouldEq(repostContent);
     });
   });
 

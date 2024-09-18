@@ -34,14 +34,15 @@ export const createQuickPost = (postContent: string, expectedPostLength? : numbe
   });
 };
 
-// use within child of #posts-feed
-export const deletePost = () => {
-  // delete the repost
-  cy.get('#menu-btn').should('be.visible').click();
-  cy.get('#post-tooltip-menu').should('be.visible').within(() => {
-    cy.get('#delete-post').should('be.visible')
-      .innerTextShouldEq('Delete post')
-      .get('#delete-post').click();
+export const deletePost = (postIdx = 1) => {
+  cy.get('#posts-feed').children().eq(postIdx).within(() => {
+    // delete the repost
+    cy.get('#menu-btn').should('be.visible').click();
+    cy.get('#post-tooltip-menu').should('be.visible').within(() => {
+      cy.get('#delete-post').should('be.visible')
+        .innerTextShouldEq('Delete post')
+        .get('#delete-post').click();
+    });
   });
 
   // confirm delete in modal
