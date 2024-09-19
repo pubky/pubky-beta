@@ -40,10 +40,23 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     renameFile(fromPath: string, toPath: string): void;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   interface Chainable<Subject> {
-    innerTextShouldEq(elem: string, text: string): void;
+    innerTextShouldEq(text: string): Chainable<Subject>;
   }
+
+  interface Chainable<Subject> {
+    innerTextShouldContain(text: string): Chainable<Subject>;
+  }
+
+  interface Chainable<Subject> {
+    innerTextShouldNotContain(text: string): Chainable<Subject>;
+  }
+
+  interface Chainable<Subject> {
+    innerTextShouldNotEq(text: string): Chainable<Subject>;
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     saveCopiedPubkyToAlias(alias: string): void;
@@ -143,9 +156,30 @@ Cypress.Commands.add('renameFile', (fromPath : string, toPath : string) => {
 });
 
 // Useful when 'should.be' doesn't work due to additional space inserted before final word.
-Cypress.Commands.add('innerTextShouldEq', (elem : string, text : string) => {
-  cy.get(elem).should(($elem) => {
+Cypress.Commands.add('innerTextShouldEq', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
     expect($elem.get(0).innerText).to.eq(text);
+  });
+});
+
+// Useful when 'should.contain' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldContain', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
+    expect($elem.get(0).innerText).to.contain(text);
+  });
+});
+
+// Useful when 'should.not.contain' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldNotContain', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
+    expect($elem.get(0).innerText).to.not.contain(text);
+  });
+});
+
+// Useful when 'should.not.be' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldNotEq', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
+    expect($elem.get(0).innerText).to.not.eq(text);
   });
 });
 

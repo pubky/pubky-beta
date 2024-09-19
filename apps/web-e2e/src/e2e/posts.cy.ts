@@ -1,6 +1,11 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { slowCypressDown } from 'cypress-slow-down';
-import { selectEmoji, latestPostInFeedContentEq } from '../support/posts';
+import { slowCypressDown } from 'cypress-slow-down'
+// registers the cy.slowDown and cy.slowDownEnd commands
+import 'cypress-slow-down/commands'
+import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost } from '../support/posts';
+import { defaultMs, fastMs } from '../support/slow-down';
+
+const username = 'Poster';
 
 describe('posts', () => {
   before(() => {
@@ -8,28 +13,26 @@ describe('posts', () => {
     cy.deleteDownloadsFolder();
 
     // create profile to post from
-    cy.onboardAsNewUser('Poster', "Big on posting.");
+    cy.onboardAsNewUser(username, "Big on posting.");
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('poster.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(username + '.pkarr'));
   });
 
   beforeEach(() => {
+    // in case it gets changed by a test and not reset
+    cy.slowDown(defaultMs);
+
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
-        cy.signIn(backupDownloadFilePath('poster.pkarr'));
+        cy.signIn(backupDownloadFilePath(username + '.pkarr'));
       };
     });
   });
 
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
-    cy.get('#quick-post-create-content').within(() => {
-      // input post content within quick post area and submit
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(postContent);
-      cy.get('#post-btn').click();
-    });
+    createQuickPost(postContent);
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -62,12 +65,7 @@ describe('posts', () => {
       "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
       `ooooooooooooooooooooooong post! ${Date.now()}`;
 
-      cy.get('#quick-post-create-content').within(() => {
-        cy.get('textarea').should('have.value', '');
-        cy.get('textarea').type(postContent);
-        cy.innerTextShouldEq('#content-length', '300 / 300');
-        cy.get('#post-btn').click();
-    });
+    createQuickPost(postContent);
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -86,8 +84,11 @@ describe('posts', () => {
       selectEmoji('smiling face with sunglasses');
       selectEmoji('lizard');
 
-      // type the rest of the post and submit
+      // type the rest of the post
       cy.get('textarea').type(postContentWithoutEmoji);
+      // check displayed content length
+      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 300`)
+      // submit
       cy.get('#post-btn').click();
     });
 
@@ -140,7 +141,7 @@ describe('posts', () => {
 
     // verify the post text and embedded link is displayed correctly in feed
     cy.get('#posts-feed').children().eq(1).within(() => {
-      cy.innerTextShouldEq('#post-content-text', postContent);
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('iframe').should('be.visible');
       cy.get('iframe').should('have.attr', 'src', embedLink);
     });
@@ -150,13 +151,13 @@ describe('posts', () => {
     // create profile to refer to in a post
     cy.signOut(true);
     const uniquePrefix = Cypress._.uniqueId();
-    const username = 'Jeremy The Poser';
-    const fullUsername = uniquePrefix + '_' + username;
+    const otherUsername = 'Jeremy The Poser';
+    const fullUsername = uniquePrefix + '_' + otherUsername;
     const pubkyAlias = 'jPubky';
     cy.onboardAsNewUser(fullUsername, "My account will be referenced in a post.", pubkyAlias);
     cy.signOut(false);
     // sign back in as poster
-    cy.signIn(backupDownloadFilePath('poster.pkarr'));
+    cy.signIn(backupDownloadFilePath(username + '.pkarr'));
 
     const postContent = `I can post with a profile reference! ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
@@ -183,4 +184,364 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
   });
 
+  it('can delete a post', () => {
+    const postContent = `I can delete this post! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // verify the post is displayed correctly in feed
+    latestPostInFeedContentEq(postContent);
+
+    // delete the post
+    deletePost();
+
+    // verify post is deleted
+    cy.get('#posts-feed').children().its('length').then((length) => {
+      // if at least 1 post still exists, check it doesn't match the text of the deleted post
+      if (length > 1) {
+        cy.get('#posts-feed').children().eq(1).within(() => {
+          cy.get('#post-content-text').innerTextShouldNotEq(postContent);
+        });
+      };
+    });
+  });
+
+  // todo: consider combining with 'can delete a post' test
+  it("cannot delete other profile's post", ()    => {
+    // create profile to create a post to try and delete
+    cy.signOut(true);
+    cy.onboardAsNewUser('Del Boy', "Try delete my post.");
+    const postContent = `Noone else can delete this post! ${Date.now()}`;
+    createQuickPost(postContent);
+    cy.signOut(false);
+    // sign back in as poster
+    cy.signIn(backupDownloadFilePath(username + '.pkarr'));
+
+    // try to delete the post made by the other account
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // open post menu and check delete is not available
+      cy.get('#menu-btn').should('be.visible').click();
+      cy.get('#post-tooltip-menu').should('be.visible').within(() => {
+        cy.get('#delete-post').should('not.exist');
+      });
+    });
+  });
+
+  it('can tag whilst creating post', () => {
+    const postContent = `I can post with tags! ${Date.now()}`;
+    const tag1 = 'alpacas';
+    const tag2 = 'llamas';
+    const tag3 = 'vicuñas';
+
+    cy.get('#quick-post-create-content').within(() => {
+      cy.get('textarea').should('have.value', '');
+      // type the post
+      cy.get('textarea').type(postContent);
+
+      // add tags to the post
+      cy.get('#tag-btn').click();
+      cy.get('#modal-root').should('be.visible').within(() => {
+        cy.get('h1').contains('Tag');
+        cy.get('input').type(tag1);
+        cy.get('#add-btn').should('be.visible').click();
+        cy.get('input').type(tag2);
+        cy.get('#add-btn').should('be.visible').click();
+        cy.get('input').type(tag3);
+        cy.get('#add-btn').should('be.visible').click();
+        cy.get('#close-btn').click();
+      });
+
+      // verify the tags are displayed in the quick post area
+      cy.get('#tags').children().should('have.length', 3);
+      cy.get('#tags').children().eq(0).contains(tag1);
+      cy.get('#tags').children().eq(1).contains(tag2);
+      cy.get('#tags').children().eq(2).contains(tag3);
+
+      // check displayed content length
+      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 300`);
+
+      // submit the post
+      cy.get('#post-btn').click();
+    });
+
+    // verify the post text and tags are displayed correctly in feed
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // check text
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+
+      // check tags
+      cy.get('#tags').find('#tag-0').contains(tag1);
+      cy.get('#tags').find('#tag-1').contains(tag2);
+      cy.get('#tags').find('#tag-2').contains(tag3);
+    });
+  });
+
+  it('can tag and remove tags from existing post', () => {
+    const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
+    const tag1 = 'bananas';
+    const tag2 = 'pjammas';
+    const tag3 = 'rastas';
+
+    createQuickPost(postContent);
+
+    // add tags to the post
+    cy.get('#tag-btn').click();
+    cy.get('#modal-root').within(() => {
+      cy.get('h1').contains('Tag Post');
+      cy.get('input').type(tag1);
+      cy.get('#add-btn').click();
+      cy.get('input').type(tag2);
+      cy.get('#add-btn').click();
+      cy.get('input').type(tag3);
+      cy.get('#add-btn').click();
+
+      // check current tags in modal
+      cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
+        cy.wrap(divs.eq(0)).contains(tag1);
+        cy.wrap(divs.eq(1)).contains(tag2);
+        cy.wrap(divs.eq(2)).contains(tag3);
+      });
+
+      // close modal
+      cy.get('#close-btn').click();
+    });
+
+    // within the latest post in the feed
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#tags').children().its('length').then((oldLength) => {
+        cy.get('#tags').within(() => {
+          // verify the tags are displayed in the post
+          cy.get('#tag-0').contains(tag1);
+          cy.get('#tag-1').contains(tag2);
+          cy.get('#tag-2').contains(tag3);
+
+          // remove tag from the post
+          cy.get('#tag-1').click();
+        });
+
+        // verify the tag is removed from the post and other tags remain
+        cy.get('#tags').children().should('have.length', oldLength - 1);
+        cy.get('#tags').within(() => {
+          cy.get('#tag-0').should('exist').contains(tag1);
+          cy.get('#tag-1').should('exist').contains(tag3);
+        });
+      });
+    });
+  });
+
+  // todo: consider creating user to create the post to bookmark
+  it('can bookmark post then remove bookmark', () => {
+    const postContent = `This post will be bookmarked! ${Date.now()}`;
+
+    // create a post to bookmark
+    createQuickPost(postContent);
+
+    // bookmark the post
+    cy.slowDown(fastMs);
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#bookmark-btn').click();
+    });
+    // check bookmark toast is shown (before the toast disappears)
+    cy.get('#toast').should('be.visible').find('h2').contains('bookmark')
+    cy.slowDown(defaultMs);
+
+    // verify the post has been bookmarked in the profile page
+    cy.get('#header-profile-pic').click();
+    cy.get('#profile-tab-bookmarks').click();
+    cy.get('#bookmarks-content').children().first().within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+
+      // remove the bookmark
+      cy.get('#bookmark-btn').click();
+    });
+
+    // verify post is not longer listed on profile page
+    cy.reload();
+    cy.get('#bookmarks-content').should('contain.text', 'No bookmarks yet');
+  });
+
+  // todo: consider creating user to create the post to repost
+  it('can repost with content then delete the repost', () => {
+    // create a post to repost
+    const postContent = `This post will be reposted with content! ${Date.now()}`;
+    const repostContent = 'Reposted with content!';
+    createQuickPost(postContent);
+
+    // repost with content
+    cy.slowDown(fastMs);
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#repost-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(($modal) => {
+      cy.get('h1').contains('Repost');
+      // check that the post content is displayed in the repost modal
+      cy.wrap($modal).contains(postContent);
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(repostContent);
+      cy.get('#repost-btn').click();
+    });
+
+    // check repost message is shown (before the alert disappears)
+    cy.get('#message-alert').should('be.visible').and('contain.text', 'Repost');
+    cy.slowDown(defaultMs);
+
+    // verify the repost with content is displayed correctly in feed
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // check that both the repost text and original post text are displayed
+      const expectedContent = [repostContent, postContent];
+      cy.get('#post-content-text').each((elem, index) => {
+        cy.wrap(elem).innerTextShouldEq(expectedContent[index]);
+      });
+    });
+
+    // delete the repost
+    deletePost();
+
+    // verify the repost is deleted
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // check that first post is the original post
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+    });
+  });
+
+  // todo: consider creating user to create the post to repost
+  it('can repost without content then delete the repost', () => {
+    // create a post to repost
+    const postContent = `This post will be reposted without content! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // repost without content
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#repost-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('h1').contains('Repost');
+      cy.get('textarea').should('have.value', '');
+      cy.get('#repost-btn').click();
+    });
+
+    // verify the repost without content is displayed correctly in feed
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+    cy.get('#posts-feed').children().eq(1).within(($post) => {
+      // check that only original post text is displayed and not additional content text
+      cy.get('#post-content-text').its('length').should('eq', 1);
+      cy.wrap($post).innerTextShouldContain(username + ' reposted');
+
+      // undo the repost
+      cy.wrap($post).contains('Undo repost').click();
+    });
+
+    // verify the repost is deleted
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+    });
+  });
+
+  it('can see repost of a deleted post', () => {
+    // create a post to repost
+    const postContent = `This post will be reposted without content! ${Date.now()}`;
+    const repostContent = `Reposted with this content! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // repost
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#repost-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('h1').contains('Repost');
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(repostContent);
+      cy.get('#repost-btn').click();
+    });
+
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+
+    // delete the original post (index 2 as the repost is at index 1)
+    deletePost(2);
+
+    // verify the repost is still displayed in feed
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      // check that only the repost text is displayed and not the original content text
+      cy.get('#post-content-text').its('length').should('eq', 1);
+      cy.get('#post-content-text').innerTextShouldEq(repostContent);
+    });
+  });
+
+  // todo: consider creating user to create the post to reply to
+  it('can reply to a post and delete the reply', () => {
+    // create a post to reply to
+    const postContent = `This post will be replied to! ${Date.now()}`;
+    const replyContent = `This is my reply! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // reply to the post
+    cy.slowDown(fastMs);
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#reply-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(($modal) => {
+      cy.get('h1').contains('Reply');
+      // check that the post content is displayed in the reply modal
+      cy.wrap($modal).contains(postContent);
+      cy.get('textarea').should('have.value', '');
+      cy.get('textarea').type(replyContent);
+      cy.get('#reply-btn').click();
+    });
+
+    // check reply message is shown (before the alert disappears)
+    cy.get('#message-alert').should('be.visible').and('contain.text', 'Reply');
+    cy.slowDown(defaultMs);
+
+    // verify the reply is displayed correctly in feed
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+    cy.get('#posts-feed').children().eq(1).within(($post) => {
+      cy.wrap($post).innerTextShouldContain(postContent)
+                    .innerTextShouldContain(replyContent);
+    });
+
+    // delete the reply (post is at index 1) (menuBtnIdx 1 for reply)
+    deletePost(1, 1);
+
+    // verify the reply is deleted
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+    cy.get('#posts-feed').children().eq(1).within(($post) => {
+      cy.wrap($post).innerTextShouldContain(postContent)
+                    .innerTextShouldNotContain(replyContent);
+    });
+  });
+
+  it('cannot see reply of a deleted post in feed', () => {
+    // create a post to reply to
+    const postContent = `This post will be replied to! ${Date.now()}`;
+    const replyContent = `This is my reply! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // reply to the post
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#reply-btn').click();
+    });
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('textarea').type(replyContent);
+      cy.get('#reply-btn').click();
+    });
+
+    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
+    cy.reload();
+
+    // delete the original post
+    deletePost();
+
+    // verify the reply and original post are no longer displayed in feed
+    cy.get('#posts-feed').children().eq(1).within(() => {
+      cy.get('#post-content-text').innerTextShouldNotContain(replyContent);
+      cy.get('#post-content-text').innerTextShouldNotContain(postContent);
+    });
+
+    // todo: check that reply still shown in own profile page
+  });
 });

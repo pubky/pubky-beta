@@ -56,7 +56,7 @@ export default function Bookmarks() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div id='bookmarks-content' className="flex flex-col gap-3">
       {Object.keys(posts).map((key) => (
         <Post key={posts[key].id} post={posts[key]} />
       ))}

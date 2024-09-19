@@ -98,7 +98,7 @@ export default function FooterArea({
         arrayTags.length > 0) && (
         <Post.Actions className="w-full">
           {arrayTags.length > 0 && (
-            <div className="gap-2 flex h-full items-center">
+            <div id='tags' className="gap-2 flex h-full items-center">
               {arrayTags.map((tag, index) => (
                 <PostUtil.Tag
                   key={index}
