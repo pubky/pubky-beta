@@ -161,7 +161,7 @@ export async function getMostFollowedUsers(
   viewerId?: string,
   skip?: number,
   limit?: number
-): Promise<UserStream> {
+): Promise<UserView[]> {
   const queryParams = new URLSearchParams();
 
   queryParams.append('viewer_id', viewerId || '');

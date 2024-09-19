@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import Tooltip from '../Tooltip';
-import { useClientContext, useAlertContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import TagsLargeView from './_TagsLargeView';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
@@ -46,7 +46,7 @@ export default function Post({
   lineStyle,
   ...rest
 }: PostProps) {
-  const { pubky, deletePost } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const { data } = useUserProfile(post?.details.author);
   const [showTooltipProfile, setShowTooltipProfile] = useState('');

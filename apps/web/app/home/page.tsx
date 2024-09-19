@@ -4,16 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 import { Content, Menu } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
-import { useFilterContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { usePostStream } from '@/hooks/usePost';
 
 export default function Index() {
   const { layout } = useFilterContext();
-  const { data, isLoading } = usePostStream(
-    '3iwsuz58pgrf7nw4kx8mg3fib1kqyi4oxqmuqxzsau1mpn5weipo',
-    0,
-    5
-  );
+  const { pubky } = usePubkyClientContext();
+  const { data, isLoading } = usePostStream(pubky, 0, 5);
   console.log('data', data);
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
@@ -86,7 +83,8 @@ export default function Index() {
           </Components.Sidebar>
         )}
         <Components.PostsLayout
-          id='posts-feed' className={`${getPostsLayoutClass(
+          id="posts-feed"
+          className={`${getPostsLayoutClass(
             layout
           )} flex-col inline-flex gap-3`}
         >
