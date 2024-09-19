@@ -6,8 +6,9 @@ import Modal from '../Modal';
 import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
 import { Section } from './Section';
-import { useUserProfile, useUsernameSearch } from '@/hooks/useUser';
+import { useUserProfile } from '@/hooks/useUser';
 import { UserView } from '@/types/User';
+import UsernameSearch from './Section/_UsernameSearch';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -64,16 +65,6 @@ export default function CreateContent({
     null
   );
 
-  const searchProfiles = (text: string) => {
-    try {
-      const { data } = useUsernameSearch(text, pubky, 0, 5);
-      return data || [];
-    } catch (error) {
-      console.error('Error searching profiles:', error);
-      return [];
-    }
-  };
-
   const searchUsername = (content: string) => {
     const pkMatches = content.match(/(pk:[^\s]+)/g);
     const atMatches = content.match(/(@[^\s]+)/g);
@@ -85,19 +76,29 @@ export default function CreateContent({
       return;
     }
 
-    let results: UserView[] = [];
-
-    for (const query of searchQueries) {
+    setSearchedUsers([]);
+    searchQueries.forEach((query) => {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const { data } = useUsernameSearch(username);
-        results = [...results, ...(data || [])];
+        <UsernameSearch
+          key={username}
+          query={username}
+          pubky={pubky ?? ''}
+          onResults={(results) =>
+            setSearchedUsers((prev) => [...prev, ...results])
+          }
+        />;
       } else if (query.startsWith('pk:')) {
-        const searchResult = searchProfiles(query);
-        results = [...results, ...(searchResult || [])];
+        <UsernameSearch
+          key={query}
+          query={query}
+          pubky={pubky ?? ''}
+          onResults={(results) =>
+            setSearchedUsers((prev) => [...prev, ...results])
+          }
+        />;
       }
-    }
-    setSearchedUsers(results.length > 0 ? results : []);
+    });
   };
 
   useEffect(() => {

@@ -14,10 +14,9 @@ import {
 import { HotTags } from './components';
 import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
-import { ImageByUri } from '@/components/ImageByUri';
 import { HotTag } from '@/types/Tag';
 import { useHotTags } from '@/hooks/useTag';
-import { useUserProfile } from '@/hooks/useUser';
+import { UserProfileForTag } from './components/_UserProfileForTag';
 
 export default function Index() {
   const router = useRouter();
@@ -25,45 +24,28 @@ export default function Index() {
   const hotTags = data || [];
   if (isError) console.error(isError);
 
-  const profilesList = hotTags.map((tag) =>
-    tag?.taggers_id.slice(0, 15).map((fromItem) => {
-      return useUserProfile(fromItem);
-    })
-  );
-
   function renderTags(hotTags: HotTag[], loadingReachTags: boolean) {
     if (loadingReachTags) {
       return <Skeletons.Simple />;
     }
 
     if (hotTags.length > 0) {
-      return hotTags.map((tag, index) => {
-        const profiles = profilesList[index];
-
-        return (
-          <div className="flex gap-3" key={index}>
-            <HotTags.Rank
-              tag={tag?.label}
-              onClick={() => router.push(`/search?tags=${tag?.label}`)}
-              color={tag?.label && Utils.generateRandomColor(tag?.label)}
-              counter={`${tag?.post_count}`}
-              boxShadow={false}
-            />
-            {profiles.map((profile, fromIndex) => (
-              <ImageByUri
-                width={32}
-                height={32}
-                alt={`pic-${fromIndex + 1}`}
-                key={fromIndex}
-                className={`w-[32px] h-[32px] rounded-full ${
-                  fromIndex !== 0 ? '-ml-5' : ''
-                }`}
-                uri={profile?.data?.details?.image || '/images/Userpic.png'}
-              />
-            ))}
-          </div>
-        );
-      });
+      return hotTags.map((tag, index) => (
+        <div className="flex gap-3" key={index}>
+          <HotTags.Rank
+            tag={tag?.label}
+            onClick={() => router.push(`/search?tags=${tag?.label}`)}
+            color={tag?.label && Utils.generateRandomColor(tag?.label)}
+            counter={`${tag?.post_count}`}
+            boxShadow={false}
+          />
+          {tag?.taggers_id.slice(0, 15).map((fromItem, fromIndex) => (
+            <div key={fromIndex} className={fromIndex !== 0 ? '-ml-5' : ''}>
+              <UserProfileForTag userId={fromItem} />
+            </div>
+          ))}
+        </div>
+      ));
     }
 
     return (

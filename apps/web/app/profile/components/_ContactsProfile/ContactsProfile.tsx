@@ -9,6 +9,7 @@ import {
   UseUserFollowing,
   UseUserFriends,
 } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 type ContactsContentProps = {
   contacts: TContacts;
@@ -16,14 +17,14 @@ type ContactsContentProps = {
 };
 
 const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
-  const pubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy';
+  const { pubky } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
   const { data, isLoading, isError } =
     contacts === 'followers'
-      ? UseUserFollowers(usePubky, 0, 10)
+      ? UseUserFollowers(usePubky ?? '', 0, 10)
       : contacts === 'following'
-      ? UseUserFollowing(usePubky, 0, 10)
-      : UseUserFriends(usePubky, 0, 10);
+      ? UseUserFollowing(usePubky ?? '', 0, 10)
+      : UseUserFriends(usePubky ?? '', 0, 10);
   const contactUsers = data;
 
   if (isError) console.error(isError);
@@ -115,19 +116,31 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
           <Contact contacts={contactUsers} isLoading={isLoading} />
         </Root>
       ) : contacts === 'followers' ? (
-        <Typography.H2 id='profile-no-followers' className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2
+          id="profile-no-followers"
+          className="mt-[100px] font-normal text-opacity-50 text-center"
+        >
           No followers yet
         </Typography.H2>
       ) : contacts === 'following' ? (
-        <Typography.H2 id='profile-no-following' className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2
+          id="profile-no-following"
+          className="mt-[100px] font-normal text-opacity-50 text-center"
+        >
           No following yet
         </Typography.H2>
       ) : contacts === 'friends' ? (
-        <Typography.H2 id='profile-no-friends' className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2
+          id="profile-no-friends"
+          className="mt-[100px] font-normal text-opacity-50 text-center"
+        >
           No friends yet
         </Typography.H2>
       ) : (
-        <Typography.H2 id='profile-no-contacts' className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2
+          id="profile-no-contacts"
+          className="mt-[100px] font-normal text-opacity-50 text-center"
+        >
           No contacts yet
         </Typography.H2>
       )}

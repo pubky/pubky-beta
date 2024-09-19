@@ -22,11 +22,15 @@ export default function Index({
   const [userExist, setUserExist] = useState(true);
 
   const loader = useRef(null);
-  if (data) {
-    setUserExist(true);
-  } else if (!data || isError) {
-    setUserExist(false);
-  }
+
+  useEffect(() => {
+    if (data) {
+      setUserExist(true);
+    } else if (!data || isError) {
+      setUserExist(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   useEffect(() => {
     setPosts({} as INewPost);
