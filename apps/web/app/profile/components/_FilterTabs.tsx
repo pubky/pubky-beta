@@ -3,7 +3,7 @@ import { Icon, Typography } from '@social/ui-shared';
 import { Profile } from './';
 import { Skeleton } from '@/components';
 import ContactsProfile from './_ContactsProfile/ContactsProfile';
-import { useClientContext, useNotificationsContext } from '@/contexts';
+import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
 import TaggedAs from './_TaggedAs';
 import { UserView } from '@/types/User';
 
@@ -71,7 +71,7 @@ export default function FilterTabs({
 }) {
   const { notifications, loading: loadingNotifications } =
     useNotificationsContext();
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const [activeTab, setActiveTab] = useState(0);
   const [loadingTab, setLoadingTab] = useState(true);
 
@@ -159,7 +159,10 @@ export default function FilterTabs({
               </div>
               {!loading && tab.key && (
                 <Typography.Caption className="tracking-normal" variant="bold">
-                  <span id='counter' className="ml-2 text-white text-opacity-30">
+                  <span
+                    id="counter"
+                    className="ml-2 text-white text-opacity-30"
+                  >
                     {getTabNumber(tab.key)}
                   </span>
                 </Typography.Caption>
@@ -168,7 +171,7 @@ export default function FilterTabs({
           );
         })}
       </div>
-      <div id='profile-tab-content' className="w-full">
+      <div id="profile-tab-content" className="w-full">
         {loading ? (
           <Skeleton.Simple />
         ) : (

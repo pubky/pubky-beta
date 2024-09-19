@@ -18,16 +18,10 @@ export default function Index({
   params: { pubky: string; postId: string };
 }) {
   //const { getReplies, getFile } = useClientContext();
-  const { data, isLoading } = usePost(
-    'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy',
-    '0RDV7ABDZDW0'
-  );
+  const { data, isLoading } = usePost(params.pubky, params.postId);
   console.log('dataPost', data);
-  const {data: replies} = usePostThread(
-    'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy',
-    '0RDV7ABDZDW0'
-  );
-  console.log("replies", replies);
+  const { data: replies } = usePostThread(params.pubky, params.postId);
+  console.log('replies', replies);
   //const { setContent, setShow } = useAlertContext();
   //const [post, setPost] = useState<IPost>({} as IPost);
   //const [showPost, setShowPost] = useState(true);
@@ -137,7 +131,7 @@ export default function Index({
               <Post.ReplyForm
                 uri={uri}
                 post={data}
-                updatePost={() => console.log("updated")}
+                updatePost={() => console.log('updated')}
                 replies={replies}
               />
             </div>
