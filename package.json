@@ -13,11 +13,13 @@
   },
   "private": true,
   "dependencies": {
+    "@noble/hashes": "^1.5.0",
     "@nx/next": "17.2.4",
     "@swc/helpers": "~0.5.2",
     "@synonymdev/pubky": "^0.1.16",
     "@tanstack/react-query": "^5.52.3",
     "axios": "^1.7.4",
+    "base32.js": "^0.1.0",
     "emoji-picker-react": "^4.9.3",
     "get-youtube-id": "^1.0.1",
     "jdenticon": "^3.2.0",

@@ -15,8 +15,10 @@ import timeAgo from './lib/Helper/timeAgo';
 import uint8ArrayToBase64 from './lib/Conversion/uint8ArrayToBase64';
 import minifyText from './lib/Text/minifyText';
 import statusHelper from './lib/Helper/statusHelper';
+import { generateHashId } from './lib/Crypto/generateHashId';
 
 export const Utils = {
+  generateHashId,
   base64ToUint8Array,
   cleanText,
   decodePostUri,
