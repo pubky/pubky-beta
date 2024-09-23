@@ -64,6 +64,7 @@ import {
   DotsThreeVertical,
   DotsThreeOutline,
   SignOut,
+  SignIn,
 } from './_System';
 import {
   Android,
@@ -187,6 +188,7 @@ export const Icon = {
   Question,
   Repost,
   SignOut,
+  SignIn,
   SlidersHorizontal,
   Shield,
   Synonym,
