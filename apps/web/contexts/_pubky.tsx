@@ -16,6 +16,7 @@ type PubkyClientContextType = {
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
   logout: () => boolean;
+  signUp: (userProfile: any) => Promise<any>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -100,6 +101,45 @@ export function PubkyClientWrapper({
     }
   };
 
+  const signUp = async (userProfile: any) => {
+    // try {
+    //   const generatedSeed = Client.crypto.generateSeed();
+    //   const seed = Utils.uint8ArrayToBase64(generatedSeed);
+    //   Utils.storage.set('seed', seed);
+    //   setSeed(seed);
+    //   await client.ready();
+    //   const result = await client.signup(generatedSeed); // seed is zeroed
+    //   if (!result.ok) throw new Error(`Signup failed: ${result.error.message}`);
+    //   const pk = result.value as unknown as string;
+    //   Utils.storage.set('pubky', pk);
+    //   setPubky(pk);
+    //   if (userProfile.image instanceof File) {
+    //     const file = userProfile.image;
+    //     const fileContent = await file.arrayBuffer();
+    //     const fileUploadResult = await client.social.files.upload(pk, {
+    //       content: Buffer.from(fileContent),
+    //       contentType: file.type,
+    //       size: file.size,
+    //     });
+    //     if (!fileUploadResult.ok) {
+    //       throw new Error(
+    //         `File upload failed: ${fileUploadResult.error.message}`
+    //       );
+    //     }
+    //     const { uri } = fileUploadResult.value;
+    //     userProfile.image = uri;
+    //   }
+    //   const pubkeyProfile = _toPubkeyProfile(userProfile);
+    //   await client.social.profile.put(pk, pubkeyProfile);
+    //   setProfile(pubkeyProfile);
+    //   Utils.storage.set('profile', pubkeyProfile);
+    //   return pubkeyProfile;
+    // } catch (error) {
+    //   console.log(error);
+    //   return false;
+    // }
+  };
+
   return (
     <PubkyClientContext.Provider
       value={{
@@ -107,6 +147,7 @@ export function PubkyClientWrapper({
         loginWithFile,
         isLoggedIn,
         logout,
+        signUp,
       }}
     >
       {children}
