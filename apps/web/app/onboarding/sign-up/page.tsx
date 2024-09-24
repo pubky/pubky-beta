@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
 import { Card } from './Card';
@@ -26,20 +26,24 @@ const profileSchema = z.object({
 });
 
 export default function Index() {
-  const { signUp } = useClientContext();
+  const { signUp, profile } = usePubkyClientContext();
   const router = useRouter();
 
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
-  const [image, setImage] = useState<File | string>('/images/Userpic.png');
+  const [name, setName] = useState(profile?.name || '');
+  const [bio, setBio] = useState(profile?.bio || '');
+  const [image, setImage] = useState<File | string>(
+    profile?.image || '/images/Userpic.png'
+  );
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<
     { title: string; url: string; placeHolder?: string }[]
-  >([
-    { url: '', title: 'website', placeHolder: 'https://' },
-    { url: '', title: 'email', placeHolder: 'user@provider.com' },
-  ]);
+  >(
+    profile?.links || [
+      { url: '', title: 'website', placeHolder: 'https://' },
+      { url: '', title: 'email', placeHolder: 'user@provider.com' },
+    ]
+  );
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
@@ -143,8 +147,8 @@ export default function Index() {
         const signUpResponse = await signUp({
           name,
           bio,
-          image,
-          links: linksObject,
+          image: image instanceof File ? image : undefined,
+          links: linksObject ? linksObject : undefined,
         });
 
         if (!signUpResponse) {

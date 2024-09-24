@@ -12,7 +12,7 @@ import {
   Icon,
 } from '@social/ui-shared';
 import { Header } from '@/components';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';
@@ -29,13 +29,13 @@ const profileSchema = z.object({
 
 export default function Index() {
   const router = useRouter();
-  const { pubky, saveProfile, getProfile, deleteFile } = useClientContext();
+  const { pubky, getProfile, saveProfile } = usePubkyClientContext();
 
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [image, setImage] = useState<File | string>('/images/Userpic.png');
-  const [prevImage, setPrevImage] = useState<string>('');
+  // const [prevImage, setPrevImage] = useState<string>('');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
@@ -67,16 +67,19 @@ export default function Index() {
   }, [modalLinkRef, setShowModalLink]);
 
   useEffect(() => {
+    if (!pubky) return;
+
     setHandler(Utils.minifyPubky(pubky));
+
     async function fetchData() {
       try {
-        const userProfile = await getProfile();
+        const userProfile = await getProfile(pubky as string);
 
         if (userProfile) {
           setName(userProfile.name);
-          setBio(userProfile.bio);
-          setImage(userProfile.image || '/images/Userpic.png');
-          setPrevImage(userProfile.image || '/images/Userpic.png');
+          setBio(userProfile?.bio || '');
+          setImage(userProfile?.image || '/images/Userpic.png');
+          // setPrevImage(userProfile?.image || '/images/Userpic.png');
           if (userProfile.links.length > 0) setLinks(userProfile.links);
         }
       } catch (error) {
@@ -223,14 +226,14 @@ export default function Index() {
         links: linksObject,
       });
 
-      if (
-        prevImage &&
-        prevImage !== '/images/Userpic.png' &&
-        prevImage !== image
-      ) {
-        const idImage = Utils.encodeImageId(prevImage);
-        if (idImage) await deleteFile(idImage);
-      }
+      // if (
+      //   prevImage &&
+      //   prevImage !== '/images/Userpic.png' &&
+      //   prevImage !== image
+      // ) {
+      //   const idImage = Utils.encodeImageId(prevImage);
+      //   if (idImage) await deleteFile(idImage);
+      // }
 
       router.push('/profile');
     } catch (error) {

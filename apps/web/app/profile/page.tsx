@@ -6,11 +6,12 @@ import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from './components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
+import { TStatus } from '@/types';
 
 export default function Index() {
-  const { pubky } = usePubkyClientContext();
+  const { pubky, profile } = usePubkyClientContext();
   const { data, isLoading } = useUserProfile(pubky ?? '');
-  const profile = data;
+  const user = data;
   const loader = useRef(null);
 
   return (
@@ -19,14 +20,14 @@ export default function Index() {
       <div>
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center gap-8 relative">
           <Profile.Avatar
-            username={profile?.details?.name || 'Loading...'}
-            uriImage={profile?.details?.image}
+            username={profile?.name || 'Loading...'}
+            uriImage={profile?.image as string}
           />
           <Profile.Handle
             className="-mt-4"
-            username={profile?.details?.name || 'Loading...'}
+            username={profile?.name || 'Loading...'}
             pubkey={pubky ? pubky : ''}
-            status={profile?.details?.status}
+            status={(profile?.status as TStatus) || 'noStatus'}
           />
         </Content.Grid>
       </div>
@@ -34,13 +35,13 @@ export default function Index() {
         <PostsLayout className="flex flex-col col-span-5 xl:col-span-4 gap-3 mt-[10px]">
           <Profile.FilterTabs
             countContacts={{
-              followers: profile?.counts?.followers ?? 0,
-              following: profile?.counts?.following ?? 0,
-              friends: profile?.counts?.friends ?? 0,
+              followers: user?.counts?.followers ?? 0,
+              following: user?.counts?.following ?? 0,
+              friends: user?.counts?.friends ?? 0,
             }}
-            countPosts={profile?.counts?.posts}
+            countPosts={user?.counts?.posts}
             loading={isLoading}
-            profile={profile}
+            profile={user}
           />
         </PostsLayout>
         <Profile.Sidebar />

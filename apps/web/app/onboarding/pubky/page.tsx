@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import { useClientContext, useToastContext } from '@/contexts';
+import { usePubkyClientContext, useToastContext } from '@/contexts';
 import { Onboarding } from '../components';
 import Image from 'next/image';
 
 export default function Index() {
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const { setContent, setShow } = useToastContext();
 
   const handleCopy = async () => {
@@ -32,7 +32,11 @@ export default function Index() {
           </div>
           <div className="justify-center items-center gap-2.5 inline-flex">
             {pubky ? (
-              <Typography.H2 id='onboarding-pubky' className="text-[31px] font-light" variant="light">
+              <Typography.H2
+                id="onboarding-pubky"
+                className="text-[31px] font-light"
+                variant="light"
+              >
                 pk:{pubky}
               </Typography.H2>
             ) : (

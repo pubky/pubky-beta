@@ -28,8 +28,8 @@ interface HeaderProps {
 
 export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
-  const { isLoggedIn, setSearchTags, searchTags } = useClientContext();
-  const { pubky } = usePubkyClientContext();
+  const { setSearchTags, searchTags } = useClientContext();
+  const { pubky, isLoggedIn } = usePubkyClientContext();
   const { data } = useUserProfile(pubky ?? '');
   const profile = data;
   const { notifications } = useNotificationsContext();

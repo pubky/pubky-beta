@@ -16,8 +16,10 @@ import uint8ArrayToBase64 from './lib/Conversion/uint8ArrayToBase64';
 import minifyText from './lib/Text/minifyText';
 import statusHelper from './lib/Helper/statusHelper';
 import { generateHashId } from './lib/Crypto/generateHashId';
+import { generateTimestampId } from './lib/Crypto/generateTimestampId';
 
 export const Utils = {
+  generateTimestampId,
   generateHashId,
   base64ToUint8Array,
   cleanText,

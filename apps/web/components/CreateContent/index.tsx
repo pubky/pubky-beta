@@ -6,7 +6,6 @@ import Modal from '../Modal';
 import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
 import { Section } from './Section';
-import { useUserProfile } from '@/hooks/useUser';
 import { UserView } from '@/types/User';
 import UsernameSearch from './Section/_UsernameSearch';
 
@@ -50,9 +49,7 @@ export default function CreateContent({
   setArrayTags,
   children,
 }: CreateContentProps) {
-  const { pubky } = usePubkyClientContext();
-  const { data } = useUserProfile(pubky ?? '');
-  const profile = data;
+  const { pubky, profile } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
@@ -235,8 +232,8 @@ export default function CreateContent({
       } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
     >
       <Section.UserArea
-        uriPic={profile?.details?.image ?? ''}
-        name={profile?.details?.name ?? 'Loading...'}
+        uriPic={(profile?.image as string) ?? ''}
+        name={profile?.name ?? 'Loading...'}
         largeView={largeView}
       />
       <div
