@@ -22,7 +22,7 @@ declare namespace Cypress {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    onboardAsNewUser(profileName: string, profileBio?: string, pubkyAlias?: string): void;
+    onboardAsNewUser(username: string, bio?: string, pubkyAlias?: string): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {

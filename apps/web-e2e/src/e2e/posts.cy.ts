@@ -2,7 +2,7 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost } from '../support/posts';
+import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost, repostPost } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -368,17 +368,7 @@ describe('posts', () => {
 
     // repost with content
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').children().eq(1).within(() => {
-      cy.get('#repost-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(($modal) => {
-      cy.get('h1').contains('Repost');
-      // check that the post content is displayed in the repost modal
-      cy.wrap($modal).contains(postContent);
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(repostContent);
-      cy.get('#repost-btn').click();
-    });
+    repostPost({ repostContent, postContent });
 
     // check repost message is shown (before the alert disappears)
     cy.get('#message-alert').should('be.visible').and('contain.text', 'Repost');
@@ -412,14 +402,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // repost without content
-    cy.get('#posts-feed').children().eq(1).within(() => {
-      cy.get('#repost-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(() => {
-      cy.get('h1').contains('Repost');
-      cy.get('textarea').should('have.value', '');
-      cy.get('#repost-btn').click();
-    });
+    repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
@@ -446,6 +429,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // repost
+    repostPost({ repostContent, postContent });
     cy.get('#posts-feed').children().eq(1).within(() => {
       cy.get('#repost-btn').click();
     });
