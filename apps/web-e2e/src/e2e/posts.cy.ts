@@ -484,7 +484,7 @@ describe('posts', () => {
     cy.reload();
     cy.get('#posts-feed').children().eq(1).within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
-                    .innerTextShouldContain(replyContent);
+      cy.wrap($post).innerTextShouldContain(replyContent);
     });
 
     // delete the reply (post is at index 1) (menuBtnIdx 1 for reply)
@@ -495,7 +495,7 @@ describe('posts', () => {
     cy.reload();
     cy.get('#posts-feed').children().eq(1).within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
-                    .innerTextShouldNotContain(replyContent);
+      cy.wrap($post).innerTextShouldNotContain(replyContent);
     });
   });
 

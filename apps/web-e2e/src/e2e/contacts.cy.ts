@@ -1,5 +1,6 @@
 import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
+import { searchAndFollowProfile } from '../support/contacts';
 
 describe('contacts', () => {
   before(() => {
@@ -8,11 +9,6 @@ describe('contacts', () => {
   });
 
   it('follow, be followed, and make a friend', () => {
-    cy.on('uncaught:exception', (err, runnable) => {
-      // returning false here prevents Cypress from failing the test
-      return false
-    })
-
     //
     // create two accounts
     //
@@ -52,21 +48,10 @@ describe('contacts', () => {
     // search for profile and follow
     //
 
-    // Search for account 1
-    cy.get('@pubky1').then((text) => {
-      // type pubky for account 1 into search bar and press enter
-      cy.get('#header-search-input').type(`${text}{enter}`);
+    // Search for account 1 using alias
+    cy.get('@pubky1').then((pubky) => {
+      searchAndFollowProfile(`${pubky}`, '#1 Friend');
     });
-    // check that account 1 profile page is displayed
-    cy.get('#profile-username-header').should('have.text', '#1 Friend');
-
-    // Check follow button is displayed for account 1
-    cy.get('#profile-follow-btn').should('be.visible').and('have.text', 'Follow');
-    // Follow account 1
-    cy.get('#profile-follow-btn').click();
-    // Check follow button is now unfollow
-    cy.get('#profile-follow-btn').should('not.exist');
-    cy.get('#profile-unfollow-btn').should('be.visible').and('have.text', 'Unfollow');
 
     //
     // check other profile shows me as new follower

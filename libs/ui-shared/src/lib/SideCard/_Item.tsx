@@ -3,6 +3,7 @@ import { Typography } from '../Typography';
 import { twMerge } from 'tailwind-merge';
 
 interface ItemProps extends React.HTMLAttributes<HTMLButtonElement> {
+  id?: string;
   label: string;
   value: string;
   selected?: boolean;
@@ -12,6 +13,7 @@ interface ItemProps extends React.HTMLAttributes<HTMLButtonElement> {
 }
 
 export const Item = ({
+  id,
   icon,
   label,
   value,
@@ -24,6 +26,7 @@ export const Item = ({
 
   return (
     <button
+      id={id}
       {...rest}
       key={value}
       className={twMerge(baseCSS, disabledCSS, rest.className)}

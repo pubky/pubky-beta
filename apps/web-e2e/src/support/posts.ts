@@ -59,15 +59,7 @@ export const deletePost = (postIdx = 1, menuBtnIdx = 0) => {
 // if no arguments or just repostContent is provided then it reposts the latest post in the feed
 // TODO: default filterText value to filter out the quick post area then can change default index to 0
 export const repostPost = ({repostContent, postContent, filterText, postIdx}: {repostContent?: string, postContent?: string, filterText?: string, postIdx?: number}) => {
-  // set default index to 1 to skip the quick post area
-  if (postIdx === undefined) postIdx = 1;
-  cy.get('#posts-feed').children().then($posts => {
-    // optionally filter posts by contained text
-    return filterText
-      // cannot use :contains due to additional space inserted between each word in the post content
-      ? $posts.filter((_idx, element) => element.innerText.includes(filterText))
-      : $posts
-  }).eq(postIdx).within(() => {
+  cy.findPostInFeed(filterText, postIdx).within(() => {
     cy.get('#repost-btn').click();
   });
   cy.get('#modal-root').should('be.visible').within(($modal) => {

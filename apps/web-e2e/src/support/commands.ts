@@ -24,6 +24,13 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     onboardAsNewUser(username: string, bio?: string, pubkyAlias?: string): void;
   }
+  interface Chainable<Subject> {
+    findPostInFeed(filterText: string, postIdx?: number): Chainable<Subject>;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    cannotFindPostInFeed(filterText: string): void;
+  }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     backupRecoveryFile(passcode?: string): void;
@@ -63,6 +70,39 @@ declare namespace Cypress {
   }
 }
 
+Cypress.Commands.add('signOut', (hasBackedUp : boolean) => {
+  cy.get('#header-profile-pic').click();
+  cy.location('pathname').should('eq', '/profile');
+
+  cy.get('#profile-sign-out-btn').click();
+
+  // sign out model only shows if user has not backed up recovery file
+  if (!hasBackedUp) cy.get('#logout-modal-sign-out-btn').click();
+
+  cy.location('pathname').should('eq', '/logout');
+
+  cy.get('#logout-link').click();
+  cy.location('pathname').should('eq', '/sign-in');
+});
+
+Cypress.Commands.add('signIn', (backupFilepath : string, passcode = '123456') => {
+  cy.location('pathname').then((currentPath) => {
+    if (currentPath !== '/sign-in') {
+      cy.visit('/sign-in');
+    };
+  });
+  cy.location('pathname').should('eq', '/sign-in');
+
+  cy.get('#fileInput').selectFile(
+    backupFilepath,
+    { force: true } // force to bypass visibility check of hidden input field
+  );
+  cy.get('#onboarding-password-input').type(passcode);
+  cy.get('#onboarding-sign-in-button').click();
+
+  cy.location('pathname').should('eq', '/home');
+});
+
 Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : string = '', pubkyAlias? : string) => {
   cy.visit('/onboarding');
 
@@ -97,37 +137,28 @@ Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : str
   cy.location('pathname').should('eq', '/home');
 });
 
-Cypress.Commands.add('signOut', (hasBackedUp : boolean) => {
-  cy.get('#header-profile-pic').click();
-  cy.location('pathname').should('eq', '/profile');
+// finds first with no args
+Cypress.Commands.add('findPostInFeed', (filterText?, postIdx?) => {
+  // set default index to 1 to skip the quick post area
+  postIdx = postIdx ?? (filterText === undefined ? 1 : 0);
 
-  cy.get('#profile-sign-out-btn').click();
-
-  // sign out model only shows if user has not backed up recovery file
-  if (!hasBackedUp) cy.get('#logout-modal-sign-out-btn').click();
-
-  cy.location('pathname').should('eq', '/logout');
-
-  cy.get('#logout-link').click();
-  cy.location('pathname').should('eq', '/sign-in');
+  cy.get('#posts-feed').children().then($posts => {
+    // optionally filter posts by contained text
+    return filterText
+      // cannot use :contains due to additional space inserted between each word in the post content
+      ? $posts.filter((_idx, element) => element.innerText.includes(filterText))
+      : $posts
+  }).eq(postIdx);
 });
 
-Cypress.Commands.add('signIn', (backupFilepath : string, passcode = '123456') => {
-  cy.location('pathname').then((currentPath) => {
-    if (currentPath !== '/sign-in') {
-      cy.visit('/sign-in');
-    };
+Cypress.Commands.add('cannotFindPostInFeed', (filterText) => {
+  cy.get('#posts-feed').children().then($posts => {
+    // Filter posts by text and assert none are found
+    const matchingPosts = $posts.filter((_idx, element) => element.innerText.includes(filterText));
+
+    // Assert that no posts are found with the provided text
+    expect(matchingPosts).to.have.length(0);
   });
-  cy.location('pathname').should('eq', '/sign-in');
-
-  cy.get('#fileInput').selectFile(
-    backupFilepath,
-    { force: true } // force to bypass visibility check of hidden input field
-  );
-  cy.get('#onboarding-password-input').type(passcode);
-  cy.get('#onboarding-sign-in-button').click();
-
-  cy.location('pathname').should('eq', '/home');
 });
 
 Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
