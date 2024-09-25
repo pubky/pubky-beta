@@ -6,7 +6,7 @@ import { ImageByUri } from '../ImageByUri';
 import { Utils } from '@social/utils-shared';
 import { useClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
-import { UserView } from '@/types/User';
+import { PubkyAppUser } from '@/contexts/_pubky';
 
 interface FeedbackProps {
   showModal: boolean;
@@ -15,7 +15,7 @@ interface FeedbackProps {
   setError: React.Dispatch<React.SetStateAction<boolean>>;
   sent: boolean;
   setSent: React.Dispatch<React.SetStateAction<boolean>>;
-  profile: UserView | null;
+  profile: PubkyAppUser | undefined;
   message: string;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
   handleSubmit: () => void;
@@ -72,9 +72,9 @@ export default function Feedback({
                 height={32}
                 className="w-[32px] h-[32px] rounded-full"
                 alt="user-image"
-                uri={profile?.details.image ?? '/images/Userpic.png'}
+                uri={profile?.image ?? '/images/Userpic.png'}
               />
-              {profile?.details.name && pubky ? (
+              {profile?.name && pubky ? (
                 <div
                   className="cursor-pointer flex gap-4 items-center"
                   onClick={() => router.push('/profile')}
@@ -83,7 +83,7 @@ export default function Feedback({
                     className={`hover:underline hover:decoration-solid`}
                     variant="medium-bold"
                   >
-                    {Utils.minifyText(profile?.details.name, 24)}
+                    {Utils.minifyText(profile?.name, 24)}
                   </Typography.Body>
                   <div className="flex gap-1 cursor-pointer">
                     {/**<Icon.CheckCircle size="16" color="gray" />*/}

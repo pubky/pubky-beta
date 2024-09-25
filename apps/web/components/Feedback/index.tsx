@@ -6,13 +6,10 @@ import { useState } from 'react';
 import { ImageByUri } from '../ImageByUri';
 import axios from 'axios';
 import Modal from '../Modal';
-import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 
 export default function Feedback() {
-  const { pubky } = usePubkyClientContext();
-  const { data } = useUserProfile(pubky ?? '');
-  const profile = data;
+  const { pubky, profile } = usePubkyClientContext();
   const [message, setMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,7 +21,7 @@ export default function Feedback() {
       setLoading(true);
       await axios.post('https://synonym.to/api/chatwoot', {
         message,
-        name: profile?.details?.name,
+        name: profile?.name,
         email: `${pubky}@pubky.app`,
         source: 'pubky',
       });
@@ -50,13 +47,13 @@ export default function Feedback() {
               <div className="flex gap-2 items-center">
                 <ImageByUri
                   alt="user"
-                  uri={profile?.details?.image ?? '/images/Userpic.png'}
+                  uri={profile?.image ?? '/images/Userpic.png'}
                   width={32}
                   height={32}
                   className="rounded-full w-8 h-8"
                 />
                 <Typography.Body variant="medium-bold">
-                  {Utils.minifyText(profile?.details?.name ?? 'Loading...', 10)}
+                  {Utils.minifyText(profile?.name ?? 'Loading...', 10)}
                 </Typography.Body>
               </div>
               <div
