@@ -30,7 +30,7 @@ import {
   IFileContent,
 } from '../types';
 
-import Client from '@pubky/sdk';
+//import Client from '@pubky/sdk';
 import { Utils } from '@social/utils-shared';
 
 const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
@@ -45,12 +45,13 @@ const homeserverUrl =
     : undefined;
 console.log({ homeserverUrl });
 
-const client = new Client(HOMESERVER, {
-  relay: PKARR_RELAY,
-  homeserverUrl,
-});
+//const client = new Client(HOMESERVER, {
+//  relay: PKARR_RELAY,
+//  homeserverUrl,
+//});
 
-const startClient = async () => {
+{
+  /**const startClient = async () => {
   await client.ready();
 
   Utils.storage.set('homeserverUrl', {
@@ -59,6 +60,8 @@ const startClient = async () => {
   });
 };
 startClient();
+*/
+}
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(

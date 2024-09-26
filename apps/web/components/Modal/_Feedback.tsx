@@ -4,9 +4,8 @@ import { Button, Icon, Input, Modal, Typography } from '@social/ui-shared';
 import { useEffect, useRef } from 'react';
 import { ImageByUri } from '../ImageByUri';
 import { Utils } from '@social/utils-shared';
-import { useClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
-import { PubkyAppUser } from '@/contexts/_pubky';
+import { PubkyAppUser, usePubkyClientContext } from '@/contexts/_pubky';
 
 interface FeedbackProps {
   showModal: boolean;
@@ -35,7 +34,7 @@ export default function Feedback({
   handleSubmit,
   loading,
 }: FeedbackProps) {
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
 

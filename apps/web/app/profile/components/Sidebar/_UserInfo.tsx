@@ -2,8 +2,8 @@ import { Typography, Button, Icon, SideCard } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import Parsing from '@/components/Content/_Parsing';
-import { useClientContext } from '@/contexts';
 import { ImageByUri } from '@/components/ImageByUri';
+import { usePubkyClientContext } from '@/contexts';
 
 interface UserInfoProps {
   scrolled: boolean;
@@ -36,14 +36,15 @@ export default function UserInfo({
   loadingFollowed,
   setLoadingFollowed,
 }: UserInfoProps) {
-  const { pubky, follow, unfollow } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { follow, unfollow } = useClientContext();
 
   const followUser = async () => {
     try {
       if (!creatorPubky) return;
       setLoadingFollowed(true);
 
-      const result = await follow(creatorPubky);
+      const result = null; //await follow(creatorPubky);
       setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
@@ -56,7 +57,7 @@ export default function UserInfo({
       if (!creatorPubky) return;
       setLoadingFollowed(true);
 
-      const result = await unfollow(creatorPubky);
+      const result = null; //await unfollow(creatorPubky);
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {

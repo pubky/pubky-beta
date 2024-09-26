@@ -10,11 +10,11 @@ import {
   Tooltip as TooltipUI,
   Typography,
 } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
 import { PostTag, PostView } from '@/types/Post';
+import { usePubkyClientContext } from '@/contexts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -23,7 +23,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Tags({ post, largeView = false }: PostProps) {
   const [showTooltipTag, setShowTooltipTag] = useState('');
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
@@ -81,9 +81,9 @@ export default function Tags({ post, largeView = false }: PostProps) {
       className="mt-6 cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
-      <div id='tags' className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
+      <div id="tags" className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
         <Button.Action
-          id='tag-btn'
+          id="tag-btn"
           size="small"
           variant="custom"
           icon={<Icon.Tag size="16" />}

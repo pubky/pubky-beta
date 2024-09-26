@@ -1,17 +1,17 @@
 import { Button, Icon, Modal } from '@social/ui-shared';
 import { useState } from 'react';
-import { useClientContext, useAlertContext } from '@/contexts';
+import { useAlertContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { IPost } from '@/types';
 import Post from '../Post';
 
 import CreateContent from '../CreateContent';
+import { PostView } from '@/types/Post';
 
 interface CreateRepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   modalRepostRef: React.RefObject<HTMLDivElement>;
-  post: IPost;
+  post: PostView;
   handleRepost: () => Promise<void>;
 }
 
@@ -22,7 +22,7 @@ export default function Repost({
   post,
   handleRepost,
 }: CreateRepostProps) {
-  const { createRepost, createTag } = useClientContext();
+  //const { createRepost, createTag } = useClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentRepost, setContentRepost] = useState('');
   const [isValidContent, setIsValidContent] = useState(false);
@@ -41,11 +41,11 @@ export default function Repost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newRepost = await createRepost(post.uri, content, selectedFiles);
+      const newRepost = null; //await createRepost(post.uri, content, selectedFiles);
 
       if (newRepost) {
         for (const tag of updatedTags) {
-          await createTag(newRepost.uri, tag);
+          //await createTag(newRepost.uri, tag);
         }
         setContent('Repost created!');
         setShow(true);
@@ -85,7 +85,7 @@ export default function Repost({
       <div className="flex items-center relative">
         <div className="w-full mt-6">
           <CreateContent
-            id='repost-create-content'
+            id="repost-create-content"
             handleSubmit={handleSubmitRepost}
             content={contentRepost}
             setContent={setContentRepost}
@@ -98,7 +98,7 @@ export default function Repost({
             placeHolder="Optional comment"
             button={
               <Button.Medium
-                id='repost-btn'
+                id="repost-btn"
                 className="w-auto"
                 variant="line"
                 icon={<Icon.Repost color="white" />}

@@ -4,8 +4,8 @@ import { z } from 'zod';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import Modal from '../Modal';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
+import { usePubkyClientContext } from '@/contexts';
 
 const passwordSchema = z.object({
   password: z
@@ -14,7 +14,8 @@ const passwordSchema = z.object({
 });
 
 export default function RemindBackup() {
-  const { seed, setSeed, getRecoveryFile } = useClientContext();
+  const { seed, setSeed } = usePubkyClientContext();
+  //const { getRecoveryFile } = useClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
   const [remindMeLater, setRemindMeLater] = useState(false);

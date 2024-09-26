@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import CreateContent from '../CreateContent';
 import { Utils } from '@social/utils-shared';
-import { useAlertContext, useClientContext } from '@/contexts';
-import { INewPost } from '@/types';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,8 +13,8 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function CreateQuickPost({
   largeView = false,
 }: CreateQuickPostProps) {
-  const { pubky, getProfile, createPost, setPosts, createTag } =
-    useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { pubky, getProfile, createPost, setPosts, createTag } = useClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -34,14 +33,14 @@ export default function CreateQuickPost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, selectedFiles);
+      const newPost = null; //await createPost(content, selectedFiles);
 
       if (newPost) {
         for (const tag of updatedTags) {
-          await createTag(newPost.uri, tag);
+          //await createTag(newPost.uri, tag);
         }
 
-        const userProfile = await getProfile();
+        const userProfile = null; //await getProfile();
 
         if (userProfile) {
           newPost.tags = updatedTags.map((tag) => ({
@@ -61,10 +60,10 @@ export default function CreateQuickPost({
             ],
           }));
         }
-        setPosts((prev: INewPost) => ({
-          ...{ [newPost.id]: newPost },
-          ...prev,
-        }));
+        //setPosts((prev: INewPost) => ({
+        //  ...{ [newPost.id]: newPost },
+        //  ...prev,
+        //}));
         setContent('Post created!');
         setShow(true);
       } else {
@@ -84,7 +83,7 @@ export default function CreateQuickPost({
 
   return (
     <CreateContent
-      id='quick-post-create-content'
+      id="quick-post-create-content"
       largeView={largeView}
       handleSubmit={handleSubmit}
       content={contentPost}
@@ -98,7 +97,7 @@ export default function CreateQuickPost({
       setIsValidContent={setIsValidContent}
       button={
         <Button.Medium
-          id='post-btn'
+          id="post-btn"
           className="w-auto"
           variant="line"
           icon={

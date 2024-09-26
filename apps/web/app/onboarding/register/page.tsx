@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Icon } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
 import { Card } from './Card';
+import { usePubkyClientContext } from '@/contexts';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -26,7 +26,7 @@ const profileSchema = z.object({
 });
 
 export default function Index() {
-  const { saveProfile } = useClientContext();
+  const { saveProfile } = usePubkyClientContext();
 
   const router = useRouter();
 

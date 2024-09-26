@@ -13,9 +13,9 @@ import {
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
-import { useClientContext } from '@/contexts';
 import { ImageByUri } from '../ImageByUri';
 import { UserTags } from '@/types/User';
+import { usePubkyClientContext } from '@/contexts';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalProfileTag: boolean;
@@ -43,7 +43,8 @@ export default function ProfileTag({
   uriImage,
 }: ProfileTagProps) {
   const router = useRouter();
-  const { pubky, follow, unfollow, listFollowing } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
@@ -61,7 +62,7 @@ export default function ProfileTag({
       try {
         if (!pubky) return;
 
-        const following = await listFollowing(pubky);
+        const following = null; //await listFollowing(pubky);
 
         if (following) {
           const followingIds = following.following.map((user) =>
@@ -90,7 +91,7 @@ export default function ProfileTag({
     }
 
     fetchFollowing();
-  }, [pubky, listFollowing, profileTags]);
+  }, [pubky, profileTags]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -101,7 +102,7 @@ export default function ProfileTag({
         [pubkyFollow]: true,
       }));
 
-      const result = await follow(pubkyFollow);
+      const result = null; // await follow(pubkyFollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
@@ -126,7 +127,7 @@ export default function ProfileTag({
         [pubkyUnfollow]: true,
       }));
 
-      const result = await unfollow(pubkyUnfollow);
+      const result = null; //await unfollow(pubkyUnfollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
@@ -423,8 +424,7 @@ export default function ProfileTag({
                             <SideCard.User
                               uri={user?.tagger_id.replace('pubky:', '')}
                               uriImage={
-                                user?.tagger_id?.image ||
-                                '/images/Userpic.png'
+                                user?.tagger_id?.image || '/images/Userpic.png'
                               }
                               username={
                                 user?.tagger_id?.name &&

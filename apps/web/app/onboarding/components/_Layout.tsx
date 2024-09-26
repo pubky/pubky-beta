@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Content, Header } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 
 interface LayoutOnboardingProps {
   children: React.ReactNode;
@@ -15,7 +15,7 @@ export default function OnboardingLayout({
   currentStep = 1,
 }: LayoutOnboardingProps) {
   const pathname = usePathname();
-  const { pubky, isLoggedIn } = useClientContext();
+  const { pubky, isLoggedIn } = usePubkyClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
 
   useEffect(() => {

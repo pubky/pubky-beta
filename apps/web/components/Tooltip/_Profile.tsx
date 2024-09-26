@@ -15,16 +15,16 @@ import {
   IFollowersResponse,
   IPostFrom,
 } from '@/types';
-import { useClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
+import { usePubkyClientContext } from '@/contexts';
 
 interface ProfileProps {
   post: IPost | IPostFrom;
 }
 
 export default function Profile({ post }: ProfileProps) {
-  const { pubky, follow, unfollow, listFollowers, listFollowing } =
-    useClientContext();
+  const { pubky } = usePubkyClientContext();
+  // const { pubky, follow, unfollow, listFollowers, listFollowing } = useClientContext();
   const router = useRouter();
 
   const [followed, setFollowed] = useState(false);
@@ -56,7 +56,7 @@ export default function Profile({ post }: ProfileProps) {
 
         if (!pubkey) return;
 
-        const followersList = await listFollowers(pubkey);
+        const followersList = null; //await listFollowers(pubkey);
 
         if (followersList) {
           setFollowersImages(
@@ -99,7 +99,7 @@ export default function Profile({ post }: ProfileProps) {
 
         if (!pubkey) return;
 
-        const followingList = await listFollowing(pubkey);
+        const followingList = null; //await listFollowing(pubkey);
 
         if (followingList) {
           setFollowingImages(
@@ -124,7 +124,7 @@ export default function Profile({ post }: ProfileProps) {
       if (!post?.author?.id) return;
       setLoadingFollowed(true);
 
-      const result = await follow(post?.author?.id);
+      const result = null; //await follow(post?.author?.id);
       setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
@@ -137,7 +137,7 @@ export default function Profile({ post }: ProfileProps) {
       if (!post?.author?.id) return;
       setLoadingFollowed(true);
 
-      const result = await unfollow(post?.author?.id);
+      const result = null; //await unfollow(post?.author?.id);
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {

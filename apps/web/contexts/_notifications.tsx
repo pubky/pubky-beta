@@ -8,7 +8,7 @@ import {
   ReactNode,
 } from 'react';
 import { INotification } from '@/types';
-import { useClientContext, useFilterContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 
 type NotificationsContextType = {
   notifications: (INotification | INotification[])[];
@@ -188,7 +188,8 @@ const NotificationsContext = createContext<NotificationsContextType>({
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
-  const { pubky, getNotifications } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { getNotifications } = useClientContext();
   const { notificationPreferences } = useFilterContext();
   const [notifications, setNotifications] = useState<
     (INotification | INotification[])[]
@@ -201,7 +202,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
       if (!pubky) return;
 
-      const results = await getNotifications();
+      const results = null; //await getNotifications();
       if (results) {
         const filteredNotifications = results.feed.filter(
           (notification: INotification) =>

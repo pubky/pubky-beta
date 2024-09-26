@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
-import { useClientContext } from '@/contexts';
-import { INewPost } from '@/types';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
 import { useUserProfile } from '@/hooks/useUser';
@@ -15,7 +13,7 @@ export default function Index({
 }: {
   params: { creatorPubky: string };
 }) {
-  const { setPosts } = useClientContext();
+  //const { setPosts } = useClientContext();
   const creatorPubky = params.creatorPubky;
   const { data, isLoading, isError } = useUserProfile(creatorPubky);
   const profile = data;
@@ -33,7 +31,7 @@ export default function Index({
   }, [data]);
 
   useEffect(() => {
-    setPosts({} as INewPost);
+    //setPosts({} as INewPost);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

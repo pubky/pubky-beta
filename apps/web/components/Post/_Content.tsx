@@ -1,6 +1,5 @@
 'use client';
 
-import { useClientContext } from '@/contexts';
 import { IFileContent } from '@/types';
 import { Utils } from '@social/utils-shared';
 import getYouTubeID from 'get-youtube-id';
@@ -27,7 +26,7 @@ export default function Content({
   largeView = false,
   children,
 }: PostProps) {
-  const { getFile } = useClientContext();
+  //const { getFile } = useClientContext();
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
@@ -87,7 +86,7 @@ export default function Content({
         const fileUris = Object.values(files).map((file) => file.fileUri);
         const fetchedFiles = await Promise.all(
           fileUris.map(async (fileUri) => {
-            const fetchedFile = await getFile(fileUri);
+            const fetchedFile = null; // await getFile(fileUri);
             return fetchedFile ? fetchedFile : null;
           })
         );
@@ -98,7 +97,7 @@ export default function Content({
     };
 
     fetchFiles();
-  }, [files, getFile]);
+  }, [files]);
 
   const openModal = (index: number) => {
     setCurrentFileIndex(index);
@@ -116,7 +115,10 @@ export default function Content({
       className="w-full cursor-text"
       onClick={(event) => event.stopPropagation()}
     >
-      <div id='post-content-text' className={`text-white break-words ${largeView && 'text-2xl'}`}>
+      <div
+        id="post-content-text"
+        className={`text-white break-words ${largeView && 'text-2xl'}`}
+      >
         <Parsing fullContent={fullContent}>{contentText}</Parsing>
 
         {showMore && (

@@ -1,10 +1,10 @@
 import { useRouter } from 'next/navigation';
 import { Card, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
-import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { useClientContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useUsernameSearch } from '@/hooks/useUser';
+import { useHotTags } from '@/hooks/useTag';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -18,18 +18,17 @@ export default function SearchInputCard({
 }: SearchInputCardProps) {
   const router = useRouter();
   const { pubky } = usePubkyClientContext();
-  const { hotTags } = useClientContext();
+  //const { hotTags } = useClientContext();
+  const {
+    data: hotTags,
+    isLoading,
+    isError: isErrorHotTags,
+  } = useHotTags(0, 10);
+  if (isErrorHotTags) console.error(isErrorHotTags);
   const { data, isError } = useUsernameSearch(inputValue ?? '', pubky, 0, 10);
   const searchedUsers = data;
-  const [loading, setLoading] = useState(true);
 
   if (isError) console.error(isError);
-
-  useEffect(() => {
-    if (hotTags) {
-      setLoading(false);
-    }
-  }, [hotTags]);
   {
     /** const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
@@ -107,7 +106,7 @@ export default function SearchInputCard({
             </div>
           )}*/}
           <div>
-            {loading ? (
+            {isLoading ? (
               <Typography.Body variant="small" className="text-opacity-30">
                 Loading...
               </Typography.Body>
@@ -121,12 +120,12 @@ export default function SearchInputCard({
                     <PostUtil.Tag
                       key={index}
                       clicked={false}
-                      onClick={() => router.push(`/search?tags=${tag.tag}`)}
-                      color={tag.tag && Utils.generateRandomColor(tag.tag)}
+                      onClick={() => router.push(`/search?tags=${tag.label}`)}
+                      color={tag.label && Utils.generateRandomColor(tag.label)}
                       className="mr-2 my-1"
                       boxShadow={false}
                     >
-                      {tag.tag}
+                      {tag.label}
                     </PostUtil.Tag>
                   ))}
                 </div>

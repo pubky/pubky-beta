@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { Button, Icon, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { IFollower, IUserProfile, LoadingContacts } from '@/types';
-import { useClientContext } from '@/contexts';
 import { ImageByUri } from '@/components/ImageByUri';
+import { usePubkyClientContext } from '@/contexts';
 
 interface ContactsList {
   index: string;
@@ -32,7 +32,8 @@ export default function List({
   followUser,
   unfollowUser,
 }: ContactsList) {
-  const { pubky, createTag, deleteTag } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  // const { createTag, deleteTag } = useClientContext();
 
   const handleAddProfileTag = async (tag: string) => {
     const creatorPubky = contactId;
@@ -40,7 +41,7 @@ export default function List({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await createTag(pubKeyToUse, tag);
+      //await createTag(pubKeyToUse, tag);
     }
   };
 
@@ -50,7 +51,7 @@ export default function List({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await deleteTag(pubKeyToUse, tag);
+      //await deleteTag(pubKeyToUse, tag);
     }
   };
   return (
@@ -65,11 +66,11 @@ export default function List({
             className="rounded-full w-[48px] h-[48px] max-w-none"
           />
           <div className="flex-col justify-center items-start inline-flex">
-            <Typography.Body id='list-profile-name' variant="medium-bold">
+            <Typography.Body id="list-profile-name" variant="medium-bold">
               {contact.profile.name &&
                 Utils.minifyText(contact?.profile?.name, 8)}
             </Typography.Body>
-            <Typography.Label id='list-pubky' className="text-opacity-30 -mt-1">
+            <Typography.Label id="list-pubky" className="text-opacity-30 -mt-1">
               {Utils.minifyPubky(contactId)}
             </Typography.Label>
           </div>
@@ -109,7 +110,7 @@ export default function List({
           <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
             Tags
           </Typography.Label>
-          <Typography.Body id='list-tags-counter' variant="medium-bold">
+          <Typography.Body id="list-tags-counter" variant="medium-bold">
             {profile?.tagsCount ?? 0}
           </Typography.Body>
         </div>
@@ -117,14 +118,14 @@ export default function List({
           <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
             Posts
           </Typography.Label>
-          <Typography.Body id='list-posts-counter' variant="medium-bold">
+          <Typography.Body id="list-posts-counter" variant="medium-bold">
             {profile?.postsCount ?? 0}
           </Typography.Body>
         </div>
         <div className="flex gap-4">
           {pubkeyUser ? (
             <Button.Medium
-              id='list-me-button'
+              id="list-me-button"
               className="w-[104px] bg-transparent cursor-default"
               icon={<Icon.Check />}
             >
@@ -136,7 +137,7 @@ export default function List({
             </Button.Medium>
           ) : isFollowed ? (
             <Button.Medium
-              id='list-unfollow-button'
+              id="list-unfollow-button"
               onClick={
                 loadingContacts[contactId]
                   ? undefined
@@ -151,7 +152,7 @@ export default function List({
             </Button.Medium>
           ) : (
             <Button.Medium
-              id='list-follow-button'
+              id="list-follow-button"
               onClick={
                 loadingContacts[contactId]
                   ? undefined

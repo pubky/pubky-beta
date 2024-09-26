@@ -2,7 +2,7 @@ import { Button, Icon, Modal } from '@social/ui-shared';
 import CreateContent from '../CreateContent';
 import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
-import { useAlertContext, useClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { INewPost } from '@/types';
 
 interface CreatePostProps {
@@ -16,8 +16,8 @@ export default function CreatePost({
   setShowModalPost,
   modalPostRef,
 }: CreatePostProps) {
-  const { pubky, getProfile, createPost, setPosts, createTag } =
-    useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { pubky, getProfile, createPost, setPosts, createTag } = useClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
@@ -34,14 +34,14 @@ export default function CreatePost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, selectedFiles);
+      const newPost = null; //await createPost(content, selectedFiles);
 
       if (newPost) {
         for (const tag of updatedTags) {
-          await createTag(newPost.uri, tag);
+          //await createTag(newPost.uri, tag);
         }
 
-        const userProfile = await getProfile();
+        const userProfile = null; //await getProfile();
 
         if (userProfile) {
           newPost.tags = updatedTags.map((tag) => ({
@@ -104,7 +104,7 @@ export default function CreatePost({
         <div className="flex items-center relative">
           <div className="w-full">
             <CreateContent
-              id='new-post-create-content'
+              id="new-post-create-content"
               handleSubmit={handleSubmit}
               content={contentPost}
               setContent={setContentPost}
@@ -116,7 +116,7 @@ export default function CreatePost({
               setArrayTags={setArrayTags}
               button={
                 <Button.Medium
-                  id='post-btn'
+                  id="post-btn"
                   className="w-auto"
                   variant="line"
                   icon={

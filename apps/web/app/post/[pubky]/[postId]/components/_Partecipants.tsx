@@ -1,9 +1,9 @@
 import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { PostThread, PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Partecipants({
   repliesResponse,
@@ -12,7 +12,8 @@ export default function Partecipants({
   repliesResponse: PostThread | undefined;
   author: string;
 }) {
-  const { pubky, follow, unfollow, listFollowing } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { follow, unfollow, listFollowing } = useClientContext();
   const { data: authorData } = useUserProfile(author);
   const [replies, setReplies] = useState<PostView[]>([]);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -44,7 +45,7 @@ export default function Partecipants({
       try {
         if (!pubky || !replies) return;
 
-        const following = await listFollowing(pubky);
+        const following = null; //await listFollowing(pubky);
 
         if (following) {
           const followingIds = following.following.map((user) =>
@@ -72,7 +73,7 @@ export default function Partecipants({
     }
 
     fetchFollowing();
-  }, [pubky, replies, listFollowing]);
+  }, [pubky, replies]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -83,7 +84,7 @@ export default function Partecipants({
         [pubkyFollow]: true,
       }));
 
-      const result = await follow(pubkyFollow);
+      const result = null; //await follow(pubkyFollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
@@ -108,7 +109,7 @@ export default function Partecipants({
         [pubkyUnfollow]: true,
       }));
 
-      const result = await unfollow(pubkyUnfollow);
+      const result = null; //await unfollow(pubkyUnfollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
