@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components';
-import { ImageByUri } from '@/components/ImageByUri';
+// import { ImageByUri } from '@/components/ImageByUri';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
@@ -36,7 +36,7 @@ export default function TaggedAs({
   //const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
 
   {
-    /** 
+    /**
   const handleAddProfileTag = async (tag: string) => {
     const pubKeyToUse =
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
@@ -71,12 +71,12 @@ export default function TaggedAs({
                   (fromItem) => fromItem?.tagger_id === pubky
                 );
 
-                const images = tag?.tagged?.map(
-                  (fromItem) => fromItem?.tagger_id?.image
-                );
-                const displayedImages = images?.slice(0, 15);
-                const extraImagesCount =
-                  images?.length - displayedImages?.length;
+                // const images = tag?.tagged?.map(
+                //   (fromItem) => fromItem?.tagger_id?.image
+                // );
+                // const displayedImages = images?.slice(0, 15);
+                // const extraImagesCount =
+                //   images?.length - displayedImages?.length;
 
                 return (
                   <div className="flex gap-2" key={index}>
@@ -123,7 +123,7 @@ export default function TaggedAs({
                       onClick={() => router.push(`/search?tags=${tag?.label}`)}
                       className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                     />
-                    <div
+                    {/* <div
                       //onClick={() => setShowModalProfileTag(true)}
                       className="cursor-pointer flex items-center"
                     >
@@ -144,7 +144,7 @@ export default function TaggedAs({
                           +{extraImagesCount}
                         </PostUtil.Counter>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 );
               })}

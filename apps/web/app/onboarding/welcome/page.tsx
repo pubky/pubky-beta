@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
@@ -23,10 +24,10 @@ export default function Index() {
   const { pubky, getProfile } = usePubkyClientContext();
   //const { listFollowers } = useClientContext();
   const [loading, setLoading] = useState(true);
-  const [image, setImage] = useState('/images/Userpic.png');
+  const [image, setImage] = useState<string>('/images/Userpic.png');
   const [handler, setHandler] = useState('');
   const [name, setName] = useState('');
-  const [bio, setBio] = useState('No bio.');
+  const [bio, setBio] = useState<string | undefined>(undefined);
   const [telegram, setTelegram] = useState('');
   const [x, setX] = useState('');
   const [website, setWebsite] = useState('');
@@ -45,9 +46,9 @@ export default function Index() {
       const userProfile = await getProfile(pubky ?? '');
 
       if (userProfile) {
-        setImage(userProfile.image || '/images/Userpic.png');
+        setImage((userProfile.image as string) || '/images/Userpic.png');
         setName(userProfile.name || '');
-        setBio(userProfile.bio || 'No bio.');
+        setBio(userProfile.bio || undefined);
         if (userProfile.links) {
           const email = userProfile.links.find(
             (link: { title: string }) => link.title === 'email'
@@ -82,19 +83,19 @@ export default function Index() {
     try {
       if (!pubky) return;
 
-      const followers = null; //await listFollowers(pubky);
+      // const followers = null; //await listFollowers(pubky);
 
-      if (followers) {
-        setContacts(
-          followers.followers.map((user: any, index: any) => ({
-            alt: 'contact-pic-' + (index + 1),
-            src: user.profile.image || '/images/Userpic.png',
-            name: user.profile.name || '',
-            handler: Utils.minifyPubky(user.uri.replace('pubky:', '')),
-          }))
-        );
-        setLoadingContacts(false);
-      }
+      // if (followers) {
+      //   setContacts(
+      //     followers.followers.map((user: any, index: any) => ({
+      //       alt: 'contact-pic-' + (index + 1),
+      //       src: user.profile.image || '/images/Userpic.png',
+      //       name: user.profile.name || '',
+      //       handler: Utils.minifyPubky(user.uri.replace('pubky:', '')),
+      //     }))
+      //   );
+      //   setLoadingContacts(false);
+      // }
     } catch (error) {
       console.log(error);
     }
@@ -109,13 +110,11 @@ export default function Index() {
     name: Utils.minifyText(name),
     handler: handler,
     image: image,
-    bio: bio,
-    links: {
-      email: email,
-      website: website,
-      x: x,
-      telegram: telegram,
-    },
+    bio: bio || 'No bio.',
+    links:
+      email || x || website || telegram
+        ? { email, x, website, telegram }
+        : undefined,
   };
 
   return (

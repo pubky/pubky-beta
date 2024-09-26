@@ -5,7 +5,8 @@ import { useEffect, useRef } from 'react';
 import { ImageByUri } from '../ImageByUri';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
-import { PubkyAppUser, usePubkyClientContext } from '@/contexts/_pubky';
+import { usePubkyClientContext } from '@/contexts/_pubky';
+import { PubkyAppUser } from '@/types/Post';
 
 interface FeedbackProps {
   showModal: boolean;

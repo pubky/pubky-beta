@@ -1,9 +1,9 @@
 import { Button, Icon, Modal } from '@social/ui-shared';
 import CreateContent from '../CreateContent';
-import { Utils } from '@social/utils-shared';
+// import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
-import { INewPost } from '@/types';
+// import { useAlertContext, usePubkyClientContext } from '@/contexts';
+// import { INewPost } from '@/types';
 
 interface CreatePostProps {
   showModalPost: boolean;
@@ -16,9 +16,9 @@ export default function CreatePost({
   setShowModalPost,
   modalPostRef,
 }: CreatePostProps) {
-  const { pubky } = usePubkyClientContext();
+  // const { pubky } = usePubkyClientContext();
   //const { pubky, getProfile, createPost, setPosts, createTag } = useClientContext();
-  const { setContent, setShow } = useAlertContext();
+  // const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -31,47 +31,47 @@ export default function CreatePost({
     try {
       setSendingPost(true);
 
-      const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      // const hashtags = Utils.extractHashtags(content);
+      // const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = null; //await createPost(content, selectedFiles);
+      // const newPost = null; //await createPost(content, selectedFiles);
 
-      if (newPost) {
-        for (const tag of updatedTags) {
-          //await createTag(newPost.uri, tag);
-        }
+      // if (newPost) {
+      //   // for (const tag of updatedTags) {
+      //   //   //await createTag(newPost.uri, tag);
+      //   // }
 
-        const userProfile = null; //await getProfile();
+      //   const userProfile = null; //await getProfile();
 
-        if (userProfile) {
-          newPost.tags = updatedTags.map((tag) => ({
-            tag,
-            count: 1,
-            from: [
-              {
-                id: `${pubky}`,
-                createdAt: Date.now(),
-                indexedAt: Date.now(),
+      //   if (userProfile) {
+      //     newPost.tags = updatedTags.map((tag) => ({
+      //       tag,
+      //       count: 1,
+      //       from: [
+      //         {
+      //           id: `${pubky}`,
+      //           createdAt: Date.now(),
+      //           indexedAt: Date.now(),
 
-                author: {
-                  id: `${pubky}`,
-                  uri: `pubky:${pubky}`,
-                  profile: userProfile,
-                },
-              },
-            ],
-          }));
-        }
-        setPosts((prev: INewPost) => ({
-          ...{ [newPost.id]: newPost },
-          ...prev,
-        }));
-        setContent('Post created!');
-        setShow(true);
-      } else {
-        setContent('Something wrong. Try again', 'warning');
-        setShow(true);
-      }
+      //           author: {
+      //             id: `${pubky}`,
+      //             uri: `pubky:${pubky}`,
+      //             profile: userProfile,
+      //           },
+      //         },
+      //       ],
+      //     }));
+      //   }
+      //   setPosts((prev: INewPost) => ({
+      //     ...{ [newPost.id]: newPost },
+      //     ...prev,
+      //   }));
+      //   setContent('Post created!');
+      //   setShow(true);
+      // } else {
+      //   setContent('Something wrong. Try again', 'warning');
+      //   setShow(true);
+      // }
       setArrayTags([]);
       setContentPost('');
       setShowModalPost(false);

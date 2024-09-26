@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import CreateContent from '../CreateContent';
-import { Utils } from '@social/utils-shared';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 
@@ -13,8 +12,8 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function CreateQuickPost({
   largeView = false,
 }: CreateQuickPostProps) {
-  const { pubky } = usePubkyClientContext();
-  //const { pubky, getProfile, createPost, setPosts, createTag } = useClientContext();
+  // const { getProfile, setPosts, createTag } = useClientContext();
+  const { createPost } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -30,40 +29,40 @@ export default function CreateQuickPost({
     try {
       setSendingPost(true);
 
-      const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      // const hashtags = Utils.extractHashtags(content);
+      // const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = null; //await createPost(content, selectedFiles);
+      const newPost = await createPost(content, 'Short', selectedFiles);
 
       if (newPost) {
-        for (const tag of updatedTags) {
-          //await createTag(newPost.uri, tag);
-        }
+        // for (const tag of updatedTags) {
+        //   await createTag(newPost.uri, tag);
+        // }
 
-        const userProfile = null; //await getProfile();
+        // const userProfile = await getProfile();
 
-        if (userProfile) {
-          newPost.tags = updatedTags.map((tag) => ({
-            tag,
-            count: 1,
-            from: [
-              {
-                id: `${pubky}`,
-                createdAt: Date.now(),
-                indexedAt: Date.now(),
-                author: {
-                  id: `${pubky}`,
-                  uri: `pubky:${pubky}`,
-                  profile: userProfile,
-                },
-              },
-            ],
-          }));
-        }
-        //setPosts((prev: INewPost) => ({
-        //  ...{ [newPost.id]: newPost },
-        //  ...prev,
-        //}));
+        // if (userProfile) {
+        //   newPost.tags = updatedTags.map((tag) => ({
+        //     tag,
+        //     count: 1,
+        //     from: [
+        //       {
+        //         id: `${pubky}`,
+        //         createdAt: Date.now(),
+        //         indexedAt: Date.now(),
+        //         author: {
+        //           id: `${pubky}`,
+        //           uri: `pubky:${pubky}`,
+        //           profile: userProfile,
+        //         },
+        //       },
+        //     ],
+        //   }));
+        // }
+        // setPosts((prev: INewPost) => ({
+        //   ...{ [newPost.id]: newPost },
+        //   ...prev,
+        // }));
         setContent('Post created!');
         setShow(true);
       } else {

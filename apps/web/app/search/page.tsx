@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { Suspense, useEffect, useRef, useState } from 'react';
@@ -16,13 +17,13 @@ import {
   WhoFollow,
 } from '@/components';
 import { useFilterContext } from '@/contexts';
-import { IPost } from '@/types';
+// import { IPost } from '@/types';
 import { Filter } from '@/components/Filter';
 import Skeletons from '@/components/Skeletons';
 
 const SearchContent = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  // const router = useRouter();
+  // const searchParams = useSearchParams();
   const { layout, reach, sort } = useFilterContext();
   //const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } = useClientContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
@@ -32,74 +33,76 @@ const SearchContent = () => {
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
   const loader = useRef(null);
-  const tagMessage =
-    searchTags.length > 1
-      ? 'with these tags:'
-      : searchTags.length === 1
-      ? 'with this tag:'
-      : '';
+  // const tagMessage =
+  //   searchTags.length > 1
+  //     ? 'with these tags:'
+  //     : searchTags.length === 1
+  //     ? 'with this tag:'
+  //     : '';
 
-  const fetchData = async (pointer: string, searchTags: string[]) => {
-    setLoading(true);
+  const tagMessage = '';
 
-    if (searchTags.length === 0) {
-      setLoading(false);
-      return;
-    }
+  // const fetchData = async (pointer: string, searchTags: string[]) => {
+  //   setLoading(true);
 
-    const results = await listGlobalPosts(pointer, reach, sort, searchTags);
+  //   if (searchTags.length === 0) {
+  //     setLoading(false);
+  //     return;
+  //   }
 
-    if (results && results.feed) {
-      if (cursor) {
-        setPosts((prev: IPost[]) => [...prev, ...results.feed]);
-      } else {
-        setPosts(results.feed);
-      }
-      setCursor(results.cursor);
-      setLoading(false);
-    }
-  };
+  //   const results = await listGlobalPosts(pointer, reach, sort, searchTags);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && cursor) {
-          fetchData(cursor, searchTags);
-        }
-      },
-      { threshold: 1 }
-    );
-    if (loader.current) {
-      observer.observe(loader.current);
-    }
-    return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cursor]);
+  //   if (results && results.feed) {
+  //     if (cursor) {
+  //       setPosts((prev: IPost[]) => [...prev, ...results.feed]);
+  //     } else {
+  //       setPosts(results.feed);
+  //     }
+  //     setCursor(results.cursor);
+  //     setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    setPosts([]);
-    fetchData('', searchTags);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reach, sort, searchTags]);
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       if (entries[0].isIntersecting && cursor) {
+  //         fetchData(cursor, searchTags);
+  //       }
+  //     },
+  //     { threshold: 1 }
+  //   );
+  //   if (loader.current) {
+  //     observer.observe(loader.current);
+  //   }
+  //   return () => observer.disconnect();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [cursor]);
 
-  useEffect(() => {
-    const search = searchParams.get('tags');
+  // useEffect(() => {
+  //   setPosts([]);
+  //   fetchData('', searchTags);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [reach, sort, searchTags]);
 
-    if (search) {
-      const tagsArray = search.split(',');
-      setSearchTags(tagsArray);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  // useEffect(() => {
+  //   const search = searchParams.get('tags');
 
-  useEffect(() => {
-    const searchTagsString = searchTags.join(',');
-    const searchUrl = searchTagsString
-      ? `/search?tags=${searchTagsString}`
-      : '/search';
-    router.replace(searchUrl);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTags]);
+  //   if (search) {
+  //     const tagsArray = search.split(',');
+  //     setSearchTags(tagsArray);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [searchParams]);
+
+  // useEffect(() => {
+  //   const searchTagsString = searchTags.join(',');
+  //   const searchUrl = searchTagsString
+  //     ? `/search?tags=${searchTagsString}`
+  //     : '/search';
+  //   router.replace(searchUrl);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [searchTags]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -171,7 +174,7 @@ const SearchContent = () => {
             layout
           )} flex-col inline-flex gap-3`}
         >
-          {Object.keys(posts).map((key, index) => (
+          {/* {Object.keys(posts).map((key, index) => (
             <Post
               key={`${index}-${posts[key].id}`}
               post={posts[key]}
@@ -193,7 +196,7 @@ const SearchContent = () => {
                 ))}
               </Typography.H2>
             </div>
-          )}
+          )} */}
           {loading && <Skeletons.Simple />}
         </PostsLayout>
         {layout !== 'wide' && (

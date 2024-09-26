@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -62,29 +63,29 @@ export default function ProfileTag({
       try {
         if (!pubky) return;
 
-        const following = null; //await listFollowing(pubky);
+        // const following = null; //await listFollowing(pubky);
 
-        if (following) {
-          const followingIds = following.following.map((user) =>
-            user.uri.replace('pubky:', '')
-          );
+        // if (following) {
+        //   const followingIds = following.following.map((user) =>
+        //     user.uri.replace('pubky:', '')
+        //   );
 
-          const matchedFollowedIds = profileTags
-            .flatMap((tag) => tag.tagged)
-            .filter((profile) => followingIds.includes(profile.tagger_id));
+        //   const matchedFollowedIds = profileTags
+        //     .flatMap((tag) => tag.tagged)
+        //     .filter((profile) => followingIds.includes(profile.tagger_id));
 
-          if (matchedFollowedIds.length > 0) {
-            setInitLoadingFollowers(false);
-            matchedFollowedIds.forEach((followed) => {
-              setFollowedUser((prevState) => ({
-                ...prevState,
-                [followed.tagger_id]: true,
-              }));
-            });
-          } else {
-            setInitLoadingFollowers(false);
-          }
-        }
+        //   if (matchedFollowedIds.length > 0) {
+        //     setInitLoadingFollowers(false);
+        //     matchedFollowedIds.forEach((followed) => {
+        //       setFollowedUser((prevState) => ({
+        //         ...prevState,
+        //         [followed.tagger_id]: true,
+        //       }));
+        //     });
+        //   } else {
+        //     setInitLoadingFollowers(false);
+        //   }
+        // }
       } catch (error) {
         console.log(error);
       }
@@ -102,12 +103,12 @@ export default function ProfileTag({
         [pubkyFollow]: true,
       }));
 
-      const result = null; // await follow(pubkyFollow);
+      // const result = null; // await follow(pubkyFollow);
 
-      setFollowedUser((prevState) => ({
-        ...prevState,
-        [pubkyFollow]: result,
-      }));
+      // setFollowedUser((prevState) => ({
+      //   ...prevState,
+      //   [pubkyFollow]: result,
+      // }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
@@ -275,12 +276,12 @@ export default function ProfileTag({
                         (fromItem) => fromItem.tagger_id === pubky
                       );
 
-                      const images = tag.tagged.map(
-                        (fromItem) => fromItem.tagger_id.image
-                      );
-                      const displayedImages = images.slice(0, 4);
-                      const extraImagesCount =
-                        images.length - displayedImages.length;
+                      // const images = tag.tagged.map(
+                      //   (fromItem) => fromItem.tagger_id.image
+                      // );
+                      // const displayedImages = images.slice(0, 4);
+                      // const extraImagesCount =
+                      //   images.length - displayedImages.length;
 
                       return (
                         <div className="flex gap-2" key={index}>
@@ -321,7 +322,7 @@ export default function ProfileTag({
                             }
                             className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                           />
-                          <div
+                          {/* <div
                             onClick={() =>
                               setSelectedTag && setSelectedTag(tag)
                             }
@@ -352,7 +353,7 @@ export default function ProfileTag({
                               className="-ml-2"
                               size="small"
                             />
-                          </div>
+                          </div> */}
                         </div>
                       );
                     })}
@@ -423,12 +424,10 @@ export default function ProfileTag({
                           >
                             <SideCard.User
                               uri={user?.tagger_id.replace('pubky:', '')}
-                              uriImage={
-                                user?.tagger_id?.image || '/images/Userpic.png'
-                              }
+                              uriImage={'/images/Userpic.png'}
                               username={
-                                user?.tagger_id?.name &&
-                                Utils.minifyText(user?.tagger_id?.name)
+                                user?.tagger_id &&
+                                Utils.minifyText(user?.tagger_id)
                               }
                               label={Utils.minifyPubky(
                                 user?.tagger_id.replace('pubky:', '')

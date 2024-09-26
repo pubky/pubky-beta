@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { z } from 'zod';
@@ -78,7 +79,7 @@ export default function RemindBackup() {
       element.download = filename;
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
-      setSeed(null);
+      setSeed(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -103,15 +104,15 @@ export default function RemindBackup() {
         setLoadingRecoveryFile(false);
         return;
       }
-      const recoveryFileResponse = await getRecoveryFile(password);
+      // const recoveryFileResponse = await getRecoveryFile(password);
 
-      if (!recoveryFileResponse) {
-        throw new Error('Something went wrong');
-      }
+      // if (!recoveryFileResponse) {
+      //   throw new Error('Something went wrong');
+      // }
 
-      const { recoveryFile, filename } = recoveryFileResponse;
-      await handleDownloadRecoveryFile({ recoveryFile, filename });
-      Utils.storage.remove('seed');
+      // const { recoveryFile, filename } = recoveryFileResponse;
+      // await handleDownloadRecoveryFile({ recoveryFile, filename });
+      // Utils.storage.remove('seed');
       setShowModalBackup(false);
     } catch (error) {
       console.log(error);

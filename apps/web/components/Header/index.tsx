@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
@@ -23,7 +23,7 @@ interface HeaderProps {
 }
 
 export default function Header({ title, className }: HeaderProps) {
-  const router = useRouter();
+  // const router = useRouter();
   //const { setSearchTags, searchTags } = useClientContext();
   const { pubky, isLoggedIn } = usePubkyClientContext();
   const { data } = useUserProfile(pubky ?? '');
@@ -78,39 +78,39 @@ export default function Header({ title, className }: HeaderProps) {
     };
   }, [refSearchInputCard]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearchTag();
-    }
-  };
+  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === 'Enter') {
+  //     handleSearchTag();
+  //   }
+  // };
 
-  const handleSearchTag = () => {
-    if (
-      (inputValue.startsWith('pk:') && inputValue.length === 55) ||
-      inputValue.length === 52
-    ) {
-      const profileId = inputValue.replace(/^pk:/, '');
-      router.push(`/profile/${profileId}`);
-    } else {
-      const trimmedValue = inputValue.trim();
-      if (searchTags.includes(trimmedValue.slice(0))) return;
+  // const handleSearchTag = () => {
+  //   if (
+  //     (inputValue.startsWith('pk:') && inputValue.length === 55) ||
+  //     inputValue.length === 52
+  //   ) {
+  //     const profileId = inputValue.replace(/^pk:/, '');
+  //     router.push(`/profile/${profileId}`);
+  //   } else {
+  //     const trimmedValue = inputValue.trim();
+  //     if (searchTags.includes(trimmedValue.slice(0))) return;
 
-      if (searchTags.length < 3) {
-        setSearchTags([...searchTags, trimmedValue.slice(0)]);
-      } else {
-        const newSearchTags = [...searchTags.slice(0), trimmedValue.slice(0)];
-        setSearchTags(newSearchTags);
-      }
-      setInputValue('');
-      router.push('/search');
-    }
-  };
+  //     if (searchTags.length < 3) {
+  //       setSearchTags([...searchTags, trimmedValue.slice(0)]);
+  //     } else {
+  //       const newSearchTags = [...searchTags.slice(0), trimmedValue.slice(0)];
+  //       setSearchTags(newSearchTags);
+  //     }
+  //     setInputValue('');
+  //     router.push('/search');
+  //   }
+  // };
 
-  const handleRemoveTag = (indexToRemove: number) => {
-    const newTags = [...searchTags];
-    newTags.splice(indexToRemove, 1);
-    setSearchTags(newTags);
-  };
+  // const handleRemoveTag = (indexToRemove: number) => {
+  //   const newTags = [...searchTags];
+  //   newTags.splice(indexToRemove, 1);
+  //   setSearchTags(newTags);
+  // };
 
   return (
     <HeaderUI.Root>
@@ -140,7 +140,7 @@ export default function Header({ title, className }: HeaderProps) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setInputValue(e.target.value)
           }
-          onKeyDown={handleKeyDown}
+          // onKeyDown={handleKeyDown}
           //placeholder={!searchTags.length ? 'Search' : ''}
           className="hidden sm:block"
           onClick={() => setSearchInputCard(true)}
@@ -154,7 +154,7 @@ export default function Header({ title, className }: HeaderProps) {
         <Input.SearchActions className="hidden sm:flex">
           <div
             className={inputValue && 'cursor-pointer'}
-            onClick={inputValue ? handleSearchTag : undefined}
+            // onClick={inputValue ? handleSearchTag : undefined}
           >
             <Icon.MagnifyingGlass />
           </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
@@ -42,18 +43,18 @@ export default function Handle({
 
         if (!pubkey) return;
 
-        const followersList = null; //await listFollowers(pubkey);
+        // const followersList = null; //await listFollowers(pubkey);
 
-        if (followersList) {
-          setInitLoadingFollowed(false);
+        // if (followersList) {
+        //   setInitLoadingFollowed(false);
 
-          followersList.followers.forEach((user) => {
-            const uri = user.uri.replace('pubky:', '');
-            if (uri === pubky) {
-              setFollowed(true);
-            }
-          });
-        }
+        //   followersList.followers.forEach((user) => {
+        //     const uri = user.uri.replace('pubky:', '');
+        //     if (uri === pubky) {
+        //       setFollowed(true);
+        //     }
+        //   });
+        // }
       } catch (error) {
         console.log(error);
       }

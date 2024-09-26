@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Icon, Modal } from '@social/ui-shared';
 import { useState } from 'react';
 import { useAlertContext } from '@/contexts';
@@ -38,25 +39,25 @@ export default function Repost({
     }
     try {
       setSendingRepost(true);
-      const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      // const hashtags = Utils.extractHashtags(content);
+      // const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newRepost = null; //await createRepost(post.uri, content, selectedFiles);
+      // const newRepost = null; //await createRepost(post.uri, content, selectedFiles);
 
-      if (newRepost) {
-        for (const tag of updatedTags) {
-          //await createTag(newRepost.uri, tag);
-        }
-        setContent('Repost created!');
-        setShow(true);
-      } else {
-        setContent('Something wrong. Try again', 'warning');
-        setShow(true);
-      }
-      setArrayTags([]);
-      setContentRepost('');
-      setShowModalRepost(false);
-      setSelectedFiles([]);
+      // if (newRepost) {
+      //   for (const tag of updatedTags) {
+      //     //await createTag(newRepost.uri, tag);
+      //   }
+      //   setContent('Repost created!');
+      //   setShow(true);
+      // } else {
+      //   setContent('Something wrong. Try again', 'warning');
+      //   setShow(true);
+      // }
+      // setArrayTags([]);
+      // setContentRepost('');
+      // setShowModalRepost(false);
+      // setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {

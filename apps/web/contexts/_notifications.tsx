@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import {
@@ -202,19 +203,19 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
       if (!pubky) return;
 
-      const results = null; //await getNotifications();
-      if (results) {
-        const filteredNotifications = results.feed.filter(
-          (notification: INotification) =>
-            notificationPreferences[
-              notification.type as keyof typeof notificationPreferences
-            ]
-        );
-        const mergedNotifications = mergeConsecutiveNotifications(
-          filteredNotifications
-        );
-        setNotifications(mergedNotifications);
-      }
+      // const results = null; //await getNotifications();
+      // if (results) {
+      //   const filteredNotifications = results.feed.filter(
+      //     (notification: INotification) =>
+      //       notificationPreferences[
+      //         notification.type as keyof typeof notificationPreferences
+      //       ]
+      //   );
+      //   const mergedNotifications = mergeConsecutiveNotifications(
+      //     filteredNotifications
+      //   );
+      //   setNotifications(mergedNotifications);
+      // }
     } catch (err) {
       console.error(err);
     } finally {

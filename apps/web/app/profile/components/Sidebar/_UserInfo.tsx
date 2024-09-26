@@ -44,8 +44,8 @@ export default function UserInfo({
       if (!creatorPubky) return;
       setLoadingFollowed(true);
 
-      const result = null; //await follow(creatorPubky);
-      setFollowed(result);
+      // const result = null; //await follow(creatorPubky);
+      // setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
       console.log(error);

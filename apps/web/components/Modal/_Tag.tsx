@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -61,29 +62,29 @@ export default function Tag({
       try {
         if (!pubky) return;
 
-        const following = null; //await listFollowing(pubky);
+        // const following = null; //await listFollowing(pubky);
 
-        if (following) {
-          const followingIds = following.following.map((user) =>
-            user.uri.replace('pubky:', '')
-          );
+        // if (following) {
+        //   const followingIds = following.following.map((user) =>
+        //     user.uri.replace('pubky:', '')
+        //   );
 
-          const matchedFollowedIds = tags
-            .flatMap((tag) => tag.from)
-            .filter((profile) => followingIds.includes(profile.author.id));
+        //   const matchedFollowedIds = tags
+        //     .flatMap((tag) => tag.from)
+        //     .filter((profile) => followingIds.includes(profile.author.id));
 
-          if (matchedFollowedIds.length > 0) {
-            setInitLoadingFollowers(false);
-            matchedFollowedIds.forEach((followed) => {
-              setFollowedUser((prevState) => ({
-                ...prevState,
-                [followed.author.id]: true,
-              }));
-            });
-          } else {
-            setInitLoadingFollowers(false);
-          }
-        }
+        //   if (matchedFollowedIds.length > 0) {
+        //     setInitLoadingFollowers(false);
+        //     matchedFollowedIds.forEach((followed) => {
+        //       setFollowedUser((prevState) => ({
+        //         ...prevState,
+        //         [followed.author.id]: true,
+        //       }));
+        //     });
+        //   } else {
+        //     setInitLoadingFollowers(false);
+        //   }
+        // }
       } catch (error) {
         console.log(error);
       }
@@ -103,10 +104,10 @@ export default function Tag({
 
       const result = null; //await follow(pubkyFollow);
 
-      setFollowedUser((prevState) => ({
-        ...prevState,
-        [pubkyFollow]: result,
-      }));
+      // setFollowedUser((prevState) => ({
+      //   ...prevState,
+      //   [pubkyFollow]: result,
+      // }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,

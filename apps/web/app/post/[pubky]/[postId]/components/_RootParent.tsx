@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Post, Skeleton } from '@/components';
 import { IPost, IReply } from '@/types';
 import { Typography } from '@social/ui-shared';
+import { PostView } from '@/types/Post';
 
 interface ParentPostState {
   [uri: string]: {
@@ -23,10 +24,10 @@ export default function RootParent({ replies }: { replies: IReply }) {
       if (!parentURI) return collectedURIs;
       collectedURIs.push(parentURI);
       try {
-        const parentPost = null; //await getPost(parentURI);
-        if (parentPost && parentPost.post && parentPost.post.parent) {
-          return await fetchParentURIs(parentPost.post.parent, collectedURIs);
-        }
+        // const parentPost = null; //await getPost(parentURI);
+        // if (parentPost && parentPost.post && parentPost.post.parent) {
+        //   return await fetchParentURIs(parentPost.post.parent, collectedURIs);
+        // }
       } catch (error) {
         console.error('Error fetching parent post:', error);
       }
@@ -97,7 +98,7 @@ export default function RootParent({ replies }: { replies: IReply }) {
     return post && post.post ? (
       <Post
         key={parentURI}
-        post={post.post}
+        post={{} as PostView}
         size="full"
         className={index === 0 ? 'rounded-bl-none' : ''}
         line={!(index === 0)}

@@ -24,10 +24,10 @@ export default function NavigatorParent({ replies }: { replies: IReply }) {
       if (!parentURI) return collectedURIs;
       collectedURIs.push(parentURI);
       try {
-        const parentPost = null; //await getPost(parentURI);
-        if (parentPost && parentPost.post && parentPost.post.parent) {
-          return await fetchParentURIs(parentPost.post.parent, collectedURIs);
-        }
+        // const parentPost = null; //await getPost(parentURI);
+        // if (parentPost && parentPost.post && parentPost.post.parent) {
+        //   return await fetchParentURIs(parentPost.post.parent, collectedURIs);
+        // }
       } catch (error) {
         console.error('Error fetching parent post:', error);
       }

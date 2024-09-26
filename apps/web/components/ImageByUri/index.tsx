@@ -44,10 +44,10 @@ const ImageByUri = ({
         ) {
           setImageUrl(uri);
         } else if (typeof uri === 'string') {
-          const fetchedFile = null; //await getFile(uri);
-          if (fetchedFile?.urls.main) {
-            setImageUrl(fetchedFile.urls.main);
-          }
+          // const fetchedFile = null; //await getFile(uri);
+          // if (fetchedFile?.urls.main) {
+          //   setImageUrl(fetchedFile.urls.main);
+          // }
         }
       } catch (error) {
         console.error('Error fetching image:', error);

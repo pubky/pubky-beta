@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -62,17 +63,17 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
 
         if (!pubkey) return;
 
-        const followersList = null; //await listFollowers(pubkey);
+        // const followersList = null; //await listFollowers(pubkey);
 
-        if (followersList) {
-          setInitLoadingFollowed(false);
+        // if (followersList) {
+        //   setInitLoadingFollowed(false);
 
-          const isFollowed = followersList.followers.some(
-            (user) => user.uri.replace('pubky:', '') === pubky
-          );
+        //   const isFollowed = followersList.followers.some(
+        //     (user) => user.uri.replace('pubky:', '') === pubky
+        //   );
 
-          setFollowed(isFollowed);
-        }
+        //   setFollowed(isFollowed);
+        // }
       } catch (error) {
         console.log(error);
       }
@@ -85,8 +86,8 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
 
     setLoadingFollowed(true);
     try {
-      const result = null; //await follow(post?.author?.id);
-      setFollowed(result);
+      // const result = null; //await follow(post?.author?.id);
+      // setFollowed(result);
       setShowMenu(false);
     } catch (error) {
       console.log(error);

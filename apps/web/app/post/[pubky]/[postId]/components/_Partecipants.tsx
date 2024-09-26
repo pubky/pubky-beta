@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
@@ -45,28 +46,28 @@ export default function Partecipants({
       try {
         if (!pubky || !replies) return;
 
-        const following = null; //await listFollowing(pubky);
+        // const following = null; //await listFollowing(pubky);
 
-        if (following) {
-          const followingIds = following.following.map((user) =>
-            user.uri.replace('pubky:', '')
-          );
-          const matchedFollowedIds = replies.filter((reply) =>
-            followingIds.includes(reply?.details?.author)
-          );
+        // if (following) {
+        //   const followingIds = following.following.map((user) =>
+        //     user.uri.replace('pubky:', '')
+        //   );
+        //   const matchedFollowedIds = replies.filter((reply) =>
+        //     followingIds.includes(reply?.details?.author)
+        //   );
 
-          if (matchedFollowedIds.length > 0) {
-            setInitLoadingFollowers(false);
-            matchedFollowedIds.forEach((followed) => {
-              setFollowedUser((prevState) => ({
-                ...prevState,
-                [followed.details.author]: true,
-              }));
-            });
-          } else {
-            setInitLoadingFollowers(false);
-          }
-        }
+        //   if (matchedFollowedIds.length > 0) {
+        //     setInitLoadingFollowers(false);
+        //     matchedFollowedIds.forEach((followed) => {
+        //       setFollowedUser((prevState) => ({
+        //         ...prevState,
+        //         [followed.details.author]: true,
+        //       }));
+        //     });
+        //   } else {
+        //     setInitLoadingFollowers(false);
+        //   }
+        // }
       } catch (error) {
         console.log(error);
       }
@@ -84,12 +85,12 @@ export default function Partecipants({
         [pubkyFollow]: true,
       }));
 
-      const result = null; //await follow(pubkyFollow);
+      // const result = null; //await follow(pubkyFollow);
 
-      setFollowedUser((prevState) => ({
-        ...prevState,
-        [pubkyFollow]: result,
-      }));
+      // setFollowedUser((prevState) => ({
+      //   ...prevState,
+      //   [pubkyFollow]: result,
+      // }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
@@ -246,10 +247,8 @@ export default function Partecipants({
                 <React.Fragment key={authorId}>
                   <SideCard.User
                     uri={authorId}
-                    uriImage={
-                      reply.details.author.image || '/images/Userpic.png'
-                    }
-                    username={Utils.minifyText(reply.details.author.name)}
+                    uriImage={'/images/Userpic.png'}
+                    username={Utils.minifyText(reply.details.author)}
                     label={Utils.minifyPubky(reply.details.author)}
                     className="mb-2"
                   >

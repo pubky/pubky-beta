@@ -18,13 +18,16 @@ export default function NotificationGroup({
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const userProfiles = null; //await Promise.all(
+        const userProfiles: IUserProfile[] = [];
+
+        //await Promise.all(
         //notifications.map((notification) =>
         // notification.type === 'lost_friend'
         //   ? getUser(notification.body.unfollowedBy!)
         //   : getUser(notification.body.followedBy!)
         //)
         //);
+
         const validProfiles = userProfiles.filter(
           (profile): profile is IUserProfile => profile !== null
         );

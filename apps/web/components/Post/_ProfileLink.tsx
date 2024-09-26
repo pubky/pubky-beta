@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -10,9 +11,9 @@ function ProfileLink({ pk }: { pk: string }) {
     const fetchUser = async () => {
       const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
       if (pkMatch) {
-        const pkFound = pkMatch[0];
-        const result = null; //await getUserIndexed(pkFound.replace('pk:', '').trim());
-        if (result) setUserName(result?.profile?.name);
+        // const pkFound = pkMatch[0];
+        // const result = null; //await getUserIndexed(pkFound.replace('pk:', '').trim());
+        // if (result) setUserName(result?.profile?.name);
       }
     };
     fetchUser();

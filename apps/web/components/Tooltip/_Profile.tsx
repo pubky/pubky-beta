@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -56,26 +57,26 @@ export default function Profile({ post }: ProfileProps) {
 
         if (!pubkey) return;
 
-        const followersList = null; //await listFollowers(pubkey);
+        // const followersList = null; //await listFollowers(pubkey);
 
-        if (followersList) {
-          setFollowersImages(
-            followersList.followers.slice(0, 3).map((user) => ({
-              alt: 'user-pic',
-              src: user?.profile?.image || '/images/Userpic.png',
-            }))
-          );
-          setFollowers(followersList);
-          setLoadingFollowers(false);
-          setInitLoadingFollowed(false);
+        // if (followersList) {
+        //   setFollowersImages(
+        //     followersList.followers.slice(0, 3).map((user) => ({
+        //       alt: 'user-pic',
+        //       src: user?.profile?.image || '/images/Userpic.png',
+        //     }))
+        //   );
+        //   setFollowers(followersList);
+        //   setLoadingFollowers(false);
+        //   setInitLoadingFollowed(false);
 
-          followersList.followers.forEach((user) => {
-            const uri = user.uri.replace('pubky:', '');
-            if (uri === pubky) {
-              setFollowed(true);
-            }
-          });
-        }
+        //   followersList.followers.forEach((user) => {
+        //     const uri = user.uri.replace('pubky:', '');
+        //     if (uri === pubky) {
+        //       setFollowed(true);
+        //     }
+        //   });
+        // }
       } catch (error) {
         console.log(error);
       }
@@ -99,18 +100,18 @@ export default function Profile({ post }: ProfileProps) {
 
         if (!pubkey) return;
 
-        const followingList = null; //await listFollowing(pubkey);
+        // const followingList = null; //await listFollowing(pubkey);
 
-        if (followingList) {
-          setFollowingImages(
-            followingList.following.slice(0, 3).map((user) => ({
-              alt: 'user-pic',
-              src: user?.profile?.image || '/images/Userpic.png',
-            }))
-          );
-          setFollowing(followingList);
-          setLoadingFollowing(false);
-        }
+        // if (followingList) {
+        //   setFollowingImages(
+        //     followingList.following.slice(0, 3).map((user) => ({
+        //       alt: 'user-pic',
+        //       src: user?.profile?.image || '/images/Userpic.png',
+        //     }))
+        //   );
+        //   setFollowing(followingList);
+        //   setLoadingFollowing(false);
+        // }
       } catch (error) {
         console.log(error);
       }
@@ -124,8 +125,8 @@ export default function Profile({ post }: ProfileProps) {
       if (!post?.author?.id) return;
       setLoadingFollowed(true);
 
-      const result = null; //await follow(post?.author?.id);
-      setFollowed(result);
+      // const result = null; //await follow(post?.author?.id);
+      // setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
       console.log(error);

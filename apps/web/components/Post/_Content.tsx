@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { IFileContent } from '@/types';
@@ -80,24 +81,24 @@ export default function Content({
     }
   }, [text]);
 
-  useEffect(() => {
-    const fetchFiles = async () => {
-      if (files) {
-        const fileUris = Object.values(files).map((file) => file.fileUri);
-        const fetchedFiles = await Promise.all(
-          fileUris.map(async (fileUri) => {
-            const fetchedFile = null; // await getFile(fileUri);
-            return fetchedFile ? fetchedFile : null;
-          })
-        );
-        setFileContents(
-          fetchedFiles.filter((file) => file !== null) as IFileContent[]
-        );
-      }
-    };
+  // useEffect(() => {
+  //   const fetchFiles = async () => {
+  //     if (files) {
+  //       const fileUris = Object.values(files).map((file) => file.fileUri);
+  //       const fetchedFiles = await Promise.all(
+  //         fileUris.map(async (fileUri) => {
+  //           const fetchedFile = null; // await getFile(fileUri);
+  //           return fetchedFile ? fetchedFile : null;
+  //         })
+  //       );
+  //       setFileContents(
+  //         fetchedFiles.filter((file) => file !== null) as IFileContent[]
+  //       );
+  //     }
+  //   };
 
-    fetchFiles();
-  }, [files]);
+  //   fetchFiles();
+  // }, [files]);
 
   const openModal = (index: number) => {
     setCurrentFileIndex(index);
