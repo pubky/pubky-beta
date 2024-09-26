@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useClientContext } from '@/contexts';
 
 interface ImageByUriProps {
   id?: string;
@@ -25,7 +24,7 @@ const ImageByUri = ({
   style,
   onClick,
 }: ImageByUriProps) => {
-  const { getFile } = useClientContext();
+  //const { getFile } = useClientContext();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ const ImageByUri = ({
         ) {
           setImageUrl(uri);
         } else if (typeof uri === 'string') {
-          const fetchedFile = await getFile(uri);
+          const fetchedFile = null; //await getFile(uri);
           if (fetchedFile?.urls.main) {
             setImageUrl(fetchedFile.urls.main);
           }
@@ -63,7 +62,7 @@ const ImageByUri = ({
         URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [uri, getFile]);
+  }, [uri]);
 
   return (
     <Image

@@ -5,10 +5,10 @@ import { z } from 'zod';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
 import Image from 'next/image';
+import { usePubkyClientContext } from '@/contexts';
 
 const passwordSchema = z.object({
   password: z
@@ -17,7 +17,8 @@ const passwordSchema = z.object({
 });
 
 export default function Index() {
-  const { seed, setSeed, getRecoveryFile } = useClientContext();
+  //const { getRecoveryFile } = useClientContext();
+  const { seed, setSeed } = usePubkyClientContext();
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
@@ -67,7 +68,7 @@ export default function Index() {
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
 
-      setSeed(null);
+      setSeed(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +91,7 @@ export default function Index() {
         setLoading(false);
         return;
       }
-      const recoveryFileResponse = await getRecoveryFile(password);
+      const recoveryFileResponse = null; //await getRecoveryFile(password);
 
       if (!recoveryFileResponse) {
         throw new Error('Something went wrong');

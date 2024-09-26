@@ -15,7 +15,7 @@ import {
   Sidebar,
   WhoFollow,
 } from '@/components';
-import { useClientContext, useFilterContext } from '@/contexts';
+import { useFilterContext } from '@/contexts';
 import { IPost } from '@/types';
 import { Filter } from '@/components/Filter';
 import Skeletons from '@/components/Skeletons';
@@ -24,8 +24,7 @@ const SearchContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { layout, reach, sort } = useFilterContext();
-  const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } =
-    useClientContext();
+  //const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } = useClientContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [cursor, setCursor] = useState('');

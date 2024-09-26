@@ -1,12 +1,12 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import { TStatus } from '@/types';
 import Buttons from './_Buttons';
 import Status from './_Status';
+import { usePubkyClientContext } from '@/contexts';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   username: string | JSX.Element;
@@ -22,7 +22,8 @@ export default function Handle({
   status,
   ...rest
 }: HandleProps) {
-  const { pubky, seed, listFollowers } = useClientContext();
+  //const { listFollowers } = useClientContext();
+  const { pubky, seed } = usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -41,7 +42,7 @@ export default function Handle({
 
         if (!pubkey) return;
 
-        const followersList = await listFollowers(pubkey);
+        const followersList = null; //await listFollowers(pubkey);
 
         if (followersList) {
           setInitLoadingFollowed(false);
@@ -73,7 +74,10 @@ export default function Handle({
     <div {...rest} className={twMerge(rest.className)}>
       {username && pubkey ? (
         <>
-          <Typography.Display id='profile-username-header' className="text-left">
+          <Typography.Display
+            id="profile-username-header"
+            className="text-left"
+          >
             {Utils.minifyText(username.toString(), 15)}
           </Typography.Display>
           <div className="-mt-4 inline-flex flex-row gap-3">

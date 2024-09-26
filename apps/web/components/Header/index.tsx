@@ -12,11 +12,7 @@ import {
   PostUtil,
 } from '@social/ui-shared';
 import { Modal } from '../Modal';
-import {
-  useClientContext,
-  useNotificationsContext,
-  usePubkyClientContext,
-} from '@/contexts';
+import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
 import { useUserProfile } from '@/hooks/useUser';
@@ -28,7 +24,7 @@ interface HeaderProps {
 
 export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
-  const { setSearchTags, searchTags } = useClientContext();
+  //const { setSearchTags, searchTags } = useClientContext();
   const { pubky, isLoggedIn } = usePubkyClientContext();
   const { data } = useUserProfile(pubky ?? '');
   const profile = data;
@@ -121,7 +117,7 @@ export default function Header({ title, className }: HeaderProps) {
       <HeaderUI.Logo link={logoLink} />
       <HeaderUI.Title titleHeader={title} className={className} />
       <Input.Search>
-        {searchTags && (
+        {/**searchTags && (
           <Input.SearchTags className="hidden sm:block">
             {searchTags.map((searchTag, index) => (
               <Input.SearchTag
@@ -137,7 +133,7 @@ export default function Header({ title, className }: HeaderProps) {
               />
             ))}
           </Input.SearchTags>
-        )}
+        )*/}
         <Input.SearchInput
           id="header-search-input"
           value={inputValue}
@@ -145,10 +141,10 @@ export default function Header({ title, className }: HeaderProps) {
             setInputValue(e.target.value)
           }
           onKeyDown={handleKeyDown}
-          placeholder={!searchTags.length ? 'Search' : ''}
+          //placeholder={!searchTags.length ? 'Search' : ''}
           className="hidden sm:block"
           onClick={() => setSearchInputCard(true)}
-          disabled={!!searchTags.length}
+          //disabled={!!searchTags.length}
         />
         <Modal.SearchInputCard
           className={searchInputCard ? 'hidden xl:block' : 'hidden'}

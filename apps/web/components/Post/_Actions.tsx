@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
 import Repost from '../Repost';
-import { useClientContext, useAlertContext, useToastContext } from '@/contexts';
+import { useAlertContext, useToastContext } from '@/contexts';
 import { IPost } from '@/types';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
@@ -21,8 +21,7 @@ export default function Actions({
   repost,
   deleteRepost = false,
 }: PostProps) {
-  const { deleteBookmark, createBookmark, createRepost, deletePost } =
-    useClientContext();
+  //const { deleteBookmark, createBookmark, createRepost, deletePost } = useClientContext();
   const { setContent, setShow } = useAlertContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
@@ -119,7 +118,7 @@ export default function Actions({
     >
       <PostUI.Actions>
         <Button.Action
-          id='reply-btn'
+          id="reply-btn"
           size="small"
           variant="custom"
           icon={<Icon.ChatCircleText size="16" />}
@@ -140,7 +139,7 @@ export default function Actions({
             />
           )*/}
           <Button.Action
-            id='repost-btn'
+            id="repost-btn"
             size="small"
             variant="custom"
             icon={
@@ -159,7 +158,7 @@ export default function Actions({
           />
         </div>
         <Button.Action
-          id='bookmark-btn'
+          id="bookmark-btn"
           size="small"
           variant="custom"
           icon={
@@ -196,7 +195,7 @@ export default function Actions({
             />
           )}*/}
           <Button.Action
-            id='menu-btn'
+            id="menu-btn"
             size="small"
             variant="custom"
             icon={<Icon.DotsThreeOutline size="16" color="white" />}

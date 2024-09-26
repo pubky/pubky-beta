@@ -10,19 +10,20 @@ import {
   Typography,
   SideCard,
 } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
-import { IPost, ITaggedPost } from '@/types';
+import { ITaggedPost } from '@/types';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import Post from '../Post';
 import { ImageByUri } from '../ImageByUri';
+import { usePubkyClientContext } from '@/contexts';
+import { PostView } from '@/types/Post';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
   tags: ITaggedPost[];
-  post: IPost;
+  post: PostView;
   handleAddTag: (tag: string) => Promise<void>;
   handleDeleteTag: (tag: string) => Promise<void>;
   selectedTag?: ITaggedPost | null;
@@ -41,7 +42,8 @@ export default function Tag({
 }: TagProps) {
   const router = useRouter();
   const modalTagRef = useRef<HTMLDivElement>(null);
-  const { pubky, follow, unfollow, listFollowing } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const [tag, setTag] = useState('');
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
@@ -59,7 +61,7 @@ export default function Tag({
       try {
         if (!pubky) return;
 
-        const following = await listFollowing(pubky);
+        const following = null; //await listFollowing(pubky);
 
         if (following) {
           const followingIds = following.following.map((user) =>
@@ -88,7 +90,7 @@ export default function Tag({
     }
 
     fetchFollowing();
-  }, [pubky, listFollowing, tags]);
+  }, [pubky, tags]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -99,7 +101,7 @@ export default function Tag({
         [pubkyFollow]: true,
       }));
 
-      const result = await follow(pubkyFollow);
+      const result = null; //await follow(pubkyFollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
@@ -124,7 +126,7 @@ export default function Tag({
         [pubkyUnfollow]: true,
       }));
 
-      const result = await unfollow(pubkyUnfollow);
+      const result = null; //await unfollow(pubkyUnfollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
@@ -192,7 +194,7 @@ export default function Tag({
       className="w-full w-[792px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
-        id='close-btn'
+        id="close-btn"
         onClick={() => {
           setShowModalTag(false);
           setTag('');
@@ -236,7 +238,7 @@ export default function Tag({
                 action={
                   <div className="flex gap-2">
                     <Button.Action
-                      id='add-btn'
+                      id="add-btn"
                       icon={<Icon.Plus size="18" />}
                       className={tag ? 'flex' : 'hidden'}
                       variant="custom"
@@ -267,7 +269,10 @@ export default function Tag({
                 </Typography.Body>
               )}
             </div>
-            <div id='current-tags' className="justify-start items-start gap-2 flex flex-col overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-webkit">
+            <div
+              id="current-tags"
+              className="justify-start items-start gap-2 flex flex-col overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-webkit"
+            >
               <Input.Label value={selectedTag ? 'Tagged' : 'Current tags'} />
               {tags.length > 0 ? (
                 <>

@@ -10,7 +10,6 @@ import {
   PostUtil,
   Typography,
 } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
@@ -18,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag, PostView } from '@/types/Post';
+import { usePubkyClientContext } from '@/contexts';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -25,8 +25,8 @@ interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const router = useRouter();
-  const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
-    useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { pubky, posts, setPosts, getPost, deleteTag, createTag } = useClientContext();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);

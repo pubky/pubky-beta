@@ -1,5 +1,5 @@
 import { Button, Icon } from '@social/ui-shared';
-import { useClientContext, useToastContext } from '@/contexts';
+import { usePubkyClientContext, useToastContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
@@ -31,7 +31,8 @@ export default function Buttons({
   setLoadingFollowed,
   setFollowed,
 }: ButtonsProps) {
-  const { pubky, follow, unfollow } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { follow, unfollow } = useClientContext();
   const { setContent, setShow } = useToastContext();
   const router = useRouter();
 
@@ -40,7 +41,7 @@ export default function Buttons({
       if (!creatorPubky) return;
       setLoadingFollowed(true);
 
-      const result = await follow(creatorPubky);
+      const result = null; //await follow(creatorPubky);
       setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
@@ -53,7 +54,7 @@ export default function Buttons({
       if (!creatorPubky) return;
       setLoadingFollowed(true);
 
-      const result = await unfollow(creatorPubky);
+      const result = null; //await unfollow(creatorPubky);
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {

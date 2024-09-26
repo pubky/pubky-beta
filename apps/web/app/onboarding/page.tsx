@@ -5,12 +5,11 @@ import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
 import { ILinkPubky } from '@/types';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Index() {
-  const { signUp } = useClientContext();
+  const { pubky, signUp, isLoggedIn } = usePubkyClientContext();
   const router = useRouter();
-  const { pubky, isLoggedIn } = useClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [loading, setLoading] = useState(false);
   const links: ILinkPubky = {};

@@ -3,7 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { useClientContext, useAlertContext, useToastContext } from '@/contexts';
+import {
+  useAlertContext,
+  usePubkyClientContext,
+  useToastContext,
+} from '@/contexts';
 import { IPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
@@ -15,16 +19,8 @@ interface TooltipMenuProps {
 }
 
 export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
-  const {
-    pubky,
-    follow,
-    unfollow,
-    listFollowers,
-    createBookmark,
-    deleteBookmark,
-    deletePost,
-    deleteFile,
-  } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  //const { pubky, follow, unfollow, listFollowers, createBookmark, deleteBookmark, deletePost, deleteFile} = useClientContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
   const tooltipMenuRef = useRef<HTMLDivElement>(null);
@@ -66,7 +62,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
 
         if (!pubkey) return;
 
-        const followersList = await listFollowers(pubkey);
+        const followersList = null; //await listFollowers(pubkey);
 
         if (followersList) {
           setInitLoadingFollowed(false);
@@ -82,14 +78,14 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       }
     }
     fetchData();
-  }, [post?.author?.id, pubky, listFollowers]);
+  }, [post?.author?.id, pubky]);
 
   const followUser = async () => {
     if (!post?.author?.id) return;
 
     setLoadingFollowed(true);
     try {
-      const result = await follow(post?.author?.id);
+      const result = null; //await follow(post?.author?.id);
       setFollowed(result);
       setShowMenu(false);
     } catch (error) {
@@ -104,7 +100,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
 
     setLoadingFollowed(true);
     try {
-      const result = await unfollow(post?.author?.id);
+      const result = null; //await unfollow(post?.author?.id);
       setFollowed(!result);
       setShowMenu(false);
     } catch (error) {
@@ -115,7 +111,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   };
 
   const handleAddBookmark = async (postId: string, uri: string) => {
-    await createBookmark(postId, uri);
+    //await createBookmark(postId, uri);
     setShowMenu(false);
   };
 
@@ -124,7 +120,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     postUri: string,
     bookmarkId: string
   ) => {
-    await deleteBookmark(postId, postUri, bookmarkId);
+    //await deleteBookmark(postId, postUri, bookmarkId);
     setShowMenu(false);
   };
 
@@ -133,13 +129,13 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       if (post?.post?.files) {
         const fileDeletions = Object.values(post.post.files).map(
           async (file) => {
-            await deleteFile(file.fileId);
+            //await deleteFile(file.fileId);
           }
         );
         await Promise.all(fileDeletions);
       }
 
-      const result = await deletePost(post?.id);
+      const result = null; //await deletePost(post?.id);
 
       if (result) {
         setContent('Post deleted successfully');
@@ -228,11 +224,14 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   return (
     <>
       <div ref={tooltipMenuRef}>
-        <Tooltip.Main id='post-tooltip-menu' className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]">
+        <Tooltip.Main
+          id="post-tooltip-menu"
+          className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]"
+        >
           {renderFollowButton()}
           {post?.author?.id === pubky && (
             <Tooltip.Item
-              id='edit-profile'
+              id="edit-profile"
               onClick={() => {
                 router.push('/settings/edit');
                 setShowMenu(false);
@@ -243,7 +242,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             </Tooltip.Item>
           )}
           <Tooltip.Item
-            id='copy-user-pubky'
+            id="copy-user-pubky"
             onClick={() => {
               copyToClipboard(`pk:${post.author.id}`);
               setContentToast(`pk:${post.author.id}`, 'pubky');
@@ -255,7 +254,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             Copy user pubky
           </Tooltip.Item>
           <Tooltip.Item
-            id='copy-post-link'
+            id="copy-post-link"
             onClick={() => {
               copyToClipboard(
                 `${window.location.origin}/post/${post.author.id}/${post.id}`
@@ -275,7 +274,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             Copy link to post
           </Tooltip.Item>
           <Tooltip.Item
-            id='copy-post-text'
+            id="copy-post-text"
             onClick={() => {
               copyToClipboard(post.post.content);
               setContentToast(
@@ -290,7 +289,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             Copy text of post
           </Tooltip.Item>
           <Tooltip.Item
-            id='add-bookmark'
+            id="add-bookmark"
             icon={
               <Icon.BookmarkSimple
                 size="20"
@@ -323,7 +322,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           </Tooltip.Item>
           {post?.author?.id === pubky && (
             <Tooltip.Item
-              id='delete-post'
+              id="delete-post"
               onClick={() => setShowModalDeletePost(true)}
               icon={<Icon.Trash size="20" color={'#EF4444'} />}
               cssText="text-red-500"

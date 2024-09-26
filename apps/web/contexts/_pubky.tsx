@@ -21,7 +21,7 @@ interface Links {
 export interface PubkyAppUser {
   name: string;
   bio?: string;
-  image?: File | string;
+  image?: string | File;
   links?: Links | any;
   status?: string;
 }
@@ -35,6 +35,7 @@ const homeserver = PublicKey.from(HOMESERVER_PUBLIC_KEY);
 type PubkyClientContextType = {
   pubky: string | undefined;
   seed: string | undefined;
+  setSeed: (seed: string | undefined) => void;
   profile: PubkyAppUser | undefined;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
@@ -268,6 +269,7 @@ export function PubkyClientWrapper({
         isLoggedIn,
         logout,
         signUp,
+        setSeed,
         getProfile,
         saveProfile,
       }}

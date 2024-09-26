@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Utils } from '@social/utils-shared';
 import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { INotification, IUserProfile } from '@/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -63,12 +62,12 @@ export default function Notification({
   notification: INotification;
 }) {
   const router = useRouter();
-  const { getUser } = useClientContext();
+  //const { getUser } = useClientContext();
   const [user, setUser] = useState<IUserProfile>();
 
   async function fetchProfile(userId: string) {
     try {
-      const userProfile = await getUser(userId);
+      const userProfile = null; //await getUser(userId);
       if (userProfile) {
         setUser(userProfile);
       }
@@ -104,7 +103,7 @@ export default function Notification({
       fetchProfile(userId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [notification, getUser]);
+  }, [notification]);
 
   const currentNotificationType =
     notificationType[notification.type as NotificationTypeKey];

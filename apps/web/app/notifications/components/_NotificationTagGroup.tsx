@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Utils } from '@social/utils-shared';
 import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { INotification, IUserProfile } from '@/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -15,13 +14,13 @@ export default function NotificationTagGroup({
   notifications,
 }: NotificationTagGroupProps) {
   const router = useRouter();
-  const { getUser } = useClientContext();
+  //const { getUser } = useClientContext();
   const [user, setUser] = useState<IUserProfile | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const userProfile = await getUser(notifications[0].body.taggedBy!);
+        const userProfile = null; // await getUser(notifications[0].body.taggedBy!);
         if (userProfile) {
           setUser(userProfile);
         }
@@ -31,7 +30,7 @@ export default function NotificationTagGroup({
     };
 
     fetchProfile();
-  }, [notifications, getUser]);
+  }, [notifications]);
 
   return (
     <div className="p-3 border-b border-white border-opacity-10 justify-between items-start flex flex-row">

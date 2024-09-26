@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useClientContext } from '@/contexts';
 import { Post, Skeleton } from '@/components';
 import { IPost, IReply } from '@/types';
 import { Typography } from '@social/ui-shared';
@@ -12,7 +11,7 @@ interface ParentPostState {
 }
 
 export default function RootParent({ replies }: { replies: IReply }) {
-  const { getPost } = useClientContext();
+  //const { getPost } = useClientContext();
   const [parentURIs, setParentURIs] = useState<string[]>([]);
   const [parentPosts, setParentPosts] = useState<ParentPostState>({});
 
@@ -24,7 +23,7 @@ export default function RootParent({ replies }: { replies: IReply }) {
       if (!parentURI) return collectedURIs;
       collectedURIs.push(parentURI);
       try {
-        const parentPost = await getPost(parentURI);
+        const parentPost = null; //await getPost(parentURI);
         if (parentPost && parentPost.post && parentPost.post.parent) {
           return await fetchParentURIs(parentPost.post.parent, collectedURIs);
         }
@@ -61,7 +60,7 @@ export default function RootParent({ replies }: { replies: IReply }) {
           ...prevState,
           [parentURI]: { post: null, loading: true },
         }));
-        const post = await getPost(parentURI);
+        const post = null; //await getPost(parentURI);
         setParentPosts((prevState) => ({
           ...prevState,
           [parentURI]: { post: post || null, loading: false },

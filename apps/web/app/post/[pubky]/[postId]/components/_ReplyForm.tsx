@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react';
 import { Icon, Button, Post } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import Partecipants from './_Partecipants';
@@ -21,7 +20,7 @@ export default function ReplyForm({
   updatePost: () => void;
   replies: PostThread | undefined;
 }) {
-  const { createReply, createTag } = useClientContext();
+  //const { createReply, createTag } = useClientContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -33,15 +32,17 @@ export default function ReplyForm({
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
-    const rootUri = post.relationships?.reposted ? post.relationships?.reposted : uri;
-    const sendReply = await createReply(content, uri, rootUri, selectedFiles);
+    const rootUri = post.relationships?.reposted
+      ? post.relationships?.reposted
+      : uri;
+    const sendReply = null; //await createReply(content, uri, rootUri, selectedFiles);
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
     if (sendReply) {
       for (const tag of updatedTags) {
-        await createTag(sendReply.uri, tag);
+        //await createTag(sendReply.uri, tag);
       }
       setSendingReply(false);
       setContentReply('');
@@ -55,7 +56,7 @@ export default function ReplyForm({
     <div ref={wrapperRef} className="grid gap-6 md:grid-cols-3">
       <Post.Root className="col-span-2">
         <CreateContent
-          id='reply-create-content'
+          id="reply-create-content"
           handleSubmit={handleReply}
           content={contentReply}
           setContent={setContentReply}
@@ -69,7 +70,7 @@ export default function ReplyForm({
           setArrayTags={setArrayTags}
           button={
             <Button.Medium
-              id='reply-btn'
+              id="reply-btn"
               className="w-auto"
               variant="line"
               icon={

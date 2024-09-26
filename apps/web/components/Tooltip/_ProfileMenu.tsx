@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { useClientContext, useToastContext } from '@/contexts';
+import { usePubkyClientContext, useToastContext } from '@/contexts';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,7 +15,7 @@ export default function ProfileMenu({
   creatorPubky,
 }: TooltipProfileMenuProps) {
   const router = useRouter();
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const { setContent, setShow } = useToastContext();
   const tooltipProfileMenuRef = useRef<HTMLDivElement>(null);
 

@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 import {
   Button,
@@ -30,7 +30,7 @@ export default function TaggedSection({
   creatorPubky,
   name,
 }: TaggedSectionProps) {
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const router = useRouter();
 
   return (

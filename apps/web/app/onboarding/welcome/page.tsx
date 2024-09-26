@@ -13,14 +13,15 @@ import {
   List,
 } from '@social/ui-shared';
 import { Onboarding } from '../components';
-import { useClientContext } from '@/contexts';
 import { Skeleton } from '@/components';
 import { Utils } from '@social/utils-shared';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Index() {
   const router = useRouter();
 
-  const { pubky, getProfile, listFollowers } = useClientContext();
+  const { pubky, getProfile } = usePubkyClientContext();
+  //const { listFollowers } = useClientContext();
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState('/images/Userpic.png');
   const [handler, setHandler] = useState('');
@@ -36,12 +37,12 @@ export default function Index() {
   const [loadingContacts, setLoadingContacts] = useState(true);
 
   useEffect(() => {
-    setHandler(Utils.minifyPubky(pubky));
+    setHandler(Utils.minifyPubky(pubky ?? ''));
   }, [pubky]);
 
   async function fetchProfile() {
     try {
-      const userProfile = await getProfile();
+      const userProfile = await getProfile(pubky ?? '');
 
       if (userProfile) {
         setImage(userProfile.image || '/images/Userpic.png');
@@ -81,7 +82,7 @@ export default function Index() {
     try {
       if (!pubky) return;
 
-      const followers = await listFollowers(pubky);
+      const followers = null; //await listFollowers(pubky);
 
       if (followers) {
         setContacts(
