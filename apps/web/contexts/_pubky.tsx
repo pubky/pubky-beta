@@ -1,5 +1,3 @@
-// src/components/PubkyClientWrapper.tsx
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
@@ -19,8 +17,7 @@ import {
 } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 
-const HOMESERVER_PUBLIC_KEY =
-  '8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo';
+const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
 const client = new PubkyClient();
 const homeserver = PublicKey.from(HOMESERVER_PUBLIC_KEY);
