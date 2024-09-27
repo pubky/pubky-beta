@@ -11,25 +11,18 @@ import {
   Keypair,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
-
-interface Links {
-  [key: string]: {
-    title: string;
-    url: string;
-  };
-}
-export interface PubkyAppUser {
-  name: string;
-  bio?: string;
-  image?: string | File;
-  links?: Links | any;
-  status?: string;
-}
+import {
+  PostKind,
+  PubkyAppFile,
+  PubkyAppPost,
+  PubkyAppUser,
+} from '@/types/Post';
+import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 
 const HOMESERVER_PUBLIC_KEY =
   '8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo';
 
-const client = PubkyClient.testnet();
+const client = new PubkyClient();
 const homeserver = PublicKey.from(HOMESERVER_PUBLIC_KEY);
 
 type PubkyClientContextType = {
@@ -43,6 +36,11 @@ type PubkyClientContextType = {
   signUp: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
   getProfile: (profilePublicKey: string) => Promise<PubkyAppUser | null>;
   saveProfile: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
+  createPost: (
+    postContent: string,
+    kind: PostKind,
+    files?: File[]
+  ) => Promise<string | false>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -240,6 +238,86 @@ export function PubkyClientWrapper({
     }
   };
 
+  const createPost = async (
+    postContent: string,
+    kind: PostKind,
+    files?: File[]
+  ): Promise<string | false> => {
+    try {
+      // Check if the user is logged in
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in');
+      }
+
+      // Generate a timestamp ID for the post
+      const postId = generateTimestampId();
+
+      // Initialize the post object
+      const newPost: PubkyAppPost = {
+        content: postContent,
+        kind,
+      };
+
+      // List to store URIs of uploaded files
+      const uploadedFileUris: string[] = [];
+
+      // File upload, if any
+      if (files && files.length > 0) {
+        for (const file of files) {
+          // Read the file content
+          const fileContent = await file.arrayBuffer();
+          const fileBase64 = Buffer.from(fileContent).toString('base64');
+
+          // Create the PubkyAppFile object
+          const fileId = generateTimestampId();
+          const newFile: PubkyAppFile = {
+            name: file.name,
+            created_at: Date.now(),
+            src: `data:${file.type};base64,${fileBase64}`,
+            content_type: file.type,
+            size: file.size,
+          };
+
+          // Serialize to JSON and convert to Buffer
+          const fileBody = Buffer.from(JSON.stringify(newFile));
+
+          // File URL
+          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
+
+          // Send the file to the homeserver
+          await client.put(fileUrl, fileBody);
+
+          // Store the file URI
+          const fileUri = `/pub/pubky.app/files/${fileId}`;
+          uploadedFileUris.push(fileUri);
+        }
+
+        // If there are files, add to the post embed
+        newPost.embed = {
+          kind: kind,
+          uri: uploadedFileUris[0], // Use the first file as the main embed
+        };
+      }
+
+      // Serialize the post to JSON and convert to Buffer
+      const postBody = Buffer.from(JSON.stringify(newPost));
+
+      // Post URL
+      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
+
+      // Send the post to the homeserver
+      await client.put(postUrl, postBody);
+
+      console.log(postUrl);
+
+      return postUrl;
+    } catch (error) {
+      console.error('Error creating post:', error);
+      return false;
+    }
+  };
+
   const toPubkeyProfile = (profile: PubkyAppUser): PubkyAppUser => {
     if (!profile) throw new Error('Profile is required');
 
@@ -272,6 +350,7 @@ export function PubkyClientWrapper({
         setSeed,
         getProfile,
         saveProfile,
+        createPost,
       }}
     >
       {children}

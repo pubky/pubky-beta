@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PostCounts {
   replies: number;
   reposts: number;
@@ -53,5 +54,40 @@ export interface Tag {
   tagger_id: string;
 }
 
+export interface PostEmbed {
+  kind: PostKind;
+  uri: string;
+}
+
+export interface PubkyAppPost {
+  content: string;
+  kind: PostKind;
+  parent?: string;
+  embed?: PostEmbed;
+}
+
+export interface PubkyAppFile {
+  name: string;
+  created_at: number;
+  src: string;
+  content_type: string;
+  size: number;
+}
+export interface Links {
+  [key: string]: {
+    title: string;
+    url: string;
+  };
+}
+
+export interface PubkyAppUser {
+  name: string;
+  bio?: string;
+  image?: File | string;
+  links?: Links | any;
+  status?: string;
+}
+
 export type PostStreamReach = 'Following' | 'Followers' | 'Friends';
 export type PostStreamSorting = 'Timeline' | 'TotalEngagement';
+export type PostKind = 'Short' | 'Long' | 'Image' | 'Video' | 'Link' | 'File';
