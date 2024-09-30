@@ -1,4 +1,4 @@
-import { Icon, SideCard, Typography } from '@social/ui-shared';
+import { SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
 import { usePioneerUsers } from '@/hooks/useUser';
@@ -36,11 +36,13 @@ export default function Pioneers() {
                 </div>
               );
             })}
+            {/**
             <SideCard.Action
               icon={<Icon.UsersLeft size="16" color="gray" />}
               disabled
               text="See All"
             />
+            */}
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">

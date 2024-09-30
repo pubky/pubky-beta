@@ -57,6 +57,7 @@ export interface Tag {
 export interface PostEmbed {
   kind: PostKind;
   uri: string;
+  postId?: string
 }
 
 export interface PubkyAppPost {

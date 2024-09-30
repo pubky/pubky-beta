@@ -3,16 +3,19 @@
 import { useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
-import Repost from '../Repost';
-import { useAlertContext, useToastContext } from '@/contexts';
-import { IPost } from '@/types';
+import {
+  useAlertContext,
+  usePubkyClientContext,
+  useToastContext,
+} from '@/contexts';
 import Tooltip from '../Tooltip';
-import Modal from '../Modal';
 import { PostView } from '@/types/Post';
+import { useUserProfile } from '@/hooks/useUser';
+import Modal from '../Modal';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
-  repost?: string;
+  repost?: PostView;
   deleteRepost?: boolean;
 }
 
@@ -21,6 +24,9 @@ export default function Actions({
   repost,
   deleteRepost = false,
 }: PostProps) {
+  const { data: author } = useUserProfile(post?.details?.author);
+  const { data: authorRepost } = useUserProfile(repost?.details?.author ?? '');
+  const { addBookmark, deleteBookmark } = usePubkyClientContext();
   //const { deleteBookmark, createBookmark, createRepost, deletePost } = useClientContext();
   const { setContent, setShow } = useAlertContext();
   const { setContent: setContentToast, setShow: setShowToast } =
@@ -28,11 +34,10 @@ export default function Actions({
   const [showMenu, setShowMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
-  const [showRepostMenu, setShowRepostMenu] = useState(false);
+  //const [showRepostMenu, setShowRepostMenu] = useState(false);
 
-  {
-    /** const handleAddBookmark = async (postId: string, uri: string) => {
-    await createBookmark(postId, uri);
+  const handleAddBookmark = async (postId: string, uri: string) => {
+    await addBookmark(postId, uri);
   };
 
   const handleDeleteBookmark = async (
@@ -44,7 +49,7 @@ export default function Actions({
   };
 
   const handleRepost = async () => {
-    const result = await createRepost(post.uri);
+    const result = null; //await createRepost(post.uri);
     if (result) {
       setContent('Repost created!');
       setShow(true);
@@ -54,8 +59,9 @@ export default function Actions({
     }
   };
 
-  const handleDeleteRepost = async () => {
-    if (repost?.id) {
+  {
+    /**const handleDeleteRepost = async () => {
+    if (repost?.details.id) {
       const result = await deletePost(repost?.id);
       if (result) {
         setContent('Repost deleted!');
@@ -65,11 +71,12 @@ export default function Actions({
         setShow(true);
       }
     }
-  };
+  };*/
+  }
 
   const handleBookmarks = (
-    repost: IPost | undefined,
-    post: IPost,
+    repost: PostView | undefined,
+    post: PostView,
     handleAddBookmark: (postId: string, uri: string) => Promise<void>,
     handleDeleteBookmark: (
       postId: string,
@@ -86,30 +93,36 @@ export default function Actions({
 
     if (repost) {
       if (isBookmarked) {
-        handleDeleteBookmark(repost.id, repost.uri, repost.bookmark.id);
+        handleDeleteBookmark(
+          repost?.details?.id,
+          repost?.details?.uri,
+          repost?.bookmark?.id ?? ''
+        );
       } else {
-        handleAddBookmark(repost.id, repost.uri);
+        handleAddBookmark(repost?.details?.id, repost?.details?.uri);
       }
     } else {
       if (isBookmarked) {
-        handleDeleteBookmark(post.id, post.uri, post.bookmark.id);
+        handleDeleteBookmark(
+          post?.details?.id,
+          post?.details?.id,
+          post?.bookmark?.id ?? ''
+        );
       } else {
-        handleAddBookmark(post.id, post.uri);
+        handleAddBookmark(post?.details?.id, post?.details?.uri);
       }
     }
 
     if (!isBookmarked) {
       setContentToast(
         `This post by ${
-          repost ? repost?.author?.profile?.name : post?.author?.profile?.name
+          repost ? authorRepost?.details?.name : author?.details?.name
         } was saved to your bookmarks.`,
         'bookmark'
       );
       setShowToast(true);
     }
   };
-  */
-  }
 
   return (
     <div
@@ -145,8 +158,7 @@ export default function Actions({
             icon={
               <Icon.Repost
                 size="16"
-                color="white"
-                //color={deleteRepost ? '#00BA7C' : 'white'}
+                color={deleteRepost ? '#00BA7C' : 'white'}
               />
             }
             counter={post?.counts?.reposts}
@@ -164,36 +176,35 @@ export default function Actions({
           icon={
             <Icon.BookmarkSimple
               size="16"
-              //opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
+              opacity={repost?.bookmark?.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
               color={
-                //  repost?.bookmark?.id
-                //   ? 'white'
-                //   : post?.bookmark?.id
-                //   ? 'white'
-                // :
-                'white'
+                repost?.bookmark?.id
+                  ? 'white'
+                  : post?.bookmark?.id
+                  ? 'white'
+                  : 'white'
               }
             />
           }
-          //onClick={() =>
-          //  handleBookmarks(
-          //    repost,
-          //   post,
-          //   handleAddBookmark,
-          //    handleDeleteBookmark,
-          //   setContentToast,
-          //   setShowToast
-          // )
-          //}
+          onClick={() =>
+            handleBookmarks(
+              repost,
+              post,
+              handleAddBookmark,
+              handleDeleteBookmark,
+              setContentToast,
+              setShowToast
+            )
+          }
         />
         <div className="relative" onClick={(event) => event.stopPropagation()}>
-          {/**{showMenu && (
+          {showMenu && (
             <Tooltip.Menu
               post={post}
               repost={repost}
               setShowMenu={setShowMenu}
             />
-          )}*/}
+          )}
           <Button.Action
             id="menu-btn"
             size="small"
@@ -206,8 +217,7 @@ export default function Actions({
           />
         </div>
       </PostUI.Actions>
-      {/** 
-      <Repost
+      <Modal.Repost
         post={post}
         handleRepost={handleRepost}
         showModalRepost={showModalRepost}
@@ -218,7 +228,6 @@ export default function Actions({
         showModalReply={showModalReply}
         setShowModalReply={setShowModalReply}
       />
-      */}
     </div>
   );
 }

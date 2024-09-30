@@ -11,7 +11,7 @@ export default function WhoFollow() {
   const recommendedProfiles = data;
   console.log('dataRecommendeProfiles', recommendedProfiles);
   //const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
-  const [loadingFollowers, setLoadingFollowers] = useState<{
+  const [loading, setLoading] = useState<{
     [pubky: string]: boolean;
   }>({});
   const [followedUser, setFollowedUser] = useState<{
@@ -24,7 +24,7 @@ export default function WhoFollow() {
     try {
       if (!pubkyFollow) return;
 
-      setLoadingFollowers((prevLoadingUsers) => ({
+      setLoading((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyFollow]: true,
       }));
@@ -36,7 +36,7 @@ export default function WhoFollow() {
         [pubkyFollow]: result,
       }));
 
-      setLoadingFollowers((prevLoadingUsers) => ({
+      setLoading((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyFollow]: false,
       }));
@@ -49,7 +49,7 @@ export default function WhoFollow() {
     try {
       if (!pubkyUnfollow) return;
 
-      setLoadingFollowers((prevLoadingUsers) => ({
+      setLoading((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyUnfollow]: true,
       }));
@@ -61,7 +61,7 @@ export default function WhoFollow() {
         [pubkyUnfollow]: !result,
       }));
 
-      setLoadingFollowers((prevLoadingUsers) => ({
+      setLoading((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyUnfollow]: false,
       }));
@@ -116,32 +116,24 @@ export default function WhoFollow() {
                     ) : isFollowed ? (
                       <SideCard.FollowAction
                         onClick={
-                          loadingFollowers[recommendedProfile.details.id]
+                          loading[recommendedProfile.details.id]
                             ? undefined
                             : () => unfollowUser(recommendedProfile.details.id)
                         }
-                        disabled={
-                          loadingFollowers[recommendedProfile.details.id]
-                        }
-                        loading={
-                          loadingFollowers[recommendedProfile.details.id]
-                        }
+                        disabled={loading[recommendedProfile.details.id]}
+                        loading={loading[recommendedProfile.details.id]}
                         icon={<Icon.Minus size="16" />}
                         variant="small"
                       />
                     ) : (
                       <SideCard.FollowAction
                         onClick={
-                          loadingFollowers[recommendedProfile.details.id]
+                          loading[recommendedProfile.details.id]
                             ? undefined
                             : () => followUser(recommendedProfile.details.id)
                         }
-                        disabled={
-                          loadingFollowers[recommendedProfile.details.id]
-                        }
-                        loading={
-                          loadingFollowers[recommendedProfile.details.id]
-                        }
+                        disabled={loading[recommendedProfile.details.id]}
+                        loading={loading[recommendedProfile.details.id]}
                         icon={<Icon.Plus size="16" />}
                         variant="small"
                       />

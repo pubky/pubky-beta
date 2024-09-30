@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Icon, Modal } from '@social/ui-shared';
-import { useState } from 'react';
-import { useAlertContext } from '@/contexts';
+import { useRef, useState } from 'react';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import Post from '../Post';
 
@@ -11,7 +11,6 @@ import { PostView } from '@/types/Post';
 interface CreateRepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
-  modalRepostRef: React.RefObject<HTMLDivElement>;
   post: PostView;
   handleRepost: () => Promise<void>;
 }
@@ -19,11 +18,12 @@ interface CreateRepostProps {
 export default function Repost({
   showModalRepost,
   setShowModalRepost,
-  modalRepostRef,
   post,
   handleRepost,
 }: CreateRepostProps) {
+  const { createRepost } = usePubkyClientContext();
   //const { createRepost, createTag } = useClientContext();
+  const modalRepostRef = useRef<HTMLDivElement>(null);
   const { setContent, setShow } = useAlertContext();
   const [contentRepost, setContentRepost] = useState('');
   const [isValidContent, setIsValidContent] = useState(false);
@@ -39,25 +39,30 @@ export default function Repost({
     }
     try {
       setSendingRepost(true);
-      // const hashtags = Utils.extractHashtags(content);
-      // const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      const hashtags = Utils.extractHashtags(content);
+      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      // const newRepost = null; //await createRepost(post.uri, content, selectedFiles);
+      const newRepost = await createRepost(
+        post?.details?.id,
+        content,
+        'Short',
+        selectedFiles
+      );
 
-      // if (newRepost) {
-      //   for (const tag of updatedTags) {
-      //     //await createTag(newRepost.uri, tag);
-      //   }
-      //   setContent('Repost created!');
-      //   setShow(true);
-      // } else {
-      //   setContent('Something wrong. Try again', 'warning');
-      //   setShow(true);
-      // }
-      // setArrayTags([]);
-      // setContentRepost('');
-      // setShowModalRepost(false);
-      // setSelectedFiles([]);
+      if (newRepost) {
+        for (const tag of updatedTags) {
+          //await createTag(newRepost.uri, tag);
+        }
+        setContent('Repost created!');
+        setShow(true);
+      } else {
+        setContent('Something wrong. Try again', 'warning');
+        setShow(true);
+      }
+      setArrayTags([]);
+      setContentRepost('');
+      setShowModalRepost(false);
+      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {
@@ -102,7 +107,6 @@ export default function Repost({
                 id="repost-btn"
                 className="w-auto"
                 variant="line"
-                icon={<Icon.Repost color="white" />}
                 loading={sendingRepost}
                 onClick={
                   !sendingRepost
@@ -116,13 +120,7 @@ export default function Repost({
                         }
                     : undefined
                 }
-                //icon={<Icon.Repost color={!isValidContent ? 'gray' : 'white'} />}
-                //disabled={!isValidContent}
-                //onClick={
-                //  isValidContent && !sendingRepost
-                //</PostElement.Actions>    ? () => handleSubmitRepost()
-                //    : undefined
-                // }
+                icon={<Icon.Repost color="white" />}
               >
                 Repost
               </Button.Medium>
