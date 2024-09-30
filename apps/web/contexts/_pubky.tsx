@@ -38,6 +38,26 @@ type PubkyClientContextType = {
     kind: PostKind,
     files?: File[]
   ) => Promise<string | false>;
+  createRepost: (
+    originalPostId: string,
+    repostContent: string,
+    kind: PostKind,
+    files?: File[]
+  ) => Promise<string | false>;
+  createReply: (
+    originalPostId: string,
+    replyContent: string,
+    kind: PostKind,
+    files?: File[]
+  ) => Promise<string | false>;
+  follow: (user_id: string) => Promise<boolean>;
+  unfollow: (user_id: string) => Promise<boolean>;
+  addBookmark: (post_id: string, post_uri: string) => Promise<boolean>;
+  deleteBookmark: (
+    post_id: string,
+    post_uri: string,
+    bookmark_id: string
+  ) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -315,6 +335,241 @@ export function PubkyClientWrapper({
     }
   };
 
+  const createRepost = async (
+    originalPostId: string,
+    repostContent: string,
+    kind: PostKind,
+    files?: File[]
+  ): Promise<string | false> => {
+    try {
+      // Check if the user is logged in
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in');
+      }
+
+      // Generate a timestamp ID for the repost
+      const repostId = generateTimestampId();
+
+      // Initialize the post object
+      const newRepost: PubkyAppPost = {
+        content: repostContent,
+        kind,
+      };
+
+      // List to store URIs of uploaded files
+      const uploadedFileUris: string[] = [];
+
+      // File upload, if any
+      if (files && files.length > 0) {
+        for (const file of files) {
+          // Read the file content
+          const fileContent = await file.arrayBuffer();
+          const fileBase64 = Buffer.from(fileContent).toString('base64');
+
+          // Create the PubkyAppFile object
+          const fileId = generateTimestampId();
+          const newFile: PubkyAppFile = {
+            name: file.name,
+            created_at: Date.now(),
+            src: `data:${file.type};base64,${fileBase64}`,
+            content_type: file.type,
+            size: file.size,
+          };
+
+          // Serialize to JSON and convert to Buffer
+          const fileBody = Buffer.from(JSON.stringify(newFile));
+
+          // File URL
+          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
+
+          // Send the file to the homeserver
+          await client.put(fileUrl, fileBody);
+
+          // Store the file URI
+          const fileUri = `/pub/pubky.app/files/${fileId}`;
+          uploadedFileUris.push(fileUri);
+        }
+
+        // If there are files, add to the post embed
+        newRepost.embed = {
+          kind: kind,
+          uri: uploadedFileUris[0],
+          postId: originalPostId,
+        };
+      }
+
+      // Serialize the repost to JSON and convert to Buffer
+      const repostBody = Buffer.from(JSON.stringify(newRepost));
+
+      // Repost URL
+      const repostUrl = `pubky://${pubky}/pub/pubky.app/posts/${repostId}`;
+
+      // Send the post to the homeserver
+      await client.put(repostUrl, repostBody);
+
+      console.log(repostUrl);
+
+      return repostUrl;
+    } catch (error) {
+      console.error('Error creating post:', error);
+      return false;
+    }
+  };
+
+  const createReply = async (
+    originalPostId: string,
+    replyContent: string,
+    kind: PostKind,
+    files?: File[]
+  ): Promise<string | false> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in');
+      }
+      const replyId = generateTimestampId();
+
+      const replyPost: PubkyAppPost = {
+        content: replyContent,
+        kind,
+        parent: originalPostId,
+      };
+
+      const uploadedFileUris: string[] = [];
+
+      if (files && files.length > 0) {
+        for (const file of files) {
+          const fileContent = await file.arrayBuffer();
+          const fileBase64 = Buffer.from(fileContent).toString('base64');
+
+          const fileId = generateTimestampId();
+          const newFile: PubkyAppFile = {
+            name: file.name,
+            created_at: Date.now(),
+            src: `data:${file.type};base64,${fileBase64}`,
+            content_type: file.type,
+            size: file.size,
+          };
+
+          const fileBody = Buffer.from(JSON.stringify(newFile));
+
+          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
+
+          await client.put(fileUrl, fileBody);
+
+          const fileUri = `/pub/pubky.app/files/${fileId}`;
+          uploadedFileUris.push(fileUri);
+        }
+
+        replyPost.embed = {
+          kind: kind,
+          uri: uploadedFileUris[0],
+        };
+      }
+
+      const replyBody = Buffer.from(JSON.stringify(replyPost));
+      const replyUrl = `pubky://${pubky}/pub/pubky.app/posts/${replyId}`;
+
+      await client.put(replyUrl, replyBody);
+
+      console.log(`Successfully replied: ${replyUrl}`);
+
+      return replyUrl;
+    } catch (error) {
+      console.error('Error while replying to post:', error);
+      return false;
+    }
+  };
+
+  const follow = async (user_id: string): Promise<boolean> => {
+    try {
+      // Check if the user is logged in
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in or pubky is not defined');
+      }
+
+      const followData = {
+        created_at: Date.now(),
+      };
+
+      const followDataBody = Buffer.from(JSON.stringify(followData));
+      const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
+
+      await client.put(followUrl, followDataBody);
+
+      console.log(`Successfully followed user with ID: ${user_id}`);
+      return true;
+    } catch (error) {
+      console.error('Error while following the user:', error);
+      return false;
+    }
+  };
+
+  const unfollow = async (user_id: string): Promise<boolean> => {
+    try {
+      // Check if the user is logged in
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in or pubky is not defined');
+      }
+
+      const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
+
+      await client.delete(followUrl);
+
+      console.log(`Successfully unfollowed user with ID: ${user_id}`);
+      return true;
+    } catch (error) {
+      console.error('Error while unfollowing the user:', error);
+      return false;
+    }
+  };
+
+  const addBookmark = async (post_id: string): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('ser is not logged in or pubky is not defined');
+      }
+
+      const bookmarkData = {
+        created_at: Date.now(),
+      };
+
+      const bookmarkDataBody = Buffer.from(JSON.stringify(bookmarkData));
+      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${post_id}`;
+
+      await client.put(bookmarkUrl, bookmarkDataBody);
+
+      console.log(`Successfully bookmarked post with ID: ${post_id}`);
+      return true;
+    } catch (error) {
+      console.error('Error while bookmarking the post:', error);
+      return false;
+    }
+  };
+
+  const deleteBookmark = async (post_id: string): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('ser is not logged in or pubky is not defined');
+      }
+
+      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${post_id}`;
+
+      await client.delete(bookmarkUrl);
+
+      console.log(`Successfully unbookmarked post with ID: ${post_id}`);
+      return true;
+    } catch (error) {
+      console.error('Error while unbookmarking the post:', error);
+      return false;
+    }
+  };
+
   const toPubkeyProfile = (profile: PubkyAppUser): PubkyAppUser => {
     if (!profile) throw new Error('Profile is required');
 
@@ -348,6 +603,12 @@ export function PubkyClientWrapper({
         getProfile,
         saveProfile,
         createPost,
+        follow,
+        unfollow,
+        addBookmark,
+        deleteBookmark,
+        createRepost,
+        createReply,
       }}
     >
       {children}

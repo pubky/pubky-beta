@@ -3,7 +3,6 @@
 import { useRef } from 'react';
 import { Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
-import Skeletons from '@/components/Skeletons';
 import { usePubkyClientContext } from '@/contexts';
 import { useBookmarkedPosts } from '@/hooks/usePost';
 
@@ -72,7 +71,6 @@ export default function Bookmarks() {
           </Typography.H2>
         </div>
       )}
-      {isLoading && <Skeletons.Simple />}
       <div ref={loader} />
     </div>
   );

@@ -65,7 +65,7 @@ export default function Header({
               </Typography.Label>
             )}
           </div>
-          {/** showTooltipProfile !== '' && <Tooltip.Profile post={post} />*/}
+          {showTooltipProfile !== '' && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
       <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>

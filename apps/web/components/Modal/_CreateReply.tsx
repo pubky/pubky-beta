@@ -1,7 +1,7 @@
 import { Button, Icon, Modal } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 
-import { useAlertContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import Post from '../Post';
 import CreateContent from '../CreateContent';
@@ -18,6 +18,7 @@ export default function CreateReply({
   setShowModalReply,
   post,
 }: CreateReplyProps) {
+  const { createReply } = usePubkyClientContext();
   // const { createReply, createTag } = useClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
@@ -40,12 +41,12 @@ export default function CreateReply({
         ? post.relationships?.replied
         : post.details.uri;
 
-      const newReply = null; //await createReply(
-      //  content,
-      //  post.uri,
-      //  rootUri,
-      //  selectedFiles
-      //);
+      const newReply = await createReply(
+        rootUri,
+        content,
+        'Short',
+        selectedFiles
+      );
 
       if (newReply) {
         for (const tag of updatedTags) {
