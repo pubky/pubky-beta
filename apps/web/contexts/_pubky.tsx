@@ -38,6 +38,8 @@ type PubkyClientContextType = {
     kind: PostKind,
     files?: File[]
   ) => Promise<string | false>;
+  follow: (user_id: string) => Promise<boolean>;
+  unfollow: (user_id: string) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -315,6 +317,51 @@ export function PubkyClientWrapper({
     }
   };
 
+  const follow = async (user_id: string): Promise<boolean> => {
+    try {
+      // Check if the user is logged in
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in or pubky is not defined');
+      }
+
+      const followData = {
+        created_at: Date.now(),
+      };
+
+      const followDataBody = Buffer.from(JSON.stringify(followData));
+      const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
+
+      await client.put(followUrl, followDataBody);
+
+      console.log(`Successfully followed user with ID: ${user_id}`);
+      return true;
+    } catch (error) {
+      console.error('Error while following the user:', error);
+      return false;
+    }
+  };
+
+  const unfollow = async (user_id: string): Promise<boolean> => {
+    try {
+      // Check if the user is logged in
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in or pubky is not defined');
+      }
+
+      const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
+
+      await client.delete(followUrl);
+
+      console.log(`Successfully unfollowed user with ID: ${user_id}`);
+      return true;
+    } catch (error) {
+      console.error('Error while unfollowing the user:', error);
+      return false;
+    }
+  };
+
   const toPubkeyProfile = (profile: PubkyAppUser): PubkyAppUser => {
     if (!profile) throw new Error('Profile is required');
 
@@ -348,6 +395,8 @@ export function PubkyClientWrapper({
         getProfile,
         saveProfile,
         createPost,
+        follow,
+        unfollow,
       }}
     >
       {children}

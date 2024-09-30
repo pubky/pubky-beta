@@ -3,16 +3,22 @@ import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
 import { useMostFollowedUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
+import { useState } from 'react';
 
 export default function WhoFollow() {
-  const { pubky } = usePubkyClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
   const { data, isLoading, isError } = useMostFollowedUsers(pubky, 0, 3);
   const recommendedProfiles = data;
+  console.log('dataRecommendeProfiles', recommendedProfiles);
+  //const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
+  const [loadingFollowers, setLoadingFollowers] = useState<{
+    [pubky: string]: boolean;
+  }>({});
+  const [followedUser, setFollowedUser] = useState<{
+    [pubky: string]: boolean;
+  }>({});
 
   if (isError) console.error(isError);
-
-  {
-    /**
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -63,8 +69,6 @@ export default function WhoFollow() {
       console.log(error);
     }
   };
-  */
-  }
 
   return (
     <div className="mb-6">
@@ -79,7 +83,9 @@ export default function WhoFollow() {
               const pubkeyUser =
                 pubky && recommendedProfile?.details?.id.includes(pubky);
               const isFollowed =
-                recommendedProfile?.relationship?.following || false;
+                followedUser[recommendedProfile.details.id] ||
+                recommendedProfile?.relationship?.following ||
+                false;
 
               return (
                 <div key={index}>
@@ -109,25 +115,33 @@ export default function WhoFollow() {
                       />
                     ) : isFollowed ? (
                       <SideCard.FollowAction
-                        // onClick={
-                        //  loadingFollowers[recommendedProfile.id]
-                        //   ? undefined
-                        //    : () => unfollowUser(recommendedProfile.id)
-                        //}
-                        //disabled={loadingFollowers[recommendedProfile.id]}
-                        // loading={loadingFollowers[recommendedProfile.id]}
+                        onClick={
+                          loadingFollowers[recommendedProfile.details.id]
+                            ? undefined
+                            : () => unfollowUser(recommendedProfile.details.id)
+                        }
+                        disabled={
+                          loadingFollowers[recommendedProfile.details.id]
+                        }
+                        loading={
+                          loadingFollowers[recommendedProfile.details.id]
+                        }
                         icon={<Icon.Minus size="16" />}
                         variant="small"
                       />
                     ) : (
                       <SideCard.FollowAction
-                        //onClick={
-                        //  loadingFollowers[recommendedProfile.id]
-                        //    ? undefined
-                        //    : () => followUser(recommendedProfile.id)
-                        //}
-                        //disabled={loadingFollowers[recommendedProfile.id]}
-                        //loading={loadingFollowers[recommendedProfile.id]}
+                        onClick={
+                          loadingFollowers[recommendedProfile.details.id]
+                            ? undefined
+                            : () => followUser(recommendedProfile.details.id)
+                        }
+                        disabled={
+                          loadingFollowers[recommendedProfile.details.id]
+                        }
+                        loading={
+                          loadingFollowers[recommendedProfile.details.id]
+                        }
                         icon={<Icon.Plus size="16" />}
                         variant="small"
                       />
