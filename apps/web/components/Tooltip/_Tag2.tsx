@@ -2,16 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { Tooltip as TooltipUI, PostUtil } from '@social/ui-shared';
-import { ITaggedPost, ITaggedProfile } from '@/types';
 import Tooltip from '.';
 import { ImageByUri } from '../ImageByUri';
+import { PostTag } from '@/types/Post';
 
 interface TagProps {
-  tags: ITaggedPost;
+  tags: PostTag | null;
   setShowModalTags: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedTag?: React.Dispatch<
-    React.SetStateAction<ITaggedPost | ITaggedProfile | null>
-  >;
+  setSelectedTag?: React.Dispatch<React.SetStateAction<PostTag | null>>;
 }
 
 export default function Tag2({
@@ -23,17 +21,18 @@ export default function Tag2({
     null
   );
   const [loadingFollowers, setLoadingFollowers] = useState(true);
-  const images = tags.from.map((fromItem) => {
-    if (fromItem.author?.profile?.image === null) {
+  const images = tags?.taggers.map((fromItem) => {
+    if (fromItem?.tagger_id?.image === null) {
       return '/images/Userpic.png';
     }
-    return fromItem.author?.profile?.image;
+    return fromItem?.tagger_id?.image;
   });
-  const displayedImages = images.slice(0, 4);
-  const extraImagesCount = images.length - displayedImages.length;
+  const displayedImages = images?.slice(0, 4);
+  const extraImagesCount =
+    images && displayedImages && images?.length - displayedImages?.length;
 
   useEffect(() => {
-    if (tags?.count) {
+    if (tags?.taggers_count) {
       setLoadingFollowers(false);
     }
   }, [tags]);
@@ -54,7 +53,7 @@ export default function Tag2({
             //}}
             className="cursor-pointer flex items-center"
           >
-            {displayedImages.map((image, imageIndex) => (
+            {displayedImages?.map((image, imageIndex) => (
               <>
                 <ImageByUri
                   width={32}
@@ -69,11 +68,11 @@ export default function Tag2({
                 />
 
                 {showTooltipProfile === imageIndex && (
-                  <Tooltip.Profile post={tags.from[imageIndex]} />
+                  <Tooltip.Profile post={tags?.taggers[imageIndex]} />
                 )}
               </>
             ))}
-            {extraImagesCount > 0 && (
+            {extraImagesCount && extraImagesCount > 0 && (
               <PostUtil.Counter className="-ml-2">
                 +{extraImagesCount}
               </PostUtil.Counter>

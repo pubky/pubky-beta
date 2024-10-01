@@ -58,6 +58,8 @@ type PubkyClientContextType = {
     post_uri: string,
     bookmark_id: string
   ) => Promise<boolean>;
+  createTag: (post_id: string, tagContent: string) => Promise<boolean>;
+  deleteTag: (post_id: string, tagId: string) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -570,6 +572,59 @@ export function PubkyClientWrapper({
     }
   };
 
+  const createTag = async (
+    postId: string,
+    tagContent: string
+  ): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in');
+      }
+
+      if (!tagContent || tagContent.trim() === '') {
+        throw new Error('Tag content cannot be empty');
+      }
+
+      const tagData = {
+        tag: tagContent,
+        created_at: Date.now(),
+        post_id: postId,
+      };
+
+      const tagBody = Buffer.from(JSON.stringify(tagData));
+
+      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${postId}/${generateTimestampId()}`;
+
+      await client.put(tagUrl, tagBody);
+
+      console.log(`Tag successfully added to post ${postId}: ${tagUrl}`);
+      return true;
+    } catch (error) {
+      console.error('Error creating tag:', error);
+      return false;
+    }
+  };
+
+  const deleteTag = async (postId: string, tagId: string): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in');
+      }
+
+      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${postId}/${tagId}`;
+
+      await client.delete(tagUrl);
+
+      console.log(`Tag successfully deleted to post ${postId}: ${tagUrl}`);
+      return true;
+    } catch (error) {
+      console.error('Error creating tag:', error);
+      return false;
+    }
+  };
+
   const toPubkeyProfile = (profile: PubkyAppUser): PubkyAppUser => {
     if (!profile) throw new Error('Profile is required');
 
@@ -609,6 +664,8 @@ export function PubkyClientWrapper({
         deleteBookmark,
         createRepost,
         createReply,
+        createTag,
+        deleteTag,
       }}
     >
       {children}
