@@ -573,7 +573,7 @@ export function PubkyClientWrapper({
   };
 
   const createTag = async (
-    postId: string,
+    id: string,
     tagContent: string
   ): Promise<boolean> => {
     try {
@@ -589,16 +589,16 @@ export function PubkyClientWrapper({
       const tagData = {
         tag: tagContent,
         created_at: Date.now(),
-        post_id: postId,
+        id: id,
       };
 
       const tagBody = Buffer.from(JSON.stringify(tagData));
 
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${postId}/${generateTimestampId()}`;
+      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${id}/${generateTimestampId()}`;
 
       await client.put(tagUrl, tagBody);
 
-      console.log(`Tag successfully added to post ${postId}: ${tagUrl}`);
+      console.log(`Tag successfully added ${id}: ${tagUrl}`);
       return true;
     } catch (error) {
       console.error('Error creating tag:', error);
@@ -606,18 +606,18 @@ export function PubkyClientWrapper({
     }
   };
 
-  const deleteTag = async (postId: string, tagId: string): Promise<boolean> => {
+  const deleteTag = async (id: string, tagId: string): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
       if (!loggedIn || !pubky) {
         throw new Error('User is not logged in');
       }
 
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${postId}/${tagId}`;
+      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${id}/${tagId}`;
 
       await client.delete(tagUrl);
 
-      console.log(`Tag successfully deleted to post ${postId}: ${tagUrl}`);
+      console.log(`Tag successfully deleted ${id}: ${tagUrl}`);
       return true;
     } catch (error) {
       console.error('Error creating tag:', error);

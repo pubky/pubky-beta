@@ -9,13 +9,14 @@ import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
+import { UserTags } from '@/types/User';
 
 export default function Sidebar({
   creatorPubky,
 }: {
   creatorPubky?: string | null;
 }) {
-  const { pubky } = usePubkyClientContext();
+  const { pubky, createTag, deleteTag } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
   const { data, isLoading, isError } = useUserProfile(usePubky ?? '');
   if (isError) console.error(isError);
@@ -26,13 +27,13 @@ export default function Sidebar({
   const links = profile?.details?.links ?? [];
   const image = profile?.details?.image ?? '/images/Userpic.png';
   const profileTags = profile?.tags ?? [];
-  //const [showModalProfileTag, setShowModalProfileTag] = useState(false);
+  const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   //const [showTooltipProfile, setShowTooltipProfile] = useState('');
   //const [loadingProfileTags, setLoadingProfileTags] = useState(true);
   //const [pubkyUser, setPubkyUser] = useState('');
   //const [loading, setLoading] = useState(true);
   const [followed, setFollowed] = useState(false);
-  //const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
+  const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
@@ -116,6 +117,8 @@ export default function Sidebar({
     fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky, getProfile, getUser, creatorPubky]);
+  */
+  }
 
   const handleAddProfileTag = async (tag: string) => {
     const pubKeyToUse =
@@ -123,7 +126,6 @@ export default function Sidebar({
 
     if (pubKeyToUse) {
       await createTag(pubKeyToUse, tag);
-      fetchProfile();
     }
   };
 
@@ -133,11 +135,8 @@ export default function Sidebar({
 
     if (pubKeyToUse) {
       await deleteTag(pubKeyToUse, tag);
-      fetchProfile();
     }
   };
-  */
-  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -178,9 +177,9 @@ export default function Sidebar({
           <TaggedSection
             profileTags={profileTags}
             loadingProfileTags={isLoading}
-            //handleAddProfileTag={handleAddProfileTag}
-            //handleDeleteProfileTag={handleDeleteProfileTag}
-            //setShowModalProfileTag={setShowModalProfileTag}
+            handleAddProfileTag={handleAddProfileTag}
+            handleDeleteProfileTag={handleDeleteProfileTag}
+            setShowModalProfileTag={setShowModalProfileTag}
             creatorPubky={creatorPubky}
             name={name}
           />
@@ -198,7 +197,6 @@ export default function Sidebar({
         setShowModalCheckLink={setShowModalCheckLink}
         clickedLink={clickedLink}
       />
-      {/**
       <Modal.ProfileTag
         profileTags={profileTags}
         showModalProfileTag={showModalProfileTag}
@@ -207,11 +205,10 @@ export default function Sidebar({
         handleDeleteProfileTag={handleDeleteProfileTag}
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
-        pubkyUser={pubkyUser}
+        pubkyUser={usePubky}
         name={name}
         uriImage={image}
       />
-      */}
     </>
   );
 }

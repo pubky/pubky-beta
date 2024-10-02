@@ -80,7 +80,7 @@ export default function Help() {
           className="w-auto"
           onClick={() =>
             window.open(
-              'https://docs.google.com/document/d/1BHF-rOB31wXsQgC1w7scRaYBlxo9fwu8ygV28x_fEOE/edit?usp=sharing'
+              'https://support.synonym.to/hc/pubky-app-help-center/en'
             )
           }
           icon={<Icon.FileText width="16" height="16" />}
