@@ -3,7 +3,7 @@ import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
 import { PostThread, PostView } from '@/types/Post';
-import { useUserProfile } from '@/hooks/useUser';
+import { UseUserFollowing, useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 
 export default function Partecipants({
@@ -13,7 +13,8 @@ export default function Partecipants({
   repliesResponse: PostThread | undefined;
   author: string;
 }) {
-  const { pubky } = usePubkyClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
+  const { data: following } = UseUserFollowing(pubky ?? '');
   //const { follow, unfollow, listFollowing } = useClientContext();
   const { data: authorData } = useUserProfile(author);
   const [replies, setReplies] = useState<PostView[]>([]);
@@ -46,35 +47,34 @@ export default function Partecipants({
       try {
         if (!pubky || !replies) return;
 
-        // const following = null; //await listFollowing(pubky);
+        if (following) {
+          const followingIds = following.map(
+            (user) => user
+            //user.uri.replace('pubky:', '')
+          );
+          const matchedFollowedIds = replies.filter((reply) =>
+            followingIds.includes(reply?.details?.author)
+          );
 
-        // if (following) {
-        //   const followingIds = following.following.map((user) =>
-        //     user.uri.replace('pubky:', '')
-        //   );
-        //   const matchedFollowedIds = replies.filter((reply) =>
-        //     followingIds.includes(reply?.details?.author)
-        //   );
-
-        //   if (matchedFollowedIds.length > 0) {
-        //     setInitLoadingFollowers(false);
-        //     matchedFollowedIds.forEach((followed) => {
-        //       setFollowedUser((prevState) => ({
-        //         ...prevState,
-        //         [followed.details.author]: true,
-        //       }));
-        //     });
-        //   } else {
-        //     setInitLoadingFollowers(false);
-        //   }
-        // }
+          if (matchedFollowedIds.length > 0) {
+            setInitLoadingFollowers(false);
+            matchedFollowedIds.forEach((followed) => {
+              setFollowedUser((prevState) => ({
+                ...prevState,
+                [followed.details.author]: true,
+              }));
+            });
+          } else {
+            setInitLoadingFollowers(false);
+          }
+        }
       } catch (error) {
         console.log(error);
       }
     }
 
     fetchFollowing();
-  }, [pubky, replies]);
+  }, [pubky, replies, following]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -85,12 +85,12 @@ export default function Partecipants({
         [pubkyFollow]: true,
       }));
 
-      // const result = null; //await follow(pubkyFollow);
+      const result = await follow(pubkyFollow);
 
-      // setFollowedUser((prevState) => ({
-      //   ...prevState,
-      //   [pubkyFollow]: result,
-      // }));
+      setFollowedUser((prevState) => ({
+        ...prevState,
+        [pubkyFollow]: result,
+      }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
@@ -110,7 +110,7 @@ export default function Partecipants({
         [pubkyUnfollow]: true,
       }));
 
-      const result = null; //await unfollow(pubkyUnfollow);
+      const result = await unfollow(pubkyUnfollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
