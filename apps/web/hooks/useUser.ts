@@ -16,10 +16,10 @@ import {
   searchUsersByUsername,
 } from '../services/userService';
 
-export function useUserProfile(userId: string) {
+export function useUserProfile(userId: string, viewerId: string) {
   return useQuery({
     queryKey: ['userProfile', userId],
-    queryFn: () => getUserProfile(userId),
+    queryFn: () => getUserProfile(userId, viewerId),
     initialData: null,
   });
 }

@@ -15,8 +15,7 @@ const passwordSchema = z.object({
 });
 
 export default function RemindBackup() {
-  const { seed, setSeed } = usePubkyClientContext();
-  //const { getRecoveryFile } = useClientContext();
+  const { seed, setSeed, getRecoveryFile } = usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
   const [remindMeLater, setRemindMeLater] = useState(false);
@@ -104,15 +103,19 @@ export default function RemindBackup() {
         setLoadingRecoveryFile(false);
         return;
       }
-      // const recoveryFileResponse = await getRecoveryFile(password);
+      const recoveryFileResponse = await getRecoveryFile(password);
 
-      // if (!recoveryFileResponse) {
-      //   throw new Error('Something went wrong');
-      // }
+      if (!recoveryFileResponse) {
+        throw new Error('Something went wrong');
+      }
 
-      // const { recoveryFile, filename } = recoveryFileResponse;
-      // await handleDownloadRecoveryFile({ recoveryFile, filename });
-      // Utils.storage.remove('seed');
+      await handleDownloadRecoveryFile({
+        recoveryFile: recoveryFileResponse,
+        filename: 'recovery_key.pkarr',
+      });
+
+      Utils.storage.remove('seed');
+
       setShowModalBackup(false);
     } catch (error) {
       console.log(error);

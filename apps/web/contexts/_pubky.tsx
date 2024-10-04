@@ -7,6 +7,7 @@ import {
   PublicKey,
   decryptRecoveryFile,
   Keypair,
+  createRecoveryFile,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
 import {
@@ -31,7 +32,6 @@ type PubkyClientContextType = {
   isLoggedIn: () => Promise<boolean>;
   logout: () => boolean;
   signUp: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
-  getProfile: (profilePublicKey: string) => Promise<PubkyAppUser | null>;
   saveProfile: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
   createPost: (
     postContent: string,
@@ -60,6 +60,7 @@ type PubkyClientContextType = {
   ) => Promise<boolean>;
   createTag: (post_id: string, tagContent: string) => Promise<boolean>;
   deleteTag: (post_id: string, tagId: string) => Promise<boolean>;
+  getRecoveryFile: (password: string) => Promise<any | null>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -115,6 +116,21 @@ export function PubkyClientWrapper({
     return true;
   };
 
+  const getRecoveryFile = async (password: string): Promise<any | null> => {
+    try {
+      const base64Seed = Utils.storage.get('seed');
+      const uint8ArraySeed = Utils.base64ToUint8Array(base64Seed);
+
+      // get keypair from uint8ArraySeed
+      const keypair = Keypair.fromSecretKey(uint8ArraySeed);
+
+      return createRecoveryFile(keypair, password);
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
   const loginWithFile = async (password: string, recoveryFile: Buffer) => {
     try {
       const keypair = decryptRecoveryFile(recoveryFile, password);
@@ -138,16 +154,7 @@ export function PubkyClientWrapper({
       Utils.storage.set('pubky_public_key', pk);
       setPubky(pk);
 
-      // Retrieve and save the profile
-      const fetchedProfile = await getProfile(pk);
-      if (fetchedProfile) {
-        Utils.storage.set('profile', JSON.stringify(fetchedProfile));
-        setProfile(fetchedProfile);
-      } else {
-        throw new Error('Failed to retrieve profile');
-      }
-
-      return session.pubky().z32();
+      return pk;
     } catch (error: any) {
       // Get error message and return as a string
       console.log(error);
@@ -195,9 +202,7 @@ export function PubkyClientWrapper({
       // Send the profile to the homeserver
       await client.put(profileUrl, body);
 
-      const fetchedProfile = await getProfile(pk);
-
-      return fetchedProfile;
+      return pubkeyProfile;
     } catch (error) {
       console.log(error);
       return false;
@@ -230,30 +235,10 @@ export function PubkyClientWrapper({
       // Send the profile to the homeserver
       await client.put(profileUrl, body);
 
-      const fetchedProfile = await getProfile(pubky as string);
-
-      return fetchedProfile;
+      return pubkeyProfile;
     } catch (error) {
       console.log(error);
       return false;
-    }
-  };
-
-  const getProfile = async (
-    profilePublicKey: string
-  ): Promise<PubkyAppUser | null> => {
-    const profileUrl = `pubky://${profilePublicKey}/pub/pubky.app/profile.json`;
-
-    try {
-      const response = await client.get(profileUrl);
-      if (response) {
-        const profileJson = Buffer.from(response).toString('utf-8');
-        return JSON.parse(profileJson);
-      }
-      return null;
-    } catch (error) {
-      console.error('Error retrieving profile:', error);
-      return null;
     }
   };
 
@@ -655,7 +640,6 @@ export function PubkyClientWrapper({
         logout,
         signUp,
         setSeed,
-        getProfile,
         saveProfile,
         createPost,
         follow,
@@ -666,6 +650,7 @@ export function PubkyClientWrapper({
         createReply,
         createTag,
         deleteTag,
+        getRecoveryFile,
       }}
     >
       {children}
