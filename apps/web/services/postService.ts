@@ -151,9 +151,15 @@ export async function getPostThread(
 ): Promise<PostThread> {
   const queryParams = new URLSearchParams();
 
-  queryParams.append('viewer_id', viewerId || '');
-  queryParams.append('skip', String(skip));
-  queryParams.append('limit', String(limit));
+  if (viewerId) {
+    queryParams.append('viewer_id', viewerId);
+  }
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
 
   const response = await fetch(
     `${BASE_URL}/thread/${authorId}/${postId}?${queryParams}`

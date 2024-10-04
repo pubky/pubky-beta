@@ -14,7 +14,7 @@ export const UserProfile = ({
   isLoading: false;
 }) => {
   const { pubky } = usePubkyClientContext();
-  const { data: profile } = useUserProfile(contact);
+  const { data: profile } = useUserProfile(contact, pubky ?? '');
 
   if (!profile) return null;
 

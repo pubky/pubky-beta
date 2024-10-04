@@ -11,24 +11,23 @@ import {
   Typography,
   SideCard,
 } from '@social/ui-shared';
-import { ITaggedPost } from '@/types';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import Post from '../Post';
 import { ImageByUri } from '../ImageByUri';
 import { usePubkyClientContext } from '@/contexts';
-import { PostView } from '@/types/Post';
+import { PostTag, PostView } from '@/types/Post';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
-  tags: ITaggedPost[];
+  tags: PostTag[];
   post: PostView;
   handleAddTag: (tag: string) => Promise<void>;
   handleDeleteTag: (tag: string) => Promise<void>;
-  selectedTag?: ITaggedPost | null;
-  setSelectedTag?: React.Dispatch<React.SetStateAction<ITaggedPost | null>>;
+  selectedTag?: PostTag | null;
+  setSelectedTag?: React.Dispatch<React.SetStateAction<PostTag | null>>;
 }
 
 export default function Tag({
@@ -279,12 +278,12 @@ export default function Tag({
                 <>
                   {!selectedTag &&
                     tags.map((tag, index) => {
-                      const isTagFound = tag.from.some(
-                        (fromItem) => fromItem.author.id === pubky
+                      const isTagFound = tag?.taggers.some(
+                        (fromItem) => fromItem.tagger_id === pubky
                       );
 
-                      const images = tag.from.map(
-                        (fromItem) => fromItem?.author?.profile?.image
+                      const images = tag?.taggers.map(
+                        (fromItem) => fromItem?.tagger_id?.image
                       );
                       const displayedImages = images.slice(0, 4);
                       const extraImagesCount =
@@ -298,20 +297,21 @@ export default function Tag({
                             onClick={(event) => {
                               event.stopPropagation();
                               isTagFound
-                                ? handleDeleteTag(tag.tag)
-                                : handleAddTag(tag.tag);
+                                ? handleDeleteTag(tag?.label)
+                                : handleAddTag(tag?.label);
                             }}
-                            color={
-                              tag.tag && Utils.generateRandomColor(tag.tag)
-                            }
+                            color={Utils.generateRandomColor(tag?.label)}
                           >
                             <div className="flex gap-2 items-center">
-                              {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                              {Utils.minifyText(
+                                tag?.label.replace(' ', ''),
+                                20
+                              )}
                               <Typography.Caption
                                 variant="bold"
                                 className="text-opacity-30"
                               >
-                                {tag.count}
+                                {tag?.taggers_count}
                               </Typography.Caption>
                             </div>
                           </PostUtil.Tag>
@@ -321,7 +321,7 @@ export default function Tag({
                             size="small"
                             icon={<Icon.MagnifyingGlassLeft size="14" />}
                             onClick={() =>
-                              router.push(`/search?tags=${tag.tag}`)
+                              router.push(`/search?tags=${tag?.label}`)
                             }
                             className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                           />
@@ -375,32 +375,32 @@ export default function Tag({
                         </div>
                         {selectedTag && (
                           <PostUtil.Tag
-                            clicked={selectedTag.from.some(
-                              (fromItem) => fromItem.author.id === pubky
+                            clicked={selectedTag?.taggers.some(
+                              (fromItem) => fromItem?.tagger_id === pubky
                             )}
                             onClick={(event) => {
                               event.stopPropagation();
-                              selectedTag.from.some(
-                                (fromItem) => fromItem.author.id === pubky
+                              selectedTag?.taggers.some(
+                                (fromItem) => fromItem?.tagger_id === pubky
                               )
-                                ? handleDeleteTag(selectedTag.tag)
-                                : handleAddTag(selectedTag.tag);
+                                ? handleDeleteTag(selectedTag?.label)
+                                : handleAddTag(selectedTag?.label);
                             }}
                             color={
-                              selectedTag.tag &&
-                              Utils.generateRandomColor(selectedTag.tag)
+                              selectedTag?.label &&
+                              Utils.generateRandomColor(selectedTag?.label)
                             }
                           >
                             <div className="flex gap-2 items-center">
                               {Utils.minifyText(
-                                selectedTag.tag.replace(' ', ''),
+                                selectedTag?.label.replace(' ', ''),
                                 20
                               )}
                               <Typography.Caption
                                 variant="bold"
                                 className="text-opacity-30"
                               >
-                                {selectedTag.count}
+                                {selectedTag?.taggers_count}
                               </Typography.Caption>
                             </div>
                           </PostUtil.Tag>
@@ -410,33 +410,33 @@ export default function Tag({
                           size="small"
                           icon={<Icon.MagnifyingGlassLeft size="14" />}
                           onClick={() =>
-                            router.push(`/search?tags=${selectedTag.tag}`)
+                            router.push(`/search?tags=${selectedTag?.label}`)
                           }
                           className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                         />
                       </div>
-                      {selectedTag.from.map((user, userIndex) => {
+                      {selectedTag?.taggers.map((user, userIndex) => {
                         const pubkeyUser =
-                          pubky && user?.author?.id.includes(pubky);
+                          pubky && user?.tagger_id.includes(pubky);
                         const isFollowed =
-                          followedUser[user?.author?.id] || false;
+                          followedUser[user?.tagger_id] || false;
                         return (
                           <div
                             key={userIndex}
                             className="w-full flex justify-between gap-10"
                           >
                             <SideCard.User
-                              uri={user?.author?.uri.replace('pubky:', '')}
+                              uri={user?.tagger_id?.uri.replace('pubky:', '')}
                               uriImage={
-                                user?.author?.profile?.image ||
+                                user?.tagger_id?.profile?.image ||
                                 '/images/Userpic.png'
                               }
                               username={
-                                user?.author?.profile?.name &&
-                                Utils.minifyText(user?.author?.profile?.name)
+                                user?.tagger_id?.profile?.name &&
+                                Utils.minifyText(user?.tagger_id?.profile?.name)
                               }
                               label={Utils.minifyPubky(
-                                user.author.uri.replace('pubky:', '')
+                                user.tagger_id.uri.replace('pubky:', '')
                               )}
                             />
                             {pubkeyUser ? (
@@ -454,24 +454,24 @@ export default function Tag({
                             ) : isFollowed ? (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.author?.id]
+                                  loadingFollowers[user?.tagger_id]
                                     ? undefined
-                                    : () => unfollowUser(user?.author?.id)
+                                    : () => unfollowUser(user?.tagger_id)
                                 }
-                                disabled={loadingFollowers[user?.author?.id]}
-                                loading={loadingFollowers[user?.author?.id]}
+                                disabled={loadingFollowers[user?.tagger_id]}
+                                loading={loadingFollowers[user?.tagger_id]}
                                 icon={<Icon.Minus size="16" />}
                                 variant="small"
                               />
                             ) : (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.author?.id]
+                                  loadingFollowers[user?.tagger_id]
                                     ? undefined
-                                    : () => followUser(user?.author?.id)
+                                    : () => followUser(user?.tagger_id)
                                 }
-                                disabled={loadingFollowers[user?.author?.id]}
-                                loading={loadingFollowers[user?.author?.id]}
+                                disabled={loadingFollowers[user?.tagger_id]}
+                                loading={loadingFollowers[user?.tagger_id]}
                                 icon={<Icon.Plus size="16" />}
                                 variant="small"
                               />

@@ -17,12 +17,13 @@ import { Onboarding } from '../components';
 import { Skeleton } from '@/components';
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts';
+import { UseUserFollowers } from '@/hooks/useUser';
 
 export default function Index() {
   const router = useRouter();
 
   const { pubky, getProfile } = usePubkyClientContext();
-  //const { listFollowers } = useClientContext();
+  const { data: followers } = UseUserFollowers(pubky ?? '', 0, 10);
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState<string>('/images/Userpic.png');
   const [handler, setHandler] = useState('');
@@ -83,19 +84,17 @@ export default function Index() {
     try {
       if (!pubky) return;
 
-      // const followers = null; //await listFollowers(pubky);
-
-      // if (followers) {
-      //   setContacts(
-      //     followers.followers.map((user: any, index: any) => ({
-      //       alt: 'contact-pic-' + (index + 1),
-      //       src: user.profile.image || '/images/Userpic.png',
-      //       name: user.profile.name || '',
-      //       handler: Utils.minifyPubky(user.uri.replace('pubky:', '')),
-      //     }))
-      //   );
-      //   setLoadingContacts(false);
-      // }
+      if (followers) {
+        setContacts(
+          followers.map((user, index) => ({
+            alt: 'contact-pic-' + (index + 1),
+            src: user.profile.image || '/images/Userpic.png',
+            name: user.profile.name || '',
+            handler: Utils.minifyPubky(user.uri.replace('pubky:', '')),
+          }))
+        );
+        setLoadingContacts(false);
+      }
     } catch (error) {
       console.log(error);
     }

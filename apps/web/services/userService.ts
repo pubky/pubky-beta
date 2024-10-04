@@ -19,8 +19,15 @@ export async function getUserDetails(userId: string): Promise<UserDetails> {
   return response.json();
 }
 
-export async function getUserProfile(userId: string): Promise<UserView> {
-  const response = await fetch(`${BASE_URL}/user/${userId}`);
+export async function getUserProfile(
+  userId: string,
+  viewerId: string
+): Promise<UserView> {
+  const queryParams = new URLSearchParams({
+    viewer_id: viewerId,
+  });
+
+  const response = await fetch(`${BASE_URL}/user/${userId}?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user profile');
 

@@ -14,9 +14,9 @@ import { useRouter } from 'next/navigation';
 interface TaggedSectionProps {
   profileTags: UserTags[];
   loadingProfileTags: boolean;
-  //handleAddProfileTag: (tag: string) => void;
-  //handleDeleteProfileTag: (tag: string) => void;
-  //setShowModalProfileTag: (show: boolean) => void;
+  handleAddProfileTag: (tag: string) => void;
+  handleDeleteProfileTag: (tag: string) => void;
+  setShowModalProfileTag: (show: boolean) => void;
   creatorPubky: string | null | undefined;
   name: string;
 }
@@ -24,9 +24,9 @@ interface TaggedSectionProps {
 export default function TaggedSection({
   profileTags,
   loadingProfileTags,
-  //handleAddProfileTag,
-  //handleDeleteProfileTag,
-  //setShowModalProfileTag,
+  handleAddProfileTag,
+  handleDeleteProfileTag,
+  setShowModalProfileTag,
   creatorPubky,
   name,
 }: TaggedSectionProps) {
@@ -64,12 +64,12 @@ export default function TaggedSection({
                     <PostUtil.Tag
                       key={index}
                       clicked={isTagFound}
-                      //onClick={(event) => {
-                      //  event.stopPropagation();
-                      //  isTagFound
-                      //   ? handleDeleteProfileTag(tag.tag)
-                      //  : handleAddProfileTag(tag.tag);
-                      //}}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        isTagFound
+                          ? handleDeleteProfileTag(tag?.label)
+                          : handleAddProfileTag(tag?.label);
+                      }}
                       color={
                         tag?.label && Utils.generateRandomColor(tag?.label)
                       }
@@ -106,7 +106,7 @@ export default function TaggedSection({
           )}
           <Button.Medium
             className="mt-2 w-auto h-8 inline-flex items-center"
-            //onClick={() => setShowModalProfileTag(true)}
+            onClick={() => setShowModalProfileTag(true)}
             icon={<Icon.Tag size="16" />}
           >
             Tag{' '}

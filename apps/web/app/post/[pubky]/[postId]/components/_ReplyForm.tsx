@@ -8,6 +8,7 @@ import Partecipants from './_Partecipants';
 import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
 import { PostThread, PostView } from '@/types/Post';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function ReplyForm({
   uri,
@@ -20,7 +21,7 @@ export default function ReplyForm({
   updatePost: () => void;
   replies: PostThread | undefined;
 }) {
-  //const { createReply, createTag } = useClientContext();
+  const { createReply, createTag } = usePubkyClientContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -32,17 +33,23 @@ export default function ReplyForm({
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
-    const rootUri = post.relationships?.reposted
-      ? post.relationships?.reposted
-      : uri;
-    const sendReply = null; //await createReply(content, uri, rootUri, selectedFiles);
+    const rootUri = post.relationships?.replied
+      ? post.relationships?.replied
+      : post?.details?.uri;
+
+    const sendReply = await createReply(
+      rootUri,
+      content,
+      'Short',
+      selectedFiles
+    );
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
     if (sendReply) {
       for (const tag of updatedTags) {
-        //await createTag(sendReply.uri, tag);
+        await createTag(sendReply, tag);
       }
       setSendingReply(false);
       setContentReply('');

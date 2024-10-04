@@ -18,8 +18,7 @@ export default function CreateReply({
   setShowModalReply,
   post,
 }: CreateReplyProps) {
-  const { createReply } = usePubkyClientContext();
-  // const { createReply, createTag } = useClientContext();
+  const { createReply, createTag } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
@@ -50,7 +49,7 @@ export default function CreateReply({
 
       if (newReply) {
         for (const tag of updatedTags) {
-          //await createTag(newReply.uri, tag);
+          await createTag(newReply, tag);
         }
         setContent('Reply created!');
         setShow(true);
