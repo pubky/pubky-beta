@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
 import Modal from '../Modal';
+import { getUserProfile } from '@/services/userService';
 
 export default function ProtectedRoutes({
   children,
@@ -13,7 +14,7 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn } = usePubkyClientContext();
+  const { isLoggedIn, pubky, profile, storeProfile } = usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -47,6 +48,16 @@ export default function ProtectedRoutes({
       if (notRedirectUser.includes(pathname)) {
         setLoading(false);
         return;
+      }
+
+      if (loggedIn && pubky && !profile) {
+        try {
+          const user = await getUserProfile(pubky, pubky);
+          console.log('user', user);
+          storeProfile(user.details);
+        } catch (error) {
+          console.error('Error getting profile', error);
+        }
       }
 
       if (!loggedIn && isProtected) {

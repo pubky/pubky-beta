@@ -57,14 +57,14 @@ export interface Tag {
 export interface PostEmbed {
   kind: PostKind;
   uri: string;
-  postId?: string
+  postId?: string;
 }
 
 export interface PubkyAppPost {
   content: string;
   kind: PostKind;
   parent?: string;
-  embed?: PostEmbed;
+  embed?: PostEmbed | null;
 }
 
 export interface PubkyAppFile {

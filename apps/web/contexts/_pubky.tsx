@@ -17,6 +17,7 @@ import {
   PubkyAppUser,
 } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
+import { UserDetails } from '@/types/User';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -61,6 +62,7 @@ type PubkyClientContextType = {
   createTag: (post_id: string, tagContent: string) => Promise<boolean>;
   deleteTag: (post_id: string, tagId: string) => Promise<boolean>;
   getRecoveryFile: (password: string) => Promise<any | null>;
+  storeProfile: (userProfile: UserDetails) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -207,6 +209,14 @@ export function PubkyClientWrapper({
       console.log(error);
       return false;
     }
+  };
+
+  const storeProfile = async (userProfile: UserDetails): Promise<boolean> => {
+    // Save the profile in storage
+    Utils.storage.set('profile', JSON.stringify(userProfile));
+    setProfile(userProfile);
+
+    return true;
   };
 
   const saveProfile = async (
@@ -651,6 +661,7 @@ export function PubkyClientWrapper({
         createTag,
         deleteTag,
         getRecoveryFile,
+        storeProfile,
       }}
     >
       {children}

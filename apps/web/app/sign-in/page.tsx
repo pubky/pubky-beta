@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
-import { useRouter } from 'next/navigation';
 import { usePubkyClientContext } from '@/contexts';
 import { Content, Typography, Header } from '@social/ui-shared';
 import { Card } from './Card';
@@ -19,10 +18,9 @@ const loginSchema = z.object({
 });
 
 export default function Index() {
-  const router = useRouter();
   const { loginWithFile, isLoggedIn, pubky } = usePubkyClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
-  const [fileName, setFileName] = useState('recoveryfile.key');
+  const [fileName, setFileName] = useState('recovery_file.pkarr');
 
   const [recoveryFile, setRecoveryFile] = useState<Buffer | null>(null);
   const [password, setPassword] = useState('');
@@ -66,14 +64,7 @@ export default function Index() {
         return;
       }
 
-      const session = await loginWithFile(
-        result.data?.password,
-        result.data?.recoveryFile
-      );
-
-      console.log('session', session);
-
-      router.push('/home');
+      await loginWithFile(result.data?.password, result.data?.recoveryFile);
     } catch (error: unknown | { message: string }) {
       const errorMessage = (error as Error)?.message || 'Failed to login';
       setLoginError(errorMessage);
