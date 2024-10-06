@@ -9,7 +9,6 @@ export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { data, isLoading, isError } = useMostFollowedUsers(pubky, 0, 3);
   const recommendedProfiles = data;
-  console.log('dataRecommendeProfiles', recommendedProfiles);
   //const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loading, setLoading] = useState<{
     [pubky: string]: boolean;

@@ -10,7 +10,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const { pubky } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
   const { data, isLoading, isError } = usePostStreamByUser(usePubky ?? '');
-  console.log('POSTSS', data);
 
   if (isError) console.error(isError);
   //const [loading, setLoading] = useState(true);

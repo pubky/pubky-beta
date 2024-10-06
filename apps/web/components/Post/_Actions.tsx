@@ -24,8 +24,12 @@ export default function Actions({
   repost,
   deleteRepost = false,
 }: PostProps) {
-  const { data: author } = useUserProfile(post?.details?.author);
-  const { data: authorRepost } = useUserProfile(repost?.details?.author ?? '');
+  const { pubky } = usePubkyClientContext();
+  const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
+  const { data: authorRepost } = useUserProfile(
+    repost?.details?.author ?? '',
+    pubky ?? ''
+  );
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
   //const { deleteBookmark, createBookmark, createRepost, deletePost } = useClientContext();
   const { setContent, setShow } = useAlertContext();

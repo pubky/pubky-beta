@@ -5,6 +5,8 @@ import { Utils } from '@social/utils-shared';
 import { PostThread, PostView } from '@/types/Post';
 import { UseUserFollowing, useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
+import { getUserProfile } from '@/services/userService';
+import { UserView } from '@/types/User';
 
 export default function Partecipants({
   repliesResponse,
@@ -16,9 +18,10 @@ export default function Partecipants({
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { data: following } = UseUserFollowing(pubky ?? '');
   //const { follow, unfollow, listFollowing } = useClientContext();
-  const { data: authorData } = useUserProfile(author);
+  const { data: authorData } = useUserProfile(author, pubky ?? '');
   const [replies, setReplies] = useState<PostView[]>([]);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
+  const [participants, setParticipants] = useState<UserView[]>([]);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
   }>({});
@@ -47,26 +50,24 @@ export default function Partecipants({
       try {
         if (!pubky || !replies) return;
 
-        if (following) {
-          const followingIds = following.map(
-            (user) => user
-            //user.uri.replace('pubky:', '')
-          );
-          const matchedFollowedIds = replies.filter((reply) =>
-            followingIds.includes(reply?.details?.author)
-          );
+        const followingIds = following?.map(
+          (user) => user
+          //user.uri.replace('pubky:', '')
+        );
+        const matchedFollowedIds = replies.filter((reply) =>
+          followingIds?.includes(reply?.details?.author)
+        );
 
-          if (matchedFollowedIds.length > 0) {
-            setInitLoadingFollowers(false);
-            matchedFollowedIds.forEach((followed) => {
-              setFollowedUser((prevState) => ({
-                ...prevState,
-                [followed.details.author]: true,
-              }));
-            });
-          } else {
-            setInitLoadingFollowers(false);
-          }
+        if (matchedFollowedIds.length > 0) {
+          setInitLoadingFollowers(false);
+          matchedFollowedIds.forEach((followed) => {
+            setFollowedUser((prevState) => ({
+              ...prevState,
+              [followed.details.author]: true,
+            }));
+          });
+        } else {
+          setInitLoadingFollowers(false);
         }
       } catch (error) {
         console.log(error);
@@ -221,6 +222,23 @@ export default function Partecipants({
     }
   };
 
+  const fetchParticipants = async () => {
+    if (!replies) return;
+
+    const uniqueAuthors = [
+      ...new Set(replies.map((reply) => reply.details.author)),
+    ];
+    const profiles = await Promise.all(
+      uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? ''))
+    );
+    setParticipants(profiles);
+  };
+
+  useEffect(() => {
+    fetchParticipants();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [replies]);
+
   return (
     <div className="hidden flex-col gap-6 xl:inline-flex col-span-1 self-start sticky top-[120px]">
       <div>
@@ -235,24 +253,20 @@ export default function Partecipants({
           >
             {getAuthorButton()}
           </SideCard.User>
-          {replies.map((reply) => {
-            if (
-              reply.details &&
-              !seenAuthors.has(reply.details.author) &&
-              reply.details.author !== authorData?.details.id
-            ) {
-              seenAuthors.add(reply.details.author);
-              const authorId = reply.details.author;
+          {participants.map((participant: UserView) => {
+            if (participant.details.id !== authorData?.details.id) {
               return (
-                <React.Fragment key={authorId}>
+                <React.Fragment key={participant.details.id}>
                   <SideCard.User
-                    uri={authorId}
-                    uriImage={'/images/Userpic.png'}
-                    username={Utils.minifyText(reply.details.author)}
-                    label={Utils.minifyPubky(reply.details.author)}
+                    uri={participant.details.id}
+                    uriImage={
+                      participant?.details?.image || '/images/Userpic.png'
+                    }
+                    username={Utils.minifyText(participant?.details?.name)}
+                    label={Utils.minifyPubky(participant.details.id)}
                     className="mb-2"
                   >
-                    {getParticipantButton(authorId)}
+                    {getParticipantButton(participant.details.id)}
                   </SideCard.User>
                 </React.Fragment>
               );

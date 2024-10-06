@@ -18,6 +18,7 @@ import {
 } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
+import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -61,6 +62,8 @@ type PubkyClientContextType = {
   ) => Promise<boolean>;
   createTag: (post_id: string, tagContent: string) => Promise<boolean>;
   deleteTag: (post_id: string, tagId: string) => Promise<boolean>;
+  createTagProfile: (profileId: string, tagContent: string) => Promise<boolean>;
+  deleteTagProfile: (profileId: string, tagId: string) => Promise<boolean>;
   getRecoveryFile: (password: string) => Promise<any | null>;
   storeProfile: (userProfile: UserDetails) => Promise<boolean>;
 };
@@ -188,6 +191,36 @@ export function PubkyClientWrapper({
       Utils.storage.set('pubky_public_key', pk);
       setPubky(pk);
 
+      if (userProfile.image instanceof File) {
+        const file = userProfile.image;
+        const fileContent = await file.arrayBuffer();
+        const fileBase64 = Buffer.from(fileContent).toString('base64');
+
+        // Create the PubkyAppFile object
+        const fileId = generateTimestampId();
+        const newFile: PubkyAppFile = {
+          name: file.name,
+          created_at: Date.now(),
+          src: `data:${file.type};base64,${fileBase64}`,
+          content_type: file.type,
+          size: file.size,
+        };
+
+        // Serialize to JSON and convert to Buffer
+        const fileBody = Buffer.from(JSON.stringify(newFile));
+
+        // File URL
+        const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
+
+        // Send the file to the homeserver
+        await client.put(fileUrl, fileBody);
+
+        // Store the file URI
+        const fileUri = `/pub/pubky.app/files/${fileId}`;
+
+        userProfile.image = fileUri;
+      }
+
       // Transform the profile to the PubkyAppUser format
       const pubkeyProfile: PubkyAppUser = toPubkeyProfile(userProfile);
 
@@ -227,6 +260,36 @@ export function PubkyClientWrapper({
 
       if (!loggedIn) {
         throw new Error('User is not logged in');
+      }
+
+      if (userProfile.image instanceof File) {
+        const file = userProfile.image;
+        const fileContent = await file.arrayBuffer();
+        const fileBase64 = Buffer.from(fileContent).toString('base64');
+
+        // Create the PubkyAppFile object
+        const fileId = generateTimestampId();
+        const newFile: PubkyAppFile = {
+          name: file.name,
+          created_at: Date.now(),
+          src: `data:${file.type};base64,${fileBase64}`,
+          content_type: file.type,
+          size: file.size,
+        };
+
+        // Serialize to JSON and convert to Buffer
+        const fileBody = Buffer.from(JSON.stringify(newFile));
+
+        // File URL
+        const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
+
+        // Send the file to the homeserver
+        await client.put(fileUrl, fileBody);
+
+        // Store the file URI
+        const fileUri = `/pub/pubky.app/files/${fileId}`;
+
+        userProfile.image = fileUri;
       }
 
       // Transform the profile to the PubkyAppUser format
@@ -528,7 +591,7 @@ export function PubkyClientWrapper({
     try {
       const loggedIn = await isLoggedIn();
       if (!loggedIn || !pubky) {
-        throw new Error('ser is not logged in or pubky is not defined');
+        throw new Error('User is not logged in or pubky is not defined');
       }
 
       const bookmarkData = {
@@ -552,7 +615,7 @@ export function PubkyClientWrapper({
     try {
       const loggedIn = await isLoggedIn();
       if (!loggedIn || !pubky) {
-        throw new Error('ser is not logged in or pubky is not defined');
+        throw new Error('User is not logged in or pubky is not defined');
       }
 
       const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${post_id}`;
@@ -568,7 +631,7 @@ export function PubkyClientWrapper({
   };
 
   const createTag = async (
-    id: string,
+    postId: string,
     tagContent: string
   ): Promise<boolean> => {
     try {
@@ -582,18 +645,19 @@ export function PubkyClientWrapper({
       }
 
       const tagData = {
-        tag: tagContent,
+        uri: `/pub/pubky.app/posts/${postId}`,
+        label: tagContent,
         created_at: Date.now(),
-        id: id,
       };
 
       const tagBody = Buffer.from(JSON.stringify(tagData));
+      const tagId = await generateHashId(tagContent);
 
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${id}/${generateTimestampId()}`;
+      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
       await client.put(tagUrl, tagBody);
 
-      console.log(`Tag successfully added ${id}: ${tagUrl}`);
+      console.log(`Tag successfully added ${tagId}: ${tagUrl}`);
       return true;
     } catch (error) {
       console.error('Error creating tag:', error);
@@ -607,12 +671,68 @@ export function PubkyClientWrapper({
       if (!loggedIn || !pubky) {
         throw new Error('User is not logged in');
       }
-
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${id}/${tagId}`;
+      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
       await client.delete(tagUrl);
 
       console.log(`Tag successfully deleted ${id}: ${tagUrl}`);
+      return true;
+    } catch (error) {
+      console.error('Error creating tag:', error);
+      return false;
+    }
+  };
+
+  const createTagProfile = async (
+    profileId: string,
+    tagContent: string
+  ): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in');
+      }
+
+      if (!tagContent || tagContent.trim() === '') {
+        throw new Error('Tag content cannot be empty');
+      }
+
+      const tagData = {
+        uri: `pubky://${profileId}/pub/pubky.app/profile.json`,
+        label: tagContent,
+        created_at: Date.now(),
+      };
+
+      const tagBody = Buffer.from(JSON.stringify(tagData));
+      const tagId = await generateHashId(tagContent);
+
+      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
+
+      await client.put(tagUrl, tagBody);
+
+      console.log(`Tag successfully added ${tagId}: ${tagUrl}`);
+      return true;
+    } catch (error) {
+      console.error('Error creating tag:', error);
+      return false;
+    }
+  };
+
+  const deleteTagProfile = async (
+    profileId: string,
+    tagId: string
+  ): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn || !pubky) {
+        throw new Error('User is not logged in');
+      }
+
+      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
+
+      await client.delete(tagUrl);
+
+      console.log(`Tag successfully deleted ${profileId}: ${tagUrl}`);
       return true;
     } catch (error) {
       console.error('Error creating tag:', error);
@@ -660,6 +780,8 @@ export function PubkyClientWrapper({
         createReply,
         createTag,
         deleteTag,
+        createTagProfile,
+        deleteTagProfile,
         getRecoveryFile,
         storeProfile,
       }}

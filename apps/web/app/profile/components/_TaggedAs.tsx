@@ -2,7 +2,7 @@ import { Skeleton } from '@/components';
 // import { ImageByUri } from '@/components/ImageByUri';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
-import { UserView } from '@/types/User';
+import { UserTags, UserView } from '@/types/User';
 import {
   Button,
   Icon,
@@ -12,6 +12,10 @@ import {
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
+import { ImageByUri } from '@/components/ImageByUri';
+import Modal from '@/components/Modal';
+import { useEffect, useState } from 'react';
+import { getUserProfile } from '@/services/userService';
 
 type TaggedAsProps = {
   profile: UserView | null;
@@ -25,24 +29,48 @@ export default function TaggedAs({
   loading,
 }: TaggedAsProps) {
   const router = useRouter();
-  // const { pubky, deleteTag, createTag } = useClientContext();
-  const { pubky } = usePubkyClientContext();
-  const usePubky = creatorPubky ?? pubky;
-  const { data } = useUserProfile(usePubky ?? '');
+  const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
+  const usePubky = creatorPubky || pubky;
+  const { data } = useUserProfile(usePubky ?? '', pubky ?? '');
   const name = data?.details?.name;
-  //const image = data?.details?.image;
+  const image = data?.details?.image;
   const profileTags = data?.tags;
-  //const [showModalProfileTag, setShowModalProfileTag] = useState(false);
-  //const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
+  const [showModalProfileTag, setShowModalProfileTag] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
+  const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>(
+    []
+  );
 
-  {
-    /**
+  useEffect(() => {
+    const fetchTaggedImages = async () => {
+      if (profileTags && profileTags.length > 0) {
+        const allImages = await Promise.all(
+          profileTags.map(async (tag) => {
+            const images = await Promise.all(
+              tag?.tagged?.map(async (fromItem) => {
+                const profile = await getUserProfile(
+                  fromItem?.tagger_id,
+                  pubky ?? ''
+                );
+                return profile?.details?.image;
+              }) ?? []
+            );
+            return images;
+          })
+        );
+        setTaggedImages(allImages);
+      }
+    };
+
+    fetchTaggedImages();
+  }, [profileTags, pubky]);
+
   const handleAddProfileTag = async (tag: string) => {
     const pubKeyToUse =
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await createTag(pubKeyToUse, tag);
+      await createTagProfile(pubKeyToUse, tag);
     }
   };
 
@@ -51,11 +79,9 @@ export default function TaggedAs({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await deleteTag(pubKeyToUse, tag);
+      await deleteTagProfile(pubKeyToUse, tag);
     }
   };
-  */
-  }
 
   return (
     <div className="w-full">
@@ -71,12 +97,10 @@ export default function TaggedAs({
                   (fromItem) => fromItem?.tagger_id === pubky
                 );
 
-                // const images = tag?.tagged?.map(
-                //   (fromItem) => fromItem?.tagger_id?.image
-                // );
-                // const displayedImages = images?.slice(0, 15);
-                // const extraImagesCount =
-                //   images?.length - displayedImages?.length;
+                const images = taggedImages[index] || [];
+                const displayedImages = images?.slice(0, 15);
+                const extraImagesCount =
+                  images?.length - displayedImages?.length;
 
                 return (
                   <div className="flex gap-2" key={index}>
@@ -95,12 +119,12 @@ export default function TaggedAs({
                     <PostUtil.Tag
                       key={index}
                       clicked={isTagFound}
-                      //onClick={(event) => {
-                      //  event.stopPropagation();
-                      //  isTagFound
-                      //   ? handleDeleteProfileTag(tag.tag)
-                      //   : handleAddProfileTag(tag.tag);
-                      //}}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        isTagFound
+                          ? handleDeleteProfileTag(tag?.label)
+                          : handleAddProfileTag(tag?.label);
+                      }}
                       color={
                         tag?.label && Utils.generateRandomColor(tag?.label)
                       }
@@ -123,7 +147,7 @@ export default function TaggedAs({
                       onClick={() => router.push(`/search?tags=${tag?.label}`)}
                       className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                     />
-                    {/* <div
+                    <div
                       //onClick={() => setShowModalProfileTag(true)}
                       className="cursor-pointer flex items-center"
                     >
@@ -144,7 +168,7 @@ export default function TaggedAs({
                           +{extraImagesCount}
                         </PostUtil.Counter>
                       )}
-                    </div> */}
+                    </div>
                   </div>
                 );
               })}
@@ -154,7 +178,7 @@ export default function TaggedAs({
               No tags yet
             </Typography.Body>
           )}
-          {/**<Button.Medium
+          <Button.Medium
             className="mt-2 w-auto h-8 inline-flex items-center"
             onClick={() => setShowModalProfileTag(true)}
             icon={<Icon.Tag size="16" />}
@@ -163,10 +187,9 @@ export default function TaggedAs({
             {!creatorPubky || creatorPubky === pubky
               ? 'yourself'
               : name && Utils.minifyText(name, 22)}
-          </Button.Medium>*/}
+          </Button.Medium>
         </div>
       )}
-      {/**
       <Modal.ProfileTag
         profileTags={profileTags ?? []}
         showModalProfileTag={showModalProfileTag}
@@ -179,7 +202,6 @@ export default function TaggedAs({
         name={name}
         uriImage={image}
       />
-       */}
     </div>
   );
 }

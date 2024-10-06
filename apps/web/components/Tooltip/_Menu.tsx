@@ -17,7 +17,7 @@ interface TooltipMenuProps {
 export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   const { pubky, follow, unfollow, addBookmark, deleteBookmark } =
     usePubkyClientContext();
-  const { data: author } = useUserProfile(pubky ?? '');
+  const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   //const { pubky, follow, unfollow, listFollowers, createBookmark, deleteBookmark, deletePost, deleteFile} = useClientContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();

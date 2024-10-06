@@ -26,20 +26,20 @@ export default function Profile({ post }: ProfileProps) {
   const router = useRouter();
   const { pubky, follow, unfollow } = usePubkyClientContext();
 
-  const { data: author } = useUserProfile(post?.details?.author);
+  const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
 
   const {
     data: followers,
     isLoading: isLoadingFollowers,
     isError: isErrorFollowers,
-  } = UseUserFollowers(pubky ?? '');
+  } = UseUserFollowers(post?.details?.author ?? '');
   if (isErrorFollowers) console.error(isErrorFollowers);
 
   const {
     data: following,
     isLoading: isLoadingFollowing,
     isError: isErrorFollowing,
-  } = UseUserFollowing(pubky ?? '');
+  } = UseUserFollowing(post?.details?.author ?? '');
   if (isErrorFollowing) console.error(isErrorFollowing);
 
   const [followed, setFollowed] = useState(false);

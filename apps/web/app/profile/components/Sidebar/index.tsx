@@ -18,12 +18,14 @@ export default function Sidebar({
 }) {
   const { pubky, createTag, deleteTag } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
-  const { data, isLoading, isError } = useUserProfile(usePubky ?? '');
+  const { data, isLoading, isError } = useUserProfile(
+    usePubky ?? '',
+    pubky ?? ''
+  );
   if (isError) console.error(isError);
   const profile = data;
-  console.log('PROFILESS', data);
   const name = profile?.details?.name ?? '';
-  const bio = profile?.details?.bio ?? 'No bio.';
+  const bio = profile?.details.bio || 'No bio.';
   const links = profile?.details?.links ?? [];
   const image = profile?.details?.image ?? '/images/Userpic.png';
   const profileTags = profile?.tags ?? [];

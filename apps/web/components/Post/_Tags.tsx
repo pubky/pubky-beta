@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -29,13 +29,17 @@ export default function Tags({ post, largeView = false }: PostProps) {
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
 
-  {
-    /**useEffect(() => {
+  useEffect(() => {
     if (post?.tags) {
-      const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
-      setTags(post?.tags);
+      const sortedTags = post?.tags
+        .slice()
+        .sort((a, b) => b.taggers_count - a.taggers_count);
+      setTags(sortedTags);
     }
   }, [post?.tags]);
+
+  {
+    /**
 
   const updatePosts = async () => {
     const updatedPost = await getPost(post.uri);

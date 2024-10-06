@@ -26,7 +26,7 @@ export default function SearchInputCard({
   } = useHotTags(0, 10);
   if (isErrorHotTags) console.error(isErrorHotTags);
   const { data, isError } = useUsernameSearch(inputValue ?? '', pubky, 0, 10);
-  const searchedUsers = data;
+  const searchedUsers = data ? data : [];
 
   if (isError) console.error(isError);
   {

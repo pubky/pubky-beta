@@ -14,6 +14,9 @@ import {
   getPioneerUsers,
   getUserTags,
   searchUsersByUsername,
+  getUserStreamFollowers,
+  getUserStreamFollowing,
+  getUserStreamFriends,
 } from '../services/userService';
 
 export function useUserProfile(userId: string, viewerId: string) {
@@ -39,6 +42,43 @@ export function UseUserFollowers(
   return useQuery({
     queryKey: ['userFollowers', userId, skip, limit],
     queryFn: () => getUserFollowers(userId, skip, limit),
+  });
+}
+
+export function UseUserStreamFollowers(
+  userId: string,
+  skip?: number,
+  limit?: number,
+  stream_type?: string
+) {
+  return useQuery({
+    queryKey: ['userStreamFollowers', userId, skip, limit, stream_type],
+    queryFn: () => getUserStreamFollowers(userId, skip, limit, stream_type),
+  });
+}
+
+export function UseUserStreamFollowing(
+  userId: string,
+  skip?: number,
+  limit?: number,
+  stream_type?: string
+) {
+  return useQuery({
+    queryKey: ['userStreamFollowing', userId, skip, limit, stream_type],
+    queryFn: () => getUserStreamFollowing(userId, skip, limit, stream_type),
+  });
+}
+
+
+export function UseUserStreamFriends(
+  userId: string,
+  skip?: number,
+  limit?: number,
+  stream_type?: string
+) {
+  return useQuery({
+    queryKey: ['userStreamFriends', userId, skip, limit, stream_type],
+    queryFn: () => getUserStreamFriends(userId, skip, limit, stream_type),
   });
 }
 

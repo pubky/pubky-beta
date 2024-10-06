@@ -26,7 +26,7 @@ export default function Header({ title, className }: HeaderProps) {
   // const router = useRouter();
   //const { setSearchTags, searchTags } = useClientContext();
   const { pubky, isLoggedIn } = usePubkyClientContext();
-  const { data } = useUserProfile(pubky ?? '');
+  const { data } = useUserProfile(pubky ?? '', pubky ?? '');
   const profile = data;
   const { notifications } = useNotificationsContext();
 

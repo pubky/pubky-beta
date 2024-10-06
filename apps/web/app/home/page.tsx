@@ -11,7 +11,6 @@ export default function Index() {
   const { layout } = useFilterContext();
   const { pubky } = usePubkyClientContext();
   const { data, isLoading } = usePostStream(pubky, 0, 5);
-  console.log('data', data);
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const loader = useRef(null);

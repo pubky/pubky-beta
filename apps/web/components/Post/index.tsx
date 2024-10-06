@@ -48,7 +48,7 @@ export default function Post({
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
-  const { data } = useUserProfile(post?.details.author);
+  const { data } = useUserProfile(post?.details.author, pubky ?? '');
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const router = useRouter();
   {
