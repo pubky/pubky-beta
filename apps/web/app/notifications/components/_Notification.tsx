@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Utils } from '@social/utils-shared';
 import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
-import { INotification, IUserProfile } from '@/types';
+import { INotification } from '@/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ImageByUri } from '@/components/ImageByUri';
+import { getUserProfile } from '@/services/userService';
+import { usePubkyClientContext } from '@/contexts';
+import { UserView } from '@/types/User';
 
 const notificationType = {
   follow: {
@@ -62,12 +65,12 @@ export default function Notification({
   notification: INotification;
 }) {
   const router = useRouter();
-  //const { getUser } = useClientContext();
-  const [user, setUser] = useState<IUserProfile>();
+  const { pubky } = usePubkyClientContext();
+  const [user, setUser] = useState<UserView>();
 
   async function fetchProfile(userId: string) {
     try {
-      const userProfile = null; //await getUser(userId);
+      const userProfile = await getUserProfile(userId, pubky ?? '');
       if (userProfile) {
         setUser(userProfile);
       }
@@ -181,14 +184,16 @@ export default function Notification({
                   height={32}
                   className="w-[32px] h-[32px] rounded-full"
                   alt="user-pic"
-                  uri={user?.profile?.image || '/images/Userpic.png'}
+                  uri={user?.details?.image || '/images/Userpic.png'}
                 />
               )}
               <Typography.Body
                 className="hover:underline hover:decoration-solid"
                 variant="medium-bold"
               >
-                {user ? Utils.minifyText(user.profile.name, 20) : 'Loading...'}
+                {user
+                  ? Utils.minifyText(user?.details?.name, 20)
+                  : 'Loading...'}
               </Typography.Body>
             </Link>
           )}

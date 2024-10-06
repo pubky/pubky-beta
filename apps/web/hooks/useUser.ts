@@ -18,6 +18,7 @@ import {
   getUserStreamFollowing,
   getUserStreamFriends,
 } from '../services/userService';
+import { getNotifications } from '@/services/notificationService';
 
 export function useUserProfile(userId: string, viewerId: string) {
   return useQuery({
@@ -68,7 +69,6 @@ export function UseUserStreamFollowing(
     queryFn: () => getUserStreamFollowing(userId, skip, limit, stream_type),
   });
 }
-
 
 export function UseUserStreamFriends(
   userId: string,
@@ -168,5 +168,12 @@ export function useUsernameSearch(
   return useQuery({
     queryKey: ['usernameSearch', username, viewerId, skip, limit],
     queryFn: () => searchUsersByUsername(username, viewerId, skip, limit),
+  });
+}
+
+export function useUserNotifications(userId: string) {
+  return useQuery({
+    queryKey: ['userNotifications', userId],
+    queryFn: () => getNotifications(userId),
   });
 }
