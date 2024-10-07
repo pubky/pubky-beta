@@ -54,7 +54,7 @@ export default function Tag2({
   }, [tags]);
 
   return (
-    <TooltipUI.Main className="z-40 w-full w-auto left-auto shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-0 translate-y-[70px]">
+    <TooltipUI.Main className="z-40 w-auto left-auto shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-0 translate-y-[70px]">
       <div className="flex gap-6 justify-start w-full">
         {loadingFollowers ? (
           <></>
@@ -70,7 +70,7 @@ export default function Tag2({
             className="cursor-pointer flex items-center"
           >
             {displayedImages?.map((image, imageIndex) => (
-              <>
+              <div key={imageIndex}>
                 <ImageByUri
                   width={32}
                   height={32}
@@ -86,7 +86,7 @@ export default function Tag2({
                 {showTooltipProfile === imageIndex && (
                   <Tooltip.Profile profileId={tags?.taggers[imageIndex]} />
                 )}
-              </>
+              </div>
             ))}
             {Number(extraImagesCount) > 0 && (
               <PostUtil.Counter className="-ml-2">
