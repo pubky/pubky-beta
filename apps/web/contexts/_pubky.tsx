@@ -40,7 +40,7 @@ type PubkyClientContextType = {
     postContent: string,
     kind: PostKind,
     files?: File[]
-  ) => Promise<void | false>;
+  ) => Promise<string | false>;
   createRepost: (
     originalPostId: string,
     originalauthorId: string,
@@ -354,7 +354,7 @@ export function PubkyClientWrapper({
     postContent: string,
     kind: PostKind,
     files?: File[]
-  ): Promise<void | false> => {
+  ): Promise<string | false> => {
     try {
       // Check if the user is logged in
       const loggedIn = await isLoggedIn();
@@ -419,11 +419,11 @@ export function PubkyClientWrapper({
       const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
 
       // Send the post to the homeserver
-      const result = await client.put(postUrl, postBody);
+      await client.put(postUrl, postBody);
 
       console.log(postUrl);
 
-      return result;
+      return postUrl;
     } catch (error) {
       console.error('Error creating post:', error);
       return false;
