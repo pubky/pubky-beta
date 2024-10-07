@@ -6,6 +6,7 @@ import { DropDown } from '..';
 import { TStatus } from '@/types';
 import { Utils } from '@social/utils-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import { usePubkyClientContext } from '@/contexts';
 
 interface StatusProps {
   status?: TStatus;
@@ -14,7 +15,7 @@ interface StatusProps {
 
 export default function Status({ status, subtitle }: StatusProps) {
   const { labels, emojis } = Utils.statusHelper;
-  //const { updateStatus } = useClientContext();
+  const { updateStatus } = usePubkyClientContext();
   const [openDropdown, setOpenDropdown] = useState(false);
   const [customStatus, setCustomStatus] = useState('');
   const [selectedEmoji, setSelectedEmoji] = useState('');
@@ -94,7 +95,7 @@ export default function Status({ status, subtitle }: StatusProps) {
               textOption: 'Available',
               iconText: '😃',
             });
-            //updateStatus('available');
+            updateStatus('available');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -113,7 +114,7 @@ export default function Status({ status, subtitle }: StatusProps) {
               textOption: 'Away',
               iconText: '🕓',
             });
-            //updateStatus('away');
+            updateStatus('away');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -133,7 +134,7 @@ export default function Status({ status, subtitle }: StatusProps) {
               textOption: 'Vacationing',
               iconText: '🌴',
             });
-            //updateStatus('vacationing');
+            updateStatus('vacationing');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -153,7 +154,7 @@ export default function Status({ status, subtitle }: StatusProps) {
               textOption: 'Working',
               iconText: '👨‍💻',
             });
-            //updateStatus('working');
+            updateStatus('working');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -173,7 +174,7 @@ export default function Status({ status, subtitle }: StatusProps) {
               textOption: 'Traveling',
               iconText: '✈️',
             });
-            //updateStatus('traveling');
+            updateStatus('traveling');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -193,7 +194,7 @@ export default function Status({ status, subtitle }: StatusProps) {
               textOption: 'Celebrating',
               iconText: '🥂',
             });
-            //updateStatus('celebrating');
+            updateStatus('celebrating');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -212,7 +213,7 @@ export default function Status({ status, subtitle }: StatusProps) {
               textOption: 'Sick',
               iconText: '🤒',
             });
-            //updateStatus('sick');
+            updateStatus('sick');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -232,7 +233,7 @@ export default function Status({ status, subtitle }: StatusProps) {
               textOption: 'No Status',
               iconText: '💭',
             });
-            //updateStatus('noStatus');
+            updateStatus('noStatus');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -278,7 +279,7 @@ export default function Status({ status, subtitle }: StatusProps) {
                           textOption: customStatus,
                           iconText: selectedEmoji,
                         });
-                        //updateStatus(`${selectedEmoji}${customStatus}`);
+                        updateStatus(`${selectedEmoji}${customStatus}`);
                         setOpenDropdown(false);
                       }}
                       variant="custom"

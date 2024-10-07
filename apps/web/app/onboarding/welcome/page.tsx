@@ -17,13 +17,14 @@ import { Onboarding } from '../components';
 import { Skeleton } from '@/components';
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts';
-import { UseUserFollowers } from '@/hooks/useUser';
+import { UseUserFollowers, UseUserStreamFollowers } from '@/hooks/useUser';
+import { getUserDetails } from '@/services/userService';
 
 export default function Index() {
   const router = useRouter();
 
-  const { pubky, getProfile } = usePubkyClientContext();
-  const { data: followers } = UseUserFollowers(pubky ?? '', 0, 10);
+  const { pubky } = usePubkyClientContext();
+  const { data: followers } = UseUserStreamFollowers(pubky ?? '', 0, 10);
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState<string>('/images/Userpic.png');
   const [handler, setHandler] = useState('');
@@ -44,7 +45,7 @@ export default function Index() {
 
   async function fetchProfile() {
     try {
-      const userProfile = await getProfile(pubky ?? '');
+      const userProfile = await getUserDetails(pubky ?? '');
 
       if (userProfile) {
         setImage((userProfile.image as string) || '/images/Userpic.png');
@@ -88,9 +89,9 @@ export default function Index() {
         setContacts(
           followers.map((user, index) => ({
             alt: 'contact-pic-' + (index + 1),
-            src: user.profile.image || '/images/Userpic.png',
-            name: user.profile.name || '',
-            handler: Utils.minifyPubky(user.uri.replace('pubky:', '')),
+            src: user?.details?.image || '/images/Userpic.png',
+            name: user?.details?.name || '',
+            handler: user?.details?.id,
           }))
         );
         setLoadingContacts(false);

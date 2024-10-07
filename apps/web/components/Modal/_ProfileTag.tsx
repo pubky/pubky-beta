@@ -272,8 +272,8 @@ export default function ProfileTag({
                 <>
                   {!selectedTag &&
                     profileTags.map((tag, index) => {
-                      const isTagFound = tag.tagged.some(
-                        (fromItem) => fromItem.tagger_id === pubky
+                      const isTagFound = tag?.taggers?.some(
+                        (fromItem) => fromItem === pubky
                       );
 
                       // const images = tag.tagged.map(
@@ -308,7 +308,7 @@ export default function ProfileTag({
                                 variant="bold"
                                 className="text-opacity-30"
                               >
-                                {tag?.tagged?.length}
+                                {tag?.taggers_count}
                               </Typography.Caption>
                             </div>
                           </PostUtil.Tag>
@@ -372,13 +372,13 @@ export default function ProfileTag({
                         </div>
                         {selectedTag && (
                           <PostUtil.Tag
-                            clicked={selectedTag.tagged.some(
-                              (fromItem) => fromItem.tagger_id === pubky
+                            clicked={selectedTag.taggers.some(
+                              (fromItem) => fromItem === pubky
                             )}
                             onClick={(event) => {
                               event.stopPropagation();
-                              selectedTag.tagged.some(
-                                (fromItem) => fromItem.tagger_id === pubky
+                              selectedTag?.taggers.some(
+                                (fromItem) => fromItem === pubky
                               )
                                 ? handleDeleteProfileTag(selectedTag.label)
                                 : handleAddProfileTag(selectedTag.label);
@@ -397,7 +397,7 @@ export default function ProfileTag({
                                 variant="bold"
                                 className="text-opacity-30"
                               >
-                                {selectedTag.tagged.length}
+                                {selectedTag?.taggers_count}
                               </Typography.Caption>
                             </div>
                           </PostUtil.Tag>
@@ -412,25 +412,20 @@ export default function ProfileTag({
                           className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                         />
                       </div>
-                      {selectedTag.tagged.map((user, userIndex) => {
-                        const pubkeyUser =
-                          pubky && user?.tagger_id.includes(pubky);
-                        const isFollowed =
-                          followedUser[user?.tagger_id] || false;
+                      {selectedTag?.taggers?.map((user, userIndex) => {
+                        const pubkeyUser = pubky && user.includes(pubky);
+                        const isFollowed = followedUser[user] || false;
                         return (
                           <div
                             key={userIndex}
                             className="w-full flex justify-between gap-10"
                           >
                             <SideCard.User
-                              uri={user?.tagger_id.replace('pubky:', '')}
+                              uri={user.replace('pubky:', '')}
                               uriImage={'/images/Userpic.png'}
-                              username={
-                                user?.tagger_id &&
-                                Utils.minifyText(user?.tagger_id)
-                              }
+                              username={user && Utils.minifyText(user)}
                               label={Utils.minifyPubky(
-                                user?.tagger_id.replace('pubky:', '')
+                                user.replace('pubky:', '')
                               )}
                             />
                             {pubkeyUser ? (
@@ -448,24 +443,24 @@ export default function ProfileTag({
                             ) : isFollowed ? (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.tagger_id]
+                                  loadingFollowers[user]
                                     ? undefined
-                                    : () => unfollowUser(user?.tagger_id)
+                                    : () => unfollowUser(user)
                                 }
-                                disabled={loadingFollowers[user?.tagger_id]}
-                                loading={loadingFollowers[user?.tagger_id]}
+                                disabled={loadingFollowers[user]}
+                                loading={loadingFollowers[user]}
                                 icon={<Icon.Minus size="16" />}
                                 variant="small"
                               />
                             ) : (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.tagger_id]
+                                  loadingFollowers[user]
                                     ? undefined
-                                    : () => followUser(user?.tagger_id)
+                                    : () => followUser(user)
                                 }
-                                disabled={loadingFollowers[user?.tagger_id]}
-                                loading={loadingFollowers[user?.tagger_id]}
+                                disabled={loadingFollowers[user]}
+                                loading={loadingFollowers[user]}
                                 icon={<Icon.Plus size="16" />}
                                 variant="small"
                               />

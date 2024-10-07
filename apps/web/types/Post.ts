@@ -1,3 +1,5 @@
+import { IFileContent } from '.';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PostCounts {
   replies: number;
@@ -20,6 +22,7 @@ export interface PostView {
   tags: PostTag[];
   relationships?: PostRelationships;
   bookmark?: Bookmark;
+  files: IFileContent[];
 }
 
 export interface PostRelationships {
@@ -35,7 +38,7 @@ export interface Bookmark {
 
 export interface PostTag {
   label: string;
-  taggers: Tag[];
+  taggers: string[];
   taggers_count: number;
 }
 

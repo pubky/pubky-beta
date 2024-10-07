@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
@@ -8,6 +7,7 @@ import { TStatus } from '@/types';
 import Buttons from './_Buttons';
 import Status from './_Status';
 import { usePubkyClientContext } from '@/contexts';
+import { UseUserFollowers } from '@/hooks/useUser';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   username: string | JSX.Element;
@@ -23,8 +23,8 @@ export default function Handle({
   status,
   ...rest
 }: HandleProps) {
-  //const { listFollowers } = useClientContext();
   const { pubky, seed } = usePubkyClientContext();
+  const { data: followers } = UseUserFollowers(pubkey ?? '');
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -43,18 +43,18 @@ export default function Handle({
 
         if (!pubkey) return;
 
-        // const followersList = null; //await listFollowers(pubkey);
+        const followersList = followers;
 
-        // if (followersList) {
-        //   setInitLoadingFollowed(false);
+        if (followersList) {
+          setInitLoadingFollowed(false);
 
-        //   followersList.followers.forEach((user) => {
-        //     const uri = user.uri.replace('pubky:', '');
-        //     if (uri === pubky) {
-        //       setFollowed(true);
-        //     }
-        //   });
-        // }
+          followersList?.forEach((user) => {
+            const id = user;
+            if (id === pubky) {
+              setFollowed(true);
+            }
+          });
+        }
       } catch (error) {
         console.log(error);
       }

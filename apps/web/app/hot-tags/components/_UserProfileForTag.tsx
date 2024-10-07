@@ -1,8 +1,10 @@
 import { useUserProfile } from '@/hooks/useUser';
 import { ImageByUri } from '@/components/ImageByUri';
+import { usePubkyClientContext } from '@/contexts';
 
 export const UserProfileForTag = ({ userId }: { userId: string }) => {
-  const { data: profile } = useUserProfile(userId);
+  const { pubky } = usePubkyClientContext();
+  const { data: profile } = useUserProfile(userId, pubky ?? '');
 
   if (!profile) return null;
 

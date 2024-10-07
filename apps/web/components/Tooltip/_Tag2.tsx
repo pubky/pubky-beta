@@ -5,6 +5,8 @@ import { Tooltip as TooltipUI, PostUtil } from '@social/ui-shared';
 import Tooltip from '.';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag } from '@/types/Post';
+import { getUserProfile } from '@/services/userService';
+import { usePubkyClientContext } from '@/contexts';
 
 interface TagProps {
   tags: PostTag | null;
@@ -17,16 +19,30 @@ export default function Tag2({
   setShowModalTags,
   setSelectedTag,
 }: TagProps) {
+  const { pubky } = usePubkyClientContext();
   const [showTooltipProfile, setShowTooltipProfile] = useState<number | null>(
     null
   );
   const [loadingFollowers, setLoadingFollowers] = useState(true);
-  const images = tags?.taggers.map((fromItem) => {
-    if (fromItem?.tagger_id?.image === null) {
-      return '/images/Userpic.png';
-    }
-    return fromItem?.tagger_id?.image;
-  });
+  const [images, setImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchUserProfiles = async () => {
+      if (tags?.taggers) {
+        const fetchedImages = await Promise.all(
+          tags.taggers.map(async (fromItem) => {
+            const profile = await getUserProfile(fromItem, pubky ?? '');
+            return profile?.details?.image ?? '/images/Userpic.png';
+          })
+        );
+        setImages(fetchedImages);
+        setLoadingFollowers(false);
+      }
+    };
+
+    fetchUserProfiles();
+  }, [tags, pubky]);
+
   const displayedImages = images?.slice(0, 4);
   const extraImagesCount =
     images && displayedImages && images?.length - displayedImages?.length;
@@ -38,7 +54,7 @@ export default function Tag2({
   }, [tags]);
 
   return (
-    <TooltipUI.Main className="z-40 w-full w-auto left-auto shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-0 translate-y-[70px]">
+    <TooltipUI.Main className="z-40 w-auto left-auto shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-0 translate-y-[70px]">
       <div className="flex gap-6 justify-start w-full">
         {loadingFollowers ? (
           <></>
@@ -54,7 +70,7 @@ export default function Tag2({
             className="cursor-pointer flex items-center"
           >
             {displayedImages?.map((image, imageIndex) => (
-              <>
+              <div key={imageIndex}>
                 <ImageByUri
                   width={32}
                   height={32}
@@ -68,11 +84,11 @@ export default function Tag2({
                 />
 
                 {showTooltipProfile === imageIndex && (
-                  <Tooltip.Profile post={tags?.taggers[imageIndex]} />
+                  <Tooltip.Profile profileId={tags?.taggers[imageIndex]} />
                 )}
-              </>
+              </div>
             ))}
-            {extraImagesCount && extraImagesCount > 0 && (
+            {Number(extraImagesCount) > 0 && (
               <PostUtil.Counter className="-ml-2">
                 +{extraImagesCount}
               </PostUtil.Counter>

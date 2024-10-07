@@ -65,6 +65,99 @@ export async function getUserFollowers(
   return response.json();
 }
 
+export async function getUserStreamFollowers(
+  userId: string,
+  viewerId: string,
+  skip?: number,
+  limit?: number,
+  stream_type?: string
+): Promise<UserView[]> {
+  const queryParams = new URLSearchParams({ userId });
+
+  stream_type = stream_type ?? 'Followers';
+  queryParams.append('viewer_id', String(viewerId));
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+  if (stream_type !== undefined) {
+    queryParams.append('stream_type', String(stream_type));
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/stream/users?user_id=${userId}&${queryParams}`
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch user followers');
+
+  return response.json();
+}
+
+export async function getUserStreamFollowing(
+  userId: string,
+  viewerId: string,
+  skip?: number,
+  limit?: number,
+  stream_type?: string
+): Promise<UserView[]> {
+  const queryParams = new URLSearchParams({ userId });
+
+  stream_type = stream_type ?? 'Following';
+  queryParams.append('viewer_id', String(viewerId));
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+  if (stream_type !== undefined) {
+    queryParams.append('stream_type', String(stream_type));
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/stream/users?user_id=${userId}&${queryParams}`
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch user following');
+
+  return response.json();
+}
+
+export async function getUserStreamFriends(
+  userId: string,
+  viewerId: string,
+  skip?: number,
+  limit?: number,
+  stream_type?: string
+): Promise<UserView[]> {
+  const queryParams = new URLSearchParams({ userId });
+
+  stream_type = stream_type ?? 'Friends';
+  queryParams.append('viewer_id', String(viewerId));
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+  if (stream_type !== undefined) {
+    queryParams.append('stream_type', String(stream_type));
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/stream/users?user_id=${userId}&${queryParams}`
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch user friends');
+
+  return response.json();
+}
+
 export async function getUserFollowing(
   userId: string,
   skip?: number,

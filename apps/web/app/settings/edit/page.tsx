@@ -29,8 +29,7 @@ const profileSchema = z.object({
 
 export default function Index() {
   const router = useRouter();
-  const { pubky, getProfile, saveProfile } = usePubkyClientContext();
-
+  const { pubky, saveProfile, profile } = usePubkyClientContext();
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
@@ -73,21 +72,23 @@ export default function Index() {
 
     async function fetchData() {
       try {
-        const userProfile = await getProfile(pubky as string);
+        const userProfile = profile;
 
         if (userProfile) {
-          setName(userProfile.name);
+          setName(userProfile?.name);
           setBio(userProfile?.bio || '');
           setImage(userProfile?.image || '/images/Userpic.png');
           // setPrevImage(userProfile?.image || '/images/Userpic.png');
-          if (userProfile.links.length > 0) setLinks(userProfile.links);
+          if (userProfile?.links && userProfile?.links?.length > 0)
+            setLinks(userProfile?.links);
         }
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, [pubky, getProfile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubky]);
 
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);

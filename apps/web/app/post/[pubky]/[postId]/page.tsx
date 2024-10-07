@@ -2,7 +2,7 @@
 
 //import Link from 'next/link';
 //import { useEffect, useState } from 'react';
-import { Content } from '@social/ui-shared';
+import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Post as PostComponent } from '@/components';
 import { Utils } from '@social/utils-shared';
 //import { IFileContent, IPost, IReply } from '@/types';
@@ -11,6 +11,13 @@ import Skeletons from '@/components/Skeletons';
 import { Post } from './components';
 //import MetaTags from '@/components/MetaTags';
 import { usePost, usePostThread } from '@/hooks/usePost';
+import MetaTags from '@/components/MetaTags';
+import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
+import { useEffect, useState } from 'react';
+import { getFile } from '@/services/fileService';
+import { PubkyAppFile } from '@/types/Post';
+import Link from 'next/link';
 
 export default function Index({
   params,
@@ -18,22 +25,22 @@ export default function Index({
   params: { pubky: string; postId: string };
 }) {
   //const { getReplies, getFile } = useClientContext();
-  const { data, isLoading } = usePost(params.pubky, params.postId);
-  console.log('dataPost', data);
+  const { pubky } = usePubkyClientContext();
+  const { data, isLoading, isError } = usePost(params.pubky, params.postId);
   const { data: replies } = usePostThread(params.pubky, params.postId);
-  console.log('replies', replies);
+  const { data: author } = useUserProfile(
+    data?.details?.author as string,
+    pubky ?? ''
+  );
   //const { setContent, setShow } = useAlertContext();
   //const [post, setPost] = useState<IPost>({} as IPost);
   //const [showPost, setShowPost] = useState(true);
   //const [loading, setLoading] = useState(true);
   //const [replies, setReplies] = useState<IReply>({} as IReply);
   const uri = Utils.decodePostUri(params.pubky, params.postId);
-  //const [file, setFile] = useState<IFileContent | null>();
-  //const [typeFile, setTypeFile] = useState<'image' | 'video'>();
-  //const fileUri = post?.post?.files ? post?.post?.files[0].fileUri : '';
-
-  {
-    /**
+  const [file, setFile] = useState<PubkyAppFile | null>();
+  const [typeFile, setTypeFile] = useState<'image' | 'video'>();
+  const fileUri = data?.files ? data?.files[0]?.uri : '';
 
   useEffect(() => {
     const FetchFile = async () => {
@@ -41,7 +48,7 @@ export default function Index({
         const fetchFileResponse = await getFile(fileUri);
         const isVideo =
           fetchFileResponse &&
-          fetchFileResponse.contentType.startsWith('video');
+          fetchFileResponse.content_type.startsWith('video');
         if (isVideo) {
           setTypeFile('video');
         } else {
@@ -54,7 +61,10 @@ export default function Index({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileUri]);
 
-  useEffect(() => {
+  {
+    /**
+  
+    useEffect(() => {
     async function fetchData() {
       if (!uri) return;
       const result = await getReplies(uri);
@@ -90,31 +100,34 @@ export default function Index({
   let content;
 
   {
-    /**f (!showPost) {
-    content = (
-      <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
-        <Typography.Body
-          variant="small"
-          className="text-opacity-50 text-center"
-        >
-          This post was not found or has been deleted by its author.
-          <Link
-            href="/home"
-            className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
+    if (isError) {
+      content = (
+        <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
+          <Typography.Body
+            variant="small"
+            className="text-opacity-50 text-center"
           >
-            Go home
-          </Link>
-        </Typography.Body>
-      </div>
-    );
-  }*/
+            This post was not found or has been deleted by its author.
+            <Link
+              href="/home"
+              className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
+            >
+              Go home
+            </Link>
+          </Typography.Body>
+        </div>
+      );
+    }
   }
   if (data) {
     content = (
       <>
-        {/**replies?.post?.post?.parent && (
-          <Post.NavigatorParent replies={replies} />
-        )*/}
+        {data?.relationships?.replied && (
+          <Link href={Utils.encodePostUri2(data?.relationships?.replied)}>
+            <Typography.Body>Go to root</Typography.Body>
+          </Link>
+          //<Post.NavigatorParent replies={replies} />
+        )}
 
         {isLoading ? (
           <Skeletons.Simple />
@@ -143,13 +156,13 @@ export default function Index({
 
   return (
     <Content.Main>
-      {/**<MetaTags
-        username={post?.author?.profile?.name || 'Pubky App'}
-        description={post?.post?.content || 'Post Description'}
-        url={Utils.encodePostUri(post?.uri)}
-        image={typeFile === 'image' && file ? file.urls.main : ''}
-        video={typeFile === 'video' && file ? file.urls.main : ''}
-      />*/}
+      <MetaTags
+        username={author?.details?.name || 'Pubky App'}
+        description={data?.details?.content || 'Post Description'}
+        url={Utils.encodePostUri(data?.details?.uri as string)}
+        image={typeFile === 'image' ? file?.src : ''}
+        video={typeFile === 'video' ? file?.src : ''}
+      />
       <Header className="hidden md:block" title="Post" />
       <Content.Grid className="flex justify-between flex-col gap-3">
         {content}

@@ -31,7 +31,7 @@ export default function Buttons({
   setLoadingFollowed,
   setFollowed,
 }: ButtonsProps) {
-  const { pubky } = usePubkyClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
   //const { follow, unfollow } = useClientContext();
   const { setContent, setShow } = useToastContext();
   const router = useRouter();
@@ -41,8 +41,8 @@ export default function Buttons({
       if (!creatorPubky) return;
       setLoadingFollowed(true);
 
-      // const result = null; //await follow(creatorPubky);
-      // setFollowed(result);
+      const result = await follow(creatorPubky);
+      setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
       console.log(error);
@@ -54,7 +54,7 @@ export default function Buttons({
       if (!creatorPubky) return;
       setLoadingFollowed(true);
 
-      const result = null; //await unfollow(creatorPubky);
+      const result = await unfollow(creatorPubky);
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {

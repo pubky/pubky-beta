@@ -4,11 +4,17 @@ import { Button, Content, Header, Icon, Typography } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect } from 'react';
 
 export default function Index() {
   const { logout } = usePubkyClientContext();
 
-  logout();
+  useEffect(() => {
+    async function funcLogout() {
+      await logout();
+    }
+    funcLogout();
+  }, [logout]);
 
   return (
     <Content.Main>

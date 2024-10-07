@@ -13,6 +13,7 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '../Tooltip';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -26,8 +27,8 @@ export default function Header({
   repostView = false,
 }: PostProps) {
   const router = useRouter();
-  const { data } = useUserProfile(post?.details?.author);
-  console.log('dataUser', data);
+  const { pubky } = usePubkyClientContext();
+  const { data } = useUserProfile(post?.details?.author, pubky ?? '');
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
 

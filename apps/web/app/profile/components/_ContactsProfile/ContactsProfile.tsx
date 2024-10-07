@@ -5,9 +5,9 @@ import { TContacts } from '@/types';
 import Root from './_Root';
 import Contact from './_Contact';
 import {
-  UseUserFollowers,
-  UseUserFollowing,
-  UseUserFriends,
+  UseUserStreamFollowers,
+  UseUserStreamFollowing,
+  UseUserStreamFriends,
 } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 
@@ -21,10 +21,10 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   const usePubky = creatorPubky ?? pubky;
   const { data, isLoading, isError } =
     contacts === 'followers'
-      ? UseUserFollowers(usePubky ?? '', 0, 10)
+      ? UseUserStreamFollowers(usePubky ?? '', pubky ?? '', 0, 10)
       : contacts === 'following'
-      ? UseUserFollowing(usePubky ?? '', 0, 10)
-      : UseUserFriends(usePubky ?? '', 0, 10);
+      ? UseUserStreamFollowing(usePubky ?? '', pubky ?? '', 0, 10)
+      : UseUserStreamFriends(usePubky ?? '', pubky ?? '', 0, 10);
   const contactUsers = data;
 
   if (isError) console.error(isError);

@@ -14,7 +14,11 @@ import {
   getPioneerUsers,
   getUserTags,
   searchUsersByUsername,
+  getUserStreamFollowers,
+  getUserStreamFollowing,
+  getUserStreamFriends,
 } from '../services/userService';
+import { getNotifications } from '@/services/notificationService';
 
 export function useUserProfile(userId: string, viewerId: string) {
   return useQuery({
@@ -39,6 +43,62 @@ export function UseUserFollowers(
   return useQuery({
     queryKey: ['userFollowers', userId, skip, limit],
     queryFn: () => getUserFollowers(userId, skip, limit),
+  });
+}
+
+export function UseUserStreamFollowers(
+  userId: string,
+  viewerId: string,
+  skip?: number,
+  limit?: number,
+  stream_type?: string
+) {
+  return useQuery({
+    queryKey: [
+      'userStreamFollowers',
+      userId,
+      viewerId,
+      skip,
+      limit,
+      stream_type,
+    ],
+    queryFn: () =>
+      getUserStreamFollowers(userId, viewerId, skip, limit, stream_type),
+  });
+}
+
+export function UseUserStreamFollowing(
+  userId: string,
+  viewerId: string,
+  skip?: number,
+  limit?: number,
+  stream_type?: string
+) {
+  return useQuery({
+    queryKey: [
+      'userStreamFollowing',
+      userId,
+      viewerId,
+      skip,
+      limit,
+      stream_type,
+    ],
+    queryFn: () =>
+      getUserStreamFollowing(userId, viewerId, skip, limit, stream_type),
+  });
+}
+
+export function UseUserStreamFriends(
+  userId: string,
+  viewerId: string,
+  skip?: number,
+  limit?: number,
+  stream_type?: string
+) {
+  return useQuery({
+    queryKey: ['userStreamFriends', userId, viewerId, skip, limit, stream_type],
+    queryFn: () =>
+      getUserStreamFriends(userId, viewerId, skip, limit, stream_type),
   });
 }
 
@@ -128,5 +188,12 @@ export function useUsernameSearch(
   return useQuery({
     queryKey: ['usernameSearch', username, viewerId, skip, limit],
     queryFn: () => searchUsersByUsername(username, viewerId, skip, limit),
+  });
+}
+
+export function useUserNotifications(userId: string) {
+  return useQuery({
+    queryKey: ['userNotifications', userId],
+    queryFn: () => getNotifications(userId),
   });
 }

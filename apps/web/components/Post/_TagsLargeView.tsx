@@ -10,7 +10,6 @@ import {
   PostUtil,
   Typography,
 } from '@social/ui-shared';
-import { ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
 import { useRouter } from 'next/navigation';
@@ -18,6 +17,8 @@ import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag, PostView } from '@/types/Post';
 import { usePubkyClientContext } from '@/contexts';
+import Image from 'next/image';
+import { getUserProfile } from '@/services/userService';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -25,25 +26,28 @@ interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const router = useRouter();
-  const { pubky } = usePubkyClientContext();
-  //const { pubky, posts, setPosts, getPost, deleteTag, createTag } = useClientContext();
+  const { pubky, createTag, deleteTag } = usePubkyClientContext();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
   const [tag, setTag] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
+  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
+    {}
+  );
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (post?.tags) {
-      //const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
-      setTags(post.tags);
+      const sortedTags = post?.tags
+        .slice()
+        .sort((a, b) => b?.taggers_count - a?.taggers_count);
+      setTags(sortedTags);
     }
   }, [post?.tags]);
-  {
-    /**
 
-  const updatePosts = async () => {
+  {
+    /**const updatePosts = async () => {
     const updatedPost = await getPost(post?.details?.uri);
 
     if (!updatedPost) return;
@@ -53,17 +57,50 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
       return posts[key];
     });
     setPosts(updatedPosts);
-  };
+  };*/
+  }
 
   const handleDeleteTag = async (tag: string) => {
-    await deleteTag(post.uri, tag);
-    updatePosts();
+    await deleteTag(post?.details?.author, post?.details?.id);
   };
 
   const handleAddTag = async (tag: string) => {
-    await createTag(post.uri, tag);
-    updatePosts();
+    await createTag(post?.details?.author, post?.details?.id, tag);
   };
+
+  useEffect(() => {
+    const fetchProfileImages = async () => {
+      const images: { [key: string]: string } = {};
+
+      const taggerPromises = tags.flatMap((tagObj) =>
+        tagObj?.taggers
+          ?.map((fromItem) => {
+            if (fromItem && !images[fromItem]) {
+              return getUserProfile(fromItem, pubky ?? '')
+                .then((profile) => {
+                  images[fromItem] =
+                    profile?.details?.image || '/images/Userpic.png';
+                })
+                .catch(() => {
+                  images[fromItem] = '/images/Userpic.png';
+                });
+            }
+            return null;
+          })
+          .filter(Boolean)
+      );
+
+      await Promise.all(taggerPromises);
+      setProfileImages(images);
+    };
+
+    if (tags.length > 0) {
+      fetchProfileImages();
+    }
+  }, [tags, pubky]);
+
+  {
+    /**
 
     const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
@@ -147,7 +184,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               onChange={handleChange}
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === 'Enter') {
-                  //handleAddTag(tag);
+                  handleAddTag(tag);
                   setTag('');
                 }
               }}
@@ -159,7 +196,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     variant="custom"
                     size="medium"
                     onClick={() => {
-                      //handleAddTag(tag);
+                      handleAddTag(tag);
                       setTag('');
                     }}
                   />
@@ -179,17 +216,16 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
         )}
         {tags.map((tagObj, index) => {
           const isTagFound = tagObj?.taggers.some(
-            (fromItem) => fromItem.tagger_id === pubky
+            (fromItem) => fromItem === pubky
           );
 
-          //const images = tagObj.from.map((fromItem) => {
-          // if (fromItem.author?.profile?.image) {
-          //  return fromItem.author.profile.image;
-          //}
-          // return '/images/Userpic.png';
-          //});
-          //const displayedImages = images.slice(0, 4);
-          //const extraImagesCount = images.length - displayedImages.length;
+          const displayedImages = tagObj?.taggers
+            .slice(0, 4)
+            .map((fromItem) => profileImages[fromItem])
+            .filter(Boolean);
+
+          const extraImagesCount =
+            tagObj?.taggers.length - displayedImages.length;
 
           return (
             <PostUI.Footer key={index}>
@@ -199,11 +235,11 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   color={
                     tagObj?.label && Utils.generateRandomColor(tagObj?.label)
                   }
-                  //onClick={() =>
-                  // isTagFound
-                  //  ? handleDeleteTag(tagObj.tag)
-                  //  : handleAddTag(tagObj.tag)
-                  //}
+                  onClick={() =>
+                    isTagFound
+                      ? handleDeleteTag(tagObj?.label)
+                      : handleAddTag(tagObj?.label)
+                  }
                 >
                   <div className="flex gap-2 items-center">
                     {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
@@ -222,7 +258,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   onClick={() => router.push(`/search?tags=${tagObj?.label}`)}
                   className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                 />
-                {/**
+
                 <div
                   onClick={() => setShowModalTag(true)}
                   className="cursor-pointer flex items-center"
@@ -245,37 +281,41 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     </PostUtil.Counter>
                   )}
                 </div>
-                */}
               </div>
-              {/* <Button.Action
+              <Button.Action
                 variant="custom"
                 size="small"
                 icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
                 onClick={(event) => {
                   event.stopPropagation();
                   isTagFound
-                    ? handleDeleteTag(tagObj.tag)
-                    : handleAddTag(tagObj.tag);
+                    ? handleDeleteTag(tagObj?.label)
+                    : handleAddTag(tagObj?.label);
                 }}
               />
-              <PostUtil.Counter counter={tagObj.count} />
-              {tagObj?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
-                <Image
-                  width={32}
-                  height={32}
-                  alt={`pic-${fromIndex + 1}`}
-                  key={fromIndex}
-                  className={`w-[32px] h-[32px] rounded-full ${
-                    fromIndex !== 0 ? '-ml-5' : ''
-                  }`}
-                  src={fromItem.author?.profile?.image || '/images/Userpic.png'}
-                />
-              ))} */}
+              <PostUtil.Counter>
+                {Number(tagObj?.taggers_count)}
+              </PostUtil.Counter>
+              {tagObj?.taggers
+                ?.slice(0, 5)
+                .map((fromItem, fromIndex: number) => {
+                  return (
+                    <Image
+                      width={32}
+                      height={32}
+                      alt={`pic-${fromIndex + 1}`}
+                      key={fromIndex}
+                      className={`w-[32px] h-[32px] rounded-full ${
+                        fromIndex !== 0 ? '-ml-5' : ''
+                      }`}
+                      src={profileImages[fromItem] || '/images/Userpic.png'}
+                    />
+                  );
+                })}
             </PostUI.Footer>
           );
         })}
       </div>
-      {/** 
       <Modal.Tag
         post={post}
         tags={tags}
@@ -286,7 +326,6 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
       />
-      */}
     </div>
   );
 }

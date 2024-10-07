@@ -21,8 +21,7 @@ export default function Repost({
   post,
   handleRepost,
 }: CreateRepostProps) {
-  const { createRepost } = usePubkyClientContext();
-  //const { createRepost, createTag } = useClientContext();
+  const { pubky, createRepost, createTag } = usePubkyClientContext();
   const modalRepostRef = useRef<HTMLDivElement>(null);
   const { setContent, setShow } = useAlertContext();
   const [contentRepost, setContentRepost] = useState('');
@@ -44,6 +43,7 @@ export default function Repost({
 
       const newRepost = await createRepost(
         post?.details?.id,
+        post?.details?.author,
         content,
         'Short',
         selectedFiles
@@ -51,7 +51,7 @@ export default function Repost({
 
       if (newRepost) {
         for (const tag of updatedTags) {
-          //await createTag(newRepost.uri, tag);
+          await createTag(pubky ?? '', newRepost, tag);
         }
         setContent('Repost created!');
         setShow(true);

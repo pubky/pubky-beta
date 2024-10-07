@@ -17,7 +17,7 @@ const passwordSchema = z.object({
 });
 
 export default function Index() {
-  //const { getRecoveryFile } = useClientContext();
+  const { getRecoveryFile } = usePubkyClientContext();
   const { seed, setSeed } = usePubkyClientContext();
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
@@ -91,14 +91,17 @@ export default function Index() {
         setLoading(false);
         return;
       }
-      const recoveryFileResponse = null; //await getRecoveryFile(password);
+      const recoveryFileResponse = await getRecoveryFile(password);
 
       if (!recoveryFileResponse) {
         throw new Error('Something went wrong');
       }
 
-      const { recoveryFile, filename } = recoveryFileResponse;
-      await handleDownloadRecoveryFile({ recoveryFile, filename });
+      await handleDownloadRecoveryFile({
+        recoveryFile: recoveryFileResponse,
+        filename: 'recovery_key.pkarr',
+      });
+
       Utils.storage.remove('seed');
       setShowModalBackup(false);
     } catch (error) {

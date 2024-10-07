@@ -21,7 +21,7 @@ export default function ReplyForm({
   updatePost: () => void;
   replies: PostThread | undefined;
 }) {
-  const { createReply, createTag } = usePubkyClientContext();
+  const { pubky, createReply, createTag } = usePubkyClientContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -49,7 +49,7 @@ export default function ReplyForm({
 
     if (sendReply) {
       for (const tag of updatedTags) {
-        await createTag(sendReply, tag);
+        await createTag(pubky ?? '', sendReply, tag);
       }
       setSendingReply(false);
       setContentReply('');

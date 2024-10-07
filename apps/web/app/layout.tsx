@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import {
   AlertWrapper,
-  ClientWrapper,
   FilterWrapper,
   NotificationsWrapper,
   ToastWrapper,
@@ -27,15 +26,13 @@ export default function RootLayout({
         <PubkyClientWrapper>
           <QueryClientProvider client={queryClient}>
             <FilterWrapper>
-              <ClientWrapper>
-                <AlertWrapper>
-                  <NotificationsWrapper>
-                    <ToastWrapper>
-                      <ProtectedRoutes>{children}</ProtectedRoutes>
-                    </ToastWrapper>
-                  </NotificationsWrapper>
-                </AlertWrapper>
-              </ClientWrapper>
+              <AlertWrapper>
+                <NotificationsWrapper>
+                  <ToastWrapper>
+                    <ProtectedRoutes>{children}</ProtectedRoutes>
+                  </ToastWrapper>
+                </NotificationsWrapper>
+              </AlertWrapper>
             </FilterWrapper>
           </QueryClientProvider>
         </PubkyClientWrapper>

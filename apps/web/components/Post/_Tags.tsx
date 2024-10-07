@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -15,7 +15,6 @@ import Tooltip from '../Tooltip';
 import Modal from '../Modal';
 import { PostTag, PostView } from '@/types/Post';
 import { usePubkyClientContext } from '@/contexts';
-import Image from 'next/image';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -29,13 +28,17 @@ export default function Tags({ post, largeView = false }: PostProps) {
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
 
-  {
-    /**useEffect(() => {
+  useEffect(() => {
     if (post?.tags) {
-      const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
-      setTags(post?.tags);
+      const sortedTags = post?.tags
+        .slice()
+        .sort((a, b) => b.taggers_count - a.taggers_count);
+      setTags(sortedTags);
     }
   }, [post?.tags]);
+
+  {
+    /**
 
   const updatePosts = async () => {
     const updatedPost = await getPost(post.uri);
@@ -55,7 +58,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
   };
 
   const handleAddTag = async (tag: string) => {
-    await createTag(post?.details?.id, tag);
+    await createTag(post?.details?.author, post?.details?.id, tag);
   };
 
   {
@@ -97,7 +100,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
         {!largeView &&
           tags.map((tagObj, index) => {
             const isTagFound = tagObj?.taggers.some(
-              (fromItem) => fromItem.tagger_id === pubky
+              (fromItem) => fromItem === pubky
             );
 
             return (
@@ -137,6 +140,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
                     </div>
                   </PostUtil.Tag>
                 </TooltipUI.Root>
+                {/**
                 <Button.Action
                   variant="custom"
                   size="small"
@@ -164,7 +168,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
                       }`}
                       src={fromItem?.tagger_id || '/images/Userpic.png'}
                     />
-                  ))}
+                  ))}*/}
               </PostUI.Footer>
             );
           })}

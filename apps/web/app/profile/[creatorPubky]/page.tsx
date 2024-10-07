@@ -7,6 +7,7 @@ import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
 import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Index({
   params,
@@ -14,8 +15,12 @@ export default function Index({
   params: { creatorPubky: string };
 }) {
   //const { setPosts } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const creatorPubky = params.creatorPubky;
-  const { data, isLoading, isError } = useUserProfile(creatorPubky);
+  const { data, isLoading, isError } = useUserProfile(
+    creatorPubky,
+    pubky ?? ''
+  );
   const profile = data;
   const [userExist, setUserExist] = useState(true);
 
