@@ -224,12 +224,12 @@ export default function Header({ title, className }: HeaderProps) {
           />
         </Link>
         <Link href="/profile" className="w-[48px] relative">
-          {notifications.length !== 0 && (
+          {notifications?.length !== 0 && (
             <PostUtil.Counter
               textCSS="tracking-tight text-black font-semibold"
               className="w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
             >
-              {notifications.length}
+              {notifications?.length}
             </PostUtil.Counter>
           )}
           <ImageByUri
@@ -274,7 +274,7 @@ export default function Header({ title, className }: HeaderProps) {
                 href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
-                counter={notifications.length}
+                counter={notifications?.length}
               />
               <Menu.Section
                 href="/bookmarks"

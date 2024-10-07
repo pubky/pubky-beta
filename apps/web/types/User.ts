@@ -1,4 +1,5 @@
 import { TStatus } from '.';
+import { PostView } from './Post';
 
 export interface UserCounts {
   followers: number;
@@ -34,6 +35,31 @@ export interface UserView {
   details: UserDetails;
   relationship: Relationship;
   tags: UserTags[];
+}
+
+export interface NotificationView {
+  body: BodyNotification;
+  timestamp: number;
+}
+
+interface BodyNotification {
+  followed_by?: string;
+  unfollowed_by?: string;
+  post_uri?: string;
+  tag_label?: string;
+  tagged_by?: string;
+  replied_by?: string;
+  parent_post_uri?: string;
+  reply_uri?: string;
+  reposted_by?: string;
+  embed_uri?: string;
+  repost_uri?: string;
+  mentioned_by?: string;
+  delete_type?: any;
+  deleted_by?: string;
+  deleted_uri?: string;
+  linked_uri?: string;
+  type: string;
 }
 
 export interface Relationship {
