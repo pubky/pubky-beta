@@ -12,7 +12,7 @@ import {
 } from '@/components';
 import { Notifications } from './components';
 import { useState, useEffect } from 'react';
-import { INotification } from '@/types';
+import { NotificationView } from '@/types/User';
 
 export default function Index() {
   const { notifications, loading } = useNotificationsContext();
@@ -25,7 +25,7 @@ export default function Index() {
   }, [loading]);
 
   function renderNotifications(
-    notifications: (INotification | INotification[])[],
+    notifications: NotificationView[],
     loadingNotifications: boolean
   ) {
     if (loadingNotifications) {
@@ -41,25 +41,26 @@ export default function Index() {
     }
 
     return notifications.map((notification, index) => {
-      if (Array.isArray(notification)) {
-        switch (notification[0].type) {
-          case 'follow':
-          case 'new_friend':
-          case 'lost_friend':
+      {
+        /**if (Array.isArray(notification)) {
+        switch (notification[0].body.type) {
+          case 'Follow':
+          case 'NewFriend':
+          case 'LostFriend':
             return (
               <Notifications.NotificationGroup
                 key={index}
                 notifications={notification}
               />
             );
-          case 'tag_profile':
+          case 'TagProfile':
             return (
               <Notifications.NotificationTagGroup
                 key={index}
                 notifications={notification}
               />
             );
-          case 'tag_post':
+          case 'TagPost':
             return (
               <Notifications.NotificationTagPostGroup
                 key={index}
@@ -73,7 +74,11 @@ export default function Index() {
         return (
           <Notifications.Notification key={index} notification={notification} />
         );
+      }*/
       }
+      return (
+        <Notifications.Notification key={index} notification={notification} />
+      );
     });
   }
 
