@@ -7,7 +7,7 @@ import UserInfo from './_UserInfo';
 import BioSection from './_BioSection';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
-import { useUserProfile } from '@/hooks/useUser';
+import { useUserProfile, UseUserStreamFollowers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 
@@ -16,7 +16,7 @@ export default function Sidebar({
 }: {
   creatorPubky?: string | null;
 }) {
-  const { pubky, createTag, deleteTag } = usePubkyClientContext();
+  const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
   const { data, isLoading, isError } = useUserProfile(
     usePubky ?? '',
@@ -24,6 +24,10 @@ export default function Sidebar({
   );
   if (isError) console.error(isError);
   const profile = data;
+  const { data: initFollowers } = UseUserStreamFollowers(
+    usePubky ?? '',
+    pubky ?? ''
+  );
   const name = profile?.details?.name ?? '';
   const bio = profile?.details.bio || 'No bio.';
   const links = profile?.details?.links ?? [];
@@ -43,9 +47,6 @@ export default function Sidebar({
   const checkLink = Utils.storage.get('checkLink') as boolean;
   const [scrolled, setScrolled] = useState(false);
 
-  {
-    /**
-
   useEffect(() => {
     async function fetchData() {
       try {
@@ -57,13 +58,13 @@ export default function Sidebar({
 
         if (!pubkey) return;
 
-        const followersList = await listFollowers(pubkey);
+        const followersList = initFollowers;
 
         if (followersList) {
-          setInitLoadingFollowed(false);
+          //setInitLoadingFollowed(false);
 
-          followersList.followers.forEach((user) => {
-            const uri = user.uri.replace('pubky:', '');
+          followersList.forEach((user) => {
+            const uri = user?.details?.id.replace('pubky:', '');
             if (uri === pubky) {
               setFollowed(true);
             }
@@ -76,6 +77,9 @@ export default function Sidebar({
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [followed, creatorPubky]);
+
+  {
+    /**
 
   async function fetchProfile() {
     try {
@@ -127,7 +131,7 @@ export default function Sidebar({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await createTag(pubKeyToUse, tag);
+      await createTagProfile(pubKeyToUse, tag);
     }
   };
 
@@ -136,7 +140,7 @@ export default function Sidebar({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await deleteTag(pubKeyToUse, tag);
+      await deleteTagProfile(pubKeyToUse, tag);
     }
   };
 

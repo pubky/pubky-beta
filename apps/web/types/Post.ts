@@ -1,4 +1,4 @@
-import { IFileContent } from ".";
+import { IFileContent } from '.';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PostCounts {
@@ -38,7 +38,7 @@ export interface Bookmark {
 
 export interface PostTag {
   label: string;
-  taggers: Tag[];
+  taggers: string[];
   taggers_count: number;
 }
 

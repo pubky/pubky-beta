@@ -31,7 +31,6 @@ export default function Actions({
     pubky ?? ''
   );
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
-  //const { deleteBookmark, createBookmark, createRepost, deletePost } = useClientContext();
   const { setContent, setShow } = useAlertContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
@@ -40,16 +39,12 @@ export default function Actions({
   const [showModalReply, setShowModalReply] = useState(false);
   //const [showRepostMenu, setShowRepostMenu] = useState(false);
 
-  const handleAddBookmark = async (postId: string, uri: string) => {
-    await addBookmark(postId, uri);
+  const handleAddBookmark = async (postId: string, authorId: string) => {
+    await addBookmark(postId, authorId);
   };
 
-  const handleDeleteBookmark = async (
-    postId: string,
-    postUri: string,
-    bookmarkId: string
-  ) => {
-    await deleteBookmark(postId, postUri, bookmarkId);
+  const handleDeleteBookmark = async (bookmarkId: string) => {
+    await deleteBookmark(bookmarkId);
   };
 
   const handleRepost = async () => {
@@ -81,12 +76,8 @@ export default function Actions({
   const handleBookmarks = (
     repost: PostView | undefined,
     post: PostView,
-    handleAddBookmark: (postId: string, uri: string) => Promise<void>,
-    handleDeleteBookmark: (
-      postId: string,
-      postUri: string,
-      bookmarkId: string
-    ) => Promise<void>,
+    handleAddBookmark: (postId: string, authorId: string) => Promise<void>,
+    handleDeleteBookmark: (bookmarkId: string) => Promise<void>,
     setContentToast: (
       content: React.ReactNode,
       variant?: 'bookmark' | 'pubky' | 'link'
@@ -97,23 +88,15 @@ export default function Actions({
 
     if (repost) {
       if (isBookmarked) {
-        handleDeleteBookmark(
-          repost?.details?.id,
-          repost?.details?.uri,
-          repost?.bookmark?.id ?? ''
-        );
+        handleDeleteBookmark(repost?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(repost?.details?.id, repost?.details?.uri);
+        handleAddBookmark(repost?.details?.id, repost?.details?.author);
       }
     } else {
       if (isBookmarked) {
-        handleDeleteBookmark(
-          post?.details?.id,
-          post?.details?.id,
-          post?.bookmark?.id ?? ''
-        );
+        handleDeleteBookmark(post?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(post?.details?.id, post?.details?.uri);
+        handleAddBookmark(post?.details?.id, post?.details?.author);
       }
     }
 

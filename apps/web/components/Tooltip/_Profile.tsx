@@ -19,27 +19,29 @@ import {
 } from '@/hooks/useUser';
 
 interface ProfileProps {
-  post: PostView;
+  post?: PostView;
+  profileId?: string | undefined;
 }
 
-export default function Profile({ post }: ProfileProps) {
+export default function Profile({ post, profileId }: ProfileProps) {
   const router = useRouter();
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const idAuthor = post?.details?.author || profileId || '';
 
-  const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
+  const { data: author } = useUserProfile(idAuthor, pubky ?? '');
 
   const {
     data: followers,
     isLoading: isLoadingFollowers,
     isError: isErrorFollowers,
-  } = UseUserFollowers(post?.details?.author ?? '');
+  } = UseUserFollowers(idAuthor ?? '');
   if (isErrorFollowers) console.error(isErrorFollowers);
 
   const {
     data: following,
     isLoading: isLoadingFollowing,
     isError: isErrorFollowing,
-  } = UseUserFollowing(post?.details?.author ?? '');
+  } = UseUserFollowing(idAuthor ?? '');
   if (isErrorFollowing) console.error(isErrorFollowing);
 
   const [followed, setFollowed] = useState(false);
@@ -47,10 +49,10 @@ export default function Profile({ post }: ProfileProps) {
 
   const followUser = async () => {
     try {
-      if (!post?.details?.author) return;
+      if (!idAuthor) return;
       setLoadingFollowed(true);
 
-      const result = await follow(post?.details?.author);
+      const result = await follow(idAuthor);
       setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
@@ -60,10 +62,10 @@ export default function Profile({ post }: ProfileProps) {
 
   const unfollowUser = async () => {
     try {
-      if (!post?.details?.author) return;
+      if (!idAuthor) return;
       setLoadingFollowed(true);
 
-      const result = await unfollow(post?.details?.author);
+      const result = await unfollow(idAuthor);
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {
@@ -78,7 +80,7 @@ export default function Profile({ post }: ProfileProps) {
     >
       <div className="w-full flex flex-col justify-between">
         <div
-          onClick={() => router.push(`/profile/${post?.details?.author}`)}
+          onClick={() => router.push(`/profile/${idAuthor}`)}
           className="justify-start items-center gap-2 flex cursor-pointer"
         >
           <PostUI.ImageUser
@@ -93,7 +95,7 @@ export default function Profile({ post }: ProfileProps) {
                 Utils.minifyText(author?.details?.name, 12)}
             </PostUI.Username>
             <Typography.Label className="text-opacity-30 -mt-1">
-              {Utils.minifyPubky(post?.details?.author)}
+              {Utils.minifyPubky(idAuthor)}
             </Typography.Label>
           </div>
         </div>
@@ -119,9 +121,7 @@ export default function Profile({ post }: ProfileProps) {
               ((followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0) &&
                 router.push(
                   `/profile/${
-                    post?.details?.author
-                      ? `${post?.details?.author}?tab=following`
-                      : '?tab=following'
+                    idAuthor ? `${idAuthor}?tab=following` : '?tab=following'
                   }`
                 );
             }}
@@ -149,9 +149,7 @@ export default function Profile({ post }: ProfileProps) {
               ((followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0) &&
                 router.push(
                   `/profile/${
-                    post?.details?.author
-                      ? `${post?.details?.author}?tab=followers`
-                      : '?tab=followers'
+                    idAuthor ? `${idAuthor}?tab=followers` : '?tab=followers'
                   }`
                 );
             }}

@@ -32,8 +32,7 @@ export default function List({
   followUser,
   unfollowUser,
 }: ContactsList) {
-  const { pubky } = usePubkyClientContext();
-  // const { createTag, deleteTag } = useClientContext();
+  const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
 
   const handleAddProfileTag = async (tag: string) => {
     const creatorPubky = contactId;
@@ -41,7 +40,7 @@ export default function List({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      //await createTag(pubKeyToUse, tag);
+      await createTagProfile(pubKeyToUse, tag);
     }
   };
 
@@ -51,7 +50,7 @@ export default function List({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      //await deleteTag(pubKeyToUse, tag);
+      await deleteTagProfile(pubKeyToUse, tag);
     }
   };
   return (

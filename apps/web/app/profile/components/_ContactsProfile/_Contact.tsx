@@ -14,7 +14,7 @@ export default function Contact({
   contacts: UserView[] | [] | undefined;
   isLoading: false;
 }) {
-  const { pubky, createTag, deleteTag, follow, unfollow } =
+  const { pubky, createTagProfile, deleteTagProfile, follow, unfollow } =
     usePubkyClientContext();
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
@@ -24,7 +24,7 @@ export default function Contact({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await createTag(pubKeyToUse, tag);
+      await createTagProfile(pubKeyToUse, tag);
     }
   };
 
@@ -33,7 +33,7 @@ export default function Contact({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await deleteTag(pubKeyToUse, tag);
+      await deleteTagProfile(pubKeyToUse, tag);
     }
   };
 

@@ -40,9 +40,10 @@ type PubkyClientContextType = {
     postContent: string,
     kind: PostKind,
     files?: File[]
-  ) => Promise<string | false>;
+  ) => Promise<void | false>;
   createRepost: (
     originalPostId: string,
+    originalauthorId: string,
     repostContent: string,
     kind: PostKind,
     files?: File[]
@@ -55,13 +56,13 @@ type PubkyClientContextType = {
   ) => Promise<string | false>;
   follow: (user_id: string) => Promise<boolean>;
   unfollow: (user_id: string) => Promise<boolean>;
-  addBookmark: (post_id: string, post_uri: string) => Promise<boolean>;
-  deleteBookmark: (
-    post_id: string,
-    post_uri: string,
-    bookmark_id: string
+  addBookmark: (postId: string, authorId: string) => Promise<boolean>;
+  deleteBookmark: (bookmarkId: string) => Promise<boolean>;
+  createTag: (
+    authorId: string,
+    postId: string,
+    tagContent: string
   ) => Promise<boolean>;
-  createTag: (post_id: string, tagContent: string) => Promise<boolean>;
   deleteTag: (post_id: string, tagId: string) => Promise<boolean>;
   createTagProfile: (profileId: string, tagContent: string) => Promise<boolean>;
   deleteTagProfile: (profileId: string, tagId: string) => Promise<boolean>;
@@ -199,7 +200,7 @@ export function PubkyClientWrapper({
         const fileBase64 = Buffer.from(fileContent).toString('base64');
 
         // Create the PubkyAppFile object
-        const fileId = generateTimestampId();
+        const fileId = generateTimestampId().toUpperCase();
         const newFile: PubkyAppFile = {
           name: file.name,
           created_at: Date.now(),
@@ -270,7 +271,7 @@ export function PubkyClientWrapper({
         const fileBase64 = Buffer.from(fileContent).toString('base64');
 
         // Create the PubkyAppFile object
-        const fileId = generateTimestampId();
+        const fileId = generateTimestampId().toUpperCase();
         const newFile: PubkyAppFile = {
           name: file.name,
           created_at: Date.now(),
@@ -353,7 +354,7 @@ export function PubkyClientWrapper({
     postContent: string,
     kind: PostKind,
     files?: File[]
-  ): Promise<string | false> => {
+  ): Promise<void | false> => {
     try {
       // Check if the user is logged in
       const loggedIn = await isLoggedIn();
@@ -362,7 +363,7 @@ export function PubkyClientWrapper({
       }
 
       // Generate a timestamp ID for the post
-      const postId = generateTimestampId();
+      const postId = generateTimestampId().toUpperCase();
 
       // Initialize the post object
       const newPost: PubkyAppPost = {
@@ -381,7 +382,7 @@ export function PubkyClientWrapper({
           const fileBase64 = Buffer.from(fileContent).toString('base64');
 
           // Create the PubkyAppFile object
-          const fileId = generateTimestampId();
+          const fileId = generateTimestampId().toUpperCase();
           const newFile: PubkyAppFile = {
             name: file.name,
             created_at: Date.now(),
@@ -418,11 +419,11 @@ export function PubkyClientWrapper({
       const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
 
       // Send the post to the homeserver
-      await client.put(postUrl, postBody);
+      const result = await client.put(postUrl, postBody);
 
       console.log(postUrl);
 
-      return postUrl;
+      return result;
     } catch (error) {
       console.error('Error creating post:', error);
       return false;
@@ -431,6 +432,7 @@ export function PubkyClientWrapper({
 
   const createRepost = async (
     originalPostId: string,
+    originalauthorId: string,
     repostContent: string,
     kind: PostKind,
     files?: File[]
@@ -443,11 +445,15 @@ export function PubkyClientWrapper({
       }
 
       // Generate a timestamp ID for the repost
-      const repostId = generateTimestampId();
+      const repostId = generateTimestampId().toUpperCase();
 
       // Initialize the post object
       const newRepost: PubkyAppPost = {
         content: repostContent,
+        embed: {
+          kind: 'Short',
+          uri: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`,
+        },
         kind,
       };
 
@@ -462,7 +468,7 @@ export function PubkyClientWrapper({
           const fileBase64 = Buffer.from(fileContent).toString('base64');
 
           // Create the PubkyAppFile object
-          const fileId = generateTimestampId();
+          const fileId = generateTimestampId().toUpperCase();
           const newFile: PubkyAppFile = {
             name: file.name,
             created_at: Date.now(),
@@ -522,7 +528,7 @@ export function PubkyClientWrapper({
       if (!loggedIn || !pubky) {
         throw new Error('User is not logged in');
       }
-      const replyId = generateTimestampId();
+      const replyId = generateTimestampId().toUpperCase();
 
       const replyPost: PubkyAppPost = {
         content: replyContent,
@@ -537,7 +543,7 @@ export function PubkyClientWrapper({
           const fileContent = await file.arrayBuffer();
           const fileBase64 = Buffer.from(fileContent).toString('base64');
 
-          const fileId = generateTimestampId();
+          const fileId = generateTimestampId().toUpperCase();
           const newFile: PubkyAppFile = {
             name: file.name,
             created_at: Date.now(),
@@ -621,7 +627,10 @@ export function PubkyClientWrapper({
     }
   };
 
-  const addBookmark = async (post_id: string): Promise<boolean> => {
+  const addBookmark = async (
+    postId: string,
+    authorId: string
+  ): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
       if (!loggedIn || !pubky) {
@@ -629,15 +638,17 @@ export function PubkyClientWrapper({
       }
 
       const bookmarkData = {
+        uri: `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
         created_at: Date.now(),
       };
 
       const bookmarkDataBody = Buffer.from(JSON.stringify(bookmarkData));
-      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${post_id}`;
+      const bookmarkId = (await generateHashId(bookmarkData.uri)).toUpperCase();
+      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
 
       await client.put(bookmarkUrl, bookmarkDataBody);
 
-      console.log(`Successfully bookmarked post with ID: ${post_id}`);
+      console.log(`Successfully bookmarked post with ID: ${bookmarkId}`);
       return true;
     } catch (error) {
       console.error('Error while bookmarking the post:', error);
@@ -645,18 +656,18 @@ export function PubkyClientWrapper({
     }
   };
 
-  const deleteBookmark = async (post_id: string): Promise<boolean> => {
+  const deleteBookmark = async (bookmarkId: string): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
       if (!loggedIn || !pubky) {
         throw new Error('User is not logged in or pubky is not defined');
       }
 
-      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${post_id}`;
+      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
 
       await client.delete(bookmarkUrl);
 
-      console.log(`Successfully unbookmarked post with ID: ${post_id}`);
+      console.log(`Successfully unbookmarked post with ID: ${bookmarkId}`);
       return true;
     } catch (error) {
       console.error('Error while unbookmarking the post:', error);
@@ -665,6 +676,7 @@ export function PubkyClientWrapper({
   };
 
   const createTag = async (
+    authorId: string,
     postId: string,
     tagContent: string
   ): Promise<boolean> => {
@@ -679,13 +691,15 @@ export function PubkyClientWrapper({
       }
 
       const tagData = {
-        uri: `/pub/pubky.app/posts/${postId}`,
+        uri: `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
         label: tagContent,
         created_at: Date.now(),
       };
 
       const tagBody = Buffer.from(JSON.stringify(tagData));
-      const tagId = await generateHashId(tagContent);
+      const tagId = (
+        await generateHashId(`${tagData.uri}:${tagData.label}`)
+      ).toUpperCase();
 
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
@@ -738,7 +752,9 @@ export function PubkyClientWrapper({
       };
 
       const tagBody = Buffer.from(JSON.stringify(tagData));
-      const tagId = await generateHashId(tagContent);
+      const tagId = (
+        await generateHashId(`${tagData.uri}:${tagData.label}`)
+      ).toUpperCase();
 
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 

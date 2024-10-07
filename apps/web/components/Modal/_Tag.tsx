@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -18,6 +17,9 @@ import Post from '../Post';
 import { ImageByUri } from '../ImageByUri';
 import { usePubkyClientContext } from '@/contexts';
 import { PostTag, PostView } from '@/types/Post';
+import { getUserProfile } from '@/services/userService';
+import { UseUserStreamFollowing } from '@/hooks/useUser';
+import { UserView } from '@/types/User';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
@@ -42,9 +44,13 @@ export default function Tag({
 }: TagProps) {
   const router = useRouter();
   const modalTagRef = useRef<HTMLDivElement>(null);
-  const { pubky } = usePubkyClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
   //const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const [tag, setTag] = useState('');
+  const { data: initFollowing } = UseUserStreamFollowing(
+    post?.details?.author,
+    pubky ?? ''
+  );
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
@@ -54,43 +60,96 @@ export default function Tag({
   }>({});
   const [tagsError, setTagsError] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
+  const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
+  const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>(
+    {}
+  );
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      const profilesMap: { [key: string]: UserView } = {};
+      const taggers = selectedTag?.taggers || [];
+
+      await Promise.all(
+        taggers.map(async (user) => {
+          try {
+            const profile = await getUserProfile(user, pubky ?? '');
+            profilesMap[user] = profile;
+          } catch (error) {
+            console.error(`Error ${user}`, error);
+          }
+        })
+      );
+      setUserProfiles(profilesMap);
+    };
+
+    fetchProfiles();
+  }, [selectedTag, pubky]);
+
+  const fetchProfileImages = async (tag: PostTag) => {
+    const images = await Promise.all(
+      tag.taggers.map(async (fromItem) => {
+        const profile = await getUserProfile(fromItem, pubky ?? '');
+        return profile?.details?.image || '/images/Userpic.png';
+      })
+    );
+    return images;
+  };
+
+  // Fetch images for all tags
+  useEffect(() => {
+    const fetchAllImages = async () => {
+      const imagesMap: { [label: string]: string[] } = {};
+      await Promise.all(
+        tags.map(async (tag) => {
+          const images = await fetchProfileImages(tag);
+          imagesMap[tag.label] = images.slice(0, 4);
+        })
+      );
+      setTagImages(imagesMap);
+    };
+
+    if (tags.length > 0) {
+      fetchAllImages();
+    }
+  }, [tags]);
 
   useEffect(() => {
     async function fetchFollowing() {
       try {
         if (!pubky) return;
 
-        // const following = null; //await listFollowing(pubky);
+        const following = initFollowing;
 
-        // if (following) {
-        //   const followingIds = following.following.map((user) =>
-        //     user.uri.replace('pubky:', '')
-        //   );
+        if (following) {
+          const followingIds = following?.map((user) =>
+            user?.details?.id.replace('pubky:', '')
+          );
 
-        //   const matchedFollowedIds = tags
-        //     .flatMap((tag) => tag.from)
-        //     .filter((profile) => followingIds.includes(profile.author.id));
+          const matchedFollowedIds = tags
+            .flatMap((tag) => tag?.taggers)
+            .filter((profile) => followingIds.includes(profile));
 
-        //   if (matchedFollowedIds.length > 0) {
-        //     setInitLoadingFollowers(false);
-        //     matchedFollowedIds.forEach((followed) => {
-        //       setFollowedUser((prevState) => ({
-        //         ...prevState,
-        //         [followed.author.id]: true,
-        //       }));
-        //     });
-        //   } else {
-        //     setInitLoadingFollowers(false);
-        //   }
-        // }
+          if (matchedFollowedIds.length > 0) {
+            setInitLoadingFollowers(false);
+            matchedFollowedIds.forEach((followed) => {
+              setFollowedUser((prevState) => ({
+                ...prevState,
+                [followed]: true,
+              }));
+            });
+          } else {
+            setInitLoadingFollowers(false);
+          }
+        }
       } catch (error) {
         console.log(error);
       }
     }
 
     fetchFollowing();
-  }, [pubky, tags]);
+  }, [pubky, tags, initFollowing]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -101,12 +160,12 @@ export default function Tag({
         [pubkyFollow]: true,
       }));
 
-      const result = null; //await follow(pubkyFollow);
+      const result = await follow(pubkyFollow);
 
-      // setFollowedUser((prevState) => ({
-      //   ...prevState,
-      //   [pubkyFollow]: result,
-      // }));
+      setFollowedUser((prevState) => ({
+        ...prevState,
+        [pubkyFollow]: result,
+      }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
@@ -126,7 +185,7 @@ export default function Tag({
         [pubkyUnfollow]: true,
       }));
 
-      const result = null; //await unfollow(pubkyUnfollow);
+      const result = await unfollow(pubkyUnfollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
@@ -279,15 +338,14 @@ export default function Tag({
                   {!selectedTag &&
                     tags.map((tag, index) => {
                       const isTagFound = tag?.taggers.some(
-                        (fromItem) => fromItem.tagger_id === pubky
+                        (fromItem) => fromItem === pubky
                       );
 
-                      const images = tag?.taggers.map(
-                        (fromItem) => fromItem?.tagger_id?.image
-                      );
-                      const displayedImages = images.slice(0, 4);
+                      const displayedImages = tagImages[tag.label] || [];
                       const extraImagesCount =
-                        images.length - displayedImages.length;
+                        displayedImages.length > 4
+                          ? displayedImages.length - 4
+                          : 0;
 
                       return (
                         <div className="flex gap-2" key={index}>
@@ -340,7 +398,7 @@ export default function Tag({
                                   imageIndex > 0 && '-ml-2'
                                 }`}
                                 alt={`tag-${imageIndex + 1}`}
-                                uri={image}
+                                uri={String(image)}
                               />
                             ))}
                             {extraImagesCount > 0 && (
@@ -376,12 +434,12 @@ export default function Tag({
                         {selectedTag && (
                           <PostUtil.Tag
                             clicked={selectedTag?.taggers.some(
-                              (fromItem) => fromItem?.tagger_id === pubky
+                              (fromItem) => fromItem === pubky
                             )}
                             onClick={(event) => {
                               event.stopPropagation();
                               selectedTag?.taggers.some(
-                                (fromItem) => fromItem?.tagger_id === pubky
+                                (fromItem) => fromItem === pubky
                               )
                                 ? handleDeleteTag(selectedTag?.label)
                                 : handleAddTag(selectedTag?.label);
@@ -416,27 +474,26 @@ export default function Tag({
                         />
                       </div>
                       {selectedTag?.taggers.map((user, userIndex) => {
-                        const pubkeyUser =
-                          pubky && user?.tagger_id.includes(pubky);
-                        const isFollowed =
-                          followedUser[user?.tagger_id] || false;
+                        const profile = userProfiles[user];
+                        const pubkeyUser = pubky && user.includes(pubky);
+                        const isFollowed = followedUser[user] || false;
+
                         return (
                           <div
                             key={userIndex}
                             className="w-full flex justify-between gap-10"
                           >
                             <SideCard.User
-                              uri={user?.tagger_id?.uri.replace('pubky:', '')}
+                              uri={profile?.details?.id.replace('pubky:', '')}
                               uriImage={
-                                user?.tagger_id?.profile?.image ||
-                                '/images/Userpic.png'
+                                profile?.details?.image || '/images/Userpic.png'
                               }
                               username={
-                                user?.tagger_id?.profile?.name &&
-                                Utils.minifyText(user?.tagger_id?.profile?.name)
+                                profile?.details?.name &&
+                                Utils.minifyText(profile?.details?.name)
                               }
                               label={Utils.minifyPubky(
-                                user.tagger_id.uri.replace('pubky:', '')
+                                profile?.details?.id.replace('pubky:', '')
                               )}
                             />
                             {pubkeyUser ? (
@@ -454,24 +511,24 @@ export default function Tag({
                             ) : isFollowed ? (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.tagger_id]
+                                  loadingFollowers[user]
                                     ? undefined
-                                    : () => unfollowUser(user?.tagger_id)
+                                    : () => unfollowUser(user)
                                 }
-                                disabled={loadingFollowers[user?.tagger_id]}
-                                loading={loadingFollowers[user?.tagger_id]}
+                                disabled={loadingFollowers[user]}
+                                loading={loadingFollowers[user]}
                                 icon={<Icon.Minus size="16" />}
                                 variant="small"
                               />
                             ) : (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.tagger_id]
+                                  loadingFollowers[user]
                                     ? undefined
-                                    : () => followUser(user?.tagger_id)
+                                    : () => followUser(user)
                                 }
-                                disabled={loadingFollowers[user?.tagger_id]}
-                                loading={loadingFollowers[user?.tagger_id]}
+                                disabled={loadingFollowers[user]}
+                                loading={loadingFollowers[user]}
                                 icon={<Icon.Plus size="16" />}
                                 variant="small"
                               />

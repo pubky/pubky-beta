@@ -13,8 +13,7 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function CreateQuickPost({
   largeView = false,
 }: CreateQuickPostProps) {
-  // const { getProfile, setPosts, createTag } = useClientContext();
-  const { createPost, createTag } = usePubkyClientContext();
+  const { pubky, createPost, createTag } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -37,7 +36,7 @@ export default function CreateQuickPost({
 
       if (newPost) {
         for (const tag of updatedTags) {
-          await createTag(newPost, tag);
+          await createTag(pubky ?? '', newPost, tag);
         }
 
         // const userProfile = await getProfile();
