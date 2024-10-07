@@ -11,7 +11,7 @@ import {
   Menu,
   PostUtil,
 } from '@social/ui-shared';
-import { Modal } from '../Modal';
+// import { Modal } from '../Modal';
 import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
@@ -31,13 +31,13 @@ export default function Header({ title, className }: HeaderProps) {
   const { notifications } = useNotificationsContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [searchInputCard, setSearchInputCard] = useState(false);
+  // const [searchInputCard, setSearchInputCard] = useState(false);
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [handler, setHandler] = useState('');
   const [inputValue, setInputValue] = useState('');
 
   const drawerRef = useRef<HTMLDivElement>(null);
-  const refSearchInputCard = useRef<HTMLDivElement>(null);
+  // const refSearchInputCard = useRef<HTMLDivElement>(null);
 
   async function fetchLoggedIn() {
     const loggedIn = await isLoggedIn();
@@ -54,29 +54,29 @@ export default function Header({ title, className }: HeaderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
 
-  useEffect(() => {
-    const handleClickOutsideDrawer = (event: MouseEvent) => {
-      {
-        if (
-          drawerRef.current &&
-          !drawerRef.current.contains(event.target as Node)
-        ) {
-          setDrawerOpen(false);
-        }
-      }
-      if (
-        refSearchInputCard.current &&
-        !refSearchInputCard.current.contains(event.target as Node)
-      ) {
-        setSearchInputCard(false);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutsideDrawer = (event: MouseEvent) => {
+  //     {
+  //       if (
+  //         drawerRef.current &&
+  //         !drawerRef.current.contains(event.target as Node)
+  //       ) {
+  //         setDrawerOpen(false);
+  //       }
+  //     }
+  //     if (
+  //       refSearchInputCard.current &&
+  //       !refSearchInputCard.current.contains(event.target as Node)
+  //     ) {
+  //       setSearchInputCard(false);
+  //     }
+  //   };
 
-    document.addEventListener('mousedown', handleClickOutsideDrawer);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideDrawer);
-    };
-  }, [refSearchInputCard]);
+  //   document.addEventListener('mousedown', handleClickOutsideDrawer);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutsideDrawer);
+  //   };
+  // }, [refSearchInputCard]);
 
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
   //   if (e.key === 'Enter') {
@@ -143,14 +143,14 @@ export default function Header({ title, className }: HeaderProps) {
           // onKeyDown={handleKeyDown}
           //placeholder={!searchTags.length ? 'Search' : ''}
           className="hidden sm:block"
-          onClick={() => setSearchInputCard(true)}
+          // onClick={() => setSearchInputCard(true)}
           //disabled={!!searchTags.length}
         />
-        <Modal.SearchInputCard
+        {/* <Modal.SearchInputCard
           className={searchInputCard ? 'hidden xl:block' : 'hidden'}
           refCard={refSearchInputCard}
           inputValue={inputValue}
-        />
+        /> */}
         <Input.SearchActions className="hidden sm:flex">
           <div
             className={inputValue && 'cursor-pointer'}

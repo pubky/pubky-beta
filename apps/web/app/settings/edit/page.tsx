@@ -87,7 +87,8 @@ export default function Index() {
       }
     }
     fetchData();
-  }, [pubky, profile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubky]);
 
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
