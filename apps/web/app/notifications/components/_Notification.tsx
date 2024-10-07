@@ -111,9 +111,6 @@ export default function Notification({
   const currentNotificationType =
     notificationType[notification?.body?.type as NotificationTypeKey];
 
-  console.log('currentNotificationType', currentNotificationType);
-  console.log('notificationType', notification?.body?.type);
-
   if (!currentNotificationType) {
     return null;
   }

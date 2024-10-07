@@ -205,15 +205,15 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       const results = initNotifications;
       if (results) {
         setNotifications(initNotifications);
-        const filteredNotifications = results.feed.filter(
-          (notification: INotification) =>
-            notificationPreferences[
-              notification.type as keyof typeof notificationPreferences
-            ]
-        );
-        const mergedNotifications = mergeConsecutiveNotifications(
-          filteredNotifications
-        );
+        //const filteredNotifications = results.feed.filter(
+        //  (notification: INotification) =>
+        //   notificationPreferences[
+        //     notification.type as keyof typeof notificationPreferences
+        //   ]
+        //);
+        //const mergedNotifications = mergeConsecutiveNotifications(
+        // filteredNotifications
+        //);
         //setNotifications(mergedNotifications);
       }
     } catch (err) {
