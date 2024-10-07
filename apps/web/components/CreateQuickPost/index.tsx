@@ -13,7 +13,7 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function CreateQuickPost({
   largeView = false,
 }: CreateQuickPostProps) {
-  const { pubky, createPost, createTag } = usePubkyClientContext();
+  const { pubky, createPost, createTag, setTimeline } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -36,33 +36,33 @@ export default function CreateQuickPost({
 
       if (newPost) {
         for (const tag of updatedTags) {
-          await createTag(pubky ?? '', newPost, tag);
+          await createTag(pubky ?? '', newPost?.uri, tag);
         }
 
-        // const userProfile = await getProfile();
+        const postWithFullDetails = {
+          details: {
+            content: newPost.details.content || '',
+            id: newPost.uri || '',
+            indexed_at: Date.now(),
+            author: pubky ?? '',
+            kind: newPost.details.kind || 'Short',
+            uri: newPost.uri || '',
+          },
+          counts: {
+            tags: 0,
+            replies: 0,
+            reposts: 0,
+          },
+          tags: updatedTags,
+          relationships: {
+            replied: null,
+            reposted: null,
+            mentioned: [],
+          },
+          bookmark: null,
+        };
 
-        // if (userProfile) {
-        //  newPost.tags = updatedTags.map((tag) => ({
-        //    tag,
-        //     count: 1,
-        //     from: [
-        //       {
-        //         id: `${pubky}`,
-        //         createdAt: Date.now(),
-        //         indexedAt: Date.now(),
-        //         author: {
-        //           id: `${pubky}`,
-        //           uri: `pubky:${pubky}`,
-        //           profile: userProfile,
-        //         },
-        //      },
-        //    ],
-        //  }));
-        //}
-        //setPosts((prev: INewPost) => ({
-        //  ...{ [newPost.id]: newPost },
-        //  ...prev,
-        // }));
+        setTimeline((prev) => [postWithFullDetails, ...prev]);
         setContent('Post created!');
         setShow(true);
       } else {

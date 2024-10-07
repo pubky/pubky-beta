@@ -9,11 +9,8 @@ import { usePostStream } from '@/hooks/usePost';
 
 export default function Index() {
   const { layout } = useFilterContext();
-  const { pubky } = usePubkyClientContext();
-  const { data, isLoading } = usePostStream(pubky, 0, 5);
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
-  const loader = useRef(null);
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
 
@@ -88,12 +85,7 @@ export default function Index() {
           )} flex-col inline-flex gap-3`}
         >
           <Components.CreateQuickPost largeView={layout === 'wide'} />
-          {data &&
-            data?.length > 0 &&
-            data.map((post) => (
-              <Components.Post key={post.details.id} post={post} />
-            ))}
-          {isLoading && <Components.Skeleton.Simple />}
+          <Timeline />
         </Components.PostsLayout>
         {layout !== 'wide' && (
           <Components.Sidebar className="hidden xl:block">
@@ -117,7 +109,72 @@ export default function Index() {
         </div>
       </Menu.Root>
       <Components.CreatePost />
-      <div ref={loader} />
     </Content.Main>
   );
+}
+
+const Timeline = () => {
+  const limit = 10;
+  const [skip, setSkip] = useState(0);
+
+  const { pubky, setTimeline, timeline } = usePubkyClientContext();
+  const { data, isLoading, error } = usePostStream(
+    pubky,
+    skip,
+    limit,
+    'timeline'
+  );
+
+  useEffect(() => {
+    if (!isLoading && data) {
+      if (skip === 0) {
+        setTimeline(data);
+        return;
+      }
+      setTimeline((prevTimeline) => [...prevTimeline, ...data]);
+    }
+  }, [data, isLoading]);
+
+  const fetchMorePosts = () => {
+    if (error) return;
+
+    setSkip((prevSkip) => prevSkip + limit);
+  };
+
+  const loader = useInfiniteScroll(fetchMorePosts, isLoading);
+
+  return (
+    <div className="flex-col inline-flex gap-3">
+      {timeline &&
+        timeline.map((post) => (
+          <Components.Post key={post.details.id} post={post} />
+        ))}
+      {isLoading && <Components.Skeleton.Simple />}
+      <div ref={loader} />
+    </div>
+  );
+};
+
+function useInfiniteScroll(fetchPosts: () => void, isLoading: boolean) {
+  const loader = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isLoading) {
+          fetchPosts();
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => observer.disconnect();
+  }, [fetchPosts, isLoading]);
+
+  return loader;
 }
