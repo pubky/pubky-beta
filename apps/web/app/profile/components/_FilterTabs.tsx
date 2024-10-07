@@ -112,7 +112,9 @@ export default function FilterTabs({
   const getTabNumber = (key: string) => {
     switch (key) {
       case 'notifications':
-        return notifications.length;
+        return notifications?.length;
+      case 'bookmarks':
+        return 0;
       case 'posts':
         return countPosts || 0;
       case 'followers':

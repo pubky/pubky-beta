@@ -220,7 +220,7 @@ export default function Contact({
                     <div className="flex-col justify-center items-start inline-flex">
                       <Typography.Body variant="medium-bold">
                         {contact?.details.name &&
-                          Utils.minifyText(contact?.details?.name, 8)}
+                          Utils.minifyText(contact?.details?.name, 20)}
                       </Typography.Body>
                       <Typography.Label className="text-opacity-30 -mt-1">
                         {contact?.details?.id &&
