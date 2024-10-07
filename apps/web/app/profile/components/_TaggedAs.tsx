@@ -47,11 +47,8 @@ export default function TaggedAs({
         const allImages = await Promise.all(
           profileTags.map(async (tag) => {
             const images = await Promise.all(
-              tag?.tagged?.map(async (fromItem) => {
-                const profile = await getUserProfile(
-                  fromItem?.tagger_id,
-                  pubky ?? ''
-                );
+              tag?.taggers?.map(async (fromItem) => {
+                const profile = await getUserProfile(fromItem, pubky ?? '');
                 return profile?.details?.image;
               }) ?? []
             );
@@ -93,8 +90,8 @@ export default function TaggedAs({
           {profileTags && profileTags.length > 0 ? (
             <>
               {profileTags.map((tag, index) => {
-                const isTagFound = tag?.tagged?.some(
-                  (fromItem) => fromItem?.tagger_id === pubky
+                const isTagFound = tag?.taggers?.some(
+                  (fromItem) => fromItem === pubky
                 );
 
                 const images = taggedImages[index] || [];
@@ -135,7 +132,7 @@ export default function TaggedAs({
                           variant="bold"
                           className="text-opacity-30"
                         >
-                          {tag?.tagged?.length}
+                          {tag?.taggers_count}
                         </Typography.Caption>
                       </div>
                     </PostUtil.Tag>

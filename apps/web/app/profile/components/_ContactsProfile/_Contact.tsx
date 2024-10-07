@@ -230,8 +230,8 @@ export default function Contact({
                   </Link>
                   <div className="lg:flex justify-end gap-2 items-center lg:w-full">
                     {contact?.tags?.slice(0, 3).map((tag, index) => {
-                      const isTagFound = tag?.tagged?.some(
-                        (fromItem) => fromItem?.tagger_id === pubky
+                      const isTagFound = tag?.taggers?.some(
+                        (fromItem) => fromItem === pubky
                       );
 
                       return (
@@ -260,7 +260,7 @@ export default function Contact({
                               variant="bold"
                               className="text-opacity-30"
                             >
-                              {tag?.tagged?.length}
+                              {tag?.taggers_count}
                             </Typography.Caption>
                           </div>
                         </PostUtil.Tag>

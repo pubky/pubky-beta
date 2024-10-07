@@ -24,6 +24,7 @@ export default function Sidebar({
   );
   if (isError) console.error(isError);
   const profile = data;
+  console.log("profile", profile);
   const { data: initFollowers } = UseUserStreamFollowers(
     usePubky ?? '',
     pubky ?? ''

@@ -43,8 +43,8 @@ export default function TaggedSection({
           {profileTags.length > 0 ? (
             <>
               {profileTags.map((tag, index) => {
-                const isTagFound = tag?.tagged?.some(
-                  (fromItem) => fromItem.tagger_id === pubky
+                const isTagFound = tag?.taggers?.some(
+                  (fromItem) => fromItem === pubky
                 );
 
                 return (
@@ -76,15 +76,15 @@ export default function TaggedSection({
                     >
                       <div className="flex gap-2 items-center">
                         {Utils.minifyText(tag?.label.replace(' ', ''), 20)}
-                        <Typography.Caption
+                        {/**<Typography.Caption
                           variant="bold"
                           className="text-opacity-30"
                         >
-                          {tag?.tagged?.length}
-                        </Typography.Caption>
+                          {tag?.taggers_count}
+                        </Typography.Caption>*/}
                       </div>
                     </PostUtil.Tag>
-                    {/**</div></TooltipUI.Root>*/}
+                    {/**</TooltipUI.Root>*/}
                     <Button.Action
                       variant="custom"
                       size="small"
@@ -93,7 +93,7 @@ export default function TaggedSection({
                       className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                     />
                     <PostUtil.Counter className="w-full">
-                      {tag?.tagged?.length}
+                      {tag?.taggers_count}
                     </PostUtil.Counter>
                   </div>
                 );

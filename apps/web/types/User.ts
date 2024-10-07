@@ -25,7 +25,8 @@ export interface UserLink {
 
 export interface UserTags {
   label: string;
-  tagged: Tag[];
+  taggers: string[];
+  taggers_count: number;
 }
 
 export interface UserView {
