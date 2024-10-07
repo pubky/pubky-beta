@@ -67,6 +67,7 @@ export async function getUserFollowers(
 
 export async function getUserStreamFollowers(
   userId: string,
+  viewerId: string,
   skip?: number,
   limit?: number,
   stream_type?: string
@@ -74,6 +75,7 @@ export async function getUserStreamFollowers(
   const queryParams = new URLSearchParams({ userId });
 
   stream_type = stream_type ?? 'Followers';
+  queryParams.append('viewer_id', String(viewerId));
 
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
@@ -96,6 +98,7 @@ export async function getUserStreamFollowers(
 
 export async function getUserStreamFollowing(
   userId: string,
+  viewerId: string,
   skip?: number,
   limit?: number,
   stream_type?: string
@@ -103,6 +106,7 @@ export async function getUserStreamFollowing(
   const queryParams = new URLSearchParams({ userId });
 
   stream_type = stream_type ?? 'Following';
+  queryParams.append('viewer_id', String(viewerId));
 
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
@@ -125,6 +129,7 @@ export async function getUserStreamFollowing(
 
 export async function getUserStreamFriends(
   userId: string,
+  viewerId: string,
   skip?: number,
   limit?: number,
   stream_type?: string
@@ -132,6 +137,7 @@ export async function getUserStreamFriends(
   const queryParams = new URLSearchParams({ userId });
 
   stream_type = stream_type ?? 'Friends';
+  queryParams.append('viewer_id', String(viewerId));
 
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));

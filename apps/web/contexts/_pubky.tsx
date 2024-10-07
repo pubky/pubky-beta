@@ -19,6 +19,7 @@ import {
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
+import { TStatus } from '@/types';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -66,6 +67,7 @@ type PubkyClientContextType = {
   deleteTagProfile: (profileId: string, tagId: string) => Promise<boolean>;
   getRecoveryFile: (password: string) => Promise<any | null>;
   storeProfile: (userProfile: UserDetails) => Promise<boolean>;
+  updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -312,6 +314,38 @@ export function PubkyClientWrapper({
     } catch (error) {
       console.log(error);
       return false;
+    }
+  };
+
+  const updateStatus = async (value: TStatus | string) => {
+    try {
+      if (!pubky) throw new Error('Pubky required');
+      if (!profile) throw new Error('Profile required');
+
+      const updatedProfile = {
+        ...profile,
+        status: value,
+      };
+
+      // Transform the profile to the PubkyAppUser format
+      const pubkeyProfile: PubkyAppUser = toPubkeyProfile(updatedProfile);
+
+      // Save the profile in storage
+      Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
+      setProfile(pubkeyProfile);
+
+      // Serialize to JSON and convert to Buffer
+      const body = Buffer.from(JSON.stringify(pubkeyProfile));
+
+      // Profile URL (fixed address)
+      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
+
+      // Send the profile to the homeserver
+      await client.put(profileUrl, body);
+
+      return pubkeyProfile;
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -784,6 +818,7 @@ export function PubkyClientWrapper({
         deleteTagProfile,
         getRecoveryFile,
         storeProfile,
+        updateStatus,
       }}
     >
       {children}

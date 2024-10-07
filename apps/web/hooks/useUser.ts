@@ -48,37 +48,57 @@ export function UseUserFollowers(
 
 export function UseUserStreamFollowers(
   userId: string,
+  viewerId: string,
   skip?: number,
   limit?: number,
   stream_type?: string
 ) {
   return useQuery({
-    queryKey: ['userStreamFollowers', userId, skip, limit, stream_type],
-    queryFn: () => getUserStreamFollowers(userId, skip, limit, stream_type),
+    queryKey: [
+      'userStreamFollowers',
+      userId,
+      viewerId,
+      skip,
+      limit,
+      stream_type,
+    ],
+    queryFn: () =>
+      getUserStreamFollowers(userId, viewerId, skip, limit, stream_type),
   });
 }
 
 export function UseUserStreamFollowing(
   userId: string,
+  viewerId: string,
   skip?: number,
   limit?: number,
   stream_type?: string
 ) {
   return useQuery({
-    queryKey: ['userStreamFollowing', userId, skip, limit, stream_type],
-    queryFn: () => getUserStreamFollowing(userId, skip, limit, stream_type),
+    queryKey: [
+      'userStreamFollowing',
+      userId,
+      viewerId,
+      skip,
+      limit,
+      stream_type,
+    ],
+    queryFn: () =>
+      getUserStreamFollowing(userId, viewerId, skip, limit, stream_type),
   });
 }
 
 export function UseUserStreamFriends(
   userId: string,
+  viewerId: string,
   skip?: number,
   limit?: number,
   stream_type?: string
 ) {
   return useQuery({
-    queryKey: ['userStreamFriends', userId, skip, limit, stream_type],
-    queryFn: () => getUserStreamFriends(userId, skip, limit, stream_type),
+    queryKey: ['userStreamFriends', userId, viewerId, skip, limit, stream_type],
+    queryFn: () =>
+      getUserStreamFriends(userId, viewerId, skip, limit, stream_type),
   });
 }
 

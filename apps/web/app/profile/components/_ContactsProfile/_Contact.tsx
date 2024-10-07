@@ -197,7 +197,10 @@ export default function Contact({
       {contacts &&
         contacts.map((contact) => {
           const pubkeyUser = pubky && contact?.details?.id.includes(pubky);
-          const isFollowed = followed[contact?.details?.id] || false;
+          const isFollowed =
+            followed[contact?.details?.id] ||
+            contact?.relationship?.following ||
+            false;
 
           return (
             <div key={contact?.details?.id} className="w-full">
@@ -227,7 +230,7 @@ export default function Contact({
                   </Link>
                   <div className="lg:flex justify-end gap-2 items-center lg:w-full">
                     {contact?.tags?.slice(0, 3).map((tag, index) => {
-                      const isTagFound = tag.tagged.some(
+                      const isTagFound = tag?.tagged?.some(
                         (fromItem) => fromItem?.tagger_id === pubky
                       );
 
