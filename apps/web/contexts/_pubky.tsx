@@ -12,6 +12,7 @@ import {
 import { Utils } from '@social/utils-shared';
 import {
   PostKind,
+  PostView,
   PubkyAppFile,
   PubkyAppPost,
   PubkyAppUser,
@@ -69,6 +70,8 @@ type PubkyClientContextType = {
   getRecoveryFile: (password: string) => Promise<any | null>;
   storeProfile: (userProfile: UserDetails) => Promise<boolean>;
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
+  timeline: PostView[] | undefined;
+  setTimeline: (timeline: PostView[] | undefined) => void;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -87,6 +90,7 @@ export function PubkyClientWrapper({
   const [profile, setProfile] = useState<PubkyAppUser | undefined>(
     (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined
   );
+  const [timeline, setTimeline] = useState<PostView[] | undefined>([]);
 
   const logout = () => {
     try {
@@ -111,13 +115,10 @@ export function PubkyClientWrapper({
   };
 
   const isLoggedIn = async () => {
-    if (!pubky) return false;
-
-    const session = await client.session(PublicKey.from(pubky));
-
-    if (!session) {
+    if (!pubky) {
       Utils.storage.remove('pubky_public_key');
       setPubky(undefined);
+
       return false;
     }
 
@@ -835,6 +836,8 @@ export function PubkyClientWrapper({
         getRecoveryFile,
         storeProfile,
         updateStatus,
+        setTimeline,
+        timeline,
       }}
     >
       {children}
