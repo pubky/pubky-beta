@@ -148,10 +148,6 @@ const Timeline = () => {
 
   return (
     <div className="flex-col inline-flex gap-3">
-      {timeline &&
-        timeline.map((post) => (
-          <Components.Post key={post.details.id} post={post} />
-        ))}
       {timeline && timeline?.length > 0
         ? timeline.map((post) => (
             <Components.Post
