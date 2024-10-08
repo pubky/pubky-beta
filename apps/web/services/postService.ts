@@ -71,7 +71,9 @@ export async function getPostStream(
   viewerId?: string,
   skip?: number,
   limit?: number,
-  sorting?: string
+  sorting?: string,
+  reach?: 'Following' | 'Friends' | 'Followers' | 'All',
+  tags?: string[]
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
 
@@ -87,8 +89,24 @@ export async function getPostStream(
   if (sorting) {
     queryParams.append('sorting', String(sorting));
   }
+  if (reach && reach !== 'All') {
+    queryParams.append('reach', String(reach));
+  }
+  //if (tags) {
+  //  queryParams.append('tags', String(tags));
+  //}
 
-  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
+  let response;
+
+  if (tags && tags?.length > 0) {
+    response = await fetch(
+      `${BASE_URL}/stream/posts/tag/${tags}?${queryParams}`
+    );
+  } else if (reach && reach !== 'All') {
+    response = await fetch(`${BASE_URL}/stream/posts/reach?${queryParams}`);
+  } else {
+    response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
+  }
 
   if (!response.ok) throw new Error('Failed to fetch post stream');
 

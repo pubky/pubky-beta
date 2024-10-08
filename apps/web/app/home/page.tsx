@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Content, Menu } from '@social/ui-shared';
+import { Content, Menu, Typography } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
@@ -70,7 +70,7 @@ export default function Index() {
               )}`}
             >
               <Filter.Reach />
-              <Filter.Sort />
+              <Filter.Sort disabled />
             </div>
             <div ref={filterContentRef}>
               <Filter.Layout />
@@ -117,12 +117,14 @@ const Timeline = () => {
   const limit = 10;
   const [skip, setSkip] = useState(0);
 
+  const { reach, layout } = useFilterContext();
   const { pubky, setTimeline, timeline } = usePubkyClientContext();
-  const { data, isLoading, error } = usePostStream(
+  const { data, isLoading, isError } = usePostStream(
     pubky,
     skip,
     limit,
-    'timeline'
+    'timeline',
+    reach
   );
 
   useEffect(() => {
@@ -136,7 +138,7 @@ const Timeline = () => {
   }, [data, isLoading]);
 
   const fetchMorePosts = () => {
-    if (error) return;
+    if (isError) return;
 
     setSkip((prevSkip) => prevSkip + limit);
   };
@@ -145,11 +147,23 @@ const Timeline = () => {
 
   return (
     <div className="flex-col inline-flex gap-3">
-      {timeline &&
-        timeline.map((post) => (
-          <Components.Post key={post.details.id} post={post} />
-        ))}
-      {isLoading && <Components.Skeleton.Simple />}
+      {timeline && timeline?.length > 0
+        ? timeline.map((post) => (
+            <Components.Post
+              key={post.details.id}
+              post={post}
+              largeView={layout === 'wide'}
+              line={Boolean(post?.relationships?.replied)}
+            />
+          ))
+        : !isLoading && (
+            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+              <Typography.H2 className="font-normal text-opacity-50">
+                No posts
+              </Typography.H2>
+            </div>
+          )}
+      {isLoading && !isError && <Components.Skeleton.Simple />}
       <div ref={loader} />
     </div>
   );

@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import { Icon, Modal, Typography } from '@social/ui-shared';
-import { IFileContent } from '@/types';
 import Image from 'next/image';
+import { FileContent } from '@/types/Post';
 
 interface FilesCarouselProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  fileContents: IFileContent[];
+  fileContents: FileContent[];
   currentFileIndex: number;
   setCurrentFileIndex: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -51,7 +51,7 @@ export default function FilesCarousel({
   }, [modalRef, setShowModal]);
 
   const currentFile = fileContents[currentFileIndex];
-  const isVideo = currentFile.contentType.startsWith('video');
+  const isVideo = currentFile.content_type.startsWith('video');
 
   return (
     <Modal.Root

@@ -99,10 +99,9 @@ export default function Tags({ post, largeView = false }: PostProps) {
         />
         {!largeView &&
           tags.map((tagObj, index) => {
-            const isTagFound = tagObj?.taggers.some(
+            const isTagFound = tagObj?.taggers?.some(
               (fromItem) => fromItem === pubky
             );
-
             return (
               <PostUI.Footer key={index}>
                 <TooltipUI.Root

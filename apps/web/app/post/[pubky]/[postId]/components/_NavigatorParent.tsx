@@ -1,18 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components';
-import { IPost, IReply } from '@/types';
 import { Content } from '@social/ui-shared';
 import Skeletons from '@/components/Skeletons';
+import { getPost } from '@/services/postService';
+import { usePubkyClientContext } from '@/contexts';
+import { PostView } from '@/types/Post';
 
 interface NavigatorParentProps {
   [uri: string]: {
-    post: IPost | null;
+    post: PostView | null;
     loading: boolean;
   };
 }
 
-export default function NavigatorParent({ replies }: { replies: IReply }) {
-  //const { getPost } = useClientContext();
+export default function NavigatorParent({
+  parentPost,
+}: {
+  parentPost: string;
+}) {
+  const { pubky } = usePubkyClientContext();
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
   const [parentURIs, setParentURIs] = useState<string[]>([]);
   const [parentPosts, setParentPosts] = useState<NavigatorParentProps>({});
 
@@ -24,10 +32,18 @@ export default function NavigatorParent({ replies }: { replies: IReply }) {
       if (!parentURI) return collectedURIs;
       collectedURIs.push(parentURI);
       try {
-        // const parentPost = null; //await getPost(parentURI);
-        // if (parentPost && parentPost.post && parentPost.post.parent) {
-        //   return await fetchParentURIs(parentPost.post.parent, collectedURIs);
-        // }
+        const match = parentURI.match(regex);
+        if (match) {
+          const authorId = match && match[1];
+          const postId = match && match[2];
+          const parentPost = await getPost(authorId, postId, pubky ?? '');
+          if (parentPost?.relationships?.replied) {
+            return await fetchParentURIs(
+              parentPost?.relationships?.replied,
+              collectedURIs
+            );
+          }
+        }
       } catch (error) {
         console.error('Error fetching parent post:', error);
       }
@@ -36,11 +52,8 @@ export default function NavigatorParent({ replies }: { replies: IReply }) {
 
     const fetchParentPosts = async () => {
       try {
-        if (replies?.post?.post?.parent) {
-          const parentURIList = await fetchParentURIs(
-            replies.post.post.parent,
-            []
-          );
+        if (parentPost) {
+          const parentURIList = await fetchParentURIs(parentPost, []);
           setParentURIs(parentURIList);
         }
       } catch (error) {
@@ -48,11 +61,11 @@ export default function NavigatorParent({ replies }: { replies: IReply }) {
       }
     };
 
-    if (replies) {
+    if (parentPost) {
       fetchParentPosts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [replies]);
+  }, [parentPost]);
 
   useEffect(() => {
     const fetchPost = async (parentURI: string) => {
@@ -61,11 +74,16 @@ export default function NavigatorParent({ replies }: { replies: IReply }) {
           ...prevState,
           [parentURI]: { post: null, loading: true },
         }));
-        const post = null; //await getPost(parentURI);
-        setParentPosts((prevState) => ({
-          ...prevState,
-          [parentURI]: { post: post || null, loading: false },
-        }));
+        const match = parentURI.match(regex);
+        if (match) {
+          const authorId = match && match[1];
+          const postId = match && match[2];
+          const post = await getPost(authorId, postId, pubky ?? '');
+          setParentPosts((prevState) => ({
+            ...prevState,
+            [parentURI]: { post: post || null, loading: false },
+          }));
+        }
       } catch (error) {
         console.error('Error fetching parent post:', error);
         setParentPosts((prevState) => ({
@@ -96,7 +114,7 @@ export default function NavigatorParent({ replies }: { replies: IReply }) {
       {parentURIs && parentURIs.length > 0 ? (
         <Content.StepperReplies
           className="mb-4"
-          postUri={replies.post.uri}
+          postUri={parentPost}
           urls={parentURIs.slice().reverse()}
         />
       ) : (

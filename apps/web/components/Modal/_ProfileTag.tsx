@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -15,8 +14,11 @@ import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { ImageByUri } from '../ImageByUri';
-import { UserTags } from '@/types/User';
+import { UserTags, UserView } from '@/types/User';
 import { usePubkyClientContext } from '@/contexts';
+import { UseUserStreamFollowing } from '@/hooks/useUser';
+import { getUserProfile } from '@/services/userService';
+import { PostTag } from '@/types/Post';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalProfileTag: boolean;
@@ -44,48 +46,103 @@ export default function ProfileTag({
   uriImage,
 }: ProfileTagProps) {
   const router = useRouter();
-  const { pubky } = usePubkyClientContext();
-  //const { pubky, follow, unfollow, listFollowing } = useClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
+  const { data: initFollowing } = UseUserStreamFollowing(
+    pubkyUser ?? '',
+    pubky ?? ''
+  );
   const [showEmojis, setShowEmojis] = useState(false);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
+  const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
   }>({});
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
+  const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>(
+    {}
+  );
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      const profilesMap: { [key: string]: UserView } = {};
+      const taggers = selectedTag?.taggers || [];
+
+      await Promise.all(
+        taggers.map(async (user) => {
+          try {
+            const profile = await getUserProfile(user, pubky ?? '');
+            profilesMap[user] = profile;
+          } catch (error) {
+            console.error(`Error ${user}`, error);
+          }
+        })
+      );
+      setUserProfiles(profilesMap);
+    };
+
+    fetchProfiles();
+  }, [selectedTag, pubky]);
+
+  const fetchProfileImages = async (tag: PostTag) => {
+    const images = await Promise.all(
+      tag.taggers.map(async (fromItem) => {
+        const profile = await getUserProfile(fromItem, pubky ?? '');
+        return profile?.details?.image || '/images/Userpic.png';
+      })
+    );
+    return images;
+  };
+
+  // Fetch images for all tags
+  useEffect(() => {
+    const fetchAllImages = async () => {
+      const imagesMap: { [label: string]: string[] } = {};
+      await Promise.all(
+        profileTags.map(async (tag) => {
+          const images = await fetchProfileImages(tag);
+          imagesMap[tag.label] = images.slice(0, 4);
+        })
+      );
+      setTagImages(imagesMap);
+    };
+
+    if (profileTags.length > 0) {
+      fetchAllImages();
+    }
+  }, [profileTags]);
 
   useEffect(() => {
     async function fetchFollowing() {
       try {
         if (!pubky) return;
 
-        // const following = null; //await listFollowing(pubky);
+        const following = initFollowing;
 
-        // if (following) {
-        //   const followingIds = following.following.map((user) =>
-        //     user.uri.replace('pubky:', '')
-        //   );
+        if (following) {
+          const followingIds = following?.map((user) =>
+            user?.details?.id?.replace('pubky:', '')
+          );
 
-        //   const matchedFollowedIds = profileTags
-        //     .flatMap((tag) => tag.tagged)
-        //     .filter((profile) => followingIds.includes(profile.tagger_id));
-
-        //   if (matchedFollowedIds.length > 0) {
-        //     setInitLoadingFollowers(false);
-        //     matchedFollowedIds.forEach((followed) => {
-        //       setFollowedUser((prevState) => ({
-        //         ...prevState,
-        //         [followed.tagger_id]: true,
-        //       }));
-        //     });
-        //   } else {
-        //     setInitLoadingFollowers(false);
-        //   }
-        // }
+          const matchedFollowedIds = profileTags
+            .flatMap((tag) => tag?.taggers)
+            .filter((profile) => followingIds.includes(profile));
+          if (matchedFollowedIds.length > 0) {
+            setInitLoadingFollowers(false);
+            matchedFollowedIds.forEach((followed) => {
+              setFollowedUser((prevState) => ({
+                ...prevState,
+                [followed]: true,
+              }));
+            });
+          } else {
+            setInitLoadingFollowers(false);
+          }
+        }
       } catch (error) {
         console.log(error);
       }
@@ -103,12 +160,12 @@ export default function ProfileTag({
         [pubkyFollow]: true,
       }));
 
-      // const result = null; // await follow(pubkyFollow);
+      const result = await follow(pubkyFollow);
 
-      // setFollowedUser((prevState) => ({
-      //   ...prevState,
-      //   [pubkyFollow]: result,
-      // }));
+      setFollowedUser((prevState) => ({
+        ...prevState,
+        [pubkyFollow]: result,
+      }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
@@ -128,7 +185,7 @@ export default function ProfileTag({
         [pubkyUnfollow]: true,
       }));
 
-      const result = null; //await unfollow(pubkyUnfollow);
+      const result = await unfollow(pubkyUnfollow);
 
       setFollowedUser((prevState) => ({
         ...prevState,
@@ -276,12 +333,11 @@ export default function ProfileTag({
                         (fromItem) => fromItem === pubky
                       );
 
-                      // const images = tag.tagged.map(
-                      //   (fromItem) => fromItem.tagger_id.image
-                      // );
-                      // const displayedImages = images.slice(0, 4);
-                      // const extraImagesCount =
-                      //   images.length - displayedImages.length;
+                      const displayedImages = tagImages[tag.label] || [];
+                      const extraImagesCount =
+                        displayedImages.length > 4
+                          ? displayedImages.length - 4
+                          : 0;
 
                       return (
                         <div className="flex gap-2" key={index}>
@@ -322,7 +378,7 @@ export default function ProfileTag({
                             }
                             className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                           />
-                          {/* <div
+                          <div
                             onClick={() =>
                               setSelectedTag && setSelectedTag(tag)
                             }
@@ -353,7 +409,7 @@ export default function ProfileTag({
                               className="-ml-2"
                               size="small"
                             />
-                          </div> */}
+                          </div>
                         </div>
                       );
                     })}

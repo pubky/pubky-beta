@@ -70,7 +70,7 @@ export default function Header({
         </TooltipUI.Root>
       </div>
       <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
-        {Utils.timeAgo(post?.details.indexed_at)}
+        {Utils.timeAgo(post?.details?.indexed_at)}
       </PostUI.Time>
     </PostUI.Header>
   );

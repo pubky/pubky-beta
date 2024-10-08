@@ -53,7 +53,6 @@ export default function ProtectedRoutes({
       if (loggedIn && pubky && !profile) {
         try {
           const user = await getUserProfile(pubky, pubky);
-          console.log('user', user);
           storeProfile(user.details);
         } catch (error) {
           console.error('Error getting profile', error);

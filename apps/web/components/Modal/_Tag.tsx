@@ -45,9 +45,8 @@ export default function Tag({
   const router = useRouter();
   const modalTagRef = useRef<HTMLDivElement>(null);
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  //const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const [tag, setTag] = useState('');
-  const { data: initFollowing } = UseUserStreamFollowing(
+  const { data: initFollowing, isError } = UseUserStreamFollowing(
     post?.details?.author,
     pubky ?? ''
   );
@@ -90,8 +89,12 @@ export default function Tag({
   const fetchProfileImages = async (tag: PostTag) => {
     const images = await Promise.all(
       tag.taggers.map(async (fromItem) => {
-        const profile = await getUserProfile(fromItem, pubky ?? '');
-        return profile?.details?.image || '/images/Userpic.png';
+        try {
+          const profile = await getUserProfile(fromItem, pubky ?? '');
+          return profile?.details?.image || '/images/Userpic.png';
+        } catch (error) {
+          return '/images/Userpic.png';
+        }
       })
     );
     return images;
@@ -120,9 +123,14 @@ export default function Tag({
       try {
         if (!pubky) return;
 
-        const following = initFollowing;
+        if (isError) {
+          setInitLoadingFollowers(false);
+          return;
+        }
 
-        if (following) {
+        const following = initFollowing as UserView[];
+
+        if (following && following.length > 0) {
           const followingIds = following?.map((user) =>
             user?.details?.id.replace('pubky:', '')
           );
@@ -402,11 +410,9 @@ export default function Tag({
                               />
                             ))}
                             {extraImagesCount > 0 && (
-                              <>
-                                <PostUtil.Counter className="-ml-2">
-                                  +{extraImagesCount}
-                                </PostUtil.Counter>
-                              </>
+                              <PostUtil.Counter className="-ml-2">
+                                +{extraImagesCount}
+                              </PostUtil.Counter>
                             )}
                             <Button.Action
                               variant="custom"

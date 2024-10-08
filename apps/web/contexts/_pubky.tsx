@@ -72,6 +72,8 @@ type PubkyClientContextType = {
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
   timeline: PostView[] | undefined;
   setTimeline: (timeline: PostView[] | undefined) => void;
+  setSearchTags: (value: string[]) => any;
+  searchTags: string[];
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -91,6 +93,7 @@ export function PubkyClientWrapper({
     (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined
   );
   const [timeline, setTimeline] = useState<PostView[] | undefined>([]);
+  const [searchTags, setSearchTags] = useState<string[]>([]);
 
   const logout = () => {
     try {
@@ -214,7 +217,7 @@ export function PubkyClientWrapper({
         const fileBody = Buffer.from(JSON.stringify(newFile));
 
         // File URL
-        const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
+        const fileUrl = `pubky://${pk}/pub/pubky.app/files/${fileId}`;
 
         // Send the file to the homeserver
         await client.put(fileUrl, fileBody);
@@ -507,8 +510,6 @@ export function PubkyClientWrapper({
       // Send the post to the homeserver
       await client.put(repostUrl, repostBody);
 
-      console.log(repostUrl);
-
       return repostUrl;
     } catch (error) {
       console.error('Error creating post:', error);
@@ -572,8 +573,6 @@ export function PubkyClientWrapper({
 
       await client.put(replyUrl, replyBody);
 
-      console.log(`Successfully replied: ${replyUrl}`);
-
       return replyUrl;
     } catch (error) {
       console.error('Error while replying to post:', error);
@@ -598,7 +597,6 @@ export function PubkyClientWrapper({
 
       await client.put(followUrl, followDataBody);
 
-      console.log(`Successfully followed user with ID: ${user_id}`);
       return true;
     } catch (error) {
       console.error('Error while following the user:', error);
@@ -618,7 +616,6 @@ export function PubkyClientWrapper({
 
       await client.delete(followUrl);
 
-      console.log(`Successfully unfollowed user with ID: ${user_id}`);
       return true;
     } catch (error) {
       console.error('Error while unfollowing the user:', error);
@@ -647,7 +644,6 @@ export function PubkyClientWrapper({
 
       await client.put(bookmarkUrl, bookmarkDataBody);
 
-      console.log(`Successfully bookmarked post with ID: ${bookmarkId}`);
       return true;
     } catch (error) {
       console.error('Error while bookmarking the post:', error);
@@ -666,7 +662,6 @@ export function PubkyClientWrapper({
 
       await client.delete(bookmarkUrl);
 
-      console.log(`Successfully unbookmarked post with ID: ${bookmarkId}`);
       return true;
     } catch (error) {
       console.error('Error while unbookmarking the post:', error);
@@ -704,7 +699,6 @@ export function PubkyClientWrapper({
 
       await client.put(tagUrl, tagBody);
 
-      console.log(`Tag successfully added ${tagId}: ${tagUrl}`);
       return true;
     } catch (error) {
       console.error('Error creating tag:', error);
@@ -722,7 +716,6 @@ export function PubkyClientWrapper({
 
       await client.delete(tagUrl);
 
-      console.log(`Tag successfully deleted ${id}: ${tagUrl}`);
       return true;
     } catch (error) {
       console.error('Error creating tag:', error);
@@ -759,7 +752,6 @@ export function PubkyClientWrapper({
 
       await client.put(tagUrl, tagBody);
 
-      console.log(`Tag successfully added ${tagId}: ${tagUrl}`);
       return true;
     } catch (error) {
       console.error('Error creating tag:', error);
@@ -781,7 +773,6 @@ export function PubkyClientWrapper({
 
       await client.delete(tagUrl);
 
-      console.log(`Tag successfully deleted ${profileId}: ${tagUrl}`);
       return true;
     } catch (error) {
       console.error('Error creating tag:', error);
@@ -836,6 +827,8 @@ export function PubkyClientWrapper({
         updateStatus,
         setTimeline,
         timeline,
+        setSearchTags,
+        searchTags,
       }}
     >
       {children}

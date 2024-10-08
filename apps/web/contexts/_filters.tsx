@@ -53,7 +53,7 @@ const FilterContext = createContext<FilterContextType>({
   setLayout: () => {},
   sort: 'recent',
   setSort: () => {},
-  reach: 'all',
+  reach: 'All',
   setReach: () => {},
   hotTagsReach: 'all',
   setHotTagsReach: () => {},
@@ -78,7 +78,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     (Utils.storage.get('sort') as TSort) || 'recent'
   );
   const [reach, setReach] = useState<TReach>(
-    (Utils.storage.get('reach') as TReach) || 'all'
+    (Utils.storage.get('reach') as TReach) || ''
   );
   const [hotTagsReach, setHotTagsReach] = useState<THotTagsReach>(
     (Utils.storage.get('hotTagsReach') as THotTagsReach) || 'all'

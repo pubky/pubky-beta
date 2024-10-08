@@ -3,18 +3,22 @@ import { useFilterContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { TReach } from '@/types';
 
-export default function Reach() {
+interface ReachProps {
+  disabled?: boolean;
+}
+
+export default function Reach({ disabled = false }: ReachProps) {
   const { reach, setReach } = useFilterContext();
   const [loading, setLoading] = useState(true);
 
   const icons = {
-    all: <Icon.Broadcast />,
-    following: <Icon.UsersRight />,
-    friends: <Icon.Smiley />,
+    All: <Icon.Broadcast />,
+    Following: <Icon.UsersRight />,
+    Friends: <Icon.Smiley />,
   };
 
   useEffect(() => {
-    setReach(reach ? reach : 'all');
+    setReach(reach ? reach : 'All');
     setLoading(false);
   }, [reach, setReach]);
 
@@ -32,7 +36,8 @@ export default function Reach() {
           value={key}
           selected={loading ? false : reach === key}
           icon={icon}
-          onClick={() => handleItemClick(key as TReach)}
+          onClick={!disabled ? () => handleItemClick(key as TReach) : undefined}
+          disabled={disabled}
         />
       ))}
     </div>

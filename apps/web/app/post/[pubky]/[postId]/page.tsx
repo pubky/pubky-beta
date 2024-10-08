@@ -123,10 +123,7 @@ export default function Index({
     content = (
       <>
         {data?.relationships?.replied && (
-          <Link href={Utils.encodePostUri2(data?.relationships?.replied)}>
-            <Typography.Body>Go to root</Typography.Body>
-          </Link>
-          //<Post.NavigatorParent replies={replies} />
+          <Post.NavigatorParent parentPost={data?.relationships?.replied} />
         )}
 
         {isLoading ? (

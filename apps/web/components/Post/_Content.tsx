@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
-import { IFileContent } from '@/types';
 import { Utils } from '@social/utils-shared';
 import getYouTubeID from 'get-youtube-id';
 import LinkPreview from 'libs/ui-shared/src/lib/Post/_Preview';
@@ -12,7 +10,8 @@ import FilesCarousel from '../Modal/_FilesCarousel';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
-import { PostView } from '@/types/Post';
+import { FileContent, PostView } from '@/types/Post';
+import { getFile } from '@/services/fileService';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -27,16 +26,15 @@ export default function Content({
   largeView = false,
   children,
 }: PostProps) {
-  //const { getFile } = useClientContext();
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
-  const [fileContents, setFileContents] = useState<IFileContent[]>([]);
+  const [fileContents, setFileContents] = useState<FileContent[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const text = post?.details?.content;
-  const files = null; // post?.post?.files;
+  const files = post?.files;
   const uri = post?.details?.uri;
 
   function checkForLink(text: string) {
@@ -81,24 +79,24 @@ export default function Content({
     }
   }, [text]);
 
-  // useEffect(() => {
-  //   const fetchFiles = async () => {
-  //     if (files) {
-  //       const fileUris = Object.values(files).map((file) => file.fileUri);
-  //       const fetchedFiles = await Promise.all(
-  //         fileUris.map(async (fileUri) => {
-  //           const fetchedFile = null; // await getFile(fileUri);
-  //           return fetchedFile ? fetchedFile : null;
-  //         })
-  //       );
-  //       setFileContents(
-  //         fetchedFiles.filter((file) => file !== null) as IFileContent[]
-  //       );
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchFiles = async () => {
+      if (files) {
+        const fileUris = Object.values(files).map((file) => file);
+        const fetchedFiles = await Promise.all(
+          fileUris.map(async (fileUri) => {
+            const fetchedFile = await getFile(fileUri.uri);
+            return fetchedFile ? fetchedFile : null;
+          })
+        );
+        setFileContents(
+          fetchedFiles.filter((file) => file !== null) as FileContent[]
+        );
+      }
+    };
 
-  //   fetchFiles();
-  // }, [files]);
+    fetchFiles();
+  }, [files]);
 
   const openModal = (index: number) => {
     setCurrentFileIndex(index);
@@ -162,9 +160,9 @@ export default function Content({
             }`}
           >
             {fileContents.map((file, index) => {
-              const isVideo = file.contentType.startsWith('video');
-              const isImage = file.contentType.startsWith('image');
-              const isPDF = file.contentType === 'application/pdf';
+              const isVideo = file?.content_type.startsWith('video');
+              const isImage = file?.content_type.startsWith('image');
+              const isPDF = file?.content_type === 'application/pdf';
 
               return (
                 <div

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Icon, Modal } from '@social/ui-shared';
 import { useRef, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
