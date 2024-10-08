@@ -30,7 +30,7 @@ export default function Actions({
     repost?.details?.author ?? '',
     pubky ?? ''
   );
-  const { addBookmark, deleteBookmark } = usePubkyClientContext();
+  const { addBookmark, deleteBookmark, createRepost } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
@@ -48,7 +48,12 @@ export default function Actions({
   };
 
   const handleRepost = async () => {
-    const result = null; //await createRepost(post.uri);
+    const result = await createRepost(
+      post?.details?.id,
+      post?.details?.author,
+      '',
+      'Short'
+    );
     if (result) {
       setContent('Repost created!');
       setShow(true);

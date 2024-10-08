@@ -122,7 +122,15 @@ export default function Post({
                         <>
                           {/** Show reposted post*/}
 
-                          <PostUI.MainCard className="mt-4">
+                          <PostUI.MainCard
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              router.push(
+                                Utils.encodePostUri(repostedPost?.details?.uri)
+                              );
+                            }}
+                            className="mt-4"
+                          >
                             <Header post={repostedPost} />
                             {line && (
                               <div
@@ -164,10 +172,7 @@ export default function Post({
                 </PostUI.MainCard>
               ) : (
                 <>
-                  <PostUI.RepostCard
-                    className="relative z-10 hover:z-50"
-                    onClick={(event) => event.stopPropagation()}
-                  >
+                  <PostUI.RepostCard className="relative z-10 hover:z-50">
                     <div className="flex gap-2 items-center">
                       <Button.Action
                         className="bg-black bg-opacity-100 hover:bg-opacity-100 cursor-default"
@@ -182,9 +187,10 @@ export default function Post({
                       >
                         <PostUI.Username
                           className="text-[13px] text-opacity-80"
-                          onClick={() =>
-                            router.push(`/profile/${post?.details?.author}`)
-                          }
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            router.push(`/profile/${post?.details?.author}`);
+                          }}
                         >
                           <span className="cursor-pointer hover:underline hover:decoration-solid">
                             {data?.details?.name &&
@@ -202,7 +208,7 @@ export default function Post({
                           <Typography.Body
                             variant="small-bold"
                             className="cursor-default text-[13px] text-red-500 text-opacity-50 underline decoration-solid"
-                            onClick={handleDeletePost}
+                            //onClick={handleDeletePost}
                           >
                             Undo repost
                           </Typography.Body>
@@ -217,10 +223,16 @@ export default function Post({
                       {/**Show reposted post */}
                       <PostUI.MainCard
                         className={twMerge(
-                          //'rounded-tl-none rounded-tr-none',
+                          'rounded-tl-none rounded-tr-none',
                           largeView && 'p-12 inline-flex flex-row gap-12',
                           rest.className
                         )}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          router.push(
+                            Utils.encodePostUri(repostedPost?.details?.uri)
+                          );
+                        }}
                       >
                         <div className="flex-col justify-between inline-flex">
                           <Header post={repostedPost} largeView={largeView} />
