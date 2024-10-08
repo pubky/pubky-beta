@@ -114,7 +114,7 @@ export default function FilterTabs({
       case 'notifications':
         return notifications?.length;
       case 'bookmarks':
-        return 0;
+        return profile?.counts?.bookmarks;
       case 'posts':
         return countPosts || 0;
       case 'followers':

@@ -1,10 +1,23 @@
-import { IFileContent } from '.';
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PostCounts {
   replies: number;
   reposts: number;
   tags: number;
+}
+
+export interface FileContent {
+  content_type: string;
+  created_at: number;
+  id: string;
+  indexed_at: number;
+  name: string;
+  owner_id: string;
+  size: number;
+  src: string;
+  uri: string;
+  urls: {
+    main: string;
+  };
 }
 
 export interface PostDetails {
@@ -22,7 +35,7 @@ export interface PostView {
   tags: PostTag[];
   relationships?: PostRelationships;
   bookmark?: Bookmark;
-  files: IFileContent[];
+  files: FileContent[];
 }
 
 export interface PostRelationships {

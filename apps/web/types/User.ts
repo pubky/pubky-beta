@@ -1,5 +1,4 @@
 import { TStatus } from '.';
-import { PostView } from './Post';
 
 export interface UserCounts {
   followers: number;
@@ -7,6 +6,7 @@ export interface UserCounts {
   friends: number;
   posts: number;
   tags: number;
+  bookmarks: number;
 }
 
 export interface UserDetails {
@@ -55,7 +55,7 @@ interface BodyNotification {
   embed_uri?: string;
   repost_uri?: string;
   mentioned_by?: string;
-  delete_type?: any;
+  delete_type?: string;
   deleted_by?: string;
   deleted_uri?: string;
   linked_uri?: string;

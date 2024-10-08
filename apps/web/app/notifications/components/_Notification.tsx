@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Utils } from '@social/utils-shared';
 import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
-import { INotification } from '@/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ImageByUri } from '@/components/ImageByUri';

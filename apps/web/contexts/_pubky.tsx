@@ -72,6 +72,8 @@ type PubkyClientContextType = {
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
   timeline: PostView[] | undefined;
   setTimeline: (timeline: PostView[] | undefined) => void;
+  setSearchTags: (value: string[]) => any;
+  searchTags: string[];
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -91,6 +93,7 @@ export function PubkyClientWrapper({
     (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined
   );
   const [timeline, setTimeline] = useState<PostView[] | undefined>([]);
+  const [searchTags, setSearchTags] = useState<string[]>([]);
 
   const logout = () => {
     try {
@@ -214,7 +217,7 @@ export function PubkyClientWrapper({
         const fileBody = Buffer.from(JSON.stringify(newFile));
 
         // File URL
-        const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
+        const fileUrl = `pubky://${pk}/pub/pubky.app/files/${fileId}`;
 
         // Send the file to the homeserver
         await client.put(fileUrl, fileBody);
@@ -836,6 +839,8 @@ export function PubkyClientWrapper({
         updateStatus,
         setTimeline,
         timeline,
+        setSearchTags,
+        searchTags,
       }}
     >
       {children}

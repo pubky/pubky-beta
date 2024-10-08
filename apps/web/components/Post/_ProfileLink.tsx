@@ -1,19 +1,23 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
+import { usePubkyClientContext } from '@/contexts';
+import { getUserProfile } from '@/services/userService';
 import React, { useState, useEffect } from 'react';
 
 function ProfileLink({ pk }: { pk: string }) {
-  //const { getUserIndexed } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
       if (pkMatch) {
-        // const pkFound = pkMatch[0];
-        // const result = null; //await getUserIndexed(pkFound.replace('pk:', '').trim());
-        // if (result) setUserName(result?.profile?.name);
+        const pkFound = pkMatch[0];
+        const result = await getUserProfile(
+          pkFound.replace('pk:', '').trim(),
+          pubky ?? ''
+        );
+        if (result) setUserName(result?.details?.name);
       }
     };
     fetchUser();
@@ -24,7 +28,7 @@ function ProfileLink({ pk }: { pk: string }) {
 
   return (
     <>
-      <a className="text-white break-all" href={`/profile/${pkPart}`}>
+      <a className="text-[#C8FF00] break-all" href={`/profile/${pkPart}`}>
         {userName ? `@${userName}` : 'Loading...'}
       </a>
       {remainingPart}

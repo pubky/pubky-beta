@@ -7,7 +7,7 @@ import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
 import { Section } from './Section';
 import { UserView } from '@/types/User';
-import UsernameSearch from './Section/_UsernameSearch';
+import { searchUsersByUsername } from '@/services/userService';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -49,7 +49,7 @@ export default function CreateContent({
   setArrayTags,
   children,
 }: CreateContentProps) {
-  const { pubky, profile } = usePubkyClientContext();
+  const { profile } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
@@ -62,7 +62,17 @@ export default function CreateContent({
     null
   );
 
-  const searchUsername = (content: string) => {
+  const searchProfiles = async (text: string) => {
+    try {
+      const result = await searchUsersByUsername(text);
+      return result || [];
+    } catch (error) {
+      console.error('Error searching profiles:', error);
+      return [];
+    }
+  };
+
+  const searchUsername = async (content: string) => {
     const pkMatches = content.match(/(pk:[^\s]+)/g);
     const atMatches = content.match(/(@[^\s]+)/g);
 
@@ -73,29 +83,19 @@ export default function CreateContent({
       return;
     }
 
-    setSearchedUsers([]);
-    searchQueries.forEach((query) => {
+    let results: UserView[] = [];
+
+    for (const query of searchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        <UsernameSearch
-          key={username}
-          query={username}
-          pubky={pubky ?? ''}
-          onResults={(results) =>
-            setSearchedUsers((prev) => [...prev, ...results])
-          }
-        />;
+        const searchResult = await searchUsersByUsername(username);
+        results = [...results, ...(searchResult || [])];
       } else if (query.startsWith('pk:')) {
-        <UsernameSearch
-          key={query}
-          query={query}
-          pubky={pubky ?? ''}
-          onResults={(results) =>
-            setSearchedUsers((prev) => [...prev, ...results])
-          }
-        />;
+        const searchResult = await searchProfiles(query);
+        results = [...results, ...(searchResult || [])];
       }
-    });
+    }
+    setSearchedUsers(results.length > 0 ? results : []);
   };
 
   useEffect(() => {
@@ -232,7 +232,7 @@ export default function CreateContent({
       } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
     >
       <Section.UserArea
-        uriPic={(profile?.image as string) ?? ''}
+        uriPic={(profile?.image as string) ?? '/images/Userpic.png'}
         name={profile?.name ?? 'Loading...'}
         largeView={largeView}
       />

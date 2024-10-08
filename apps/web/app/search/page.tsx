@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { Suspense, useEffect, useRef, useState } from 'react';
@@ -16,93 +15,101 @@ import {
   Sidebar,
   WhoFollow,
 } from '@/components';
-import { useFilterContext } from '@/contexts';
-// import { IPost } from '@/types';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { Filter } from '@/components/Filter';
 import Skeletons from '@/components/Skeletons';
+import { usePostStream } from '@/hooks/usePost';
 
 const SearchContent = () => {
-  // const router = useRouter();
-  // const searchParams = useSearchParams();
-  const { layout, reach, sort } = useFilterContext();
-  //const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } = useClientContext();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { layout } = useFilterContext();
+  const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
+  const { data, isLoading, isError } = usePostStream(
+    pubky,
+    0,
+    5,
+    'timeline',
+    'All',
+    searchTags
+  );
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [cursor, setCursor] = useState('');
+  //const [cursor, setCursor] = useState('');
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
   const loader = useRef(null);
-  // const tagMessage =
-  //   searchTags.length > 1
-  //     ? 'with these tags:'
-  //     : searchTags.length === 1
-  //     ? 'with this tag:'
-  //     : '';
-
-  const tagMessage = '';
+  const tagMessage =
+    searchTags.length > 1
+      ? 'with these tags:'
+      : searchTags.length === 1
+      ? 'with this tag:'
+      : '';
 
   // const fetchData = async (pointer: string, searchTags: string[]) => {
-  //   setLoading(true);
+  //  setLoading(true);
 
-  //   if (searchTags.length === 0) {
-  //     setLoading(false);
-  //     return;
-  //   }
+  //  if (searchTags.length === 0) {
+  //    setLoading(false);
+  //    return;
+  // }
 
-  //   const results = await listGlobalPosts(pointer, reach, sort, searchTags);
+  // const results = posts; //await listGlobalPosts(pointer, reach, sort, searchTags);
 
-  //   if (results && results.feed) {
-  //     if (cursor) {
-  //       setPosts((prev: IPost[]) => [...prev, ...results.feed]);
-  //     } else {
-  //       setPosts(results.feed);
-  //     }
-  //     setCursor(results.cursor);
-  //     setLoading(false);
-  //   }
-  // };
+  //if (results && results.feed) {
+  //  if (cursor) {
+  //    setPosts((prev: IPost[]) => [...prev, ...results.feed]);
+  //  } else {
+  //    setPosts(results.feed);
+  //  }
+  //  setCursor(results.cursor);
+  //  setLoading(false);
+  //}
+  //};
 
-  // useEffect(() => {
-  //   const observer = new IntersectionObserver(
-  //     (entries) => {
-  //       if (entries[0].isIntersecting && cursor) {
-  //         fetchData(cursor, searchTags);
-  //       }
-  //     },
-  //     { threshold: 1 }
-  //   );
-  //   if (loader.current) {
-  //     observer.observe(loader.current);
-  //   }
-  //   return () => observer.disconnect();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [cursor]);
+  {
+    /**useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && cursor) {
+          fetchData(cursor, searchTags);
+        }
+      },
+      { threshold: 1 }
+    );
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cursor]);
+  */
+  }
 
-  // useEffect(() => {
-  //   setPosts([]);
-  //   fetchData('', searchTags);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [reach, sort, searchTags]);
+  //useEffect(() => {
+  // //setPosts([]);
+  //  fetchData('', searchTags);
+  //  // eslint-disable-next-line react-hooks/exhaustive-deps
+  //}, [reach, sort, searchTags]);
 
-  // useEffect(() => {
-  //   const search = searchParams.get('tags');
+  useEffect(() => {
+    const search = searchParams.get('tags');
 
-  //   if (search) {
-  //     const tagsArray = search.split(',');
-  //     setSearchTags(tagsArray);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [searchParams]);
+    if (search) {
+      const tagsArray = search.split(',');
+      setSearchTags(tagsArray);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
-  // useEffect(() => {
-  //   const searchTagsString = searchTags.join(',');
-  //   const searchUrl = searchTagsString
-  //     ? `/search?tags=${searchTagsString}`
-  //     : '/search';
-  //   router.replace(searchUrl);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [searchTags]);
+  useEffect(() => {
+    const searchTagsString = searchTags.join(',');
+    const searchUrl = searchTagsString
+      ? `/search?tags=${searchTagsString}`
+      : '/search';
+    router.replace(searchUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTags]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -160,8 +167,8 @@ const SearchContent = () => {
                 isFilterContentVisible
               )}`}
             >
-              <Filter.Reach />
-              <Filter.Sort />
+              <Filter.Reach disabled />
+              <Filter.Sort disabled />
             </div>
             <div ref={filterContentRef}>
               <Filter.Layout />
@@ -174,30 +181,24 @@ const SearchContent = () => {
             layout
           )} flex-col inline-flex gap-3`}
         >
-          {/* {Object.keys(posts).map((key, index) => (
-            <Post
-              key={`${index}-${posts[key].id}`}
-              post={posts[key]}
-              largeView={layout === 'wide'}
-              layout={layout}
-            />
-          ))}
-          {Object.keys(posts).length === 0 && !loading && (
-            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-              <Typography.H2 className="font-normal text-opacity-50">
-                No posts {tagMessage}
-              </Typography.H2>
-              <Typography.H2 className="font-normal">
-                {searchTags.map((searchTag, index) => (
-                  <span key={`tag-${searchTag}`}>
-                    {searchTag}
-                    {index !== searchTags.length - 1 && ', '}
-                  </span>
-                ))}
-              </Typography.H2>
-            </div>
-          )} */}
-          {loading && <Skeletons.Simple />}
+          {data && data?.length > 0
+            ? data.map((post) => <Post key={post.details.id} post={post} />)
+            : !isLoading && (
+                <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+                  <Typography.H2 className="font-normal text-opacity-50">
+                    No posts {tagMessage}
+                  </Typography.H2>
+                  <Typography.H2 className="font-normal">
+                    {searchTags.map((searchTag, index) => (
+                      <span key={`tag-${searchTag}`}>
+                        {searchTag}
+                        {index !== searchTags.length - 1 && ', '}
+                      </span>
+                    ))}
+                  </Typography.H2>
+                </div>
+              )}
+          {isLoading && !isError && <Skeletons.Simple />}
         </PostsLayout>
         {layout !== 'wide' && (
           <Sidebar className="hidden 2xl:block">
