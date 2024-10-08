@@ -201,14 +201,20 @@ export function PubkyClientWrapper({
       if (userProfile.image instanceof File) {
         const file = userProfile.image;
         const fileContent = await file.arrayBuffer();
-        const fileBase64 = Buffer.from(fileContent).toString('base64');
+        //const fileBase64 = Buffer.from(fileContent).toString('base64');
+
+        const blobId = generateTimestampId().toUpperCase();
+        const blobUrl = `pubky://${pk}/pub/pubky.app/blobs/${blobId}`;
+        const blobBody = Buffer.from(JSON.stringify(fileContent));
+
+        await client.put(blobUrl, blobBody);
 
         // Create the PubkyAppFile object
         const fileId = generateTimestampId().toUpperCase();
         const newFile: PubkyAppFile = {
           name: file.name,
           created_at: Date.now(),
-          src: `data:${file.type};base64,${fileBase64}`,
+          src: blobUrl,
           content_type: file.type,
           size: file.size,
         };
@@ -219,17 +225,21 @@ export function PubkyClientWrapper({
         // File URL
         const fileUrl = `pubky://${pk}/pub/pubky.app/files/${fileId}`;
 
+        console.log('fileUrl', fileUrl);
+
         // Send the file to the homeserver
         await client.put(fileUrl, fileBody);
 
         // Store the file URI
-        const fileUri = `/pub/pubky.app/files/${fileId}`;
+        //const fileUri = `/pub/pubky.app/files/${fileId}`;
 
-        userProfile.image = fileUri;
+        userProfile.image = fileId;
       }
 
       // Transform the profile to the PubkyAppUser format
       const pubkeyProfile: PubkyAppUser = toPubkeyProfile(userProfile);
+
+      console.log('userProfile', pubkeyProfile);
 
       // Save the profile in storage
       Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
