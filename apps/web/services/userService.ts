@@ -72,7 +72,7 @@ export async function getUserStreamFollowers(
   limit?: number,
   stream_type?: string
 ): Promise<UserView[]> {
-  const queryParams = new URLSearchParams({ userId });
+  const queryParams = new URLSearchParams({ user_id: userId });
 
   stream_type = stream_type ?? 'Followers';
   queryParams.append('viewer_id', String(viewerId));

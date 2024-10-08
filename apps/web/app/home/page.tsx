@@ -127,7 +127,6 @@ const Timeline = () => {
     reach
   );
 
-  console.log('data', data);
   useEffect(() => {
     if (!isLoading && data) {
       if (skip === 0) {

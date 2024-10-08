@@ -107,7 +107,6 @@ export async function getPostStream(
   } else {
     response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
   }
-  console.log('response', response.url);
 
   if (!response.ok) throw new Error('Failed to fetch post stream');
 
