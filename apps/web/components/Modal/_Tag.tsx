@@ -45,7 +45,6 @@ export default function Tag({
   const router = useRouter();
   const modalTagRef = useRef<HTMLDivElement>(null);
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  //const { pubky, follow, unfollow, listFollowing } = useClientContext();
   const [tag, setTag] = useState('');
   const { data: initFollowing } = UseUserStreamFollowing(
     post?.details?.author,
