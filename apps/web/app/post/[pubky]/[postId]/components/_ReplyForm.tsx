@@ -56,6 +56,7 @@ export default function ReplyForm({
       setArrayTags([]);
       setSelectedFiles([]);
       updatePost();
+      setTextArea(false);
     }
   };
 
