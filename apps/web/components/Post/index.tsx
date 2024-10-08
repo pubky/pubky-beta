@@ -23,6 +23,7 @@ import TagsLargeView from './_TagsLargeView';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import { getPost } from '@/services/postService';
+import { Skeleton } from '..';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -52,6 +53,7 @@ export default function Post({
   const { data } = useUserProfile(post?.details.author, pubky ?? '');
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [repostedPost, setRepostedPost] = useState<PostView>();
+  const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
   const router = useRouter();
   const lineBaseCSS = `absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS =
@@ -83,8 +85,10 @@ export default function Post({
 
           const result = await getPost(authorId, postId, pubky ?? '');
           setRepostedPost(result);
+          setLoadingRepostedPost(false);
         } else {
           console.error('URI reposted not valid');
+          setLoadingRepostedPost(false);
         }
       }
     }
@@ -118,7 +122,9 @@ export default function Post({
                         post={post}
                         fullContent={fullContent}
                       />
-                      {post?.relationships?.reposted && repostedPost ? (
+                      {loadingRepostedPost ? (
+                        <Skeleton.Simple />
+                      ) : post?.relationships?.reposted && repostedPost ? (
                         <>
                           {/** Show reposted post*/}
 
@@ -218,7 +224,9 @@ export default function Post({
                       {Utils.timeAgo(post?.details?.indexed_at)}
                     </PostUI.Time>
                   </PostUI.RepostCard>
-                  {post?.relationships?.reposted && repostedPost ? (
+                  {loadingRepostedPost ? (
+                    <Skeleton.Simple />
+                  ) : post?.relationships?.reposted && repostedPost ? (
                     <>
                       {/**Show reposted post */}
                       <PostUI.MainCard
