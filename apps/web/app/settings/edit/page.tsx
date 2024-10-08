@@ -225,6 +225,7 @@ export default function Index() {
         bio,
         image,
         links: linksObject,
+        status: profile?.status,
       });
 
       // if (
