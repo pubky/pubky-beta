@@ -17,7 +17,6 @@ import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag, PostView } from '@/types/Post';
 import { usePubkyClientContext } from '@/contexts';
-import Image from 'next/image';
 import { getUserProfile } from '@/services/userService';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -258,60 +257,24 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   onClick={() => router.push(`/search?tags=${tagObj?.label}`)}
                   className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                 />
-
-                <div
-                  onClick={() => setShowModalTag(true)}
-                  className="cursor-pointer flex items-center"
-                >
-                  {displayedImages.map((image, imageIndex) => (
-                    <ImageByUri
-                      width={32}
-                      height={32}
-                      key={index}
-                      className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                        imageIndex > 0 && '-ml-2'
-                      }`}
-                      alt={`tag-${imageIndex + 1}`}
-                      uri={image}
-                    />
-                  ))}
-                  {extraImagesCount > 0 && (
-                    <PostUtil.Counter className="-ml-2">
-                      +{extraImagesCount}
-                    </PostUtil.Counter>
-                  )}
-                </div>
               </div>
-              <Button.Action
-                variant="custom"
-                size="small"
-                icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  isTagFound
-                    ? handleDeleteTag(tagObj?.label)
-                    : handleAddTag(tagObj?.label);
-                }}
-              />
-              <PostUtil.Counter>
-                {Number(tagObj?.taggers_count)}
-              </PostUtil.Counter>
-              {tagObj?.taggers
-                ?.slice(0, 5)
-                .map((fromItem, fromIndex: number) => {
-                  return (
-                    <Image
-                      width={32}
-                      height={32}
-                      alt={`pic-${fromIndex + 1}`}
-                      key={fromIndex}
-                      className={`w-[32px] h-[32px] rounded-full ${
-                        fromIndex !== 0 ? '-ml-5' : ''
-                      }`}
-                      src={profileImages[fromItem] || '/images/Userpic.png'}
-                    />
-                  );
-                })}
+              {displayedImages.map((image, imageIndex) => (
+                <ImageByUri
+                  width={32}
+                  height={32}
+                  key={index}
+                  className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                    imageIndex > 0 && '-ml-2'
+                  }`}
+                  alt={`tag-${imageIndex + 1}`}
+                  uri={image}
+                />
+              ))}
+              {extraImagesCount > 0 && (
+                <PostUtil.Counter className="-ml-2">
+                  +{extraImagesCount}
+                </PostUtil.Counter>
+              )}
             </PostUI.Footer>
           );
         })}

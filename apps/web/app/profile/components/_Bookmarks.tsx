@@ -64,7 +64,7 @@ export default function Bookmarks() {
         results?.length > 0 &&
         results.map((post) => <Post key={post.details.id} post={post} />)}
       {isLoading && <Skeleton.Simple />}
-      {results?.length === 0 && !isLoading && (
+      {(!results || results?.length === 0) && !isLoading && (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
           <Typography.H2 className="font-normal text-opacity-50">
             No bookmarks yet.
