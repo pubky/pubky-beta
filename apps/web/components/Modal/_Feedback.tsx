@@ -59,7 +59,7 @@ export default function Feedback({
       show={showModal}
       closeModal={() => setShowModal(false)}
       modalRef={modalRef}
-      className="w-[792px] max-h-[600] overflow-y-auto"
+      className="md:w-[792px] max-h-[600] overflow-y-auto"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       {!sent && !error && (

@@ -14,7 +14,7 @@ import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { ImageByUri } from '../ImageByUri';
-import { UserTags, UserView } from '@/types/User';
+import { UserTags } from '@/types/User';
 import { usePubkyClientContext } from '@/contexts';
 import { UseUserStreamFollowing } from '@/hooks/useUser';
 import { getUserProfile } from '@/services/userService';
@@ -62,31 +62,7 @@ export default function ProfileTag({
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
-  const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>(
-    {}
-  );
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      const profilesMap: { [key: string]: UserView } = {};
-      const taggers = selectedTag?.taggers || [];
-
-      await Promise.all(
-        taggers.map(async (user) => {
-          try {
-            const profile = await getUserProfile(user, pubky ?? '');
-            profilesMap[user] = profile;
-          } catch (error) {
-            console.error(`Error ${user}`, error);
-          }
-        })
-      );
-      setUserProfiles(profilesMap);
-    };
-
-    fetchProfiles();
-  }, [selectedTag, pubky]);
 
   const fetchProfileImages = async (tag: PostTag) => {
     const images = await Promise.all(
@@ -248,7 +224,7 @@ export default function ProfileTag({
       closeModal={() => {
         setShowModalProfileTag(false);
       }}
-      className="w-[792px]"
+      className="md:w-[792px]"
     >
       <Modal.CloseAction
         onClick={() => {

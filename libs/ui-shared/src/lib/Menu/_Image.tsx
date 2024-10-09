@@ -2,6 +2,7 @@ import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index'
 import Image from 'next/image';
 
 import { twMerge } from 'tailwind-merge';
+import { PostUtil } from '../PostUtil';
 // import { PostUtil } from '../PostUtil';
 
 type Image = {
@@ -23,12 +24,11 @@ export const ImageMenu = ({
 }: Image) => {
   return (
     <div className="w-[48px]">
-      {/* {notifications && (
-        <PostUtil.Counter
-          className="absolute text-center top-6 right-6 bg-black bg-opacity-60 border-white border-opacity-100"
-          counter={notifications}
-        />
-      )} */}
+      {notifications && (
+        <PostUtil.Counter className="absolute text-center top-6 right-6 bg-black bg-opacity-60 border-white border-opacity-100">
+          {notifications}
+        </PostUtil.Counter>
+      )}
       <ImageByUri
         {...rest}
         width={48}

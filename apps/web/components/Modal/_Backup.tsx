@@ -40,7 +40,7 @@ export default function Backup({
         setShowWords(false);
       }}
       modalRef={modalBackupRef}
-      className="max-w-[792px]"
+      className="md:max-w-[792px]"
     >
       <Modal.CloseAction
         onClick={() => {

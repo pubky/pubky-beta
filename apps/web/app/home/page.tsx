@@ -90,7 +90,7 @@ export default function Index() {
         {layout !== 'wide' && (
           <Components.Sidebar className="hidden xl:block">
             <Components.WhoFollow />
-            <Components.Pioneers />
+            <Components.Influencers />
             <Components.HotTags />
             <Components.Feedback />
           </Components.Sidebar>

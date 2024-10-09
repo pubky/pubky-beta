@@ -34,7 +34,7 @@ export default function Index() {
             {pubky ? (
               <Typography.H2
                 id="onboarding-pubky"
-                className="text-[31px] font-light"
+                className="break-all lg:text-[31px] font-light"
                 variant="light"
               >
                 pk:{pubky}
@@ -58,7 +58,7 @@ export default function Index() {
         <Button.Large
           id="onboarding-copy-pubky-btn"
           icon={<Icon.Clipboard />}
-          className="w-[250px]"
+          className="w-[250px] hidden md:flex"
           variant="secondary"
           onClick={() => {
             setContent(`pk:${pubky}`, 'pubky');

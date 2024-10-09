@@ -165,13 +165,16 @@ export default function RemindBackup() {
           <Typography.H1 className="text-[#05050a] text-4xl">
             Back up your account
           </Typography.H1>
-          <div className="w-full flex justify-between gap-4">
-            <Typography.Body className="w-full text-[#05050a]" variant="medium">
+          <div className="w-full md:flex justify-between gap-4">
+            <Typography.Body
+              className="w-full text-[#05050a] mb-4 md:mb-0"
+              variant="medium"
+            >
               Time to back up your account.
               <br /> Without a backup you lose your account if you close your
               browser!
             </Typography.Body>
-            <div className="w-full flex gap-6 justify-end">
+            <div className="w-full flex gap-6 md:justify-end">
               <Button.Large
                 onClick={RemindMe}
                 variant="secondary"
