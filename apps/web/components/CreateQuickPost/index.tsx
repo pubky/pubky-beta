@@ -13,7 +13,8 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function CreateQuickPost({
   largeView = false,
 }: CreateQuickPostProps) {
-  const { pubky, createPost, createTag, setTimeline } = usePubkyClientContext();
+  const { pubky, createPost, createTag, setTimeline, timeline } =
+    usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -53,16 +54,26 @@ export default function CreateQuickPost({
             replies: 0,
             reposts: 0,
           },
-          tags: updatedTags,
+          tags: updatedTags.map((tag) => ({
+            name: tag,
+            label: tag,
+            taggers: [],
+            taggers_count: 0,
+          })), // Ensure tags are of type PostTag[]
           relationships: {
-            replied: null,
-            reposted: null,
+            replied: undefined,
+            reposted: undefined,
             mentioned: [],
           },
-          bookmark: null,
+          bookmark: undefined,
+          files: [],
         };
 
-        setTimeline((prev) => [postWithFullDetails, ...prev]);
+        if (!timeline) return;
+
+        const timelineCopy = [postWithFullDetails, ...timeline];
+
+        setTimeline(timelineCopy);
         setContent('Post created!');
         setShow(true);
       } else {

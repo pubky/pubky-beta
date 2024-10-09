@@ -22,6 +22,7 @@ export default function CreatePost({
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [isValidContent, setIsValidContent] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
   const handleSubmit = async (content: string) => {
     if (sendingPost) {
       return;
@@ -36,7 +37,7 @@ export default function CreatePost({
 
       if (newPost) {
         for (const tag of updatedTags) {
-          await createTag(pubky ?? '', newPost, tag);
+          await createTag(pubky ?? '', newPost.uri, tag);
         }
 
         setContent('Post created!');

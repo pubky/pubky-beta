@@ -37,6 +37,11 @@ const nextConfig = {
       },
     ],
   },
+  cleanDistDir: false,
+  webpack: (config) => {
+    config.experiments.asyncWebAssembly = true;
+    return config;
+  },
   async redirects() {
     return [
       {

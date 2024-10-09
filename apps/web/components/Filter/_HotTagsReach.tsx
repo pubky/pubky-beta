@@ -1,7 +1,7 @@
 import { Icon, SideCard } from '@social/ui-shared';
 import { useFilterContext } from '@/contexts';
 import { useEffect, useState } from 'react';
-import { TReach } from '@/types';
+import { THotTagsReach } from '@/types';
 
 export default function HotTagsReach() {
   const { hotTagsReach, setHotTagsReach } = useFilterContext();
@@ -18,7 +18,7 @@ export default function HotTagsReach() {
     setLoading(false);
   }, [hotTagsReach, setHotTagsReach]);
 
-  const handleItemClick = (value: TReach) => {
+  const handleItemClick = (value: THotTagsReach) => {
     setHotTagsReach(value);
   };
 
@@ -32,7 +32,7 @@ export default function HotTagsReach() {
           value={key}
           selected={loading ? false : hotTagsReach === key}
           icon={icon}
-          onClick={() => handleItemClick(key as TReach)}
+          onClick={() => handleItemClick(key as THotTagsReach)}
         />
       ))}
     </div>

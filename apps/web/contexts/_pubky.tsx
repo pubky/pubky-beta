@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import {
   PubkyClient,
   PublicKey,
@@ -71,7 +70,7 @@ type PubkyClientContextType = {
   storeProfile: (userProfile: UserDetails) => Promise<boolean>;
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
   timeline: PostView[] | undefined;
-  setTimeline: (timeline: PostView[] | undefined) => void;
+  setTimeline: (timeline: PostView[]) => void;
   setSearchTags: (value: string[]) => any;
   searchTags: string[];
 };
@@ -83,6 +82,7 @@ export function PubkyClientWrapper({
 }: {
   children: React.ReactNode;
 }) {
+  const [wasmLoaded, setWasmLoaded] = useState(false);
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined
   );
@@ -92,8 +92,26 @@ export function PubkyClientWrapper({
   const [profile, setProfile] = useState<PubkyAppUser | undefined>(
     (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined
   );
-  const [timeline, setTimeline] = useState<PostView[] | undefined>([]);
+  const [timeline, setTimeline] = useState<PostView[]>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Certifique-se de que o código está sendo executado no lado do cliente
+    if (typeof window !== 'undefined') {
+      import('base32.js')
+        .then((module) => {
+          // Você pode usar o módulo importado aqui
+          setWasmLoaded(true);
+        })
+        .catch((error) => {
+          console.error('Erro ao carregar o módulo base32.js:', error);
+        });
+    }
+  }, []);
+
+  if (!wasmLoaded) {
+    return <div>Loading...</div>;
+  }
 
   const logout = () => {
     try {

@@ -9,22 +9,22 @@ export default function Reach() {
   const { reach, setReach } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
-    following: <Icon.UsersRight />,
-    followers: <Icon.UsersLeft />,
-    friends: <Icon.Smiley />,
-    all: <Icon.Broadcast />,
-    loading: <Icon.LoadingSpin className="animate-spin" />,
+    Following: <Icon.UsersRight />,
+    Followers: <Icon.UsersLeft />,
+    Friends: <Icon.Smiley />,
+    All: <Icon.Broadcast />,
+    Loading: <Icon.LoadingSpin className="animate-spin" />,
   };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: reach ? reach : 'all',
-    iconOption: icons.loading,
+    iconOption: icons.Loading,
   });
 
   useEffect(() => {
     setDropdownValue({
       value: reach ? reach : 'all',
-      iconOption: reach ? icons[reach] : icons.all,
+      iconOption: reach ? icons[reach] : icons.All,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -45,42 +45,42 @@ export default function Reach() {
         <DropDownUI.Item
           label="Following"
           value="following"
-          selected={reach === 'following'}
+          selected={reach === 'Following'}
           icon={<Icon.UsersRight />}
           onClick={() => {
             setDropdownValue({
-              value: 'following',
+              value: 'Following',
               iconOption: <Icon.UsersRight />,
             });
-            setReach('following');
+            setReach('Following');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="Friends"
           value="friends"
-          selected={reach === 'friends'}
+          selected={reach === 'Friends'}
           icon={<Icon.Smiley />}
           onClick={() => {
             setDropdownValue({
-              value: 'friends',
+              value: 'Friends',
               iconOption: <Icon.Smiley />,
             });
-            setReach('friends');
+            setReach('Friends');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="All"
           value="all"
-          selected={reach === 'all'}
+          selected={reach === 'All'}
           icon={<Icon.Broadcast />}
           onClick={() => {
             setDropdownValue({
-              value: 'all',
+              value: 'All',
               iconOption: <Icon.Broadcast />,
             });
-            setReach('all');
+            setReach('All');
             setOpenDropdown(false);
           }}
         />

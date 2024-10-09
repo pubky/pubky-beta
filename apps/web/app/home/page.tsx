@@ -133,7 +133,12 @@ const Timeline = () => {
         setTimeline(data);
         return;
       }
-      setTimeline((prevTimeline) => [...prevTimeline, ...data]);
+
+      if (!timeline) return;
+
+      const timelineCopy = [...timeline];
+
+      setTimeline([...timelineCopy, ...data]);
     }
   }, [data, isLoading]);
 

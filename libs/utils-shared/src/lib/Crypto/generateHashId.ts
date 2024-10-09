@@ -1,9 +1,9 @@
 // @ts-ignore
 import { blake3 } from '@noble/hashes/blake3';
+// @ts-ignore
 import base32 from 'base32.js';
 
 // Function to generate a Hash ID
-// @ts-ignore
 export async function generateHashId(data: string): Promise<string> {
   // Hash the data using blake3
   const hashBytes = blake3(data, { dkLen: 32 });

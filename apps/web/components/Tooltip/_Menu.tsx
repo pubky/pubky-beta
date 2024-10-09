@@ -87,12 +87,8 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     setShowMenu(false);
   };
 
-  const handleDeleteBookmark = async (
-    postId: string,
-    postUri: string,
-    bookmarkId: string
-  ) => {
-    await deleteBookmark(postId, postUri, bookmarkId);
+  const handleDeleteBookmark = async (bookmarkId: string) => {
+    await deleteBookmark(bookmarkId);
     setShowMenu(false);
   };
 
@@ -160,11 +156,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     repost: PostView | undefined,
     post: PostView,
     handleAddBookmark: (postId: string, uri: string) => Promise<void>,
-    handleDeleteBookmark: (
-      postId: string,
-      postUri: string,
-      bookmarkId: string
-    ) => Promise<void>,
+    handleDeleteBookmark: (bookmarkId: string) => Promise<void>,
     setContentToast: (
       content: React.ReactNode,
       variant?: 'bookmark' | 'pubky' | 'link'
@@ -175,21 +167,13 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
 
     if (repost) {
       if (isBookmarked) {
-        handleDeleteBookmark(
-          repost?.details?.id,
-          repost?.details?.uri,
-          repost?.bookmark?.id ?? ''
-        );
+        handleDeleteBookmark(repost?.bookmark?.id ?? '');
       } else {
         handleAddBookmark(repost?.details?.id, repost?.details?.uri);
       }
     } else if (post) {
       if (isBookmarked) {
-        handleDeleteBookmark(
-          post?.details?.id,
-          post?.details?.uri,
-          post?.bookmark?.id ?? ''
-        );
+        handleDeleteBookmark(post?.bookmark?.id ?? '');
       } else {
         handleAddBookmark(post?.details?.id, post?.details?.uri);
       }
@@ -317,7 +301,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             </Tooltip.Item>
           )}
         </Tooltip.Main>
-        {/** 
+        {/**
         <Modal.DeletePost
           showModalDeletePost={showModalDeletePost}
           setShowModalDeletePost={setShowModalDeletePost}

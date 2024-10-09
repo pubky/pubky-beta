@@ -12,6 +12,7 @@ interface CreateRepostProps {
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
   handleRepost: () => Promise<void>;
+  modalRepostRef?: React.RefObject<HTMLDivElement>;
 }
 
 export default function Repost({
