@@ -29,6 +29,7 @@
     "react-dom": "18.2.0",
     "react-link-parser": "^1.1.6",
     "react-tweet": "^3.2.1",
+    "sharp": "^0.33.5",
     "tailwind-merge": "^2.2.1",
     "tslib": "^2.3.0",
     "zod": "^3.22.4"
