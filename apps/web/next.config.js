@@ -38,8 +38,11 @@ const nextConfig = {
     ],
   },
   cleanDistDir: false,
-  webpack: (config) => {
-    config.experiments.asyncWebAssembly = true;
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('@synonymdev/pubky');
+    }
+
     return config;
   },
   async redirects() {

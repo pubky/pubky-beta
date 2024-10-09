@@ -12,7 +12,8 @@
       "rules": {
         "@next/next/no-html-link-for-pages": "off",
         "@nx/enforce-module-boundaries": "off",
-        "react-hooks/exhaustive-deps": "off"
+        "react-hooks/exhaustive-deps": "off",
+        "@typescript-eslint/no-explicit-any": "off"
       }
     },
     {
