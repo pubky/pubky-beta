@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import { useEffect, useState } from 'react';
 import Tooltip from '../Tooltip';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import TagsLargeView from './_TagsLargeView';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
@@ -49,7 +49,7 @@ export default function Post({
   ...rest
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  //const { setContent, setShow } = useAlertContext();
   const { data } = useUserProfile(post?.details.author, pubky ?? '');
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [repostedPost, setRepostedPost] = useState<PostView>();
@@ -59,16 +59,16 @@ export default function Post({
   const lineHorizontalCSS =
     'absolute ml-[1px] w-3.5 border-t-2 border-neutral-800';
 
-  const handleDeletePost = async () => {
-    const result = null; //await deletePost(post?.id);
-    if (result) {
-      setContent('Post deleted successfully');
-      setShow(true);
-    } else {
-      setContent('Something wrong. Try again', 'warning');
-      setShow(true);
-    }
-  };
+  //const handleDeletePost = async () => {
+  //  const result = null; //await deletePost(post?.id);
+  //  if (result) {
+  //    setContent('Post deleted successfully');
+  //    setShow(true);
+  //  } else {
+  //    setContent('Something wrong. Try again', 'warning');
+  //    setShow(true);
+  //  }
+  // };
 
   const fetchRepostedPost = async () => {
     if (post?.relationships?.reposted) {

@@ -9,13 +9,7 @@ import {
   createRecoveryFile,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
-import {
-  PostKind,
-  PostView,
-  PubkyAppFile,
-  PubkyAppPost,
-  PubkyAppUser,
-} from '@/types/Post';
+import { PostKind, PostView, PubkyAppPost, PubkyAppUser } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
@@ -219,14 +213,19 @@ export function PubkyClientWrapper({
       if (userProfile.image instanceof File) {
         const file = userProfile.image;
         const fileContent = await file.arrayBuffer();
-        const fileBase64 = Buffer.from(fileContent).toString('base64');
+
+        const blobId = generateTimestampId().toUpperCase();
+        const blobUrl = `pubky://${pk}/pub/pubky.app/blobs/${blobId}`;
+        const blobBody = Buffer.from(fileContent);
+
+        await client.put(blobUrl, blobBody);
 
         // Create the PubkyAppFile object
         const fileId = generateTimestampId().toUpperCase();
-        const newFile: PubkyAppFile = {
+        const newFile = {
           name: file.name,
           created_at: Date.now(),
-          src: `data:${file.type};base64,${fileBase64}`,
+          src: blobUrl,
           content_type: file.type,
           size: file.size,
         };
@@ -241,9 +240,8 @@ export function PubkyClientWrapper({
         await client.put(fileUrl, fileBody);
 
         // Store the file URI
-        const fileUri = `/pub/pubky.app/files/${fileId}`;
 
-        userProfile.image = fileUri;
+        userProfile.image = fileUrl;
       }
 
       // Transform the profile to the PubkyAppUser format
@@ -290,14 +288,19 @@ export function PubkyClientWrapper({
       if (userProfile.image instanceof File) {
         const file = userProfile.image;
         const fileContent = await file.arrayBuffer();
-        const fileBase64 = Buffer.from(fileContent).toString('base64');
+
+        const blobId = generateTimestampId().toUpperCase();
+        const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
+        const blobBody = Buffer.from(fileContent);
+
+        await client.put(blobUrl, blobBody);
 
         // Create the PubkyAppFile object
         const fileId = generateTimestampId().toUpperCase();
-        const newFile: PubkyAppFile = {
+        const newFile = {
           name: file.name,
           created_at: Date.now(),
-          src: `data:${file.type};base64,${fileBase64}`,
+          src: blobUrl,
           content_type: file.type,
           size: file.size,
         };
@@ -312,9 +315,8 @@ export function PubkyClientWrapper({
         await client.put(fileUrl, fileBody);
 
         // Store the file URI
-        const fileUri = `/pub/pubky.app/files/${fileId}`;
 
-        userProfile.image = fileUri;
+        userProfile.image = fileUrl;
       }
 
       // Transform the profile to the PubkyAppUser format
@@ -400,14 +402,19 @@ export function PubkyClientWrapper({
         for (const file of files) {
           // Read the file content
           const fileContent = await file.arrayBuffer();
-          const fileBase64 = Buffer.from(fileContent).toString('base64');
+
+          const blobId = generateTimestampId().toUpperCase();
+          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
+          const blobBody = Buffer.from(fileContent);
+
+          await client.put(blobUrl, blobBody);
 
           // Create the PubkyAppFile object
           const fileId = generateTimestampId().toUpperCase();
-          const newFile: PubkyAppFile = {
+          const newFile = {
             name: file.name,
             created_at: Date.now(),
-            src: `data:${file.type};base64,${fileBase64}`,
+            src: blobUrl,
             content_type: file.type,
             size: file.size,
           };
@@ -422,8 +429,7 @@ export function PubkyClientWrapper({
           await client.put(fileUrl, fileBody);
 
           // Store the file URI
-          const fileUri = `/pub/pubky.app/files/${fileId}`;
-          uploadedFileUris.push(fileUri);
+          uploadedFileUris.push(fileUrl);
         }
 
         // If there are files, add to the post embed
@@ -483,14 +489,18 @@ export function PubkyClientWrapper({
         for (const file of files) {
           // Read the file content
           const fileContent = await file.arrayBuffer();
-          const fileBase64 = Buffer.from(fileContent).toString('base64');
+          const blobId = generateTimestampId().toUpperCase();
+          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
+          const blobBody = Buffer.from(fileContent);
+
+          await client.put(blobUrl, blobBody);
 
           // Create the PubkyAppFile object
           const fileId = generateTimestampId().toUpperCase();
-          const newFile: PubkyAppFile = {
+          const newFile = {
             name: file.name,
             created_at: Date.now(),
-            src: `data:${file.type};base64,${fileBase64}`,
+            src: blobUrl,
             content_type: file.type,
             size: file.size,
           };
@@ -505,8 +515,7 @@ export function PubkyClientWrapper({
           await client.put(fileUrl, fileBody);
 
           // Store the file URI
-          const fileUri = `/pub/pubky.app/files/${fileId}`;
-          uploadedFileUris.push(fileUri);
+          uploadedFileUris.push(fileUrl);
         }
 
         // If there are files, add to the post embed
@@ -557,13 +566,17 @@ export function PubkyClientWrapper({
       if (files && files.length > 0) {
         for (const file of files) {
           const fileContent = await file.arrayBuffer();
-          const fileBase64 = Buffer.from(fileContent).toString('base64');
+          const blobId = generateTimestampId().toUpperCase();
+          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
+          const blobBody = Buffer.from(fileContent);
+
+          await client.put(blobUrl, blobBody);
 
           const fileId = generateTimestampId().toUpperCase();
-          const newFile: PubkyAppFile = {
+          const newFile = {
             name: file.name,
             created_at: Date.now(),
-            src: `data:${file.type};base64,${fileBase64}`,
+            src: blobUrl,
             content_type: file.type,
             size: file.size,
           };
@@ -574,8 +587,7 @@ export function PubkyClientWrapper({
 
           await client.put(fileUrl, fileBody);
 
-          const fileUri = `/pub/pubky.app/files/${fileId}`;
-          uploadedFileUris.push(fileUri);
+          uploadedFileUris.push(fileUrl);
         }
 
         replyPost.embed = {

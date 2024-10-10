@@ -101,10 +101,7 @@ export interface IFileContent {
   id: string;
   indexedAt: number;
   metadata: Record<string, string>;
-  owner: {
-    id: string;
-    uri: string;
-  };
+  owner: string;
   size: number;
   src: string;
   uri: string;
