@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { createContext, useContext, useState } from 'react';
-import {
-  PubkyClient,
-  PublicKey,
-  decryptRecoveryFile,
-  Keypair,
-  createRecoveryFile,
-} from '@synonymdev/pubky';
-import { Utils } from '@social/utils-shared';
+import { TStatus } from '@/types';
 import {
   PostKind,
   PostView,
@@ -17,10 +9,18 @@ import {
   PubkyAppPost,
   PubkyAppUser,
 } from '@/types/Post';
-import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
+import { Utils } from '@social/utils-shared';
+import {
+  Keypair,
+  PubkyClient,
+  PublicKey,
+  createRecoveryFile,
+  decryptRecoveryFile,
+} from '@synonymdev/pubky';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
-import { TStatus } from '@/types';
+import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
+import { createContext, useContext, useState } from 'react';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -205,7 +205,9 @@ export function PubkyClientWrapper({
 
         const blobId = generateTimestampId().toUpperCase();
         const blobUrl = `pubky://${pk}/pub/pubky.app/blobs/${blobId}`;
-        const blobBody = Buffer.from(JSON.stringify(fileContent));
+        const blobBody = Buffer.from(fileContent);
+
+        console.log('file content', blobBody);
 
         await client.put(blobUrl, blobBody);
 
@@ -222,6 +224,8 @@ export function PubkyClientWrapper({
         // Serialize to JSON and convert to Buffer
         const fileBody = Buffer.from(JSON.stringify(newFile));
 
+        console.log('fileBody', newFile);
+
         // File URL
         const fileUrl = `pubky://${pk}/pub/pubky.app/files/${fileId}`;
 
@@ -231,9 +235,25 @@ export function PubkyClientWrapper({
         await client.put(fileUrl, fileBody);
 
         // Store the file URI
-        //const fileUri = `/pub/pubky.app/files/${fileId}`;
 
-        userProfile.image = fileId;
+        userProfile.image = fileUrl;
+
+
+        /* LATER ON: You'll have
+          profile = {..., image: "pubky://${pk}/pub/pubky.app/files/${fileId}"}
+          first pass profile.image to GET /v0/files/file/${encodeURIComponent("pubky://${pk}/pub/pubky.app/files/${fileId}")}
+          you get a file object like File = {id, uri, owner_id, ..., urls: {main: "xxxx"}}
+
+          "xxxx" is the relative address to file
+          to get full address ->
+            1. GET /v0/info/
+            2. response.base_file_url (you can cache this as it won't change often)
+
+          full URL: `${response.base_file_url}${"xxxx"}`
+
+          <img src=[full URL] />
+          
+        */
       }
 
       // Transform the profile to the PubkyAppUser format
