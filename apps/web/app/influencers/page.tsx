@@ -5,7 +5,7 @@ import { CreatePost, Feedback, Header, Sidebar, WhoFollow } from '@/components';
 import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
 import { usePubkyClientContext } from '@/contexts';
-import { useInfluencersUsers } from '@/hooks/useUser';
+import { useMostFollowedUsers } from '@/hooks/useUser';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { Utils } from '@social/utils-shared';
@@ -22,7 +22,7 @@ export default function Index() {
     data: influencers,
     isLoading,
     isError,
-  } = useInfluencersUsers(pubky, 0, 10);
+  } = useMostFollowedUsers(pubky, 0, 10);
   if (isError) console.error(isError);
 
   const [loadingInfluencers, setLoadingInfluencers] =
