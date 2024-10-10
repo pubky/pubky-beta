@@ -13,7 +13,6 @@ import {
 import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
-import { useUserProfile } from '@/hooks/useUser';
 import { useRouter } from 'next/navigation';
 import Modal from '../Modal';
 
@@ -24,10 +23,8 @@ interface HeaderProps {
 
 export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
-  const { setSearchTags, searchTags } = usePubkyClientContext();
+  const { setSearchTags, searchTags, profile } = usePubkyClientContext();
   const { pubky, isLoggedIn } = usePubkyClientContext();
-  const { data } = useUserProfile(pubky ?? '', pubky ?? '');
-  const profile = data;
   const { notifications } = useNotificationsContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -195,17 +192,26 @@ export default function Header({ title, className }: HeaderProps) {
             }
           />
         </Link>
-        {/**
-        <Link href="/bookmarks">
+
+        <Link href="/influencers">
           <Button.Action
-            id="header-bookmarks-btn"
+            id="header-nfluencers-btn"
             variant="menu"
-            label="Bookmarks"
-            active={title === 'Bookmarks'}
-            icon={<Icon.BookmarkSimple size="24" />}
+            label="Influencers"
+            active={title === `Influencers`}
+            className={
+              title === 'Influencers'
+                ? 'bg-opacity-100 hover:bg-opacity-100'
+                : ''
+            }
+            icon={
+              <Icon.UsersLeft
+                size="24"
+                color={title === 'Influencers' ? '#05050a' : 'white'}
+              />
+            }
           />
         </Link>
-        */}
         <Link href="/settings">
           <Button.Action
             id="header-settings-btn"
@@ -240,7 +246,7 @@ export default function Header({ title, className }: HeaderProps) {
               title === 'Profile' && 'border-2 border-white'
             } rounded-full w-[48px] h-[48px]`}
             alt="user-pic"
-            uri={profile?.details?.image}
+            uri={String(profile?.image)}
           />
         </Link>
       </div>
@@ -249,18 +255,16 @@ export default function Header({ title, className }: HeaderProps) {
           className="lg:hidden relative cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-          <Menu.ImageMenu uriImage={profile?.details?.image ?? ''} />
+          <Menu.ImageMenu
+            uriImage={String(profile?.image ?? '/images/Userpic.png')}
+          />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
               href="/profile"
-              uriImage={profile?.details?.image ?? ''}
-              username={
-                profile?.details?.name
-                  ? Utils.minifyText(profile?.details?.name)
-                  : ''
-              }
+              uriImage={String(profile?.image) ?? ''}
+              username={profile?.name ? Utils.minifyText(profile?.name) : ''}
               handler={handler}
             />
             <div className="flex-col inline-flex">
@@ -277,9 +281,9 @@ export default function Header({ title, className }: HeaderProps) {
                 counter={notifications?.length}
               />
               <Menu.Section
-                href="/bookmarks"
-                icon={<Icon.BookmarkSimple />}
-                text="Bookmarks"
+                href="/influencers"
+                icon={<Icon.UsersLeft />}
+                text="Influencers"
                 onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section

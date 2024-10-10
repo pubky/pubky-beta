@@ -1,4 +1,4 @@
-import Pioneers from './Pioneers';
+import Influencers from './Influencers';
 import CreatePost from './CreatePost';
 import CreateQuickPost from './CreateQuickPost';
 import ButtonFilters from './ButtonFiltersDrawer/Index';
@@ -18,7 +18,7 @@ import ProtectedRoutes from './ProtectedRoutes';
 import RemindBackup from './RemindBackup';
 
 export {
-  Pioneers,
+  Influencers,
   CreatePost,
   CreateQuickPost,
   ButtonFilters,

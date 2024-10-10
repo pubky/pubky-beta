@@ -77,11 +77,11 @@ export default function Handle({
         <>
           <Typography.Display
             id="profile-username-header"
-            className="text-left"
+            className="text-center md:text-left mb-4"
           >
             {Utils.minifyText(username.toString(), 15)}
           </Typography.Display>
-          <div className="-mt-4 inline-flex flex-row gap-3">
+          <div className="md:-mt-4 flex flex-col md:flex-row gap-3">
             <Buttons
               creatorPubky={creatorPubky}
               pubkey={pubkey}

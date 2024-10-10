@@ -1,7 +1,5 @@
-import Image from 'next/image';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
-import { Icon } from '../Icon';
 import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLAnchorElement> {
@@ -40,7 +38,6 @@ export const Header = ({
           <Typography.Label className="text-opacity-50">
             {handler}
           </Typography.Label>
-          <Icon.CheckCircle />
         </div>
       </div>
     </a>

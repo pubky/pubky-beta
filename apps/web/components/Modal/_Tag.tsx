@@ -258,7 +258,7 @@ export default function Tag({
         setTag('');
         setTagsError(false);
       }}
-      className="w-full w-[792px] max-h-[600px] overflow-y-auto"
+      className="w-full md:w-[792px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
         id="close-btn"

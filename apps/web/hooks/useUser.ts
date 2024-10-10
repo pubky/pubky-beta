@@ -11,7 +11,7 @@ import {
   searchUsers,
   getUserStream,
   getMostFollowedUsers,
-  getPioneerUsers,
+  getInfluencersUsers,
   getUserTags,
   searchUsersByUsername,
   getUserStreamFollowers,
@@ -161,14 +161,14 @@ export function useMostFollowedUsers(
   });
 }
 
-export function usePioneerUsers(
+export function useInfluencersUsers(
   viewerId?: string,
   skip?: number,
   limit?: number
 ) {
   return useQuery({
-    queryKey: ['pioneerUsers', viewerId, skip, limit],
-    queryFn: () => getPioneerUsers(viewerId, skip, limit),
+    queryKey: ['influencersUsers', viewerId, skip, limit],
+    queryFn: () => getInfluencersUsers(viewerId, skip, limit),
   });
 }
 

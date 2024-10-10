@@ -378,9 +378,8 @@ export function PubkyClientWrapper({
     files?: File[]
   ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
     try {
-      // Check if the user is logged in
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in');
       }
 
@@ -458,9 +457,8 @@ export function PubkyClientWrapper({
     files?: File[]
   ): Promise<string | false> => {
     try {
-      // Check if the user is logged in
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in');
       }
 
@@ -543,7 +541,7 @@ export function PubkyClientWrapper({
   ): Promise<string | false> => {
     try {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in');
       }
       const replyId = generateTimestampId().toUpperCase();
@@ -600,9 +598,8 @@ export function PubkyClientWrapper({
 
   const follow = async (user_id: string): Promise<boolean> => {
     try {
-      // Check if the user is logged in
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in or pubky is not defined');
       }
 
@@ -624,9 +621,8 @@ export function PubkyClientWrapper({
 
   const unfollow = async (user_id: string): Promise<boolean> => {
     try {
-      // Check if the user is logged in
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in or pubky is not defined');
       }
 
@@ -647,7 +643,7 @@ export function PubkyClientWrapper({
   ): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in or pubky is not defined');
       }
 
@@ -672,7 +668,7 @@ export function PubkyClientWrapper({
   const deleteBookmark = async (bookmarkId: string): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in or pubky is not defined');
       }
 
@@ -694,7 +690,7 @@ export function PubkyClientWrapper({
   ): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in');
       }
 
@@ -727,7 +723,7 @@ export function PubkyClientWrapper({
   const deleteTag = async (id: string, tagId: string): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in');
       }
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
@@ -747,7 +743,7 @@ export function PubkyClientWrapper({
   ): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in');
       }
 
@@ -783,7 +779,7 @@ export function PubkyClientWrapper({
   ): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
-      if (!loggedIn || !pubky) {
+      if (!loggedIn) {
         throw new Error('User is not logged in');
       }
 

@@ -98,7 +98,7 @@ export type UserStreamType =
   | 'Following'
   | 'Friends'
   | 'MostFollowed'
-  | 'Pioneers';
+  | 'Influencers';
 
 export interface UserTag {
   label: string;

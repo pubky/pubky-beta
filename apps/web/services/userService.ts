@@ -277,7 +277,7 @@ export async function getMostFollowedUsers(
   return response.json();
 }
 
-export async function getPioneerUsers(
+export async function getInfluencersUsers(
   viewerId?: string,
   skip?: number,
   limit?: number
@@ -293,7 +293,7 @@ export async function getPioneerUsers(
     `${BASE_URL}/stream/users/pioneers?${queryParams}`
   );
 
-  if (!response.ok) throw new Error('Failed to fetch pioneer users');
+  if (!response.ok) throw new Error('Failed to fetch influencers users');
 
   return response.json();
 }

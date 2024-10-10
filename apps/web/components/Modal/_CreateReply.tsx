@@ -93,7 +93,7 @@ export default function CreateReply({
         setShowModalReply(false);
         setArrayTags([]);
       }}
-      className="w-[792px] max-w-[1200px] max-h-[600px] overflow-y-auto"
+      className="md:w-[792px] max-w-[1200px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
         onClick={() => {

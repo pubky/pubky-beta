@@ -143,7 +143,7 @@ export default function Index() {
               onClick={
                 disposableAccount ? () => setShowModalBackup(true) : undefined
               }
-              className="w-auto"
+              className="w-auto hidden md:flex"
               variant="secondary"
             >
               Backup account
