@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Icon,
   Tooltip,
@@ -17,6 +17,7 @@ import {
   UseUserFollowing,
   useUserProfile,
 } from '@/hooks/useUser';
+import { getUserDetails } from '@/services/userService';
 
 interface ProfileProps {
   post?: PostView;
@@ -26,6 +27,12 @@ interface ProfileProps {
 export default function Profile({ post, profileId }: ProfileProps) {
   const router = useRouter();
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const [followingImages, setFollowingImages] = useState<
+    { alt: string; src: string }[]
+  >([]);
+  const [followersImages, setFollowersImages] = useState<
+    { alt: string; src: string }[]
+  >([]);
   const idAuthor = post?.details?.author || profileId || '';
 
   const { data: author } = useUserProfile(idAuthor, pubky ?? '');
@@ -46,6 +53,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
 
   const [followed, setFollowed] = useState(false);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
+  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
 
   const followUser = async () => {
     try {
@@ -73,6 +81,67 @@ export default function Profile({ post, profileId }: ProfileProps) {
     }
   };
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const followersList = followers;
+
+        if (followersList) {
+          const images = await Promise.all(
+            followersList.slice(0, 3).map(async (user, index) => {
+              const userDetails = await getUserDetails(user);
+              return {
+                alt: `userPic-${index + 1}`,
+                src: userDetails?.image || '/images/Userpic.png',
+              };
+            })
+          );
+
+          setFollowersImages(images);
+          setInitLoadingFollowed(false);
+
+          followersList.forEach((user) => {
+            const uri = user.replace('pubky:', '');
+            if (uri === pubky) {
+              setFollowed(true);
+            }
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [followers]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const followingList = following;
+
+        if (followingList) {
+          const images = await Promise.all(
+            followingList.slice(0, 3).map(async (user, index) => {
+              const userDetails = await getUserDetails(user);
+              return {
+                alt: `userPic-${index + 1}`,
+                src: userDetails?.image || '/images/Userpic.png',
+              };
+            })
+          );
+
+          setFollowingImages(images);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [following]);
   return (
     <Tooltip.Main
       onClick={(event) => event.stopPropagation()}
@@ -135,7 +204,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
                 Following
               </Typography.Label>
             </div>
-            {/**<PostUI.UserPic images={followingImages} />*/}
+            {followingImages && <PostUI.UserPic images={followingImages} />}
           </div>
         )}
         {isLoadingFollowers ? (
@@ -163,21 +232,22 @@ export default function Profile({ post, profileId }: ProfileProps) {
                 Followers
               </Typography.Label>
             </div>
-            {/**<PostUI.UserPic images={followersImages} />*/}
+            {followersImages && <PostUI.UserPic images={followersImages} />}
           </div>
         )}
       </div>
       <div>
-        {
-          //initLoadingFollowed ? (
-          //  <Button.Transparent
-          //   loading={initLoadingFollowed}
-          //   className={post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'}
-          //>
-          //</div>  Loading
-          //</Button.Transparent>
-          // ) :
-          followed ? (
+        {followed ? (
+          initLoadingFollowed ? (
+            <Button.Transparent
+              loading={initLoadingFollowed}
+              className={
+                post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+              }
+            >
+              Loading
+            </Button.Transparent>
+          ) : (
             <Button.Transparent
               onClick={
                 loadingFollowed
@@ -196,27 +266,27 @@ export default function Profile({ post, profileId }: ProfileProps) {
             >
               Unfollow
             </Button.Transparent>
-          ) : (
-            <Button.Transparent
-              onClick={
-                loadingFollowed
-                  ? undefined
-                  : (event) => {
-                      event.stopPropagation();
-                      followUser();
-                    }
-              }
-              disabled={loadingFollowed}
-              loading={loadingFollowed}
-              icon={<Icon.UserPlus size="16" />}
-              className={
-                post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-              }
-            >
-              Follow
-            </Button.Transparent>
           )
-        }
+        ) : (
+          <Button.Transparent
+            onClick={
+              loadingFollowed
+                ? undefined
+                : (event) => {
+                    event.stopPropagation();
+                    followUser();
+                  }
+            }
+            disabled={loadingFollowed}
+            loading={loadingFollowed}
+            icon={<Icon.UserPlus size="16" />}
+            className={
+              post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+            }
+          >
+            Follow
+          </Button.Transparent>
+        )}
         {post?.details?.author === pubky && (
           <Button.Transparent
             icon={<Icon.Pencil size="16" />}
