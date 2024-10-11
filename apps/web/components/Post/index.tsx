@@ -55,9 +55,9 @@ export default function Post({
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
   const router = useRouter();
-  const lineBaseCSS = `absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
+  const lineBaseCSS = `ml-[10px] absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS =
-    'absolute ml-[1px] w-3.5 border-t-2 border-neutral-800';
+    'absolute ml-[10px] w-3.5 border-t-2 border-neutral-800';
 
   //const handleDeletePost = async () => {
   //  const result = null; //await deletePost(post?.id);
@@ -259,13 +259,16 @@ export default function Post({
                               }`}
                             >
                               {!repostView && (
-                                <Tags largeView={largeView} post={post} />
+                                <Tags
+                                  largeView={largeView}
+                                  post={repostedPost}
+                                />
                               )}
-                              {!repostView && <Actions post={post} />}
+                              {!repostView && <Actions post={repostedPost} />}
                             </div>
                           </div>
                         </div>
-                        {largeView && <TagsLargeView post={post} />}
+                        {largeView && <TagsLargeView post={repostedPost} />}
                       </PostUI.MainCard>
                     </>
                   ) : (

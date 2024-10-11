@@ -43,7 +43,7 @@ type PubkyClientContextType = {
     files?: File[]
   ) => Promise<string | false>;
   createReply: (
-    originalPostId: string,
+    originalPostUri: string,
     replyContent: string,
     kind: PostKind,
     files?: File[]
@@ -434,7 +434,7 @@ export function PubkyClientWrapper({
 
         // If there are files, add to the post embed
         newPost.embed = {
-          kind: kind,
+          kind: 'File',
           uri: uploadedFileUris[0], // Use the first file as the main embed
         };
       }
@@ -543,7 +543,7 @@ export function PubkyClientWrapper({
   };
 
   const createReply = async (
-    originalPostId: string,
+    originalPostUri: string,
     replyContent: string,
     kind: PostKind,
     files?: File[]
@@ -558,7 +558,7 @@ export function PubkyClientWrapper({
       const replyPost: PubkyAppPost = {
         content: replyContent,
         kind,
-        parent: originalPostId,
+        parent: originalPostUri,
       };
 
       const uploadedFileUris: string[] = [];

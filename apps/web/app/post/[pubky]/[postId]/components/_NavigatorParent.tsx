@@ -115,7 +115,7 @@ export default function NavigatorParent({
         <Content.StepperReplies
           className="mb-4"
           postUri={parentPost}
-          urls={parentURIs.slice().reverse()}
+          urls={parentURIs.slice().reverse().slice(0, -1)}
         />
       ) : (
         <Skeletons.Simple />

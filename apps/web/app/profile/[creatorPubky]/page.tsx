@@ -27,10 +27,10 @@ export default function Index({
   const loader = useRef(null);
 
   useEffect(() => {
-    if (data) {
-      setUserExist(true);
-    } else if (!data || isError) {
+    if (!isLoading && isError) {
       setUserExist(false);
+    } else {
+      setUserExist(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);

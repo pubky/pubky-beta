@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Content, Menu, Typography } from '@social/ui-shared';
+import { Content, Icon, Menu, Typography } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { usePostStream } from '@/hooks/usePost';
+import { usePostStream, usePostThread } from '@/hooks/usePost';
+import { useRouter } from 'next/navigation';
+import { Utils } from '@social/utils-shared';
 
 export default function Index() {
   const { layout } = useFilterContext();
@@ -154,12 +156,14 @@ const Timeline = () => {
     <div className="flex-col inline-flex gap-3">
       {timeline && timeline?.length > 0
         ? timeline.map((post) => (
-            <Components.Post
-              key={post.details.id}
-              post={post}
-              largeView={layout === 'wide'}
-              line={Boolean(post?.relationships?.replied)}
-            />
+            <div key={post.details.id}>
+              <Components.Post
+                post={post}
+                largeView={layout === 'wide'}
+                line={Boolean(post?.relationships?.replied)}
+              />
+              <PostReplies post={post} layout={layout} />
+            </div>
           ))
         : !isLoading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
@@ -170,6 +174,45 @@ const Timeline = () => {
           )}
       {isLoading && !isError && <Components.Skeleton.Simple />}
       <div ref={loader} />
+    </div>
+  );
+};
+
+const PostReplies = ({ post, layout }) => {
+  const { data: replies } = usePostThread(post.details.author, post.details.id);
+  //const [showAllReplies, setShowAllReplies] = useState(false);
+  const router = useRouter();
+
+  if (!replies || replies.replies.length === 0) return null;
+
+  const displayedReplies = replies.replies.slice(0, 2);
+  //showAllReplies
+  //  ? replies.replies
+  //  : replies.replies.slice(0, 2);
+  const repliesLeft = replies.replies.length - displayedReplies.length;
+
+  return (
+    <div className="mt-3 flex flex-col gap-3">
+      {displayedReplies.map((reply) => (
+        <Components.Post
+          key={reply.details.id}
+          post={reply}
+          largeView={layout === 'wide'}
+          line={Boolean(reply?.relationships?.replied)}
+        />
+      ))}
+      {repliesLeft > 0 && (
+        //&& !showAllReplies
+        <Typography.Body
+          variant="small-bold"
+          //onClick={() => setShowAllReplies(true)}
+          onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
+          className="cursor-pointer flex gap-1 items-center ml-6 hover:opacity-80"
+        >
+          <Icon.ChatCircleText />
+          {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
+        </Typography.Body>
+      )}
     </div>
   );
 };

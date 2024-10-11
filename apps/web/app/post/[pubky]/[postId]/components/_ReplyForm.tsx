@@ -8,7 +8,7 @@ import Partecipants from './_Partecipants';
 import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
 import { PostThread, PostView } from '@/types/Post';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
 export default function ReplyForm({
   uri,
@@ -22,6 +22,7 @@ export default function ReplyForm({
   replies: PostThread | undefined;
 }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
+  const { setContent, setShow } = useAlertContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -33,12 +34,12 @@ export default function ReplyForm({
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
-    const rootUri = post.relationships?.replied
-      ? post.relationships?.replied
-      : post?.details?.uri;
+    //const rootUri = post.relationships?.replied
+    //  ? post.relationships?.replied
+    //  : post?.details?.uri;
 
     const sendReply = await createReply(
-      rootUri,
+      post?.details?.uri,
       content,
       'Short',
       selectedFiles
@@ -57,11 +58,13 @@ export default function ReplyForm({
       setSelectedFiles([]);
       updatePost();
       setTextArea(false);
+      setContent('Reply created!');
+      setShow(true);
     }
   };
 
   return (
-    <div ref={wrapperRef} className="grid gap-6 md:grid-cols-3">
+    <div ref={wrapperRef} className="grid gap-6 xl:grid-cols-3">
       <Post.Root className="col-span-2">
         <CreateContent
           id="reply-create-content"
@@ -103,7 +106,7 @@ export default function ReplyForm({
           }
           textArea={textArea}
         />
-        <Replies repliesResponse={replies} />
+        <Replies post={post} repliesResponse={replies} />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}
