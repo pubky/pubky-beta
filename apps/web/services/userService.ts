@@ -91,6 +91,8 @@ export async function getUserStreamFollowers(
     `${BASE_URL}/stream/users?user_id=${userId}&${queryParams}`
   );
 
+  console.log('response', response);
+
   if (!response.ok) throw new Error('Failed to fetch user followers');
 
   return response.json();
