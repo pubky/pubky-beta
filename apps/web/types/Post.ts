@@ -89,6 +89,11 @@ export interface PubkyAppFile {
   src: string;
   content_type: string;
   size: number;
+  id: string;
+  indexed_at: number;
+  owner_id: string;
+  uri: string;
+  urls: string;
 }
 export interface Links {
   [key: string]: {
@@ -100,7 +105,7 @@ export interface Links {
 export interface PubkyAppUser {
   name: string;
   bio?: string;
-  image?: File | string;
+  image?: string | File;
   links?: Links | any;
   status?: string;
 }

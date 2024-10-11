@@ -41,6 +41,20 @@ export default function Index({
   const [file, setFile] = useState<PubkyAppFile | null>();
   const [typeFile, setTypeFile] = useState<'image' | 'video'>();
   const fileUri = data?.files ? data?.files[0]?.uri : '';
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const FetchFile = async () => {
@@ -123,7 +137,7 @@ export default function Index({
     content = (
       <>
         {data?.relationships?.replied && (
-          <Post.NavigatorParent parentPost={data?.relationships?.replied} />
+          <Post.NavigatorParent parentPost={data?.details?.uri} />
         )}
 
         {isLoading ? (
@@ -134,7 +148,7 @@ export default function Index({
               key={uri}
               post={data}
               size="full"
-              largeView={true}
+              largeView={windowWidth >= 1280}
               fullContent
             />
             <div className="mt-3">

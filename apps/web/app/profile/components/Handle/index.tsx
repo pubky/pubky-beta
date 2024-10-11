@@ -61,7 +61,7 @@ export default function Handle({
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [followed, creatorPubky]);
+  }, [followers, creatorPubky]);
 
   useEffect(() => {
     if (seed) {

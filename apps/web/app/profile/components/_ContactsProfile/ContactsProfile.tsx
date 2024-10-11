@@ -111,7 +111,7 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
         <div className="mt-12">
           <Skeletons.Simple />
         </div>
-      ) : contactUsers?.length ?? 0 > 0 ? (
+      ) : contactUsers && contactUsers?.length > 0 ? (
         <Root>
           <Contact contacts={contactUsers} isLoading={isLoading} />
         </Root>

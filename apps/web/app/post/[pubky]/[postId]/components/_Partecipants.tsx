@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
@@ -28,7 +27,6 @@ export default function Partecipants({
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
-  const seenAuthors = new Set<string>();
 
   const fetchReplies = async () => {
     try {

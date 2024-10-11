@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { getFile } from '@/services/fileService';
 
 interface ImageByUriProps {
   id?: string;
@@ -24,7 +25,8 @@ const ImageByUri = ({
   style,
   onClick,
 }: ImageByUriProps) => {
-  //const { getFile } = useClientContext();
+  const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
+  const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,10 +46,10 @@ const ImageByUri = ({
         ) {
           setImageUrl(uri);
         } else if (typeof uri === 'string') {
-          // const fetchedFile = null; //await getFile(uri);
-          // if (fetchedFile?.urls.main) {
-          //   setImageUrl(fetchedFile.urls.main);
-          // }
+          const fetchedFile = await getFile(uri);
+          if (fetchedFile?.urls) {
+            setImageUrl(`${BASE_URL}/${JSON.parse(fetchedFile?.urls).main}`);
+          }
         }
       } catch (error) {
         console.error('Error fetching image:', error);

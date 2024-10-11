@@ -72,7 +72,7 @@ export async function getUserStreamFollowers(
   limit?: number,
   stream_type?: string
 ): Promise<UserView[]> {
-  const queryParams = new URLSearchParams({ user_id: userId });
+  const queryParams = new URLSearchParams({ userId });
 
   stream_type = stream_type ?? 'Followers';
   queryParams.append('viewer_id', String(viewerId));
@@ -90,6 +90,8 @@ export async function getUserStreamFollowers(
   const response = await fetch(
     `${BASE_URL}/stream/users?user_id=${userId}&${queryParams}`
   );
+
+  console.log('response', response);
 
   if (!response.ok) throw new Error('Failed to fetch user followers');
 
