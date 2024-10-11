@@ -1,22 +1,17 @@
 'use client';
 
-//import Link from 'next/link';
-//import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Post as PostComponent } from '@/components';
 import { Utils } from '@social/utils-shared';
-//import { IFileContent, IPost, IReply } from '@/types';
-//import { useClientContext, useAlertContext } from '@/contexts';
 import Skeletons from '@/components/Skeletons';
 import { Post } from './components';
-//import MetaTags from '@/components/MetaTags';
-import { usePost, usePostThread } from '@/hooks/usePost';
 import MetaTags from '@/components/MetaTags';
+import { usePost, usePostThread } from '@/hooks/usePost';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getFile } from '@/services/fileService';
-import { PubkyAppFile } from '@/types/Post';
+import { PostThread, PubkyAppFile } from '@/types/Post';
 import Link from 'next/link';
 
 export default function Index({
@@ -24,24 +19,44 @@ export default function Index({
 }: {
   params: { pubky: string; postId: string };
 }) {
-  //const { getReplies, getFile } = useClientContext();
+  let content: React.ReactNode = null;
+
+  const limit = 10;
+  const [skip, setSkip] = useState(0);
+  const [repliesArray, setRepliesArray] = useState<PostThread>(
+    {} as PostThread
+  );
   const { pubky } = usePubkyClientContext();
   const { data, isLoading, isError } = usePost(params.pubky, params.postId);
-  const { data: replies } = usePostThread(params.pubky, params.postId);
+  const {
+    data: replies,
+    isLoading: isLoadingReplies,
+    isError: isErrorReplies,
+  } = usePostThread(params.pubky, params.postId, pubky, skip, limit);
   const { data: author } = useUserProfile(
     data?.details?.author as string,
     pubky ?? ''
   );
-  //const { setContent, setShow } = useAlertContext();
-  //const [post, setPost] = useState<IPost>({} as IPost);
-  //const [showPost, setShowPost] = useState(true);
-  //const [loading, setLoading] = useState(true);
-  //const [replies, setReplies] = useState<IReply>({} as IReply);
   const uri = Utils.decodePostUri(params.pubky, params.postId);
   const [file, setFile] = useState<PubkyAppFile | null>();
   const [typeFile, setTypeFile] = useState<'image' | 'video'>();
   const fileUri = data?.files ? data?.files[0]?.uri : '';
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
+  const fetchMoreReplies = () => {
+    if (isErrorReplies) return;
+
+    const newReplies = {
+      root_post: replies?.root_post,
+      replies: [...(repliesArray?.replies || []), ...(replies?.replies || [])],
+    };
+    setRepliesArray(newReplies as PostThread);
+
+    const newSkip = skip + limit;
+    setSkip(newSkip);
+  };
+
+  const loader = useInfiniteScroll(fetchMoreReplies, isLoadingReplies);
 
   useEffect(() => {
     const handleResize = () => {
@@ -72,46 +87,7 @@ export default function Index({
       }
     };
     FetchFile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileUri]);
-
-  {
-    /**
-  
-    useEffect(() => {
-    async function fetchData() {
-      if (!uri) return;
-      const result = await getReplies(uri);
-
-      if (result) {
-        if (result.post) {
-          setPost(result.post);
-        } else {
-          setShowPost(false);
-        }
-        setReplies(result);
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, [uri, getReplies]);
-
-  const handleUpdatePost = async () => {
-    const result = await getReplies(uri);
-    if (result) {
-      setPost(result.post);
-      setReplies(result);
-      setContent('Reply created!');
-      setShow(true);
-    } else {
-      setContent('Something went wrong. Try again', 'warning');
-      setShow(true);
-    }
-  };
-  */
-  }
-
-  let content;
 
   {
     if (isError) {
@@ -156,9 +132,10 @@ export default function Index({
                 uri={uri}
                 post={data}
                 updatePost={() => console.log('updated')}
-                replies={replies}
+                replies={repliesArray}
               />
             </div>
+            <div ref={loader} />
           </>
         )}
       </>
@@ -181,4 +158,28 @@ export default function Index({
       <CreatePost />
     </Content.Main>
   );
+}
+
+function useInfiniteScroll(fetchPosts: () => void, isLoading: boolean) {
+  const loader = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isLoading) {
+          fetchPosts();
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => observer.disconnect();
+  }, [fetchPosts, isLoading]);
+
+  return loader;
 }
