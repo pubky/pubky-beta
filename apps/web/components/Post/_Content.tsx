@@ -90,7 +90,12 @@ export default function Content({
           })
         );
         setFileContents(
-          fetchedFiles.filter((file) => file !== null) as FileContent[]
+          fetchedFiles
+            .filter((file) => file !== null)
+            .map((file) => ({
+              ...file,
+              urls: { main: file!.urls }, // Ensure the 'urls' property is correctly structured
+            })) as FileContent[]
         );
       }
     };
