@@ -23,7 +23,7 @@ export default function Reach() {
 
   useEffect(() => {
     setDropdownValue({
-      value: reach ? reach : 'all',
+      value: reach ? reach : 'All',
       iconOption: reach ? icons[reach] : icons.All,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,7 +44,7 @@ export default function Reach() {
       >
         <DropDownUI.Item
           label="Following"
-          value="following"
+          value="Following"
           selected={reach === 'Following'}
           icon={<Icon.UsersRight />}
           onClick={() => {
@@ -58,7 +58,7 @@ export default function Reach() {
         />
         <DropDownUI.Item
           label="Friends"
-          value="friends"
+          value="Friends"
           selected={reach === 'Friends'}
           icon={<Icon.Smiley />}
           onClick={() => {
@@ -72,7 +72,7 @@ export default function Reach() {
         />
         <DropDownUI.Item
           label="All"
-          value="all"
+          value="All"
           selected={reach === 'All'}
           icon={<Icon.Broadcast />}
           onClick={() => {

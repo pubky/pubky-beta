@@ -118,7 +118,7 @@ const Timeline = () => {
   const [skip, setSkip] = useState(0);
 
   const { reach, layout } = useFilterContext();
-  const { pubky, setTimeline, timeline } = usePubkyClientContext();
+  const { pubky, timeline, setTimeline } = usePubkyClientContext();
   const { data, isLoading, isError } = usePostStream(
     pubky,
     skip,
@@ -126,6 +126,11 @@ const Timeline = () => {
     'timeline',
     reach
   );
+
+  useEffect(() => {
+    setSkip(0);
+    setTimeline([]);
+  }, [reach]);
 
   useEffect(() => {
     if (!isLoading && data) {
@@ -140,12 +145,14 @@ const Timeline = () => {
 
       setTimeline([...timelineCopy, ...data]);
     }
-  }, [data, isLoading]);
+  }, [data, isLoading, reach]);
 
   const fetchMorePosts = () => {
     if (isError) return;
 
-    setSkip((prevSkip) => prevSkip + limit);
+    const newSkip = skip + limit;
+
+    setSkip(newSkip);
   };
 
   const loader = useInfiniteScroll(fetchMorePosts, isLoading);
@@ -153,9 +160,9 @@ const Timeline = () => {
   return (
     <div className="flex-col inline-flex gap-3">
       {timeline && timeline?.length > 0
-        ? timeline.map((post) => (
+        ? timeline.map((post, index) => (
             <Components.Post
-              key={post.details.id}
+              key={`${index}-${post.details.id}`}
               post={post}
               largeView={layout === 'wide'}
               line={Boolean(post?.relationships?.replied)}
@@ -168,7 +175,11 @@ const Timeline = () => {
               </Typography.H2>
             </div>
           )}
-      {isLoading && !isError && <Components.Skeleton.Simple />}
+      {isLoading && !isError && (
+        <div className="mt-4">
+          <Components.Skeleton.Simple />
+        </div>
+      )}
       <div ref={loader} />
     </div>
   );
