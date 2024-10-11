@@ -9,7 +9,7 @@ import { usePubkyClientContext } from '@/contexts';
 import { TStatus } from '@/types';
 
 export default function Index() {
-  const { pubky, profile } = usePubkyClientContext();
+  const { pubky } = usePubkyClientContext();
   const { data, isLoading } = useUserProfile(pubky ?? '', pubky ?? '');
   const user = data;
   const loader = useRef(null);
@@ -20,14 +20,14 @@ export default function Index() {
       <div>
         <Content.Grid className="flex flex-col text-center lg:flex-row items-center gap-8 relative">
           <Profile.Avatar
-            username={profile?.name || 'Loading...'}
-            uriImage={profile?.image as string}
+            username={user?.details?.name || 'Loading...'}
+            uriImage={user?.details?.image as string}
           />
           <Profile.Handle
             className="-mt-4"
-            username={profile?.name || 'Loading...'}
+            username={user?.details?.name || 'Loading...'}
             pubkey={pubky ? pubky : ''}
-            status={(profile?.status as TStatus) || 'noStatus'}
+            status={(user?.details?.status as TStatus) || 'noStatus'}
           />
         </Content.Grid>
       </div>
