@@ -21,6 +21,7 @@ import {
   SquareHalf,
   ThreeColumns,
   Eye,
+  LineHorizontal,
 } from './_Design';
 import { Plus, Minus, X } from './_Math';
 import { GitFork } from './_Development';
@@ -167,6 +168,7 @@ export const Icon = {
   ListBullets,
   ListNumbers,
   LoadingSpin,
+  LineHorizontal,
   Lock,
   MagnifyingGlass,
   MagnifyingGlassLeft,

@@ -65,6 +65,12 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
     reply?.details?.id
   );
   const router = useRouter();
+  const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
+  const lineHorizontalCSS = (
+    <div className="absolute ml-[10px]">
+      <Icon.LineHorizontal size="14" color="#262626" />
+    </div>
+  );
   //const [showAllReplies, setShowAllReplies] = useState(false);
 
   if (!replyReplies || replyReplies.replies.length === 0) return null;
@@ -89,15 +95,21 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
       ))}
       {repliesLeft > 0 && (
         //&& !showAllReplies
-        <Typography.Body
-          variant="small-bold"
-          //onClick={() => setShowAllReplies(true)}
-          onClick={() => router.push(Utils.encodePostUri(reply?.details?.uri))}
-          className="mt-3 cursor-pointer flex gap-1 items-center ml-6 hover:opacity-80"
-        >
-          <Icon.ChatCircleText />
-          {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
-        </Typography.Body>
+        <div>
+          <div className={lineBaseCSS} />
+          {lineHorizontalCSS}
+          <Typography.Body
+            variant="small-bold"
+            //onClick={() => setShowAllReplies(true)}
+            onClick={() =>
+              router.push(Utils.encodePostUri(reply?.details?.uri))
+            }
+            className="mt-3 cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
+          >
+            <Icon.ChatCircleText />
+            {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
+          </Typography.Body>
+        </div>
       )}
     </div>
   );
