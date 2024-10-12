@@ -107,7 +107,7 @@ export default function Post({
         <PostUI.Root>
           <div>
             {post?.relationships?.reposted && !repostView ? (
-              post?.details?.content || post?.files ? (
+              post?.details?.content || post?.details?.attachments ? (
                 <PostUI.MainCard
                   className={twMerge(
                     largeView && 'p-12 inline-flex flex-row gap-12',

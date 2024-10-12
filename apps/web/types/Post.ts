@@ -15,12 +15,11 @@ export interface FileContent {
   size: number;
   src: string;
   uri: string;
-  urls: {
-    main: string;
-  };
+  urls: string;
 }
 
 export interface PostDetails {
+  attachments: string[];
   author: string;
   content: string;
   id: string;
@@ -35,7 +34,6 @@ export interface PostView {
   tags: PostTag[];
   relationships?: PostRelationships;
   bookmark?: Bookmark;
-  files: FileContent[];
 }
 
 export interface PostRelationships {
@@ -81,6 +79,7 @@ export interface PubkyAppPost {
   kind: PostKind;
   parent?: string;
   embed?: PostEmbed | null;
+  attachments?: string[];
 }
 
 export interface PubkyAppFile {

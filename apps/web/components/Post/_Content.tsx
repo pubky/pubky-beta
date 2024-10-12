@@ -26,6 +26,8 @@ export default function Content({
   largeView = false,
   children,
 }: PostProps) {
+  const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
+  const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
@@ -34,7 +36,7 @@ export default function Content({
   const [showModal, setShowModal] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const text = post?.details?.content;
-  const files = post?.files;
+  const files = post?.details?.attachments;
   const uri = post?.details?.uri;
 
   function checkForLink(text: string) {
@@ -85,7 +87,8 @@ export default function Content({
         const fileUris = Object.values(files).map((file) => file);
         const fetchedFiles = await Promise.all(
           fileUris.map(async (fileUri) => {
-            const fetchedFile = await getFile(fileUri.uri);
+            const fetchedFile = await getFile(fileUri);
+            console.log('fetchedFile', fetchedFile);
             return fetchedFile ? fetchedFile : null;
           })
         );
@@ -94,7 +97,7 @@ export default function Content({
             .filter((file) => file !== null)
             .map((file) => ({
               ...file,
-              urls: { main: file!.urls }, // Ensure the 'urls' property is correctly structured
+              urls: file!.urls, // Ensure 'urls' is a string
             })) as FileContent[]
         );
       }
@@ -179,13 +182,13 @@ export default function Content({
                 >
                   {isVideo ? (
                     <video
-                      src={file.urls.main}
+                      src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                       controls
                       className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isImage ? (
                     <Image
-                      src={file.urls.main}
+                      src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                       alt={`Fetched file ${index}`}
                       layout="responsive"
                       width={800}
@@ -196,7 +199,10 @@ export default function Content({
                     <div
                       onClick={(event) => {
                         event.stopPropagation();
-                        window.open(file.urls.main, '_blank');
+                        window.open(
+                          `${BASE_URL}/${JSON.parse(file?.urls).main}`,
+                          '_blank'
+                        );
                       }}
                       className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
                     >
@@ -206,7 +212,10 @@ export default function Content({
                           className="text-opacity-80"
                           variant="small-bold"
                         >
-                          {Utils.minifyText(file.urls.main, 60)}
+                          {Utils.minifyText(
+                            `${BASE_URL}/${JSON.parse(file?.urls).main}`,
+                            60
+                          )}
                         </Typography.Body>
                       </div>
                       <Button.Medium

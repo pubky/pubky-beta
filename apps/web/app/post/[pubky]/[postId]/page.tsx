@@ -40,7 +40,9 @@ export default function Index({
   const uri = Utils.decodePostUri(params.pubky, params.postId);
   const [file, setFile] = useState<PubkyAppFile | null>();
   const [typeFile, setTypeFile] = useState<'image' | 'video'>();
-  const fileUri = data?.files ? data?.files[0]?.uri : '';
+  const fileUri = data?.details?.attachments
+    ? data?.details?.attachments[0]
+    : '';
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const fetchMoreReplies = () => {

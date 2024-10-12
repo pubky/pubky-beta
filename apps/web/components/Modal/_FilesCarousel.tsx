@@ -20,6 +20,8 @@ export default function FilesCarousel({
   currentFileIndex,
   setCurrentFileIndex,
 }: FilesCarouselProps) {
+  const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
+  const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const modalRef = useRef<HTMLDivElement>(null);
 
   const showPreviousFile = () => {
@@ -71,13 +73,13 @@ export default function FilesCarousel({
       )}
       {isVideo ? (
         <video
-          src={currentFile.urls.main}
+          src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
           controls
           className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
         />
       ) : (
         <Image
-          src={currentFile.urls.main}
+          src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
           alt={`Modal view ${currentFileIndex}`}
           layout="responsive"
           width={800}

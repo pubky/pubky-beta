@@ -443,11 +443,8 @@ export function PubkyClientWrapper({
           uploadedFileUris.push(fileUrl);
         }
 
-        // If there are files, add to the post embed
-        newPost.embed = {
-          kind: 'File',
-          uri: uploadedFileUris[0], // Use the first file as the main embed
-        };
+        // If there are files, add to the post attachments
+        newPost.attachments = uploadedFileUris;
       }
 
       // Serialize the post to JSON and convert to Buffer
@@ -529,12 +526,8 @@ export function PubkyClientWrapper({
           uploadedFileUris.push(fileUrl);
         }
 
-        // If there are files, add to the post embed
-        newRepost.embed = {
-          kind: kind,
-          uri: uploadedFileUris[0],
-          postId: originalPostId,
-        };
+        // If there are files, add to the repost attachments
+        newRepost.attachments = uploadedFileUris;
       }
 
       // Serialize the repost to JSON and convert to Buffer
@@ -601,10 +594,8 @@ export function PubkyClientWrapper({
           uploadedFileUris.push(fileUrl);
         }
 
-        replyPost.embed = {
-          kind: kind,
-          uri: uploadedFileUris[0],
-        };
+        // If there are files, add to the reply attachments
+        replyPost.attachments = uploadedFileUris;
       }
 
       const replyBody = Buffer.from(JSON.stringify(replyPost));
