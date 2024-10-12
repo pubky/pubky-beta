@@ -15,11 +15,13 @@ export default function ReplyForm({
   post,
   updatePost,
   replies,
+  isLoadingReplies,
 }: {
   uri: string;
   post: PostView;
   updatePost: () => void;
   replies: PostThread | undefined;
+  isLoadingReplies: boolean;
 }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
@@ -106,7 +108,11 @@ export default function ReplyForm({
           }
           textArea={textArea}
         />
-        <Replies post={post} repliesResponse={replies} />
+        <Replies
+          post={post}
+          repliesResponse={replies}
+          isLoadingReplies={isLoadingReplies}
+        />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}

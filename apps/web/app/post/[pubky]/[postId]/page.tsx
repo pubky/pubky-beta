@@ -133,9 +133,10 @@ export default function Index({
                 post={data}
                 updatePost={() => console.log('updated')}
                 replies={repliesArray}
+                isLoadingReplies={isLoadingReplies}
               />
+              <div ref={loader} />
             </div>
-            <div ref={loader} />
           </>
         )}
       </>

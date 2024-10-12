@@ -5,13 +5,16 @@ import { PostThread, PostView } from '@/types/Post';
 import { usePostThread } from '@/hooks/usePost';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
+import Skeletons from '@/components/Skeletons';
 
 export default function Replies({
   repliesResponse,
   post,
+  isLoadingReplies,
 }: {
   repliesResponse: PostThread | undefined;
   post: PostView;
+  isLoadingReplies: boolean;
 }) {
   const [replies, setReplies] = useState<PostView[]>([]);
 
@@ -41,7 +44,9 @@ export default function Replies({
 
   return (
     <>
-      {replies && replies.length === 0 ? (
+      {isLoadingReplies ? (
+        <Skeletons.Simple />
+      ) : replies && replies.length === 0 ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">
           No replies yet
         </Typography.Body>
@@ -68,7 +73,8 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
   //showAllReplies
   //  ? replyReplies.replies
   //  : replyReplies.replies.slice(0, 1);
-  const repliesLeft = replyReplies.replies.length - displayedReplies.length;
+  const repliesLeft =
+    replyReplies?.root_post.counts?.replies - displayedReplies.length;
 
   return (
     <div>
