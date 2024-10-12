@@ -19,7 +19,7 @@ export interface FileContent {
 }
 
 export interface PostDetails {
-  attachments: string[];
+  attachments?: string[];
   author: string;
   content: string;
   id: string;
