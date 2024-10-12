@@ -53,7 +53,7 @@ const FilterContext = createContext<FilterContextType>({
   setLayout: () => {},
   sort: 'recent',
   setSort: () => {},
-  reach: 'All',
+  reach: 'all',
   setReach: () => {},
   hotTagsReach: 'all',
   setHotTagsReach: () => {},

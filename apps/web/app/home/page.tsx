@@ -72,7 +72,7 @@ export default function Index() {
               )}`}
             >
               <Filter.Reach />
-              <Filter.Sort disabled />
+              <Filter.Sort />
             </div>
             <div ref={filterContentRef}>
               <Filter.Layout />
@@ -119,14 +119,14 @@ const Timeline = () => {
   const limit = 10;
   const [skip, setSkip] = useState(0);
 
-  const { reach, layout } = useFilterContext();
+  const { reach, layout, sort } = useFilterContext();
   const { pubky, timeline, setTimeline } = usePubkyClientContext();
   const { data, isLoading, isError } = usePostStream(
     pubky,
     skip,
     limit,
-    'timeline',
-    reach
+    reach,
+    sort
   );
 
   useEffect(() => {

@@ -88,7 +88,6 @@ export default function Content({
         const fetchedFiles = await Promise.all(
           fileUris.map(async (fileUri) => {
             const fetchedFile = await getFile(fileUri);
-            console.log('fetchedFile', fetchedFile);
             return fetchedFile ? fetchedFile : null;
           })
         );

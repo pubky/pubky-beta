@@ -9,7 +9,12 @@ import { useBookmarkedPosts } from '@/hooks/usePost';
 export default function Bookmarks() {
   //const { posts } = useClientContext();
   const { pubky } = usePubkyClientContext();
-  const { data, isLoading } = useBookmarkedPosts(pubky ?? '', '', 0, 10);
+  const { data, isLoading } = useBookmarkedPosts(
+    pubky ?? '',
+    pubky ?? '',
+    0,
+    10
+  );
   const results = data;
   const loader = useRef(null);
 
