@@ -23,14 +23,14 @@ import { usePostStream } from '@/hooks/usePost';
 const SearchContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { layout } = useFilterContext();
+  const { layout, reach, sort } = useFilterContext();
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
   const { data, isLoading, isError } = usePostStream(
     pubky,
     0,
     5,
-    'timeline',
-    'All',
+    reach,
+    sort,
     searchTags
   );
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
@@ -167,8 +167,8 @@ const SearchContent = () => {
                 isFilterContentVisible
               )}`}
             >
-              <Filter.Reach disabled />
-              <Filter.Sort disabled />
+              <Filter.Reach />
+              <Filter.Sort />
             </div>
             <div ref={filterContentRef}>
               <Filter.Layout />

@@ -12,13 +12,13 @@ export default function Reach({ disabled = false }: ReachProps) {
   const [loading, setLoading] = useState(true);
 
   const icons = {
-    All: <Icon.Broadcast />,
-    Following: <Icon.UsersRight />,
-    Friends: <Icon.Smiley />,
+    all: <Icon.Broadcast />,
+    following: <Icon.UsersRight />,
+    friends: <Icon.Smiley />,
   };
 
   useEffect(() => {
-    setReach(reach ? reach : 'All');
+    setReach(reach ? reach : 'all');
     setLoading(false);
   }, [reach, setReach]);
 

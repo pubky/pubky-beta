@@ -45,14 +45,13 @@ export function usePostStream(
   viewerId?: string,
   skip?: number,
   limit?: number,
-  sorting?: string,
-  reach?: 'Following' | 'Friends' | 'Followers' | 'All',
-  //sort?: 'recent' | 'popularity',
+  reach?: 'following' | 'friends' | 'followers' | 'all',
+  sort?: 'recent' | 'popularity',
   tags?: string[]
 ) {
   return useQuery({
-    queryKey: ['postStream', viewerId, skip, limit, sorting, reach, tags],
-    queryFn: () => getPostStream(viewerId, skip, limit, sorting, reach, tags),
+    queryKey: ['postStream', viewerId, skip, limit, reach, sort, tags],
+    queryFn: () => getPostStream(viewerId, skip, limit, reach, sort, tags),
   });
 }
 

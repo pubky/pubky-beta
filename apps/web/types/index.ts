@@ -9,7 +9,7 @@ export type TStatus =
   | 'sick'
   | 'noStatus';
 export type TSize = 'full' | 'normal';
-export type TReach = 'Following' | 'Friends' | 'Followers' | 'All';
+export type TReach = 'following' | 'friends' | 'followers' | 'all';
 export type TLanguage = 'english' | 'spanish' | 'german' | 'french' | 'italian';
 export type TSort = 'recent' | 'popularity';
 export type THotTagsReach = 'following' | 'followers' | 'friends' | 'all';

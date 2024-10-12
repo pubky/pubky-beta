@@ -36,12 +36,12 @@ export default function CreateReply({
 
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
-      const rootUri = post.relationships?.replied
-        ? post.relationships?.replied
-        : post.details.uri;
+      //const rootUri = post.relationships?.replied
+      //  ? post.relationships?.replied
+      //  : post.details.uri;
 
       const newReply = await createReply(
-        rootUri,
+        post?.details?.uri,
         content,
         'Short',
         selectedFiles

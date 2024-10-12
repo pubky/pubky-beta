@@ -101,8 +101,8 @@ export default function Index() {
       <Header className="hidden md:block" title="HotTags" />
       <Content.Grid className="grid grid-cols-5 gap-4">
         <Sidebar className="self-start sticky top-[120px] hidden xl:block">
-          <Filter.HotTagsReach />
-          <Filter.TagsTimeFrame />
+          <Filter.HotTagsReach disabled />
+          <Filter.TagsTimeFrame disabled />
         </Sidebar>
         <div className="w-full flex-col inline-flex gap-3 col-span-5 xl:col-span-4 2xl:col-span-3">
           {isLoading ? (

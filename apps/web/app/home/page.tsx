@@ -72,7 +72,7 @@ export default function Index() {
               )}`}
             >
               <Filter.Reach />
-              <Filter.Sort disabled />
+              <Filter.Sort />
             </div>
             <div ref={filterContentRef}>
               <Filter.Layout />
@@ -119,14 +119,14 @@ const Timeline = () => {
   const limit = 10;
   const [skip, setSkip] = useState(0);
 
-  const { reach, layout } = useFilterContext();
+  const { reach, layout, sort } = useFilterContext();
   const { pubky, timeline, setTimeline } = usePubkyClientContext();
   const { data, isLoading, isError } = usePostStream(
     pubky,
     skip,
     limit,
-    'timeline',
-    reach
+    reach,
+    sort
   );
 
   useEffect(() => {
@@ -193,6 +193,12 @@ const PostReplies = ({ post, layout }) => {
   const { data: replies } = usePostThread(post.details.author, post.details.id);
   //const [showAllReplies, setShowAllReplies] = useState(false);
   const router = useRouter();
+  const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
+  const lineHorizontalCSS = (
+    <div className="absolute ml-[10px]">
+      <Icon.LineHorizontal size="14" color="#262626" />
+    </div>
+  );
 
   if (!replies || replies.replies.length === 0) return null;
 
@@ -215,15 +221,19 @@ const PostReplies = ({ post, layout }) => {
       ))}
       {repliesLeft > 0 && (
         //&& !showAllReplies
-        <Typography.Body
-          variant="small-bold"
-          //onClick={() => setShowAllReplies(true)}
-          onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
-          className="cursor-pointer flex gap-1 items-center ml-6 hover:opacity-80"
-        >
-          <Icon.ChatCircleText />
-          {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
-        </Typography.Body>
+        <div>
+          <div className={lineBaseCSS} />
+          {lineHorizontalCSS}
+          <Typography.Body
+            variant="small-bold"
+            //onClick={() => setShowAllReplies(true)}
+            onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
+            className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
+          >
+            <Icon.ChatCircleText />
+            {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
+          </Typography.Body>
+        </div>
       )}
     </div>
   );
