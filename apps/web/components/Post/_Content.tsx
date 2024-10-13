@@ -212,7 +212,8 @@ export default function Content({
                           variant="small-bold"
                         >
                           {Utils.minifyText(
-                            `${BASE_URL}/${JSON.parse(file?.urls).main}`,
+                            file?.name ??
+                              `${BASE_URL}/${JSON.parse(file?.urls).main}`,
                             60
                           )}
                         </Typography.Body>
