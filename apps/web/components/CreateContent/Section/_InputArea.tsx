@@ -68,7 +68,7 @@ export default function InputArea({
     setIsDragging(false);
 
     const files = event.dataTransfer.files;
-    const maxSizeInMB = 6;
+    const maxSizeInMB = 20;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (files) {

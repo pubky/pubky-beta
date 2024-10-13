@@ -77,6 +77,8 @@ type PubkyClientContextType = {
   searchTags: string[];
   repliesArray: PostThread | undefined;
   setRepliesArray: (repliesArray: PostThread) => void;
+  timelineProfile: PostView[] | undefined;
+  setTimelineProfile: (timelineProfile: PostView[]) => void;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -97,21 +99,20 @@ export function PubkyClientWrapper({
     (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined
   );
   const [timeline, setTimeline] = useState<PostView[]>([]);
+  const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [repliesArray, setRepliesArray] = useState<PostThread>(
     {} as PostThread
   );
 
   useEffect(() => {
-    // Certifique-se de que o código está sendo executado no lado do cliente
     if (typeof window !== 'undefined') {
       import('base32.js')
-        .then((module) => {
-          // Você pode usar o módulo importado aqui
+        .then(() => {
           setWasmLoaded(true);
         })
         .catch((error) => {
-          console.error('Erro ao carregar o módulo base32.js:', error);
+          console.error(error);
         });
     }
   }, []);
@@ -904,6 +905,8 @@ export function PubkyClientWrapper({
         searchTags,
         repliesArray,
         setRepliesArray,
+        timelineProfile,
+        setTimelineProfile,
       }}
     >
       {children}
