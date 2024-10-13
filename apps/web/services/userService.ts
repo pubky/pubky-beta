@@ -278,20 +278,24 @@ export async function getMostFollowedUsers(
 }
 
 export async function getInfluencersUsers(
+  userId: string,
   viewerId?: string,
   skip?: number,
   limit?: number
 ): Promise<UserView[]> {
   const queryParams = new URLSearchParams();
 
+  queryParams.append('user_id', String(userId));
+
   if (viewerId) queryParams.append('viewer_id', viewerId);
 
   queryParams.append('skip', String(skip));
   queryParams.append('limit', String(limit));
+  queryParams.append('source', 'pioneers');
 
-  const response = await fetch(
-    `${BASE_URL}/stream/users/pioneers?${queryParams}`
-  );
+  console.log(`${BASE_URL}/stream/users/?${queryParams}`);
+
+  const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch influencers users');
 

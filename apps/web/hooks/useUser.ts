@@ -162,13 +162,14 @@ export function useMostFollowedUsers(
 }
 
 export function useInfluencersUsers(
+  userId: string,
   viewerId?: string,
   skip?: number,
   limit?: number
 ) {
   return useQuery({
     queryKey: ['influencersUsers', viewerId, skip, limit],
-    queryFn: () => getInfluencersUsers(viewerId, skip, limit),
+    queryFn: () => getInfluencersUsers(userId, viewerId, skip, limit),
   });
 }
 
