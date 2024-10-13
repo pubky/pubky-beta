@@ -44,7 +44,7 @@ export default function Handle({
 
         if (!pubkey) return;
 
-        const followersList = followers?.users;
+        const followersList = followers;
 
         if (followersList) {
           setInitLoadingFollowed(false);
@@ -95,6 +95,7 @@ export default function Handle({
               setLoadingFollowed={setLoadingFollowed}
               setFollowed={setFollowed}
               setShowProfileMenu={setShowProfileMenu}
+              username={username as string}
             />
             <Status creatorPubky={creatorPubky} status={status} />
           </div>

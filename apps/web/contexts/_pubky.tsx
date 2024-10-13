@@ -56,6 +56,8 @@ type PubkyClientContextType = {
   ) => Promise<string | false>;
   follow: (user_id: string) => Promise<boolean>;
   unfollow: (user_id: string) => Promise<boolean>;
+  mute: (user_id: string) => Promise<boolean>;
+  unmute: (user_id: string) => Promise<boolean>;
   addBookmark: (postId: string, authorId: string) => Promise<boolean>;
   deleteBookmark: (bookmarkId: string) => Promise<boolean>;
   createTag: (
@@ -651,6 +653,47 @@ export function PubkyClientWrapper({
     }
   };
 
+  const mute = async (user_id: string): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in or pubky is not defined');
+      }
+
+      const muteData = {
+        created_at: Date.now(),
+      };
+
+      const muteDataBody = Buffer.from(JSON.stringify(muteData));
+      const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
+
+      await client.put(muteUrl, muteDataBody);
+
+      return true;
+    } catch (error) {
+      console.error('Error while muting the user:', error);
+      return false;
+    }
+  };
+
+  const unmute = async (user_id: string): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in or pubky is not defined');
+      }
+
+      const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
+
+      await client.delete(muteUrl);
+
+      return true;
+    } catch (error) {
+      console.error('Error while unmuting the user:', error);
+      return false;
+    }
+  };
+
   const addBookmark = async (
     postId: string,
     authorId: string
@@ -842,6 +885,8 @@ export function PubkyClientWrapper({
         createPost,
         follow,
         unfollow,
+        mute,
+        unmute,
         addBookmark,
         deleteBookmark,
         createRepost,

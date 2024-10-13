@@ -3,7 +3,6 @@ import {
   UserCounts,
   UserDetails,
   UserSearch,
-  UserStream,
   UserTag,
   Relationship,
 } from '../types/User';
@@ -47,14 +46,14 @@ export async function getUserFollowers(
   viewerId?: string,
   skip?: number,
   limit?: number
-): Promise<string[]> {
+): Promise<UserView[]> {
   const queryParams = new URLSearchParams({ userId });
 
   queryParams.append('user_id', String(userId));
   if (skip) queryParams.append('skip', String(skip));
   if (viewerId) queryParams.append('viewer_id', String(viewerId));
   if (limit) queryParams.append('limit', String(limit));
-  queryParams.append('source', 'following');
+  queryParams.append('source', 'followers');
 
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 
@@ -68,11 +67,11 @@ export async function getUserStreamFollowers(
   viewerId: string,
   skip?: number,
   limit?: number,
-  stream_type?: string
+  source?: string
 ): Promise<UserView[]> {
   const queryParams = new URLSearchParams({ userId });
 
-  stream_type = stream_type ?? 'Followers';
+  source = source ?? 'followers';
   queryParams.append('viewer_id', String(viewerId));
 
   if (skip !== undefined) {
@@ -81,8 +80,8 @@ export async function getUserStreamFollowers(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
-  if (stream_type !== undefined) {
-    queryParams.append('stream_type', String(stream_type));
+  if (source !== undefined) {
+    queryParams.append('source', String(source));
   }
 
   const response = await fetch(
@@ -99,11 +98,11 @@ export async function getUserStreamFollowing(
   viewerId: string,
   skip?: number,
   limit?: number,
-  stream_type?: string
+  source?: string
 ): Promise<UserView[]> {
   const queryParams = new URLSearchParams({ userId });
 
-  stream_type = stream_type ?? 'Following';
+  source = source ?? 'following';
   queryParams.append('viewer_id', String(viewerId));
 
   if (skip !== undefined) {
@@ -112,8 +111,8 @@ export async function getUserStreamFollowing(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
-  if (stream_type !== undefined) {
-    queryParams.append('stream_type', String(stream_type));
+  if (source !== undefined) {
+    queryParams.append('source', String(source));
   }
 
   const response = await fetch(
@@ -130,11 +129,11 @@ export async function getUserStreamFriends(
   viewerId: string,
   skip?: number,
   limit?: number,
-  stream_type?: string
+  source?: string
 ): Promise<UserView[]> {
   const queryParams = new URLSearchParams({ userId });
 
-  stream_type = stream_type ?? 'Friends';
+  source = source ?? 'friends';
   queryParams.append('viewer_id', String(viewerId));
 
   if (skip !== undefined) {
@@ -143,8 +142,8 @@ export async function getUserStreamFriends(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
-  if (stream_type !== undefined) {
-    queryParams.append('stream_type', String(stream_type));
+  if (source !== undefined) {
+    queryParams.append('source', String(source));
   }
 
   const response = await fetch(
@@ -156,12 +155,17 @@ export async function getUserStreamFriends(
   return response.json();
 }
 
-export async function getUserFollowing(
+export async function getUserStreamMuted(
   userId: string,
+  viewerId: string,
   skip?: number,
-  limit?: number
-): Promise<string[]> {
-  const queryParams = new URLSearchParams({ userId });
+  limit?: number,
+  source?: string
+): Promise<UserView[]> {
+  const queryParams = new URLSearchParams();
+
+  source = source ?? 'muted';
+  queryParams.append('viewer_id', String(viewerId));
 
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
@@ -169,10 +173,38 @@ export async function getUserFollowing(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
+  if (source !== undefined) {
+    queryParams.append('source', String(source));
+  }
 
   const response = await fetch(
-    `${BASE_URL}/user/${userId}/following?${queryParams}`
+    `${BASE_URL}/stream/users?user_id=${userId}&${queryParams}`
   );
+  console.log(
+    'url',
+    `${BASE_URL}/stream/users?user_id=${userId}&${queryParams}`
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch user muted');
+
+  return response.json();
+}
+
+export async function getUserFollowing(
+  userId: string,
+  viewerId?: string,
+  skip?: number,
+  limit?: number
+): Promise<UserView[]> {
+  const queryParams = new URLSearchParams({ userId });
+
+  queryParams.append('user_id', String(userId));
+  if (skip) queryParams.append('skip', String(skip));
+  if (viewerId) queryParams.append('viewer_id', String(viewerId));
+  if (limit) queryParams.append('limit', String(limit));
+  queryParams.append('source', 'following');
+
+  const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user following');
 
@@ -198,6 +230,29 @@ export async function getUserFriends(
   );
 
   if (!response.ok) throw new Error('Failed to fetch user friends');
+
+  return response.json();
+}
+
+export async function getUserMuted(
+  userId: string,
+  skip?: number,
+  limit?: number
+): Promise<string[]> {
+  const queryParams = new URLSearchParams({ userId });
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/user/${userId}/muted?${queryParams}`
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch user muted');
 
   return response.json();
 }
@@ -239,7 +294,7 @@ export async function getUserStream(
   skip?: number,
   limit?: number,
   source?: string
-): Promise<UserStream> {
+): Promise<UserView[]> {
   const queryParams = new URLSearchParams();
 
   queryParams.append('user_id', userId);
@@ -328,7 +383,7 @@ export async function searchUsersByUsername(
   }
 
   const response = await fetch(
-    `${BASE_URL}/stream/users/username-search?${queryParams.toString()}`
+    `${BASE_URL}/stream/users/username?${queryParams.toString()}`
   );
   if (!response.ok) throw new Error('Failed to search users by username');
   return response.json();

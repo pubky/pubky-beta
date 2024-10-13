@@ -1,23 +1,64 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
 import { usePubkyClientContext, useToastContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
+import { UseUserStreamMuted } from '@/hooks/useUser';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
   creatorPubky: string;
+  name: string;
 }
 
 export default function ProfileMenu({
   setShowProfileMenu,
   creatorPubky,
+  name = 'User',
 }: TooltipProfileMenuProps) {
   const router = useRouter();
-  const { pubky } = usePubkyClientContext();
+  const { pubky, mute, unmute } = usePubkyClientContext();
+  const { data, isLoading, isError } = UseUserStreamMuted(
+    pubky ?? '',
+    pubky ?? '',
+    0,
+    1
+  );
+  if (isError) console.error(isError);
+  console.log('DATAMuted', data);
+  console.log("loading", isLoading)
   const { setContent, setShow } = useToastContext();
+  const [muted, setMuted] = useState(false);
+  const [loadingMuted, setLoadingMuted] = useState(true);
   const tooltipProfileMenuRef = useRef<HTMLDivElement>(null);
+
+  const muteUser = async () => {
+    try {
+      if (!creatorPubky) return;
+      setLoadingMuted(true);
+
+      const result = await mute(creatorPubky);
+      setMuted(result);
+      setLoadingMuted(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const unmuteUser = async () => {
+    try {
+      if (!creatorPubky) return;
+      setLoadingMuted(true);
+
+      const result = await unmute(creatorPubky);
+      setMuted(!result);
+      setLoadingMuted(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
@@ -89,6 +130,30 @@ export default function ProfileMenu({
         >
           Copy profile link
         </Tooltip.Item>
+        {pubky !== creatorPubky && isLoading ? (
+          <Tooltip.Item
+            loading={isLoading}
+            icon={<Icon.LoadingSpin size="20" />}
+          >
+            Loading...
+          </Tooltip.Item>
+        ) : muted ? (
+          <Tooltip.Item
+            loading={loadingMuted}
+            onClick={loadingMuted ? undefined : () => unmuteUser()}
+            icon={<Icon.SpeakerSimpleSlash size="20" />}
+          >
+            Unmute {Utils.minifyText(name, 10)}
+          </Tooltip.Item>
+        ) : (
+          <Tooltip.Item
+            loading={loadingMuted}
+            onClick={loadingMuted ? undefined : () => muteUser()}
+            icon={<Icon.SpeakerSimpleSlash size="20" />}
+          >
+            Mute {Utils.minifyText(name, 10)}
+          </Tooltip.Item>
+        )}
       </Tooltip.Main>
     </div>
   );
