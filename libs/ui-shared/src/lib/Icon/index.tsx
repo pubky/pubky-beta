@@ -35,6 +35,7 @@ import {
   Podcast,
   SlidersHorizontal,
   SpeakerSimpleSlash,
+  SpeakerHigh,
 } from './_Media';
 import {
   NoteBlank,
@@ -200,6 +201,7 @@ export const Icon = {
   SquaresFour,
   SquareHalf,
   SpeakerSimpleSlash,
+  SpeakerHigh,
   Spotify,
   Stack,
   Tag,

@@ -65,6 +65,7 @@ interface BodyNotification {
 export interface Relationship {
   following: boolean;
   followed_by: boolean;
+  muted: boolean;
 }
 
 export interface Followers {

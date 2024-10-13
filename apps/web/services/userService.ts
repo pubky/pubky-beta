@@ -180,10 +180,6 @@ export async function getUserStreamMuted(
   const response = await fetch(
     `${BASE_URL}/stream/users?user_id=${userId}&${queryParams}`
   );
-  console.log(
-    'url',
-    `${BASE_URL}/stream/users?user_id=${userId}&${queryParams}`
-  );
 
   if (!response.ok) throw new Error('Failed to fetch user muted');
 
