@@ -31,7 +31,7 @@ export default function ProfileMenu({
   console.log("loading", isLoading)
   const { setContent, setShow } = useToastContext();
   const [muted, setMuted] = useState(false);
-  const [loadingMuted, setLoadingMuted] = useState(true);
+  const [loadingMuted, setLoadingMuted] = useState(false);
   const tooltipProfileMenuRef = useRef<HTMLDivElement>(null);
 
   const muteUser = async () => {
