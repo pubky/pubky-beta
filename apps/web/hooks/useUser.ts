@@ -37,18 +37,6 @@ export function useUserCounts(userId: string) {
   });
 }
 
-export function UseUserFollowers(
-  userId: string,
-  viewerId: string,
-  skip?: number,
-  limit?: number
-) {
-  return useQuery({
-    queryKey: ['userFollowers', userId, skip, limit],
-    queryFn: () => getUserFollowers(userId, viewerId, skip, limit),
-  });
-}
-
 export function UseUserStreamFollowers(
   userId: string,
   viewerId: string,
@@ -103,15 +91,25 @@ export function UseUserStreamMuted(
   });
 }
 
-export function UseUserFollowing(
+export function UseUserFollowers(
   userId: string,
-  viewerId: string,
   skip?: number,
   limit?: number
 ) {
   return useQuery({
-    queryKey: ['userFollowing', userId, viewerId, skip, limit],
-    queryFn: () => getUserFollowing(userId, viewerId, skip, limit),
+    queryKey: ['userFollowers', userId, skip, limit],
+    queryFn: () => getUserFollowers(userId, skip, limit),
+  });
+}
+
+export function UseUserFollowing(
+  userId: string,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['userFollowing', userId, skip, limit],
+    queryFn: () => getUserFollowing(userId, skip, limit),
   });
 }
 
