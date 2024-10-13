@@ -207,11 +207,7 @@ export default function FilterTabs({
               <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
             )}
             {activeTab === 6 && (
-              <TaggedAs
-                profile={profile}
-                loading={loading}
-                creatorPubky={creatorPubky}
-              />
+              <TaggedAs loading={loading} creatorPubky={creatorPubky} />
             )}
           </>
         )}

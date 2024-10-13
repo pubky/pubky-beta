@@ -37,12 +37,13 @@ export function useUserCounts(userId: string) {
 
 export function UseUserFollowers(
   userId: string,
+  viewerId: string,
   skip?: number,
   limit?: number
 ) {
   return useQuery({
     queryKey: ['userFollowers', userId, skip, limit],
-    queryFn: () => getUserFollowers(userId, skip, limit),
+    queryFn: () => getUserFollowers(userId, viewerId, skip, limit),
   });
 }
 
@@ -139,14 +140,15 @@ export function useSearchUsers(
 }
 
 export function useUserStream(
+  userId: string,
   viewerId?: string,
   skip?: number,
   limit?: number,
-  streamType?: string
+  source?: string
 ) {
   return useQuery({
-    queryKey: ['userStream', viewerId, skip, limit, streamType],
-    queryFn: () => getUserStream(viewerId, skip, limit, streamType),
+    queryKey: ['userStream', viewerId, skip, limit, source],
+    queryFn: () => getUserStream(userId, viewerId, skip, limit, source),
   });
 }
 

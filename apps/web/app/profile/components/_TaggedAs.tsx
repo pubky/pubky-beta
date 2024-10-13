@@ -1,5 +1,4 @@
 import { Skeleton } from '@/components';
-// import { ImageByUri } from '@/components/ImageByUri';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserTags, UserView } from '@/types/User';
@@ -18,16 +17,11 @@ import { useEffect, useState } from 'react';
 import { getUserProfile } from '@/services/userService';
 
 type TaggedAsProps = {
-  profile: UserView | null;
   creatorPubky: string | undefined;
   loading: boolean;
 };
 
-export default function TaggedAs({
-  profile,
-  creatorPubky,
-  loading,
-}: TaggedAsProps) {
+export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const router = useRouter();
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const usePubky = creatorPubky || pubky;

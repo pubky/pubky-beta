@@ -10,8 +10,7 @@ import { TStatus } from '@/types';
 
 export default function Index() {
   const { pubky } = usePubkyClientContext();
-  const { data, isLoading } = useUserProfile(pubky ?? '', pubky ?? '');
-  const user = data;
+  const { data: user, isLoading } = useUserProfile(pubky ?? '', pubky ?? '');
   const loader = useRef(null);
 
   return (

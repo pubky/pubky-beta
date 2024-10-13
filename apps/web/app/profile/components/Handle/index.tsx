@@ -7,7 +7,7 @@ import { TStatus } from '@/types';
 import Buttons from './_Buttons';
 import Status from './_Status';
 import { usePubkyClientContext } from '@/contexts';
-import { UseUserFollowers } from '@/hooks/useUser';
+import { useUserStream } from '@/hooks/useUser';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   username: string | JSX.Element;
@@ -24,7 +24,8 @@ export default function Handle({
   ...rest
 }: HandleProps) {
   const { pubky, seed } = usePubkyClientContext();
-  const { data: followers } = UseUserFollowers(pubkey ?? '');
+  const { data: followers } = useUserStream(pubkey, pubky, 0, 10, 'followers');
+
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -43,13 +44,13 @@ export default function Handle({
 
         if (!pubkey) return;
 
-        const followersList = followers;
+        const followersList = followers?.users;
 
         if (followersList) {
           setInitLoadingFollowed(false);
 
-          followersList?.forEach((user) => {
-            const id = user;
+          followersList.map((user) => {
+            const id = user.details.id;
             if (id === pubky) {
               setFollowed(true);
             }

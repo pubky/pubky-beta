@@ -23,9 +23,9 @@ export async function getUserProfile(
   userId: string,
   viewerId: string
 ): Promise<UserView> {
-  const queryParams = new URLSearchParams({
-    viewer_id: viewerId,
-  });
+  const queryParams = new URLSearchParams();
+
+  if (viewerId) queryParams.append('viewer_id', viewerId);
 
   const response = await fetch(`${BASE_URL}/user/${userId}?${queryParams}`);
 
@@ -44,21 +44,19 @@ export async function getUserCounts(userId: string): Promise<UserCounts> {
 
 export async function getUserFollowers(
   userId: string,
+  viewerId?: string,
   skip?: number,
   limit?: number
 ): Promise<string[]> {
   const queryParams = new URLSearchParams({ userId });
 
-  if (skip !== undefined) {
-    queryParams.append('skip', String(skip));
-  }
-  if (limit !== undefined) {
-    queryParams.append('limit', String(limit));
-  }
+  queryParams.append('user_id', String(userId));
+  if (skip) queryParams.append('skip', String(skip));
+  if (viewerId) queryParams.append('viewer_id', String(viewerId));
+  if (limit) queryParams.append('limit', String(limit));
+  queryParams.append('source', 'following');
 
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/followers?${queryParams}`
-  );
+  const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user followers');
 
@@ -236,21 +234,22 @@ export async function searchUsers(
 }
 
 export async function getUserStream(
+  userId: string,
   viewerId?: string,
   skip?: number,
   limit?: number,
-  streamType?: string
+  source?: string
 ): Promise<UserStream> {
   const queryParams = new URLSearchParams();
 
+  queryParams.append('user_id', userId);
   if (viewerId) queryParams.append('viewer_id', viewerId);
   if (skip) queryParams.append('skip', String(skip));
   if (limit) queryParams.append('limit', String(limit));
-  if (streamType) queryParams.append('stream_type', streamType);
+  if (source) queryParams.append('source', source);
 
-  const response = await fetch(
-    `${BASE_URL}/stream/users?${queryParams.toString()}`
-  );
+  console.log(`${BASE_URL}/stream/users?${queryParams}`);
+  const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user stream');
 

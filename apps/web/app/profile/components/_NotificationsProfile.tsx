@@ -1,6 +1,5 @@
 import { Notifications } from '@/app/notifications/components';
 import { Skeleton } from '@/components';
-import { INotification } from '@/types';
 import { NotificationView } from '@/types/User';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import Link from 'next/link';

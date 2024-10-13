@@ -15,7 +15,6 @@ export default function WhoFollow() {
   );
 
   const recommendedProfiles = data;
-  //const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loading, setLoading] = useState<{
     [pubky: string]: boolean;
   }>({});

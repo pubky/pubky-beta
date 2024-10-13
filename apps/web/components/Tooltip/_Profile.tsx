@@ -41,7 +41,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
     data: followers,
     isLoading: isLoadingFollowers,
     isError: isErrorFollowers,
-  } = UseUserFollowers(idAuthor ?? '');
+  } = UseUserFollowers(idAuthor ?? '', pubky ?? '');
   if (isErrorFollowers) console.error(isErrorFollowers);
 
   const {
