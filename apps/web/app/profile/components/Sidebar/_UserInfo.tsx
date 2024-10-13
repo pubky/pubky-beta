@@ -95,6 +95,7 @@ export default function UserInfo({
               <Tooltip.ProfileMenu
                 setShowProfileMenu={setShowProfileMenu}
                 creatorPubky={pubkyUser}
+                name={name}
               />
             )}
             <div

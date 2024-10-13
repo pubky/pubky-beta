@@ -16,6 +16,7 @@ interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   setShowModalLogout: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
+  username: string;
 }
 
 export default function Buttons({
@@ -30,6 +31,7 @@ export default function Buttons({
   setShowModalLogout,
   setLoadingFollowed,
   setFollowed,
+  username,
 }: ButtonsProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   //const { follow, unfollow } = useClientContext();
@@ -181,6 +183,7 @@ export default function Buttons({
           <Tooltip.ProfileMenu
             setShowProfileMenu={setShowProfileMenu}
             creatorPubky={creatorPubky ?? pubkey}
+            name={username}
           />
         )}
         <Button.Action

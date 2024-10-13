@@ -17,7 +17,6 @@ import {
   UseUserFollowing,
   useUserProfile,
 } from '@/hooks/useUser';
-import { getUserDetails } from '@/services/userService';
 
 interface ProfileProps {
   post?: PostView;
@@ -42,13 +41,14 @@ export default function Profile({ post, profileId }: ProfileProps) {
     isLoading: isLoadingFollowers,
     isError: isErrorFollowers,
   } = UseUserFollowers(idAuthor ?? '', pubky ?? '');
+  console.log('followers', followers);
   if (isErrorFollowers) console.error(isErrorFollowers);
 
   const {
     data: following,
     isLoading: isLoadingFollowing,
     isError: isErrorFollowing,
-  } = UseUserFollowing(idAuthor ?? '');
+  } = UseUserFollowing(idAuthor ?? '', pubky ?? '');
   if (isErrorFollowing) console.error(isErrorFollowing);
 
   const [followed, setFollowed] = useState(false);
@@ -89,10 +89,10 @@ export default function Profile({ post, profileId }: ProfileProps) {
         if (followersList) {
           const images = await Promise.all(
             followersList.slice(0, 3).map(async (user, index) => {
-              const userDetails = await getUserDetails(user);
+              //const userDetails = await getUserDetails(user);
               return {
                 alt: `userPic-${index + 1}`,
-                src: userDetails?.image || '/images/Userpic.png',
+                src: user?.details?.image || '/images/Userpic.png',
               };
             })
           );
@@ -101,7 +101,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
           setInitLoadingFollowed(false);
 
           followersList.forEach((user) => {
-            const uri = user.replace('pubky:', '');
+            const uri = user?.details?.id.replace('pubky:', '');
             if (uri === pubky) {
               setFollowed(true);
             }
@@ -124,10 +124,10 @@ export default function Profile({ post, profileId }: ProfileProps) {
         if (followingList) {
           const images = await Promise.all(
             followingList.slice(0, 3).map(async (user, index) => {
-              const userDetails = await getUserDetails(user);
+              //const userDetails = await getUserDetails(user);
               return {
                 alt: `userPic-${index + 1}`,
-                src: userDetails?.image || '/images/Userpic.png',
+                src: user?.details?.image || '/images/Userpic.png',
               };
             })
           );
@@ -142,6 +142,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [following]);
+
   return (
     <Tooltip.Main
       onClick={(event) => event.stopPropagation()}

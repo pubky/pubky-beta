@@ -17,6 +17,8 @@ import {
   getUserStreamFollowers,
   getUserStreamFollowing,
   getUserStreamFriends,
+  getUserStreamMuted,
+  getUserMuted,
 } from '../services/userService';
 import { getNotifications } from '@/services/notificationService';
 
@@ -52,19 +54,12 @@ export function UseUserStreamFollowers(
   viewerId: string,
   skip?: number,
   limit?: number,
-  stream_type?: string
+  source?: string
 ) {
   return useQuery({
-    queryKey: [
-      'userStreamFollowers',
-      userId,
-      viewerId,
-      skip,
-      limit,
-      stream_type,
-    ],
+    queryKey: ['userStreamFollowers', userId, viewerId, skip, limit, source],
     queryFn: () =>
-      getUserStreamFollowers(userId, viewerId, skip, limit, stream_type),
+      getUserStreamFollowers(userId, viewerId, skip, limit, source),
   });
 }
 
@@ -73,19 +68,12 @@ export function UseUserStreamFollowing(
   viewerId: string,
   skip?: number,
   limit?: number,
-  stream_type?: string
+  source?: string
 ) {
   return useQuery({
-    queryKey: [
-      'userStreamFollowing',
-      userId,
-      viewerId,
-      skip,
-      limit,
-      stream_type,
-    ],
+    queryKey: ['userStreamFollowing', userId, viewerId, skip, limit, source],
     queryFn: () =>
-      getUserStreamFollowing(userId, viewerId, skip, limit, stream_type),
+      getUserStreamFollowing(userId, viewerId, skip, limit, source),
   });
 }
 
@@ -94,23 +82,36 @@ export function UseUserStreamFriends(
   viewerId: string,
   skip?: number,
   limit?: number,
-  stream_type?: string
+  source?: string
 ) {
   return useQuery({
-    queryKey: ['userStreamFriends', userId, viewerId, skip, limit, stream_type],
-    queryFn: () =>
-      getUserStreamFriends(userId, viewerId, skip, limit, stream_type),
+    queryKey: ['userStreamFriends', userId, viewerId, skip, limit, source],
+    queryFn: () => getUserStreamFriends(userId, viewerId, skip, limit, source),
+  });
+}
+
+export function UseUserStreamMuted(
+  userId: string,
+  viewerId: string,
+  skip?: number,
+  limit?: number,
+  source?: string
+) {
+  return useQuery({
+    queryKey: ['userStreamMuted', userId, viewerId, skip, limit, source],
+    queryFn: () => getUserStreamMuted(userId, viewerId, skip, limit, source),
   });
 }
 
 export function UseUserFollowing(
   userId: string,
+  viewerId: string,
   skip?: number,
   limit?: number
 ) {
   return useQuery({
-    queryKey: ['userFollowing', userId, skip, limit],
-    queryFn: () => getUserFollowing(userId, skip, limit),
+    queryKey: ['userFollowing', userId, viewerId, skip, limit],
+    queryFn: () => getUserFollowing(userId, viewerId, skip, limit),
   });
 }
 
@@ -118,6 +119,13 @@ export function UseUserFriends(userId: string, skip?: number, limit?: number) {
   return useQuery({
     queryKey: ['userFriends', userId, skip, limit],
     queryFn: () => getUserFriends(userId, skip, limit),
+  });
+}
+
+export function UseUserMuted(userId: string, skip?: number, limit?: number) {
+  return useQuery({
+    queryKey: ['userMuted', userId, skip, limit],
+    queryFn: () => getUserMuted(userId, skip, limit),
   });
 }
 

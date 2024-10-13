@@ -17,11 +17,11 @@ export default function Index({
   //const { setPosts } = useClientContext();
   const { pubky } = usePubkyClientContext();
   const creatorPubky = params.creatorPubky;
-  const { data, isLoading, isError } = useUserProfile(
-    creatorPubky,
-    pubky ?? ''
-  );
-  const profile = data;
+  const {
+    data: profile,
+    isLoading,
+    isError,
+  } = useUserProfile(creatorPubky, pubky ?? '');
   const [userExist, setUserExist] = useState(true);
 
   const loader = useRef(null);
@@ -33,7 +33,7 @@ export default function Index({
       setUserExist(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [profile]);
 
   useEffect(() => {
     //setPosts({} as INewPost);
