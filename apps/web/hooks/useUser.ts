@@ -151,13 +151,14 @@ export function useUserStream(
 }
 
 export function useMostFollowedUsers(
+  userId: string,
   viewerId?: string,
   skip?: number,
   limit?: number
 ) {
   return useQuery({
     queryKey: ['mostFollowedUsers', viewerId, skip, limit],
-    queryFn: () => getMostFollowedUsers(viewerId, skip, limit),
+    queryFn: () => getMostFollowedUsers(userId, viewerId, skip, limit),
   });
 }
 

@@ -22,7 +22,7 @@ export default function Index() {
     data: influencers,
     isLoading,
     isError,
-  } = useMostFollowedUsers(pubky, 0, 10);
+  } = useMostFollowedUsers(pubky ?? '', pubky, 0, 10);
   if (isError) console.error(isError);
 
   const [loadingInfluencers, setLoadingInfluencers] =

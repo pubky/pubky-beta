@@ -1,7 +1,7 @@
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
-import { useMostFollowedUsers } from '@/hooks/useUser';
+import { useInfluencersUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 
@@ -12,7 +12,7 @@ export default function Influencers() {
     data: influencers,
     isLoading,
     isError,
-  } = useMostFollowedUsers(pubky, 0, 3);
+  } = useInfluencersUsers(pubky ?? '', pubky, 0, 3);
 
   if (isError) console.error(isError);
 
