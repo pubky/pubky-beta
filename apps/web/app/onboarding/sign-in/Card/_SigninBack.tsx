@@ -15,7 +15,7 @@ export default function SigninBack() {
         className="mt-4 lg:mt-0"
         id="onboarding-sign-up-link"
       >
-        <Button.Large icon={<Icon.SignIn size="16" />}>
+        <Button.Large variant="secondary" icon={<Icon.SignIn size="16" />}>
           Sign in to Pubky
         </Button.Large>
       </Link>

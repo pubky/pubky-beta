@@ -1,13 +1,17 @@
 'use client';
 
-import Link from 'next/link';
 import { Typography, Button, Icon, Content, Header } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { usePubkyClientContext } from '@/contexts';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function Intro() {
   const { pubky, isLoggedIn } = usePubkyClientContext();
+  const router = useRouter();
   const [logoLink, setLogoLink] = useState('/onboarding');
+  const [currentIntro, setCurrentIntro] = useState(0);
+  const totalIntros = 6;
 
   useEffect(() => {
     async function fetchData() {
@@ -20,68 +24,263 @@ export default function Intro() {
     }
     fetchData();
   }, [pubky, isLoggedIn]);
+
+  const handleNext = () => {
+    if (currentIntro < totalIntros - 1) {
+      setCurrentIntro((prev) => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentIntro > 0) {
+      setCurrentIntro((prev) => prev - 1);
+    }
+  };
+
+  const introContent = [
+    {
+      content: (
+        <>
+          <Typography.Display>
+            It&apos;s your web. Time to take it back.
+          </Typography.Display>
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                The internet was once a place of limitless possibility—a
+                frontier for free expression, connection, and exploration.
+              </Typography.Body>
+              <Typography.Body variant="medium" className="text-opacity-50">
+                Over time, control has shifted into the hands of a few, turning
+                our digital world into a maze of algorithms and walled gardens.
+              </Typography.Body>
+              <Typography.Body variant="medium" className="text-opacity-50">
+                It doesn&apos;t have to be this way.
+              </Typography.Body>
+            </div>
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                We envision a web where you decide which content you see, who
+                you connect with, and what is relevant. A place where your
+                identity and data belong to you, not corporations.
+              </Typography.Body>
+              <Typography.Body variant="medium" className="text-opacity-50">
+                You are one step closer to a web that&apos;s truly yours.{' '}
+                <span className="text-white font-bold text-opacity-100">
+                  Let&apos;s unlock the web.
+                </span>
+              </Typography.Body>
+            </div>
+          </div>
+        </>
+      ),
+    },
+    {
+      content: (
+        <>
+          <Typography.Display className="sm:leading-[4rem]">
+            Introducing
+            <br />
+            Pubky.
+          </Typography.Display>
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                Pubky is part of a new kind of web where you have control over
+                your online identity, content, and connections.
+              </Typography.Body>
+              <Typography.Body variant="medium" className="text-opacity-50">
+                We believe the internet should belong to its users. So,
+                we&apos;re building a decentralized web where you own your
+                identity, curate your content, and connect with others on your
+                own terms.
+              </Typography.Body>
+              <Typography.Body
+                variant="medium"
+                className="font-bold text-white text-opacity-100"
+              >
+                No more walled gardens or hidden algorithms.
+              </Typography.Body>
+            </div>
+          </div>
+        </>
+      ),
+    },
+    {
+      content: (
+        <>
+          <Typography.Display>Your Digital Key.</Typography.Display>
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                Instead of usernames and passwords, Pubky uses cryptographic
+                keys to secure your account. Think of it as a secret digital
+                key, that only you hold.
+              </Typography.Body>
+            </div>
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                Your key allows you to define where people can find your data,
+                even if you are censored or change digital locations.{' '}
+                <span className="font-bold text-white text-opacity-100">
+                  In this web, you are the key.
+                </span>
+              </Typography.Body>
+            </div>
+          </div>
+        </>
+      ),
+    },
+    {
+      content: (
+        <>
+          <Typography.Display>Social Tagging.</Typography.Display>
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                Use special tags to categorize posts and discover content that
+                interests you.
+              </Typography.Body>
+              <Typography.Body variant="medium" className="text-opacity-50">
+                Profile tags help you find the people, communities and
+                conversations you&apos;re looking for.
+              </Typography.Body>
+            </div>
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                There are no algorithms deciding what&apos;s best &apos;for
+                you&apos;. YOU create the algorithm with your peers.
+              </Typography.Body>
+              <Typography.Body
+                variant="medium"
+                className="font-bold text-opacity-100"
+              >
+                Your keys, your content, your rules.
+              </Typography.Body>
+            </div>
+          </div>
+          <div className="flex">
+            <Image
+              width={596}
+              height={388}
+              alt="intro-1"
+              src="/images/intro-1.svg"
+            />
+            <Image
+              width={496}
+              height={288}
+              alt="intro-2"
+              src="/images/intro-2.svg"
+            />
+          </div>
+        </>
+      ),
+    },
+    {
+      content: (
+        <>
+          <Typography.Display>Customized Feeds.</Typography.Display>
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                You decide which content appears in your feeds. Choose the tags,
+                people, reach and content types you want to see.
+              </Typography.Body>
+            </div>
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                Save custom filter settings as new custom feeds.
+                <span className="text-white text-opacity-100 font-bold">
+                  You are the algorithm.
+                </span>
+              </Typography.Body>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1 mt-6">
+            <Image
+              width={720}
+              height={39}
+              alt="intro-4"
+              src="/images/intro-4.svg"
+            />
+            <Image
+              width={720}
+              height={269}
+              alt="intro-3"
+              src="/images/intro-3.svg"
+            />
+          </div>
+        </>
+      ),
+    },
+    {
+      content: (
+        <>
+          <Typography.Display>
+            Posts, Articles, Photos, Links...
+          </Typography.Display>
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="flex flex-col gap-4">
+              <Typography.Body variant="medium" className="text-opacity-50">
+                Pubky supports a growing set of content types. Use Pubky like a
+                search engine, or a blog, or social media, or a forum, or for
+                photo-sharing.
+              </Typography.Body>
+              <Typography.Body variant="medium" className="font-bold">
+                Pubky is the next web.
+              </Typography.Body>
+            </div>
+          </div>
+          <Image
+            width={600}
+            height={396}
+            alt="intro-5"
+            src="/images/intro-5.svg"
+            className="float-right -mt-24"
+          />
+        </>
+      ),
+    },
+  ];
+
   return (
     <Content.Main className="pb-0">
       <Header.Root>
         <Header.Logo link={logoLink} />
         <Header.Title titleHeader={'Intro'} />
+        <Header.Action link="/onboarding/sign-in">Skip Intro</Header.Action>
       </Header.Root>
+
+      {/*Intro 1*/}
       <Content.Grid>
-        {' '}
-        <Typography.Display>You just want to be free.</Typography.Display>
-        <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-          <div className="flex flex-col gap-4">
-            <Typography.Body variant="medium" className="text-opacity-50">
-              If you just stop everything for a moment and breathe in, you will
-              realize that our deepest desires, our most profound dreams, all
-              lead us to one ultimate destination: freedom.
-            </Typography.Body>
-            <Typography.Body variant="medium" className="text-opacity-50">
-              Yet, we often lose sight of this truth. We chase after money,
-              possessions, status, believing these are the ends we seek. But
-              these are mere shadows, echoes of a deeper longing. What we truly
-              crave is freedom — the freedom to be, to speak, to live without
-              restraint.
-            </Typography.Body>
-          </div>
-          <div className="flex flex-col gap-4">
-            <Typography.Body variant="medium" className="text-opacity-50">
-              True freedom isn&apos;t bought or sold; it is earned through the
-              courage to be ourselves, to speak our truths, to live
-              authentically.
-            </Typography.Body>
-            <Typography.Body variant="medium" className="text-opacity-50">
-              It is the liberty to think, to create, to connect without fear or
-              censorship.
-            </Typography.Body>
-            <Typography.Body variant="medium" className="text-opacity-50">
-              It is the sovereignty of not only our money but our minds, our
-              bodies, and our digital lives.
-            </Typography.Body>
-          </div>
-          <div className="flex flex-col gap-4">
-            <Typography.Body variant="medium" className="text-opacity-50">
-              Look around you. Every action, every choice you make is a step
-              towards or away from this freedom. Which way are you heading?
-            </Typography.Body>
-            <Typography.Body variant="medium" className="text-opacity-50">
-              It&apos;s time to make a choice.
-            </Typography.Body>
-            <Typography.Body variant="medium" className="font-semibold">
-              Welcome to Pubky.
-            </Typography.Body>
-            <Typography.Body variant="medium" className="text-opacity-50">
-              Your keys, your content, your rules.
-            </Typography.Body>
-          </div>
-          {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-3.png" />*/}
-        </div>
-        <div className="w-full max-w-[1200px] mt-6 justify-end items-center inline-flex">
-          <Link href="/onboarding/sign-in" id="onboarding-sign-in-btn">
-            <Button.Large icon={<Icon.ArrowRight />}>Continue</Button.Large>
-          </Link>
+        {introContent[currentIntro].content}
+        <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-12">
+          <Button.Large
+            icon={<Icon.ArrowLeft />}
+            className="w-[140px]"
+            variant="secondary"
+            onClick={() =>
+              currentIntro === 0 ? router.push('/onboarding') : handleBack()
+            }
+          >
+            Back
+          </Button.Large>
+          <Button.Large
+            className="w-[140px]"
+            icon={<Icon.ArrowRight />}
+            onClick={() =>
+              currentIntro === totalIntros - 1
+                ? router.push('/onboarding/sign-in')
+                : handleNext()
+            }
+          >
+            Continue
+          </Button.Large>
         </div>
       </Content.Grid>
+      <div className="w-full">
+        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/background-image.png')] pointer-events-none" />
+      </div>
     </Content.Main>
   );
 }

@@ -59,13 +59,13 @@ export default function Index() {
         <Header.Action id="onboarding-sign-in-btn">Sign in</Header.Action>
       </Header.Root>
       <Content.Grid className="relative z-20">
-        <Typography.Display>Become the algorithm</Typography.Display>
+        <Typography.Display>Unlock the web.</Typography.Display>
         <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
-          Your keys, your content, your rules. Social publishing, reimagined.
+          Your keys, your content, your rules.
         </Typography.H2>
         <div className="relative flex gap-3">
           <Link id="onboarding-get-started-link" href="/onboarding/intro">
-            <Button.Large className="mt-12">Get started</Button.Large>
+            <Button.Large className="mt-12">Sign up</Button.Large>
           </Link>
           <Button.Large
             onClick={!loading ? () => handleSubmit() : undefined}
@@ -78,7 +78,7 @@ export default function Index() {
         </div>
       </Content.Grid>
       <div className="w-full">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/background-image.png')]" />
+        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/background-image.png')] pointer-events-none" />
       </div>
     </Content.Main>
   );

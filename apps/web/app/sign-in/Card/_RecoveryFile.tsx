@@ -113,6 +113,7 @@ export default function RecoveryFile({
         loading={loading}
         className="mt-4"
         id="onboarding-sign-in-button"
+        variant="secondary"
       >
         Sign in
       </Button.Large>

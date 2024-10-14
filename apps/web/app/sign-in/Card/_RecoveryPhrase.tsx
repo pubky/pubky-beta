@@ -24,6 +24,7 @@ export default function RecoveryPhrase() {
         disabled
         className="mt-4 lg:mt-0"
         icon={<Icon.Key size="16" color="gray" />}
+        variant="secondary"
       >
         Sign in
       </Button.Large>
