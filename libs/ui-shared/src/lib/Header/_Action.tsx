@@ -13,7 +13,7 @@ export const Action = ({
 }: ActionProps) => {
   return (
     <Link href={link}>
-      <Button.Large {...rest} variant="secondary">
+      <Button.Large className="h-[48px]" {...rest} variant="secondary">
         {children}
       </Button.Large>
     </Link>

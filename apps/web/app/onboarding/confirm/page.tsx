@@ -121,8 +121,8 @@ export default function Index() {
         <div className="relative my-8 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
           <div className="p-12 flex-col justify-center items-center flex">
             <div className="p-12">
-              <Icon.CheckCircle size="130" />
-              <Image alt="glow" fill src="/images/glow-1.png" />
+              <Icon.CheckCircle size="130" color="#C8FF00" />
+              <Image alt="glow" fill src="/images/glow-2.png" />
             </div>
           </div>
         </div>

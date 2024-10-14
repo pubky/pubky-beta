@@ -15,7 +15,9 @@ export default function NewAccount() {
         className="mt-4 lg:mt-0"
         id="onboarding-sign-up-link"
       >
-        <Button.Large icon={<Icon.UserRectangle />}>New pubky</Button.Large>
+        <Button.Large variant="secondary" icon={<Icon.UserRectangle />}>
+          New pubky
+        </Button.Large>
       </Link>
     </Card.Primary>
   );

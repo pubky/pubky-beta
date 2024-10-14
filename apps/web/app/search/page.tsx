@@ -19,6 +19,7 @@ import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { Filter } from '@/components/Filter';
 import Skeletons from '@/components/Skeletons';
 import { usePostStream } from '@/hooks/usePost';
+import { UseUserMuted } from '@/hooks/useUser';
 
 const SearchContent = () => {
   const router = useRouter();
@@ -33,6 +34,7 @@ const SearchContent = () => {
     sort,
     searchTags
   );
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   //const [cursor, setCursor] = useState('');
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
@@ -182,13 +184,15 @@ const SearchContent = () => {
           )} flex-col inline-flex gap-3`}
         >
           {data && data?.length > 0
-            ? data.map((post) => (
-                <Post
-                  key={post.details.id}
-                  post={post}
-                  largeView={layout === 'wide'}
-                />
-              ))
+            ? data
+                .filter((post) => !mutedUsers?.includes(post?.details?.author))
+                .map((post) => (
+                  <Post
+                    key={post.details.id}
+                    post={post}
+                    largeView={layout === 'wide'}
+                  />
+                ))
             : !isLoading && (
                 <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
                   <Typography.H2 className="font-normal text-opacity-50">

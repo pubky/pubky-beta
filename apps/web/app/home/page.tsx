@@ -8,6 +8,7 @@ import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { usePostStream, usePostThread } from '@/hooks/usePost';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
+import { UseUserMuted } from '@/hooks/useUser';
 
 export default function Index() {
   const { layout } = useFilterContext();
@@ -128,6 +129,7 @@ const Timeline = () => {
     reach,
     sort
   );
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
 
   useEffect(() => {
     setSkip(0);
@@ -162,18 +164,20 @@ const Timeline = () => {
   return (
     <div className="flex-col inline-flex gap-3">
       {timeline && timeline?.length > 0
-        ? timeline.map((post, index) => (
-            <div key={`${index}-${post.details.id}`}>
-              <Components.Post
-                post={post}
-                largeView={layout === 'wide'}
-                line={Boolean(post?.relationships?.replied)}
-              />
-              {post?.counts?.replies > 0 && (
-                <PostReplies post={post} layout={layout} />
-              )}
-            </div>
-          ))
+        ? timeline
+            .filter((post) => !mutedUsers?.includes(post?.details?.author))
+            .map((post, index) => (
+              <div key={`${index}-${post.details.id}`}>
+                <Components.Post
+                  post={post}
+                  largeView={layout === 'wide'}
+                  line={Boolean(post?.relationships?.replied)}
+                />
+                {post?.counts?.replies > 0 && (
+                  <PostReplies post={post} layout={layout} />
+                )}
+              </div>
+            ))
         : !isLoading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
               <Typography.H2 className="font-normal text-opacity-50">
@@ -192,8 +196,10 @@ const Timeline = () => {
 };
 
 const PostReplies = ({ post, layout }) => {
+  const { pubky } = usePubkyClientContext();
   const { data: replies } = usePostThread(post.details.author, post.details.id);
   //const [showAllReplies, setShowAllReplies] = useState(false);
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
   const router = useRouter();
   const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
@@ -213,14 +219,16 @@ const PostReplies = ({ post, layout }) => {
 
   return (
     <div className="mt-3 flex flex-col gap-3">
-      {displayedReplies.map((reply) => (
-        <Components.Post
-          key={reply.details.id}
-          post={reply}
-          largeView={layout === 'wide'}
-          line={Boolean(reply?.relationships?.replied)}
-        />
-      ))}
+      {displayedReplies
+        .filter((post) => !mutedUsers?.includes(post?.details?.author))
+        .map((reply) => (
+          <Components.Post
+            key={reply.details.id}
+            post={reply}
+            largeView={layout === 'wide'}
+            line={Boolean(reply?.relationships?.replied)}
+          />
+        ))}
       {repliesLeft > 0 && (
         //&& !showAllReplies
         <div>

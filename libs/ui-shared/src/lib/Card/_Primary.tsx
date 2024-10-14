@@ -9,6 +9,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   className?: string;
   refCard?: React.RefObject<HTMLDivElement>;
+  imageTitle?: React.ReactNode;
 }
 
 export const Primary = ({
@@ -18,6 +19,7 @@ export const Primary = ({
   borderRadius = 'rounded-2xl',
   children,
   refCard,
+  imageTitle,
   ...rest
 }: CardProps) => {
   const baseCSS = `w-full p-8 shadow flex-col justify-between inline-flex`;
@@ -35,7 +37,10 @@ export const Primary = ({
             text && 'gap-6'
           )}
         >
-          <Typography.Body variant="large-bold">{title}</Typography.Body>
+          <div className="flex gap-2">
+            <Typography.Body variant="large-bold">{title}</Typography.Body>
+            {imageTitle}
+          </div>
           <Typography.Body className="text-opacity-80" variant="medium-light">
             {text}
           </Typography.Body>

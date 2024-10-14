@@ -50,7 +50,7 @@ export default function Post({
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
   //const { setContent, setShow } = useAlertContext();
-  const { data } = useUserProfile(post?.details.author, pubky ?? '');
+  const { data } = useUserProfile(post?.details?.author, pubky ?? '');
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
