@@ -169,7 +169,9 @@ const Timeline = () => {
                 largeView={layout === 'wide'}
                 line={Boolean(post?.relationships?.replied)}
               />
-              <PostReplies post={post} layout={layout} />
+              {post?.counts?.replies > 0 && (
+                <PostReplies post={post} layout={layout} />
+              )}
             </div>
           ))
         : !isLoading && (

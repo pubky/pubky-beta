@@ -37,7 +37,9 @@ export default function Replies({
     return replies.map((reply) => (
       <div className="flex flex-col gap-3" key={reply?.details?.id}>
         <Post post={reply} size="full" />
-        <ReplyReplies post={post} reply={reply} />
+        {reply?.counts?.replies > 0 && (
+          <ReplyReplies post={post} reply={reply} />
+        )}
       </div>
     ));
   };

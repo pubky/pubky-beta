@@ -17,7 +17,7 @@ export default function MutedUsers() {
     data: mutedUsers,
     isLoading,
     isError,
-  } = UseUserStreamMuted(pubky ?? '', pubky ?? '', 0, 1);
+  } = UseUserStreamMuted(pubky ?? '', pubky ?? '', 0, 10);
   if (isError) console.error(isError);
 
   const [loadingMutedUsers, setLoadingMutedUsers] = useState<LoadingMutedUsers>(
@@ -90,9 +90,7 @@ export default function MutedUsers() {
               {mutedUsers.map((mutedUser) => {
                 const pubkeyUser =
                   pubky && mutedUser?.details?.id.includes(pubky);
-                const isMuted = muted[mutedUser?.details?.id] || true;
-                //mutedUser?.relationship?.muted ||
-                //false;
+                const isMuted = muted[mutedUser?.details?.id] ?? true;
 
                 return (
                   <div key={mutedUser?.details?.id} className="w-full">

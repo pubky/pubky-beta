@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
-import { UserTags, UserView } from '@/types/User';
+import { UserTags } from '@/types/User';
 import {
   Button,
   Icon,
