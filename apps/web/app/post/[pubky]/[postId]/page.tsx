@@ -44,6 +44,12 @@ export default function Index({
     ? data?.details?.attachments[0]
     : '';
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  //const [parentPostsCount, setParentPostsCount] = useState(0);
+  const postRef = useRef<HTMLDivElement>(null);
+
+  //const handleParentPostsCountChange = (count: number) => {
+  //  setParentPostsCount(count);
+  //};
 
   const fetchMoreReplies = () => {
     if (isErrorReplies) return;
@@ -112,23 +118,31 @@ export default function Index({
     }
   }
   if (data) {
+    //const marginLeftValue = (parentPostsCount + 1) * 12;
     content = (
       <>
         {data?.relationships?.replied && (
-          <Post.NavigatorParent parentPost={data?.details?.uri} />
+          <Post.RootParent
+            postRef={postRef}
+            parentURI={data?.relationships?.replied}
+            //onParentPostsCountChange={handleParentPostsCountChange}
+          />
         )}
 
         {isLoading ? (
           <Skeletons.Simple />
         ) : (
           <>
-            <PostComponent
-              key={uri}
-              post={data}
-              size="full"
-              largeView={windowWidth >= 1280}
-              fullContent
-            />
+            <div ref={postRef}>
+              <PostComponent
+                key={uri}
+                post={data}
+                size="full"
+                largeView={windowWidth >= 1280}
+                fullContent
+                line={Boolean(data?.relationships?.replied)}
+              />
+            </div>
             <div className="mt-3">
               <Post.ReplyForm
                 uri={uri}
