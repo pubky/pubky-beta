@@ -6,6 +6,8 @@ import { usePostThread } from '@/hooks/usePost';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import Skeletons from '@/components/Skeletons';
+import { UseUserMuted } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Replies({
   repliesResponse,
@@ -16,6 +18,8 @@ export default function Replies({
   post: PostView;
   isLoadingReplies: boolean;
 }) {
+  const { pubky } = usePubkyClientContext();
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
   const [replies, setReplies] = useState<PostView[]>([]);
 
   const fetchReplies = async () => {
@@ -34,14 +38,16 @@ export default function Replies({
   }, [repliesResponse]);
 
   const renderReplies = (replies: PostView[]) => {
-    return replies.map((reply) => (
-      <div className="flex flex-col gap-3" key={reply?.details?.id}>
-        <Post post={reply} size="full" />
-        {reply?.counts?.replies > 0 && (
-          <ReplyReplies post={post} reply={reply} />
-        )}
-      </div>
-    ));
+    return replies
+      .filter((reply) => !mutedUsers?.includes(reply?.details?.author))
+      .map((reply) => (
+        <div className="flex flex-col gap-3" key={reply?.details?.id}>
+          <Post post={reply} size="full" />
+          {reply?.counts?.replies > 0 && (
+            <ReplyReplies post={post} reply={reply} />
+          )}
+        </div>
+      ));
   };
 
   return (
@@ -62,10 +68,12 @@ export default function Replies({
 }
 
 const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
+  const { pubky } = usePubkyClientContext();
   const { data: replyReplies } = usePostThread(
     reply?.details?.author,
     reply?.details?.id
   );
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
   const router = useRouter();
   const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
@@ -86,15 +94,19 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
 
   return (
     <div>
-      {displayedReplies.map((nestedReply) => (
-        <div className="flex flex-col gap-3" key={nestedReply?.details?.id}>
-          <Post
-            post={nestedReply}
-            size="full"
-            line={Boolean(reply?.relationships?.replied)}
-          />
-        </div>
-      ))}
+      {displayedReplies
+        .filter(
+          (nestedReply) => !mutedUsers?.includes(nestedReply?.details?.author)
+        )
+        .map((nestedReply) => (
+          <div className="flex flex-col gap-3" key={nestedReply?.details?.id}>
+            <Post
+              post={nestedReply}
+              size="full"
+              line={Boolean(reply?.relationships?.replied)}
+            />
+          </div>
+        ))}
       {repliesLeft > 0 && (
         //&& !showAllReplies
         <div>
