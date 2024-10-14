@@ -287,7 +287,6 @@ export async function getUserStream(
   if (limit) queryParams.append('limit', String(limit));
   if (source) queryParams.append('source', source);
 
-  console.log(`${BASE_URL}/stream/users?${queryParams}`);
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user stream');
