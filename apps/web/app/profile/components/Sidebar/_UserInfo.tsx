@@ -36,16 +36,15 @@ export default function UserInfo({
   loadingFollowed,
   setLoadingFollowed,
 }: UserInfoProps) {
-  const { pubky } = usePubkyClientContext();
-  //const { follow, unfollow } = useClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
 
   const followUser = async () => {
     try {
       if (!creatorPubky) return;
       setLoadingFollowed(true);
 
-      // const result = null; //await follow(creatorPubky);
-      // setFollowed(result);
+      const result = await follow(creatorPubky);
+      setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
       console.log(error);
@@ -57,7 +56,7 @@ export default function UserInfo({
       if (!creatorPubky) return;
       setLoadingFollowed(true);
 
-      const result = null; //await unfollow(creatorPubky);
+      const result = await unfollow(creatorPubky);
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {

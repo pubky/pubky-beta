@@ -7,7 +7,7 @@ import UserInfo from './_UserInfo';
 import BioSection from './_BioSection';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
-import { useUserProfile, UseUserStreamFollowers } from '@/hooks/useUser';
+import { useUserProfile, useUserStream } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 
@@ -24,9 +24,12 @@ export default function Sidebar({
   );
   if (isError) console.error(isError);
   const profile = data;
-  const { data: initFollowers } = UseUserStreamFollowers(
+  const { data: initFollowers } = useUserStream(
     usePubky ?? '',
-    pubky ?? ''
+    pubky,
+    0,
+    10,
+    'followers'
   );
   const name = profile?.details?.name ?? '';
   const bio = profile?.details.bio || 'No bio.';
