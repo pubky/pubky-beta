@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { Icon, Button, Post } from '@social/ui-shared';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
-import Partecipants from './_Partecipants';
+import Participants from './_Participants';
 import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
 import { PostThread, PostView } from '@/types/Post';
@@ -125,7 +125,7 @@ export default function ReplyForm({
           setShowModalTag={setShowModalTag}
         />
       </Post.Root>
-      <Partecipants author={post.details.author} repliesResponse={replies} />
+      <Participants author={post.details.author} repliesResponse={replies} />
     </div>
   );
 }

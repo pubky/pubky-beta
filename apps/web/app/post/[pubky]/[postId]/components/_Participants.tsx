@@ -7,7 +7,7 @@ import { usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 
-export default function Partecipants({
+export default function Participants({
   repliesResponse,
   author,
 }: {
