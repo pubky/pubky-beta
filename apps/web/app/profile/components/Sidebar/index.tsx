@@ -170,6 +170,7 @@ export default function Sidebar({
           scrolled={scrolled}
           uriImage={image}
           name={name}
+          profile={profile}
           creatorPubky={creatorPubky}
           pubkyUser={usePubky ?? ''}
           showProfileMenu={showProfileMenu}

@@ -47,7 +47,7 @@ export default function Tag({
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
   const { data: initFollowing, isError } = UseUserStreamFollowing(
-    post?.details?.author,
+    pubky ?? '',
     pubky ?? ''
   );
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
