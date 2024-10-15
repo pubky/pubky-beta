@@ -109,6 +109,7 @@ export default function CreateQuickPost({
       arrayTags={arrayTags}
       setArrayTags={setArrayTags}
       setIsValidContent={setIsValidContent}
+      loading={sendingPost}
       button={
         <Button.Medium
           id="post-btn"

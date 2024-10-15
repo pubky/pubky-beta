@@ -132,6 +132,7 @@ export default function Repost({
             setIsValidContent={setIsValidContent}
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
+            loading={sendingRepost}
             arrayTags={arrayTags}
             setArrayTags={setArrayTags}
             placeHolder="Optional comment"

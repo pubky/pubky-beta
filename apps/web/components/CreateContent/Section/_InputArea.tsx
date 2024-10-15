@@ -21,6 +21,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   autoFocus?: boolean;
   placeHolder?: string;
   setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
+  loading?: boolean;
 }
 
 export default function InputArea({
@@ -37,6 +38,7 @@ export default function InputArea({
   autoFocus,
   placeHolder,
   setFilePreviews,
+  loading,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -122,6 +124,7 @@ export default function InputArea({
           setCursorPosition(e.target.selectionStart);
           setIsValidContent(Utils.isValidContent(e.target.value));
         }}
+        disabled={loading}
         onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
           setCursorPosition(e.currentTarget.selectionStart);
         }}

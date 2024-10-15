@@ -300,6 +300,7 @@ export default function Index() {
           placeholder="Your Name"
           className="h-auto text-[40px] font-bold sm:text-[64px]"
           defaultValue={name}
+          disabled={loading}
           maxLength={25}
           autoCorrect="off"
           error={errors.name}
@@ -325,6 +326,7 @@ export default function Index() {
                   id="edit-profile-bio-input"
                   placeholder="Short bio. Tell a bit about yourself."
                   className="h-[240px]"
+                  disabled={loading}
                   maxLength={160}
                   defaultValue={bio}
                   error={errors.bio}
@@ -350,6 +352,7 @@ export default function Index() {
                     id={`edit-profile-link-${link.title.toLowerCase()}-input`}
                     className="h-[70px] mt-2"
                     placeholder={link.placeHolder}
+                    disabled={loading}
                     value={link.url}
                     error={errors[`link${index}` as keyof typeof errors]}
                     action={
@@ -415,6 +418,7 @@ export default function Index() {
               accept="image/*"
               onChange={UploadPic}
               className="hidden"
+              disabled={loading}
             />
           </Card.Primary>
           {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}

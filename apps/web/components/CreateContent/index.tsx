@@ -27,6 +27,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   arrayTags: string[];
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
+  loading?: boolean;
 }
 
 export default function CreateContent({
@@ -48,6 +49,7 @@ export default function CreateContent({
   arrayTags,
   setArrayTags,
   children,
+  loading,
 }: CreateContentProps) {
   const { profile } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -254,6 +256,7 @@ export default function CreateContent({
           autoFocus={autoFocus}
           placeHolder={placeHolder}
           setFilePreviews={setFilePreviews}
+          loading={loading}
         />
         <LinkPreviewer content={content} />
         {selectedFiles.length > 0 && (

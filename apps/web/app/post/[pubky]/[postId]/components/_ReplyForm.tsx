@@ -83,6 +83,7 @@ export default function ReplyForm({
           setIsValidContent={setIsValidContent}
           selectedFiles={selectedFiles}
           setSelectedFiles={setSelectedFiles}
+          loading={sendingReply}
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}
           button={

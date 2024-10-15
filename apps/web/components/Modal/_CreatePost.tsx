@@ -90,6 +90,7 @@ export default function CreatePost({
               setIsValidContent={setIsValidContent}
               selectedFiles={selectedFiles}
               setSelectedFiles={setSelectedFiles}
+              loading={sendingPost}
               arrayTags={arrayTags}
               setArrayTags={setArrayTags}
               button={

@@ -128,6 +128,7 @@ export default function CreateReply({
             setIsValidContent={setIsValidContent}
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
+            loading={sendingReply}
             arrayTags={arrayTags}
             setArrayTags={setArrayTags}
             button={
