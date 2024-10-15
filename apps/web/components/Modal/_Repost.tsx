@@ -27,10 +27,10 @@ export default function Repost({
   const [contentRepost, setContentRepost] = useState('');
   const [isValidContent, setIsValidContent] = useState(false);
   const [sendingRepost, setSendingRepost] = useState(false);
-
   const [arrayTags, setArrayTags] = useState<string[]>([]);
-
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   const handleSubmitRepost = async (content: string) => {
     if (sendingRepost) {
@@ -38,8 +38,6 @@ export default function Repost({
     }
     try {
       setSendingRepost(true);
-      const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
       const newRepost = await createRepost(
         post?.details?.id,
@@ -49,9 +47,14 @@ export default function Repost({
         selectedFiles
       );
 
-      if (newRepost) {
+      const hashtags = Utils.extractHashtags(content);
+      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      const match = newRepost && newRepost.match(regex);
+
+      if (newRepost && match) {
+        const repostId = match[2];
         for (const tag of updatedTags) {
-          await createTag(pubky ?? '', newRepost, tag);
+          await createTag(pubky ?? '', repostId, tag);
         }
         setContent('Repost created!');
         setShow(true);

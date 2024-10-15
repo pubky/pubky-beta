@@ -66,13 +66,13 @@ export default function FooterArea({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    const maxSizeInMB = 6;
+    const maxSizeInMB = 20;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (files) {
       const validFiles = Array.from(files).filter((file) => {
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 6 MB', 'warning');
+          setContentAlert('The maximum allowed size is 20 MB', 'warning');
           setShow(true);
           return false;
         }

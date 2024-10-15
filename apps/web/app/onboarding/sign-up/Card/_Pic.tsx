@@ -1,4 +1,5 @@
 import { ImageByUri } from '@/components/ImageByUri';
+import { useAlertContext } from '@/contexts';
 import { Button, Card, Icon } from '@social/ui-shared';
 
 interface PicProps {
@@ -7,6 +8,8 @@ interface PicProps {
 }
 
 export default function Pic({ image, setImage }: PicProps) {
+  const { setContent, setShow } = useAlertContext();
+
   const handleUploadImage = () => {
     if (image === '/images/Userpic.png') {
       const fileInput = document.getElementById('fileInput');
@@ -21,8 +24,17 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const maxSizeInMB = 20;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
     const file = event.target.files?.[0];
+
     if (file) {
+      if (file.size > maxSizeInBytes) {
+        setContent('The maximum allowed size is 20 MB', 'warning');
+        setShow(true);
+        return;
+      }
+
       const img = new Image();
       img.src = URL.createObjectURL(file);
 

@@ -22,6 +22,8 @@ export default function CreateQuickPost({
   const [textArea, setTextArea] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   const handleSubmit = async (content: string) => {
     if (sendingPost) {
@@ -34,10 +36,12 @@ export default function CreateQuickPost({
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
       const newPost = await createPost(content, 'Short', selectedFiles);
+      const match = newPost && newPost?.uri.match(regex);
 
-      if (newPost) {
+      if (newPost && match) {
+        const postId = match[2];
         for (const tag of updatedTags) {
-          await createTag(pubky ?? '', newPost?.uri, tag);
+          await createTag(pubky ?? '', postId, tag);
         }
 
         const postWithFullDetails = {

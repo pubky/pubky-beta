@@ -26,6 +26,8 @@ export default function CreateReply({
   const modalReplyRef = useRef<HTMLDivElement>(null);
   const [isValidContent, setIsValidContent] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   const handleSubmit = async (content: string) => {
     if (sendingReply) {
@@ -34,8 +36,6 @@ export default function CreateReply({
     try {
       setSendingReply(true);
 
-      const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
       //const rootUri = post.relationships?.replied
       //  ? post.relationships?.replied
       //  : post.details.uri;
@@ -47,9 +47,14 @@ export default function CreateReply({
         selectedFiles
       );
 
-      if (newReply) {
+      const hashtags = Utils.extractHashtags(content);
+      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      const match = newReply && newReply.match(regex);
+
+      if (newReply && match) {
+        const replyId = match[2];
         for (const tag of updatedTags) {
-          await createTag(pubky ?? '', newReply, tag);
+          await createTag(pubky ?? '', replyId, tag);
         }
         setContent('Reply created!');
         setShow(true);

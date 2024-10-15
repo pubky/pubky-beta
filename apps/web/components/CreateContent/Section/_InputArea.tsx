@@ -83,7 +83,7 @@ export default function InputArea({
           return false;
         }
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 6 MB', 'warning');
+          setContentAlert('The maximum allowed size is 20 MB', 'warning');
           setShow(true);
           return false;
         }
