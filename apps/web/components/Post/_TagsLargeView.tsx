@@ -46,20 +46,6 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     }
   }, [post?.tags]);
 
-  {
-    /**const updatePosts = async () => {
-    const updatedPost = await getPost(post?.details?.uri);
-
-    if (!updatedPost) return;
-
-    const updatedPosts = Object.keys(posts).map((key) => {
-      if (posts[key].uri === updatedPost.uri) return updatedPost;
-      return posts[key];
-    });
-    setPosts(updatedPosts);
-  };*/
-  }
-
   const handleDeleteTag = async (tag: string) => {
     setLoadingTags(tag);
     await deleteTag(post?.details?.id, tag);
@@ -126,25 +112,6 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     }
   }, [tags, pubky]);
 
-  {
-    /**
-
-    const handleTagSearch = (tag: string) => {
-    if (searchTags.includes(tag)) return;
-
-    if (searchTags.length < 3) {
-      setSearchTags([...searchTags, tag]);
-    } else {
-      const newSearchTags = [...searchTags.slice(1), tag];
-      setSearchTags(newSearchTags);
-    }
-    router.push('/search');
-  };
-
-  if (post?.tags?.length === 0) {
-    return <></>;
-  }*/
-  }
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '');
     setTag(valueWithoutSpaces);
@@ -255,7 +222,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             tagObj?.taggers.length - displayedImages.length;
 
           return (
-            <PostUI.Footer key={index}>
+            <PostUI.Footer key={`${index}-${tagObj?.label}`}>
               <div className="flex gap-2">
                 {tagObj.taggers_count > 0 && (
                   <PostUtil.Tag

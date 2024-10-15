@@ -32,14 +32,24 @@ export default function Actions({
   const [showMenu, setShowMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
+  const [loadingBookmarks, setLoadingBookmarks] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(
+    repost?.bookmark?.id ? repost?.bookmark?.id : post?.bookmark?.id ?? ''
+  );
   //const [showRepostMenu, setShowRepostMenu] = useState(false);
 
   const handleAddBookmark = async (postId: string, authorId: string) => {
+    setLoadingBookmarks(true);
     await addBookmark(postId, authorId);
+    setIsBookmarked(postId);
+    setLoadingBookmarks(false);
   };
 
   const handleDeleteBookmark = async (bookmarkId: string) => {
+    setLoadingBookmarks(true);
     await deleteBookmark(bookmarkId);
+    setIsBookmarked('');
+    setLoadingBookmarks(false);
   };
 
   //const handleRepost = async () => {
@@ -73,7 +83,7 @@ export default function Actions({
   };*/
   }
 
-  const handleBookmarks = (
+  const handleBookmarks = async (
     repost: PostView | undefined,
     post: PostView,
     handleAddBookmark: (postId: string, authorId: string) => Promise<void>,
@@ -84,19 +94,17 @@ export default function Actions({
     ) => void,
     setShowToast: (show: boolean) => void
   ) => {
-    const isBookmarked = repost ? repost.bookmark?.id : post?.bookmark?.id;
-
     if (repost) {
       if (isBookmarked) {
-        handleDeleteBookmark(repost?.bookmark?.id ?? '');
+        await handleDeleteBookmark(repost?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(repost?.details?.id, repost?.details?.author);
+        await handleAddBookmark(repost?.details?.id, repost?.details?.author);
       }
     } else {
       if (isBookmarked) {
-        handleDeleteBookmark(post?.bookmark?.id ?? '');
+        await handleDeleteBookmark(post?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(post?.details?.id, post?.details?.author);
+        await handleAddBookmark(post?.details?.id, post?.details?.author);
       }
     }
 
@@ -161,17 +169,15 @@ export default function Actions({
           size="small"
           variant="custom"
           icon={
-            <Icon.BookmarkSimple
-              size="16"
-              opacity={repost?.bookmark?.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
-              color={
-                repost?.bookmark?.id
-                  ? 'white'
-                  : post?.bookmark?.id
-                  ? 'white'
-                  : 'white'
-              }
-            />
+            loadingBookmarks ? (
+              <Icon.LoadingSpin size="16" />
+            ) : (
+              <Icon.BookmarkSimple
+                size="16"
+                opacity={isBookmarked !== '' ? 1 : 0.2}
+                color={'white'}
+              />
+            )
           }
           onClick={() =>
             handleBookmarks(

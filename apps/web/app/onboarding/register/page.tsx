@@ -100,7 +100,7 @@ export default function Index() {
       }
 
       try {
-        const linksObject: { [fieldName: string]: string } = {};
+        const linksObject: { title: string; url: string }[] = [];
         const invalidLinkIndexes: number[] = [];
 
         links.forEach((link, index) => {
