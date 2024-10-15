@@ -10,9 +10,10 @@ interface BioProps {
   bio: string;
   setBio: React.Dispatch<React.SetStateAction<string>>;
   errors: Errors;
+  loading?: boolean;
 }
 
-export default function Bio({ bio, setBio, errors }: BioProps) {
+export default function Bio({ bio, setBio, errors, loading }: BioProps) {
   return (
     <Card.Primary className="justify-start gap-4" title="Profile">
       <div>
@@ -26,6 +27,7 @@ export default function Bio({ bio, setBio, errors }: BioProps) {
             className="h-[240px]"
             id="onboarding-bio-input"
             defaultValue={bio ? bio : ''}
+            disabled={loading}
             maxLength={160}
             error={errors.bio}
             onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {

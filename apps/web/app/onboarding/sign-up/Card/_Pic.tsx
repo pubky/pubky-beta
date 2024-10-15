@@ -5,9 +5,10 @@ import { Button, Card, Icon } from '@social/ui-shared';
 interface PicProps {
   image: File | string;
   setImage: React.Dispatch<React.SetStateAction<File | string>>;
+  loading: boolean;
 }
 
-export default function Pic({ image, setImage }: PicProps) {
+export default function Pic({ image, setImage, loading }: PicProps) {
   const { setContent, setShow } = useAlertContext();
 
   const handleUploadImage = () => {
@@ -118,6 +119,7 @@ export default function Pic({ image, setImage }: PicProps) {
         accept="image/*"
         onChange={UploadPic}
         className="hidden"
+        disabled={loading}
       />
     </Card.Primary>
   );

@@ -11,7 +11,6 @@ interface CreateRepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
-  handleRepost: () => Promise<void>;
   modalRepostRef?: React.RefObject<HTMLDivElement>;
 }
 
@@ -19,7 +18,6 @@ export default function Repost({
   showModalRepost,
   setShowModalRepost,
   post,
-  handleRepost,
 }: CreateRepostProps) {
   const { pubky, createRepost, createTag } = usePubkyClientContext();
   const modalRepostRef = useRef<HTMLDivElement>(null);
@@ -56,6 +54,38 @@ export default function Repost({
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', repostId, tag);
         }
+        setContent('Repost created!');
+        setShow(true);
+      } else {
+        setContent('Something wrong. Try again', 'warning');
+        setShow(true);
+      }
+      setArrayTags([]);
+      setContentRepost('');
+      setShowModalRepost(false);
+      setSelectedFiles([]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSendingRepost(false);
+    }
+  };
+
+  const handleSubmitQuickRepost = async () => {
+    if (sendingRepost) {
+      return;
+    }
+    try {
+      setSendingRepost(true);
+
+      const newRepost = await createRepost(
+        post?.details?.id,
+        post?.details?.author,
+        '',
+        'Short'
+      );
+
+      if (newRepost) {
         setContent('Repost created!');
         setShow(true);
       } else {
@@ -115,12 +145,7 @@ export default function Repost({
                   !sendingRepost
                     ? isValidContent || selectedFiles.length > 0
                       ? () => handleSubmitRepost(contentRepost)
-                      : () => {
-                          setSendingRepost(true);
-                          handleRepost();
-                          setShowModalRepost(false);
-                          setSendingRepost(false);
-                        }
+                      : () => handleSubmitQuickRepost()
                     : undefined
                 }
                 icon={<Icon.Repost color="white" />}
