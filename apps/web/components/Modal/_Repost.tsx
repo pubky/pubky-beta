@@ -11,7 +11,6 @@ interface CreateRepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
-  handleRepost: () => Promise<void>;
   modalRepostRef?: React.RefObject<HTMLDivElement>;
 }
 
@@ -19,7 +18,6 @@ export default function Repost({
   showModalRepost,
   setShowModalRepost,
   post,
-  handleRepost,
 }: CreateRepostProps) {
   const { pubky, createRepost, createTag } = usePubkyClientContext();
   const modalRepostRef = useRef<HTMLDivElement>(null);
@@ -27,10 +25,10 @@ export default function Repost({
   const [contentRepost, setContentRepost] = useState('');
   const [isValidContent, setIsValidContent] = useState(false);
   const [sendingRepost, setSendingRepost] = useState(false);
-
   const [arrayTags, setArrayTags] = useState<string[]>([]);
-
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   const handleSubmitRepost = async (content: string) => {
     if (sendingRepost) {
@@ -38,8 +36,6 @@ export default function Repost({
     }
     try {
       setSendingRepost(true);
-      const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
       const newRepost = await createRepost(
         post?.details?.id,
@@ -49,10 +45,47 @@ export default function Repost({
         selectedFiles
       );
 
-      if (newRepost) {
+      const hashtags = Utils.extractHashtags(content);
+      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      const match = newRepost && newRepost.match(regex);
+
+      if (newRepost && match) {
+        const repostId = match[2];
         for (const tag of updatedTags) {
-          await createTag(pubky ?? '', newRepost, tag);
+          await createTag(pubky ?? '', repostId, tag);
         }
+        setContent('Repost created!');
+        setShow(true);
+      } else {
+        setContent('Something wrong. Try again', 'warning');
+        setShow(true);
+      }
+      setArrayTags([]);
+      setContentRepost('');
+      setShowModalRepost(false);
+      setSelectedFiles([]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSendingRepost(false);
+    }
+  };
+
+  const handleSubmitQuickRepost = async () => {
+    if (sendingRepost) {
+      return;
+    }
+    try {
+      setSendingRepost(true);
+
+      const newRepost = await createRepost(
+        post?.details?.id,
+        post?.details?.author,
+        '',
+        'Short'
+      );
+
+      if (newRepost) {
         setContent('Repost created!');
         setShow(true);
       } else {
@@ -112,12 +145,7 @@ export default function Repost({
                   !sendingRepost
                     ? isValidContent || selectedFiles.length > 0
                       ? () => handleSubmitRepost(contentRepost)
-                      : () => {
-                          setSendingRepost(true);
-                          handleRepost();
-                          setShowModalRepost(false);
-                          setSendingRepost(false);
-                        }
+                      : () => handleSubmitQuickRepost()
                     : undefined
                 }
                 icon={<Icon.Repost color="white" />}

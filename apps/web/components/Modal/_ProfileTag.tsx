@@ -49,8 +49,8 @@ export default function ProfileTag({
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
-  const { data: initFollowing } = UseUserStreamFollowing(
-    pubkyUser ?? '',
+  const { data: initFollowing, isError } = UseUserStreamFollowing(
+    pubky ?? '',
     pubky ?? ''
   );
   const [showEmojis, setShowEmojis] = useState(false);
@@ -119,13 +119,18 @@ export default function ProfileTag({
   useEffect(() => {
     async function fetchFollowing() {
       try {
-        if (!pubky) return;
+        if (!pubkyUser) return;
 
-        const following = initFollowing;
+        if (isError) {
+          setInitLoadingFollowers(false);
+          return;
+        }
 
-        if (following) {
+        const following = initFollowing as UserView[];
+
+        if (following && following.length > 0) {
           const followingIds = following?.map((user) =>
-            user?.details?.id?.replace('pubky:', '')
+            user?.details?.id.replace('pubky:', '')
           );
 
           const matchedFollowedIds = profileTags
@@ -149,7 +154,7 @@ export default function ProfileTag({
     }
 
     fetchFollowing();
-  }, [pubky, profileTags]);
+  }, [pubky, profileTags, initFollowing]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -472,6 +477,7 @@ export default function ProfileTag({
                         const profile = userProfiles[user];
                         const pubkeyUser = pubky && user.includes(pubky);
                         const isFollowed = followedUser[user] || false;
+
                         return (
                           <div
                             key={userIndex}

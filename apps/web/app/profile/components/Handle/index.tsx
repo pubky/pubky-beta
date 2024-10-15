@@ -36,13 +36,13 @@ export default function Handle({
   useEffect(() => {
     async function fetchData() {
       try {
-        let pubkey = creatorPubky;
+        let pubkeyUser = creatorPubky;
 
-        if (!pubkey) {
-          pubkey = pubky;
+        if (!pubkeyUser) {
+          pubkeyUser = pubky;
         }
 
-        if (!pubkey) return;
+        if (!pubkeyUser) return;
 
         const followersList = followers;
 

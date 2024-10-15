@@ -16,6 +16,7 @@ interface LinksProps {
   setLinks: React.Dispatch<React.SetStateAction<Link[]>>;
   setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
   errors: Errors;
+  loading?: boolean;
 }
 
 export default function Links({
@@ -23,6 +24,7 @@ export default function Links({
   setLinks,
   setShowModalLink,
   errors,
+  loading,
 }: LinksProps) {
   const handleRemoveLink = (indexToRemove: number) => {
     setLinks((prevLinks) => {
@@ -42,6 +44,7 @@ export default function Links({
             <Input.Text
               className="h-[70px] mt-2"
               placeholder={link.placeHolder}
+              disabled={loading}
               value={link.url}
               error={errors[`link${index}` as keyof typeof errors]}
               action={

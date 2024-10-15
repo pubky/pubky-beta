@@ -56,6 +56,7 @@ type PubkyClientContextType = {
   ) => Promise<string | false>;
   follow: (user_id: string) => Promise<boolean>;
   unfollow: (user_id: string) => Promise<boolean>;
+  deleteFile: (file_uri: string) => Promise<boolean>;
   mute: (user_id: string) => Promise<boolean>;
   unmute: (user_id: string) => Promise<boolean>;
   addBookmark: (postId: string, authorId: string) => Promise<boolean>;
@@ -654,6 +655,22 @@ export function PubkyClientWrapper({
     }
   };
 
+  const deleteFile = async (file_uri: string): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in or pubky is not defined');
+      }
+
+      await client.delete(file_uri);
+
+      return true;
+    } catch (error) {
+      console.error('Error while unfollowing the user:', error);
+      return false;
+    }
+  };
+
   const mute = async (user_id: string): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
@@ -886,6 +903,7 @@ export function PubkyClientWrapper({
         createPost,
         follow,
         unfollow,
+        deleteFile,
         mute,
         unmute,
         addBookmark,

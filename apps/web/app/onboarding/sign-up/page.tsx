@@ -157,10 +157,9 @@ export default function Index() {
       } catch (error) {
         console.log(error);
       } finally {
+        router.push('/onboarding/pubky');
         setLoading(false);
       }
-
-      router.push('/onboarding/pubky');
     } catch (error) {
       console.log(error);
     } finally {
@@ -174,6 +173,7 @@ export default function Index() {
         placeholder="Your Name"
         className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px]"
         defaultValue={name ? name : ''}
+        disabled={loading}
         autoFocus
         id="onboarding-name-input"
         autoCorrect="off"
@@ -186,14 +186,15 @@ export default function Index() {
         Enter your bio, add some links, and upload a user picture.
       </Typography.H2>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-        <Card.Bio bio={bio} setBio={setBio} errors={errors} />
+        <Card.Bio bio={bio} setBio={setBio} errors={errors} loading={loading} />
         <Card.Links
           links={links}
           setLinks={setLinks}
           setShowModalLink={setShowModalLink}
           errors={errors}
+          loading={loading}
         />
-        <Card.Pic image={image} setImage={setImage} />
+        <Card.Pic image={image} setImage={setImage} loading={loading} />
         {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">

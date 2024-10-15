@@ -12,11 +12,12 @@ import {
   Icon,
 } from '@social/ui-shared';
 import { Header } from '@/components';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';
 import { ImageByUri } from '@/components/ImageByUri';
+import { useUserProfile } from '@/hooks/useUser';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -29,12 +30,14 @@ const profileSchema = z.object({
 
 export default function Index() {
   const router = useRouter();
-  const { pubky, saveProfile, profile } = usePubkyClientContext();
+  const { pubky, saveProfile, deleteFile } = usePubkyClientContext();
+  const { data: profile } = useUserProfile(pubky ?? '', pubky ?? '');
+  const { setContent, setShow } = useAlertContext();
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [image, setImage] = useState<File | string>('/images/Userpic.png');
-  // const [prevImage, setPrevImage] = useState<string>('');
+  const [prevImage, setPrevImage] = useState<File | string>('');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
@@ -75,12 +78,15 @@ export default function Index() {
         const userProfile = profile;
 
         if (userProfile) {
-          setName(userProfile?.name);
-          setBio(userProfile?.bio || '');
-          setImage(userProfile?.image || '/images/Userpic.png');
-          // setPrevImage(userProfile?.image || '/images/Userpic.png');
-          if (userProfile?.links && userProfile?.links?.length > 0)
-            setLinks(userProfile?.links);
+          setName(userProfile?.details?.name);
+          setBio(userProfile?.details?.bio || '');
+          setImage(userProfile?.details?.image || '/images/Userpic.png');
+          setPrevImage(userProfile?.details?.image || '/images/Userpic.png');
+          if (
+            userProfile?.details?.links &&
+            userProfile?.details?.links?.length > 0
+          )
+            setLinks(userProfile?.details?.links);
         }
       } catch (error) {
         console.log(error);
@@ -88,7 +94,7 @@ export default function Index() {
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky]);
+  }, [pubky, profile]);
 
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
@@ -105,8 +111,17 @@ export default function Index() {
   };
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const maxSizeInMB = 20;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
     const file = event.target.files?.[0];
+
     if (file) {
+      if (file.size > maxSizeInBytes) {
+        setContent('The maximum allowed size is 20 MB', 'warning');
+        setShow(true);
+        return;
+      }
+
       const img = new Image();
       img.src = URL.createObjectURL(file);
 
@@ -225,17 +240,16 @@ export default function Index() {
         bio,
         image,
         links: linksObject,
-        status: profile?.status,
+        status: profile?.details?.status,
       });
 
-      // if (
-      //   prevImage &&
-      //   prevImage !== '/images/Userpic.png' &&
-      //   prevImage !== image
-      // ) {
-      //   const idImage = Utils.encodeImageId(prevImage);
-      //   if (idImage) await deleteFile(idImage);
-      // }
+      if (
+        prevImage &&
+        prevImage !== '/images/Userpic.png' &&
+        prevImage !== image
+      ) {
+        await deleteFile(String(prevImage));
+      }
 
       router.push('/profile');
     } catch (error) {

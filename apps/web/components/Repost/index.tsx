@@ -41,7 +41,6 @@ export default function Repost({
       showModalRepost={showModalRepost}
       setShowModalRepost={setShowModalRepost}
       modalRepostRef={modalRepostRef}
-      handleRepost={handleRepost}
     />
   );
 }

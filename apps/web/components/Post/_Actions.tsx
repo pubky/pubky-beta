@@ -3,11 +3,7 @@
 import { useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
-import {
-  useAlertContext,
-  usePubkyClientContext,
-  useToastContext,
-} from '@/contexts';
+import { usePubkyClientContext, useToastContext } from '@/contexts';
 import Tooltip from '../Tooltip';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
@@ -30,8 +26,7 @@ export default function Actions({
     repost?.details?.author ?? '',
     pubky ?? ''
   );
-  const { addBookmark, deleteBookmark, createRepost } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addBookmark, deleteBookmark } = usePubkyClientContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
   const [showMenu, setShowMenu] = useState(false);
@@ -47,21 +42,21 @@ export default function Actions({
     await deleteBookmark(bookmarkId);
   };
 
-  const handleRepost = async () => {
-    const result = await createRepost(
-      post?.details?.id,
-      post?.details?.author,
-      '',
-      'Short'
-    );
-    if (result) {
-      setContent('Repost created!');
-      setShow(true);
-    } else {
-      setContent('Something wrong. Try again', 'warning');
-      setShow(true);
-    }
-  };
+  //const handleRepost = async () => {
+  //  const result = await createRepost(
+  //    post?.details?.id,
+  //    post?.details?.author,
+  //    '',
+  //    'Short'
+  //  );
+  //  if (result) {
+  //    setContent('Repost created!');
+  //    setShow(true);
+  //  } else {
+  //    setContent('Something wrong. Try again', 'warning');
+  //    setShow(true);
+  //  }
+  //};
 
   {
     /**const handleDeleteRepost = async () => {
@@ -211,7 +206,6 @@ export default function Actions({
       </PostUI.Actions>
       <Modal.Repost
         post={post}
-        handleRepost={handleRepost}
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
       />

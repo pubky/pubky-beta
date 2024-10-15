@@ -33,6 +33,8 @@ export default function ReplyForm({
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
@@ -49,10 +51,12 @@ export default function ReplyForm({
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+    const match = sendReply && sendReply.match(regex);
 
-    if (sendReply) {
+    if (sendReply && match) {
+      const replyId = match[2];
       for (const tag of updatedTags) {
-        await createTag(pubky ?? '', sendReply, tag);
+        await createTag(pubky ?? '', replyId, tag);
       }
       setSendingReply(false);
       setContentReply('');

@@ -15,7 +15,7 @@ export default function Partecipants({
   author: string;
 }) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { data: following } = UseUserFollowing(pubky ?? '');
+  const { data: followingUsers } = UseUserFollowing(pubky ?? '');
   //const { follow, unfollow, listFollowing } = useClientContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
   const [replies, setReplies] = useState<PostView[]>([]);
@@ -48,24 +48,27 @@ export default function Partecipants({
       try {
         if (!pubky || !replies) return;
 
-        const followingIds = following?.map(
-          (user) => user
-          //user.uri.replace('pubky:', '')
-        );
-        const matchedFollowedIds = replies.filter((reply) =>
-          followingIds?.includes(reply?.details?.author)
-        );
+        const following = followingUsers;
 
-        if (matchedFollowedIds.length > 0) {
-          setInitLoadingFollowers(false);
-          matchedFollowedIds.forEach((followed) => {
-            setFollowedUser((prevState) => ({
-              ...prevState,
-              [followed.details.author]: true,
-            }));
-          });
-        } else {
-          setInitLoadingFollowers(false);
+        if (following) {
+          const followingIds = following.map((user) =>
+            user.replace('pubky:', '')
+          );
+          const matchedFollowedIds = replies.filter((reply) =>
+            followingIds.includes(reply?.details?.author)
+          );
+
+          if (matchedFollowedIds.length > 0) {
+            setInitLoadingFollowers(false);
+            matchedFollowedIds.forEach((followed) => {
+              setFollowedUser((prevState) => ({
+                ...prevState,
+                [followed.details.author]: true,
+              }));
+            });
+          } else {
+            setInitLoadingFollowers(false);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -73,7 +76,7 @@ export default function Partecipants({
     }
 
     fetchFollowing();
-  }, [pubky, replies, following]);
+  }, [pubky, replies, followingUsers]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -127,6 +130,8 @@ export default function Partecipants({
 
   const getAuthorButton = () => {
     const authorId = authorData ? authorData.details.id : '';
+    const followed =
+      followedUser[authorId] || authorData?.relationship?.following || false;
     if (pubky === authorId) {
       return (
         <Button.Medium
@@ -146,7 +151,7 @@ export default function Partecipants({
           Loading
         </Button.Medium>
       );
-    } else if (followedUser[authorId]) {
+    } else if (followed) {
       return (
         <Button.Medium
           onClick={() => unfollowUser(authorId)}
