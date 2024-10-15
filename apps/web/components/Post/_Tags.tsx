@@ -27,6 +27,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
+  const [loadingTags, setLoadingTags] = useState(false);
 
   useEffect(() => {
     if (post?.tags) {
@@ -37,49 +38,41 @@ export default function Tags({ post, largeView = false }: PostProps) {
     }
   }, [post?.tags]);
 
-  {
-    /**
-
-  const updatePosts = async () => {
-    const updatedPost = await getPost(post.uri);
-
-    if (!updatedPost) return;
-
-    const updatedPosts = Object.keys(posts).map((key) => {
-      if (posts[key].uri === updatedPost.uri) return updatedPost;
-      return posts[key];
-    });
-    setPosts(updatedPosts);
-  };*/
-  }
-
   const handleDeleteTag = async (tag: string) => {
+    setLoadingTags(true);
     await deleteTag(post?.details?.id, tag);
+    // delete my user from tag from post.tags
+    const newTags = tags.map((tagObj) => {
+      if (tagObj.label === tag) {
+        return {
+          ...tagObj,
+          taggers_count: tagObj.taggers_count - 1,
+          taggers: tagObj.taggers.filter((fromItem) => fromItem !== pubky),
+        };
+      }
+      return tagObj;
+    });
+    setTags(newTags);
+    setLoadingTags(false);
   };
 
   const handleAddTag = async (tag: string) => {
+    setLoadingTags(true);
     await createTag(post?.details?.author, post?.details?.id, tag);
+    // add tag to post.tags
+    const newTags: PostTag[] = tags.map((tagObj) => {
+      if (tagObj.label === tag) {
+        return {
+          ...tagObj,
+          taggers_count: tagObj.taggers_count + 1,
+          taggers: [...tagObj.taggers, pubky ?? ''],
+        };
+      }
+      return tagObj;
+    });
+    setTags(newTags);
+    setLoadingTags(false);
   };
-
-  {
-    /**const handleTagSearch = (tag: string) => {
-    if (searchTags.includes(tag)) return;
-
-    if (searchTags.length < 3) {
-      setSearchTags([...searchTags, tag]);
-    } else {
-      const newSearchTags = [...searchTags.slice(1), tag];
-      setSearchTags(newSearchTags);
-    }
-    router.push('/search');
-  };*/
-  }
-
-  {
-    /** if (post?.tags?.length === 0) {
-    return <></>;
-  } */
-  }
 
   return (
     <div
@@ -105,7 +98,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
             return (
               <PostUI.Footer key={index}>
                 <TooltipUI.Root
-                  delay={800}
+                  delay={0}
                   setShowTooltip={setShowTooltipTag}
                   tagId={tagObj?.label}
                 >
@@ -130,44 +123,19 @@ export default function Tags({ post, largeView = false }: PostProps) {
                   >
                     <div className="flex gap-2 items-center">
                       {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
-                      <Typography.Caption
-                        variant="bold"
-                        className="text-opacity-30"
-                      >
-                        {tagObj?.taggers_count}
-                      </Typography.Caption>
+                      {loadingTags ? (
+                        <Icon.LoadingSpin size="16" />
+                      ) : (
+                        <Typography.Caption
+                          variant="bold"
+                          className="text-opacity-30"
+                        >
+                          {tagObj?.taggers_count}
+                        </Typography.Caption>
+                      )}
                     </div>
                   </PostUtil.Tag>
                 </TooltipUI.Root>
-                {/**
-                <Button.Action
-                  variant="custom"
-                  size="small"
-                  icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    isTagFound
-                      ? handleDeleteTag(tagObj?.label)
-                      : handleAddTag(tagObj?.label);
-                  }}
-                />
-                <PostUtil.Counter>
-                  {Number(tagObj?.taggers_count)}
-                </PostUtil.Counter>
-                {tagObj?.taggers
-                  .slice(0, 5)
-                  .map((fromItem, fromIndex: number) => (
-                    <Image
-                      width={32}
-                      height={32}
-                      alt={`pic-${fromIndex + 1}`}
-                      key={fromIndex}
-                      className={`w-[32px] h-[32px] rounded-full ${
-                        fromIndex !== 0 ? '-ml-5' : ''
-                      }`}
-                      src={fromItem?.tagger_id || '/images/Userpic.png'}
-                    />
-                  ))}*/}
               </PostUI.Footer>
             );
           })}
