@@ -27,7 +27,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
-  const [loadingTags, setLoadingTags] = useState(false);
+  const [loadingTags, setLoadingTags] = useState('');
 
   useEffect(() => {
     if (post?.tags) {
@@ -39,7 +39,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
   }, [post?.tags]);
 
   const handleDeleteTag = async (tag: string) => {
-    setLoadingTags(true);
+    setLoadingTags(tag);
     await deleteTag(post?.details?.id, tag);
     // delete my user from tag from post.tags
     const newTags = tags.map((tagObj) => {
@@ -53,11 +53,11 @@ export default function Tags({ post, largeView = false }: PostProps) {
       return tagObj;
     });
     setTags(newTags);
-    setLoadingTags(false);
+    setLoadingTags('');
   };
 
   const handleAddTag = async (tag: string) => {
-    setLoadingTags(true);
+    setLoadingTags(tag);
     await createTag(post?.details?.author, post?.details?.id, tag);
     // add tag to post.tags
     const newTags: PostTag[] = tags.map((tagObj) => {
@@ -71,7 +71,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
       return tagObj;
     });
     setTags(newTags);
-    setLoadingTags(false);
+    setLoadingTags('');
   };
 
   return (
@@ -109,32 +109,35 @@ export default function Tags({ post, largeView = false }: PostProps) {
                       tags={tagObj}
                     />
                   )}
-                  <PostUtil.Tag
-                    id={`tag-${index}`}
-                    clicked={isTagFound}
-                    color={
-                      tagObj?.label && Utils.generateRandomColor(tagObj?.label)
-                    }
-                    onClick={() =>
-                      isTagFound
-                        ? handleDeleteTag(tagObj?.label)
-                        : handleAddTag(tagObj?.label)
-                    }
-                  >
-                    <div className="flex gap-2 items-center">
-                      {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
-                      {loadingTags ? (
-                        <Icon.LoadingSpin size="16" />
-                      ) : (
-                        <Typography.Caption
-                          variant="bold"
-                          className="text-opacity-30"
-                        >
-                          {tagObj?.taggers_count}
-                        </Typography.Caption>
-                      )}
-                    </div>
-                  </PostUtil.Tag>
+                  {tagObj.taggers_count > 0 && (
+                    <PostUtil.Tag
+                      id={`tag-${index}`}
+                      clicked={isTagFound}
+                      color={
+                        tagObj?.label &&
+                        Utils.generateRandomColor(tagObj?.label)
+                      }
+                      onClick={() =>
+                        isTagFound
+                          ? handleDeleteTag(tagObj?.label)
+                          : handleAddTag(tagObj?.label)
+                      }
+                    >
+                      <div className="flex gap-2 items-center">
+                        {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
+                        {loadingTags === tagObj?.label ? (
+                          <Icon.LoadingSpin size="16" />
+                        ) : (
+                          <Typography.Caption
+                            variant="bold"
+                            className="text-opacity-30"
+                          >
+                            {tagObj?.taggers_count}
+                          </Typography.Caption>
+                        )}
+                      </div>
+                    </PostUtil.Tag>
+                  )}
                 </TooltipUI.Root>
               </PostUI.Footer>
             );
@@ -144,9 +147,9 @@ export default function Tags({ post, largeView = false }: PostProps) {
         post={post}
         tags={tags}
         updatePostInTimeline={(newTag: PostView) => {
-          setLoadingTags(true);
+          setLoadingTags(newTag?.details.content);
           setTags(newTag.tags);
-          setLoadingTags(false);
+          setLoadingTags('');
         }}
         handleAddTag={handleAddTag}
         handleDeleteTag={handleDeleteTag}

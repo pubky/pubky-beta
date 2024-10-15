@@ -34,6 +34,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
     {}
   );
+  const [loadingTags, setLoadingTags] = useState('');
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,13 +61,40 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
   }
 
   const handleDeleteTag = async (tag: string) => {
-    await deleteTag(post?.details?.author, post?.details?.id);
+    setLoadingTags(tag);
+    await deleteTag(post?.details?.id, tag);
+    // delete my user from tag from post.tags
+    const newTags = tags.map((tagObj) => {
+      if (tagObj.label === tag) {
+        return {
+          ...tagObj,
+          taggers_count: tagObj.taggers_count - 1,
+          taggers: tagObj.taggers.filter((fromItem) => fromItem !== pubky),
+        };
+      }
+      return tagObj;
+    });
+    setTags(newTags);
+    setLoadingTags('');
   };
 
   const handleAddTag = async (tag: string) => {
+    setLoadingTags(tag);
     await createTag(post?.details?.author, post?.details?.id, tag);
+    // add tag to post.tags
+    const newTags: PostTag[] = tags.map((tagObj) => {
+      if (tagObj.label === tag) {
+        return {
+          ...tagObj,
+          taggers_count: tagObj.taggers_count + 1,
+          taggers: [...tagObj.taggers, pubky ?? ''],
+        };
+      }
+      return tagObj;
+    });
+    setTags(newTags);
+    setLoadingTags('');
   };
-
   useEffect(() => {
     const fetchProfileImages = async () => {
       const images: { [key: string]: string } = {};
@@ -229,27 +257,33 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           return (
             <PostUI.Footer key={index}>
               <div className="flex gap-2">
-                <PostUtil.Tag
-                  clicked={isTagFound}
-                  color={
-                    tagObj?.label && Utils.generateRandomColor(tagObj?.label)
-                  }
-                  onClick={() =>
-                    isTagFound
-                      ? handleDeleteTag(tagObj?.label)
-                      : handleAddTag(tagObj?.label)
-                  }
-                >
-                  <div className="flex gap-2 items-center">
-                    {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
-                    <Typography.Caption
-                      variant="bold"
-                      className="text-opacity-30"
-                    >
-                      {tagObj?.taggers_count}
-                    </Typography.Caption>
-                  </div>
-                </PostUtil.Tag>
+                {tagObj.taggers_count > 0 && (
+                  <PostUtil.Tag
+                    clicked={isTagFound}
+                    color={
+                      tagObj?.label && Utils.generateRandomColor(tagObj?.label)
+                    }
+                    onClick={() =>
+                      isTagFound
+                        ? handleDeleteTag(tagObj?.label)
+                        : handleAddTag(tagObj?.label)
+                    }
+                  >
+                    <div className="flex gap-2 items-center">
+                      {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
+                      {loadingTags === tagObj?.label ? (
+                        <Icon.LoadingSpin size="16" />
+                      ) : (
+                        <Typography.Caption
+                          variant="bold"
+                          className="text-opacity-30"
+                        >
+                          {tagObj?.taggers_count}
+                        </Typography.Caption>
+                      )}
+                    </div>
+                  </PostUtil.Tag>
+                )}
                 <Button.Action
                   variant="custom"
                   size="small"
@@ -282,6 +316,11 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
       <Modal.Tag
         post={post}
         tags={tags}
+        updatePostInTimeline={(newTag: PostView) => {
+          setLoadingTags(newTag?.details.content);
+          setTags(newTag.tags);
+          setLoadingTags('');
+        }}
         handleAddTag={handleAddTag}
         handleDeleteTag={handleDeleteTag}
         showModalTag={showModalTag}
