@@ -106,16 +106,18 @@ export default function Index() {
         links.forEach((link, index) => {
           if (link.url) {
             let validationResult;
+            const cleanUrl = link.url.replace('mailto:', '');
+
             if (link.title === 'email') {
               validationResult = z
                 .string()
                 .email({ message: 'Invalid email address' })
-                .safeParse(link.url);
+                .safeParse(cleanUrl);
 
               if (validationResult.success) {
                 linksObject.push({
                   title: link.title,
-                  url: `mailto:${link.url}`,
+                  url: `mailto:${cleanUrl}`,
                 });
               } else {
                 invalidLinkIndexes.push(index);

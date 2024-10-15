@@ -45,7 +45,7 @@ export default function Links({
               className="h-[70px] mt-2"
               placeholder={link.placeHolder}
               disabled={loading}
-              value={link.url}
+              value={link.url.replace('mailto:', '')}
               error={errors[`link${index}` as keyof typeof errors]}
               action={
                 index > 1 && (

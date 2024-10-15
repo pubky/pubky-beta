@@ -196,6 +196,8 @@ export default function Index() {
       links.forEach((link, index) => {
         if (link.url) {
           let validationResult;
+          const cleanUrl = link.url.replace('mailto:', '');
+
           if (
             link.title.toLowerCase() === 'email' ||
             link.title.toLowerCase() === 'mail'
@@ -203,12 +205,12 @@ export default function Index() {
             validationResult = z
               .string()
               .email({ message: 'Invalid email address' })
-              .safeParse(link.url);
+              .safeParse(cleanUrl);
 
             if (validationResult.success) {
               linksObject.push({
                 title: link.title,
-                url: `mailto:${link.url}`,
+                url: `mailto:${cleanUrl}`,
               });
             } else {
               invalidLinkIndexes.push(index);
@@ -367,7 +369,7 @@ export default function Index() {
                     className="h-[70px] mt-2"
                     placeholder={link.placeHolder}
                     disabled={loading}
-                    value={link.url}
+                    value={link.url.replace('mailto:', '')}
                     error={errors[`link${index}` as keyof typeof errors]}
                     action={
                       <div
