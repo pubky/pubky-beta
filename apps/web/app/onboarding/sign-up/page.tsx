@@ -9,6 +9,7 @@ import { usePubkyClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
 import { Card } from './Card';
+import { Links } from '@/types/Post';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -36,14 +37,10 @@ export default function Index() {
   );
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
-  const [links, setLinks] = useState<
-    { title: string; url: string; placeHolder?: string }[]
-  >(
-    profile?.links || [
-      { url: '', title: 'website', placeHolder: 'https://' },
-      { url: '', title: 'email', placeHolder: 'user@provider.com' },
-    ]
-  );
+  const [links, setLinks] = useState<Links[]>([
+    { url: '', title: 'website', placeHolder: 'https://' },
+    { url: '', title: 'email', placeHolder: 'user@provider.com' },
+  ]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
@@ -103,7 +100,7 @@ export default function Index() {
       }
 
       try {
-        const linksObject: { [fieldName: string]: string } = {};
+        const linksObject: Links[] = [];
         const invalidLinkIndexes: number[] = [];
 
         links.forEach((link, index) => {
@@ -114,6 +111,15 @@ export default function Index() {
                 .string()
                 .email({ message: 'Invalid email address' })
                 .safeParse(link.url);
+
+              if (validationResult.success) {
+                linksObject.push({
+                  title: link.title,
+                  url: `mailto:${link.url}`,
+                });
+              } else {
+                invalidLinkIndexes.push(index);
+              }
             } else {
               validationResult = z
                 .string()
@@ -122,10 +128,13 @@ export default function Index() {
                 .safeParse(link.url);
             }
 
-            if (!validationResult.success) {
-              invalidLinkIndexes.push(index);
+            if (validationResult.success) {
+              linksObject.push({
+                title: link.title,
+                url: link.url,
+              });
             } else {
-              linksObject[link.title] = link.url;
+              invalidLinkIndexes.push(index);
             }
           }
         });
@@ -133,7 +142,10 @@ export default function Index() {
         if (invalidLinkIndexes.length > 0) {
           const newErrors: FormErrors = {};
           invalidLinkIndexes.forEach((index) => {
-            if (links[index].title === 'email') {
+            if (
+              links[index].title.toLowerCase() === 'email' ||
+              links[index].title.toLowerCase() === 'mail'
+            ) {
               newErrors[`link${index}`] = ['Invalid email address'];
             } else {
               newErrors[`link${index}`] = ['Invalid website URL'];

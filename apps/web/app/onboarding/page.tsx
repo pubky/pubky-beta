@@ -4,15 +4,15 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { ILinkPubky } from '@/types';
 import { usePubkyClientContext } from '@/contexts';
+import { Links } from '@/types/Post';
 
 export default function Index() {
   const { pubky, signUp, isLoggedIn } = usePubkyClientContext();
   const router = useRouter();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [loading, setLoading] = useState(false);
-  const links: ILinkPubky = {};
+  const links: Links[] = [];
 
   useEffect(() => {
     async function fetchData() {

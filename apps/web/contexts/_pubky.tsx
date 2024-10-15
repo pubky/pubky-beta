@@ -872,18 +872,21 @@ export function PubkyClientWrapper({
   const toPubkeyProfile = (profile: PubkyAppUser): PubkyAppUser => {
     if (!profile) throw new Error('Profile is required');
 
-    const linksArray = Object.entries(profile.links || {}).map(
-      ([title, url]) => ({
-        title,
-        url,
-      })
-    );
+    //const linksArray = Object.entries(profile.links || {}).map(
+    //  ([title, url]) => ({
+    //    title,
+    //    url,
+    //  })
+    //);
 
     return {
       name: profile.name || 'anonymous',
       bio: profile.bio || '',
       image: profile.image,
-      links: linksArray.length > 0 ? linksArray : undefined,
+      links:
+        profile?.links && profile?.links?.length > 0
+          ? profile?.links
+          : undefined,
       status: profile.status || 'noStatus',
     };
   };

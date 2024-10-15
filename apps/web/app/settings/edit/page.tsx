@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';
 import { ImageByUri } from '@/components/ImageByUri';
 import { useUserProfile } from '@/hooks/useUser';
+import { Links } from '@/types/Post';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -41,9 +42,7 @@ export default function Index() {
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [links, setLinks] = useState<
-    { title: string; url: string; placeHolder?: string }[]
-  >([
+  const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
     { url: '', title: 'email', placeHolder: 'user@provider.com' },
   ]);
@@ -191,7 +190,7 @@ export default function Index() {
         return;
       }
 
-      const linksObject: { [fieldName: string]: string } = {};
+      const linksObject: { title: string; url: string }[] = [];
       const invalidLinkIndexes: number[] = [];
 
       links.forEach((link, index) => {
@@ -205,18 +204,30 @@ export default function Index() {
               .string()
               .email({ message: 'Invalid email address' })
               .safeParse(link.url);
+
+            if (validationResult.success) {
+              linksObject.push({
+                title: link.title,
+                url: `mailto:${link.url}`,
+              });
+            } else {
+              invalidLinkIndexes.push(index);
+            }
           } else {
             validationResult = z
               .string()
               .url({ message: 'Invalid website URL' })
               .optional()
               .safeParse(link.url);
-          }
 
-          if (!validationResult.success) {
-            invalidLinkIndexes.push(index);
-          } else {
-            linksObject[link.title] = link.url;
+            if (validationResult.success) {
+              linksObject.push({
+                title: link.title,
+                url: link.url,
+              });
+            } else {
+              invalidLinkIndexes.push(index);
+            }
           }
         }
       });
@@ -224,7 +235,10 @@ export default function Index() {
       if (invalidLinkIndexes.length > 0) {
         const newErrors: FormErrors = {};
         invalidLinkIndexes.forEach((index) => {
-          if (links[index].title === 'email' || links[index].title === 'mail') {
+          if (
+            links[index].title.toLowerCase() === 'email' ||
+            links[index].title.toLowerCase() === 'mail'
+          ) {
             newErrors[`link${index}`] = ['Invalid email address'];
           } else {
             newErrors[`link${index}`] = ['Invalid website URL'];

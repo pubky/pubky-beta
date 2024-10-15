@@ -95,17 +95,16 @@ export interface PubkyAppFile {
   urls: string;
 }
 export interface Links {
-  [key: string]: {
-    title: string;
-    url: string;
-  };
+  title: string;
+  url: string;
+  placeHolder?: string;
 }
 
 export interface PubkyAppUser {
   name: string;
   bio?: string;
   image?: string | File;
-  links?: Links | any;
+  links?: Links[];
   status?: string;
 }
 

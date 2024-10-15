@@ -88,14 +88,14 @@ export default function Status({ status, subtitle }: StatusProps) {
             dropdownValue.value !== 'custom' &&
             dropdownValue.value === 'available'
           }
-          icon={'😃'}
-          onClick={() => {
+          icon={'👋'}
+          onClick={async () => {
             setDropdownValue({
               value: 'available',
               textOption: 'Available',
-              iconText: '😃',
+              iconText: '👋',
             });
-            updateStatus('available');
+            await updateStatus('available');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -108,13 +108,13 @@ export default function Status({ status, subtitle }: StatusProps) {
             dropdownValue.value !== 'custom' && dropdownValue.value === 'away'
           }
           icon={'🕓'}
-          onClick={() => {
+          onClick={async () => {
             setDropdownValue({
               value: 'away',
               textOption: 'Away',
               iconText: '🕓',
             });
-            updateStatus('away');
+            await updateStatus('away');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -128,13 +128,13 @@ export default function Status({ status, subtitle }: StatusProps) {
             dropdownValue.value === 'vacationing'
           }
           icon={'🌴'}
-          onClick={() => {
+          onClick={async () => {
             setDropdownValue({
               value: 'vacationing',
               textOption: 'Vacationing',
               iconText: '🌴',
             });
-            updateStatus('vacationing');
+            await updateStatus('vacationing');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -148,13 +148,13 @@ export default function Status({ status, subtitle }: StatusProps) {
             dropdownValue.value === 'working'
           }
           icon={'👨‍💻'}
-          onClick={() => {
+          onClick={async () => {
             setDropdownValue({
               value: 'working',
               textOption: 'Working',
               iconText: '👨‍💻',
             });
-            updateStatus('working');
+            await updateStatus('working');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -168,13 +168,13 @@ export default function Status({ status, subtitle }: StatusProps) {
             dropdownValue.value === 'traveling'
           }
           icon={'✈️'}
-          onClick={() => {
+          onClick={async () => {
             setDropdownValue({
               value: 'traveling',
               textOption: 'Traveling',
               iconText: '✈️',
             });
-            updateStatus('traveling');
+            await updateStatus('traveling');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -188,13 +188,13 @@ export default function Status({ status, subtitle }: StatusProps) {
             dropdownValue.value === 'celebrating'
           }
           icon={'🥂'}
-          onClick={() => {
+          onClick={async () => {
             setDropdownValue({
               value: 'celebrating',
               textOption: 'Celebrating',
               iconText: '🥂',
             });
-            updateStatus('celebrating');
+            await updateStatus('celebrating');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -207,13 +207,13 @@ export default function Status({ status, subtitle }: StatusProps) {
             dropdownValue.value !== 'custom' && dropdownValue.value === 'sick'
           }
           icon={'🤒'}
-          onClick={() => {
+          onClick={async () => {
             setDropdownValue({
               value: 'sick',
               textOption: 'Sick',
               iconText: '🤒',
             });
-            updateStatus('sick');
+            await updateStatus('sick');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
@@ -227,13 +227,13 @@ export default function Status({ status, subtitle }: StatusProps) {
             dropdownValue.value === 'noStatus'
           }
           icon={'💭'}
-          onClick={() => {
+          onClick={async () => {
             setDropdownValue({
               value: 'noStatus',
               textOption: 'No Status',
               iconText: '💭',
             });
-            updateStatus('noStatus');
+            await updateStatus('noStatus');
             setOpenDropdown(false);
             setCustomStatus('');
             setSelectedEmoji('');
