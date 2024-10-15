@@ -76,7 +76,7 @@ export default function Partecipants({
     }
 
     fetchFollowing();
-  }, [pubky, replies]);
+  }, [pubky, replies, followingUsers]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
