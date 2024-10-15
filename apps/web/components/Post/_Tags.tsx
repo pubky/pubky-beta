@@ -143,6 +143,11 @@ export default function Tags({ post, largeView = false }: PostProps) {
       <Modal.Tag
         post={post}
         tags={tags}
+        updatePostInTimeline={(newTag: PostView) => {
+          setLoadingTags(true);
+          setTags(newTag.tags);
+          setLoadingTags(false);
+        }}
         handleAddTag={handleAddTag}
         handleDeleteTag={handleDeleteTag}
         showModalTag={showModalTag}

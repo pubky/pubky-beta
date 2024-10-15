@@ -28,6 +28,7 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   handleAddTag: (tag: string) => Promise<void>;
   handleDeleteTag: (tag: string) => Promise<void>;
+  updatePostInTimeline: (updatedPost: PostView) => void;
   selectedTag?: PostTag | null;
   setSelectedTag?: React.Dispatch<React.SetStateAction<PostTag | null>>;
 }
@@ -39,6 +40,7 @@ export default function Tag({
   post,
   handleAddTag,
   handleDeleteTag,
+  updatePostInTimeline,
   selectedTag,
   setSelectedTag,
 }: TagProps) {
@@ -63,6 +65,7 @@ export default function Tag({
   const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>(
     {}
   );
+  const [loading, setLoading] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -233,6 +236,24 @@ export default function Tag({
     setTag(valueWithoutSpaces);
   };
 
+  const handleAddTagAndUpdatePost = async (tag: string) => {
+    try {
+      setLoading(true);
+      await handleAddTag(tag);
+      const updatedTags = [
+        ...post.tags,
+        { label: tag, taggers: [pubky ?? ''], taggers_count: 1 },
+      ];
+      const updatedPost = { ...post, tags: updatedTags };
+      updatePostInTimeline(updatedPost);
+      setTag('');
+      setLoading(false);
+      setShowModalTag(false);
+    } catch (error) {
+      console.error('Error adding tag and updating post', error);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -295,11 +316,11 @@ export default function Tag({
                 className="w-96 mt-2 flex items-center"
                 maxLength={20}
                 autoFocus
+                disabled={loading}
                 onChange={handleChange}
                 onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key === 'Enter') {
-                    handleAddTag(tag);
-                    setTag('');
+                    handleAddTagAndUpdatePost(tag);
                   }
                 }}
                 action={
@@ -310,15 +331,16 @@ export default function Tag({
                       className={tag ? 'flex' : 'hidden'}
                       variant="custom"
                       size="medium"
+                      disabled={loading}
                       onClick={() => {
-                        handleAddTag(tag);
-                        setTag('');
+                        handleAddTagAndUpdatePost(tag);
                       }}
                     />
                     <Button.Action
                       variant="custom"
                       icon={<Icon.Smiley size="32" />}
                       size="medium"
+                      disabled={loading}
                       onClick={(event) => {
                         event.stopPropagation();
                         setShowEmojis(true);
@@ -364,7 +386,7 @@ export default function Tag({
                               event.stopPropagation();
                               isTagFound
                                 ? handleDeleteTag(tag?.label)
-                                : handleAddTag(tag?.label);
+                                : handleAddTagAndUpdatePost(tag?.label);
                             }}
                             color={Utils.generateRandomColor(tag?.label)}
                           >
@@ -448,7 +470,7 @@ export default function Tag({
                                 (fromItem) => fromItem === pubky
                               )
                                 ? handleDeleteTag(selectedTag?.label)
-                                : handleAddTag(selectedTag?.label);
+                                : handleAddTagAndUpdatePost(selectedTag?.label);
                             }}
                             color={
                               selectedTag?.label &&
