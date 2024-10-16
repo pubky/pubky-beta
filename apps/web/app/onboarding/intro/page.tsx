@@ -73,7 +73,7 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-1.svg')" },
+      className: { top: '50px', backgroundImage: "url('/images/intro-1.svg')" },
     },
     {
       content: (
