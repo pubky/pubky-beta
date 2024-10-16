@@ -2,8 +2,9 @@ import { Typography, Button, Icon, SideCard } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import Parsing from '@/components/Content/_Parsing';
-import { useClientContext } from '@/contexts';
 import { ImageByUri } from '@/components/ImageByUri';
+import { usePubkyClientContext } from '@/contexts';
+import { UserView } from '@/types/User';
 
 interface UserInfoProps {
   scrolled: boolean;
@@ -14,6 +15,7 @@ interface UserInfoProps {
   showProfileMenu: boolean;
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
   bio: string;
+  profile: UserView | null;
   initLoadingFollowed: boolean;
   followed: boolean;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,6 +30,7 @@ export default function UserInfo({
   creatorPubky,
   pubkyUser,
   setShowProfileMenu,
+  profile,
   showProfileMenu,
   bio,
   initLoadingFollowed,
@@ -36,7 +39,7 @@ export default function UserInfo({
   loadingFollowed,
   setLoadingFollowed,
 }: UserInfoProps) {
-  const { pubky, follow, unfollow } = useClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
 
   const followUser = async () => {
     try {
@@ -82,7 +85,7 @@ export default function UserInfo({
             />
             <div>
               <Typography.Body variant="medium-bold" className="-mb-2">
-                {Utils.minifyText(name, 15)}
+                {Utils.minifyText(name, 10)}
               </Typography.Body>
               <Typography.Label className="text-[12px] text-opacity-50">
                 {pubkyUser ? Utils.minifyPubky(pubkyUser) : 'Loading...'}
@@ -94,6 +97,7 @@ export default function UserInfo({
               <Tooltip.ProfileMenu
                 setShowProfileMenu={setShowProfileMenu}
                 creatorPubky={pubkyUser}
+                name={name}
               />
             )}
             <div
@@ -121,7 +125,7 @@ export default function UserInfo({
           >
             Loading
           </Button.Medium>
-        ) : followed ? (
+        ) : followed || profile?.relationship?.following || false ? (
           <Button.Medium
             onClick={loadingFollowed ? undefined : () => unfollowUser()}
             disabled={loadingFollowed}

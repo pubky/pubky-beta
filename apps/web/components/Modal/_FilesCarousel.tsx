@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import { Icon, Modal, Typography } from '@social/ui-shared';
-import { IFileContent } from '@/types';
 import Image from 'next/image';
+import { FileContent } from '@/types/Post';
 
 interface FilesCarouselProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  fileContents: IFileContent[];
+  fileContents: FileContent[];
   currentFileIndex: number;
   setCurrentFileIndex: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -20,6 +20,8 @@ export default function FilesCarousel({
   currentFileIndex,
   setCurrentFileIndex,
 }: FilesCarouselProps) {
+  const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
+  const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const modalRef = useRef<HTMLDivElement>(null);
 
   const showPreviousFile = () => {
@@ -51,7 +53,7 @@ export default function FilesCarousel({
   }, [modalRef, setShowModal]);
 
   const currentFile = fileContents[currentFileIndex];
-  const isVideo = currentFile.contentType.startsWith('video');
+  const isVideo = currentFile.content_type.startsWith('video');
 
   return (
     <Modal.Root
@@ -71,13 +73,13 @@ export default function FilesCarousel({
       )}
       {isVideo ? (
         <video
-          src={currentFile.urls.main}
+          src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
           controls
           className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
         />
       ) : (
         <Image
-          src={currentFile.urls.main}
+          src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
           alt={`Modal view ${currentFileIndex}`}
           layout="responsive"
           width={800}

@@ -3,36 +3,29 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { useClientContext, useAlertContext, useToastContext } from '@/contexts';
-import { IPost } from '@/types';
+import { usePubkyClientContext, useToastContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import Modal from '../Modal';
+import { PostView } from '@/types/Post';
+import { useUserProfile } from '@/hooks/useUser';
 
 interface TooltipMenuProps {
-  post: IPost;
+  post: PostView;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  repost?: IPost;
+  repost?: PostView;
 }
 
 export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
-  const {
-    pubky,
-    follow,
-    unfollow,
-    listFollowers,
-    createBookmark,
-    deleteBookmark,
-    deletePost,
-    deleteFile,
-  } = useClientContext();
+  const { pubky, follow, unfollow, addBookmark, deleteBookmark } =
+    usePubkyClientContext();
+  const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
+  //const { pubky, follow, unfollow, listFollowers, createBookmark, deleteBookmark, deletePost, deleteFile} = useClientContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
   const tooltipMenuRef = useRef<HTMLDivElement>(null);
   const [followed, setFollowed] = useState(false);
-  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
-  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
-  const { setContent, setShow } = useAlertContext();
+  //const [showModalDeletePost, setShowModalDeletePost] = useState(false);
+  //const { setContent, setShow } = useAlertContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -59,37 +52,12 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     }
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const pubkey = post?.author?.id || pubky;
-
-        if (!pubkey) return;
-
-        const followersList = await listFollowers(pubkey);
-
-        if (followersList) {
-          setInitLoadingFollowed(false);
-
-          const isFollowed = followersList.followers.some(
-            (user) => user.uri.replace('pubky:', '') === pubky
-          );
-
-          setFollowed(isFollowed);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [post?.author?.id, pubky, listFollowers]);
-
   const followUser = async () => {
-    if (!post?.author?.id) return;
+    if (!post?.details?.author) return;
 
     setLoadingFollowed(true);
     try {
-      const result = await follow(post?.author?.id);
+      const result = await follow(post?.details?.author);
       setFollowed(result);
       setShowMenu(false);
     } catch (error) {
@@ -100,11 +68,11 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   };
 
   const unfollowUser = async () => {
-    if (!post?.author?.id) return;
+    if (!post?.details?.author) return;
 
     setLoadingFollowed(true);
     try {
-      const result = await unfollow(post?.author?.id);
+      const result = await unfollow(post?.details?.author);
       setFollowed(!result);
       setShowMenu(false);
     } catch (error) {
@@ -115,31 +83,28 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   };
 
   const handleAddBookmark = async (postId: string, uri: string) => {
-    await createBookmark(postId, uri);
+    await addBookmark(postId, uri);
     setShowMenu(false);
   };
 
-  const handleDeleteBookmark = async (
-    postId: string,
-    postUri: string,
-    bookmarkId: string
-  ) => {
-    await deleteBookmark(postId, postUri, bookmarkId);
+  const handleDeleteBookmark = async (bookmarkId: string) => {
+    await deleteBookmark(bookmarkId);
     setShowMenu(false);
   };
 
-  const handleDeletePost = async () => {
+  {
+    /**const handleDeletePost = async () => {
     try {
-      if (post?.post?.files) {
-        const fileDeletions = Object.values(post.post.files).map(
+      if (post?.details?.files) {
+        const fileDeletions = Object.values(post.details?.files).map(
           async (file) => {
-            await deleteFile(file.fileId);
+            //await deleteFile(file.fileId);
           }
         );
         await Promise.all(fileDeletions);
       }
 
-      const result = await deletePost(post?.id);
+      const result = null; //await deletePost(post?.id);
 
       if (result) {
         setContent('Post deleted successfully');
@@ -152,16 +117,20 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     } finally {
       setShowMenu(false);
     }
-  };
-  const renderFollowButton = () => {
-    if (post?.author?.id === pubky) return null;
+  };*/
+  }
 
-    if (initLoadingFollowed) {
+  const renderFollowButton = () => {
+    if (post?.details?.author === pubky) return null;
+
+    {
+      /**if (initLoadingFollowed) {
       return (
         <Tooltip.Item icon={<Icon.LoadingSpin size="24" />}>
           Loading
         </Tooltip.Item>
       );
+    }*/
     }
 
     return followed ? (
@@ -170,7 +139,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
         loading={loadingFollowed}
         icon={<Icon.UserMinus size="24" />}
       >
-        Unfollow {Utils.minifyText(post?.author?.profile?.name, 10)}
+        Unfollow {Utils.minifyText(author?.details?.name ?? '', 10)}
       </Tooltip.Item>
     ) : (
       <Tooltip.Item
@@ -178,20 +147,16 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
         loading={loadingFollowed}
         icon={<Icon.UserPlus size="24" />}
       >
-        Follow {Utils.minifyText(post?.author?.profile?.name)}
+        Follow {Utils.minifyText(author?.details?.name ?? '')}
       </Tooltip.Item>
     );
   };
 
   const handleBookmarks = (
-    repost: IPost | undefined,
-    post: IPost,
+    repost: PostView | undefined,
+    post: PostView,
     handleAddBookmark: (postId: string, uri: string) => Promise<void>,
-    handleDeleteBookmark: (
-      postId: string,
-      postUri: string,
-      bookmarkId: string
-    ) => Promise<void>,
+    handleDeleteBookmark: (bookmarkId: string) => Promise<void>,
     setContentToast: (
       content: React.ReactNode,
       variant?: 'bookmark' | 'pubky' | 'link'
@@ -202,23 +167,21 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
 
     if (repost) {
       if (isBookmarked) {
-        handleDeleteBookmark(repost.id, repost.uri, repost.bookmark.id);
+        handleDeleteBookmark(repost?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(repost.id, repost.uri);
+        handleAddBookmark(repost?.details?.id, repost?.details?.uri);
       }
     } else if (post) {
       if (isBookmarked) {
-        handleDeleteBookmark(post.id, post.uri, post.bookmark.id);
+        handleDeleteBookmark(post?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(post.id, post.uri);
+        handleAddBookmark(post?.details?.id, post?.details?.uri);
       }
     }
 
     if (!isBookmarked) {
       setContentToast(
-        `This post by ${
-          repost ? repost?.author?.profile?.name : post?.author?.profile?.name
-        } was saved to your bookmarks.`,
+        `This post by ${author?.details?.name} was saved to your bookmarks.`,
         'bookmark'
       );
       setShowToast(true);
@@ -228,11 +191,14 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   return (
     <>
       <div ref={tooltipMenuRef}>
-        <Tooltip.Main id='post-tooltip-menu' className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]">
+        <Tooltip.Main
+          id="post-tooltip-menu"
+          className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]"
+        >
           {renderFollowButton()}
-          {post?.author?.id === pubky && (
+          {post?.details?.author === pubky && (
             <Tooltip.Item
-              id='edit-profile'
+              id="edit-profile"
               onClick={() => {
                 router.push('/settings/edit');
                 setShowMenu(false);
@@ -243,10 +209,10 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             </Tooltip.Item>
           )}
           <Tooltip.Item
-            id='copy-user-pubky'
+            id="copy-user-pubky"
             onClick={() => {
-              copyToClipboard(`pk:${post.author.id}`);
-              setContentToast(`pk:${post.author.id}`, 'pubky');
+              copyToClipboard(`pk:${post?.details?.author}`);
+              setContentToast(`pk:${post?.details?.author}`, 'pubky');
               setShowToast(true);
               setShowMenu(false);
             }}
@@ -255,14 +221,14 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             Copy user pubky
           </Tooltip.Item>
           <Tooltip.Item
-            id='copy-post-link'
+            id="copy-post-link"
             onClick={() => {
               copyToClipboard(
-                `${window.location.origin}/post/${post.author.id}/${post.id}`
+                `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`
               );
               setContentToast(
                 Utils.minifyText(
-                  `${window.location.origin}/post/${post.author.id}/${post.id}`,
+                  `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`,
                   80
                 ),
                 'link'
@@ -275,11 +241,11 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             Copy link to post
           </Tooltip.Item>
           <Tooltip.Item
-            id='copy-post-text'
+            id="copy-post-text"
             onClick={() => {
-              copyToClipboard(post.post.content);
+              copyToClipboard(post.details?.content);
               setContentToast(
-                Utils.minifyContent(post.post.content, 1),
+                Utils.minifyContent(post.details?.content, 1),
                 'text'
               );
               setShowToast(true);
@@ -290,13 +256,15 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             Copy text of post
           </Tooltip.Item>
           <Tooltip.Item
-            id='add-bookmark'
+            id="add-bookmark"
             icon={
               <Icon.BookmarkSimple
                 size="20"
-                opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
+                opacity={
+                  repost?.bookmark?.id ? 1 : post?.bookmark?.id ? 1 : 0.2
+                }
                 color={
-                  repost?.bookmark.id
+                  repost?.bookmark?.id
                     ? 'white'
                     : post?.bookmark?.id
                     ? 'white'
@@ -321,10 +289,11 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               ? 'Remove Bookmark'
               : 'Add Bookmark'}
           </Tooltip.Item>
-          {post?.author?.id === pubky && (
+          {post?.details.author === pubky && (
             <Tooltip.Item
-              id='delete-post'
-              onClick={() => setShowModalDeletePost(true)}
+              id="delete-post"
+              className="opacity-50 cursor-default hover:bg-transparent"
+              //onClick={() => setShowModalDeletePost(true)}
               icon={<Icon.Trash size="20" color={'#EF4444'} />}
               cssText="text-red-500"
             >
@@ -332,11 +301,12 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             </Tooltip.Item>
           )}
         </Tooltip.Main>
+        {/**
         <Modal.DeletePost
           showModalDeletePost={showModalDeletePost}
           setShowModalDeletePost={setShowModalDeletePost}
           handleDeletePost={handleDeletePost}
-        />
+        />*/}
       </div>
     </>
   );

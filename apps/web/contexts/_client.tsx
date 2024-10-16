@@ -30,11 +30,11 @@ import {
   IFileContent,
 } from '../types';
 
-import Client from '@pubky/sdk';
+//import Client from '@pubky/sdk';
 import { Utils } from '@social/utils-shared';
 
-const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
-const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY || '';
+// const HOMESERVER = process.env.NEXT_PUBLIC_HOMESERVER || '';
+// const PKARR_RELAY = process.env.NEXT_PUBLIC_PKARR_RELAY || '';
 
 const ClientContext = createContext<TClientContext>({} as TClientContext);
 
@@ -45,12 +45,13 @@ const homeserverUrl =
     : undefined;
 console.log({ homeserverUrl });
 
-const client = new Client(HOMESERVER, {
-  relay: PKARR_RELAY,
-  homeserverUrl,
-});
+//const client = new Client(HOMESERVER, {
+//  relay: PKARR_RELAY,
+//  homeserverUrl,
+//});
 
-const startClient = async () => {
+{
+  /**const startClient = async () => {
   await client.ready();
 
   Utils.storage.set('homeserverUrl', {
@@ -59,6 +60,8 @@ const startClient = async () => {
   });
 };
 startClient();
+*/
+}
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [pubky, setPubky] = useState<string | null>(
@@ -74,9 +77,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const [recommendedProfiles, setRecommendedProfiles] = useState<
     IRecommendedProfiles[] | null
   >(null);
-  const [profile, setProfile] = useState<string | null>(
-    Utils.storage.get('profile') || null
-  );
+  // const [profile, setProfile] = useState<string | null>(
+  //   Utils.storage.get('profile') || null
+  //);
   const [posts, setPosts] = useState<INewPost>({} as INewPost);
   const [searchTags, setSearchTags] = useState<string[]>([]);
 
@@ -92,7 +95,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         status: value,
       };
 
-      Utils.storage.set('profile', updatedProfile);
+      //Utils.storage.set('profile', updatedProfile);
 
       const result = await client.social.profile.put(pubky, updatedProfile);
 
@@ -117,7 +120,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       if (!pks.length) {
         // remove any local storage data that might be there
         Utils.storage.remove('pubky');
-        Utils.storage.remove('profile');
+        //Utils.storage.remove('profile');
         setPubky(null);
         setProfile(null);
 
@@ -195,7 +198,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       await client.social.profile.put(pk, pubkeyProfile);
 
       setProfile(pubkeyProfile);
-      Utils.storage.set('profile', pubkeyProfile);
+      //Utils.storage.set('profile', pubkeyProfile);
 
       return pubkeyProfile;
     } catch (error) {
@@ -227,7 +230,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const logout = async (): Promise<boolean> => {
     try {
       Utils.storage.remove('pubky');
-      Utils.storage.remove('profile');
+      //Utils.storage.remove('profile');
       Utils.storage.remove('seed');
       Utils.storage.remove('backup');
       Utils.storage.remove('timerRemind');
@@ -286,7 +289,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       const result = await client.social.profile.put(pk, pubkeyProfile);
 
       setProfile(pubkeyProfile);
-      Utils.storage.set('profile', pubkeyProfile);
+      //Utils.storage.set('profile', pubkeyProfile);
 
       if (!result.ok)
         throw new Error(`Save profile: ${pk} failed: ${result.error.message}`);
@@ -348,7 +351,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
 
       const userProfile = result.value?.profile;
 
-      Utils.storage.set('profile', userProfile);
+      //Utils.storage.set('profile', userProfile);
       setProfile(userProfile);
 
       return userProfile;
@@ -1120,7 +1123,7 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
         mostFollowed,
         pubky,
         seed,
-        profile,
+        //profile,
         posts,
         updateStatus,
         isLoggedIn,

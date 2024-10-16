@@ -3,15 +3,15 @@
 import { useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 
-import Repost from '../Repost';
-import { useClientContext, useAlertContext, useToastContext } from '@/contexts';
-import { IPost } from '@/types';
+import { usePubkyClientContext, useToastContext } from '@/contexts';
 import Tooltip from '../Tooltip';
+import { PostView } from '@/types/Post';
+import { useUserProfile } from '@/hooks/useUser';
 import Modal from '../Modal';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
-  post: IPost;
-  repost?: IPost;
+  post: PostView;
+  repost?: PostView;
   deleteRepost?: boolean;
 }
 
@@ -20,41 +20,57 @@ export default function Actions({
   repost,
   deleteRepost = false,
 }: PostProps) {
-  const { deleteBookmark, createBookmark, createRepost, deletePost } =
-    useClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { pubky } = usePubkyClientContext();
+  const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
+  const { data: authorRepost } = useUserProfile(
+    repost?.details?.author ?? '',
+    pubky ?? ''
+  );
+  const { addBookmark, deleteBookmark } = usePubkyClientContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
   const [showMenu, setShowMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
-  const [showRepostMenu, setShowRepostMenu] = useState(false);
+  const [loadingBookmarks, setLoadingBookmarks] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(
+    repost?.bookmark?.id ? repost?.bookmark?.id : post?.bookmark?.id ?? ''
+  );
+  //const [showRepostMenu, setShowRepostMenu] = useState(false);
 
-  const handleAddBookmark = async (postId: string, uri: string) => {
-    await createBookmark(postId, uri);
+  const handleAddBookmark = async (postId: string, authorId: string) => {
+    setLoadingBookmarks(true);
+    await addBookmark(postId, authorId);
+    setIsBookmarked(postId);
+    setLoadingBookmarks(false);
   };
 
-  const handleDeleteBookmark = async (
-    postId: string,
-    postUri: string,
-    bookmarkId: string
-  ) => {
-    await deleteBookmark(postId, postUri, bookmarkId);
+  const handleDeleteBookmark = async (bookmarkId: string) => {
+    setLoadingBookmarks(true);
+    await deleteBookmark(bookmarkId);
+    setIsBookmarked('');
+    setLoadingBookmarks(false);
   };
 
-  const handleRepost = async () => {
-    const result = await createRepost(post.uri);
-    if (result) {
-      setContent('Repost created!');
-      setShow(true);
-    } else {
-      setContent('Something wrong. Try again', 'warning');
-      setShow(true);
-    }
-  };
+  //const handleRepost = async () => {
+  //  const result = await createRepost(
+  //    post?.details?.id,
+  //    post?.details?.author,
+  //    '',
+  //    'Short'
+  //  );
+  //  if (result) {
+  //    setContent('Repost created!');
+  //    setShow(true);
+  //  } else {
+  //    setContent('Something wrong. Try again', 'warning');
+  //    setShow(true);
+  //  }
+  //};
 
-  const handleDeleteRepost = async () => {
-    if (repost?.id) {
+  {
+    /**const handleDeleteRepost = async () => {
+    if (repost?.details.id) {
       const result = await deletePost(repost?.id);
       if (result) {
         setContent('Repost deleted!');
@@ -64,43 +80,38 @@ export default function Actions({
         setShow(true);
       }
     }
-  };
+  };*/
+  }
 
-  const handleBookmarks = (
-    repost: IPost | undefined,
-    post: IPost,
-    handleAddBookmark: (postId: string, uri: string) => Promise<void>,
-    handleDeleteBookmark: (
-      postId: string,
-      postUri: string,
-      bookmarkId: string
-    ) => Promise<void>,
+  const handleBookmarks = async (
+    repost: PostView | undefined,
+    post: PostView,
+    handleAddBookmark: (postId: string, authorId: string) => Promise<void>,
+    handleDeleteBookmark: (bookmarkId: string) => Promise<void>,
     setContentToast: (
       content: React.ReactNode,
       variant?: 'bookmark' | 'pubky' | 'link'
     ) => void,
     setShowToast: (show: boolean) => void
   ) => {
-    const isBookmarked = repost ? repost.bookmark?.id : post?.bookmark?.id;
-
     if (repost) {
       if (isBookmarked) {
-        handleDeleteBookmark(repost.id, repost.uri, repost.bookmark.id);
+        await handleDeleteBookmark(repost?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(repost.id, repost.uri);
+        await handleAddBookmark(repost?.details?.id, repost?.details?.author);
       }
     } else {
       if (isBookmarked) {
-        handleDeleteBookmark(post.id, post.uri, post.bookmark.id);
+        await handleDeleteBookmark(post?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(post.id, post.uri);
+        await handleAddBookmark(post?.details?.id, post?.details?.author);
       }
     }
 
     if (!isBookmarked) {
       setContentToast(
         `This post by ${
-          repost ? repost?.author?.profile?.name : post?.author?.profile?.name
+          repost ? authorRepost?.details?.name : author?.details?.name
         } was saved to your bookmarks.`,
         'bookmark'
       );
@@ -115,18 +126,18 @@ export default function Actions({
     >
       <PostUI.Actions>
         <Button.Action
-          id='reply-btn'
+          id="reply-btn"
           size="small"
           variant="custom"
           icon={<Icon.ChatCircleText size="16" />}
-          counter={post?.repliesCount}
+          counter={post?.counts?.replies}
           onClick={(event) => {
             event.stopPropagation();
             setShowModalReply(true);
           }}
         />
         <div className="relative">
-          {showRepostMenu && (
+          {/**showRepostMenu && (
             <Tooltip.RepostMenu
               setShowRepostMenu={setShowRepostMenu}
               setShowModalRepost={setShowModalRepost}
@@ -134,19 +145,18 @@ export default function Actions({
               deleteRepost={deleteRepost}
               handleDeleteRepost={handleDeleteRepost}
             />
-          )}
+          )*/}
           <Button.Action
-            id='repost-btn'
+            id="repost-btn"
             size="small"
             variant="custom"
             icon={
               <Icon.Repost
                 size="16"
-                color="white"
-                //color={deleteRepost ? '#00BA7C' : 'white'}
+                color={deleteRepost ? '#00BA7C' : 'white'}
               />
             }
-            counter={post?.repostsCount}
+            counter={post?.counts?.reposts}
             onClick={(event) => {
               event.stopPropagation();
               //setShowRepostMenu(true);
@@ -155,21 +165,19 @@ export default function Actions({
           />
         </div>
         <Button.Action
-          id='bookmark-btn'
+          id="bookmark-btn"
           size="small"
           variant="custom"
           icon={
-            <Icon.BookmarkSimple
-              size="16"
-              opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
-              color={
-                repost?.bookmark?.id
-                  ? 'white'
-                  : post?.bookmark?.id
-                  ? 'white'
-                  : 'white'
-              }
-            />
+            loadingBookmarks ? (
+              <Icon.LoadingSpin size="16" />
+            ) : (
+              <Icon.BookmarkSimple
+                size="16"
+                opacity={isBookmarked !== '' ? 1 : 0.2}
+                color={'white'}
+              />
+            )
           }
           onClick={() =>
             handleBookmarks(
@@ -191,7 +199,7 @@ export default function Actions({
             />
           )}
           <Button.Action
-            id='menu-btn'
+            id="menu-btn"
             size="small"
             variant="custom"
             icon={<Icon.DotsThreeOutline size="16" color="white" />}
@@ -202,9 +210,8 @@ export default function Actions({
           />
         </div>
       </PostUI.Actions>
-      <Repost
+      <Modal.Repost
         post={post}
-        handleRepost={handleRepost}
         showModalRepost={showModalRepost}
         setShowModalRepost={setShowModalRepost}
       />

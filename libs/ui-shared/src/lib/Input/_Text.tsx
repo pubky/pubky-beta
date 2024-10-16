@@ -8,6 +8,7 @@ interface TextProps extends React.HTMLAttributes<HTMLInputElement> {
   value?: string;
   maxLength?: number;
   inputPadding?: string;
+  disabled?: boolean;
   type?:
     | 'button'
     | 'checkbox'
@@ -41,6 +42,7 @@ export const Text = ({
   required = false,
   maxLength,
   inputPadding = 'pr-12',
+  disabled,
   value,
   ...rest
 }: TextProps) => {
@@ -55,6 +57,7 @@ export const Text = ({
           {...rest}
           type={type}
           value={value}
+          disabled={disabled}
           maxLength={maxLength}
           required={required}
           className={twMerge(

@@ -1,16 +1,16 @@
 import { Button, Icon, Modal } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 
-import { useClientContext, useAlertContext } from '@/contexts';
-import { IPost } from '@/types';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import Post from '../Post';
 import CreateContent from '../CreateContent';
+import { PostView } from '@/types/Post';
 
 interface CreateReplyProps {
   showModalReply: boolean;
   setShowModalReply: React.Dispatch<React.SetStateAction<boolean>>;
-  post: IPost;
+  post: PostView;
 }
 
 export default function CreateReply({
@@ -18,7 +18,7 @@ export default function CreateReply({
   setShowModalReply,
   post,
 }: CreateReplyProps) {
-  const { createReply, createTag } = useClientContext();
+  const { pubky, createReply, createTag } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
@@ -26,6 +26,8 @@ export default function CreateReply({
   const modalReplyRef = useRef<HTMLDivElement>(null);
   const [isValidContent, setIsValidContent] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   const handleSubmit = async (content: string) => {
     if (sendingReply) {
@@ -34,20 +36,25 @@ export default function CreateReply({
     try {
       setSendingReply(true);
 
-      const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
-      const rootUri = post.post.root ? post.post.root : post.uri;
+      //const rootUri = post.relationships?.replied
+      //  ? post.relationships?.replied
+      //  : post.details.uri;
 
       const newReply = await createReply(
+        post?.details?.uri,
         content,
-        post.uri,
-        rootUri,
+        'Short',
         selectedFiles
       );
 
-      if (newReply) {
+      const hashtags = Utils.extractHashtags(content);
+      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      const match = newReply && newReply.match(regex);
+
+      if (newReply && match) {
+        const replyId = match[2];
         for (const tag of updatedTags) {
-          await createTag(newReply.uri, tag);
+          await createTag(pubky ?? '', replyId, tag);
         }
         setContent('Reply created!');
         setShow(true);
@@ -91,7 +98,7 @@ export default function CreateReply({
         setShowModalReply(false);
         setArrayTags([]);
       }}
-      className="w-[792px] max-w-[1200px] max-h-[600px] overflow-y-auto"
+      className="md:w-[792px] max-w-[1200px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -113,7 +120,7 @@ export default function CreateReply({
         <div className="absolute ml-[1px] w-3.5 border-t-2 border-neutral-800" />
         <div className="w-full ml-[15px] mt-6">
           <CreateContent
-            id='create-reply-create-content'
+            id="create-reply-create-content"
             handleSubmit={handleSubmit}
             content={contentReply}
             setContent={setContentReply}
@@ -121,11 +128,12 @@ export default function CreateReply({
             setIsValidContent={setIsValidContent}
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
+            loading={sendingReply}
             arrayTags={arrayTags}
             setArrayTags={setArrayTags}
             button={
               <Button.Medium
-                id='reply-btn'
+                id="reply-btn"
                 className="w-auto"
                 variant="line"
                 icon={

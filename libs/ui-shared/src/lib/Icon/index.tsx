@@ -21,6 +21,7 @@ import {
   SquareHalf,
   ThreeColumns,
   Eye,
+  LineHorizontal,
 } from './_Design';
 import { Plus, Minus, X } from './_Math';
 import { GitFork } from './_Development';
@@ -34,6 +35,7 @@ import {
   Podcast,
   SlidersHorizontal,
   SpeakerSimpleSlash,
+  SpeakerHigh,
 } from './_Media';
 import {
   NoteBlank,
@@ -64,6 +66,7 @@ import {
   DotsThreeVertical,
   DotsThreeOutline,
   SignOut,
+  SignIn,
 } from './_System';
 import {
   Android,
@@ -166,6 +169,7 @@ export const Icon = {
   ListBullets,
   ListNumbers,
   LoadingSpin,
+  LineHorizontal,
   Lock,
   MagnifyingGlass,
   MagnifyingGlassLeft,
@@ -187,6 +191,7 @@ export const Icon = {
   Question,
   Repost,
   SignOut,
+  SignIn,
   SlidersHorizontal,
   Shield,
   Synonym,
@@ -196,6 +201,7 @@ export const Icon = {
   SquaresFour,
   SquareHalf,
   SpeakerSimpleSlash,
+  SpeakerHigh,
   Spotify,
   Stack,
   Tag,

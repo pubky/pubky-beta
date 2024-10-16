@@ -9,122 +9,58 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import {
-  IPost,
-  IFollowingResponse,
-  IFollowersResponse,
-  IPostFrom,
-} from '@/types';
-import { useClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
+import { usePubkyClientContext } from '@/contexts';
+import { PostView } from '@/types/Post';
+import {
+  UseUserFollowers,
+  UseUserFollowing,
+  useUserProfile,
+} from '@/hooks/useUser';
+import { getUserDetails } from '@/services/userService';
 
 interface ProfileProps {
-  post: IPost | IPostFrom;
+  post?: PostView;
+  profileId?: string | undefined;
 }
 
-export default function Profile({ post }: ProfileProps) {
-  const { pubky, follow, unfollow, listFollowers, listFollowing } =
-    useClientContext();
+export default function Profile({ post, profileId }: ProfileProps) {
   const router = useRouter();
-
-  const [followed, setFollowed] = useState(false);
-  const [following, setFollowing] = useState<IFollowingResponse | null>(null);
-  const [followers, setFollowers] = useState<IFollowersResponse | null>(null);
-  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
-  const [loadingFollowed, setLoadingFollowed] = useState(false);
-  const [loadingFollowers, setLoadingFollowers] = useState(true);
-  const [loadingFollowing, setLoadingFollowing] = useState(true);
+  const { pubky, follow, unfollow } = usePubkyClientContext();
   const [followingImages, setFollowingImages] = useState<
     { alt: string; src: string }[]
   >([]);
   const [followersImages, setFollowersImages] = useState<
     { alt: string; src: string }[]
   >([]);
+  const idAuthor = post?.details?.author || profileId || '';
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        let pubkey;
+  const { data: author } = useUserProfile(idAuthor, pubky ?? '');
 
-        if (post?.author?.id) {
-          pubkey = post?.author?.id;
-        }
+  const {
+    data: followers,
+    isLoading: isLoadingFollowers,
+    isError: isErrorFollowers,
+  } = UseUserFollowers(idAuthor ?? '');
+  if (isErrorFollowers) console.error(isErrorFollowers);
 
-        if (!pubkey) {
-          pubkey = pubky;
-        }
+  const {
+    data: following,
+    isLoading: isLoadingFollowing,
+    isError: isErrorFollowing,
+  } = UseUserFollowing(idAuthor ?? '');
+  if (isErrorFollowing) console.error(isErrorFollowing);
 
-        if (!pubkey) return;
-
-        const followersList = await listFollowers(pubkey);
-
-        if (followersList) {
-          setFollowersImages(
-            followersList.followers.slice(0, 3).map((user) => ({
-              alt: 'user-pic',
-              src: user?.profile?.image || '/images/Userpic.png',
-            }))
-          );
-          setFollowers(followersList);
-          setLoadingFollowers(false);
-          setInitLoadingFollowed(false);
-
-          followersList.followers.forEach((user) => {
-            const uri = user.uri.replace('pubky:', '');
-            if (uri === pubky) {
-              setFollowed(true);
-            }
-          });
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [followed, post?.author?.id]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        let pubkey;
-
-        if (post?.author?.id) {
-          pubkey = post?.author?.id;
-        }
-
-        if (!pubkey) {
-          pubkey = pubky;
-        }
-
-        if (!pubkey) return;
-
-        const followingList = await listFollowing(pubkey);
-
-        if (followingList) {
-          setFollowingImages(
-            followingList.following.slice(0, 3).map((user) => ({
-              alt: 'user-pic',
-              src: user?.profile?.image || '/images/Userpic.png',
-            }))
-          );
-          setFollowing(followingList);
-          setLoadingFollowing(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [post?.author?.id]);
+  const [followed, setFollowed] = useState(false);
+  const [loadingFollowed, setLoadingFollowed] = useState(false);
+  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
 
   const followUser = async () => {
     try {
-      if (!post?.author?.id) return;
+      if (!idAuthor) return;
       setLoadingFollowed(true);
 
-      const result = await follow(post?.author?.id);
+      const result = await follow(idAuthor);
       setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
@@ -134,16 +70,78 @@ export default function Profile({ post }: ProfileProps) {
 
   const unfollowUser = async () => {
     try {
-      if (!post?.author?.id) return;
+      if (!idAuthor) return;
       setLoadingFollowed(true);
 
-      const result = await unfollow(post?.author?.id);
+      const result = await unfollow(idAuthor);
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const followersList = followers;
+
+        if (followersList) {
+          const images = await Promise.all(
+            followersList.slice(0, 3).map(async (user, index) => {
+              const userDetails = await getUserDetails(user);
+              return {
+                alt: `userPic-${index + 1}`,
+                src: userDetails?.image || '/images/Userpic.png',
+              };
+            })
+          );
+
+          setFollowersImages(images);
+          setInitLoadingFollowed(false);
+
+          followersList.forEach((user) => {
+            const uri = user?.replace('pubky:', '');
+            if (uri === pubky) {
+              setFollowed(true);
+            }
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [followers]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const followingList = following;
+
+        if (followingList) {
+          const images = await Promise.all(
+            followingList.slice(0, 3).map(async (user, index) => {
+              const userDetails = await getUserDetails(user);
+              return {
+                alt: `userPic-${index + 1}`,
+                src: userDetails?.image || '/images/Userpic.png',
+              };
+            })
+          );
+
+          setFollowingImages(images);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [following]);
 
   return (
     <Tooltip.Main
@@ -152,22 +150,22 @@ export default function Profile({ post }: ProfileProps) {
     >
       <div className="w-full flex flex-col justify-between">
         <div
-          onClick={() => router.push(`/profile/${post?.author?.id}`)}
+          onClick={() => router.push(`/profile/${idAuthor}`)}
           className="justify-start items-center gap-2 flex cursor-pointer"
         >
           <PostUI.ImageUser
-            uriImage={post?.author?.profile?.image || '/images/Userpic.png'}
+            uriImage={author?.details?.image || '/images/Userpic.png'}
             alt="user"
           />
           <div className={`flex flex-col justify-start`}>
             <PostUI.Username
               className={`hover:underline hover:decoration-solid`}
             >
-              {post?.author?.profile?.name &&
-                Utils.minifyText(post?.author?.profile?.name, 12)}
+              {author?.details?.name &&
+                Utils.minifyText(author?.details?.name, 12)}
             </PostUI.Username>
             <Typography.Label className="text-opacity-30 -mt-1">
-              {Utils.minifyPubky(post?.author?.id)}
+              {Utils.minifyPubky(idAuthor)}
             </Typography.Label>
           </div>
         </div>
@@ -177,12 +175,12 @@ export default function Profile({ post }: ProfileProps) {
         className="scrollbar-thin scrollbar-webkit my-3 text-opacity-80 break-words max-h-[150px] overflow-y-auto"
         onClick={(event) => event.stopPropagation()}
       >
-        {post?.author?.profile?.bio
-          ? Utils.minifyText(post?.author?.profile?.bio, 50)
+        {author?.details?.bio
+          ? Utils.minifyText(author?.details?.bio, 50)
           : 'No bio.'}
       </Typography.Body>
       <div className="grid grid-cols-2 gap-6 justify-start">
-        {loadingFollowing ? (
+        {isLoadingFollowing ? (
           <div className="flex w-full justify-center min-h-[64px] items-center">
             <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
           </div>
@@ -190,29 +188,27 @@ export default function Profile({ post }: ProfileProps) {
           <div
             onClick={(event) => {
               event.stopPropagation();
-              ((followers?.count ?? 0) > 0 || (following?.count ?? 0) > 0) &&
+              ((followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0) &&
                 router.push(
                   `/profile/${
-                    post?.author?.id
-                      ? `${post?.author?.id}?tab=following`
-                      : '?tab=following'
+                    idAuthor ? `${idAuthor}?tab=following` : '?tab=following'
                   }`
                 );
             }}
             className={`flex-col gap-3 inline-flex ${
-              (following?.count ?? 0) > 0 && 'cursor-pointer'
+              (following?.length ?? 0) > 0 && 'cursor-pointer'
             }`}
           >
             <div className="inline-flex gap-2">
-              <Typography.Label>{following?.count}</Typography.Label>
+              <Typography.Label>{following?.length}</Typography.Label>
               <Typography.Label className="text-opacity-50">
                 Following
               </Typography.Label>
             </div>
-            <PostUI.UserPic images={followingImages} />
+            {followingImages && <PostUI.UserPic images={followingImages} />}
           </div>
         )}
-        {loadingFollowers ? (
+        {isLoadingFollowers ? (
           <div className="flex w-full justify-center min-h-[64px] items-center">
             <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
           </div>
@@ -220,54 +216,58 @@ export default function Profile({ post }: ProfileProps) {
           <div
             onClick={(event) => {
               event.stopPropagation();
-              ((followers?.count ?? 0) > 0 || (following?.count ?? 0) > 0) &&
+              ((followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0) &&
                 router.push(
                   `/profile/${
-                    post?.author?.id
-                      ? `${post?.author?.id}?tab=followers`
-                      : '?tab=followers'
+                    idAuthor ? `${idAuthor}?tab=followers` : '?tab=followers'
                   }`
                 );
             }}
             className={`flex-col gap-3 inline-flex ${
-              (followers?.count ?? 0) > 0 && 'cursor-pointer'
+              (followers?.length ?? 0) > 0 && 'cursor-pointer'
             }`}
           >
             <div className="inline-flex gap-2">
-              <Typography.Label>{followers?.count}</Typography.Label>
+              <Typography.Label>{followers?.length}</Typography.Label>
               <Typography.Label className="text-opacity-50">
                 Followers
               </Typography.Label>
             </div>
-            <PostUI.UserPic images={followersImages} />
+            {followersImages && <PostUI.UserPic images={followersImages} />}
           </div>
         )}
       </div>
       <div>
-        {initLoadingFollowed ? (
-          <Button.Transparent
-            loading={initLoadingFollowed}
-            className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
-          >
-            Loading
-          </Button.Transparent>
-        ) : followed ? (
-          <Button.Transparent
-            onClick={
-              loadingFollowed
-                ? undefined
-                : (event) => {
-                    event.stopPropagation();
-                    unfollowUser();
-                  }
-            }
-            disabled={loadingFollowed}
-            loading={loadingFollowed}
-            icon={<Icon.UserMinus size="16" />}
-            className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
-          >
-            Unfollow
-          </Button.Transparent>
+        {followed ? (
+          initLoadingFollowed ? (
+            <Button.Transparent
+              loading={initLoadingFollowed}
+              className={
+                post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+              }
+            >
+              Loading
+            </Button.Transparent>
+          ) : (
+            <Button.Transparent
+              onClick={
+                loadingFollowed
+                  ? undefined
+                  : (event) => {
+                      event.stopPropagation();
+                      unfollowUser();
+                    }
+              }
+              disabled={loadingFollowed}
+              loading={loadingFollowed}
+              icon={<Icon.UserMinus size="16" />}
+              className={
+                post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+              }
+            >
+              Unfollow
+            </Button.Transparent>
+          )
         ) : (
           <Button.Transparent
             onClick={
@@ -281,12 +281,14 @@ export default function Profile({ post }: ProfileProps) {
             disabled={loadingFollowed}
             loading={loadingFollowed}
             icon={<Icon.UserPlus size="16" />}
-            className={post?.author?.id === pubky ? 'hidden' : 'w-full mt-3'}
+            className={
+              post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+            }
           >
             Follow
           </Button.Transparent>
         )}
-        {post?.author?.id === pubky && (
+        {post?.details?.author === pubky && (
           <Button.Transparent
             icon={<Icon.Pencil size="16" />}
             onClick={(event) => {

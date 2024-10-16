@@ -4,7 +4,6 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Content, Menu, Typography } from '@social/ui-shared';
 import {
-  ActiveFriends,
   ButtonFilters,
   CreatePost,
   Feedback,
@@ -14,21 +13,30 @@ import {
   PostsLayout,
   Sidebar,
   WhoFollow,
+  Influencers,
 } from '@/components';
-import { useClientContext, useFilterContext } from '@/contexts';
-import { IPost } from '@/types';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { Filter } from '@/components/Filter';
 import Skeletons from '@/components/Skeletons';
+import { usePostStream } from '@/hooks/usePost';
+import { UseUserMuted } from '@/hooks/useUser';
 
 const SearchContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { layout, reach, sort } = useFilterContext();
-  const { listGlobalPosts, searchTags, setSearchTags, posts, setPosts } =
-    useClientContext();
+  const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
+  const { data, isLoading, isError } = usePostStream(
+    pubky,
+    0,
+    5,
+    reach,
+    sort,
+    searchTags
+  );
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [cursor, setCursor] = useState('');
+  //const [cursor, setCursor] = useState('');
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
@@ -40,28 +48,29 @@ const SearchContent = () => {
       ? 'with this tag:'
       : '';
 
-  const fetchData = async (pointer: string, searchTags: string[]) => {
-    setLoading(true);
+  // const fetchData = async (pointer: string, searchTags: string[]) => {
+  //  setLoading(true);
 
-    if (searchTags.length === 0) {
-      setLoading(false);
-      return;
-    }
+  //  if (searchTags.length === 0) {
+  //    setLoading(false);
+  //    return;
+  // }
 
-    const results = await listGlobalPosts(pointer, reach, sort, searchTags);
+  // const results = posts; //await listGlobalPosts(pointer, reach, sort, searchTags);
 
-    if (results && results.feed) {
-      if (cursor) {
-        setPosts((prev: IPost[]) => [...prev, ...results.feed]);
-      } else {
-        setPosts(results.feed);
-      }
-      setCursor(results.cursor);
-      setLoading(false);
-    }
-  };
+  //if (results && results.feed) {
+  //  if (cursor) {
+  //    setPosts((prev: IPost[]) => [...prev, ...results.feed]);
+  //  } else {
+  //    setPosts(results.feed);
+  //  }
+  //  setCursor(results.cursor);
+  //  setLoading(false);
+  //}
+  //};
 
-  useEffect(() => {
+  {
+    /**useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && cursor) {
@@ -76,12 +85,14 @@ const SearchContent = () => {
     return () => observer.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor]);
+  */
+  }
 
-  useEffect(() => {
-    setPosts([]);
-    fetchData('', searchTags);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reach, sort, searchTags]);
+  //useEffect(() => {
+  // //setPosts([]);
+  //  fetchData('', searchTags);
+  //  // eslint-disable-next-line react-hooks/exhaustive-deps
+  //}, [reach, sort, searchTags]);
 
   useEffect(() => {
     const search = searchParams.get('tags');
@@ -172,35 +183,37 @@ const SearchContent = () => {
             layout
           )} flex-col inline-flex gap-3`}
         >
-          {Object.keys(posts).map((key, index) => (
-            <Post
-              key={`${index}-${posts[key].id}`}
-              post={posts[key]}
-              largeView={layout === 'wide'}
-              layout={layout}
-            />
-          ))}
-          {Object.keys(posts).length === 0 && !loading && (
-            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-              <Typography.H2 className="font-normal text-opacity-50">
-                No posts {tagMessage}
-              </Typography.H2>
-              <Typography.H2 className="font-normal">
-                {searchTags.map((searchTag, index) => (
-                  <span key={`tag-${searchTag}`}>
-                    {searchTag}
-                    {index !== searchTags.length - 1 && ', '}
-                  </span>
-                ))}
-              </Typography.H2>
-            </div>
-          )}
-          {loading && <Skeletons.Simple />}
+          {data && data?.length > 0
+            ? data
+                .filter((post) => !mutedUsers?.includes(post?.details?.author))
+                .map((post) => (
+                  <Post
+                    key={post.details.id}
+                    post={post}
+                    largeView={layout === 'wide'}
+                  />
+                ))
+            : !isLoading && (
+                <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+                  <Typography.H2 className="font-normal text-opacity-50">
+                    No posts {tagMessage}
+                  </Typography.H2>
+                  <Typography.H2 className="font-normal">
+                    {searchTags.map((searchTag, index) => (
+                      <span key={`tag-${searchTag}`}>
+                        {searchTag}
+                        {index !== searchTags.length - 1 && ', '}
+                      </span>
+                    ))}
+                  </Typography.H2>
+                </div>
+              )}
+          {isLoading && !isError && <Skeletons.Simple />}
         </PostsLayout>
         {layout !== 'wide' && (
           <Sidebar className="hidden 2xl:block">
             <WhoFollow />
-            <ActiveFriends />
+            <Influencers />
             <HotTags />
             <Feedback />
           </Sidebar>

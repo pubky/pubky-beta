@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
@@ -11,10 +10,11 @@ import {
   Menu,
   PostUtil,
 } from '@social/ui-shared';
-import { Modal } from '../Modal';
-import { useClientContext, useNotificationsContext } from '@/contexts';
+import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
+import { useRouter } from 'next/navigation';
+import Modal from '../Modal';
 
 interface HeaderProps {
   title?: React.ReactNode;
@@ -23,33 +23,18 @@ interface HeaderProps {
 
 export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
-  const { pubky, getProfile, isLoggedIn, setSearchTags, searchTags } =
-    useClientContext();
+  const { setSearchTags, searchTags, profile } = usePubkyClientContext();
+  const { pubky, isLoggedIn } = usePubkyClientContext();
   const { notifications } = useNotificationsContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
-  const [image, setImage] = useState('/images/Userpic.png');
-  const [name, setName] = useState('');
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [handler, setHandler] = useState('');
   const [inputValue, setInputValue] = useState('');
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
-
-  async function fetchProfile() {
-    try {
-      const userProfile = await getProfile();
-
-      if (userProfile) {
-        setImage(userProfile.image || '/images/Userpic.png');
-        setName(userProfile.name || '');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async function fetchLoggedIn() {
     const loggedIn = await isLoggedIn();
@@ -61,9 +46,8 @@ export default function Header({ title, className }: HeaderProps) {
   }
 
   useEffect(() => {
-    setHandler(Utils.minifyPubky(pubky));
+    setHandler(Utils.minifyPubky(pubky ?? ''));
     fetchLoggedIn();
-    fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
 
@@ -208,17 +192,26 @@ export default function Header({ title, className }: HeaderProps) {
             }
           />
         </Link>
-        {/**
-        <Link href="/bookmarks">
+
+        <Link href="/influencers">
           <Button.Action
-            id="header-bookmarks-btn"
+            id="header-nfluencers-btn"
             variant="menu"
-            label="Bookmarks"
-            active={title === 'Bookmarks'}
-            icon={<Icon.BookmarkSimple size="24" />}
+            label="Influencers"
+            active={title === `Influencers`}
+            className={
+              title === 'Influencers'
+                ? 'bg-opacity-100 hover:bg-opacity-100'
+                : ''
+            }
+            icon={
+              <Icon.UsersLeft
+                size="24"
+                color={title === 'Influencers' ? '#05050a' : 'white'}
+              />
+            }
           />
         </Link>
-        */}
         <Link href="/settings">
           <Button.Action
             id="header-settings-btn"
@@ -237,12 +230,12 @@ export default function Header({ title, className }: HeaderProps) {
           />
         </Link>
         <Link href="/profile" className="w-[48px] relative">
-          {notifications.length !== 0 && (
+          {notifications?.length !== 0 && (
             <PostUtil.Counter
               textCSS="tracking-tight text-black font-semibold"
               className="w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
             >
-              {notifications.length}
+              {notifications?.length}
             </PostUtil.Counter>
           )}
           <ImageByUri
@@ -253,7 +246,7 @@ export default function Header({ title, className }: HeaderProps) {
               title === 'Profile' && 'border-2 border-white'
             } rounded-full w-[48px] h-[48px]`}
             alt="user-pic"
-            uri={image}
+            uri={String(profile?.image)}
           />
         </Link>
       </div>
@@ -262,14 +255,16 @@ export default function Header({ title, className }: HeaderProps) {
           className="lg:hidden relative cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-          <Menu.ImageMenu uriImage={image} />
+          <Menu.ImageMenu
+            uriImage={String(profile?.image ?? '/images/Userpic.png')}
+          />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
           <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
             <Menu.Header
               href="/profile"
-              uriImage={image}
-              username={Utils.minifyText(name)}
+              uriImage={String(profile?.image) ?? ''}
+              username={profile?.name ? Utils.minifyText(profile?.name) : ''}
               handler={handler}
             />
             <div className="flex-col inline-flex">
@@ -283,12 +278,12 @@ export default function Header({ title, className }: HeaderProps) {
                 href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
-                counter={notifications.length}
+                counter={notifications?.length}
               />
               <Menu.Section
-                href="/bookmarks"
-                icon={<Icon.BookmarkSimple />}
-                text="Bookmarks"
+                href="/influencers"
+                icon={<Icon.UsersLeft />}
+                text="Influencers"
                 onClick={() => setDrawerOpen(false)}
               />
               <Menu.Section

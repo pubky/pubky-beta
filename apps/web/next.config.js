@@ -35,7 +35,19 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'privky.app',
       },
+      {
+        protocol: 'https',
+        hostname: 'nexus.privky.app',
+      },
     ],
+  },
+  cleanDistDir: false,
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('@synonymdev/pubky');
+    }
+
+    return config;
   },
   async redirects() {
     return [

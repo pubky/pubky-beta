@@ -1,131 +1,21 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Content, Menu, Typography } from '@social/ui-shared';
+import { Content, Icon, Menu, Typography } from '@social/ui-shared';
 import * as Components from '@/components';
-import Skeletons from '@/components/Skeletons';
 import { Filter } from '@/components/Filter';
-import { useClientContext, useFilterContext } from '@/contexts';
-import { IPost, INewPost } from '@/types';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePostStream, usePostThread } from '@/hooks/usePost';
+import { useRouter } from 'next/navigation';
+import { Utils } from '@social/utils-shared';
+import { UseUserMuted } from '@/hooks/useUser';
 
 export default function Index() {
-  const { reach, sort, layout } = useFilterContext();
-  const { listGlobalPosts, getPost, posts, setPosts } = useClientContext();
+  const { layout } = useFilterContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [cursor, setCursor] = useState('');
-  const [parentPosts, setParentPosts] = useState<{
-    [key: string]: IPost | null;
-  }>({});
-  const [repliesMap, setRepliesMap] = useState<{ [key: string]: IPost[] }>({});
-  const [postLevels, setPostLevels] = useState<{ [key: string]: number }>({});
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
-  const loader = useRef(null);
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
-
-  const fetchParentPost = async (parentUri: string): Promise<IPost | null> => {
-    try {
-      const parentPost = await getPost(parentUri);
-      return parentPost;
-    } catch (error) {
-      console.error('Error fetching parent post:', error);
-      return null;
-    }
-  };
-
-  const fetchData = async (
-    pointer: string,
-    cancellationToken: { cancelled: boolean }
-  ) => {
-    setLoading(true);
-
-    const results = await listGlobalPosts(pointer, reach, sort);
-
-    if (cancellationToken.cancelled) return;
-
-    if (results && results.feed) {
-      const newRepliesMap: { [key: string]: IPost[] } = {};
-      const newPostLevels: { [key: string]: number } = {};
-      const newPostsTemp = await Promise.all(
-        results.feed.map(async (post: IPost) => {
-          let parentPost: IPost | null = null;
-          const parentUri = post.post.parent;
-
-          if (parentUri) {
-            parentPost = await fetchParentPost(parentUri);
-            setParentPosts((prev) => ({
-              ...prev,
-              [parentUri]: parentPost,
-            }));
-
-            if (newRepliesMap[parentUri]) {
-              newRepliesMap[parentUri].push(post);
-            } else {
-              newRepliesMap[parentUri] = [post];
-            }
-
-            let level = 1;
-            let currentUri = parentUri;
-            while (parentPosts[currentUri]) {
-              level++;
-              currentUri = parentPosts[currentUri]?.post?.parent || '';
-            }
-            newPostLevels[post.uri] = level;
-          } else {
-            newPostLevels[post.uri] = 0;
-            return post;
-          }
-        })
-      );
-
-      setRepliesMap((prev) => ({ ...prev, ...newRepliesMap }));
-      setPostLevels((prev) => ({ ...prev, ...newPostLevels }));
-
-      const postsMap = newPostsTemp.reduce((acc: INewPost, post) => {
-        if (post) {
-          acc[post.id] = post;
-        }
-        return acc;
-      }, {});
-
-      setPosts((prev: INewPost) => ({ ...prev, ...postsMap }));
-
-      setCursor(results.cursor);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      async (entries) => {
-        if (entries[0].isIntersecting && cursor) {
-          const cancellationToken = { cancelled: false };
-          fetchData(cursor, cancellationToken);
-          return () => {
-            cancellationToken.cancelled = true;
-          };
-        }
-      },
-      { threshold: 0 }
-    );
-    if (loader.current) {
-      observer.observe(loader.current);
-    }
-    return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cursor]);
-
-  useEffect(() => {
-    setPosts({} as INewPost);
-    setCursor('');
-    const cancellationToken = { cancelled: false };
-    fetchData('', cancellationToken);
-    return () => {
-      cancellationToken.cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reach, sort]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -156,76 +46,6 @@ export default function Index() {
       document.removeEventListener('mousedown', handleClickOutsideDrawer);
     };
   }, [drawerFilterRef]);
-
-  {
-    /** function renderParentPost(
-    parentPost: IPost,
-    parentUri: string | undefined,
-    layout: string
-  ) {
-    if (parentPost) {
-      return (
-        <Components.Post post={parentPost} largeView={layout === 'wide'} />
-      );
-    }
-
-    if (parentUri) {
-      return (
-        <div className="relative ml-4 mb-8 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
-          <Typography.Body variant="small" className="text-opacity-50">
-            This post was not found or has been deleted by its author.
-          </Typography.Body>
-          <div className="absolute -ml-1 mt-2 border-l-2 border-neutral-800 h-[44px]" />
-        </div>
-      );
-    }
-
-    return null;
-  }
-    */
-  }
-
-  function renderPostWithReplies(
-    post: IPost,
-    layout: string,
-    renderedPosts: Set<string>
-  ) {
-    if (renderedPosts.has(post.uri)) {
-      return null;
-    }
-    renderedPosts.add(post.uri);
-
-    const level = postLevels[post.uri] || 0;
-    const marginClass = level > 0 ? `ml-${level * 6}` : '';
-
-    return (
-      <div className={`flex flex-col gap-3 ${marginClass}`} key={post.id}>
-        <Components.Post
-          largeView={layout === 'wide'}
-          post={post}
-          line={Boolean(post?.post?.parent)}
-        />
-        {repliesMap[post.uri]?.map((reply) =>
-          renderPostWithReplies(reply, layout, renderedPosts)
-        )}
-      </div>
-    );
-  }
-
-  function renderPostsInOrder(layout: string) {
-    const renderedPosts = new Set<string>();
-
-    return Object.keys(posts).flatMap((key) => {
-      const post = posts[key];
-      const parentUri = post?.post?.parent;
-
-      if (!parentUri || !renderedPosts.has(parentUri)) {
-        return renderPostWithReplies(post, layout, renderedPosts);
-      }
-
-      return null;
-    });
-  }
 
   function getPostsLayoutClass(layout: string) {
     return layout === 'wide'
@@ -262,25 +82,18 @@ export default function Index() {
           </Components.Sidebar>
         )}
         <Components.PostsLayout
-          id='posts-feed' className={`${getPostsLayoutClass(
+          id="posts-feed"
+          className={`${getPostsLayoutClass(
             layout
           )} flex-col inline-flex gap-3`}
         >
           <Components.CreateQuickPost largeView={layout === 'wide'} />
-          {renderPostsInOrder(layout)}
-          {Object.keys(posts).length === 0 && !loading && (
-            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-              <Typography.H2 className="font-normal text-opacity-50">
-                No posts yet.
-              </Typography.H2>
-            </div>
-          )}
-          {loading && <Skeletons.Simple />}
+          <Timeline />
         </Components.PostsLayout>
         {layout !== 'wide' && (
           <Components.Sidebar className="hidden xl:block">
             <Components.WhoFollow />
-            <Components.ActiveFriends />
+            <Components.Influencers />
             <Components.HotTags />
             <Components.Feedback />
           </Components.Sidebar>
@@ -299,7 +112,163 @@ export default function Index() {
         </div>
       </Menu.Root>
       <Components.CreatePost />
-      <div ref={loader} />
     </Content.Main>
   );
+}
+
+const Timeline = () => {
+  const limit = 10;
+  const [skip, setSkip] = useState(0);
+
+  const { reach, layout, sort } = useFilterContext();
+  const { pubky, timeline, setTimeline } = usePubkyClientContext();
+  const { data, isLoading, isError } = usePostStream(
+    pubky,
+    skip,
+    limit,
+    reach,
+    sort
+  );
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
+
+  useEffect(() => {
+    setSkip(0);
+    setTimeline([]);
+  }, [reach]);
+
+  useEffect(() => {
+    if (!isLoading && data) {
+      if (skip === 0) {
+        setTimeline(data);
+        return;
+      }
+
+      if (!timeline) return;
+
+      const timelineCopy = [...timeline];
+
+      setTimeline([...timelineCopy, ...data]);
+    }
+  }, [data, isLoading, reach]);
+
+  const fetchMorePosts = () => {
+    if (isError) return;
+
+    const newSkip = skip + limit;
+
+    setSkip(newSkip);
+  };
+
+  const loader = useInfiniteScroll(fetchMorePosts, isLoading);
+
+  return (
+    <div className="flex-col inline-flex gap-3">
+      {timeline && timeline?.length > 0
+        ? timeline
+            .filter((post) => !mutedUsers?.includes(post?.details?.author))
+            .map((post, index) => (
+              <div key={`${index}-${post.details.id}`}>
+                <Components.Post
+                  post={post}
+                  largeView={layout === 'wide'}
+                  line={Boolean(post?.relationships?.replied)}
+                />
+                {post?.counts?.replies > 0 && (
+                  <PostReplies post={post} layout={layout} />
+                )}
+              </div>
+            ))
+        : !isLoading && (
+            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+              <Typography.H2 className="font-normal text-opacity-50">
+                No posts
+              </Typography.H2>
+            </div>
+          )}
+      {isLoading && !isError && (
+        <div className="mt-4">
+          <Components.Skeleton.Simple />
+        </div>
+      )}
+      <div ref={loader} />
+    </div>
+  );
+};
+
+const PostReplies = ({ post, layout }) => {
+  const { pubky } = usePubkyClientContext();
+  const { data: replies } = usePostThread(post.details.author, post.details.id);
+  //const [showAllReplies, setShowAllReplies] = useState(false);
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
+  const router = useRouter();
+  const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
+  const lineHorizontalCSS = (
+    <div className="absolute ml-[10px]">
+      <Icon.LineHorizontal size="14" color="#262626" />
+    </div>
+  );
+
+  if (!replies || replies.replies.length === 0) return null;
+
+  const displayedReplies = replies.replies.slice(0, 2);
+  //showAllReplies
+  //  ? replies.replies
+  //  : replies.replies.slice(0, 2);
+  const repliesLeft =
+    replies?.root_post?.counts?.replies - displayedReplies.length;
+
+  return (
+    <div className="mt-3 flex flex-col gap-3">
+      {displayedReplies
+        .filter((post) => !mutedUsers?.includes(post?.details?.author))
+        .map((reply) => (
+          <Components.Post
+            key={reply.details.id}
+            post={reply}
+            largeView={layout === 'wide'}
+            line={Boolean(reply?.relationships?.replied)}
+          />
+        ))}
+      {repliesLeft > 0 && (
+        //&& !showAllReplies
+        <div>
+          <div className={lineBaseCSS} />
+          {lineHorizontalCSS}
+          <Typography.Body
+            variant="small-bold"
+            //onClick={() => setShowAllReplies(true)}
+            onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
+            className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
+          >
+            <Icon.ChatCircleText />
+            {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
+          </Typography.Body>
+        </div>
+      )}
+    </div>
+  );
+};
+
+function useInfiniteScroll(fetchPosts: () => void, isLoading: boolean) {
+  const loader = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isLoading) {
+          fetchPosts();
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => observer.disconnect();
+  }, [fetchPosts, isLoading]);
+
+  return loader;
 }

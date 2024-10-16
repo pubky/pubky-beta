@@ -54,7 +54,7 @@ export const Stepper = ({
     );
   };
 
-  const stepComponents = [];
+  const stepComponents: JSX.Element[] = [];
   for (let i = 1; i <= steps; i++) {
     stepComponents.push(renderStep(i));
   }

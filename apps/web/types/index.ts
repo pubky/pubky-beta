@@ -9,7 +9,7 @@ export type TStatus =
   | 'sick'
   | 'noStatus';
 export type TSize = 'full' | 'normal';
-export type TReach = 'following' | 'friends' | 'all';
+export type TReach = 'following' | 'friends' | 'followers' | 'all';
 export type TLanguage = 'english' | 'spanish' | 'german' | 'french' | 'italian';
 export type TSort = 'recent' | 'popularity';
 export type THotTagsReach = 'following' | 'followers' | 'friends' | 'all';
@@ -101,10 +101,7 @@ export interface IFileContent {
   id: string;
   indexedAt: number;
   metadata: Record<string, string>;
-  owner: {
-    id: string;
-    uri: string;
-  };
+  owner: string;
   size: number;
   src: string;
   uri: string;

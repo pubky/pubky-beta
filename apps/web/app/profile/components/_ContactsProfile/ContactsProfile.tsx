@@ -1,15 +1,15 @@
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import { Typography } from '@social/ui-shared';
 import Skeletons from '@/components/Skeletons';
-import { useClientContext } from '@/contexts';
-import {
-  IFollowingResponse,
-  IFollowersResponse,
-  IFriendsResponse,
-  TContacts,
-} from '@/types';
+import { TContacts } from '@/types';
 import Root from './_Root';
 import Contact from './_Contact';
+import {
+  UseUserStreamFollowers,
+  UseUserStreamFollowing,
+  UseUserStreamFriends,
+} from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 
 type ContactsContentProps = {
   contacts: TContacts;
@@ -17,7 +17,19 @@ type ContactsContentProps = {
 };
 
 const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
-  const { pubky, listFollowing, listFollowers } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  const usePubky = creatorPubky ?? pubky;
+  const { data, isLoading, isError } =
+    contacts === 'followers'
+      ? UseUserStreamFollowers(usePubky ?? '', pubky ?? '', 0, 10)
+      : contacts === 'following'
+      ? UseUserStreamFollowing(usePubky ?? '', pubky ?? '', 0, 10)
+      : UseUserStreamFriends(usePubky ?? '', pubky ?? '', 0, 10);
+  const contactUsers = data;
+
+  if (isError) console.error(isError);
+  {
+    /** 
   const [loading, setLoading] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState(true);
   const [contactsUsers, setContactsUsers] = useState<
@@ -90,31 +102,45 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
       contactsToShow = contactsUsers.friends || [];
     }
   }
+    */
+  }
 
   return (
     <>
-      {loadingContacts || loading ? (
+      {isLoading ? (
         <div className="mt-12">
           <Skeletons.Simple />
         </div>
-      ) : contactsUsers?.count ?? 0 > 0 ? (
+      ) : contactUsers && contactUsers?.length > 0 ? (
         <Root>
-          <Contact contacts={contactsToShow} />
+          <Contact contacts={contactUsers} isLoading={isLoading} />
         </Root>
       ) : contacts === 'followers' ? (
-        <Typography.H2 id='profile-no-followers' className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2
+          id="profile-no-followers"
+          className="mt-[100px] font-normal text-opacity-50 text-center"
+        >
           No followers yet
         </Typography.H2>
       ) : contacts === 'following' ? (
-        <Typography.H2 id='profile-no-following' className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2
+          id="profile-no-following"
+          className="mt-[100px] font-normal text-opacity-50 text-center"
+        >
           No following yet
         </Typography.H2>
       ) : contacts === 'friends' ? (
-        <Typography.H2 id='profile-no-friends' className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2
+          id="profile-no-friends"
+          className="mt-[100px] font-normal text-opacity-50 text-center"
+        >
           No friends yet
         </Typography.H2>
       ) : (
-        <Typography.H2 id='profile-no-contacts' className="mt-[100px] font-normal text-opacity-50 text-center">
+        <Typography.H2
+          id="profile-no-contacts"
+          className="mt-[100px] font-normal text-opacity-50 text-center"
+        >
           No contacts yet
         </Typography.H2>
       )}

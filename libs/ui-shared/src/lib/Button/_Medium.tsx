@@ -56,7 +56,13 @@ export const Medium = ({
       ref={rest.ref}
       className={twMerge(cssButton, cssColorButton, rest.className)}
     >
-      {loading ? <Icon.LoadingSpin size="16" /> : icon && <div>{icon}</div>}
+      {loading ? (
+        <div>
+          <Icon.LoadingSpin size="16" />
+        </div>
+      ) : (
+        icon && <div>{icon}</div>
+      )}
       {children && (
         <Typography.Body variant="small-bold" className={color}>
           {children}

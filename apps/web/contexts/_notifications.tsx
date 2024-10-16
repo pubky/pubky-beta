@@ -7,16 +7,18 @@ import {
   useState,
   ReactNode,
 } from 'react';
-import { INotification } from '@/types';
-import { useClientContext, useFilterContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useUserNotifications } from '@/hooks/useUser';
+import { NotificationView } from '@/types/User';
 
 type NotificationsContextType = {
-  notifications: (INotification | INotification[])[];
+  notifications: NotificationView[];
   loading: boolean;
   fetchNotifications: () => Promise<void>;
 };
 
-const mergeConsecutiveNotifications = (
+{
+  /**const mergeConsecutiveNotifications = (
   notifications: INotification[]
 ): (INotification | INotification[])[] => {
   const mergedNotifications: (INotification | INotification[])[] = [];
@@ -179,7 +181,8 @@ const mergeConsecutiveNotifications = (
   addCurrentNotifications();
 
   return mergedNotifications;
-};
+};*/
+}
 
 const NotificationsContext = createContext<NotificationsContextType>({
   notifications: [],
@@ -188,11 +191,10 @@ const NotificationsContext = createContext<NotificationsContextType>({
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
-  const { pubky, getNotifications } = useClientContext();
-  const { notificationPreferences } = useFilterContext();
-  const [notifications, setNotifications] = useState<
-    (INotification | INotification[])[]
-  >([]);
+  const { pubky } = usePubkyClientContext();
+  const { data: initNotifications } = useUserNotifications(pubky ?? '');
+  //const { notificationPreferences } = useFilterContext();
+  const [notifications, setNotifications] = useState<NotificationView[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchNotifications = async () => {
@@ -201,18 +203,19 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
       if (!pubky) return;
 
-      const results = await getNotifications();
+      const results = initNotifications;
       if (results) {
-        const filteredNotifications = results.feed.filter(
-          (notification: INotification) =>
-            notificationPreferences[
-              notification.type as keyof typeof notificationPreferences
-            ]
-        );
-        const mergedNotifications = mergeConsecutiveNotifications(
-          filteredNotifications
-        );
-        setNotifications(mergedNotifications);
+        setNotifications(results);
+        //const filteredNotifications = results.feed.filter(
+        //  (notification: INotification) =>
+        //   notificationPreferences[
+        //     notification.type as keyof typeof notificationPreferences
+        //   ]
+        //);
+        //const mergedNotifications = mergeConsecutiveNotifications(
+        // filteredNotifications
+        //);
+        //setNotifications(mergedNotifications);
       }
     } catch (err) {
       console.error(err);
@@ -226,7 +229,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky]);
+  }, [pubky, initNotifications]);
 
   return (
     <NotificationsContext.Provider

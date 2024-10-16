@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
-import { useRouter } from 'next/navigation';
-import { useAlertContext, useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Content, Typography, Header } from '@social/ui-shared';
 import { Card } from './Card';
 
@@ -19,12 +18,9 @@ const loginSchema = z.object({
 });
 
 export default function Index() {
-  const router = useRouter();
-  const { decryptRecoveryFile } = useClientContext();
-  const { setContent, setShow } = useAlertContext();
-  const { pubky, isLoggedIn } = useClientContext();
+  const { loginWithFile, isLoggedIn, pubky } = usePubkyClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
-  const [fileName, setFileName] = useState('recoveryfile.key');
+  const [fileName, setFileName] = useState('recovery_file.pkarr');
 
   const [recoveryFile, setRecoveryFile] = useState<Buffer | null>(null);
   const [password, setPassword] = useState('');
@@ -40,13 +36,15 @@ export default function Index() {
     if (loading) {
       return;
     }
-    try {
-      setLoading(true);
-      setErrors({
-        password: '',
-        recoveryFile: '',
-      });
 
+    setLoading(true);
+    setErrors({
+      password: '',
+      recoveryFile: '',
+    });
+    setLoginError('');
+
+    try {
       const result = loginSchema.safeParse({
         password,
         recoveryFile,
@@ -54,7 +52,6 @@ export default function Index() {
 
       if (!result.success) {
         const newErrors: FormErrors = result.error.flatten().fieldErrors;
-
         const errorMessages = Object.keys(newErrors).reduce(
           (acc: { [key: string]: string }, key) => {
             acc[key] = newErrors[key].join(', ');
@@ -62,36 +59,18 @@ export default function Index() {
           },
           {}
         );
-
         setErrors((prev) => ({ ...prev, ...errorMessages }));
         setLoading(false);
         return;
       }
 
-      if (!recoveryFile || !password) return;
-
-      try {
-        const loggedIn = await decryptRecoveryFile(password, recoveryFile);
-
-        if (loggedIn && typeof loggedIn === 'object') {
-          router.push('/home');
-        } else if (loggedIn === undefined) {
-          setContent('Profile not found. Create a new one!', 'warning');
-          setShow(true);
-          setUserNotFound(true);
-          setLoginError('');
-          setLoading(false);
-          router.push('/onboarding/sign-up');
-        } else {
-          setLoginError(loggedIn);
-          setUserNotFound(false);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } catch (error) {
-      console.log(error);
+      await loginWithFile(result.data?.password, result.data?.recoveryFile);
+    } catch (error: unknown | { message: string }) {
+      const errorMessage = (error as Error)?.message || 'Failed to login';
+      setLoginError(errorMessage);
+      setLoading(false);
+      setUserNotFound(false);
+      console.error('Login error:', error);
     }
   };
 
@@ -105,7 +84,8 @@ export default function Index() {
       }
     }
     fetchData();
-  }, [pubky, isLoggedIn]);
+  }, [isLoggedIn, pubky]);
+
   return (
     <Content.Main>
       <Header.Root>
@@ -133,7 +113,6 @@ export default function Index() {
           />
           <Card.RecoveryPhrase />
         </div>
-        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-4.png" />*/}
       </Content.Grid>
     </Content.Main>
   );

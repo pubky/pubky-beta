@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { z } from 'zod';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import Modal from '../Modal';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
+import { usePubkyClientContext } from '@/contexts';
 
 const passwordSchema = z.object({
   password: z
@@ -14,7 +15,7 @@ const passwordSchema = z.object({
 });
 
 export default function RemindBackup() {
-  const { seed, setSeed, getRecoveryFile } = useClientContext();
+  const { seed, setSeed, getRecoveryFile } = usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
   const [remindMeLater, setRemindMeLater] = useState(false);
@@ -77,7 +78,7 @@ export default function RemindBackup() {
       element.download = filename;
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
-      setSeed(null);
+      setSeed(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -108,9 +109,13 @@ export default function RemindBackup() {
         throw new Error('Something went wrong');
       }
 
-      const { recoveryFile, filename } = recoveryFileResponse;
-      await handleDownloadRecoveryFile({ recoveryFile, filename });
+      await handleDownloadRecoveryFile({
+        recoveryFile: recoveryFileResponse,
+        filename: 'recovery_key.pkarr',
+      });
+
       Utils.storage.remove('seed');
+
       setShowModalBackup(false);
     } catch (error) {
       console.log(error);
@@ -160,13 +165,16 @@ export default function RemindBackup() {
           <Typography.H1 className="text-[#05050a] text-4xl">
             Back up your account
           </Typography.H1>
-          <div className="w-full flex justify-between gap-4">
-            <Typography.Body className="w-full text-[#05050a]" variant="medium">
+          <div className="w-full md:flex justify-between gap-4">
+            <Typography.Body
+              className="w-full text-[#05050a] mb-4 md:mb-0"
+              variant="medium"
+            >
               Time to back up your account.
               <br /> Without a backup you lose your account if you close your
               browser!
             </Typography.Body>
-            <div className="w-full flex gap-6 justify-end">
+            <div className="w-full flex gap-6 md:justify-end">
               <Button.Large
                 onClick={RemindMe}
                 variant="secondary"

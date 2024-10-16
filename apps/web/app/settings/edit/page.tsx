@@ -12,11 +12,13 @@ import {
   Icon,
 } from '@social/ui-shared';
 import { Header } from '@/components';
-import { useClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';
 import { ImageByUri } from '@/components/ImageByUri';
+import { useUserProfile } from '@/hooks/useUser';
+import { Links } from '@/types/Post';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -29,19 +31,18 @@ const profileSchema = z.object({
 
 export default function Index() {
   const router = useRouter();
-  const { pubky, saveProfile, getProfile, deleteFile } = useClientContext();
-
+  const { pubky, saveProfile, deleteFile } = usePubkyClientContext();
+  const { data: profile } = useUserProfile(pubky ?? '', pubky ?? '');
+  const { setContent, setShow } = useAlertContext();
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [image, setImage] = useState<File | string>('/images/Userpic.png');
-  const [prevImage, setPrevImage] = useState<string>('');
+  const [prevImage, setPrevImage] = useState<File | string>('');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [links, setLinks] = useState<
-    { title: string; url: string; placeHolder?: string }[]
-  >([
+  const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
     { url: '', title: 'email', placeHolder: 'user@provider.com' },
   ]);
@@ -67,24 +68,32 @@ export default function Index() {
   }, [modalLinkRef, setShowModalLink]);
 
   useEffect(() => {
+    if (!pubky) return;
+
     setHandler(Utils.minifyPubky(pubky));
+
     async function fetchData() {
       try {
-        const userProfile = await getProfile();
+        const userProfile = profile;
 
         if (userProfile) {
-          setName(userProfile.name);
-          setBio(userProfile.bio);
-          setImage(userProfile.image || '/images/Userpic.png');
-          setPrevImage(userProfile.image || '/images/Userpic.png');
-          if (userProfile.links.length > 0) setLinks(userProfile.links);
+          setName(userProfile?.details?.name);
+          setBio(userProfile?.details?.bio || '');
+          setImage(userProfile?.details?.image || '/images/Userpic.png');
+          setPrevImage(userProfile?.details?.image || '/images/Userpic.png');
+          if (
+            userProfile?.details?.links &&
+            userProfile?.details?.links?.length > 0
+          )
+            setLinks(userProfile?.details?.links);
         }
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, [pubky, getProfile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubky, profile]);
 
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
@@ -101,8 +110,17 @@ export default function Index() {
   };
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const maxSizeInMB = 20;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
     const file = event.target.files?.[0];
+
     if (file) {
+      if (file.size > maxSizeInBytes) {
+        setContent('The maximum allowed size is 20 MB', 'warning');
+        setShow(true);
+        return;
+      }
+
       const img = new Image();
       img.src = URL.createObjectURL(file);
 
@@ -172,12 +190,14 @@ export default function Index() {
         return;
       }
 
-      const linksObject: { [fieldName: string]: string } = {};
+      const linksObject: { title: string; url: string }[] = [];
       const invalidLinkIndexes: number[] = [];
 
       links.forEach((link, index) => {
         if (link.url) {
           let validationResult;
+          const cleanUrl = link.url.replace('mailto:', '');
+
           if (
             link.title.toLowerCase() === 'email' ||
             link.title.toLowerCase() === 'mail'
@@ -185,19 +205,31 @@ export default function Index() {
             validationResult = z
               .string()
               .email({ message: 'Invalid email address' })
-              .safeParse(link.url);
+              .safeParse(cleanUrl);
+
+            if (validationResult.success) {
+              linksObject.push({
+                title: link.title,
+                url: `mailto:${cleanUrl}`,
+              });
+            } else {
+              invalidLinkIndexes.push(index);
+            }
           } else {
             validationResult = z
               .string()
               .url({ message: 'Invalid website URL' })
               .optional()
               .safeParse(link.url);
-          }
 
-          if (!validationResult.success) {
-            invalidLinkIndexes.push(index);
-          } else {
-            linksObject[link.title] = link.url;
+            if (validationResult.success) {
+              linksObject.push({
+                title: link.title,
+                url: link.url,
+              });
+            } else {
+              invalidLinkIndexes.push(index);
+            }
           }
         }
       });
@@ -205,7 +237,10 @@ export default function Index() {
       if (invalidLinkIndexes.length > 0) {
         const newErrors: FormErrors = {};
         invalidLinkIndexes.forEach((index) => {
-          if (links[index].title === 'email' || links[index].title === 'mail') {
+          if (
+            links[index].title.toLowerCase() === 'email' ||
+            links[index].title.toLowerCase() === 'mail'
+          ) {
             newErrors[`link${index}`] = ['Invalid email address'];
           } else {
             newErrors[`link${index}`] = ['Invalid website URL'];
@@ -221,6 +256,7 @@ export default function Index() {
         bio,
         image,
         links: linksObject,
+        status: profile?.details?.status,
       });
 
       if (
@@ -228,8 +264,7 @@ export default function Index() {
         prevImage !== '/images/Userpic.png' &&
         prevImage !== image
       ) {
-        const idImage = Utils.encodeImageId(prevImage);
-        if (idImage) await deleteFile(idImage);
+        await deleteFile(String(prevImage));
       }
 
       router.push('/profile');
@@ -281,6 +316,7 @@ export default function Index() {
           placeholder="Your Name"
           className="h-auto text-[40px] font-bold sm:text-[64px]"
           defaultValue={name}
+          disabled={loading}
           maxLength={25}
           autoCorrect="off"
           error={errors.name}
@@ -306,6 +342,7 @@ export default function Index() {
                   id="edit-profile-bio-input"
                   placeholder="Short bio. Tell a bit about yourself."
                   className="h-[240px]"
+                  disabled={loading}
                   maxLength={160}
                   defaultValue={bio}
                   error={errors.bio}
@@ -331,7 +368,8 @@ export default function Index() {
                     id={`edit-profile-link-${link.title.toLowerCase()}-input`}
                     className="h-[70px] mt-2"
                     placeholder={link.placeHolder}
-                    value={link.url}
+                    disabled={loading}
+                    value={link.url.replace('mailto:', '')}
                     error={errors[`link${index}` as keyof typeof errors]}
                     action={
                       <div
@@ -396,6 +434,7 @@ export default function Index() {
               accept="image/*"
               onChange={UploadPic}
               className="hidden"
+              disabled={loading}
             />
           </Card.Primary>
           {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}

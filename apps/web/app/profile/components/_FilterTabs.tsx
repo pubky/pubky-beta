@@ -3,9 +3,9 @@ import { Icon, Typography } from '@social/ui-shared';
 import { Profile } from './';
 import { Skeleton } from '@/components';
 import ContactsProfile from './_ContactsProfile/ContactsProfile';
-import { useClientContext, useNotificationsContext } from '@/contexts';
+import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
 import TaggedAs from './_TaggedAs';
-import { IUserProfile } from '@/types';
+import { UserView } from '@/types/User';
 
 const tabs = [
   {
@@ -67,11 +67,11 @@ export default function FilterTabs({
     friends: number;
   };
   loading: boolean;
-  profile: IUserProfile | undefined;
+  profile: UserView | null;
 }) {
   const { notifications, loading: loadingNotifications } =
     useNotificationsContext();
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const [activeTab, setActiveTab] = useState(0);
   const [loadingTab, setLoadingTab] = useState(true);
 
@@ -112,7 +112,9 @@ export default function FilterTabs({
   const getTabNumber = (key: string) => {
     switch (key) {
       case 'notifications':
-        return notifications.length;
+        return notifications?.length;
+      case 'bookmarks':
+        return profile?.counts?.bookmarks;
       case 'posts':
         return countPosts || 0;
       case 'followers':
@@ -122,7 +124,7 @@ export default function FilterTabs({
       case 'friends':
         return countContacts.friends || 0;
       case 'tagged':
-        return profile?.taggedAs.length || 0;
+        return profile?.tags.length || 0;
       default:
         return null;
     }
@@ -130,7 +132,7 @@ export default function FilterTabs({
 
   return (
     <div className="flex gap-4">
-      <div className="w-[300px] self-start sticky top-[120px]">
+      <div className="w-[300px] self-start sticky top-[120px] hidden md:block">
         {tabs.map((tab) => {
           if (
             creatorPubky &&
@@ -159,7 +161,10 @@ export default function FilterTabs({
               </div>
               {!loading && tab.key && (
                 <Typography.Caption className="tracking-normal" variant="bold">
-                  <span id='counter' className="ml-2 text-white text-opacity-30">
+                  <span
+                    id="counter"
+                    className="ml-2 text-white text-opacity-30"
+                  >
                     {getTabNumber(tab.key)}
                   </span>
                 </Typography.Caption>
@@ -168,7 +173,7 @@ export default function FilterTabs({
           );
         })}
       </div>
-      <div id='profile-tab-content' className="w-full">
+      <div id="profile-tab-content" className="w-full">
         {loading ? (
           <Skeleton.Simple />
         ) : (
@@ -202,11 +207,7 @@ export default function FilterTabs({
               <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
             )}
             {activeTab === 6 && (
-              <TaggedAs
-                profile={profile}
-                loading={loading}
-                creatorPubky={creatorPubky}
-              />
+              <TaggedAs loading={loading} creatorPubky={creatorPubky} />
             )}
           </>
         )}

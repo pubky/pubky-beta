@@ -12,6 +12,7 @@ export default function Index() {
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Join />
         <Card.NewAccount />
+        <Card.SigninBack />
       </div>
       {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image1.png" />*/}
     </Onboarding.Layout>

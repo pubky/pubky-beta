@@ -4,16 +4,15 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { ILinkPubky } from '@/types';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { Links } from '@/types/Post';
 
 export default function Index() {
-  const { signUp } = useClientContext();
+  const { pubky, signUp, isLoggedIn } = usePubkyClientContext();
   const router = useRouter();
-  const { pubky, isLoggedIn } = useClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [loading, setLoading] = useState(false);
-  const links: ILinkPubky = {};
+  const links: Links[] = [];
 
   useEffect(() => {
     async function fetchData() {
@@ -60,13 +59,13 @@ export default function Index() {
         <Header.Action id="onboarding-sign-in-btn">Sign in</Header.Action>
       </Header.Root>
       <Content.Grid className="relative z-20">
-        <Typography.Display>Become the algorithm</Typography.Display>
+        <Typography.Display>Unlock the web.</Typography.Display>
         <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
-          Your keys, your content, your rules. Social publishing, reimagined.
+          Your keys, your content, your rules.
         </Typography.H2>
         <div className="relative flex gap-3">
           <Link id="onboarding-get-started-link" href="/onboarding/intro">
-            <Button.Large className="mt-12">Get started</Button.Large>
+            <Button.Large className="mt-12">Sign up</Button.Large>
           </Link>
           <Button.Large
             onClick={!loading ? () => handleSubmit() : undefined}
@@ -79,7 +78,7 @@ export default function Index() {
         </div>
       </Content.Grid>
       <div className="w-full">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/background-image.png')]" />
+        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/background-image.png')] pointer-events-none" />
       </div>
     </Content.Main>
   );

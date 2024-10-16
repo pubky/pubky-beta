@@ -5,15 +5,15 @@ import { useState } from 'react';
 import { useAlertContext } from '@/contexts';
 import Modal from '../../Modal';
 import { Utils } from '@social/utils-shared';
-import { IUserProfile } from '@/types';
+import { UserView } from '@/types/User';
 
 interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedFiles: File[];
   setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   content: string;
   setContent: (content: string) => void;
-  setSearchedUsers: React.Dispatch<React.SetStateAction<IUserProfile[]>>;
-  searchedUsers: IUserProfile[];
+  setSearchedUsers: React.Dispatch<React.SetStateAction<UserView[]>>;
+  searchedUsers: UserView[];
   setCursorPosition: React.Dispatch<React.SetStateAction<number>>;
   setTextArea?: React.Dispatch<React.SetStateAction<boolean>>;
   largeView?: boolean;
@@ -21,6 +21,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   autoFocus?: boolean;
   placeHolder?: string;
   setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
+  loading?: boolean;
 }
 
 export default function InputArea({
@@ -37,6 +38,7 @@ export default function InputArea({
   autoFocus,
   placeHolder,
   setFilePreviews,
+  loading,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -68,7 +70,7 @@ export default function InputArea({
     setIsDragging(false);
 
     const files = event.dataTransfer.files;
-    const maxSizeInMB = 6;
+    const maxSizeInMB = 20;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (files) {
@@ -83,7 +85,7 @@ export default function InputArea({
           return false;
         }
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 6 MB', 'warning');
+          setContentAlert('The maximum allowed size is 20 MB', 'warning');
           setShow(true);
           return false;
         }
@@ -122,6 +124,7 @@ export default function InputArea({
           setCursorPosition(e.target.selectionStart);
           setIsValidContent(Utils.isValidContent(e.target.value));
         }}
+        disabled={loading}
         onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
           setCursorPosition(e.currentTarget.selectionStart);
         }}

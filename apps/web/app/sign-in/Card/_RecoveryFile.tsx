@@ -65,6 +65,7 @@ export default function RecoveryFile({
             id="file_input"
             onChange={UploadRecoveryFile}
             accept=".pkarr"
+            disabled={loading}
           />
         </div>
         <div>
@@ -73,6 +74,7 @@ export default function RecoveryFile({
             className="h-[70px] mt-1"
             type="password"
             error={errors.password}
+            disabled={loading}
             placeholder="••••••••••••"
             id="onboarding-password-input"
             onKeyDown={handleKeyDown}
@@ -113,6 +115,7 @@ export default function RecoveryFile({
         loading={loading}
         className="mt-4"
         id="onboarding-sign-in-button"
+        variant="secondary"
       >
         Sign in
       </Button.Large>

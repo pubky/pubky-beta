@@ -4,9 +4,9 @@ import { Button, Icon, Input, Modal, Typography } from '@social/ui-shared';
 import { useEffect, useRef } from 'react';
 import { ImageByUri } from '../ImageByUri';
 import { Utils } from '@social/utils-shared';
-import { IProfile } from '@/types';
-import { useClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
+import { usePubkyClientContext } from '@/contexts/_pubky';
+import { PubkyAppUser } from '@/types/Post';
 
 interface FeedbackProps {
   showModal: boolean;
@@ -15,7 +15,7 @@ interface FeedbackProps {
   setError: React.Dispatch<React.SetStateAction<boolean>>;
   sent: boolean;
   setSent: React.Dispatch<React.SetStateAction<boolean>>;
-  profile: IProfile | undefined;
+  profile: PubkyAppUser | undefined;
   message: string;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
   handleSubmit: () => void;
@@ -35,7 +35,7 @@ export default function Feedback({
   handleSubmit,
   loading,
 }: FeedbackProps) {
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -59,7 +59,7 @@ export default function Feedback({
       show={showModal}
       closeModal={() => setShowModal(false)}
       modalRef={modalRef}
-      className="w-[792px] max-h-[600] overflow-y-auto"
+      className="md:w-[792px] max-h-[600] overflow-y-auto"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       {!sent && !error && (
@@ -72,7 +72,7 @@ export default function Feedback({
                 height={32}
                 className="w-[32px] h-[32px] rounded-full"
                 alt="user-image"
-                uri={profile?.image}
+                uri={profile?.image ?? '/images/Userpic.png'}
               />
               {profile?.name && pubky ? (
                 <div

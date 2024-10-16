@@ -5,10 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
 import { Card } from './Card';
+import { Links } from '@/types/Post';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -26,17 +27,17 @@ const profileSchema = z.object({
 });
 
 export default function Index() {
-  const { signUp } = useClientContext();
+  const { signUp, profile } = usePubkyClientContext();
   const router = useRouter();
 
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
-  const [image, setImage] = useState<File | string>('/images/Userpic.png');
+  const [name, setName] = useState(profile?.name || '');
+  const [bio, setBio] = useState(profile?.bio || '');
+  const [image, setImage] = useState<File | string>(
+    profile?.image || '/images/Userpic.png'
+  );
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
-  const [links, setLinks] = useState<
-    { title: string; url: string; placeHolder?: string }[]
-  >([
+  const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
     { url: '', title: 'email', placeHolder: 'user@provider.com' },
   ]);
@@ -99,17 +100,28 @@ export default function Index() {
       }
 
       try {
-        const linksObject: { [fieldName: string]: string } = {};
+        const linksObject: Links[] = [];
         const invalidLinkIndexes: number[] = [];
 
         links.forEach((link, index) => {
           if (link.url) {
             let validationResult;
+            const cleanUrl = link.url.replace('mailto:', '');
+
             if (link.title === 'email') {
               validationResult = z
                 .string()
                 .email({ message: 'Invalid email address' })
-                .safeParse(link.url);
+                .safeParse(cleanUrl);
+
+              if (validationResult.success) {
+                linksObject.push({
+                  title: link.title,
+                  url: `mailto:${cleanUrl}`,
+                });
+              } else {
+                invalidLinkIndexes.push(index);
+              }
             } else {
               validationResult = z
                 .string()
@@ -118,10 +130,13 @@ export default function Index() {
                 .safeParse(link.url);
             }
 
-            if (!validationResult.success) {
-              invalidLinkIndexes.push(index);
+            if (validationResult.success) {
+              linksObject.push({
+                title: link.title,
+                url: link.url,
+              });
             } else {
-              linksObject[link.title] = link.url;
+              invalidLinkIndexes.push(index);
             }
           }
         });
@@ -129,7 +144,10 @@ export default function Index() {
         if (invalidLinkIndexes.length > 0) {
           const newErrors: FormErrors = {};
           invalidLinkIndexes.forEach((index) => {
-            if (links[index].title === 'email') {
+            if (
+              links[index].title.toLowerCase() === 'email' ||
+              links[index].title.toLowerCase() === 'mail'
+            ) {
               newErrors[`link${index}`] = ['Invalid email address'];
             } else {
               newErrors[`link${index}`] = ['Invalid website URL'];
@@ -143,8 +161,8 @@ export default function Index() {
         const signUpResponse = await signUp({
           name,
           bio,
-          image,
-          links: linksObject,
+          image: image instanceof File ? image : undefined,
+          links: linksObject ? linksObject : undefined,
         });
 
         if (!signUpResponse) {
@@ -153,10 +171,9 @@ export default function Index() {
       } catch (error) {
         console.log(error);
       } finally {
+        router.push('/onboarding/pubky');
         setLoading(false);
       }
-
-      router.push('/onboarding/pubky');
     } catch (error) {
       console.log(error);
     } finally {
@@ -170,6 +187,7 @@ export default function Index() {
         placeholder="Your Name"
         className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px]"
         defaultValue={name ? name : ''}
+        disabled={loading}
         autoFocus
         id="onboarding-name-input"
         autoCorrect="off"
@@ -182,14 +200,15 @@ export default function Index() {
         Enter your bio, add some links, and upload a user picture.
       </Typography.H2>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-        <Card.Bio bio={bio} setBio={setBio} errors={errors} />
+        <Card.Bio bio={bio} setBio={setBio} errors={errors} loading={loading} />
         <Card.Links
           links={links}
           setLinks={setLinks}
           setShowModalLink={setShowModalLink}
           errors={errors}
+          loading={loading}
         />
-        <Card.Pic image={image} setImage={setImage} />
+        <Card.Pic image={image} setImage={setImage} loading={loading} />
         {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">

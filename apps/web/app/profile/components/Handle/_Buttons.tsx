@@ -1,5 +1,5 @@
 import { Button, Icon } from '@social/ui-shared';
-import { useClientContext, useToastContext } from '@/contexts';
+import { usePubkyClientContext, useToastContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
@@ -16,6 +16,7 @@ interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   setShowModalLogout: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
+  username: string;
 }
 
 export default function Buttons({
@@ -30,8 +31,10 @@ export default function Buttons({
   setShowModalLogout,
   setLoadingFollowed,
   setFollowed,
+  username,
 }: ButtonsProps) {
-  const { pubky, follow, unfollow } = useClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
+  //const { follow, unfollow } = useClientContext();
   const { setContent, setShow } = useToastContext();
   const router = useRouter();
 
@@ -180,6 +183,7 @@ export default function Buttons({
           <Tooltip.ProfileMenu
             setShowProfileMenu={setShowProfileMenu}
             creatorPubky={creatorPubky ?? pubkey}
+            name={username}
           />
         )}
         <Button.Action

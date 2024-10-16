@@ -1,7 +1,7 @@
 'use client';
 
 import { Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import { ImageByUri } from '@/components/ImageByUri';
@@ -13,7 +13,7 @@ interface UserAreaProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function UserArea({ largeView, uriPic, name }: UserAreaProps) {
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
   const router = useRouter();
 
   return (

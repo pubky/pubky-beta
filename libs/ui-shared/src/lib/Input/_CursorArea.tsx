@@ -8,6 +8,7 @@ interface CursorAreaProps extends React.HTMLAttributes<HTMLTextAreaElement> {
   error?: string;
   value?: string;
   maxLength?: number;
+  disabled?: boolean;
 }
 
 export const CursorArea = ({
@@ -15,6 +16,7 @@ export const CursorArea = ({
   error,
   value,
   maxLength,
+  disabled,
   ...rest
 }: CursorAreaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -38,6 +40,7 @@ export const CursorArea = ({
         {...rest}
         ref={textareaRef}
         value={value}
+        disabled={disabled}
         maxLength={maxLength}
         className={twMerge(
           baseCSS,

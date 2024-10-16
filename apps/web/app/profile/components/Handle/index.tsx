@@ -1,12 +1,13 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import { TStatus } from '@/types';
 import Buttons from './_Buttons';
 import Status from './_Status';
+import { usePubkyClientContext } from '@/contexts';
+import { useUserStream } from '@/hooks/useUser';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   username: string | JSX.Element;
@@ -22,7 +23,9 @@ export default function Handle({
   status,
   ...rest
 }: HandleProps) {
-  const { pubky, seed, listFollowers } = useClientContext();
+  const { pubky, seed } = usePubkyClientContext();
+  const { data: followers } = useUserStream(pubkey, pubky, 0, 10, 'followers');
+
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -33,22 +36,22 @@ export default function Handle({
   useEffect(() => {
     async function fetchData() {
       try {
-        let pubkey = creatorPubky;
+        let pubkeyUser = creatorPubky;
 
-        if (!pubkey) {
-          pubkey = pubky;
+        if (!pubkeyUser) {
+          pubkeyUser = pubky;
         }
 
-        if (!pubkey) return;
+        if (!pubkeyUser) return;
 
-        const followersList = await listFollowers(pubkey);
+        const followersList = followers;
 
         if (followersList) {
           setInitLoadingFollowed(false);
 
-          followersList.followers.forEach((user) => {
-            const uri = user.uri.replace('pubky:', '');
-            if (uri === pubky) {
+          followersList.map((user) => {
+            const id = user.details.id;
+            if (id === pubky) {
               setFollowed(true);
             }
           });
@@ -59,7 +62,7 @@ export default function Handle({
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [followed, creatorPubky]);
+  }, [followers, creatorPubky]);
 
   useEffect(() => {
     if (seed) {
@@ -73,10 +76,13 @@ export default function Handle({
     <div {...rest} className={twMerge(rest.className)}>
       {username && pubkey ? (
         <>
-          <Typography.Display id='profile-username-header' className="text-left">
+          <Typography.Display
+            id="profile-username-header"
+            className="text-center md:text-left mb-4"
+          >
             {Utils.minifyText(username.toString(), 15)}
           </Typography.Display>
-          <div className="-mt-4 inline-flex flex-row gap-3">
+          <div className="md:-mt-4 flex flex-col md:flex-row gap-3">
             <Buttons
               creatorPubky={creatorPubky}
               pubkey={pubkey}
@@ -89,6 +95,7 @@ export default function Handle({
               setLoadingFollowed={setLoadingFollowed}
               setFollowed={setFollowed}
               setShowProfileMenu={setShowProfileMenu}
+              username={username as string}
             />
             <Status creatorPubky={creatorPubky} status={status} />
           </div>

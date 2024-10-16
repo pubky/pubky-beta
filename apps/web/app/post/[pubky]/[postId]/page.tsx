@@ -1,31 +1,83 @@
 'use client';
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, Post as PostComponent } from '@/components';
 import { Utils } from '@social/utils-shared';
-import { IFileContent, IPost, IReply } from '@/types';
-import { useClientContext, useAlertContext } from '@/contexts';
 import Skeletons from '@/components/Skeletons';
 import { Post } from './components';
 import MetaTags from '@/components/MetaTags';
+import { usePost, usePostThread } from '@/hooks/usePost';
+import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
+import { useEffect, useRef, useState } from 'react';
+import { getFile } from '@/services/fileService';
+import { PostThread, PubkyAppFile } from '@/types/Post';
+import Link from 'next/link';
 
 export default function Index({
   params,
 }: {
   params: { pubky: string; postId: string };
 }) {
-  const { getReplies, getFile } = useClientContext();
-  const { setContent, setShow } = useAlertContext();
-  const [post, setPost] = useState<IPost>({} as IPost);
-  const [showPost, setShowPost] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const [replies, setReplies] = useState<IReply>({} as IReply);
+  let content: React.ReactNode = null;
+
+  const limit = 10;
+  const [skip, setSkip] = useState(0);
+  const [repliesArray, setRepliesArray] = useState<PostThread>(
+    {} as PostThread
+  );
+  const { pubky } = usePubkyClientContext();
+  const { data, isLoading, isError } = usePost(params.pubky, params.postId);
+  const {
+    data: replies,
+    isLoading: isLoadingReplies,
+    isError: isErrorReplies,
+  } = usePostThread(params.pubky, params.postId, pubky, skip, limit);
+  const { data: author } = useUserProfile(
+    data?.details?.author as string,
+    pubky ?? ''
+  );
   const uri = Utils.decodePostUri(params.pubky, params.postId);
-  const [file, setFile] = useState<IFileContent | null>();
+  const [file, setFile] = useState<PubkyAppFile | null>();
   const [typeFile, setTypeFile] = useState<'image' | 'video'>();
-  const fileUri = post?.post?.files ? post?.post?.files[0].fileUri : '';
+  const fileUri = data?.details?.attachments
+    ? data?.details?.attachments[0]
+    : '';
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  //const [parentPostsCount, setParentPostsCount] = useState(0);
+  const postRef = useRef<HTMLDivElement>(null);
+
+  //const handleParentPostsCountChange = (count: number) => {
+  //  setParentPostsCount(count);
+  //};
+
+  const fetchMoreReplies = () => {
+    if (isErrorReplies) return;
+
+    const newReplies = {
+      root_post: replies?.root_post,
+      replies: [...(repliesArray?.replies || []), ...(replies?.replies || [])],
+    };
+    setRepliesArray(newReplies as PostThread);
+
+    const newSkip = skip + limit;
+    setSkip(newSkip);
+  };
+
+  const loader = useInfiniteScroll(fetchMoreReplies, isLoadingReplies);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const FetchFile = async () => {
@@ -33,7 +85,7 @@ export default function Index({
         const fetchFileResponse = await getFile(fileUri);
         const isVideo =
           fetchFileResponse &&
-          fetchFileResponse.contentType.startsWith('video');
+          fetchFileResponse.content_type.startsWith('video');
         if (isVideo) {
           setTypeFile('video');
         } else {
@@ -43,84 +95,63 @@ export default function Index({
       }
     };
     FetchFile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileUri]);
 
-  useEffect(() => {
-    async function fetchData() {
-      if (!uri) return;
-      const result = await getReplies(uri);
-
-      if (result) {
-        if (result.post) {
-          setPost(result.post);
-        } else {
-          setShowPost(false);
-        }
-        setReplies(result);
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, [uri, getReplies]);
-
-  const handleUpdatePost = async () => {
-    const result = await getReplies(uri);
-    if (result) {
-      setPost(result.post);
-      setReplies(result);
-      setContent('Reply created!');
-      setShow(true);
-    } else {
-      setContent('Something went wrong. Try again', 'warning');
-      setShow(true);
-    }
-  };
-
-  let content;
-
-  if (!showPost) {
-    content = (
-      <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
-        <Typography.Body
-          variant="small"
-          className="text-opacity-50 text-center"
-        >
-          This post was not found or has been deleted by its author.
-          <Link
-            href="/home"
-            className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
+  {
+    if (isError) {
+      content = (
+        <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
+          <Typography.Body
+            variant="small"
+            className="text-opacity-50 text-center"
           >
-            Go home
-          </Link>
-        </Typography.Body>
-      </div>
-    );
-  } else {
+            This post was not found or has been deleted by its author.
+            <Link
+              href="/home"
+              className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
+            >
+              Go home
+            </Link>
+          </Typography.Body>
+        </div>
+      );
+    }
+  }
+  if (data) {
+    //const marginLeftValue = (parentPostsCount + 1) * 12;
     content = (
       <>
-        {replies?.post?.post?.parent && (
-          <Post.NavigatorParent replies={replies} />
+        {data?.relationships?.replied && (
+          <Post.RootParent
+            postRef={postRef}
+            parentURI={data?.relationships?.replied}
+            //onParentPostsCountChange={handleParentPostsCountChange}
+          />
         )}
 
-        {loading ? (
+        {isLoading ? (
           <Skeletons.Simple />
         ) : (
           <>
-            <PostComponent
-              key={uri}
-              post={post}
-              size="full"
-              largeView={true}
-              fullContent
-            />
+            <div ref={postRef}>
+              <PostComponent
+                key={uri}
+                post={data}
+                size="full"
+                largeView={windowWidth >= 1280}
+                fullContent
+                line={Boolean(data?.relationships?.replied)}
+              />
+            </div>
             <div className="mt-3">
               <Post.ReplyForm
                 uri={uri}
-                post={post}
-                updatePost={handleUpdatePost}
-                replies={replies}
+                post={data}
+                updatePost={() => console.log('updated')}
+                replies={repliesArray}
+                isLoadingReplies={isLoadingReplies}
               />
+              <div ref={loader} />
             </div>
           </>
         )}
@@ -131,11 +162,11 @@ export default function Index({
   return (
     <Content.Main>
       <MetaTags
-        username={post?.author?.profile?.name || 'Pubky App'}
-        description={post?.post?.content || 'Post Description'}
-        url={Utils.encodePostUri(post?.uri)}
-        image={typeFile === 'image' && file ? file.urls.main : ''}
-        video={typeFile === 'video' && file ? file.urls.main : ''}
+        username={author?.details?.name || 'Pubky App'}
+        description={data?.details?.content || 'Post Description'}
+        url={Utils.encodePostUri(data?.details?.uri as string)}
+        image={typeFile === 'image' ? file?.src : ''}
+        video={typeFile === 'video' ? file?.src : ''}
       />
       <Header className="hidden md:block" title="Post" />
       <Content.Grid className="flex justify-between flex-col gap-3">
@@ -144,4 +175,28 @@ export default function Index({
       <CreatePost />
     </Content.Main>
   );
+}
+
+function useInfiniteScroll(fetchPosts: () => void, isLoading: boolean) {
+  const loader = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isLoading) {
+          fetchPosts();
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => observer.disconnect();
+  }, [fetchPosts, isLoading]);
+
+  return loader;
 }

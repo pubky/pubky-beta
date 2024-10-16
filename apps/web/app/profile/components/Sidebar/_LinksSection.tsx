@@ -126,12 +126,12 @@ export default function LinksSection({
                       )}
                       {link.title.toLocaleLowerCase() === 'email' ||
                       link.title.toLocaleLowerCase() === 'mail' ? (
-                        <Link href={`mailto:${link.url}`} target="_blank">
+                        <Link href={`${link.url}`} target="_blank">
                           <Typography.Body
                             className="text-opacity-80 hover:text-opacity-100"
                             variant="small"
                           >
-                            {link.url}
+                            {link.url.replace(/^mailto:/, '')}
                           </Typography.Body>
                         </Link>
                       ) : (

@@ -1,23 +1,87 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import {
-  IFollower,
-  IFollowing,
-  IFriend,
-  IUserProfile,
-  LoadingContacts,
-} from '@/types';
-import { useClientContext } from '@/contexts';
-import List from './_List';
+import { UserView } from '@/types/User';
+import Link from 'next/link';
+import { ImageByUri } from '@/components/ImageByUri';
+import { Button, Icon, PostUtil, Typography } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
+import { usePubkyClientContext } from '@/contexts';
+import { useState } from 'react';
+import { LoadingContacts } from '@/types';
 
 export default function Contact({
   contacts,
+  isLoading,
 }: {
-  contacts: IFollower[] | IFollowing[] | IFriend[] | [];
+  contacts: UserView[] | [] | undefined;
+  isLoading: false;
 }) {
-  const { pubky, follow, unfollow, listFollowing, getUserIndexed } =
-    useClientContext();
+  const { pubky, createTagProfile, deleteTagProfile, follow, unfollow } =
+    usePubkyClientContext();
+  const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
+  const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
+
+  const handleAddProfileTag = async (creatorPubky: string, tag: string) => {
+    const pubKeyToUse =
+      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+
+    if (pubKeyToUse) {
+      await createTagProfile(pubKeyToUse, tag);
+    }
+  };
+
+  const handleDeleteProfileTag = async (creatorPubky: string, tag: string) => {
+    const pubKeyToUse =
+      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+
+    if (pubKeyToUse) {
+      await deleteTagProfile(pubKeyToUse, tag);
+    }
+  };
+
+  const followUser = async (pubkyFollow: string) => {
+    try {
+      if (!pubkyFollow) return;
+      setLoadingContacts((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyFollow]: true,
+      }));
+
+      const result = await follow(pubkyFollow);
+      setFollowed((prevState) => ({
+        ...prevState,
+        [pubkyFollow]: result,
+      }));
+      setLoadingContacts((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyFollow]: false,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const unfollowUser = async (pubkyUnfollow: string) => {
+    try {
+      if (!pubkyUnfollow) return;
+      setLoadingContacts((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyUnfollow]: true,
+      }));
+
+      const result = await unfollow(pubkyUnfollow);
+      setFollowed((prevState) => ({
+        ...prevState,
+        [pubkyUnfollow]: !result,
+      }));
+      setLoadingContacts((prevLoadingUsers) => ({
+        ...prevLoadingUsers,
+        [pubkyUnfollow]: false,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  {
+    /** 
   const [initLoadingContacts, setInitLoadingContacts] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
   const [profiles, setProfiles] = useState<{ [key: string]: IUserProfile }>({});
@@ -125,31 +189,144 @@ export default function Contact({
       console.log(error);
     }
   };
+  */
+  }
 
   return (
     <>
       {contacts &&
-        contacts.map((contact, index) => {
-          const pubkeyUser = pubky && contact.uri.includes(pubky);
-          const contactId = contact.uri.replace('pubky:', '');
-          const isFollowed = followed[contactId] || false;
-          const profile = profiles[contactId];
+        contacts.map((contact) => {
+          const pubkeyUser = pubky && contact?.details?.id.includes(pubky);
+          const isFollowed =
+            followed[contact?.details?.id] ||
+            contact?.relationship?.following ||
+            false;
 
           return (
-            <div key={`contact-${index}`} className="w-full">
-              <List
-                index={`list-${contact.uri}`}
-                profile={profile}
-                contactId={contactId}
-                contact={contact as IFollower}
-                showDivider={contacts.length - 1 !== index}
-                pubkeyUser={pubkeyUser}
-                initLoadingContacts={initLoadingContacts}
-                isFollowed={isFollowed}
-                loadingContacts={loadingContacts}
-                followUser={followUser}
-                unfollowUser={unfollowUser}
-              />
+            <div key={contact?.details?.id} className="w-full">
+              <div className="w-full">
+                <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
+                  <Link
+                    className="flex gap-2 w-full"
+                    href={`/profile/${contact?.details?.id}`}
+                  >
+                    <ImageByUri
+                      width={48}
+                      height={48}
+                      uri={contact?.details?.image || '/images/Userpic.png'}
+                      alt={`profile-pic-${contact?.details?.id}`}
+                      className="rounded-full w-[48px] h-[48px] max-w-none"
+                    />
+                    <div className="flex-col justify-center items-start inline-flex">
+                      <Typography.Body variant="medium-bold">
+                        {contact?.details.name &&
+                          Utils.minifyText(contact?.details?.name, 20)}
+                      </Typography.Body>
+                      <Typography.Label className="text-opacity-30 -mt-1">
+                        {contact?.details?.id &&
+                          Utils.minifyPubky(contact?.details?.id)}
+                      </Typography.Label>
+                    </div>
+                  </Link>
+                  <div className="lg:flex justify-end gap-2 items-center lg:w-full">
+                    {contact?.tags?.slice(0, 3).map((tag, index) => {
+                      const isTagFound = tag?.taggers?.some(
+                        (fromItem) => fromItem === pubky
+                      );
+
+                      return (
+                        <PostUtil.Tag
+                          key={index}
+                          clicked={false}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            isTagFound
+                              ? handleDeleteProfileTag(
+                                  contact?.details?.id,
+                                  tag?.label
+                                )
+                              : handleAddProfileTag(
+                                  contact?.details?.id,
+                                  tag?.label
+                                );
+                          }}
+                          color={
+                            tag?.label && Utils.generateRandomColor(tag?.label)
+                          }
+                        >
+                          <div className="flex gap-2 items-center">
+                            {Utils.minifyText(tag?.label.replace(' ', ''), 10)}
+                            <Typography.Caption
+                              variant="bold"
+                              className="text-opacity-30"
+                            >
+                              {tag?.taggers_count}
+                            </Typography.Caption>
+                          </div>
+                        </PostUtil.Tag>
+                      );
+                    })}
+                  </div>
+                  <div className="flex-col justify-start items-start gap-1 inline-flex">
+                    <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+                      Tags
+                    </Typography.Label>
+                    <Typography.Body variant="medium-bold">
+                      {contact?.counts?.tags ?? 0}
+                    </Typography.Body>
+                  </div>
+                  <div className="flex-col justify-start items-start gap-1 inline-flex">
+                    <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+                      Posts
+                    </Typography.Label>
+                    <Typography.Body variant="medium-bold">
+                      {contact?.counts?.posts ?? 0}
+                    </Typography.Body>
+                  </div>
+                  <div className="flex gap-4">
+                    {pubkeyUser ? (
+                      <Button.Medium
+                        className="w-[104px] bg-transparent cursor-default"
+                        icon={<Icon.Check />}
+                      >
+                        Me
+                      </Button.Medium>
+                    ) : isLoading ? (
+                      <Button.Medium disabled loading={isLoading}>
+                        Loading
+                      </Button.Medium>
+                    ) : isFollowed ? (
+                      <Button.Medium
+                        onClick={
+                          loadingContacts[contact?.details?.id]
+                            ? undefined
+                            : () => unfollowUser(contact?.details?.id)
+                        }
+                        disabled={loadingContacts[contact?.details?.id]}
+                        loading={loadingContacts[contact?.details?.id]}
+                        icon={<Icon.UserMinus size="16" />}
+                        className="w-[104px]"
+                      >
+                        Unfollow
+                      </Button.Medium>
+                    ) : (
+                      <Button.Medium
+                        onClick={
+                          loadingContacts[contact?.details?.id]
+                            ? undefined
+                            : () => followUser(contact?.details?.id)
+                        }
+                        disabled={loadingContacts[contact?.details?.id]}
+                        loading={loadingContacts[contact?.details?.id]}
+                        icon={<Icon.UserPlus size="16" />}
+                        className="w-[104px]"
+                      >
+                        Follow
+                      </Button.Medium>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           );
         })}

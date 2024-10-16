@@ -5,10 +5,10 @@ import { z } from 'zod';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useClientContext } from '@/contexts';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
 import Image from 'next/image';
+import { usePubkyClientContext } from '@/contexts';
 
 const passwordSchema = z.object({
   password: z
@@ -17,7 +17,8 @@ const passwordSchema = z.object({
 });
 
 export default function Index() {
-  const { seed, setSeed, getRecoveryFile } = useClientContext();
+  const { getRecoveryFile } = usePubkyClientContext();
+  const { seed, setSeed } = usePubkyClientContext();
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
@@ -67,7 +68,7 @@ export default function Index() {
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
 
-      setSeed(null);
+      setSeed(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -96,8 +97,11 @@ export default function Index() {
         throw new Error('Something went wrong');
       }
 
-      const { recoveryFile, filename } = recoveryFileResponse;
-      await handleDownloadRecoveryFile({ recoveryFile, filename });
+      await handleDownloadRecoveryFile({
+        recoveryFile: recoveryFileResponse,
+        filename: 'recovery_key.pkarr',
+      });
+
       Utils.storage.remove('seed');
       setShowModalBackup(false);
     } catch (error) {
@@ -117,8 +121,8 @@ export default function Index() {
         <div className="relative my-8 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
           <div className="p-12 flex-col justify-center items-center flex">
             <div className="p-12">
-              <Icon.CheckCircle size="130" />
-              <Image alt="glow" fill src="/images/glow-1.png" />
+              <Icon.CheckCircle size="130" color="#C8FF00" />
+              <Image alt="glow" fill src="/images/glow-2.png" />
             </div>
           </div>
         </div>
@@ -139,7 +143,7 @@ export default function Index() {
               onClick={
                 disposableAccount ? () => setShowModalBackup(true) : undefined
               }
-              className="w-auto"
+              className="w-auto hidden md:flex"
               variant="secondary"
             >
               Backup account

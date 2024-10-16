@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useClientContext, useAlertContext } from '@/contexts';
-import { IUserProfile } from '@/types';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import Modal from '../Modal';
 import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
 import { Section } from './Section';
+import { UserView } from '@/types/User';
+import { searchUsersByUsername } from '@/services/userService';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -26,6 +27,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   arrayTags: string[];
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
+  loading?: boolean;
 }
 
 export default function CreateContent({
@@ -47,25 +49,24 @@ export default function CreateContent({
   arrayTags,
   setArrayTags,
   children,
+  loading,
 }: CreateContentProps) {
-  const { pubky, getProfile, searchUsers } = useClientContext();
+  const { profile } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
-  const [name, setName] = useState('');
-  const [pic, setPic] = useState('/images/Userpic.png');
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
-  const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
 
   const searchProfiles = async (text: string) => {
     try {
-      const result = await searchUsers(text);
+      const result = await searchUsersByUsername(text);
       return result || [];
     } catch (error) {
       console.error('Error searching profiles:', error);
@@ -84,12 +85,12 @@ export default function CreateContent({
       return;
     }
 
-    let results: IUserProfile[] = [];
+    let results: UserView[] = [];
 
     for (const query of searchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const searchResult = await searchUsers(username);
+        const searchResult = await searchUsersByUsername(username);
         results = [...results, ...(searchResult || [])];
       } else if (query.startsWith('pk:')) {
         const searchResult = await searchProfiles(query);
@@ -113,25 +114,6 @@ export default function CreateContent({
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
-
-  async function fetchProfile() {
-    try {
-      if (!pubky) return;
-      const userProfile = await getProfile();
-
-      if (userProfile) {
-        setPic(userProfile?.image || '/images/Userpic.png');
-        setName(userProfile?.name);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -251,7 +233,11 @@ export default function CreateContent({
         largeView ? 'p-12' : 'p-6'
       } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
     >
-      <Section.UserArea uriPic={pic} name={name} largeView={largeView} />
+      <Section.UserArea
+        uriPic={(profile?.image as string) ?? '/images/Userpic.png'}
+        name={profile?.name ?? 'Loading...'}
+        largeView={largeView}
+      />
       <div
         ref={wrapperRef}
         className="w-full flex justify-between gap-6 items-start flex-col"
@@ -270,6 +256,7 @@ export default function CreateContent({
           autoFocus={autoFocus}
           placeHolder={placeHolder}
           setFilePreviews={setFilePreviews}
+          loading={loading}
         />
         <LinkPreviewer content={content} />
         {selectedFiles.length > 0 && (

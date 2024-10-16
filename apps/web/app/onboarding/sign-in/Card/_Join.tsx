@@ -1,20 +1,38 @@
 import Image from 'next/image';
 
-import { Content, Card } from '@social/ui-shared';
+import { Content, Card, Typography } from '@social/ui-shared';
+import Link from 'next/link';
 
 export default function Join() {
   return (
     <Card.Primary
-      title="Join with Bitkit"
-      text="Have Bitkit or another Pubky Core powered wallet? Scan this QR to sign up."
+      title="Join with"
+      text="Scan the QR with Bitkit or any other Pubky Core powered wallet."
+      imageTitle={
+        <Link href="https://bitkit.to" target="_blank">
+          <Image
+            width={122}
+            height={36}
+            alt="bitkit"
+            src="/images/bitkit.png"
+          />
+        </Link>
+      }
     >
-      <Image
-        width={320}
-        height={320}
-        className="mt-6"
-        alt="qr"
-        src="/images/qr.png"
-      />
+      <div className="relative">
+        <Image
+          width={320}
+          height={320}
+          className="rounded-lg mt-6"
+          alt="qr"
+          src="/images/qr.png"
+        />
+        <div className="w-full inset-0 flex items-center justify-center absolute">
+          <Typography.H2 className="text-center w-full px-4 py-3 bg-[#2a2a2f] font-extrabold rounded-tl-3xl rounded-br-3xl">
+            COMING SOON
+          </Typography.H2>
+        </div>
+      </div>
       <Content.LinksStoreApp />
     </Card.Primary>
   );

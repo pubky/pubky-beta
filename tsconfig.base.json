@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "allowJs": false,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -18,7 +19,9 @@
       "@/*": ["apps/web/*"],
       "@social/ui-shared": ["libs/ui-shared/src/index.ts"],
       "@social/utils-shared": ["libs/utils-shared/src/index.ts"]
-    }
+    },
+    "noImplicitAny": false
   },
+  "include": ["libs/utils-shared/src/types"],
   "exclude": ["node_modules", "tmp"]
 }

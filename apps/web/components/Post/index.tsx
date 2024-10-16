@@ -9,24 +9,28 @@ import {
   Typography,
 } from '@social/ui-shared';
 
-import { IPost, TLayouts, TSize } from '@/types';
+import { TLayouts, TSize } from '@/types';
 import Tags from './_Tags';
 import Actions from './_Actions';
 import Header from './_Header';
 import Content from './_Content';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Tooltip from '../Tooltip';
-import { useClientContext, useAlertContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import TagsLargeView from './_TagsLargeView';
+import { PostView } from '@/types/Post';
+import { useUserProfile } from '@/hooks/useUser';
+import { getPost } from '@/services/postService';
+import { Skeleton } from '..';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
   largeView?: boolean;
   bookmark?: boolean;
   size?: TSize;
-  post: IPost;
+  post: PostView;
   layout?: TLayouts;
   fullContent?: boolean;
   line?: boolean;
@@ -44,37 +48,69 @@ export default function Post({
   lineStyle,
   ...rest
 }: PostProps) {
-  const { pubky, deletePost } = useClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { pubky } = usePubkyClientContext();
+  //const { setContent, setShow } = useAlertContext();
+  const { data } = useUserProfile(post?.details?.author, pubky ?? '');
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
+  const [repostedPost, setRepostedPost] = useState<PostView>();
+  const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
   const router = useRouter();
-  {
-    /**const lineBaseCSS = `absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
-  const lineHorizontalCSS =
-    'absolute ml-[1px] w-3.5 border-t-2 border-neutral-800';*/
-  }
+  const lineBaseCSS = `ml-[10px] absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
+  const lineHorizontalCSS = (
+    <div className="absolute ml-[10px]">
+      <Icon.LineHorizontal size="14" color="#262626" />
+    </div>
+  );
 
-  const handleDeletePost = async () => {
-    const result = await deletePost(post?.id);
-    if (result) {
-      setContent('Post deleted successfully');
-      setShow(true);
-    } else {
-      setContent('Something wrong. Try again', 'warning');
-      setShow(true);
+  //const handleDeletePost = async () => {
+  //  const result = null; //await deletePost(post?.id);
+  //  if (result) {
+  //    setContent('Post deleted successfully');
+  //    setShow(true);
+  //  } else {
+  //    setContent('Something wrong. Try again', 'warning');
+  //    setShow(true);
+  //  }
+  // };
+
+  const fetchRepostedPost = async () => {
+    if (post?.relationships?.reposted) {
+      if (post?.relationships?.reposted) {
+        const url = post.relationships.reposted;
+
+        const regex =
+          /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+        const match = url.match(regex);
+
+        if (match) {
+          const authorId = match[1];
+          const postId = match[2];
+
+          const result = await getPost(authorId, postId, pubky ?? '');
+          setRepostedPost(result);
+          setLoadingRepostedPost(false);
+        } else {
+          console.error('URI reposted not valid');
+          setLoadingRepostedPost(false);
+        }
+      }
     }
   };
+
+  useEffect(() => {
+    fetchRepostedPost();
+  }, [post?.relationships?.reposted]);
 
   return (
     <div
       className="w-full cursor-pointer"
-      onClick={() => router.push(Utils.encodePostUri(post?.uri))}
+      onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
     >
       <div className="flex flex-col">
         <PostUI.Root>
           <div>
-            {post?.post?.embed && !repostView ? (
-              post?.post?.content || post?.post?.files ? (
+            {post?.relationships?.reposted && !repostView ? (
+              post?.details?.content || post?.details?.attachments ? (
                 <PostUI.MainCard
                   className={twMerge(
                     largeView && 'p-12 inline-flex flex-row gap-12',
@@ -89,20 +125,35 @@ export default function Post({
                         post={post}
                         fullContent={fullContent}
                       />
-                      {post?.post.embed.post ? (
-                        <PostUI.MainCard className="mt-4">
-                          <Header post={post?.post?.embed?.post} />
-                          {line && (
-                            //<div className={twMerge(lineBaseCSS, lineStyle)} />
-                            <></>
-                          )}
-                          <div>
-                            <Content
-                              post={post?.post?.embed?.post}
-                              fullContent={fullContent}
-                            />
-                          </div>
-                        </PostUI.MainCard>
+                      {loadingRepostedPost ? (
+                        <Skeleton.Simple />
+                      ) : post?.relationships?.reposted && repostedPost ? (
+                        <>
+                          {/** Show reposted post*/}
+
+                          <PostUI.MainCard
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              router.push(
+                                Utils.encodePostUri(repostedPost?.details?.uri)
+                              );
+                            }}
+                            className="mt-4"
+                          >
+                            <Header post={repostedPost} />
+                            {line && (
+                              <div
+                                className={twMerge(lineBaseCSS, lineStyle)}
+                              />
+                            )}
+                            <div>
+                              <Content
+                                post={repostedPost}
+                                fullContent={fullContent}
+                              />
+                            </div>
+                          </PostUI.MainCard>
+                        </>
                       ) : (
                         <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
                           <Typography.Body
@@ -130,10 +181,7 @@ export default function Post({
                 </PostUI.MainCard>
               ) : (
                 <>
-                  <PostUI.RepostCard
-                    className="relative z-10 hover:z-50"
-                    onClick={(event) => event.stopPropagation()}
-                  >
+                  <PostUI.RepostCard className="relative z-10 hover:z-50">
                     <div className="flex gap-2 items-center">
                       <Button.Action
                         className="bg-black bg-opacity-100 hover:bg-opacity-100 cursor-default"
@@ -148,12 +196,14 @@ export default function Post({
                       >
                         <PostUI.Username
                           className="text-[13px] text-opacity-80"
-                          onClick={() =>
-                            router.push(`/profile/${post?.author.id}`)
-                          }
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            router.push(`/profile/${post?.details?.author}`);
+                          }}
                         >
                           <span className="cursor-pointer hover:underline hover:decoration-solid">
-                            {Utils.minifyText(post?.author?.profile?.name)}{' '}
+                            {data?.details?.name &&
+                              Utils.minifyText(data?.details?.name)}{' '}
                           </span>
                           reposted{' '}
                         </PostUI.Username>
@@ -161,56 +211,69 @@ export default function Post({
                           <Tooltip.Profile post={post} />
                         )}
                       </TooltipUI.Root>
-                      {(!post?.post.content || !post?.post.embed.post) &&
-                        post?.author.id === pubky && (
+                      {(!post?.details?.content ||
+                        !post?.relationships?.reposted) &&
+                        post?.details?.author === pubky && (
                           <Typography.Body
                             variant="small-bold"
-                            className="cursor-pointer text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
-                            onClick={handleDeletePost}
+                            className="cursor-default text-[13px] text-red-500 text-opacity-50 underline decoration-solid"
+                            //onClick={handleDeletePost}
                           >
                             Undo repost
                           </Typography.Body>
                         )}
                     </div>
-                    <PostUI.Time>{Utils.timeAgo(post?.createdAt)}</PostUI.Time>
+                    <PostUI.Time>
+                      {Utils.timeAgo(post?.details?.indexed_at)}
+                    </PostUI.Time>
                   </PostUI.RepostCard>
-                  {post?.post.embed.post ? (
-                    <PostUI.MainCard
-                      className={twMerge(
-                        //'rounded-tl-none rounded-tr-none',
-                        largeView && 'p-12 inline-flex flex-row gap-12',
-                        rest.className
-                      )}
-                    >
-                      <div className="flex-col justify-between inline-flex">
-                        <Header
-                          post={post?.post?.embed?.post}
-                          largeView={largeView}
-                        />
-                        {line && (
-                          //<div className={twMerge(lineBaseCSS, lineStyle)} />
-                          <></>
+                  {loadingRepostedPost ? (
+                    <Skeleton.Simple />
+                  ) : post?.relationships?.reposted && repostedPost ? (
+                    <>
+                      {/**Show reposted post */}
+                      <PostUI.MainCard
+                        className={twMerge(
+                          'rounded-tl-none rounded-tr-none',
+                          largeView && 'p-12 inline-flex flex-row gap-12',
+                          rest.className
                         )}
-                        <div>
-                          <Content
-                            largeView={largeView}
-                            post={post?.post?.embed?.post}
-                            fullContent={fullContent}
-                          />
-                          <div
-                            className={`flex flex-col md:flex-row ${
-                              largeView ? 'gap-2' : 'justify-between'
-                            }`}
-                          >
-                            {!repostView && (
-                              <Tags largeView={largeView} post={post} />
-                            )}
-                            {!repostView && <Actions post={post} />}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          router.push(
+                            Utils.encodePostUri(repostedPost?.details?.uri)
+                          );
+                        }}
+                      >
+                        <div className="flex-col justify-between inline-flex">
+                          <Header post={repostedPost} largeView={largeView} />
+                          {line && (
+                            <div className={twMerge(lineBaseCSS, lineStyle)} />
+                          )}
+                          <div>
+                            <Content
+                              largeView={largeView}
+                              post={repostedPost}
+                              fullContent={fullContent}
+                            />
+                            <div
+                              className={`flex flex-col md:flex-row ${
+                                largeView ? 'gap-2' : 'justify-between'
+                              }`}
+                            >
+                              {!repostView && (
+                                <Tags
+                                  largeView={largeView}
+                                  post={repostedPost}
+                                />
+                              )}
+                              {!repostView && <Actions post={repostedPost} />}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      {largeView && <TagsLargeView post={post} />}
-                    </PostUI.MainCard>
+                        {largeView && <TagsLargeView post={repostedPost} />}
+                      </PostUI.MainCard>
+                    </>
                   ) : (
                     <>
                       <div className="mx-[47px] px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
@@ -231,8 +294,9 @@ export default function Post({
               <div className="flex items-center relative">
                 {line && (
                   <>
-                    {/** <div className={twMerge(lineBaseCSS, lineStyle)} />
-                    <div className={twMerge(lineHorizontalCSS)} />*/}
+                    <div className={twMerge(lineBaseCSS, lineStyle)} />
+
+                    {lineHorizontalCSS}
                   </>
                 )}
                 <PostUI.MainCard

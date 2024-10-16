@@ -1,25 +1,31 @@
 import { Icon, SideCard } from '@social/ui-shared';
 
-export default function TagsTimeFrame() {
+interface TagsTimeFrameProps {
+  disabled?: boolean;
+}
+
+export default function TagsTimeFrame({
+  disabled = false,
+}: TagsTimeFrameProps) {
   return (
     <div className="mb-6">
       <SideCard.Header title="Timeframe" />
       <SideCard.Item
         label="Today"
         value="today"
-        disabled
+        disabled={disabled}
         icon={<Icon.Asterisk size="24" color="gray" />}
       />
       <SideCard.Item
         label="This month"
         value="this-month"
-        disabled
+        disabled={disabled}
         icon={<Icon.Calendar size="24" color="gray" />}
       />
       <SideCard.Item
         label="All time"
         value="all time"
-        selected
+        disabled={disabled}
         icon={<Icon.Clock size="24" />}
       />
     </div>

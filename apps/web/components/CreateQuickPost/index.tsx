@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import CreateContent from '../CreateContent';
-import { Utils } from '@social/utils-shared';
-import { useAlertContext, useClientContext } from '@/contexts';
-import { INewPost } from '@/types';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -14,8 +13,8 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function CreateQuickPost({
   largeView = false,
 }: CreateQuickPostProps) {
-  const { pubky, getProfile, createPost, setPosts, createTag } =
-    useClientContext();
+  const { pubky, createPost, createTag, setTimeline, timeline } =
+    usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -23,6 +22,8 @@ export default function CreateQuickPost({
   const [textArea, setTextArea] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   const handleSubmit = async (content: string) => {
     if (sendingPost) {
@@ -34,37 +35,49 @@ export default function CreateQuickPost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, selectedFiles);
+      const newPost = await createPost(content, 'Short', selectedFiles);
+      const match = newPost && newPost?.uri.match(regex);
 
-      if (newPost) {
+      if (newPost && match) {
+        const postId = match[2];
         for (const tag of updatedTags) {
-          await createTag(newPost.uri, tag);
+          await createTag(pubky ?? '', postId, tag);
         }
 
-        const userProfile = await getProfile();
+        const postWithFullDetails = {
+          details: {
+            content: newPost.details.content || '',
+            id: newPost.uri || '',
+            indexed_at: Date.now(),
+            author: pubky ?? '',
+            kind: newPost.details.kind || 'Short',
+            uri: newPost.uri || '',
+          },
+          counts: {
+            tags: 0,
+            replies: 0,
+            reposts: 0,
+          },
+          tags: updatedTags.map((tag) => ({
+            name: tag,
+            label: tag,
+            taggers: [],
+            taggers_count: 0,
+          })), // Ensure tags are of type PostTag[]
+          relationships: {
+            replied: undefined,
+            reposted: undefined,
+            mentioned: [],
+          },
+          bookmark: undefined,
+          files: [],
+        };
 
-        if (userProfile) {
-          newPost.tags = updatedTags.map((tag) => ({
-            tag,
-            count: 1,
-            from: [
-              {
-                id: `${pubky}`,
-                createdAt: Date.now(),
-                indexedAt: Date.now(),
-                author: {
-                  id: `${pubky}`,
-                  uri: `pubky:${pubky}`,
-                  profile: userProfile,
-                },
-              },
-            ],
-          }));
-        }
-        setPosts((prev: INewPost) => ({
-          ...{ [newPost.id]: newPost },
-          ...prev,
-        }));
+        if (!timeline) return;
+
+        const timelineCopy = [postWithFullDetails, ...timeline];
+
+        setTimeline(timelineCopy);
         setContent('Post created!');
         setShow(true);
       } else {
@@ -84,7 +97,7 @@ export default function CreateQuickPost({
 
   return (
     <CreateContent
-      id='quick-post-create-content'
+      id="quick-post-create-content"
       largeView={largeView}
       handleSubmit={handleSubmit}
       content={contentPost}
@@ -96,9 +109,10 @@ export default function CreateQuickPost({
       arrayTags={arrayTags}
       setArrayTags={setArrayTags}
       setIsValidContent={setIsValidContent}
+      loading={sendingPost}
       button={
         <Button.Medium
-          id='post-btn'
+          id="post-btn"
           className="w-auto"
           variant="line"
           icon={

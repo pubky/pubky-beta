@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Utils } from '@social/utils-shared';
 import { Icon, Typography, Button } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { INotification, IUserProfile } from '@/types';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
@@ -13,19 +12,22 @@ type NotificationGroupProps = {
 export default function NotificationGroup({
   notifications,
 }: NotificationGroupProps) {
-  const { getUser } = useClientContext();
+  //const { getUser } = useClientContext();
   const [users, setUsers] = useState<IUserProfile[]>([]);
 
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const userProfiles = await Promise.all(
-          notifications.map((notification) =>
-            notification.type === 'lost_friend'
-              ? getUser(notification.body.unfollowedBy!)
-              : getUser(notification.body.followedBy!)
-          )
-        );
+        const userProfiles: IUserProfile[] = [];
+
+        //await Promise.all(
+        //notifications.map((notification) =>
+        // notification.type === 'lost_friend'
+        //   ? getUser(notification.body.unfollowedBy!)
+        //   : getUser(notification.body.followedBy!)
+        //)
+        //);
+
         const validProfiles = userProfiles.filter(
           (profile): profile is IUserProfile => profile !== null
         );
@@ -36,7 +38,7 @@ export default function NotificationGroup({
     };
 
     fetchProfiles();
-  }, [notifications, getUser]);
+  }, [notifications]);
 
   const displayedUsers = users.slice(0, 3);
   const remainingUsersCount = users.length - displayedUsers.length;

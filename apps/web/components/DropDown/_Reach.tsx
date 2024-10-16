@@ -9,22 +9,22 @@ export default function Reach() {
   const { reach, setReach } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
-    following: <Icon.UsersRight />,
-    followers: <Icon.UsersLeft />,
-    friends: <Icon.Smiley />,
-    all: <Icon.Broadcast />,
-    loading: <Icon.LoadingSpin className="animate-spin" />,
+    Following: <Icon.UsersRight />,
+    Followers: <Icon.UsersLeft />,
+    Friends: <Icon.Smiley />,
+    All: <Icon.Broadcast />,
+    Loading: <Icon.LoadingSpin className="animate-spin" />,
   };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: reach ? reach : 'all',
-    iconOption: icons.loading,
+    iconOption: icons.Loading,
   });
 
   useEffect(() => {
     setDropdownValue({
       value: reach ? reach : 'all',
-      iconOption: reach ? icons[reach] : icons.all,
+      iconOption: reach ? icons[reach] : icons.All,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -44,7 +44,7 @@ export default function Reach() {
       >
         <DropDownUI.Item
           label="Following"
-          value="following"
+          value="Following"
           selected={reach === 'following'}
           icon={<Icon.UsersRight />}
           onClick={() => {
@@ -58,7 +58,7 @@ export default function Reach() {
         />
         <DropDownUI.Item
           label="Friends"
-          value="friends"
+          value="Friends"
           selected={reach === 'friends'}
           icon={<Icon.Smiley />}
           onClick={() => {
@@ -72,7 +72,7 @@ export default function Reach() {
         />
         <DropDownUI.Item
           label="All"
-          value="all"
+          value="All"
           selected={reach === 'all'}
           icon={<Icon.Broadcast />}
           onClick={() => {

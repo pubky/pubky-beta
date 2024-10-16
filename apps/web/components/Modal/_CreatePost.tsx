@@ -1,9 +1,8 @@
 import { Button, Icon, Modal } from '@social/ui-shared';
 import CreateContent from '../CreateContent';
-import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
-import { useAlertContext, useClientContext } from '@/contexts';
-import { INewPost } from '@/types';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
 
 interface CreatePostProps {
   showModalPost: boolean;
@@ -16,14 +15,16 @@ export default function CreatePost({
   setShowModalPost,
   modalPostRef,
 }: CreatePostProps) {
-  const { pubky, getProfile, createPost, setPosts, createTag } =
-    useClientContext();
+  const { pubky, createPost, createTag } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [isValidContent, setIsValidContent] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
   const handleSubmit = async (content: string) => {
     if (sendingPost) {
       return;
@@ -34,38 +35,15 @@ export default function CreatePost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, selectedFiles);
+      const newPost = await createPost(content, 'Short', selectedFiles);
+      const match = newPost && newPost?.uri.match(regex);
 
-      if (newPost) {
+      if (newPost && match) {
+        const postId = match[2];
         for (const tag of updatedTags) {
-          await createTag(newPost.uri, tag);
+          await createTag(pubky ?? '', postId, tag);
         }
 
-        const userProfile = await getProfile();
-
-        if (userProfile) {
-          newPost.tags = updatedTags.map((tag) => ({
-            tag,
-            count: 1,
-            from: [
-              {
-                id: `${pubky}`,
-                createdAt: Date.now(),
-                indexedAt: Date.now(),
-
-                author: {
-                  id: `${pubky}`,
-                  uri: `pubky:${pubky}`,
-                  profile: userProfile,
-                },
-              },
-            ],
-          }));
-        }
-        setPosts((prev: INewPost) => ({
-          ...{ [newPost.id]: newPost },
-          ...prev,
-        }));
         setContent('Post created!');
         setShow(true);
       } else {
@@ -90,7 +68,7 @@ export default function CreatePost({
         setShowModalPost(false);
         //setArrayTags([]);
       }}
-      className="w-[792px] max-h-[600px] overflow-y-auto max-w-[1200px]"
+      className="md:w-[792px] max-h-[600px] overflow-y-auto max-w-[1200px]"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -104,7 +82,7 @@ export default function CreatePost({
         <div className="flex items-center relative">
           <div className="w-full">
             <CreateContent
-              id='new-post-create-content'
+              id="new-post-create-content"
               handleSubmit={handleSubmit}
               content={contentPost}
               setContent={setContentPost}
@@ -112,11 +90,12 @@ export default function CreatePost({
               setIsValidContent={setIsValidContent}
               selectedFiles={selectedFiles}
               setSelectedFiles={setSelectedFiles}
+              loading={sendingPost}
               arrayTags={arrayTags}
               setArrayTags={setArrayTags}
               button={
                 <Button.Medium
-                  id='post-btn'
+                  id="post-btn"
                   className="w-auto"
                   variant="line"
                   icon={

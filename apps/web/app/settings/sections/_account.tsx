@@ -3,8 +3,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/Modal';
 import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
+import { usePubkyClientContext } from '@/contexts';
 
 const passwordSchema = z.object({
   password: z
@@ -14,7 +14,8 @@ const passwordSchema = z.object({
 
 export default function Account() {
   const router = useRouter();
-  const { seed, setSeed, getRecoveryFile } = useClientContext();
+  const { seed, setSeed } = usePubkyClientContext();
+  const { getRecoveryFile } = usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -48,7 +49,7 @@ export default function Account() {
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
 
-      setSeed(null);
+      setSeed(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -79,8 +80,11 @@ export default function Account() {
         throw new Error('Something went wrong');
       }
 
-      const { recoveryFile, filename } = recoveryFileResponse;
-      await handleDownloadRecoveryFile({ recoveryFile, filename });
+      await handleDownloadRecoveryFile({
+        recoveryFile: recoveryFileResponse,
+        filename: 'recovery_key.pkarr',
+      });
+
       Utils.storage.remove('seed');
       setShowModalBackup(false);
     } catch (error) {

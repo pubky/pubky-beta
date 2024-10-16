@@ -1,4 +1,4 @@
-import ActiveFriends from './AtiveFriends';
+import Influencers from './Influencers';
 import CreatePost from './CreatePost';
 import CreateQuickPost from './CreateQuickPost';
 import ButtonFilters from './ButtonFiltersDrawer/Index';
@@ -18,7 +18,7 @@ import ProtectedRoutes from './ProtectedRoutes';
 import RemindBackup from './RemindBackup';
 
 export {
-  ActiveFriends,
+  Influencers,
   CreatePost,
   CreateQuickPost,
   ButtonFilters,

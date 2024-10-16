@@ -2,27 +2,29 @@
 
 import { useRef, useState } from 'react';
 import { Icon, Button, Post } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
-import { IPost } from '@/types';
-import Partecipants from './_Partecipants';
-import { IReply } from '@/types';
+import Participants from './_Participants';
 import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
+import { PostThread, PostView } from '@/types/Post';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
 export default function ReplyForm({
   uri,
   post,
   updatePost,
   replies,
+  isLoadingReplies,
 }: {
   uri: string;
-  post: IPost;
+  post: PostView;
   updatePost: () => void;
-  replies: IReply;
+  replies: PostThread | undefined;
+  isLoadingReplies: boolean;
 }) {
-  const { createReply, createTag } = useClientContext();
+  const { pubky, createReply, createTag } = usePubkyClientContext();
+  const { setContent, setShow } = useAlertContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -31,32 +33,47 @@ export default function ReplyForm({
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
-    const rootUri = post.post.root ? post.post.root : uri;
-    const sendReply = await createReply(content, uri, rootUri, selectedFiles);
+    //const rootUri = post.relationships?.replied
+    //  ? post.relationships?.replied
+    //  : post?.details?.uri;
+
+    const sendReply = await createReply(
+      post?.details?.uri,
+      content,
+      'Short',
+      selectedFiles
+    );
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+    const match = sendReply && sendReply.match(regex);
 
-    if (sendReply) {
+    if (sendReply && match) {
+      const replyId = match[2];
       for (const tag of updatedTags) {
-        await createTag(sendReply.uri, tag);
+        await createTag(pubky ?? '', replyId, tag);
       }
       setSendingReply(false);
       setContentReply('');
       setArrayTags([]);
       setSelectedFiles([]);
       updatePost();
+      setTextArea(false);
+      setContent('Reply created!');
+      setShow(true);
     }
   };
 
   return (
-    <div ref={wrapperRef} className="grid gap-6 md:grid-cols-3">
+    <div ref={wrapperRef} className="grid gap-6 xl:grid-cols-3">
       <Post.Root className="col-span-2">
         <CreateContent
-          id='reply-create-content'
+          id="reply-create-content"
           handleSubmit={handleReply}
           content={contentReply}
           setContent={setContentReply}
@@ -66,11 +83,12 @@ export default function ReplyForm({
           setIsValidContent={setIsValidContent}
           selectedFiles={selectedFiles}
           setSelectedFiles={setSelectedFiles}
+          loading={sendingReply}
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}
           button={
             <Button.Medium
-              id='reply-btn'
+              id="reply-btn"
               className="w-auto"
               variant="line"
               icon={
@@ -95,7 +113,11 @@ export default function ReplyForm({
           }
           textArea={textArea}
         />
-        <Replies repliesResponse={replies} />
+        <Replies
+          post={post}
+          repliesResponse={replies}
+          isLoadingReplies={isLoadingReplies}
+        />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}
@@ -103,7 +125,7 @@ export default function ReplyForm({
           setShowModalTag={setShowModalTag}
         />
       </Post.Root>
-      <Partecipants repliesResponse={replies} />
+      <Participants author={post.details.author} repliesResponse={replies} />
     </div>
   );
 }

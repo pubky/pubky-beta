@@ -1,12 +1,12 @@
 import { Notifications } from '@/app/notifications/components';
 import { Skeleton } from '@/components';
-import { INotification } from '@/types';
+import { NotificationView } from '@/types/User';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 type NotificationsProps = {
-  notifications: INotification[] | (INotification | INotification[])[];
+  notifications: NotificationView[];
   loading: boolean;
 };
 
@@ -24,14 +24,15 @@ export default function NotificationsProfile({
     <>
       {loadingNotifications ? (
         <Skeleton.Simple />
-      ) : notifications.length === 0 ? (
+      ) : notifications?.length === 0 ? (
         <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
           No notification yet
         </Typography.H2>
       ) : (
         <div>
-          {notifications.slice(0, 10).map((notification, index) => {
-            if (Array.isArray(notification)) {
+          {notifications?.slice(0, 10).map((notification, index) => {
+            {
+              /**if (Array.isArray(notification)) {
               if (
                 notification[0].type === 'follow' ||
                 notification[0].type === 'new_friend' ||
@@ -65,9 +66,16 @@ export default function NotificationsProfile({
                   notification={notification}
                 />
               );
+            }*/
             }
+            return (
+              <Notifications.Notification
+                key={index}
+                notification={notification}
+              />
+            );
           })}
-          {notifications.length > 10 && (
+          {notifications?.length > 10 && (
             <Link href={'/notifications'}>
               <Button.Medium
                 icon={<Icon.Bell size="16" />}

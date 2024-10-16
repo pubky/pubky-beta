@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Utils } from '@social/utils-shared';
 import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { INotification, IUserProfile } from '@/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -14,14 +13,14 @@ type NotificationTagPostGroupProps = {
 export default function NotificationTagPostGroup({
   notifications,
 }: NotificationTagPostGroupProps) {
-  const { getUser } = useClientContext();
+  //const { getUser } = useClientContext();
   const [user, setUser] = useState<IUserProfile | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const userProfile = await getUser(notifications[0].body.taggedBy!);
+        const userProfile = null; // await getUser(notifications[0].body.taggedBy!);
         if (userProfile) {
           setUser(userProfile);
         }
@@ -31,7 +30,7 @@ export default function NotificationTagPostGroup({
     };
 
     fetchProfile();
-  }, [notifications, getUser]);
+  }, [notifications]);
 
   const postUrl = notifications[0].body.postUri;
 

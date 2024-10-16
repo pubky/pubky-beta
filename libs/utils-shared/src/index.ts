@@ -5,6 +5,7 @@ import extractHashtags from './lib/Helper/extractHashtags';
 import decodePostUri from './lib/URI/decodePostUIri';
 import encodeImageId from './lib/URI/encodeImageId';
 import encodePostUri from './lib/URI/encodePostUri';
+import encodePostUri2 from './lib/URI/encodePostUri2';
 import isValidContent from './lib/Text/isValidContent';
 import generateRandomColor from './lib/Helper/generateRandomColor';
 import hexToRgba from './lib/Helper/hetToRgba';
@@ -15,13 +16,18 @@ import timeAgo from './lib/Helper/timeAgo';
 import uint8ArrayToBase64 from './lib/Conversion/uint8ArrayToBase64';
 import minifyText from './lib/Text/minifyText';
 import statusHelper from './lib/Helper/statusHelper';
+import { generateHashId } from './lib/Crypto/generateHashId';
+import { generateTimestampId } from './lib/Crypto/generateTimestampId';
 
 export const Utils = {
+  generateTimestampId,
+  generateHashId,
   base64ToUint8Array,
   cleanText,
   decodePostUri,
   encodeImageId,
   encodePostUri,
+  encodePostUri2,
   isValidContent,
   generateRandomColor,
   hexToRgba,

@@ -7,16 +7,16 @@ interface LinksStoreAppProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
-  const baseCSS = 'flex gap-1 mt-6';
+  const baseCSS = 'flex mt-4';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <Link href="https://www.bitkit.to/" target="_blank">
+      {/**<Link href="https://www.bitkit.to/" target="_blank">
         <Image width={122} height={36} alt="bitkit" src="/images/bitkit.png" />
-      </Link>
+      </Link>*/}
       <Link href="https://testflight.apple.com/join/lGXhnwcC" target="_blank">
         <Image
-          width={100}
-          height={44}
+          width={160}
+          height={94}
           alt="apple-store"
           src="/images/apple-store.png"
         />
@@ -26,8 +26,8 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
         target="_blank"
       >
         <Image
-          width={100}
-          height={44}
+          width={160}
+          height={94}
           alt="google-play"
           src="/images/google-play.png"
         />

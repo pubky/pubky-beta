@@ -66,13 +66,13 @@ export default function FooterArea({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    const maxSizeInMB = 6;
+    const maxSizeInMB = 20;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (files) {
       const validFiles = Array.from(files).filter((file) => {
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 6 MB', 'warning');
+          setContentAlert('The maximum allowed size is 20 MB', 'warning');
           setShow(true);
           return false;
         }
@@ -98,7 +98,7 @@ export default function FooterArea({
         arrayTags.length > 0) && (
         <Post.Actions className="w-full">
           {arrayTags.length > 0 && (
-            <div id='tags' className="gap-2 flex h-full items-center">
+            <div id="tags" className="gap-2 flex h-full items-center">
               {arrayTags.map((tag, index) => (
                 <PostUtil.Tag
                   key={index}
@@ -124,7 +124,7 @@ export default function FooterArea({
           )}
           {showEmojis && (
             <div
-              id='emoji-picker'
+              id="emoji-picker"
               className={`absolute translate-y-[10%] ${
                 largeView
                   ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
@@ -140,11 +140,14 @@ export default function FooterArea({
             </div>
           )}
           <div className="grow" />
-          <div id ='content-length' className="text-opacity-30 text-white text-sm mt-4 mr-2">
+          <div
+            id="content-length"
+            className="text-opacity-30 text-white text-sm mt-4 mr-2"
+          >
             {content.length} / 300
           </div>
           <Button.Action
-            id='tag-btn'
+            id="tag-btn"
             variant="custom"
             icon={<Icon.Tag size="32" />}
             onClick={(event) => {
@@ -153,7 +156,7 @@ export default function FooterArea({
             }}
           />
           <Button.Action
-            id='emoji-btn'
+            id="emoji-btn"
             variant="custom"
             icon={<Icon.Smiley size="32" />}
             onClick={(event) => {
@@ -162,7 +165,7 @@ export default function FooterArea({
             }}
           />
           <Button.Action
-            id='media-upload-btn'
+            id="media-upload-btn"
             variant="custom"
             icon={<Icon.ImageSquare size="32" />}
             onClick={() => document.getElementById('fileInput')?.click()}
@@ -170,7 +173,7 @@ export default function FooterArea({
             <input
               id="fileInput"
               type="file"
-              accept="image/*,video/*"
+              accept="image/*,video/*,.pdf"
               className="hidden"
               onChange={handleFileChange}
               multiple
