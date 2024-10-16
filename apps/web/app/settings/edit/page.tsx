@@ -448,7 +448,7 @@ export default function Index() {
           </Card.Primary>
           {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
         </div>
-        <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-12">
+        <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-6">
           <Link href="/onboarding/sign-up">
             <Button.Large
               id="edit-profile-cancel-btn"
