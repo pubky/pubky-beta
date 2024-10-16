@@ -65,7 +65,11 @@ export default function ProtectedRoutes({
         return;
       }
       if (loggedIn && redirectLoggedUser.includes(pathname)) {
-        router.push('/home');
+        if (profile) {
+          router.push('/home');
+        } else {
+          router.push('/onboarding/register');
+        }
         setLoading(false);
         return;
       }

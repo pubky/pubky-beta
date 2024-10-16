@@ -4,11 +4,13 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { Button, Input, Icon } from '@social/ui-shared';
+import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../components';
 import { Card } from './Card';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { Links } from '@/types/Post';
+import { Utils } from '@social/utils-shared';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -21,12 +23,13 @@ const profileSchema = z.object({
     .max(24, { message: 'Maximum length 24 characters' }),
   bio: z
     .string()
-    .max(140, { message: 'Maximum length 140 characters' })
+    .max(160, { message: 'Maximum length 160 characters' })
     .optional(),
 });
 
 export default function Index() {
-  const { saveProfile } = usePubkyClientContext();
+  const { pubky, saveProfile } = usePubkyClientContext();
+  const { setContent, setShow } = useAlertContext();
 
   const router = useRouter();
 
@@ -35,9 +38,7 @@ export default function Index() {
   const [image, setImage] = useState<File | string>('/images/Userpic.png');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
-  const [links, setLinks] = useState<
-    { title: string; url: string; placeHolder?: string }[]
-  >([
+  const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
     { url: '', title: 'email', placeHolder: 'user@provider.com' },
   ]);
@@ -62,6 +63,11 @@ export default function Index() {
       document.removeEventListener('mousedown', handleClickOutsideModal);
     };
   }, [modalLinkRef, setShowModalLink]);
+
+  useEffect(() => {
+    setContent('Add info, your profile is empty.', 'warning');
+    setShow(true);
+  }, [pubky]);
 
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
@@ -100,17 +106,28 @@ export default function Index() {
       }
 
       try {
-        const linksObject: { title: string; url: string }[] = [];
+        const linksObject: Links[] = [];
         const invalidLinkIndexes: number[] = [];
 
         links.forEach((link, index) => {
           if (link.url) {
             let validationResult;
+            const cleanUrl = link.url.replace('mailto:', '');
+
             if (link.title === 'email') {
               validationResult = z
                 .string()
                 .email({ message: 'Invalid email address' })
-                .safeParse(link.url);
+                .safeParse(cleanUrl);
+
+              if (validationResult.success) {
+                linksObject.push({
+                  title: link.title,
+                  url: `mailto:${cleanUrl}`,
+                });
+              } else {
+                invalidLinkIndexes.push(index);
+              }
             } else {
               validationResult = z
                 .string()
@@ -119,10 +136,13 @@ export default function Index() {
                 .safeParse(link.url);
             }
 
-            if (!validationResult.success) {
-              invalidLinkIndexes.push(index);
+            if (validationResult.success) {
+              linksObject.push({
+                title: link.title,
+                url: link.url,
+              });
             } else {
-              linksObject[link.title] = link.url;
+              invalidLinkIndexes.push(index);
             }
           }
         });
@@ -130,7 +150,10 @@ export default function Index() {
         if (invalidLinkIndexes.length > 0) {
           const newErrors: FormErrors = {};
           invalidLinkIndexes.forEach((index) => {
-            if (links[index].title === 'email') {
+            if (
+              links[index].title.toLowerCase() === 'email' ||
+              links[index].title.toLowerCase() === 'mail'
+            ) {
               newErrors[`link${index}`] = ['Invalid email address'];
             } else {
               newErrors[`link${index}`] = ['Invalid website URL'];
@@ -153,7 +176,7 @@ export default function Index() {
         setLoading(false);
       }
 
-      router.push('/profile');
+      router.push('/home');
     } catch (error) {
       console.log(error);
     } finally {
@@ -165,16 +188,22 @@ export default function Index() {
     <Onboarding.Layout currentStep={3}>
       <Input.Cursor
         placeholder="Your Name"
-        className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px]"
-        defaultValue={name ? name : ''}
-        autoFocus
-        id="onboarding-name-input"
+        className="h-auto text-[40px] font-bold sm:text-[64px]"
+        defaultValue={name}
+        disabled={loading}
+        maxLength={25}
         autoCorrect="off"
+        error={errors.name}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setName(e.target.value)
         }
-        error={errors.name}
       />
+      <Typography.H2
+        variant="light"
+        className="-mt-4 text-opacity-50 break-words"
+      >
+        {Utils.minifyPubky(pubky ?? '')}
+      </Typography.H2>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} />
         <Card.Links
