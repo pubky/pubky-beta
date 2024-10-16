@@ -15,17 +15,21 @@ export default function OnboardingLayout({
   currentStep = 1,
 }: LayoutOnboardingProps) {
   const pathname = usePathname();
-  const { pubky, isLoggedIn } = usePubkyClientContext();
+  const { pubky, isLoggedIn, profile } = usePubkyClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
 
   useEffect(() => {
     async function fetchData() {
       const loggedIn = await isLoggedIn();
+      const emptyProfile = profile ? false : true;
 
       if (!loggedIn || pathname === '/onboarding/welcome') {
         setLogoLink('/onboarding');
       } else {
         setLogoLink('/home');
+      }
+      if (emptyProfile) {
+        setLogoLink('/onboarding/register');
       }
     }
     fetchData();

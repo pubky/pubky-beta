@@ -1,7 +1,6 @@
 'use client';
 
 import { z } from 'zod';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
@@ -179,7 +178,6 @@ export default function Index() {
       router.push('/home');
     } catch (error) {
       console.log(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -213,18 +211,8 @@ export default function Index() {
           errors={errors}
         />
         <Card.Pic image={image} setImage={setImage} />
-        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
       </div>
-      <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
-        <Link href="/onboarding/sign-in">
-          <Button.Large
-            icon={<Icon.ArrowLeft />}
-            className="w-[140px]"
-            variant="secondary"
-          >
-            Back
-          </Button.Large>
-        </Link>
+      <div className="w-full max-w-[1200px] mt-6 justify-end items-center inline-flex">
         <Button.Large
           onClick={!loading ? () => handleSubmit() : undefined}
           icon={<Icon.Check />}
