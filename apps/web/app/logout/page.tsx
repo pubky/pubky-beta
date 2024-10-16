@@ -27,7 +27,7 @@ export default function Index() {
         <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
           You have signed out from Pubky. See you soon!
         </Typography.H2>
-        <div className="relative my-8 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
+        <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
           <div className="p-12 flex-col justify-center items-center flex">
             <div className="p-12">
               <Icon.SignOut size="130" />

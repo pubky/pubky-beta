@@ -1,8 +1,11 @@
+'use client';
+
 import { Button, Content, Header, Typography } from '@social/ui-shared';
-import Link from 'next/link';
 import { Error404 } from '@/components/404';
+import { useRouter } from 'next/navigation';
 
 export default function Custom404() {
+  const router = useRouter();
   return (
     <Content.Main>
       <Header.Root>
@@ -14,11 +17,11 @@ export default function Custom404() {
         <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
           The page or content you are looking for is not available
         </Typography.H2>
-        <Link href="/home">
-          <Button.Large className="sm:w-80 w-full mt-12 relative z-10">
-            Return home
+        <div onClick={() => router.back()}>
+          <Button.Large className="sm:w-80 w-full mt-6 relative z-10">
+            Return back
           </Button.Large>
-        </Link>
+        </div>
       </Content.Grid>
       <Error404.Root>
         <Error404.Text>404</Error404.Text>

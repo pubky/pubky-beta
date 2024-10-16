@@ -199,7 +199,7 @@ export default function Index() {
       <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
         Enter your bio, add some links, and upload a user picture.
       </Typography.H2>
-      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} loading={loading} />
         <Card.Links
           links={links}

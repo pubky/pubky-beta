@@ -16,7 +16,7 @@ export const Word = ({
   ...rest
 }: WordProps) => {
   const baseCSS =
-    'w-full bg-white bg-opacity-10  px-4 py-3 rounded-lg outline-none text-white placeholder:text-white placeholder:text-opacity-50 placeholder:font-semibold justify-start items-start gap-[5px] inline-flex';
+    'w-full bg-white bg-opacity-10 px-3 py-2 rounded-lg outline-none text-white placeholder:text-white placeholder:text-opacity-50 placeholder:font-semibold justify-start items-start gap-[5px] inline-flex';
 
   const errorCSS = `text-red-500 text-sm mt-2`;
 

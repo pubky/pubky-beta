@@ -34,7 +34,7 @@ export default function Links({
   };
 
   return (
-    <Card.Primary className="justify-start" title="Links">
+    <Card.Primary className="justify-start w-full col-span-3" title="Links">
       <div className="flex-col inline-flex gap-4 mt-4">
         {links.map((link, index) => (
           <div key={index}>
@@ -63,7 +63,7 @@ export default function Links({
           </div>
         ))}
         <Button.Transparent
-          className="w-[40%] mt-2"
+          className="w-[100px] mt-2"
           icon={
             <Icon.LinkSimple
               size="16"

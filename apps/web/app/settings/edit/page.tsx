@@ -301,7 +301,7 @@ export default function Index() {
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-auto' : 'w-[38px] h-[38px]';
+    return image === '/images/Userpic.png' ? 'w-8/12' : 'w-[38px] h-[38px]';
   };
 
   return (
@@ -330,8 +330,11 @@ export default function Index() {
         >
           {handler}
         </Typography.H2>
-        <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-          <Card.Primary className="justify-start gap-4" title="Profile">
+        <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
+          <Card.Primary
+            className="justify-start gap-4 w-full col-span-3"
+            title="Profile"
+          >
             <div>
               <Input.Label value="Short bio" />
               <Card.Primary
@@ -341,7 +344,7 @@ export default function Index() {
                 <Input.TextArea
                   id="edit-profile-bio-input"
                   placeholder="Short bio. Tell a bit about yourself."
-                  className="h-[240px]"
+                  className="h-[180px]"
                   disabled={loading}
                   maxLength={160}
                   defaultValue={bio}
@@ -359,7 +362,10 @@ export default function Index() {
               </Card.Primary>
             </div>
           </Card.Primary>
-          <Card.Primary className="justify-start" title="Links">
+          <Card.Primary
+            className="justify-start w-full col-span-3"
+            title="Links"
+          >
             <div className="flex-col inline-flex gap-4 mt-4">
               {links.map((link, index) => (
                 <div key={index}>
@@ -393,7 +399,7 @@ export default function Index() {
               ))}
               <Button.Transparent
                 id="edit-profile-add-link-btn"
-                className="w-[40%] mt-2"
+                className="w-[100px] mt-2"
                 icon={
                   <Icon.LinkSimple
                     size="16"
@@ -409,13 +415,16 @@ export default function Index() {
               </Button.Transparent>
             </div>
           </Card.Primary>
-          <Card.Primary className="justify-start z-10" title="Picture">
+          <Card.Primary
+            className="justify-start z-10 w-full col-span-2"
+            title="Picture"
+          >
             {image && (
               <div className="relative">
                 <ImageByUri
-                  width={150}
-                  height={150}
-                  className="w-80 h-80 mt-12 rounded-full"
+                  width={100}
+                  height={100}
+                  className="w-52 h-52 mt-12 rounded-full"
                   alt="user"
                   uri={image}
                 />

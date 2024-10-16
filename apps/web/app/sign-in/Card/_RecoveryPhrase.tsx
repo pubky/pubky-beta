@@ -4,7 +4,8 @@ export default function RecoveryPhrase() {
   return (
     <Card.Primary
       title="Recovery Phrase"
-      text="Enter your recovery phrase from any (paper) backup (less secure)."
+      text="Enter your recovery phrase from a backup."
+      className="w-full col-span-3"
     >
       <div className="my-6 grid grid-rows-6 grid-flow-col gap-1">
         <Input.Word placeholder="1." disabled />

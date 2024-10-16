@@ -204,7 +204,7 @@ export default function Index() {
       >
         {Utils.minifyPubky(pubky ?? '')}
       </Typography.H2>
-      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} />
         <Card.Links
           links={links}
