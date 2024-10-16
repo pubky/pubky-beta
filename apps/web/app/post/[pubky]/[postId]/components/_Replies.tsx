@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import Skeletons from '@/components/Skeletons';
 import { UseUserMuted } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
+import CreateQuickReply from '@/components/CreateQuickReply';
 
 export default function Replies({
   repliesResponse,
@@ -81,6 +82,12 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
       <Icon.LineHorizontal size="14" color="#262626" />
     </div>
   );
+  const lineBaseCSS2 = `ml-[11px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1.5px] after:h-[65px] after:block after:-mt-[38px] after:-ml-[1px]`;
+  const lineHorizontalCSS2 = (
+    <div className="absolute ml-[10px] mt-[22px]">
+      <Icon.LineHorizontal size="14" color="#262626" />
+    </div>
+  );
   //const [showAllReplies, setShowAllReplies] = useState(false);
 
   if (!replyReplies || replyReplies.replies.length === 0) return null;
@@ -120,11 +127,16 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
             }
             className="mt-3 cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
           >
-            <Icon.ChatCircleText />
+            <Icon.PlusCircle />
             {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
           </Typography.Body>
         </div>
       )}
+      <div className="relative mt-3">
+        <div className={lineBaseCSS2} />
+        {lineHorizontalCSS2}
+        <CreateQuickReply post={reply} />
+      </div>
     </div>
   );
 };

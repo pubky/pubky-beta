@@ -23,7 +23,7 @@ import {
   Eye,
   LineHorizontal,
 } from './_Design';
-import { Plus, Minus, X } from './_Math';
+import { Plus, Minus, X, PlusCircle } from './_Math';
 import { GitFork } from './_Development';
 import { UnitedStates, Spain, Germany, France, Italy } from './_Flag';
 import {
@@ -186,6 +186,7 @@ export const Icon = {
   PencilLine,
   Play,
   Plus,
+  PlusCircle,
   Podcast,
   Pubky,
   Question,

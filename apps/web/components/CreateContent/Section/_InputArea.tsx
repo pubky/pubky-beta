@@ -6,6 +6,7 @@ import { useAlertContext } from '@/contexts';
 import Modal from '../../Modal';
 import { Utils } from '@social/utils-shared';
 import { UserView } from '@/types/User';
+import { twMerge } from 'tailwind-merge';
 
 interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedFiles: File[];
@@ -22,6 +23,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   placeHolder?: string;
   setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
   loading?: boolean;
+  className?: string;
 }
 
 export default function InputArea({
@@ -39,6 +41,7 @@ export default function InputArea({
   placeHolder,
   setFilePreviews,
   loading,
+  className,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -132,9 +135,10 @@ export default function InputArea({
         value={content}
         maxLength={300}
         onClick={() => setTextArea && setTextArea(true)}
-        className={`w-full max-h-[300px] h-auto mt-4 ${
-          largeView && 'text-2xl min-h-[50px]'
-        }`}
+        className={twMerge(
+          `w-full max-h-[300px] h-auto ${largeView && 'text-2xl min-h-[50px]'}`,
+          className
+        )}
         placeholder={placeHolder}
       />
       {isDragging && (
