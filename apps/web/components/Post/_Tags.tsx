@@ -91,7 +91,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
           }}
         />
         {!largeView &&
-          tags.map((tagObj, index) => {
+          tags.slice(0, 3).map((tagObj, index) => {
             const isTagFound = tagObj?.taggers?.some(
               (fromItem) => fromItem === pubky
             );
@@ -124,7 +124,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
                       }
                     >
                       <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
+                        {Utils.minifyText(tagObj?.label.replace(' ', ''), 13)}
                         {loadingTags === tagObj?.label ? (
                           <Icon.LoadingSpin size="16" />
                         ) : (
