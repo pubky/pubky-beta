@@ -4,7 +4,6 @@ import { Typography, Button, Icon, Content, Header } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { usePubkyClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 export default function Intro() {
   const { pubky, isLoggedIn } = usePubkyClientContext();
@@ -74,6 +73,7 @@ export default function Intro() {
           </div>
         </>
       ),
+      className: { top: '50px', backgroundImage: "url('/images/intro-1.svg')" },
     },
     {
       content: (
@@ -105,6 +105,7 @@ export default function Intro() {
           </div>
         </>
       ),
+      className: { backgroundImage: "url('/images/intro-2.svg')" },
     },
     {
       content: (
@@ -130,6 +131,7 @@ export default function Intro() {
           </div>
         </>
       ),
+      className: { backgroundImage: "url('/images/intro-3.svg')" },
     },
     {
       content: (
@@ -159,22 +161,9 @@ export default function Intro() {
               </Typography.Body>
             </div>
           </div>
-          <div className="flex">
-            <Image
-              width={596}
-              height={388}
-              alt="intro-1"
-              src="/images/intro-1.svg"
-            />
-            <Image
-              width={496}
-              height={288}
-              alt="intro-2"
-              src="/images/intro-2.svg"
-            />
-          </div>
         </>
       ),
+      className: { backgroundImage: "url('/images/intro-4.svg')" },
     },
     {
       content: (
@@ -196,22 +185,12 @@ export default function Intro() {
               </Typography.Body>
             </div>
           </div>
-          <div className="flex flex-col gap-1 mt-6">
-            <Image
-              width={720}
-              height={39}
-              alt="intro-4"
-              src="/images/intro-4.svg"
-            />
-            <Image
-              width={720}
-              height={269}
-              alt="intro-3"
-              src="/images/intro-3.svg"
-            />
-          </div>
         </>
       ),
+      className: {
+        top: '500px',
+        backgroundImage: "url('/images/intro-5.svg')",
+      },
     },
     {
       content: (
@@ -231,15 +210,12 @@ export default function Intro() {
               </Typography.Body>
             </div>
           </div>
-          <Image
-            width={600}
-            height={396}
-            alt="intro-5"
-            src="/images/intro-5.svg"
-            className="float-right -mt-24"
-          />
         </>
       ),
+      className: {
+        top: '100px',
+        backgroundImage: "url('/images/intro-6.svg')",
+      },
     },
   ];
 
@@ -252,7 +228,7 @@ export default function Intro() {
       </Header.Root>
 
       {/*Intro 1*/}
-      <Content.Grid>
+      <Content.Grid className="z-10 relative">
         {introContent[currentIntro].content}
         <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-12">
           <Button.Large
@@ -279,7 +255,10 @@ export default function Intro() {
         </div>
       </Content.Grid>
       <div className="w-full">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/background-image.png')] pointer-events-none" />
+        <div
+          style={introContent[currentIntro].className}
+          className="absolute inset-0 bg-cover bg-center pointer-events-none"
+        />
       </div>
     </Content.Main>
   );

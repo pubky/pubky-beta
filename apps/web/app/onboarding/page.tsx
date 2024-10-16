@@ -78,7 +78,7 @@ export default function Index() {
         </div>
       </Content.Grid>
       <div className="w-full">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/background-image.png')] pointer-events-none" />
+        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/home.svg')] pointer-events-none" />
       </div>
     </Content.Main>
   );
