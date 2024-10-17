@@ -14,7 +14,7 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, pubky, profile, storeProfile } = usePubkyClientContext();
+  const { isLoggedIn, pubky, storeProfile, profile } = usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -29,56 +29,57 @@ export default function ProtectedRoutes({
     '/settings',
   ];
 
-  const redirectLoggedUser = ['/onboarding', '/login', '/sign-up', '/sign-in'];
-
-  const notRedirectUser = [
+  const redirectLoggedUser = [
+    '/onboarding',
+    '/login',
+    '/sign-up',
+    '/sign-in',
     '/onboarding/welcome',
     '/onboarding/permissions',
-    '/onboarding/confirm',
-    '/onboarding/sign-up',
   ];
 
   useEffect(() => {
-    const isProtected = protectedRoutes.includes(pathname);
-
     const checkLogin = async () => {
+      const pk = pubky || '';
+
       const loggedIn = await isLoggedIn();
+      let emptyProfile = profile ? false : true;
 
-      // exceptions for the onboarding process
-      if (notRedirectUser.includes(pathname)) {
-        setLoading(false);
-        return;
-      }
-
-      if (loggedIn && pubky && !profile) {
-        try {
-          const user = await getUserProfile(pubky, pubky);
-          storeProfile(user.details);
-        } catch (error) {
-          console.error('Error getting profile', error);
+      // check if user is logged in
+      if (loggedIn) {
+        // check if user has a profile
+        if (emptyProfile) {
+          try {
+            const user = await getUserProfile(pk, pk);
+            storeProfile(user.details);
+            emptyProfile = false;
+          } catch (error) {
+            // if there is no profile, redirect to register a new one
+            router.push('/onboarding/register');
+            setLoading(false);
+            return;
+          }
         }
-      }
 
-      if (!loggedIn && isProtected) {
-        router.push('/onboarding');
-        setLoading(false);
-        return;
-      }
-      if (loggedIn && redirectLoggedUser.includes(pathname)) {
-        if (profile) {
+        if (redirectLoggedUser.includes(pathname)) {
           router.push('/home');
-        } else {
-          router.push('/onboarding/register');
+          setLoading(false);
+          return;
         }
-        setLoading(false);
-        return;
+      } else {
+        if (protectedRoutes.includes(pathname)) {
+          router.push('/onboarding');
+          setLoading(false);
+          return;
+        }
       }
+
       setLoading(false);
     };
 
     checkLogin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, router, pathname]);
+  }, [pubky, router, pathname]);
 
   return (
     <>
