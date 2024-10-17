@@ -63,22 +63,22 @@ export default function Index() {
         <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
           Your keys, your content, your rules.
         </Typography.H2>
-        <div className="relative flex gap-3">
+        <div className="relative flex gap-3 mt-6">
           <Link id="onboarding-get-started-link" href="/onboarding/intro">
-            <Button.Large className="mt-12">Sign up</Button.Large>
+            <Button.Large>Create Account</Button.Large>
           </Link>
           <Button.Large
             onClick={!loading ? () => handleSubmit() : undefined}
             variant="secondary"
-            className="w-auto mt-12"
+            className="w-auto"
             loading={loading}
           >
-            Explore first
+            Explore Pubky
           </Button.Large>
         </div>
       </Content.Grid>
       <div className="w-full">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/home.svg')] pointer-events-none" />
+        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/home.png')] pointer-events-none" />
       </div>
     </Content.Main>
   );

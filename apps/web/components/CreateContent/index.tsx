@@ -8,6 +8,7 @@ import FilePreview from '../FilePreview';
 import { Section } from './Section';
 import { UserView } from '@/types/User';
 import { searchUsersByUsername } from '@/services/userService';
+import { twMerge } from 'tailwind-merge';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -28,6 +29,8 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   arrayTags: string[];
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
   loading?: boolean;
+  variant?: 'small';
+  className?: string;
 }
 
 export default function CreateContent({
@@ -50,6 +53,8 @@ export default function CreateContent({
   setArrayTags,
   children,
   loading,
+  variant,
+  className,
 }: CreateContentProps) {
   const { profile } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -229,35 +234,42 @@ export default function CreateContent({
   return (
     <div
       id={`${id}`}
-      className={`${
-        largeView ? 'p-12' : 'p-6'
-      } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
+      className={twMerge(
+        `${
+          largeView ? 'p-12' : 'p-6'
+        } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`,
+        className
+      )}
     >
-      <Section.UserArea
-        uriPic={(profile?.image as string) ?? '/images/Userpic.png'}
-        name={profile?.name ?? 'Loading...'}
-        largeView={largeView}
-      />
       <div
         ref={wrapperRef}
-        className="w-full flex justify-between gap-6 items-start flex-col"
+        className="w-full flex justify-between gap-3 items-start flex-col"
       >
-        <Section.InputArea
-          selectedFiles={selectedFiles}
-          setSelectedFiles={setSelectedFiles}
-          content={content}
-          setContent={setContent}
-          searchedUsers={searchedUsers}
-          setSearchedUsers={setSearchedUsers}
-          setCursorPosition={setCursorPosition}
-          setTextArea={setTextArea}
-          largeView={largeView}
-          setIsValidContent={setIsValidContent}
-          autoFocus={autoFocus}
-          placeHolder={placeHolder}
-          setFilePreviews={setFilePreviews}
-          loading={loading}
-        />
+        <div className={variant ? 'flex w-full gap-4' : 'w-full'}>
+          <Section.UserArea
+            uriPic={(profile?.image as string) ?? '/images/Userpic.png'}
+            name={profile?.name ?? 'Loading...'}
+            largeView={largeView}
+            variant={variant}
+          />
+          <Section.InputArea
+            selectedFiles={selectedFiles}
+            setSelectedFiles={setSelectedFiles}
+            content={content}
+            className="mt-[6px]"
+            setContent={setContent}
+            searchedUsers={searchedUsers}
+            setSearchedUsers={setSearchedUsers}
+            setCursorPosition={setCursorPosition}
+            setTextArea={setTextArea}
+            largeView={largeView}
+            setIsValidContent={setIsValidContent}
+            autoFocus={autoFocus}
+            placeHolder={placeHolder}
+            setFilePreviews={setFilePreviews}
+            loading={loading}
+          />
+        </div>
         <LinkPreviewer content={content} />
         {selectedFiles.length > 0 && (
           <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">

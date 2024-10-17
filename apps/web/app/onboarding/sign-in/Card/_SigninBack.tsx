@@ -6,8 +6,9 @@ export default function SigninBack() {
     <Card.Primary
       title="Been here before?"
       text="Sign back into Pubky by uploading your Pubky recovery file or entering your recovery phrase."
+      className="w-full col-span-3"
     >
-      <div className="flex justify-center items-center p-8">
+      <div className="flex justify-center items-center">
         <Icon.SignIn size="120" />
       </div>
       <Link

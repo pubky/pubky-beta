@@ -13,7 +13,10 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
       {/**<Link href="https://www.bitkit.to/" target="_blank">
         <Image width={122} height={36} alt="bitkit" src="/images/bitkit.png" />
       </Link>*/}
-      <Link href="https://testflight.apple.com/join/lGXhnwcC" target="_blank">
+      <Link
+        href="https://apps.apple.com/us/app/bitkit-wallet/id6502440655"
+        target="_blank"
+      >
         <Image
           width={160}
           height={94}

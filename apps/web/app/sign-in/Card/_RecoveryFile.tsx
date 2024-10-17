@@ -52,7 +52,8 @@ export default function RecoveryFile({
   return (
     <Card.Primary
       title="Recovery File"
-      text="Upload your Pubky recovery file and enter your password."
+      text="Upload your recovery file, enter your password."
+      className="w-full col-span-3"
     >
       <div className="flex-col inline-flex gap-4">
         <div>

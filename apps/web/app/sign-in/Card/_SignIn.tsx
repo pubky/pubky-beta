@@ -10,14 +10,10 @@ export default function SignIn() {
       text="Scan the QR with Bitkit or any other Pubky Core powered wallet."
       imageTitle={
         <Link href="https://bitkit.to" target="_blank">
-          <Image
-            width={122}
-            height={36}
-            alt="bitkit"
-            src="/images/bitkit.png"
-          />
+          <Image width={82} height={36} alt="bitkit" src="/images/bitkit.png" />
         </Link>
       }
+      className="w-full col-span-2"
     >
       <div className="relative">
         <Image
@@ -27,8 +23,8 @@ export default function SignIn() {
           alt="qr"
           src="/images/qr.png"
         />
-        <div className="w-full inset-0 flex items-center justify-center absolute">
-          <Typography.H2 className="text-center w-full px-4 py-3 bg-[#2a2a2f] font-extrabold rounded-tl-3xl rounded-br-3xl">
+        <div className="w-full inset-0 flex items-center justify-right left-8 absolute">
+          <Typography.H2 className="text-center w-full px-4 py-3 bg-[#2a2a2f] font-extrabold rounded-tl-3xl rounded-bl-3xl">
             COMING SOON
           </Typography.H2>
         </div>

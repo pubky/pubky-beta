@@ -80,6 +80,7 @@ type PubkyClientContextType = {
   setRepliesArray: (repliesArray: PostThread) => void;
   timelineProfile: PostView[] | undefined;
   setTimelineProfile: (timelineProfile: PostView[]) => void;
+  deletePost: (post_id: string) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -461,6 +462,26 @@ export function PubkyClientWrapper({
       await client.put(postUrl, postBody);
 
       return { uri: postUrl, details: newPost };
+    } catch (error) {
+      console.error('Error creating post:', error);
+      return false;
+    }
+  };
+
+  const deletePost = async (postId: string): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      // Post URL
+      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
+
+      // Send the post to the homeserver
+      await client.delete(postUrl);
+
+      return true;
     } catch (error) {
       console.error('Error creating post:', error);
       return false;
@@ -904,6 +925,7 @@ export function PubkyClientWrapper({
         setSeed,
         saveProfile,
         createPost,
+        deletePost,
         follow,
         unfollow,
         deleteFile,

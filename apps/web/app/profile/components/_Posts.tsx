@@ -53,10 +53,13 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   return (
     <div className="flex flex-col gap-3">
       {timelineProfile &&
-        timelineProfile?.length > 0 &&
-        timelineProfile.map((post) => (
-          <Post key={post.details.id} post={post} />
-        ))}
+        timelineProfile.length > 0 &&
+        timelineProfile.map(
+          (post) =>
+            post?.details?.content !== '[DELETED]' && (
+              <Post key={post.details.id} post={post} />
+            )
+        )}
       {isLoading && <Skeleton.Simple />}
       {timelineProfile && timelineProfile.length === 0 && !isLoading && (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">

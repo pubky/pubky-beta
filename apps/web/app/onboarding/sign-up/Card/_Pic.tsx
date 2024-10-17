@@ -90,17 +90,20 @@ export default function Pic({ image, setImage, loading }: PicProps) {
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-auto' : 'w-[38px] h-[38px]';
+    return image === '/images/Userpic.png' ? 'w-8/12' : 'w-[38px] h-[38px]';
   };
 
   return (
-    <Card.Primary className="justify-start z-10" title="Picture">
+    <Card.Primary
+      className="justify-start z-10 w-full col-span-2"
+      title="Picture"
+    >
       {image && (
         <div className="relative">
           <ImageByUri
-            width={150}
-            height={150}
-            className="w-80 h-80 mt-12 rounded-full"
+            width={100}
+            height={100}
+            className="w-52 h-52 mt-[50px] rounded-full"
             alt="user"
             uri={image}
           />

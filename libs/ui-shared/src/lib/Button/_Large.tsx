@@ -21,14 +21,14 @@ export const Large = ({
   colorText = 'text-white',
   ...rest
 }: LargeButtonProps) => {
-  let stateButton = 'hover:bg-opacity-30';
+  let stateButton = 'hover:bg-opacity-20';
 
   if (disabled) {
     colorText = 'text-gray-500';
     stateButton = 'border-opacity-30 bg-opacity-10 cursor-auto';
   }
 
-  let cssColorButton = ` bg-white bg-opacity-20 border border-white`;
+  let cssColorButton = ` bg-white bg-opacity-10 border border-white`;
 
   switch (variant) {
     case 'secondary':

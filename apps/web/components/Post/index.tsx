@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import { useEffect, useState } from 'react';
 import Tooltip from '../Tooltip';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import TagsLargeView from './_TagsLargeView';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
@@ -28,6 +28,7 @@ import { Skeleton } from '..';
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
   largeView?: boolean;
+  homeView?: boolean;
   bookmark?: boolean;
   size?: TSize;
   post: PostView;
@@ -40,6 +41,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function Post({
   repostView = false,
   largeView = false,
+  homeView = false,
   size = 'full',
   post,
   layout,
@@ -48,30 +50,30 @@ export default function Post({
   lineStyle,
   ...rest
 }: PostProps) {
-  const { pubky } = usePubkyClientContext();
-  //const { setContent, setShow } = useAlertContext();
+  const { pubky, deletePost } = usePubkyClientContext();
+  const { setContent, setShow } = useAlertContext();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
   const router = useRouter();
-  const lineBaseCSS = `ml-[10px] absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
+  const lineBaseCSS = `ml-[10px] absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1.5px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
   const lineHorizontalCSS = (
     <div className="absolute ml-[10px]">
       <Icon.LineHorizontal size="14" color="#262626" />
     </div>
   );
 
-  //const handleDeletePost = async () => {
-  //  const result = null; //await deletePost(post?.id);
-  //  if (result) {
-  //    setContent('Post deleted successfully');
-  //    setShow(true);
-  //  } else {
-  //    setContent('Something wrong. Try again', 'warning');
-  //    setShow(true);
-  //  }
-  // };
+  const handleDeletePost = async () => {
+    const result = await deletePost(post?.details?.id);
+    if (result) {
+      setContent('Post deleted successfully');
+      setShow(true);
+    } else {
+      setContent('Something wrong. Try again', 'warning');
+      setShow(true);
+    }
+  };
 
   const fetchRepostedPost = async () => {
     if (post?.relationships?.reposted) {
@@ -127,7 +129,9 @@ export default function Post({
                       />
                       {loadingRepostedPost ? (
                         <Skeleton.Simple />
-                      ) : post?.relationships?.reposted && repostedPost ? (
+                      ) : post?.relationships?.reposted &&
+                        repostedPost &&
+                        repostedPost?.details?.content !== '[DELETED]' ? (
                         <>
                           {/** Show reposted post*/}
 
@@ -160,8 +164,7 @@ export default function Post({
                             variant="small"
                             className="text-opacity-50"
                           >
-                            This post was not found or has been deleted by its
-                            author.
+                            This post been deleted by its author.
                           </Typography.Body>
                         </div>
                       )}
@@ -216,8 +219,11 @@ export default function Post({
                         post?.details?.author === pubky && (
                           <Typography.Body
                             variant="small-bold"
-                            className="cursor-default text-[13px] text-red-500 text-opacity-50 underline decoration-solid"
-                            //onClick={handleDeletePost}
+                            className="text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleDeletePost();
+                            }}
                           >
                             Undo repost
                           </Typography.Body>
@@ -229,7 +235,9 @@ export default function Post({
                   </PostUI.RepostCard>
                   {loadingRepostedPost ? (
                     <Skeleton.Simple />
-                  ) : post?.relationships?.reposted && repostedPost ? (
+                  ) : post?.relationships?.reposted &&
+                    repostedPost &&
+                    repostedPost?.details?.content !== '[DELETED]' ? (
                     <>
                       {/**Show reposted post */}
                       <PostUI.MainCard
@@ -276,20 +284,37 @@ export default function Post({
                     </>
                   ) : (
                     <>
-                      <div className="mx-[47px] px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
+                      <div className="px-6 py-12 bg-white bg-opacity-10 rounded-bl-2xl rounded-br-2xl">
                         <Typography.Body
                           variant="small"
                           className="text-opacity-50"
                         >
-                          This post was not found or has been deleted by its
-                          author.
+                          This post been deleted by its author.
                         </Typography.Body>
                       </div>
-                      <div className="border-0 border-b-[1px] border-white border-opacity-10 mt-6" />
                     </>
                   )}
                 </>
               )
+            ) : post?.details?.content === '[DELETED]' ? (
+              <>
+                {post?.relationships?.replied && homeView && (
+                  <div className="relative">
+                    <div className={twMerge(lineBaseCSS, 'after:h-[52px]')} />
+                    {lineHorizontalCSS}
+                  </div>
+                )}
+                <div
+                  onClick={(event) => event.stopPropagation()}
+                  className={`${
+                    post?.relationships?.replied && homeView && 'ml-6'
+                  } cursor-default px-6 py-2 bg-white bg-opacity-10 rounded-2xl`}
+                >
+                  <Typography.Body variant="small" className="text-opacity-50">
+                    This post been deleted by its author.
+                  </Typography.Body>
+                </div>
+              </>
             ) : (
               <div className="flex items-center relative">
                 {line && (

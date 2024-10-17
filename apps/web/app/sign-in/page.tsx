@@ -94,11 +94,11 @@ export default function Index() {
         <Header.Action link="/onboarding/sign-in">New here?</Header.Action>
       </Header.Root>
       <Content.Grid>
-        <Typography.Display>Sign in to Pubky</Typography.Display>
+        <Typography.Display>Sign in to Pubky.</Typography.Display>
         <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
-          Choose to sign in with a QR, recovery file, or recovery phrase
+          Choose to sign in with a QR, recovery file, or recovery phrase.
         </Typography.H2>
-        <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+        <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
           <Card.SignIn />
           <Card.RecoveryFile
             errors={errors}

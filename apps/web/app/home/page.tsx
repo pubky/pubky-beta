@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Fragment } from 'react';
 import { Content, Icon, Menu, Typography } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
@@ -9,6 +9,7 @@ import { usePostStream, usePostThread } from '@/hooks/usePost';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import { UseUserMuted } from '@/hooks/useUser';
+import CreateQuickReply from '@/components/CreateQuickReply';
 
 export default function Index() {
   const { layout } = useFilterContext();
@@ -167,16 +168,23 @@ const Timeline = () => {
         ? timeline
             .filter((post) => !mutedUsers?.includes(post?.details?.author))
             .map((post, index) => (
-              <div key={`${index}-${post.details.id}`}>
-                <Components.Post
-                  post={post}
-                  largeView={layout === 'wide'}
-                  line={Boolean(post?.relationships?.replied)}
-                />
-                {post?.counts?.replies > 0 && (
-                  <PostReplies post={post} layout={layout} />
+              <Fragment key={`${index}-${post.details.id}`}>
+                {post?.details?.content === '[DELETED]' ? (
+                  // && !post?.counts?.replies
+                  ''
+                ) : (
+                  <div>
+                    <Components.Post
+                      post={post}
+                      largeView={layout === 'wide'}
+                      line={Boolean(post?.relationships?.replied)}
+                    />
+                    {post?.counts?.replies > 0 && (
+                      <PostReplies homeView post={post} layout={layout} />
+                    )}
+                  </div>
                 )}
-              </div>
+              </Fragment>
             ))
         : !isLoading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
@@ -195,7 +203,7 @@ const Timeline = () => {
   );
 };
 
-const PostReplies = ({ post, layout }) => {
+const PostReplies = ({ post, layout, homeView = false }) => {
   const { pubky } = usePubkyClientContext();
   const { data: replies } = usePostThread(post.details.author, post.details.id);
   //const [showAllReplies, setShowAllReplies] = useState(false);
@@ -204,6 +212,12 @@ const PostReplies = ({ post, layout }) => {
   const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
   const lineHorizontalCSS = (
     <div className="absolute ml-[10px]">
+      <Icon.LineHorizontal size="14" color="#262626" />
+    </div>
+  );
+  const lineBaseCSS2 = `ml-[11px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1.5px] after:h-[65px] after:block after:-mt-[38px] after:-ml-[1px]`;
+  const lineHorizontalCSS2 = (
+    <div className="absolute ml-[10px] mt-[22px]">
       <Icon.LineHorizontal size="14" color="#262626" />
     </div>
   );
@@ -227,6 +241,7 @@ const PostReplies = ({ post, layout }) => {
             post={reply}
             largeView={layout === 'wide'}
             line={Boolean(reply?.relationships?.replied)}
+            homeView={homeView}
           />
         ))}
       {repliesLeft > 0 && (
@@ -240,9 +255,16 @@ const PostReplies = ({ post, layout }) => {
             onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
             className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
           >
-            <Icon.ChatCircleText />
+            <Icon.PlusCircle />
             {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
           </Typography.Body>
+        </div>
+      )}
+      {post?.details?.content !== '[DELETED]' && (
+        <div className="relative">
+          <div className={lineBaseCSS2} />
+          {lineHorizontalCSS2}
+          <CreateQuickReply post={post} />
         </div>
       )}
     </div>

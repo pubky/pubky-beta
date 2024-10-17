@@ -34,10 +34,10 @@ export const Primary = ({
         <div
           className={twMerge(
             `flex-col justify-start inline-flex`,
-            text && 'gap-6'
+            text && 'gap-3'
           )}
         >
-          <div className="flex gap-2">
+          <div className="flex gap-1 items-center">
             <Typography.Body variant="large-bold">{title}</Typography.Body>
             {imageTitle}
           </div>

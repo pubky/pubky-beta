@@ -20,11 +20,11 @@ export default function Index() {
 
   return (
     <Onboarding.Layout currentStep={3}>
-      <Typography.Display>Your pubky</Typography.Display>
+      <Typography.Display>Your pubky.</Typography.Display>
       <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
         Share your pubky with your friends so they can follow you.
       </Typography.H2>
-      <div className="relative my-8 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
+      <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
         <div className="p-12 flex-col justify-center items-center flex">
           <div className="p-12">
             <Icon.Key size="130" />
@@ -34,7 +34,7 @@ export default function Index() {
             {pubky ? (
               <Typography.H2
                 id="onboarding-pubky"
-                className="break-all lg:text-[31px] font-light"
+                className="break-all lg:text-2xl font-semibold uppercase"
                 variant="light"
               >
                 pk:{pubky}

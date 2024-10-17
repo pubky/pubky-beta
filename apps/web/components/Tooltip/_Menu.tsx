@@ -3,10 +3,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { usePubkyClientContext, useToastContext } from '@/contexts';
+import {
+  useAlertContext,
+  usePubkyClientContext,
+  useToastContext,
+} from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
+import Modal from '../Modal';
 
 interface TooltipMenuProps {
   post: PostView;
@@ -15,17 +20,23 @@ interface TooltipMenuProps {
 }
 
 export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
-  const { pubky, follow, unfollow, addBookmark, deleteBookmark } =
-    usePubkyClientContext();
+  const {
+    pubky,
+    follow,
+    unfollow,
+    addBookmark,
+    deleteBookmark,
+    deletePost,
+    deleteFile,
+  } = usePubkyClientContext();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
-  //const { pubky, follow, unfollow, listFollowers, createBookmark, deleteBookmark, deletePost, deleteFile} = useClientContext();
   const { setContent: setContentToast, setShow: setShowToast } =
     useToastContext();
   const tooltipMenuRef = useRef<HTMLDivElement>(null);
   const [followed, setFollowed] = useState(false);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
-  //const [showModalDeletePost, setShowModalDeletePost] = useState(false);
-  //const { setContent, setShow } = useAlertContext();
+  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
+  const { setContent, setShow } = useAlertContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -92,19 +103,18 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     setShowMenu(false);
   };
 
-  {
-    /**const handleDeletePost = async () => {
+  const handleDeletePost = async () => {
     try {
-      if (post?.details?.files) {
-        const fileDeletions = Object.values(post.details?.files).map(
+      if (post?.details?.attachments) {
+        const fileDeletions = Object.values(post?.details?.attachments).map(
           async (file) => {
-            //await deleteFile(file.fileId);
+            await deleteFile(file);
           }
         );
         await Promise.all(fileDeletions);
       }
 
-      const result = null; //await deletePost(post?.id);
+      const result = await deletePost(post?.details?.id);
 
       if (result) {
         setContent('Post deleted successfully');
@@ -117,8 +127,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     } finally {
       setShowMenu(false);
     }
-  };*/
-  }
+  };
 
   const renderFollowButton = () => {
     if (post?.details?.author === pubky) return null;
@@ -292,8 +301,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           {post?.details.author === pubky && (
             <Tooltip.Item
               id="delete-post"
-              className="opacity-50 cursor-default hover:bg-transparent"
-              //onClick={() => setShowModalDeletePost(true)}
+              onClick={() => setShowModalDeletePost(true)}
               icon={<Icon.Trash size="20" color={'#EF4444'} />}
               cssText="text-red-500"
             >
@@ -301,12 +309,12 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             </Tooltip.Item>
           )}
         </Tooltip.Main>
-        {/**
+
         <Modal.DeletePost
           showModalDeletePost={showModalDeletePost}
           setShowModalDeletePost={setShowModalDeletePost}
           handleDeletePost={handleDeletePost}
-        />*/}
+        />
       </div>
     </>
   );

@@ -43,27 +43,42 @@ export default function Intro() {
           <Typography.Display>
             It&apos;s your web. Time to take it back.
           </Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 The internet was once a place of limitless possibility—a
                 frontier for free expression, connection, and exploration.
               </Typography.Body>
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 Over time, control has shifted into the hands of a few, turning
                 our digital world into a maze of algorithms and walled gardens.
               </Typography.Body>
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 It doesn&apos;t have to be this way.
               </Typography.Body>
             </div>
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 We envision a web where you decide which content you see, who
                 you connect with, and what is relevant. A place where your
                 identity and data belong to you, not corporations.
               </Typography.Body>
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 You are one step closer to a web that&apos;s truly yours.{' '}
                 <span className="text-white font-bold text-opacity-100">
                   Let&apos;s unlock the web.
@@ -73,7 +88,7 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { top: '50px', backgroundImage: "url('/images/intro-1.svg')" },
+      className: { backgroundImage: "url('/images/intro-1.png')" },
     },
     {
       content: (
@@ -83,13 +98,19 @@ export default function Intro() {
             <br />
             Pubky.
           </Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 Pubky is part of a new kind of web where you have control over
                 your online identity, content, and connections.
               </Typography.Body>
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 We believe the internet should belong to its users. So,
                 we&apos;re building a decentralized web where you own your
                 identity, curate your content, and connect with others on your
@@ -105,22 +126,28 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-2.svg')" },
+      className: { backgroundImage: "url('/images/intro-2.png')" },
     },
     {
       content: (
         <>
           <Typography.Display>Your Digital Key.</Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 Instead of usernames and passwords, Pubky uses cryptographic
                 keys to secure your account. Think of it as a secret digital
                 key, that only you hold.
               </Typography.Body>
             </div>
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 Your key allows you to define where people can find your data,
                 even if you are censored or change digital locations.{' '}
                 <span className="font-bold text-white text-opacity-100">
@@ -131,25 +158,34 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-3.svg')" },
+      className: { backgroundImage: "url('/images/intro-3.png')" },
     },
     {
       content: (
         <>
           <Typography.Display>Social Tagging.</Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 Use special tags to categorize posts and discover content that
                 interests you.
               </Typography.Body>
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 Profile tags help you find the people, communities and
                 conversations you&apos;re looking for.
               </Typography.Body>
             </div>
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 There are no algorithms deciding what&apos;s best &apos;for
                 you&apos;. YOU create the algorithm with your peers.
               </Typography.Body>
@@ -163,21 +199,30 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-4.svg')" },
+      className: {
+        right: '300px',
+        backgroundImage: "url('/images/intro-4.png')",
+      },
     },
     {
       content: (
         <>
           <Typography.Display>Customized Feeds.</Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 You decide which content appears in your feeds. Choose the tags,
                 people, reach and content types you want to see.
               </Typography.Body>
             </div>
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 Save custom filter settings as new custom feeds.
                 <span className="text-white text-opacity-100 font-bold">
                   You are the algorithm.
@@ -188,8 +233,10 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: '500px',
-        backgroundImage: "url('/images/intro-5.svg')",
+        top: '250px',
+        left: '10px',
+        backgroundImage: "url('/images/intro-5.png')",
+        backgroundPosition: 'left',
       },
     },
     {
@@ -198,9 +245,12 @@ export default function Intro() {
           <Typography.Display>
             Posts, Articles, Photos, Links...
           </Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
             <div className="flex flex-col gap-4">
-              <Typography.Body variant="medium" className="text-opacity-50">
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 leading-snug"
+              >
                 Pubky supports a growing set of content types. Use Pubky like a
                 search engine, or a blog, or social media, or a forum, or for
                 photo-sharing.
@@ -214,7 +264,8 @@ export default function Intro() {
       ),
       className: {
         top: '100px',
-        backgroundImage: "url('/images/intro-6.svg')",
+        backgroundImage: "url('/images/intro-6.png')",
+        backgroundPosition: 'left',
       },
     },
   ];
@@ -224,25 +275,33 @@ export default function Intro() {
       <Header.Root>
         <Header.Logo link={logoLink} />
         <Header.Title titleHeader={'Intro'} />
-        <Header.Action link="/onboarding/sign-in">Skip Intro</Header.Action>
       </Header.Root>
 
       {/*Intro 1*/}
       <Content.Grid className="z-10 relative">
         {introContent[currentIntro].content}
-        <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-12">
+        <div className="max-w-[1200px] fixed bottom-10 w-full flex justify-between items-center p-4 mx-auto">
+          <div className="flex gap-4">
+            <Button.Large
+              icon={<Icon.ArrowLeft />}
+              className="w-auto"
+              variant="secondary"
+              onClick={() =>
+                currentIntro === 0 ? router.push('/onboarding') : handleBack()
+              }
+            >
+              Back
+            </Button.Large>
+            <Button.Large
+              className="w-auto"
+              variant="secondary"
+              onClick={() => router.push('/onboarding/sign-in')}
+            >
+              Skip Intro
+            </Button.Large>
+          </div>
           <Button.Large
-            icon={<Icon.ArrowLeft />}
-            className="w-[140px]"
-            variant="secondary"
-            onClick={() =>
-              currentIntro === 0 ? router.push('/onboarding') : handleBack()
-            }
-          >
-            Back
-          </Button.Large>
-          <Button.Large
-            className="w-[140px]"
+            className="w-auto"
             icon={<Icon.ArrowRight />}
             onClick={() =>
               currentIntro === totalIntros - 1

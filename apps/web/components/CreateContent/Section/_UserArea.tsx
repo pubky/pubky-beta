@@ -10,14 +10,20 @@ interface UserAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView: boolean;
   uriPic: string;
   name: string;
+  variant?: 'small';
 }
 
-export default function UserArea({ largeView, uriPic, name }: UserAreaProps) {
+export default function UserArea({
+  largeView,
+  uriPic,
+  name,
+  variant,
+}: UserAreaProps) {
   const { pubky } = usePubkyClientContext();
   const router = useRouter();
 
   return (
-    <div className="justify-start items-center gap-3 flex">
+    <div className={`${!variant && 'items-center'} justify-start gap-3 flex`}>
       <ImageByUri
         width={largeView ? 48 : 32}
         height={largeView ? 48 : 32}
@@ -27,30 +33,34 @@ export default function UserArea({ largeView, uriPic, name }: UserAreaProps) {
         alt="user-image"
         uri={uriPic}
       />
-      {name && pubky ? (
-        <div
-          className="cursor-pointer flex gap-4 items-center"
-          onClick={() => router.push('/profile')}
-        >
-          <Typography.Body
-            className={`${
-              largeView && 'text-2xl'
-            } hover:underline hover:decoration-solid`}
-            variant="medium-bold"
-          >
-            {Utils.minifyText(name, 24)}
-          </Typography.Body>
-          <div className="flex gap-1 cursor-pointer">
-            {/**<Icon.CheckCircle size="16" color="gray" />*/}
-            <Typography.Label className="text-opacity-30">
-              {Utils.minifyPubky(pubky)}
-            </Typography.Label>
-          </div>
-        </div>
-      ) : (
-        <Typography.Body variant="medium-bold" className="text-opacity-50">
-          Loading...
-        </Typography.Body>
+      {!variant && (
+        <>
+          {name && pubky ? (
+            <div
+              className="cursor-pointer flex gap-4 items-center"
+              onClick={() => router.push('/profile')}
+            >
+              <Typography.Body
+                className={`${
+                  largeView && 'text-2xl'
+                } hover:underline hover:decoration-solid`}
+                variant="medium-bold"
+              >
+                {Utils.minifyText(name, 24)}
+              </Typography.Body>
+              <div className="flex gap-1 cursor-pointer">
+                {/**<Icon.CheckCircle size="16" color="gray" />*/}
+                <Typography.Label className="text-opacity-30">
+                  {Utils.minifyPubky(pubky)}
+                </Typography.Label>
+              </div>
+            </div>
+          ) : (
+            <Typography.Body variant="medium-bold" className="text-opacity-50">
+              Loading...
+            </Typography.Body>
+          )}
+        </>
       )}
     </div>
   );

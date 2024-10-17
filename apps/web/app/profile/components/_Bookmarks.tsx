@@ -67,7 +67,12 @@ export default function Bookmarks() {
     <div id="bookmarks-content" className="flex flex-col gap-3">
       {results &&
         results?.length > 0 &&
-        results.map((post) => <Post key={post.details.id} post={post} />)}
+        results.map(
+          (post) =>
+            post?.details?.content !== '[DELETED]' && (
+              <Post key={post.details.id} post={post} />
+            )
+        )}
       {isLoading && <Skeleton.Simple />}
       {(!results || results?.length === 0) && !isLoading && (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
