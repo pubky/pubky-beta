@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { Utils } from '@social/utils-shared';
@@ -9,7 +10,6 @@ import { Tweet } from 'react-tweet';
 import FilesCarousel from '../Modal/_FilesCarousel';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import Image from 'next/image';
 import { FileContent, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 
@@ -186,10 +186,10 @@ export default function Content({
                       className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isImage ? (
-                    <Image
+                    <img
                       src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                       alt={`Fetched file ${index}`}
-                      layout="responsive"
+                      //layout="responsive"
                       width={800}
                       height={418}
                       className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"

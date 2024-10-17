@@ -1,7 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { getFile } from '@/services/fileService';
 
 interface ImageByUriProps {
@@ -67,7 +67,7 @@ const ImageByUri = ({
   }, [uri]);
 
   return (
-    <Image
+    <img
       id={id}
       src={imageUrl || '/images/Userpic.png'}
       alt={alt}
