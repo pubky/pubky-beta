@@ -124,7 +124,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                         {Utils.minifyText(tag?.label.replace(' ', ''), 20)}
                         <Typography.Caption
                           variant="bold"
-                          className="text-opacity-30"
+                          className="text-opacity-60"
                         >
                           {tag?.taggers_count}
                         </Typography.Caption>

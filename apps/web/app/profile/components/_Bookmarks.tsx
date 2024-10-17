@@ -1,14 +1,14 @@
 'use client';
 
 import { useRef } from 'react';
-import { Typography } from '@social/ui-shared';
+import { Icon, Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { useBookmarkedPosts } from '@/hooks/usePost';
 
 export default function Bookmarks() {
   //const { posts } = useClientContext();
-  const { pubky } = usePubkyClientContext();
+  const { pubky, deleteBookmark } = usePubkyClientContext();
   const { data, isLoading } = useBookmarkedPosts(
     pubky ?? '',
     pubky ?? '',
@@ -63,16 +63,33 @@ export default function Bookmarks() {
   */
   }
 
+  const handleDeleteBookmark = async (bookmarkId: string) => {
+    await deleteBookmark(bookmarkId);
+  };
+
   return (
     <div id="bookmarks-content" className="flex flex-col gap-3">
       {results &&
         results?.length > 0 &&
-        results.map(
-          (post) =>
-            post?.details?.content !== '[DELETED]' && (
+        results.map((post) => {
+          return (
+            <div key={post.details.id} className="flex gap-2 items-center">
               <Post key={post.details.id} post={post} />
-            )
-        )}
+              {post?.details?.content === '[DELETED]' && post?.bookmark?.id && (
+                <div
+                  onClick={() =>
+                    post?.bookmark?.id
+                      ? handleDeleteBookmark(post?.bookmark?.id)
+                      : undefined
+                  }
+                  className="cursor-pointer"
+                >
+                  <Icon.BookmarkSimple opacity="1" />
+                </div>
+              )}
+            </div>
+          );
+        })}
       {isLoading && <Skeleton.Simple />}
       {(!results || results?.length === 0) && !isLoading && (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">

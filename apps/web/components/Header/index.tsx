@@ -164,15 +164,8 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Feed"
             active={title === 'Feed'}
-            className={
-              title === 'Feed' ? 'bg-opacity-100 hover:bg-opacity-100' : ''
-            }
-            icon={
-              <Icon.Activity
-                size="24"
-                color={title === 'Feed' ? '#05050a' : 'white'}
-              />
-            }
+            className={title === 'Feed' ? 'border-t border-white' : ''}
+            icon={<Icon.Activity size="24" />}
           />
         </Link>
         <Link href="/hot-tags">
@@ -181,15 +174,8 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Hot&#160;Tags"
             active={title === `HotTags`}
-            className={
-              title === 'HotTags' ? 'bg-opacity-100 hover:bg-opacity-100' : ''
-            }
-            icon={
-              <Icon.Fire
-                size="24"
-                color={title === 'HotTags' ? '#05050a' : 'white'}
-              />
-            }
+            className={title === 'HotTags' ? 'border-t border-white' : ''}
+            icon={<Icon.Fire size="24" />}
           />
         </Link>
 
@@ -199,17 +185,8 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Influencers"
             active={title === `Influencers`}
-            className={
-              title === 'Influencers'
-                ? 'bg-opacity-100 hover:bg-opacity-100'
-                : ''
-            }
-            icon={
-              <Icon.UsersLeft
-                size="24"
-                color={title === 'Influencers' ? '#05050a' : 'white'}
-              />
-            }
+            className={title === 'Influencers' ? 'border-t border-white' : ''}
+            icon={<Icon.UsersLeft size="24" />}
           />
         </Link>
         <Link href="/settings">
@@ -218,15 +195,8 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Settings"
             active={title === 'Settings'}
-            className={
-              title === 'Settings' ? 'bg-opacity-100 hover:bg-opacity-100' : ''
-            }
-            icon={
-              <Icon.GearSix
-                size="24"
-                color={title === 'Settings' ? '#05050a' : 'white'}
-              />
-            }
+            className={title === 'Settings' ? 'border-t border-white' : ''}
+            icon={<Icon.GearSix size="24" />}
           />
         </Link>
         <Link href="/profile" className="w-[48px] relative">

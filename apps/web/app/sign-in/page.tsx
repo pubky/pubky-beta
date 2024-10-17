@@ -66,7 +66,9 @@ export default function Index() {
 
       await loginWithFile(result.data?.password, result.data?.recoveryFile);
     } catch (error: unknown | { message: string }) {
-      const errorMessage = (error as Error)?.message || 'Failed to login';
+      const errorMessage =
+        'Recovery file or password is incorrect.';
+      //(error as Error)?.message ||;
       setLoginError(errorMessage);
       setLoading(false);
       setUserNotFound(false);

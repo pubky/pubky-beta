@@ -130,7 +130,7 @@ export default function Tags({ post, largeView = false }: PostProps) {
                         ) : (
                           <Typography.Caption
                             variant="bold"
-                            className="text-opacity-30"
+                            className="text-opacity-60"
                           >
                             {tagObj?.taggers_count}
                           </Typography.Caption>
