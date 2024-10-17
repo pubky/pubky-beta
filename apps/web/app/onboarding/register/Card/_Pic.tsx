@@ -49,7 +49,7 @@ export default function Pic({ image, setImage }: PicProps) {
       title="Picture"
     >
       {image && (
-        <div className="relative">
+        <div className="relative flex items-center">
           <ImageByUri
             width={100}
             height={100}

@@ -420,7 +420,7 @@ export default function Index() {
             title="Picture"
           >
             {image && (
-              <div className="relative">
+              <div className="relative flex items-center">
                 <ImageByUri
                   width={100}
                   height={100}
