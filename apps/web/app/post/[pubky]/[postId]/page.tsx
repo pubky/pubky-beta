@@ -98,7 +98,9 @@ export default function Index({
   }, [fileUri]);
 
   {
-    if (isError) {
+    if (isLoading) {
+      content = <Skeletons.Simple />;
+    } else if (isError || data?.details?.content === '[DELETED]') {
       content = (
         <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
           <Typography.Body
@@ -115,48 +117,47 @@ export default function Index({
           </Typography.Body>
         </div>
       );
-    }
-  }
-  if (data) {
-    //const marginLeftValue = (parentPostsCount + 1) * 12;
-    content = (
-      <>
-        {data?.relationships?.replied && (
-          <Post.RootParent
-            postRef={postRef}
-            parentURI={data?.relationships?.replied}
-            //onParentPostsCountChange={handleParentPostsCountChange}
-          />
-        )}
+    } else if (data) {
+      //const marginLeftValue = (parentPostsCount + 1) * 12;
+      content = (
+        <>
+          {data?.relationships?.replied && (
+            <Post.RootParent
+              postRef={postRef}
+              parentURI={data?.relationships?.replied}
+              //onParentPostsCountChange={handleParentPostsCountChange}
+            />
+          )}
 
-        {isLoading ? (
-          <Skeletons.Simple />
-        ) : (
-          <>
-            <div ref={postRef}>
-              <PostComponent
-                key={uri}
-                post={data}
-                size="full"
-                largeView={windowWidth >= 1280}
-                fullContent
-                line={Boolean(data?.relationships?.replied)}
-              />
-            </div>
-            <div className="mt-3">
-              <Post.ReplyForm
-                uri={uri}
-                post={data}
-                updatePost={() => console.log('updated')}
-                replies={repliesArray}
-                isLoadingReplies={isLoadingReplies}
-              />
-              <div ref={loader} />
-            </div>
-          </>
-        )}
-      </>
-    );
+          {isLoading ? (
+            <Skeletons.Simple />
+          ) : (
+            <>
+              <div ref={postRef}>
+                <PostComponent
+                  key={uri}
+                  post={data}
+                  size="full"
+                  largeView={windowWidth >= 1280}
+                  fullContent
+                  line={Boolean(data?.relationships?.replied)}
+                />
+              </div>
+              <div className="mt-3">
+                <Post.ReplyForm
+                  uri={uri}
+                  post={data}
+                  updatePost={() => console.log('updated')}
+                  replies={repliesArray}
+                  isLoadingReplies={isLoadingReplies}
+                />
+                <div ref={loader} />
+              </div>
+            </>
+          )}
+        </>
+      );
+    }
   }
 
   return (

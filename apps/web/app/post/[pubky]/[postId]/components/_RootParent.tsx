@@ -131,7 +131,7 @@ export default function RootParent({
         key={parentURI}
         //style={{ marginLeft: `${marginLeftValue}px` }}
       >
-        <Post post={post.post} size="full" largeView line={isLine} />
+        <Post homeView post={post.post} size="full" largeView line={isLine} />
       </div>
     ) : (
       <div

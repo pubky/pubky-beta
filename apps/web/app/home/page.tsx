@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Fragment } from 'react';
 import { Content, Icon, Menu, Typography } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
@@ -168,16 +168,23 @@ const Timeline = () => {
         ? timeline
             .filter((post) => !mutedUsers?.includes(post?.details?.author))
             .map((post, index) => (
-              <div key={`${index}-${post.details.id}`}>
-                <Components.Post
-                  post={post}
-                  largeView={layout === 'wide'}
-                  line={Boolean(post?.relationships?.replied)}
-                />
-                {post?.counts?.replies > 0 && (
-                  <PostReplies post={post} layout={layout} />
+              <Fragment key={`${index}-${post.details.id}`}>
+                {post?.details?.content === '[DELETED]' &&
+                !post?.counts?.replies ? (
+                  ''
+                ) : (
+                  <div>
+                    <Components.Post
+                      post={post}
+                      largeView={layout === 'wide'}
+                      line={Boolean(post?.relationships?.replied)}
+                    />
+                    {post?.counts?.replies > 0 && (
+                      <PostReplies homeView post={post} layout={layout} />
+                    )}
+                  </div>
                 )}
-              </div>
+              </Fragment>
             ))
         : !isLoading && (
             <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
@@ -196,7 +203,7 @@ const Timeline = () => {
   );
 };
 
-const PostReplies = ({ post, layout }) => {
+const PostReplies = ({ post, layout, homeView = false }) => {
   const { pubky } = usePubkyClientContext();
   const { data: replies } = usePostThread(post.details.author, post.details.id);
   //const [showAllReplies, setShowAllReplies] = useState(false);
@@ -234,6 +241,7 @@ const PostReplies = ({ post, layout }) => {
             post={reply}
             largeView={layout === 'wide'}
             line={Boolean(reply?.relationships?.replied)}
+            homeView={homeView}
           />
         ))}
       {repliesLeft > 0 && (
@@ -252,11 +260,13 @@ const PostReplies = ({ post, layout }) => {
           </Typography.Body>
         </div>
       )}
-      <div className="relative">
-        <div className={lineBaseCSS2} />
-        {lineHorizontalCSS2}
-        <CreateQuickReply post={post} />
-      </div>
+      {post?.details?.content !== '[DELETED]' && (
+        <div className="relative">
+          <div className={lineBaseCSS2} />
+          {lineHorizontalCSS2}
+          <CreateQuickReply post={post} />
+        </div>
+      )}
     </div>
   );
 };

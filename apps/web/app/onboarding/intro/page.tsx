@@ -199,7 +199,10 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-4.png')" },
+      className: {
+        right: '300px',
+        backgroundImage: "url('/images/intro-4.png')",
+      },
     },
     {
       content: (
@@ -277,7 +280,7 @@ export default function Intro() {
       {/*Intro 1*/}
       <Content.Grid className="z-10 relative">
         {introContent[currentIntro].content}
-        <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-12">
+        <div className="max-w-[1200px] fixed bottom-10 w-full flex justify-between items-center p-4 mx-auto">
           <div className="flex gap-4">
             <Button.Large
               icon={<Icon.ArrowLeft />}
