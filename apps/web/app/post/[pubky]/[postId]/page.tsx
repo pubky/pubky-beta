@@ -14,13 +14,92 @@ import { getFile } from '@/services/fileService';
 import { PostThread, PubkyAppFile } from '@/types/Post';
 import Link from 'next/link';
 
+// Component for Loading Content
+function LoadingContent() {
+  return <Skeletons.Simple />;
+}
+
+// Component for Not Found Content
+function NotFoundContent() {
+  return (
+    <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
+      <Typography.Body variant="small" className="text-opacity-50 text-center">
+        This post was not found or has been deleted by its author.
+        <Link
+          href="/home"
+          className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
+        >
+          Go home
+        </Link>
+      </Typography.Body>
+    </div>
+  );
+}
+
+// Component for Deleted Content
+function DeletedContent() {
+  return (
+    <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
+      <Typography.Body variant="small" className="text-opacity-50 text-center">
+        This post has been deleted by its author.
+        <Link
+          href="/home"
+          className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
+        >
+          Go home
+        </Link>
+      </Typography.Body>
+    </div>
+  );
+}
+
+// Component for Valid Post Content
+function ValidPostContent({
+  postRef,
+  data,
+  windowWidth,
+  repliesArray,
+  isLoadingReplies,
+  loader,
+}) {
+  return (
+    <>
+      {data?.relationships?.replied && (
+        <Post.RootParent
+          postRef={postRef}
+          parentURI={data?.relationships?.replied}
+        />
+      )}
+
+      <div ref={postRef}>
+        <PostComponent
+          key={data?.details?.uri}
+          post={data}
+          size="full"
+          largeView={windowWidth >= 1280}
+          fullContent
+          line={Boolean(data?.relationships?.replied)}
+        />
+      </div>
+      <div className="mt-3">
+        <Post.ReplyForm
+          uri={data?.details.id}
+          post={data}
+          updatePost={() => console.log('updated')}
+          replies={repliesArray}
+          isLoadingReplies={isLoadingReplies}
+        />
+        <div ref={loader} />
+      </div>
+    </>
+  );
+}
+
 export default function Index({
   params,
 }: {
   params: { pubky: string; postId: string };
 }) {
-  let content: React.ReactNode = null;
-
   const limit = 10;
   const [skip, setSkip] = useState(0);
   const [repliesArray, setRepliesArray] = useState<PostThread>(
@@ -37,19 +116,13 @@ export default function Index({
     data?.details?.author as string,
     pubky ?? ''
   );
-  const uri = Utils.decodePostUri(params.pubky, params.postId);
   const [file, setFile] = useState<PubkyAppFile | null>();
   const [typeFile, setTypeFile] = useState<'image' | 'video'>();
   const fileUri = data?.details?.attachments
     ? data?.details?.attachments[0]
     : '';
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-  //const [parentPostsCount, setParentPostsCount] = useState(0);
   const postRef = useRef<HTMLDivElement>(null);
-
-  //const handleParentPostsCountChange = (count: number) => {
-  //  setParentPostsCount(count);
-  //};
 
   const fetchMoreReplies = () => {
     if (isErrorReplies) return;
@@ -97,84 +170,25 @@ export default function Index({
     FetchFile();
   }, [fileUri]);
 
-  {
-    if (isLoading) {
-      content = <Skeletons.Simple />;
-    } else if (isError) {
-      content = (
-        <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
-          <Typography.Body
-            variant="small"
-            className="text-opacity-50 text-center"
-          >
-            This post was not found or has been deleted by its author.
-            <Link
-              href="/home"
-              className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
-            >
-              Go home
-            </Link>
-          </Typography.Body>
-        </div>
-      );
-    } else if (data?.details?.content === '[DELETED]') {
-      content = (
-        <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
-          <Typography.Body
-            variant="small"
-            className="text-opacity-50 text-center"
-          >
-            This post been deleted by its author.
-            <Link
-              href="/home"
-              className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
-            >
-              Go home
-            </Link>
-          </Typography.Body>
-        </div>
-      );
-    } else if (data) {
-      //const marginLeftValue = (parentPostsCount + 1) * 12;
-      content = (
-        <>
-          {data?.relationships?.replied && (
-            <Post.RootParent
-              postRef={postRef}
-              parentURI={data?.relationships?.replied}
-              //onParentPostsCountChange={handleParentPostsCountChange}
-            />
-          )}
+  let content: React.ReactNode = null;
 
-          {isLoading ? (
-            <Skeletons.Simple />
-          ) : (
-            <>
-              <div ref={postRef}>
-                <PostComponent
-                  key={uri}
-                  post={data}
-                  size="full"
-                  largeView={windowWidth >= 1280}
-                  fullContent
-                  line={Boolean(data?.relationships?.replied)}
-                />
-              </div>
-              <div className="mt-3">
-                <Post.ReplyForm
-                  uri={uri}
-                  post={data}
-                  updatePost={() => console.log('updated')}
-                  replies={repliesArray}
-                  isLoadingReplies={isLoadingReplies}
-                />
-                <div ref={loader} />
-              </div>
-            </>
-          )}
-        </>
-      );
-    }
+  if (isLoading) {
+    content = <LoadingContent />;
+  } else if (isError) {
+    content = <NotFoundContent />;
+  } else if (data?.details?.content === '[DELETED]') {
+    content = <DeletedContent />;
+  } else if (data) {
+    content = (
+      <ValidPostContent
+        postRef={postRef}
+        data={data}
+        windowWidth={windowWidth}
+        repliesArray={repliesArray}
+        isLoadingReplies={isLoadingReplies}
+        loader={loader}
+      />
+    );
   }
 
   return (
