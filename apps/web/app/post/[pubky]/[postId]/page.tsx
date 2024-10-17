@@ -100,7 +100,7 @@ export default function Index({
   {
     if (isLoading) {
       content = <Skeletons.Simple />;
-    } else if (isError || data?.details?.content === '[DELETED]') {
+    } else if (isError) {
       content = (
         <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
           <Typography.Body
@@ -108,6 +108,23 @@ export default function Index({
             className="text-opacity-50 text-center"
           >
             This post was not found or has been deleted by its author.
+            <Link
+              href="/home"
+              className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
+            >
+              Go home
+            </Link>
+          </Typography.Body>
+        </div>
+      );
+    } else if (data?.details?.content === '[DELETED]') {
+      content = (
+        <div className="ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
+          <Typography.Body
+            variant="small"
+            className="text-opacity-50 text-center"
+          >
+            This post been deleted by its author.
             <Link
               href="/home"
               className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"

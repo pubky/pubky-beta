@@ -186,13 +186,16 @@ const SearchContent = () => {
           {data && data?.length > 0
             ? data
                 .filter((post) => !mutedUsers?.includes(post?.details?.author))
-                .map((post) => (
-                  <Post
-                    key={post.details.id}
-                    post={post}
-                    largeView={layout === 'wide'}
-                  />
-                ))
+                .map(
+                  (post) =>
+                    post?.details?.content !== '[DELETED]' && (
+                      <Post
+                        key={post.details.id}
+                        post={post}
+                        largeView={layout === 'wide'}
+                      />
+                    )
+                )
             : !isLoading && (
                 <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
                   <Typography.H2 className="font-normal text-opacity-50">

@@ -139,7 +139,7 @@ export default function RootParent({
         className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]"
       >
         <Typography.Body variant="small" className="text-opacity-50">
-          This post was not found or has been deleted by its author.
+          This post been deleted by its author.
         </Typography.Body>
         <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[50px]" />
       </div>

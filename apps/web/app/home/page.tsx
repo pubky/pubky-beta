@@ -169,8 +169,8 @@ const Timeline = () => {
             .filter((post) => !mutedUsers?.includes(post?.details?.author))
             .map((post, index) => (
               <Fragment key={`${index}-${post.details.id}`}>
-                {post?.details?.content === '[DELETED]' &&
-                !post?.counts?.replies ? (
+                {post?.details?.content === '[DELETED]' ? (
+                  // && !post?.counts?.replies
                   ''
                 ) : (
                   <div>
