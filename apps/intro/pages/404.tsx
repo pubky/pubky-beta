@@ -9,7 +9,7 @@ export default function Custom404() {
   return (
     <Content.Main>
       <Header.Root>
-        <Header.Logo />
+        <Header.Logo link="/" />
         <Header.Title title="Page not found" />
       </Header.Root>
       <Content.Grid>
