@@ -294,7 +294,7 @@ export default function Intro() {
                 </Link>
                 <Button.Large
                   onClick={() =>
-                    window.open('https://blog.bitkit.to/', '_blank')
+                    window.open('https://medium.com/@synonym_to', '_blank')
                   }
                   variant="secondary"
                   className="w-auto"
