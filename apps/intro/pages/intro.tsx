@@ -289,11 +289,11 @@ export default function Intro() {
                 Learn more about Pubky:
               </Typography.Body>
               <div className="relative flex gap-3">
-                <Link href="https://pubky.org">
+                <Link target="_blank" href="https://pubky.org">
                   <Button.Large>Knowledge Base</Button.Large>
                 </Link>
                 <Button.Large
-                  //onClick={() => window.open('https://pubky.org', '_blank')}
+                  onClick={() => window.open('/', '_blank')}
                   variant="secondary"
                   className="w-auto"
                 >
@@ -316,15 +316,27 @@ export default function Intro() {
         <Header.Logo link="/" />
         <Header.Title titleHeader="Sneak&#160;Peek" />
         <div className="h-6 justify-start items-start gap-6 inline-flex">
-          <div className="cursor-pointer opacity-30 hover:opacity-100">
+          <Link
+            target="_blank"
+            href="https://github.com/pubky"
+            className="cursor-pointer opacity-30 hover:opacity-100"
+          >
             <Icon.Github size="24" />
-          </div>
-          <div className="cursor-pointer opacity-30 hover:opacity-100">
+          </Link>
+          <Link
+            target="_blank"
+            href="/"
+            className="cursor-pointer opacity-30 hover:opacity-100"
+          >
             <Icon.Twitter size="24" />
-          </div>
-          <div className="cursor-pointer opacity-30 hover:opacity-100">
+          </Link>
+          <Link
+            target="_blank"
+            href="/"
+            className="cursor-pointer opacity-30 hover:opacity-100"
+          >
             <Icon.Youtube width="24" height="24" />
-          </div>
+          </Link>
         </div>
       </Header.Root>
 
@@ -337,7 +349,7 @@ export default function Intro() {
             className="w-auto"
             variant="secondary"
             onClick={() =>
-              currentIntro === 0 ? router.push('/onboarding') : handleBack()
+              currentIntro === 0 ? router.push('/') : handleBack()
             }
           >
             Back
