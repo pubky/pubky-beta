@@ -25,7 +25,7 @@ export default function Index() {
           </Link>
           <Link
             target="_blank"
-            href="/"
+            href="https://www.youtube.com/channel/UCyNruUjynpzvQXNTxbJBLmg"
             className="cursor-pointer opacity-30 hover:opacity-100"
           >
             <Icon.Youtube width="24" height="24" />
