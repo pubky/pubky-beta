@@ -18,7 +18,7 @@ export default function Index() {
           </Link>
           <Link
             target="_blank"
-            href="/"
+            href="https://x.com/getpubky"
             className="cursor-pointer opacity-30 hover:opacity-100"
           >
             <Icon.Twitter size="24" />

@@ -293,7 +293,9 @@ export default function Intro() {
                   <Button.Large>Knowledge Base</Button.Large>
                 </Link>
                 <Button.Large
-                  onClick={() => window.open('/', '_blank')}
+                  onClick={() =>
+                    window.open('https://blog.bitkit.to/', '_blank')
+                  }
                   variant="secondary"
                   className="w-auto"
                 >
