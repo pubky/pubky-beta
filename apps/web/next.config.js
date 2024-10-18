@@ -39,6 +39,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'nexus.privky.app',
       },
+      {
+        protocol: 'https',
+        hostname: 'nexus.staging.pubky.app',
+      },
     ],
   },
   cleanDistDir: false,
