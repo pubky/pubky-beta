@@ -66,8 +66,7 @@ export default function Index() {
 
       await loginWithFile(result.data?.password, result.data?.recoveryFile);
     } catch (error: unknown | { message: string }) {
-      const errorMessage =
-        'Recovery file or password is incorrect.';
+      const errorMessage = 'Recovery file or password is incorrect.';
       //(error as Error)?.message ||;
       setLoginError(errorMessage);
       setLoading(false);
@@ -93,7 +92,7 @@ export default function Index() {
       <Header.Root>
         <Header.Logo link={logoLink} />
         <Header.Title titleHeader="Sign in" />
-        <Header.Action link="/onboarding/sign-in">New here?</Header.Action>
+        <Header.Action link="/onboarding/intro">New here?</Header.Action>
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Sign in to Pubky.</Typography.Display>

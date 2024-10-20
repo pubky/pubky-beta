@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import { UseUserMuted } from '@/hooks/useUser';
 import CreateQuickReply from '@/components/CreateQuickReply';
+import { HeaderSEO } from '@/components/HeaderSEO';
 
 export default function Index() {
   const { layout } = useFilterContext();
@@ -60,6 +61,7 @@ export default function Index() {
 
   return (
     <Content.Main>
+      <HeaderSEO />
       <Components.Header className="hidden md:block" title="Feed" />
       <Components.RemindBackup />
       {layout === 'wide' && (

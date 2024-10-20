@@ -141,7 +141,7 @@ export default function Header({ title, className }: HeaderProps) {
           placeholder={!searchTags.length ? 'Search' : ''}
           className="hidden sm:block"
           onClick={() => setSearchInputCard(true)}
-          disabled={!!searchTags.length}
+          readOnly={!!searchTags.length}
         />
         <Modal.SearchInputCard
           className={searchInputCard ? 'hidden xl:block' : 'hidden'}
@@ -202,8 +202,8 @@ export default function Header({ title, className }: HeaderProps) {
         <Link href="/profile" className="w-[48px] relative">
           {notifications?.length !== 0 && (
             <PostUtil.Counter
-              textCSS="tracking-tight text-black font-semibold"
-              className="w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
+              textCSS="tracking-tight text-black font-semibold text-[13px]"
+              className="p-0 w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
             >
               {notifications?.length}
             </PostUtil.Counter>

@@ -10,6 +10,7 @@ export default function Intro() {
   const router = useRouter();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [currentIntro, setCurrentIntro] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const totalIntros = 6;
 
   useEffect(() => {
@@ -23,6 +24,17 @@ export default function Intro() {
     }
     fetchData();
   }, [pubky, isLoggedIn]);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleNext = () => {
     if (currentIntro < totalIntros - 1) {
@@ -99,7 +111,7 @@ export default function Intro() {
             Pubky.
           </Typography.Display>
           <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-2">
               <Typography.Body
                 variant="medium"
                 className="text-opacity-80 leading-snug"
@@ -146,11 +158,11 @@ export default function Intro() {
             <div className="flex flex-col gap-4">
               <Typography.Body
                 variant="medium"
-                className="text-opacity-80 leading-snug"
+                className="text-opacity-80 leading-snug tracking-normal"
               >
                 Your key allows you to define where people can find your data,
                 even if you are censored or change digital locations.{' '}
-                <span className="font-bold text-white text-opacity-100">
+                <span className="font-bold text-white text-opacity-100 tracking-normal">
                   In this web, you are the key.
                 </span>
               </Typography.Body>
@@ -158,7 +170,10 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-3.png')" },
+      className: {
+        right: isMobile ? '0px' : '200px',
+        backgroundImage: "url('/images/intro-3.png')",
+      },
     },
     {
       content: (
@@ -200,7 +215,8 @@ export default function Intro() {
         </>
       ),
       className: {
-        right: '300px',
+        right: isMobile ? '0px' : '300px',
+        left: isMobile ? '-300px' : '0px',
         backgroundImage: "url('/images/intro-4.png')",
       },
     },
@@ -224,6 +240,7 @@ export default function Intro() {
                 className="text-opacity-80 leading-snug"
               >
                 Save custom filter settings as new custom feeds.
+                <br />
                 <span className="text-white text-opacity-100 font-bold">
                   You are the algorithm.
                 </span>
@@ -233,8 +250,8 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: '250px',
-        left: '10px',
+        top: isMobile ? '50px' : '250px',
+        left: isMobile ? '-120px' : '10px',
         backgroundImage: "url('/images/intro-5.png')",
         backgroundPosition: 'left',
       },
@@ -263,7 +280,8 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: '100px',
+        top: isMobile ? '50px' : '100px',
+        left: isMobile ? '-800px' : '0px',
         backgroundImage: "url('/images/intro-6.png')",
         backgroundPosition: 'left',
       },
@@ -272,7 +290,7 @@ export default function Intro() {
 
   return (
     <Content.Main className="pb-0">
-      <Header.Root>
+      <Header.Root className="backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
         <Header.Title titleHeader={'Intro'} />
       </Header.Root>
@@ -280,7 +298,7 @@ export default function Intro() {
       {/*Intro 1*/}
       <Content.Grid className="z-10 relative">
         {introContent[currentIntro].content}
-        <div className="max-w-[1200px] fixed bottom-10 w-full flex justify-between items-center p-4 mx-auto">
+        <div className="right-[2px] xl:right-auto max-w-[1200px] fixed bottom-10 w-full flex justify-between items-center p-4 mx-auto">
           <div className="flex gap-4">
             <Button.Large
               icon={<Icon.ArrowLeft />}

@@ -23,14 +23,14 @@ export default function OnboardingLayout({
       const loggedIn = await isLoggedIn();
       const emptyProfile = profile ? false : true;
 
-      if (!loggedIn || pathname === '/onboarding/welcome') {
+      if (!loggedIn || pathname === '/onboarding/welcome' || emptyProfile) {
         setLogoLink('/onboarding');
       } else {
         setLogoLink('/home');
       }
-      if (emptyProfile) {
-        setLogoLink('/onboarding/register');
-      }
+      //if (emptyProfile) {
+      //  setLogoLink('/onboarding/register');
+      //}
     }
     fetchData();
   }, [pubky, pathname, isLoggedIn]);
