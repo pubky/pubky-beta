@@ -41,6 +41,7 @@ type PubkyClientContextType = {
     kind: PostKind,
     files?: File[]
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
+  editPost: (post: PostView, postContent: string) => Promise<string | false>;
   createRepost: (
     originalPostId: string,
     originalauthorId: string,
@@ -464,6 +465,36 @@ export function PubkyClientWrapper({
       return { uri: postUrl, details: newPost };
     } catch (error) {
       console.error('Error creating post:', error);
+      return false;
+    }
+  };
+
+  const editPost = async (post: PostView, postContent: string) => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const editPost: PubkyAppPost = {
+        content: postContent,
+        kind: post?.details?.kind,
+        attachments: post?.details?.attachments,
+        relationships: post?.relationships,
+      };
+
+      // Serialize the post to JSON and convert to Buffer
+      const postBody = Buffer.from(JSON.stringify(editPost));
+
+      // Post URL
+      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${post?.details?.id}`;
+
+      // Send the post to the homeserver
+      await client.put(postUrl, postBody);
+
+      return postUrl;
+    } catch (error) {
+      console.error('Error editing post:', error);
       return false;
     }
   };
@@ -925,6 +956,7 @@ export function PubkyClientWrapper({
         setSeed,
         saveProfile,
         createPost,
+        editPost,
         deletePost,
         follow,
         unfollow,

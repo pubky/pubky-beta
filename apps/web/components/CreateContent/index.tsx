@@ -24,10 +24,10 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   setIsValidContent: React.Dispatch<React.SetStateAction<boolean>>;
   placeHolder?: string;
   children?: React.ReactNode;
-  selectedFiles: File[];
-  setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  arrayTags: string[];
-  setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedFiles?: File[];
+  setSelectedFiles?: React.Dispatch<React.SetStateAction<File[]>>;
+  arrayTags?: string[];
+  setArrayTags?: React.Dispatch<React.SetStateAction<string[]>>;
   loading?: boolean;
   variant?: 'small';
   className?: string;
@@ -173,7 +173,8 @@ export default function CreateContent({
   }, [isValidContent, content]);
 
   const removeFile = (index: number) => {
-    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setSelectedFiles &&
+      setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     setFilePreviews((prevPreviews) =>
       prevPreviews.filter((_, i) => i !== index)
     );
@@ -193,10 +194,11 @@ export default function CreateContent({
               file &&
               (file.type.startsWith('image/') || file.type.startsWith('video/'))
             ) {
-              if (selectedFiles.length < 3) {
+              if (selectedFiles && selectedFiles.length < 3) {
                 const filePreview = URL.createObjectURL(file);
 
-                setSelectedFiles((prevFiles) => [...prevFiles, file]);
+                setSelectedFiles &&
+                  setSelectedFiles((prevFiles) => [...prevFiles, file]);
                 setFilePreviews((prevPreviews) => [
                   ...prevPreviews,
                   filePreview,
@@ -271,7 +273,7 @@ export default function CreateContent({
           />
         </div>
         <LinkPreviewer content={content} />
-        {selectedFiles.length > 0 && (
+        {selectedFiles && selectedFiles.length > 0 && (
           <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
             {selectedFiles.map((file, index) => (
               <FilePreview
@@ -307,12 +309,14 @@ export default function CreateContent({
           setShowModalTag={setShowModalTag}
         />
       </div>
-      <Modal.TagCreatePost
-        arrayTags={arrayTags}
-        setArrayTags={setArrayTags}
-        showModalTag={showModalTag}
-        setShowModalTag={setShowModalTag}
-      />
+      {arrayTags && setArrayTags && (
+        <Modal.TagCreatePost
+          arrayTags={arrayTags}
+          setArrayTags={setArrayTags}
+          showModalTag={showModalTag}
+          setShowModalTag={setShowModalTag}
+        />
+      )}
     </div>
   );
 }
