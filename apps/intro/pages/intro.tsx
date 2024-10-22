@@ -213,6 +213,7 @@ export default function Intro() {
         </>
       ),
       className: {
+        right: isMobile ? '0px' : '300px',
         backgroundImage: isMobile
           ? "url('/images/intro-4-mobile.png')"
           : "url('/images/intro-4.png')",
