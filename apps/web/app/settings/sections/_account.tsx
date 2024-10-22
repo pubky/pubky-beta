@@ -20,6 +20,7 @@ export default function Account() {
   const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalBackup, setShowModalBackup] = useState(false);
+  const [showModalDeleteAccount, setShowModalDeleteAccount] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
   const [password, setPassword] = useState('');
@@ -188,9 +189,9 @@ export default function Account() {
         <Button.Large
           icon={<Icon.Trash size="16" />}
           variant="secondary"
-          className="w-auto cursor-default"
-          onClick={handleDeleteAccount}
-          loading={loadingDeleteAccount}
+          className="w-auto"
+          onClick={() => setShowModalDeleteAccount(true)}
+          //loading={loadingDeleteAccount}
         >
           Delete account
         </Button.Large>
@@ -240,6 +241,12 @@ export default function Account() {
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
         errors={errorPassword}
+      />
+      <Modal.DeleteAccount
+        loading={loadingDeleteAccount}
+        showModalDeleteAccount={showModalDeleteAccount}
+        setShowModalDeleteAccount={setShowModalDeleteAccount}
+        handleDeleteAccount={handleDeleteAccount}
       />
     </div>
   );

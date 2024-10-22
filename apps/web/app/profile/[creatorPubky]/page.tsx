@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
+import Skeletons from '@/components/Skeletons';
 
 export default function Index({
   params,
@@ -22,26 +23,31 @@ export default function Index({
     isLoading,
     isError,
   } = useUserProfile(creatorPubky, pubky ?? '');
-  const [userExist, setUserExist] = useState(true);
-
   const loader = useRef(null);
-
-  useEffect(() => {
-    if (!isLoading && isError) {
-      setUserExist(false);
-    } else {
-      setUserExist(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile]);
-
-  useEffect(() => {
-    //setPosts({} as INewPost);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   let content;
-  if (userExist) {
+
+  if (isLoading) {
+    content = <Skeletons.Simple />;
+  } else if (!profile && isError) {
+    content = (
+      <Content.Grid>
+        <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
+          <Typography.Body
+            variant="small"
+            className="text-opacity-50 text-center"
+          >
+            This profile was not found or has been deleted by its author.
+            <Link
+              href="/home"
+              className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
+            >
+              Go home
+            </Link>
+          </Typography.Body>
+        </div>
+      </Content.Grid>
+    );
+  } else {
     content = (
       <>
         <div>
@@ -78,25 +84,6 @@ export default function Index({
         <CreatePost />
         <div ref={loader} />
       </>
-    );
-  } else {
-    content = (
-      <Content.Grid>
-        <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
-          <Typography.Body
-            variant="small"
-            className="text-opacity-50 text-center"
-          >
-            This profile was not found or has been deleted by its author.
-            <Link
-              href="/home"
-              className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
-            >
-              Go home
-            </Link>
-          </Typography.Body>
-        </div>
-      </Content.Grid>
     );
   }
 

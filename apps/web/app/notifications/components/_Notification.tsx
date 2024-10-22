@@ -72,9 +72,12 @@ export default function Notification({
       const userProfile = await getUserProfile(userId, pubky ?? '');
       if (userProfile) {
         setUser(userProfile);
+      } else {
+        setUser(undefined);
       }
     } catch (error) {
       console.log(error);
+      setUser(undefined);
     }
   }
 
@@ -190,9 +193,11 @@ export default function Notification({
                 className="hover:underline hover:decoration-solid"
                 variant="medium-bold"
               >
-                {user
-                  ? Utils.minifyText(user?.details?.name, 20)
-                  : 'Loading...'}
+                {user !== undefined
+                  ? user
+                    ? Utils.minifyText(user?.details?.name, 20)
+                    : 'Loading...'
+                  : '[DELETED]'}
               </Typography.Body>
             </Link>
           )}
