@@ -323,8 +323,8 @@ export default function Intro() {
       ),
       className: {
         backgroundImage: isMobile
-        ? "url('/images/intro-7-mobile.png')"
-        : "url('/images/intro-7.png')",
+          ? "url('/images/intro-7-mobile.png')"
+          : "url('/images/intro-7.png')",
       },
     },
   ];
@@ -359,13 +359,15 @@ export default function Intro() {
         </div>
       </Header.Root>
 
-      {/*Intro 1*/}
+      {/*Bg images*/}
       <div className="w-full">
         <div
           style={introContent[currentIntro].className}
-          className="absolute inset-0 bg-cover bg-center pointer-events-none"
+          className="fixed inset-0 bg-cover bg-center pointer-events-none"
         />
       </div>
+
+      {/*Intros*/}
       <Content.Grid className="z-10 relative flex flex-col justify-between min-w-screen min-h-[80vh]">
         {introContent[currentIntro].content}
         <div className="grow"></div>
