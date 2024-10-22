@@ -143,7 +143,7 @@ export default function Index() {
               : "url('/images/home.png')",
             marginTop: isMobile ? '150px' : '',
           }}
-          className="home inset-0 bg-cover bg-center pointer-events-none"
+          className="fixed inset-0 bg-cover bg-center pointer-events-none"
         />
       </div>
     </Content.Main>
