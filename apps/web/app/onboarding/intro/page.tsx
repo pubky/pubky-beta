@@ -310,9 +310,18 @@ export default function Intro() {
         <Header.Title titleHeader={'Intro'} />
       </Header.Root>
 
+      {/*Bg images */}
+      <div className="w-full">
+        <div
+          style={introContent[currentIntro].className}
+          className="fixed inset-0 bg-cover bg-center pointer-events-none"
+        />
+      </div>
+
       {/*Intros*/}
-      <Content.Grid className="z-10 relative">
+      <Content.Grid className="z-10 relative flex flex-col justify-between min-w-screen min-h-[80vh]">
         {introContent[currentIntro].content}
+        <div className="grow" />
         <div className="absolute bottom-5 xl:bottom-10 w-full flex justify-between items-center mx-auto mt-6">
           <div className="flex gap-4">
             <Button.Large
@@ -346,12 +355,6 @@ export default function Intro() {
           </Button.Large>
         </div>
       </Content.Grid>
-      <div className="w-full">
-        <div
-          style={introContent[currentIntro].className}
-          className="fixed inset-0 bg-cover bg-center pointer-events-none"
-        />
-      </div>
     </Content.Main>
   );
 }
