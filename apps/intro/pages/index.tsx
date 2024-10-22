@@ -2,8 +2,22 @@
 
 import Link from 'next/link';
 import { Header, Content, Typography, Button, Icon } from '@social/ui-shared';
+import { useEffect, useState } from 'react';
 
 export default function Index() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <Content.Main>
       <Header.Root className="backdrop-blur-[0px]">
@@ -32,7 +46,7 @@ export default function Index() {
           </Link>
         </div>
       </Header.Root>
-      <Content.Grid className="relative z-20 mt-14">
+      <Content.Grid className="relative z-20 xl:mt-14">
         <Typography.Display className="text-7xl sm:text-7xl xl:text-9xl xl:leading-[128px]">
           Unlock <br />
           the web.
@@ -66,7 +80,12 @@ export default function Index() {
       </Content.Grid>
       <div className="w-full">
         <div
-          style={{ backgroundImage: "url('/images/home.png')" }}
+          style={{
+            backgroundImage: isMobile
+              ? "url('/images/home-mobile.png')"
+              : "url('/images/home.png')",
+            marginTop: isMobile ? '150px' : '',
+          }}
           className="absolute inset-0 bg-cover bg-center pointer-events-none"
         />
       </div>

@@ -86,7 +86,12 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-1.png')" },
+      className: {
+        marginTop: isMobile ? '250px' : '',
+        backgroundImage: isMobile
+          ? "url('/images/intro-1-mobile.png')"
+          : "url('/images/intro-1.png')",
+      },
     },
     {
       content: (
@@ -124,7 +129,13 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-2.png')" },
+      className: {
+        marginTop: isMobile ? '270px' : '',
+        marginLeft: isMobile ? '-250px' : '',
+        backgroundImage: isMobile
+          ? "url('/images/intro-2-mobile.png')"
+          : "url('/images/intro-2.png')",
+      },
     },
     {
       content: (
@@ -157,8 +168,9 @@ export default function Intro() {
         </>
       ),
       className: {
-        right: isMobile ? '0px' : '200px',
-        backgroundImage: "url('/images/intro-3.png')",
+        backgroundImage: isMobile
+          ? "url('/images/intro-3-mobile.png')"
+          : "url('/images/intro-3.png')",
       },
     },
     {
@@ -201,9 +213,9 @@ export default function Intro() {
         </>
       ),
       className: {
-        right: isMobile ? '0px' : '300px',
-        left: isMobile ? '-300px' : '0px',
-        backgroundImage: "url('/images/intro-4.png')",
+        backgroundImage: isMobile
+          ? "url('/images/intro-4-mobile.png')"
+          : "url('/images/intro-4.png')",
       },
     },
     {
@@ -236,9 +248,10 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: isMobile ? '50px' : '250px',
-        left: isMobile ? '-120px' : '10px',
-        backgroundImage: "url('/images/intro-5.png')",
+        top: isMobile ? '340px' : '250px',
+        backgroundImage: isMobile
+          ? "url('/images/intro-5-mobile.png')"
+          : "url('/images/intro-5.png')",
         backgroundPosition: 'left',
       },
     },
@@ -267,8 +280,9 @@ export default function Intro() {
       ),
       className: {
         top: isMobile ? '50px' : '100px',
-        left: isMobile ? '-800px' : '0px',
-        backgroundImage: "url('/images/intro-6.png')",
+        backgroundImage: isMobile
+          ? "url('/images/intro-6-mobile.png')"
+          : "url('/images/intro-6.png')",
         backgroundPosition: 'left',
       },
     },
@@ -352,7 +366,7 @@ export default function Intro() {
       <Content.Grid className="z-10 relative flex flex-col justify-between min-w-screen min-h-[80vh]">
         {introContent[currentIntro].content}
         <div className="grow"></div>
-        <div className="right-[2px] xl:right-auto bottom-10 w-full flex justify-between items-center mx-auto mt-6">
+        <div className="absolute bottom-5 xl:bottom-10 w-full flex justify-between items-center mx-auto mt-6">
           <Button.Large
             icon={<Icon.ArrowLeft />}
             className="w-auto"
