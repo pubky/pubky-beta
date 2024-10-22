@@ -343,9 +343,16 @@ export default function Intro() {
       </Header.Root>
 
       {/*Intro 1*/}
-      <Content.Grid className="z-10 relative">
+      <div className="w-full">
+        <div
+          style={introContent[currentIntro].className}
+          className="absolute inset-0 bg-cover bg-center pointer-events-none"
+        />
+      </div>
+      <Content.Grid className="z-10 relative flex flex-col justify-between min-w-screen min-h-[80vh]">
         {introContent[currentIntro].content}
-        <div className="right-[2px] xl:right-auto max-w-[1200px] fixed bottom-10 w-full flex justify-between items-center p-4 mx-auto">
+        <div className="grow"></div>
+        <div className="right-[2px] xl:right-auto bottom-10 w-full flex justify-between items-center mx-auto mt-6">
           <Button.Large
             icon={<Icon.ArrowLeft />}
             className="w-auto"
@@ -356,30 +363,27 @@ export default function Intro() {
           >
             Back
           </Button.Large>
-
-          <Button.Large
-            className="w-auto"
-            icon={
-              currentIntro === totalIntros - 1 ? (
-                <Icon.Check />
-              ) : (
-                <Icon.ArrowRight />
-              )
-            }
-            onClick={() =>
-              currentIntro === totalIntros - 1 ? router.push('/') : handleNext()
-            }
-          >
-            {currentIntro === totalIntros - 1 ? "Can't Wait!" : 'Continue'}
-          </Button.Large>
+          {currentIntro !== totalIntros - 1 && (
+            <Button.Large
+              className="w-auto"
+              icon={
+                currentIntro === totalIntros - 1 ? (
+                  <Icon.Check />
+                ) : (
+                  <Icon.ArrowRight />
+                )
+              }
+              onClick={() =>
+                currentIntro === totalIntros - 1
+                  ? router.push('/')
+                  : handleNext()
+              }
+            >
+              {currentIntro === totalIntros - 1 ? "Can't Wait!" : 'Continue'}
+            </Button.Large>
+          )}
         </div>
       </Content.Grid>
-      <div className="w-full">
-        <div
-          style={introContent[currentIntro].className}
-          className="absolute inset-0 bg-cover bg-center pointer-events-none"
-        />
-      </div>
     </Content.Main>
   );
 }
