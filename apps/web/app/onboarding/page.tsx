@@ -8,11 +8,23 @@ import { usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
 
 export default function Index() {
+  const [isMobile, setIsMobile] = useState(false);
   const { pubky, signUp, isLoggedIn } = usePubkyClientContext();
   const router = useRouter();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [loading, setLoading] = useState(false);
   const links: Links[] = [];
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -83,7 +95,7 @@ export default function Index() {
           <Header.Action id="onboarding-sign-in-btn">Sign in</Header.Action>
         </div>
       </Header.Root>
-      <Content.Grid className="relative z-20 mt-14">
+      <Content.Grid className="relative z-20 xl:mt-14">
         <Typography.Display className="text-7xl sm:text-7xl xl:text-9xl xl:leading-[128px]">
           Unlock <br />
           the web.
@@ -125,8 +137,13 @@ export default function Index() {
       </Content.Grid>
       <div className="w-full">
         <div
-          style={{ backgroundImage: "url('/images/home.png')" }}
-          className="absolute inset-0 bg-cover bg-center pointer-events-none"
+          style={{
+            backgroundImage: isMobile
+              ? "url('/images/home-mobile.png')"
+              : "url('/images/home.png')",
+            marginTop: isMobile ? '150px' : '',
+          }}
+          className="home inset-0 bg-cover bg-center pointer-events-none"
         />
       </div>
     </Content.Main>

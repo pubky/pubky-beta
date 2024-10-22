@@ -100,7 +100,12 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-1.png')" },
+      className: {
+        marginTop: isMobile ? '250px' : '',
+        backgroundImage: isMobile
+          ? "url('/images/intro-1-mobile.png')"
+          : "url('/images/intro-1.png')",
+      },
     },
     {
       content: (
@@ -138,7 +143,13 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-2.png')" },
+      className: {
+        marginTop: isMobile ? '270px' : '',
+        marginLeft: isMobile ? '-250px' : '',
+        backgroundImage: isMobile
+          ? "url('/images/intro-2-mobile.png')"
+          : "url('/images/intro-2.png')",
+      },
     },
     {
       content: (
@@ -171,8 +182,9 @@ export default function Intro() {
         </>
       ),
       className: {
-        right: isMobile ? '0px' : '200px',
-        backgroundImage: "url('/images/intro-3.png')",
+        backgroundImage: isMobile
+          ? "url('/images/intro-3-mobile.png')"
+          : "url('/images/intro-3.png')",
       },
     },
     {
@@ -216,8 +228,9 @@ export default function Intro() {
       ),
       className: {
         right: isMobile ? '0px' : '300px',
-        left: isMobile ? '-300px' : '0px',
-        backgroundImage: "url('/images/intro-4.png')",
+        backgroundImage: isMobile
+          ? "url('/images/intro-4-mobile.png')"
+          : "url('/images/intro-4.png')",
       },
     },
     {
@@ -250,9 +263,10 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: isMobile ? '50px' : '250px',
-        left: isMobile ? '-120px' : '10px',
-        backgroundImage: "url('/images/intro-5.png')",
+        marginTop: isMobile ? '350px' : '250px',
+        backgroundImage: isMobile
+          ? "url('/images/intro-5-mobile.png')"
+          : "url('/images/intro-5.png')",
         backgroundPosition: 'left',
       },
     },
@@ -280,9 +294,10 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: isMobile ? '50px' : '100px',
-        left: isMobile ? '-800px' : '0px',
-        backgroundImage: "url('/images/intro-6.png')",
+        top: '100px',
+        backgroundImage: isMobile
+          ? "url('/images/intro-6-mobile.png')"
+          : "url('/images/intro-6.png')",
         backgroundPosition: 'left',
       },
     },
@@ -295,10 +310,10 @@ export default function Intro() {
         <Header.Title titleHeader={'Intro'} />
       </Header.Root>
 
-      {/*Intro 1*/}
+      {/*Intros*/}
       <Content.Grid className="z-10 relative">
         {introContent[currentIntro].content}
-        <div className="right-[2px] xl:right-auto max-w-[1200px] fixed bottom-10 w-full flex justify-between items-center p-4 mx-auto">
+        <div className="absolute bottom-5 xl:bottom-10 w-full flex justify-between items-center mx-auto mt-6">
           <div className="flex gap-4">
             <Button.Large
               icon={<Icon.ArrowLeft />}
@@ -334,7 +349,7 @@ export default function Intro() {
       <div className="w-full">
         <div
           style={introContent[currentIntro].className}
-          className="absolute inset-0 bg-cover bg-center pointer-events-none"
+          className="fixed inset-0 bg-cover bg-center pointer-events-none"
         />
       </div>
     </Content.Main>
