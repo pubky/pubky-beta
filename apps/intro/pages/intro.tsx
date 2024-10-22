@@ -322,7 +322,9 @@ export default function Intro() {
         </>
       ),
       className: {
-        backgroundImage: "url('/images/intro-7.png')",
+        backgroundImage: isMobile
+        ? "url('/images/intro-7-mobile.png')"
+        : "url('/images/intro-7.png')",
       },
     },
   ];
