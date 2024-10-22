@@ -248,7 +248,7 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: isMobile ? '340px' : '250px',
+        marginTop: isMobile ? '350px' : '250px',
         backgroundImage: isMobile
           ? "url('/images/intro-5-mobile.png')"
           : "url('/images/intro-5.png')",
@@ -279,7 +279,7 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: isMobile ? '50px' : '100px',
+        top: '100px',
         backgroundImage: isMobile
           ? "url('/images/intro-6-mobile.png')"
           : "url('/images/intro-6.png')",
