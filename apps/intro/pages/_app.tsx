@@ -32,7 +32,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta property="og:image:height" content="630" />
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:creator" content="@pubkyapp" />
+        <meta name="twitter:creator" content="@getpubky" />
         <meta name="twitter:title" content="Pubky | Unlock the web." />
         <meta
           name="twitter:description"
