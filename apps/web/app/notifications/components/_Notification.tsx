@@ -9,48 +9,48 @@ import { usePubkyClientContext } from '@/contexts';
 import { NotificationView, UserView } from '@/types/User';
 
 const notificationType = {
-  Follow: {
-    type: 'Follow',
+  follow: {
+    type: 'follow',
     icon: <Icon.UserPlus size="16" />,
     text: 'followed you',
   },
-  NewFriend: {
-    type: 'NewFriend',
+  newfriend: {
+    type: 'newfriend',
     icon: <Icon.UsersLeft size="16" />,
     text: 'is your friend now',
   },
-  LostFriend: {
-    type: 'LostFriend',
+  lostfriend: {
+    type: 'lostfriend',
     icon: <Icon.UserMinus size="16" />,
     text: 'is not your friend anymore',
   },
-  TagPost: {
-    type: 'TagPost',
+  tagpost: {
+    type: 'tagpost',
     icon: <Icon.Tag size="16" />,
     text: 'tagged your post as',
   },
-  TagProfile: {
-    type: 'TagProfile',
+  tagprofile: {
+    type: 'tagprofile',
     icon: <Icon.Tag size="16" />,
     text: 'tagged your profile as',
   },
-  Reply: {
-    type: 'Reply',
+  reply: {
+    type: 'reply',
     icon: <Icon.ChatCircleText size="16" />,
     text: 'replied your post',
   },
-  Repost: {
-    type: 'Repost',
+  repost: {
+    type: 'repost',
     icon: <Icon.Repost size="16" />,
     text: 'reposted your post',
   },
-  Mention: {
-    type: 'Mention',
+  mention: {
+    type: 'mention',
     icon: <Icon.Note size="16" />,
     text: 'mentioned you in a post',
   },
-  PostDeleted: {
-    type: 'PostDeleted',
+  postdeleted: {
+    type: 'postdeleted',
     icon: <Icon.Trash size="16" />,
     text: 'deleted a post',
   },
@@ -81,23 +81,23 @@ export default function Notification({
   useEffect(() => {
     let userId: string | undefined;
     if (
-      notification.body.type === notificationType.Follow.type ||
-      notification.body.type === notificationType.NewFriend.type ||
-      notification.body.type === notificationType.LostFriend.type
+      notification.body.type === notificationType?.follow?.type ||
+      notification.body.type === notificationType?.newfriend?.type ||
+      notification.body.type === notificationType?.lostfriend?.type
     ) {
       userId = notification.body.followed_by || notification.body.unfollowed_by;
     } else if (
-      notification.body.type === notificationType.TagProfile.type ||
-      notification.body.type === notificationType.TagPost.type
+      notification.body.type === notificationType?.tagprofile?.type ||
+      notification.body.type === notificationType?.tagpost?.type
     ) {
       userId = notification.body.tagged_by;
-    } else if (notification.body.type === notificationType.Reply.type) {
+    } else if (notification.body.type === notificationType?.reply?.type) {
       userId = notification.body.replied_by;
-    } else if (notification.body.type === notificationType.Repost.type) {
+    } else if (notification.body.type === notificationType?.repost?.type) {
       userId = notification.body.reposted_by;
-    } else if (notification.body.type === notificationType.Mention.type) {
+    } else if (notification.body.type === notificationType?.mention?.type) {
       userId = notification.body.mentioned_by;
-    } else if (notification.body.type === notificationType.PostDeleted.type) {
+    } else if (notification.body.type === notificationType?.postdeleted?.type) {
       userId = notification.body.deleted_by;
     }
 
@@ -124,32 +124,32 @@ export default function Notification({
     notification?.body?.deleted_by;
 
   const postLink =
-    (notification?.body?.type === notificationType.TagPost.type ||
-      notification?.body?.type === notificationType.Mention.type) &&
+    (notification?.body?.type === notificationType?.tagpost?.type ||
+      notification?.body?.type === notificationType?.mention?.type) &&
     notification.body.post_uri
       ? Utils.encodePostUri(notification.body.post_uri)
       : '';
 
   const replyLink =
-    notification?.body?.type === notificationType.Reply.type &&
+    notification?.body?.type === notificationType?.reply?.type &&
     notification.body.reply_uri
       ? Utils.encodePostUri(notification.body.reply_uri)
       : '';
 
   const parentPostReplyLink =
-    notification.body.type === notificationType.Reply.type &&
+    notification.body.type === notificationType?.reply?.type &&
     notification.body.parent_post_uri
       ? Utils.encodePostUri(notification.body.parent_post_uri)
       : '';
 
   const repostLink =
-    notification.body.type === notificationType.Repost.type &&
+    notification.body.type === notificationType?.repost?.type &&
     notification.body.repost_uri
       ? Utils.encodePostUri(notification.body.repost_uri)
       : '';
 
   const embedLink =
-    notification.body.type === notificationType.Repost.type &&
+    notification.body.type === notificationType?.repost?.type &&
     notification.body.embed_uri
       ? Utils.encodePostUri(notification.body.embed_uri)
       : '';
@@ -198,13 +198,13 @@ export default function Notification({
           )}
           <Typography.Body variant="medium-bold" className="text-opacity-50">
             {currentNotificationType.text}
-            {notification.body.type === notificationType.PostDeleted.type &&
+            {notification.body.type === notificationType?.postdeleted?.type &&
               (notification.body.delete_type === 'ReplyParent'
                 ? ' you replied'
                 : ' you reposted')}
           </Typography.Body>
-          {(notification.body.type === notificationType.TagProfile.type ||
-            notification.body.type === notificationType.TagPost.type) && (
+          {(notification.body.type === notificationType?.tagprofile?.type ||
+            notification.body.type === notificationType?.tagpost?.type) && (
             <PostUtil.Tag
               color={
                 notification.body.tag_label &&
@@ -271,7 +271,7 @@ export default function Notification({
               </Link>
             </>
           )}
-          {notification.body.type === notificationType.PostDeleted.type &&
+          {notification.body.type === notificationType?.postdeleted?.type &&
             deletedPostLink && (
               <Link href={deletedPostLink}>
                 <Typography.Body
