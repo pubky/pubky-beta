@@ -17,7 +17,7 @@ export default function SearchInputCard({
   ...rest
 }: SearchInputCardProps) {
   const router = useRouter();
-  const { pubky } = usePubkyClientContext();
+  const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
   //const { hotTags } = useClientContext();
   const { data: hotTags, isLoading } = useHotTags(0, 10);
   // if (isErrorHotTags) console.error(isErrorHotTags);
@@ -25,8 +25,7 @@ export default function SearchInputCard({
   const searchedUsers = data ? data : [];
 
   // if (isError) console.error(isError);
-  {
-    /** const handleTagSearch = (tag: string) => {
+  const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
 
     if (searchTags.length < 3) {
@@ -36,16 +35,13 @@ export default function SearchInputCard({
       setSearchTags(newSearchTags);
     }
     router.push('/search');
-  };*/
-  }
+  };
 
-  {
-    /**  const handleRemoveTag = (indexToRemove: number) => {
-    const newTags = [...searchTags];
-    newTags.splice(indexToRemove, 1);
-    setSearchTags(newTags);
-  };*/
-  }
+  //const handleRemoveTag = (indexToRemove: number) => {
+  //  const newTags = [...searchTags];
+  //  newTags.splice(indexToRemove, 1);
+  //  setSearchTags(newTags);
+  //};
 
   return (
     <Card.Primary
@@ -77,7 +73,7 @@ export default function SearchInputCard({
         </div>
       ) : (
         <div className="flex-col gap-6 inline-flex">
-          {/**{searchTags.length > 0 && (
+          {/**searchTags.length > 0 && (
             <div>
               <Typography.Label className="text-opacity-30">
                 Searched tags
@@ -100,7 +96,7 @@ export default function SearchInputCard({
                 ))}
               </div>
             </div>
-          )}*/}
+          )*/}
           <div>
             {isLoading ? (
               <Typography.Body variant="small" className="text-opacity-30">
@@ -116,7 +112,8 @@ export default function SearchInputCard({
                     <PostUtil.Tag
                       key={index}
                       clicked={false}
-                      onClick={() => router.push(`/search?tags=${tag.label}`)}
+                      //onClick={() => router.push(`/search?tags=${tag.label}`)}
+                      onClick={() => handleTagSearch(tag.label)}
                       color={tag.label && Utils.generateRandomColor(tag.label)}
                       className="mr-2 my-1"
                       boxShadow={false}

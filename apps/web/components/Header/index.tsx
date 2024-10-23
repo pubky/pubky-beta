@@ -141,7 +141,7 @@ export default function Header({ title, className }: HeaderProps) {
           placeholder={!searchTags.length ? 'Search' : ''}
           className="hidden sm:block"
           onClick={() => setSearchInputCard(true)}
-          disabled={!!searchTags.length}
+          readOnly={!!searchTags.length}
         />
         <Modal.SearchInputCard
           className={searchInputCard ? 'hidden xl:block' : 'hidden'}
@@ -164,15 +164,8 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Feed"
             active={title === 'Feed'}
-            className={
-              title === 'Feed' ? 'bg-opacity-100 hover:bg-opacity-100' : ''
-            }
-            icon={
-              <Icon.Activity
-                size="24"
-                color={title === 'Feed' ? '#05050a' : 'white'}
-              />
-            }
+            className={title === 'Feed' ? 'border-t border-white' : ''}
+            icon={<Icon.Activity size="24" />}
           />
         </Link>
         <Link href="/hot-tags">
@@ -181,15 +174,8 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Hot&#160;Tags"
             active={title === `HotTags`}
-            className={
-              title === 'HotTags' ? 'bg-opacity-100 hover:bg-opacity-100' : ''
-            }
-            icon={
-              <Icon.Fire
-                size="24"
-                color={title === 'HotTags' ? '#05050a' : 'white'}
-              />
-            }
+            className={title === 'HotTags' ? 'border-t border-white' : ''}
+            icon={<Icon.Fire size="24" />}
           />
         </Link>
 
@@ -199,17 +185,8 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Influencers"
             active={title === `Influencers`}
-            className={
-              title === 'Influencers'
-                ? 'bg-opacity-100 hover:bg-opacity-100'
-                : ''
-            }
-            icon={
-              <Icon.UsersLeft
-                size="24"
-                color={title === 'Influencers' ? '#05050a' : 'white'}
-              />
-            }
+            className={title === 'Influencers' ? 'border-t border-white' : ''}
+            icon={<Icon.UsersLeft size="24" />}
           />
         </Link>
         <Link href="/settings">
@@ -218,22 +195,15 @@ export default function Header({ title, className }: HeaderProps) {
             variant="menu"
             label="Settings"
             active={title === 'Settings'}
-            className={
-              title === 'Settings' ? 'bg-opacity-100 hover:bg-opacity-100' : ''
-            }
-            icon={
-              <Icon.GearSix
-                size="24"
-                color={title === 'Settings' ? '#05050a' : 'white'}
-              />
-            }
+            className={title === 'Settings' ? 'border-t border-white' : ''}
+            icon={<Icon.GearSix size="24" />}
           />
         </Link>
         <Link href="/profile" className="w-[48px] relative">
           {notifications?.length !== 0 && (
             <PostUtil.Counter
-              textCSS="tracking-tight text-black font-semibold"
-              className="w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
+              textCSS="tracking-tight text-black font-semibold text-[13px]"
+              className="p-0 w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
             >
               {notifications?.length}
             </PostUtil.Counter>

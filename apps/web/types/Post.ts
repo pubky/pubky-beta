@@ -79,6 +79,7 @@ export interface PubkyAppPost {
   kind: PostKind;
   parent?: string;
   embed?: PostEmbed | null;
+  relationships?: PostRelationships;
   attachments?: string[];
 }
 

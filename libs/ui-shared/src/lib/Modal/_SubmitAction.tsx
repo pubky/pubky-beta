@@ -7,6 +7,7 @@ interface SubmitActionProps extends React.HTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   disabled?: boolean;
   loading?: boolean;
+  colorText?: string;
 }
 
 export const SubmitAction = ({
@@ -14,6 +15,7 @@ export const SubmitAction = ({
   disabled = false,
   loading = false,
   icon = <Icon.PaperPlaneRight color={disabled ? 'gray' : 'white'} />,
+  colorText,
   ...rest
 }: SubmitActionProps) => {
   return (
@@ -23,6 +25,7 @@ export const SubmitAction = ({
       disabled={disabled}
       className="w-full"
       {...rest}
+      colorText={colorText}
     >
       {children}
     </Button.Large>

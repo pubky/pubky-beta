@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/Modal';
 import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
 const passwordSchema = z.object({
   password: z
@@ -14,15 +14,41 @@ const passwordSchema = z.object({
 
 export default function Account() {
   const router = useRouter();
-  const { seed, setSeed } = usePubkyClientContext();
-  const { getRecoveryFile } = usePubkyClientContext();
+  const { seed, setSeed, getRecoveryFile, deleteAccount } =
+    usePubkyClientContext();
+  const { setContent, setShow } = useAlertContext();
+  const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalBackup, setShowModalBackup] = useState(false);
+  const [showModalDeleteAccount, setShowModalDeleteAccount] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
   const [password, setPassword] = useState('');
   const [errorPassword, setErrorPassword] = useState<string>('');
   const modalBackupRef = useRef<HTMLDivElement>(null);
+
+  const handleDeleteAccount = async () => {
+    try {
+      setLoadingDeleteAccount(true);
+      const result = await deleteAccount();
+
+      if (result) {
+        setLoadingDeleteAccount(false);
+        setContent('Account deleted!');
+        setShow(true);
+        router.push('/logout');
+      } else {
+        setLoadingDeleteAccount(false);
+        setContent('Something wrong', 'warning');
+        setShow(true);
+      }
+    } catch (error) {
+      console.error(error);
+      setLoadingDeleteAccount(false);
+      setContent('Something wrong', 'warning');
+      setShow(true);
+    }
+  };
 
   useEffect(() => {
     if (seed) {
@@ -161,10 +187,11 @@ export default function Account() {
           information, contacts, custom streams, and settings or preferences.
         </Typography.Body>
         <Button.Large
-          icon={<Icon.Trash size="16" color="gray" />}
+          icon={<Icon.Trash size="16" />}
           variant="secondary"
-          className="w-auto cursor-default"
-          disabled
+          className="w-auto"
+          onClick={() => setShowModalDeleteAccount(true)}
+          //loading={loadingDeleteAccount}
         >
           Delete account
         </Button.Large>
@@ -214,6 +241,12 @@ export default function Account() {
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
         errors={errorPassword}
+      />
+      <Modal.DeleteAccount
+        loading={loadingDeleteAccount}
+        showModalDeleteAccount={showModalDeleteAccount}
+        setShowModalDeleteAccount={setShowModalDeleteAccount}
+        handleDeleteAccount={handleDeleteAccount}
       />
     </div>
   );

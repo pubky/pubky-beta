@@ -2,17 +2,29 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Header, Content, Typography, Button } from '@social/ui-shared';
+import { Header, Content, Typography, Button, Icon } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
 import { usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
 
 export default function Index() {
+  const [isMobile, setIsMobile] = useState(false);
   const { pubky, signUp, isLoggedIn } = usePubkyClientContext();
   const router = useRouter();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [loading, setLoading] = useState(false);
   const links: Links[] = [];
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -54,18 +66,51 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Header.Root>
+      <Header.Root className="backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
-        <Header.Action id="onboarding-sign-in-btn">Sign in</Header.Action>
+        <div className="flex gap-12 items-center">
+          <div className="h-6 justify-start items-start gap-6 inline-flex">
+            <Link
+              target="_blank"
+              href="https://github.com/pubky"
+              className="cursor-pointer opacity-30 hover:opacity-100"
+            >
+              <Icon.Github size="24" />
+            </Link>
+            <Link
+              target="_blank"
+              href="https://x.com/getpubky"
+              className="cursor-pointer opacity-30 hover:opacity-100"
+            >
+              <Icon.Twitter size="24" />
+            </Link>
+            <Link
+              target="_blank"
+              href="https://www.youtube.com/channel/UCyNruUjynpzvQXNTxbJBLmg"
+              className="cursor-pointer opacity-30 hover:opacity-100"
+            >
+              <Icon.Youtube width="24" height="24" />
+            </Link>
+          </div>
+          <Header.Action id="onboarding-sign-in-btn">Sign in</Header.Action>
+        </div>
       </Header.Root>
-      <Content.Grid className="relative z-20">
-        <Typography.Display>Unlock the web.</Typography.Display>
+      <Content.Grid className="relative z-20 xl:mt-14">
+        <Typography.Display className="text-7xl sm:text-7xl xl:text-9xl xl:leading-[128px]">
+          Unlock <br />
+          the web.
+        </Typography.Display>
         <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
           Your keys, your content, your rules.
         </Typography.H2>
-        <div className="relative flex gap-3 mt-6">
-          <Link id="onboarding-get-started-link" href="/onboarding/intro">
-            <Button.Large>Create Account</Button.Large>
+        <div className="relative flex gap-3 mt-12">
+          <Link href="/onboarding/intro">
+            <Button.Large
+              className="bg-[#c8ff00] border-[#c8ff00]"
+              colorText="text-[#c8ff00]"
+            >
+              Create Account
+            </Button.Large>
           </Link>
           <Button.Large
             onClick={!loading ? () => handleSubmit() : undefined}
@@ -75,10 +120,31 @@ export default function Index() {
           >
             Explore Pubky
           </Button.Large>
+          <Button.Large
+            onClick={() => window.open('https://pubky.org', '_blank')}
+            variant="secondary"
+            className="w-auto"
+          >
+            Pubky Core
+          </Button.Large>
         </div>
+        <Typography.Body
+          variant="small"
+          className="fixed bottom-12 text-[13.5px] text-opacity-30 font-normal"
+        >
+          Synonym Software Ltd. ©2024.
+        </Typography.Body>
       </Content.Grid>
       <div className="w-full">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/home.png')] pointer-events-none" />
+        <div
+          style={{
+            backgroundImage: isMobile
+              ? "url('/images/home-mobile.png')"
+              : "url('/images/home.png')",
+            marginTop: isMobile ? '150px' : '',
+          }}
+          className="fixed inset-0 bg-cover bg-center pointer-events-none"
+        />
       </div>
     </Content.Main>
   );

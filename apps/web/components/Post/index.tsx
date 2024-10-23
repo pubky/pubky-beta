@@ -164,7 +164,7 @@ export default function Post({
                             variant="small"
                             className="text-opacity-50"
                           >
-                            This post been deleted by its author.
+                            This post has been deleted by its author.
                           </Typography.Body>
                         </div>
                       )}
@@ -289,7 +289,7 @@ export default function Post({
                           variant="small"
                           className="text-opacity-50"
                         >
-                          This post been deleted by its author.
+                          This post has been deleted by its author.
                         </Typography.Body>
                       </div>
                     </>
@@ -311,7 +311,7 @@ export default function Post({
                   } cursor-default px-6 py-2 bg-white bg-opacity-10 rounded-2xl`}
                 >
                   <Typography.Body variant="small" className="text-opacity-50">
-                    This post been deleted by its author.
+                    This post has been deleted by its author.
                   </Typography.Body>
                 </div>
               </>

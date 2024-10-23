@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
-import { useRouter } from 'next/navigation';
 import {
   useAlertContext,
   usePubkyClientContext,
@@ -36,8 +35,8 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   const [followed, setFollowed] = useState(false);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
+  const [showModalEditPost, setShowModalEditPost] = useState(false);
   const { setContent, setShow } = useAlertContext();
-  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
@@ -205,7 +204,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]"
         >
           {renderFollowButton()}
-          {post?.details?.author === pubky && (
+          {/**post?.details?.author === pubky && (
             <Tooltip.Item
               id="edit-profile"
               onClick={() => {
@@ -215,6 +214,15 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
               icon={<Icon.Pencil size="20" />}
             >
               Edit profile
+            </Tooltip.Item>
+          )*/}
+          {post?.details?.author === pubky && (
+            <Tooltip.Item
+              id="edit-post"
+              onClick={() => setShowModalEditPost(true)}
+              icon={<Icon.Pencil size="20" />}
+            >
+              Edit post
             </Tooltip.Item>
           )}
           <Tooltip.Item
@@ -310,6 +318,11 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           )}
         </Tooltip.Main>
 
+        <Modal.EditPost
+          showModalEditPost={showModalEditPost}
+          setShowModalEditPost={setShowModalEditPost}
+          post={post}
+        />
         <Modal.DeletePost
           showModalDeletePost={showModalDeletePost}
           setShowModalDeletePost={setShowModalDeletePost}

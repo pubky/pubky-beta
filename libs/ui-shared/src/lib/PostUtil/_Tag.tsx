@@ -76,7 +76,7 @@ export const Tag = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex gap-2">
+      <div className="flex gap-2 whitespace-nowrap">
         <Typography.Body className={cssText} variant="small-bold">
           {children}
         </Typography.Body>

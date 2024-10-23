@@ -87,13 +87,18 @@ export default function RecoveryFile({
       </div>
       {loginError && (
         <div className="flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
-          <Typography.Body className="text-red-600" variant="small-bold">
+          <Typography.Body
+            className="break-words text-red-600"
+            variant="small-bold"
+          >
             {loginError === 'Invalid encryption key' ||
             loginError === 'Invalid recovery file'
               ? 'Recovery password or recovery file incorrect'
               : loginError}
           </Typography.Body>
-          <Icon.Warning color="#dc2626" />
+          <div>
+            <Icon.Warning color="#dc2626" />
+          </div>
         </div>
       )}
       {/**userNotFound && (

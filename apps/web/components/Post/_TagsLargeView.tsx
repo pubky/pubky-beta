@@ -243,7 +243,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                       ) : (
                         <Typography.Caption
                           variant="bold"
-                          className="text-opacity-30"
+                          className="text-opacity-60"
                         >
                           {tagObj?.taggers_count}
                         </Typography.Caption>

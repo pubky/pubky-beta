@@ -9,8 +9,8 @@ import { UserView } from '@/types/User';
 import { twMerge } from 'tailwind-merge';
 
 interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
-  selectedFiles: File[];
-  setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  selectedFiles?: File[];
+  setSelectedFiles?: React.Dispatch<React.SetStateAction<File[]>>;
   content: string;
   setContent: (content: string) => void;
   setSearchedUsers: React.Dispatch<React.SetStateAction<UserView[]>>;
@@ -95,13 +95,20 @@ export default function InputArea({
         return true;
       });
 
-      const newFiles = validFiles.slice(0, 3 - selectedFiles.length);
-      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+      const newFiles =
+        selectedFiles && validFiles.slice(0, 3 - selectedFiles.length);
+      const newPreviews =
+        newFiles && newFiles.map((file) => URL.createObjectURL(file));
 
-      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
-      setFilePreviews((prevPreviews) =>
-        [...prevPreviews, ...newPreviews].slice(0, 3)
-      );
+      setSelectedFiles &&
+        newFiles &&
+        setSelectedFiles((prevFiles) =>
+          [...prevFiles, ...newFiles].slice(0, 3)
+        );
+      newPreviews &&
+        setFilePreviews((prevPreviews) =>
+          [...prevPreviews, ...newPreviews].slice(0, 3)
+        );
     }
   };
 
@@ -141,7 +148,7 @@ export default function InputArea({
         )}
         placeholder={placeHolder}
       />
-      {isDragging && (
+      {isDragging && selectedFiles && (
         <div className="flex justify-center items-center z-50">
           <Icon.Plus size="64" color="gray" />
         </div>

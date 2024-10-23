@@ -76,7 +76,7 @@ export default function WhoFollow() {
 
   return (
     <div className="mb-6">
-      <SideCard.Header title="Who to follow" />
+      <SideCard.Header title="Who to Follow" />
       <SideCard.Content className="flex flex-col gap-2">
         {isLoading ? (
           <Skeletons.Simple />

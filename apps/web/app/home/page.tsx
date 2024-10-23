@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import { UseUserMuted } from '@/hooks/useUser';
 import CreateQuickReply from '@/components/CreateQuickReply';
+import { HeaderSEO } from '@/components/HeaderSEO';
 
 export default function Index() {
   const { layout } = useFilterContext();
@@ -60,6 +61,7 @@ export default function Index() {
 
   return (
     <Content.Main>
+      <HeaderSEO />
       <Components.Header className="hidden md:block" title="Feed" />
       <Components.RemindBackup />
       {layout === 'wide' && (
@@ -215,7 +217,7 @@ const PostReplies = ({ post, layout, homeView = false }) => {
       <Icon.LineHorizontal size="14" color="#262626" />
     </div>
   );
-  const lineBaseCSS2 = `ml-[11px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[65px] after:block after:-mt-[38px] after:-ml-[1px]`;
+  const lineBaseCSS2 = `ml-[11px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1.6px] after:h-[62px] after:block after:-mt-[38px] after:-ml-[1px]`;
   const lineHorizontalCSS2 = (
     <div className="absolute ml-[10px] mt-[22px]">
       <Icon.LineHorizontal size="14" color="#262626" />

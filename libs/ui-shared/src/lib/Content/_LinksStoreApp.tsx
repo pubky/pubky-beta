@@ -25,7 +25,7 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
         />
       </Link>
       <Link
-        href="https://play.google.com/apps/testing/to.synonym.bitkit.wallet"
+        href="https://play.google.com/store/apps/details?id=to.bitkit"
         target="_blank"
       >
         <Image

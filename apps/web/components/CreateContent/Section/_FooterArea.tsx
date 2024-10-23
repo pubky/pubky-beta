@@ -18,10 +18,10 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   cursorPosition: number;
   setCursorPosition: React.Dispatch<React.SetStateAction<number>>;
   setIsValidContent: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  selectedFiles: File[];
-  setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
-  arrayTags: string[];
+  setSelectedFiles?: React.Dispatch<React.SetStateAction<File[]>>;
+  selectedFiles?: File[];
+  setArrayTags?: React.Dispatch<React.SetStateAction<string[]>>;
+  arrayTags?: string[];
   setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
   showEmojis: boolean;
   setShowEmojis: React.Dispatch<React.SetStateAction<boolean>>;
@@ -79,13 +79,20 @@ export default function FooterArea({
         return true;
       });
 
-      const newFiles = validFiles.slice(0, 3 - selectedFiles.length);
-      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+      const newFiles =
+        selectedFiles && validFiles.slice(0, 3 - selectedFiles.length);
+      setSelectedFiles &&
+        newFiles &&
+        setSelectedFiles((prevFiles) =>
+          [...prevFiles, ...newFiles].slice(0, 3)
+        );
 
-      const newFilePreviews = newFiles.map((file) => URL.createObjectURL(file));
-      setFilePreviews((prevPreviews) =>
-        [...prevPreviews, ...newFilePreviews].slice(0, 3)
-      );
+      const newFilePreviews =
+        newFiles && newFiles.map((file) => URL.createObjectURL(file));
+      newFilePreviews &&
+        setFilePreviews((prevPreviews) =>
+          [...prevPreviews, ...newFilePreviews].slice(0, 3)
+        );
     }
   };
 
@@ -95,9 +102,9 @@ export default function FooterArea({
         textArea ||
         content ||
         showModalTag ||
-        arrayTags.length > 0) && (
+        (arrayTags && arrayTags.length > 0)) && (
         <Post.Actions className="w-full">
-          {arrayTags.length > 0 && (
+          {arrayTags && arrayTags.length > 0 && (
             <div id="tags" className="gap-2 flex h-full items-center">
               {arrayTags.map((tag, index) => (
                 <PostUtil.Tag
@@ -108,6 +115,7 @@ export default function FooterArea({
                     <div
                       className="flex items-center"
                       onClick={() =>
+                        setArrayTags &&
                         setArrayTags((prev) =>
                           prev.filter((item) => item !== tag)
                         )
@@ -149,11 +157,12 @@ export default function FooterArea({
           <Button.Action
             id="tag-btn"
             variant="custom"
-            icon={<Icon.Tag size="32" />}
+            icon={<Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />}
             onClick={(event) => {
               event.stopPropagation();
               setShowModalTag(true);
             }}
+            disabled={!arrayTags}
           />
           <Button.Action
             id="emoji-btn"
@@ -167,8 +176,14 @@ export default function FooterArea({
           <Button.Action
             id="media-upload-btn"
             variant="custom"
-            icon={<Icon.ImageSquare size="32" />}
+            icon={
+              <Icon.ImageSquare
+                size="32"
+                color={!selectedFiles ? 'gray' : 'white'}
+              />
+            }
             onClick={() => document.getElementById('fileInput')?.click()}
+            disabled={!selectedFiles}
           >
             <input
               id="fileInput"
@@ -176,6 +191,7 @@ export default function FooterArea({
               accept="image/*,video/*,.pdf"
               className="hidden"
               onChange={handleFileChange}
+              disabled={!selectedFiles}
               multiple
             />
           </Button.Action>

@@ -29,7 +29,10 @@ export default function Join() {
           src="/images/qr.png"
         />
         <div className="w-full inset-0 flex items-center justify-right left-8 absolute">
-          <Typography.H2 className="text-center w-full px-4 py-3 bg-[#2a2a2f] font-extrabold rounded-tl-3xl rounded-bl-3xl">
+          <Typography.H2
+            style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 5% 100%)' }}
+            className="text-[20px] mt-4 font-black text-center w-full px-4 py-2.5 bg-[#2a2a2f]"
+          >
             COMING SOON
           </Typography.H2>
         </div>

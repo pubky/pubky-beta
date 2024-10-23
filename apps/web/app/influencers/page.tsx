@@ -181,7 +181,7 @@ export default function Index() {
                                     )}
                                     <Typography.Caption
                                       variant="bold"
-                                      className="text-opacity-30"
+                                      className="text-opacity-60"
                                     >
                                       {tag?.taggers_count}
                                     </Typography.Caption>

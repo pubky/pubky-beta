@@ -10,6 +10,7 @@ export default function Intro() {
   const router = useRouter();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [currentIntro, setCurrentIntro] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const totalIntros = 6;
 
   useEffect(() => {
@@ -23,6 +24,17 @@ export default function Intro() {
     }
     fetchData();
   }, [pubky, isLoggedIn]);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleNext = () => {
     if (currentIntro < totalIntros - 1) {
@@ -88,7 +100,12 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-1.png')" },
+      className: {
+        marginTop: isMobile ? '250px' : '',
+        backgroundImage: isMobile
+          ? "url('/images/intro-1-mobile.png')"
+          : "url('/images/intro-1.png')",
+      },
     },
     {
       content: (
@@ -99,7 +116,7 @@ export default function Intro() {
             Pubky.
           </Typography.Display>
           <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-2">
               <Typography.Body
                 variant="medium"
                 className="text-opacity-80 leading-snug"
@@ -126,7 +143,13 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-2.png')" },
+      className: {
+        marginTop: isMobile ? '270px' : '',
+        marginLeft: isMobile ? '-250px' : '',
+        backgroundImage: isMobile
+          ? "url('/images/intro-2-mobile.png')"
+          : "url('/images/intro-2.png')",
+      },
     },
     {
       content: (
@@ -146,11 +169,11 @@ export default function Intro() {
             <div className="flex flex-col gap-4">
               <Typography.Body
                 variant="medium"
-                className="text-opacity-80 leading-snug"
+                className="text-opacity-80 leading-snug tracking-normal"
               >
                 Your key allows you to define where people can find your data,
                 even if you are censored or change digital locations.{' '}
-                <span className="font-bold text-white text-opacity-100">
+                <span className="font-bold text-white text-opacity-100 tracking-normal">
                   In this web, you are the key.
                 </span>
               </Typography.Body>
@@ -158,7 +181,11 @@ export default function Intro() {
           </div>
         </>
       ),
-      className: { backgroundImage: "url('/images/intro-3.png')" },
+      className: {
+        backgroundImage: isMobile
+          ? "url('/images/intro-3-mobile.png')"
+          : "url('/images/intro-3.png')",
+      },
     },
     {
       content: (
@@ -200,8 +227,10 @@ export default function Intro() {
         </>
       ),
       className: {
-        right: '300px',
-        backgroundImage: "url('/images/intro-4.png')",
+        right: isMobile ? '0px' : '300px',
+        backgroundImage: isMobile
+          ? "url('/images/intro-4-mobile.png')"
+          : "url('/images/intro-4.png')",
       },
     },
     {
@@ -224,6 +253,7 @@ export default function Intro() {
                 className="text-opacity-80 leading-snug"
               >
                 Save custom filter settings as new custom feeds.
+                <br />
                 <span className="text-white text-opacity-100 font-bold">
                   You are the algorithm.
                 </span>
@@ -233,9 +263,10 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: '250px',
-        left: '10px',
-        backgroundImage: "url('/images/intro-5.png')",
+        marginTop: isMobile ? '350px' : '250px',
+        backgroundImage: isMobile
+          ? "url('/images/intro-5-mobile.png')"
+          : "url('/images/intro-5.png')",
         backgroundPosition: 'left',
       },
     },
@@ -264,7 +295,9 @@ export default function Intro() {
       ),
       className: {
         top: '100px',
-        backgroundImage: "url('/images/intro-6.png')",
+        backgroundImage: isMobile
+          ? "url('/images/intro-6-mobile.png')"
+          : "url('/images/intro-6.png')",
         backgroundPosition: 'left',
       },
     },
@@ -272,15 +305,24 @@ export default function Intro() {
 
   return (
     <Content.Main className="pb-0">
-      <Header.Root>
+      <Header.Root className="backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
         <Header.Title titleHeader={'Intro'} />
       </Header.Root>
 
-      {/*Intro 1*/}
-      <Content.Grid className="z-10 relative">
+      {/*Bg images */}
+      <div className="w-full">
+        <div
+          style={introContent[currentIntro].className}
+          className="fixed inset-0 bg-cover bg-center pointer-events-none"
+        />
+      </div>
+
+      {/*Intros*/}
+      <Content.Grid className="z-10 relative flex flex-col justify-between min-w-screen min-h-[80vh]">
         {introContent[currentIntro].content}
-        <div className="max-w-[1200px] fixed bottom-10 w-full flex justify-between items-center p-4 mx-auto">
+        <div className="grow" />
+        <div className="absolute bottom-5 xl:bottom-10 w-full flex justify-between items-center mx-auto mt-6">
           <div className="flex gap-4">
             <Button.Large
               icon={<Icon.ArrowLeft />}
@@ -313,12 +355,6 @@ export default function Intro() {
           </Button.Large>
         </div>
       </Content.Grid>
-      <div className="w-full">
-        <div
-          style={introContent[currentIntro].className}
-          className="absolute inset-0 bg-cover bg-center pointer-events-none"
-        />
-      </div>
     </Content.Main>
   );
 }

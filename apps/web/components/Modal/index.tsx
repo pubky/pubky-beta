@@ -2,7 +2,9 @@ import Backup from './_Backup';
 import CheckLink from './_CheckLink';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
+import DeleteAccount from './_DeleteAccount';
 import DeletePost from './_DeletePost';
+import EditPost from './_EditPost';
 import Feedback from './_Feedback';
 import Link from './_Link';
 import Logout from './_Logout';
@@ -20,7 +22,9 @@ export const Modal = {
   CheckLink,
   CreatePost,
   CreateReply,
+  DeleteAccount,
   DeletePost,
+  EditPost,
   Feedback,
   Link,
   Logout,

@@ -20,6 +20,7 @@ import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTi
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
 import { TStatus } from '@/types';
+import { getUserProfile } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -41,6 +42,7 @@ type PubkyClientContextType = {
     kind: PostKind,
     files?: File[]
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
+  editPost: (post: PostView, postContent: string) => Promise<string | false>;
   createRepost: (
     originalPostId: string,
     originalauthorId: string,
@@ -81,6 +83,7 @@ type PubkyClientContextType = {
   timelineProfile: PostView[] | undefined;
   setTimelineProfile: (timelineProfile: PostView[]) => void;
   deletePost: (post_id: string) => Promise<boolean>;
+  deleteAccount: () => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -191,9 +194,13 @@ export function PubkyClientWrapper({
 
       // Save pubky state
       const pk = session.pubky().z32();
+      const user = await getUserProfile(pk, pk);
+      if (user?.details?.name === '[DELETED]') {
+        throw new Error('This account has been deleted');
+      }
+
       Utils.storage.set('pubky_public_key', pk);
       setPubky(pk);
-
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
@@ -464,6 +471,59 @@ export function PubkyClientWrapper({
       return { uri: postUrl, details: newPost };
     } catch (error) {
       console.error('Error creating post:', error);
+      return false;
+    }
+  };
+
+  const editPost = async (post: PostView, postContent: string) => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const editPost: PubkyAppPost = {
+        content: postContent,
+        kind: post?.details?.kind,
+        attachments: post?.details?.attachments,
+        relationships: post?.relationships,
+      };
+
+      // Serialize the post to JSON and convert to Buffer
+      const postBody = Buffer.from(JSON.stringify(editPost));
+
+      // Post URL
+      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${post?.details?.id}`;
+
+      // Send the post to the homeserver
+      await client.put(postUrl, postBody);
+
+      return postUrl;
+    } catch (error) {
+      console.error('Error editing post:', error);
+      return false;
+    }
+  };
+
+  const deleteAccount = async () => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
+      const lists = await client.list(profileUrl);
+
+      await Promise.all(
+        lists.map(async (list) => {
+          await client.delete(list);
+        })
+      );
+
+      return true;
+    } catch (error) {
+      console.error('Error editing post:', error);
       return false;
     }
   };
@@ -925,6 +985,7 @@ export function PubkyClientWrapper({
         setSeed,
         saveProfile,
         createPost,
+        editPost,
         deletePost,
         follow,
         unfollow,
@@ -939,6 +1000,7 @@ export function PubkyClientWrapper({
         deleteTag,
         createTagProfile,
         deleteTagProfile,
+        deleteAccount,
         getRecoveryFile,
         storeProfile,
         updateStatus,

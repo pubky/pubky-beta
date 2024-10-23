@@ -130,7 +130,7 @@ export default function Index() {
           <Link href="/onboarding/pubky">
             <Button.Large
               icon={<Icon.ArrowLeft />}
-              className="w-[175px]"
+              className="w-[140px]"
               variant="secondary"
             >
               Back
@@ -164,9 +164,9 @@ export default function Index() {
             <Button.Large
               id="onboarding-start-exploring-btn"
               icon={<Icon.Check />}
-              className="w-[175px] z-20"
+              className="w-[140px] z-20"
             >
-              Start Exploring
+              Let&apos;s go!
             </Button.Large>
           </Link>
         </div>
