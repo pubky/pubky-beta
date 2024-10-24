@@ -10,6 +10,7 @@ export default function Intro() {
   const [currentIntro, setCurrentIntro] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [smallScreen, setSmallScreen] = useState(false);
+  const [largeScreen, setLargeScreen] = useState(false);
   const totalIntros = 7;
 
   useEffect(() => {
@@ -19,15 +20,21 @@ export default function Intro() {
     const checkSmallScreen = () => {
       setSmallScreen(window.innerWidth < 1280);
     };
+    const checkLargeScreen = () => {
+      setLargeScreen(window.innerWidth < 1500);
+    };
 
     checkMobile();
     checkSmallScreen();
+    checkLargeScreen();
     window.addEventListener('resize', checkMobile);
     window.addEventListener('resize', checkSmallScreen);
+    window.addEventListener('resize', checkLargeScreen);
 
     return () => {
       window.removeEventListener('resize', checkMobile);
       window.removeEventListener('resize', checkSmallScreen);
+      window.removeEventListener('resize', checkLargeScreen);
     };
   }, []);
 
@@ -292,7 +299,12 @@ export default function Intro() {
       ),
       className: {
         top: isMobile ? '200px' : '100px',
-        left: smallScreen && !isMobile ? '-300px' : '',
+        left:
+          largeScreen && !smallScreen
+            ? '-200px'
+            : smallScreen && !isMobile
+            ? '-220px'
+            : '',
         backgroundImage: isMobile
           ? "url('/images/intro-6-mobile.png')"
           : "url('/images/intro-6.png')",
@@ -301,37 +313,37 @@ export default function Intro() {
     },
     {
       content: (
-        <>
-          <Typography.Display>Coming Soon</Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
-            <div className="flex flex-col gap-4">
+        <div className="lg:h-[50vh] flex items-center justify-center">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Typography.Display>Coming Soon</Typography.Display>
               <Typography.Body
                 variant="medium"
                 className="text-opacity-80 leading-snug"
               >
-                Pubky is currently in private beta and will open up to more
-                users soon.
+                Pubky is currently in private beta and will open up
+                <br /> to more users soon.
               </Typography.Body>
-              <Typography.Body variant="medium" className="font-bold">
-                Learn more about Pubky:
-              </Typography.Body>
-              <div className="relative flex gap-3">
-                <Link target="_blank" href="https://pubky.org">
-                  <Button.Large>Knowledge Base</Button.Large>
-                </Link>
-                <Button.Large
-                  onClick={() =>
-                    window.open('https://medium.com/@synonym_to', '_blank')
-                  }
-                  variant="secondary"
-                  className="w-auto"
-                >
-                  Blog
-                </Button.Large>
-              </div>
+            </div>
+            <Typography.Body variant="medium" className="font-bold">
+              Learn more about Pubky:
+            </Typography.Body>
+            <div className="relative flex gap-3">
+              <Link target="_blank" href="https://pubky.org">
+                <Button.Large>Knowledge Base</Button.Large>
+              </Link>
+              <Button.Large
+                onClick={() =>
+                  window.open('https://medium.com/@synonym_to', '_blank')
+                }
+                variant="secondary"
+                className="w-auto"
+              >
+                Blog
+              </Button.Large>
             </div>
           </div>
-        </>
+        </div>
       ),
       className: {
         backgroundImage: isMobile
@@ -346,7 +358,7 @@ export default function Intro() {
       <Header.Root className="backdrop-blur-[0px]">
         <div className="flex gap-3 lg:gap-6 items-center lg:items-start">
           <Header.Logo link="/" />
-          <Header.Title titleHeader="Sneak&#160;Peek" />
+          <Header.Title className="mt-[1px]" titleHeader="Sneak&#160;Peek" />
         </div>
         <div className="h-6 justify-start items-start gap-6 inline-flex">
           <Link
