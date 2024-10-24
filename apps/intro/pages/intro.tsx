@@ -260,7 +260,7 @@ export default function Intro() {
       ),
       className: {
         marginTop: isMobile ? '350px' : '250px',
-        left: !smallScreen ? '200px' : '',
+        left: smallScreen ? '50px' : '200px',
         backgroundImage: isMobile
           ? "url('/images/intro-5-mobile.png')"
           : "url('/images/intro-5.png')",
