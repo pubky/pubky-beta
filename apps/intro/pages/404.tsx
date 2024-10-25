@@ -2,7 +2,7 @@
 
 import { Button, Content, Header, Typography } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import Error404 from './components/404';
+import Error404 from '../components/404';
 
 export default function Custom404() {
   const router = useRouter();

@@ -11,6 +11,7 @@ export default function Intro() {
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [currentIntro, setCurrentIntro] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [smallScreen, setSmallScreen] = useState(false);
   const totalIntros = 6;
 
   useEffect(() => {
@@ -29,11 +30,19 @@ export default function Intro() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 640);
     };
+    const checkSmallScreen = () => {
+      setSmallScreen(window.innerWidth < 1280);
+    };
 
     checkMobile();
+    checkSmallScreen();
     window.addEventListener('resize', checkMobile);
+    window.addEventListener('resize', checkSmallScreen);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('resize', checkSmallScreen);
+    };
   }, []);
 
   const handleNext = () => {
@@ -53,7 +62,7 @@ export default function Intro() {
       content: (
         <>
           <Typography.Display>
-            It&apos;s your web. Time to take it back.
+            It&apos;s your web. Take it back.
           </Typography.Display>
           <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
             <div className="flex flex-col gap-4">
@@ -101,7 +110,7 @@ export default function Intro() {
         </>
       ),
       className: {
-        marginTop: isMobile ? '250px' : '',
+        marginTop: isMobile ? '300px' : '',
         backgroundImage: isMobile
           ? "url('/images/intro-1-mobile.png')"
           : "url('/images/intro-1.png')",
@@ -144,10 +153,10 @@ export default function Intro() {
         </>
       ),
       className: {
-        marginTop: isMobile ? '270px' : '',
-        marginLeft: isMobile ? '-250px' : '',
+        marginTop: isMobile ? '300px' : '',
+        marginLeft: isMobile ? '-150px' : '',
         backgroundImage: isMobile
-          ? "url('/images/intro-2-mobile.png')"
+          ? "url('/images/intro-2.png')"
           : "url('/images/intro-2.png')",
       },
     },
@@ -228,6 +237,7 @@ export default function Intro() {
       ),
       className: {
         right: isMobile ? '0px' : '300px',
+        top: isMobile ? '100px' : '',
         backgroundImage: isMobile
           ? "url('/images/intro-4-mobile.png')"
           : "url('/images/intro-4.png')",
@@ -264,6 +274,7 @@ export default function Intro() {
       ),
       className: {
         marginTop: isMobile ? '350px' : '250px',
+        left: smallScreen ? '50px' : '200px',
         backgroundImage: isMobile
           ? "url('/images/intro-5-mobile.png')"
           : "url('/images/intro-5.png')",
@@ -294,7 +305,8 @@ export default function Intro() {
         </>
       ),
       className: {
-        top: '100px',
+        top: isMobile ? '200px' : '100px',
+        left: smallScreen && !isMobile ? '-300px' : '',
         backgroundImage: isMobile
           ? "url('/images/intro-6-mobile.png')"
           : "url('/images/intro-6.png')",
@@ -304,10 +316,12 @@ export default function Intro() {
   ];
 
   return (
-    <Content.Main className="pb-0">
+    <Content.Main className="pb-0 md:pt-[150px] pt-[120px]">
       <Header.Root className="backdrop-blur-[0px]">
-        <Header.Logo link={logoLink} />
-        <Header.Title titleHeader={'Intro'} />
+        <div className="flex gap-3 lg:gap-6 items-center lg:items-start">
+          <Header.Logo link={logoLink} />
+          <Header.Title titleHeader={'Intro'} />
+        </div>
       </Header.Root>
 
       {/*Bg images */}

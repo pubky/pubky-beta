@@ -100,7 +100,7 @@ export default function Index() {
           Unlock <br />
           the web.
         </Typography.Display>
-        <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
+        <Typography.H2 variant="light" className="text-opacity-50 mt-4">
           Your keys, your content, your rules.
         </Typography.H2>
         <div className="relative flex gap-3 mt-12">
