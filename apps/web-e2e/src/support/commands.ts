@@ -64,13 +64,19 @@ declare namespace Cypress {
 }
 
 Cypress.Commands.add('onboardAsNewUser', (profileName : string, profileBio : string = '', pubkyAlias? : string) => {
-  cy.visit('/onboarding');
+  cy.visit('/', {
+    auth: {
+      username: `${process.env.AUTH_USERNAME}`,
+      password: `${process.env.AUTH_PASSWORD}`
+    }
+  });
 
-  cy.get('#onboarding-get-started-link').click();
+  cy.location('pathname').should('eq', '/onboarding');
+
+  cy.contains('button', 'Create Account').click();
   cy.location('pathname').should('eq', '/onboarding/intro');
 
-  cy.get('#onboarding-sign-in-btn').click();
-  cy.location('pathname').should('eq', '/onboarding/sign-in');
+  cy.contains('button', 'Skip Intro').click();
 
   cy.get('#onboarding-sign-up-link').click();
   cy.location('pathname').should('eq', '/onboarding/sign-up');
@@ -204,14 +210,10 @@ Cypress.Commands.add('saveCopiedPubkyToAlias', (alias : string) => {
   });
 });
 
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+// To prevent Cypress from failing the test when:
+// `Uncaught SyntaxError: Invalid or unexpected token` on Chrome, and
+// `Uncaught SyntaxError: "" literal not terminated before end of script` on firefox.
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
+// Cypress.on('uncaught:exception', (_err, _runnable) => {
+//   return false
+// })
