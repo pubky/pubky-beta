@@ -59,7 +59,7 @@ export default function Replies({
     <>
       {isLoadingReplies ? (
         <Skeletons.Simple />
-      ) : replies && replies.length === 0 ? (
+      ) : !Array.isArray(replies) ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">
           No replies yet
         </Typography.Body>
