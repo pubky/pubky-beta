@@ -1,8 +1,8 @@
 import { Icon, Typography } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { Post } from '@/components';
-import { PostThread, PostView } from '@/types/Post';
-import { usePostThread } from '@/hooks/usePost';
+import { PostView } from '@/types/Post';
+import { usePostReplies } from '@/hooks/usePost';
 import { Utils } from '@social/utils-shared';
 import { useRouter } from 'next/navigation';
 import Skeletons from '@/components/Skeletons';
@@ -15,7 +15,7 @@ export default function Replies({
   post,
   isLoadingReplies,
 }: {
-  repliesResponse: PostThread | undefined;
+  repliesResponse: PostView[] | undefined;
   post: PostView;
   isLoadingReplies: boolean;
 }) {
@@ -26,7 +26,7 @@ export default function Replies({
   const fetchReplies = async () => {
     try {
       if (repliesResponse) {
-        setReplies(repliesResponse.replies || []);
+        setReplies(repliesResponse || []);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -39,6 +39,10 @@ export default function Replies({
   }, [repliesResponse]);
 
   const renderReplies = (replies: PostView[]) => {
+    if (!Array.isArray(replies)) {
+      return null;
+    }
+
     return replies
       .filter((reply) => !mutedUsers?.includes(reply?.details?.author))
       .map((reply) => (
@@ -70,7 +74,7 @@ export default function Replies({
 
 const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
   const { pubky } = usePubkyClientContext();
-  const { data: replyReplies } = usePostThread(
+  const { data: replyReplies } = usePostReplies(
     reply?.details?.author,
     reply?.details?.id
   );
@@ -90,14 +94,13 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
   );
   //const [showAllReplies, setShowAllReplies] = useState(false);
 
-  if (!replyReplies || replyReplies.replies.length === 0) return null;
+  if (!replyReplies || replyReplies.length === 0) return null;
 
-  const displayedReplies = replyReplies.replies.slice(0, 1);
+  const displayedReplies = replyReplies.slice(0, 1);
   //showAllReplies
   //  ? replyReplies.replies
   //  : replyReplies.replies.slice(0, 1);
-  const repliesLeft =
-    replyReplies?.root_post.counts?.replies - displayedReplies.length;
+  const repliesLeft = replyReplies?.length - displayedReplies.length;
 
   return (
     <div>

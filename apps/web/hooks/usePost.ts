@@ -9,7 +9,7 @@ import {
   getPostStream,
   getPostStreamByUser,
   getPostStreamByReach,
-  getPostThread,
+  getPostReplies,
   getBookmarkedPosts,
 } from '../services/postService';
 
@@ -86,7 +86,7 @@ export function usePostStreamByReach(
   });
 }
 
-export function usePostThread(
+export function usePostReplies(
   authorId: string,
   postId: string,
   viewerId?: string,
@@ -94,8 +94,8 @@ export function usePostThread(
   limit?: number
 ) {
   return useQuery({
-    queryKey: ['postThread', authorId, postId, viewerId, skip, limit],
-    queryFn: () => getPostThread(authorId, postId, viewerId, skip, limit),
+    queryKey: ['postReplies', authorId, postId, viewerId, skip, limit],
+    queryFn: () => getPostReplies(authorId, postId, viewerId, skip, limit),
     retry: false,
   });
 }

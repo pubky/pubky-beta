@@ -9,13 +9,7 @@ import {
   createRecoveryFile,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
-import {
-  PostKind,
-  PostThread,
-  PostView,
-  PubkyAppPost,
-  PubkyAppUser,
-} from '@/types/Post';
+import { PostKind, PostView, PubkyAppPost, PubkyAppUser } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
@@ -78,8 +72,8 @@ type PubkyClientContextType = {
   setTimeline: (timeline: PostView[]) => void;
   setSearchTags: (value: string[]) => any;
   searchTags: string[];
-  repliesArray: PostThread | undefined;
-  setRepliesArray: (repliesArray: PostThread) => void;
+  repliesArray: PostView[] | undefined;
+  setRepliesArray: (repliesArray: PostView[]) => void;
   timelineProfile: PostView[] | undefined;
   setTimelineProfile: (timelineProfile: PostView[]) => void;
   deletePost: (post_id: string) => Promise<boolean>;
@@ -106,8 +100,8 @@ export function PubkyClientWrapper({
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
-  const [repliesArray, setRepliesArray] = useState<PostThread>(
-    {} as PostThread
+  const [repliesArray, setRepliesArray] = useState<PostView[]>(
+    {} as PostView[]
   );
 
   useEffect(() => {

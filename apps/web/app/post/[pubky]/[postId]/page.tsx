@@ -6,12 +6,12 @@ import { Utils } from '@social/utils-shared';
 import Skeletons from '@/components/Skeletons';
 import { Post } from './components';
 import MetaTags from '@/components/MetaTags';
-import { usePost, usePostThread } from '@/hooks/usePost';
+import { usePost, usePostReplies } from '@/hooks/usePost';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { useEffect, useRef, useState } from 'react';
 import { getFile } from '@/services/fileService';
-import { PostThread, PubkyAppFile } from '@/types/Post';
+import { PostView, PubkyAppFile } from '@/types/Post';
 import Link from 'next/link';
 
 // Component for Loading Content
@@ -102,8 +102,8 @@ export default function Index({
 }) {
   const limit = 10;
   const [skip, setSkip] = useState(0);
-  const [repliesArray, setRepliesArray] = useState<PostThread>(
-    {} as PostThread
+  const [repliesArray, setRepliesArray] = useState<PostView[]>(
+    {} as PostView[]
   );
   const { pubky } = usePubkyClientContext();
   const { data, isLoading, isError } = usePost(params.pubky, params.postId);
@@ -111,7 +111,7 @@ export default function Index({
     data: replies,
     isLoading: isLoadingReplies,
     isError: isErrorReplies,
-  } = usePostThread(params.pubky, params.postId, pubky, skip, limit);
+  } = usePostReplies(params.pubky, params.postId, pubky, skip, limit);
   const { data: author } = useUserProfile(
     data?.details?.author as string,
     pubky ?? ''
@@ -127,11 +127,11 @@ export default function Index({
   const fetchMoreReplies = () => {
     if (isErrorReplies) return;
 
-    const newReplies = {
-      root_post: replies?.root_post,
-      replies: [...(repliesArray?.replies || []), ...(replies?.replies || [])],
-    };
-    setRepliesArray(newReplies as PostThread);
+    const newRepliesArray = [
+      ...(Array.isArray(repliesArray) ? repliesArray : []),
+      ...(Array.isArray(replies) ? replies : []),
+    ];
+    setRepliesArray(newRepliesArray);
 
     const newSkip = skip + limit;
     setSkip(newSkip);
