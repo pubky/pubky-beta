@@ -27,7 +27,7 @@ export default function Faq() {
         </div>
       ))}
       <Button.Medium
-        icon={<Icon.Question size="16" color="gray" />}
+        icon={<Icon.Question size="16" />}
         className="py-2 px-3 h-8"
         onClick={() => router.push('/settings?section=help')}
       >

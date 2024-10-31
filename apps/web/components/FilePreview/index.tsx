@@ -18,6 +18,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
   const isVideo = file.type.startsWith('video');
   const isImage = file.type.startsWith('image');
   const isPDF = file.type === 'application/pdf';
+  const isAudio = file.type.startsWith('audio');
 
   return (
     <div className="relative">
@@ -41,7 +42,12 @@ const FilePreview: React.FC<FilePreviewProps> = ({
         />
       ) : isPDF ? (
         <div className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-gray-100 rounded-lg p-4">
-          <Icon.FileText size="64"color='#05050a' />
+          <Icon.FileText size="64" color="#05050a" />
+          <p className="mt-2 text-gray-700 text-sm text-center">{file.name}</p>
+        </div>
+      ) : isAudio ? (
+        <div className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-gray-100 rounded-lg p-4">
+          <Icon.SpeakerHigh size="64" color="#05050a" />
           <p className="mt-2 text-gray-700 text-sm text-center">{file.name}</p>
         </div>
       ) : (
