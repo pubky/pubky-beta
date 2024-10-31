@@ -145,6 +145,7 @@ export type NotificationPreferences = {
   reply: boolean;
   repost: boolean;
   post_deleted: boolean;
+  post_edited: boolean;
 };
 
 export interface INotification {

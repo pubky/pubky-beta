@@ -46,6 +46,7 @@ const defaultPreferences: NotificationPreferences = {
   reply: true,
   repost: true,
   post_deleted: true,
+  post_edited: true,
 };
 
 const FilterContext = createContext<FilterContextType>({
