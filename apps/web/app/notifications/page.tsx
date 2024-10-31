@@ -1,7 +1,7 @@
 'use client';
 
 import { Content, Typography } from '@social/ui-shared';
-import { useNotificationsContext } from '@/contexts';
+import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
 import {
   CreatePost,
   Header,
@@ -15,8 +15,17 @@ import { useState, useEffect } from 'react';
 import { NotificationView } from '@/types/User';
 
 export default function Index() {
+  const { putTimestampNotification } = usePubkyClientContext();
   const { notifications, loading } = useNotificationsContext();
   const [loadingNotifications, setLoadingNotifications] = useState(true);
+  const timestamp = Date.now();
+
+  useEffect(() => {
+    const PutTimestamp = async () => {
+      await putTimestampNotification(timestamp);
+    };
+    PutTimestamp();
+  }, []);
 
   useEffect(() => {
     if (!loading) {

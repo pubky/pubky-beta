@@ -10,7 +10,7 @@ import {
   Menu,
   PostUtil,
 } from '@social/ui-shared';
-import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
 import { useRouter } from 'next/navigation';
@@ -24,8 +24,8 @@ interface HeaderProps {
 export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
   const { setSearchTags, searchTags, profile } = usePubkyClientContext();
+  const {unReadNotification} = useFilterContext();
   const { pubky, isLoggedIn } = usePubkyClientContext();
-  const { notifications } = useNotificationsContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
@@ -200,12 +200,12 @@ export default function Header({ title, className }: HeaderProps) {
           />
         </Link>
         <Link href="/profile" className="w-[48px] relative">
-          {notifications?.length !== 0 && (
+          {unReadNotification !== 0 && (
             <PostUtil.Counter
               textCSS="tracking-tight text-black font-semibold text-[13px]"
               className="p-0 w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
             >
-              {notifications?.length}
+              {unReadNotification}
             </PostUtil.Counter>
           )}
           <ImageByUri
@@ -248,7 +248,7 @@ export default function Header({ title, className }: HeaderProps) {
                 href="/notifications"
                 icon={<Icon.Bell />}
                 text="Notifications"
-                counter={notifications?.length}
+                counter={unReadNotification}
               />
               <Menu.Section
                 href="/influencers"

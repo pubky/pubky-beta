@@ -1,17 +1,25 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Content } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from './components';
 import { useUserProfile } from '@/hooks/useUser';
-import { usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { TStatus } from '@/types';
 
 export default function Index() {
-  const { pubky } = usePubkyClientContext();
+  const { pubky, putTimestampNotification } = usePubkyClientContext();
   const { data: user, isLoading } = useUserProfile(pubky ?? '', pubky ?? '');
   const loader = useRef(null);
+  const timestamp = Date.now();
+
+  useEffect(() => {
+    const PutTimestamp = async () => {
+      await putTimestampNotification(timestamp);
+    };
+    PutTimestamp();
+  }, []);
 
   return (
     <Content.Main>

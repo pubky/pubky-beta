@@ -78,6 +78,8 @@ type PubkyClientContextType = {
   setTimelineProfile: (timelineProfile: PostView[]) => void;
   deletePost: (post_id: string) => Promise<boolean>;
   deleteAccount: () => Promise<boolean>;
+  getTimestampNotification: () => Promise<number | boolean>;
+  putTimestampNotification: (timestamp: number) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -131,6 +133,7 @@ export function PubkyClientWrapper({
       Utils.storage.remove('pubky_public_key');
       Utils.storage.remove('seed');
       Utils.storage.remove('profile');
+      Utils.storage.remove('unread');
       setPubky(undefined);
       setSeed(undefined);
       setProfile(undefined);
@@ -518,6 +521,50 @@ export function PubkyClientWrapper({
       return true;
     } catch (error) {
       console.error('Error editing post:', error);
+      return false;
+    }
+  };
+
+  const getTimestampNotification = async () => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
+      const lastRead = await client.get(lastReadUrl);
+      const jsonString = lastRead && Object.values(lastRead)
+        .map((asciiCode: number) => String.fromCharCode(asciiCode))
+        .join('');
+
+      // Parso la stringa JSON e ottengo il valore di "timestamp"
+      const parsedData = jsonString && JSON.parse(jsonString);
+      const timestamp = Number(parsedData.timestamp);
+
+      return timestamp;
+    } catch (error) {
+      console.error('Error get timestamp:', error);
+      return false;
+    }
+  };
+
+  const putTimestampNotification = async (timestamp: number) => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const body = { timestamp: timestamp };
+      const lastReadBody = Buffer.from(JSON.stringify(body));
+
+      const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
+      const lastRead = await client.put(lastReadUrl, lastReadBody);
+
+      return true;
+    } catch (error) {
+      console.error('Error put timestamp:', error);
       return false;
     }
   };
@@ -1006,6 +1053,8 @@ export function PubkyClientWrapper({
         setRepliesArray,
         timelineProfile,
         setTimelineProfile,
+        getTimestampNotification,
+        putTimestampNotification,
       }}
     >
       {children}

@@ -176,7 +176,6 @@ export async function getPostReplies(
   }
 
   const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
-  console.log('response', `${BASE_URL}/stream/posts?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch post replies');
 

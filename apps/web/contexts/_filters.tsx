@@ -34,6 +34,8 @@ type FilterContextType = {
   setTimeframe: (timeframe: TTimeframe) => void;
   notificationPreferences: NotificationPreferences;
   setNotificationPreferences: (prefs: NotificationPreferences) => void;
+  unReadNotification: number;
+  setUnReadNotification: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const defaultPreferences: NotificationPreferences = {
@@ -68,6 +70,8 @@ const FilterContext = createContext<FilterContextType>({
   setTimeframe: () => {},
   notificationPreferences: defaultPreferences,
   setNotificationPreferences: () => {},
+  unReadNotification: 0,
+  setUnReadNotification: () => {},
 });
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
@@ -96,6 +100,9 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [timeframe, setTimeframe] = useState<TTimeframe>(
     (Utils.storage.get('timeframe') as TTimeframe) || 'today'
   );
+  const [unReadNotification, setUnReadNotification] = useState<number>(
+    (Utils.storage.get('unread') as number) || 0
+  );
   const [notificationPreferences, setNotificationPreferences] =
     useState<NotificationPreferences>(
       (Utils.storage.get(
@@ -114,6 +121,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     Utils.storage.set('content', content);
     Utils.storage.set('timeframe', timeframe);
     Utils.storage.set('notificationPreferences', notificationPreferences);
+    Utils.storage.set('unread', unReadNotification);
     setIsInitialized(true);
   }, [
     layout,
@@ -150,6 +158,8 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         setTimeframe,
         notificationPreferences,
         setNotificationPreferences,
+        unReadNotification,
+        setUnReadNotification,
       }}
     >
       {children}
