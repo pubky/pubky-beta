@@ -65,10 +65,7 @@ export default function DeleteAccount({
           className="bg-[#dc2626] border-[#dc2626]"
           colorText="text-[#dc2626]"
           loading={loading}
-          onClick={() => {
-            handleDeleteAccount();
-            //setShowModalDeleteAccount(false);
-          }}
+          onClick={() => (loading ? undefined : handleDeleteAccount())}
         >
           Delete Account
         </Modal.SubmitAction>

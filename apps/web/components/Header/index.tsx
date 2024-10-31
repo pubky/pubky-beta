@@ -24,7 +24,7 @@ interface HeaderProps {
 export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
   const { setSearchTags, searchTags, profile } = usePubkyClientContext();
-  const {unReadNotification} = useFilterContext();
+  const { unReadNotification } = useFilterContext();
   const { pubky, isLoggedIn } = usePubkyClientContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -205,7 +205,7 @@ export default function Header({ title, className }: HeaderProps) {
               textCSS="tracking-tight text-black font-semibold text-[13px]"
               className="p-0 w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
             >
-              {unReadNotification}
+              {unReadNotification > 21 ? '+21' : unReadNotification}
             </PostUtil.Counter>
           )}
           <ImageByUri

@@ -15,6 +15,7 @@ import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
 import { TStatus } from '@/types';
 import { getUserProfile } from '@/services/userService';
+import JSZip from 'jszip';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -78,6 +79,7 @@ type PubkyClientContextType = {
   setTimelineProfile: (timelineProfile: PostView[]) => void;
   deletePost: (post_id: string) => Promise<boolean>;
   deleteAccount: () => Promise<boolean>;
+  downloadData: () => Promise<boolean>;
   getTimestampNotification: () => Promise<number | boolean>;
   putTimestampNotification: (timestamp: number) => Promise<boolean>;
 };
@@ -525,6 +527,69 @@ export function PubkyClientWrapper({
     }
   };
 
+  const downloadData = async () => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
+      const lists = await client.list(profileUrl);
+
+      const zip = new JSZip();
+      const dataFolder = zip.folder('data');
+      if (!dataFolder) {
+        throw new Error("Error creating 'data' folder in zip.");
+      }
+
+      await Promise.all(
+        lists.slice(0, 2).map(async (list, index) => {
+          const result = await client.get(list);
+
+          if (result === undefined) {
+            console.warn(`File ${index + 1} was not found or is undefined.`);
+            return; // Skip
+          }
+
+          let parsedData;
+          let fileName;
+          try {
+            const decoder = new TextDecoder('utf-8');
+            const decodedString = decoder.decode(result);
+            parsedData = JSON.parse(decodedString);
+            fileName = `${index + 1}.json`;
+            dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
+          } catch (error) {
+            console.warn(
+              `File ${
+                index + 1
+              } is not in JSON format. It will be saved as a binary file.`
+            );
+            fileName = `${index + 1}.bin`;
+            dataFolder.file(fileName, result);
+          }
+        })
+      );
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'data.zip';
+      document.body.appendChild(a);
+      a.click();
+
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      return true;
+    } catch (error) {
+      console.error('Error downloading data:', error);
+      return false;
+    }
+  };
+
   const getTimestampNotification = async () => {
     try {
       const loggedIn = await isLoggedIn();
@@ -534,11 +599,12 @@ export function PubkyClientWrapper({
 
       const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
       const lastRead = await client.get(lastReadUrl);
-      const jsonString = lastRead && Object.values(lastRead)
-        .map((asciiCode: number) => String.fromCharCode(asciiCode))
-        .join('');
+      const jsonString =
+        lastRead &&
+        Object.values(lastRead)
+          .map((asciiCode: number) => String.fromCharCode(asciiCode))
+          .join('');
 
-      // Parso la stringa JSON e ottengo il valore di "timestamp"
       const parsedData = jsonString && JSON.parse(jsonString);
       const timestamp = Number(parsedData.timestamp);
 
@@ -1055,6 +1121,7 @@ export function PubkyClientWrapper({
         setTimelineProfile,
         getTimestampNotification,
         putTimestampNotification,
+        downloadData,
       }}
     >
       {children}
