@@ -8,7 +8,7 @@ import { defaultMs } from './src/support/slow-down';
 export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { cypressDir: 'src' }),
-    baseUrl: 'https://staging.pubky.app',
+    baseUrl: 'http://localhost:4200',
     defaultCommandTimeout: process.env.CI ? 30_000 : 10_000,
     video: true,
     viewportWidth: 1920,
