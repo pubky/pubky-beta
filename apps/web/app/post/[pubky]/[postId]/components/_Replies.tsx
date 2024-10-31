@@ -100,7 +100,7 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
   //showAllReplies
   //  ? replyReplies.replies
   //  : replyReplies.replies.slice(0, 1);
-  const repliesLeft = replyReplies?.length - displayedReplies.length;
+  const repliesLeft = post?.counts?.replies - displayedReplies.length;
 
   return (
     <div>

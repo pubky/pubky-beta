@@ -233,7 +233,7 @@ const PostReplies = ({ post, layout, homeView = false }) => {
   //showAllReplies
   //  ? replies.replies
   //  : replies.replies.slice(0, 2);
-  const repliesLeft = replies?.length - displayedReplies.length;
+  const repliesLeft = post?.counts?.replies - displayedReplies.length;
 
   return (
     <div className="mt-3 flex flex-col gap-3">
