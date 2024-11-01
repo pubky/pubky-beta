@@ -25,6 +25,7 @@ export default function CreateArticle({
   const [contentTitle, setContentTitle] = useState('');
   const [contentArticle, setContentArticle] = useState('');
   const [showModalTag, setShowModalTag] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [sendingArticle, setSendingArticle] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [isValidContent, setIsValidContent] = useState(false);
@@ -203,6 +204,12 @@ export default function CreateArticle({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValidContent, contentArticle]);
 
+  const handleFileClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -307,6 +314,7 @@ export default function CreateArticle({
                 <div className="w-full">
                   <Input.Cursor
                     placeholder="Title"
+                    autoFocus
                     className="h-auto text-[40px] font-bold sm:text-[64px]"
                     defaultValue={contentTitle}
                     disabled={sendingArticle}
@@ -341,6 +349,7 @@ export default function CreateArticle({
                       </div>
                     ) : (
                       <div
+                        onClick={handleFileClick}
                         onDragEnter={handleDragEnter}
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
@@ -348,6 +357,7 @@ export default function CreateArticle({
                         className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-white bg-opacity-10 rounded-lg p-4 cursor-pointer"
                       >
                         <input
+                          ref={fileInputRef}
                           type="file"
                           accept="image/*"
                           onChange={handleFileChange}
@@ -381,7 +391,6 @@ export default function CreateArticle({
                     //setTextArea={setTextArea}
                     largeView
                     setIsValidContent={setIsValidContent}
-                    autoFocus
                     placeHolder="Write your article"
                     setFilePreviews={setFilePreviews}
                     loading={sendingArticle}
