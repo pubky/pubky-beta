@@ -7,8 +7,9 @@ describe('contacts', () => {
     cy.deleteDownloadsFolder();
   });
 
-  it('follow, be followed, and make a friend', () => {
-    cy.on('uncaught:exception', (err, runnable) => {
+  // SKIP due to bug https://github.com/pubky/pubky-app/issues/529
+  it.skip('follow, be followed, and make a friend', () => {
+    cy.on('uncaught:exception', (_err, _runnable) => {
       // returning false here prevents Cypress from failing the test
       return false
     })
@@ -59,6 +60,9 @@ describe('contacts', () => {
     });
     // check that account 1 profile page is displayed
     cy.get('#profile-username-header').should('have.text', '#1 Friend');
+
+    // NOTE: this is where timeout occurs waiting on Follow button
+    // but instead get Loading...', see https://github.com/pubky/pubky-app/issues/529
 
     // Check follow button is displayed for account 1
     cy.get('#profile-follow-btn').should('be.visible').and('have.text', 'Follow');

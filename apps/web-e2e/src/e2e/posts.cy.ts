@@ -38,6 +38,7 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
+
   it('can post from new post', () => {
     const postContent = `I can make a new post! ${Date.now()}`;
     // click button to display new post modal
@@ -184,6 +185,7 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
   });
 
+  // FAILING
   it('can delete a post', () => {
     const postContent = `I can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
@@ -226,6 +228,7 @@ describe('posts', () => {
     });
   });
 
+  // FAILING
   it('can tag whilst creating post', () => {
     const postContent = `I can post with tags! ${Date.now()}`;
     const tag1 = 'alpacas';
@@ -275,6 +278,7 @@ describe('posts', () => {
     });
   });
 
+  // FAILING
   it('can tag and remove tags from existing post', () => {
     const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
     const tag1 = 'bananas';
@@ -329,6 +333,7 @@ describe('posts', () => {
   });
 
   // todo: consider creating user to create the post to bookmark
+  // FAILING
   it('can bookmark post then remove bookmark', () => {
     const postContent = `This post will be bookmarked! ${Date.now()}`;
 
@@ -360,6 +365,7 @@ describe('posts', () => {
   });
 
   // todo: consider creating user to create the post to repost
+  // FAILING
   it('can repost with content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted with content! ${Date.now()}`;
@@ -406,6 +412,7 @@ describe('posts', () => {
   });
 
   // todo: consider creating user to create the post to repost
+  // FAILING
   it('can repost without content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
@@ -439,6 +446,7 @@ describe('posts', () => {
     });
   });
 
+  // FAILING
   it('can see repost of a deleted post', () => {
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
@@ -515,6 +523,7 @@ describe('posts', () => {
     });
   });
 
+  // FAILING
   it('cannot see reply of a deleted post in feed', () => {
     // create a post to reply to
     const postContent = `This post will be replied to! ${Date.now()}`;

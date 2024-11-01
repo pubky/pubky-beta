@@ -22,7 +22,7 @@ declare namespace Cypress {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    onboardAsNewUser(profileName: string, profileBio?: string, pubkyAlias?: string): void;
+    onboardAsNewUser(profileName: string, profileBio?: string, pubkyAlias?: string, skipOnboardingSlides?: boolean): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
@@ -63,7 +63,7 @@ declare namespace Cypress {
   }
 }
 
-Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', pubkyAlias?: string) => {
+Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', pubkyAlias?: string, skipOnboardingSlides: boolean = true) => {
   cy.visit('/', {
     auth: {
       username: `${process.env.AUTH_USERNAME}`,
@@ -76,7 +76,18 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
   cy.get('#onboarding-create-account-btn').click();
   cy.location('pathname').should('eq', '/onboarding/intro');
 
-  cy.get('#onboarding-skip-intro-btn').click();
+  if (skipOnboardingSlides) {
+    // click 'Skip Intro' button
+    cy.get('#onboarding-skip-intro-btn').click();
+
+  } else {
+    // click 'Continue' button 6 times to skip onboarding slides
+    for (let i = 0; i < 6; i++) {
+      cy.get('#onboarding-continue-btn').click();
+      cy.location('pathname').should('eq', '/onboarding/intro');
+    };
+  };
+
   cy.location('pathname').should('eq', '/onboarding/sign-in');
 
   cy.get('#onboarding-sign-up-link').click();
