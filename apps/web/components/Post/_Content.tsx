@@ -132,7 +132,49 @@ export default function Content({
         id="post-content-text"
         className={`text-white break-words ${largeView && 'text-2xl'}`}
       >
-        <Parsing fullContent={fullContent}>{contentText}</Parsing>
+        {(() => {
+          try {
+            const parsedContent = JSON.parse(contentText);
+            if (parsedContent.title && parsedContent.body) {
+              const truncatedBody =
+                parsedContent.body.length > 300
+                  ? parsedContent.body.substring(0, 300) + '...'
+                  : parsedContent.body;
+
+              return (
+                <div className="w-full justify-between flex gap-8">
+                  <div>
+                    <Typography.Body className="mb-2" variant="large-bold">
+                      {parsedContent.title}
+                    </Typography.Body>
+                    <div className="opacity-70">
+                      <Parsing fullContent={fullContent}>
+                        {truncatedBody}
+                      </Parsing>
+                    </div>
+                  </div>
+                  <div>
+                    {fileContents.map((file, index) => {
+                      return (
+                        <div key={index} className="relative">
+                          <Image
+                            src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                            alt={`Fetched file ${index}`}
+                            layout="responsive"
+                            width={460}
+                            height={90}
+                            className="w-full h-auto max-w-[660px] max-h-[400px] object-cover rounded-[10px] overflow-hidden"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            }
+          } catch (error) {}
+          return <Parsing fullContent={fullContent}>{contentText}</Parsing>;
+        })()}
 
         {showMore && (
           <a
@@ -168,7 +210,7 @@ export default function Content({
             <Spotify link={spotifyUrl} />
           </div>
         )}
-        {fileContents.length > 0 && (
+        {fileContents.length > 0 && post?.details?.kind !== 'Long' && (
           <div
             className={`mt-4 grid gap-4 ${
               fileContents.length === 1

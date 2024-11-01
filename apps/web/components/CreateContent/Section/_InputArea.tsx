@@ -24,6 +24,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
   loading?: boolean;
   className?: string;
+  maxLength?: number;
 }
 
 export default function InputArea({
@@ -42,6 +43,7 @@ export default function InputArea({
   setFilePreviews,
   loading,
   className,
+  maxLength = 300,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -141,7 +143,7 @@ export default function InputArea({
         }}
         autoFocus={autoFocus}
         value={content}
-        maxLength={300}
+        maxLength={maxLength}
         onClick={() => setTextArea && setTextArea(true)}
         className={twMerge(
           `w-full max-h-[300px] h-auto ${largeView && 'text-2xl min-h-[50px]'}`,

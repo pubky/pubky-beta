@@ -8,6 +8,8 @@ import EmojiPicker, {
 } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext } from '@/contexts';
+import { useState } from 'react';
+import Modal from '@/components/Modal';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   visibleTextArea: boolean;
@@ -29,6 +31,9 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   button: React.ReactNode;
   wrapperRefEmojis: React.RefObject<HTMLDivElement>;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
+  article?: boolean;
+  noFile?: boolean;
+  maxLength?: number;
 }
 
 export default function FooterArea({
@@ -51,8 +56,12 @@ export default function FooterArea({
   wrapperRefEmojis,
   setShowModalTag,
   button,
+  article,
+  noFile,
+  maxLength = 300,
 }: FooterAreaProps) {
   const { setContent: setContentAlert, setShow } = useAlertContext();
+  const [openModalArticle, setOpenModalArticle] = useState(false);
 
   const handleEmojiClick = (emojiObject: EmojiClickData) => {
     const textBeforeCursor = content.slice(0, cursorPosition);
@@ -152,7 +161,7 @@ export default function FooterArea({
             id="content-length"
             className="text-opacity-30 text-white text-sm mt-4 mr-2"
           >
-            {content.length} / 300
+            {content.length} / {maxLength}
           </div>
           <Button.Action
             id="tag-btn"
@@ -173,31 +182,47 @@ export default function FooterArea({
               setShowEmojis(true);
             }}
           />
-          <Button.Action
-            id="media-upload-btn"
-            variant="custom"
-            icon={
-              <Icon.ImageSquare
-                size="32"
-                color={!selectedFiles ? 'gray' : 'white'}
-              />
-            }
-            onClick={() => document.getElementById('fileInput')?.click()}
-            disabled={!selectedFiles}
-          >
-            <input
-              id="fileInput"
-              type="file"
-              accept="image/*,video/*,audio/*,.pdf"
-              className="hidden"
-              onChange={handleFileChange}
-              disabled={!selectedFiles}
-              multiple
+          {article && (
+            <Button.Action
+              variant="custom"
+              icon={<Icon.Newspaper size="32" />}
+              onClick={(event) => {
+                event.stopPropagation();
+                setOpenModalArticle(true);
+              }}
             />
-          </Button.Action>
+          )}
+          {!noFile && (
+            <Button.Action
+              id="media-upload-btn"
+              variant="custom"
+              icon={
+                <Icon.ImageSquare
+                  size="32"
+                  color={!selectedFiles ? 'gray' : 'white'}
+                />
+              }
+              onClick={() => document.getElementById('fileInput')?.click()}
+              disabled={!selectedFiles}
+            >
+              <input
+                id="fileInput"
+                type="file"
+                accept="image/*,video/*,audio/*,.pdf"
+                className="hidden"
+                onChange={handleFileChange}
+                disabled={!selectedFiles}
+                multiple
+              />
+            </Button.Action>
+          )}
           {button}
         </Post.Actions>
       )}
+      <Modal.CreateArticle
+        showModalArticle={openModalArticle}
+        setShowModalArticle={setOpenModalArticle}
+      />
     </>
   );
 }

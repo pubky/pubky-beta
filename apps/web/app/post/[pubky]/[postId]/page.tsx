@@ -1,6 +1,6 @@
 'use client';
 
-import { Content, Typography } from '@social/ui-shared';
+import { Content, Typography, Post as PostUI } from '@social/ui-shared';
 import { CreatePost, Header, Post as PostComponent } from '@/components';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '@/components/Skeletons';
@@ -13,6 +13,10 @@ import { useEffect, useRef, useState } from 'react';
 import { getFile } from '@/services/fileService';
 import { PostView, PubkyAppFile } from '@/types/Post';
 import Link from 'next/link';
+import TagsLargeView from '@/components/Post/_TagsLargeView';
+import { ImageByUri } from '@/components/ImageByUri';
+import { useRouter } from 'next/navigation';
+import Parsing from '@/components/Content/_Parsing';
 
 // Component for Loading Content
 function LoadingContent() {
@@ -62,6 +66,9 @@ function ValidPostContent({
   isLoadingReplies,
   loader,
 }) {
+  const router = useRouter();
+  const { pubky } = usePubkyClientContext();
+  const user = useUserProfile(data?.details?.author, pubky ?? '');
   return (
     <>
       {data?.relationships?.replied && (
@@ -72,14 +79,74 @@ function ValidPostContent({
       )}
 
       <div ref={postRef}>
-        <PostComponent
-          key={data?.details?.uri}
-          post={data}
-          size="full"
-          largeView={windowWidth >= 1280}
-          fullContent
-          line={Boolean(data?.relationships?.replied)}
-        />
+        <div key={data?.details?.uri}>
+          {data?.details?.kind === 'Long' ? (
+            <div className="flex">
+              <div className="flex flex-col gap-4">
+                <Typography.Display className="sm:leading-[64px]">
+                  {JSON.parse(data?.details?.content).title}
+                </Typography.Display>
+                <div className="flex w-full gap-4 justify-between items-center">
+                  <div className="justify-start gap-3 flex items-center mt-4 mb-2">
+                    <ImageByUri
+                      width={48}
+                      height={48}
+                      className="w-[48px] h-[48px] rounded-full"
+                      alt="user-image"
+                      uri={user?.data?.details?.image}
+                    />
+                    <div
+                      className="cursor-pointer flex gap-4 items-center"
+                      onClick={() => router.push('/profile')}
+                    >
+                      <Typography.Body
+                        className={`text-2xl hover:underline hover:decoration-solid`}
+                        variant="medium-bold"
+                      >
+                        {Utils.minifyText(
+                          user?.data?.details?.name ?? 'Loading...',
+                          24
+                        )}
+                      </Typography.Body>
+                      <div className="flex gap-1 mt-1 cursor-pointer">
+                        {/**<Icon.CheckCircle size="16" color="gray" />*/}
+                        <Typography.Label className="text-opacity-30">
+                          {Utils.minifyPubky(pubky ?? '')}
+                        </Typography.Label>
+                      </div>
+                    </div>
+                  </div>
+                  <PostUI.Time className="mr-2">
+                    {Utils.timeAgo(data?.details?.indexed_at)}
+                  </PostUI.Time>
+                </div>
+                <ImageByUri
+                  width={1000}
+                  height={650}
+                  className="w-[1200px] h-auto max-h-[500px] rounded-lg mb-4"
+                  alt="article-image"
+                  uri={data?.details?.attachments[0] ?? ''}
+                  loading
+                />
+                <div className="opacity-70 text-white break-words">
+                  <Parsing fullContent>
+                    {JSON.parse(data?.details?.content).body}
+                  </Parsing>
+                </div>
+              </div>
+              <TagsLargeView post={data} />
+            </div>
+          ) : (
+            <PostComponent
+              key={data?.details?.uri}
+              post={data}
+              size="full"
+              largeView={windowWidth >= 1280}
+              fullContent
+              line={Boolean(data?.relationships?.replied)}
+            />
+          )}
+        </div>
       </div>
       <div className="mt-3">
         <Post.ReplyForm

@@ -31,6 +31,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   loading?: boolean;
   variant?: 'small';
   className?: string;
+  article?: boolean;
 }
 
 export default function CreateContent({
@@ -55,6 +56,7 @@ export default function CreateContent({
   loading,
   variant,
   className,
+  article,
 }: CreateContentProps) {
   const { profile } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -307,6 +309,7 @@ export default function CreateContent({
           button={button}
           wrapperRefEmojis={wrapperRefEmojis}
           setShowModalTag={setShowModalTag}
+          article={article}
         />
       </div>
       {arrayTags && setArrayTags && (

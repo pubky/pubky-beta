@@ -37,6 +37,12 @@ type PubkyClientContextType = {
     kind: PostKind,
     files?: File[]
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
+  createArticle: (
+    title: string,
+    articleContent: string,
+    kind: PostKind,
+    files?: File[]
+  ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
   editPost: (post: PostView, postContent: string) => Promise<string | false>;
   createRepost: (
     originalPostId: string,
@@ -470,6 +476,88 @@ export function PubkyClientWrapper({
       return { uri: postUrl, details: newPost };
     } catch (error) {
       console.error('Error creating post:', error);
+      return false;
+    }
+  };
+
+  const createArticle = async (
+    title: string,
+    articleContent: string,
+    kind: PostKind,
+    files?: File[]
+  ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      // Generate a timestamp ID for the article
+      const articleId = generateTimestampId().toUpperCase();
+
+      // Initialize the post object
+      const newArticle: PubkyAppPost = {
+        content: JSON.stringify({
+          title: title,
+          body: articleContent,
+        }),
+        kind,
+      };
+
+      // List to store URIs of uploaded files
+      const uploadedFileUris: string[] = [];
+
+      // File upload, if any
+      if (files && files.length > 0) {
+        for (const file of files) {
+          // Read the file content
+          const fileContent = await file.arrayBuffer();
+
+          const blobId = generateTimestampId().toUpperCase();
+          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
+          const blobBody = Buffer.from(fileContent);
+
+          await client.put(blobUrl, blobBody);
+
+          // Create the PubkyAppFile object
+          const fileId = generateTimestampId().toUpperCase();
+          const newFile = {
+            name: file.name,
+            created_at: Date.now(),
+            src: blobUrl,
+            content_type: file.type,
+            size: file.size,
+          };
+
+          // Serialize to JSON and convert to Buffer
+          const fileBody = Buffer.from(JSON.stringify(newFile));
+
+          // File URL
+          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
+
+          // Send the file to the homeserver
+          await client.put(fileUrl, fileBody);
+
+          // Store the file URI
+          uploadedFileUris.push(fileUrl);
+        }
+
+        // If there are files, add to the post attachments
+        newArticle.attachments = uploadedFileUris;
+      }
+
+      // Serialize the post to JSON and convert to Buffer
+      const articleBody = Buffer.from(JSON.stringify(newArticle));
+
+      // Post URL
+      const articleUrl = `pubky://${pubky}/pub/pubky.app/posts/${articleId}`;
+
+      // Send the post to the homeserver
+      await client.put(articleUrl, articleBody);
+
+      return { uri: articleUrl, details: newArticle };
+    } catch (error) {
+      console.error('Error creating article:', error);
       return false;
     }
   };
@@ -1103,6 +1191,7 @@ export function PubkyClientWrapper({
         deleteBookmark,
         createRepost,
         createReply,
+        createArticle,
         createTag,
         deleteTag,
         createTagProfile,
