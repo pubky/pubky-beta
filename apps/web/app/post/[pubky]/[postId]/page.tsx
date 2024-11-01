@@ -97,7 +97,9 @@ function ValidPostContent({
                     />
                     <div
                       className="cursor-pointer flex gap-4 items-center"
-                      onClick={() => router.push('/profile')}
+                      onClick={() =>
+                        router.push(`/profile/${data?.details?.author}`)
+                      }
                     >
                       <Typography.Body
                         className={`text-2xl hover:underline hover:decoration-solid`}
@@ -111,7 +113,7 @@ function ValidPostContent({
                       <div className="flex gap-1 mt-1 cursor-pointer">
                         {/**<Icon.CheckCircle size="16" color="gray" />*/}
                         <Typography.Label className="text-opacity-30">
-                          {Utils.minifyPubky(pubky ?? '')}
+                          {Utils.minifyPubky(data?.details?.author ?? '')}
                         </Typography.Label>
                       </div>
                     </div>
