@@ -128,7 +128,7 @@ function ValidPostContent({
                   uri={data?.details?.attachments[0] ?? ''}
                   loading
                 />
-                <div className="opacity-70 text-white break-words">
+                <div className="text-white break-words">
                   <Parsing fullContent>
                     {JSON.parse(data?.details?.content).body}
                   </Parsing>
