@@ -1,4 +1,4 @@
-name: ESLint Check
+name: Build Prod
 
 on:
   push:
@@ -27,5 +27,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run ESLint
-        run: npx eslint . --ext .js,.jsx,.ts,.tsx
+      - name: Buuild prod
+        run: npx nx build web --prod
