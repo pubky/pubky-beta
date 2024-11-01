@@ -112,117 +112,121 @@ export default function FooterArea({
         content ||
         showModalTag ||
         (arrayTags && arrayTags.length > 0)) && (
-        <Post.Actions className="w-full">
-          {arrayTags && arrayTags.length > 0 && (
-            <div id="tags" className="gap-2 flex h-full items-center">
-              {arrayTags.map((tag, index) => (
-                <PostUtil.Tag
-                  key={index}
-                  clicked
-                  color={tag && Utils.generateRandomColor(tag)}
-                  action={
-                    <div
-                      className="flex items-center"
-                      onClick={() =>
-                        setArrayTags &&
-                        setArrayTags((prev) =>
-                          prev.filter((item) => item !== tag)
-                        )
-                      }
-                    >
-                      <Icon.X size="16" />
-                    </div>
-                  }
-                >
-                  {Utils.minifyText(tag.replace(' ', ''))}
-                </PostUtil.Tag>
-              ))}
-            </div>
-          )}
-          {showEmojis && (
+        <>
+          <Post.Actions className="w-full">
+            {arrayTags && arrayTags.length > 0 && (
+              <div id="tags" className="gap-2 flex h-full items-center">
+                {arrayTags.map((tag, index) => (
+                  <PostUtil.Tag
+                    key={index}
+                    clicked
+                    color={tag && Utils.generateRandomColor(tag)}
+                    action={
+                      <div
+                        className="flex items-center"
+                        onClick={() =>
+                          setArrayTags &&
+                          setArrayTags((prev) =>
+                            prev.filter((item) => item !== tag)
+                          )
+                        }
+                      >
+                        <Icon.X size="16" />
+                      </div>
+                    }
+                  >
+                    {Utils.minifyText(tag.replace(' ', ''))}
+                  </PostUtil.Tag>
+                ))}
+              </div>
+            )}
+            {showEmojis && (
+              <div
+                id="emoji-picker"
+                className={`absolute translate-y-[10%] ${
+                  largeView
+                    ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
+                    : 'translate-x-[30%]'
+                } z-10`}
+                ref={wrapperRefEmojis}
+              >
+                <EmojiPicker
+                  theme={Theme.DARK}
+                  emojiStyle={EmojiStyle.TWITTER}
+                  onEmojiClick={handleEmojiClick}
+                />
+              </div>
+            )}
+            <div className="grow" />
             <div
-              id="emoji-picker"
-              className={`absolute translate-y-[10%] ${
-                largeView
-                  ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
-                  : 'translate-x-[30%]'
-              } z-10`}
-              ref={wrapperRefEmojis}
+              id="content-length"
+              className="text-opacity-30 text-white text-sm mt-4 mr-2"
             >
-              <EmojiPicker
-                theme={Theme.DARK}
-                emojiStyle={EmojiStyle.TWITTER}
-                onEmojiClick={handleEmojiClick}
-              />
+              {content.length} / {maxLength}
             </div>
-          )}
-          <div className="grow" />
-          <div
-            id="content-length"
-            className="text-opacity-30 text-white text-sm mt-4 mr-2"
-          >
-            {content.length} / {maxLength}
-          </div>
-          <Button.Action
-            id="tag-btn"
-            variant="custom"
-            icon={<Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />}
-            onClick={(event) => {
-              event.stopPropagation();
-              setShowModalTag(true);
-            }}
-            disabled={!arrayTags}
-          />
-          <Button.Action
-            id="emoji-btn"
-            variant="custom"
-            icon={<Icon.Smiley size="32" />}
-            onClick={(event) => {
-              event.stopPropagation();
-              setShowEmojis(true);
-            }}
-          />
-          {article && (
             <Button.Action
-              variant="custom"
-              icon={<Icon.Newspaper size="32" />}
-              onClick={(event) => {
-                event.stopPropagation();
-                setOpenModalArticle(true);
-              }}
-            />
-          )}
-          {!noFile && (
-            <Button.Action
-              id="media-upload-btn"
+              id="tag-btn"
               variant="custom"
               icon={
-                <Icon.ImageSquare
-                  size="32"
-                  color={!selectedFiles ? 'gray' : 'white'}
-                />
+                <Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />
               }
-              onClick={() => document.getElementById('fileInput')?.click()}
-              disabled={!selectedFiles}
-            >
-              <input
-                id="fileInput"
-                type="file"
-                accept="image/*,video/*,audio/*,.pdf"
-                className="hidden"
-                onChange={handleFileChange}
-                disabled={!selectedFiles}
-                multiple
+              onClick={(event) => {
+                event.stopPropagation();
+                setShowModalTag(true);
+              }}
+              disabled={!arrayTags}
+            />
+            <Button.Action
+              id="emoji-btn"
+              variant="custom"
+              icon={<Icon.Smiley size="32" />}
+              onClick={(event) => {
+                event.stopPropagation();
+                setShowEmojis(true);
+              }}
+            />
+            {article && (
+              <Button.Action
+                variant="custom"
+                icon={<Icon.Newspaper size="32" />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setOpenModalArticle(true);
+                }}
               />
-            </Button.Action>
-          )}
-          {button}
-        </Post.Actions>
+            )}
+            {!noFile && (
+              <Button.Action
+                id="media-upload-btn"
+                variant="custom"
+                icon={
+                  <Icon.ImageSquare
+                    size="32"
+                    color={!selectedFiles ? 'gray' : 'white'}
+                  />
+                }
+                onClick={() => document.getElementById('fileInput')?.click()}
+                disabled={!selectedFiles}
+              >
+                <input
+                  id="fileInput"
+                  type="file"
+                  accept="image/*,video/*,audio/*,.pdf"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  disabled={!selectedFiles}
+                  multiple
+                />
+              </Button.Action>
+            )}
+            {button}
+          </Post.Actions>
+          <Modal.CreateArticle
+            showModalArticle={openModalArticle}
+            setShowModalArticle={setOpenModalArticle}
+          />
+        </>
       )}
-      <Modal.CreateArticle
-        showModalArticle={openModalArticle}
-        setShowModalArticle={setOpenModalArticle}
-      />
     </>
   );
 }
