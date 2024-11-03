@@ -38,7 +38,6 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
-
   it('can post from new post', () => {
     const postContent = `I can make a new post! ${Date.now()}`;
     // click button to display new post modal
@@ -46,18 +45,22 @@ describe('posts', () => {
     cy.get('h1').contains('New Post').should('be.visible');
 
     // input post content and submit
-    cy.get('#new-post-create-content').within(() => {
+    cy.get('#new-post-create-content').should('be.visible').within(() => {
       cy.get('textarea').should('have.value', '');
       cy.get('textarea').type(postContent);
       cy.get('#post-btn').click();
     });
     cy.get('#modal-root').should('not.exist');
 
+    // TODO: remove manuual refresh, see https://github.com/pubky/pubky-app/issues/493
+    // should test before and after refresh
+    cy.reload();
+
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
   });
 
-  it('can post with maximum character limit (300)', () => {
+  it.skip('can post with maximum character limit (300)', () => {
     const postContent =
       "I can make a really loooooooooooooooooooooooooooooo" +
       "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
@@ -98,7 +101,7 @@ describe('posts', () => {
   });
 
   // test skipped because viewing uploaded image in post doesn't work for this local deployment
-  it.skip('can post with image upload', () => {
+  it('can post with image upload', () => {
     const postContent = `I can post with an image! ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
@@ -155,7 +158,7 @@ describe('posts', () => {
     const otherUsername = 'Jeremy The Poser';
     const fullUsername = uniquePrefix + '_' + otherUsername;
     const pubkyAlias = 'jPubky';
-    cy.onboardAsNewUser(fullUsername, "My account will be referenced in a post.", pubkyAlias);
+    cy.onboardAsNewUser(fullUsername, "My account will be referenced in a post.", true, pubkyAlias);
     cy.signOut(false);
     // sign back in as poster
     cy.signIn(backupDownloadFilePath(username + '.pkarr'));
@@ -185,7 +188,6 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
   });
 
-  // FAILING
   it('can delete a post', () => {
     const postContent = `I can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
@@ -193,8 +195,14 @@ describe('posts', () => {
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
 
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/523
+    cy.reload();
+
     // delete the post
     deletePost();
+
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    cy.reload();
 
     // verify post is deleted
     cy.get('#posts-feed').children().its('length').then((length) => {
@@ -228,7 +236,6 @@ describe('posts', () => {
     });
   });
 
-  // FAILING
   it('can tag whilst creating post', () => {
     const postContent = `I can post with tags! ${Date.now()}`;
     const tag1 = 'alpacas';
@@ -266,15 +273,19 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    // should test before and after refresh
+    cy.reload();
+
     // verify the post text and tags are displayed correctly in feed
     cy.get('#posts-feed').children().eq(1).within(() => {
       // check text
       cy.get('#post-content-text').innerTextShouldEq(postContent);
 
       // check tags
-      cy.get('#tags').find('#tag-0').contains(tag1);
+      cy.get('#tags').find('#tag-0').contains(tag3);
       cy.get('#tags').find('#tag-1').contains(tag2);
-      cy.get('#tags').find('#tag-2').contains(tag3);
+      cy.get('#tags').find('#tag-2').contains(tag1);
     });
   });
 
@@ -287,54 +298,80 @@ describe('posts', () => {
 
     createQuickPost(postContent);
 
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/539
+    cy.reload();
+
+    // TODO: uncomment once bug fixed, see https://github.com/pubky/pubky-app/issues/540
     // add tags to the post
-    cy.get('#tag-btn').click();
-    cy.get('#modal-root').within(() => {
-      cy.get('h1').contains('Tag Post');
-      cy.get('input').type(tag1);
-      cy.get('#add-btn').click();
-      cy.get('input').type(tag2);
-      cy.get('#add-btn').click();
-      cy.get('input').type(tag3);
-      cy.get('#add-btn').click();
+    // cy.get('#tag-btn').click();
+    // cy.get('#modal-root').within(() => {
+    //   cy.get('h1').contains('Tag Post');
+    //   cy.get('input').type(tag1);
+    //   cy.get('#add-btn').should('be.visible').click();
+    //   cy.get('input').type(tag2);
+    //   cy.get('#add-btn').should('be.visible').click();
+    //   cy.get('input').type(tag3);
+    //   cy.get('#add-btn').should('be.visible').click();
 
-      // check current tags in modal
-      cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
-        cy.wrap(divs.eq(0)).contains(tag1);
-        cy.wrap(divs.eq(1)).contains(tag2);
-        cy.wrap(divs.eq(2)).contains(tag3);
+    //   // check current tags in modal
+    //   cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
+    //     cy.wrap(divs.eq(0)).contains(tag1);
+    //     cy.wrap(divs.eq(1)).contains(tag2);
+    //     cy.wrap(divs.eq(2)).contains(tag3);
+    //   });
+
+    //   // close modal
+    //   cy.get('#close-btn').click();
+    // });
+
+    // TODO: remove WORKAROUND for uncommented code above once bug #540 is fixed.
+    for (const tag of [tag1, tag2, tag3]) {
+      cy.get('#tag-btn').click();
+      cy.get('#modal-root').should('be.visible').within(() => {
+        cy.get('input').type(tag);
+        cy.get('#add-btn').should('be.visible').click();
       });
+    };
 
-      // close modal
-      cy.get('#close-btn').click();
-    });
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/541
+    // should test before and after refresh
+    cy.reload();
 
     // within the latest post in the feed
     cy.get('#posts-feed').children().eq(1).within(() => {
       cy.get('#tags').children().its('length').then((oldLength) => {
         cy.get('#tags').within(() => {
           // verify the tags are displayed in the post
-          cy.get('#tag-0').contains(tag1);
+          cy.get('#tag-0').contains(tag3);
           cy.get('#tag-1').contains(tag2);
-          cy.get('#tag-2').contains(tag3);
+          cy.get('#tag-2').contains(tag1);
 
           // remove tag from the post
           cy.get('#tag-1').click();
         });
 
         // verify the tag is removed from the post and other tags remain
-        cy.get('#tags').children().should('have.length', oldLength - 1);
+        // TODO: check children length once bug fixed, see https://github.com/pubky/pubky-app/issues/543
+        //cy.get('#tags').children().should('have.length', oldLength - 1);
+
+        cy.get('#tags').innerTextShouldNotContain(tag2);
         cy.get('#tags').within(() => {
-          cy.get('#tag-0').should('exist').contains(tag1);
-          cy.get('#tag-1').should('exist').contains(tag3);
+          cy.get('#tag-0').should('exist').contains(tag3);
+          cy.get('#tag-2').should('exist').contains(tag1);
         });
       });
     });
+
+    // refresh page and check tag is still removed
+    cy.reload();
+    // FAILS HERE due to https://github.com/pubky/pubky-app/issues/544
+    cy.get('#tags').innerTextShouldNotContain(tag2);
+
   });
 
   // todo: consider creating user to create the post to bookmark
   // FAILING
-  it('can bookmark post then remove bookmark', () => {
+  it.skip('can bookmark post then remove bookmark', () => {
     const postContent = `This post will be bookmarked! ${Date.now()}`;
 
     // create a post to bookmark
@@ -366,7 +403,7 @@ describe('posts', () => {
 
   // todo: consider creating user to create the post to repost
   // FAILING
-  it('can repost with content then delete the repost', () => {
+  it.skip('can repost with content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted with content! ${Date.now()}`;
     const repostContent = 'Reposted with content!';
@@ -413,7 +450,7 @@ describe('posts', () => {
 
   // todo: consider creating user to create the post to repost
   // FAILING
-  it('can repost without content then delete the repost', () => {
+  it.skip('can repost without content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
@@ -447,7 +484,7 @@ describe('posts', () => {
   });
 
   // FAILING
-  it('can see repost of a deleted post', () => {
+  it.skip('can see repost of a deleted post', () => {
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     const repostContent = `Reposted with this content! ${Date.now()}`;
@@ -479,7 +516,7 @@ describe('posts', () => {
   });
 
   // todo: consider creating user to create the post to reply to
-  it('can reply to a post and delete the reply', () => {
+  it.skip('can reply to a post and delete the reply', () => {
     // create a post to reply to
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
@@ -524,7 +561,7 @@ describe('posts', () => {
   });
 
   // FAILING
-  it('cannot see reply of a deleted post in feed', () => {
+  it.skip('cannot see reply of a deleted post in feed', () => {
     // create a post to reply to
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;

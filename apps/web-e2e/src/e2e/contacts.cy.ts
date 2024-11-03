@@ -10,7 +10,7 @@ describe('contacts', () => {
   // SKIP due to bug https://github.com/pubky/pubky-app/issues/529
   it.skip('follow, be followed, and make a friend', () => {
     cy.on('uncaught:exception', (_err, _runnable) => {
-      // returning false here prevents Cypress from failing the test
+      // returning false here prevents Cypress from failing the test on uncaught exception
       return false
     })
 

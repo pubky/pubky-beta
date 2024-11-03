@@ -22,7 +22,7 @@ declare namespace Cypress {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    onboardAsNewUser(profileName: string, profileBio?: string, pubkyAlias?: string, skipOnboardingSlides?: boolean): void;
+    onboardAsNewUser(profileName: string, profileBio?: string, skipOnboardingSlides?: boolean, pubkyAlias?: string): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
@@ -63,7 +63,7 @@ declare namespace Cypress {
   }
 }
 
-Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', pubkyAlias?: string, skipOnboardingSlides: boolean = true) => {
+Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', skipOnboardingSlides: boolean = true, pubkyAlias?: string) => {
   cy.visit('/', {
     auth: {
       username: `${process.env.AUTH_USERNAME}`,
