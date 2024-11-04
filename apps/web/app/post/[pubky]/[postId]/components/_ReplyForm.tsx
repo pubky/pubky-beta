@@ -7,7 +7,7 @@ import { Utils } from '@social/utils-shared';
 import Participants from './_Participants';
 import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
-import { PostThread, PostView } from '@/types/Post';
+import { PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
 export default function ReplyForm({
@@ -20,7 +20,7 @@ export default function ReplyForm({
   uri: string;
   post: PostView;
   updatePost: () => void;
-  replies: PostThread | undefined;
+  replies: PostView[] | undefined;
   isLoadingReplies: boolean;
 }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();

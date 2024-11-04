@@ -14,23 +14,23 @@ const notificationType = {
     icon: <Icon.UserPlus size="16" />,
     text: 'followed you',
   },
-  newfriend: {
-    type: 'newfriend',
+  new_friend: {
+    type: 'new_friend',
     icon: <Icon.UsersLeft size="16" />,
     text: 'is your friend now',
   },
-  lostfriend: {
-    type: 'lostfriend',
+  lost_friend: {
+    type: 'lost_friend',
     icon: <Icon.UserMinus size="16" />,
     text: 'is not your friend anymore',
   },
-  tagpost: {
-    type: 'tagpost',
+  tag_post: {
+    type: 'tag_post',
     icon: <Icon.Tag size="16" />,
     text: 'tagged your post as',
   },
-  tagprofile: {
-    type: 'tagprofile',
+  tag_profile: {
+    type: 'tag_profile',
     icon: <Icon.Tag size="16" />,
     text: 'tagged your profile as',
   },
@@ -49,10 +49,15 @@ const notificationType = {
     icon: <Icon.Note size="16" />,
     text: 'mentioned you in a post',
   },
-  postdeleted: {
-    type: 'postdeleted',
+  post_deleted: {
+    type: 'post_deleted',
     icon: <Icon.Trash size="16" />,
     text: 'deleted a post',
+  },
+  post_edited: {
+    type: 'post_edited',
+    icon: <Icon.PencilLine size="16" />,
+    text: 'edited a post',
   },
 };
 
@@ -85,13 +90,13 @@ export default function Notification({
     let userId: string | undefined;
     if (
       notification.body.type === notificationType?.follow?.type ||
-      notification.body.type === notificationType?.newfriend?.type ||
-      notification.body.type === notificationType?.lostfriend?.type
+      notification.body.type === notificationType?.new_friend?.type ||
+      notification.body.type === notificationType?.lost_friend?.type
     ) {
       userId = notification.body.followed_by || notification.body.unfollowed_by;
     } else if (
-      notification.body.type === notificationType?.tagprofile?.type ||
-      notification.body.type === notificationType?.tagpost?.type
+      notification.body.type === notificationType?.tag_profile?.type ||
+      notification.body.type === notificationType?.tag_post?.type
     ) {
       userId = notification.body.tagged_by;
     } else if (notification.body.type === notificationType?.reply?.type) {
@@ -100,8 +105,12 @@ export default function Notification({
       userId = notification.body.reposted_by;
     } else if (notification.body.type === notificationType?.mention?.type) {
       userId = notification.body.mentioned_by;
-    } else if (notification.body.type === notificationType?.postdeleted?.type) {
+    } else if (
+      notification.body.type === notificationType?.post_deleted?.type
+    ) {
       userId = notification.body.deleted_by;
+    } else if (notification.body.type === notificationType?.post_edited?.type) {
+      userId = notification.body.edited_by;
     }
 
     if (userId) {
@@ -124,10 +133,11 @@ export default function Notification({
     notification?.body?.replied_by ||
     notification?.body?.reposted_by ||
     notification?.body?.mentioned_by ||
-    notification?.body?.deleted_by;
+    notification?.body?.deleted_by ||
+    notification?.body?.edited_by;
 
   const postLink =
-    (notification?.body?.type === notificationType?.tagpost?.type ||
+    (notification?.body?.type === notificationType?.tag_post?.type ||
       notification?.body?.type === notificationType?.mention?.type) &&
     notification.body.post_uri
       ? Utils.encodePostUri(notification.body.post_uri)
@@ -158,8 +168,15 @@ export default function Notification({
       : '';
 
   const deletedPostLink =
-    (notification.body.delete_type === 'ReplyParent' ||
-      notification.body.delete_type === 'RepostEmbed') &&
+    (notification.body.delete_source === 'reply_parent' ||
+      notification.body.delete_source === 'repost_embed') &&
+    notification.body.linked_uri
+      ? Utils.encodePostUri(notification.body.linked_uri)
+      : '';
+
+  const editedPostLink =
+    (notification.body.edit_source === 'reply_parent' ||
+      notification.body.edit_source === 'repost_embed') &&
     notification.body.linked_uri
       ? Utils.encodePostUri(notification.body.linked_uri)
       : '';
@@ -203,13 +220,17 @@ export default function Notification({
           )}
           <Typography.Body variant="medium-bold" className="text-opacity-50">
             {currentNotificationType.text}
-            {notification.body.type === notificationType?.postdeleted?.type &&
-              (notification.body.delete_type === 'ReplyParent'
+            {notification.body.type === notificationType?.post_deleted?.type &&
+              (notification.body.delete_source === 'reply_parent'
+                ? ' you replied'
+                : ' you reposted')}
+            {notification.body.type === notificationType?.post_edited?.type &&
+              (notification.body.edit_source === 'reply_parent'
                 ? ' you replied'
                 : ' you reposted')}
           </Typography.Body>
-          {(notification.body.type === notificationType?.tagprofile?.type ||
-            notification.body.type === notificationType?.tagpost?.type) && (
+          {(notification.body.type === notificationType?.tag_profile?.type ||
+            notification.body.type === notificationType?.tag_post?.type) && (
             <PostUtil.Tag
               color={
                 notification.body.tag_label &&
@@ -276,14 +297,27 @@ export default function Notification({
               </Link>
             </>
           )}
-          {notification.body.type === notificationType?.postdeleted?.type &&
+          {notification.body.type === notificationType?.post_deleted?.type &&
             deletedPostLink && (
               <Link href={deletedPostLink}>
                 <Typography.Body
                   variant="small"
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
-                  {notification.body.delete_type === 'ReplyParent'
+                  {notification.body.delete_source === 'reply_parent'
+                    ? 'View reply'
+                    : 'View repost'}
+                </Typography.Body>
+              </Link>
+            )}
+          {notification.body.type === notificationType?.post_edited?.type &&
+            editedPostLink && (
+              <Link href={editedPostLink}>
+                <Typography.Body
+                  variant="small"
+                  className="text-white text-opacity-80 hover:text-opacity-100"
+                >
+                  {notification.body.edit_source === 'reply_parent'
                     ? 'View reply'
                     : 'View repost'}
                 </Typography.Body>

@@ -81,6 +81,7 @@ export default function InputArea({
         const isValidType =
           file.type.startsWith('image/') ||
           file.type.startsWith('video/') ||
+          file.type.startsWith('audio/') ||
           file.type === 'application/pdf';
         if (!isValidType) {
           setContentAlert('File not supported', 'warning');

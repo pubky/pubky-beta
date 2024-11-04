@@ -308,7 +308,7 @@ export async function getMostFollowedUsers(
 
   queryParams.append('skip', String(skip));
   queryParams.append('limit', String(limit));
-  queryParams.append('source', 'mostfollowed');
+  queryParams.append('source', 'most_followed');
 
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 

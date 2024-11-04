@@ -9,18 +9,13 @@ import {
   createRecoveryFile,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
-import {
-  PostKind,
-  PostThread,
-  PostView,
-  PubkyAppPost,
-  PubkyAppUser,
-} from '@/types/Post';
+import { PostKind, PostView, PubkyAppPost, PubkyAppUser } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
 import { TStatus } from '@/types';
 import { getUserProfile } from '@/services/userService';
+import JSZip from 'jszip';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -78,12 +73,15 @@ type PubkyClientContextType = {
   setTimeline: (timeline: PostView[]) => void;
   setSearchTags: (value: string[]) => any;
   searchTags: string[];
-  repliesArray: PostThread | undefined;
-  setRepliesArray: (repliesArray: PostThread) => void;
+  repliesArray: PostView[] | undefined;
+  setRepliesArray: (repliesArray: PostView[]) => void;
   timelineProfile: PostView[] | undefined;
   setTimelineProfile: (timelineProfile: PostView[]) => void;
   deletePost: (post_id: string) => Promise<boolean>;
   deleteAccount: () => Promise<boolean>;
+  downloadData: () => Promise<boolean>;
+  getTimestampNotification: () => Promise<number | boolean>;
+  putTimestampNotification: (timestamp: number) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -106,8 +104,8 @@ export function PubkyClientWrapper({
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
-  const [repliesArray, setRepliesArray] = useState<PostThread>(
-    {} as PostThread
+  const [repliesArray, setRepliesArray] = useState<PostView[]>(
+    {} as PostView[]
   );
 
   useEffect(() => {
@@ -137,6 +135,7 @@ export function PubkyClientWrapper({
       Utils.storage.remove('pubky_public_key');
       Utils.storage.remove('seed');
       Utils.storage.remove('profile');
+      Utils.storage.remove('unread');
       setPubky(undefined);
       setSeed(undefined);
       setProfile(undefined);
@@ -524,6 +523,114 @@ export function PubkyClientWrapper({
       return true;
     } catch (error) {
       console.error('Error editing post:', error);
+      return false;
+    }
+  };
+
+  const downloadData = async () => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
+      const lists = await client.list(profileUrl);
+
+      const zip = new JSZip();
+      const dataFolder = zip.folder('data');
+      if (!dataFolder) {
+        throw new Error("Error creating 'data' folder in zip.");
+      }
+
+      await Promise.all(
+        lists.slice(0, 2).map(async (list, index) => {
+          const result = await client.get(list);
+
+          if (result === undefined) {
+            console.warn(`File ${index + 1} was not found or is undefined.`);
+            return; // Skip
+          }
+
+          let parsedData;
+          let fileName;
+          try {
+            const decoder = new TextDecoder('utf-8');
+            const decodedString = decoder.decode(result);
+            parsedData = JSON.parse(decodedString);
+            fileName = `${index + 1}.json`;
+            dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
+          } catch (error) {
+            console.warn(
+              `File ${
+                index + 1
+              } is not in JSON format. It will be saved as a binary file.`
+            );
+            fileName = `${index + 1}.bin`;
+            dataFolder.file(fileName, result);
+          }
+        })
+      );
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'data.zip';
+      document.body.appendChild(a);
+      a.click();
+
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      return true;
+    } catch (error) {
+      console.error('Error downloading data:', error);
+      return false;
+    }
+  };
+
+  const getTimestampNotification = async () => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
+      const lastRead = await client.get(lastReadUrl);
+      const jsonString =
+        lastRead &&
+        Object.values(lastRead)
+          .map((asciiCode: number) => String.fromCharCode(asciiCode))
+          .join('');
+
+      const parsedData = jsonString && JSON.parse(jsonString);
+      const timestamp = Number(parsedData.timestamp);
+
+      return timestamp;
+    } catch (error) {
+      console.error('Error get timestamp:', error);
+      return false;
+    }
+  };
+
+  const putTimestampNotification = async (timestamp: number) => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const body = { timestamp: timestamp };
+      const lastReadBody = Buffer.from(JSON.stringify(body));
+
+      const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
+      const lastRead = await client.put(lastReadUrl, lastReadBody);
+
+      return true;
+    } catch (error) {
+      console.error('Error put timestamp:', error);
       return false;
     }
   };
@@ -1012,6 +1119,9 @@ export function PubkyClientWrapper({
         setRepliesArray,
         timelineProfile,
         setTimelineProfile,
+        getTimestampNotification,
+        putTimestampNotification,
+        downloadData,
       }}
     >
       {children}

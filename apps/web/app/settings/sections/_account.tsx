@@ -14,10 +14,11 @@ const passwordSchema = z.object({
 
 export default function Account() {
   const router = useRouter();
-  const { seed, setSeed, getRecoveryFile, deleteAccount } =
+  const { seed, setSeed, getRecoveryFile, deleteAccount, downloadData } =
     usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
+  const [loadingDownload, setLoadingDownload] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [showModalDeleteAccount, setShowModalDeleteAccount] = useState(false);
@@ -45,6 +46,24 @@ export default function Account() {
     } catch (error) {
       console.error(error);
       setLoadingDeleteAccount(false);
+      setContent('Something wrong', 'warning');
+      setShow(true);
+    }
+  };
+
+  const handleDownloadData = async () => {
+    try {
+      setLoadingDownload(true);
+      const result = await downloadData();
+
+      if (result) {
+        setLoadingDownload(false);
+        setContent('Data downloaded!');
+        setShow(true);
+      }
+    } catch (error) {
+      console.error(error);
+      setLoadingDownload(false);
       setContent('Something wrong', 'warning');
       setShow(true);
     }
@@ -137,7 +156,7 @@ export default function Account() {
   }, [modalBackupRef, setShowModalBackup]);
 
   return (
-    <div className="px-12 pt-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="px-12 pt-12 pb-0 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Lock size="24" />
@@ -225,10 +244,11 @@ export default function Account() {
           elsewhere.
         </Typography.Body>
         <Button.Large
-          icon={<Icon.DownloadSimple size="16" color="gray" />}
+          icon={<Icon.DownloadSimple size="16" />}
           variant="secondary"
-          className="w-auto cursor-default"
-          disabled
+          className="w-auto"
+          loading={loadingDownload}
+          onClick={() => (loadingDownload ? undefined : handleDownloadData())}
         >
           Download data
         </Button.Large>

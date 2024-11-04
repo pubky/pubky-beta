@@ -7,7 +7,7 @@ import {
   useState,
   ReactNode,
 } from 'react';
-import { usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useUserNotifications } from '@/hooks/useUser';
 import { NotificationView } from '@/types/User';
 
@@ -191,11 +191,20 @@ const NotificationsContext = createContext<NotificationsContextType>({
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
-  const { pubky } = usePubkyClientContext();
+  const { pubky, getTimestampNotification } = usePubkyClientContext();
   const { data: initNotifications } = useUserNotifications(pubky ?? '');
-  //const { notificationPreferences } = useFilterContext();
+  const [timestamp, setTimestamp] = useState<number>();
+  const { notificationPreferences, setUnReadNotification } = useFilterContext();
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timestamp = async () => {
+      const result = await getTimestampNotification();
+      setTimestamp(Number(result));
+    };
+    timestamp();
+  }, []);
 
   const fetchNotifications = async () => {
     try {
@@ -205,13 +214,25 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
       const results = initNotifications;
       if (results) {
-        setNotifications(results);
-        //const filteredNotifications = results.feed.filter(
-        //  (notification: INotification) =>
-        //   notificationPreferences[
-        //     notification.type as keyof typeof notificationPreferences
-        //   ]
-        //);
+        const filteredNotifications = results.filter(
+          (notification: NotificationView) =>
+            notificationPreferences[
+              notification.body.type as keyof typeof notificationPreferences
+            ]
+        );
+        setNotifications(filteredNotifications);
+
+        const unreadCount = filteredNotifications.reduce(
+          (count: number, notification: NotificationView) => {
+            if (timestamp && notification.timestamp > timestamp) {
+              return count + 1;
+            }
+            return count;
+          },
+          0
+        );
+        setUnReadNotification(unreadCount);
+
         //const mergedNotifications = mergeConsecutiveNotifications(
         // filteredNotifications
         //);

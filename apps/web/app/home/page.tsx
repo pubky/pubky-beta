@@ -5,7 +5,7 @@ import { Content, Icon, Menu, Typography } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { usePostStream, usePostThread } from '@/hooks/usePost';
+import { usePostStream, usePostReplies } from '@/hooks/usePost';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import { UseUserMuted } from '@/hooks/useUser';
@@ -207,7 +207,10 @@ const Timeline = () => {
 
 const PostReplies = ({ post, layout, homeView = false }) => {
   const { pubky } = usePubkyClientContext();
-  const { data: replies } = usePostThread(post.details.author, post.details.id);
+  const { data: replies } = usePostReplies(
+    post.details.author,
+    post.details.id
+  );
   //const [showAllReplies, setShowAllReplies] = useState(false);
   const { data: mutedUsers } = UseUserMuted(pubky ?? '');
   const router = useRouter();
@@ -224,14 +227,13 @@ const PostReplies = ({ post, layout, homeView = false }) => {
     </div>
   );
 
-  if (!replies || replies.replies.length === 0) return null;
+  if (!replies || replies.length === 0) return null;
 
-  const displayedReplies = replies.replies.slice(0, 2);
+  const displayedReplies = replies.slice(0, 2);
   //showAllReplies
   //  ? replies.replies
   //  : replies.replies.slice(0, 2);
-  const repliesLeft =
-    replies?.root_post?.counts?.replies - displayedReplies.length;
+  const repliesLeft = post?.counts?.replies - displayedReplies.length;
 
   return (
     <div className="mt-3 flex flex-col gap-3">

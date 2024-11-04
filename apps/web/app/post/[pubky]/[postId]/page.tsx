@@ -6,12 +6,12 @@ import { Utils } from '@social/utils-shared';
 import Skeletons from '@/components/Skeletons';
 import { Post } from './components';
 import MetaTags from '@/components/MetaTags';
-import { usePost, usePostThread } from '@/hooks/usePost';
+import { usePost, usePostReplies } from '@/hooks/usePost';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { useEffect, useRef, useState } from 'react';
 import { getFile } from '@/services/fileService';
-import { PostThread, PubkyAppFile } from '@/types/Post';
+import { PostView, PubkyAppFile } from '@/types/Post';
 import Link from 'next/link';
 
 // Component for Loading Content
@@ -98,20 +98,33 @@ function ValidPostContent({
 export default function Index({
   params,
 }: {
-  params: { pubky: string; postId: string };
+  params: Promise<{ pubky: string; postId: string }>;
 }) {
+  const { pubky } = usePubkyClientContext();
   const limit = 10;
   const [skip, setSkip] = useState(0);
-  const [repliesArray, setRepliesArray] = useState<PostThread>(
-    {} as PostThread
+  const [repliesArray, setRepliesArray] = useState<PostView[]>(
+    {} as PostView[]
   );
-  const { pubky } = usePubkyClientContext();
-  const { data, isLoading, isError } = usePost(params.pubky, params.postId);
+  const [resolvedParams, setResolvedParams] = useState<{
+    pubky: string;
+    postId: string;
+  } | null>(null);
+
+  useEffect(() => {
+    params.then((p) => setResolvedParams(p));
+  }, [params]);
+
+  const { pubky: paramsPubky, postId: paramsPostId } = resolvedParams ?? {
+    pubky: '',
+    postId: '',
+  };
+  const { data, isLoading, isError } = usePost(paramsPubky, paramsPostId);
   const {
     data: replies,
     isLoading: isLoadingReplies,
     isError: isErrorReplies,
-  } = usePostThread(params.pubky, params.postId, pubky, skip, limit);
+  } = usePostReplies(paramsPubky, paramsPostId, pubky, skip, limit);
   const { data: author } = useUserProfile(
     data?.details?.author as string,
     pubky ?? ''
@@ -127,11 +140,11 @@ export default function Index({
   const fetchMoreReplies = () => {
     if (isErrorReplies) return;
 
-    const newReplies = {
-      root_post: replies?.root_post,
-      replies: [...(repliesArray?.replies || []), ...(replies?.replies || [])],
-    };
-    setRepliesArray(newReplies as PostThread);
+    const newRepliesArray = [
+      ...(Array.isArray(repliesArray) ? repliesArray : []),
+      ...(Array.isArray(replies) ? replies : []),
+    ];
+    setRepliesArray(newRepliesArray);
 
     const newSkip = skip + limit;
     setSkip(newSkip);

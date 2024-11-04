@@ -188,7 +188,7 @@ export default function FooterArea({
             <input
               id="fileInput"
               type="file"
-              accept="image/*,video/*,.pdf"
+              accept="image/*,video/*,audio/*,.pdf"
               className="hidden"
               onChange={handleFileChange}
               disabled={!selectedFiles}

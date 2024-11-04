@@ -1,5 +1,6 @@
 import { Notifications } from '@/app/notifications/components';
 import { Skeleton } from '@/components';
+import { useFilterContext } from '@/contexts';
 import { NotificationView } from '@/types/User';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import Link from 'next/link';
@@ -15,6 +16,7 @@ export default function NotificationsProfile({
   loading,
 }: NotificationsProps) {
   const [loadingNotifications, setLoadingNotifications] = useState(true);
+  const { unReadNotification } = useFilterContext();
 
   useEffect(() => {
     if (!loading) setLoadingNotifications(false);
@@ -30,9 +32,26 @@ export default function NotificationsProfile({
         </Typography.H2>
       ) : (
         <div>
-          {notifications?.slice(0, 10).map((notification, index) => {
-            {
-              /**if (Array.isArray(notification)) {
+          {unReadNotification > 0 && (
+            <div className="mb-12">
+              <Typography.Body className="font-semibold">
+                New Notifications
+              </Typography.Body>
+              {notifications
+                .slice(0, unReadNotification)
+                .map((notification, index) => (
+                  <Notifications.Notification
+                    key={index}
+                    notification={notification}
+                  />
+                ))}
+            </div>
+          )}
+          {notifications
+            ?.slice(unReadNotification, 10)
+            .map((notification, index) => {
+              {
+                /**if (Array.isArray(notification)) {
               if (
                 notification[0].type === 'follow' ||
                 notification[0].type === 'new_friend' ||
@@ -67,14 +86,14 @@ export default function NotificationsProfile({
                 />
               );
             }*/
-            }
-            return (
-              <Notifications.Notification
-                key={index}
-                notification={notification}
-              />
-            );
-          })}
+              }
+              return (
+                <Notifications.Notification
+                  key={index}
+                  notification={notification}
+                />
+              );
+            })}
           {notifications?.length > 10 && (
             <Link href={'/notifications'}>
               <Button.Medium

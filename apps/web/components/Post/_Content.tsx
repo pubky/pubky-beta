@@ -12,6 +12,7 @@ import { Button, Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import { FileContent, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
+import { Spotify } from 'react-spotify-embed';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -32,6 +33,7 @@ export default function Content({
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
+  const [spotifyUrl, setSpotifyUrl] = useState('');
   const [fileContents, setFileContents] = useState<FileContent[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
@@ -63,6 +65,11 @@ export default function Content({
       const githubMatch = url.match(githubRegex);
       if (githubMatch) {
         setGithubUrl(githubMatch[0]);
+      }
+
+      const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
+      if (spotifyRegex.test(url)) {
+        setSpotifyUrl(url);
       }
     }
   }
@@ -147,7 +154,7 @@ export default function Content({
             ></iframe>
           </div>
         )}
-        {preview && !videoId && !tweetId && !githubUrl && (
+        {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
           <LinkPreview url={preview} />
         )}
         {tweetId && (
@@ -156,6 +163,11 @@ export default function Content({
           </div>
         )}
         {githubUrl && <GitHub url={githubUrl} />}
+        {spotifyUrl && (
+          <div className="mt-4">
+            <Spotify link={spotifyUrl} />
+          </div>
+        )}
         {fileContents.length > 0 && (
           <div
             className={`mt-4 grid gap-4 ${
@@ -170,6 +182,7 @@ export default function Content({
               const isVideo = file?.content_type.startsWith('video');
               const isImage = file?.content_type.startsWith('image');
               const isPDF = file?.content_type === 'application/pdf';
+              const isAudio = file?.content_type.startsWith('audio');
 
               return (
                 <div
@@ -177,7 +190,7 @@ export default function Content({
                   className={`relative cursor-pointer ${
                     fileContents.length === 3 && index === 0 ? 'col-span-2' : ''
                   }`}
-                  onClick={() => openModal(index)}
+                  onClick={() => (isImage ? openModal(index) : undefined)}
                 >
                   {isVideo ? (
                     <video
@@ -225,6 +238,14 @@ export default function Content({
                         Download
                       </Button.Medium>
                     </div>
+                  ) : isAudio ? (
+                    <audio controls>
+                      <source
+                        src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                        type="audio/mpeg"
+                      />
+                      Browser do not support audio.
+                    </audio>
                   ) : (
                     <p className="text-gray-500">Unsupported file type</p>
                   )}

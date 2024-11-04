@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
 import { Preview, Post } from '@social/ui-shared';
+import { Spotify } from 'react-spotify-embed';
 
 interface LinkPreviewerProps {
   content: string;
@@ -14,6 +15,7 @@ export default function LinkPreviewer({ content }: LinkPreviewerProps) {
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
+  const [spotifyUrl, setSpotifyUrl] = useState('');
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -54,11 +56,18 @@ export default function LinkPreviewer({ content }: LinkPreviewerProps) {
           } else {
             setGithubUrl('');
           }
+          const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
+          if (spotifyRegex.test(url)) {
+            setSpotifyUrl(url);
+          } else {
+            setSpotifyUrl('');
+          }
         } else {
           setPreview('');
           setVideoId('');
           setTweetId('');
           setGithubUrl('');
+          setSpotifyUrl('');
         }
       }, 100);
 
@@ -87,7 +96,7 @@ export default function LinkPreviewer({ content }: LinkPreviewerProps) {
           ></iframe>
         </div>
       )}
-      {preview && !videoId && !tweetId && !githubUrl && (
+      {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
         <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
           <Post.LinkPreview url={preview} />
         </div>
@@ -98,6 +107,7 @@ export default function LinkPreviewer({ content }: LinkPreviewerProps) {
         </div>
       )}
       {githubUrl && <Preview.GitHub url={githubUrl} />}
+      {spotifyUrl && <Spotify link={spotifyUrl} />}
     </>
   );
 }

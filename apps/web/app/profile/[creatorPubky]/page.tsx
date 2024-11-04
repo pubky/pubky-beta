@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from '../components';
@@ -13,11 +13,19 @@ import Skeletons from '@/components/Skeletons';
 export default function Index({
   params,
 }: {
-  params: { creatorPubky: string };
+  params: Promise<{ creatorPubky: string }>;
 }) {
   //const { setPosts } = useClientContext();
   const { pubky } = usePubkyClientContext();
-  const creatorPubky = params.creatorPubky;
+  const [resolvedParams, setResolvedParams] = useState<{
+    creatorPubky: string;
+  } | null>(null);
+
+  useEffect(() => {
+    params.then((p) => setResolvedParams(p));
+  }, [params]);
+
+  const creatorPubky = resolvedParams?.creatorPubky || '';
   const {
     data: profile,
     isLoading,

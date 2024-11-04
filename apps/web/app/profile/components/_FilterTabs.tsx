@@ -3,7 +3,11 @@ import { Icon, Typography } from '@social/ui-shared';
 import { Profile } from './';
 import { Skeleton } from '@/components';
 import ContactsProfile from './_ContactsProfile/ContactsProfile';
-import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
+import {
+  useFilterContext,
+  useNotificationsContext,
+  usePubkyClientContext,
+} from '@/contexts';
 import TaggedAs from './_TaggedAs';
 import { UserView } from '@/types/User';
 
@@ -72,6 +76,7 @@ export default function FilterTabs({
   const { notifications, loading: loadingNotifications } =
     useNotificationsContext();
   const { pubky } = usePubkyClientContext();
+  const { unReadNotification } = useFilterContext();
   const [activeTab, setActiveTab] = useState(0);
   const [loadingTab, setLoadingTab] = useState(true);
 
@@ -112,7 +117,7 @@ export default function FilterTabs({
   const getTabNumber = (key: string) => {
     switch (key) {
       case 'notifications':
-        return notifications?.length;
+        return unReadNotification;
       case 'bookmarks':
         return profile?.counts?.bookmarks;
       case 'posts':

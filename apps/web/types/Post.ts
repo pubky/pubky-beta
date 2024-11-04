@@ -57,11 +57,6 @@ export interface PostStream {
   posts: PostView[];
 }
 
-export interface PostThread {
-  root_post: PostView;
-  replies: PostView[];
-}
-
 export interface Tag {
   tag_id: string;
   indexed_at: number;

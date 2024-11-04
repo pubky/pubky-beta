@@ -12,6 +12,7 @@ const defaultPreferences = {
   reply: true,
   repost: true,
   post_deleted: true,
+  post_edited: true,
 };
 
 type NotificationType = keyof typeof defaultPreferences;
@@ -84,6 +85,8 @@ const getNotificationLabel = (type: NotificationType) => {
       return 'New repost to your post';
     case 'post_deleted':
       return 'Someone deleted a post you replied/reposted';
+    case 'post_edited':
+      return 'Someone edited a post you replied/reposted';
     default:
       return '';
   }
