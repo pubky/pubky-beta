@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { FileContent, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
+//import MarkdownPreview from '@uiw/react-markdown-preview';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -132,7 +133,51 @@ export default function Content({
         id="post-content-text"
         className={`text-white break-words ${largeView && 'text-2xl'}`}
       >
-        <Parsing fullContent={fullContent}>{contentText}</Parsing>
+        {(() => {
+          try {
+            if (post?.details?.kind === 'Long') {
+              const parsedContent = JSON.parse(contentText);
+              if (parsedContent.title && parsedContent.body) {
+                const truncatedBody =
+                  parsedContent.body.length > 300
+                    ? parsedContent.body.substring(0, 300) + '...'
+                    : parsedContent.body;
+
+                return (
+                  <div className="w-full justify-between flex gap-8">
+                    <div>
+                      <Typography.Body className="mb-2" variant="large-bold">
+                        {parsedContent.title}
+                      </Typography.Body>
+                      <div className="opacity-70">
+                        {/**<MarkdownPreview source={truncatedBody} />*/}
+                      </div>
+                    </div>
+                    <div>
+                      {fileContents.map((file, index) => {
+                        return (
+                          <div key={index} className="relative">
+                            <Image
+                              src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                              alt={`Fetched file ${index}`}
+                              layout="responsive"
+                              width={360}
+                              height={200}
+                              className="w-full h-auto max-w-[360px] max-h-[200px] object-cover rounded-[10px] overflow-hidden"
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
+            }
+          } catch (error) {
+            console.error(error);
+          }
+          return <Parsing fullContent={fullContent}>{contentText}</Parsing>;
+        })()}
 
         {showMore && (
           <a

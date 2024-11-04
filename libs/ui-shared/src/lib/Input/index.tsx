@@ -3,6 +3,7 @@ import { CheckboxIcon } from './Input.Checkbox/_CheckboxIcon';
 import { Cursor } from './_Cursor';
 import { CursorArea } from './_CursorArea';
 import { Label } from './_Label';
+import { MarkdownEditor } from './_MarkdownEditor';
 import { Radio } from './_Radio';
 import { Search } from './Input.Search/_Search';
 import { SearchActions } from './Input.Search/_SearchActions';
@@ -22,6 +23,7 @@ export const Input = {
   Cursor,
   CursorArea,
   Label,
+  MarkdownEditor,
   Radio,
   Search,
   SearchActions,

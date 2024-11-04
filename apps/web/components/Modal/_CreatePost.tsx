@@ -93,6 +93,8 @@ export default function CreatePost({
               loading={sendingPost}
               arrayTags={arrayTags}
               setArrayTags={setArrayTags}
+              setShowModalPost={setShowModalPost}
+              article
               button={
                 <Button.Medium
                   id="post-btn"

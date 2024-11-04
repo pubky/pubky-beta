@@ -28,6 +28,12 @@ export default function CreateReply({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+  const lineBaseCSS = `ml-[10px] absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[122px] after:block after:-mt-[115px] after:-ml-[2px]`;
+  const lineHorizontalCSS = (
+    <div className="absolute ml-[10px]">
+      <Icon.LineHorizontal size="14" color="#262626" />
+    </div>
+  );
 
   const handleSubmit = async (content: string) => {
     if (sendingReply) {
@@ -114,11 +120,11 @@ export default function CreateReply({
         className="mt-2 max-h-[600px] overflow-y-auto rounded-bl-none"
       />
       <div className="flex items-center relative">
-        <div
-          className={`absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1.5px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`}
-        />
-        <div className="absolute ml-[1px] w-3.5 border-t-2 border-neutral-800" />
-        <div className="w-full ml-[15px] mt-6">
+        <div className="relative">
+          <div className={lineBaseCSS} />
+          {lineHorizontalCSS}
+        </div>
+        <div className="w-full ml-6 mt-6">
           <CreateContent
             id="create-reply-create-content"
             handleSubmit={handleSubmit}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { getFile } from '@/services/fileService';
+import Skeletons from '../Skeletons';
 
 interface ImageByUriProps {
   id?: string;
@@ -13,6 +14,7 @@ interface ImageByUriProps {
   className?: string;
   style?: React.CSSProperties;
   onClick?: () => void;
+  loading?: boolean;
 }
 
 const ImageByUri = ({
@@ -23,6 +25,7 @@ const ImageByUri = ({
   height,
   className,
   style,
+  loading,
   onClick,
 }: ImageByUriProps) => {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
@@ -67,16 +70,22 @@ const ImageByUri = ({
   }, [uri]);
 
   return (
-    <Image
-      id={id}
-      src={imageUrl || '/images/Userpic.png'}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      style={style}
-      onClick={onClick}
-    />
+    <>
+      {!imageUrl && loading ? (
+        <Skeletons.Simple />
+      ) : (
+        <Image
+          id={id}
+          src={imageUrl || '/images/Userpic.png'}
+          alt={alt}
+          width={width}
+          height={height}
+          className={className}
+          style={style}
+          onClick={onClick}
+        />
+      )}
+    </>
   );
 };
 
