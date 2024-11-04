@@ -6,6 +6,7 @@ interface WordProps extends React.HTMLAttributes<HTMLInputElement> {
   error?: string;
   required?: boolean;
   disabled?: boolean;
+  placeholder?: string;
 }
 
 export const Word = ({
@@ -13,6 +14,7 @@ export const Word = ({
   error,
   required,
   disabled,
+  placeholder,
   ...rest
 }: WordProps) => {
   const baseCSS =
@@ -27,6 +29,7 @@ export const Word = ({
       <input
         {...rest}
         required={required}
+        placeholder={placeholder}
         className={twMerge(
           baseCSS,
           rest.className,
