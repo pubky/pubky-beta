@@ -34,6 +34,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   article?: boolean;
   markdown?: boolean;
   maxLength?: number;
+  setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateContent({
@@ -61,6 +62,7 @@ export default function CreateContent({
   article,
   markdown,
   maxLength = 300,
+  setShowModalPost,
 }: CreateContentProps) {
   const { profile } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -317,6 +319,7 @@ export default function CreateContent({
           setShowModalTag={setShowModalTag}
           article={article}
           maxLength={maxLength}
+          setShowModalPost={setShowModalPost}
         />
       </div>
       {arrayTags && setArrayTags && (

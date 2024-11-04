@@ -34,6 +34,7 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   article?: boolean;
   noFile?: boolean;
   maxLength?: number;
+  setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function FooterArea({
@@ -59,6 +60,7 @@ export default function FooterArea({
   article,
   noFile,
   maxLength = 300,
+  setShowModalPost,
 }: FooterAreaProps) {
   const { setContent: setContentAlert, setShow } = useAlertContext();
   const [openModalArticle, setOpenModalArticle] = useState(false);
@@ -226,6 +228,7 @@ export default function FooterArea({
             <Modal.CreateArticle
               showModalArticle={openModalArticle}
               setShowModalArticle={setOpenModalArticle}
+              setShowModalPost={setShowModalPost}
             />
           )}
         </>

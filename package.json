@@ -16,7 +16,7 @@
     "@noble/hashes": "^1.5.0",
     "@nx/next": "17.2.4",
     "@swc/helpers": "~0.5.2",
-    "@synonymdev/pubky": "^0.1.16",
+    "@synonymdev/pubky": "^0.2.0",
     "@tanstack/react-query": "^5.52.3",
     "@uiw/react-markdown-preview": "^5.1.3",
     "axios": "^1.7.4",

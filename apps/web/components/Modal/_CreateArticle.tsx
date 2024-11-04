@@ -12,11 +12,13 @@ import Image from 'next/image';
 interface CreateArticleProps {
   showModalArticle: boolean;
   setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateArticle({
   showModalArticle,
   setShowModalArticle,
+  setShowModalPost,
 }: CreateArticleProps) {
   const { pubky, createArticle, createTag, profile } = usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
@@ -74,6 +76,7 @@ export default function CreateArticle({
       }
       setArrayTags([]);
       setContentArticle('');
+      setShowModalPost && setShowModalPost(false);
       setShowModalArticle(false);
       setSelectedFile([]);
     } catch (error) {
