@@ -24,7 +24,7 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedFiles?: File[];
   setArrayTags?: React.Dispatch<React.SetStateAction<string[]>>;
   arrayTags?: string[];
-  setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
+  setFilePreviews?: React.Dispatch<React.SetStateAction<string[]>>;
   showEmojis: boolean;
   setShowEmojis: React.Dispatch<React.SetStateAction<boolean>>;
   largeView: boolean;
@@ -99,6 +99,7 @@ export default function FooterArea({
       const newFilePreviews =
         newFiles && newFiles.map((file) => URL.createObjectURL(file));
       newFilePreviews &&
+        setFilePreviews &&
         setFilePreviews((prevPreviews) =>
           [...prevPreviews, ...newFilePreviews].slice(0, 3)
         );
@@ -221,10 +222,12 @@ export default function FooterArea({
             )}
             {button}
           </Post.Actions>
-          <Modal.CreateArticle
-            showModalArticle={openModalArticle}
-            setShowModalArticle={setOpenModalArticle}
-          />
+          {openModalArticle && (
+            <Modal.CreateArticle
+              showModalArticle={openModalArticle}
+              setShowModalArticle={setOpenModalArticle}
+            />
+          )}
         </>
       )}
     </>

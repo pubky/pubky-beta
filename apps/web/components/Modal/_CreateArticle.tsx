@@ -1,14 +1,13 @@
 import { Button, Icon, Input, Modal as ModalUI } from '@social/ui-shared';
-import CreateContent from '../CreateContent';
 import { useEffect, useRef, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { Section } from '../CreateContent/Section';
 import LinkPreviewer from '../LinkPreview';
 import { UserView } from '@/types/User';
-import FilePreview from '../FilePreview';
 import Modal from '.';
 import { searchUsersByUsername } from '@/services/userService';
+import Image from 'next/image';
 
 interface CreateArticleProps {
   showModalArticle: boolean;
@@ -38,7 +37,7 @@ export default function CreateArticle({
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
-  const [filePreviews, setFilePreviews] = useState<string[]>([]);
+  //const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
@@ -269,16 +268,16 @@ export default function CreateArticle({
 
       const newFiles =
         selectedFile && validFiles.slice(0, 3 - selectedFile.length);
-      const newPreviews =
-        newFiles && newFiles.map((file) => URL.createObjectURL(file));
+      //const newPreviews =
+      // newFiles && newFiles.map((file) => URL.createObjectURL(file));
 
       setSelectedFile &&
         newFiles &&
         setSelectedFile((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
-      newPreviews &&
-        setFilePreviews((prevPreviews) =>
-          [...prevPreviews, ...newPreviews].slice(0, 3)
-        );
+      //newPreviews &&
+      // setFilePreviews((prevPreviews) =>
+      //   [...prevPreviews, ...newPreviews].slice(0, 3)
+      // );
     }
   };
 
@@ -339,7 +338,7 @@ export default function CreateArticle({
                         >
                           <Icon.Trash size="20" />
                         </div>
-                        <img
+                        <Image
                           src={URL.createObjectURL(selectedFile[0])}
                           alt="Uploaded Preview"
                           className="w-[1200px] h-auto max-h-[500px] rounded-lg"
@@ -392,8 +391,9 @@ export default function CreateArticle({
                     largeView
                     setIsValidContent={setIsValidContent}
                     placeHolder="Write your article"
-                    setFilePreviews={setFilePreviews}
+                    //setFilePreviews={setFilePreviews}
                     loading={sendingArticle}
+                    markdown
                   />
                 </div>
                 <LinkPreviewer content={contentArticle} />
@@ -411,7 +411,7 @@ export default function CreateArticle({
                   setArrayTags={setArrayTags}
                   maxLength={1000}
                   arrayTags={arrayTags}
-                  setFilePreviews={setFilePreviews}
+                  //setFilePreviews={setFilePreviews}
                   showEmojis={showEmojis}
                   setShowEmojis={setShowEmojis}
                   largeView

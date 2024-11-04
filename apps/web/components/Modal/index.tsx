@@ -5,6 +5,7 @@ import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
 import DeleteAccount from './_DeleteAccount';
 import DeletePost from './_DeletePost';
+import EditArticle from './_EditArticle';
 import EditPost from './_EditPost';
 import Feedback from './_Feedback';
 import Link from './_Link';
@@ -26,6 +27,7 @@ export const Modal = {
   CreateReply,
   DeleteAccount,
   DeletePost,
+  EditArticle,
   EditPost,
   Feedback,
   Link,
