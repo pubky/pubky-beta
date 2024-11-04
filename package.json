@@ -26,7 +26,7 @@
     "jdenticon": "^3.2.0",
     "jszip": "^3.10.1",
     "markdown-it": "^14.1.0",
-    "next": "^14.2.5",
+    "next": "^15.0.2",
     "nextjs-toploader": "^1.6.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",

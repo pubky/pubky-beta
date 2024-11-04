@@ -49,7 +49,7 @@ const nextConfig = {
       },
     ],
   },
-  cleanDistDir: false,
+  cleanDistDir: true,
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push('@synonymdev/pubky');

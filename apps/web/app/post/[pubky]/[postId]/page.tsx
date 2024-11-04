@@ -167,20 +167,33 @@ function ValidPostContent({
 export default function Index({
   params,
 }: {
-  params: { pubky: string; postId: string };
+  params: Promise<{ pubky: string; postId: string }>;
 }) {
+  const { pubky } = usePubkyClientContext();
   const limit = 10;
   const [skip, setSkip] = useState(0);
   const [repliesArray, setRepliesArray] = useState<PostView[]>(
     {} as PostView[]
   );
-  const { pubky } = usePubkyClientContext();
-  const { data, isLoading, isError } = usePost(params.pubky, params.postId);
+  const [resolvedParams, setResolvedParams] = useState<{
+    pubky: string;
+    postId: string;
+  } | null>(null);
+
+  useEffect(() => {
+    params.then((p) => setResolvedParams(p));
+  }, [params]);
+
+  const { pubky: paramsPubky, postId: paramsPostId } = resolvedParams ?? {
+    pubky: '',
+    postId: '',
+  };
+  const { data, isLoading, isError } = usePost(paramsPubky, paramsPostId);
   const {
     data: replies,
     isLoading: isLoadingReplies,
     isError: isErrorReplies,
-  } = usePostReplies(params.pubky, params.postId, pubky, skip, limit);
+  } = usePostReplies(paramsPubky, paramsPostId, pubky, skip, limit);
   const { data: author } = useUserProfile(
     data?.details?.author as string,
     pubky ?? ''
