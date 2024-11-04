@@ -143,7 +143,7 @@ export default function InputArea({
       className="w-full relative"
     >
       {markdown ? (
-        <Input.MarkdownEditor
+        <Input.MarkdownEditorComponent
           onChange={handleEditorChange}
           placeHolder={placeHolder}
           autoFocus={autoFocus}

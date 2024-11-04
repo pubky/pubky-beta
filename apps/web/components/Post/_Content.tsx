@@ -13,7 +13,7 @@ import Image from 'next/image';
 import { FileContent, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
-//import MarkdownPreview from '@uiw/react-markdown-preview';
+import MarkdownPreview from '@uiw/react-markdown-preview';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -150,7 +150,7 @@ export default function Content({
                         {parsedContent.title}
                       </Typography.Body>
                       <div className="opacity-70">
-                        {/**<MarkdownPreview source={truncatedBody} />*/}
+                        <MarkdownPreview source={truncatedBody} />
                       </div>
                     </div>
                     <div>

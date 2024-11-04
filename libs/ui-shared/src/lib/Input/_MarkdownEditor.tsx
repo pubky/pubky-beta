@@ -1,7 +1,6 @@
 import React from 'react';
-//import MarkdownIt from 'markdown-it';
-//import MdEditor from 'react-markdown-editor-lite';
-//import 'react-markdown-editor-lite/lib/index.css';
+import MarkdownEditor from '@uiw/react-markdown-editor';
+//import '@uiw/react-markdown-editor/dist/style.css';
 
 interface CursorAreaProps {
   children?: string;
@@ -14,9 +13,7 @@ interface CursorAreaProps {
   value: string;
 }
 
-//const mdParser = new MarkdownIt();
-
-export const MarkdownEditor = ({
+export const MarkdownEditorComponent = ({
   onChange,
   value,
   children,
@@ -28,23 +25,14 @@ export const MarkdownEditor = ({
   ...rest
 }: CursorAreaProps) => {
   return (
-    <div>
-      {/**<MdEditor
+    <div className="dark-editor">
+      <MarkdownEditor
         value={value}
-        style={{ height: '400px' }}
-        renderHTML={(text) => mdParser.render(text)}
-        onChange={onChange}
+        //onChange={(editor, data, value) => onChange({ text: value })}
+        height="400px"
         autoFocus={autoFocus}
-        placeholder={placeHolder}
-        config={{
-          view: {
-            menu: true,
-            md: true,
-            html: true,
-          },
-        }}
-        className="dark-editor mt-4"
-      />*/}
+        {...rest}
+      />
     </div>
   );
 };
