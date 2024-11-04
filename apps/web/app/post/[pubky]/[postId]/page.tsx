@@ -16,7 +16,7 @@ import Link from 'next/link';
 import TagsLargeView from '@/components/Post/_TagsLargeView';
 import { ImageByUri } from '@/components/ImageByUri';
 import { useRouter } from 'next/navigation';
-import Parsing from '@/components/Content/_Parsing';
+import MarkdownPreview from '@uiw/react-markdown-preview';
 
 // Component for Loading Content
 function LoadingContent() {
@@ -131,9 +131,9 @@ function ValidPostContent({
                   loading
                 />
                 <div className="text-white break-words">
-                  <Parsing fullContent>
-                    {JSON.parse(data?.details?.content).body}
-                  </Parsing>
+                  <MarkdownPreview
+                    source={JSON.parse(data?.details?.content).body}
+                  />
                 </div>
               </div>
               <TagsLargeView post={data} />

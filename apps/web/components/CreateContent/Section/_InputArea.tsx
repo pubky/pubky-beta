@@ -7,6 +7,7 @@ import Modal from '../../Modal';
 import { Utils } from '@social/utils-shared';
 import { UserView } from '@/types/User';
 import { twMerge } from 'tailwind-merge';
+import { MarkdownEditor } from 'libs/ui-shared/src/lib/Input/_MarkdownEditor';
 
 interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedFiles?: File[];
@@ -21,10 +22,11 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   setIsValidContent: React.Dispatch<React.SetStateAction<boolean>>;
   autoFocus?: boolean;
   placeHolder?: string;
-  setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
+  setFilePreviews?: React.Dispatch<React.SetStateAction<string[]>>;
   loading?: boolean;
   className?: string;
   maxLength?: number;
+  markdown?: boolean;
 }
 
 export default function InputArea({
@@ -44,6 +46,7 @@ export default function InputArea({
   loading,
   className,
   maxLength = 300,
+  markdown,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -109,6 +112,7 @@ export default function InputArea({
           [...prevFiles, ...newFiles].slice(0, 3)
         );
       newPreviews &&
+        setFilePreviews &&
         setFilePreviews((prevPreviews) =>
           [...prevPreviews, ...newPreviews].slice(0, 3)
         );
@@ -123,6 +127,14 @@ export default function InputArea({
     setSearchedUsers([]);
   };
 
+  const handleEditorChange = ({ text }: { text: string }) => {
+    if (text.length <= maxLength) {
+      setContent(text);
+      setCursorPosition(text.length);
+      setIsValidContent(Utils.isValidContent(text));
+    }
+  };
+
   return (
     <div
       onDragEnter={handleDragEnter}
@@ -131,26 +143,38 @@ export default function InputArea({
       onDrop={handleDrop}
       className="w-full relative"
     >
-      <Input.CursorArea
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-          setContent(e.target.value);
-          setCursorPosition(e.target.selectionStart);
-          setIsValidContent(Utils.isValidContent(e.target.value));
-        }}
-        disabled={loading}
-        onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-          setCursorPosition(e.currentTarget.selectionStart);
-        }}
-        autoFocus={autoFocus}
-        value={content}
-        maxLength={maxLength}
-        onClick={() => setTextArea && setTextArea(true)}
-        className={twMerge(
-          `w-full max-h-[300px] h-auto ${largeView && 'text-2xl min-h-[50px]'}`,
-          className
-        )}
-        placeholder={placeHolder}
-      />
+      {markdown ? (
+        <MarkdownEditor
+          onChange={handleEditorChange}
+          placeHolder={placeHolder}
+          autoFocus={autoFocus}
+          value={content}
+          maxLength={maxLength}
+        />
+      ) : (
+        <Input.CursorArea
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setContent(e.target.value);
+            setCursorPosition(e.target.selectionStart);
+            setIsValidContent(Utils.isValidContent(e.target.value));
+          }}
+          disabled={loading}
+          onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+            setCursorPosition(e.currentTarget.selectionStart);
+          }}
+          autoFocus={autoFocus}
+          value={content}
+          maxLength={maxLength}
+          onClick={() => setTextArea && setTextArea(true)}
+          className={twMerge(
+            `w-full max-h-[300px] h-auto ${
+              largeView && 'text-2xl min-h-[50px]'
+            }`,
+            className
+          )}
+          placeholder={placeHolder}
+        />
+      )}
       {isDragging && selectedFiles && (
         <div className="flex justify-center items-center z-50">
           <Icon.Plus size="64" color="gray" />

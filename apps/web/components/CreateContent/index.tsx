@@ -32,6 +32,8 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'small';
   className?: string;
   article?: boolean;
+  markdown?: boolean;
+  maxLength?: number;
 }
 
 export default function CreateContent({
@@ -57,6 +59,8 @@ export default function CreateContent({
   variant,
   className,
   article,
+  markdown,
+  maxLength = 300,
 }: CreateContentProps) {
   const { profile } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -272,6 +276,8 @@ export default function CreateContent({
             placeHolder={placeHolder}
             setFilePreviews={setFilePreviews}
             loading={loading}
+            markdown={markdown}
+            maxLength={maxLength}
           />
         </div>
         <LinkPreviewer content={content} />
@@ -310,6 +316,7 @@ export default function CreateContent({
           wrapperRefEmojis={wrapperRefEmojis}
           setShowModalTag={setShowModalTag}
           article={article}
+          maxLength={maxLength}
         />
       </div>
       {arrayTags && setArrayTags && (

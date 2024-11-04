@@ -714,7 +714,7 @@ export function PubkyClientWrapper({
       const lastReadBody = Buffer.from(JSON.stringify(body));
 
       const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
-      const lastRead = await client.put(lastReadUrl, lastReadBody);
+      await client.put(lastReadUrl, lastReadBody);
 
       return true;
     } catch (error) {

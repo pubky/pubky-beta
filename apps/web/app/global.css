@@ -10,3 +10,82 @@ body {
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
 }
+
+.dark-editor .rc-md-editor,
+.dark-editor .rc-md-navigation,
+.dark-editor .rc-md-editor-toolbar {
+  background-color: #05050a !important;
+  color: #ffffff !important;
+}
+
+.dark-editor .rc-md-editor-toolbar .button {
+  color: #ffffff !important;
+}
+
+.dark-editor .rc-md-editor-toolbar .button:hover {
+  color: #bbbbbb !important;
+}
+
+.dark-editor .rc-md-editor .section .input,
+.dark-editor .rc-md-editor .section .preview {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+  caret-color: #ffffff !important;
+}
+
+.dark-editor .rc-md-editor-toolbar {
+  border-color: #333 !important;
+}
+
+.dark-editor .rc-md-editor .section .input::selection {
+  background-color: #555 !important;
+  color: #ffffff !important;
+}
+
+.rc-md-editor .editor-container .sec-md .input {
+  color: white !important;
+  background-color: #05050a !important;
+}
+
+.custom-html-style {
+  color: white !important;
+}
+
+.rc-md-editor .editor-container > .section {
+  border: 0px solid transparent !important;
+}
+
+.rc-md-editor .rc-md-navigation {
+  border: 1px solid #ffffff33 !important;
+}
+
+.rc-md-editor {
+  border: 0px solid transparent !important;
+  background-color: #05050a !important;
+}
+
+.rc-md-editor .editor-container {
+  background-color: #05050a !important;
+}
+
+.rc-md-editor .rc-md-navigation .button-wrap .button {
+  color: white !important;
+}
+
+.rc-md-editor .rc-md-navigation .button-wrap .button:hover {
+  color: #757575 !important;
+}
+
+.custom-html-style code,
+.custom-html-style pre {
+  background-color: #05050a !important;
+}
+
+.custom-html-style table th {
+  background-color: #05050a !important;
+}
+
+.wmde-markdown {
+  background-color: transparent !important;
+  color: white !important;
+}
