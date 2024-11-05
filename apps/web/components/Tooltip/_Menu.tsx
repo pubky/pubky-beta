@@ -336,11 +336,13 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           setShowModalEditPost={setShowModalEditPost}
           post={post}
         />
-        <Modal.EditArticle
-          showModalEditArticle={showModalEditArticle}
-          setShowModalEditArticle={setShowModalEditArticle}
-          article={post}
-        />
+        {showModalEditArticle && (
+          <Modal.EditArticle
+            showModalEditArticle={showModalEditArticle}
+            setShowModalEditArticle={setShowModalEditArticle}
+            article={post}
+          />
+        )}
         <Modal.DeletePost
           showModalDeletePost={showModalDeletePost}
           setShowModalDeletePost={setShowModalDeletePost}
