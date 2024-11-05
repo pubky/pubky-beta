@@ -101,7 +101,7 @@ describe('posts', () => {
   });
 
   // test skipped because viewing uploaded image in post doesn't work for this local deployment
-  it('can post with image upload', () => {
+  it.skip('can post with image upload', () => {
     const postContent = `I can post with an image! ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
@@ -272,6 +272,10 @@ describe('posts', () => {
       // submit the post
       cy.get('#post-btn').click();
     });
+
+    // wait to guarentee tags are associated with the post
+    // todo: consider try loop instead of wait
+    cy.wait(2_000);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
