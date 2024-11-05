@@ -248,7 +248,7 @@ export default function Tag({
       updatePostInTimeline(updatedPost);
       setTag('');
       setLoading(false);
-      setShowModalTag(false);
+      //setShowModalTag(false);
     } catch (error) {
       console.error('Error adding tag and updating post', error);
     }

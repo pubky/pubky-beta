@@ -69,9 +69,13 @@ type PubkyClientContextType = {
     postId: string,
     tagContent: string
   ) => Promise<boolean>;
-  deleteTag: (post_id: string, tagId: string) => Promise<boolean>;
+  deleteTag: (
+    author_id: string,
+    post_id: string,
+    tagLabel: string
+  ) => Promise<boolean>;
   createTagProfile: (profileId: string, tagContent: string) => Promise<boolean>;
-  deleteTagProfile: (profileId: string, tagId: string) => Promise<boolean>;
+  deleteTagProfile: (profileId: string, tagLabel: string) => Promise<boolean>;
   getRecoveryFile: (password: string) => Promise<any | null>;
   storeProfile: (userProfile: UserDetails) => Promise<boolean>;
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
@@ -1071,19 +1075,29 @@ export function PubkyClientWrapper({
     }
   };
 
-  const deleteTag = async (id: string, tagId: string): Promise<boolean> => {
+  const deleteTag = async (
+    authorId: string,
+    postId: string,
+    tagLabel: string
+  ): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
       if (!loggedIn) {
         throw new Error('User is not logged in');
       }
+
+      const uriPost = `pubky://${authorId}/pub/pubky.app/posts/${postId}`;
+
+      const tagId = (
+        await generateHashId(`${uriPost}:${tagLabel}`)
+      ).toUpperCase();
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
       await client.delete(tagUrl);
 
       return true;
     } catch (error) {
-      console.error('Error creating tag:', error);
+      console.error('Error deleting tag:', error);
       return false;
     }
   };
@@ -1126,7 +1140,7 @@ export function PubkyClientWrapper({
 
   const deleteTagProfile = async (
     profileId: string,
-    tagId: string
+    tagLabel: string
   ): Promise<boolean> => {
     try {
       const loggedIn = await isLoggedIn();
@@ -1134,6 +1148,10 @@ export function PubkyClientWrapper({
         throw new Error('User is not logged in');
       }
 
+      const profileUri = `pubky://${profileId}/pub/pubky.app/profile.json`;
+      const tagId = (
+        await generateHashId(`${profileUri}:${tagLabel}`)
+      ).toUpperCase();
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
       await client.delete(tagUrl);
