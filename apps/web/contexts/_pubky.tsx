@@ -702,7 +702,7 @@ export function PubkyClientWrapper({
 
       return timestamp;
     } catch (error) {
-      console.error('Error get timestamp:', error);
+      // console.error('Error get timestamp:', error);
       return false;
     }
   };

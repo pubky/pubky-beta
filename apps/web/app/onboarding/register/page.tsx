@@ -18,7 +18,7 @@ interface FormErrors {
 const profileSchema = z.object({
   name: z
     .string()
-    .min(1, { message: 'Minimum length 1 character.' })
+    .min(3, { message: 'Minimum length 3 character.' })
     .max(24, { message: 'Maximum length 24 characters' }),
   bio: z
     .string()
