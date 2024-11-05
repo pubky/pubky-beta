@@ -163,7 +163,7 @@ export default function Content({
                               layout="responsive"
                               width={360}
                               height={200}
-                              className="w-full h-auto max-w-[360px] max-h-[200px] object-cover rounded-[10px] overflow-hidden"
+                              className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
                             />
                           </div>
                         );
@@ -213,7 +213,7 @@ export default function Content({
             <Spotify link={spotifyUrl} />
           </div>
         )}
-        {fileContents.length > 0 && (
+        {fileContents.length > 0 && post?.details?.kind !== 'Long' && (
           <div
             className={`mt-4 grid gap-4 ${
               fileContents.length === 1

@@ -81,7 +81,7 @@ function ValidPostContent({
       <div ref={postRef}>
         <div key={data?.details?.uri}>
           {data?.details?.kind === 'Long' ? (
-            <div className="flex">
+            <div className="flex gap-6">
               <div className="flex flex-col gap-4">
                 <Typography.Display className="sm:leading-[64px]">
                   {JSON.parse(data?.details?.content).title}

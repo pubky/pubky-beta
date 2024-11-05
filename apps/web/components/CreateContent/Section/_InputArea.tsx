@@ -26,6 +26,8 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   maxLength?: number;
   markdown?: boolean;
+  isError?: boolean;
+  setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function InputArea({
@@ -46,6 +48,8 @@ export default function InputArea({
   className,
   maxLength = 300,
   markdown,
+  isError,
+  setIsError,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -126,12 +130,15 @@ export default function InputArea({
     setSearchedUsers([]);
   };
 
-  const handleEditorChange = ({ text }: { text: string }) => {
-    if (text.length <= maxLength) {
-      setContent(text);
-      setCursorPosition(text.length);
-      setIsValidContent(Utils.isValidContent(text));
+  const handleEditorChange = (text: string) => {
+    if (text.length > maxLength) {
+      setIsError && setIsError(true);
+    } else {
+      setIsError && setIsError(false);
     }
+    setContent(text);
+    setCursorPosition(text.length);
+    setIsValidContent(Utils.isValidContent(text));
   };
 
   return (
@@ -148,7 +155,7 @@ export default function InputArea({
           placeHolder={placeHolder}
           autoFocus={autoFocus}
           value={content}
-          maxLength={maxLength}
+          isError={isError}
         />
       ) : (
         <Input.CursorArea

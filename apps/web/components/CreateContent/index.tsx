@@ -35,6 +35,8 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   markdown?: boolean;
   maxLength?: number;
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
+  isError?: boolean;
+  setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateContent({
@@ -62,6 +64,8 @@ export default function CreateContent({
   article,
   markdown,
   maxLength = 300,
+  isError,
+  setIsError,
   setShowModalPost,
 }: CreateContentProps) {
   const { profile } = usePubkyClientContext();
@@ -166,7 +170,8 @@ export default function CreateContent({
       if (
         (event.ctrlKey || event.metaKey) &&
         event.key === 'Enter' &&
-        isValidContent
+        isValidContent &&
+        !isError
       ) {
         handleSubmit(content);
       }
@@ -280,6 +285,8 @@ export default function CreateContent({
             loading={loading}
             markdown={markdown}
             maxLength={maxLength}
+            setIsError={setIsError}
+            isError={isError}
           />
         </div>
         <LinkPreviewer content={content} />
@@ -318,6 +325,7 @@ export default function CreateContent({
           wrapperRefEmojis={wrapperRefEmojis}
           setShowModalTag={setShowModalTag}
           article={article}
+          markdown={markdown}
           maxLength={maxLength}
           setShowModalPost={setShowModalPost}
         />

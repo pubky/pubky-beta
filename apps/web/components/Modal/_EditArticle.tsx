@@ -17,6 +17,7 @@ export default function EditArticle({
 }: CreateEditArticleProps) {
   const { editPost } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
+  const [isError, setIsError] = useState(false);
   const [initTitle, setInitTitle] = useState('');
   const [contentEditArticle, setContentEditArticle] = useState('');
   const [sendingEditArticle, setSendingEditArticle] = useState(false);
@@ -102,6 +103,8 @@ export default function EditArticle({
             <CreateContent
               id="new-post-create-content"
               handleSubmit={handleSubmit}
+              setIsError={setIsError}
+              isError={isError}
               content={contentEditArticle}
               setContent={setContentEditArticle}
               isValidContent={isValidContent}
@@ -117,13 +120,13 @@ export default function EditArticle({
                   icon={
                     <Icon.PencilLine
                       size="16"
-                      color={!isValidContent ? 'gray' : 'white'}
+                      color={!isValidContent || isError ? 'gray' : 'white'}
                     />
                   }
-                  disabled={!isValidContent}
+                  disabled={!isValidContent || isError}
                   loading={sendingEditArticle}
                   onClick={
-                    isValidContent
+                    isValidContent && !isError
                       ? () =>
                           handleSubmit(
                             JSON.stringify({

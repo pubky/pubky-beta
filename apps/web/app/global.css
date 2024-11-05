@@ -11,44 +11,94 @@ body {
   -moz-osx-font-smoothing: grayscale !important;
 }
 
-.dark-editor .w-md-editor,
-.dark-editor .w-md-editor-toolbar,
-.dark-editor .w-md-editor-content {
+.md-editor {
   background-color: #05050a !important;
-  color: #ffffff !important;
 }
 
-.dark-editor .w-md-editor-toolbar {
-  border-color: #333 !important;
-}
-
-.dark-editor .w-md-editor-content .w-md-editor-text-pre::selection {
-  background-color: #555 !important;
-  color: #ffffff !important;
-}
-
-.dark-editor .w-md-editor-toolbar .w-md-editor-toolbar-item button {
-  color: #ffffff !important;
-}
-
-.dark-editor .w-md-editor-toolbar .w-md-editor-toolbar-item button:hover {
-  color: #bbbbbb !important;
-}
-
-.dark-editor .w-md-editor-text-input,
-.dark-editor .w-md-editor-preview {
-  background-color: #1e1e1e !important;
-  color: #ffffff !important;
-  caret-color: #ffffff !important;
-}
-
-.dark-editor .w-md-editor-preview code,
-.dark-editor .w-md-editor-preview pre {
-  background-color: #05050a !important;
+.md-editor-toolbar button {
   color: white !important;
 }
 
-.dark-editor .w-md-editor-preview table th {
+.ͼ1b {
   background-color: #05050a !important;
+}
+
+.ͼ1b .cm-gutters {
+  background-color: #05050a !important;
+  display: none !important;
+}
+
+.md-editor-toolbar {
+  gap: 10px !important;
+}
+
+.md-editor-toolbar-warp:not(.md-editor-toolbar-bottom) {
+  border: 1px solid #ffffff29 !important;
+  border-radius: 8px !important;
+  padding: 6px 8px 6px 8px !important;
+}
+
+.ͼ1b .cm-activeLine {
+  background-color: #05050a !important;
+}
+
+.ͼ2 .cm-activeLine {
+  background-color: #05050a !important;
+}
+
+.ͼ1 .cm-line {
   color: white !important;
+  padding: 10px 10px 0px 10px !important;
+  font-size: 14px !important;
+}
+
+.ͼ4 .cm-line {
+  caret-color: white !important;
+}
+
+.ͼ4 .cm-line::selection {
+  background-color: #0056b3 !important;
+}
+
+.wmde-markdown {
+  color: white !important;
+  background-color: transparent !important;
+}
+
+.md-editor-preview {
+  background-color: #05050a !important;
+  border-left: 1px solid #ffffff29 !important;
+}
+
+.ͼo .cm-activeLine::selection {
+  background-color: #0056b3 !important;
+}
+
+.ͼo .cm-gutters {
+  display: none !important;
+}
+
+.ͼ4 .cm-content {
+  caret-color: white !important;
+  background-color: #05050a !important;
+}
+
+.ͼai .cm-scroller {
+  background-color: #05050a !important;
+}
+
+.ͼ2 .cm-gutters {
+  display: none !important;
+}
+
+.ͼo .cm-activeLine {
+  background-color: #05050a !important;
+}
+
+.ͼ13 {
+  color: white !important;
+}
+
+.md-editor-toolbar button.active {
+  background-color: #05050a !important;
 }

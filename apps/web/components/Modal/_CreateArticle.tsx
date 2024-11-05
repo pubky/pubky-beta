@@ -22,6 +22,7 @@ export default function CreateArticle({
 }: CreateArticleProps) {
   const { pubky, createArticle, createTag, profile } = usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
+  const [isError, setIsError] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
   const [contentTitle, setContentTitle] = useState('');
   const [contentArticle, setContentArticle] = useState('');
@@ -192,7 +193,11 @@ export default function CreateArticle({
       if (
         (event.ctrlKey || event.metaKey) &&
         event.key === 'Enter' &&
-        isValidContent
+        isValidContent &&
+        selectedFile.length > 0 &&
+        contentTitle &&
+        !isError &&
+        !sendingArticle
       ) {
         handleSubmit(contentArticle);
       }
@@ -390,6 +395,8 @@ export default function CreateArticle({
                     setSearchedUsers={setSearchedUsers}
                     setCursorPosition={setCursorPosition}
                     maxLength={1000}
+                    isError={isError}
+                    setIsError={setIsError}
                     //setTextArea={setTextArea}
                     largeView
                     setIsValidContent={setIsValidContent}
@@ -429,6 +436,7 @@ export default function CreateArticle({
                           color={
                             !isValidContent ||
                             selectedFile.length === 0 ||
+                            isError ||
                             !contentTitle
                               ? 'gray'
                               : 'white'
@@ -438,6 +446,7 @@ export default function CreateArticle({
                       disabled={
                         !isValidContent ||
                         selectedFile.length === 0 ||
+                        isError ||
                         !contentArticle
                       }
                       loading={sendingArticle}
@@ -445,6 +454,7 @@ export default function CreateArticle({
                         isValidContent &&
                         selectedFile.length > 0 &&
                         contentTitle &&
+                        !isError &&
                         !sendingArticle
                           ? () => handleSubmit(contentArticle)
                           : undefined

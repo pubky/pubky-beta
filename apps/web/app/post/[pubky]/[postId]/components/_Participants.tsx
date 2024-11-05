@@ -54,9 +54,11 @@ export default function Participants({
           const followingIds = following.map((user) =>
             user.replace('pubky:', '')
           );
-          const matchedFollowedIds = replies.filter((reply) =>
-            followingIds.includes(reply?.details?.author)
-          );
+          const matchedFollowedIds = Array.isArray(replies)
+            ? replies.filter((reply) =>
+                followingIds.includes(reply?.details?.author)
+              )
+            : [];
 
           if (matchedFollowedIds.length > 0) {
             setInitLoadingFollowers(false);

@@ -32,6 +32,7 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   wrapperRefEmojis: React.RefObject<HTMLDivElement>;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
   article?: boolean;
+  markdown?: boolean;
   noFile?: boolean;
   maxLength?: number;
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,6 +59,7 @@ export default function FooterArea({
   setShowModalTag,
   button,
   article,
+  markdown,
   noFile,
   maxLength = 300,
   setShowModalPost,
@@ -149,6 +151,8 @@ export default function FooterArea({
                 className={`absolute translate-y-[10%] ${
                   largeView
                     ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
+                    : markdown
+                    ? 'translate-x-[0%] md:translate-x-[150%]'
                     : 'translate-x-[30%]'
                 } z-10`}
                 ref={wrapperRefEmojis}

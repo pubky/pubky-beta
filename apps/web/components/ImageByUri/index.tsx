@@ -55,7 +55,7 @@ const ImageByUri = ({
           }
         }
       } catch (error) {
-        console.error('Error fetching image:', error);
+        //console.error('Error fetching image:', error);
         setImageUrl('/images/Userpic.png');
       }
     };
