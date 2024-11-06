@@ -231,7 +231,7 @@ export function PubkyClientWrapper({
       const keypair = Keypair.fromSecretKey(secretKey);
 
       if (!keypair) {
-        throw new Error('Invalid recovery file');
+        throw new Error('Invalid recovery phrase');
       }
 
       // Sign up

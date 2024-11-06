@@ -12,8 +12,10 @@ export default function RecoveryPhrase() {
   const [missingWordsError, setMissingWordsError] = useState('');
 
   const handleWordChange = (index, value) => {
+    const sanitizedValue = value.replace(/[^a-zA-Z]/g, '');
+
     const newWords = [...words];
-    newWords[index] = value;
+    newWords[index] = sanitizedValue;
     setWords(newWords);
 
     if (missingWordsError) {

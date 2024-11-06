@@ -50,7 +50,7 @@ export default function ConfirmPhrase({
   }, [mnemonic]);
 
   const handleSelectWord = (word: string) => {
-    if (selectedWords.includes(word)) return;
+    // if (selectedWords.includes(word)) return;
 
     const firstEmptyOrIncorrectIndex = selectedWords.findIndex(
       (selectedWord, idx) => !selectedWord || selectedWord !== correctOrder[idx]
