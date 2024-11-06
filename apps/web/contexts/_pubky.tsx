@@ -16,6 +16,7 @@ import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId'
 import { TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
+import { getUserProfile } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -213,6 +214,10 @@ export function PubkyClientWrapper({
 
       // Save pubky state
       const pk = session.pubky().z32();
+      const user = await getUserProfile(pk, pk);
+      if (user?.details?.name === '[DELETED]') {
+        throw new Error('This account has been deleted');
+      }
 
       Utils.storage.set('pubky_public_key', pk);
       setPubky(pk);
@@ -246,6 +251,10 @@ export function PubkyClientWrapper({
 
       // Save pubky state
       const pk = session.pubky().z32();
+      const user = await getUserProfile(pk, pk);
+      if (user?.details?.name === '[DELETED]') {
+        throw new Error('This account has been deleted');
+      }
 
       Utils.storage.set('pubky_public_key', pk);
       setPubky(pk);
