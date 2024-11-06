@@ -120,7 +120,7 @@ export default function CreateReply({
       />
       <div className="flex items-center relative">
         <div
-          className={`ml-[9px] absolute border-l-2 h-[47%] top-0 border-neutral-800`}
+          className={`ml-[9px] absolute border-l-2 h-[49%] top-0 border-neutral-800`}
         />
         {lineHorizontalCSS}
         <div className="w-full ml-6 mt-6">
