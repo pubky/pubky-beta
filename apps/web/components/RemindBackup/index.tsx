@@ -15,7 +15,8 @@ const passwordSchema = z.object({
 });
 
 export default function RemindBackup() {
-  const { seed, setSeed, getRecoveryFile } = usePubkyClientContext();
+  const { seed, setSeed, mnemonic, setMnemonic, getRecoveryFile } =
+    usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
   const [remindMeLater, setRemindMeLater] = useState(false);
@@ -43,7 +44,7 @@ export default function RemindBackup() {
   }, []);
 
   useEffect(() => {
-    if (seed) {
+    if (seed || mnemonic) {
       setDisposableAccount(true);
       setShowBackupSuccess(false);
     } else {
@@ -52,7 +53,7 @@ export default function RemindBackup() {
         setShowBackupSuccess(true);
       }
     }
-  }, [seed, backupCloseMessage]);
+  }, [seed, mnemonic, backupCloseMessage]);
 
   useEffect(() => {
     if (backupCloseMessage) {
@@ -79,6 +80,7 @@ export default function RemindBackup() {
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
       setSeed(undefined);
+      setMnemonic(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -115,6 +117,7 @@ export default function RemindBackup() {
       });
 
       Utils.storage.remove('seed');
+      Utils.storage.remove('mnemonic');
 
       setShowModalBackup(false);
     } catch (error) {

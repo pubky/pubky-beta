@@ -18,7 +18,7 @@ const passwordSchema = z.object({
 
 export default function Index() {
   const { getRecoveryFile } = usePubkyClientContext();
-  const { seed, setSeed } = usePubkyClientContext();
+  const { seed, setSeed, mnemonic, setMnemonic } = usePubkyClientContext();
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
@@ -69,6 +69,7 @@ export default function Index() {
       element.click();
 
       setSeed(undefined);
+      setMnemonic(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -148,12 +149,12 @@ export default function Index() {
             >
               Backup account
             </Button.Large>
-            {showTooltip && !seed && (
-              <Tooltip.Small>
+            {showTooltip && !seed && !mnemonic && (
+              <Tooltip.Small className="w-[278px]">
                 <Typography.Body variant="small" className="text-opacity-80">
                   You have already done the backup,{' '}
                   <span className="text-white font-bold text-opacity-100">
-                    your seed has been deleted
+                    your recovery file/phrase has been deleted
                   </span>
                   .
                 </Typography.Body>

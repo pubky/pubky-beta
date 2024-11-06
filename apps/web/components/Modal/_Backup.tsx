@@ -1,5 +1,6 @@
 'use client';
 
+import { usePubkyClientContext } from '@/contexts';
 import {
   Button,
   Card,
@@ -8,6 +9,7 @@ import {
   Modal,
   Typography,
 } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 
 interface BackupProps {
@@ -29,9 +31,51 @@ export default function Backup({
   modalBackupRef,
   errors,
 }: BackupProps) {
+  const { setSeed, setMnemonic, mnemonic } = usePubkyClientContext();
   const [phrase, setPhrase] = useState(false);
   const [file, setFile] = useState(false);
   const [showWords, setShowWords] = useState(false);
+  const [copyMnemonic, setCopyMnemonic] = useState(false);
+
+  const handleRecoveryPhrase = () => {
+    setShowModalBackup(false);
+    Utils.storage.remove('mnemonic');
+    Utils.storage.remove('seed');
+    setSeed(undefined);
+    setMnemonic(undefined);
+  };
+
+  const handleCopyMnemonicToClipboard = () => {
+    if (mnemonic) {
+      navigator.clipboard
+        .writeText(mnemonic)
+        .then(() => {
+          setCopyMnemonic(true);
+          setTimeout(() => {
+            setCopyMnemonic(false);
+          }, 1000);
+        })
+        .catch((err) => {
+          console.error('Failed to copy to clipboard: ', err);
+        });
+    }
+  };
+
+  const handleDownloadRecoveryPhaseTXT = () => {
+    if (mnemonic) {
+      const fileName = 'pubky_recoveryphrase.txt';
+      const fileContent = mnemonic;
+
+      const blob = new Blob([fileContent], { type: 'text/plain' });
+      const link = document.createElement('a');
+
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+
+      link.click();
+    }
+  };
+
   return (
     <Modal.Root
       show={showModalBackup}
@@ -67,49 +111,57 @@ export default function Backup({
             <div
               className={`${
                 !showWords && 'blur-[10px]'
-              } w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start gap-12 inline-flex`}
+              } relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start gap-12 inline-flex`}
             >
               <div className="grow shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">1. </span>{' '}
-                  negative
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">2. </span>{' '}
-                  inquiry
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">3. </span> swamp
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">4. </span> purity
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">5. </span> carbon
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">6. </span> actual
-                </Typography.Body>
+                {mnemonic
+                  ?.split(' ')
+                  .slice(0, 6)
+                  .map((word, index) => (
+                    <Typography.Body key={index} variant="medium-bold">
+                      <span className="text-white text-opacity-50">
+                        {index + 1}.{' '}
+                      </span>{' '}
+                      {word}
+                    </Typography.Body>
+                  ))}
               </div>
               <div className="grow shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">7. </span> march
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">8. </span> enemy
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">9. </span> clinic
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">10. </span> armed
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">11. </span> exact
-                </Typography.Body>
-                <Typography.Body variant="medium-bold">
-                  <span className="text-white text-opacity-50">12. </span> fog
-                </Typography.Body>
+                {mnemonic
+                  ?.split(' ')
+                  .slice(6, 12)
+                  .map((word, index) => (
+                    <Typography.Body key={index} variant="medium-bold">
+                      <span className="text-white text-opacity-50">
+                        {index + 7}.{' '}
+                      </span>{' '}
+                      {word}
+                    </Typography.Body>
+                  ))}
+              </div>
+              <div className="absolute bottom-3 right-5 flex gap-4">
+                <div
+                  onClick={handleCopyMnemonicToClipboard}
+                  className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
+                >
+                  {copyMnemonic ? (
+                    <Icon.Check size="12" />
+                  ) : (
+                    <Icon.Clipboard size="12" />
+                  )}
+                  <Typography.Body variant="small-bold">
+                    Copy to clipboard
+                  </Typography.Body>
+                </div>
+                <div
+                  onClick={handleDownloadRecoveryPhaseTXT}
+                  className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
+                >
+                  <Icon.DownloadSimple size="12" />
+                  <Typography.Body variant="small-bold">
+                    Download
+                  </Typography.Body>
+                </div>
               </div>
             </div>
           </div>
@@ -129,7 +181,7 @@ export default function Backup({
               icon={showWords ? <Icon.ArrowRight /> : <Icon.Eye />}
               onClick={
                 showWords
-                  ? () => setShowModalBackup(false)
+                  ? () => handleRecoveryPhrase()
                   : () => setShowWords(true)
               }
               className="w-auto"
@@ -205,9 +257,8 @@ export default function Backup({
                 <Icon.FileText size="128" />
               </div>
               <Button.Large
-                icon={<Icon.FileText color="gray" />}
-                disabled
-                // onClick={() => setPhrase(true)}
+                icon={<Icon.FileText />}
+                onClick={() => setPhrase(true)}
               >
                 Recovery Phrase
               </Button.Large>

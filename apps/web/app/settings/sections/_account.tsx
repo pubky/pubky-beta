@@ -14,8 +14,15 @@ const passwordSchema = z.object({
 
 export default function Account() {
   const router = useRouter();
-  const { seed, setSeed, getRecoveryFile, deleteAccount, downloadData } =
-    usePubkyClientContext();
+  const {
+    seed,
+    setSeed,
+    mnemonic,
+    setMnemonic,
+    getRecoveryFile,
+    deleteAccount,
+    downloadData,
+  } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
@@ -95,6 +102,7 @@ export default function Account() {
       element.click();
 
       setSeed(undefined);
+      setMnemonic(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -131,6 +139,7 @@ export default function Account() {
       });
 
       Utils.storage.remove('seed');
+      Utils.storage.remove('mnemonic');
       setShowModalBackup(false);
     } catch (error) {
       console.log(error);
@@ -182,12 +191,12 @@ export default function Account() {
           >
             Back up account
           </Button.Large>
-          {showTooltip && !seed && (
-            <Tooltip.Small className="w-[250px]">
+          {showTooltip && !seed && !mnemonic && (
+            <Tooltip.Small className="w-[278px]">
               <Typography.Body variant="small" className="text-opacity-80">
                 You have already done the backup,{' '}
                 <span className="text-white font-bold text-opacity-100">
-                  your seed has been deleted
+                  your recovery file/phrase has been deleted
                 </span>
                 .
               </Typography.Body>

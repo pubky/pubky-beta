@@ -14,8 +14,8 @@ import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTi
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
 import { TStatus } from '@/types';
-import { getUserProfile } from '@/services/userService';
 import JSZip from 'jszip';
+import * as bip39 from 'bip39';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -26,8 +26,11 @@ type PubkyClientContextType = {
   pubky: string | undefined;
   seed: string | undefined;
   setSeed: (seed: string | undefined) => void;
+  mnemonic: string | undefined;
+  setMnemonic: (mnemonic: string | undefined) => void;
   profile: PubkyAppUser | undefined;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
+  loginWithMnemonic: (mnemonic: string) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
   logout: () => boolean;
   signUp: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
@@ -108,6 +111,9 @@ export function PubkyClientWrapper({
   const [seed, setSeed] = useState<string | undefined>(
     (Utils.storage.get('seed') as string | undefined) || undefined
   );
+  const [mnemonic, setMnemonic] = useState<string | undefined>(
+    (Utils.storage.get('mnemonic') as string | undefined) || undefined
+  );
   const [profile, setProfile] = useState<PubkyAppUser | undefined>(
     (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined
   );
@@ -148,6 +154,7 @@ export function PubkyClientWrapper({
       Utils.storage.remove('unread');
       setPubky(undefined);
       setSeed(undefined);
+      setMnemonic(undefined);
       setProfile(undefined);
 
       return true;
@@ -203,10 +210,39 @@ export function PubkyClientWrapper({
 
       // Save pubky state
       const pk = session.pubky().z32();
-      const user = await getUserProfile(pk, pk);
-      if (user?.details?.name === '[DELETED]') {
-        throw new Error('This account has been deleted');
+
+      Utils.storage.set('pubky_public_key', pk);
+      setPubky(pk);
+      return pk;
+    } catch (error: any) {
+      // Get error message and return as a string
+      console.log(error);
+      throw new Error(error.message);
+    }
+  };
+
+  const loginWithMnemonic = async (mnemonic: string) => {
+    try {
+      const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
+      const secretKey = seedMnemonic.slice(0, 32);
+      const keypair = Keypair.fromSecretKey(secretKey);
+
+      if (!keypair) {
+        throw new Error('Invalid recovery file');
       }
+
+      // Sign up
+      await client.signup(keypair, homeserver);
+
+      // Get session
+      const session = await client.session(keypair.publicKey());
+
+      if (!session) {
+        throw new Error('Failed to get session');
+      }
+
+      // Save pubky state
+      const pk = session.pubky().z32();
 
       Utils.storage.set('pubky_public_key', pk);
       setPubky(pk);
@@ -220,12 +256,18 @@ export function PubkyClientWrapper({
 
   const signUp = async (userProfile: PubkyAppUser): Promise<any | false> => {
     try {
-      const newKeypair = Keypair.random();
+      const mnemonic = bip39.generateMnemonic(128);
+      const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
+      const secretKey = seedMnemonic.slice(0, 32);
+      const newKeypair = Keypair.fromSecretKey(secretKey);
 
       const seed = Utils.uint8ArrayToBase64(newKeypair.secretKey());
 
       Utils.storage.set('seed', seed);
       setSeed(seed);
+
+      Utils.storage.set('mnemonic', mnemonic);
+      setMnemonic(mnemonic);
 
       // Sign up
       await client.signup(newKeypair, homeserver);
@@ -1191,11 +1233,14 @@ export function PubkyClientWrapper({
         pubky,
         seed,
         profile,
+        mnemonic,
         loginWithFile,
+        loginWithMnemonic,
         isLoggedIn,
         logout,
         signUp,
         setSeed,
+        setMnemonic,
         saveProfile,
         createPost,
         editPost,
