@@ -61,7 +61,7 @@ export default function Backup({
     }
   };
 
-  const handleDownloadRecoveryPhaseTXT = () => {
+  const handleDownloadRecoveryPhraseTXT = () => {
     if (mnemonic) {
       const fileName = 'pubky_recoveryphrase.txt';
       const fileContent = mnemonic;
@@ -154,7 +154,7 @@ export default function Backup({
                   </Typography.Body>
                 </div>
                 <div
-                  onClick={handleDownloadRecoveryPhaseTXT}
+                  onClick={handleDownloadRecoveryPhraseTXT}
                   className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
                 >
                   <Icon.DownloadSimple size="12" />
