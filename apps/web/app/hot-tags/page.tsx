@@ -99,12 +99,12 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="HotTags" />
-      <Content.Grid className="grid grid-cols-5 gap-4">
-        <Sidebar className="self-start sticky top-[120px] hidden xl:block">
+      <Content.Grid className="grid grid-cols-10 gap-4">
+        <Sidebar className="col-span-1 self-start sticky top-[120px] hidden lg:block">
           <Filter.HotTagsReach disabled />
           <Filter.TagsTimeFrame disabled />
         </Sidebar>
-        <div className="w-full flex-col inline-flex gap-3 col-span-5 xl:col-span-4 2xl:col-span-3">
+        <div className="flex-col inline-flex gap-3 col-span-10 lg:col-span-9 xl:col-span-7 lg:ml-[70px] xl:ml-[45px]">
           {isLoading ? (
             <div className="w-full">
               <Skeletons.Simple />
@@ -113,7 +113,7 @@ export default function Index() {
             renderTags(hotTags, isLoading)
           )}
         </div>
-        <Sidebar className="hidden 2xl:block">
+        <Sidebar className="col-span-2 hidden xl:block">
           <WhoFollow />
           <Influencers />
           <Feedback />

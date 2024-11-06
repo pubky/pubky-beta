@@ -33,7 +33,7 @@ export default function Header({
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
 
   return (
-    <PostUI.Header>
+    <PostUI.Header className="w-full justify-between">
       <div
         className="justify-start items-center gap-4 flex cursor-pointer"
         onClick={(event) => {

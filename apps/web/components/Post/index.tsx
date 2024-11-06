@@ -120,13 +120,15 @@ export default function Post({
                   )}
                 >
                   <div className="flex-col justify-between inline-flex">
-                    <Header post={post} largeView={largeView} />
                     <div>
+                      <Header post={post} largeView={largeView} />
                       <Content
                         largeView={largeView}
                         post={post}
                         fullContent={fullContent}
                       />
+                    </div>
+                    <div>
                       {loadingRepostedPost ? (
                         <Skeleton.Simple />
                       ) : post?.relationships?.reposted &&
@@ -332,17 +334,19 @@ export default function Post({
                   )}
                 >
                   <div className="flex-col justify-between inline-flex">
-                    <Header
-                      post={post}
-                      largeView={largeView}
-                      repostView={repostView}
-                    />
                     <div>
+                      <Header
+                        post={post}
+                        largeView={largeView}
+                        repostView={repostView}
+                      />
                       <Content
                         largeView={largeView}
                         post={post}
                         fullContent={fullContent}
                       />
+                    </div>
+                    <div>
                       <div
                         className={`flex flex-col md:flex-row ${
                           largeView ? 'gap-2' : 'justify-between'

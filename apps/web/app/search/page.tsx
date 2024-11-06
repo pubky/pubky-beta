@@ -147,8 +147,8 @@ const SearchContent = () => {
 
   function getPostsLayoutClass(layout: string) {
     return layout === 'wide'
-      ? 'col-span-5'
-      : 'col-span-5 lg:col-span-4 xl:col-span-3';
+      ? 'col-span-10'
+      : 'col-span-10 lg:col-span-9 xl:col-span-7';
   }
 
   function getSidebarClass(isFilterContentVisible: boolean) {
@@ -161,9 +161,9 @@ const SearchContent = () => {
       {layout === 'wide' && (
         <ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       )}
-      <Content.Grid className={'grid grid-cols-5 gap-6'}>
+      <Content.Grid className={'grid grid-cols-10 gap-6'}>
         {layout !== 'wide' && (
-          <Sidebar className="hidden xl:block">
+          <Sidebar className="col-span-1 hidden lg:block">
             <div
               className={`self-start ${getSidebarClass(
                 isFilterContentVisible
@@ -181,7 +181,7 @@ const SearchContent = () => {
         <PostsLayout
           className={`${getPostsLayoutClass(
             layout
-          )} flex-col inline-flex gap-3`}
+          )} flex-col inline-flex gap-3 lg:ml-[70px] xl:ml-[45px]`}
         >
           {data && data?.length > 0
             ? data
@@ -214,7 +214,7 @@ const SearchContent = () => {
           {isLoading && !isError && <Skeletons.Simple />}
         </PostsLayout>
         {layout !== 'wide' && (
-          <Sidebar className="hidden 2xl:block">
+          <Sidebar className="col-span-2 hidden xl:block">
             <WhoFollow />
             <Influencers />
             <HotTags />

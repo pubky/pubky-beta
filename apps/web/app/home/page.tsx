@@ -51,8 +51,8 @@ export default function Index() {
 
   function getPostsLayoutClass(layout: string) {
     return layout === 'wide'
-      ? 'col-span-5'
-      : 'col-span-5 lg:col-span-4 xl:col-span-3';
+      ? 'col-span-10'
+      : 'col-span-10 lg:col-span-9 xl:col-span-7';
   }
 
   function getSidebarClass(isFilterContentVisible: boolean) {
@@ -67,9 +67,9 @@ export default function Index() {
       {layout === 'wide' && (
         <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       )}
-      <Content.Grid className="grid grid-cols-5 gap-6">
+      <Content.Grid className="grid grid-cols-10 gap-6">
         {layout !== 'wide' && (
-          <Components.Sidebar className="hidden lg:block">
+          <Components.Sidebar className="col-span-1 hidden lg:block">
             <div
               className={`self-start ${getSidebarClass(
                 isFilterContentVisible
@@ -88,13 +88,13 @@ export default function Index() {
           id="posts-feed"
           className={`${getPostsLayoutClass(
             layout
-          )} flex-col inline-flex gap-3`}
+          )} flex-col inline-flex gap-3 lg:ml-[70px] xl:ml-[45px]`}
         >
           <Components.CreateQuickPost largeView={layout === 'wide'} />
           <Timeline />
         </Components.PostsLayout>
         {layout !== 'wide' && (
-          <Components.Sidebar className="hidden xl:block">
+          <Components.Sidebar className="col-span-2 hidden xl:block">
             <Components.WhoFollow />
             <Components.Influencers />
             <Components.HotTags />
