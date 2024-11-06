@@ -150,7 +150,10 @@ export function PubkyClientWrapper({
       // Clear storage and states
       Utils.storage.remove('pubky_public_key');
       Utils.storage.remove('seed');
+      Utils.storage.remove('mnemonic');
       Utils.storage.remove('profile');
+      Utils.storage.remove('timerRemind');
+      Utils.storage.remove('backup');
       Utils.storage.remove('unread');
       setPubky(undefined);
       setSeed(undefined);

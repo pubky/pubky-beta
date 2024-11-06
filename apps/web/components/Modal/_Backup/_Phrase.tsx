@@ -1,49 +1,55 @@
 'use client';
 
 import { usePubkyClientContext } from '@/contexts';
-import {
-  Button,
-  Card,
-  Icon,
-  Input,
-  Modal,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import ConfirmPhrase from './_ConfirmPhrase';
 
-interface BackupProps {
-  loading: boolean;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: () => Promise<void>;
-  showModalBackup: boolean;
+interface PhraseProps {
   setShowModalBackup: React.Dispatch<React.SetStateAction<boolean>>;
-  modalBackupRef: React.RefObject<HTMLDivElement>;
-  errors: string;
+  setShowBackupSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
+  setPhrase: React.Dispatch<React.SetStateAction<boolean>>;
+  confirmPhrase: boolean;
+  setConfirmPhrase: React.Dispatch<React.SetStateAction<boolean>>;
+  showWords: boolean;
+  setShowWords: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Backup({
-  loading,
-  setPassword,
-  handleSubmit,
-  showModalBackup,
+export default function Phrase({
   setShowModalBackup,
-  modalBackupRef,
-  errors,
-}: BackupProps) {
-  const { setSeed, setMnemonic, mnemonic } = usePubkyClientContext();
-  const [phrase, setPhrase] = useState(false);
-  const [file, setFile] = useState(false);
-  const [showWords, setShowWords] = useState(false);
+  setShowBackupSuccess,
+  setPhrase,
+  confirmPhrase,
+  setConfirmPhrase,
+  showWords,
+  setShowWords,
+}: PhraseProps) {
+  const { mnemonic } = usePubkyClientContext();
   const [copyMnemonic, setCopyMnemonic] = useState(false);
+  const [randomizedWords, setRandomizedWords] = useState<string[]>([]);
+  const [isCorrectOrder, setIsCorrectOrder] = useState(false);
+  const [selectedWords, setSelectedWords] = useState<string[]>(
+    Array(12).fill('')
+  );
+  const correctOrder = mnemonic?.split(' ') || [];
 
-  const handleRecoveryPhrase = () => {
-    setShowModalBackup(false);
-    Utils.storage.remove('mnemonic');
-    Utils.storage.remove('seed');
-    setSeed(undefined);
-    setMnemonic(undefined);
-  };
+  useEffect(() => {
+    if (
+      selectedWords.length === correctOrder.length &&
+      selectedWords.every((word, index) => word === correctOrder[index])
+    ) {
+      setIsCorrectOrder(true);
+    } else {
+      setIsCorrectOrder(false);
+    }
+  }, [selectedWords, correctOrder]);
+
+  useEffect(() => {
+    if (mnemonic) {
+      setRandomizedWords(mnemonic.split(' ').sort(() => Math.random() - 0.5));
+    }
+  }, [mnemonic]);
 
   const handleCopyMnemonicToClipboard = () => {
     if (mnemonic) {
@@ -77,23 +83,20 @@ export default function Backup({
   };
 
   return (
-    <Modal.Root
-      show={showModalBackup}
-      closeModal={() => {
-        setShowModalBackup(false);
-        setShowWords(false);
-      }}
-      modalRef={modalBackupRef}
-      className="md:max-w-[792px]"
-    >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalBackup(false);
-          setShowWords(false);
-        }}
-      />
-      <Modal.Header title="Back up your account" />
-      {phrase ? (
+    <>
+      {confirmPhrase ? (
+        <ConfirmPhrase
+          setShowModalBackup={setShowModalBackup}
+          setShowBackupSuccess={setShowBackupSuccess}
+          setConfirmPhrase={setConfirmPhrase}
+          randomizedWords={randomizedWords}
+          setRandomizedWords={setRandomizedWords}
+          isCorrectOrder={isCorrectOrder}
+          setIsCorrectOrder={setIsCorrectOrder}
+          selectedWords={selectedWords}
+          setSelectedWords={setSelectedWords}
+        />
+      ) : (
         <>
           <Typography.Body
             className="text-opacity-80 mt-2"
@@ -183,7 +186,7 @@ export default function Backup({
               icon={showWords ? <Icon.ArrowRight /> : <Icon.Eye />}
               onClick={
                 showWords
-                  ? () => handleRecoveryPhrase()
+                  ? () => setConfirmPhrase(true)
                   : () => setShowWords(true)
               }
               className="w-auto"
@@ -192,97 +195,7 @@ export default function Backup({
             </Button.Large>
           </div>
         </>
-      ) : file ? (
-        <>
-          <Typography.Body
-            className="text-opacity-80 mt-2"
-            variant="medium-light"
-          >
-            Encrypt your recovery file below with a secure password, download
-            it, and save it to your computer or your cloud provider. Never share
-            this file and password with anyone.
-          </Typography.Body>
-          <div className="my-4">
-            <Typography.H2 className="mb-4">
-              Recovery File Password
-            </Typography.H2>
-            <Input.Label className="mt-4" value="Password" />
-            <Input.Text
-              id="backup-recovery-file-password-input"
-              className="h-[70px] mt-1"
-              type="password"
-              error={errors}
-              placeholder="••••••••••••"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
-            />
-          </div>
-          <div className="w-full max-w-[796px] mt-4 justify-between items-center inline-flex">
-            <Button.Large
-              icon={<Icon.ArrowLeft />}
-              className="w-auto"
-              variant="secondary"
-              onClick={() => setFile(false)}
-            >
-              Back
-            </Button.Large>
-            <Button.Large
-              id="backup-download-recovery-file-btn"
-              icon={<Icon.DownloadSimple />}
-              onClick={!loading ? () => handleSubmit() : undefined}
-              loading={loading}
-              className="w-auto"
-            >
-              Download Recovery File
-            </Button.Large>
-          </div>
-        </>
-      ) : (
-        <>
-          <Typography.Body
-            className="text-opacity-80 my-4"
-            variant="medium-light"
-          >
-            Please choose how you want to back up your account. For security
-            reasons, your recovery phrase or recovery file{' '}
-            <strong className="font-bold text-white text-opacity-100">
-              will be deleted once you complete the backup.
-            </strong>
-          </Typography.Body>
-          <div className="flex gap-6">
-            <Card.Primary
-              title="Recovery Phrase"
-              text="Write down 12 words to recover your account at a later date."
-            >
-              <div className="flex justify-center items-center my-10">
-                <Icon.FileText size="128" />
-              </div>
-              <Button.Large
-                icon={<Icon.FileText />}
-                onClick={() => setPhrase(true)}
-              >
-                Recovery Phrase
-              </Button.Large>
-            </Card.Primary>
-            <Card.Primary
-              title="Recovery File"
-              text="Download a password encrypted, digital file to your computer."
-            >
-              <div className="flex justify-center items-center my-10">
-                <Icon.DownloadSimple size="128" />
-              </div>
-              <Button.Large
-                id="backup-recovery-file-btn"
-                icon={<Icon.DownloadSimple />}
-                onClick={() => setFile(true)}
-              >
-                Recovery File
-              </Button.Large>
-            </Card.Primary>
-          </div>
-        </>
       )}
-    </Modal.Root>
+    </>
   );
 }

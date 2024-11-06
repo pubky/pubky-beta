@@ -213,8 +213,8 @@ export default function RemindBackup() {
                   className="text-[#05050a] text-opacity-80"
                   variant="small-bold"
                 >
-                  Backup successful! Your seed has been deleted and now you can
-                  make login via the chosen recovery method.
+                  Backup successful! Your recovery file/phrase has been deleted
+                  and now you can make login via the chosen recovery method.
                 </Typography.Body>
               </div>
               <div className="cursor-pointer" onClick={Closed}>
@@ -232,6 +232,7 @@ export default function RemindBackup() {
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
         errors={errorPassword}
+        setShowBackupSuccess={setShowBackupSuccess}
       />
     </div>
   );

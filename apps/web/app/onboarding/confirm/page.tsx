@@ -104,6 +104,7 @@ export default function Index() {
       });
 
       Utils.storage.remove('seed');
+      Utils.storage.remove('mnemonic');
       setShowModalBackup(false);
     } catch (error) {
       console.log(error);
