@@ -7,6 +7,7 @@
     "start:dev": "nx serve web",
     "start:e2e": "nx e2e web-e2e --watch",
     "build": "nx build web",
+    "serve:prod": "nx serve web --prod",
     "reset": "nx reset",
     "clean": "npm run reset && rm -rf ./node_modules/ ./dist/",
     "setup:dev": "npm i && npm link @pubky/sdk"

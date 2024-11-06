@@ -16,5 +16,8 @@ RUN npm install --omit=dev
 # Remove devDependencies to reduce image size
 RUN npm prune --production
 
+# Build
+RUN npm run build
+
 # The command to run the pubky web server
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "serve:prod"]
