@@ -139,30 +139,32 @@ export default function Backup({
                     </Typography.Body>
                   ))}
               </div>
-              <div className="absolute bottom-3 right-5 flex gap-4">
-                <div
-                  onClick={handleCopyMnemonicToClipboard}
-                  className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
-                >
-                  {copyMnemonic ? (
-                    <Icon.Check size="12" />
-                  ) : (
-                    <Icon.Clipboard size="12" />
-                  )}
-                  <Typography.Body variant="small-bold">
-                    Copy to clipboard
-                  </Typography.Body>
+              {showWords && (
+                <div className="absolute bottom-3 right-5 flex gap-4">
+                  <div
+                    onClick={handleCopyMnemonicToClipboard}
+                    className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
+                  >
+                    {copyMnemonic ? (
+                      <Icon.Check size="12" />
+                    ) : (
+                      <Icon.Clipboard size="12" />
+                    )}
+                    <Typography.Body variant="small-bold">
+                      Copy to clipboard
+                    </Typography.Body>
+                  </div>
+                  <div
+                    onClick={handleDownloadRecoveryPhraseTXT}
+                    className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
+                  >
+                    <Icon.DownloadSimple size="12" />
+                    <Typography.Body variant="small-bold">
+                      Download
+                    </Typography.Body>
+                  </div>
                 </div>
-                <div
-                  onClick={handleDownloadRecoveryPhraseTXT}
-                  className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
-                >
-                  <Icon.DownloadSimple size="12" />
-                  <Typography.Body variant="small-bold">
-                    Download
-                  </Typography.Body>
-                </div>
-              </div>
+              )}
             </div>
           </div>
           <div className="w-full max-w-[796px] mt-4 justify-between items-center inline-flex">
