@@ -13,16 +13,23 @@ import { PostKind, PostView, PubkyAppPost, PubkyAppUser } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
-import { TStatus } from '@/types';
+import { ICustomFeed, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
 import { getUserProfile } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
+const TESTNET = process.env.TESTNET;
 const DEFAULT_HTTP_RELAY =
   process.env.DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
 
-const client = new PubkyClient();
+let client: PubkyClient;
+if (TESTNET) {
+  client = PubkyClient.testnet();
+} else {
+  client = new PubkyClient();
+}
+
 const homeserver = PublicKey.from(HOMESERVER_PUBLIC_KEY);
 
 type PubkyClientContextType = {
@@ -84,6 +91,9 @@ type PubkyClientContextType = {
     post_id: string,
     tagLabel: string
   ) => Promise<boolean>;
+  saveFeed: (feed: ICustomFeed, name: string) => Promise<boolean>;
+  deleteFeed: (feed: ICustomFeed) => Promise<boolean>;
+  loadFeeds: () => Promise<{ feed: ICustomFeed; name: string }[]>;
   createTagProfile: (profileId: string, tagContent: string) => Promise<boolean>;
   deleteTagProfile: (profileId: string, tagLabel: string) => Promise<boolean>;
   getRecoveryFile: (password: string) => Promise<any | null>;
@@ -183,6 +193,13 @@ export function PubkyClientWrapper({
     }
 
     return true;
+  };
+
+  const ensureLoggedIn = async (): Promise<void> => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+      throw new Error('User is not logged in');
+    }
   };
 
   const getRecoveryFile = async (password: string): Promise<any | null> => {
@@ -390,11 +407,7 @@ export function PubkyClientWrapper({
     userProfile: PubkyAppUser
   ): Promise<any | false> => {
     try {
-      const loggedIn = isLoggedIn();
-
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       if (userProfile.image instanceof File) {
         const file = userProfile.image;
@@ -491,10 +504,7 @@ export function PubkyClientWrapper({
     files?: File[]
   ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       // Generate a timestamp ID for the post
       const postId = generateTimestampId().toUpperCase();
@@ -570,10 +580,7 @@ export function PubkyClientWrapper({
     files?: File[]
   ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       // Generate a timestamp ID for the article
       const articleId = generateTimestampId().toUpperCase();
@@ -647,10 +654,7 @@ export function PubkyClientWrapper({
 
   const editPost = async (post: PostView, postContent: string) => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       const editPost: PubkyAppPost = {
         content: postContent,
@@ -677,10 +681,7 @@ export function PubkyClientWrapper({
 
   const deleteAccount = async () => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
       const lists = await client.list(profileUrl);
@@ -700,10 +701,7 @@ export function PubkyClientWrapper({
 
   const downloadData = async () => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
       const lists = await client.list(profileUrl);
@@ -714,34 +712,37 @@ export function PubkyClientWrapper({
         throw new Error("Error creating 'data' folder in zip.");
       }
 
-      await Promise.all(
-        lists.slice(0, 2).map(async (list, index) => {
-          const result = await client.get(list);
+      const delay = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms));
 
-          if (result === undefined) {
-            console.warn(`File ${index + 1} was not found or is undefined.`);
-            return; // Skip
-          }
+      for (let index = 0; index < lists.length; index++) {
+        const list = lists[index];
+        const result = await client.get(list);
 
-          let parsedData;
-          let fileName;
-          try {
-            const decoder = new TextDecoder('utf-8');
-            const decodedString = decoder.decode(result);
-            parsedData = JSON.parse(decodedString);
-            fileName = `${index + 1}.json`;
-            dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
-          } catch (error) {
-            console.warn(
-              `File ${
-                index + 1
-              } is not in JSON format. It will be saved as a binary file.`
-            );
-            fileName = `${index + 1}.bin`;
-            dataFolder.file(fileName, result);
-          }
-        })
-      );
+        if (result === undefined) {
+          console.warn(`File ${index + 1} was not found or is undefined.`);
+          continue; // Skip
+        }
+
+        let parsedData;
+        let fileName;
+        try {
+          const decoder = new TextDecoder('utf-8');
+          const decodedString = decoder.decode(result);
+          parsedData = JSON.parse(decodedString);
+          fileName = `${index + 1}.json`;
+          dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
+        } catch (error) {
+          console.warn(
+            `File ${
+              index + 1
+            } is not in JSON format. It will be saved as a binary file.`
+          );
+          fileName = `${index + 1}.bin`;
+          dataFolder.file(fileName, result);
+        }
+        await delay(500);
+      }
 
       const content = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(content);
@@ -763,10 +764,7 @@ export function PubkyClientWrapper({
 
   const getTimestampNotification = async () => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
       const lastRead = await client.get(lastReadUrl);
@@ -788,10 +786,7 @@ export function PubkyClientWrapper({
 
   const putTimestampNotification = async (timestamp: number) => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       const body = { timestamp: timestamp };
       const lastReadBody = Buffer.from(JSON.stringify(body));
@@ -808,10 +803,7 @@ export function PubkyClientWrapper({
 
   const deletePost = async (postId: string): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       // Post URL
       const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
@@ -850,10 +842,7 @@ export function PubkyClientWrapper({
     files?: File[]
   ): Promise<string | false> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       // Generate a timestamp ID for the repost
       const repostId = generateTimestampId().toUpperCase();
@@ -932,12 +921,9 @@ export function PubkyClientWrapper({
     files?: File[]
   ): Promise<string | false> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
-      const replyId = generateTimestampId().toUpperCase();
+      await ensureLoggedIn();
 
+      const replyId = generateTimestampId().toUpperCase();
       const replyPost: PubkyAppPost = {
         content: replyContent,
         kind,
@@ -991,10 +977,7 @@ export function PubkyClientWrapper({
 
   const follow = async (user_id: string): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in or pubky is not defined');
-      }
+      await ensureLoggedIn();
 
       const followData = {
         created_at: Date.now(),
@@ -1014,10 +997,7 @@ export function PubkyClientWrapper({
 
   const unfollow = async (user_id: string): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in or pubky is not defined');
-      }
+      await ensureLoggedIn();
 
       const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
 
@@ -1032,10 +1012,7 @@ export function PubkyClientWrapper({
 
   const deleteFile = async (file_uri: string): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in or pubky is not defined');
-      }
+      await ensureLoggedIn();
 
       await client.delete(file_uri);
 
@@ -1048,10 +1025,7 @@ export function PubkyClientWrapper({
 
   const mute = async (user_id: string): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in or pubky is not defined');
-      }
+      await ensureLoggedIn();
 
       const muteData = {
         created_at: Date.now(),
@@ -1071,10 +1045,7 @@ export function PubkyClientWrapper({
 
   const unmute = async (user_id: string): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in or pubky is not defined');
-      }
+      await ensureLoggedIn();
 
       const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
 
@@ -1092,10 +1063,7 @@ export function PubkyClientWrapper({
     authorId: string
   ): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in or pubky is not defined');
-      }
+      await ensureLoggedIn();
 
       const bookmarkData = {
         uri: `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
@@ -1117,10 +1085,7 @@ export function PubkyClientWrapper({
 
   const deleteBookmark = async (bookmarkId: string): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in or pubky is not defined');
-      }
+      await ensureLoggedIn();
 
       const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
 
@@ -1139,10 +1104,7 @@ export function PubkyClientWrapper({
     tagContent: string
   ): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       if (!tagContent || tagContent.trim() === '') {
         throw new Error('Tag content cannot be empty');
@@ -1170,16 +1132,102 @@ export function PubkyClientWrapper({
     }
   };
 
+  const saveFeed = async (
+    feed: ICustomFeed,
+    name: string
+  ): Promise<boolean> => {
+    try {
+      await ensureLoggedIn();
+
+      const feedData = {
+        feed,
+        name,
+        created_at: Date.now(),
+      };
+
+      const feedBody = Buffer.from(JSON.stringify(feedData));
+      const feedId = (
+        await generateHashId(JSON.stringify(feed).toLowerCase())
+      ).toUpperCase();
+
+      const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
+
+      await client.put(feedUrl, feedBody);
+
+      return true;
+    } catch (error) {
+      console.error('Error creating tag:', error);
+      return false;
+    }
+  };
+
+  const loadFeeds = async (): Promise<
+    { feed: ICustomFeed; name: string }[]
+  > => {
+    try {
+      await ensureLoggedIn();
+
+      // Define the feeds directory path
+      const feedsDirUrl = `pubky://${pubky}/pub/pubky.app/feeds/`;
+      const feedUris = await client.list(feedsDirUrl);
+
+      // Fetch each feed data
+      const feedsData = await Promise.all(
+        feedUris.map(async (uri) => {
+          try {
+            const result = await client.get(uri);
+            if (result) {
+              const decodedString = new TextDecoder('utf-8').decode(result);
+              const parsedData = JSON.parse(decodedString);
+              return { feed: parsedData.feed, name: parsedData.name };
+            }
+            return null; // Handle cases where the result might be undefined
+          } catch (error) {
+            console.error(`Error fetching feed from ${uri}:`, error);
+            return null;
+          }
+        })
+      );
+
+      // Filter out any null entries and assert the result type
+      return feedsData.filter(
+        (feed): feed is { feed: ICustomFeed; name: string } => feed !== null
+      );
+    } catch (error) {
+      console.error('Error loading feeds:', error);
+      return [];
+    }
+  };
+
+  const deleteFeed = async (feed: ICustomFeed): Promise<boolean> => {
+    try {
+      await ensureLoggedIn();
+
+      // Compute the hash ID for the feed based on the feed options
+      const feedId = (
+        await generateHashId(JSON.stringify(feed).toLowerCase())
+      ).toUpperCase();
+
+      // Construct the feed URL
+      const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
+
+      // Delete the feed from the homeserver
+      await client.delete(feedUrl);
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting feed:', error);
+      return false;
+    }
+  };
+
   const deleteTag = async (
     authorId: string,
     postId: string,
     tagLabel: string
   ): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       const uriPost = `pubky://${authorId}/pub/pubky.app/posts/${postId}`;
 
@@ -1202,10 +1250,7 @@ export function PubkyClientWrapper({
     tagContent: string
   ): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       if (!tagContent || tagContent.trim() === '') {
         throw new Error('Tag content cannot be empty');
@@ -1238,10 +1283,7 @@ export function PubkyClientWrapper({
     tagLabel: string
   ): Promise<boolean> => {
     try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        throw new Error('User is not logged in');
-      }
+      await ensureLoggedIn();
 
       const profileUri = `pubky://${profileId}/pub/pubky.app/profile.json`;
       const tagId = (
@@ -1297,6 +1339,9 @@ export function PubkyClientWrapper({
         setSeed,
         setMnemonic,
         saveProfile,
+        saveFeed,
+        deleteFeed,
+        loadFeeds,
         createPost,
         editPost,
         deletePost,

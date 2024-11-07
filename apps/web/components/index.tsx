@@ -1,5 +1,6 @@
 import Influencers from './Influencers';
 import CreatePost from './CreatePost';
+import CustomFeeds from './CustomFeeds';
 import CreateQuickPost from './CreateQuickPost';
 import ButtonFilters from './ButtonFiltersDrawer/Index';
 import DropDown from './DropDown/_DropDown';
@@ -20,6 +21,7 @@ import RemindBackup from './RemindBackup';
 export {
   Influencers,
   CreatePost,
+  CustomFeeds,
   CreateQuickPost,
   ButtonFilters,
   DropDown,

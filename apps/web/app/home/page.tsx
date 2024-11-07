@@ -11,10 +11,12 @@ import { Utils } from '@social/utils-shared';
 import { UseUserMuted } from '@/hooks/useUser';
 import CreateQuickReply from '@/components/CreateQuickReply';
 import { HeaderSEO } from '@/components/HeaderSEO';
+import { ICustomFeed } from '@/types';
 
 export default function Index() {
   const { layout } = useFilterContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
+  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
@@ -90,8 +92,15 @@ export default function Index() {
             layout
           )} flex-col inline-flex gap-3 lg:ml-[70px] xl:ml-[45px]`}
         >
+          <Components.CustomFeeds
+            selectedFeed={selectedFeed}
+            setSelectedFeed={setSelectedFeed}
+          />
           <Components.CreateQuickPost largeView={layout === 'wide'} />
-          <Timeline />
+          <Timeline
+            setSelectedFeed={setSelectedFeed}
+            selectedFeed={selectedFeed}
+          />
         </Components.PostsLayout>
         {layout !== 'wide' && (
           <Components.Sidebar className="col-span-2 hidden xl:block">
@@ -119,18 +128,45 @@ export default function Index() {
   );
 }
 
-const Timeline = () => {
+interface TimelineProps {
+  selectedFeed: ICustomFeed | undefined;
+  setSelectedFeed: React.Dispatch<
+    React.SetStateAction<ICustomFeed | undefined>
+  >;
+}
+
+const Timeline = ({ selectedFeed, setSelectedFeed }: TimelineProps) => {
   const limit = 10;
   const [skip, setSkip] = useState(0);
+  const [tagsFeed, setTagsFeed] = useState<string[]>();
 
-  const { reach, layout, sort } = useFilterContext();
+  const { reach, layout, sort, setReach, setLayout, setSort } =
+    useFilterContext();
+
+  useEffect(() => {
+    if (selectedFeed) {
+      setReach(selectedFeed.reach);
+      setLayout(selectedFeed.layout);
+      setSort(selectedFeed.sort);
+      selectedFeed?.tags &&
+        selectedFeed?.tags?.length > 0 &&
+        setTagsFeed(selectedFeed?.tags);
+    } else {
+      setReach('all');
+      setLayout('columns');
+      setSort('recent');
+      setTagsFeed([]);
+    }
+  }, [selectedFeed]);
+
   const { pubky, timeline, setTimeline } = usePubkyClientContext();
   const { data, isLoading, isError } = usePostStream(
     pubky,
     skip,
     limit,
     reach,
-    sort
+    sort,
+    tagsFeed && tagsFeed?.length > 0 ? tagsFeed : undefined
   );
   const { data: mutedUsers } = UseUserMuted(pubky ?? '');
 
