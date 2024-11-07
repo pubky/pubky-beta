@@ -36,8 +36,7 @@ export const createQuickPost = (postContent: string, expectedPostLength? : numbe
 
 // menuBtnIdx: 0 for original post, 1 for reply
 export const deletePost = (postIdx = 0, menuBtnIdx = 0) => {
-  // first eq gets div for the posts below the quick post, second eq gets the first post in that div
-  cy.get('#posts-feed').children().eq(1).children().eq(postIdx).within(() => {
+  cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(postIdx).within(() => {
     // delete the repost
     // cy.find('#menu-btn').eq(menuBtnIdx).should('be.visible').click();
     // '[id="menu-btn"]' will find all with id

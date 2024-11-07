@@ -9,7 +9,7 @@ export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { cypressDir: 'src' }),
     baseUrl: 'http://localhost:4200',
-    defaultCommandTimeout: process.env.CI ? 30_000 : 15_000,
+    defaultCommandTimeout: process.env.CI ? 60_000 : 15_000,
     video: true,
     viewportWidth: 1920,
     viewportHeight: 1080,

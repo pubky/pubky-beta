@@ -144,7 +144,7 @@ describe('posts', () => {
     });
 
     // verify the post text and embedded link is displayed correctly in feed
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('iframe').should('be.visible');
       cy.get('iframe').should('have.attr', 'src', embedLink);
@@ -209,10 +209,10 @@ describe('posts', () => {
     cy.reload();
 
     // verify post is deleted
-    cy.get('#posts-feed').children().its('length').then((length) => {
+    cy.get('#posts-feed').find('#timeline').children().its('length').then((length) => {
       // if at least 1 post still exists, check it doesn't match the text of the deleted post
-      if (length > 1) {
-        cy.get('#posts-feed').children().eq(1).within(() => {
+      if (length > 0) {
+        cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
           cy.get('#post-content-text').innerTextShouldNotEq(postContent);
         });
       };
@@ -231,7 +231,7 @@ describe('posts', () => {
     cy.signIn(backupDownloadFilePath(username + '.pkarr'));
 
     // try to delete the post made by the other account
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       // open post menu and check delete is not available
       cy.get('#menu-btn').should('be.visible').click();
       cy.get('#post-tooltip-menu').should('be.visible').within(() => {
@@ -286,7 +286,7 @@ describe('posts', () => {
     cy.reload();
 
     // verify the post text and tags are displayed correctly in feed
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       // check text
       cy.get('#post-content-text').innerTextShouldEq(postContent);
 
@@ -349,7 +349,7 @@ describe('posts', () => {
     cy.reload();
 
     // within the latest post in the feed
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#tags').children().its('length').then((_oldLength) => {
         cy.get('#tags').within(() => {
           // verify the tags are displayed in the post
@@ -391,7 +391,7 @@ describe('posts', () => {
 
     // bookmark the post
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#bookmark-btn').click();
     });
     // check bookmark toast is shown (before the toast disappears)
@@ -444,7 +444,7 @@ describe('posts', () => {
     // verify the repost with content is displayed correctly in feed
     // TODO: remove manual refresh refresh, see https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
     cy.reload();
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       // check that both the repost text and original post text are displayed
       const expectedContent = [repostContent, postContent];
       cy.get('#post-content-text').each((elem, index) => {
@@ -487,8 +487,7 @@ describe('posts', () => {
     // verify the repost without content is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
     cy.reload();
-    // first eq gets div for the posts below the quick post, second eq gets the first post in that div
-    cy.get('#posts-feed').children().eq(1).children().eq(0).within(($post) => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       // check that only original post text is displayed and not additional content text
       cy.get('#post-content-text').its('length').should('eq', 1);
       cy.wrap($post).innerTextShouldContain(username + ' reposted');
@@ -501,7 +500,7 @@ describe('posts', () => {
     cy.reload();
 
     // verify the repost is deleted
-    cy.get('#posts-feed').children().eq(1).children().eq(0).within(($post) => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       cy.wrap($post).innerTextShouldNotContain('Undo repost');
       cy.wrap($post).get('#post-content-text').innerTextShouldEq(postContent);
     });
@@ -517,7 +516,7 @@ describe('posts', () => {
     cy.reload();
 
     // repost
-    cy.get('#posts-feed').children().eq(1).children().eq(0).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#repost-btn').click();
     });
     cy.get('#modal-root').should('be.visible').within(() => {
@@ -537,7 +536,7 @@ describe('posts', () => {
     cy.reload();
 
     // verify the repost is still displayed in feed
-    cy.get('#posts-feed').children().eq(1).children().eq(0).within(($post) => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       // check that only the repost text is displayed and not the original content text
       cy.wrap($post).innerTextShouldContain("This post has been deleted")
       cy.get('#post-content-text').innerTextShouldEq(repostContent);
@@ -553,7 +552,7 @@ describe('posts', () => {
 
     // reply to the post
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').children().eq(1).children().eq(0).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#reply-btn').click();
     });
     cy.get('#modal-root').should('be.visible').within(($modal) => {
@@ -572,7 +571,7 @@ describe('posts', () => {
     // verify the reply is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.reload();
-    cy.get('#posts-feed').children().eq(1).children().eq(0).within(($post) => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
                     .innerTextShouldContain(replyContent);
     });
@@ -583,7 +582,7 @@ describe('posts', () => {
     // verify the reply is deleted
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.reload();
-    cy.get('#posts-feed').children().eq(1).children().eq(0).within(($post) => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
                     .innerTextShouldNotContain(replyContent);
     });
@@ -618,7 +617,7 @@ describe('posts', () => {
     cy.reload();
 
     // verify the reply and original post are no longer displayed in feed
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#post-content-text').innerTextShouldNotContain(replyContent);
       cy.get('#post-content-text').innerTextShouldNotContain(postContent);
     });
