@@ -87,7 +87,6 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
     };
   };
 
-
   cy.get('#onboarding-sign-up-link').click();
   cy.location('pathname').should('eq', '/onboarding/sign-up');
 
@@ -129,6 +128,10 @@ Cypress.Commands.add('signOut', (hasBackedUp: boolean) => {
 });
 
 Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => {
+  // clear local cache to avoid pkarr resolution issue
+  cy.clearCookies();
+  cy.clearLocalStorage();
+
   cy.location('pathname').then((currentPath) => {
     if (currentPath !== '/sign-in') {
       cy.visit('/sign-in');
@@ -137,7 +140,7 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.location('pathname').should('eq', '/sign-in');
 
   // TODO: remove wait workaround for pkarr rate limiting once using testnet
-  cy.wait(5000);
+  cy.wait(3000);
 
   cy.get('#fileInput').selectFile(
     backupFilepath,
