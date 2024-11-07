@@ -32,8 +32,11 @@ type PubkyClientContextType = {
   mnemonic: string | undefined;
   setMnemonic: (mnemonic: string | undefined) => void;
   profile: PubkyAppUser | undefined;
-  generateAuthUrl: () => Promise<string | boolean>;
+  generateAuthUrl: (
+    caps?: string
+  ) => { url: string; promise: Promise<any> } | null;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
+  loginWithAuthUrl: (publicKey: string) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
   logout: () => boolean;
@@ -194,6 +197,25 @@ export function PubkyClientWrapper({
     } catch (error) {
       console.log(error);
       return false;
+    }
+  };
+
+  const loginWithAuthUrl = async (publickey: string) => {
+    try {
+      // Save pubky state
+      const pk = publickey;
+      const user = await getUserProfile(pk, pk);
+      if (user?.details?.name === '[DELETED]') {
+        throw new Error('This account has been deleted');
+      }
+
+      Utils.storage.set('pubky_public_key', pk);
+      setPubky(pk);
+      return pk;
+    } catch (error: any) {
+      // Get error message and return as a string
+      console.log(error);
+      throw new Error(error.message);
     }
   };
 
@@ -804,16 +826,19 @@ export function PubkyClientWrapper({
     }
   };
 
-  const generateAuthUrl = async () => {
-    const caps = '/pub/pubky.app/:rw,/pub/example.com/nested:rw';
+  const generateAuthUrl = (caps?: string) => {
+    const capabilities =
+      caps || '/pub/pubky.app/:rw,/pub/example.com/nested:rw';
 
     try {
-      const [url] = await client.authRequest(DEFAULT_HTTP_RELAY, caps);
-
-      return String(url);
+      const [url, promise] = client.authRequest(
+        DEFAULT_HTTP_RELAY,
+        capabilities
+      );
+      return { url: String(url), promise };
     } catch (error) {
       console.error('Error generating auth URL:', error);
-      return false;
+      return null;
     }
   };
 
@@ -1265,6 +1290,7 @@ export function PubkyClientWrapper({
         generateAuthUrl,
         loginWithFile,
         loginWithMnemonic,
+        loginWithAuthUrl,
         isLoggedIn,
         logout,
         signUp,

@@ -1,13 +1,15 @@
 import Image from 'next/image';
 
-import { Content, Card, Typography } from '@social/ui-shared';
+import { Content, Card, Typography, Icon } from '@social/ui-shared';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
 export default function SignIn() {
-  const { generateAuthUrl } = usePubkyClientContext();
+  const { generateAuthUrl, loginWithAuthUrl } = usePubkyClientContext();
+  const { setContent, setShow } = useAlertContext();
+  const [loginError, setLoginError] = useState('');
   const [authUrl, setAuthUrl] = useState('');
   //const [showCopied, setShowCopied] = useState(false);
   const canvasRef = useRef(null);
@@ -17,9 +19,31 @@ export default function SignIn() {
   }, []);
 
   const handleGenerateAuthUrl = async () => {
-    const url = await generateAuthUrl();
+    const result = generateAuthUrl();
 
-    if (url) setAuthUrl(String(url));
+    if (result && result.url) {
+      setAuthUrl(result.url);
+
+      try {
+        const pubkey = await result.promise;
+        if (pubkey) {
+          const handleLoginResult = await loginWithAuthUrl(
+            String(pubkey.z32())
+          );
+          if (handleLoginResult) {
+            setContent('Login successful!');
+            setShow(true);
+          }
+        }
+      } catch (error: unknown | { message: string }) {
+        const errorMessage =
+          (error as Error)?.message === 'aead::Error'
+            ? 'Failed to login.'
+            : (error as Error)?.message;
+        setLoginError(errorMessage);
+        console.error('Login error:', error);
+      }
+    }
   };
 
   {
@@ -79,6 +103,19 @@ export default function SignIn() {
           </Typography.H2>
         </div>
       </div>
+      {loginError && (
+        <div className="flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
+          <Typography.Body
+            className="break-words text-red-600"
+            variant="small-bold"
+          >
+            {loginError}
+          </Typography.Body>
+          <div>
+            <Icon.Warning color="#dc2626" />
+          </div>
+        </div>
+      )}
       <Content.LinksStoreApp />
     </Card.Primary>
   );
