@@ -19,6 +19,8 @@ import * as bip39 from 'bip39';
 import { getUserProfile } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
+const DEFAULT_HTTP_RELAY =
+  process.env.DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
 
 const client = new PubkyClient();
 const homeserver = PublicKey.from(HOMESERVER_PUBLIC_KEY);
@@ -30,6 +32,7 @@ type PubkyClientContextType = {
   mnemonic: string | undefined;
   setMnemonic: (mnemonic: string | undefined) => void;
   profile: PubkyAppUser | undefined;
+  generateAuthUrl: () => Promise<string | boolean>;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
@@ -801,6 +804,19 @@ export function PubkyClientWrapper({
     }
   };
 
+  const generateAuthUrl = async () => {
+    const caps = '/pub/pubky.app/:rw,/pub/example.com/nested:rw';
+
+    try {
+      const [url] = await client.authRequest(DEFAULT_HTTP_RELAY, caps);
+
+      return String(url);
+    } catch (error) {
+      console.error('Error generating auth URL:', error);
+      return false;
+    }
+  };
+
   const createRepost = async (
     originalPostId: string,
     originalauthorId: string,
@@ -1246,6 +1262,7 @@ export function PubkyClientWrapper({
         seed,
         profile,
         mnemonic,
+        generateAuthUrl,
         loginWithFile,
         loginWithMnemonic,
         isLoggedIn,

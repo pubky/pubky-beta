@@ -2,7 +2,6 @@
 
 import { usePubkyClientContext } from '@/contexts';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import { Utils } from '@social/utils-shared';
 import { useEffect, useState } from 'react';
 import ConfirmPhrase from './_ConfirmPhrase';
 

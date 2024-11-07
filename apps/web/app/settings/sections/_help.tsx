@@ -98,9 +98,9 @@ export default function Help() {
         </Typography.Body>
         <Button.Large
           variant="secondary"
-          className="w-auto cursor-default"
-          disabled
-          icon={<Icon.Telegram width="16" height="16" color="gray" />}
+          className="w-auto"
+          onClick={() => window.open('https://t.me/pubkychat', '_blank')}
+          icon={<Icon.Telegram width="16" height="16" />}
         >
           Pubky Support (Telegram)
         </Button.Large>
