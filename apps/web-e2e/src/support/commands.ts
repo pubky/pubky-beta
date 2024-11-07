@@ -138,6 +138,9 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   });
   cy.location('pathname').should('eq', '/sign-in');
 
+  // TODO: remove wait workaround for pkarr rate limiting once using testnet
+  cy.wait(5000);
+
   cy.get('#fileInput').selectFile(
     backupFilepath,
     { force: true } // force to bypass visibility check of hidden input field
