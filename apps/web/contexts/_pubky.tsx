@@ -1129,6 +1129,76 @@ export function PubkyClientWrapper({
     }
   };
 
+  const saveFeed = async (
+    filter: FilterContextType,
+    name: string,
+  ): Promise<boolean> => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+
+      const feedData = {
+        filter,
+        name,
+        created_at: Date.now(),
+      };
+
+      const feedBody = Buffer.from(JSON.stringify(feedData));
+      const feedId = (
+        await generateHashId(JSON.stringify(filter))
+      ).toUpperCase();
+
+      const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
+
+      await client.put(feedUrl, feedBody);
+
+      return true;
+    } catch (error) {
+      console.error('Error creating tag:', error);
+      return false;
+    }
+  };
+
+  const loadFeeds = async (): Promise<{ filter: FilterContextType; name: string }[]> => {
+    try {
+      // Verify the user is logged in
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+  
+      // Define the feeds directory path
+      const feedsDirUrl = `pubky://${pubky}/pub/pubky.app/feeds/`;
+      const feedUris = await client.list(feedsDirUrl);
+  
+      // Fetch each feed data
+      const feedsData = await Promise.all(
+        feedUris.map(async (uri) => {
+          try {
+            const result = await client.get(uri);
+            if (result) {
+              const decodedString = new TextDecoder('utf-8').decode(result);
+              const parsedData = JSON.parse(decodedString);
+              return { filter: parsedData.filter, name: parsedData.name };
+            }
+            return null; // Handle cases where the result might be undefined
+          } catch (error) {
+            console.error(`Error fetching feed from ${uri}:`, error);
+            return null;
+          }
+        })
+      );
+  
+      // Filter out any null entries and assert the result type
+      return feedsData.filter((feed): feed is { filter: FilterContextType; name: string } => feed !== null);
+    } catch (error) {
+      console.error('Error loading feeds:', error);
+      return [];
+    }
+  };
+
   const deleteTag = async (
     authorId: string,
     postId: string,
