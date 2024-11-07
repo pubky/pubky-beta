@@ -19,6 +19,8 @@ import * as bip39 from 'bip39';
 import { getUserProfile } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
+const DEFAULT_HTTP_RELAY =
+  process.env.DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
 
 const client = new PubkyClient();
 const homeserver = PublicKey.from(HOMESERVER_PUBLIC_KEY);
@@ -30,7 +32,11 @@ type PubkyClientContextType = {
   mnemonic: string | undefined;
   setMnemonic: (mnemonic: string | undefined) => void;
   profile: PubkyAppUser | undefined;
+  generateAuthUrl: (
+    caps?: string
+  ) => { url: string; promise: Promise<any> } | null;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
+  loginWithAuthUrl: (publicKey: string) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
   logout: () => boolean;
@@ -191,6 +197,25 @@ export function PubkyClientWrapper({
     } catch (error) {
       console.log(error);
       return false;
+    }
+  };
+
+  const loginWithAuthUrl = async (publickey: string) => {
+    try {
+      // Save pubky state
+      const pk = publickey;
+      const user = await getUserProfile(pk, pk);
+      if (user?.details?.name === '[DELETED]') {
+        throw new Error('This account has been deleted');
+      }
+
+      Utils.storage.set('pubky_public_key', pk);
+      setPubky(pk);
+      return pk;
+    } catch (error: any) {
+      // Get error message and return as a string
+      console.log(error);
+      throw new Error(error.message);
     }
   };
 
@@ -801,6 +826,22 @@ export function PubkyClientWrapper({
     }
   };
 
+  const generateAuthUrl = (caps?: string) => {
+    const capabilities =
+      caps || '/pub/pubky.app/:rw,/pub/example.com/nested:rw';
+
+    try {
+      const [url, promise] = client.authRequest(
+        DEFAULT_HTTP_RELAY,
+        capabilities
+      );
+      return { url: String(url), promise };
+    } catch (error) {
+      console.error('Error generating auth URL:', error);
+      return null;
+    }
+  };
+
   const createRepost = async (
     originalPostId: string,
     originalauthorId: string,
@@ -1246,8 +1287,10 @@ export function PubkyClientWrapper({
         seed,
         profile,
         mnemonic,
+        generateAuthUrl,
         loginWithFile,
         loginWithMnemonic,
+        loginWithAuthUrl,
         isLoggedIn,
         logout,
         signUp,
