@@ -15,7 +15,7 @@ import {
   NotificationPreferences,
 } from './../types';
 
-export type FilterContextType = {
+type FilterContextType = {
   layout: TLayouts;
   setLayout(layout: TLayouts): void;
   sort: TSort;

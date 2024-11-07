@@ -13,11 +13,10 @@ import { PostKind, PostView, PubkyAppPost, PubkyAppUser } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
-import { TStatus } from '@/types';
+import { ICustomFeed, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
 import { getUserProfile } from '@/services/userService';
-import { FilterContextType } from './_filters';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -1131,7 +1130,7 @@ export function PubkyClientWrapper({
   };
 
   const saveFeed = async (
-    filter: FilterContextType,
+    feed: ICustomFeed,
     name: string,
   ): Promise<boolean> => {
     try {
@@ -1141,14 +1140,14 @@ export function PubkyClientWrapper({
       }
 
       const feedData = {
-        filter,
+        feed,
         name,
         created_at: Date.now(),
       };
 
       const feedBody = Buffer.from(JSON.stringify(feedData));
       const feedId = (
-        await generateHashId(JSON.stringify(filter).toLocaleUpperCase())
+        await generateHashId(JSON.stringify(feed).toLowerCase())
       ).toUpperCase();
 
       const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
@@ -1162,7 +1161,7 @@ export function PubkyClientWrapper({
     }
   };
 
-  const loadFeeds = async (): Promise<{ filter: FilterContextType; name: string }[]> => {
+  const loadFeeds = async (): Promise<{ feed: ICustomFeed; name: string }[]> => {
     try {
       // Verify the user is logged in
       const loggedIn = await isLoggedIn();
@@ -1182,7 +1181,7 @@ export function PubkyClientWrapper({
             if (result) {
               const decodedString = new TextDecoder('utf-8').decode(result);
               const parsedData = JSON.parse(decodedString);
-              return { filter: parsedData.filter, name: parsedData.name };
+              return { feed: parsedData.feed, name: parsedData.name };
             }
             return null; // Handle cases where the result might be undefined
           } catch (error) {
@@ -1193,14 +1192,14 @@ export function PubkyClientWrapper({
       );
   
       // Filter out any null entries and assert the result type
-      return feedsData.filter((feed): feed is { filter: FilterContextType; name: string } => feed !== null);
+      return feedsData.filter((feed): feed is { feed: ICustomFeed; name: string } => feed !== null);
     } catch (error) {
       console.error('Error loading feeds:', error);
       return [];
     }
   };
 
-  const deleteFeed = async (filter: FilterContextType): Promise<boolean> => {
+  const deleteFeed = async (feed: ICustomFeed): Promise<boolean> => {
     try {
       // Verify the user is logged in
       const loggedIn = await isLoggedIn();
@@ -1208,8 +1207,8 @@ export function PubkyClientWrapper({
         throw new Error('User is not logged in');
       }
   
-      // Compute the hash ID for the feed based on the filter
-      const feedId = (await generateHashId(JSON.stringify(filter))).toUpperCase();
+      // Compute the hash ID for the feed based on the feed options
+      const feedId = (await generateHashId(JSON.stringify(feed))).toLowerCase();
   
       // Construct the feed URL
       const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;

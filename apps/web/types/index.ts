@@ -183,6 +183,14 @@ export interface IAuthor {
   profile: IProfile;
 }
 
+export interface ICustomFeed {
+  tags: string[],
+  sort: TSort,
+  reach: TReach,
+  layout: TLayouts,
+  content: TContent,
+}
+
 export interface IPostContent {
   content: string;
   parent?: string;
@@ -235,7 +243,7 @@ export interface IFollowed {
   id: string;
 }
 
-interface IViewer {}
+interface IViewer { }
 
 export interface IUserProfile {
   profile: IProfile;
