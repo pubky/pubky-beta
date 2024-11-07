@@ -17,6 +17,7 @@ import { TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
 import { getUserProfile } from '@/services/userService';
+import { FilterContextType } from './_filters';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 
@@ -1147,7 +1148,7 @@ export function PubkyClientWrapper({
 
       const feedBody = Buffer.from(JSON.stringify(feedData));
       const feedId = (
-        await generateHashId(JSON.stringify(filter))
+        await generateHashId(JSON.stringify(filter).toLocaleUpperCase())
       ).toUpperCase();
 
       const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
@@ -1196,6 +1197,30 @@ export function PubkyClientWrapper({
     } catch (error) {
       console.error('Error loading feeds:', error);
       return [];
+    }
+  };
+
+  const deleteFeed = async (filter: FilterContextType): Promise<boolean> => {
+    try {
+      // Verify the user is logged in
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+  
+      // Compute the hash ID for the feed based on the filter
+      const feedId = (await generateHashId(JSON.stringify(filter))).toUpperCase();
+  
+      // Construct the feed URL
+      const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
+  
+      // Delete the feed from the homeserver
+      await client.delete(feedUrl);
+  
+      return true;
+    } catch (error) {
+      console.error('Error deleting feed:', error);
+      return false;
     }
   };
 
