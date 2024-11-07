@@ -201,6 +201,10 @@ describe('posts', () => {
     // delete the post
     deletePost();
 
+    // wait to guarentee delete is applied
+    // todo: consider try loop instead of wait
+    cy.wait(2_000);
+
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     cy.reload();
 
@@ -335,6 +339,10 @@ describe('posts', () => {
         cy.get('#add-btn').should('be.visible').click();
       });
     };
+
+    // wait to guarentee tags are associated with the post
+    // todo: consider try loop instead of wait
+    cy.wait(2_000);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/541
     // should test before and after refresh
@@ -601,6 +609,10 @@ describe('posts', () => {
 
     // delete the original post
     deletePost();
+
+    // wait to guarentee delete is applied
+    // todo: consider try loop instead of wait
+    cy.wait(2_000);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     cy.reload();
