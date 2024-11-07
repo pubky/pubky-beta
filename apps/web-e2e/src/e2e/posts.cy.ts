@@ -154,7 +154,7 @@ describe('posts', () => {
   it('can post with profile reference', () => {
     // create profile to refer to in a post
     cy.signOut(true);
-    const uniquePrefix = Cypress._.uniqueId();
+    const uniquePrefix = Cypress._.uniqueId(Date.now().toString().slice(-3));
     const otherUsername = 'Jeremy The Poser';
     const fullUsername = uniquePrefix + '_' + otherUsername;
     const pubkyAlias = 'jPubky';
