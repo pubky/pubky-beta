@@ -131,7 +131,7 @@ Cypress.Commands.add('signOut', (hasBackedUp: boolean) => {
 });
 
 Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => {
-  // clear local cache to avoid pkarr resolution issue
+  // TODO: remove clear local cache to avoid pkarr resolution issue
   cy.clearCookies();
   cy.clearLocalStorage();
 

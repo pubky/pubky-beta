@@ -52,7 +52,7 @@ describe('posts', () => {
     });
     cy.get('#modal-root').should('not.exist');
 
-    // TODO: remove manuual refresh, see https://github.com/pubky/pubky-app/issues/493
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
     cy.wait(1000);
     cy.reload();
