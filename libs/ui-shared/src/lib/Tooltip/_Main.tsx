@@ -24,7 +24,7 @@ export const Main = ({ children, ...rest }: MainProps) => {
   }, []);
 
   const baseCSS =
-    'w-full absolute left-1/2 transform -translate-x-1/2 bg-[#05050A] border border-white border-opacity-30 text-white px-8 py-6 rounded-[20px] shadow-md z-40';
+    'w-full absolute left-1/2 transform -translate-x-1/2 bg-[#05050A] border border-white border-opacity-30 text-white px-8 py-6 rounded-[20px] shadow-md z-50';
 
   const topPositionCSS = 'bottom-full translate-y-[10px]';
   const bottomPositionCSS = 'top-full -translate-y-[10px]';
