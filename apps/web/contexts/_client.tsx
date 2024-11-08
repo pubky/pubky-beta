@@ -235,7 +235,6 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       Utils.storage.remove('backup');
       Utils.storage.remove('timerRemind');
       Utils.storage.remove('checkLink');
-      Utils.storage.remove('notificationPreferences');
       setPubky(null);
       setProfile(null);
       setSeed(null);

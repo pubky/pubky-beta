@@ -5,7 +5,7 @@ import { Content } from '@social/ui-shared';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from './components';
 import { useUserProfile } from '@/hooks/useUser';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { TStatus } from '@/types';
 
 export default function Index() {

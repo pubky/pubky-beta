@@ -13,7 +13,7 @@ import { PostKind, PostView, PubkyAppPost, PubkyAppUser } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
-import { ICustomFeed, TStatus } from '@/types';
+import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
 import { getUserProfile } from '@/services/userService';
@@ -112,6 +112,16 @@ type PubkyClientContextType = {
   downloadData: () => Promise<boolean>;
   getTimestampNotification: () => Promise<number | boolean>;
   putTimestampNotification: (timestamp: number) => Promise<boolean>;
+  loadSettings: () => Promise<{
+    notifications: NotificationPreferences;
+    privacysafety?: any;
+    language?: string;
+  } | null>;
+  saveSettings: (
+    notifications: NotificationPreferences,
+    privacysafety?: any,
+    language?: string
+  ) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -802,6 +812,49 @@ export function PubkyClientWrapper({
     }
   };
 
+  const loadSettings = async () => {
+    try {
+      await ensureLoggedIn();
+
+      const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
+      const settings = await client.get(settingsUrl);
+
+      const jsonString =
+        settings &&
+        Object.values(settings)
+          .map((asciiCode: number) => String.fromCharCode(asciiCode))
+          .join('');
+
+      const parsedData = jsonString && JSON.parse(jsonString);
+
+      return parsedData;
+    } catch (error) {
+      console.error('Error load settings:', error);
+      return null;
+    }
+  };
+
+  const saveSettings = async (
+    notifications: NotificationPreferences,
+    privacysafety?: any,
+    language?: string
+  ) => {
+    try {
+      await ensureLoggedIn();
+
+      const body = { notifications, privacysafety, language };
+      const settingsBody = Buffer.from(JSON.stringify(body));
+
+      const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
+      await client.put(settingsUrl, settingsBody);
+
+      return true;
+    } catch (error) {
+      console.error('Error put settings:', error);
+      return false;
+    }
+  };
+
   const deletePost = async (postId: string): Promise<boolean> => {
     try {
       await ensureLoggedIn();
@@ -1374,6 +1427,8 @@ export function PubkyClientWrapper({
         setTimelineProfile,
         getTimestampNotification,
         putTimestampNotification,
+        saveSettings,
+        loadSettings,
         downloadData,
       }}
     >
