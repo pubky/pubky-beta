@@ -77,6 +77,7 @@ export default function CustomFeeds({
 
   const handleForYouClick = () => {
     setSelectedFeed(undefined);
+    Utils.storage.remove('feed');
   };
 
   return (
