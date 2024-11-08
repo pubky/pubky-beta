@@ -72,6 +72,9 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
   cy.location('pathname').should('eq', '/onboarding/intro');
 
   if (skipOnboardingSlides) {
+    // TODO: remove wait workaround for pkarr rate limiting once using testnet
+    cy.wait(3000);
+
     // click 'Skip Intro' button
     cy.get('#onboarding-skip-intro-btn').click();
 

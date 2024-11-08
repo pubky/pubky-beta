@@ -54,6 +54,7 @@ describe('posts', () => {
 
     // TODO: remove manuual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
+    cy.wait(1000);
     cy.reload();
 
     // verify the post is displayed correctly in feed
