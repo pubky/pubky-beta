@@ -171,6 +171,7 @@ export function PubkyClientWrapper({
       Utils.storage.remove('profile');
       Utils.storage.remove('timerRemind');
       Utils.storage.remove('backup');
+      Utils.storage.remove('feed');
       Utils.storage.remove('unread');
       setPubky(undefined);
       setSeed(undefined);

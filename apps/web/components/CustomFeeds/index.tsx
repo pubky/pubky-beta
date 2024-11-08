@@ -36,9 +36,27 @@ export default function CustomFeeds({
 
   const handleLoadFeeds = async () => {
     const result = await loadFeeds();
-    console.log(result);
     setFeeds(result);
+
+    const storedFeed = Utils.storage.get('feed');
+    if (storedFeed) {
+      const matchingFeed = result.find(
+        (feed) => JSON.stringify(feed.feed) === JSON.stringify(storedFeed)
+      );
+      if (matchingFeed) {
+        setSelectedFeed(matchingFeed.feed);
+      } else {
+        setSelectedFeed(undefined);
+        Utils.storage.remove('feed');
+      }
+    }
   };
+
+  useEffect(() => {
+    if (selectedFeed) {
+      Utils.storage.set('feed', selectedFeed);
+    }
+  }, [selectedFeed]);
 
   const handleAddFeed = async (feedToAdd: ICustomFeed, name: string) => {
     await saveFeed(feedToAdd, name);

@@ -155,7 +155,7 @@ const Timeline = ({ selectedFeed, setSelectedFeed }: TimelineProps) => {
       setReach('all');
       setLayout('columns');
       setSort('recent');
-      setTagsFeed([]);
+      setTagsFeed(undefined);
     }
   }, [selectedFeed]);
 
