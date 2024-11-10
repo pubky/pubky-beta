@@ -721,7 +721,6 @@ export function PubkyClientWrapper({
       const dataList: string[] = [];
       const limit = 500;
       let hasMore = true;
-
       // Loop until no more URLs are returned
       do {
         const batch = await client.list(userDataUrl, cursor, false, limit);
@@ -732,7 +731,6 @@ export function PubkyClientWrapper({
           cursor = batch[batch.length - 1];
         }
       } while (hasMore);
-
       const zip = new JSZip();
       const dataFolder = zip.folder('data');
       if (!dataFolder) {
@@ -745,7 +743,7 @@ export function PubkyClientWrapper({
       await Promise.all(
         dataList.map(async (dataUrl, index) => {
           const result = await client.get(dataUrl);
-
+  
           if (result === undefined) {
             return;
           }
@@ -761,7 +759,11 @@ export function PubkyClientWrapper({
             // Save as binary if not JSON
             dataFolder.file(fileName, result);
           }
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 2eb0042 (Fix download and add progress)
           // Update progress
           setProgress(Math.round(((index + 1) / totalFiles) * 100));
         })
@@ -783,16 +785,17 @@ export function PubkyClientWrapper({
       a.download = `${pubky}_${formattedDateTime}_pubky.app.zip`;
       document.body.appendChild(a);
       a.click();
-
+  
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-
+  
       return true;
     } catch (error) {
       console.error('Error downloading data:', error);
       return false;
     }
   };
+  
 
   const getTimestampNotification = async () => {
     try {
