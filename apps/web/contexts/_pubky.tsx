@@ -759,11 +759,15 @@ export function PubkyClientWrapper({
         })
       );
 
+      // Get the current date and time, and format it
+      const now = new Date();
+      const formattedDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
+
       const content = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(content);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${pubky}-pubky.app.zip`;
+      a.download = `${pubky}_${formattedDateTime}_pubky.app.zip`;
       document.body.appendChild(a);
       a.click();
 
