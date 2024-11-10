@@ -705,8 +705,24 @@ export function PubkyClientWrapper({
         throw new Error('User is not logged in');
       }
 
-      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
-      const lists = await client.list(profileUrl);
+      const userDataUrl = `pubky://${pubky}/pub/pubky.app`;
+      let cursor = null;
+      const dataList: string[] = [];
+      const limit = 100; // Max limit per call
+      let hasMore = true; // Control loop execution
+
+      // Loop until no more URLs are returned
+      do {
+        const batch = await client.list(userDataUrl, cursor, false, limit);
+        if (batch.length === 0) {
+          hasMore = false; // Stop if there are no more URLs
+        } else {
+          dataList.push(...batch);
+          cursor = batch[batch.length - 1]; // Update cursor to the last URL in the batch
+        }
+      } while (hasMore);
+  
+      console.log(dataList);
 
       const zip = new JSZip();
       const dataFolder = zip.folder('data');
@@ -715,8 +731,8 @@ export function PubkyClientWrapper({
       }
 
       await Promise.all(
-        lists.slice(0, 2).map(async (list, index) => {
-          const result = await client.get(list);
+        dataList.slice(0, 2).map(async (dataUrl, index) => {
+          const result = await client.get(dataUrl);
 
           if (result === undefined) {
             console.warn(`File ${index + 1} was not found or is undefined.`);
@@ -729,15 +745,15 @@ export function PubkyClientWrapper({
             const decoder = new TextDecoder('utf-8');
             const decodedString = decoder.decode(result);
             parsedData = JSON.parse(decodedString);
-            fileName = `${index + 1}.json`;
+            fileName = dataUrl.split(`pubky://${pubky}/`)[1];
             dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
           } catch (error) {
             console.warn(
               `File ${
-                index + 1
+                fileName
               } is not in JSON format. It will be saved as a binary file.`
             );
-            fileName = `${index + 1}.bin`;
+            fileName = dataUrl.split(`pubky://${pubky}/`)[1];
             dataFolder.file(fileName, result);
           }
         })
@@ -747,7 +763,7 @@ export function PubkyClientWrapper({
       const url = URL.createObjectURL(content);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'data.zip';
+      a.download = `${pubky}-pubky.app.zip`;
       document.body.appendChild(a);
       a.click();
 
