@@ -26,6 +26,7 @@ export default function Account() {
   const { setContent, setShow } = useAlertContext();
   const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
+  const [progressDownload, setProgressDownload] = useState(0);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [showModalDeleteAccount, setShowModalDeleteAccount] = useState(false);
@@ -59,20 +60,21 @@ export default function Account() {
   };
 
   const handleDownloadData = async () => {
-    try {
-      setLoadingDownload(true);
-      const result = await downloadData();
+    setLoadingDownload(true);
+    setProgressDownload(0); // Reset progress
 
+    try {
+      const result = await downloadData(setProgressDownload);
       if (result) {
-        setLoadingDownload(false);
         setContent('Data downloaded!');
         setShow(true);
       }
     } catch (error) {
       console.error(error);
-      setLoadingDownload(false);
-      setContent('Something wrong', 'warning');
+      setContent('Something went wrong', 'warning');
       setShow(true);
+    } finally {
+      setLoadingDownload(false);
     }
   };
 
@@ -259,7 +261,7 @@ export default function Account() {
           loading={loadingDownload}
           onClick={() => (loadingDownload ? undefined : handleDownloadData())}
         >
-          Download data
+          {loadingDownload ? `Downloading... ${progressDownload}%` : 'Download data'}
         </Button.Large>
       </div>
       <Modal.Backup

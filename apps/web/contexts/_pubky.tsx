@@ -697,72 +697,68 @@ export function PubkyClientWrapper({
       return false;
     }
   };
-
-  const downloadData = async () => {
+  
+  const downloadData = async (setProgress) => {
     try {
       const loggedIn = await isLoggedIn();
       if (!loggedIn) {
         throw new Error('User is not logged in');
       }
-
+  
       const userDataUrl = `pubky://${pubky}/pub/pubky.app`;
       let cursor = null;
       const dataList: string[] = [];
-      const limit = 100; // Max limit per call
-      let hasMore = true; // Control loop execution
-
+      const limit = 500;
+      let hasMore = true;
+  
       // Loop until no more URLs are returned
       do {
         const batch = await client.list(userDataUrl, cursor, false, limit);
         if (batch.length === 0) {
-          hasMore = false; // Stop if there are no more URLs
+          hasMore = false;
         } else {
           dataList.push(...batch);
-          cursor = batch[batch.length - 1]; // Update cursor to the last URL in the batch
+          cursor = batch[batch.length - 1];
         }
       } while (hasMore);
   
-      console.log(dataList);
-
       const zip = new JSZip();
       const dataFolder = zip.folder('data');
       if (!dataFolder) {
         throw new Error("Error creating 'data' folder in zip.");
       }
-
+  
+      const totalFiles = dataList.length;
+  
+      // Process all files and update progress
       await Promise.all(
-        dataList.slice(0, 2).map(async (dataUrl, index) => {
+        dataList.map(async (dataUrl, index) => {
           const result = await client.get(dataUrl);
-
+  
           if (result === undefined) {
-            console.warn(`File ${index + 1} was not found or is undefined.`);
-            return; // Skip
+            return;
           }
-
-          let parsedData;
-          let fileName;
+  
+          const fileName = dataUrl.split(`pubky://${pubky}/`)[1];
+  
           try {
             const decoder = new TextDecoder('utf-8');
             const decodedString = decoder.decode(result);
-            parsedData = JSON.parse(decodedString);
-            fileName = dataUrl.split(`pubky://${pubky}/`)[1];
+            const parsedData = JSON.parse(decodedString);
             dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
-          } catch (error) {
-            console.warn(
-              `File ${
-                fileName
-              } is not in JSON format. It will be saved as a binary file.`
-            );
-            fileName = dataUrl.split(`pubky://${pubky}/`)[1];
+          } catch {
+            // Save as binary if not JSON
             dataFolder.file(fileName, result);
           }
+  
+          // Update progress
+          setProgress(Math.round(((index + 1) / totalFiles) * 100));
         })
       );
-
-      // Get the current date and time, and format it
+  
       const now = new Date();
       const formattedDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
-
+  
       const content = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(content);
       const a = document.createElement('a');
@@ -770,16 +766,17 @@ export function PubkyClientWrapper({
       a.download = `${pubky}_${formattedDateTime}_pubky.app.zip`;
       document.body.appendChild(a);
       a.click();
-
+  
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-
+  
       return true;
     } catch (error) {
       console.error('Error downloading data:', error);
       return false;
     }
   };
+  
 
   const getTimestampNotification = async () => {
     try {
