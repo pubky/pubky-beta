@@ -109,7 +109,9 @@ type PubkyClientContextType = {
   setTimelineProfile: (timelineProfile: PostView[]) => void;
   deletePost: (post_id: string) => Promise<boolean>;
   deleteAccount: () => Promise<boolean>;
-  downloadData: () => Promise<boolean>;
+  downloadData: (
+    setProgress: React.Dispatch<React.SetStateAction<number>>
+  ) => Promise<boolean>;
   getTimestampNotification: () => Promise<number | boolean>;
   putTimestampNotification: (timestamp: number) => Promise<boolean>;
   loadSettings: () => Promise<{
@@ -710,12 +712,26 @@ export function PubkyClientWrapper({
     }
   };
 
-  const downloadData = async () => {
+  const downloadData = async (setProgress) => {
     try {
       await ensureLoggedIn();
 
-      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
-      const lists = await client.list(profileUrl);
+      const userDataUrl = `pubky://${pubky}/pub/pubky.app`;
+      let cursor = undefined;
+      const dataList: string[] = [];
+      const limit = 500;
+      let hasMore = true;
+
+      // Loop until no more URLs are returned
+      do {
+        const batch = await client.list(userDataUrl, cursor, false, limit);
+        if (batch.length === 0) {
+          hasMore = false;
+        } else {
+          dataList.push(...batch);
+          cursor = batch[batch.length - 1];
+        }
+      } while (hasMore);
 
       const zip = new JSZip();
       const dataFolder = zip.folder('data');
@@ -723,43 +739,48 @@ export function PubkyClientWrapper({
         throw new Error("Error creating 'data' folder in zip.");
       }
 
-      const delay = (ms: number) =>
-        new Promise((resolve) => setTimeout(resolve, ms));
+      const totalFiles = dataList.length;
 
-      for (let index = 0; index < lists.length; index++) {
-        const list = lists[index];
-        const result = await client.get(list);
+      // Process all files and update progress
+      await Promise.all(
+        dataList.map(async (dataUrl, index) => {
+          const result = await client.get(dataUrl);
 
-        if (result === undefined) {
-          console.warn(`File ${index + 1} was not found or is undefined.`);
-          continue; // Skip
-        }
+          if (result === undefined) {
+            return;
+          }
 
-        let parsedData;
-        let fileName;
-        try {
-          const decoder = new TextDecoder('utf-8');
-          const decodedString = decoder.decode(result);
-          parsedData = JSON.parse(decodedString);
-          fileName = `${index + 1}.json`;
-          dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
-        } catch (error) {
-          console.warn(
-            `File ${
-              index + 1
-            } is not in JSON format. It will be saved as a binary file.`
-          );
-          fileName = `${index + 1}.bin`;
-          dataFolder.file(fileName, result);
-        }
-        await delay(500);
-      }
+          const fileName = dataUrl.split(`pubky://${pubky}/`)[1];
+
+          try {
+            const decoder = new TextDecoder('utf-8');
+            const decodedString = decoder.decode(result);
+            const parsedData = JSON.parse(decodedString);
+            dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
+          } catch {
+            // Save as binary if not JSON
+            dataFolder.file(fileName, result);
+          }
+
+          // Update progress
+          setProgress(Math.round(((index + 1) / totalFiles) * 100));
+        })
+      );
+
+      const now = new Date();
+      const formattedDateTime = `${now.getFullYear()}-${String(
+        now.getMonth() + 1
+      ).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(
+        now.getHours()
+      ).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(
+        now.getSeconds()
+      ).padStart(2, '0')}`;
 
       const content = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(content);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'data.zip';
+      a.download = `${pubky}_${formattedDateTime}_pubky.app.zip`;
       document.body.appendChild(a);
       a.click();
 
