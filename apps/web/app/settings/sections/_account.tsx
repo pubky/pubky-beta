@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/Modal';
-import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
+import { Button, Icon, Input, Tooltip, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
@@ -22,10 +22,12 @@ export default function Account() {
     getRecoveryFile,
     deleteAccount,
     downloadData,
-    importData
+    importData,
   } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
-  const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
+  const [fileName, setFileName] = useState('file.zip');
+  const [deleteProgress, setDeleteProgress] = useState(0);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
   const [importProgress, setImportProgress] = useState(0);
@@ -40,26 +42,22 @@ export default function Account() {
   const modalBackupRef = useRef<HTMLDivElement>(null);
 
   const handleDeleteAccount = async () => {
-    try {
-      setLoadingDeleteAccount(true);
-      const result = await deleteAccount();
+    setDeletingAccount(true);
+    setDeleteProgress(0); // Reset progress
 
-      if (result) {
-        setLoadingDeleteAccount(false);
-        setContent('Account deleted!');
-        setShow(true);
-        router.push('/logout');
-      } else {
-        setLoadingDeleteAccount(false);
-        setContent('Something wrong', 'warning');
-        setShow(true);
-      }
-    } catch (error) {
-      console.error(error);
-      setLoadingDeleteAccount(false);
-      setContent('Something wrong', 'warning');
+    const result = await deleteAccount(setDeleteProgress);
+
+    if (result) {
+      setContent('Account deleted successfully!');
+      setShow(true);
+    } else {
+      setContent('Error deleting account', 'warning');
       setShow(true);
     }
+
+    setDeletingAccount(false);
+    setShowModalDeleteAccount(false);
+    router.push('/logout');
   };
 
   const handleDownloadData = async () => {
@@ -81,8 +79,13 @@ export default function Account() {
     }
   };
 
-  const handleImportData = async (event) => {
-    const file = event.target.files[0];
+  const handleImportData = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFileName(event.target.files[0].name);
+    }
+    const file = event.target.files && event.target.files[0];
     if (!file) return;
 
     setImportingData(true);
@@ -98,9 +101,10 @@ export default function Account() {
       setShow(true);
     }
 
+    router.push('/profile');
     setImportingData(false);
   };
-  
+
   useEffect(() => {
     if (seed) {
       setDisposableAccount(true);
@@ -244,9 +248,11 @@ export default function Account() {
           variant="secondary"
           className="w-auto"
           onClick={() => setShowModalDeleteAccount(true)}
-          //loading={loadingDeleteAccount}
+          loading={deletingAccount}
         >
-          Delete account
+          {deletingAccount
+            ? `Deleting... ${deleteProgress}%`
+            : 'Delete Account'}
         </Button.Large>
       </div>
       <div className="w-full h-px bg-white bg-opacity-10 my-12" />
@@ -275,7 +281,8 @@ export default function Account() {
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
           Your data on Pubky is yours. Export your account data to use it
-          elsewhere. Note this is not a full pubky homeserver export, this function will export data related to pubky.app.
+          elsewhere. Note this is not a full pubky homeserver export, this
+          function will export data related to pubky.app.
         </Typography.Body>
         <Button.Large
           icon={<Icon.DownloadSimple size="16" />}
@@ -289,45 +296,27 @@ export default function Account() {
             : 'Download data'}
         </Button.Large>
       </div>
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
-          <Icon.ArrowUp size="24" />
+          <Icon.UploadSimple size="18" />
           <Typography.H2>Import your data</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
-          Import your account data from a backup ZIP file. Note this is not a full pubky homeserver import, this function will import pubky.app data.
+          Import your account data from a backup ZIP file. Note this is not a
+          full pubky homeserver import, this function will import pubky.app
+          data.
         </Typography.Body>
-        <input
-          type="file"
+        <Input.UploadFile
           accept=".zip"
+          fileName={
+            importingData ? `Importing... ${importProgress}%` : fileName
+          }
+          className="mb-4 w-[350px]"
+          id="file_input"
           onChange={handleImportData}
           disabled={importingData}
-          className="mb-4"
         />
-        {importingData && (
-          <div>
-            <Typography.Body variant="medium">
-              Importing... {importProgress}%
-            </Typography.Body>
-            <div
-              style={{
-                width: '100%',
-                height: '20px',
-                backgroundColor: '#e0e0e0',
-                marginTop: '10px',
-              }}
-            >
-              <div
-                style={{
-                  width: `${importProgress}%`,
-                  height: '100%',
-                  backgroundColor: '#76c7c0',
-                  transition: 'width 0.3s ease',
-                }}
-              ></div>
-            </div>
-          </div>
-        )}
       </div>
       <Modal.Backup
         loading={loadingRecoveryFile}
@@ -339,7 +328,8 @@ export default function Account() {
         errors={errorPassword}
       />
       <Modal.DeleteAccount
-        loading={loadingDeleteAccount}
+        deletingAccount={deletingAccount}
+        deleteProgress={deleteProgress}
         showModalDeleteAccount={showModalDeleteAccount}
         setShowModalDeleteAccount={setShowModalDeleteAccount}
         handleDeleteAccount={handleDeleteAccount}
