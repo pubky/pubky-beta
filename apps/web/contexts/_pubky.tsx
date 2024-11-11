@@ -112,6 +112,7 @@ type PubkyClientContextType = {
   downloadData: (
     setProgress: React.Dispatch<React.SetStateAction<number>>
   ) => Promise<boolean>;
+  importData: () => Promise<boolean>;
   getTimestampNotification: () => Promise<number | boolean>;
   putTimestampNotification: (timestamp: number) => Promise<boolean>;
   loadSettings: () => Promise<{
@@ -796,6 +797,69 @@ export function PubkyClientWrapper({
     }
   };
   
+  const importData = async (zipFile, setProgress) => {
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        throw new Error('User is not logged in');
+      }
+  
+      // Load the zip file using JSZip
+      const zip = await JSZip.loadAsync(zipFile);
+  
+      // Get all files in the zip
+      const files = Object.keys(zip.files);
+  
+      // Extract files under 'data/' directory
+      const dataFiles = files.filter((filename) => filename.startsWith('data/'));
+  
+      // Separate 'profile.json' and other files
+      const profileFileName = 'pub/pubky.app/profile.json';
+      const otherFiles = dataFiles.filter((filename) => filename !== profileFileName);
+  
+      // Sort other files in reverse alphanumeric order
+      otherFiles.sort().reverse();
+  
+      // Combine 'profile.json' first, then the other files
+      const allFiles = [profileFileName, ...otherFiles];
+  
+      const totalFiles = allFiles.length;
+  
+      // Process files one by one
+      for (let index = 0; index < totalFiles; index++) {
+        const filename = allFiles[index];
+        const file = zip.files[filename];
+  
+        if (!file) {
+          console.warn(`File ${filename} not found in the zip.`);
+          continue;
+        }
+        
+        // No need to upload directories
+        if (file.dir) {
+          continue;
+        }
+
+        // Read the file content as ArrayBuffer
+        const content = await file.async('arraybuffer');
+  
+        // Prepare the destination URL for client.put()
+        // Remove 'data/' prefix
+        const dataUrl = `pubky://${pubky}/${filename.replace('data/', '')}`;
+  
+        // Upload the file
+        await client.put(dataUrl, new Uint8Array(content));
+  
+        // Update progress
+        setProgress(Math.round(((index + 1) / totalFiles) * 100));
+      }
+  
+      return true;
+    } catch (error) {
+      console.error('Error importing data:', error);
+      return false;
+    }
+  };
 
   const getTimestampNotification = async () => {
     try {
@@ -1454,6 +1518,7 @@ export function PubkyClientWrapper({
         saveSettings,
         loadSettings,
         downloadData,
+        importData,
       }}
     >
       {children}

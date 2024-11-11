@@ -22,11 +22,14 @@ export default function Account() {
     getRecoveryFile,
     deleteAccount,
     downloadData,
+    importData
   } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
+  const [importProgress, setImportProgress] = useState(0);
+  const [importingData, setImportingData] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [showModalDeleteAccount, setShowModalDeleteAccount] = useState(false);
@@ -78,6 +81,26 @@ export default function Account() {
     }
   };
 
+  const handleImportData = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setImportingData(true);
+    setImportProgress(0);
+
+    const result = await importData(file, setImportProgress);
+
+    if (result) {
+      setContent('Data imported successfully!');
+      setShow(true);
+    } else {
+      setContent('Error importing data', 'warning');
+      setShow(true);
+    }
+
+    setImportingData(false);
+  };
+  
   useEffect(() => {
     if (seed) {
       setDisposableAccount(true);
@@ -252,7 +275,7 @@ export default function Account() {
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
           Your data on Pubky is yours. Export your account data to use it
-          elsewhere.
+          elsewhere. Note this is not a full pubky homeserver export, this function will export data related to pubky.app.
         </Typography.Body>
         <Button.Large
           icon={<Icon.DownloadSimple size="16" />}
@@ -265,6 +288,46 @@ export default function Account() {
             ? `Downloading... ${progressDownload}%`
             : 'Download data'}
         </Button.Large>
+      </div>
+      <div className="flex-col justify-start items-start gap-6 flex">
+        <div className="justify-start items-center gap-2 inline-flex">
+          <Icon.ArrowUp size="24" />
+          <Typography.H2>Import your data</Typography.H2>
+        </div>
+        <Typography.Body variant="medium" className="text-opacity-80">
+          Import your account data from a backup ZIP file. Note this is not a full pubky homeserver import, this function will import pubky.app data.
+        </Typography.Body>
+        <input
+          type="file"
+          accept=".zip"
+          onChange={handleImportData}
+          disabled={importingData}
+          className="mb-4"
+        />
+        {importingData && (
+          <div>
+            <Typography.Body variant="medium">
+              Importing... {importProgress}%
+            </Typography.Body>
+            <div
+              style={{
+                width: '100%',
+                height: '20px',
+                backgroundColor: '#e0e0e0',
+                marginTop: '10px',
+              }}
+            >
+              <div
+                style={{
+                  width: `${importProgress}%`,
+                  height: '100%',
+                  backgroundColor: '#76c7c0',
+                  transition: 'width 0.3s ease',
+                }}
+              ></div>
+            </div>
+          </div>
+        )}
       </div>
       <Modal.Backup
         loading={loadingRecoveryFile}
