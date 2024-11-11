@@ -432,6 +432,35 @@ export const DownloadSimple = ({ size = '16', color = 'white' }: IconProps) => (
   </svg>
 );
 
+export const UploadSimple = ({ size = '24', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 26 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12.2929 0.289262C12.6834 -0.101263 13.3166 -0.101263 13.7071 0.289262L18.9571 5.53926C19.3476 5.92979 19.3476 6.56295 18.9571 6.95347C18.5666 7.344 17.9334 7.344 17.5429 6.95347L13 2.41058L8.45711 6.95347C8.06658 7.344 7.43342 7.344 7.04289 6.95347C6.65237 6.56295 6.65237 5.92979 7.04289 5.53926L12.2929 0.289262Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M13 0C13.5523 0 14 0.447715 14 1V15C14 15.5523 13.5523 16 13 16C12.4477 16 12 15.5523 12 15V1C12 0.447715 12.4477 0 13 0Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M1 12C1.55228 12 2 12.4477 2 13V22H24V13C24 12.4477 24.4477 12 25 12C25.5523 12 26 12.4477 26 13V22C26 22.5304 25.7893 23.0391 25.4142 23.4142C25.0391 23.7893 24.5304 24 24 24H2C1.46957 24 0.960861 23.7893 0.585787 23.4142C0.210714 23.0391 0 22.5304 0 22V13C0 12.4477 0.447715 12 1 12Z"
+      fill={color}
+    />
+  </svg>
+);
+
 export const LoadingSpin = ({ size = '40', color = 'white' }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

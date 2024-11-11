@@ -108,8 +108,14 @@ type PubkyClientContextType = {
   timelineProfile: PostView[] | undefined;
   setTimelineProfile: (timelineProfile: PostView[]) => void;
   deletePost: (post_id: string) => Promise<boolean>;
-  deleteAccount: () => Promise<boolean>;
+  deleteAccount: (
+    setProgress: React.Dispatch<React.SetStateAction<number>>
+  ) => Promise<boolean>;
   downloadData: (
+    setProgress: React.Dispatch<React.SetStateAction<number>>
+  ) => Promise<boolean>;
+  importData: (
+    zipFile: File,
     setProgress: React.Dispatch<React.SetStateAction<number>>
   ) => Promise<boolean>;
   getTimestampNotification: () => Promise<number | boolean>;
@@ -692,22 +698,36 @@ export function PubkyClientWrapper({
     }
   };
 
-  const deleteAccount = async () => {
+  const deleteAccount = async (setProgress) => {
     try {
       await ensureLoggedIn();
 
-      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
-      const lists = await client.list(profileUrl);
+      const baseDirectory = `pubky://${pubky}/pub/pubky.app/`;
+      const dataList = await client.list(baseDirectory);
 
-      await Promise.all(
-        lists.map(async (list) => {
-          await client.delete(list);
-        })
-      );
+      // Separate profile.json and other files
+      const profileUrl = `${baseDirectory}profile.json`;
+      const filesToDelete = dataList.filter((file) => file !== profileUrl);
+
+      // Sort remaining files alphanumerically (ascending order)
+      filesToDelete.sort().reverse();
+
+      // Total files including profile.json for progress calculation
+      const totalFiles = filesToDelete.length + 1;
+
+      // Delete each file (excluding profile.json) and update progress
+      for (let index = 0; index < filesToDelete.length; index++) {
+        await client.delete(filesToDelete[index]);
+        setProgress(Math.round(((index + 1) / totalFiles) * 100));
+      }
+
+      // Finally, delete profile.json and update progress to 100%
+      await client.delete(profileUrl);
+      setProgress(100);
 
       return true;
     } catch (error) {
-      console.error('Error editing post:', error);
+      console.error('Error deleting account:', error);
       return false;
     }
   };
@@ -721,7 +741,6 @@ export function PubkyClientWrapper({
       const dataList: string[] = [];
       const limit = 500;
       let hasMore = true;
-
       // Loop until no more URLs are returned
       do {
         const batch = await client.list(userDataUrl, cursor, false, limit);
@@ -732,7 +751,6 @@ export function PubkyClientWrapper({
           cursor = batch[batch.length - 1];
         }
       } while (hasMore);
-
       const zip = new JSZip();
       const dataFolder = zip.folder('data');
       if (!dataFolder) {
@@ -745,7 +763,7 @@ export function PubkyClientWrapper({
       await Promise.all(
         dataList.map(async (dataUrl, index) => {
           const result = await client.get(dataUrl);
-
+  
           if (result === undefined) {
             return;
           }
@@ -761,7 +779,7 @@ export function PubkyClientWrapper({
             // Save as binary if not JSON
             dataFolder.file(fileName, result);
           }
-
+  
           // Update progress
           setProgress(Math.round(((index + 1) / totalFiles) * 100));
         })
@@ -783,13 +801,84 @@ export function PubkyClientWrapper({
       a.download = `${pubky}_${formattedDateTime}_pubky.app.zip`;
       document.body.appendChild(a);
       a.click();
-
+  
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-
+  
       return true;
     } catch (error) {
       console.error('Error downloading data:', error);
+      return false;
+    }
+  };
+
+  const importData = async (
+    zipFile: File,
+    setProgress: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    try {
+      await ensureLoggedIn();
+
+      // Load the zip file using JSZip
+      const zip = await JSZip.loadAsync(zipFile);
+
+      // Get all files in the zip
+      const files = Object.keys(zip.files);
+
+      // Extract files under 'data/' directory
+      const dataFiles = files.filter((filename) =>
+        filename.startsWith('data/')
+      );
+
+      // Separate 'profile.json' and other files
+      const profileFileName = 'pub/pubky.app/profile.json';
+      const otherFiles = dataFiles.filter(
+        (filename) => filename !== profileFileName
+      );
+
+      // Sort other files in reverse alphanumeric order
+      otherFiles.sort().reverse();
+
+      // Combine 'profile.json' first, then the other files
+      const allFiles = [profileFileName, ...otherFiles];
+
+      const totalFiles = allFiles.length;
+
+      // Process files one by one
+      for (let index = 0; index < totalFiles; index++) {
+        const filename = allFiles[index];
+        const file = zip.files[filename];
+
+        if (!file) {
+          console.warn(`File ${filename} not found in the zip.`);
+          continue;
+        }
+
+        // No need to upload directories
+        if (file.dir) {
+          continue;
+        }
+
+        // Read the file content as ArrayBuffer
+        const content = await file.async('arraybuffer');
+
+        // Prepare the destination URL for client.put()
+        // Remove 'data/' prefix
+        const dataUrl = `pubky://${pubky}/${filename.replace('data/', '')}`;
+
+        // Upload the file
+        await client.put(dataUrl, new Uint8Array(content));
+
+        // Update progress
+        setProgress(Math.round(((index + 1) / totalFiles) * 100));
+        setProfile(undefined);
+      }
+
+      Utils.storage.remove('profile');
+      setProfile(undefined);
+      return true;
+    } catch (error) {
+      console.error('Error importing data:', error);
       return false;
     }
   };
@@ -1451,6 +1540,7 @@ export function PubkyClientWrapper({
         saveSettings,
         loadSettings,
         downloadData,
+        importData,
       }}
     >
       {children}
