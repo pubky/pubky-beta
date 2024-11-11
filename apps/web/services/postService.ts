@@ -78,6 +78,7 @@ export async function getPostStream(
 
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
+    queryParams.append('observer_id', viewerId);
   }
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
