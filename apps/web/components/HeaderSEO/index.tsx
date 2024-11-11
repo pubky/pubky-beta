@@ -10,10 +10,10 @@ interface HeaderSEOProps {
 
 export const HeaderSEO = ({
   title = 'Pubky.app | Unlock the web',
-  icon = '/images/pubky-logo.png',
+  icon = '/images/webp/pubky-logo.webp',
   description = 'Unlock the web. Your keys, your content, your rules.',
   keywords = 'key, public key, pubkey, pubky, pkarr, pubky core, web',
-  image = '/images/pubky-seo.png',
+  image = '/images/webp/pubky-seo.webp',
 }: HeaderSEOProps) => {
   const imageUrl = `https://synonym.to${image}`;
   const twitterHandle = '@getpubky';

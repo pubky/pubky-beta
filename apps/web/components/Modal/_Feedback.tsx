@@ -72,7 +72,7 @@ export default function Feedback({
                 height={32}
                 className="w-[32px] h-[32px] rounded-full"
                 alt="user-image"
-                uri={profile?.image ?? '/images/Userpic.png'}
+                uri={profile?.image ?? '/images/webp/Userpic.webp'}
               />
               {profile?.name && pubky ? (
                 <div

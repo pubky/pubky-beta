@@ -34,7 +34,7 @@ export default function Sidebar({
   const name = profile?.details?.name ?? '';
   const bio = profile?.details.bio || 'No bio.';
   const links = profile?.details?.links ?? [];
-  const image = profile?.details?.image ?? '/images/Userpic.png';
+  const image = profile?.details?.image ?? '/images/webp/Userpic.webp';
   const profileTags = profile?.tags ?? [];
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   //const [showTooltipProfile, setShowTooltipProfile] = useState('');
@@ -109,7 +109,7 @@ export default function Sidebar({
       if (profile) {
         setName(profile?.name || '');
         setBio(profile?.bio || 'No bio.');
-        setImage(profile?.image || '/images/Userpic.png');
+        setImage(profile?.image || '/images/webp/Userpic.webp');
         setLinks(
           profile?.links.map((link) => ({ title: link.title, url: link.url }))
         );

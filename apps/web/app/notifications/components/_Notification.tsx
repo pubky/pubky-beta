@@ -203,7 +203,7 @@ export default function Notification({
                   height={32}
                   className="w-[32px] h-[32px] rounded-full"
                   alt="user-pic"
-                  uri={user?.details?.image || '/images/Userpic.png'}
+                  uri={user?.details?.image || '/images/webp/Userpic.webp'}
                 />
               )}
               <Typography.Body

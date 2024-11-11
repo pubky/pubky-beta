@@ -333,7 +333,7 @@ export default function CreateArticle({
                     }
                   />
                   <Section.UserArea
-                    uriPic={(profile?.image as string) ?? '/images/Userpic.png'}
+                    uriPic={(profile?.image as string) ?? '/images/webp/Userpic.webp'}
                     name={profile?.name ?? 'Loading...'}
                     largeView
                   />

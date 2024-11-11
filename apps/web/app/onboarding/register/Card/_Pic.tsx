@@ -8,13 +8,13 @@ interface PicProps {
 
 export default function Pic({ image, setImage }: PicProps) {
   const handleUploadImage = () => {
-    if (image === '/images/Userpic.png') {
+    if (image === '/images/webp/Userpic.webp') {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      setImage('/images/Userpic.png');
+      setImage('/images/webp/Userpic.webp');
       //const idImage = Utils.encodeImageId(image);
       //if (idImage) deleteFile(idImage);
     }
@@ -28,7 +28,7 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const getButtonIconImage = () => {
-    return image === '/images/Userpic.png' ? (
+    return image === '/images/webp/Userpic.webp' ? (
       <Icon.File size="16" />
     ) : (
       <Icon.Trash size="16" />
@@ -36,11 +36,11 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const getButtonLabelImage = () => {
-    return image === '/images/Userpic.png' ? 'Choose file' : undefined;
+    return image === '/images/webp/Userpic.webp' ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png'
+    return image === '/images/webp/Userpic.webp'
       ? 'w-[120px] lg:w-[85%] xl:w-8/12'
       : 'w-[38px] h-[38px]';
   };

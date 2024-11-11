@@ -94,9 +94,9 @@ export default function Tag({
       tag.taggers.map(async (fromItem) => {
         try {
           const profile = await getUserProfile(fromItem, pubky ?? '');
-          return profile?.details?.image || '/images/Userpic.png';
+          return profile?.details?.image || '/images/webp/Userpic.webp';
         } catch (error) {
-          return '/images/Userpic.png';
+          return '/images/webp/Userpic.webp';
         }
       })
     );
@@ -514,7 +514,7 @@ export default function Tag({
                             <SideCard.User
                               uri={profile?.details?.id.replace('pubky:', '')}
                               uriImage={
-                                profile?.details?.image || '/images/Userpic.png'
+                                profile?.details?.image || '/images/webp/Userpic.webp'
                               }
                               username={
                                 profile?.details?.name &&

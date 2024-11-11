@@ -17,7 +17,7 @@ export default function Index() {
         <Card.NewAccount />
         <Card.SigninBack />
       </div>
-      {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image1.png" />*/}
+      {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/webp/bg-image1.webp" />*/}
     </Onboarding.Layout>
   );
 }

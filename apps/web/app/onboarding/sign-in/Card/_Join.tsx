@@ -87,7 +87,7 @@ export default function Join() {
             width={102}
             height={36}
             alt="bitkit"
-            src="/images/bitkit.png"
+            src="/images/webp/bitkit.webp"
           />
         </Link>
       }
@@ -115,7 +115,7 @@ export default function Join() {
             height={320}
             className="rounded-lg mt-6"
             alt="qr"
-            src="/images/qr.png"
+            src="/images/webp/qr.webp"
           />
         )}
         <div className="w-full inset-0 flex items-center justify-right left-8 absolute">

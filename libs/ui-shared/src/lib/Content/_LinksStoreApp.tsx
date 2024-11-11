@@ -11,7 +11,7 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       {/**<Link href="https://www.bitkit.to/" target="_blank">
-        <Image width={122} height={36} alt="bitkit" src="/images/bitkit.png" />
+        <Image width={122} height={36} alt="bitkit" src="/images/webp/bitkit.webp" />
       </Link>*/}
       <Link
         href="https://apps.apple.com/us/app/bitkit-wallet/id6502440655"
@@ -21,7 +21,7 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
           width={160}
           height={94}
           alt="apple-store"
-          src="/images/apple-store.png"
+          src="/images/webp/apple-store.webp"
         />
       </Link>
       <Link
@@ -32,7 +32,7 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
           width={160}
           height={94}
           alt="google-play"
-          src="/images/google-play.png"
+          src="/images/webp/google-play.webp"
         />
       </Link>
     </div>

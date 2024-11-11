@@ -12,13 +12,13 @@ export default function Pic({ image, setImage, loading }: PicProps) {
   const { setContent, setShow } = useAlertContext();
 
   const handleUploadImage = () => {
-    if (image === '/images/Userpic.png') {
+    if (image === '/images/webp/Userpic.webp') {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      setImage('/images/Userpic.png');
+      setImage('/images/webp/Userpic.webp');
       //const idImage = Utils.encodeImageId(image);
       //if (idImage) deleteFile(idImage);
     }
@@ -74,7 +74,7 @@ export default function Pic({ image, setImage, loading }: PicProps) {
   };
 
   const getButtonIconImage = () => {
-    return image === '/images/Userpic.png' ? (
+    return image === '/images/webp/Userpic.webp' ? (
       <div>
         <Icon.File size="16" />
       </div>
@@ -86,11 +86,11 @@ export default function Pic({ image, setImage, loading }: PicProps) {
   };
 
   const getButtonLabelImage = () => {
-    return image === '/images/Userpic.png' ? 'Choose file' : undefined;
+    return image === '/images/webp/Userpic.webp' ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png'
+    return image === '/images/webp/Userpic.webp'
       ? 'w-[120px] lg:w-[85%] xl:w-8/12'
       : 'w-[38px] h-[38px]';
   };

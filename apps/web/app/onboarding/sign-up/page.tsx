@@ -33,7 +33,7 @@ export default function Index() {
   const [name, setName] = useState(profile?.name || '');
   const [bio, setBio] = useState(profile?.bio || '');
   const [image, setImage] = useState<File | string>(
-    profile?.image || '/images/Userpic.png'
+    profile?.image || '/images/webp/Userpic.webp'
   );
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
@@ -212,7 +212,7 @@ export default function Index() {
           loading={loading}
         />
         <Card.Pic image={image} setImage={setImage} loading={loading} />
-        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
+        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/webp/bg-image-2.webp" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
         <Link href="/onboarding/sign-in">

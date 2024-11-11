@@ -213,7 +213,7 @@ export default function Contact({
                     <ImageByUri
                       width={48}
                       height={48}
-                      uri={contact?.details?.image || '/images/Userpic.png'}
+                      uri={contact?.details?.image || '/images/webp/Userpic.webp'}
                       alt={`profile-pic-${contact?.details?.id}`}
                       className="rounded-full w-[48px] h-[48px] max-w-none"
                     />

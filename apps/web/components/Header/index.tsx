@@ -226,7 +226,7 @@ export default function Header({ title, className }: HeaderProps) {
           onClick={() => setDrawerOpen(true)}
         >
           <Menu.ImageMenu
-            uriImage={String(profile?.image ?? '/images/Userpic.png')}
+            uriImage={String(profile?.image ?? '/images/webp/Userpic.webp')}
           />
         </div>
         <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
