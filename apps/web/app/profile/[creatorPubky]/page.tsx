@@ -101,7 +101,9 @@ export default function Index({
                 following: profile?.counts?.following ?? 0,
                 friends: profile?.counts?.friends ?? 0,
               }}
-              countPosts={(profile?.counts?.posts ?? 0) - (profile?.counts?.replies ?? 0)}
+              countPosts={
+                (profile?.counts?.posts ?? 0) - (profile?.counts?.replies ?? 0)
+              }
               countReplies={profile?.counts?.replies}
               loading={isLoading}
               creatorPubky={creatorPubky}

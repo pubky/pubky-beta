@@ -48,14 +48,14 @@ export default function DeletePost({
       </Typography.Body>
       <div className="flex gap-4 mt-8">
         <Button.Large
-          id='cancel-btn'
+          id="cancel-btn"
           variant="secondary"
           onClick={() => setShowModalDeletePost(false)}
         >
           Cancel
         </Button.Large>
         <Modal.SubmitAction
-          id='delete-post-btn'
+          id="delete-post-btn"
           icon={<Icon.Trash size="16" />}
           onClick={() => {
             handleDeletePost();

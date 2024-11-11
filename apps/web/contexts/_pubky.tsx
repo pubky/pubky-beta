@@ -762,7 +762,7 @@ export function PubkyClientWrapper({
       await Promise.all(
         dataList.map(async (dataUrl, index) => {
           const result = await client.get(dataUrl);
-  
+
           if (result === undefined) {
             return;
           }
@@ -778,7 +778,7 @@ export function PubkyClientWrapper({
             // Save as binary if not JSON
             dataFolder.file(fileName, result);
           }
-  
+
           // Update progress
           setProgress(Math.round(((index + 1) / totalFiles) * 100));
         })
@@ -800,10 +800,10 @@ export function PubkyClientWrapper({
       a.download = `${pubky}_${formattedDateTime}_pubky.app.zip`;
       document.body.appendChild(a);
       a.click();
-  
+
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-  
+
       return true;
     } catch (error) {
       console.error('Error downloading data:', error);

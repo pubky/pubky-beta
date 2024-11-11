@@ -114,7 +114,7 @@ export async function getPostStreamByUser(
 
   if (userId) {
     queryParams.append('author_id', userId);
-    queryParams.append('source', "author");
+    queryParams.append('source', 'author');
   }
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
@@ -143,7 +143,7 @@ export async function getRepliesStreamByUser(
 
   if (userId) {
     queryParams.append('author_id', userId);
-    queryParams.append('source', "author_replies");
+    queryParams.append('source', 'author_replies');
   }
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
