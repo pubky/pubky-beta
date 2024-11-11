@@ -22,9 +22,11 @@ export default function Account() {
     getRecoveryFile,
     deleteAccount,
     downloadData,
+    logout,
   } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
-  const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
+  const [deleteProgress, setDeleteProgress] = useState(0);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
   const [disposableAccount, setDisposableAccount] = useState(false);
@@ -37,26 +39,22 @@ export default function Account() {
   const modalBackupRef = useRef<HTMLDivElement>(null);
 
   const handleDeleteAccount = async () => {
-    try {
-      setLoadingDeleteAccount(true);
-      const result = await deleteAccount();
+    setDeletingAccount(true);
+    setDeleteProgress(0); // Reset progress
 
-      if (result) {
-        setLoadingDeleteAccount(false);
-        setContent('Account deleted!');
-        setShow(true);
-        router.push('/logout');
-      } else {
-        setLoadingDeleteAccount(false);
-        setContent('Something wrong', 'warning');
-        setShow(true);
-      }
-    } catch (error) {
-      console.error(error);
-      setLoadingDeleteAccount(false);
-      setContent('Something wrong', 'warning');
+    const result = await deleteAccount(setDeleteProgress);
+
+    if (result) {
+      setContent('Account deleted successfully!');
+      setShow(true);
+    } else {
+      setContent('Error deleting account', 'warning');
       setShow(true);
     }
+
+    setDeletingAccount(false);
+    setShowModalDeleteAccount(false);
+    logout();
   };
 
   const handleDownloadData = async () => {
@@ -221,9 +219,8 @@ export default function Account() {
           variant="secondary"
           className="w-auto"
           onClick={() => setShowModalDeleteAccount(true)}
-          //loading={loadingDeleteAccount}
         >
-          Delete account
+          {deletingAccount ? `Deleting... ${deleteProgress}%` : 'Delete Account'}
         </Button.Large>
       </div>
       <div className="w-full h-px bg-white bg-opacity-10" />
@@ -274,7 +271,8 @@ export default function Account() {
         errors={errorPassword}
       />
       <Modal.DeleteAccount
-        loading={loadingDeleteAccount}
+        deletingAccount={deletingAccount}
+        deleteProgress={deleteProgress}
         showModalDeleteAccount={showModalDeleteAccount}
         setShowModalDeleteAccount={setShowModalDeleteAccount}
         handleDeleteAccount={handleDeleteAccount}

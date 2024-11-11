@@ -14,7 +14,8 @@ export default function DeleteAccount({
   showModalDeleteAccount,
   setShowModalDeleteAccount,
   handleDeleteAccount,
-  loading,
+  deletingAccount,
+  deleteProgress,
 }: DeleteAccountProps) {
   const modalDeleteAccountRef = useRef<HTMLDivElement>(null);
 
@@ -64,10 +65,9 @@ export default function DeleteAccount({
           icon={<Icon.Trash size="16" color="#dc2626" />}
           className="bg-[#dc2626] border-[#dc2626]"
           colorText="text-[#dc2626]"
-          loading={loading}
-          onClick={() => (loading ? undefined : handleDeleteAccount())}
+          onClick={() => (deletingAccount ? undefined : handleDeleteAccount())}
         >
-          Delete Account
+          {deletingAccount ? `Deleting... ${deleteProgress}%` : 'Delete Account'}
         </Modal.SubmitAction>
       </div>
     </Modal.Root>

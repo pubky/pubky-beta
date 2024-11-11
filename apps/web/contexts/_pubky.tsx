@@ -108,7 +108,9 @@ type PubkyClientContextType = {
   timelineProfile: PostView[] | undefined;
   setTimelineProfile: (timelineProfile: PostView[]) => void;
   deletePost: (post_id: string) => Promise<boolean>;
-  deleteAccount: () => Promise<boolean>;
+  deleteAccount: (
+    setProgress: React.Dispatch<React.SetStateAction<number>>
+  ) => Promise<boolean>;
   downloadData: (
     setProgress: React.Dispatch<React.SetStateAction<number>>
   ) => Promise<boolean>;
@@ -692,25 +694,40 @@ export function PubkyClientWrapper({
     }
   };
 
-  const deleteAccount = async () => {
+  const deleteAccount = async (setProgress) => {
     try {
       await ensureLoggedIn();
-
-      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
-      const lists = await client.list(profileUrl);
-
-      await Promise.all(
-        lists.map(async (list) => {
-          await client.delete(list);
-        })
-      );
-
+  
+      const baseDirectory = `pubky://${pubky}/pub/pubky.app/`;
+      const dataList = await client.list(baseDirectory);
+  
+      // Separate profile.json and other files
+      const profileUrl = `${baseDirectory}profile.json`;
+      const filesToDelete = dataList.filter((file) => file !== profileUrl);
+  
+      // Sort remaining files alphanumerically (ascending order)
+      filesToDelete.sort().reverse();
+  
+      // Total files including profile.json for progress calculation
+      const totalFiles = filesToDelete.length + 1;
+  
+      // Delete each file (excluding profile.json) and update progress
+      for (let index = 0; index < filesToDelete.length; index++) {
+        await client.delete(filesToDelete[index]);
+        setProgress(Math.round(((index + 1) / totalFiles) * 100));
+      }
+  
+      // Finally, delete profile.json and update progress to 100%
+      await client.delete(profileUrl);
+      setProgress(100);
+  
       return true;
     } catch (error) {
-      console.error('Error editing post:', error);
+      console.error('Error deleting account:', error);
       return false;
     }
   };
+  
 
   const downloadData = async (setProgress) => {
     try {
