@@ -6,6 +6,8 @@ export interface UserCounts {
   friends: number;
   posts: number;
   tags: number;
+  replies: number;
+  tagged: number;
   bookmarks: number;
 }
 
