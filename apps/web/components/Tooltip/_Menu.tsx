@@ -202,7 +202,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       <div ref={tooltipMenuRef}>
         <Tooltip.Main
           id="post-tooltip-menu"
-          className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]"
+          className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px] z-40"
         >
           {renderFollowButton()}
           {/**post?.details?.author === pubky && (

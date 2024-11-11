@@ -569,7 +569,7 @@ export default function Tag({
                 </>
               ) : (
                 <Typography.Body variant="small" className="text-opacity-30">
-                  Not tags yet.
+                  No tags yet.
                 </Typography.Body>
               )}
             </div>

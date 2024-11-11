@@ -10,6 +10,8 @@ import {
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useUserNotifications } from '@/hooks/useUser';
 import { NotificationView } from '@/types/User';
+import { NotificationPreferences } from '@/types';
+import { defaultPreferences } from './_filters';
 
 type NotificationsContextType = {
   notifications: NotificationView[];
@@ -191,10 +193,13 @@ const NotificationsContext = createContext<NotificationsContextType>({
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
-  const { pubky, getTimestampNotification } = usePubkyClientContext();
+  const { pubky, getTimestampNotification, loadSettings } =
+    usePubkyClientContext();
   const { data: initNotifications } = useUserNotifications(pubky ?? '');
   const [timestamp, setTimestamp] = useState<number>();
-  const { notificationPreferences, setUnReadNotification } = useFilterContext();
+  const { setUnReadNotification } = useFilterContext();
+  const [notificationPreferences, setNotificationPreferences] =
+    useState<NotificationPreferences>();
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -206,16 +211,29 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     timestamp();
   }, []);
 
+  useEffect(() => {
+    const settings = async () => {
+      const result = await loadSettings();
+      if (result) {
+        setNotificationPreferences(result.notifications);
+      } else {
+        setNotificationPreferences(defaultPreferences);
+      }
+    };
+    settings();
+  }, []);
+
   const fetchNotifications = async () => {
     try {
       setLoading(true);
 
-      if (!pubky) return;
+      if (!pubky || !notificationPreferences) return;
 
       const results = initNotifications;
       if (results) {
         const filteredNotifications = results.filter(
           (notification: NotificationView) =>
+            notificationPreferences &&
             notificationPreferences[
               notification.body.type as keyof typeof notificationPreferences
             ]
@@ -246,11 +264,12 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 10000);
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky, initNotifications]);
+    if (notificationPreferences) {
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [pubky, notificationPreferences, initNotifications]);
 
   return (
     <NotificationsContext.Provider
