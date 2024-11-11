@@ -69,7 +69,7 @@ export default function Index() {
       <Header.Root className="backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
         <div className="flex gap-12 items-center">
-          <div className="h-6 justify-start items-start gap-6 inline-flex">
+          <div className="h-6 justify-start items-start gap-6 sm:inline-flex hidden">
             <Link
               target="_blank"
               href="https://github.com/pubky"
@@ -92,18 +92,26 @@ export default function Index() {
               <Icon.Youtube width="24" height="24" />
             </Link>
           </div>
-          <Header.Action id="onboarding-sign-in-btn">Sign in</Header.Action>
+          <Header.Action
+            icon={<Icon.SignIn size="16" />}
+            id="onboarding-sign-in-btn"
+          >
+            Sign in
+          </Header.Action>
         </div>
       </Header.Root>
       <Content.Grid className="relative z-20 xl:mt-14">
-        <Typography.Display className="text-7xl sm:text-7xl xl:text-9xl xl:leading-[128px]">
+        <Typography.Display className="text-5xl sm:text-7xl xl:text-9xl xl:leading-[128px]">
           Unlock <br />
           the web.
         </Typography.Display>
-        <Typography.H2 variant="light" className="text-opacity-50 mt-4">
+        <Typography.Body
+          variant="large"
+          className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-4"
+        >
           Your keys, your content, your rules.
-        </Typography.H2>
-        <div className="relative flex gap-3 mt-12">
+        </Typography.Body>
+        <div className="relative flex gap-3 mt-6 sm:mt-12">
           <Link href="/onboarding/intro">
             <Button.Large
               className="bg-[#c8ff00] border-[#c8ff00]"
@@ -123,17 +131,42 @@ export default function Index() {
           <Button.Large
             onClick={() => window.open('https://pubky.org', '_blank')}
             variant="secondary"
-            className="w-auto"
+            className="w-auto hidden sm:flex"
           >
             Pubky Core
           </Button.Large>
         </div>
-        <Typography.Body
-          variant="small"
-          className="fixed bottom-12 text-[13.5px] text-opacity-30 font-normal"
-        >
-          Synonym Software Ltd. ©2024.
-        </Typography.Body>
+        <div className="fixed bottom-12">
+          <div className="mb-2 h-6 justify-start items-start gap-6 inline-flex sm:hidden">
+            <Link
+              target="_blank"
+              href="https://github.com/pubky"
+              className="cursor-pointer opacity-30 hover:opacity-100"
+            >
+              <Icon.Github size="24" />
+            </Link>
+            <Link
+              target="_blank"
+              href="https://x.com/getpubky"
+              className="cursor-pointer opacity-30 hover:opacity-100"
+            >
+              <Icon.Twitter size="24" />
+            </Link>
+            <Link
+              target="_blank"
+              href="https://www.youtube.com/channel/UCyNruUjynpzvQXNTxbJBLmg"
+              className="cursor-pointer opacity-30 hover:opacity-100"
+            >
+              <Icon.Youtube width="24" height="24" />
+            </Link>
+          </div>
+          <Typography.Body
+            variant="small"
+            className="text-[13.5px] text-opacity-30 font-normal"
+          >
+            Synonym Software Ltd. ©2024.
+          </Typography.Body>
+        </div>
       </Content.Grid>
       <div className="w-full">
         <div

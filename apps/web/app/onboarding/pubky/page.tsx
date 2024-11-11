@@ -21,9 +21,12 @@ export default function Index() {
   return (
     <Onboarding.Layout currentStep={3}>
       <Typography.Display>Your pubky.</Typography.Display>
-      <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
+      <Typography.Body
+        variant="large"
+        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0"
+      >
         Share your pubky with your friends so they can follow you.
-      </Typography.H2>
+      </Typography.Body>
       <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
         <div className="p-12 flex-col justify-center items-center flex">
           <div className="p-12">
@@ -34,7 +37,7 @@ export default function Index() {
             {pubky ? (
               <Typography.H2
                 id="onboarding-pubky"
-                className="break-all lg:text-2xl font-semibold uppercase"
+                className="break-all text-[13px] lg:text-2xl font-semibold uppercase"
                 variant="light"
               >
                 pk:{pubky}
@@ -45,6 +48,19 @@ export default function Index() {
           </div>
         </div>
       </div>
+      <Button.Large
+        id="onboarding-copy-pubky-btn"
+        icon={<Icon.Clipboard />}
+        className="w-[250px] flex md:hidden mb-12"
+        variant="secondary"
+        onClick={() => {
+          setContent(`pk:${pubky}`, 'pubky');
+          setShow(true);
+          handleCopy();
+        }}
+      >
+        Copy pubky to clipboard
+      </Button.Large>
       <div className="w-full max-w-[1200px] justify-between items-center inline-flex">
         <Link href="/onboarding/sign-up">
           <Button.Large

@@ -24,9 +24,12 @@ export default function Index() {
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Bye bye!</Typography.Display>
-        <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
+        <Typography.Body
+          variant="large"
+          className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0"
+        >
           You have signed out from Pubky. See you soon!
-        </Typography.H2>
+        </Typography.Body>
         <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
           <div className="p-12 flex-col justify-center items-center flex">
             <div className="p-12">

@@ -326,7 +326,7 @@ export default function Notification({
         </div>
       </div>
       <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex opacity-30">
-        <Typography.Caption className="uppercase items-center flex gap-2 text-white">
+        <Typography.Caption className="uppercase font-bold items-center flex gap-2 text-white">
           <Icon.Clock size="16" />
           {Utils.timeAgo(notification.timestamp)}
         </Typography.Caption>

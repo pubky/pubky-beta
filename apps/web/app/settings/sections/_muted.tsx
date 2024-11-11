@@ -24,6 +24,7 @@ export default function MutedUsers() {
     {}
   );
   const [muted, setMuted] = useState<{ [pubky: string]: boolean }>({});
+  const [isLoadingUnmuteAll, setIsLoadingUnmuteAll] = useState(false);
 
   const muteUser = async (pubkyMute: string) => {
     try {
@@ -66,6 +67,30 @@ export default function MutedUsers() {
       }));
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const unmuteAllUsers = async () => {
+    try {
+      if (mutedUsers) {
+        setIsLoadingUnmuteAll(true);
+        setLoadingMutedUsers(
+          mutedUsers.reduce(
+            (acc, user) => ({ ...acc, [user.details.id]: true }),
+            {}
+          )
+        );
+
+        await Promise.all(
+          mutedUsers.map((user) => unmuteUser(user.details.id))
+        );
+
+        setLoadingMutedUsers({});
+      }
+    } catch (error) {
+      console.error('Error while unmute all users:', error);
+    } finally {
+      setIsLoadingUnmuteAll(false);
     }
   };
 
@@ -174,29 +199,29 @@ export default function MutedUsers() {
                   </div>
                 );
               })}
+              {mutedUsers.length > 1 && (
+                <>
+                  <div className="w-full h-px bg-white bg-opacity-10 my-6" />
+                  <Button.Medium
+                    onClick={() =>
+                      isLoadingUnmuteAll ? undefined : unmuteAllUsers()
+                    }
+                    disabled={isLoadingUnmuteAll}
+                    loading={isLoadingUnmuteAll}
+                    icon={<Icon.SpeakerSimpleSlash size="16" />}
+                    className="w-[180px]"
+                  >
+                    Unmute all users
+                  </Button.Medium>
+                </>
+              )}
             </>
           ) : (
-            <Typography.H2 className="flex self-center mt-[50px] font-normal text-opacity-20 text-center">
+            <Typography.H2 className="flex self-center mt-[20px] font-normal text-opacity-20 text-center">
               No muted users yet
             </Typography.H2>
           )}
         </div>
-        {/**<SideCard.User
-          uri="dmhebqrrfiacj1fkqemun9fnmxqas9ff6qgi39duemwe3s89sf9y"
-          src={'/images/Userpic.png'}
-          username={Utils.minifyText('Test account name')}
-          label={Utils.minifyPubky(
-            'dmhebqrrfiacj1fkqemun9fnmxqas9ff6qgi39duemwe3s89sf9y'
-          )}
-        >
-          <Button.Medium
-            icon={<Icon.SpeakerSimpleSlash size="16" />}
-            className="w-auto"
-          >
-            Unmute
-          </Button.Medium>
-        </SideCard.User>
-        */}
       </div>
     </div>
   );

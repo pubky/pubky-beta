@@ -39,7 +39,7 @@ export default function Backup({
         setShowWords(false);
       }}
       modalRef={modalBackupRef}
-      className="md:max-w-[792px]"
+      className="md:max-w-[792px] max-h-[600px] md:max-h-full overflow-y-auto"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -82,7 +82,7 @@ export default function Backup({
               will be deleted once you complete the backup.
             </strong>
           </Typography.Body>
-          <div className="flex gap-6">
+          <div className="flex flex-col sm:flex-row gap-6">
             <Card.Primary
               title="Recovery Phrase"
               text="Write down 12 words to recover your account at a later date."

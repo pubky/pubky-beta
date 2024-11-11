@@ -167,7 +167,7 @@ export default function Account() {
   }, [modalBackupRef, setShowModalBackup]);
 
   return (
-    <div className="px-12 pt-12 pb-0 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start inline-flex">
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Lock size="24" />
@@ -206,7 +206,7 @@ export default function Account() {
           )}
         </Tooltip.RootSmall>
       </div>
-      <div className="w-full h-px bg-white bg-opacity-10" />
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Trash size="24" />
@@ -226,7 +226,7 @@ export default function Account() {
           Delete account
         </Button.Large>
       </div>
-      <div className="w-full h-px bg-white bg-opacity-10" />
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Pencil size="24" />
@@ -244,7 +244,7 @@ export default function Account() {
           Edit profile
         </Button.Large>
       </div>
-      <div className="w-full h-px bg-white bg-opacity-10" />
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.DownloadSimple size="24" />
@@ -261,7 +261,9 @@ export default function Account() {
           loading={loadingDownload}
           onClick={() => (loadingDownload ? undefined : handleDownloadData())}
         >
-          {loadingDownload ? `Downloading... ${progressDownload}%` : 'Download data'}
+          {loadingDownload
+            ? `Downloading... ${progressDownload}%`
+            : 'Download data'}
         </Button.Large>
       </div>
       <Modal.Backup

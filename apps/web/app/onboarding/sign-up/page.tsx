@@ -196,9 +196,12 @@ export default function Index() {
         }
         error={errors.name}
       />
-      <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
+      <Typography.Body
+        variant="large"
+        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0"
+      >
         Enter your bio, add some links, and upload a user picture.
-      </Typography.H2>
+      </Typography.Body>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} loading={loading} />
         <Card.Links

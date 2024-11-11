@@ -117,9 +117,12 @@ export default function Index() {
     <>
       <Onboarding.Layout currentStep={4}>
         <Typography.Display>Ready to go!</Typography.Display>
-        <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
+        <Typography.Body
+          variant="large"
+          className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0"
+        >
           Welcome to Pubky. Your keys, your content, your rules.
-        </Typography.H2>
+        </Typography.Body>
         <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
           <div className="p-12 flex-col justify-center items-center flex">
             <div className="p-12">
@@ -128,6 +131,30 @@ export default function Index() {
             </div>
           </div>
         </div>
+        <Tooltip.RootSmall setShowTooltip={setShowTooltip}>
+          <Button.Large
+            icon={<Icon.Lock color={disposableAccount ? ' white' : 'gray'} />}
+            disabled={!disposableAccount}
+            onClick={
+              disposableAccount ? () => setShowModalBackup(true) : undefined
+            }
+            className="w-auto md:hidden flex mb-12"
+            variant="secondary"
+          >
+            Backup account
+          </Button.Large>
+          {showTooltip && !seed && !mnemonic && (
+            <Tooltip.Small className="w-[278px]">
+              <Typography.Body variant="small" className="text-opacity-80">
+                You have already done the backup,{' '}
+                <span className="text-white font-bold text-opacity-100">
+                  your recovery file/phrase has been deleted
+                </span>
+                .
+              </Typography.Body>
+            </Tooltip.Small>
+          )}
+        </Tooltip.RootSmall>
         <div className="w-full max-w-[1200px] justify-between items-center inline-flex">
           <Link href="/onboarding/pubky">
             <Button.Large

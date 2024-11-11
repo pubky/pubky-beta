@@ -38,8 +38,13 @@ export default function OnboardingLayout({
   return (
     <Content.Main className="pb-0">
       <Header.Root>
-        <Header.Logo link={logoLink} />
-        <Header.Title titleHeader={'Onboarding'} />
+        <div className="flex gap-3 lg:gap-6 w-full sm:w-auto justify-between sm:justify-start items-start">
+          <Header.Logo link={logoLink} />
+          <Header.Title
+            titleHeader="Onboarding"
+            className="flex justify-end sm:justify-start"
+          />
+        </div>
         <Content.Stepper
           className="w-[50%] lg:w-[70%] xl:w-full hidden sm:flex"
           currentStep={currentStep}

@@ -8,7 +8,7 @@ export default function NewAccount() {
       text="Another option is to create a new account and profile on Pubky itself."
       className="w-full col-span-3"
     >
-      <div className="flex justify-center items-center p-2">
+      <div className="flex justify-center items-center p-12 sm:p-2">
         <Icon.Key size="120" />
       </div>
       <Link
