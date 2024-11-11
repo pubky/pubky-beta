@@ -97,10 +97,7 @@ export default function Index() {
             setSelectedFeed={setSelectedFeed}
           />
           <Components.CreateQuickPost largeView={layout === 'wide'} />
-          <Timeline
-            setSelectedFeed={setSelectedFeed}
-            selectedFeed={selectedFeed}
-          />
+          <Timeline selectedFeed={selectedFeed} />
         </Components.PostsLayout>
         {layout !== 'wide' && (
           <Components.Sidebar className="col-span-2 hidden xl:block">
@@ -130,12 +127,9 @@ export default function Index() {
 
 interface TimelineProps {
   selectedFeed: ICustomFeed | undefined;
-  setSelectedFeed: React.Dispatch<
-    React.SetStateAction<ICustomFeed | undefined>
-  >;
 }
 
-const Timeline = ({ selectedFeed, setSelectedFeed }: TimelineProps) => {
+const Timeline = ({ selectedFeed }: TimelineProps) => {
   const limit = 10;
   const [skip, setSkip] = useState(0);
   const [tagsFeed, setTagsFeed] = useState<string[]>();

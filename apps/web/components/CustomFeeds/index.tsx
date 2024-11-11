@@ -81,7 +81,7 @@ export default function CustomFeeds({
   };
 
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-1 flex-wrap">
       <div
         className={twMerge(
           baseCSS,
@@ -103,7 +103,9 @@ export default function CustomFeeds({
             )}
             onClick={() => handleFeedSelect(feed.feed)}
           >
-            <Typography.Body variant="small-bold">{feed.name}</Typography.Body>
+            <Typography.Body variant="small-bold">
+              {Utils.minifyText(feed.name, 11)}
+            </Typography.Body>
             <div
               onClick={(e) => {
                 e.stopPropagation();
@@ -115,12 +117,14 @@ export default function CustomFeeds({
           </div>
         );
       })}
-      <div
-        onClick={() => setShowModalCreateFeed(true)}
-        className={twMerge(baseCSS, rest.className)}
-      >
-        <Icon.Plus size="24" />
-      </div>
+      {feeds && feeds?.length < 4 && (
+        <div
+          onClick={() => setShowModalCreateFeed(true)}
+          className={twMerge(baseCSS, rest.className)}
+        >
+          <Icon.Plus size="24" />
+        </div>
+      )}
       <Modal.CreateFeed
         setNameFeed={setNameFeed}
         nameFeed={nameFeed}

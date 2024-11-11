@@ -1,5 +1,5 @@
 import { useFilterContext } from '@/contexts';
-import { ICustomFeed, TLayouts, TReach, TSort } from '@/types';
+import { ICustomFeed } from '@/types';
 import {
   Button,
   Icon,
@@ -37,9 +37,6 @@ export default function CreateFeed({
   const [tagsError, setTagsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
-  //const [valueReach, setValueReach] = useState<TReach>(reach);
-  //const [valueLayout, setValueLayout] = useState<TLayouts>(layout);
-  //const [valueSort, setValueSort] = useState<TSort>(sort);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async () => {
@@ -186,6 +183,8 @@ export default function CreateFeed({
         <div>
           <Input.Text
             value={nameFeed}
+            maxLength={20}
+            autoFocus
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setNameFeed(e.target.value)
             }
@@ -214,7 +213,6 @@ export default function CreateFeed({
             value={tag}
             maxLength={20}
             onChange={handleChange}
-            autoFocus
             onKeyDown={handleKeyDown}
             action={
               <div className="flex gap-2">
