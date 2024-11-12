@@ -15,7 +15,8 @@ const passwordSchema = z.object({
 });
 
 export default function RemindBackup() {
-  const { seed, setSeed, getRecoveryFile } = usePubkyClientContext();
+  const { seed, setSeed, mnemonic, setMnemonic, getRecoveryFile } =
+    usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
   const [remindMeLater, setRemindMeLater] = useState(false);
@@ -43,7 +44,7 @@ export default function RemindBackup() {
   }, []);
 
   useEffect(() => {
-    if (seed) {
+    if (seed || mnemonic) {
       setDisposableAccount(true);
       setShowBackupSuccess(false);
     } else {
@@ -52,7 +53,7 @@ export default function RemindBackup() {
         setShowBackupSuccess(true);
       }
     }
-  }, [seed, backupCloseMessage]);
+  }, [seed, mnemonic, backupCloseMessage]);
 
   useEffect(() => {
     if (backupCloseMessage) {
@@ -79,6 +80,7 @@ export default function RemindBackup() {
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
       setSeed(undefined);
+      setMnemonic(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -115,6 +117,7 @@ export default function RemindBackup() {
       });
 
       Utils.storage.remove('seed');
+      Utils.storage.remove('mnemonic');
 
       setShowModalBackup(false);
     } catch (error) {
@@ -154,15 +157,15 @@ export default function RemindBackup() {
         <div
           className={`${
             remindMeLater && 'hidden'
-          } relative w-full p-12 bg-white rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex mb-6`}
+          } relative w-full p-6 sm:p-12 bg-white rounded-lg shadow border border-white flex-col justify-start items-start gap-2 sm:gap-6 inline-flex mb-6`}
         >
           <div
             onClick={RemindMe}
-            className="cursor-pointer hover:bg-opacity-20 w-12 h-12 absolute right-[25px] top-[25px] p-3 bg-black bg-opacity-10 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
+            className="hidden sm:block cursor-pointer hover:bg-opacity-20 w-12 h-12 absolute right-[25px] top-[25px] p-3 bg-black bg-opacity-10 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
           >
             <Icon.X size="24" color="#05050a" />
           </div>
-          <Typography.H1 className="text-[#05050a] text-4xl">
+          <Typography.H1 className="text-[#05050a] text-2xl sm:text-4xl">
             Back up your account
           </Typography.H1>
           <div className="w-full md:flex justify-between gap-4">
@@ -182,7 +185,8 @@ export default function RemindBackup() {
                 colorText="text-[#05050a]"
                 icon={<Icon.Clock size="16" color="#05050a" />}
               >
-                Remind me later
+                <span className="hidden sm:block">Remind me later</span>
+                <span className="block sm:hidden">Later</span>
               </Button.Large>
               <Button.Large
                 id="remind-backup-now-btn"
@@ -210,8 +214,8 @@ export default function RemindBackup() {
                   className="text-[#05050a] text-opacity-80"
                   variant="small-bold"
                 >
-                  Backup successful! Your seed has been deleted and now you can
-                  make login via the chosen recovery method.
+                  Backup successful! Your recovery file/phrase has been deleted
+                  and now you can make login via the chosen recovery method.
                 </Typography.Body>
               </div>
               <div className="cursor-pointer" onClick={Closed}>
@@ -229,6 +233,7 @@ export default function RemindBackup() {
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
         errors={errorPassword}
+        setShowBackupSuccess={setShowBackupSuccess}
       />
     </div>
   );

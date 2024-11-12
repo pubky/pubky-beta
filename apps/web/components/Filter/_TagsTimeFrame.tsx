@@ -17,7 +17,7 @@ export default function TagsTimeFrame({
         icon={<Icon.Asterisk size="24" color="gray" />}
       />
       <SideCard.Item
-        label="This month"
+        label={`This\u00A0month`}
         value="this-month"
         disabled={disabled}
         icon={<Icon.Calendar size="24" color="gray" />}

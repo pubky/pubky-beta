@@ -31,6 +31,12 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   loading?: boolean;
   variant?: 'small';
   className?: string;
+  article?: boolean;
+  markdown?: boolean;
+  maxLength?: number;
+  setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
+  isError?: boolean;
+  setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateContent({
@@ -55,6 +61,12 @@ export default function CreateContent({
   loading,
   variant,
   className,
+  article,
+  markdown,
+  maxLength = 1000,
+  isError,
+  setIsError,
+  setShowModalPost,
 }: CreateContentProps) {
   const { profile } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -158,7 +170,8 @@ export default function CreateContent({
       if (
         (event.ctrlKey || event.metaKey) &&
         event.key === 'Enter' &&
-        isValidContent
+        isValidContent &&
+        !isError
       ) {
         handleSubmit(content);
       }
@@ -249,7 +262,7 @@ export default function CreateContent({
       >
         <div className={variant ? 'flex w-full gap-4' : 'w-full'}>
           <Section.UserArea
-            uriPic={(profile?.image as string) ?? '/images/Userpic.png'}
+            uriPic={(profile?.image as string) ?? '/images/webp/Userpic.webp'}
             name={profile?.name ?? 'Loading...'}
             largeView={largeView}
             variant={variant}
@@ -270,6 +283,10 @@ export default function CreateContent({
             placeHolder={placeHolder}
             setFilePreviews={setFilePreviews}
             loading={loading}
+            markdown={markdown}
+            maxLength={maxLength}
+            setIsError={setIsError}
+            isError={isError}
           />
         </div>
         <LinkPreviewer content={content} />
@@ -307,6 +324,10 @@ export default function CreateContent({
           button={button}
           wrapperRefEmojis={wrapperRefEmojis}
           setShowModalTag={setShowModalTag}
+          article={article}
+          markdown={markdown}
+          maxLength={maxLength}
+          setShowModalPost={setShowModalPost}
         />
       </div>
       {arrayTags && setArrayTags && (

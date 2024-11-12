@@ -24,7 +24,7 @@ export default function EditPost({
 
   useEffect(() => {
     setContentEditPost(post?.details?.content);
-  }, [post])
+  }, [post]);
 
   const handleSubmit = async (content: string) => {
     if (sendingEditPost) {

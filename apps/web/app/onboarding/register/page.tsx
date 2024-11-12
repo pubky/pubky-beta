@@ -18,7 +18,7 @@ interface FormErrors {
 const profileSchema = z.object({
   name: z
     .string()
-    .min(1, { message: 'Minimum length 1 character.' })
+    .min(3, { message: 'Minimum length 3 character.' })
     .max(24, { message: 'Maximum length 24 characters' }),
   bio: z
     .string()
@@ -34,7 +34,7 @@ export default function Index() {
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState<File | string>('/images/Userpic.png');
+  const [image, setImage] = useState<File | string>('/images/webp/Userpic.webp');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<Links[]>([

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useFilterContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Icon, Input, Typography } from '@social/ui-shared';
 
 const defaultPreferences = {
@@ -18,24 +18,30 @@ const defaultPreferences = {
 type NotificationType = keyof typeof defaultPreferences;
 
 export default function Notifications() {
-  const { notificationPreferences, setNotificationPreferences } =
-    useFilterContext();
+  const { saveSettings, loadSettings } = usePubkyClientContext();
   const [preferences, setPreferences] = useState(defaultPreferences);
 
-  useEffect(() => {
-    if (notificationPreferences) {
-      setPreferences(notificationPreferences);
+  const handleLoadSettings = async () => {
+    const result = await loadSettings();
+    if (result) {
+      setPreferences(result.notifications);
+    } else {
+      saveSettings(preferences);
     }
-  }, [notificationPreferences]);
+  };
+
+  useEffect(() => {
+    handleLoadSettings();
+  }, []);
 
   const handleToggle = (type: NotificationType) => {
     const updatedPreferences = { ...preferences, [type]: !preferences[type] };
     setPreferences(updatedPreferences);
-    setNotificationPreferences(updatedPreferences);
+    saveSettings(updatedPreferences);
   };
 
   return (
-    <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.BellSimple size="24" />

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/Modal';
-import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
+import { Button, Icon, Input, Tooltip, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
@@ -14,11 +14,24 @@ const passwordSchema = z.object({
 
 export default function Account() {
   const router = useRouter();
-  const { seed, setSeed, getRecoveryFile, deleteAccount, downloadData } =
-    usePubkyClientContext();
+  const {
+    seed,
+    setSeed,
+    mnemonic,
+    setMnemonic,
+    getRecoveryFile,
+    deleteAccount,
+    downloadData,
+    importData,
+  } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
-  const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
+  const [fileName, setFileName] = useState('file.zip');
+  const [deleteProgress, setDeleteProgress] = useState(0);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
+  const [progressDownload, setProgressDownload] = useState(0);
+  const [importProgress, setImportProgress] = useState(0);
+  const [importingData, setImportingData] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [showModalDeleteAccount, setShowModalDeleteAccount] = useState(false);
@@ -29,44 +42,67 @@ export default function Account() {
   const modalBackupRef = useRef<HTMLDivElement>(null);
 
   const handleDeleteAccount = async () => {
-    try {
-      setLoadingDeleteAccount(true);
-      const result = await deleteAccount();
+    setDeletingAccount(true);
+    setDeleteProgress(0); // Reset progress
 
-      if (result) {
-        setLoadingDeleteAccount(false);
-        setContent('Account deleted!');
-        setShow(true);
-        router.push('/logout');
-      } else {
-        setLoadingDeleteAccount(false);
-        setContent('Something wrong', 'warning');
-        setShow(true);
-      }
-    } catch (error) {
-      console.error(error);
-      setLoadingDeleteAccount(false);
-      setContent('Something wrong', 'warning');
+    const result = await deleteAccount(setDeleteProgress);
+
+    if (result) {
+      setContent('Account deleted successfully!');
+      setShow(true);
+    } else {
+      setContent('Error deleting account', 'warning');
       setShow(true);
     }
+
+    setDeletingAccount(false);
+    setShowModalDeleteAccount(false);
+    router.push('/logout');
   };
 
   const handleDownloadData = async () => {
-    try {
-      setLoadingDownload(true);
-      const result = await downloadData();
+    setLoadingDownload(true);
+    setProgressDownload(0); // Reset progress
 
+    try {
+      const result = await downloadData(setProgressDownload);
       if (result) {
-        setLoadingDownload(false);
         setContent('Data downloaded!');
         setShow(true);
       }
     } catch (error) {
       console.error(error);
+      setContent('Something went wrong', 'warning');
+      setShow(true);
+    } finally {
       setLoadingDownload(false);
-      setContent('Something wrong', 'warning');
+    }
+  };
+
+  const handleImportData = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFileName(event.target.files[0].name);
+    }
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    setImportingData(true);
+    setImportProgress(0);
+
+    const result = await importData(file, setImportProgress);
+
+    if (result) {
+      setContent('Data imported successfully!');
+      setShow(true);
+    } else {
+      setContent('Error importing data', 'warning');
       setShow(true);
     }
+
+    router.push('/profile');
+    setImportingData(false);
   };
 
   useEffect(() => {
@@ -95,6 +131,7 @@ export default function Account() {
       element.click();
 
       setSeed(undefined);
+      setMnemonic(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -131,6 +168,7 @@ export default function Account() {
       });
 
       Utils.storage.remove('seed');
+      Utils.storage.remove('mnemonic');
       setShowModalBackup(false);
     } catch (error) {
       console.log(error);
@@ -156,7 +194,7 @@ export default function Account() {
   }, [modalBackupRef, setShowModalBackup]);
 
   return (
-    <div className="px-12 pt-12 pb-0 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start inline-flex">
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Lock size="24" />
@@ -182,12 +220,12 @@ export default function Account() {
           >
             Back up account
           </Button.Large>
-          {showTooltip && !seed && (
-            <Tooltip.Small className="w-[250px]">
+          {showTooltip && !seed && !mnemonic && (
+            <Tooltip.Small className="w-[278px]">
               <Typography.Body variant="small" className="text-opacity-80">
                 You have already done the backup,{' '}
                 <span className="text-white font-bold text-opacity-100">
-                  your seed has been deleted
+                  your recovery file/phrase has been deleted
                 </span>
                 .
               </Typography.Body>
@@ -195,7 +233,7 @@ export default function Account() {
           )}
         </Tooltip.RootSmall>
       </div>
-      <div className="w-full h-px bg-white bg-opacity-10" />
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Trash size="24" />
@@ -210,12 +248,14 @@ export default function Account() {
           variant="secondary"
           className="w-auto"
           onClick={() => setShowModalDeleteAccount(true)}
-          //loading={loadingDeleteAccount}
+          loading={deletingAccount}
         >
-          Delete account
+          {deletingAccount
+            ? `Deleting... ${deleteProgress}%`
+            : 'Delete Account'}
         </Button.Large>
       </div>
-      <div className="w-full h-px bg-white bg-opacity-10" />
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Pencil size="24" />
@@ -233,7 +273,7 @@ export default function Account() {
           Edit profile
         </Button.Large>
       </div>
-      <div className="w-full h-px bg-white bg-opacity-10" />
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.DownloadSimple size="24" />
@@ -241,7 +281,8 @@ export default function Account() {
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
           Your data on Pubky is yours. Export your account data to use it
-          elsewhere.
+          elsewhere. Note this is not a full pubky homeserver export, this
+          function will export data related to pubky.app.
         </Typography.Body>
         <Button.Large
           icon={<Icon.DownloadSimple size="16" />}
@@ -250,8 +291,32 @@ export default function Account() {
           loading={loadingDownload}
           onClick={() => (loadingDownload ? undefined : handleDownloadData())}
         >
-          Download data
+          {loadingDownload
+            ? `Downloading... ${progressDownload}%`
+            : 'Download data'}
         </Button.Large>
+      </div>
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
+      <div className="flex-col justify-start items-start gap-6 flex">
+        <div className="justify-start items-center gap-2 inline-flex">
+          <Icon.UploadSimple size="18" />
+          <Typography.H2>Import your data</Typography.H2>
+        </div>
+        <Typography.Body variant="medium" className="text-opacity-80">
+          Import your account data from a backup ZIP file. Note this is not a
+          full pubky homeserver import, this function will import pubky.app
+          data.
+        </Typography.Body>
+        <Input.UploadFile
+          accept=".zip"
+          fileName={
+            importingData ? `Importing... ${importProgress}%` : fileName
+          }
+          className="mb-4 w-full md:w-[350px]"
+          id="file_input"
+          onChange={handleImportData}
+          disabled={importingData}
+        />
       </div>
       <Modal.Backup
         loading={loadingRecoveryFile}
@@ -263,7 +328,8 @@ export default function Account() {
         errors={errorPassword}
       />
       <Modal.DeleteAccount
-        loading={loadingDeleteAccount}
+        deletingAccount={deletingAccount}
+        deleteProgress={deleteProgress}
         showModalDeleteAccount={showModalDeleteAccount}
         setShowModalDeleteAccount={setShowModalDeleteAccount}
         handleDeleteAccount={handleDeleteAccount}

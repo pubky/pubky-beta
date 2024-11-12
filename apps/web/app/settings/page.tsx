@@ -8,6 +8,7 @@ import Menu from './_menu';
 import { Section } from './sections';
 import Faq from './_faq';
 import Version from './_version';
+import MenuMobile from './_menuMobile';
 
 export default function Index() {
   const router = useRouter();
@@ -34,9 +35,13 @@ export default function Index() {
         <Components.Sidebar className="hidden lg:block">
           <Menu selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
         </Components.Sidebar>
-        <div
-          className={`col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-3`}
-        >
+        <div className="col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-3">
+          <div className="lg:hidden flex">
+            <MenuMobile
+              selectedItem={selectedItem}
+              setSelectedItem={setSelectedItem}
+            />
+          </div>
           {selectedItem === 'account' && <Section.Account />}
           {selectedItem === 'notifications' && <Section.Notifications />}
           {selectedItem === 'privacy_safety' && <Section.PrivacySafety />}
@@ -52,6 +57,7 @@ export default function Index() {
           </div>
         </Components.Sidebar>
       </Content.Grid>
+      <Components.FooterMobile />
     </Content.Main>
   );
 }

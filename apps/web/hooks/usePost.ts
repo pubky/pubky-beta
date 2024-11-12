@@ -11,6 +11,7 @@ import {
   getPostStreamByReach,
   getPostReplies,
   getBookmarkedPosts,
+  getRepliesStreamByUser,
 } from '../services/postService';
 
 export function usePost(authorId: string, postId: string, viewerId?: string) {
@@ -69,6 +70,19 @@ export function usePostStreamByUser(
   return useQuery({
     queryKey: ['postStreamByUser', userId, viewerId, skip, limit],
     queryFn: () => getPostStreamByUser(userId, viewerId, skip, limit),
+    retry: false,
+  });
+}
+
+export function useRepliesStreamByUser(
+  userId: string,
+  viewerId?: string,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['repliesStreamByUser', userId, viewerId, skip, limit],
+    queryFn: () => getRepliesStreamByUser(userId, viewerId, skip, limit),
     retry: false,
   });
 }

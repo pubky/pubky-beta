@@ -79,7 +79,7 @@ export default function ProtectedRoutes({
 
     checkLogin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky, router, pathname]);
+  }, [pubky]);
 
   return (
     <>

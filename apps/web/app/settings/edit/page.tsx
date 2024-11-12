@@ -37,7 +37,7 @@ export default function Index() {
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState<File | string>('/images/Userpic.png');
+  const [image, setImage] = useState<File | string>('/images/webp/Userpic.webp');
   const [prevImage, setPrevImage] = useState<File | string>('');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
@@ -79,8 +79,8 @@ export default function Index() {
         if (userProfile) {
           setName(userProfile?.details?.name);
           setBio(userProfile?.details?.bio || '');
-          setImage(userProfile?.details?.image || '/images/Userpic.png');
-          setPrevImage(userProfile?.details?.image || '/images/Userpic.png');
+          setImage(userProfile?.details?.image || '/images/webp/Userpic.webp');
+          setPrevImage(userProfile?.details?.image || '/images/webp/Userpic.webp');
           if (
             userProfile?.details?.links &&
             userProfile?.details?.links?.length > 0
@@ -261,7 +261,7 @@ export default function Index() {
 
       if (
         prevImage &&
-        prevImage !== '/images/Userpic.png' &&
+        prevImage !== '/images/webp/Userpic.webp' &&
         prevImage !== image
       ) {
         await deleteFile(String(prevImage));
@@ -274,18 +274,18 @@ export default function Index() {
   };
 
   const handleUploadImage = () => {
-    if (image === '/images/Userpic.png') {
+    if (image === '/images/webp/Userpic.webp') {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      setImage('/images/Userpic.png');
+      setImage('/images/webp/Userpic.webp');
     }
   };
 
   const getButtonIconImage = () => {
-    return image === '/images/Userpic.png' ? (
+    return image === '/images/webp/Userpic.webp' ? (
       <div>
         <Icon.File size="16" />
       </div>
@@ -297,11 +297,13 @@ export default function Index() {
   };
 
   const getButtonLabelImage = () => {
-    return image === '/images/Userpic.png' ? 'Choose file' : undefined;
+    return image === '/images/webp/Userpic.webp' ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-8/12' : 'w-[38px] h-[38px]';
+    return image === '/images/webp/Userpic.webp'
+      ? 'w-[120px] lg:w-[85%] xl:w-8/12'
+      : 'w-[38px] h-[38px]';
   };
 
   return (
@@ -420,18 +422,18 @@ export default function Index() {
             title="Picture"
           >
             {image && (
-              <div className="relative flex items-center">
+              <div className="relative flex items-center justify-center">
                 <ImageByUri
                   width={100}
                   height={100}
-                  className="w-52 h-52 mt-12 rounded-full"
+                  className="w-72 h-72 lg:w-48 lg:h-48 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
                   alt="user"
                   uri={image}
                 />
                 <Button.Transparent
                   icon={getButtonIconImage()}
                   onClick={handleUploadImage}
-                  className={`${getButtonWidthImage()} mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+                  className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
                 >
                   {getButtonLabelImage()}
                 </Button.Transparent>
@@ -446,7 +448,7 @@ export default function Index() {
               disabled={loading}
             />
           </Card.Primary>
-          {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
+          {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/webp/bg-image-2.webp" />*/}
         </div>
         <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-6">
           <Link href="/onboarding/sign-up">

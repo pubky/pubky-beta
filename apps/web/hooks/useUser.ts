@@ -165,7 +165,7 @@ export function useUserStream(
   source?: string
 ) {
   return useQuery({
-    queryKey: ['userStream', viewerId, skip, limit, source],
+    queryKey: ['userStream', userId, viewerId, skip, limit, source],
     queryFn: () => getUserStream(userId, viewerId, skip, limit, source),
     retry: false,
   });

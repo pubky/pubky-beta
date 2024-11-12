@@ -32,7 +32,7 @@ export default function Tag2({
         const fetchedImages = await Promise.all(
           tags.taggers.map(async (fromItem) => {
             const profile = await getUserProfile(fromItem, pubky ?? '');
-            return profile?.details?.image ?? '/images/Userpic.png';
+            return profile?.details?.image ?? '/images/webp/Userpic.webp';
           })
         );
         setImages(fetchedImages);
@@ -80,7 +80,7 @@ export default function Tag2({
                     imageIndex > 0 && '-ml-2'
                   }`}
                   alt={`tag-${imageIndex + 1}`}
-                  uri={image ? image : '/images/Userpic.png'}
+                  uri={image ? image : '/images/webp/Userpic.webp'}
                 />
 
                 {showTooltipProfile === imageIndex && (

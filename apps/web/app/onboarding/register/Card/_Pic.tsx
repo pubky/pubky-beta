@@ -8,13 +8,13 @@ interface PicProps {
 
 export default function Pic({ image, setImage }: PicProps) {
   const handleUploadImage = () => {
-    if (image === '/images/Userpic.png') {
+    if (image === '/images/webp/Userpic.webp') {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      setImage('/images/Userpic.png');
+      setImage('/images/webp/Userpic.webp');
       //const idImage = Utils.encodeImageId(image);
       //if (idImage) deleteFile(idImage);
     }
@@ -28,7 +28,7 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const getButtonIconImage = () => {
-    return image === '/images/Userpic.png' ? (
+    return image === '/images/webp/Userpic.webp' ? (
       <Icon.File size="16" />
     ) : (
       <Icon.Trash size="16" />
@@ -36,11 +36,13 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const getButtonLabelImage = () => {
-    return image === '/images/Userpic.png' ? 'Choose file' : undefined;
+    return image === '/images/webp/Userpic.webp' ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-8/12' : 'w-[60px]';
+    return image === '/images/webp/Userpic.webp'
+      ? 'w-[120px] lg:w-[85%] xl:w-8/12'
+      : 'w-[38px] h-[38px]';
   };
 
   return (
@@ -49,18 +51,18 @@ export default function Pic({ image, setImage }: PicProps) {
       title="Picture"
     >
       {image && (
-        <div className="relative flex items-center">
+        <div className="relative flex items-center justify-center">
           <ImageByUri
             width={100}
             height={100}
-            className="w-52 h-52 mt-12 rounded-full"
+            className="w-72 h-72 lg:w-48 lg:h-48 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
             alt="user"
             uri={image}
           />
           <Button.Transparent
             icon={getButtonIconImage()}
             onClick={handleUploadImage}
-            className={`${getButtonWidthImage()} mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+            className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
           >
             {getButtonLabelImage()}
           </Button.Transparent>
