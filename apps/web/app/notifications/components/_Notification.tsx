@@ -242,7 +242,7 @@ export default function Notification({
               clicked={false}
               boxShadow={false}
             >
-              {notification.body.tag_label}
+              {Utils.minifyText(String(notification.body.tag_label), 10)}
             </PostUtil.Tag>
           )}
           {postLink && (
