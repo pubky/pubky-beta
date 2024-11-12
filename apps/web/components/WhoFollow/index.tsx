@@ -1,3 +1,5 @@
+'use client';
+
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
