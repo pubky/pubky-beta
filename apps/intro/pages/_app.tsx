@@ -7,7 +7,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Pubky | Unlock the web.</title>
-        <link rel="shortcut icon" href="/images/pubky-logo.png" />
+        <link rel="shortcut icon" href="/images/webp/pubky-logo.webp" />
 
         <meta
           name="description"
@@ -25,7 +25,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         />
         <meta
           property="og:image"
-          content="https://pubky.app/images/seo-pubky.png"
+          content="https://pubky.app/images/webp/pubky-seo.webp"
         />
         <meta property="og:type" content="website" />
         <meta property="og:image:width" content="1200" />
@@ -40,7 +40,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         />
         <meta
           name="twitter:image"
-          content="https://pubky.app/images/seo-pubky.png"
+          content="https://pubky.app/images/webp/pubky-seo.webp"
         />
       </Head>
       <main className="app">

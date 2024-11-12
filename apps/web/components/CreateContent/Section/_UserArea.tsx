@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ImageByUri } from '@/components/ImageByUri';
 
 interface UserAreaProps extends React.HTMLAttributes<HTMLDivElement> {
-  largeView: boolean;
+  largeView?: boolean;
   uriPic: string;
   name: string;
   variant?: 'small';

@@ -28,9 +28,8 @@ export default function CreateReply({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
-  const lineBaseCSS = `ml-[10px] absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[122px] after:block after:-mt-[115px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
-    <div className="absolute ml-[10px]">
+    <div className="absolute ml-[9px]">
       <Icon.LineHorizontal size="14" color="#262626" />
     </div>
   );
@@ -117,13 +116,13 @@ export default function CreateReply({
       <Post
         post={post}
         repostView
-        className="mt-2 max-h-[600px] overflow-y-auto rounded-bl-none"
+        className="mt-2 max-h-[600px] overflow-y-auto"
       />
       <div className="flex items-center relative">
-        <div className="relative">
-          <div className={lineBaseCSS} />
-          {lineHorizontalCSS}
-        </div>
+        <div
+          className={`ml-[9px] absolute border-l-2 h-[49%] top-0 border-neutral-800`}
+        />
+        {lineHorizontalCSS}
         <div className="w-full ml-6 mt-6">
           <CreateContent
             id="create-reply-create-content"

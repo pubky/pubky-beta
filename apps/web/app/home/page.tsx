@@ -11,13 +11,27 @@ import { Utils } from '@social/utils-shared';
 import { UseUserMuted } from '@/hooks/useUser';
 import CreateQuickReply from '@/components/CreateQuickReply';
 import { HeaderSEO } from '@/components/HeaderSEO';
+import { ICustomFeed } from '@/types';
 
 export default function Index() {
   const { layout } = useFilterContext();
+  const [isMobile, setIsMobile] = useState(false);
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
+  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1280);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -90,8 +104,14 @@ export default function Index() {
             layout
           )} flex-col inline-flex gap-3 lg:ml-[70px] xl:ml-[45px]`}
         >
-          <Components.CreateQuickPost largeView={layout === 'wide'} />
-          <Timeline />
+          <Components.CustomFeeds
+            selectedFeed={selectedFeed}
+            setSelectedFeed={setSelectedFeed}
+          />
+          <Components.CreateQuickPost
+            largeView={!isMobile && layout === 'wide'}
+          />
+          <Timeline isMobile={isMobile} selectedFeed={selectedFeed} />
         </Components.PostsLayout>
         {layout !== 'wide' && (
           <Components.Sidebar className="col-span-2 hidden xl:block">
@@ -115,22 +135,48 @@ export default function Index() {
         </div>
       </Menu.Root>
       <Components.CreatePost />
+      <Components.FooterMobile title="Feed" />
     </Content.Main>
   );
 }
 
-const Timeline = () => {
+interface TimelineProps {
+  selectedFeed: ICustomFeed | undefined;
+  isMobile: boolean;
+}
+
+const Timeline = ({ selectedFeed, isMobile }: TimelineProps) => {
   const limit = 10;
   const [skip, setSkip] = useState(0);
+  const [tagsFeed, setTagsFeed] = useState<string[]>();
 
-  const { reach, layout, sort } = useFilterContext();
+  const { reach, layout, sort, setReach, setLayout, setSort } =
+    useFilterContext();
+
+  useEffect(() => {
+    if (selectedFeed) {
+      setReach(selectedFeed.reach);
+      setLayout(selectedFeed.layout);
+      setSort(selectedFeed.sort);
+      selectedFeed?.tags &&
+        selectedFeed?.tags?.length > 0 &&
+        setTagsFeed(selectedFeed?.tags);
+    } else {
+      setReach('all');
+      setLayout('columns');
+      setSort('recent');
+      setTagsFeed(undefined);
+    }
+  }, [selectedFeed]);
+
   const { pubky, timeline, setTimeline } = usePubkyClientContext();
   const { data, isLoading, isError } = usePostStream(
     pubky,
     skip,
     limit,
     reach,
-    sort
+    sort,
+    tagsFeed && tagsFeed?.length > 0 ? tagsFeed : undefined
   );
   const { data: mutedUsers } = UseUserMuted(pubky ?? '');
 
@@ -178,11 +224,16 @@ const Timeline = () => {
                   <div>
                     <Components.Post
                       post={post}
-                      largeView={layout === 'wide'}
+                      largeView={!isMobile && layout === 'wide'}
                       line={Boolean(post?.relationships?.replied)}
                     />
                     {post?.counts?.replies > 0 && (
-                      <PostReplies homeView post={post} layout={layout} />
+                      <PostReplies
+                        isMobile={isMobile}
+                        homeView
+                        post={post}
+                        layout={layout}
+                      />
                     )}
                   </div>
                 )}
@@ -205,7 +256,7 @@ const Timeline = () => {
   );
 };
 
-const PostReplies = ({ post, layout, homeView = false }) => {
+const PostReplies = ({ post, layout, homeView = false, isMobile }) => {
   const { pubky } = usePubkyClientContext();
   const { data: replies } = usePostReplies(
     post.details.author,
@@ -243,7 +294,7 @@ const PostReplies = ({ post, layout, homeView = false }) => {
           <Components.Post
             key={reply.details.id}
             post={reply}
-            largeView={layout === 'wide'}
+            largeView={!isMobile && layout === 'wide'}
             line={Boolean(reply?.relationships?.replied)}
             homeView={homeView}
           />

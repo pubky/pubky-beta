@@ -53,6 +53,7 @@ export default function Post({
   const { pubky, deletePost } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
+  const [showModalTag, setShowModalTag] = useState(false);
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
@@ -176,9 +177,19 @@ export default function Post({
                         }`}
                       >
                         {!repostView && (
-                          <Tags largeView={largeView} post={post} />
+                          <Tags
+                            showModalTag={showModalTag}
+                            setShowModalTag={setShowModalTag}
+                            largeView={largeView}
+                            post={post}
+                          />
                         )}
-                        {!repostView && <Actions post={post} />}
+                        {!repostView && (
+                          <Actions
+                            setShowModalTag={setShowModalTag}
+                            post={post}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>
@@ -273,11 +284,18 @@ export default function Post({
                             >
                               {!repostView && (
                                 <Tags
+                                  showModalTag={showModalTag}
+                                  setShowModalTag={setShowModalTag}
                                   largeView={largeView}
                                   post={repostedPost}
                                 />
                               )}
-                              {!repostView && <Actions post={repostedPost} />}
+                              {!repostView && (
+                                <Actions
+                                  setShowModalTag={setShowModalTag}
+                                  post={repostedPost}
+                                />
+                              )}
                             </div>
                           </div>
                         </div>
@@ -353,9 +371,19 @@ export default function Post({
                         }`}
                       >
                         {!repostView && (
-                          <Tags largeView={largeView} post={post} />
+                          <Tags
+                            showModalTag={showModalTag}
+                            setShowModalTag={setShowModalTag}
+                            largeView={largeView}
+                            post={post}
+                          />
                         )}
-                        {!repostView && <Actions post={post} />}
+                        {!repostView && (
+                          <Actions
+                            setShowModalTag={setShowModalTag}
+                            post={post}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>

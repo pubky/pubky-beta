@@ -92,10 +92,10 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               return getUserProfile(fromItem, pubky ?? '')
                 .then((profile) => {
                   images[fromItem] =
-                    profile?.details?.image || '/images/Userpic.png';
+                    profile?.details?.image || '/images/webp/Userpic.webp';
                 })
                 .catch(() => {
-                  images[fromItem] = '/images/Userpic.png';
+                  images[fromItem] = '/images/webp/Userpic.webp';
                 });
             }
             return null;

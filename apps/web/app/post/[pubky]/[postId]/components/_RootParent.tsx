@@ -22,10 +22,22 @@ export default function RootParent({
   //onParentPostsCountChange: (count: number) => void;
 }) {
   const { pubky } = usePubkyClientContext();
+  const [isMobile, setIsMobile] = useState(false);
   const [parentURIs, setParentURIs] = useState<string[]>([]);
   const [parentPosts, setParentPosts] = useState<ParentPostState>({});
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1280);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const fetchParentURIs = async (
@@ -131,7 +143,13 @@ export default function RootParent({
         key={parentURI}
         //style={{ marginLeft: `${marginLeftValue}px` }}
       >
-        <Post homeView post={post.post} size="full" largeView line={isLine} />
+        <Post
+          homeView
+          post={post.post}
+          size="full"
+          largeView={!isMobile}
+          line={isLine}
+        />
       </div>
     ) : (
       <div

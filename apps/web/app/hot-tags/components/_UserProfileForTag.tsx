@@ -14,7 +14,7 @@ export const UserProfileForTag = ({ userId }: { userId: string }) => {
       height={32}
       alt={`pic-${userId}`}
       className={`w-[32px] h-[32px] rounded-full`}
-      uri={profile?.details?.image || '/images/Userpic.png'}
+      uri={profile?.details?.image || '/images/webp/Userpic.webp'}
     />
   );
 };

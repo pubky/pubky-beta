@@ -20,6 +20,9 @@ export const Body = ({ variant = 'large', children, ...rest }: BodyProps) => {
     case 'large-bold':
       cssClasses = 'text-2xl font-semibold font-InterTight tracking-wide';
       break;
+    case 'large':
+      cssClasses = 'text-2xl font-normal font-InterTight tracking-wide';
+      break;
     case 'medium':
       cssClasses = 'text-[17px] font-normal font-InterTight tracking-wide';
       break;

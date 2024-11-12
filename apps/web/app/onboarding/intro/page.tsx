@@ -112,8 +112,8 @@ export default function Intro() {
       className: {
         marginTop: isMobile ? '300px' : '',
         backgroundImage: isMobile
-          ? "url('/images/intro-1-mobile.png')"
-          : "url('/images/intro-1.png')",
+          ? "url('/images/webp/intro-1-mobile.webp')"
+          : "url('/images/webp/intro-1.webp')",
       },
     },
     {
@@ -156,8 +156,8 @@ export default function Intro() {
         marginTop: isMobile ? '300px' : '',
         marginLeft: isMobile ? '-150px' : '',
         backgroundImage: isMobile
-          ? "url('/images/intro-2.png')"
-          : "url('/images/intro-2.png')",
+          ? "url('/images/webp/intro-2.webp')"
+          : "url('/images/webp/intro-2.webp')",
       },
     },
     {
@@ -192,8 +192,8 @@ export default function Intro() {
       ),
       className: {
         backgroundImage: isMobile
-          ? "url('/images/intro-3-mobile.png')"
-          : "url('/images/intro-3.png')",
+          ? "url('/images/webp/intro-3-mobile.webp')"
+          : "url('/images/webp/intro-3.webp')",
       },
     },
     {
@@ -239,8 +239,8 @@ export default function Intro() {
         right: isMobile ? '0px' : '300px',
         top: isMobile ? '100px' : '',
         backgroundImage: isMobile
-          ? "url('/images/intro-4-mobile.png')"
-          : "url('/images/intro-4.png')",
+          ? "url('/images/webp/intro-4-mobile.webp')"
+          : "url('/images/webp/intro-4.webp')",
       },
     },
     {
@@ -276,8 +276,8 @@ export default function Intro() {
         marginTop: isMobile ? '350px' : '250px',
         left: smallScreen ? '50px' : '200px',
         backgroundImage: isMobile
-          ? "url('/images/intro-5-mobile.png')"
-          : "url('/images/intro-5.png')",
+          ? "url('/images/webp/intro-5-mobile.webp')"
+          : "url('/images/webp/intro-5.webp')",
         backgroundPosition: 'left',
       },
     },
@@ -308,8 +308,8 @@ export default function Intro() {
         top: isMobile ? '200px' : '100px',
         left: smallScreen && !isMobile ? '-300px' : '',
         backgroundImage: isMobile
-          ? "url('/images/intro-6-mobile.png')"
-          : "url('/images/intro-6.png')",
+          ? "url('/images/webp/intro-6-mobile.webp')"
+          : "url('/images/webp/intro-6.webp')",
         backgroundPosition: 'left',
       },
     },
@@ -318,9 +318,12 @@ export default function Intro() {
   return (
     <Content.Main className="pb-0 md:pt-[150px] pt-[120px]">
       <Header.Root className="backdrop-blur-[0px]">
-        <div className="flex gap-3 lg:gap-6 items-center lg:items-start">
+        <div className="flex gap-3 lg:gap-6 w-full justify-between sm:justify-start items-start">
           <Header.Logo link={logoLink} />
-          <Header.Title titleHeader={'Intro'} />
+          <Header.Title
+            titleHeader="Intro"
+            className="flex justify-end sm:justify-start"
+          />
         </div>
       </Header.Root>
 
@@ -336,11 +339,11 @@ export default function Intro() {
       <Content.Grid className="z-10 relative flex flex-col justify-between min-w-screen min-h-[80vh]">
         {introContent[currentIntro].content}
         <div className="grow" />
-        <div className="absolute bottom-5 xl:bottom-10 w-full flex justify-between items-center mx-auto mt-6">
+        <div className="absolute bottom-0 sm:bottom-5 xl:bottom-10 w-full flex justify-between items-center mx-auto mt-6">
           <div className="flex gap-4">
             <Button.Large
               icon={<Icon.ArrowLeft />}
-              className="w-auto"
+              className="w-auto hidden md:flex"
               variant="secondary"
               onClick={() =>
                 currentIntro === 0 ? router.push('/onboarding') : handleBack()

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
+import * as Components from '@/components';
 import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from '../components';
 import { Profile as ProfileCommon } from '../components';
@@ -17,6 +18,7 @@ export default function Index({
 }) {
   //const { setPosts } = useClientContext();
   const { pubky } = usePubkyClientContext();
+  const [activeTab, setActiveTab] = useState(0);
   const [resolvedParams, setResolvedParams] = useState<{
     creatorPubky: string;
   } | null>(null);
@@ -59,29 +61,53 @@ export default function Index({
     content = (
       <>
         <div>
-          <Content.Grid className="flex flex-col text-start lg:flex-row items-center gap-8 relative">
-            <ProfileCommon.Avatar
-              username={profile?.details?.name || 'Loading...'}
-              uriImage={profile?.details?.image || '/images/Userpic.png'}
-            />
-            <ProfileCommon.Handle
-              className="-mt-4"
-              username={profile?.details?.name || 'Loading...'}
-              pubkey={creatorPubky ?? ''}
-              creatorPubky={creatorPubky}
-              status={profile?.details?.status}
-            />
-          </Content.Grid>
-        </div>
-        <Content.Grid className="grid grid-cols-5 gap-2">
-          <PostsLayout className="flex flex-col col-span-5 xl:col-span-4 gap-3 mt-[10px]">
-            <Profile.FilterTabs
+          <Content.Grid className="pb-4 md:pb-12 flex flex-col text-start lg:flex-row items-center gap-8 relative">
+            <Profile.FilterTabsMobile
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
               countContacts={{
                 followers: profile?.counts?.followers ?? 0,
                 following: profile?.counts?.following ?? 0,
                 friends: profile?.counts?.friends ?? 0,
               }}
+              countReplies={profile?.counts?.replies}
               countPosts={profile?.counts?.posts}
+              loading={isLoading}
+              creatorPubky={creatorPubky}
+              profile={profile}
+            />
+            <div className="w-full rounded-2xl p-6 md:p-0 bg-white md:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-8 relative">
+              <ProfileCommon.Avatar
+                username={profile?.details?.name || 'Loading...'}
+                uriImage={
+                  profile?.details?.image || '/images/webp/Userpic.webp'
+                }
+              />
+              <ProfileCommon.Handle
+                className="-mt-4"
+                username={profile?.details?.name || 'Loading...'}
+                bio={profile?.details?.bio || 'No bio.'}
+                pubkey={creatorPubky ?? ''}
+                creatorPubky={creatorPubky}
+                status={profile?.details?.status}
+              />
+            </div>
+          </Content.Grid>
+        </div>
+        <Content.Grid className="grid grid-cols-5 gap-2">
+          <PostsLayout className="flex flex-col col-span-5 xl:col-span-4 gap-3 mt-[10px]">
+            <Profile.FilterTabs
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              countContacts={{
+                followers: profile?.counts?.followers ?? 0,
+                following: profile?.counts?.following ?? 0,
+                friends: profile?.counts?.friends ?? 0,
+              }}
+              countPosts={
+                (profile?.counts?.posts ?? 0) - (profile?.counts?.replies ?? 0)
+              }
+              countReplies={profile?.counts?.replies}
               loading={isLoading}
               creatorPubky={creatorPubky}
               profile={profile}
@@ -90,6 +116,7 @@ export default function Index({
           <Profile.Sidebar creatorPubky={creatorPubky} />
         </Content.Grid>
         <CreatePost />
+        <Components.FooterMobile />
         <div ref={loader} />
       </>
     );

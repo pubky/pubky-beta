@@ -45,7 +45,7 @@ const ImageByUri = ({
           typeof uri === 'string' &&
           (uri.startsWith('http') ||
             uri.startsWith('data:') ||
-            uri === '/images/Userpic.png')
+            uri === '/images/webp/Userpic.webp')
         ) {
           setImageUrl(uri);
         } else if (typeof uri === 'string') {
@@ -56,7 +56,7 @@ const ImageByUri = ({
         }
       } catch (error) {
         //console.error('Error fetching image:', error);
-        setImageUrl('/images/Userpic.png');
+        setImageUrl('/images/webp/Userpic.webp');
       }
     };
 
@@ -76,7 +76,7 @@ const ImageByUri = ({
       ) : (
         <Image
           id={id}
-          src={imageUrl || '/images/Userpic.png'}
+          src={imageUrl || '/images/webp/Userpic.webp'}
           alt={alt}
           width={width}
           height={height}
