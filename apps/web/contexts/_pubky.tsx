@@ -292,13 +292,12 @@ export function PubkyClientWrapper({
 
   const loginWithMnemonic = async (mnemonic: string) => {
     try {
+      if (!bip39.validateMnemonic(mnemonic)) {
+        throw new Error('Invalid recovery phrase');
+      }
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
       const secretKey = seedMnemonic.slice(0, 32);
       const keypair = Keypair.fromSecretKey(secretKey);
-
-      if (!keypair) {
-        throw new Error('Invalid recovery phrase');
-      }
 
       // Sign up
       await client.signup(keypair, homeserver);
