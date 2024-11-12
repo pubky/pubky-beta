@@ -253,7 +253,7 @@ export default function ProfileTag({
       closeModal={() => {
         setShowModalProfileTag(false);
       }}
-      className="md:w-[792px]"
+      className="md:w-[792px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -263,7 +263,7 @@ export default function ProfileTag({
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <Modal.Header title={`Tag ${name}`} />
         <Modal.Content className="w-full flex flex-row">
-          <div className="flex gap-6">
+          <div className="flex flex-col lg:flex-row gap-6">
             <div>
               {showEmojis && (
                 <div
@@ -284,7 +284,7 @@ export default function ProfileTag({
               <Input.Text
                 placeholder="tag"
                 value={tag}
-                className="w-96 mt-2 flex items-center"
+                className="w-full lg:w-96 mt-2 flex items-center"
                 maxLength={20}
                 autoFocus
                 onChange={handleChange}

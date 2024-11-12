@@ -2,6 +2,7 @@ import Avatar from './_Avatar';
 import Handle from './Handle';
 import HeaderBackground from './_HeaderBackground';
 import FilterTabs from './_FilterTabs';
+import FilterTabsMobile from './_FilterTabsMobile';
 import NotificationsProfile from './_NotificationsProfile';
 import Bookmarks from './_Bookmarks';
 import Posts from './_Posts';
@@ -12,6 +13,7 @@ export const Profile = {
   Handle,
   HeaderBackground,
   FilterTabs,
+  FilterTabsMobile,
   NotificationsProfile,
   Bookmarks,
   Posts,

@@ -95,7 +95,7 @@ export default function MutedUsers() {
   };
 
   return (
-    <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.SpeakerSimpleSlash size="24" />
@@ -120,7 +120,7 @@ export default function MutedUsers() {
                 return (
                   <div key={mutedUser?.details?.id} className="w-full">
                     <div className="w-full">
-                      <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
+                      <div className="flex-col md:flex-row justify-start gap-4 inline-flex w-full">
                         <Link
                           className="flex gap-2 w-full"
                           href={`/profile/${mutedUser?.details?.id}`}
@@ -149,7 +149,7 @@ export default function MutedUsers() {
                         <div className="flex gap-4">
                           {pubkeyUser ? (
                             <Button.Medium
-                              className="w-[104px] bg-transparent cursor-default"
+                              className="w-full md:w-[104px] bg-transparent cursor-default"
                               icon={<Icon.Check />}
                             >
                               Me
@@ -172,7 +172,7 @@ export default function MutedUsers() {
                                 loadingMutedUsers[mutedUser?.details?.id]
                               }
                               icon={<Icon.SpeakerSimpleSlash size="16" />}
-                              className="w-[104px]"
+                              className="w-full md:w-[104px]"
                             >
                               Unmute
                             </Button.Medium>
@@ -188,7 +188,7 @@ export default function MutedUsers() {
                               }
                               loading={loadingMutedUsers[mutedUser.details?.id]}
                               icon={<Icon.SpeakerHigh size="16" />}
-                              className="w-[104px]"
+                              className="w-full md:w-[104px]"
                             >
                               Mute
                             </Button.Medium>

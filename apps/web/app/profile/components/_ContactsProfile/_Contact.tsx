@@ -205,30 +205,51 @@ export default function Contact({
           return (
             <div key={contact?.details?.id} className="w-full">
               <div className="w-full">
-                <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
-                  <Link
-                    className="flex gap-2 w-full"
-                    href={`/profile/${contact?.details?.id}`}
-                  >
-                    <ImageByUri
-                      width={48}
-                      height={48}
-                      uri={contact?.details?.image || '/images/Userpic.png'}
-                      alt={`profile-pic-${contact?.details?.id}`}
-                      className="rounded-full w-[48px] h-[48px] max-w-none"
-                    />
-                    <div className="flex-col justify-center items-start inline-flex">
-                      <Typography.Body variant="medium-bold">
-                        {contact?.details.name &&
-                          Utils.minifyText(contact?.details?.name, 20)}
-                      </Typography.Body>
-                      <Typography.Label className="text-opacity-30 -mt-1">
-                        {contact?.details?.id &&
-                          Utils.minifyPubky(contact?.details?.id)}
-                      </Typography.Label>
+                <div className="p-6 rounded-2xl bg-white bg-opacity-10 lg:p-0 lg:bg-transparent flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
+                  <div className="w-full flex justify-between items-center">
+                    <Link
+                      className="flex gap-2 w-full"
+                      href={`/profile/${contact?.details?.id}`}
+                    >
+                      <ImageByUri
+                        width={48}
+                        height={48}
+                        uri={contact?.details?.image || '/images/Userpic.png'}
+                        alt={`profile-pic-${contact?.details?.id}`}
+                        className="rounded-full w-[48px] h-[48px] max-w-none"
+                      />
+                      <div className="flex-col justify-center items-start inline-flex">
+                        <Typography.Body variant="medium-bold">
+                          {contact?.details.name &&
+                            Utils.minifyText(contact?.details?.name, 20)}
+                        </Typography.Body>
+                        <Typography.Label className="text-opacity-30 -mt-1">
+                          {contact?.details?.id &&
+                            Utils.minifyPubky(contact?.details?.id)}
+                        </Typography.Label>
+                      </div>
+                    </Link>
+
+                    <div className="flex gap-4">
+                      <div className="inline-flex flex-col justify-start items-start gap-1">
+                        <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+                          Tags
+                        </Typography.Label>
+                        <Typography.Body variant="medium-bold">
+                          {contact?.counts?.tags ?? 0}
+                        </Typography.Body>
+                      </div>
+                      <div className="inline-flex flex-col justify-start items-start gap-1">
+                        <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
+                          Posts
+                        </Typography.Label>
+                        <Typography.Body variant="medium-bold">
+                          {contact?.counts?.posts ?? 0}
+                        </Typography.Body>
+                      </div>
                     </div>
-                  </Link>
-                  <div className="lg:flex justify-end gap-2 items-center lg:w-full">
+                  </div>
+                  <div className="flex lg:justify-end gap-2 items-center lg:w-full">
                     {contact?.tags?.slice(0, 3).map((tag, index) => {
                       const isTagFound = tag?.taggers?.some(
                         (fromItem) => fromItem === pubky
@@ -267,7 +288,7 @@ export default function Contact({
                       );
                     })}
                   </div>
-                  <div className="flex-col justify-start items-start gap-1 inline-flex">
+                  <div className="hidden lg:inline-flex flex-col justify-start items-start gap-1 inline-flex">
                     <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
                       Tags
                     </Typography.Label>
@@ -275,7 +296,7 @@ export default function Contact({
                       {contact?.counts?.tags ?? 0}
                     </Typography.Body>
                   </div>
-                  <div className="flex-col justify-start items-start gap-1 inline-flex">
+                  <div className="hidden lg:inline-flex flex-col justify-start items-start gap-1 inline-flex">
                     <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
                       Posts
                     </Typography.Label>
@@ -286,7 +307,7 @@ export default function Contact({
                   <div className="flex gap-4">
                     {pubkeyUser ? (
                       <Button.Medium
-                        className="w-[104px] bg-transparent cursor-default"
+                        className="w-full lg:w-[104px] bg-transparent cursor-default"
                         icon={<Icon.Check />}
                       >
                         Me
@@ -305,7 +326,7 @@ export default function Contact({
                         disabled={loadingContacts[contact?.details?.id]}
                         loading={loadingContacts[contact?.details?.id]}
                         icon={<Icon.UserMinus size="16" />}
-                        className="w-[104px]"
+                        className="w-full lg:w-[104px]"
                       >
                         Unfollow
                       </Button.Medium>
@@ -319,7 +340,7 @@ export default function Contact({
                         disabled={loadingContacts[contact?.details?.id]}
                         loading={loadingContacts[contact?.details?.id]}
                         icon={<Icon.UserPlus size="16" />}
-                        className="w-[104px]"
+                        className="w-full lg:w-[104px]"
                       >
                         Follow
                       </Button.Medium>

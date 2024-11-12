@@ -12,6 +12,7 @@ import {
   WhoFollow,
 } from '@/components';
 import { HotTags } from './components';
+import * as Components from '@/components';
 import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
 import { HotTag } from '@/types/Tag';
@@ -40,10 +41,12 @@ export default function Index() {
             {firstThreeTags.map((tag, index) => (
               <div
                 key={index}
-                className="w-full p-6 flex flex-col gap-2 rounded-lg border border-white border-opacity-20"
+                className="bg-white bg-opacity-10 lg:bg-transparent w-full p-6 flex flex-col gap-2 rounded-lg lg:border lg:border-white lg:border-opacity-20"
               >
                 <div className="flex gap-2">
-                  <PostUtil.Counter>{index + 1}</PostUtil.Counter>
+                  <PostUtil.Counter className="bg-transparent">
+                    {index + 1}
+                  </PostUtil.Counter>
                   <PostUtil.Tag
                     onClick={() => router.push(`/search?tags=${tag?.label}`)}
                     color={tag?.label && Utils.generateRandomColor(tag?.label)}
@@ -120,6 +123,7 @@ export default function Index() {
         </Sidebar>
       </Content.Grid>
       <CreatePost />
+      <Components.FooterMobile title="HotTags" />
     </Content.Main>
   );
 }

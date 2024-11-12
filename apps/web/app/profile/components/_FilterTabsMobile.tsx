@@ -1,14 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Icon, Typography } from '@social/ui-shared';
-import { Profile } from './';
 import { Skeleton } from '@/components';
-import ContactsProfile from './_ContactsProfile/ContactsProfile';
-import {
-  useFilterContext,
-  useNotificationsContext,
-  usePubkyClientContext,
-} from '@/contexts';
-import TaggedAs from './_TaggedAs';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
 
 const tabs = [
@@ -56,7 +49,7 @@ const tabs = [
   },
 ];
 
-export default function FilterTabs({
+export default function FilterTabsMobile({
   activeTab,
   setActiveTab,
   creatorPubky,
@@ -77,8 +70,6 @@ export default function FilterTabs({
   loading: boolean;
   profile: UserView | null;
 }) {
-  const { notifications, loading: loadingNotifications } =
-    useNotificationsContext();
   const { pubky } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
   const [loadingTab, setLoadingTab] = useState(true);
@@ -139,8 +130,8 @@ export default function FilterTabs({
   };
 
   return (
-    <div className="flex gap-4">
-      <div className="w-[300px] self-start sticky top-[120px] hidden lg:block">
+    <div className="lg:hidden">
+      <div className="flex w-full gap-4 justify-between">
         {tabs.map((tab) => {
           if (
             creatorPubky &&
@@ -155,26 +146,16 @@ export default function FilterTabs({
               id={`profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() => handleTabClick(tab.id, tab.key)}
-              className={`w-full h-12 px-3 items-center gap-2 flex justify-between cursor-pointer ${
+              className={`w-full pb-3 items-center gap-1 flex justify-between cursor-pointer border-b border-white ${
                 isActive && !loading
                   ? 'opacity-100'
                   : 'opacity-50 hover:opacity-100'
               }`}
             >
-              <div className="flex gap-2 items-center">
-                {tab.icon}
-                <Typography.Caption className="tracking-normal" variant="bold">
-                  {tab.label}
-                </Typography.Caption>
-              </div>
+              {tab.icon}
               {!loading && tab.key && (
                 <Typography.Caption className="tracking-normal" variant="bold">
-                  <span
-                    id="counter"
-                    className="ml-2 text-white text-opacity-30"
-                  >
-                    {getTabNumber(tab.key)}
-                  </span>
+                  <span id="counter">{getTabNumber(tab.key)}</span>
                 </Typography.Caption>
               )}
             </div>
@@ -182,43 +163,7 @@ export default function FilterTabs({
         })}
       </div>
       <div id="profile-tab-content" className="w-full">
-        {loading ? (
-          <Skeleton.Simple />
-        ) : (
-          <>
-            {(!creatorPubky || creatorPubky === pubky) && (
-              <>
-                {activeTab === 0 ? (
-                  <Profile.NotificationsProfile
-                    notifications={notifications}
-                    loading={loadingNotifications}
-                  />
-                ) : (
-                  activeTab === 1 && <Profile.Bookmarks />
-                )}
-              </>
-            )}
-            {activeTab === 2 && <Profile.Posts creatorPubky={creatorPubky} />}
-            {activeTab === 3 && (
-              <ContactsProfile
-                creatorPubky={creatorPubky}
-                contacts="followers"
-              />
-            )}
-            {activeTab === 4 && (
-              <ContactsProfile
-                creatorPubky={creatorPubky}
-                contacts="following"
-              />
-            )}
-            {activeTab === 5 && (
-              <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
-            )}
-            {activeTab === 6 && (
-              <TaggedAs loading={loading} creatorPubky={creatorPubky} />
-            )}
-          </>
-        )}
+        {loading ? <Skeleton.Simple /> : <>{}</>}
       </div>
     </div>
   );

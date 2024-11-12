@@ -52,7 +52,7 @@ export default function Header({
           tagId="1"
           setShowTooltip={setShowTooltipProfile}
         >
-          <div className={`justify-start items-center lg:flex gap-4`}>
+          <div className="justify-start items-start lg:items-center flex lg:flex-row flex-col lg:gap-4">
             <PostUI.Username
               className={`${
                 largeView && 'text-2xl'
@@ -61,7 +61,7 @@ export default function Header({
               {data?.details?.name && Utils.minifyText(data?.details?.name, 24)}
             </PostUI.Username>
             {!repostView && (
-              <Typography.Label className="cursor-pointer text-opacity-30">
+              <Typography.Label className="cursor-pointer text-opacity-30 -mt-1 lg:mt-0">
                 {Utils.minifyPubky(post?.details?.author)}
               </Typography.Label>
             )}
@@ -70,7 +70,12 @@ export default function Header({
         </TooltipUI.Root>
       </div>
       <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
-        {Utils.timeAgo(post?.details?.indexed_at)}
+        <span className="hidden md:flex">
+          {Utils.timeAgo(post?.details?.indexed_at)}
+        </span>
+        <span className="md:hidden">
+          {Utils.timeAgo(post?.details?.indexed_at, true)}
+        </span>
       </PostUI.Time>
     </PostUI.Header>
   );

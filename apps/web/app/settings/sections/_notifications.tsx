@@ -18,22 +18,21 @@ const defaultPreferences = {
 type NotificationType = keyof typeof defaultPreferences;
 
 export default function Notifications() {
-  const {saveSettings, loadSettings} = usePubkyClientContext();
+  const { saveSettings, loadSettings } = usePubkyClientContext();
   const [preferences, setPreferences] = useState(defaultPreferences);
 
+  const handleLoadSettings = async () => {
+    const result = await loadSettings();
+    if (result) {
+      setPreferences(result.notifications);
+    } else {
+      saveSettings(preferences);
+    }
+  };
 
-const handleLoadSettings = async () => {
-  const result = await loadSettings();
-  if (result) {
-    setPreferences(result.notifications)
-  } else {
-    saveSettings(preferences);
-  }
-}
-
-useEffect(() => {
-  handleLoadSettings();
-}, []);
+  useEffect(() => {
+    handleLoadSettings();
+  }, []);
 
   const handleToggle = (type: NotificationType) => {
     const updatedPreferences = { ...preferences, [type]: !preferences[type] };
@@ -42,7 +41,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.BellSimple size="24" />

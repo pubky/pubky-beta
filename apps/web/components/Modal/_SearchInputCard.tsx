@@ -48,7 +48,7 @@ export default function SearchInputCard({
       {...rest}
       refCard={refCard}
       className={twMerge('absolute top-16', rest.className)}
-      background="bg-[#05050A] border border-white border-opacity-30"
+      background="bg-[#05050A] border border-white border-opacity-30 z-10"
     >
       {inputValue !== '' && searchedUsers && searchedUsers.length > 0 ? (
         <div className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col gap-2">

@@ -292,7 +292,7 @@ export default function Tag({
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <Modal.Header title="Tag Post" />
         <Modal.Content className="flex flex-row w-full">
-          <div className="flex gap-6">
+          <div className="flex flex-col md:flex-row gap-6">
             <div>
               {showEmojis && (
                 <div
@@ -313,7 +313,7 @@ export default function Tag({
               <Input.Text
                 placeholder="tag"
                 value={tag}
-                className="w-96 mt-2 flex items-center"
+                className="w-full md:w-96 mt-2 flex items-center"
                 maxLength={20}
                 autoFocus
                 disabled={loading}

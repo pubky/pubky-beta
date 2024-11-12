@@ -19,13 +19,19 @@ import { usePubkyClientContext } from '@/contexts';
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   largeView?: boolean;
+  showModalTag: boolean;
+  setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Tags({ post, largeView = false }: PostProps) {
+export default function Tags({
+  post,
+  largeView = false,
+  showModalTag,
+  setShowModalTag,
+}: PostProps) {
   const [showTooltipTag, setShowTooltipTag] = useState('');
   const { pubky, createTag, deleteTag } = usePubkyClientContext();
   const [tags, setTags] = useState<PostTag[]>([]);
-  const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
   const [loadingTags, setLoadingTags] = useState('');
 
@@ -76,20 +82,25 @@ export default function Tags({ post, largeView = false }: PostProps) {
 
   return (
     <div
-      className="mt-6 cursor-default"
+      className="lg:mt-6 cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
-      <div id="tags" className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
-        <Button.Action
-          id="tag-btn"
-          size="small"
-          variant="custom"
-          icon={<Icon.Tag size="16" />}
-          counter={post?.tags?.length}
-          onClick={() => {
-            setShowModalTag(true);
-          }}
-        />
+      <div
+        id="tags"
+        className={`flex-row inline-flex gap-2 flex-wrap mt-6 lg:mt-0`}
+      >
+        <div className="hidden md:flex">
+          <Button.Action
+            id="tag-btn"
+            size="small"
+            variant="custom"
+            icon={<Icon.Tag size="16" />}
+            counter={post?.tags?.length}
+            onClick={() => {
+              setShowModalTag(true);
+            }}
+          />
+        </div>
         {!largeView &&
           tags.slice(0, 3).map((tagObj, index) => {
             const isTagFound = tagObj?.taggers?.some(

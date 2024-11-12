@@ -15,11 +15,23 @@ import { ICustomFeed } from '@/types';
 
 export default function Index() {
   const { layout } = useFilterContext();
+  const [isMobile, setIsMobile] = useState(false);
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1280);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -96,8 +108,10 @@ export default function Index() {
             selectedFeed={selectedFeed}
             setSelectedFeed={setSelectedFeed}
           />
-          <Components.CreateQuickPost largeView={layout === 'wide'} />
-          <Timeline selectedFeed={selectedFeed} />
+          <Components.CreateQuickPost
+            largeView={!isMobile && layout === 'wide'}
+          />
+          <Timeline isMobile={isMobile} selectedFeed={selectedFeed} />
         </Components.PostsLayout>
         {layout !== 'wide' && (
           <Components.Sidebar className="col-span-2 hidden xl:block">
@@ -121,15 +135,17 @@ export default function Index() {
         </div>
       </Menu.Root>
       <Components.CreatePost />
+      <Components.FooterMobile title="Feed" />
     </Content.Main>
   );
 }
 
 interface TimelineProps {
   selectedFeed: ICustomFeed | undefined;
+  isMobile: boolean;
 }
 
-const Timeline = ({ selectedFeed }: TimelineProps) => {
+const Timeline = ({ selectedFeed, isMobile }: TimelineProps) => {
   const limit = 10;
   const [skip, setSkip] = useState(0);
   const [tagsFeed, setTagsFeed] = useState<string[]>();
@@ -208,11 +224,16 @@ const Timeline = ({ selectedFeed }: TimelineProps) => {
                   <div>
                     <Components.Post
                       post={post}
-                      largeView={layout === 'wide'}
+                      largeView={!isMobile && layout === 'wide'}
                       line={Boolean(post?.relationships?.replied)}
                     />
                     {post?.counts?.replies > 0 && (
-                      <PostReplies homeView post={post} layout={layout} />
+                      <PostReplies
+                        isMobile={isMobile}
+                        homeView
+                        post={post}
+                        layout={layout}
+                      />
                     )}
                   </div>
                 )}
@@ -235,7 +256,7 @@ const Timeline = ({ selectedFeed }: TimelineProps) => {
   );
 };
 
-const PostReplies = ({ post, layout, homeView = false }) => {
+const PostReplies = ({ post, layout, homeView = false, isMobile }) => {
   const { pubky } = usePubkyClientContext();
   const { data: replies } = usePostReplies(
     post.details.author,
@@ -273,7 +294,7 @@ const PostReplies = ({ post, layout, homeView = false }) => {
           <Components.Post
             key={reply.details.id}
             post={reply}
-            largeView={layout === 'wide'}
+            largeView={!isMobile && layout === 'wide'}
             line={Boolean(reply?.relationships?.replied)}
             homeView={homeView}
           />
