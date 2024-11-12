@@ -130,7 +130,7 @@ export default function Index() {
                                 height={48}
                                 uri={
                                   influencer?.details?.image ||
-                                  '/images/Userpic.png'
+                                  '/images/webp/Userpic.webp'
                                 }
                                 alt={`profile-pic-${influencer?.details?.id}`}
                                 className="rounded-full w-[48px] h-[48px] max-w-none"

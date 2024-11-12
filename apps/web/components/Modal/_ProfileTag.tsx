@@ -92,7 +92,7 @@ export default function ProfileTag({
     const images = await Promise.all(
       tag.taggers.map(async (fromItem) => {
         const profile = await getUserProfile(fromItem, pubky ?? '');
-        return profile?.details?.image || '/images/Userpic.png';
+        return profile?.details?.image || '/images/webp/Userpic.webp';
       })
     );
     return images;
@@ -322,7 +322,7 @@ export default function ProfileTag({
                 <SideCard.User
                   uri={pubkyUser}
                   className="mt-6"
-                  uriImage={uriImage || '/images/Userpic.png'}
+                  uriImage={uriImage || '/images/webp/Userpic.webp'}
                   username={Utils.minifyText(name, 16)}
                   label={Utils.minifyPubky(pubkyUser)}
                 />
@@ -486,7 +486,7 @@ export default function ProfileTag({
                             <SideCard.User
                               uri={profile?.details?.id.replace('pubky:', '')}
                               uriImage={
-                                profile?.details?.image || '/images/Userpic.png'
+                                profile?.details?.image || '/images/webp/Userpic.webp'
                               }
                               username={
                                 profile?.details?.name &&

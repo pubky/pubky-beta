@@ -262,7 +262,7 @@ export default function CreateContent({
       >
         <div className={variant ? 'flex w-full gap-4' : 'w-full'}>
           <Section.UserArea
-            uriPic={(profile?.image as string) ?? '/images/Userpic.png'}
+            uriPic={(profile?.image as string) ?? '/images/webp/Userpic.webp'}
             name={profile?.name ?? 'Loading...'}
             largeView={largeView}
             variant={variant}

@@ -92,7 +92,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
               const userDetails = await getUserDetails(user);
               return {
                 alt: `userPic-${index + 1}`,
-                src: userDetails?.image || '/images/Userpic.png',
+                src: userDetails?.image || '/images/webp/Userpic.webp',
               };
             })
           );
@@ -127,7 +127,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
               const userDetails = await getUserDetails(user);
               return {
                 alt: `userPic-${index + 1}`,
-                src: userDetails?.image || '/images/Userpic.png',
+                src: userDetails?.image || '/images/webp/Userpic.webp',
               };
             })
           );
@@ -154,7 +154,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
           className="justify-start items-center gap-2 flex cursor-pointer"
         >
           <PostUI.ImageUser
-            uriImage={author?.details?.image || '/images/Userpic.png'}
+            uriImage={author?.details?.image || '/images/webp/Userpic.webp'}
             alt="user"
           />
           <div className={`flex flex-col justify-start`}>

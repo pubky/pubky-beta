@@ -112,8 +112,8 @@ export default function Intro() {
       className: {
         marginTop: isMobile ? '300px' : '',
         backgroundImage: isMobile
-          ? "url('/images/intro-1-mobile.png')"
-          : "url('/images/intro-1.png')",
+          ? "url('/images/webp/intro-1-mobile.webp')"
+          : "url('/images/webp/intro-1.webp')",
       },
     },
     {
@@ -156,8 +156,8 @@ export default function Intro() {
         marginTop: isMobile ? '300px' : '',
         marginLeft: isMobile ? '-150px' : '',
         backgroundImage: isMobile
-          ? "url('/images/intro-2.png')"
-          : "url('/images/intro-2.png')",
+          ? "url('/images/webp/intro-2.webp')"
+          : "url('/images/webp/intro-2.webp')",
       },
     },
     {
@@ -192,8 +192,8 @@ export default function Intro() {
       ),
       className: {
         backgroundImage: isMobile
-          ? "url('/images/intro-3-mobile.png')"
-          : "url('/images/intro-3.png')",
+          ? "url('/images/webp/intro-3-mobile.webp')"
+          : "url('/images/webp/intro-3.webp')",
       },
     },
     {
@@ -239,8 +239,8 @@ export default function Intro() {
         right: isMobile ? '0px' : '300px',
         top: isMobile ? '100px' : '',
         backgroundImage: isMobile
-          ? "url('/images/intro-4-mobile.png')"
-          : "url('/images/intro-4.png')",
+          ? "url('/images/webp/intro-4-mobile.webp')"
+          : "url('/images/webp/intro-4.webp')",
       },
     },
     {
@@ -276,8 +276,8 @@ export default function Intro() {
         marginTop: isMobile ? '350px' : '250px',
         left: smallScreen ? '50px' : '200px',
         backgroundImage: isMobile
-          ? "url('/images/intro-5-mobile.png')"
-          : "url('/images/intro-5.png')",
+          ? "url('/images/webp/intro-5-mobile.webp')"
+          : "url('/images/webp/intro-5.webp')",
         backgroundPosition: 'left',
       },
     },
@@ -308,8 +308,8 @@ export default function Intro() {
         top: isMobile ? '200px' : '100px',
         left: smallScreen && !isMobile ? '-300px' : '',
         backgroundImage: isMobile
-          ? "url('/images/intro-6-mobile.png')"
-          : "url('/images/intro-6.png')",
+          ? "url('/images/webp/intro-6-mobile.webp')"
+          : "url('/images/webp/intro-6.webp')",
         backgroundPosition: 'left',
       },
     },

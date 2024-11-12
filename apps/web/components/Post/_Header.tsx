@@ -42,7 +42,7 @@ export default function Header({
         }}
       >
         <PostUI.ImageUser
-          uriImage={data?.details?.image || '/images/Userpic.png'}
+          uriImage={data?.details?.image || '/images/webp/Userpic.webp'}
           alt="user"
           width={largeView ? 48 : 32}
           height={largeView ? 48 : 32}

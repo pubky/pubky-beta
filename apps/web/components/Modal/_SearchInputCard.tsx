@@ -65,7 +65,7 @@ export default function SearchInputCard({
             <SideCard.User
               key={user.details.id}
               uri={user.details.id}
-              uriImage={user?.details?.image || '/images/Userpic.png'}
+              uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
               username={Utils.minifyText(user?.details?.name)}
               label={Utils.minifyPubky(user?.details?.id)}
             />

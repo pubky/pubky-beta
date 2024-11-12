@@ -31,7 +31,7 @@ export default function Index() {
         <div className="p-12 flex-col justify-center items-center flex">
           <div className="p-12">
             <Icon.Key size="130" />
-            <Image alt="glow" fill src="/images/glow-1.png" />
+            <Image alt="glow" fill src="/images/webp/glow-1.webp" />
           </div>
           <div className="justify-center items-center gap-2.5 inline-flex">
             {pubky ? (

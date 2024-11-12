@@ -26,7 +26,7 @@ export default function Tag({
     if (fromItem.author?.profile?.image) {
       return fromItem.author?.profile?.image;
     }
-    return '/images/Userpic.png';
+    return '/images/webp/Userpic.webp';
   });
   const displayedImages = images.slice(0, 4);
   const extraImagesCount = images.length - displayedImages.length;
