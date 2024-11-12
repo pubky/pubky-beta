@@ -1,5 +1,6 @@
 'use client';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
   PubkyClient,
@@ -139,6 +140,7 @@ export function PubkyClientWrapper({
 }: {
   children: React.ReactNode;
 }) {
+  const [queryClient] = useState(() => new QueryClient());
   const [wasmLoaded, setWasmLoaded] = useState(false);
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined
@@ -1542,7 +1544,7 @@ export function PubkyClientWrapper({
         importData,
       }}
     >
-      {children}
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </PubkyClientContext.Provider>
   );
 }

@@ -1,44 +1,55 @@
-import Head from 'next/head';
-
-interface HeaderSEOProps {
+interface SeoMetadataParams {
   title?: string;
-  icon?: string;
   description?: string;
-  keywords?: string;
+  keywords?: string[];
+  icon?: string;
   image?: string;
+  url?: string;
+  twitterHandle?: string;
 }
 
-export const HeaderSEO = ({
+export function getSeoMetadata({
   title = 'Pubky.app | Unlock the web',
-  icon = '/images/webp/pubky-logo.webp',
   description = 'Unlock the web. Your keys, your content, your rules.',
-  keywords = 'key, public key, pubkey, pubky, pkarr, pubky core, web',
+  keywords = [
+    'key',
+    'public key',
+    'pubkey',
+    'pubky',
+    'pkarr',
+    'pubky core',
+    'web',
+  ],
+  icon = '/images/webp/pubky-logo.webp',
   image = '/images/webp/pubky-seo.webp',
-}: HeaderSEOProps) => {
-  const imageUrl = `https://synonym.to${image}`;
-  const twitterHandle = '@getpubky';
-
-  return (
-    <Head>
-      <title>{title}</title>
-      <link rel="shortcut icon" href={icon} />
-
-      <meta name="description" content={description} />
-      <meta name="keywords" content={keywords} />
-
-      <meta property="og:title" content={title} />
-      <meta property="og:site_name" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={imageUrl} />
-      <meta property="og:type" content="website" />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:creator" content={twitterHandle} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={imageUrl} />
-    </Head>
-  );
-};
+  url = 'https://synonym.to',
+  twitterHandle = '@getpubky',
+}: SeoMetadataParams) {
+  return {
+    title,
+    description,
+    keywords,
+    icons: {
+      icon,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      images: [
+        {
+          url: `https://synonym.to${image}`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      site_name: 'Pubky.app',
+    },
+    twitter: {
+      handle: twitterHandle,
+      site: twitterHandle,
+      cardType: 'summary_large_image',
+    },
+  };
+}
