@@ -66,7 +66,7 @@ export default function SearchInputCard({
               key={user.details.id}
               uri={user.details.id}
               uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
-              username={Utils.minifyText(user?.details?.name)}
+              username={Utils.minifyText(user?.details?.name, 20)}
               label={Utils.minifyPubky(user?.details?.id)}
             />
           ))}
