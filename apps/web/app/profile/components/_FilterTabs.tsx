@@ -32,24 +32,30 @@ const tabs = [
   },
   {
     id: 3,
+    key: 'replies',
+    icon: <Icon.FileText size="24" color="white" />,
+    label: 'Replies',
+  },
+  {
+    id: 4,
     key: 'followers',
     icon: <Icon.UsersLeft size="24" color="white" />,
     label: 'Followers',
   },
   {
-    id: 4,
+    id: 5,
     key: 'following',
     icon: <Icon.UsersRight size="24" color="white" />,
     label: 'Following',
   },
   {
-    id: 5,
+    id: 6,
     key: 'friends',
     icon: <Icon.Smiley size="24" color="white" />,
     label: 'Friends',
   },
   {
-    id: 6,
+    id: 7,
     key: 'tagged',
     icon: <Icon.Tag size="24" color="white" />,
     label: 'Tagged',
@@ -61,6 +67,7 @@ export default function FilterTabs({
   setActiveTab,
   creatorPubky,
   countPosts,
+  countReplies,
   countContacts,
   loading,
   profile,
@@ -69,6 +76,7 @@ export default function FilterTabs({
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;
   creatorPubky?: string;
   countPosts: number | undefined;
+  countReplies: number | undefined;
   countContacts: {
     followers: number;
     following: number;
@@ -125,6 +133,8 @@ export default function FilterTabs({
         return profile?.counts?.bookmarks;
       case 'posts':
         return countPosts || 0;
+      case 'replies':
+        return countReplies || 0;
       case 'followers':
         return countContacts.followers || 0;
       case 'following':
@@ -199,22 +209,23 @@ export default function FilterTabs({
               </>
             )}
             {activeTab === 2 && <Profile.Posts creatorPubky={creatorPubky} />}
-            {activeTab === 3 && (
+            {activeTab === 3 && <Profile.Replies creatorPubky={creatorPubky} />}
+            {activeTab === 4 && (
               <ContactsProfile
                 creatorPubky={creatorPubky}
                 contacts="followers"
               />
             )}
-            {activeTab === 4 && (
+            {activeTab === 5 && (
               <ContactsProfile
                 creatorPubky={creatorPubky}
                 contacts="following"
               />
             )}
-            {activeTab === 5 && (
+            {activeTab === 6 && (
               <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
             )}
-            {activeTab === 6 && (
+            {activeTab === 7 && (
               <TaggedAs loading={loading} creatorPubky={creatorPubky} />
             )}
           </>

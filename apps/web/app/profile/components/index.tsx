@@ -5,6 +5,7 @@ import FilterTabsMobile from './_FilterTabsMobile';
 import NotificationsProfile from './_NotificationsProfile';
 import Bookmarks from './_Bookmarks';
 import Posts from './_Posts';
+import Replies from './_Replies';
 import Sidebar from './Sidebar';
 
 export const Profile = {
@@ -15,5 +16,6 @@ export const Profile = {
   NotificationsProfile,
   Bookmarks,
   Posts,
+  Replies,
   Sidebar,
 };
