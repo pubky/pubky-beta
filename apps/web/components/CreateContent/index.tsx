@@ -63,7 +63,7 @@ export default function CreateContent({
   className,
   article,
   markdown,
-  maxLength = 300,
+  maxLength = 1000,
   isError,
   setIsError,
   setShowModalPost,

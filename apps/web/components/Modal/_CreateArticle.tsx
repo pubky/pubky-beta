@@ -345,7 +345,9 @@ export default function CreateArticle({
                     }
                   />
                   <Section.UserArea
-                    uriPic={(profile?.image as string) ?? '/images/webp/Userpic.webp'}
+                    uriPic={
+                      (profile?.image as string) ?? '/images/webp/Userpic.webp'
+                    }
                     name={profile?.name ?? 'Loading...'}
                     largeView={!isMobile}
                   />
@@ -406,7 +408,7 @@ export default function CreateArticle({
                     searchedUsers={searchedUsers}
                     setSearchedUsers={setSearchedUsers}
                     setCursorPosition={setCursorPosition}
-                    maxLength={1000}
+                    maxLength={50000}
                     isError={isError}
                     setIsError={setIsError}
                     //setTextArea={setTextArea}
@@ -431,7 +433,7 @@ export default function CreateArticle({
                   //setSelectedFiles={setSelectedFiles}
                   //selectedFiles={selectedFiles}
                   setArrayTags={setArrayTags}
-                  maxLength={1000}
+                  maxLength={50000}
                   arrayTags={arrayTags}
                   //setFilePreviews={setFilePreviews}
                   showEmojis={showEmojis}

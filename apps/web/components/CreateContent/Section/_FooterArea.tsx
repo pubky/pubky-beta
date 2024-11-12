@@ -61,7 +61,7 @@ export default function FooterArea({
   article,
   markdown,
   noFile,
-  maxLength = 300,
+  maxLength = 1000,
   setShowModalPost,
 }: FooterAreaProps) {
   const { setContent: setContentAlert, setShow } = useAlertContext();

@@ -103,7 +103,7 @@ export default function Feedback({
             </div>
             <Input.CursorArea
               autoFocus
-              maxLength={1000}
+              maxLength={50000}
               value={message}
               onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
                 const target = e.target as HTMLTextAreaElement;
@@ -114,7 +114,7 @@ export default function Feedback({
             />
             <div className="w-full flex gap-3 mt-3 justify-end">
               <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
-                {message.length} / 1000
+                {message.length} / 50000
               </div>
               <Button.Medium
                 className="w-auto"

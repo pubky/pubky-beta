@@ -108,7 +108,7 @@ export default function EditArticle({
               content={contentEditArticle}
               setContent={setContentEditArticle}
               isValidContent={isValidContent}
-              maxLength={1000}
+              maxLength={50000}
               setIsValidContent={setIsValidContent}
               loading={sendingEditArticle}
               markdown
