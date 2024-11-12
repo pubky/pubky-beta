@@ -9,7 +9,7 @@ export const H1 = ({ children, ...rest }: H1Props) => {
     <h1
       {...rest}
       className={twMerge(
-        `text-[38px] font-semibold font-InterTight tracking-wide text-white`,
+        `text-[38px] font-semibold font-InterTight tracking-wide leading-tight text-white`,
         rest.className
       )}
     >

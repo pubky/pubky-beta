@@ -183,15 +183,15 @@ export default function Notification({
 
   return (
     <div className="p-3 border-b border-white border-opacity-10 justify-between items-start flex flex-row">
-      <div className="flex gap-4 flex-col sm:flex-row">
+      <div className="flex md:gap-4 flex-col sm:flex-row">
         <Button.Action
           size="small"
           variant="custom"
           icon={currentNotificationType.icon}
-          className="bg-gradient-none border border-white border-opacity-30"
+          className="hidden md:flex bg-gradient-none border border-white border-opacity-30"
           disabled
         />
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center flex-wrap">
           {userId && (
             <Link
               href={`/profile/${userId}`}
@@ -203,7 +203,7 @@ export default function Notification({
                   height={32}
                   className="w-[32px] h-[32px] rounded-full"
                   alt="user-pic"
-                  uri={user?.details?.image || '/images/Userpic.png'}
+                  uri={user?.details?.image || '/images/webp/Userpic.webp'}
                 />
               )}
               <Typography.Body
@@ -326,9 +326,14 @@ export default function Notification({
         </div>
       </div>
       <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex opacity-30">
-        <Typography.Caption className="uppercase items-center flex gap-2 text-white">
+        <Typography.Caption className="uppercase font-bold items-center flex gap-1 md:gap-2 text-white">
           <Icon.Clock size="16" />
-          {Utils.timeAgo(notification.timestamp)}
+          <span className="hidden md:block">
+            {Utils.timeAgo(notification.timestamp)}
+          </span>
+          <span className="md:hidden">
+            {Utils.timeAgo(notification.timestamp, true)}
+          </span>
         </Typography.Caption>
       </div>
     </div>

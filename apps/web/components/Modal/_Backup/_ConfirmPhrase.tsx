@@ -208,7 +208,7 @@ export default function ConfirmPhrase({
           </div>
         )}
       </div>
-      <div className="w-full max-w-[796px] mt-4 justify-between items-center inline-flex">
+      <div className="w-full max-w-[796px] mt-4 justify-between items-center inline-flex gap-6">
         <Button.Large
           icon={<Icon.ArrowLeft />}
           className="w-auto"

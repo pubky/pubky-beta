@@ -19,7 +19,7 @@ export default function Avatar({
         alt={username}
         width={128}
         height={128}
-        className={'rounded-full w-32 h-32'}
+        className={'rounded-full w-16 h-16 md:w-32 md:h-32'}
         uri={uriImage}
       />
       <div className="absolute right-0 top-36 text-[110px]">{status}</div>

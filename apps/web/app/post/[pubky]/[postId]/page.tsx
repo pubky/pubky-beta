@@ -7,6 +7,7 @@ import Skeletons from '@/components/Skeletons';
 import { Post } from './components';
 import MetaTags from '@/components/MetaTags';
 import { usePost, usePostReplies } from '@/hooks/usePost';
+import * as Components from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { useEffect, useRef, useState } from 'react';
@@ -91,12 +92,12 @@ function ValidPostContent({
                     <ImageByUri
                       width={48}
                       height={48}
-                      className="w-[48px] h-[48px] rounded-full"
+                      className="w-[32px] h-[32px] md:w-[48px] md:h-[48px] rounded-full"
                       alt="user-image"
                       uri={user?.data?.details?.image}
                     />
                     <div
-                      className="cursor-pointer flex gap-4 items-center"
+                      className="cursor-pointer flex flex-col md:flex-row md:gap-4 md:items-center"
                       onClick={() =>
                         router.push(`/profile/${data?.details?.author}`)
                       }
@@ -110,7 +111,7 @@ function ValidPostContent({
                           24
                         )}
                       </Typography.Body>
-                      <div className="flex gap-1 mt-1 cursor-pointer">
+                      <div className="flex gap-1 -mt-1 md:mt-1 cursor-pointer">
                         {/**<Icon.CheckCircle size="16" color="gray" />*/}
                         <Typography.Label className="text-opacity-30">
                           {Utils.minifyPubky(data?.details?.author ?? '')}
@@ -119,7 +120,12 @@ function ValidPostContent({
                     </div>
                   </div>
                   <PostUI.Time className="mr-2">
-                    {Utils.timeAgo(data?.details?.indexed_at)}
+                    <span className="hidden md:flex">
+                      {Utils.timeAgo(data?.details?.indexed_at)}
+                    </span>
+                    <span className="md:hidden">
+                      {Utils.timeAgo(data?.details?.indexed_at, true)}
+                    </span>
                   </PostUI.Time>
                 </div>
                 <ImageByUri
@@ -136,7 +142,7 @@ function ValidPostContent({
                   />
                 </div>
               </div>
-              <TagsLargeView post={data} />
+              {windowWidth >= 1280 && <TagsLargeView post={data} />}
             </div>
           ) : (
             <PostComponent
@@ -287,6 +293,7 @@ export default function Index({
         {content}
       </Content.Grid>
       <CreatePost />
+      <Components.FooterMobile />
     </Content.Main>
   );
 }

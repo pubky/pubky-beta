@@ -22,6 +22,7 @@ export default function CreateArticle({
 }: CreateArticleProps) {
   const { pubky, createArticle, createTag, profile } = usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [isError, setIsError] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
   const [contentTitle, setContentTitle] = useState('');
@@ -44,6 +45,17 @@ export default function CreateArticle({
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1280);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSubmit = async (content: string) => {
     if (sendingArticle) {
@@ -333,9 +345,11 @@ export default function CreateArticle({
                     }
                   />
                   <Section.UserArea
-                    uriPic={(profile?.image as string) ?? '/images/Userpic.png'}
+                    uriPic={
+                      (profile?.image as string) ?? '/images/webp/Userpic.webp'
+                    }
                     name={profile?.name ?? 'Loading...'}
-                    largeView
+                    largeView={!isMobile}
                   />
                   <div className="relative my-4">
                     {selectedFile.length > 0 ? (
@@ -394,11 +408,11 @@ export default function CreateArticle({
                     searchedUsers={searchedUsers}
                     setSearchedUsers={setSearchedUsers}
                     setCursorPosition={setCursorPosition}
-                    maxLength={1000}
+                    maxLength={50000}
                     isError={isError}
                     setIsError={setIsError}
                     //setTextArea={setTextArea}
-                    largeView
+                    largeView={!isMobile}
                     setIsValidContent={setIsValidContent}
                     placeHolder="Write your article"
                     //setFilePreviews={setFilePreviews}
@@ -419,12 +433,12 @@ export default function CreateArticle({
                   //setSelectedFiles={setSelectedFiles}
                   //selectedFiles={selectedFiles}
                   setArrayTags={setArrayTags}
-                  maxLength={1000}
+                  maxLength={50000}
                   arrayTags={arrayTags}
                   //setFilePreviews={setFilePreviews}
                   showEmojis={showEmojis}
                   setShowEmojis={setShowEmojis}
-                  largeView
+                  largeView={!isMobile}
                   noFile
                   button={
                     <Button.Medium

@@ -6,10 +6,13 @@ export default function Index() {
   return (
     <Onboarding.Layout currentStep={2}>
       <Typography.Display>Welcome!</Typography.Display>
-      <Typography.H2 variant="light" className="text-opacity-50 mt-4 lg:mt-0">
+      <Typography.Body
+        variant="large"
+        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0"
+      >
         Allow Pubky to read your profile and contacts for a more seamless
         experience.
-      </Typography.H2>
+      </Typography.Body>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         <Card.Primary title="Permissions">
           <List.Primary
@@ -36,7 +39,7 @@ export default function Index() {
           title="Be aware"
           text="All content, posts, and profile data you create will be openly available to anyone."
         />
-        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
+        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/webp/bg-image-2.webp" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
         <Link href="/onboarding/sign-in">

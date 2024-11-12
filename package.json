@@ -9,7 +9,8 @@
     "build": "nx build web",
     "reset": "nx reset",
     "clean": "npm run reset && rm -rf ./node_modules/ ./dist/",
-    "setup:dev": "npm i && npm link @pubky/sdk"
+    "setup:dev": "npm i && npm link @pubky/sdk",
+    "format": "prettier --write apps/web/**/*.{js,ts,tsx}  '!apps/web/.next/**' "
   },
   "private": true,
   "dependencies": {

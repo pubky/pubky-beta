@@ -11,6 +11,7 @@ import { useUserStream } from '@/hooks/useUser';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   username: string | JSX.Element;
+  bio?: string;
   pubkey: string;
   creatorPubky?: string | null;
   status?: TStatus;
@@ -18,6 +19,7 @@ interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Handle({
   username,
+  bio,
   pubkey,
   creatorPubky,
   status,
@@ -76,13 +78,23 @@ export default function Handle({
     <div {...rest} className={twMerge(rest.className)}>
       {username && pubkey ? (
         <>
-          <Typography.Display
-            id="profile-username-header"
-            className="text-center md:text-left mb-4"
-          >
-            {Utils.minifyText(username.toString(), 15)}
-          </Typography.Display>
-          <div className="md:-mt-4 flex flex-col md:flex-row gap-3">
+          <div className="text-center lg:text-left flex flex-col gap-2 mb-4 md:mb-9">
+            <Typography.Display
+              id="profile-username-header"
+              className="text-2xl sm:text-2xl"
+            >
+              {Utils.minifyText(username.toString(), 15)}
+            </Typography.Display>
+            {bio && (
+              <Typography.Body
+                variant="medium"
+                className="text-opacity-80 md:hidden"
+              >
+                {Utils.minifyText(bio.toString(), 30)}
+              </Typography.Body>
+            )}
+          </div>
+          <div className="md:-mt-4 flex flex-wrap gap-3 justify-center md:justify-start">
             <Buttons
               creatorPubky={creatorPubky}
               pubkey={pubkey}

@@ -65,6 +65,7 @@ import {
   DotsThree,
   DotsThreeVertical,
   DotsThreeOutline,
+  UploadSimple,
   SignOut,
   SignIn,
 } from './_System';
@@ -214,6 +215,7 @@ export const Icon = {
   Tether,
   Trash,
   UnitedStates,
+  UploadSimple,
   User,
   UsersLeft,
   UserMinus,

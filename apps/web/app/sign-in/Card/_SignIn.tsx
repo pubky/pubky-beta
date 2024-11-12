@@ -11,6 +11,7 @@ export default function SignIn() {
   const { setContent, setShow } = useAlertContext();
   const [loginError, setLoginError] = useState('');
   const [authUrl, setAuthUrl] = useState('');
+  const [qrSize, setQrSize] = useState(210);
   //const [showCopied, setShowCopied] = useState(false);
   const canvasRef = useRef(null);
 
@@ -59,13 +60,28 @@ export default function SignIn() {
   */
   }
 
+  useEffect(() => {
+    const updateSize = () => {
+      if (window.innerWidth <= 480) {
+        setQrSize(320);
+      } else {
+        setQrSize(210);
+      }
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
   return (
     <Card.Primary
       title="Sign in with"
       text="Scan the QR with Bitkit or any other Pubky Core powered wallet."
       imageTitle={
         <Link href="https://bitkit.to" target="_blank">
-          <Image width={82} height={36} alt="bitkit" src="/images/bitkit.png" />
+          <Image width={82} height={36} alt="bitkit" src="/images/webp/bitkit.webp" />
         </Link>
       }
       className="w-full col-span-2"
@@ -75,12 +91,13 @@ export default function SignIn() {
         //onClick={copyToClipboard}
       >
         {authUrl ? (
-          <div className="blur-[3px] rounded-lg p-2 mt-2 bg-white flex justify-center-center">
+          <div className="blur-[3px] rounded-lg mt-6 flex justify-center-center">
             <QRCodeSVG
               value={authUrl}
-              size={210}
+              size={qrSize}
               bgColor="#ffffff"
               fgColor="#000000"
+              className="p-2 bg-white"
               level="Q"
               ref={canvasRef}
             />
@@ -91,7 +108,7 @@ export default function SignIn() {
             height={320}
             className="rounded-lg mt-6"
             alt="qr"
-            src="/images/qr.png"
+            src="/images/webp/qr.webp"
           />
         )}
         <div className="w-full inset-0 flex items-center justify-right left-8 absolute">

@@ -144,7 +144,7 @@ export default function Content({
                     : parsedContent.body;
 
                 return (
-                  <div className="w-full justify-between flex gap-8">
+                  <div className="w-full justify-between flex flex-col md:flex-row gap-8">
                     <div>
                       <Typography.Body className="mb-2" variant="large-bold">
                         {parsedContent.title}
@@ -261,7 +261,7 @@ export default function Content({
                           '_blank'
                         );
                       }}
-                      className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
+                      className="flex flex-col md:flex-row gap-2 w-full justify-between items-start md:items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
                     >
                       <div className="flex gap-2 items-center">
                         <Icon.FileText size="20" />

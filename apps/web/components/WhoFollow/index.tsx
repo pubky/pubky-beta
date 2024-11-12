@@ -97,7 +97,7 @@ export default function WhoFollow() {
                     uri={recommendedProfile?.details?.id}
                     uriImage={
                       recommendedProfile?.details?.image ||
-                      '/images/Userpic.png'
+                      '/images/webp/Userpic.webp'
                     }
                     username={Utils.minifyText(
                       recommendedProfile?.details?.name,
