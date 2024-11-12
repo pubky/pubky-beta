@@ -45,7 +45,7 @@ export default function Help() {
   };
 
   return (
-    <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Question size="24" />
@@ -98,9 +98,9 @@ export default function Help() {
         </Typography.Body>
         <Button.Large
           variant="secondary"
-          className="w-auto cursor-default"
-          disabled
-          icon={<Icon.Telegram width="16" height="16" color="gray" />}
+          className="w-auto"
+          onClick={() => window.open('https://t.me/pubkychat', '_blank')}
+          icon={<Icon.Telegram width="16" height="16" />}
         >
           Pubky Support (Telegram)
         </Button.Large>

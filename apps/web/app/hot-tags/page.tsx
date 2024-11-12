@@ -12,6 +12,7 @@ import {
   WhoFollow,
 } from '@/components';
 import { HotTags } from './components';
+import * as Components from '@/components';
 import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
 import { HotTag } from '@/types/Tag';
@@ -40,10 +41,12 @@ export default function Index() {
             {firstThreeTags.map((tag, index) => (
               <div
                 key={index}
-                className="w-full p-6 flex flex-col gap-2 rounded-lg border border-white border-opacity-20"
+                className="bg-white bg-opacity-10 lg:bg-transparent w-full p-6 flex flex-col gap-2 rounded-lg lg:border lg:border-white lg:border-opacity-20"
               >
                 <div className="flex gap-2">
-                  <PostUtil.Counter>{index + 1}</PostUtil.Counter>
+                  <PostUtil.Counter className="bg-transparent">
+                    {index + 1}
+                  </PostUtil.Counter>
                   <PostUtil.Tag
                     onClick={() => router.push(`/search?tags=${tag?.label}`)}
                     color={tag?.label && Utils.generateRandomColor(tag?.label)}
@@ -99,12 +102,12 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="HotTags" />
-      <Content.Grid className="grid grid-cols-5 gap-4">
-        <Sidebar className="self-start sticky top-[120px] hidden xl:block">
+      <Content.Grid className="grid grid-cols-10 gap-4">
+        <Sidebar className="col-span-1 self-start sticky top-[120px] hidden lg:block">
           <Filter.HotTagsReach disabled />
           <Filter.TagsTimeFrame disabled />
         </Sidebar>
-        <div className="w-full flex-col inline-flex gap-3 col-span-5 xl:col-span-4 2xl:col-span-3">
+        <div className="flex-col inline-flex gap-3 col-span-10 lg:col-span-9 xl:col-span-7 lg:ml-[70px] xl:ml-[45px]">
           {isLoading ? (
             <div className="w-full">
               <Skeletons.Simple />
@@ -113,13 +116,14 @@ export default function Index() {
             renderTags(hotTags, isLoading)
           )}
         </div>
-        <Sidebar className="hidden 2xl:block">
+        <Sidebar className="col-span-2 hidden xl:block">
           <WhoFollow />
           <Influencers />
           <Feedback />
         </Sidebar>
       </Content.Grid>
       <CreatePost />
+      <Components.FooterMobile title="HotTags" />
     </Content.Main>
   );
 }

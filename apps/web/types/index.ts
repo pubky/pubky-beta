@@ -145,6 +145,7 @@ export type NotificationPreferences = {
   reply: boolean;
   repost: boolean;
   post_deleted: boolean;
+  post_edited: boolean;
 };
 
 export interface INotification {
@@ -188,6 +189,14 @@ export interface IPostContent {
   root?: string;
   embed?: EmbedContent;
   files?: { [key: string]: { fileId: string; fileUri: string } };
+}
+
+export interface ICustomFeed {
+  tags?: string[];
+  sort: TSort;
+  reach: TReach;
+  layout: TLayouts;
+  content: TContent;
 }
 
 export interface EmbedContent {

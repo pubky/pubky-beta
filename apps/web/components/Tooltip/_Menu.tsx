@@ -36,6 +36,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [showModalEditPost, setShowModalEditPost] = useState(false);
+  const [showModalEditArticle, setShowModalEditArticle] = useState(false);
   const { setContent, setShow } = useAlertContext();
 
   useEffect(() => {
@@ -201,7 +202,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       <div ref={tooltipMenuRef}>
         <Tooltip.Main
           id="post-tooltip-menu"
-          className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]"
+          className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px] z-40"
         >
           {renderFollowButton()}
           {/**post?.details?.author === pubky && (
@@ -217,13 +218,25 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
             </Tooltip.Item>
           )*/}
           {post?.details?.author === pubky && (
-            <Tooltip.Item
-              id="edit-post"
-              onClick={() => setShowModalEditPost(true)}
-              icon={<Icon.Pencil size="20" />}
-            >
-              Edit post
-            </Tooltip.Item>
+            <>
+              {post?.details?.kind === 'Long' ? (
+                <Tooltip.Item
+                  id="edit-article"
+                  onClick={() => setShowModalEditArticle(true)}
+                  icon={<Icon.Pencil size="20" />}
+                >
+                  Edit article
+                </Tooltip.Item>
+              ) : (
+                <Tooltip.Item
+                  id="edit-post"
+                  onClick={() => setShowModalEditPost(true)}
+                  icon={<Icon.Pencil size="20" />}
+                >
+                  Edit post
+                </Tooltip.Item>
+              )}
+            </>
           )}
           <Tooltip.Item
             id="copy-user-pubky"
@@ -323,6 +336,13 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           setShowModalEditPost={setShowModalEditPost}
           post={post}
         />
+        {showModalEditArticle && (
+          <Modal.EditArticle
+            showModalEditArticle={showModalEditArticle}
+            setShowModalEditArticle={setShowModalEditArticle}
+            article={post}
+          />
+        )}
         <Modal.DeletePost
           showModalDeletePost={showModalDeletePost}
           setShowModalDeletePost={setShowModalDeletePost}

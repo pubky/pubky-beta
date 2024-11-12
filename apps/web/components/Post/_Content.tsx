@@ -12,6 +12,8 @@ import { Button, Icon, Typography } from '@social/ui-shared';
 import Image from 'next/image';
 import { FileContent, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
+import { Spotify } from 'react-spotify-embed';
+import MarkdownPreview from '@uiw/react-markdown-preview';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -32,6 +34,7 @@ export default function Content({
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
+  const [spotifyUrl, setSpotifyUrl] = useState('');
   const [fileContents, setFileContents] = useState<FileContent[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
@@ -63,6 +66,11 @@ export default function Content({
       const githubMatch = url.match(githubRegex);
       if (githubMatch) {
         setGithubUrl(githubMatch[0]);
+      }
+
+      const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
+      if (spotifyRegex.test(url)) {
+        setSpotifyUrl(url);
       }
     }
   }
@@ -125,7 +133,51 @@ export default function Content({
         id="post-content-text"
         className={`text-white break-words ${largeView && 'text-2xl'}`}
       >
-        <Parsing fullContent={fullContent}>{contentText}</Parsing>
+        {(() => {
+          try {
+            if (post?.details?.kind === 'Long') {
+              const parsedContent = JSON.parse(contentText);
+              if (parsedContent.title && parsedContent.body) {
+                const truncatedBody =
+                  parsedContent.body.length > 300
+                    ? parsedContent.body.substring(0, 300) + '...'
+                    : parsedContent.body;
+
+                return (
+                  <div className="w-full justify-between flex flex-col md:flex-row gap-8">
+                    <div>
+                      <Typography.Body className="mb-2" variant="large-bold">
+                        {parsedContent.title}
+                      </Typography.Body>
+                      <div className="opacity-70">
+                        <MarkdownPreview source={truncatedBody} />
+                      </div>
+                    </div>
+                    <div>
+                      {fileContents.map((file, index) => {
+                        return (
+                          <div key={index} className="relative">
+                            <Image
+                              src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                              alt={`Fetched file ${index}`}
+                              layout="responsive"
+                              width={360}
+                              height={200}
+                              className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
+            }
+          } catch (error) {
+            console.error(error);
+          }
+          return <Parsing fullContent={fullContent}>{contentText}</Parsing>;
+        })()}
 
         {showMore && (
           <a
@@ -147,7 +199,7 @@ export default function Content({
             ></iframe>
           </div>
         )}
-        {preview && !videoId && !tweetId && !githubUrl && (
+        {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
           <LinkPreview url={preview} />
         )}
         {tweetId && (
@@ -156,7 +208,12 @@ export default function Content({
           </div>
         )}
         {githubUrl && <GitHub url={githubUrl} />}
-        {fileContents.length > 0 && (
+        {spotifyUrl && (
+          <div className="mt-4">
+            <Spotify link={spotifyUrl} />
+          </div>
+        )}
+        {fileContents.length > 0 && post?.details?.kind !== 'Long' && (
           <div
             className={`mt-4 grid gap-4 ${
               fileContents.length === 1
@@ -170,6 +227,7 @@ export default function Content({
               const isVideo = file?.content_type.startsWith('video');
               const isImage = file?.content_type.startsWith('image');
               const isPDF = file?.content_type === 'application/pdf';
+              const isAudio = file?.content_type.startsWith('audio');
 
               return (
                 <div
@@ -177,7 +235,7 @@ export default function Content({
                   className={`relative cursor-pointer ${
                     fileContents.length === 3 && index === 0 ? 'col-span-2' : ''
                   }`}
-                  onClick={() => openModal(index)}
+                  onClick={() => (isImage ? openModal(index) : undefined)}
                 >
                   {isVideo ? (
                     <video
@@ -203,7 +261,7 @@ export default function Content({
                           '_blank'
                         );
                       }}
-                      className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
+                      className="flex flex-col md:flex-row gap-2 w-full justify-between items-start md:items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
                     >
                       <div className="flex gap-2 items-center">
                         <Icon.FileText size="20" />
@@ -225,6 +283,14 @@ export default function Content({
                         Download
                       </Button.Medium>
                     </div>
+                  ) : isAudio ? (
+                    <audio controls>
+                      <source
+                        src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                        type="audio/mpeg"
+                      />
+                      Browser do not support audio.
+                    </audio>
                   ) : (
                     <p className="text-gray-500">Unsupported file type</p>
                   )}

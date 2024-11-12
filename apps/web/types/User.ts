@@ -6,6 +6,8 @@ export interface UserCounts {
   friends: number;
   posts: number;
   tags: number;
+  replies: number;
+  tagged: number;
   bookmarks: number;
 }
 
@@ -55,11 +57,14 @@ interface BodyNotification {
   embed_uri?: string;
   repost_uri?: string;
   mentioned_by?: string;
-  delete_type?: string;
+  delete_source?: string;
   deleted_by?: string;
   deleted_uri?: string;
   linked_uri?: string;
   type: string;
+  edited_by?: string;
+  edited_uri?: string;
+  edit_source?: string;
 }
 
 export interface Relationship {

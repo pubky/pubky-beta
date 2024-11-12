@@ -3,7 +3,6 @@ import {
   PostCounts,
   PostDetails,
   PostStream,
-  PostThread,
   Bookmark,
 } from '../types/Post';
 
@@ -79,6 +78,7 @@ export async function getPostStream(
 
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
+    queryParams.append('observer_id', viewerId);
   }
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
@@ -92,7 +92,7 @@ export async function getPostStream(
   if (sort) {
     if (sort === 'recent') queryParams.append('sorting', String('timeline'));
     else if (sort === 'popularity')
-      queryParams.append('sorting', String('totalengagement'));
+      queryParams.append('sorting', String('total_engagement'));
   }
   if (tags) {
     queryParams.append('tags', String(tags));
@@ -115,6 +115,36 @@ export async function getPostStreamByUser(
 
   if (userId) {
     queryParams.append('author_id', userId);
+    queryParams.append('source', 'author');
+  }
+  if (viewerId) {
+    queryParams.append('viewer_id', viewerId);
+  }
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+
+  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
+
+  if (!response.ok) throw new Error('Failed to fetch post stream by user');
+
+  return response.json();
+}
+
+export async function getRepliesStreamByUser(
+  userId: string,
+  viewerId?: string,
+  skip?: number,
+  limit?: number
+): Promise<PostView[]> {
+  const queryParams = new URLSearchParams();
+
+  if (userId) {
+    queryParams.append('author_id', userId);
+    queryParams.append('source', 'author_replies');
   }
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
@@ -153,14 +183,18 @@ export async function getPostStreamByReach(
   return response.json();
 }
 
-export async function getPostThread(
+export async function getPostReplies(
   authorId: string,
   postId: string,
   viewerId?: string,
   skip?: number,
   limit?: number
-): Promise<PostThread> {
+): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
+
+  queryParams.append('author_id', authorId);
+  queryParams.append('source', 'post_replies');
+  queryParams.append('post_id', postId);
 
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
@@ -172,11 +206,9 @@ export async function getPostThread(
     queryParams.append('limit', String(limit));
   }
 
-  const response = await fetch(
-    `${BASE_URL}/thread/${authorId}/${postId}?${queryParams}`
-  );
+  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
 
-  if (!response.ok) throw new Error('Failed to fetch post thread');
+  if (!response.ok) throw new Error('Failed to fetch post replies');
 
   return response.json();
 }
@@ -194,6 +226,7 @@ export async function getBookmarkedPosts(
   }
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
+    queryParams.append('observer_id', viewerId);
   }
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));

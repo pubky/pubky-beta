@@ -32,11 +32,11 @@ type FilterContextType = {
   setContent: (content: TContent) => void;
   timeframe: TTimeframe;
   setTimeframe: (timeframe: TTimeframe) => void;
-  notificationPreferences: NotificationPreferences;
-  setNotificationPreferences: (prefs: NotificationPreferences) => void;
+  unReadNotification: number;
+  setUnReadNotification: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const defaultPreferences: NotificationPreferences = {
+export const defaultPreferences: NotificationPreferences = {
   follow: true,
   new_friend: true,
   lost_friend: true,
@@ -46,6 +46,7 @@ const defaultPreferences: NotificationPreferences = {
   reply: true,
   repost: true,
   post_deleted: true,
+  post_edited: true,
 };
 
 const FilterContext = createContext<FilterContextType>({
@@ -65,8 +66,8 @@ const FilterContext = createContext<FilterContextType>({
   setContent: () => {},
   timeframe: 'today',
   setTimeframe: () => {},
-  notificationPreferences: defaultPreferences,
-  setNotificationPreferences: () => {},
+  unReadNotification: 0,
+  setUnReadNotification: () => {},
 });
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
@@ -95,12 +96,9 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [timeframe, setTimeframe] = useState<TTimeframe>(
     (Utils.storage.get('timeframe') as TTimeframe) || 'today'
   );
-  const [notificationPreferences, setNotificationPreferences] =
-    useState<NotificationPreferences>(
-      (Utils.storage.get(
-        'notificationPreferences'
-      ) as NotificationPreferences) || defaultPreferences
-    );
+  const [unReadNotification, setUnReadNotification] = useState<number>(
+    (Utils.storage.get('unread') as number) || 0
+  );
 
   // save filters to local storage
   useEffect(() => {
@@ -112,7 +110,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     Utils.storage.set('contactsLayout', contactsLayout);
     Utils.storage.set('content', content);
     Utils.storage.set('timeframe', timeframe);
-    Utils.storage.set('notificationPreferences', notificationPreferences);
+    Utils.storage.set('unread', unReadNotification);
     setIsInitialized(true);
   }, [
     layout,
@@ -123,7 +121,6 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     contactsLayout,
     content,
     timeframe,
-    notificationPreferences,
   ]);
 
   if (!isInitialized) return null;
@@ -147,8 +144,8 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         setContent,
         timeframe,
         setTimeframe,
-        notificationPreferences,
-        setNotificationPreferences,
+        unReadNotification,
+        setUnReadNotification,
       }}
     >
       {children}

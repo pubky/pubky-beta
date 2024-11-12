@@ -95,7 +95,7 @@ export default function NotificationGroup({
                     height={32}
                     className="w-[32px] h-[32px] rounded-full"
                     alt="user-pic"
-                    uri={user.profile.image || '/images/Userpic.png'}
+                    uri={user.profile.image || '/images/webp/Userpic.webp'}
                   />
                   <Typography.Body
                     className="hover:underline hover:decoration-solid"

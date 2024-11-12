@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Content, Menu, Typography } from '@social/ui-shared';
+import { Content, Icon, Input, Menu, Typography } from '@social/ui-shared';
+import * as Components from '@/components';
 import {
   ButtonFilters,
   CreatePost,
@@ -20,6 +21,7 @@ import { Filter } from '@/components/Filter';
 import Skeletons from '@/components/Skeletons';
 import { usePostStream } from '@/hooks/usePost';
 import { UseUserMuted } from '@/hooks/useUser';
+import Modal from '@/components/Modal';
 
 const SearchContent = () => {
   const router = useRouter();
@@ -40,6 +42,10 @@ const SearchContent = () => {
   const [isFilterContentVisible, setIsFilterContentVisible] = useState(true);
   const filterContentRef = useRef(null);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
+  const [searchInputCard, setSearchInputCard] = useState(false);
+  const refSearchInputCard = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [inputValue, setInputValue] = useState('');
   const loader = useRef(null);
   const tagMessage =
     searchTags.length > 1
@@ -47,6 +53,17 @@ const SearchContent = () => {
       : searchTags.length === 1
       ? 'with this tag:'
       : '';
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1280);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // const fetchData = async (pointer: string, searchTags: string[]) => {
   //  setLoading(true);
@@ -137,23 +154,63 @@ const SearchContent = () => {
           setDrawerFilterOpen(false);
         }
       }
+      if (
+        refSearchInputCard.current &&
+        !refSearchInputCard.current.contains(event.target as Node)
+      ) {
+        setSearchInputCard(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutsideDrawer);
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideDrawer);
     };
-  }, [drawerFilterRef]);
+  }, [drawerFilterRef, refSearchInputCard]);
 
   function getPostsLayoutClass(layout: string) {
     return layout === 'wide'
-      ? 'col-span-5'
-      : 'col-span-5 lg:col-span-4 xl:col-span-3';
+      ? 'col-span-10'
+      : 'col-span-10 lg:col-span-9 xl:col-span-7';
   }
 
   function getSidebarClass(isFilterContentVisible: boolean) {
     return isFilterContentVisible ? '' : 'sticky top-[120px]';
   }
+
+  const handleRemoveTag = (indexToRemove: number) => {
+    const newTags = [...searchTags];
+    newTags.splice(indexToRemove, 1);
+    setSearchTags(newTags);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchTag();
+    }
+  };
+
+  const handleSearchTag = () => {
+    if (
+      (inputValue.startsWith('pk:') && inputValue.length === 55) ||
+      inputValue.length === 52
+    ) {
+      const profileId = inputValue.replace(/^pk:/, '');
+      router.push(`/profile/${profileId}`);
+    } else {
+      const trimmedValue = inputValue.trim();
+      if (searchTags.includes(trimmedValue.slice(0))) return;
+
+      if (searchTags.length < 3) {
+        setSearchTags([...searchTags, trimmedValue.slice(0)]);
+      } else {
+        const newSearchTags = [...searchTags.slice(0), trimmedValue.slice(0)];
+        setSearchTags(newSearchTags);
+      }
+      setInputValue('');
+      router.push('/search');
+    }
+  };
 
   return (
     <Content.Main>
@@ -161,9 +218,9 @@ const SearchContent = () => {
       {layout === 'wide' && (
         <ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       )}
-      <Content.Grid className={'grid grid-cols-5 gap-6'}>
+      <Content.Grid className={'grid grid-cols-10 gap-6'}>
         {layout !== 'wide' && (
-          <Sidebar className="hidden xl:block">
+          <Sidebar className="col-span-1 hidden lg:block">
             <div
               className={`self-start ${getSidebarClass(
                 isFilterContentVisible
@@ -181,8 +238,51 @@ const SearchContent = () => {
         <PostsLayout
           className={`${getPostsLayoutClass(
             layout
-          )} flex-col inline-flex gap-3`}
+          )} flex-col inline-flex gap-3 lg:ml-[70px] xl:ml-[45px]`}
         >
+          <Input.Search className="lg:hidden">
+            {searchTags && (
+              <Input.SearchTags>
+                {searchTags.map((searchTag, index) => (
+                  <Input.SearchTag
+                    key={index}
+                    onClick={() => handleRemoveTag(index)}
+                    action={
+                      <div className="mt-[3px]">
+                        <Icon.X key={index} />
+                      </div>
+                    }
+                    value={`${searchTag}`}
+                    className="mr-2"
+                  />
+                ))}
+              </Input.SearchTags>
+            )}
+            <Input.SearchInput
+              id="header-search-input"
+              value={inputValue}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setInputValue(e.target.value)
+              }
+              onKeyDown={handleKeyDown}
+              placeholder={!searchTags.length ? 'Search' : ''}
+              onClick={() => setSearchInputCard(true)}
+              readOnly={!!searchTags.length}
+            />
+            <Modal.SearchInputCard
+              className={searchInputCard ? 'block lg:hidden' : 'hidden'}
+              refCard={refSearchInputCard}
+              inputValue={inputValue}
+            />
+            <Input.SearchActions className="hidden lg:flex">
+              <div
+                className={inputValue && 'cursor-pointer'}
+                onClick={inputValue ? handleSearchTag : undefined}
+              >
+                <Icon.MagnifyingGlass />
+              </div>
+            </Input.SearchActions>
+          </Input.Search>
           {data && data?.length > 0
             ? data
                 .filter((post) => !mutedUsers?.includes(post?.details?.author))
@@ -192,7 +292,7 @@ const SearchContent = () => {
                       <Post
                         key={post.details.id}
                         post={post}
-                        largeView={layout === 'wide'}
+                        largeView={!isMobile && layout === 'wide'}
                       />
                     )
                 )
@@ -214,7 +314,7 @@ const SearchContent = () => {
           {isLoading && !isError && <Skeletons.Simple />}
         </PostsLayout>
         {layout !== 'wide' && (
-          <Sidebar className="hidden 2xl:block">
+          <Sidebar className="col-span-2 hidden xl:block">
             <WhoFollow />
             <Influencers />
             <HotTags />
@@ -235,6 +335,7 @@ const SearchContent = () => {
         </div>
       </Menu.Root>
       <CreatePost />
+      <Components.FooterMobile title="Search" />
       <div ref={loader} />
     </Content.Main>
   );

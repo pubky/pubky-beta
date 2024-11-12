@@ -13,12 +13,14 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   repost?: PostView;
   deleteRepost?: boolean;
+  setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Actions({
   post,
   repost,
   deleteRepost = false,
+  setShowModalTag,
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
@@ -119,10 +121,21 @@ export default function Actions({
 
   return (
     <div
-      className="cursor-default"
+      className="cursor-default mt-6"
       onClick={(event) => event.stopPropagation()}
     >
       <PostUI.Actions>
+        <Button.Action
+          id="tag-btn"
+          size="small"
+          variant="custom"
+          className="md:hidden"
+          icon={<Icon.Tag size="16" />}
+          counter={post?.tags?.length}
+          onClick={() => {
+            setShowModalTag(true);
+          }}
+        />
         <Button.Action
           id="reply-btn"
           size="small"

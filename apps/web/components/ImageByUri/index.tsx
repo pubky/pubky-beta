@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { getFile } from '@/services/fileService';
+import Skeletons from '../Skeletons';
 
 interface ImageByUriProps {
   id?: string;
@@ -13,6 +14,7 @@ interface ImageByUriProps {
   className?: string;
   style?: React.CSSProperties;
   onClick?: () => void;
+  loading?: boolean;
 }
 
 const ImageByUri = ({
@@ -23,6 +25,7 @@ const ImageByUri = ({
   height,
   className,
   style,
+  loading,
   onClick,
 }: ImageByUriProps) => {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
@@ -42,7 +45,7 @@ const ImageByUri = ({
           typeof uri === 'string' &&
           (uri.startsWith('http') ||
             uri.startsWith('data:') ||
-            uri === '/images/Userpic.png')
+            uri === '/images/webp/Userpic.webp')
         ) {
           setImageUrl(uri);
         } else if (typeof uri === 'string') {
@@ -52,8 +55,8 @@ const ImageByUri = ({
           }
         }
       } catch (error) {
-        console.error('Error fetching image:', error);
-        setImageUrl('/images/Userpic.png');
+        //console.error('Error fetching image:', error);
+        setImageUrl('/images/webp/Userpic.webp');
       }
     };
 
@@ -67,16 +70,22 @@ const ImageByUri = ({
   }, [uri]);
 
   return (
-    <Image
-      id={id}
-      src={imageUrl || '/images/Userpic.png'}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      style={style}
-      onClick={onClick}
-    />
+    <>
+      {!imageUrl && loading ? (
+        <Skeletons.Simple />
+      ) : (
+        <Image
+          id={id}
+          src={imageUrl || '/images/webp/Userpic.webp'}
+          alt={alt}
+          width={width}
+          height={height}
+          className={className}
+          style={style}
+          onClick={onClick}
+        />
+      )}
+    </>
   );
 };
 

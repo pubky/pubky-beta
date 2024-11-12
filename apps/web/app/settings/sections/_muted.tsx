@@ -24,6 +24,7 @@ export default function MutedUsers() {
     {}
   );
   const [muted, setMuted] = useState<{ [pubky: string]: boolean }>({});
+  const [isLoadingUnmuteAll, setIsLoadingUnmuteAll] = useState(false);
 
   const muteUser = async (pubkyMute: string) => {
     try {
@@ -69,8 +70,32 @@ export default function MutedUsers() {
     }
   };
 
+  const unmuteAllUsers = async () => {
+    try {
+      if (mutedUsers) {
+        setIsLoadingUnmuteAll(true);
+        setLoadingMutedUsers(
+          mutedUsers.reduce(
+            (acc, user) => ({ ...acc, [user.details.id]: true }),
+            {}
+          )
+        );
+
+        await Promise.all(
+          mutedUsers.map((user) => unmuteUser(user.details.id))
+        );
+
+        setLoadingMutedUsers({});
+      }
+    } catch (error) {
+      console.error('Error while unmute all users:', error);
+    } finally {
+      setIsLoadingUnmuteAll(false);
+    }
+  };
+
   return (
-    <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.SpeakerSimpleSlash size="24" />
@@ -95,7 +120,7 @@ export default function MutedUsers() {
                 return (
                   <div key={mutedUser?.details?.id} className="w-full">
                     <div className="w-full">
-                      <div className="flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
+                      <div className="flex-col md:flex-row justify-start gap-4 inline-flex w-full">
                         <Link
                           className="flex gap-2 w-full"
                           href={`/profile/${mutedUser?.details?.id}`}
@@ -104,7 +129,7 @@ export default function MutedUsers() {
                             width={48}
                             height={48}
                             uri={
-                              mutedUser?.details?.image || '/images/Userpic.png'
+                              mutedUser?.details?.image || '/images/webp/Userpic.webp'
                             }
                             alt={`profile-pic-${mutedUser?.details?.id}`}
                             className="rounded-full w-[48px] h-[48px] max-w-none"
@@ -124,7 +149,7 @@ export default function MutedUsers() {
                         <div className="flex gap-4">
                           {pubkeyUser ? (
                             <Button.Medium
-                              className="w-[104px] bg-transparent cursor-default"
+                              className="w-full md:w-[104px] bg-transparent cursor-default"
                               icon={<Icon.Check />}
                             >
                               Me
@@ -147,7 +172,7 @@ export default function MutedUsers() {
                                 loadingMutedUsers[mutedUser?.details?.id]
                               }
                               icon={<Icon.SpeakerSimpleSlash size="16" />}
-                              className="w-[104px]"
+                              className="w-full md:w-[104px]"
                             >
                               Unmute
                             </Button.Medium>
@@ -163,7 +188,7 @@ export default function MutedUsers() {
                               }
                               loading={loadingMutedUsers[mutedUser.details?.id]}
                               icon={<Icon.SpeakerHigh size="16" />}
-                              className="w-[104px]"
+                              className="w-full md:w-[104px]"
                             >
                               Mute
                             </Button.Medium>
@@ -174,29 +199,29 @@ export default function MutedUsers() {
                   </div>
                 );
               })}
+              {mutedUsers.length > 1 && (
+                <>
+                  <div className="w-full h-px bg-white bg-opacity-10 my-6" />
+                  <Button.Medium
+                    onClick={() =>
+                      isLoadingUnmuteAll ? undefined : unmuteAllUsers()
+                    }
+                    disabled={isLoadingUnmuteAll}
+                    loading={isLoadingUnmuteAll}
+                    icon={<Icon.SpeakerSimpleSlash size="16" />}
+                    className="w-[180px]"
+                  >
+                    Unmute all users
+                  </Button.Medium>
+                </>
+              )}
             </>
           ) : (
-            <Typography.H2 className="flex self-center mt-[50px] font-normal text-opacity-20 text-center">
+            <Typography.H2 className="flex self-center mt-[20px] font-normal text-opacity-20 text-center">
               No muted users yet
             </Typography.H2>
           )}
         </div>
-        {/**<SideCard.User
-          uri="dmhebqrrfiacj1fkqemun9fnmxqas9ff6qgi39duemwe3s89sf9y"
-          src={'/images/Userpic.png'}
-          username={Utils.minifyText('Test account name')}
-          label={Utils.minifyPubky(
-            'dmhebqrrfiacj1fkqemun9fnmxqas9ff6qgi39duemwe3s89sf9y'
-          )}
-        >
-          <Button.Medium
-            icon={<Icon.SpeakerSimpleSlash size="16" />}
-            className="w-auto"
-          >
-            Unmute
-          </Button.Medium>
-        </SideCard.User>
-        */}
       </div>
     </div>
   );

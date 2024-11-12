@@ -30,7 +30,7 @@ export default function Influencers() {
                   <SideCard.User
                     uri={influencer.details.id.replace('pubky:', '')}
                     uriImage={
-                      influencer?.details?.image || '/images/Userpic.png'
+                      influencer?.details?.image || '/images/webp/Userpic.webp'
                     }
                     username={
                       influencer?.details?.name &&

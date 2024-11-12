@@ -16,7 +16,7 @@ export const Toast = ({
   variant = 'link',
   ...rest
 }: MessageProps) => {
-  const baseCSS = `z-50 md:w-[792px] fixed bottom-0 left-1/2 transform -translate-x-1/2 p-6 bg-[#05050a] bg-opacity-60 rounded-tl-2xl rounded-tr-2xl shadow border-l border-r border-t border-white border-opacity-30 backdrop-blur-[50px] justify-start items-center gap-3 inline-flex`;
+  const baseCSS = `z-50 w-[400px] md:w-[792px] fixed bottom-0 left-1/2 transform -translate-x-1/2 p-6 bg-[#05050a] bg-opacity-60 rounded-tl-2xl rounded-tr-2xl shadow border-l border-r border-t border-white border-opacity-30 backdrop-blur-[50px] justify-start items-center gap-3 inline-flex`;
 
   return (
     <div id="toast" {...rest} className={twMerge(baseCSS, rest.className)}>
@@ -25,7 +25,10 @@ export const Toast = ({
           {icon}
           <Typography.H2>{title}</Typography.H2>
         </div>
-        <Typography.Body className="text-opacity-80" variant="medium-light">
+        <Typography.Body
+          className="text-opacity-80 break-words"
+          variant="medium-light"
+        >
           {children}
         </Typography.Body>
       </div>

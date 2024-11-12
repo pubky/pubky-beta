@@ -48,7 +48,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
 
   const handleDeleteTag = async (tag: string) => {
     setLoadingTags(tag);
-    await deleteTag(post?.details?.id, tag);
+    await deleteTag(post?.details?.author, post?.details?.id, tag);
     // delete my user from tag from post.tags
     const newTags = tags.map((tagObj) => {
       if (tagObj.label === tag) {
@@ -92,10 +92,10 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               return getUserProfile(fromItem, pubky ?? '')
                 .then((profile) => {
                   images[fromItem] =
-                    profile?.details?.image || '/images/Userpic.png';
+                    profile?.details?.image || '/images/webp/Userpic.webp';
                 })
                 .catch(() => {
-                  images[fromItem] = '/images/Userpic.png';
+                  images[fromItem] = '/images/webp/Userpic.webp';
                 });
             }
             return null;

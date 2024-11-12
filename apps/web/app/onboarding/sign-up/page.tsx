@@ -18,7 +18,7 @@ interface FormErrors {
 const profileSchema = z.object({
   name: z
     .string()
-    .min(1, { message: 'Minimum length 1 character.' })
+    .min(3, { message: 'Minimum length 3 character.' })
     .max(24, { message: 'Maximum length 24 characters' }),
   bio: z
     .string()
@@ -33,7 +33,7 @@ export default function Index() {
   const [name, setName] = useState(profile?.name || '');
   const [bio, setBio] = useState(profile?.bio || '');
   const [image, setImage] = useState<File | string>(
-    profile?.image || '/images/Userpic.png'
+    profile?.image || '/images/webp/Userpic.webp'
   );
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
@@ -196,9 +196,12 @@ export default function Index() {
         }
         error={errors.name}
       />
-      <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
+      <Typography.Body
+        variant="large"
+        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0"
+      >
         Enter your bio, add some links, and upload a user picture.
-      </Typography.H2>
+      </Typography.Body>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} loading={loading} />
         <Card.Links
@@ -209,7 +212,7 @@ export default function Index() {
           loading={loading}
         />
         <Card.Pic image={image} setImage={setImage} loading={loading} />
-        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/bg-image-2.png" />*/}
+        {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/webp/bg-image-2.webp" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">
         <Link href="/onboarding/sign-in">

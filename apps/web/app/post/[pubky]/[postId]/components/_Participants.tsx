@@ -1,7 +1,7 @@
 import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
-import { PostThread, PostView } from '@/types/Post';
+import { PostView } from '@/types/Post';
 import { UseUserFollowing, useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
@@ -11,7 +11,7 @@ export default function Participants({
   repliesResponse,
   author,
 }: {
-  repliesResponse: PostThread | undefined;
+  repliesResponse: PostView[] | undefined;
   author: string;
 }) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
@@ -31,7 +31,7 @@ export default function Participants({
   const fetchReplies = async () => {
     try {
       if (repliesResponse) {
-        setReplies(repliesResponse?.replies || []);
+        setReplies(repliesResponse || []);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -54,9 +54,11 @@ export default function Participants({
           const followingIds = following.map((user) =>
             user.replace('pubky:', '')
           );
-          const matchedFollowedIds = replies.filter((reply) =>
-            followingIds.includes(reply?.details?.author)
-          );
+          const matchedFollowedIds = Array.isArray(replies)
+            ? replies.filter((reply) =>
+                followingIds.includes(reply?.details?.author)
+              )
+            : [];
 
           if (matchedFollowedIds.length > 0) {
             setInitLoadingFollowers(false);
@@ -226,7 +228,7 @@ export default function Participants({
   };
 
   const fetchParticipants = async () => {
-    if (!replies) return;
+    if (!Array.isArray(replies) || replies.length === 0) return;
 
     const uniqueAuthors = [
       ...new Set(replies.map((reply) => reply.details.author)),
@@ -249,7 +251,7 @@ export default function Participants({
         <SideCard.Content>
           <SideCard.User
             uri={authorData ? authorData.details.id : ''}
-            uriImage={authorData?.details?.image || '/images/Userpic.png'}
+            uriImage={authorData?.details?.image || '/images/webp/Userpic.webp'}
             username={Utils.minifyText(authorData?.details?.name ?? '')}
             label={Utils.minifyPubky(authorData?.details?.id ?? '')}
             className="mb-2"
@@ -263,7 +265,7 @@ export default function Participants({
                   <SideCard.User
                     uri={participant.details.id}
                     uriImage={
-                      participant?.details?.image || '/images/Userpic.png'
+                      participant?.details?.image || '/images/webp/Userpic.webp'
                     }
                     username={Utils.minifyText(participant?.details?.name)}
                     label={Utils.minifyPubky(participant.details.id)}

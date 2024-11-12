@@ -14,9 +14,12 @@ export default function Custom404() {
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Lost in the Rabbit Hole</Typography.Display>
-        <Typography.H2 variant="light" className="text-opacity-50 mt-4 sm:mt-0">
+        <Typography.Body
+          variant="large"
+          className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0"
+        >
           The page or content you are looking for is not available
-        </Typography.H2>
+        </Typography.Body>
         <div onClick={() => router.back()}>
           <Button.Large className="sm:w-80 w-full mt-6 relative z-10">
             Return back

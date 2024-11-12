@@ -82,8 +82,8 @@ export default function Index() {
         <div
           style={{
             backgroundImage: isMobile
-              ? "url('/images/home-mobile.png')"
-              : "url('/images/home.png')",
+              ? "url('/images/webp/home-mobile.webp')"
+              : "url('/images/webp/home.webp')",
             marginTop: isMobile ? '150px' : '',
           }}
           className="fixed inset-0 bg-cover bg-center pointer-events-none"
