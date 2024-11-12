@@ -36,6 +36,7 @@ export default function Index() {
               following: user?.counts?.following ?? 0,
               friends: user?.counts?.friends ?? 0,
             }}
+            countReplies={user?.counts?.replies}
             countPosts={user?.counts?.posts}
             loading={isLoading}
             profile={user}

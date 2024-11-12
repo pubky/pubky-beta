@@ -70,6 +70,7 @@ export default function Index({
                 following: profile?.counts?.following ?? 0,
                 friends: profile?.counts?.friends ?? 0,
               }}
+              countReplies={profile?.counts?.replies}
               countPosts={profile?.counts?.posts}
               loading={isLoading}
               creatorPubky={creatorPubky}
@@ -78,7 +79,9 @@ export default function Index({
             <div className="w-full rounded-2xl p-6 md:p-0 bg-white md:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-8 relative">
               <ProfileCommon.Avatar
                 username={profile?.details?.name || 'Loading...'}
-                uriImage={profile?.details?.image || '/images/webp/Userpic.webp'}
+                uriImage={
+                  profile?.details?.image || '/images/webp/Userpic.webp'
+                }
               />
               <ProfileCommon.Handle
                 className="-mt-4"
