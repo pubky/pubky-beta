@@ -22,6 +22,7 @@ import Skeletons from '@/components/Skeletons';
 import { usePostStream } from '@/hooks/usePost';
 import { UseUserMuted } from '@/hooks/useUser';
 import Modal from '@/components/Modal';
+import { Utils } from '@social/utils-shared';
 
 const SearchContent = () => {
   const router = useRouter();
@@ -264,7 +265,8 @@ const SearchContent = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setInputValue(e.target.value)
               }
-              onKeyDown={handleKeyDown}
+              onKeyDown={searchTags.length ? undefined : handleKeyDown}
+              maxLength={20}
               placeholder={!searchTags.length ? 'Search' : ''}
               onClick={() => setSearchInputCard(true)}
               readOnly={!!searchTags.length}
@@ -297,14 +299,14 @@ const SearchContent = () => {
                     )
                 )
             : !isLoading && (
-                <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+                <div className="mt-[100px] col-span-3 flex flex-col md:flex-row justify-center items-center md:gap-6">
                   <Typography.H2 className="font-normal text-opacity-50">
                     No posts {tagMessage}
                   </Typography.H2>
-                  <Typography.H2 className="font-normal">
+                  <Typography.H2 className="font-normal break-all">
                     {searchTags.map((searchTag, index) => (
                       <span key={`tag-${searchTag}`}>
-                        {searchTag}
+                        {Utils.minifyText(searchTag, 20)}
                         {index !== searchTags.length - 1 && ', '}
                       </span>
                     ))}
