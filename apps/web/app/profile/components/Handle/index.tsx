@@ -5,60 +5,40 @@ import { Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
-import { TStatus } from '@/types';
 import Buttons from './_Buttons';
 import Status from './_Status';
 import { usePubkyClientContext } from '@/contexts';
-import { useUserStream } from '@/hooks/useUser';
+import { UserView } from '@/types/User';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
-  username: string | JSX.Element;
-  bio?: string;
   pubkey: string;
+  profile: UserView | null;
   creatorPubky?: string | null;
-  status?: TStatus;
 }
 
 export default function Handle({
-  username,
-  bio,
   pubkey,
+  profile,
   creatorPubky,
-  status,
   ...rest
 }: HandleProps) {
-  const { pubky, seed } = usePubkyClientContext();
-  const { data: followers } = useUserStream(pubkey, pubky, 0, 10, 'followers');
-
+  const { seed } = usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
+  const username = profile?.details?.name || 'Loading...';
+  const bio = profile?.details?.bio || 'No bio.';
+  const status = profile?.details?.status || 'noStatus';
 
   useEffect(() => {
     async function fetchData() {
       try {
-        let pubkeyUser = creatorPubky;
-
-        if (!pubkeyUser) {
-          pubkeyUser = pubky;
-        }
-
-        if (!pubkeyUser) return;
-
-        const followersList = followers;
-
-        if (followersList) {
+        if (profile) {
           setInitLoadingFollowed(false);
-
-          followersList.map((user) => {
-            const id = user.details.id;
-            if (id === pubky) {
-              setFollowed(true);
-            }
-          });
+          if (profile?.relationship?.following) setFollowed(true);
         }
       } catch (error) {
         console.log(error);
@@ -66,7 +46,7 @@ export default function Handle({
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [followers, creatorPubky]);
+  }, [profile, creatorPubky]);
 
   useEffect(() => {
     if (seed) {
