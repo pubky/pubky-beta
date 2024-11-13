@@ -288,6 +288,7 @@ const PostReplies = ({ post, layout, homeView = false, isMobile }) => {
     <div className="mt-3 flex flex-col gap-3">
       {displayedReplies
         .filter((post) => !mutedUsers?.includes(post?.details?.author))
+        .reverse()
         .map((reply) => (
           <Components.Post
             key={reply.details.id}

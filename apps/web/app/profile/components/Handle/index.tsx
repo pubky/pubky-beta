@@ -1,3 +1,5 @@
+'use client';
+
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
