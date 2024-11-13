@@ -149,7 +149,7 @@ export default function Index() {
                                 </Typography.Label>
                               </div>
                             </Link>
-                            <div className="flex gap-4">
+                            <div className="flex lg:hidden gap-4">
                               <div className="inline-flex flex-col justify-start items-start gap-1">
                                 <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
                                   Tags
