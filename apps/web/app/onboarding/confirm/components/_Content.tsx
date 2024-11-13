@@ -144,7 +144,7 @@ export default function Index() {
             Backup account
           </Button.Large>
           {showTooltip && !seed && !mnemonic && (
-            <Tooltip.Small className="w-[278px]">
+            <Tooltip.Small className="md:hidden w-[278px]">
               <Typography.Body variant="small" className="text-opacity-80">
                 You have already done the backup,{' '}
                 <span className="text-white font-bold text-opacity-100">
@@ -178,7 +178,7 @@ export default function Index() {
               Backup account
             </Button.Large>
             {showTooltip && !seed && !mnemonic && (
-              <Tooltip.Small className="w-[278px]">
+              <Tooltip.Small className="hidden md:flex w-[278px]">
                 <Typography.Body variant="small" className="text-opacity-80">
                   You have already done the backup,{' '}
                   <span className="text-white font-bold text-opacity-100">
