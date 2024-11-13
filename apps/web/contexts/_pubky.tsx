@@ -20,7 +20,7 @@ import * as bip39 from 'bip39';
 import { getUserProfile } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
-const TESTNET = process.env.TESTNET;
+const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
 const DEFAULT_HTTP_RELAY =
   process.env.DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
 

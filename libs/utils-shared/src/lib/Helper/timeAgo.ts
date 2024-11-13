@@ -23,7 +23,7 @@ export function timeAgo(timestamp: number, mobile?: boolean) {
   const hours = mobile ? 'h' : number === 1 ? 'hour ago' : 'hours ago';
   const minutes = mobile ? 'min' : number === 1 ? 'minute ago' : 'minutes ago';
   const second = mobile ? 's' : number === 1 ? 'second ago' : 'seconds ago';
-  const space = mobile ? ' ' : '';
+  const space = mobile ? '' : ' ';
 
   if (number >= 1) {
     return `${number}${space}${year}`;
@@ -44,7 +44,7 @@ export function timeAgo(timestamp: number, mobile?: boolean) {
   interval = seconds / 3600;
   number = Math.floor(interval);
   if (number >= 1) {
-    return `${number}${hours}`;
+    return `${number}${space}${hours}`;
   }
 
   interval = seconds / 60;

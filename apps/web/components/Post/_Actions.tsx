@@ -130,7 +130,11 @@ export default function Actions({
           size="small"
           variant="custom"
           className="md:hidden"
-          icon={<Icon.Tag size="16" />}
+          icon={
+            <div>
+              <Icon.Tag size="16" />
+            </div>
+          }
           counter={post?.tags?.length}
           onClick={() => {
             setShowModalTag(true);
@@ -140,7 +144,11 @@ export default function Actions({
           id="reply-btn"
           size="small"
           variant="custom"
-          icon={<Icon.ChatCircleText size="16" />}
+          icon={
+            <div>
+              <Icon.ChatCircleText size="16" />
+            </div>
+          }
           counter={post?.counts?.replies}
           onClick={(event) => {
             event.stopPropagation();
@@ -162,10 +170,12 @@ export default function Actions({
             size="small"
             variant="custom"
             icon={
-              <Icon.Repost
-                size="16"
-                color={deleteRepost ? '#00BA7C' : 'white'}
-              />
+              <div>
+                <Icon.Repost
+                  size="16"
+                  color={deleteRepost ? '#00BA7C' : 'white'}
+                />
+              </div>
             }
             counter={post?.counts?.reposts}
             onClick={(event) => {
@@ -181,13 +191,17 @@ export default function Actions({
           variant="custom"
           icon={
             loadingBookmarks ? (
-              <Icon.LoadingSpin size="16" />
+              <div>
+                <Icon.LoadingSpin size="16" />
+              </div>
             ) : (
-              <Icon.BookmarkSimple
-                size="16"
-                opacity={isBookmarked !== '' ? 1 : 0.2}
-                color={'white'}
-              />
+              <div>
+                <Icon.BookmarkSimple
+                  size="16"
+                  opacity={isBookmarked !== '' ? 1 : 0.2}
+                  color={'white'}
+                />
+              </div>
             )
           }
           onClick={() =>
@@ -213,7 +227,11 @@ export default function Actions({
             id="menu-btn"
             size="small"
             variant="custom"
-            icon={<Icon.DotsThreeOutline size="16" color="white" />}
+            icon={
+              <div>
+                <Icon.DotsThreeOutline size="16" color="white" />
+              </div>
+            }
             onClick={(event) => {
               event.stopPropagation();
               setShowMenu(true);

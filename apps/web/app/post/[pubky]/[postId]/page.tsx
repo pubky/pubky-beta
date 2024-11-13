@@ -1,6 +1,6 @@
 'use client';
 
-import { Content, Typography, Post as PostUI } from '@social/ui-shared';
+import { Content, Typography, Post as PostUI, Icon } from '@social/ui-shared';
 import { CreatePost, Header, Post as PostComponent } from '@/components';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '@/components/Skeletons';
@@ -70,6 +70,12 @@ function ValidPostContent({
   const router = useRouter();
   const { pubky } = usePubkyClientContext();
   const user = useUserProfile(data?.details?.author, pubky ?? '');
+  const lineHorizontalCSS = (
+    <div className="absolute ml-[9px]">
+      <Icon.LineHorizontal size="14" color="#262626" />
+    </div>
+  );
+
   return (
     <>
       {data?.relationships?.replied && (
@@ -145,14 +151,25 @@ function ValidPostContent({
               {windowWidth >= 1280 && <TagsLargeView post={data} />}
             </div>
           ) : (
-            <PostComponent
-              key={data?.details?.uri}
-              post={data}
-              size="full"
-              largeView={windowWidth >= 1280}
-              fullContent
-              line={Boolean(data?.relationships?.replied)}
-            />
+            <div className="flex items-center relative">
+              {data?.relationships?.replied && (
+                <>
+                  <div
+                    className={`ml-[9px] absolute border-l-2 h-[52%] -top-3 border-neutral-800`}
+                  />
+                  {lineHorizontalCSS}
+                </>
+              )}
+              <PostComponent
+                key={data?.details?.uri}
+                post={data}
+                size="full"
+                largeView={windowWidth >= 1280}
+                fullContent
+                className={data?.relationships?.replied ? 'ml-6' : ''}
+                //line={Boolean(data?.relationships?.replied)}
+              />
+            </div>
           )}
         </div>
       </div>
