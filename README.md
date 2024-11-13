@@ -26,7 +26,7 @@ Create a `.env` file at the root of the project and include the following enviro
 NEXT_PUBLIC_HOMESERVER=z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo
 NEXT_PUBLIC_PKARR_RELAY=http://localhost:7258
 NEXT_PUBLIC_NEXUS=http://localhost:8080
-TESTNET=FALSE
+NEXT_PUBLIC_TESTNET=true
 ```
 
 ### :earth_americas: Mainnet Configuration
