@@ -7,7 +7,6 @@ import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from '../components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
-import { TStatus } from '@/types';
 
 export default function Index() {
   const { pubky, putTimestampNotification } = usePubkyClientContext();
@@ -48,10 +47,8 @@ export default function Index() {
             />
             <Profile.Handle
               className="-mt-4"
-              username={user?.details?.name || 'Loading...'}
-              bio={user?.details?.bio || 'No bio.'}
+              profile={user}
               pubkey={pubky ? pubky : ''}
-              status={(user?.details?.status as TStatus) || 'noStatus'}
             />
           </div>
         </Content.Grid>

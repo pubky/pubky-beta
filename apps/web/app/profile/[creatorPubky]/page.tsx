@@ -85,11 +85,9 @@ export default function Index({
               />
               <ProfileCommon.Handle
                 className="-mt-4"
-                username={profile?.details?.name || 'Loading...'}
-                bio={profile?.details?.bio || 'No bio.'}
+                profile={profile}
                 pubkey={creatorPubky ?? ''}
                 creatorPubky={creatorPubky}
-                status={profile?.details?.status}
               />
             </div>
           </Content.Grid>

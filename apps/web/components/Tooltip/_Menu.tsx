@@ -34,6 +34,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   const tooltipMenuRef = useRef<HTMLDivElement>(null);
   const [followed, setFollowed] = useState(false);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
+  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [showModalEditPost, setShowModalEditPost] = useState(false);
   const [showModalEditArticle, setShowModalEditArticle] = useState(false);
@@ -62,6 +63,21 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       console.log('Failed to copy: ', error);
     }
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (author) {
+          setInitLoadingFollowed(false);
+          if (author?.relationship?.following) setFollowed(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [author]);
 
   const followUser = async () => {
     if (!post?.details?.author) return;
@@ -132,14 +148,12 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   const renderFollowButton = () => {
     if (post?.details?.author === pubky) return null;
 
-    {
-      /**if (initLoadingFollowed) {
+    if (initLoadingFollowed) {
       return (
         <Tooltip.Item icon={<Icon.LoadingSpin size="24" />}>
           Loading
         </Tooltip.Item>
       );
-    }*/
     }
 
     return followed ? (
