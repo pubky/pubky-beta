@@ -1,3 +1,5 @@
+'use client';
+
 import { Notifications } from '@/app/notifications/components';
 import { Skeleton } from '@/components';
 import { useFilterContext } from '@/contexts';
