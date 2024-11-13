@@ -10,7 +10,7 @@ import { useInfluencersUsers } from '@/hooks/useUser';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { Utils } from '@social/utils-shared';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface LoadingInfluencers {
   [pubky: string]: boolean;
@@ -29,6 +29,16 @@ export default function Index() {
   const [loadingInfluencers, setLoadingInfluencers] =
     useState<LoadingInfluencers>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
+
+  useEffect(() => {
+    if (influencers) {
+      const initialFollowedState = influencers.reduce((acc, profile) => {
+        acc[profile.details.id] = profile.relationship?.following || false;
+        return acc;
+      }, {} as { [pubky: string]: boolean });
+      setFollowed(initialFollowedState);
+    }
+  }, [influencers]);
 
   const handleAddProfileTag = async (creatorPubky: string, tag: string) => {
     const pubKeyToUse =
@@ -111,10 +121,7 @@ export default function Index() {
                 influencers.map((influencer) => {
                   const pubkeyUser =
                     pubky && influencer?.details?.id.includes(pubky);
-                  const isFollowed =
-                    followed[influencer?.details?.id] ||
-                    influencer?.relationship?.following ||
-                    false;
+                  const isFollowed = followed[influencer?.details?.id];
 
                   return (
                     <div key={influencer?.details?.id} className="w-full">

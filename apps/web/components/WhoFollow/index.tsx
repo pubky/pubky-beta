@@ -5,7 +5,7 @@ import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
 import { useMostFollowedUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
@@ -25,6 +25,19 @@ export default function WhoFollow() {
   }>({});
 
   if (isError) console.error(isError);
+
+  useEffect(() => {
+    if (recommendedProfiles) {
+      const initialFollowedState = recommendedProfiles.reduce(
+        (acc, profile) => {
+          acc[profile.details.id] = profile.relationship?.following || false;
+          return acc;
+        },
+        {} as { [pubky: string]: boolean }
+      );
+      setFollowedUser(initialFollowedState);
+    }
+  }, [recommendedProfiles]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -89,9 +102,7 @@ export default function WhoFollow() {
               const pubkeyUser =
                 pubky && recommendedProfile?.details?.id.includes(pubky);
               const isFollowed =
-                followedUser[recommendedProfile.details.id] ||
-                recommendedProfile?.relationship?.following ||
-                false;
+                followedUser[recommendedProfile.details.id];
 
               return (
                 <div key={index}>
