@@ -166,7 +166,7 @@ function ValidPostContent({
                 size="full"
                 largeView={windowWidth >= 1280}
                 fullContent
-                className="ml-6"
+                className={data?.relationships?.replied ? 'ml-6' : ''}
                 //line={Boolean(data?.relationships?.replied)}
               />
             </div>
