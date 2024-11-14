@@ -16,7 +16,6 @@ import { useRouter } from 'next/navigation';
 import { ImageByUri } from '../ImageByUri';
 import { UserTags, UserView } from '@/types/User';
 import { usePubkyClientContext } from '@/contexts';
-import { UseUserStreamFollowing } from '@/hooks/useUser';
 import { getUserProfile } from '@/services/userService';
 import { PostTag } from '@/types/Post';
 
@@ -49,10 +48,6 @@ export default function ProfileTag({
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
-  const { data: initFollowing, isError } = UseUserStreamFollowing(
-    pubky ?? '',
-    pubky ?? ''
-  );
   const [showEmojis, setShowEmojis] = useState(false);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
@@ -69,7 +64,10 @@ export default function ProfileTag({
 
   useEffect(() => {
     const fetchProfiles = async () => {
+      setInitLoadingFollowers(true);
+
       const profilesMap: { [key: string]: UserView } = {};
+      const followedMap: { [key: string]: boolean } = {};
       const taggers = selectedTag?.taggers || [];
 
       await Promise.all(
@@ -77,12 +75,21 @@ export default function ProfileTag({
           try {
             const profile = await getUserProfile(user, pubky ?? '');
             profilesMap[user] = profile;
+
+            if (profile.relationship?.following) {
+              followedMap[user] = true;
+            } else {
+              followedMap[user] = false;
+            }
           } catch (error) {
-            console.error(`Error ${user}`, error);
+            console.error(`Error fetching profile for user ${user}`, error);
           }
         })
       );
+
       setUserProfiles(profilesMap);
+      setFollowedUser((prevState) => ({ ...prevState, ...followedMap }));
+      setInitLoadingFollowers(false);
     };
 
     fetchProfiles();
@@ -115,46 +122,6 @@ export default function ProfileTag({
       fetchAllImages();
     }
   }, [profileTags]);
-
-  useEffect(() => {
-    async function fetchFollowing() {
-      try {
-        if (!pubkyUser) return;
-
-        if (isError) {
-          setInitLoadingFollowers(false);
-          return;
-        }
-
-        const following = initFollowing as UserView[];
-
-        if (following && following.length > 0) {
-          const followingIds = following?.map((user) =>
-            user?.details?.id.replace('pubky:', '')
-          );
-
-          const matchedFollowedIds = profileTags
-            .flatMap((tag) => tag?.taggers)
-            .filter((profile) => followingIds.includes(profile));
-          if (matchedFollowedIds.length > 0) {
-            setInitLoadingFollowers(false);
-            matchedFollowedIds.forEach((followed) => {
-              setFollowedUser((prevState) => ({
-                ...prevState,
-                [followed]: true,
-              }));
-            });
-          } else {
-            setInitLoadingFollowers(false);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    fetchFollowing();
-  }, [pubky, profileTags, initFollowing]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -476,7 +443,7 @@ export default function ProfileTag({
                       {selectedTag?.taggers?.map((user, userIndex) => {
                         const profile = userProfiles[user];
                         const pubkeyUser = pubky && user.includes(pubky);
-                        const isFollowed = followedUser[user] || false;
+                        const isFollowed = followedUser[user];
 
                         return (
                           <div
@@ -486,7 +453,8 @@ export default function ProfileTag({
                             <SideCard.User
                               uri={profile?.details?.id.replace('pubky:', '')}
                               uriImage={
-                                profile?.details?.image || '/images/webp/Userpic.webp'
+                                profile?.details?.image ||
+                                '/images/webp/Userpic.webp'
                               }
                               username={
                                 profile?.details?.name &&

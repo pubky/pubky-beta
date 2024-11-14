@@ -2,7 +2,7 @@ import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
-import { UseUserFollowing, useUserProfile } from '@/hooks/useUser';
+import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
@@ -15,8 +15,6 @@ export default function Participants({
   author: string;
 }) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { data: followingUsers } = UseUserFollowing(pubky ?? '');
-  //const { follow, unfollow, listFollowing } = useClientContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
   const [replies, setReplies] = useState<PostView[]>([]);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -43,42 +41,39 @@ export default function Participants({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repliesResponse]);
 
-  useEffect(() => {
-    async function fetchFollowing() {
-      try {
-        if (!pubky || !replies) return;
+  const fetchParticipants = async () => {
+    if (!Array.isArray(replies) || replies.length === 0) return;
+    setInitLoadingFollowers(true);
 
-        const following = followingUsers;
+    try {
+      const uniqueAuthors = [
+        ...new Set(replies.map((reply) => reply.details.author)),
+      ];
 
-        if (following) {
-          const followingIds = following.map((user) =>
-            user.replace('pubky:', '')
-          );
-          const matchedFollowedIds = Array.isArray(replies)
-            ? replies.filter((reply) =>
-                followingIds.includes(reply?.details?.author)
-              )
-            : [];
+      const profiles = await Promise.all(
+        uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? ''))
+      );
 
-          if (matchedFollowedIds.length > 0) {
-            setInitLoadingFollowers(false);
-            matchedFollowedIds.forEach((followed) => {
-              setFollowedUser((prevState) => ({
-                ...prevState,
-                [followed.details.author]: true,
-              }));
-            });
-          } else {
-            setInitLoadingFollowers(false);
-          }
+      const followedMap = profiles.reduce((acc, profile) => {
+        if (profile.relationship?.following) {
+          acc[profile.details.id] = true;
         }
-      } catch (error) {
-        console.log(error);
-      }
-    }
+        return acc;
+      }, {} as { [key: string]: boolean });
 
-    fetchFollowing();
-  }, [pubky, replies, followingUsers]);
+      setParticipants(profiles);
+
+      setFollowedUser((prevState) => ({ ...prevState, ...followedMap }));
+    } catch (error) {
+      console.error('Error fetching participants:', error);
+    } finally {
+      setInitLoadingFollowers(false);
+    }
+  };
+  useEffect(() => {
+    fetchParticipants();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [replies]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -132,8 +127,7 @@ export default function Participants({
 
   const getAuthorButton = () => {
     const authorId = authorData ? authorData.details.id : '';
-    const followed =
-      followedUser[authorId] || authorData?.relationship?.following || false;
+    const isFollowed = followedUser[authorId];
     if (pubky === authorId) {
       return (
         <Button.Medium
@@ -153,7 +147,7 @@ export default function Participants({
           Loading
         </Button.Medium>
       );
-    } else if (followed) {
+    } else if (isFollowed) {
       return (
         <Button.Medium
           onClick={() => unfollowUser(authorId)}
@@ -226,23 +220,6 @@ export default function Participants({
       );
     }
   };
-
-  const fetchParticipants = async () => {
-    if (!Array.isArray(replies) || replies.length === 0) return;
-
-    const uniqueAuthors = [
-      ...new Set(replies.map((reply) => reply.details.author)),
-    ];
-    const profiles = await Promise.all(
-      uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? ''))
-    );
-    setParticipants(profiles);
-  };
-
-  useEffect(() => {
-    fetchParticipants();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [replies]);
 
   return (
     <div className="hidden flex-col gap-6 xl:inline-flex col-span-1 self-start sticky top-[120px]">

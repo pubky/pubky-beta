@@ -4,7 +4,7 @@ import { ImageByUri } from '@/components/ImageByUri';
 import { Button, Icon, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingContacts } from '@/types';
 
 export default function Contact({
@@ -18,6 +18,16 @@ export default function Contact({
     usePubkyClientContext();
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
+
+  useEffect(() => {
+    if (contacts) {
+      const initialFollowedState = contacts.reduce((acc, profile) => {
+        acc[profile.details.id] = profile.relationship?.following || false;
+        return acc;
+      }, {} as { [pubky: string]: boolean });
+      setFollowed(initialFollowedState);
+    }
+  }, [contacts]);
 
   const handleAddProfileTag = async (creatorPubky: string, tag: string) => {
     const pubKeyToUse =
@@ -197,10 +207,7 @@ export default function Contact({
       {contacts &&
         contacts.map((contact) => {
           const pubkeyUser = pubky && contact?.details?.id.includes(pubky);
-          const isFollowed =
-            followed[contact?.details?.id] ||
-            contact?.relationship?.following ||
-            false;
+          const isFollowed = followed[contact?.details?.id];
 
           return (
             <div key={contact?.details?.id} className="w-full">

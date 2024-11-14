@@ -18,7 +18,6 @@ import { ImageByUri } from '../ImageByUri';
 import { usePubkyClientContext } from '@/contexts';
 import { PostTag, PostView } from '@/types/Post';
 import { getUserProfile } from '@/services/userService';
-import { UseUserStreamFollowing } from '@/hooks/useUser';
 import { UserView } from '@/types/User';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -48,10 +47,7 @@ export default function Tag({
   const modalTagRef = useRef<HTMLDivElement>(null);
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
-  const { data: initFollowing, isError } = UseUserStreamFollowing(
-    pubky ?? '',
-    pubky ?? ''
-  );
+
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
@@ -70,7 +66,10 @@ export default function Tag({
 
   useEffect(() => {
     const fetchProfiles = async () => {
+      setInitLoadingFollowers(true);
+
       const profilesMap: { [key: string]: UserView } = {};
+      const followedMap: { [key: string]: boolean } = {};
       const taggers = selectedTag?.taggers || [];
 
       await Promise.all(
@@ -78,12 +77,21 @@ export default function Tag({
           try {
             const profile = await getUserProfile(user, pubky ?? '');
             profilesMap[user] = profile;
+
+            if (profile.relationship?.following) {
+              followedMap[user] = true;
+            } else {
+              followedMap[user] = false;
+            }
           } catch (error) {
-            console.error(`Error ${user}`, error);
+            console.error(`Error fetching profile for user ${user}`, error);
           }
         })
       );
+
       setUserProfiles(profilesMap);
+      setFollowedUser((prevState) => ({ ...prevState, ...followedMap }));
+      setInitLoadingFollowers(false);
     };
 
     fetchProfiles();
@@ -120,47 +128,6 @@ export default function Tag({
       fetchAllImages();
     }
   }, [tags]);
-
-  useEffect(() => {
-    async function fetchFollowing() {
-      try {
-        if (!pubky) return;
-
-        if (isError) {
-          setInitLoadingFollowers(false);
-          return;
-        }
-
-        const following = initFollowing as UserView[];
-
-        if (following && following.length > 0) {
-          const followingIds = following?.map((user) =>
-            user?.details?.id.replace('pubky:', '')
-          );
-
-          const matchedFollowedIds = tags
-            .flatMap((tag) => tag?.taggers)
-            .filter((profile) => followingIds.includes(profile));
-
-          if (matchedFollowedIds.length > 0) {
-            setInitLoadingFollowers(false);
-            matchedFollowedIds.forEach((followed) => {
-              setFollowedUser((prevState) => ({
-                ...prevState,
-                [followed]: true,
-              }));
-            });
-          } else {
-            setInitLoadingFollowers(false);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    fetchFollowing();
-  }, [pubky, tags, initFollowing]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -424,9 +391,8 @@ export default function Tag({
                                 width={32}
                                 height={32}
                                 key={imageIndex}
-                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                                  imageIndex > 0 && '-ml-2'
-                                }`}
+                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${imageIndex > 0 && '-ml-2'
+                                  }`}
                                 alt={`tag-${imageIndex + 1}`}
                                 uri={String(image)}
                               />
@@ -504,7 +470,7 @@ export default function Tag({
                       {selectedTag?.taggers.map((user, userIndex) => {
                         const profile = userProfiles[user];
                         const pubkeyUser = pubky && user.includes(pubky);
-                        const isFollowed = followedUser[user] || false;
+                        const isFollowed = followedUser[user];
 
                         return (
                           <div
