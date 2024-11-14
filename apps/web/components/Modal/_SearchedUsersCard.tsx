@@ -36,9 +36,7 @@ export default function SearchedUsersCard({
   return (
     <div
       id="searched-users-card"
-      className={
-        'w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 p-4 flex flex-col gap-2 absolute bg-gradient-to-t from-[#07040a] to-[#1b1820]'
-      }
+      className="md:w-[300px] max-w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 p-4 flex flex-col gap-2 absolute bg-gradient-to-t from-[#07040a] to-[#1b1820]"
     >
       {userProfiles.map((data, index) => {
         const user = searchedUsers[index];
