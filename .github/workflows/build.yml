@@ -9,10 +9,9 @@ on:
     branches:
       - master
       - dev
-      - article
 
 jobs:
-  eslint:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,8 +24,11 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Create .env
+        run: cp .env.example .env
 
-      - name: Buuild prod
-        run: npx nx build web --prod
+      - name: Install dependencies
+        run: npm install --omit=dev
+
+      - name: Build prod
+        run: npm run build
