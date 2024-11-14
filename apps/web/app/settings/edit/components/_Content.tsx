@@ -312,10 +312,7 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Header
-        className="hidden w-[400px] xl:w-[260px] md:block"
-        title="Settings"
-      />
+      <Header className="hidden md:block" title="Settings" />
       <Content.Grid>
         <Input.Cursor
           id="edit-profile-name-input"
