@@ -35,7 +35,7 @@ const tabs = [
   {
     id: 3,
     key: 'replies',
-    icon: <Icon.FileText size="24" color="white" />,
+    icon: <Icon.File size="24" color="white" />,
     label: 'Replies',
   },
   {
