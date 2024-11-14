@@ -125,7 +125,7 @@ export default function UserInfo({
           >
             Loading
           </Button.Medium>
-        ) : followed || profile?.relationship?.following || false ? (
+        ) : followed ? (
           <Button.Medium
             onClick={loadingFollowed ? undefined : () => unfollowUser()}
             disabled={loadingFollowed}
