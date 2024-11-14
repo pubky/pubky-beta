@@ -45,6 +45,7 @@ export default function Replies({
 
     return replies
       .filter((reply) => !mutedUsers?.includes(reply?.details?.author))
+      .reverse()
       .map((reply) => (
         <div className="flex flex-col gap-3" key={reply?.details?.id}>
           <Post post={reply} size="full" />
@@ -108,6 +109,7 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
         .filter(
           (nestedReply) => !mutedUsers?.includes(nestedReply?.details?.author)
         )
+        .reverse()
         .map((nestedReply) => (
           <div className="flex flex-col gap-3" key={nestedReply?.details?.id}>
             <Post

@@ -1,5 +1,6 @@
 'use client';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
   PubkyClient,
@@ -19,7 +20,7 @@ import * as bip39 from 'bip39';
 import { getUserProfile } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
-const TESTNET = process.env.TESTNET;
+const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
 const DEFAULT_HTTP_RELAY =
   process.env.DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
 
@@ -139,6 +140,7 @@ export function PubkyClientWrapper({
 }: {
   children: React.ReactNode;
 }) {
+  const [queryClient] = useState(() => new QueryClient());
   const [wasmLoaded, setWasmLoaded] = useState(false);
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined
@@ -1542,7 +1544,7 @@ export function PubkyClientWrapper({
         importData,
       }}
     >
-      {children}
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </PubkyClientContext.Provider>
   );
 }

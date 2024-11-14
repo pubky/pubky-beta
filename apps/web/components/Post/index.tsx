@@ -367,7 +367,7 @@ export default function Post({
                     <div>
                       <div
                         className={`flex flex-col md:flex-row ${
-                          largeView ? 'gap-2' : 'justify-between'
+                          largeView ? '' : 'justify-between'
                         }`}
                       >
                         {!repostView && (

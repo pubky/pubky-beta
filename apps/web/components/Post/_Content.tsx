@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { Utils } from '@social/utils-shared';
@@ -244,13 +245,12 @@ export default function Content({
                       className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isImage ? (
-                    <Image
+                    <img
                       src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                       alt={`Fetched file ${index}`}
-                      layout="responsive"
                       width={800}
                       height={418}
-                      className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
+                      className="w-auto h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isPDF ? (
                     <div
