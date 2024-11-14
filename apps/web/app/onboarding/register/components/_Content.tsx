@@ -34,7 +34,9 @@ export default function Index() {
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState<File | string>('/images/webp/Userpic.webp');
+  const [image, setImage] = useState<File | string>(
+    '/images/webp/Userpic.webp'
+  );
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<Links[]>([
