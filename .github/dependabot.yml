@@ -48,7 +48,7 @@ updates:
       # # Optionally ignore Cypress if you prefer manual updates
       # - dependency-name: "cypress"
       # - dependency-name: "eslint-plugin-cypress"
-    reviewers:
-      - "your-github-username"
-    assignees:
-      - "your-github-username"
+    # reviewers:
+    #  - "your-github-username"
+    # assignees:
+    #  - "your-github-username"
