@@ -2,10 +2,12 @@
 
 import { usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
+import { Utils } from '@social/utils-shared';
 import React, { useState, useEffect } from 'react';
 
 function ProfileLink({ pk }: { pk: string }) {
   const { pubky } = usePubkyClientContext();
+  const [pkFound, setPkFound] = useState<string>('');
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -13,6 +15,7 @@ function ProfileLink({ pk }: { pk: string }) {
       const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
       if (pkMatch) {
         const pkFound = pkMatch[0];
+        setPkFound(pkFound);
         const result = await getUserProfile(
           pkFound.replace('pk:', '').trim(),
           pubky ?? ''
@@ -29,7 +32,7 @@ function ProfileLink({ pk }: { pk: string }) {
   return (
     <>
       <a className="text-[#C8FF00] break-all" href={`/profile/${pkPart}`}>
-        {userName ? `@${userName}` : 'Loading...'}
+        {userName ? `@${userName}` : Utils.minifyPubky(pkFound)}
       </a>
       {remainingPart}
     </>

@@ -113,7 +113,8 @@ function ValidPostContent({
                         variant="medium-bold"
                       >
                         {Utils.minifyText(
-                          user?.data?.details?.name ?? 'Loading...',
+                          user?.data?.details?.name ??
+                            Utils.minifyPubky(data?.details?.author),
                           24
                         )}
                       </Typography.Body>

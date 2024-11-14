@@ -74,7 +74,7 @@ export default function Feedback({
                 alt="user-image"
                 uri={profile?.image ?? '/images/webp/Userpic.webp'}
               />
-              {profile?.name && pubky ? (
+              {pubky ? (
                 <div
                   className="cursor-pointer flex gap-4 items-center"
                   onClick={() => router.push('/profile')}
@@ -83,7 +83,10 @@ export default function Feedback({
                     className={`hover:underline hover:decoration-solid`}
                     variant="medium-bold"
                   >
-                    {Utils.minifyText(profile?.name, 24)}
+                    {Utils.minifyText(
+                      profile?.name ?? Utils.minifyPubky(pubky),
+                      24
+                    )}
                   </Typography.Body>
                   <div className="flex gap-1 cursor-pointer">
                     {/**<Icon.CheckCircle size="16" color="gray" />*/}

@@ -34,7 +34,7 @@ export default function Index() {
   const { pubky, saveProfile, deleteFile } = usePubkyClientContext();
   const { data: profile } = useUserProfile(pubky ?? '', pubky ?? '');
   const { setContent, setShow } = useAlertContext();
-  const [handler, setHandler] = useState('Loading...');
+  const [handler, setHandler] = useState(pubky);
   const [name, setName] = useState('');
   const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);

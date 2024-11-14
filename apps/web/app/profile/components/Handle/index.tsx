@@ -29,7 +29,7 @@ export default function Handle({
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
-  const username = profile?.details?.name || 'Loading...';
+  const username = profile?.details?.name || Utils.minifyPubky(pubkey);
   const bio = profile?.details?.bio || 'No bio.';
   const status = profile?.details?.status || 'noStatus';
 
@@ -58,7 +58,7 @@ export default function Handle({
 
   return (
     <div {...rest} className={twMerge(rest.className)}>
-      {username && pubkey ? (
+      {pubkey ? (
         <>
           <div className="text-center lg:text-left flex flex-col gap-2 mb-4 md:mb-9">
             <Typography.Display

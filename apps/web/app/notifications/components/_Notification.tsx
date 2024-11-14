@@ -72,7 +72,7 @@ export default function Notification({
 }) {
   const router = useRouter();
   const { pubky } = usePubkyClientContext();
-  const [user, setUser] = useState<UserView>();
+  const [user, setUser] = useState<UserView | null | undefined>(null);
 
   async function fetchProfile(userId: string) {
     try {
@@ -212,10 +212,10 @@ export default function Notification({
                 className="hover:underline hover:decoration-solid"
                 variant="medium-bold"
               >
-                {user !== undefined
-                  ? user
-                    ? Utils.minifyText(user?.details?.name, 20)
-                    : 'Loading...'
+                {user === null
+                  ? Utils.minifyPubky(userId)
+                  : user
+                  ? Utils.minifyText(user?.details?.name, 20)
                   : '[DELETED]'}
               </Typography.Body>
             </Link>
