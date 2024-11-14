@@ -36,10 +36,12 @@ export default function Index() {
   const { setContent, setShow } = useAlertContext();
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
+  const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [image, setImage] = useState<File | string>(
     '/images/webp/Userpic.webp'
   );
+  const [bio, setBio] = useState('');
   const [prevImage, setPrevImage] = useState<File | string>('');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
@@ -126,39 +128,14 @@ export default function Index() {
       }
 
       const img = new Image();
-      img.src = URL.createObjectURL(file);
+      const newImageUrl = URL.createObjectURL(file);
+      img.src = newImageUrl;
 
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const size = Math.min(img.width, img.height);
-
-        canvas.width = size;
-        canvas.height = size;
-
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(
-            img,
-            (img.width - size) / 2,
-            (img.height - size) / 2,
-            size,
-            size,
-            0,
-            0,
-            size,
-            size
-          );
-
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const croppedFile = new File([blob], file.name, {
-                type: file.type,
-              });
-              setImage(croppedFile);
-            }
-          }, file.type);
-        }
+        setSelectedImage(img.src);
+        setShowModalCroppedImage(true);
       };
+      event.target.value = '';
     }
   };
 
@@ -285,6 +262,7 @@ export default function Index() {
       }
     } else {
       setImage('/images/webp/Userpic.webp');
+      setSelectedImage(null);
     }
   };
 
@@ -478,6 +456,14 @@ export default function Index() {
         modalLinkRef={modalLinkRef}
         onAddLink={handleAddLink}
       />
+      {showModalCroppedImage && selectedImage && (
+        <Modal.CroppedImage
+          showModalCroppedImage={showModalCroppedImage}
+          setShowModalCroppedImage={setShowModalCroppedImage}
+          image={selectedImage}
+          setImage={setImage}
+        />
+      )}
     </Content.Main>
   );
 }
