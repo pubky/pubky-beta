@@ -53,7 +53,10 @@ export default function Feedback() {
                   className="rounded-full w-8 h-8"
                 />
                 <Typography.Body variant="medium-bold">
-                  {Utils.minifyText(profile?.name ?? 'Loading...', 10)}
+                  {Utils.minifyText(
+                    profile?.name ?? Utils.minifyPubky(pubky ?? ''),
+                    10
+                  )}
                 </Typography.Body>
               </div>
               <div

@@ -7,6 +7,7 @@ import { CreatePost, Header, PostsLayout } from '@/components';
 import { Profile } from '../components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
 
 export default function Index() {
   const { pubky, putTimestampNotification } = usePubkyClientContext();
@@ -42,7 +43,7 @@ export default function Index() {
           />
           <div className="w-full rounded-2xl p-6 md:p-0 bg-white md:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-8 relative">
             <Profile.Avatar
-              username={user?.details?.name || 'Loading...'}
+              username={user?.details?.name || Utils.minifyPubky(pubky ?? '')}
               uriImage={user?.details?.image as string}
             />
             <Profile.Handle

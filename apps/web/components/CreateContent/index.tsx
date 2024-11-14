@@ -9,6 +9,7 @@ import { Section } from './Section';
 import { UserView } from '@/types/User';
 import { searchUsersByUsername } from '@/services/userService';
 import { twMerge } from 'tailwind-merge';
+import { Utils } from '@social/utils-shared';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -68,7 +69,7 @@ export default function CreateContent({
   setIsError,
   setShowModalPost,
 }: CreateContentProps) {
-  const { profile } = usePubkyClientContext();
+  const { profile, pubky } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
@@ -263,7 +264,7 @@ export default function CreateContent({
         <div className={variant ? 'flex w-full gap-4' : 'w-full'}>
           <Section.UserArea
             uriPic={(profile?.image as string) ?? '/images/webp/Userpic.webp'}
-            name={profile?.name ?? 'Loading...'}
+            name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
             largeView={largeView}
             variant={variant}
           />

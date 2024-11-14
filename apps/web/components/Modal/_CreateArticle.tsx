@@ -348,7 +348,7 @@ export default function CreateArticle({
                     uriPic={
                       (profile?.image as string) ?? '/images/webp/Userpic.webp'
                     }
-                    name={profile?.name ?? 'Loading...'}
+                    name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
                     largeView={!isMobile}
                   />
                   <div className="relative my-4">

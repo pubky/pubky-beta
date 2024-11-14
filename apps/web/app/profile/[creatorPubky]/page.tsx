@@ -10,6 +10,7 @@ import { Profile as ProfileCommon } from '../components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import Skeletons from '@/components/Skeletons';
+import { Utils } from '@social/utils-shared';
 
 export default function Index({
   params,
@@ -78,7 +79,9 @@ export default function Index({
             />
             <div className="w-full rounded-2xl p-6 md:p-0 bg-white md:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-8 relative">
               <ProfileCommon.Avatar
-                username={profile?.details?.name || 'Loading...'}
+                username={
+                  profile?.details?.name || Utils.minifyPubky(creatorPubky)
+                }
                 uriImage={
                   profile?.details?.image || '/images/webp/Userpic.webp'
                 }

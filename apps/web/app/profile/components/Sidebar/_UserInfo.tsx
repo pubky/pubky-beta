@@ -88,7 +88,7 @@ export default function UserInfo({
                 {Utils.minifyText(name, 10)}
               </Typography.Body>
               <Typography.Label className="text-[12px] text-opacity-50">
-                {pubkyUser ? Utils.minifyPubky(pubkyUser) : 'Loading...'}
+                {Utils.minifyPubky(pubkyUser)}
               </Typography.Label>
             </div>
           </div>

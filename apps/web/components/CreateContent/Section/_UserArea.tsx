@@ -35,7 +35,7 @@ export default function UserArea({
       />
       {!variant && (
         <>
-          {name && pubky ? (
+          {pubky ? (
             <div
               className="cursor-pointer flex gap-4 items-center"
               onClick={() => router.push('/profile')}
@@ -46,7 +46,7 @@ export default function UserArea({
                 } hover:underline hover:decoration-solid`}
                 variant="medium-bold"
               >
-                {Utils.minifyText(name, 24)}
+                {Utils.minifyText(name ?? Utils.minifyPubky(pubky), 24)}
               </Typography.Body>
               <div className="flex gap-1 cursor-pointer">
                 {/**<Icon.CheckCircle size="16" color="gray" />*/}
