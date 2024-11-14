@@ -1,0 +1,54 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 10
+    ignore:
+      # Ignore Nx core packages
+      # Must migrate manually periodically running `npx nx migrate latest`
+      - dependency-name: "nx"
+      - dependency-name: "@nx/*"
+      # # Ignore TypeScript and related tools
+      # - dependency-name: "typescript"
+      # - dependency-name: "tslib"
+      # - dependency-name: "ts-node"
+      # - dependency-name: "ts-jest"
+      # - dependency-name: "@typescript-eslint/*"
+      # - dependency-name: "@types/node"
+      # - dependency-name: "@types/react"
+      # - dependency-name: "@types/react-dom"
+      # # Ignore Build and Transpilation Tools
+      # - dependency-name: "@swc/*"
+      # - dependency-name: "@swc-node/*"
+      # - dependency-name: "babel-jest"
+      # - dependency-name: "postcss"
+      # - dependency-name: "autoprefixer"
+      # # Ignore Testing Frameworks
+      # - dependency-name: "jest"
+      # - dependency-name: "jest-*"
+      # - dependency-name: "jest-environment-*"
+      # - dependency-name: "@testing-library/*"
+      # # Ignore Linting Tools
+      # - dependency-name: "eslint"
+      # - dependency-name: "eslint-config-*"
+      # - dependency-name: "eslint-plugin-*"
+      # - dependency-name: "prettier"
+      # - dependency-name: "eslint-config-next"
+      # - dependency-name: "@nx/eslint"
+      # - dependency-name: "@nx/eslint-plugin"
+      # # Ignore Framework and Core Libraries
+      # - dependency-name: "react"
+      # - dependency-name: "react-dom"
+      # - dependency-name: "next"
+      # - dependency-name: "nextjs-toploader"
+      # - dependency-name: "tailwindcss"
+      # - dependency-name: "tailwind-merge"
+      # # Optionally ignore Cypress if you prefer manual updates
+      # - dependency-name: "cypress"
+      # - dependency-name: "eslint-plugin-cypress"
+    # reviewers:
+    #  - "your-github-username"
+    # assignees:
+    #  - "your-github-username"
