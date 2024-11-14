@@ -128,12 +128,14 @@ export default function Index() {
       }
 
       const img = new Image();
-      img.src = URL.createObjectURL(file);
+      const newImageUrl = URL.createObjectURL(file);
+      img.src = newImageUrl;
 
       img.onload = () => {
         setSelectedImage(img.src);
         setShowModalCroppedImage(true);
       };
+      event.target.value = '';
     }
   };
 
@@ -260,6 +262,7 @@ export default function Index() {
       }
     } else {
       setImage('/images/webp/Userpic.webp');
+      setSelectedImage(null);
     }
   };
 

@@ -1,6 +1,8 @@
 import { ImageByUri } from '@/components/ImageByUri';
+import Modal from '@/components/Modal';
 import { useAlertContext } from '@/contexts';
 import { Button, Card, Icon } from '@social/ui-shared';
+import { useState } from 'react';
 
 interface PicProps {
   image: File | string;
@@ -10,6 +12,8 @@ interface PicProps {
 
 export default function Pic({ image, setImage, loading }: PicProps) {
   const { setContent, setShow } = useAlertContext();
+  const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleUploadImage = () => {
     if (image === '/images/webp/Userpic.webp') {
@@ -19,8 +23,7 @@ export default function Pic({ image, setImage, loading }: PicProps) {
       }
     } else {
       setImage('/images/webp/Userpic.webp');
-      //const idImage = Utils.encodeImageId(image);
-      //if (idImage) deleteFile(idImage);
+      setSelectedImage(null);
     }
   };
 
@@ -37,39 +40,14 @@ export default function Pic({ image, setImage, loading }: PicProps) {
       }
 
       const img = new Image();
-      img.src = URL.createObjectURL(file);
+      const newImageUrl = URL.createObjectURL(file);
+      img.src = newImageUrl;
 
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const size = Math.min(img.width, img.height);
-
-        canvas.width = size;
-        canvas.height = size;
-
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(
-            img,
-            (img.width - size) / 2,
-            (img.height - size) / 2,
-            size,
-            size,
-            0,
-            0,
-            size,
-            size
-          );
-
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const croppedFile = new File([blob], file.name, {
-                type: file.type,
-              });
-              setImage(croppedFile);
-            }
-          }, file.type);
-        }
+        setSelectedImage(newImageUrl);
+        setShowModalCroppedImage(true);
       };
+      event.target.value = '';
     }
   };
 
@@ -96,36 +74,46 @@ export default function Pic({ image, setImage, loading }: PicProps) {
   };
 
   return (
-    <Card.Primary
-      className="justify-start z-10 w-full col-span-2"
-      title="Picture"
-    >
-      {image && (
-        <div className="relative flex items-center justify-center">
-          <ImageByUri
-            width={100}
-            height={100}
-            className="w-72 h-72 lg:w-48 lg:h-48 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
-            alt="user"
-            uri={image}
-          />
-          <Button.Transparent
-            icon={getButtonIconImage()}
-            onClick={handleUploadImage}
-            className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
-          >
-            {getButtonLabelImage()}
-          </Button.Transparent>
-        </div>
+    <>
+      <Card.Primary
+        className="justify-start z-10 w-full col-span-2"
+        title="Picture"
+      >
+        {image && (
+          <div className="relative flex items-center justify-center">
+            <ImageByUri
+              width={100}
+              height={100}
+              className="w-72 h-72 lg:w-48 lg:h-48 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
+              alt="user"
+              uri={image}
+            />
+            <Button.Transparent
+              icon={getButtonIconImage()}
+              onClick={handleUploadImage}
+              className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+            >
+              {getButtonLabelImage()}
+            </Button.Transparent>
+          </div>
+        )}
+        <input
+          id="fileInput"
+          type="file"
+          accept="image/*"
+          onChange={UploadPic}
+          className="hidden"
+          disabled={loading}
+        />
+      </Card.Primary>
+      {showModalCroppedImage && selectedImage && (
+        <Modal.CroppedImage
+          showModalCroppedImage={showModalCroppedImage}
+          setShowModalCroppedImage={setShowModalCroppedImage}
+          image={selectedImage}
+          setImage={setImage}
+        />
       )}
-      <input
-        id="fileInput"
-        type="file"
-        accept="image/*"
-        onChange={UploadPic}
-        className="hidden"
-        disabled={loading}
-      />
-    </Card.Primary>
+    </>
   );
 }
