@@ -7,7 +7,7 @@ import UserInfo from './_UserInfo';
 import BioSection from './_BioSection';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
-import { useUserProfile, useUserStream } from '@/hooks/useUser';
+import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 
@@ -24,13 +24,6 @@ export default function Sidebar({
   );
   if (isError) console.error(isError);
   const profile = data;
-  const { data: initFollowers } = useUserStream(
-    usePubky ?? '',
-    pubky,
-    0,
-    10,
-    'followers'
-  );
   const name = profile?.details?.name ?? '';
   const bio = profile?.details.bio || 'No bio.';
   const links = profile?.details?.links ?? [];
@@ -53,25 +46,9 @@ export default function Sidebar({
   useEffect(() => {
     async function fetchData() {
       try {
-        let pubkey = creatorPubky;
-
-        if (!pubkey) {
-          pubkey = pubky;
-        }
-
-        if (!pubkey) return;
-
-        const followersList = initFollowers;
-
-        if (followersList) {
+        if (profile) {
           //setInitLoadingFollowed(false);
-
-          followersList.forEach((user) => {
-            const uri = user?.details?.id.replace('pubky:', '');
-            if (uri === pubky) {
-              setFollowed(true);
-            }
-          });
+          if (profile?.relationship?.following) setFollowed(true);
         }
       } catch (error) {
         console.log(error);
@@ -79,55 +56,7 @@ export default function Sidebar({
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [followed, creatorPubky]);
-
-  {
-    /**
-
-  async function fetchProfile() {
-    try {
-      let profile = null;
-      if (creatorPubky) {
-        const userProfile = await getUser(creatorPubky);
-
-        if (userProfile) {
-          profile = userProfile?.profile;
-          setPubkyUser(creatorPubky);
-          setProfileTags(userProfile?.taggedAs);
-        }
-      } else {
-        if (!pubky) return;
-        const userProfile = await getUser(pubky);
-        setPubkyUser(pubky || '');
-
-        if (userProfile) {
-          profile = userProfile.profile;
-          setProfileTags(userProfile?.taggedAs);
-        }
-      }
-
-      if (profile) {
-        setName(profile?.name || '');
-        setBio(profile?.bio || 'No bio.');
-        setImage(profile?.image || '/images/webp/Userpic.webp');
-        setLinks(
-          profile?.links.map((link) => ({ title: link.title, url: link.url }))
-        );
-
-        setLoading(false);
-      }
-      setLoadingProfileTags(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky, getProfile, getUser, creatorPubky]);
-  */
-  }
+  }, [profile, creatorPubky]);
 
   const handleAddProfileTag = async (tag: string) => {
     const pubKeyToUse =

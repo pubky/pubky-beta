@@ -41,6 +41,15 @@ export default function Participants({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repliesResponse]);
 
+  useEffect(() => {
+    if (authorData) {
+      setFollowedUser((prevState) => ({
+        ...prevState,
+        [authorData.details.id]: authorData.relationship?.following || false,
+      }));
+    }
+  }, [authorData]);
+
   const fetchParticipants = async () => {
     if (!Array.isArray(replies) || replies.length === 0) return;
     setInitLoadingFollowers(true);
