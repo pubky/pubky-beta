@@ -4,6 +4,7 @@ import CreateArticle from './_CreateArticle';
 import CreateFeed from './_CreateFeed';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
+import CroppedImage from './_CroppedImage';
 import DeleteAccount from './_DeleteAccount';
 import DeletePost from './_DeletePost';
 import EditArticle from './_EditArticle';
@@ -27,6 +28,7 @@ export const Modal = {
   CreateFeed,
   CreatePost,
   CreateReply,
+  CroppedImage,
   DeleteAccount,
   DeletePost,
   EditArticle,

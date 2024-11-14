@@ -37,7 +37,11 @@ export default function Index() {
   const [handler, setHandler] = useState('Loading...');
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState<File | string>('/images/webp/Userpic.webp');
+  const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [image, setImage] = useState<File | string>(
+    '/images/webp/Userpic.webp'
+  );
   const [prevImage, setPrevImage] = useState<File | string>('');
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
@@ -80,7 +84,9 @@ export default function Index() {
           setName(userProfile?.details?.name);
           setBio(userProfile?.details?.bio || '');
           setImage(userProfile?.details?.image || '/images/webp/Userpic.webp');
-          setPrevImage(userProfile?.details?.image || '/images/webp/Userpic.webp');
+          setPrevImage(
+            userProfile?.details?.image || '/images/webp/Userpic.webp'
+          );
           if (
             userProfile?.details?.links &&
             userProfile?.details?.links?.length > 0
@@ -125,35 +131,8 @@ export default function Index() {
       img.src = URL.createObjectURL(file);
 
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const size = Math.min(img.width, img.height);
-
-        canvas.width = size;
-        canvas.height = size;
-
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(
-            img,
-            (img.width - size) / 2,
-            (img.height - size) / 2,
-            size,
-            size,
-            0,
-            0,
-            size,
-            size
-          );
-
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const croppedFile = new File([blob], file.name, {
-                type: file.type,
-              });
-              setImage(croppedFile);
-            }
-          }, file.type);
-        }
+        setSelectedImage(img.src);
+        setShowModalCroppedImage(true);
       };
     }
   };
@@ -477,6 +456,14 @@ export default function Index() {
         modalLinkRef={modalLinkRef}
         onAddLink={handleAddLink}
       />
+      {showModalCroppedImage && selectedImage && (
+        <Modal.CroppedImage
+          showModalCroppedImage={showModalCroppedImage}
+          setShowModalCroppedImage={setShowModalCroppedImage}
+          image={selectedImage}
+          setImage={setImage}
+        />
+      )}
     </Content.Main>
   );
 }
