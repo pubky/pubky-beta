@@ -4,11 +4,13 @@ FROM node:22.9.0-slim
 # Set working directory
 WORKDIR /usr/src/app
 
+# Declare build arguments
+ARG NEXT_PUBLIC_HOMESERVER
+ARG NEXT_PUBLIC_NEXUS
+ARG NEXT_PUBLIC_TESTNET
+
 # Copy pubky-app
 COPY . .
-
-# Use the NPM_TOKEN to access private packages
-RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 
 # Install dependencies
 RUN npm install --omit=dev
