@@ -21,10 +21,10 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   const usePubky = creatorPubky ?? pubky;
   const { data, isLoading, isError } =
     contacts === 'followers'
-      ? UseUserStreamFollowers(usePubky ?? '', pubky ?? '', 0, 10)
+      ? UseUserStreamFollowers(usePubky ?? '', pubky ?? '')
       : contacts === 'following'
-      ? UseUserStreamFollowing(usePubky ?? '', pubky ?? '', 0, 10)
-      : UseUserStreamFriends(usePubky ?? '', pubky ?? '', 0, 10);
+      ? UseUserStreamFollowing(usePubky ?? '', pubky ?? '')
+      : UseUserStreamFriends(usePubky ?? '', pubky ?? '');
   const contactUsers = data;
 
   if (isError) console.error(isError);
