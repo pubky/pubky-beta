@@ -7,7 +7,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Pubky | Unlock the web.</title>
-        <link rel="shortcut icon" href="/images/webp/pubky-logo.webp" />
+        <link rel="shortcut icon" href="/images/pubky-logo.svg" />
 
         <meta
           name="description"

@@ -20,7 +20,7 @@ export function getSeoMetadata({
     'pubky core',
     'web',
   ],
-  icon = '/images/webp/pubky-logo.webp',
+  icon = '/images/pubky-logo.svg',
   image = '/images/webp/pubky-seo.webp',
   url = 'https://synonym.to',
   twitterHandle = '@getpubky',
