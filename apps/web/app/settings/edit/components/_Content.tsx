@@ -31,16 +31,15 @@ const profileSchema = z.object({
 
 export default function Index() {
   const router = useRouter();
-  const { pubky, saveProfile, deleteFile } = usePubkyClientContext();
-  const { data: profile } = useUserProfile(pubky ?? '', pubky ?? '');
+  const { pubky, profile, saveProfile, deleteFile } = usePubkyClientContext();
+  const { data: profileUser } = useUserProfile(pubky ?? '', pubky ?? '');
   const { setContent, setShow } = useAlertContext();
   const [handler, setHandler] = useState(pubky);
   const [name, setName] = useState('');
   const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [image, setImage] = useState<File | string>(
-    '/images/webp/Userpic.webp'
-  );
+  const [image, setImage] = useState<File | string | undefined>(profile?.image);
+  const [generatedImage, setGeneratedImage] = useState<File | string>();
   const [bio, setBio] = useState('');
   const [prevImage, setPrevImage] = useState<File | string>('');
   const [showModalLink, setShowModalLink] = useState(false);
@@ -54,6 +53,29 @@ export default function Index() {
     name: '',
     bio: '',
   });
+
+  useEffect(() => {
+    if (!image) {
+      const fetchJdenticon = async () => {
+        const id = Math.random().toString(36).substring(2, 15);
+        const response = await fetch(`/api/generatejdenticon?id=${id}`);
+        const data = await response.json();
+        const blob = new Blob([new Uint8Array(data.image.data)], {
+          type: 'image/png',
+        });
+        const fileImage = new File([blob], 'generatedImage.png', {
+          type: 'image/png',
+        });
+        setGeneratedImage(fileImage);
+        setImage(fileImage);
+      };
+
+      fetchJdenticon();
+    } else if (image === profile?.image) {
+      setGeneratedImage(profile?.image);
+      setImage(profile?.image);
+    }
+  }, [profile?.image, image]);
 
   useEffect(() => {
     const handleClickOutsideModal = (event: MouseEvent) => {
@@ -78,7 +100,7 @@ export default function Index() {
 
     async function fetchData() {
       try {
-        const userProfile = profile;
+        const userProfile = profileUser;
 
         if (userProfile) {
           setName(userProfile?.details?.name);
@@ -237,7 +259,7 @@ export default function Index() {
         bio,
         image,
         links: linksObject,
-        status: profile?.details?.status,
+        status: profileUser?.details?.status,
       });
 
       if (
@@ -255,19 +277,19 @@ export default function Index() {
   };
 
   const handleUploadImage = () => {
-    if (image === '/images/webp/Userpic.webp') {
+    if (image === generatedImage) {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      setImage('/images/webp/Userpic.webp');
+      generatedImage && setImage(generatedImage);
       setSelectedImage(null);
     }
   };
 
   const getButtonIconImage = () => {
-    return image === '/images/webp/Userpic.webp' ? (
+    return image === generatedImage ? (
       <div>
         <Icon.File size="16" />
       </div>
@@ -279,11 +301,11 @@ export default function Index() {
   };
 
   const getButtonLabelImage = () => {
-    return image === '/images/webp/Userpic.webp' ? 'Choose file' : undefined;
+    return image === generatedImage ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/webp/Userpic.webp'
+    return image === generatedImage
       ? 'w-[120px] lg:w-[85%] xl:w-8/12'
       : 'w-[38px] h-[38px]';
   };

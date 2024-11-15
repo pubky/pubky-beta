@@ -27,16 +27,15 @@ const profileSchema = z.object({
 });
 
 export default function Index() {
-  const { pubky, saveProfile } = usePubkyClientContext();
+  const { pubky, profile, saveProfile } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
 
   const router = useRouter();
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState<File | string>(
-    '/images/webp/Userpic.webp'
-  );
+  const [image, setImage] = useState<File | string | undefined>('');
+  const [generatedImage, setGeneratedImage] = useState<File>();
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<Links[]>([
@@ -48,6 +47,26 @@ export default function Index() {
     name: '',
     bio: '',
   });
+
+  useEffect(() => {
+    if (!profile?.image && !image) {
+      const fetchJdenticon = async () => {
+        const id = pubky ?? Math.random().toString(36).substring(2, 15);
+        const response = await fetch(`/api/generatejdenticon?id=${id}`);
+        const data = await response.json();
+        const blob = new Blob([new Uint8Array(data.image.data)], {
+          type: 'image/png',
+        });
+        const fileImage = new File([blob], 'generatedImage.png', {
+          type: 'image/png',
+        });
+        setGeneratedImage(fileImage);
+        setImage(fileImage);
+      };
+
+      fetchJdenticon();
+    }
+  }, [profile?.image, image]);
 
   useEffect(() => {
     const handleClickOutsideModal = (event: MouseEvent) => {
@@ -212,7 +231,11 @@ export default function Index() {
           setShowModalLink={setShowModalLink}
           errors={errors}
         />
-        <Card.Pic image={image} setImage={setImage} />
+        <Card.Pic
+          image={image}
+          setImage={setImage}
+          defaultImage={generatedImage}
+        />
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-end items-center inline-flex">
         <Button.Large
