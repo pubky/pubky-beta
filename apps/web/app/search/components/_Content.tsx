@@ -264,6 +264,7 @@ const SearchContent = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setInputValue(e.target.value)
               }
+              maxLength={60}
               onKeyDown={handleKeyDown}
               placeholder={!searchTags.length ? 'Search' : ''}
               onClick={() => setSearchInputCard(true)}
