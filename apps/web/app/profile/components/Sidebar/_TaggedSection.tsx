@@ -75,7 +75,7 @@ export default function TaggedSection({
                       }
                     >
                       <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tag?.label.replace(' ', ''), 20)}
+                        {Utils.minifyText(tag?.label, 21)}
                         {/**<Typography.Caption
                           variant="bold"
                           className="text-opacity-30"

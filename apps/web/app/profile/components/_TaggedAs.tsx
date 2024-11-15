@@ -121,7 +121,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       }
                     >
                       <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tag?.label.replace(' ', ''), 20)}
+                        {Utils.minifyText(tag?.label, 21)}
                         <Typography.Caption
                           variant="bold"
                           className="text-opacity-60"

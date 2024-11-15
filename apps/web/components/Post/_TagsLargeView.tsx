@@ -237,7 +237,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     }
                   >
                     <div className="flex gap-2 items-center">
-                      {Utils.minifyText(tagObj?.label.replace(' ', ''), 14)}
+                      {Utils.minifyText(tagObj?.label, 13)}
                       {loadingTags === tagObj?.label ? (
                         <Icon.LoadingSpin size="16" />
                       ) : (
@@ -259,23 +259,25 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                 />
               </div>
-              {displayedImages.map((image, imageIndex) => (
-                <ImageByUri
-                  width={32}
-                  height={32}
-                  key={index}
-                  className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                    imageIndex > 0 && '-ml-2'
-                  }`}
-                  alt={`tag-${imageIndex + 1}`}
-                  uri={image}
-                />
-              ))}
-              {extraImagesCount > 0 && (
-                <PostUtil.Counter className="-ml-2">
-                  +{extraImagesCount}
-                </PostUtil.Counter>
-              )}
+              <div className="flex">
+                {displayedImages.map((image, imageIndex) => (
+                  <ImageByUri
+                    width={32}
+                    height={32}
+                    key={index}
+                    className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                      imageIndex > 0 && '-ml-2'
+                    }`}
+                    alt={`tag-${imageIndex + 1}`}
+                    uri={image}
+                  />
+                ))}
+                {extraImagesCount > 0 && (
+                  <PostUtil.Counter className="-ml-2">
+                    +{extraImagesCount}
+                  </PostUtil.Counter>
+                )}
+              </div>
             </PostUI.Footer>
           );
         })}

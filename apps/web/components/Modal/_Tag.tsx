@@ -358,10 +358,7 @@ export default function Tag({
                             color={Utils.generateRandomColor(tag?.label)}
                           >
                             <div className="flex gap-2 items-center">
-                              {Utils.minifyText(
-                                tag?.label.replace(' ', ''),
-                                20
-                              )}
+                              {Utils.minifyText(tag?.label, 21)}
                               <Typography.Caption
                                 variant="bold"
                                 className="text-opacity-60"
@@ -445,10 +442,7 @@ export default function Tag({
                             }
                           >
                             <div className="flex gap-2 items-center">
-                              {Utils.minifyText(
-                                selectedTag?.label.replace(' ', ''),
-                                20
-                              )}
+                              {Utils.minifyText(selectedTag?.label, 21)}
                               <Typography.Caption
                                 variant="bold"
                                 className="text-opacity-60"

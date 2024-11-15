@@ -203,10 +203,7 @@ export default function Index() {
                                   }
                                 >
                                   <div className="flex gap-2 items-center">
-                                    {Utils.minifyText(
-                                      tag?.label.replace(' ', ''),
-                                      10
-                                    )}
+                                    {Utils.minifyText(tag?.label, 10)}
                                     <Typography.Caption
                                       variant="bold"
                                       className="text-opacity-60"

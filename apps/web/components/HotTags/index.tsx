@@ -44,7 +44,7 @@ export default function HotTags() {
                   key={index}
                   onClick={() => router.push(`/search?tags=${tag?.label}`)}
                   rank={index + 1}
-                  tag={Utils.minifyText(tag?.label, 15)}
+                  tag={Utils.minifyText(tag?.label, 21)}
                   color={tag?.label && Utils.generateRandomColor(tag?.label)}
                   counter={`${tag?.post_count}`}
                   boxShadow={false}
