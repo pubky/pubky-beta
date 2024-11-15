@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../../components';
+import * as jdenticon from 'jdenticon';
 import { Card } from '../Card';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
@@ -52,16 +53,20 @@ export default function Index() {
     if (!profile?.image && !image) {
       const fetchJdenticon = async () => {
         const id = pubky ?? Math.random().toString(36).substring(2, 15);
-        const response = await fetch(`/api/generatejdenticon?id=${id}`);
-        const data = await response.json();
-        const blob = new Blob([new Uint8Array(data.image.data)], {
-          type: 'image/png',
-        });
-        const fileImage = new File([blob], 'generatedImage.png', {
-          type: 'image/png',
-        });
-        setGeneratedImage(fileImage);
-        setImage(fileImage);
+        const size = 200;
+        const svgCode = jdenticon.toSvg(id, size);
+
+        try {
+          const pngBlob = await Utils.svgToPng(svgCode, size);
+          const pngFile = new File([pngBlob], `${id}.png`, {
+            type: 'image/png',
+          });
+
+          setGeneratedImage(pngFile);
+          setImage(pngFile);
+        } catch (error) {
+          console.error('Error converting SVG to PNG:', error);
+        }
       };
 
       fetchJdenticon();

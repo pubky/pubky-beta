@@ -14,6 +14,7 @@ import {
 import { Header } from '@/components';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
+import * as jdenticon from 'jdenticon';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';
 import { ImageByUri } from '@/components/ImageByUri';
@@ -57,17 +58,21 @@ export default function Index() {
   useEffect(() => {
     if (!image) {
       const fetchJdenticon = async () => {
-        const id = Math.random().toString(36).substring(2, 15);
-        const response = await fetch(`/api/generatejdenticon?id=${id}`);
-        const data = await response.json();
-        const blob = new Blob([new Uint8Array(data.image.data)], {
-          type: 'image/png',
-        });
-        const fileImage = new File([blob], 'generatedImage.png', {
-          type: 'image/png',
-        });
-        setGeneratedImage(fileImage);
-        setImage(fileImage);
+        const id = pubky ?? Math.random().toString(36).substring(2, 15);
+        const size = 200;
+        const svgCode = jdenticon.toSvg(id, size);
+
+        try {
+          const pngBlob = await Utils.svgToPng(svgCode, size);
+          const pngFile = new File([pngBlob], `${id}.png`, {
+            type: 'image/png',
+          });
+
+          setGeneratedImage(pngFile);
+          setImage(pngFile);
+        } catch (error) {
+          console.error('Error converting SVG to PNG:', error);
+        }
       };
 
       fetchJdenticon();
