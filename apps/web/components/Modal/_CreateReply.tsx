@@ -130,6 +130,7 @@ export default function CreateReply({
             content={contentReply}
             setContent={setContentReply}
             isValidContent={isValidContent}
+            placeHolder={Utils.promptPlaceholder('reply')}
             setIsValidContent={setIsValidContent}
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}

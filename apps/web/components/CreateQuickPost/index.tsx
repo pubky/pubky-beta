@@ -101,6 +101,7 @@ export default function CreateQuickPost({
       largeView={largeView}
       handleSubmit={handleSubmit}
       content={contentPost}
+      placeHolder={Utils.promptPlaceholder('post')}
       setContent={setContentPost}
       setTextArea={setTextArea}
       isValidContent={isValidContent}

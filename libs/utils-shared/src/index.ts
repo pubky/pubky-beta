@@ -15,6 +15,7 @@ import storage from './lib/Storage/storage';
 import timeAgo from './lib/Helper/timeAgo';
 import uint8ArrayToBase64 from './lib/Conversion/uint8ArrayToBase64';
 import minifyText from './lib/Text/minifyText';
+import promptPlaceholder from './lib/Text/promptPlaceholder';
 import statusHelper from './lib/Helper/statusHelper';
 import { generateHashId } from './lib/Crypto/generateHashId';
 import { generateTimestampId } from './lib/Crypto/generateTimestampId';
@@ -36,6 +37,7 @@ export const Utils = {
   minifyPubky,
   storage,
   minifyText,
+  promptPlaceholder,
   timeAgo,
   statusHelper,
   copyToClipboard,
