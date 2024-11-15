@@ -156,6 +156,7 @@ export default function InputArea({
           autoFocus={autoFocus}
           value={content}
           isError={isError}
+          maxLength={maxLength}
         />
       ) : (
         <Input.CursorArea

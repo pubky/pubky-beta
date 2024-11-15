@@ -72,9 +72,11 @@ export default function FooterArea({
     const textAfterCursor = content.slice(cursorPosition);
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
 
-    setContent(newText);
-    setCursorPosition(cursorPosition + emojiObject.emoji.length);
-    setIsValidContent(Utils.isValidContent(newText));
+    if (newText.length <= maxLength) {
+      setContent(newText);
+      setCursorPosition(cursorPosition + emojiObject.emoji.length);
+      setIsValidContent(Utils.isValidContent(newText));
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {

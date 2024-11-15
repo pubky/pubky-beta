@@ -6,6 +6,7 @@ interface MarkdownEditorProps {
   autoFocus?: boolean;
   value: string;
   isError?: boolean;
+  maxLength?: number;
 }
 
 export const MarkdownEditorComponent = ({
@@ -14,6 +15,7 @@ export const MarkdownEditorComponent = ({
   placeHolder,
   autoFocus,
   isError,
+  maxLength,
   ...rest
 }: MarkdownEditorProps) => {
   const errorCSS = `text-red-500 text-sm mt-2`;
@@ -30,7 +32,7 @@ export const MarkdownEditorComponent = ({
         autoFocus={autoFocus}
         {...rest}
       />
-      {isError && <div className={errorCSS}>Max length 1000</div>}
+      {isError && <div className={errorCSS}>Max length {maxLength}</div>}
     </div>
   );
 };

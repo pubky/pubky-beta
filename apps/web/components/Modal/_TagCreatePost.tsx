@@ -119,7 +119,7 @@ export default function TagCreatePost({
       />
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <Modal.Header title="Tag" />
-        <Modal.Content className="flex flex-row w-[350px]">
+        <Modal.Content className="flex flex-row md:w-[350px]">
           <div className="w-full flex-col inline-flex">
             {/**  <div>
               <Typography.Label className="text-opacity-30 font-medium">
@@ -194,7 +194,7 @@ export default function TagCreatePost({
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.TWITTER}
                     onEmojiClick={(emojiObject) => {
-                      setTag(tag + emojiObject.emoji);
+                      if (tag.length < 20) setTag(tag + emojiObject.emoji);
                       setShowEmojis(false);
                     }}
                   />
