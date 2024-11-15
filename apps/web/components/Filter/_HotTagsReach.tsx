@@ -1,3 +1,5 @@
+'use client';
+
 import { Icon, SideCard } from '@social/ui-shared';
 import { useFilterContext } from '@/contexts';
 import { useEffect, useState } from 'react';
