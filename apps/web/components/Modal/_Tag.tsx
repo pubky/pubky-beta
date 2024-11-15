@@ -246,7 +246,7 @@ export default function Tag({
         setTag('');
         setTagsError(false);
       }}
-      className="w-full md:w-[792px] max-h-[600px] overflow-y-auto"
+      className="w-full md:w-[900px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
         id="close-btn"
@@ -270,7 +270,7 @@ export default function Tag({
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.TWITTER}
                     onEmojiClick={(emojiObject) => {
-                      setTag(tag + emojiObject.emoji);
+                      if (tag.length < 20) setTag(tag + emojiObject.emoji);
                       setShowEmojis(false);
                     }}
                   />
@@ -391,8 +391,9 @@ export default function Tag({
                                 width={32}
                                 height={32}
                                 key={imageIndex}
-                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${imageIndex > 0 && '-ml-2'
-                                  }`}
+                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                                  imageIndex > 0 && '-ml-2'
+                                }`}
                                 alt={`tag-${imageIndex + 1}`}
                                 uri={String(image)}
                               />
@@ -480,7 +481,8 @@ export default function Tag({
                             <SideCard.User
                               uri={profile?.details?.id.replace('pubky:', '')}
                               uriImage={
-                                profile?.details?.image || '/images/webp/Userpic.webp'
+                                profile?.details?.image ||
+                                '/images/webp/Userpic.webp'
                               }
                               username={
                                 profile?.details?.name &&
