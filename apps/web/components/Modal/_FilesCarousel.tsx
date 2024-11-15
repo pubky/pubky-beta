@@ -1,8 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useRef } from 'react';
 import { Icon, Modal, Typography } from '@social/ui-shared';
-import Image from 'next/image';
 import { FileContent } from '@/types/Post';
 
 interface FilesCarouselProps {
@@ -78,10 +78,9 @@ export default function FilesCarousel({
           className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
         />
       ) : (
-        <Image
+        <img
           src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
           alt={`Modal view ${currentFileIndex}`}
-          layout="responsive"
           width={800}
           height={418}
           className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
