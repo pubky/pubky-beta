@@ -78,7 +78,7 @@ export default function ReplyForm({
           content={contentReply}
           setContent={setContentReply}
           setTextArea={setTextArea}
-          placeHolder="What are your thoughts on this?"
+          placeHolder={Utils.promptPlaceholder('reply')}
           isValidContent={isValidContent}
           setIsValidContent={setIsValidContent}
           selectedFiles={selectedFiles}

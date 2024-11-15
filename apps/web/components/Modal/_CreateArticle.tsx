@@ -414,7 +414,7 @@ export default function CreateArticle({
                     //setTextArea={setTextArea}
                     largeView={!isMobile}
                     setIsValidContent={setIsValidContent}
-                    placeHolder="Write your article"
+                    placeHolder={Utils.promptPlaceholder('article')}
                     //setFilePreviews={setFilePreviews}
                     loading={sendingArticle}
                     markdown

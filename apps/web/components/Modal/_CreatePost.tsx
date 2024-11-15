@@ -86,6 +86,7 @@ export default function CreatePost({
               handleSubmit={handleSubmit}
               content={contentPost}
               setContent={setContentPost}
+              placeHolder={Utils.promptPlaceholder('post')}
               isValidContent={isValidContent}
               setIsValidContent={setIsValidContent}
               selectedFiles={selectedFiles}

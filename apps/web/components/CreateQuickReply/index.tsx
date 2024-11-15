@@ -67,7 +67,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
         isValidContent={isValidContent}
         selectedFiles={selectedFiles}
         setSelectedFiles={setSelectedFiles}
-        placeHolder="What are your thoughts on this?"
+        placeHolder={Utils.promptPlaceholder('reply')}
         arrayTags={arrayTags}
         setArrayTags={setArrayTags}
         setIsValidContent={setIsValidContent}

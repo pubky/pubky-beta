@@ -53,7 +53,7 @@ export default function CreateContent({
   button,
   isValidContent,
   setIsValidContent,
-  placeHolder = "What's on your mind?",
+  placeHolder,
   selectedFiles,
   setSelectedFiles,
   arrayTags,

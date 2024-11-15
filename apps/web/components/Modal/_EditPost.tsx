@@ -93,6 +93,7 @@ export default function EditPost({
               id="new-post-create-content"
               handleSubmit={handleSubmit}
               content={contentEditPost}
+              placeHolder="Edit post"
               setContent={setContentEditPost}
               isValidContent={isValidContent}
               setIsValidContent={setIsValidContent}
