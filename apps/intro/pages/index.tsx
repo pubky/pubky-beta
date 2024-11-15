@@ -19,7 +19,7 @@ export default function Index() {
   }, []);
 
   return (
-    <Content.Main>
+    <Content.Main shadowBottom>
       <Header.Root className="backdrop-blur-[0px]">
         <Header.Logo link="/" />
         <div className="h-6 justify-start items-start gap-6 inline-flex">

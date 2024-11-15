@@ -354,7 +354,7 @@ export default function Intro() {
   ];
 
   return (
-    <Content.Main className="pb-0 md:pt-[150px] pt-[120px]">
+    <Content.Main className="pb-0 md:pt-[150px] pt-[120px]" shadowBottom>
       <Header.Root className="backdrop-blur-[0px]">
         <div className="flex gap-3 lg:gap-6 items-center lg:items-start">
           <Header.Logo link="/" />

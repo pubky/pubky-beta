@@ -65,7 +65,7 @@ export default function Index() {
   };
 
   return (
-    <Content.Main>
+    <Content.Main shadowBottom>
       <Header.Root className="backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
         <div className="flex gap-12 items-center">
