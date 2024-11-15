@@ -24,7 +24,7 @@ export default function CreateQuickPost({
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
-  console.log("hey")
+
   const handleSubmit = async (content: string) => {
     if (sendingPost) {
       return;

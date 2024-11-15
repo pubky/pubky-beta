@@ -9,14 +9,13 @@ export const metadata = getSeoMetadata({
 });
 
 export default function Index() {
-  console.log("here server side")
   return (
-  <Content.Main>
+    <Content.Main>
       <Components.Header className="hidden md:block" title="Feed" />
       <Components.RemindBackup />
       <HomePage.Content />
       <Components.CreatePost />
       <Components.FooterMobile title="Feed" />
-  </Content.Main>
-  )
+    </Content.Main>
+  );
 }
