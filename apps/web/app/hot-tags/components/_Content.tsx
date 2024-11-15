@@ -53,7 +53,7 @@ export default function Index() {
                     boxShadow={false}
                     clicked={false}
                   >
-                    {tag?.label}
+                    {Utils.minifyText(tag?.label, 21)}
                   </PostUtil.Tag>
                 </div>
                 <Typography.Body className="text-opacity-80" variant="small">
