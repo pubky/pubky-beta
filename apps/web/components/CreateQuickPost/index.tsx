@@ -5,6 +5,7 @@ import CreateContent from '../CreateContent';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
+import { PostView } from '@/types/Post';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -44,10 +45,10 @@ export default function CreateQuickPost({
           await createTag(pubky ?? '', postId, tag);
         }
 
-        const postWithFullDetails = {
+        const postWithFullDetails: PostView = {
           details: {
             content: newPost.details.content || '',
-            id: newPost.uri || '',
+            id: postId,
             indexed_at: Date.now(),
             author: pubky ?? '',
             kind: newPost.details.kind || 'Short',
@@ -63,19 +64,21 @@ export default function CreateQuickPost({
             label: tag,
             taggers: [],
             taggers_count: 0,
-          })), // Ensure tags are of type PostTag[]
+          })),
           relationships: {
             replied: undefined,
             reposted: undefined,
             mentioned: [],
           },
           bookmark: undefined,
-          files: [],
         };
 
         if (!timeline) return;
 
-        const timelineCopy = [postWithFullDetails, ...timeline];
+        const timelineCopy = {
+          ...timeline,
+          [postId]: postWithFullDetails,
+        };
 
         setTimeline(timelineCopy);
         setContent('Post created!');

@@ -100,8 +100,8 @@ type PubkyClientContextType = {
   getRecoveryFile: (password: string) => Promise<any | null>;
   storeProfile: (userProfile: UserDetails) => Promise<boolean>;
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
-  timeline: PostView[] | undefined;
-  setTimeline: (timeline: PostView[]) => void;
+  timeline: TimelineState | undefined;
+  setTimeline: (timeline: TimelineState) => void;
   setSearchTags: (value: string[]) => any;
   searchTags: string[];
   repliesArray: PostView[] | undefined;
@@ -133,6 +133,10 @@ type PubkyClientContextType = {
   ) => Promise<boolean>;
 };
 
+interface TimelineState {
+  [key: string]: PostView; // ou defina o tipo específico do post
+}
+
 const PubkyClientContext = createContext({} as PubkyClientContextType);
 
 export function PubkyClientWrapper({
@@ -154,7 +158,9 @@ export function PubkyClientWrapper({
   const [profile, setProfile] = useState<PubkyAppUser | undefined>(
     (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined
   );
-  const [timeline, setTimeline] = useState<PostView[]>([]);
+  const [timeline, setTimeline] = useState<TimelineState | undefined>(
+    undefined
+  );
   const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [repliesArray, setRepliesArray] = useState<PostView[]>(
