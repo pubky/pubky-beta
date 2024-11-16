@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button, Icon } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
+import * as jdenticon from 'jdenticon';
 import { usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
+import { Utils } from '@social/utils-shared';
 
 export default function Index() {
   const [isMobile, setIsMobile] = useState(false);
@@ -45,21 +47,26 @@ export default function Index() {
     try {
       setLoading(true);
 
+      const id = Math.random().toString(36).substring(2, 15);
+      const size = 200;
+      const svgCode = jdenticon.toSvg(id, size);
+      const pngBlob = await Utils.svgToPng(svgCode, size);
+      const pngFile = new File([pngBlob], `${id}.png`, { type: 'image/png' });
+
       const signUpResponse = await signUp({
         name: '',
         bio: '',
-        image: '/images/webp/Userpic.webp',
+        image: pngFile instanceof File ? pngFile : undefined,
         links: links,
       });
 
       if (!signUpResponse) {
         throw new Error('Something went wrong');
       }
-
-      router.push('/home');
     } catch (error) {
       console.log(error);
     } finally {
+      router.push('/home');
       setLoading(false);
     }
   };
