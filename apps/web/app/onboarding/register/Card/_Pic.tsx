@@ -5,23 +5,24 @@ import { Button, Card, Icon } from '@social/ui-shared';
 import { useState } from 'react';
 
 interface PicProps {
-  image: File | string;
-  setImage: React.Dispatch<React.SetStateAction<File | string>>;
+  image: File | string | undefined;
+  setImage: React.Dispatch<React.SetStateAction<File | string | undefined>>;
+  defaultImage: File | undefined;
 }
 
-export default function Pic({ image, setImage }: PicProps) {
+export default function Pic({ image, setImage, defaultImage }: PicProps) {
   const { setContent, setShow } = useAlertContext();
   const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleUploadImage = () => {
-    if (image === '/images/webp/Userpic.webp') {
+    if (image === defaultImage) {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      setImage('/images/webp/Userpic.webp');
+      defaultImage && setImage(defaultImage);
       setSelectedImage(null);
     }
   };
@@ -51,7 +52,7 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const getButtonIconImage = () => {
-    return image === '/images/webp/Userpic.webp' ? (
+    return image === defaultImage ? (
       <div>
         <Icon.File size="16" />
       </div>
@@ -63,11 +64,11 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const getButtonLabelImage = () => {
-    return image === '/images/webp/Userpic.webp' ? 'Choose file' : undefined;
+    return image === defaultImage ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/webp/Userpic.webp'
+    return image === defaultImage
       ? 'w-[120px] lg:w-[85%] xl:w-8/12'
       : 'w-[38px] h-[38px]';
   };

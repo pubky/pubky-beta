@@ -12,8 +12,8 @@ interface CroppedArea {
 interface CroppedImageProps {
   showModalCroppedImage: boolean;
   setShowModalCroppedImage: React.Dispatch<React.SetStateAction<boolean>>;
-  image: string;
-  setImage: React.Dispatch<React.SetStateAction<File | string>>;
+  image: string | undefined;
+  setImage: React.Dispatch<React.SetStateAction<File | string | undefined>>;
 }
 
 export default function CroppedImage({
@@ -54,7 +54,7 @@ export default function CroppedImage({
   const getCroppedImg = useCallback(async () => {
     const canvas = document.createElement('canvas');
     const img = new Image();
-    img.src = image;
+    img.src = String(image);
 
     await new Promise((resolve) => {
       img.onload = resolve;

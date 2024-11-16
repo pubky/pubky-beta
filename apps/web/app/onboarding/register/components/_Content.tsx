@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../../components';
+import * as jdenticon from 'jdenticon';
 import { Card } from '../Card';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
@@ -27,16 +28,15 @@ const profileSchema = z.object({
 });
 
 export default function Index() {
-  const { pubky, saveProfile } = usePubkyClientContext();
+  const { pubky, profile, saveProfile } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
 
   const router = useRouter();
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState<File | string>(
-    '/images/webp/Userpic.webp'
-  );
+  const [image, setImage] = useState<File | string | undefined>('');
+  const [generatedImage, setGeneratedImage] = useState<File>();
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<Links[]>([
@@ -48,6 +48,30 @@ export default function Index() {
     name: '',
     bio: '',
   });
+
+  useEffect(() => {
+    if (!profile?.image && !image) {
+      const fetchJdenticon = async () => {
+        const id = pubky ?? Math.random().toString(36).substring(2, 15);
+        const size = 200;
+        const svgCode = jdenticon.toSvg(id, size);
+
+        try {
+          const pngBlob = await Utils.svgToPng(svgCode, size);
+          const pngFile = new File([pngBlob], `${id}.png`, {
+            type: 'image/png',
+          });
+
+          setGeneratedImage(pngFile);
+          setImage(pngFile);
+        } catch (error) {
+          console.error('Error converting SVG to PNG:', error);
+        }
+      };
+
+      fetchJdenticon();
+    }
+  }, [profile?.image, image]);
 
   useEffect(() => {
     const handleClickOutsideModal = (event: MouseEvent) => {
@@ -212,7 +236,11 @@ export default function Index() {
           setShowModalLink={setShowModalLink}
           errors={errors}
         />
-        <Card.Pic image={image} setImage={setImage} />
+        <Card.Pic
+          image={image}
+          setImage={setImage}
+          defaultImage={generatedImage}
+        />
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-end items-center inline-flex">
         <Button.Large

@@ -1,4 +1,5 @@
 import base64ToUint8Array from './lib/Conversion/base64ToUint8Array';
+import svgToPng from './lib/Conversion/svgToPng';
 import cleanText from './lib/Text/cleanText';
 import copyToClipboard from './lib/Helper/copyToClipboard';
 import extractHashtags from './lib/Helper/extractHashtags';
@@ -24,6 +25,7 @@ export const Utils = {
   generateTimestampId,
   generateHashId,
   base64ToUint8Array,
+  svgToPng,
   cleanText,
   decodePostUri,
   encodeImageId,

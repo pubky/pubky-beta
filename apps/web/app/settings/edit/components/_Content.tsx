@@ -14,6 +14,7 @@ import {
 import { Header } from '@/components';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
+import * as jdenticon from 'jdenticon';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';
 import { ImageByUri } from '@/components/ImageByUri';
@@ -31,16 +32,15 @@ const profileSchema = z.object({
 
 export default function Index() {
   const router = useRouter();
-  const { pubky, saveProfile, deleteFile } = usePubkyClientContext();
-  const { data: profile } = useUserProfile(pubky ?? '', pubky ?? '');
+  const { pubky, profile, saveProfile, deleteFile } = usePubkyClientContext();
+  const { data: profileUser } = useUserProfile(pubky ?? '', pubky ?? '');
   const { setContent, setShow } = useAlertContext();
   const [handler, setHandler] = useState(pubky);
   const [name, setName] = useState('');
   const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [image, setImage] = useState<File | string>(
-    '/images/webp/Userpic.webp'
-  );
+  const [image, setImage] = useState<File | string | undefined>(profile?.image);
+  const [generatedImage, setGeneratedImage] = useState<File | string>();
   const [bio, setBio] = useState('');
   const [prevImage, setPrevImage] = useState<File | string>('');
   const [showModalLink, setShowModalLink] = useState(false);
@@ -54,6 +54,33 @@ export default function Index() {
     name: '',
     bio: '',
   });
+
+  useEffect(() => {
+    if (!image) {
+      const fetchJdenticon = async () => {
+        const id = pubky ?? Math.random().toString(36).substring(2, 15);
+        const size = 200;
+        const svgCode = jdenticon.toSvg(id, size);
+
+        try {
+          const pngBlob = await Utils.svgToPng(svgCode, size);
+          const pngFile = new File([pngBlob], `${id}.png`, {
+            type: 'image/png',
+          });
+
+          setGeneratedImage(pngFile);
+          setImage(pngFile);
+        } catch (error) {
+          console.error('Error converting SVG to PNG:', error);
+        }
+      };
+
+      fetchJdenticon();
+    } else if (image === profile?.image) {
+      setGeneratedImage(profile?.image);
+      setImage(profile?.image);
+    }
+  }, [profile?.image, image]);
 
   useEffect(() => {
     const handleClickOutsideModal = (event: MouseEvent) => {
@@ -78,7 +105,7 @@ export default function Index() {
 
     async function fetchData() {
       try {
-        const userProfile = profile;
+        const userProfile = profileUser;
 
         if (userProfile) {
           setName(userProfile?.details?.name);
@@ -237,7 +264,7 @@ export default function Index() {
         bio,
         image,
         links: linksObject,
-        status: profile?.details?.status,
+        status: profileUser?.details?.status,
       });
 
       if (
@@ -255,19 +282,19 @@ export default function Index() {
   };
 
   const handleUploadImage = () => {
-    if (image === '/images/webp/Userpic.webp') {
+    if (image === generatedImage) {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      setImage('/images/webp/Userpic.webp');
+      generatedImage && setImage(generatedImage);
       setSelectedImage(null);
     }
   };
 
   const getButtonIconImage = () => {
-    return image === '/images/webp/Userpic.webp' ? (
+    return image === generatedImage ? (
       <div>
         <Icon.File size="16" />
       </div>
@@ -279,11 +306,11 @@ export default function Index() {
   };
 
   const getButtonLabelImage = () => {
-    return image === '/images/webp/Userpic.webp' ? 'Choose file' : undefined;
+    return image === generatedImage ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/webp/Userpic.webp'
+    return image === generatedImage
       ? 'w-[120px] lg:w-[85%] xl:w-8/12'
       : 'w-[38px] h-[38px]';
   };
