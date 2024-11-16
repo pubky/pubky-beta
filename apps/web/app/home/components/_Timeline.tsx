@@ -11,26 +11,53 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { PostReplies } from './_PostReplies';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
+// Types
 interface TimelineProps {
   selectedFeed: ICustomFeed | undefined;
 }
 
-export const Timeline = ({ selectedFeed }: TimelineProps) => {
-  const limit = 10;
-  const isMobile = useIsMobile();
-  const [skip, setSkip] = useState(0);
-  const [tagsFeed, setTagsFeed] = useState<string[]>();
+// Helper components
+const EmptyTimeline = () => (
+  <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+    <Typography.H2 className="font-normal text-opacity-50">
+      No posts
+    </Typography.H2>
+  </div>
+);
 
-  const { reach, layout, sort, setReach, setLayout, setSort } = useFilterContext();
+const LoadingSkeleton = () => (
+  <div className="mt-4">
+    <Components.Skeleton.Simple />
+  </div>
+);
+
+const TimelinePost = ({ post, isMobile, layout }) => (
+  <div>
+    <Components.Post
+      post={post}
+      largeView={!isMobile && layout === 'wide'}
+      line={Boolean(post?.relationships?.replied)}
+    />
+    {post?.counts?.replies > 0 && (
+      <PostReplies isMobile={isMobile} homeView post={post} layout={layout} />
+    )}
+  </div>
+);
+
+// Custom hook to manage filters
+const useTimelineFilters = (selectedFeed) => {
+  const { reach, layout, sort, setReach, setLayout, setSort } =
+    useFilterContext();
+  const [tagsFeed, setTagsFeed] = useState<string[]>();
 
   useEffect(() => {
     if (selectedFeed) {
       setReach(selectedFeed.reach);
       setLayout(selectedFeed.layout);
       setSort(selectedFeed.sort);
-      selectedFeed?.tags &&
-        selectedFeed?.tags?.length > 0 &&
-        setTagsFeed(selectedFeed?.tags);
+      if (selectedFeed?.tags?.length > 0) {
+        setTagsFeed(selectedFeed.tags);
+      }
     } else {
       setReach('all');
       setLayout('columns');
@@ -39,7 +66,11 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     }
   }, [selectedFeed]);
 
-  const { pubky, timeline, setTimeline } = usePubkyClientContext();
+  return { reach, layout, sort, tagsFeed };
+};
+
+const useTimelinePosts = (pubky, skip, limit, reach, sort, tagsFeed) => {
+  const { timeline, setTimeline } = usePubkyClientContext();
   const { data, isLoading, isError } = usePostStream(
     pubky,
     skip,
@@ -48,75 +79,76 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     sort,
     tagsFeed && tagsFeed?.length > 0 ? tagsFeed : undefined
   );
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
-
-  useEffect(() => {
-    setSkip(0);
-    setTimeline([]);
-  }, [reach]);
 
   useEffect(() => {
     if (!isLoading && data) {
       if (skip === 0) {
-        setTimeline(data);
+        const timelineObj = data.reduce((acc, post) => {
+          acc[post.details.id] = post;
+          return acc;
+        }, {});
+        setTimeline(timelineObj);
         return;
       }
-
       if (!timeline) return;
 
-      const timelineCopy = [...timeline];
-      setTimeline([...timelineCopy, ...data]);
+      const newPosts = data.reduce(
+        (acc, post) => {
+          acc[post.details.id] = post;
+          return acc;
+        },
+        { ...timeline }
+      );
+      setTimeline(newPosts);
     }
   }, [data, isLoading, reach]);
 
+  return { timeline, isLoading, isError };
+};
+
+export const Timeline = ({ selectedFeed }: TimelineProps) => {
+  const limit = 10;
+  const isMobile = useIsMobile();
+  const [skip, setSkip] = useState(0);
+  const { pubky } = usePubkyClientContext();
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
+
+  const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
+  const { timeline, isLoading, isError } = useTimelinePosts(
+    pubky,
+    skip,
+    limit,
+    reach,
+    sort,
+    tagsFeed
+  );
+
   const fetchMorePosts = () => {
     if (isError) return;
-    const newSkip = skip + limit;
-    setSkip(newSkip);
+    setSkip(skip + limit);
   };
 
   const loader = useInfiniteScroll(fetchMorePosts, isLoading);
 
+  const filteredPosts = timeline
+    ? Object.values(timeline).filter(
+        (post) => !mutedUsers?.includes(post?.details?.author)
+      )
+    : [];
+
   return (
     <div className="flex-col inline-flex gap-3">
-      {timeline && timeline?.length > 0
-        ? timeline
-            .filter((post) => !mutedUsers?.includes(post?.details?.author))
-            .map((post, index) => (
-              <Fragment key={`${index}-${post.details.id}`}>
-                {post?.details?.content === '[DELETED]' ? (
-                  ''
-                ) : (
-                  <div>
-                    <Components.Post
-                      post={post}
-                      largeView={!isMobile && layout === 'wide'}
-                      line={Boolean(post?.relationships?.replied)}
-                    />
-                    {post?.counts?.replies > 0 && (
-                      <PostReplies
-                        isMobile={isMobile}
-                        homeView
-                        post={post}
-                        layout={layout}
-                      />
-                    )}
-                  </div>
-                )}
-              </Fragment>
-            ))
-        : !isLoading && (
-            <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-              <Typography.H2 className="font-normal text-opacity-50">
-                No posts
-              </Typography.H2>
-            </div>
-          )}
-      {isLoading && !isError && (
-        <div className="mt-4">
-          <Components.Skeleton.Simple />
-        </div>
-      )}
+      {timeline && Object.keys(timeline).length > 0
+        ? filteredPosts.map((post) => (
+            <Fragment key={post.details.id}>
+              {post?.details?.content !== '[DELETED]' && (
+                <TimelinePost post={post} isMobile={isMobile} layout={layout} />
+              )}
+            </Fragment>
+          ))
+        : !isLoading && <EmptyTimeline />}
+
+      {isLoading && !isError && <LoadingSkeleton />}
       <div ref={loader} />
     </div>
   );
