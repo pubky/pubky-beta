@@ -89,7 +89,7 @@ export default function Handle({
               setLoadingFollowed={setLoadingFollowed}
               setFollowed={setFollowed}
               setShowProfileMenu={setShowProfileMenu}
-              username={username as string}
+              profile={profile}
             />
             <Status creatorPubky={creatorPubky} status={status} />
           </div>

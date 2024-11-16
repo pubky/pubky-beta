@@ -16,7 +16,6 @@ export default function NotificationTagGroup({
   notifications,
 }: NotificationTagGroupProps) {
   const router = useRouter();
-  //const { getUser } = useClientContext();
   const [user, setUser] = useState<IUserProfile | null>(null);
 
   useEffect(() => {

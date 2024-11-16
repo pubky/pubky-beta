@@ -17,7 +17,7 @@ export default function MutedUsers() {
     data: mutedUsers,
     isLoading,
     isError,
-  } = UseUserStreamMuted(pubky ?? '', pubky ?? '', 0, 10);
+  } = UseUserStreamMuted(pubky ?? '', pubky ?? '');
   if (isError) console.error(isError);
 
   const [loadingMutedUsers, setLoadingMutedUsers] = useState<LoadingMutedUsers>(
@@ -129,7 +129,8 @@ export default function MutedUsers() {
                             width={48}
                             height={48}
                             uri={
-                              mutedUser?.details?.image || '/images/webp/Userpic.webp'
+                              mutedUser?.details?.image ||
+                              '/images/webp/Userpic.webp'
                             }
                             alt={`profile-pic-${mutedUser?.details?.id}`}
                             className="rounded-full w-[48px] h-[48px] max-w-none"

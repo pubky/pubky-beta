@@ -5,23 +5,21 @@ import { Icon, Tooltip } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
 import { usePubkyClientContext, useToastContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { UseUserMuted } from '@/hooks/useUser';
+import { UserView } from '@/types/User';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
   creatorPubky: string;
-  name: string;
+  profile: UserView | null;
 }
 
 export default function ProfileMenu({
   setShowProfileMenu,
   creatorPubky,
-  name = 'User',
+  profile,
 }: TooltipProfileMenuProps) {
   const router = useRouter();
   const { pubky, mute, unmute } = usePubkyClientContext();
-  const { data: mutedUsers, isError } = UseUserMuted(pubky ?? '', 0, 10);
-  if (isError) console.error(isError);
   const { setContent, setShow } = useToastContext();
   const [muted, setMuted] = useState(false);
   const [loadingMuted, setLoadingMuted] = useState(false);
@@ -31,25 +29,9 @@ export default function ProfileMenu({
   useEffect(() => {
     async function fetchData() {
       try {
-        let pubkey = creatorPubky;
-
-        if (!pubkey) {
-          pubkey = pubky ?? '';
-        }
-
-        if (!pubkey) return;
-
-        const mutedList = mutedUsers;
-
-        if (mutedList) {
+        if (profile) {
           setInitLoadingMuted(false);
-
-          mutedList.map((user) => {
-            const id = user;
-            if (id === pubkey) {
-              setMuted(true);
-            }
-          });
+          if (profile?.relationship?.muted) setMuted(true);
         }
       } catch (error) {
         console.log(error);
@@ -57,7 +39,7 @@ export default function ProfileMenu({
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mutedUsers, creatorPubky]);
+  }, [profile, creatorPubky]);
 
   const muteUser = async () => {
     try {
@@ -169,7 +151,10 @@ export default function ProfileMenu({
               onClick={loadingMuted ? undefined : () => unmuteUser()}
               icon={<Icon.SpeakerSimpleSlash size="20" />}
             >
-              Unmute {Utils.minifyText(name, 10)}
+              Unmute{' '}
+              {profile
+                ? Utils.minifyText(profile?.details?.name, 10)
+                : Utils.minifyPubky(creatorPubky)}
             </Tooltip.Item>
           ) : (
             <Tooltip.Item
@@ -177,7 +162,10 @@ export default function ProfileMenu({
               onClick={loadingMuted ? undefined : () => muteUser()}
               icon={<Icon.SpeakerHigh size="20" />}
             >
-              Mute {Utils.minifyText(name, 10)}
+              Mute{' '}
+              {profile
+                ? Utils.minifyText(profile?.details?.name, 10)
+                : Utils.minifyPubky(creatorPubky)}
             </Tooltip.Item>
           )
         ) : (
