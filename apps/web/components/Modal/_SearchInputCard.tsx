@@ -18,13 +18,10 @@ export default function SearchInputCard({
 }: SearchInputCardProps) {
   const router = useRouter();
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
-  //const { hotTags } = useClientContext();
   const { data: hotTags, isLoading } = useHotTags(0, 10);
-  // if (isErrorHotTags) console.error(isErrorHotTags);
-  const { data } = useUsernameSearch(inputValue ?? '', pubky, 0, 10);
+  const { data } = useUsernameSearch(inputValue ?? '', pubky);
   const searchedUsers = data ? data : [];
 
-  // if (isError) console.error(isError);
   const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
 

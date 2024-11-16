@@ -22,7 +22,7 @@ import React from 'react';
 
 export default function Index() {
   const router = useRouter();
-  const { data, isLoading, isError } = useHotTags(0, 10);
+  const { data, isLoading, isError } = useHotTags();
   const hotTags = data || [];
   if (isError) console.error(isError);
 

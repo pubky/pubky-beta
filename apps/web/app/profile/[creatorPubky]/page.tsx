@@ -17,7 +17,6 @@ export default function Index({
 }: {
   params: Promise<{ creatorPubky: string }>;
 }) {
-  //const { setPosts } = useClientContext();
   const { pubky } = usePubkyClientContext();
   const [activeTab, setActiveTab] = useState(0);
   const [resolvedParams, setResolvedParams] = useState<{

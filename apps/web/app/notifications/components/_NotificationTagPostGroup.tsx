@@ -15,7 +15,6 @@ type NotificationTagPostGroupProps = {
 export default function NotificationTagPostGroup({
   notifications,
 }: NotificationTagPostGroupProps) {
-  //const { getUser } = useClientContext();
   const [user, setUser] = useState<IUserProfile | null>(null);
   const router = useRouter();
 

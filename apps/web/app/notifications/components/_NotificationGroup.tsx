@@ -14,7 +14,6 @@ type NotificationGroupProps = {
 export default function NotificationGroup({
   notifications,
 }: NotificationGroupProps) {
-  //const { getUser } = useClientContext();
   const [users, setUsers] = useState<IUserProfile[]>([]);
 
   useEffect(() => {

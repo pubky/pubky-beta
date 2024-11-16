@@ -7,14 +7,8 @@ import { usePubkyClientContext } from '@/contexts';
 import { useBookmarkedPosts } from '@/hooks/usePost';
 
 export default function Bookmarks() {
-  //const { posts } = useClientContext();
   const { pubky, deleteBookmark } = usePubkyClientContext();
-  const { data, isLoading } = useBookmarkedPosts(
-    pubky ?? '',
-    pubky ?? '',
-    0,
-    10
-  );
+  const { data, isLoading } = useBookmarkedPosts(pubky ?? '', pubky ?? '');
   const results = data;
   const loader = useRef(null);
 
