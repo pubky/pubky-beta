@@ -330,12 +330,6 @@ export function PubkyClientWrapper({
 
       const seed = Utils.uint8ArrayToBase64(newKeypair.secretKey());
 
-      Utils.storage.set('seed', seed);
-      setSeed(seed);
-
-      Utils.storage.set('mnemonic', mnemonic);
-      setMnemonic(mnemonic);
-
       // Sign up
       await client.signup(newKeypair, homeserver);
 
@@ -348,8 +342,6 @@ export function PubkyClientWrapper({
 
       // Save pubky state
       const pk = session.pubky().z32();
-      Utils.storage.set('pubky_public_key', pk);
-      setPubky(pk);
 
       if (userProfile.image instanceof File) {
         const file = userProfile.image;
@@ -388,7 +380,16 @@ export function PubkyClientWrapper({
       // Transform the profile to the PubkyAppUser format
       const pubkeyProfile: PubkyAppUser = toPubkeyProfile(userProfile);
 
-      // Save the profile in storage
+      // Save info in storage
+      Utils.storage.set('seed', seed);
+      setSeed(seed);
+
+      Utils.storage.set('mnemonic', mnemonic);
+      setMnemonic(mnemonic);
+
+      Utils.storage.set('pubky_public_key', pk);
+      setPubky(pk);
+
       Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
       setProfile(pubkeyProfile);
 
