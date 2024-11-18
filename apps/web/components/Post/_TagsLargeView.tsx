@@ -81,6 +81,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     setTags(newTags);
     setLoadingTags('');
   };
+
   useEffect(() => {
     const fetchProfileImages = async () => {
       const images: { [key: string]: string } = {};

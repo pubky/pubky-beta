@@ -17,11 +17,9 @@ interface ParentPostState {
 export default function RootParent({
   parentURI,
   postRef,
-}: //onParentPostsCountChange,
-{
+}: {
   parentURI: string;
-  postRef: any;
-  //onParentPostsCountChange: (count: number) => void;
+  postRef: React.RefObject<HTMLDivElement>;
 }) {
   const { pubky } = usePubkyClientContext();
   const [isMobile, setIsMobile] = useState(false);
@@ -72,7 +70,6 @@ export default function RootParent({
         if (parentURI) {
           const parentURIList = await fetchParentURIs(parentURI, []);
           setParentURIs(parentURIList);
-          //onParentPostsCountChange(parentURIList.length);
         }
       } catch (error) {
         console.error('Error fetching parent URIs:', error);
@@ -136,15 +133,10 @@ export default function RootParent({
   return parentURIs.map((parentURI, index) => {
     const reversedIndex = parentURIs.length - 1 - index;
     const post = parentPosts[parentURIs[reversedIndex]];
-
-    //const marginLeftValue = index > 1 ? index * 12 : '';
     const isLine = index > 0;
 
     return post && post.post ? (
-      <div
-        key={parentURI}
-        //style={{ marginLeft: `${marginLeftValue}px` }}
-      >
+      <div key={parentURI}>
         <Post
           homeView
           post={post.post}

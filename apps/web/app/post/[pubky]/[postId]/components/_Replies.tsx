@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, Typography } from '@social/ui-shared';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Post } from '@/components';
 import { PostView } from '@/types/Post';
 import { usePostReplies } from '@/hooks/usePost';
@@ -16,53 +16,48 @@ export default function Replies({
   repliesResponse,
   post,
   isLoadingReplies,
+  lastReplyRef,
 }: {
-  repliesResponse: PostView[] | undefined;
+  repliesResponse: { [key: string]: PostView } | undefined;
   post: PostView;
   isLoadingReplies: boolean;
+  lastReplyRef: React.RefObject<HTMLDivElement>;
 }) {
   const { pubky } = usePubkyClientContext();
   const { data: mutedUsers } = UseUserMuted(pubky ?? '');
-  const [replies, setReplies] = useState<PostView[]>([]);
+  const replies = repliesResponse ? Object.values(repliesResponse) : [];
 
-  const fetchReplies = async () => {
-    try {
-      if (repliesResponse) {
-        setReplies(repliesResponse || []);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchReplies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repliesResponse]);
-
-  const renderReplies = (replies: PostView[]) => {
-    if (!Array.isArray(replies)) {
+  const renderReplies = (repliesArray: PostView[]) => {
+    if (!Array.isArray(repliesArray)) {
       return null;
     }
 
-    return replies
+    return repliesArray
       .filter((reply) => !mutedUsers?.includes(reply?.details?.author))
       .reverse()
-      .map((reply) => (
-        <div className="flex flex-col gap-3" key={reply?.details?.id}>
-          <Post post={reply} size="full" />
-          {reply?.counts?.replies > 0 && (
-            <ReplyReplies post={post} reply={reply} />
-          )}
-        </div>
-      ));
+      .map((reply, index) => {
+        const isLastReply = index === 0;
+        console.log('aqui');
+        return (
+          <div
+            className="flex flex-col gap-3"
+            key={reply?.details?.id}
+            ref={isLastReply ? lastReplyRef : null}
+          >
+            <Post post={reply} size="full" />
+            {reply?.counts?.replies > 0 && (
+              <ReplyReplies post={post} reply={reply} />
+            )}
+          </div>
+        );
+      });
   };
 
   return (
     <>
       {isLoadingReplies ? (
         <Skeletons.Simple />
-      ) : !Array.isArray(replies) ? (
+      ) : replies.length === 0 ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">
           No replies yet
         </Typography.Body>
@@ -95,14 +90,10 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
       <Icon.LineHorizontal size="14" color="#262626" />
     </div>
   );
-  //const [showAllReplies, setShowAllReplies] = useState(false);
 
   if (!replyReplies || replyReplies.length === 0) return null;
 
   const displayedReplies = replyReplies.slice(0, 1);
-  //showAllReplies
-  //  ? replyReplies.replies
-  //  : replyReplies.replies.slice(0, 1);
   const repliesLeft = post?.counts?.replies - displayedReplies.length;
 
   return (
@@ -122,13 +113,11 @@ const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
           </div>
         ))}
       {repliesLeft > 0 && (
-        //&& !showAllReplies
         <div>
           <div className={lineBaseCSS} />
           {lineHorizontalCSS}
           <Typography.Body
             variant="small-bold"
-            //onClick={() => setShowAllReplies(true)}
             onClick={() =>
               router.push(Utils.encodePostUri(reply?.details?.uri))
             }

@@ -10,18 +10,19 @@ import CreateContent from '@/components/CreateContent';
 import { PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
-export default function ReplyForm({
-  uri,
+export default function PostRoot({
   post,
   updatePost,
   replies,
   isLoadingReplies,
+  lastReplyRef,
 }: {
   uri: string;
   post: PostView;
   updatePost: () => void;
-  replies: PostView[] | undefined;
+  replies: { [key: string]: PostView } | undefined;
   isLoadingReplies: boolean;
+  lastReplyRef: React.RefObject<HTMLDivElement>;
 }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
@@ -38,9 +39,6 @@ export default function ReplyForm({
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
-    //const rootUri = post.relationships?.replied
-    //  ? post.relationships?.replied
-    //  : post?.details?.uri;
 
     const sendReply = await createReply(
       post?.details?.uri,
@@ -117,6 +115,7 @@ export default function ReplyForm({
           post={post}
           repliesResponse={replies}
           isLoadingReplies={isLoadingReplies}
+          lastReplyRef={lastReplyRef}
         />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
