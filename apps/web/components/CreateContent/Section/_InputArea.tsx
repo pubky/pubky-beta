@@ -125,6 +125,10 @@ export default function InputArea({
         setFilePreviews((prevPreviews) =>
           [...prevPreviews, ...newPreviews].slice(0, 3)
         );
+
+      if (newFiles && newFiles?.length > 0 && setTextArea) {
+        setTextArea(true);
+      }
     }
   };
 
