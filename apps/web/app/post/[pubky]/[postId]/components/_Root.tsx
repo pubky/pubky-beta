@@ -10,7 +10,7 @@ export default function Root({
 }: {
   params: Promise<{ pubky: string; postId: string }>;
 }) {
-  const limit = 100;
+  const limit = 1;
 
   const { pubky } = usePubkyClientContext();
 
@@ -40,6 +40,14 @@ export default function Root({
     limit
   );
 
+  const repliesKeyValue =
+    replies?.reduce((acc, reply) => {
+      if (reply?.details?.id) {
+        acc[reply.details.id] = reply;
+      }
+      return acc;
+    }, {} as Record<string, (typeof replies)[number]>) || {};
+
   const lastReplyElementRef = useRef<HTMLDivElement | null>(null);
 
   if (isLoading) {
@@ -58,7 +66,7 @@ export default function Root({
     <Post.ValidPostContent
       postRef={null}
       data={data}
-      replies={replies}
+      replies={repliesKeyValue}
       isLoadingReplies={isLoadingReplies}
       lastReplyRef={lastReplyElementRef}
     />
