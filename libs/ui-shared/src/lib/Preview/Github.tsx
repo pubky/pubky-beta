@@ -58,7 +58,6 @@ export const GitHub = ({ url }: GitHubProps) => {
         setPreviewImage(image);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
         setError('Failed to load data');
         setLoading(false);
       }
