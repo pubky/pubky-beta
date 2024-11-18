@@ -919,6 +919,8 @@ export function PubkyClientWrapper({
 
   const loadSettings = async () => {
     try {
+      if (!pubky) return null;
+
       await ensureLoggedIn();
 
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
