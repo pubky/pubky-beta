@@ -32,12 +32,12 @@ const LoadingSkeleton = () => (
   </div>
 );
 
-const TimelinePost = ({ post, isMobile, layout }) => (
+const TimelinePost = ({ post, isMobile, layout, selectedFeed }) => (
   <div>
     <Components.Post
       post={post}
       largeView={!isMobile && layout === 'wide'}
-      line={Boolean(post?.relationships?.replied)}
+      line={!selectedFeed?.tags && Boolean(post?.relationships?.replied)}
     />
     {post?.counts?.replies > 0 && (
       <PostReplies isMobile={isMobile} homeView post={post} layout={layout} />
@@ -143,7 +143,12 @@ export const Timeline = ({ selectedFeed, loadingFeed }: TimelineProps) => {
         ? filteredPosts.map((post) => (
             <Fragment key={post.details.id}>
               {post?.details?.content !== '[DELETED]' && (
-                <TimelinePost post={post} isMobile={isMobile} layout={layout} />
+                <TimelinePost
+                  post={post}
+                  isMobile={isMobile}
+                  layout={layout}
+                  selectedFeed={selectedFeed}
+                />
               )}
             </Fragment>
           ))
