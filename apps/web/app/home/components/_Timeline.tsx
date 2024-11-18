@@ -14,6 +14,7 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 // Types
 interface TimelineProps {
   selectedFeed: ICustomFeed | undefined;
+  loadingFeed: boolean;
 }
 
 // Helper components
@@ -106,7 +107,7 @@ const useTimelinePosts = (pubky, skip, limit, reach, sort, tagsFeed) => {
   return { timeline, isLoading, isError };
 };
 
-export const Timeline = ({ selectedFeed }: TimelineProps) => {
+export const Timeline = ({ selectedFeed, loadingFeed }: TimelineProps) => {
   const limit = 10;
   const isMobile = useIsMobile();
   const [skip, setSkip] = useState(0);
@@ -148,7 +149,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           ))
         : !isLoading && <EmptyTimeline />}
 
-      {isLoading && !isError && <LoadingSkeleton />}
+      {((isLoading && !isError) || loadingFeed) && <LoadingSkeleton />}
       <div ref={loader} />
     </div>
   );

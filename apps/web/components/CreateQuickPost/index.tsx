@@ -9,10 +9,12 @@ import { PostView } from '@/types/Post';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
+  loadingFeed?: boolean;
 }
 
 export default function CreateQuickPost({
   largeView = false,
+  loadingFeed,
 }: CreateQuickPostProps) {
   const { pubky, createPost, createTag, setTimeline, timeline } =
     usePubkyClientContext();
@@ -99,46 +101,52 @@ export default function CreateQuickPost({
   };
 
   return (
-    <CreateContent
-      id="quick-post-create-content"
-      largeView={largeView}
-      handleSubmit={handleSubmit}
-      content={contentPost}
-      placeHolder={Utils.promptPlaceholder('post')}
-      setContent={setContentPost}
-      setTextArea={setTextArea}
-      isValidContent={isValidContent}
-      selectedFiles={selectedFiles}
-      setSelectedFiles={setSelectedFiles}
-      arrayTags={arrayTags}
-      setArrayTags={setArrayTags}
-      setIsValidContent={setIsValidContent}
-      loading={sendingPost}
-      article
-      button={
-        <Button.Medium
-          id="post-btn"
-          className="w-auto"
-          variant="line"
-          icon={
-            <Icon.PaperPlaneRight
-              color={
-                !isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'
-              }
-            />
-          }
-          disabled={!isValidContent && selectedFiles.length === 0}
+    <>
+      {!loadingFeed && (
+        <CreateContent
+          id="quick-post-create-content"
+          largeView={largeView}
+          handleSubmit={handleSubmit}
+          content={contentPost}
+          placeHolder={Utils.promptPlaceholder('post')}
+          setContent={setContentPost}
+          setTextArea={setTextArea}
+          isValidContent={isValidContent}
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          arrayTags={arrayTags}
+          setArrayTags={setArrayTags}
+          setIsValidContent={setIsValidContent}
           loading={sendingPost}
-          onClick={
-            (isValidContent || selectedFiles.length > 0) && !sendingPost
-              ? () => handleSubmit(contentPost)
-              : undefined
+          article
+          button={
+            <Button.Medium
+              id="post-btn"
+              className="w-auto"
+              variant="line"
+              icon={
+                <Icon.PaperPlaneRight
+                  color={
+                    !isValidContent && selectedFiles.length === 0
+                      ? 'gray'
+                      : 'white'
+                  }
+                />
+              }
+              disabled={!isValidContent && selectedFiles.length === 0}
+              loading={sendingPost}
+              onClick={
+                (isValidContent || selectedFiles.length > 0) && !sendingPost
+                  ? () => handleSubmit(contentPost)
+                  : undefined
+              }
+            >
+              Post
+            </Button.Medium>
           }
-        >
-          Post
-        </Button.Medium>
-      }
-      textArea={textArea}
-    />
+          textArea={textArea}
+        />
+      )}
+    </>
   );
 }
