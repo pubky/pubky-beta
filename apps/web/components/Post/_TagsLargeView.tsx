@@ -164,7 +164,12 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   theme={Theme.DARK}
                   emojiStyle={EmojiStyle.TWITTER}
                   onEmojiClick={(emojiObject) => {
-                    setTag(tag + emojiObject.emoji);
+                    const emojiLength =
+                      Array.from(emojiObject.emoji).length + 1;
+                    const currentTagLength = Array.from(tag).length;
+                    if (currentTagLength + emojiLength <= 20) {
+                      setTag(tag + emojiObject.emoji);
+                    }
                     setShowEmojis(false);
                   }}
                 />

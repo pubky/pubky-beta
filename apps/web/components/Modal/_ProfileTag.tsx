@@ -241,7 +241,12 @@ export default function ProfileTag({
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.TWITTER}
                     onEmojiClick={(emojiObject) => {
-                      if (tag.length < 20) setTag(tag + emojiObject.emoji);
+                      const emojiLength =
+                        Array.from(emojiObject.emoji).length + 1;
+                      const currentTagLength = Array.from(tag).length;
+                      if (currentTagLength + emojiLength <= 20) {
+                        setTag(tag + emojiObject.emoji);
+                      }
                       setShowEmojis(false);
                     }}
                   />
