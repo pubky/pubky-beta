@@ -195,14 +195,15 @@ export default function TagCreatePost({
                     emojiStyle={EmojiStyle.TWITTER}
                     onEmojiClick={(emojiObject) => {
                       const emojiLength =
-                        Array.from(emojiObject.emoji).length + 1;
-                      const currentTagLength = Array.from(tag).length;
-                      if (currentTagLength + emojiLength <= 20) {
+                        new Blob([emojiObject.emoji]).size / 2;
+
+                      if (tag.length + emojiLength <= 20) {
                         setTag(tag + emojiObject.emoji);
                       }
                       setShowEmojis(false);
                     }}
                   />
+                  ;
                 </div>
               )}
               {/* <Input.Label value="Add tag" /> */}
@@ -237,6 +238,7 @@ export default function TagCreatePost({
                 }
               />
             </div>
+            <span className="text-white">{tag.length}</span>
             {tagsError && (
               <Typography.Body variant="small" className="text-[#e95164]">
                 Max 4 tags

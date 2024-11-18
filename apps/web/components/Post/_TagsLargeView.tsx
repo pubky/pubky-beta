@@ -164,10 +164,9 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   theme={Theme.DARK}
                   emojiStyle={EmojiStyle.TWITTER}
                   onEmojiClick={(emojiObject) => {
-                    const emojiLength =
-                      Array.from(emojiObject.emoji).length + 1;
-                    const currentTagLength = Array.from(tag).length;
-                    if (currentTagLength + emojiLength <= 20) {
+                    const emojiLength = new Blob([emojiObject.emoji]).size / 2;
+
+                    if (tag.length + emojiLength <= 20) {
                       setTag(tag + emojiObject.emoji);
                     }
                     setShowEmojis(false);
