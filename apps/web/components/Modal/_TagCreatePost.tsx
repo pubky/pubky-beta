@@ -238,7 +238,6 @@ export default function TagCreatePost({
                 }
               />
             </div>
-            <span className="text-white">{tag.length}</span>
             {tagsError && (
               <Typography.Body variant="small" className="text-[#e95164]">
                 Max 4 tags
