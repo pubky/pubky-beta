@@ -329,8 +329,12 @@ export async function getInfluencersUsers(
 
   if (viewerId) queryParams.append('viewer_id', viewerId);
 
-  queryParams.append('skip', String(skip));
-  queryParams.append('limit', String(limit));
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
   queryParams.append('source', 'pioneers');
 
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
