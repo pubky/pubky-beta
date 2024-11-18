@@ -155,7 +155,7 @@ export default function Header({ title, className }: HeaderProps) {
               setInputValue(e.target.value)
             }
             onKeyDown={searchTags.length ? undefined : handleKeyDown}
-            maxLength={60}
+            maxLength={55}
             placeholder={!searchTags.length ? 'Search' : ''}
             className="hidden lg:block"
             onClick={() => setSearchInputCard(true)}

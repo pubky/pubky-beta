@@ -84,7 +84,7 @@ export default function Pic({ image, setImage, defaultImage }: PicProps) {
             <ImageByUri
               width={100}
               height={100}
-              className="w-72 h-72 lg:w-48 lg:h-48 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
+              className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
               alt="user"
               uri={image}
             />

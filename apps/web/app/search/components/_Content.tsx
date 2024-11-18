@@ -264,7 +264,7 @@ const SearchContent = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setInputValue(e.target.value)
               }
-              maxLength={60}
+              maxLength={55}
               onKeyDown={handleKeyDown}
               placeholder={!searchTags.length ? 'Search' : ''}
               onClick={() => setSearchInputCard(true)}
@@ -298,11 +298,11 @@ const SearchContent = () => {
                     )
                 )
             : !isLoading && (
-                <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+                <div className="mt-[100px] col-span-3 flex flex-col justify-center items-center gap-2">
                   <Typography.H2 className="font-normal text-opacity-50">
                     No posts {tagMessage}
                   </Typography.H2>
-                  <Typography.H2 className="font-normal">
+                  <Typography.H2 className="font-normal break-all">
                     {searchTags.map((searchTag, index) => (
                       <span key={`tag-${searchTag}`}>
                         {searchTag}
