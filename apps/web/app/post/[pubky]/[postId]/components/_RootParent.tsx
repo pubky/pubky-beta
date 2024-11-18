@@ -121,7 +121,7 @@ export default function RootParent({
   );
 
   useEffect(() => {
-    if (allParentPostsLoaded && postRef.current) {
+    if (allParentPostsLoaded && postRef?.current) {
       postRef.current.scrollIntoView();
     }
   }, [allParentPostsLoaded]);
@@ -135,7 +135,20 @@ export default function RootParent({
     const post = parentPosts[parentURIs[reversedIndex]];
     const isLine = index > 0;
 
-    return post && post.post ? (
+    if (!post?.post)
+      return (
+        <div
+          key={parentURI}
+          className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]"
+        >
+          <Typography.Body variant="small" className="text-opacity-50">
+            This post has been deleted by its author.
+          </Typography.Body>
+          <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[50px]" />
+        </div>
+      );
+
+    return (
       <div key={parentURI}>
         <Post
           homeView
@@ -144,16 +157,6 @@ export default function RootParent({
           largeView={!isMobile}
           line={isLine}
         />
-      </div>
-    ) : (
-      <div
-        key={parentURI}
-        className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]"
-      >
-        <Typography.Body variant="small" className="text-opacity-50">
-          This post has been deleted by its author.
-        </Typography.Body>
-        <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[50px]" />
       </div>
     );
   });
