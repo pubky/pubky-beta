@@ -13,7 +13,7 @@ export default function Participants({
   repliesResponse,
   author,
 }: {
-  repliesResponse: PostView[] | undefined;
+  repliesResponse: { [key: string]: PostView } | undefined;
   author: string;
 }) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
@@ -31,7 +31,7 @@ export default function Participants({
   const fetchReplies = async () => {
     try {
       if (repliesResponse) {
-        setReplies(repliesResponse || []);
+        setReplies(Object.values(repliesResponse) || []);
       }
     } catch (error) {
       console.error('Error:', error);

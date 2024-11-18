@@ -187,8 +187,8 @@ export async function getPostReplies(
   authorId: string,
   postId: string,
   viewerId?: string,
-  skip?: number,
-  limit?: number
+  skip: number = 0,
+  limit: number = 10
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
 
@@ -199,12 +199,8 @@ export async function getPostReplies(
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
   }
-  if (skip !== undefined) {
-    queryParams.append('skip', String(skip));
-  }
-  if (limit !== undefined) {
-    queryParams.append('limit', String(limit));
-  }
+  queryParams.append('skip', String(skip));
+  queryParams.append('limit', String(limit));
 
   const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
 
