@@ -229,6 +229,7 @@ export default function Content({
               const isImage = file?.content_type.startsWith('image');
               const isPDF = file?.content_type === 'application/pdf';
               const isAudio = file?.content_type.startsWith('audio');
+              const widthImage = fileContents.length > 1 ? 'w-full' : 'w-auto';
 
               return (
                 <div
@@ -250,7 +251,7 @@ export default function Content({
                       alt={`Fetched file ${index}`}
                       width={800}
                       height={418}
-                      className="w-auto h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
+                      className={`${widthImage} min-w-[200px] h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden`}
                     />
                   ) : isPDF ? (
                     <div
