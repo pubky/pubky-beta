@@ -23,6 +23,7 @@ import { supportedVideoTypes } from './lib/Helper/FileType/_video';
 import { supportedAudioTypes } from './lib/Helper/FileType/_audio';
 import { generateHashId } from './lib/Crypto/generateHashId';
 import { generateTimestampId } from './lib/Crypto/generateTimestampId';
+import truncateText from './lib/Text/truncateText';
 
 export const Utils = {
   generateTimestampId,
@@ -50,4 +51,5 @@ export const Utils = {
   supportedAudioTypes,
   copyToClipboard,
   uint8ArrayToBase64,
+  truncateText,
 };
