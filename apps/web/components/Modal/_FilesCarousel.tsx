@@ -60,7 +60,7 @@ export default function FilesCarousel({
       show={showModal}
       closeModal={() => setShowModal(false)}
       modalRef={modalRef}
-      className="relative w-[60vw] h-[70vh]"
+      className="relative sm:w-[60vw] sm:h-[70vh]"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       {fileContents.length > 1 && (
