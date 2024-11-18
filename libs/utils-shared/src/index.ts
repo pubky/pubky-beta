@@ -20,6 +20,7 @@ import promptPlaceholder from './lib/Text/promptPlaceholder';
 import statusHelper from './lib/Helper/statusHelper';
 import { generateHashId } from './lib/Crypto/generateHashId';
 import { generateTimestampId } from './lib/Crypto/generateTimestampId';
+import truncateText from './lib/Text/truncateText';
 
 export const Utils = {
   generateTimestampId,
@@ -44,4 +45,5 @@ export const Utils = {
   statusHelper,
   copyToClipboard,
   uint8ArrayToBase64,
+  truncateText,
 };

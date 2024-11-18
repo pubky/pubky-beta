@@ -1,3 +1,5 @@
+'use client';
+
 import { Icon, Typography } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { Post } from '@/components';
