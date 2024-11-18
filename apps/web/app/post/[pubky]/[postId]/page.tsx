@@ -230,18 +230,25 @@ export default function Index({
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const postRef = useRef<HTMLDivElement>(null);
 
-  const fetchMoreReplies = () => {
-    if (isErrorReplies) return;
+ const fetchMoreReplies = () => {
+  if (isErrorReplies) return;
 
-    const newRepliesArray = [
-      ...(Array.isArray(repliesArray) ? repliesArray : []),
-      ...(Array.isArray(replies) ? replies : []),
-    ];
-    setRepliesArray(newRepliesArray);
+  const newReplies = Array.isArray(replies) ? replies : [];
+  const existingReplies = Array.isArray(repliesArray) ? repliesArray : [];
 
-    const newSkip = skip + limit;
-    setSkip(newSkip);
-  };
+  const mergedReplies = [
+    ...existingReplies,
+    ...newReplies.filter(
+      (reply) =>
+        !existingReplies.some(
+          (existingReply) => existingReply.details.uri === reply.details.uri
+        )
+    ),
+  ];
+
+  setRepliesArray(mergedReplies);
+  setSkip(skip + limit);
+};
 
   const loader = useInfiniteScroll(fetchMoreReplies, isLoadingReplies);
 
