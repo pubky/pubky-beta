@@ -15,6 +15,7 @@ import { MainContent } from './_MainContent';
 export default function ContentHome() {
   const { layout } = useFilterContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
+  const [loadingFeed, setLoadingFeed] = useState(true);
   const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
   const { isFilterContentVisible, filterContentRef } = useFilterVisibility();
   const drawerFilterRef = useRef<HTMLDivElement>(null);
@@ -37,6 +38,8 @@ export default function ContentHome() {
           layout={layout}
           selectedFeed={selectedFeed}
           setSelectedFeed={setSelectedFeed}
+          loadingFeed={loadingFeed}
+          setLoadingFeed={setLoadingFeed}
         />
         {layout !== 'wide' && <RightSidebar />}
       </Content.Grid>

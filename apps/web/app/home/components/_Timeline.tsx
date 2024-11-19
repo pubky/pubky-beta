@@ -14,6 +14,7 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 // Types
 interface TimelineProps {
   selectedFeed: ICustomFeed | undefined;
+  loadingFeed: boolean;
 }
 
 // Helper components
@@ -31,12 +32,12 @@ const LoadingSkeleton = () => (
   </div>
 );
 
-const TimelinePost = ({ post, isMobile, layout }) => (
+const TimelinePost = ({ post, isMobile, layout, selectedFeed }) => (
   <div>
     <Components.Post
       post={post}
       largeView={!isMobile && layout === 'wide'}
-      line={Boolean(post?.relationships?.replied)}
+      line={!selectedFeed?.tags && Boolean(post?.relationships?.replied)}
     />
     {post?.counts?.replies > 0 && (
       <PostReplies isMobile={isMobile} homeView post={post} layout={layout} />
@@ -106,7 +107,7 @@ const useTimelinePosts = (pubky, skip, limit, reach, sort, tagsFeed) => {
   return { timeline, isLoading, isError };
 };
 
-export const Timeline = ({ selectedFeed }: TimelineProps) => {
+export const Timeline = ({ selectedFeed, loadingFeed }: TimelineProps) => {
   const limit = 10;
   const isMobile = useIsMobile();
   const [skip, setSkip] = useState(0);
@@ -142,13 +143,18 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         ? filteredPosts.map((post) => (
             <Fragment key={post.details.id}>
               {post?.details?.content !== '[DELETED]' && (
-                <TimelinePost post={post} isMobile={isMobile} layout={layout} />
+                <TimelinePost
+                  post={post}
+                  isMobile={isMobile}
+                  layout={layout}
+                  selectedFeed={selectedFeed}
+                />
               )}
             </Fragment>
           ))
         : !isLoading && <EmptyTimeline />}
 
-      {isLoading && !isError && <LoadingSkeleton />}
+      {((isLoading && !isError) || loadingFeed) && <LoadingSkeleton />}
       <div ref={loader} />
     </div>
   );

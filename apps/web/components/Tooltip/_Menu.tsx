@@ -284,21 +284,23 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           >
             Copy link to post
           </Tooltip.Item>
-          <Tooltip.Item
-            id="copy-post-text"
-            onClick={() => {
-              copyToClipboard(post.details?.content);
-              setContentToast(
-                Utils.minifyContent(post.details?.content, 1),
-                'text'
-              );
-              setShowToast(true);
-              setShowMenu(false);
-            }}
-            icon={<Icon.FileText size="20" />}
-          >
-            Copy text of post
-          </Tooltip.Item>
+          {post?.details?.kind !== 'Long' && (
+            <Tooltip.Item
+              id="copy-post-text"
+              onClick={() => {
+                copyToClipboard(post.details?.content);
+                setContentToast(
+                  Utils.minifyContent(post.details?.content, 1),
+                  'text'
+                );
+                setShowToast(true);
+                setShowMenu(false);
+              }}
+              icon={<Icon.FileText size="20" />}
+            >
+              Copy text of post
+            </Tooltip.Item>
+          )}
           <Tooltip.Item
             id="add-bookmark"
             icon={
