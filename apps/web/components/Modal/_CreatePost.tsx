@@ -1,6 +1,6 @@
 import { Button, Icon, Modal } from '@social/ui-shared';
 import CreateContent from '../CreateContent';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 
@@ -22,8 +22,13 @@ export default function CreatePost({
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [isValidContent, setIsValidContent] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [placeholder, setPlaceholder] = useState('');
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+  useEffect(() => {
+    setPlaceholder(Utils.promptPlaceholder('post'));
+  }, []);
 
   const handleSubmit = async (content: string) => {
     if (sendingPost) {
@@ -86,7 +91,7 @@ export default function CreatePost({
               handleSubmit={handleSubmit}
               content={contentPost}
               setContent={setContentPost}
-              placeHolder={Utils.promptPlaceholder('post')}
+              placeHolder={placeholder}
               isValidContent={isValidContent}
               setIsValidContent={setIsValidContent}
               selectedFiles={selectedFiles}

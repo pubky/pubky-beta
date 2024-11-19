@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CreateContent from '../CreateContent';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
@@ -20,8 +20,13 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
   const [textArea, setTextArea] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
+  const [placeholder, setPlaceholder] = useState('');
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+  useEffect(() => {
+    setPlaceholder(Utils.promptPlaceholder('reply'));
+  }, []);
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
@@ -67,7 +72,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
         isValidContent={isValidContent}
         selectedFiles={selectedFiles}
         setSelectedFiles={setSelectedFiles}
-        placeHolder={Utils.promptPlaceholder('reply')}
+        placeHolder={placeholder}
         arrayTags={arrayTags}
         setArrayTags={setArrayTags}
         setIsValidContent={setIsValidContent}

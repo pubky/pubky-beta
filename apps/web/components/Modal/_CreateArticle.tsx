@@ -38,6 +38,7 @@ export default function CreateArticle({
   const [showEmojis, setShowEmojis] = useState(false);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const [placeholder, setPlaceholder] = useState('');
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -45,6 +46,10 @@ export default function CreateArticle({
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+  useEffect(() => {
+    setPlaceholder(Utils.promptPlaceholder('article'));
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -414,7 +419,7 @@ export default function CreateArticle({
                     //setTextArea={setTextArea}
                     largeView={!isMobile}
                     setIsValidContent={setIsValidContent}
-                    placeHolder={Utils.promptPlaceholder('article')}
+                    placeHolder={placeholder}
                     //setFilePreviews={setFilePreviews}
                     loading={sendingArticle}
                     markdown
