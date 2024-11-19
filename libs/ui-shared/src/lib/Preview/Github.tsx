@@ -84,7 +84,7 @@ export const GitHub = ({ url }: GitHubProps) => {
       rel="noopener noreferrer"
       className="w-full max-w-[700px] p-4 border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden block"
     >
-      <div className="flex justify-between">
+      <div className="flex flex-col md:flex-row gap-4 justify-between">
         <div className="flex items-center">
           <img
             src={ownerAvatar}
@@ -135,7 +135,7 @@ export const GitHub = ({ url }: GitHubProps) => {
             <img
               src={previewImage}
               alt="Preview"
-              className="w-40 h-[90px] rounded-lg"
+              className="w-full md:w-auto md:max-w-40 h-auto max-h-[744px] md:max-h-[120px] rounded-lg"
             />
           </div>
         )}
