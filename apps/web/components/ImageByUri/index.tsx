@@ -81,8 +81,9 @@ const ImageByUri = ({
           width={width}
           height={height}
           className={className}
-          style={style}
+          style={{ width: 'auto', height: 'auto', ...style }}
           onClick={onClick}
+          priority
         />
       )}
     </>
