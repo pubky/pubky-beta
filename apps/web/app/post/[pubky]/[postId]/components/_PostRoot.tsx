@@ -13,16 +13,10 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 export default function PostRoot({
   post,
   updatePost,
-  replies,
-  isLoadingReplies,
-  lastReplyRef,
 }: {
   uri: string;
   post: PostView;
   updatePost: () => void;
-  replies: { [key: string]: PostView } | undefined;
-  isLoadingReplies: boolean;
-  lastReplyRef: React.RefObject<HTMLDivElement>;
 }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
@@ -111,12 +105,7 @@ export default function PostRoot({
           }
           textArea={textArea}
         />
-        <Replies
-          post={post}
-          repliesResponse={replies}
-          isLoadingReplies={isLoadingReplies}
-          lastReplyRef={lastReplyRef}
-        />
+        <Replies postId={post.details.id} pubkyAuthor={post.details.author} />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}
@@ -124,7 +113,7 @@ export default function PostRoot({
           setShowModalTag={setShowModalTag}
         />
       </Post.Root>
-      <Participants author={post.details.author} repliesResponse={replies} />
+      <Participants author={post.details.author} />
     </div>
   );
 }

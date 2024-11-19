@@ -1,63 +1,111 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 import { Typography } from '@social/ui-shared';
 import { Post } from '@/components';
 import Skeletons from '@/components/Skeletons';
 
-import { UseUserMuted } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
-
-import { PostView } from '@/types/Post';
+import { getPostReplies } from '@/services/postService';
 
 export default function Replies({
-  repliesResponse,
-  isLoadingReplies,
-  lastReplyRef,
+  pubkyAuthor,
+  postId,
 }: {
-  repliesResponse: { [key: string]: PostView } | undefined;
-  post: PostView;
-  isLoadingReplies: boolean;
-  lastReplyRef: React.RefObject<HTMLDivElement>;
+  pubkyAuthor: string;
+  postId: string;
 }) {
-  const { pubky } = usePubkyClientContext();
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
-  const replies = repliesResponse ? Object.values(repliesResponse) : [];
+  const { pubky, replies, setReplies } = usePubkyClientContext();
+  const limit = 5;
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [start, setStart] = useState<number | undefined>(undefined);
 
-  const renderReplies = (repliesArray: PostView[]) => {
-    if (!Array.isArray(repliesArray)) {
-      return null;
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastReplyElementRef = useRef<HTMLDivElement | null>(null);
+
+  const fetchReplies = async () => {
+    if (isLoading || !hasMore) return;
+
+    setIsLoading(true);
+    try {
+      const newReplies = await getPostReplies(
+        pubkyAuthor,
+        postId,
+        pubky,
+        limit,
+        start
+      );
+      setStart(newReplies[newReplies.length - 1].details.indexed_at - 1);
+
+      if (newReplies && newReplies.length > 0) {
+        setReplies((prevReplies) => [...prevReplies, ...newReplies]);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      setHasMore(false);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setReplies([]);
+    fetchReplies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchReplies();
+      }
+    });
+
+    if (lastReplyElementRef.current) {
+      observer.current.observe(lastReplyElementRef.current);
     }
 
-    return repliesArray
-      .filter((reply) => !mutedUsers?.includes(reply?.details?.author))
-      .reverse()
-      .map((reply, index) => {
-        const isLastReply = index === 0;
-        return (
-          <div
-            className="flex flex-col gap-3"
-            key={reply?.details?.id}
-            ref={isLastReply ? lastReplyRef : null}
-          >
-            <Post post={reply} size="full" />
-          </div>
-        );
-      });
-  };
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, [isLoading, hasMore, replies]);
+
+  useEffect(() => {
+    return () => {
+      setReplies([]);
+    };
+  }, [setReplies]);
 
   return (
     <>
-      {isLoadingReplies ? (
-        <Skeletons.Simple />
-      ) : !Array.isArray(replies) ? (
+      {replies.length === 0 && !isLoading ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">
-          No replies yet
+          No replies yet.
         </Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full mt-3">
-          {renderReplies(replies)}
+          {replies.map((reply, index) => {
+            const isLastReply = replies.length === index + 1;
+            return (
+              <div
+                key={`${reply.details.id}-${index}`}
+                ref={isLastReply ? lastReplyElementRef : null}
+              >
+                <Post post={reply} />
+              </div>
+            );
+          })}
+          {isLoading && <Skeletons.Simple />}
         </div>
       )}
     </>

@@ -14,13 +14,7 @@ import { useUserProfile } from '@/hooks/useUser';
 
 import { usePubkyClientContext } from '@/contexts';
 
-export function ValidPostContent({
-  postRef,
-  data,
-  isLoadingReplies,
-  replies,
-  lastReplyRef,
-}) {
+export function ValidPostContent({ postRef, data }) {
   const { pubky } = usePubkyClientContext();
   const user = useUserProfile(data?.details?.author, pubky ?? '');
 
@@ -45,9 +39,6 @@ export function ValidPostContent({
           uri={data?.details.id}
           post={data}
           updatePost={() => console.log('updated')}
-          replies={replies}
-          isLoadingReplies={isLoadingReplies}
-          lastReplyRef={lastReplyRef}
         />
       </div>
     </>

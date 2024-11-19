@@ -187,26 +187,41 @@ export async function getPostReplies(
   authorId: string,
   postId: string,
   viewerId?: string,
-  skip: number = 0,
-  limit: number = 10
+  limit = 10,
+  start?: number,
+  end?: number,
+  skip?: number
 ): Promise<PostView[]> {
-  const queryParams = new URLSearchParams();
-
-  queryParams.append('author_id', authorId);
-  queryParams.append('source', 'post_replies');
-  queryParams.append('post_id', postId);
+  const queryParams = new URLSearchParams({
+    author_id: authorId,
+    source: 'post_replies',
+    post_id: postId,
+    limit: String(limit),
+  });
 
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
   }
-  queryParams.append('skip', String(skip));
-  queryParams.append('limit', String(limit));
+  if (start !== undefined) {
+    queryParams.append('start', String(start));
+  }
+  if (end !== undefined) {
+    queryParams.append('end', String(end));
+  }
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
 
-  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
+  const url = `${BASE_URL}/stream/posts?${queryParams.toString()}`;
 
-  if (!response.ok) throw new Error('Failed to fetch post replies');
+  const response = await fetch(url);
 
-  return response.json();
+  if (!response.ok) {
+    throw new Error(`Failed to fetch post replies: ${response.statusText}`);
+  }
+
+  const data: PostView[] = await response.json();
+  return data;
 }
 
 export async function getBookmarkedPosts(

@@ -3,22 +3,14 @@
 import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
-import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 
-export default function Participants({
-  repliesResponse,
-  author,
-}: {
-  repliesResponse: { [key: string]: PostView } | undefined;
-  author: string;
-}) {
-  const { pubky, follow, unfollow } = usePubkyClientContext();
+export default function Participants({ author }: { author: string }) {
+  const { pubky, follow, unfollow, replies } = usePubkyClientContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
-  const [replies, setReplies] = useState<PostView[]>([]);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [participants, setParticipants] = useState<UserView[]>([]);
   const [loadingFollowers, setLoadingFollowers] = useState<{
@@ -27,21 +19,6 @@ export default function Participants({
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
-
-  const fetchReplies = async () => {
-    try {
-      if (repliesResponse) {
-        setReplies(Object.values(repliesResponse) || []);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchReplies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repliesResponse]);
 
   useEffect(() => {
     if (authorData) {
