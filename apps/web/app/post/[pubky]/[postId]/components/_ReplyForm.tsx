@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Icon, Button, Post } from '@social/ui-shared';
 import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
@@ -33,8 +33,13 @@ export default function ReplyForm({
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [placeholder, setPlaceholder] = useState('');
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+  useEffect(() => {
+    setPlaceholder(Utils.promptPlaceholder('reply'));
+  }, []);
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
@@ -78,7 +83,7 @@ export default function ReplyForm({
           content={contentReply}
           setContent={setContentReply}
           setTextArea={setTextArea}
-          placeHolder={Utils.promptPlaceholder('reply')}
+          placeHolder={placeholder}
           isValidContent={isValidContent}
           setIsValidContent={setIsValidContent}
           selectedFiles={selectedFiles}
