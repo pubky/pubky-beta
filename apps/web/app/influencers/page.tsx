@@ -1,3 +1,5 @@
+import { Content } from '@social/ui-shared';
+import { CreatePost, Header, FooterMobile } from '@/components';
 import { getSeoMetadata } from './../../components/HeaderSEO';
 import { Influencers } from './components/index';
 
@@ -7,5 +9,16 @@ export const metadata = getSeoMetadata({
 });
 
 export default function Index() {
-  return <Influencers.Content />;
+  return (
+    <Content.Main>
+      <Header className="hidden md:block" title="Influencers" />
+      <Content.Grid className="grid grid-cols-10 gap-4">
+        <Influencers.LeftSidebar />
+        <Influencers.MainContent />
+        <Influencers.RightSidebar />
+      </Content.Grid>
+      <CreatePost />
+      <FooterMobile title="Influencers" />
+    </Content.Main>
+  );
 }
