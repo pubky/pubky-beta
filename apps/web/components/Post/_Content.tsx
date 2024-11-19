@@ -15,6 +15,7 @@ import { FileContent, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -31,6 +32,7 @@ export default function Content({
 }: PostProps) {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
+  const isMobile = useIsMobile();
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
@@ -216,7 +218,7 @@ export default function Content({
         )}
         {fileContents.length > 0 && post?.details?.kind !== 'Long' && (
           <div
-            className={`mt-4 grid gap-4 ${
+            className={`mt-4 flex flex-col md:grid gap-4 ${
               fileContents.length === 1
                 ? 'grid-cols-1'
                 : fileContents.length === 2
@@ -229,7 +231,7 @@ export default function Content({
               const isImage = file?.content_type.startsWith('image');
               const isPDF = file?.content_type === 'application/pdf';
               const isAudio = file?.content_type.startsWith('audio');
-              const widthImage = fileContents.length > 1 ? 'w-full' : 'w-auto';
+              // const widthImage = fileContents.length > 1 ? 'w-full' : 'w-auto';
 
               return (
                 <div
@@ -243,7 +245,7 @@ export default function Content({
                     <video
                       src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                       controls
-                      className="w-full h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden"
+                      className="min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isImage ? (
                     <img
@@ -251,7 +253,7 @@ export default function Content({
                       alt={`Fetched file ${index}`}
                       width={800}
                       height={418}
-                      className={`${widthImage} min-w-[200px] h-auto max-w-full max-h-[418px] object-cover rounded-[10px] overflow-hidden`}
+                      className="min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isPDF ? (
                     <div
@@ -262,7 +264,7 @@ export default function Content({
                           '_blank'
                         );
                       }}
-                      className="flex flex-col md:flex-row gap-2 w-full justify-between items-start md:items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
+                      className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
                     >
                       <div className="flex gap-2 items-center">
                         <Icon.FileText size="20" />
@@ -273,7 +275,7 @@ export default function Content({
                           {Utils.minifyText(
                             file?.name ??
                               `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                            60
+                            isMobile ? 20 : 60
                           )}
                         </Typography.Body>
                       </div>
