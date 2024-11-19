@@ -133,7 +133,7 @@ type PubkyClientContextType = {
 };
 
 interface TimelineState {
-  [key: string]: PostView; // ou defina o tipo específico do post
+  [key: string]: PostView;
 }
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);

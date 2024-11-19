@@ -58,25 +58,29 @@ const useTimelinePosts = (pubky, skip, limit, reach, sort, searchTags) => {
   );
 
   useEffect(() => {
-    if (!isLoading && data) {
-      if (skip === 0) {
-        const timelineObj = data.reduce((acc, post) => {
-          acc[post.details.id] = post;
-          return acc;
-        }, {});
-        setTimeline(timelineObj);
-        return;
-      }
-      if (!timeline) return;
+    if (!isLoading) {
+      if (data) {
+        if (skip === 0) {
+          const timelineObj = data.reduce((acc, post) => {
+            acc[post.details.id] = post;
+            return acc;
+          }, {});
+          setTimeline(timelineObj);
+          return;
+        }
+        if (!timeline) return;
 
-      const newPosts = data.reduce(
-        (acc, post) => {
-          acc[post.details.id] = post;
-          return acc;
-        },
-        { ...timeline }
-      );
-      setTimeline(newPosts);
+        const newPosts = data.reduce(
+          (acc, post) => {
+            acc[post.details.id] = post;
+            return acc;
+          },
+          { ...timeline }
+        );
+        setTimeline(newPosts);
+      } else {
+        setTimeline({});
+      }
     }
   }, [data, isLoading, reach]);
 
