@@ -100,7 +100,7 @@ export default function Content({
           fileUris.map(async (fileUri) => {
             const fetchedFile = await getFile(fileUri);
             return fetchedFile ? fetchedFile : null;
-          })
+          }),
         );
         setFileContents(
           fetchedFiles
@@ -108,7 +108,7 @@ export default function Content({
             .map((file) => ({
               ...file,
               urls: file!.urls, // Ensure 'urls' is a string
-            })) as FileContent[]
+            })) as FileContent[],
         );
       }
     };
@@ -163,7 +163,6 @@ export default function Content({
                             <Image
                               src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                               alt={`Fetched file ${index}`}
-                              layout="responsive"
                               width={360}
                               height={200}
                               className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
@@ -222,8 +221,8 @@ export default function Content({
               fileContents.length === 1
                 ? 'grid-cols-1'
                 : fileContents.length === 2
-                ? 'grid-cols-2'
-                : 'grid-cols-2'
+                  ? 'grid-cols-2'
+                  : 'grid-cols-2'
             }`}
           >
             {fileContents.map((file, index) => {
@@ -261,7 +260,7 @@ export default function Content({
                         event.stopPropagation();
                         window.open(
                           `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                          '_blank'
+                          '_blank',
                         );
                       }}
                       className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
@@ -275,7 +274,7 @@ export default function Content({
                           {Utils.minifyText(
                             file?.name ??
                               `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                            isMobile ? 20 : 60
+                            isMobile ? 20 : 60,
                           )}
                         </Typography.Body>
                       </div>
