@@ -9,6 +9,7 @@ interface TextProps extends React.HTMLAttributes<HTMLInputElement> {
   maxLength?: number;
   inputPadding?: string;
   disabled?: boolean;
+  placeholder?: string;
   type?:
     | 'button'
     | 'checkbox'
@@ -44,6 +45,7 @@ export const Text = ({
   inputPadding = 'pr-12',
   disabled,
   value,
+  placeholder = '',
   ...rest
 }: TextProps) => {
   const baseCSS = `w-full h-[70px] p-6 rounded-2xl bg-transparent border border-white border-opacity-30 border-dashed flex-col justify-start items-start inline-flex outline-none text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-30 text-[17px] font-normal font-InterTight leading-snug tracking-wide`;
@@ -60,11 +62,12 @@ export const Text = ({
           disabled={disabled}
           maxLength={maxLength}
           required={required}
+          placeholder={placeholder}
           className={twMerge(
             baseCSS,
             inputPaddingRight,
             rest.className,
-            error ? 'border-red-600 border-opacity-100' : ''
+            error ? 'border-red-600 border-opacity-100' : '',
           )}
         />
         {action && (

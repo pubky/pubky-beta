@@ -7,6 +7,7 @@ interface WordProps extends React.HTMLAttributes<HTMLInputElement> {
   required?: boolean;
   disabled?: boolean;
   value?: string;
+  placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -16,6 +17,7 @@ export const Word = ({
   disabled,
   value,
   onChange,
+  placeholder = '',
   ...rest
 }: WordProps) => {
   const baseCSS =
@@ -29,10 +31,11 @@ export const Word = ({
       <input
         {...rest}
         required={required}
+        placeholder={placeholder}
         className={twMerge(
           baseCSS,
           rest.className,
-          error ? inputWithErrorStyle : ''
+          error ? inputWithErrorStyle : '',
         )}
         disabled={disabled}
         value={value}
