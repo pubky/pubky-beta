@@ -94,6 +94,12 @@ export default function FooterArea({
         return true;
       });
 
+      if (selectedFiles && selectedFiles.length + validFiles.length > 3) {
+        setContentAlert('Max 3 files only.', 'warning');
+        setShow(true);
+        return;
+      }
+
       const newFiles =
         selectedFiles && validFiles.slice(0, 3 - selectedFiles.length);
       setSelectedFiles &&
