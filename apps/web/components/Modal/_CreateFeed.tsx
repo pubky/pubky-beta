@@ -201,7 +201,11 @@ export default function CreateFeed({
                 theme={Theme.DARK}
                 emojiStyle={EmojiStyle.TWITTER}
                 onEmojiClick={(emojiObject) => {
-                  setTag(tag + emojiObject.emoji);
+                  const emojiLength = new Blob([emojiObject.emoji]).size / 2;
+
+                  if (tag.length + emojiLength <= 20) {
+                    setTag(tag + emojiObject.emoji);
+                  }
                   setShowEmojis(false);
                 }}
               />
