@@ -86,21 +86,28 @@ export default function InputArea({
 
     if (files) {
       const validFiles = Array.from(files).filter((file) => {
+        const isImage = file.type.startsWith('image/');
+        const isVideo = file.type.startsWith('video/');
+        const isAudio = file.type.startsWith('audio/');
+
         const isValidType =
-          file.type.startsWith('image/') ||
-          file.type.startsWith('video/') ||
-          file.type.startsWith('audio/') ||
+          (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+          (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+          (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
           file.type === 'application/pdf';
+
         if (!isValidType) {
-          setContentAlert('File not supported', 'warning');
+          setContentAlert('File type not supported.', 'warning');
           setShow(true);
           return false;
         }
+
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 20 MB', 'warning');
+          setContentAlert('The maximum allowed size is 20 MB.', 'warning');
           setShow(true);
           return false;
         }
+
         return true;
       });
 
