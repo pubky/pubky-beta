@@ -1,147 +1,113 @@
-import { Icon, Typography } from '@social/ui-shared';
-import React, { useEffect, useState } from 'react';
+'use client';
+
+import React, { useRef, useState, useEffect } from 'react';
+
+import { Typography } from '@social/ui-shared';
 import { Post } from '@/components';
-import { PostView } from '@/types/Post';
-import { usePostReplies } from '@/hooks/usePost';
-import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
 import Skeletons from '@/components/Skeletons';
-import { UseUserMuted } from '@/hooks/useUser';
+
 import { usePubkyClientContext } from '@/contexts';
-import CreateQuickReply from '@/components/CreateQuickReply';
+import { getPostReplies } from '@/services/postService';
 
 export default function Replies({
-  repliesResponse,
-  post,
-  isLoadingReplies,
+  pubkyAuthor,
+  postId,
 }: {
-  repliesResponse: PostView[] | undefined;
-  post: PostView;
-  isLoadingReplies: boolean;
+  pubkyAuthor: string;
+  postId: string;
 }) {
-  const { pubky } = usePubkyClientContext();
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
-  const [replies, setReplies] = useState<PostView[]>([]);
+  const { pubky, replies, setReplies } = usePubkyClientContext();
+  const limit = 5;
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [start, setStart] = useState<number | undefined>(undefined);
+
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastReplyElementRef = useRef<HTMLDivElement | null>(null);
 
   const fetchReplies = async () => {
+    if (isLoading || !hasMore) return;
+
+    setIsLoading(true);
     try {
-      if (repliesResponse) {
-        setReplies(repliesResponse || []);
+      const newReplies = await getPostReplies(
+        pubkyAuthor,
+        postId,
+        pubky,
+        limit,
+        start
+      );
+      setStart(newReplies[newReplies.length - 1].details.indexed_at - 1);
+
+      if (newReplies && newReplies.length > 0) {
+        setReplies((prevReplies) => [...prevReplies, ...newReplies]);
+      } else {
+        setHasMore(false);
       }
     } catch (error) {
-      console.error('Error:', error);
+      setHasMore(false);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
+    setReplies([]);
     fetchReplies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repliesResponse]);
+  }, []);
 
-  const renderReplies = (replies: PostView[]) => {
-    if (!Array.isArray(replies)) {
-      return null;
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchReplies();
+      }
+    });
+
+    if (lastReplyElementRef.current) {
+      observer.current.observe(lastReplyElementRef.current);
     }
 
-    return replies
-      .filter((reply) => !mutedUsers?.includes(reply?.details?.author))
-      .reverse()
-      .map((reply) => (
-        <div className="flex flex-col gap-3" key={reply?.details?.id}>
-          <Post post={reply} size="full" />
-          {reply?.counts?.replies > 0 && (
-            <ReplyReplies post={post} reply={reply} />
-          )}
-        </div>
-      ));
-  };
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, [isLoading, hasMore, replies]);
+
+  useEffect(() => {
+    return () => {
+      setReplies([]);
+    };
+  }, [setReplies]);
 
   return (
     <>
-      {isLoadingReplies ? (
-        <Skeletons.Simple />
-      ) : !Array.isArray(replies) ? (
+      {replies.length === 0 && !isLoading ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">
-          No replies yet
+          No replies yet.
         </Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full mt-3">
-          {renderReplies(replies)}
+          {replies.map((reply, index) => {
+            const isLastReply = replies.length === index + 1;
+            return (
+              <div
+                key={`${reply.details.id}-${index}`}
+                ref={isLastReply ? lastReplyElementRef : null}
+              >
+                <Post post={reply} />
+              </div>
+            );
+          })}
+          {isLoading && <Skeletons.Simple />}
         </div>
       )}
     </>
   );
 }
-
-const ReplyReplies = ({ reply, post }: { reply: PostView; post: PostView }) => {
-  const { pubky } = usePubkyClientContext();
-  const { data: replyReplies } = usePostReplies(
-    reply?.details?.author,
-    reply?.details?.id
-  );
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
-  const router = useRouter();
-  const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
-  const lineHorizontalCSS = (
-    <div className="absolute ml-[10px]">
-      <Icon.LineHorizontal size="14" color="#262626" />
-    </div>
-  );
-  const lineBaseCSS2 = `ml-[11px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1.5px] after:h-[65px] after:block after:-mt-[38px] after:-ml-[1px]`;
-  const lineHorizontalCSS2 = (
-    <div className="absolute ml-[10px] mt-[22px]">
-      <Icon.LineHorizontal size="14" color="#262626" />
-    </div>
-  );
-  //const [showAllReplies, setShowAllReplies] = useState(false);
-
-  if (!replyReplies || replyReplies.length === 0) return null;
-
-  const displayedReplies = replyReplies.slice(0, 1);
-  //showAllReplies
-  //  ? replyReplies.replies
-  //  : replyReplies.replies.slice(0, 1);
-  const repliesLeft = post?.counts?.replies - displayedReplies.length;
-
-  return (
-    <div>
-      {displayedReplies
-        .filter(
-          (nestedReply) => !mutedUsers?.includes(nestedReply?.details?.author)
-        )
-        .reverse()
-        .map((nestedReply) => (
-          <div className="flex flex-col gap-3" key={nestedReply?.details?.id}>
-            <Post
-              post={nestedReply}
-              size="full"
-              line={Boolean(reply?.relationships?.replied)}
-            />
-          </div>
-        ))}
-      {repliesLeft > 0 && (
-        //&& !showAllReplies
-        <div>
-          <div className={lineBaseCSS} />
-          {lineHorizontalCSS}
-          <Typography.Body
-            variant="small-bold"
-            //onClick={() => setShowAllReplies(true)}
-            onClick={() =>
-              router.push(Utils.encodePostUri(reply?.details?.uri))
-            }
-            className="mt-3 cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
-          >
-            <Icon.PlusCircle />
-            {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
-          </Typography.Body>
-        </div>
-      )}
-      <div className="relative mt-3">
-        <div className={lineBaseCSS2} />
-        {lineHorizontalCSS2}
-        <CreateQuickReply post={reply} />
-      </div>
-    </div>
-  );
-};

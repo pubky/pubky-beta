@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components';
 import { Content } from '@social/ui-shared';

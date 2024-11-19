@@ -10,18 +10,13 @@ import CreateContent from '@/components/CreateContent';
 import { PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
-export default function ReplyForm({
-  uri,
+export default function PostRoot({
   post,
   updatePost,
-  replies,
-  isLoadingReplies,
 }: {
   uri: string;
   post: PostView;
   updatePost: () => void;
-  replies: PostView[] | undefined;
-  isLoadingReplies: boolean;
 }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
@@ -38,9 +33,6 @@ export default function ReplyForm({
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
-    //const rootUri = post.relationships?.replied
-    //  ? post.relationships?.replied
-    //  : post?.details?.uri;
 
     const sendReply = await createReply(
       post?.details?.uri,
@@ -113,11 +105,7 @@ export default function ReplyForm({
           }
           textArea={textArea}
         />
-        <Replies
-          post={post}
-          repliesResponse={replies}
-          isLoadingReplies={isLoadingReplies}
-        />
+        <Replies postId={post.details.id} pubkyAuthor={post.details.author} />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}
@@ -125,7 +113,7 @@ export default function ReplyForm({
           setShowModalTag={setShowModalTag}
         />
       </Post.Root>
-      <Participants author={post.details.author} repliesResponse={replies} />
+      <Participants author={post.details.author} />
     </div>
   );
 }

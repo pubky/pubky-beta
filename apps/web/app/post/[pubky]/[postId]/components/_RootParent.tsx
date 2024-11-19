@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { Post, Skeleton } from '@/components';
 import { Typography } from '@social/ui-shared';
@@ -15,11 +17,9 @@ interface ParentPostState {
 export default function RootParent({
   parentURI,
   postRef,
-}: //onParentPostsCountChange,
-{
+}: {
   parentURI: string;
-  postRef: any;
-  //onParentPostsCountChange: (count: number) => void;
+  postRef: React.RefObject<HTMLDivElement>;
 }) {
   const { pubky } = usePubkyClientContext();
   const [isMobile, setIsMobile] = useState(false);
@@ -70,7 +70,6 @@ export default function RootParent({
         if (parentURI) {
           const parentURIList = await fetchParentURIs(parentURI, []);
           setParentURIs(parentURIList);
-          //onParentPostsCountChange(parentURIList.length);
         }
       } catch (error) {
         console.error('Error fetching parent URIs:', error);
@@ -122,7 +121,7 @@ export default function RootParent({
   );
 
   useEffect(() => {
-    if (allParentPostsLoaded && postRef.current) {
+    if (allParentPostsLoaded && postRef?.current) {
       postRef.current.scrollIntoView();
     }
   }, [allParentPostsLoaded]);
@@ -134,15 +133,23 @@ export default function RootParent({
   return parentURIs.map((parentURI, index) => {
     const reversedIndex = parentURIs.length - 1 - index;
     const post = parentPosts[parentURIs[reversedIndex]];
-
-    //const marginLeftValue = index > 1 ? index * 12 : '';
     const isLine = index > 0;
 
-    return post && post.post ? (
-      <div
-        key={parentURI}
-        //style={{ marginLeft: `${marginLeftValue}px` }}
-      >
+    if (!post?.post)
+      return (
+        <div
+          key={parentURI}
+          className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]"
+        >
+          <Typography.Body variant="small" className="text-opacity-50">
+            This post has been deleted by its author.
+          </Typography.Body>
+          <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[50px]" />
+        </div>
+      );
+
+    return (
+      <div key={parentURI}>
         <Post
           homeView
           post={post.post}
@@ -150,16 +157,6 @@ export default function RootParent({
           largeView={!isMobile}
           line={isLine}
         />
-      </div>
-    ) : (
-      <div
-        key={parentURI}
-        className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]"
-      >
-        <Typography.Body variant="small" className="text-opacity-50">
-          This post has been deleted by its author.
-        </Typography.Body>
-        <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[50px]" />
       </div>
     );
   });

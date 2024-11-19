@@ -105,11 +105,23 @@ export function usePostReplies(
   postId: string,
   viewerId?: string,
   skip?: number,
-  limit?: number
+  limit?: number,
+  start?: number,
+  end?: number
 ) {
   return useQuery({
-    queryKey: ['postReplies', authorId, postId, viewerId, skip, limit],
-    queryFn: () => getPostReplies(authorId, postId, viewerId, skip, limit),
+    queryKey: [
+      'postReplies',
+      authorId,
+      postId,
+      viewerId,
+      limit,
+      start,
+      end,
+      skip,
+    ],
+    queryFn: () =>
+      getPostReplies(authorId, postId, viewerId, limit, start, end, skip),
     retry: false,
   });
 }

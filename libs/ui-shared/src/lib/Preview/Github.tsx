@@ -1,6 +1,6 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+
+import { useEffect, useState } from 'react';
 import { Typography } from '../Typography';
 import { Icon } from '../Icon';
 
@@ -8,8 +8,19 @@ interface GitHubProps {
   url: string;
 }
 
+type RepoData = {
+  full_name: string;
+  description: string;
+  stargazers_count: number;
+  forks_count: number;
+  subscribers_count: number;
+  owner: {
+    avatar_url: string;
+  };
+};
+
 export const GitHub = ({ url }: GitHubProps) => {
-  const [repoData, setRepoData] = useState<any>(null);
+  const [repoData, setRepoData] = useState<RepoData | null>(null);
   const [ownerAvatar, setOwnerAvatar] = useState<string>('');
   const [previewImage, setPreviewImage] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -58,7 +69,6 @@ export const GitHub = ({ url }: GitHubProps) => {
         setPreviewImage(image);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
         setError('Failed to load data');
         setLoading(false);
       }

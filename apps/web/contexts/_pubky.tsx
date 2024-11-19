@@ -130,6 +130,8 @@ type PubkyClientContextType = {
     privacysafety?: any,
     language?: string
   ) => Promise<boolean>;
+  setReplies: React.Dispatch<React.SetStateAction<PostView[]>>;
+  replies: PostView[];
 };
 
 interface TimelineState {
@@ -161,6 +163,7 @@ export function PubkyClientWrapper({
     undefined
   );
   const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
+  const [replies, setReplies] = useState<PostView[]>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [repliesArray, setRepliesArray] = useState<PostView[]>(
     {} as PostView[]
@@ -919,6 +922,8 @@ export function PubkyClientWrapper({
 
   const loadSettings = async () => {
     try {
+      if (!pubky) return null;
+
       await ensureLoggedIn();
 
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
@@ -1484,6 +1489,8 @@ export function PubkyClientWrapper({
   return (
     <PubkyClientContext.Provider
       value={{
+        replies,
+        setReplies,
         pubky,
         seed,
         profile,

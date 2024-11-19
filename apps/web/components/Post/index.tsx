@@ -59,11 +59,6 @@ export default function Post({
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
   const router = useRouter();
   const lineBaseCSS = `ml-[10px] absolute border-l-2 h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
-  const lineHorizontalCSS = (
-    <div className="absolute ml-[10px]">
-      <Icon.LineHorizontal size="14" color="#262626" />
-    </div>
-  );
 
   const handleDeletePost = async () => {
     const result = await deletePost(post?.details?.id);
@@ -321,7 +316,9 @@ export default function Post({
                 {post?.relationships?.replied && homeView && (
                   <div className="relative">
                     <div className={twMerge(lineBaseCSS, 'after:h-[52px]')} />
-                    {lineHorizontalCSS}
+                    <div className="absolute ml-[10px]">
+                      <Icon.LineHorizontal size="14" color="#262626" />
+                    </div>
                   </div>
                 )}
                 <div
@@ -340,14 +337,15 @@ export default function Post({
                 {line && (
                   <>
                     <div className={twMerge(lineBaseCSS, lineStyle)} />
-
-                    {lineHorizontalCSS}
+                    <div className="absolute ml-[10px]">
+                      <Icon.LineHorizontal size="14" color="#262626" />
+                    </div>
                   </>
                 )}
                 <PostUI.MainCard
                   className={twMerge(
                     line && 'ml-6',
-                    largeView && 'p-12 flex inline-flex flex-row gap-12',
+                    largeView && 'p-12 inline-flex flex-row gap-12',
                     rest.className
                   )}
                 >
