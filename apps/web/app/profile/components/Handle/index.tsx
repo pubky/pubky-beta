@@ -60,7 +60,7 @@ export default function Handle({
     <div {...rest} className={twMerge(rest.className)}>
       {pubkey ? (
         <>
-          <div className="text-center lg:text-left flex flex-col gap-2 mb-4 md:mb-9">
+          <div className="text-center lg:text-left flex flex-col gap-2 mb-4 md:mb-7">
             <Typography.Display
               id="profile-username-header"
               className="text-2xl sm:text-2xl"
@@ -76,7 +76,7 @@ export default function Handle({
               </Typography.Body>
             )}
           </div>
-          <div className="md:-mt-4 flex flex-wrap gap-3 justify-center md:justify-start">
+          <div className="flex flex-wrap gap-3 justify-center md:justify-start">
             <Buttons
               creatorPubky={creatorPubky}
               pubkey={pubkey}

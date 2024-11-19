@@ -156,7 +156,7 @@ export default function Buttons({
       )}
       <Button.Medium
         id="profile-copy-pubkey-btn"
-        className="px-3 w-auto h-8"
+        className="px-3 w-auto h-8 uppercase"
         onClick={() => {
           setContent(`pk:${pubkey}`, 'pubky');
           setShow(true);

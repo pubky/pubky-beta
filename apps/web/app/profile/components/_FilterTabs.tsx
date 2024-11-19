@@ -152,7 +152,7 @@ export default function FilterTabs({
 
   return (
     <div className="flex gap-4">
-      <div className="w-[300px] self-start sticky top-[120px] hidden lg:block">
+      <div className="w-[280px] self-start sticky top-[120px] hidden lg:block">
         {tabs.map((tab) => {
           if (
             creatorPubky &&
@@ -167,7 +167,7 @@ export default function FilterTabs({
               id={`profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() => handleTabClick(tab.id, tab.key)}
-              className={`w-full h-12 px-3 items-center gap-2 flex justify-between cursor-pointer ${
+              className={`w-full py-2 px-3 items-center flex justify-between cursor-pointer ${
                 isActive && !loading
                   ? 'opacity-100'
                   : 'opacity-50 hover:opacity-100'
@@ -175,19 +175,25 @@ export default function FilterTabs({
             >
               <div className="flex gap-2 items-center">
                 {tab.icon}
-                <Typography.Caption className="tracking-normal" variant="bold">
+                <Typography.Body
+                  className="tracking-normal"
+                  variant="small-bold"
+                >
                   {tab.label}
-                </Typography.Caption>
+                </Typography.Body>
               </div>
               {!loading && tab.key && (
-                <Typography.Caption className="tracking-normal" variant="bold">
+                <Typography.Body
+                  className="tracking-normal"
+                  variant="small-bold"
+                >
                   <span
                     id="counter"
                     className="ml-2 text-white text-opacity-30"
                   >
                     {getTabNumber(tab.key)}
                   </span>
-                </Typography.Caption>
+                </Typography.Body>
               )}
             </div>
           );
