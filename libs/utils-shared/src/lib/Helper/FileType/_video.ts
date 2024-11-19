@@ -1,1 +1,1 @@
-export const supportedVideoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
+export const supportedVideoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
