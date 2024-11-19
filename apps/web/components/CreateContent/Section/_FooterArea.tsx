@@ -86,6 +86,21 @@ export default function FooterArea({
 
     if (files) {
       const validFiles = Array.from(files).filter((file) => {
+        const isImage = file.type.startsWith('image/');
+        const isVideo = file.type.startsWith('video/');
+        const isAudio = file.type.startsWith('audio/');
+        const isValidType =
+          (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+          (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+          (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
+          file.type === 'application/pdf';
+
+        if (!isValidType) {
+          setContentAlert('File type not supported.', 'warning');
+          setShow(true);
+          return false;
+        }
+
         if (file.size > maxSizeInBytes) {
           setContentAlert('The maximum allowed size is 20 MB', 'warning');
           setShow(true);
