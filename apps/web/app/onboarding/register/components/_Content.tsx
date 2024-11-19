@@ -198,12 +198,12 @@ export default function Index() {
       } catch (error) {
         console.log(error);
       } finally {
+        router.push('/home');
         setLoading(false);
       }
-
-      router.push('/home');
     } catch (error) {
       console.log(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -212,7 +212,7 @@ export default function Index() {
     <Onboarding.Layout currentStep={3}>
       <Input.Cursor
         placeholder="Your Name"
-        className="h-auto text-[40px] font-bold sm:text-[64px]"
+        className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px]"
         defaultValue={name}
         disabled={loading}
         maxLength={25}
@@ -224,7 +224,7 @@ export default function Index() {
       />
       <Typography.H2
         variant="light"
-        className="-mt-4 text-opacity-50 break-words"
+        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0"
       >
         {Utils.minifyPubky(pubky ?? '')}
       </Typography.H2>
