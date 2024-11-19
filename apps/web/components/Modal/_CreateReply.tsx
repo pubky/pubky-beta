@@ -25,6 +25,7 @@ export default function CreateReply({
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const modalReplyRef = useRef<HTMLDivElement>(null);
   const [isValidContent, setIsValidContent] = useState(false);
+  const [placeholder, setPlaceholder] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
@@ -33,6 +34,10 @@ export default function CreateReply({
       <Icon.LineHorizontal size="14" color="#262626" />
     </div>
   );
+
+  useEffect(() => {
+    setPlaceholder(Utils.promptPlaceholder('reply'));
+  }, []);
 
   const handleSubmit = async (content: string) => {
     if (sendingReply) {
@@ -130,7 +135,7 @@ export default function CreateReply({
             content={contentReply}
             setContent={setContentReply}
             isValidContent={isValidContent}
-            placeHolder={Utils.promptPlaceholder('reply')}
+            placeHolder={placeholder}
             setIsValidContent={setIsValidContent}
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
