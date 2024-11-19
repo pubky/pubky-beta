@@ -8,7 +8,7 @@ describe('contacts', () => {
   });
 
   // SKIP due to bug https://github.com/pubky/pubky-app/issues/529
-  it.skip('follow, be followed, and make a friend', () => {
+  it('follow, be followed, and make a friend', () => {
     cy.on('uncaught:exception', (_err, _runnable) => {
       // returning false here prevents Cypress from failing the test on uncaught exception
       return false
@@ -79,23 +79,25 @@ describe('contacts', () => {
     // Check account 1 profile for updated followers
     // workaround: reload page to get updated counter https://github.com/pubky/pubky-app/issues/395
     cy.reload();
-    // tab shows number of followers is 1
-    cy.get('#profile-tab-followers').find('#counter').should('have.text', 1);
+
+    // check followers tab and click it
+    cy.get('#profile-tab-followers').within(($tab) => {
+      cy.get('#counter').should('have.text', 1);
+      cy.get('#label').should('have.text', 'Followers');
+      cy.wrap($tab).click();
+    });
 
     // check number of listed followers is 1
-    cy.get('#profile-tab-followers').should('contain.text', 'Followers');
-    cy.get('#profile-tab-followers').click();
     cy.get('#profile-list-root').children().should('have.length', 1)
     cy.get('#profile-list-root').children().first().within(() => {
       // check that account 2 is listed as a follower
-      // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
-      cy.get('#list-profile-name').should('contain.text', '#2 Frien');
+      cy.get('#list-profile-name').should('have.text', '#2 Friend');
       // check 0 tags
       cy.get('#list-tags-counter').should('have.text', 0);
       // check 0 posts
       cy.get('#list-posts-counter').should('have.text', 0);
       // check follower is 'me'
-      cy.get('#list-me-button').should('be.visible');
+      cy.get('#list-me-label').should('be.visible');
     });
 
     // check number of listed following is 0

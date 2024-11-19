@@ -121,6 +121,7 @@ export default function Index() {
         <div className="relative flex gap-3 mt-6 sm:mt-12">
           <Link href="/onboarding/intro">
             <Button.Large
+              id="onboarding-create-account-btn"
               className="w-auto lg:w-[156px] bg-[#c8ff00] border-[#c8ff00]"
               colorText="text-[#c8ff00]"
             >

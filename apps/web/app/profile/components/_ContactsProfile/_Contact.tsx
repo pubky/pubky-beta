@@ -120,7 +120,7 @@ export default function Contact({
                         className="rounded-full w-[48px] h-[48px] max-w-none"
                       />
                       <div className="flex-col justify-center items-start inline-flex">
-                        <Typography.Body variant="medium-bold">
+                        <Typography.Body id='list-profile-name' variant="medium-bold">
                           {contact?.details.name &&
                             Utils.minifyText(contact?.details?.name, 20)}
                         </Typography.Body>
@@ -193,7 +193,7 @@ export default function Contact({
                     <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
                       Tags
                     </Typography.Label>
-                    <Typography.Body variant="medium-bold">
+                    <Typography.Body id='list-tags-counter' variant="medium-bold">
                       {contact?.counts?.tags ?? 0}
                     </Typography.Body>
                   </div>
@@ -201,13 +201,14 @@ export default function Contact({
                     <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
                       Posts
                     </Typography.Label>
-                    <Typography.Body variant="medium-bold">
+                    <Typography.Body id='list-posts-counter' variant="medium-bold">
                       {contact?.counts?.posts ?? 0}
                     </Typography.Body>
                   </div>
                   <div className="flex gap-4">
                     {pubkeyUser ? (
                       <Button.Medium
+                        id='list-me-label'
                         className="w-full lg:w-[104px] bg-transparent cursor-default"
                         icon={<Icon.User size="16" />}
                       >
@@ -219,6 +220,7 @@ export default function Contact({
                       </Button.Medium>
                     ) : isFollowed ? (
                       <Button.Medium
+                        id='list-unfollow-button'
                         onClick={
                           loadingContacts[contact?.details?.id]
                             ? undefined
@@ -233,6 +235,7 @@ export default function Contact({
                       </Button.Medium>
                     ) : (
                       <Button.Medium
+                        id='list-follow-button'
                         onClick={
                           loadingContacts[contact?.details?.id]
                             ? undefined

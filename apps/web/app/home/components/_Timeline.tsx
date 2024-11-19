@@ -74,7 +74,7 @@ export const Timeline = () => {
     timeline.length > 0 ? timeline[0].details.indexed_at : undefined;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div id="timeline"className="flex flex-col gap-3">
       {isSuccess && latestTimestamp && (
         <NewPostsNotifier
           latestTimestamp={latestTimestamp}
