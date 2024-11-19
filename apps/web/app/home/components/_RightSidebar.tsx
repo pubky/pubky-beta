@@ -1,4 +1,3 @@
-
 import * as Components from '@/components';
 
 export function RightSidebar() {

@@ -1,5 +1,7 @@
 import { getSeoMetadata } from '@/components/HeaderSEO';
-import { Search } from './components/index';
+import { Content } from '@social/ui-shared';
+import * as Components from '@/components';
+import { SearchPage } from './components';
 
 export const metadata = getSeoMetadata({
   title: 'Search | Pubky.app',
@@ -7,5 +9,12 @@ export const metadata = getSeoMetadata({
 });
 
 export default function Index() {
-  return <Search.Content />;
+  return (
+    <Content.Main>
+      <Components.Header className="hidden md:block" title="Search" />
+      <SearchPage.Content />
+      <Components.CreatePost />
+      <Components.FooterMobile title="Search" />
+    </Content.Main>
+  );
 }
