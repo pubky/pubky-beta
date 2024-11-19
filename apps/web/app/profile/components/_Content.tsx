@@ -27,7 +27,7 @@ export default function Index() {
     <Content.Main>
       <Header className="hidden md:block" title="Profile" />
       <div>
-        <Content.Grid className="pb-4 md:pb-12 flex flex-col text-center lg:flex-row items-center gap-4 md:gap-8 relative">
+        <Content.Grid className="pb-4 flex flex-col text-center lg:flex-row items-center gap-4 md:gap-8 relative">
           <Profile.FilterTabsMobile
             activeTab={activeTab}
             setActiveTab={setActiveTab}
@@ -41,21 +41,18 @@ export default function Index() {
             loading={isLoading}
             profile={user}
           />
-          <div className="w-full rounded-2xl p-6 md:p-0 bg-white md:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-8 relative">
+          <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
             <Profile.Avatar
+              className="lg:pl-12"
               username={user?.details?.name || Utils.minifyPubky(pubky ?? '')}
               uriImage={user?.details?.image as string}
             />
-            <Profile.Handle
-              className="-mt-4"
-              profile={user}
-              pubkey={pubky ? pubky : ''}
-            />
+            <Profile.Handle profile={user} pubkey={pubky ? pubky : ''} />
           </div>
         </Content.Grid>
       </div>
-      <Content.Grid className="grid grid-cols-5 gap-2">
-        <PostsLayout className="flex flex-col col-span-5 xl:col-span-4 gap-3 mt-[10px]">
+      <Content.Grid className="grid grid-cols-6 gap-2">
+        <PostsLayout className="flex flex-col col-span-6 xl:col-span-5 gap-3 mt-[10px]">
           <Profile.FilterTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}

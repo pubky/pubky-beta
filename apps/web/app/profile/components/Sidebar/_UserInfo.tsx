@@ -75,17 +75,17 @@ export default function UserInfo({
     >
       <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
         <div className="items-center inline-flex justify-between">
-          <div className="justify-start items-center gap-3 inline-flex">
+          <div className="justify-start items-center gap-2 inline-flex">
             <ImageByUri
-              width={40}
-              height={40}
-              className="w-[40px] h-[40px] rounded-full"
+              width={35}
+              height={35}
+              className="w-[35px] h-[35px] rounded-full"
               uri={uriImage}
               alt="user-pic"
             />
             <div>
               <Typography.Body variant="medium-bold" className="-mb-2">
-                {Utils.minifyText(name, 10)}
+                {Utils.minifyText(name, 8)}
               </Typography.Body>
               <Typography.Label className="text-[12px] text-opacity-50">
                 {Utils.minifyPubky(pubkyUser)}
@@ -104,7 +104,7 @@ export default function UserInfo({
               className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10 p-2 -mt-[10px]"
               onClick={() => setShowProfileMenu(true)}
             >
-              <Icon.DotsThreeOutline size="16" />
+              <Icon.DotsThreeOutline size="12" />
             </div>
           </div>
         </div>
