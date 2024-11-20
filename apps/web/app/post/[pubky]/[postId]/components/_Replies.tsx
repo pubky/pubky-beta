@@ -8,13 +8,16 @@ import Skeletons from '@/components/Skeletons';
 
 import { usePubkyClientContext } from '@/contexts';
 import { getPostReplies } from '@/services/postService';
+import { ReplyReplies } from './_ReplyReplies';
 
 export default function Replies({
   pubkyAuthor,
   postId,
+  postCountReplies,
 }: {
   pubkyAuthor: string;
   postId: string;
+  postCountReplies: number;
 }) {
   const { pubky, replies, setReplies } = usePubkyClientContext();
   const limit = 5;
@@ -100,8 +103,15 @@ export default function Replies({
               <div
                 key={`${reply.details.id}-${index}`}
                 ref={isLastReply ? lastReplyElementRef : null}
+                className="flex flex-col gap-3"
               >
                 <Post post={reply} />
+                {reply?.counts?.replies > 0 && (
+                  <ReplyReplies
+                    postCountReplies={postCountReplies}
+                    reply={reply}
+                  />
+                )}
               </div>
             );
           })}
