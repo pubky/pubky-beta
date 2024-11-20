@@ -97,24 +97,27 @@ export default function Replies({
         </Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full mt-3">
-          {replies.map((reply, index) => {
-            const isLastReply = replies.length === index + 1;
-            return (
-              <div
-                key={`${reply.details.id}-${index}`}
-                ref={isLastReply ? lastReplyElementRef : null}
-                className="flex flex-col gap-3"
-              >
-                <Post post={reply} />
-                {reply?.counts?.replies > 0 && (
-                  <ReplyReplies
-                    postCountReplies={postCountReplies}
-                    reply={reply}
-                  />
-                )}
-              </div>
-            );
-          })}
+          {replies
+            .slice()
+            .reverse()
+            .map((reply, index) => {
+              const isLastReply = replies.length === index + 1;
+              return (
+                <div
+                  key={`${reply.details.id}-${index}`}
+                  ref={isLastReply ? lastReplyElementRef : null}
+                  className="flex flex-col gap-3"
+                >
+                  <Post post={reply} />
+                  {reply?.counts?.replies > 0 && (
+                    <ReplyReplies
+                      postCountReplies={postCountReplies}
+                      reply={reply}
+                    />
+                  )}
+                </div>
+              );
+            })}
           {isLoading && <Skeletons.Simple />}
         </div>
       )}
