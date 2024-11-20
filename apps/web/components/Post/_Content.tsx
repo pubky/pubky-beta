@@ -100,7 +100,7 @@ export default function Content({
           fileUris.map(async (fileUri) => {
             const fetchedFile = await getFile(fileUri);
             return fetchedFile ? fetchedFile : null;
-          }),
+          })
         );
         setFileContents(
           fetchedFiles
@@ -108,7 +108,7 @@ export default function Content({
             .map((file) => ({
               ...file,
               urls: file!.urls, // Ensure 'urls' is a string
-            })) as FileContent[],
+            })) as FileContent[]
         );
       }
     };
@@ -221,8 +221,8 @@ export default function Content({
               fileContents.length === 1
                 ? 'grid-cols-1'
                 : fileContents.length === 2
-                  ? 'grid-cols-2'
-                  : 'grid-cols-2'
+                ? 'grid-cols-2'
+                : 'grid-cols-2'
             }`}
           >
             {fileContents.map((file, index) => {
@@ -244,7 +244,7 @@ export default function Content({
                     <video
                       src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                       controls
-                      className="min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                      className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isImage ? (
                     <img
@@ -252,7 +252,7 @@ export default function Content({
                       alt={`Fetched file ${index}`}
                       width={800}
                       height={418}
-                      className="min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                      className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isPDF ? (
                     <div
@@ -260,7 +260,7 @@ export default function Content({
                         event.stopPropagation();
                         window.open(
                           `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                          '_blank',
+                          '_blank'
                         );
                       }}
                       className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
@@ -274,7 +274,7 @@ export default function Content({
                           {Utils.minifyText(
                             file?.name ??
                               `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                            isMobile ? 20 : 60,
+                            isMobile ? 20 : 60
                           )}
                         </Typography.Body>
                       </div>
