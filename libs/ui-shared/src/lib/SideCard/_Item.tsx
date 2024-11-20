@@ -21,31 +21,26 @@ export const Item = ({
 }: ItemProps) => {
   const disabledCSS = disabled ? 'cursor-default' : '';
   const baseCSS = `w-full h-12 py-2 shadow backdrop-blur-[10px] items-center justify-between inline-flex`;
-
   return (
     <button
       {...rest}
       key={value}
+      disabled={disabled}
       className={twMerge(baseCSS, disabledCSS, rest.className)}
     >
-      <div className="w-14 justify-start items-center contents">
+      <div className="w-full justify-start items-center contents ">
         <div
-          className={`flex gap-2 items-center ${
+          className={`flex gap-2 items-center w-full ${
             disabled
               ? 'opacity-20'
               : selected
-              ? 'opacity-100'
-              : 'opacity-50 hover:opacity-100'
-          }`}
+                ? 'opacity-100'
+                : 'opacity-50 hover:opacity-100'
+          } text-white text-[15px] font-semibold font-['Inter Tight'] leading-[18px] tracking-tight`}
         >
           {icon}
           <Typography.Body variant="medium-bold">{label}</Typography.Body>
         </div>
-        {/**{selected && (
-          <div>
-            <Icon.Check size="28" />
-          </div>
-        )}*/}
       </div>
     </button>
   );

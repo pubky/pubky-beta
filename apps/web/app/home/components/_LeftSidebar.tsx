@@ -21,8 +21,8 @@ export function LeftSidebar({
         <Filter.Sort />
       </div>
       <div ref={filterContentRef}>
-        <Filter.Layout />
         <Filter.Content />
+        <Filter.Layout />
       </div>
     </Components.Sidebar>
   );
