@@ -204,11 +204,11 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timestamp = async () => {
+    const handletimestamp = async () => {
       const result = await getTimestampNotification();
       setTimestamp(Number(result));
     };
-    timestamp();
+    handletimestamp();
   }, []);
 
   useEffect(() => {

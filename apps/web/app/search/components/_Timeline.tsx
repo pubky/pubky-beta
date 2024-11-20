@@ -78,8 +78,6 @@ const useTimelinePosts = (pubky, skip, limit, reach, sort, searchTags) => {
           { ...timeline }
         );
         setTimeline(newPosts);
-      } else if (searchTags.length === 0) {
-        setTimeline({});
       }
     }
   }, [data, isLoading, reach]);

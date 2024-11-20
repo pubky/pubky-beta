@@ -31,8 +31,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
       const timelineCopy = [...timelineProfile];
 
       setTimelineProfile([...timelineCopy, ...data]);
-    } else {
-      setTimelineProfile([]);
     }
   }, [data, isLoading]);
 
