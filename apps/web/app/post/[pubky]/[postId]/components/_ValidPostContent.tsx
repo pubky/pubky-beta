@@ -11,6 +11,7 @@ import TagsLargeView from '@/components/Post/_TagsLargeView';
 import { Post } from '.';
 
 import { useUserProfile } from '@/hooks/useUser';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 import { usePubkyClientContext } from '@/contexts';
 
@@ -46,6 +47,8 @@ export function ValidPostContent({ postRef, data }) {
 }
 
 const NormalPost = ({ data }) => {
+  const isMobile = useIsMobile();
+
   return (
     <div className="flex items-center relative">
       {data?.relationships?.replied && (
@@ -63,6 +66,7 @@ const NormalPost = ({ data }) => {
         post={data}
         size="full"
         fullContent
+        largeView={!isMobile}
         className={data?.relationships?.replied ? 'ml-6' : ''}
       />
     </div>
