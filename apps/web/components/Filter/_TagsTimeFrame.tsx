@@ -14,19 +14,31 @@ export default function TagsTimeFrame({
         label="Today"
         value="today"
         disabled={disabled}
-        icon={<Icon.Asterisk size="24" color="gray" />}
+        icon={
+          <div>
+            <Icon.Asterisk size="24" color="gray" />
+          </div>
+        }
       />
       <SideCard.Item
         label={`This\u00A0month`}
         value="this-month"
         disabled={disabled}
-        icon={<Icon.Calendar size="24" color="gray" />}
+        icon={
+          <div>
+            <Icon.Calendar size="24" color="gray" />
+          </div>
+        }
       />
       <SideCard.Item
         label="All time"
         value="all time"
         disabled={disabled}
-        icon={<Icon.Clock size="24" />}
+        icon={
+          <div>
+            <Icon.Clock size="24" />
+          </div>
+        }
       />
     </div>
   );

@@ -14,8 +14,16 @@ export default function Sort({ disabled = false }: SortProps) {
   const [loading, setLoading] = useState(true);
 
   const icons = {
-    recent: <Icon.Asterisk />,
-    popularity: <Icon.Fire />,
+    recent: (
+      <div>
+        <Icon.Asterisk />
+      </div>
+    ),
+    popularity: (
+      <div>
+        <Icon.Fire />
+      </div>
+    ),
   };
 
   useEffect(() => {

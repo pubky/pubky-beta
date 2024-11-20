@@ -14,9 +14,21 @@ export default function Layout({ setDrawerFilterOpen }: LayoutProps) {
   const [loading, setLoading] = useState(true);
 
   const icons = {
-    columns: <Icon.ThreeColumns />,
-    wide: <Icon.List />,
-    visual: <Icon.SquaresFour color="gray" />,
+    columns: (
+      <div>
+        <Icon.ThreeColumns />
+      </div>
+    ),
+    wide: (
+      <div>
+        <Icon.List />
+      </div>
+    ),
+    visual: (
+      <div>
+        <Icon.SquaresFour color="gray" />
+      </div>
+    ),
   };
 
   useEffect(() => {

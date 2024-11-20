@@ -14,9 +14,21 @@ export default function Reach({ disabled = false }: ReachProps) {
   const [loading, setLoading] = useState(true);
 
   const icons = {
-    all: <Icon.Broadcast />,
-    following: <Icon.UsersRight />,
-    friends: <Icon.Smiley />,
+    all: (
+      <div>
+        <Icon.Broadcast />
+      </div>
+    ),
+    following: (
+      <div>
+        <Icon.UsersRight />
+      </div>
+    ),
+    friends: (
+      <div>
+        <Icon.Smiley />
+      </div>
+    ),
   };
 
   useEffect(() => {

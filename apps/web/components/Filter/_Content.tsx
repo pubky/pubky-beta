@@ -8,32 +8,52 @@ export default function Content() {
         label="All"
         value="all"
         selected
-        icon={<Icon.Stack />}
+        icon={
+          <div>
+            <Icon.Stack />
+          </div>
+        }
         className="mt-2"
       />
       <SideCard.Item
         label="Posts"
         value="posts"
         disabled
-        icon={<Icon.NoteBlank color="gray" />}
+        icon={
+          <div>
+            <Icon.NoteBlank color="gray" />
+          </div>
+        }
       />
       <SideCard.Item
         label="Images"
         value="images"
         disabled
-        icon={<Icon.ImageSquare color="gray" />}
+        icon={
+          <div>
+            <Icon.ImageSquare color="gray" />
+          </div>
+        }
       />
       <SideCard.Item
         label="Videos"
         value="videos"
         disabled
-        icon={<Icon.Play color="gray" />}
+        icon={
+          <div>
+            <Icon.Play color="gray" />
+          </div>
+        }
       />
       <SideCard.Item
         label="Links"
         value="links"
         disabled
-        icon={<Icon.LinkSimple color="gray" />}
+        icon={
+          <div>
+            <Icon.LinkSimple color="gray" />
+          </div>
+        }
       />
     </div>
   );
