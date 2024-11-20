@@ -20,7 +20,7 @@ export const Item = ({
   ...rest
 }: ItemProps) => {
   const disabledCSS = disabled ? 'cursor-default' : '';
-  const baseCSS = `w-full h-12 py-2 shadow backdrop-blur-[10px] items-center justify-between inline-flex`;
+  const baseCSS = `w-full h-10 py-2 shadow backdrop-blur-[10px] items-center justify-between inline-flex`;
   return (
     <button
       {...rest}

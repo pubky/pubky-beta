@@ -31,7 +31,7 @@ export default function Layout({ setDrawerFilterOpen }: LayoutProps) {
 
   return (
     <div className="mb-6">
-      <SideCard.Header title="Layout" />
+      <SideCard.Header title="Layout" className="mb-2" />
       {Object.entries(icons).map(([key, icon]) => (
         <SideCard.Item
           key={key}

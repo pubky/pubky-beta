@@ -29,8 +29,8 @@ export default function Reach({ disabled = false }: ReachProps) {
   };
 
   return (
-    <div className="mb-6">
-      <SideCard.Header title="Reach" />
+    <div className="mb-8">
+      <SideCard.Header title="Reach" className="mb-2" />
       {Object.entries(icons).map(([key, icon]) => (
         <SideCard.Item
           key={key}

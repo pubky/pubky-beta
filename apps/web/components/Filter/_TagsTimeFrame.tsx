@@ -9,7 +9,7 @@ export default function TagsTimeFrame({
 }: TagsTimeFrameProps) {
   return (
     <div className="mb-6">
-      <SideCard.Header title="Timeframe" />
+      <SideCard.Header title="Timeframe" className="mb-2" />
       <SideCard.Item
         label="Today"
         value="today"

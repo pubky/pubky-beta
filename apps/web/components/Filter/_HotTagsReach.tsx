@@ -30,7 +30,7 @@ export default function HotTagsReach({ disabled = false }: HotTagsReachProps) {
 
   return (
     <div className="mb-6">
-      <SideCard.Header title="Reach" />
+      <SideCard.Header title="Reach" className="mb-2" />
       {Object.entries(icons).map(([key, icon]) => (
         <SideCard.Item
           key={key}
