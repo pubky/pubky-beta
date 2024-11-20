@@ -10,7 +10,7 @@ export const PageTitle = ({
   ...rest
 }: PageTitleProps) => {
   const responsiveCSS = 'sm:text-3xl sm:leading-snug';
-  const baseCSS = `text-[26px] leading-relaxed font-light font-InterTight text-white`;
+  const baseCSS = `text-white/50 text-3xl font-light font-['Inter Tight'] leading-[30px]`;
   return (
     <h2 {...rest} className={twMerge(baseCSS, responsiveCSS, rest.className)}>
       {children}
