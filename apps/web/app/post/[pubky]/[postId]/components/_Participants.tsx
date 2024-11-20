@@ -11,6 +11,7 @@ import { UserView } from '@/types/User';
 export default function Participants({ author }: { author: string }) {
   const { pubky, follow, unfollow, replies } = usePubkyClientContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
+  const [initLoadingAuthor, setInitLoadingAuthor] = useState(true);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [participants, setParticipants] = useState<UserView[]>([]);
   const [loadingFollowers, setLoadingFollowers] = useState<{
@@ -21,12 +22,14 @@ export default function Participants({ author }: { author: string }) {
   }>({});
 
   useEffect(() => {
+    setInitLoadingAuthor(true);
     if (authorData) {
       setFollowedUser((prevState) => ({
         ...prevState,
         [authorData.details.id]: authorData.relationship?.following || false,
       }));
     }
+    setInitLoadingAuthor(false);
   }, [authorData]);
 
   const fetchParticipants = async () => {
@@ -125,7 +128,7 @@ export default function Participants({ author }: { author: string }) {
           Me
         </Button.Medium>
       );
-    } else if (initLoadingFollowers) {
+    } else if (initLoadingAuthor) {
       return (
         <Button.Medium
           disabled
