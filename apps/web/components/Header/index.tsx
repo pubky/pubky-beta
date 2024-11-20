@@ -118,7 +118,7 @@ export default function Header({ title, className }: HeaderProps) {
         >
           <Icon.SlidersHorizontal size="24" />
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 xl:min-w-[220px]">
           <HeaderUI.Logo link={logoLink} />
           <HeaderUI.Title
             titleHeader={title}

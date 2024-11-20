@@ -6,13 +6,16 @@ interface LeftSidebarProps {
   filterContentRef: React.RefObject<HTMLDivElement>;
 }
 
-export function LeftSidebar({ isFilterContentVisible, filterContentRef }: LeftSidebarProps) {
+export function LeftSidebar({
+  isFilterContentVisible,
+  filterContentRef,
+}: LeftSidebarProps) {
   const getSidebarClass = (isFilterContentVisible: boolean) => {
     return isFilterContentVisible ? '' : 'sticky top-[120px]';
   };
 
   return (
-    <Components.Sidebar className="col-span-1 hidden lg:block">
+    <Components.Sidebar className="col-span-2 hidden lg:block">
       <div className={`self-start ${getSidebarClass(isFilterContentVisible)}`}>
         <Filter.Reach />
         <Filter.Sort />
