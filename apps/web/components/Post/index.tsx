@@ -2,28 +2,32 @@
 
 import { twMerge } from 'tailwind-merge';
 import {
-  Button,
-  Icon,
   Post as PostUI,
+  Icon,
+  Button,
   Tooltip as TooltipUI,
   Typography,
 } from '@social/ui-shared';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { TLayouts, TSize } from '@/types';
-import Tags from './_Tags';
-import Actions from './_Actions';
-import Header from './_Header';
-import Content from './_Content';
-import { useRouter } from 'next/navigation';
-import { Utils } from '@social/utils-shared';
-import { useEffect, useState } from 'react';
-import Tooltip from '../Tooltip';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
-import TagsLargeView from './_TagsLargeView';
 import { PostView } from '@/types/Post';
+import { Utils } from '@social/utils-shared';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { useUserProfile } from '@/hooks/useUser';
 import { getPost } from '@/services/postService';
-import { Skeleton } from '..';
+
+import Header from './_Header';
+import Content from './_Content';
+import Actions from './_Actions';
+import Tags from './_Tags';
+import TagsLargeView from './_TagsLargeView';
+import Tooltip from '../Tooltip';
+
+import RepostedPost from './_RepostedPost';
+import DeletedPostMessage from './_DeletedPostMessage';
+import MainPostContent from './_MainPostContent';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -50,6 +54,8 @@ export default function Post({
   lineStyle,
   ...rest
 }: PostProps) {
+  const router = useRouter();
+
   const { pubky, deletePost } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
@@ -57,8 +63,6 @@ export default function Post({
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
-  const router = useRouter();
-  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
 
   const handleDeletePost = async () => {
     const result = await deletePost(post?.details?.id);
@@ -73,24 +77,22 @@ export default function Post({
 
   const fetchRepostedPost = async () => {
     if (post?.relationships?.reposted) {
-      if (post?.relationships?.reposted) {
-        const url = post.relationships.reposted;
+      const url = post.relationships.reposted;
 
-        const regex =
-          /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
-        const match = url.match(regex);
+      const regex =
+        /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+      const match = url.match(regex);
 
-        if (match) {
-          const authorId = match[1];
-          const postId = match[2];
+      if (match) {
+        const authorId = match[1];
+        const postId = match[2];
 
-          const result = await getPost(authorId, postId, pubky ?? '');
-          setRepostedPost(result);
-          setLoadingRepostedPost(false);
-        } else {
-          console.error('URI reposted not valid');
-          setLoadingRepostedPost(false);
-        }
+        const result = await getPost(authorId, postId, pubky ?? '');
+        setRepostedPost(result);
+        setLoadingRepostedPost(false);
+      } else {
+        console.error('URI reposted not valid');
+        setLoadingRepostedPost(false);
       }
     }
   };
@@ -124,74 +126,43 @@ export default function Post({
                         fullContent={fullContent}
                       />
                     </div>
-                    <div>
-                      {loadingRepostedPost ? (
-                        <Skeleton.Simple />
-                      ) : post?.relationships?.reposted &&
-                        repostedPost &&
-                        repostedPost?.details?.content !== '[DELETED]' ? (
-                        <>
-                          {/** Show reposted post*/}
-
-                          <PostUI.MainCard
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              router.push(
-                                Utils.encodePostUri(repostedPost?.details?.uri)
-                              );
-                            }}
-                            className="mt-4"
-                          >
-                            <Header post={repostedPost} />
-                            {line && (
-                              <div
-                                className={twMerge(lineBaseCSS, lineStyle)}
-                              />
-                            )}
-                            <div>
-                              <Content
-                                post={repostedPost}
-                                fullContent={fullContent}
-                              />
-                            </div>
-                          </PostUI.MainCard>
-                        </>
-                      ) : (
-                        <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
-                          <Typography.Body
-                            variant="small"
-                            className="text-opacity-50"
-                          >
-                            This post has been deleted by its author.
-                          </Typography.Body>
-                        </div>
+                    <RepostedPost
+                      repostedPost={repostedPost}
+                      loadingRepostedPost={loadingRepostedPost}
+                      largeView={largeView}
+                      fullContent={fullContent}
+                      line={line}
+                      lineStyle={lineStyle}
+                      repostView={repostView}
+                      showModalTag={showModalTag}
+                      setShowModalTag={setShowModalTag}
+                    />
+                    <div
+                      className={`flex flex-col md:flex-row ${
+                        largeView ? 'gap-2' : 'justify-between'
+                      }`}
+                    >
+                      {!repostView && (
+                        <Tags
+                          showModalTag={showModalTag}
+                          setShowModalTag={setShowModalTag}
+                          largeView={largeView}
+                          post={post}
+                        />
                       )}
-                      <div
-                        className={`flex flex-col md:flex-row ${
-                          largeView ? 'gap-2' : 'justify-between'
-                        }`}
-                      >
-                        {!repostView && (
-                          <Tags
-                            showModalTag={showModalTag}
-                            setShowModalTag={setShowModalTag}
-                            largeView={largeView}
-                            post={post}
-                          />
-                        )}
-                        {!repostView && (
-                          <Actions
-                            setShowModalTag={setShowModalTag}
-                            post={post}
-                          />
-                        )}
-                      </div>
+                      {!repostView && (
+                        <Actions
+                          setShowModalTag={setShowModalTag}
+                          post={post}
+                        />
+                      )}
                     </div>
                   </div>
                   {largeView && <TagsLargeView post={post} />}
                 </PostUI.MainCard>
               ) : (
                 <>
+                  {/* Repost Card */}
                   <PostUI.RepostCard className="relative z-10 hover:z-50">
                     <div className="flex gap-2 items-center">
                       <Button.Action
@@ -241,153 +212,42 @@ export default function Post({
                       {Utils.timeAgo(post?.details?.indexed_at)}
                     </PostUI.Time>
                   </PostUI.RepostCard>
-                  {loadingRepostedPost ? (
-                    <Skeleton.Simple />
-                  ) : post?.relationships?.reposted &&
-                    repostedPost &&
-                    repostedPost?.details?.content !== '[DELETED]' ? (
-                    <>
-                      {/**Show reposted post */}
-                      <PostUI.MainCard
-                        className={twMerge(
-                          'rounded-tl-none rounded-tr-none',
-                          largeView && 'p-12 inline-flex flex-row gap-12',
-                          rest.className
-                        )}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          router.push(
-                            Utils.encodePostUri(repostedPost?.details?.uri)
-                          );
-                        }}
-                      >
-                        <div className="flex-col justify-between inline-flex">
-                          <Header post={repostedPost} largeView={largeView} />
-                          {line && (
-                            <div className={twMerge(lineBaseCSS, lineStyle)} />
-                          )}
-                          <div>
-                            <Content
-                              largeView={largeView}
-                              post={repostedPost}
-                              fullContent={fullContent}
-                            />
-                            <div
-                              className={`flex flex-col md:flex-row ${
-                                largeView ? 'gap-2' : 'justify-between'
-                              }`}
-                            >
-                              {!repostView && (
-                                <Tags
-                                  showModalTag={showModalTag}
-                                  setShowModalTag={setShowModalTag}
-                                  largeView={largeView}
-                                  post={repostedPost}
-                                />
-                              )}
-                              {!repostView && (
-                                <Actions
-                                  setShowModalTag={setShowModalTag}
-                                  post={repostedPost}
-                                />
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        {largeView && <TagsLargeView post={repostedPost} />}
-                      </PostUI.MainCard>
-                    </>
-                  ) : (
-                    <>
-                      <div className="px-6 py-12 bg-white bg-opacity-10 rounded-bl-2xl rounded-br-2xl">
-                        <Typography.Body
-                          variant="small"
-                          className="text-opacity-50"
-                        >
-                          This post has been deleted by its author.
-                        </Typography.Body>
-                      </div>
-                    </>
-                  )}
+                  <RepostedPost
+                    repostedPost={repostedPost}
+                    loadingRepostedPost={loadingRepostedPost}
+                    largeView={largeView}
+                    fullContent={fullContent}
+                    line={line}
+                    lineStyle={lineStyle}
+                    repostView={repostView}
+                    showModalTag={showModalTag}
+                    setShowModalTag={setShowModalTag}
+                    restClassName={twMerge(
+                      'rounded-tl-none rounded-tr-none',
+                      largeView && 'p-12 inline-flex flex-row gap-12',
+                      rest.className
+                    )}
+                  />
                 </>
               )
             ) : post?.details?.content === '[DELETED]' ? (
-              <>
-                {post?.relationships?.replied && homeView && (
-                  <div className="relative">
-                    <div className={twMerge(lineBaseCSS, 'after:h-[52px]')} />
-                    <div className="absolute ml-[10px]">
-                      <Icon.LineHorizontal size="14" color="#262626" />
-                    </div>
-                  </div>
-                )}
-                <div
-                  onClick={(event) => event.stopPropagation()}
-                  className={`${
-                    post?.relationships?.replied && homeView && 'ml-6'
-                  } cursor-default px-6 py-2 bg-white bg-opacity-10 rounded-2xl`}
-                >
-                  <Typography.Body variant="small" className="text-opacity-50">
-                    This post has been deleted by its author.
-                  </Typography.Body>
-                </div>
-              </>
+              <DeletedPostMessage
+                className={`${
+                  post?.relationships?.replied && homeView && 'ml-6'
+                } cursor-default`}
+              />
             ) : (
-              <div className="flex items-center relative">
-                {line && (
-                  <>
-                    <div className={twMerge(lineBaseCSS, lineStyle)} />
-                    <div className="absolute ml-[10px]">
-                      <Icon.LineHorizontal size="14" color="#262626" />
-                    </div>
-                  </>
-                )}
-                <PostUI.MainCard
-                  className={twMerge(
-                    line && 'ml-6',
-                    largeView && 'p-12 inline-flex flex-row gap-12',
-                    rest.className
-                  )}
-                >
-                  <div className="flex-col justify-between inline-flex">
-                    <div>
-                      <Header
-                        post={post}
-                        largeView={largeView}
-                        repostView={repostView}
-                      />
-                      <Content
-                        largeView={largeView}
-                        post={post}
-                        fullContent={fullContent}
-                      />
-                    </div>
-                    <div>
-                      <div
-                        className={`flex flex-col md:flex-row ${
-                          largeView ? '' : 'justify-between'
-                        }`}
-                      >
-                        {!repostView && (
-                          <Tags
-                            showModalTag={showModalTag}
-                            setShowModalTag={setShowModalTag}
-                            largeView={largeView}
-                            post={post}
-                          />
-                        )}
-                        {!repostView && (
-                          <Actions
-                            setShowModalTag={setShowModalTag}
-                            post={post}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  {largeView && <TagsLargeView post={post} />}
-                </PostUI.MainCard>
-              </div>
+              <MainPostContent
+                post={post}
+                largeView={largeView}
+                fullContent={fullContent}
+                line={line}
+                lineStyle={lineStyle}
+                repostView={repostView}
+                showModalTag={showModalTag}
+                setShowModalTag={setShowModalTag}
+                restClassName={rest.className}
+              />
             )}
           </div>
         </PostUI.Root>

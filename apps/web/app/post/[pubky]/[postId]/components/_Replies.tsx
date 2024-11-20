@@ -98,7 +98,7 @@ export default function Replies({
             const isLastReply = replies.length === index + 1;
             return (
               <div
-                key={`${reply.details.id}-${index}`}
+                key={`reply-${reply.details.id}-${index}`}
                 ref={isLastReply ? lastReplyElementRef : null}
               >
                 <Post post={reply} />
