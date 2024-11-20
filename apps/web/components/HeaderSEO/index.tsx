@@ -21,8 +21,8 @@ export function getSeoMetadata({
     'web',
   ],
   icon = '/images/pubky-logo.svg',
-  image = '/images/webp/pubky-seo.webp',
-  url = 'https://synonym.to',
+  image = 'https://pubky.app/images/webp/pubky-seo.webp',
+  url = 'https://pubky.app',
   twitterHandle = '@getpubky',
 }: SeoMetadataParams) {
   return {
@@ -38,7 +38,7 @@ export function getSeoMetadata({
       url,
       images: [
         {
-          url: `https://synonym.to${image}`,
+          url: image,
           width: 1200,
           height: 630,
           alt: title,
