@@ -5,13 +5,14 @@ import { Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
 import { usePostStreamByUser } from '@/hooks/usePost';
 import { usePubkyClientContext } from '@/contexts';
+import { PostView } from '@/types/Post';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
-  const { pubky, timelineProfile, setTimelineProfile } =
-    usePubkyClientContext();
+  const { pubky, timelineProfile } = usePubkyClientContext();
   const [skip, setSkip] = useState(0);
   const limit = 10;
   const usePubky = creatorPubky ?? pubky;
+  const [timeline, setTimeline] = useState<PostView[]>([]);
   const { data, isLoading, isError } = usePostStreamByUser(
     usePubky ?? '',
     pubky,
@@ -22,7 +23,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   useEffect(() => {
     if (!isLoading && data) {
       if (skip === 0) {
-        setTimelineProfile(data);
+        setTimeline(data);
         return;
       }
 
@@ -30,9 +31,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
 
       const timelineCopy = [...timelineProfile];
 
-      setTimelineProfile([...timelineCopy, ...data]);
-    } else {
-      setTimelineProfile([]);
+      setTimeline([...timelineCopy, ...data]);
     }
   }, [data, isLoading]);
 
@@ -54,16 +53,16 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
 
   return (
     <div className="flex flex-col gap-3">
-      {timelineProfile &&
-        timelineProfile.length > 0 &&
-        timelineProfile.map(
+      {timeline &&
+        timeline.length > 0 &&
+        timeline.map(
           (post) =>
             post?.details?.content !== '[DELETED]' && (
               <Post key={post.details.id} post={post} />
             )
         )}
       {isLoading && <Skeleton.Simple />}
-      {timelineProfile && timelineProfile.length === 0 && !isLoading && (
+      {timeline && timeline.length === 0 && !isLoading && (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
           <Typography.H2 className="font-normal text-opacity-50">
             No posts yet.
