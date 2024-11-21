@@ -29,7 +29,7 @@ export function ValidPostContent({ postRef, data }) {
       )}
 
       <div ref={postRef} key={data?.details?.uri}>
-        {data?.details?.kind === 'Long' ? (
+        {data?.details?.kind === 'long' ? (
           <LongPost data={data} user={user} />
         ) : (
           <NormalPost data={data} />

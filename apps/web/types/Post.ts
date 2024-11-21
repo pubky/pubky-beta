@@ -24,7 +24,7 @@ export interface PostDetails {
   content: string;
   id: string;
   indexed_at: number;
-  kind: 'Short' | 'Long' | 'Image' | 'Video' | 'Link' | 'File';
+  kind: 'short' | 'long' | 'image' | 'video' | 'link' | 'file';
   uri: string;
 }
 
@@ -106,4 +106,4 @@ export interface PubkyAppUser {
 
 export type PostStreamReach = 'Following' | 'Followers' | 'Friends';
 export type PostStreamSorting = 'Timeline' | 'TotalEngagement';
-export type PostKind = 'Short' | 'Long' | 'Image' | 'Video' | 'Link' | 'File';
+export type PostKind = 'short' | 'long' | 'image' | 'video' | 'link' | 'file';

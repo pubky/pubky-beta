@@ -41,7 +41,7 @@ export default function Repost({
         post?.details?.id,
         post?.details?.author,
         content,
-        'Short',
+        'short',
         selectedFiles
       );
 
@@ -82,7 +82,7 @@ export default function Repost({
         post?.details?.id,
         post?.details?.author,
         '',
-        'Short'
+        'short'
       );
 
       if (newRepost) {

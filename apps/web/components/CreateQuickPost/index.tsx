@@ -43,7 +43,7 @@ export default function CreateQuickPost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, 'Short', selectedFiles);
+      const newPost = await createPost(content, 'short', selectedFiles);
       const match = newPost && newPost?.uri.match(regex);
 
       if (newPost && match) {
@@ -58,7 +58,7 @@ export default function CreateQuickPost({
             id: postId,
             indexed_at: Date.now(),
             author: pubky ?? '',
-            kind: newPost.details.kind || 'Short',
+            kind: newPost.details.kind || 'short',
             uri: newPost.uri || '',
           },
           counts: {

@@ -40,7 +40,7 @@ export default function CreatePost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, 'Short', selectedFiles);
+      const newPost = await createPost(content, 'short', selectedFiles);
       const match = newPost && newPost?.uri.match(regex);
 
       if (newPost && match) {

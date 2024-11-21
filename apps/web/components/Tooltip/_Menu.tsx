@@ -233,7 +233,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           )*/}
           {post?.details?.author === pubky && (
             <>
-              {post?.details?.kind === 'Long' ? (
+              {post?.details?.kind === 'long' ? (
                 <Tooltip.Item
                   id="edit-article"
                   onClick={() => setShowModalEditArticle(true)}
@@ -284,7 +284,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           >
             Copy link to post
           </Tooltip.Item>
-          {post?.details?.kind !== 'Long' && (
+          {post?.details?.kind !== 'long' && (
             <Tooltip.Item
               id="copy-post-text"
               onClick={() => {

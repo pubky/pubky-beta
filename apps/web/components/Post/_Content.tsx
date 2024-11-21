@@ -138,7 +138,7 @@ export default function Content({
       >
         {(() => {
           try {
-            if (post?.details?.kind === 'Long') {
+            if (post?.details?.kind === 'long') {
               const parsedContent = JSON.parse(contentText);
               if (parsedContent.title && parsedContent.body) {
                 const truncatedBody =
@@ -215,7 +215,7 @@ export default function Content({
             <Spotify link={spotifyUrl} />
           </div>
         )}
-        {fileContents.length > 0 && post?.details?.kind !== 'Long' && (
+        {fileContents.length > 0 && post?.details?.kind !== 'long' && (
           <div
             className={`mt-4 flex flex-col md:grid gap-4 ${
               fileContents.length === 1
