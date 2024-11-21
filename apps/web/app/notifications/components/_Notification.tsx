@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Utils } from '@social/utils-shared';
 import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { ImageByUri } from '@/components/ImageByUri';
 import { getUserProfile } from '@/services/userService';
 import { usePubkyClientContext } from '@/contexts';
@@ -70,7 +69,6 @@ export default function Notification({
 }: {
   notification: NotificationView;
 }) {
-  const router = useRouter();
   const { pubky } = usePubkyClientContext();
   const [user, setUser] = useState<UserView | null | undefined>(null);
 
@@ -233,19 +231,18 @@ export default function Notification({
           </Typography.Body>
           {(notification.body.type === notificationType?.tag_profile?.type ||
             notification.body.type === notificationType?.tag_post?.type) && (
-            <PostUtil.Tag
-              color={
-                notification.body.tag_label &&
-                Utils.generateRandomColor(notification.body.tag_label)
-              }
-              onClick={() =>
-                router.push(`/search?tags=${notification.body.tag_label}`)
-              }
-              clicked={false}
-              boxShadow={false}
-            >
-              {Utils.minifyText(String(notification.body.tag_label), 10)}
-            </PostUtil.Tag>
+            <Link href={`/search?tags=${notification.body.tag_label}`}>
+              <PostUtil.Tag
+                color={
+                  notification.body.tag_label &&
+                  Utils.generateRandomColor(notification.body.tag_label)
+                }
+                clicked={false}
+                boxShadow={false}
+              >
+                {Utils.minifyText(String(notification.body.tag_label), 10)}
+              </PostUtil.Tag>
+            </Link>
           )}
           {postLink && (
             <Link href={postLink}>

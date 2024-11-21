@@ -21,6 +21,7 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
           width={160}
           height={94}
           alt="apple-store"
+          className="w-full h-auto"
           src="/images/webp/apple-store.webp"
         />
       </Link>
@@ -32,6 +33,7 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
           width={160}
           height={94}
           alt="google-play"
+          className="w-full h-auto"
           src="/images/webp/google-play.webp"
         />
       </Link>

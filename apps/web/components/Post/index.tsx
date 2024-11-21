@@ -8,7 +8,6 @@ import {
   Tooltip as TooltipUI,
   Typography,
 } from '@social/ui-shared';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { TLayouts, TSize } from '@/types';
@@ -28,6 +27,7 @@ import Tooltip from '../Tooltip';
 import RepostedPost from './_RepostedPost';
 import DeletedPostMessage from './_DeletedPostMessage';
 import MainPostContent from './_MainPostContent';
+import Link from 'next/link';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -54,8 +54,6 @@ export default function Post({
   lineStyle,
   ...rest
 }: PostProps) {
-  const router = useRouter();
-
   const { pubky, deletePost } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
@@ -102,9 +100,9 @@ export default function Post({
   }, [post?.relationships?.reposted]);
 
   return (
-    <div
+    <Link
       className="w-full cursor-pointer"
-      onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
+      href={Utils.encodePostUri(post?.details?.uri)}
     >
       <div className="flex flex-col">
         <PostUI.Root>
@@ -176,19 +174,20 @@ export default function Post({
                         tagId="1"
                         setShowTooltip={setShowTooltipProfile}
                       >
-                        <PostUI.Username
-                          className="text-[13px] text-opacity-80"
+                        <Link
+                          href={`/profile/${post?.details?.author}`}
                           onClick={(event) => {
                             event.stopPropagation();
-                            router.push(`/profile/${post?.details?.author}`);
                           }}
                         >
-                          <span className="cursor-pointer hover:underline hover:decoration-solid">
-                            {data?.details?.name &&
-                              Utils.minifyText(data?.details?.name)}{' '}
-                          </span>
-                          reposted{' '}
-                        </PostUI.Username>
+                          <PostUI.Username className="text-[13px] text-opacity-80">
+                            <span className="cursor-pointer hover:underline hover:decoration-solid">
+                              {data?.details?.name &&
+                                Utils.minifyText(data?.details?.name)}{' '}
+                            </span>
+                            reposted{' '}
+                          </PostUI.Username>
+                        </Link>
                         {showTooltipProfile !== '' && (
                           <Tooltip.Profile post={post} />
                         )}
@@ -252,6 +251,6 @@ export default function Post({
           </div>
         </PostUI.Root>
       </div>
-    </div>
+    </Link>
   );
 }

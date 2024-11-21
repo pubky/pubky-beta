@@ -48,7 +48,7 @@ export default function Index() {
   const [loading, setLoading] = useState(false);
   const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
-    { url: '', title: 'email', placeHolder: 'user@provider.com' },
+    { url: '', title: 'x (twitter)', placeHolder: '@user' },
   ]);
   const [errors, setErrors] = useState({
     name: '',
@@ -407,7 +407,7 @@ export default function Index() {
               ))}
               <Button.Transparent
                 id="edit-profile-add-link-btn"
-                className="w-[100px] mt-2"
+                className="w-[100px] mt-2 px-3 py-2 h-8"
                 icon={
                   <Icon.LinkSimple
                     size="16"

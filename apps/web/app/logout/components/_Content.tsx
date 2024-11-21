@@ -11,7 +11,7 @@ export default function Index() {
   logout();
 
   return (
-    <Content.Main>
+    <Content.Main className="sm:pt-[125px]">
       <Header.Root>
         <Header.Logo />
         <Header.Title titleHeader="Signed out" />
@@ -26,7 +26,7 @@ export default function Index() {
         </Typography.Body>
         <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
           <div className="p-12 flex-col justify-center items-center flex">
-            <div className="p-12">
+            <div className="p-4">
               <Icon.SignOut size="130" />
               <Image alt="glow" fill src="/images/webp/glow-1.webp" />
             </div>

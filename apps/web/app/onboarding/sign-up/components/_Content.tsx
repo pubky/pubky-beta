@@ -40,7 +40,7 @@ export default function Index() {
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
-    { url: '', title: 'email', placeHolder: 'user@provider.com' },
+    { url: '', title: 'x (twitter)', placeHolder: '@user' },
   ]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
@@ -48,25 +48,26 @@ export default function Index() {
     bio: '',
   });
 
-
   useEffect(() => {
     if (!profile?.image && !image) {
       const fetchJdenticon = async () => {
         const id = Math.random().toString(36).substring(2, 15);
         const size = 200;
         const svgCode = jdenticon.toSvg(id, size);
-  
+
         try {
           const pngBlob = await Utils.svgToPng(svgCode, size);
-          const pngFile = new File([pngBlob], `${id}.png`, { type: "image/png" });
-  
+          const pngFile = new File([pngBlob], `${id}.png`, {
+            type: 'image/png',
+          });
+
           setGeneratedImage(pngFile);
           setImage(pngFile);
         } catch (error) {
-          console.error("Error converting SVG to PNG:", error);
+          console.error('Error converting SVG to PNG:', error);
         }
       };
-  
+
       fetchJdenticon();
     }
   }, [profile?.image, image]);
@@ -247,7 +248,7 @@ export default function Index() {
         <Link href="/onboarding/sign-in">
           <Button.Large
             icon={<Icon.ArrowLeft />}
-            className="w-[140px]"
+            className="w-auto"
             variant="secondary"
           >
             Back
@@ -256,7 +257,7 @@ export default function Index() {
         <Button.Large
           onClick={!loading ? () => handleSubmit() : undefined}
           icon={<Icon.ArrowRight />}
-          className="w-[140px]"
+          className="w-auto"
           loading={loading}
           id="onboarding-submit-button"
         >

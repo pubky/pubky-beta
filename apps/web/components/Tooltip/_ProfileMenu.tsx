@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
-import { useRouter } from 'next/navigation';
 import { usePubkyClientContext, useToastContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { UserView } from '@/types/User';
+import Link from 'next/link';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,7 +18,6 @@ export default function ProfileMenu({
   creatorPubky,
   profile,
 }: TooltipProfileMenuProps) {
-  const router = useRouter();
   const { pubky, mute, unmute } = usePubkyClientContext();
   const { setContent, setShow } = useToastContext();
   const [muted, setMuted] = useState(false);
@@ -107,15 +106,16 @@ export default function ProfileMenu({
     <div ref={tooltipProfileMenuRef}>
       <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]">
         {pubky === creatorPubky && (
-          <Tooltip.Item
-            onClick={() => {
-              router.push('/settings/edit');
-              setShowProfileMenu(false);
-            }}
-            icon={<Icon.Pencil size="20" />}
-          >
-            Edit profile
-          </Tooltip.Item>
+          <Link href="/settings/edit">
+            <Tooltip.Item
+              onClick={() => {
+                setShowProfileMenu(false);
+              }}
+              icon={<Icon.Pencil size="20" />}
+            >
+              Edit profile
+            </Tooltip.Item>
+          </Link>
         )}
         <Tooltip.Item
           onClick={() => {

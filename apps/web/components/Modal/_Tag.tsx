@@ -12,13 +12,13 @@ import {
 } from '@social/ui-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
 import Post from '../Post';
 import { ImageByUri } from '../ImageByUri';
 import { usePubkyClientContext } from '@/contexts';
 import { PostTag, PostView } from '@/types/Post';
 import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
+import Link from 'next/link';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalTag: boolean;
@@ -43,7 +43,6 @@ export default function Tag({
   selectedTag,
   setSelectedTag,
 }: TagProps) {
-  const router = useRouter();
   const modalTagRef = useRef<HTMLDivElement>(null);
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
@@ -373,15 +372,14 @@ export default function Tag({
                             </div>
                           </PostUtil.Tag>
 
-                          <Button.Action
-                            variant="custom"
-                            size="small"
-                            icon={<Icon.MagnifyingGlassLeft size="14" />}
-                            onClick={() =>
-                              router.push(`/search?tags=${tag?.label}`)
-                            }
-                            className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                          />
+                          <Link href={`/search?tags=${tag?.label}`}>
+                            <Button.Action
+                              variant="custom"
+                              size="small"
+                              icon={<Icon.MagnifyingGlassLeft size="14" />}
+                              className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                            />
+                          </Link>
                           <div
                             onClick={() =>
                               setSelectedTag && setSelectedTag(tag)
@@ -457,15 +455,14 @@ export default function Tag({
                             </div>
                           </PostUtil.Tag>
                         )}
-                        <Button.Action
-                          variant="custom"
-                          size="small"
-                          icon={<Icon.MagnifyingGlassLeft size="14" />}
-                          onClick={() =>
-                            router.push(`/search?tags=${selectedTag?.label}`)
-                          }
-                          className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                        />
+                        <Link href={`/search?tags=${selectedTag?.label}`}>
+                          <Button.Action
+                            variant="custom"
+                            size="small"
+                            icon={<Icon.MagnifyingGlassLeft size="14" />}
+                            className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                          />
+                        </Link>
                       </div>
                       {selectedTag?.taggers.map((user, userIndex) => {
                         const profile = userProfiles[user];

@@ -30,7 +30,7 @@ export const CursorArea = ({
     }
   }, [value]);
 
-  const baseCSS = `w-full h-auto min-h-[25px] bg-transparent rounded-[5px] outline-none text-white text-[17px] placeholder:text-white placeholder:text-opacity-30 font-normal font-InterTight leading-snug tracking-wide resize-none`;
+  const baseCSS = `w-full h-auto min-h-[25px] bg-transparent rounded-[5px] outline-none text-white text-[17px] placeholder:text-white placeholder:text-opacity-20 font-normal font-InterTight leading-snug tracking-wide resize-none`;
 
   const errorCSS = `text-red-500 text-sm mt-2`;
 
@@ -48,7 +48,7 @@ export const CursorArea = ({
         className={twMerge(
           baseCSS,
           rest.className,
-          error ? inputWithErrorStyle : '',
+          error ? inputWithErrorStyle : ''
         )}
       />
       {error && <div className={errorCSS}>{error}</div>}

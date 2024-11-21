@@ -4,9 +4,9 @@ import { Button, Icon, Input, Modal, Typography } from '@social/ui-shared';
 import { useEffect, useRef } from 'react';
 import { ImageByUri } from '../ImageByUri';
 import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
 import { usePubkyClientContext } from '@/contexts/_pubky';
 import { PubkyAppUser } from '@/types/Post';
+import Link from 'next/link';
 
 interface FeedbackProps {
   showModal: boolean;
@@ -36,7 +36,6 @@ export default function Feedback({
   loading,
 }: FeedbackProps) {
   const { pubky } = usePubkyClientContext();
-  const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -75,9 +74,9 @@ export default function Feedback({
                 uri={profile?.image ?? '/images/webp/Userpic.webp'}
               />
               {pubky ? (
-                <div
+                <Link
                   className="cursor-pointer flex gap-4 items-center"
-                  onClick={() => router.push('/profile')}
+                  href="/profile"
                 >
                   <Typography.Body
                     className={`hover:underline hover:decoration-solid`}
@@ -94,7 +93,7 @@ export default function Feedback({
                       {Utils.minifyPubky(pubky)}
                     </Typography.Label>
                   </div>
-                </div>
+                </Link>
               ) : (
                 <Typography.Body
                   variant="medium-bold"

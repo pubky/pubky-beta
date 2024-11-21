@@ -34,9 +34,9 @@ export const Item = ({
             disabled
               ? 'opacity-20'
               : selected
-                ? 'opacity-100'
-                : 'opacity-50 hover:opacity-100'
-          } text-white text-[15px] font-semibold font-['Inter Tight'] leading-[18px] tracking-tight`}
+              ? 'opacity-100'
+              : 'opacity-50 hover:opacity-100'
+          } text-white text-[15px] font-semibold font-InterTight leading-[18px] tracking-tight`}
         >
           {icon}
           <Typography.Body variant="medium-bold">{label}</Typography.Body>

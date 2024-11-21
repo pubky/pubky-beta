@@ -3,9 +3,9 @@
 import Skeletons from '@/components/Skeletons';
 import { PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
 import { HotTag } from '@/types/Tag';
 import { HotTags } from '.';
+import Link from 'next/link';
 
 interface RenderTagsProps {
   hotTags: HotTag[];
@@ -13,8 +13,6 @@ interface RenderTagsProps {
 }
 
 const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
-  const router = useRouter();
-
   if (loadingReachTags) {
     return <Skeletons.Simple />;
   }
@@ -35,14 +33,15 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                 <PostUtil.Counter className="bg-transparent">
                   {index + 1}
                 </PostUtil.Counter>
-                <PostUtil.Tag
-                  onClick={() => router.push(`/search?tags=${tag?.label}`)}
-                  color={tag?.label && Utils.generateRandomColor(tag?.label)}
-                  boxShadow={false}
-                  clicked={false}
-                >
-                  {Utils.minifyText(tag?.label, 21)}
-                </PostUtil.Tag>
+                <Link href={`/search?tags=${tag?.label}`}>
+                  <PostUtil.Tag
+                    color={tag?.label && Utils.generateRandomColor(tag?.label)}
+                    boxShadow={false}
+                    clicked={false}
+                  >
+                    {Utils.minifyText(tag?.label, 21)}
+                  </PostUtil.Tag>
+                </Link>
               </div>
               <Typography.Body className="text-opacity-80" variant="small">
                 {tag?.post_count} posts this month
@@ -69,13 +68,14 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
       {otherTags.length > 0 &&
         otherTags.map((tag, index) => (
           <div className="flex gap-3" key={index + 3}>
-            <HotTags.Rank
-              tag={tag?.label}
-              onClick={() => router.push(`/search?tags=${tag?.label}`)}
-              color={tag?.label && Utils.generateRandomColor(tag?.label)}
-              counter={`${tag?.post_count}`}
-              boxShadow={false}
-            />
+            <Link href={`/search?tags=${tag?.label}`}>
+              <HotTags.Rank
+                tag={tag?.label}
+                color={tag?.label && Utils.generateRandomColor(tag?.label)}
+                counter={`${tag?.post_count}`}
+                boxShadow={false}
+              />
+            </Link>
             {tag?.taggers_id.slice(0, 15).map((fromItem, fromIndex) => (
               <div key={fromIndex} className={fromIndex !== 0 ? '-ml-5' : ''}>
                 <HotTags.UserProfileForTag userId={fromItem} />

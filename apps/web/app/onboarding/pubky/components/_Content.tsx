@@ -50,7 +50,7 @@ export default function Index() {
       </div>
       <Button.Large
         id="onboarding-copy-pubky-btn"
-        icon={<Icon.Clipboard />}
+        icon={<Icon.Clipboard size="16" />}
         className="w-[250px] flex md:hidden mb-12"
         variant="secondary"
         onClick={() => {
@@ -73,7 +73,7 @@ export default function Index() {
         </Link>
         <Button.Large
           id="onboarding-copy-pubky-btn"
-          icon={<Icon.Clipboard />}
+          icon={<Icon.Clipboard size="16" />}
           className="w-[250px] hidden md:flex"
           variant="secondary"
           onClick={() => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
 interface LogoutProps {
@@ -13,7 +13,6 @@ export default function Logout({
   showModalLogout,
   setShowModalLogout,
 }: LogoutProps) {
-  const router = useRouter();
   const modalLogoutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -44,21 +43,23 @@ export default function Logout({
         If you sign out without backup you will no longer be able to login.
       </Typography.Body>
       <div className="flex gap-4 mt-8">
-        <Button.Large
-          id="logout-modal-sign-out-btn"
-          variant="secondary"
-          icon={<Icon.SignOut size="16" />}
-          onClick={() => router.push(`/logout`)}
-        >
-          Yes, sign out
-        </Button.Large>
-        <Modal.SubmitAction
-          id="logout-modal-backup-btn"
-          icon={<Icon.Lock size="16" />}
-          onClick={() => router.push(`/settings`)}
-        >
-          Backup
-        </Modal.SubmitAction>
+        <Link href="/logout">
+          <Button.Large
+            id="logout-modal-sign-out-btn"
+            variant="secondary"
+            icon={<Icon.SignOut size="16" />}
+          >
+            Yes, sign out
+          </Button.Large>
+        </Link>
+        <Link href="/settings">
+          <Modal.SubmitAction
+            id="logout-modal-backup-btn"
+            icon={<Icon.Lock size="16" />}
+          >
+            Backup
+          </Modal.SubmitAction>
+        </Link>
       </div>
     </Modal.Root>
   );

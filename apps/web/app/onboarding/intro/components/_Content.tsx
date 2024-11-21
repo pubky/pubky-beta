@@ -4,6 +4,7 @@ import { Typography, Button, Icon, Content, Header } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { usePubkyClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Intro() {
   const { pubky, isLoggedIn } = usePubkyClientContext();
@@ -316,7 +317,7 @@ export default function Intro() {
   ];
 
   return (
-    <Content.Main className="pb-0 md:pt-[150px] pt-[120px]" shadowBottom>
+    <Content.Main className="pb-0 md:pt-[125px] pt-[120px]" shadowBottom>
       <Header.Root className="backdrop-blur-[0px]">
         <div className="flex gap-3 lg:gap-6 w-full justify-between sm:justify-start items-start">
           <Header.Logo link={logoLink} />
@@ -351,13 +352,11 @@ export default function Intro() {
             >
               Back
             </Button.Large>
-            <Button.Large
-              className="w-auto"
-              variant="secondary"
-              onClick={() => router.push('/onboarding/sign-in')}
-            >
-              Skip Intro
-            </Button.Large>
+            <Link href="/onboarding/sign-in">
+              <Button.Large className="w-auto" variant="secondary">
+                Skip Intro
+              </Button.Large>
+            </Link>
           </div>
           <Button.Large
             className="w-auto"

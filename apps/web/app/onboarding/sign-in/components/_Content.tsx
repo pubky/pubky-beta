@@ -12,7 +12,7 @@ export default function Index() {
       >
         Join by scanning a QR with Bitkit, or by creating a new pubky.
       </Typography.Body>
-      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
+      <div className="w-full flex-col inline-flex lg:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
         <Card.Join />
         <Card.NewAccount />
         <Card.SigninBack />
