@@ -53,7 +53,7 @@ export default function CreateReply({
       const newReply = await createReply(
         post?.details?.uri,
         content,
-        'Short',
+        'short',
         selectedFiles,
       );
 

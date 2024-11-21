@@ -75,7 +75,7 @@ export default function CreateArticle({
       const newArticle = await createArticle(
         contentTitle,
         content,
-        'Long',
+        'long',
         selectedFile
       );
       const match = newArticle && newArticle?.uri.match(regex);

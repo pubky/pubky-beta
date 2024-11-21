@@ -42,7 +42,7 @@ export default function PostRoot({
     const sendReply = await createReply(
       post?.details?.uri,
       content,
-      'Short',
+      'short',
       selectedFiles
     );
 

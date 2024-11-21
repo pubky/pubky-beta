@@ -37,7 +37,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
     const sendReply = await createReply(
       post?.details?.uri,
       content,
-      'Short',
+      'short',
       selectedFiles
     );
 

@@ -1015,7 +1015,7 @@ export function PubkyClientWrapper({
       const newRepost: PubkyAppPost = {
         content: repostContent,
         embed: {
-          kind: 'Short',
+          kind: 'short',
           uri: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`,
         },
         kind,
