@@ -8,15 +8,18 @@ import Skeletons from '@/components/Skeletons';
 
 import { usePubkyClientContext } from '@/contexts';
 import { getPostReplies } from '@/services/postService';
+import { ReplyReplies } from './ReplyReplies';
 
 export default function Replies({
   pubkyAuthor,
   postId,
+  postCountReplies,
 }: {
   pubkyAuthor: string;
   postId: string;
+  postCountReplies: number;
 }) {
-  const { pubky, replies, setReplies } = usePubkyClientContext();
+  const { pubky, replies, setReplies, mutedUsers } = usePubkyClientContext();
   const limit = 5;
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -94,17 +97,28 @@ export default function Replies({
         </Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full mt-3">
-          {replies.map((reply, index) => {
-            const isLastReply = replies.length === index + 1;
-            return (
-              <div
-                key={`reply-${reply.details.id}-${index}`}
-                ref={isLastReply ? lastReplyElementRef : null}
-              >
-                <Post post={reply} />
-              </div>
-            );
-          })}
+          {replies
+            .filter(
+              (reply) => !mutedUsers?.includes(reply?.details?.author) // Filtra i post di utenti mutati
+            )
+            .map((reply, index) => {
+              const isLastReply = replies.length === index + 1;
+              return (
+                <div
+                  key={`reply-${reply.details.id}-${index}`}
+                  ref={isLastReply ? lastReplyElementRef : null}
+                  className="flex flex-col gap-3"
+                >
+                  <Post post={reply} />
+                  {reply?.counts?.replies > 0 && (
+                    <ReplyReplies
+                      postCountReplies={postCountReplies}
+                      reply={reply}
+                    />
+                  )}
+                </div>
+              );
+            })}
           {isLoading && <Skeletons.Simple />}
         </div>
       )}

@@ -132,6 +132,8 @@ type PubkyClientContextType = {
   ) => Promise<boolean>;
   setReplies: React.Dispatch<React.SetStateAction<PostView[]>>;
   replies: PostView[];
+  setMutedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  mutedUsers: string[] | undefined;
 };
 
 interface TimelineState {
@@ -164,6 +166,7 @@ export function PubkyClientWrapper({
   );
   const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
   const [replies, setReplies] = useState<PostView[]>([]);
+  const [mutedUsers, setMutedUsers] = useState<string[] | undefined>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [repliesArray, setRepliesArray] = useState<PostView[]>(
     {} as PostView[]
@@ -1491,6 +1494,8 @@ export function PubkyClientWrapper({
       value={{
         replies,
         setReplies,
+        mutedUsers,
+        setMutedUsers,
         pubky,
         seed,
         profile,

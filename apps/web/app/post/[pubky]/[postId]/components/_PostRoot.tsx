@@ -9,6 +9,7 @@ import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
 import { PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { UseUserMuted } from '@/hooks/useUser';
 
 export default function PostRoot({
   post,
@@ -18,7 +19,10 @@ export default function PostRoot({
   post: PostView;
   updatePost: () => void;
 }) {
-  const { pubky, createReply, createTag } = usePubkyClientContext();
+  const { pubky, createReply, createTag, setMutedUsers } =
+    usePubkyClientContext();
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
+  setMutedUsers(mutedUsers);
   const { setContent, setShow } = useAlertContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
@@ -110,7 +114,11 @@ export default function PostRoot({
           }
           textArea={textArea}
         />
-        <Replies postId={post.details.id} pubkyAuthor={post.details.author} />
+        <Replies
+          postId={post.details.id}
+          pubkyAuthor={post.details.author}
+          postCountReplies={post?.counts?.replies}
+        />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}

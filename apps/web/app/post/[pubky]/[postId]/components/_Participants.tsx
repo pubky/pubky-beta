@@ -9,7 +9,8 @@ import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 
 export default function Participants({ author }: { author: string }) {
-  const { pubky, follow, unfollow, replies } = usePubkyClientContext();
+  const { pubky, follow, unfollow, replies, mutedUsers } =
+    usePubkyClientContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
   const [initLoadingAuthor, setInitLoadingAuthor] = useState(true);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -226,26 +227,27 @@ export default function Participants({ author }: { author: string }) {
           >
             {getAuthorButton()}
           </SideCard.User>
-          {participants.map((participant: UserView) => {
-            if (participant.details.id !== authorData?.details.id) {
-              return (
-                <React.Fragment key={participant.details.id}>
-                  <SideCard.User
-                    uri={participant.details.id}
-                    uriImage={
-                      participant?.details?.image || '/images/webp/Userpic.webp'
-                    }
-                    username={Utils.minifyText(participant?.details?.name)}
-                    label={Utils.minifyPubky(participant.details.id)}
-                    className="mb-2"
-                  >
-                    {getParticipantButton(participant.details.id)}
-                  </SideCard.User>
-                </React.Fragment>
-              );
-            }
-            return null;
-          })}
+          {participants
+            .filter(
+              (participant: UserView) =>
+                participant.details.id !== authorData?.details.id &&
+                !mutedUsers?.includes(participant.details.id)
+            )
+            .map((participant: UserView) => (
+              <React.Fragment key={participant.details.id}>
+                <SideCard.User
+                  uri={participant.details.id}
+                  uriImage={
+                    participant?.details?.image || '/images/webp/Userpic.webp'
+                  }
+                  username={Utils.minifyText(participant?.details?.name)}
+                  label={Utils.minifyPubky(participant.details.id)}
+                  className="mb-2"
+                >
+                  {getParticipantButton(participant.details.id)}
+                </SideCard.User>
+              </React.Fragment>
+            ))}
         </SideCard.Content>
       </div>
     </div>
