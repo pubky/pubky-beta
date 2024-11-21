@@ -34,6 +34,10 @@ describe('posts', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
 
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    // should test before and after refresh
+    cy.reload();
+
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
   });
@@ -54,23 +58,40 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.wait(1000);
     cy.reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
   });
 
+  // TODO: make 1000
   it('can post with maximum character limit (300)', () => {
     const postContent =
-      "I can make a really loooooooooooooooooooooooooooooo" +
-      "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-      "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-      "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-      "ooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-      `ooooooooooooooooooooooong post! ${Date.now()}`;
+      "I can make a really looooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      "oooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+      `ooooooooooooooooooooooooooooooooooooooooooog post! ${Date.now()}`;
 
     createQuickPost(postContent);
+
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    // should test before and after refresh
+    cy.reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -92,10 +113,16 @@ describe('posts', () => {
       // type the rest of the post
       cy.get('textarea').type(postContentWithoutEmoji);
       // check displayed content length
-      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 300`)
+      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`)
       // submit
       cy.get('#post-btn').click();
+      // wait for textarea to be cleared to ensure post is submitted
+      cy.get('textarea').should('have.value', '');
     });
+
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    // should test before and after refresh
+    cy.reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -144,6 +171,10 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    // should test before and after refresh
+    cy.reload();
+
     // verify the post text and embedded link is displayed correctly in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
@@ -185,6 +216,10 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    // should test before and after refresh
+    cy.reload();
+
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
   });
@@ -192,6 +227,10 @@ describe('posts', () => {
   it('can delete a post', () => {
     const postContent = `I can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
+
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    // should test before and after refresh
+    cy.reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -202,7 +241,7 @@ describe('posts', () => {
     // delete the post
     deletePost();
 
-    // wait to guarentee delete is applied
+    // wait to guarantee delete is applied
     // todo: consider try loop instead of wait
     cy.wait(2_000);
 
@@ -272,13 +311,13 @@ describe('posts', () => {
       cy.get('#tags').children().eq(2).contains(tag3);
 
       // check displayed content length
-      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 300`);
+      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
 
       // submit the post
       cy.get('#post-btn').click();
     });
 
-    // wait to guarentee tags are associated with the post
+    // wait to guarantee tags are associated with the post
     // todo: consider try loop instead of wait
     cy.wait(2_000);
 
@@ -309,39 +348,30 @@ describe('posts', () => {
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/539
     cy.reload();
 
-    // TODO: uncomment once bug fixed, see https://github.com/pubky/pubky-app/issues/540
     // add tags to the post
-    // cy.get('#tag-btn').click();
-    // cy.get('#modal-root').within(() => {
-    //   cy.get('h1').contains('Tag Post');
-    //   cy.get('input').type(tag1);
-    //   cy.get('#add-btn').should('be.visible').click();
-    //   cy.get('input').type(tag2);
-    //   cy.get('#add-btn').should('be.visible').click();
-    //   cy.get('input').type(tag3);
-    //   cy.get('#add-btn').should('be.visible').click();
+    cy.get('#tag-btn').click();
+    cy.get('#modal-root').within(() => {
+      cy.get('h1').contains('Tag Post');
 
-    //   // check current tags in modal
-    //   cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
-    //     cy.wrap(divs.eq(0)).contains(tag1);
-    //     cy.wrap(divs.eq(1)).contains(tag2);
-    //     cy.wrap(divs.eq(2)).contains(tag3);
-    //   });
-
-    //   // close modal
-    //   cy.get('#close-btn').click();
-    // });
-
-    // TODO: remove WORKAROUND for uncommented code above once bug #540 is fixed.
-    for (const tag of [tag1, tag2, tag3]) {
-      cy.get('#tag-btn').click();
-      cy.get('#modal-root').should('be.visible').within(() => {
+      // add tags to the post
+      for (const tag of [tag1, tag2, tag3]) {
         cy.get('input').type(tag);
         cy.get('#add-btn').should('be.visible').click();
-      });
-    };
+      };
 
-    // wait to guarentee tags are associated with the post
+      // TODO: uncomment once bug is fixed, see https://github.com/pubky/pubky-app/issues/541
+      // check current tags in modal
+      // cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
+      //   cy.wrap(divs.eq(0)).contains(tag1);
+      //   cy.wrap(divs.eq(1)).contains(tag2);
+      //   cy.wrap(divs.eq(2)).contains(tag3);
+      // });
+
+      // close modal
+      cy.get('#close-btn').click();
+    });
+
+    // wait to guarantee tags are associated with the post
     // todo: consider try loop instead of wait
     cy.wait(2_000);
 
@@ -380,7 +410,7 @@ describe('posts', () => {
     //cy.get('#tags').innerTextShouldNotContain(tag2);
   });
 
-  // todo: consider creating user to create the post to bookmark
+  //todo: consider creating user to create the post to bookmark
   it('can bookmark post then remove bookmark', () => {
     const postContent = `This post will be bookmarked! ${Date.now()}`;
 
@@ -414,7 +444,7 @@ describe('posts', () => {
     cy.get('#bookmarks-content').should('contain.text', 'No bookmarks yet');
   });
 
-  // todo: consider creating user to create the post to repost
+  //todo: consider creating user to create the post to repost
   it('can repost with content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted with content! ${Date.now()}`;
@@ -426,7 +456,7 @@ describe('posts', () => {
 
     // repost with content
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#repost-btn').click();
     });
     cy.get('#modal-root').should('be.visible').within(($modal) => {
@@ -454,13 +484,13 @@ describe('posts', () => {
     });
 
     // delete the repost
-    deletePost();
+    deletePost(0, 1);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     cy.reload();
 
     // verify the repost is deleted
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       // check that first post is the original post
       cy.get('#post-content-text').innerTextShouldEq(postContent);
     });
@@ -476,7 +506,7 @@ describe('posts', () => {
     cy.reload();
 
     // repost without content
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#repost-btn').click();
     });
     cy.get('#modal-root').should('be.visible').within(() => {
@@ -551,6 +581,9 @@ describe('posts', () => {
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
 
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    cy.reload();
+
     // reply to the post
     cy.slowDown(fastMs);
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -596,7 +629,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // reply to the post
-    cy.get('#posts-feed').children().eq(1).within(() => {
+    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#reply-btn').click();
     });
     cy.get('#modal-root').should('be.visible').within(() => {
@@ -610,7 +643,7 @@ describe('posts', () => {
     // delete the original post
     deletePost();
 
-    // wait to guarentee delete is applied
+    // wait to guarantee delete is applied
     // todo: consider try loop instead of wait
     cy.wait(2_000);
 

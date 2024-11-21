@@ -9,14 +9,14 @@ export const selectEmoji = (emojiName: string) => {
 
 // verify that a post in the feed has the expected content, post is located by index
 export const postInFeedContentEq = (postContent: string, idx: number) => {
-  cy.get('#posts-feed').children().eq(idx).within(() => {
+  cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(idx).within(() => {
     // This approach is necessary for due to additional space inserted before final word.
     cy.get('#post-content-text').innerTextShouldEq(postContent);
   });
 };
 
 export const latestPostInFeedContentEq = (postContent: string) => {
-  postInFeedContentEq(postContent, 1);
+  postInFeedContentEq(postContent, 0);
 };
 
 export const createQuickPost = (postContent: string, expectedPostLength? : number) => {
@@ -27,8 +27,8 @@ export const createQuickPost = (postContent: string, expectedPostLength? : numbe
     // verify displayed content length
     cy.log('postContent.length: ', postContent.length);
     expectedPostLength
-      ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 300`)
-      : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 300`);
+      ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 1000`)
+      : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
     // submit
     cy.get('#post-btn').click();
   });

@@ -49,8 +49,12 @@ export default function Index() {
         </div>
       </div>
       <Button.Large
+<<<<<<< HEAD
         id="onboarding-copy-pubky-btn"
         icon={<Icon.Clipboard size="16" />}
+=======
+        icon={<Icon.Clipboard />}
+>>>>>>> a2d57ed (rebase, use updated pubky-docker branch and fix all tests)
         className="w-[250px] flex md:hidden mb-12"
         variant="secondary"
         onClick={() => {

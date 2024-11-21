@@ -21,9 +21,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: pubky/pubky-docker
+          ref: catch-21/update
           path: pubky-docker
           submodules: true
-          submodules_recursive: true
           token: ${{ secrets.READ_REPOS }}
           # cannot use ssh-key (deploy key) for private submodules due to the
           # limitation where only a single key can be used per repo checkout
