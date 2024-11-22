@@ -21,12 +21,6 @@ export function MainContent({ layout }: MainContentProps) {
   const [searchInputCard, setSearchInputCard] = useState(false);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
 
-  const getPostsLayoutClass = (layout: string) => {
-    return layout === 'wide'
-      ? 'col-span-10'
-      : 'col-span-10 lg:col-span-9 xl:col-span-7';
-  };
-
   const handleRemoveTag = (indexToRemove: number) => {
     const newTags = [...searchTags];
     newTags.splice(indexToRemove, 1);
@@ -80,11 +74,25 @@ export function MainContent({ layout }: MainContentProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTags]);
 
+  useEffect(() => {
+    const handleClickOutsideDrawer = (event: MouseEvent) => {
+      if (
+        refSearchInputCard.current &&
+        !refSearchInputCard.current.contains(event.target as Node)
+      ) {
+        setSearchInputCard(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideDrawer);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideDrawer);
+    };
+  }, [refSearchInputCard]);
+
   return (
     <Components.PostsLayout
-      className={`${getPostsLayoutClass(
-        layout
-      )} flex-col inline-flex gap-3 lg:ml-[70px] xl:ml-[45px]`}
+      className="w-full flex-col inline-flex gap-3"
     >
       <Input.Search className="lg:hidden">
         {searchTags && (
@@ -112,6 +120,10 @@ export function MainContent({ layout }: MainContentProps) {
           }
           maxLength={55}
           onKeyDown={handleKeyDown}
+          className={`${
+            searchInputCard &&
+            'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
+          }`}
           placeholder={!searchTags.length ? 'Search' : ''}
           onClick={() => setSearchInputCard(true)}
           readOnly={!!searchTags.length}

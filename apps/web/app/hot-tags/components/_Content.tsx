@@ -24,12 +24,12 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="HotTags" />
-      <Content.Grid className="grid grid-cols-10 gap-4">
-        <Sidebar className="col-span-1 self-start sticky top-[120px] hidden lg:block">
-          <Filter.HotTagsReach disabled />
-          <Filter.TagsTimeFrame disabled />
+      <Content.Grid className="flex gap-6">
+        <Sidebar className="w-[280px] self-start sticky top-[120px] hidden lg:block">
+          <Filter.HotTagsReach />
+          <Filter.TagsTimeFrame />
         </Sidebar>
-        <div className="flex-col inline-flex gap-3 col-span-10 lg:col-span-9 xl:col-span-7 lg:ml-[70px] xl:ml-[45px]">
+        <div className="flex-col inline-flex gap-3 w-full">
           {isLoading ? (
             <div className="w-full">
               <Skeletons.Simple />
@@ -41,7 +41,7 @@ export default function Index() {
             />
           )}
         </div>
-        <Sidebar className="col-span-2 hidden xl:block">
+        <Sidebar className="w-[280px] hidden xl:block">
           <WhoFollow />
           <Influencers />
           <Feedback />

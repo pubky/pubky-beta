@@ -95,7 +95,7 @@ export default function MutedUsers() {
   };
 
   return (
-    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.SpeakerSimpleSlash size="24" />
@@ -151,7 +151,7 @@ export default function MutedUsers() {
                           {pubkeyUser ? (
                             <Button.Medium
                               className="w-full md:w-[104px] bg-transparent cursor-default"
-                              icon={<Icon.Check />}
+                              icon={<Icon.User size="16" />}
                             >
                               Me
                             </Button.Medium>

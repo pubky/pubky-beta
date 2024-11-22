@@ -17,18 +17,10 @@ export function MainContent({
   loadingFeed,
   setLoadingFeed,
 }: MainContentProps) {
-  const getPostsLayoutClass = (layout: string) => {
-    return layout === 'wide'
-      ? 'col-span-10'
-      : 'col-span-10 lg:col-span-8 xl:col-span-6';
-  };
-
   return (
     <Components.PostsLayout
       id="posts-feed"
-      className={`${getPostsLayoutClass(
-        layout,
-      )} flex-col inline-flex gap-3 lg:ml-[0px] xl:ml-[0px]`}
+      className="w-full flex-col inline-flex gap-3"
     >
       <Components.CustomFeeds
         selectedFeed={selectedFeed}

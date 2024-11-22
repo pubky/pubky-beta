@@ -12,7 +12,11 @@ interface FollowAction extends React.HTMLAttributes<HTMLButtonElement> {
 
 export const FollowAction = ({
   text,
-  icon = <Icon.UserPlus size="16" />,
+  icon = (
+    <div>
+      <Icon.UserPlus size="16" />
+    </div>
+  ),
   loading = false,
   variant = 'normal',
   ...rest
@@ -32,7 +36,7 @@ export const FollowAction = ({
           {...rest}
           variant="custom"
           icon={loading ? <Icon.LoadingSpin size="16" /> : icon}
-          className={twMerge(`w-[40px] h-[40px]`, rest.className)}
+          className={twMerge(`w-[32px] h-[32px] p-0`, rest.className)}
         />
       )}
     </div>

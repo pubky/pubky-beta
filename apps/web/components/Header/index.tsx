@@ -118,7 +118,7 @@ export default function Header({ title, className }: HeaderProps) {
         >
           <Icon.SlidersHorizontal size="24" />
         </div>
-        <div className="flex gap-4 xl:min-w-[220px]">
+        <div className="flex gap-4 xl:min-w-[180px]">
           <HeaderUI.Logo link={logoLink} />
           <HeaderUI.Title
             titleHeader={title}
@@ -157,7 +157,10 @@ export default function Header({ title, className }: HeaderProps) {
             onKeyDown={searchTags.length ? undefined : handleKeyDown}
             maxLength={55}
             placeholder={!searchTags.length ? 'Search' : ''}
-            className="hidden lg:block"
+            className={`hidden lg:block ${
+              searchInputCard &&
+              'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
+            }`}
             onClick={() => setSearchInputCard(true)}
             readOnly={!!searchTags.length}
           />
@@ -175,7 +178,7 @@ export default function Header({ title, className }: HeaderProps) {
             </div>
           </Input.SearchActions>
         </Input.Search>
-        <div className="hidden lg:flex gap-4 items-center">
+        <div className="hidden lg:flex gap-3 items-center">
           <Link href="/home">
             <Button.Action
               id="header-home-btn"
@@ -231,7 +234,7 @@ export default function Header({ title, className }: HeaderProps) {
               width={48}
               height={48}
               className={`${
-                title === 'Profile' && 'border-2 border-white'
+                title === 'Profile' && 'border-t-2 border-white'
               } rounded-full w-[48px] h-[48px]`}
               alt="user-pic"
               uri={String(profile?.image)}

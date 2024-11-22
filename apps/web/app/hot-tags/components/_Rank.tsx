@@ -23,7 +23,9 @@ export default function Rank({
       <PostUtil.Tag boxShadow={boxShadow} clicked={false} color={color}>
         {tag}
       </PostUtil.Tag>
-      <PostUtil.Counter className="w-full">{counter} posts</PostUtil.Counter>
+      <PostUtil.Counter className="w-full">
+        {counter} {Number(counter) > 1 ? 'posts' : 'post'}
+      </PostUtil.Counter>
       {images && (
         <Post.UserPic className="hidden sm:inline-flex" images={images} />
       )}

@@ -10,12 +10,12 @@ import { Tweet } from 'react-tweet';
 import FilesCarousel from '../Modal/_FilesCarousel';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import Image from 'next/image';
 import { FileContent, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import Link from 'next/link';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -100,7 +100,7 @@ export default function Content({
           fileUris.map(async (fileUri) => {
             const fetchedFile = await getFile(fileUri);
             return fetchedFile ? fetchedFile : null;
-          }),
+          })
         );
         setFileContents(
           fetchedFiles
@@ -108,7 +108,7 @@ export default function Content({
             .map((file) => ({
               ...file,
               urls: file!.urls, // Ensure 'urls' is a string
-            })) as FileContent[],
+            })) as FileContent[]
         );
       }
     };
@@ -160,7 +160,7 @@ export default function Content({
                       {fileContents.map((file, index) => {
                         return (
                           <div key={index} className="relative">
-                            <Image
+                            <img
                               src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                               alt={`Fetched file ${index}`}
                               width={360}
@@ -182,12 +182,12 @@ export default function Content({
         })()}
 
         {showMore && (
-          <a
+          <Link
             href={Utils.encodePostUri(uri)}
             className="text-white text-opacity-80 hover:text-opacity-100"
           >
             Show more
-          </a>
+          </Link>
         )}
         {videoId && (
           <div className="w-full max-w-[560px] relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
@@ -221,8 +221,8 @@ export default function Content({
               fileContents.length === 1
                 ? 'grid-cols-1'
                 : fileContents.length === 2
-                  ? 'grid-cols-2'
-                  : 'grid-cols-2'
+                ? 'grid-cols-2'
+                : 'grid-cols-2'
             }`}
           >
             {fileContents.map((file, index) => {
@@ -260,7 +260,7 @@ export default function Content({
                         event.stopPropagation();
                         window.open(
                           `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                          '_blank',
+                          '_blank'
                         );
                       }}
                       className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
@@ -274,7 +274,7 @@ export default function Content({
                           {Utils.minifyText(
                             file?.name ??
                               `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                            isMobile ? 20 : 60,
+                            isMobile ? 20 : 60
                           )}
                         </Typography.Body>
                       </div>

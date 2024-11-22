@@ -12,7 +12,7 @@ export default function Index() {
   return (
     <Content.Main>
       <Header className="hidden md:block" title="Influencers" />
-      <Content.Grid className="grid grid-cols-10 gap-4">
+      <Content.Grid className="flex gap-6">
         <Influencers.LeftSidebar />
         <Influencers.MainContent />
         <Influencers.RightSidebar />

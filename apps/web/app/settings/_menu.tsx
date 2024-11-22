@@ -45,17 +45,17 @@ export default function Menu({ selectedItem, setSelectedItem }: MenuProps) {
           ? 'opacity-20'
           : isSelected
           ? 'cursor-pointer opacity-100'
-          : 'cursor-pointer border-b border-transparent hover:bg-white hover:bg-opacity-10 hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
+          : 'cursor-pointer border-b border-transparent hover:bg-gradient-to-t from-white/10 to-transparent hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
 
         return (
           <div
             key={key}
-            className={`${itemClass} w-full h-10 py-6 justify-between items-center inline-flex`}
+            className={`${itemClass} w-full h-10 py-3 justify-between items-center inline-flex`}
             onClick={() => !item.disabled && setSelectedItem(key)}
           >
             <div className="justify-start items-center gap-2 flex">
               {item.icon}
-              <Typography.Body variant="medium-bold">
+              <Typography.Body variant="small-bold">
                 {item.label}
               </Typography.Body>
             </div>

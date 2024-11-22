@@ -13,7 +13,7 @@ export default function Index() {
   return (
     <Content.Main className="sm:pt-[125px]">
       <Header.Root>
-        <Header.Logo />
+        <Header.Logo link='/onboarding' />
         <Header.Title titleHeader="Signed out" />
       </Header.Root>
       <Content.Grid>

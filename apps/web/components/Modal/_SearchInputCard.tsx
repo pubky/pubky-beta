@@ -45,8 +45,11 @@ export default function SearchInputCard({
     <Card.Primary
       {...rest}
       refCard={refCard}
-      className={twMerge('absolute top-16', rest.className)}
-      background="bg-[#05050A] border border-white border-opacity-30 z-10"
+      className={twMerge(
+        'absolute top-12 rounded-b-2xl rounded-t-none p-6 pt-2',
+        rest.className
+      )}
+      background="bg-[#05050A] border border-t-0 border-white border-opacity-20 z-10"
     >
       {inputValue !== '' && searchedUsers && searchedUsers.length > 0 ? (
         <div className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col gap-2">

@@ -38,7 +38,10 @@ export default function Question({
           open ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 -mt-6'
         )}
       >
-        <Typography.Body className="text-opacity-80 mr-2" variant="small">
+        <Typography.Body
+          className="text-opacity-80 text-[16px] mr-2 leading-snug"
+          variant="medium"
+        >
           {answer}
         </Typography.Body>
       </div>

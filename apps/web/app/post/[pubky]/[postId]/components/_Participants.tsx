@@ -123,7 +123,7 @@ export default function Participants({ author }: { author: string }) {
       return (
         <Button.Medium
           className="w-[114px] bg-transparent cursor-default"
-          icon={<Icon.Check />}
+          icon={<Icon.User size="16" />}
         >
           Me
         </Button.Medium>
@@ -170,7 +170,7 @@ export default function Participants({ author }: { author: string }) {
       return (
         <Button.Medium
           className="w-[114px] bg-transparent cursor-default"
-          icon={<Icon.Check />}
+          icon={<Icon.User size="16" />}
         >
           Me
         </Button.Medium>

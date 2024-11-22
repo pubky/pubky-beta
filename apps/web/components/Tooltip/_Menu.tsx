@@ -86,7 +86,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     try {
       const result = await follow(post?.details?.author);
       setFollowed(result);
-      setShowMenu(false);
+      if (result) setShowMenu(false);
     } catch (error) {
       console.log(error);
     } finally {
@@ -101,7 +101,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     try {
       const result = await unfollow(post?.details?.author);
       setFollowed(!result);
-      setShowMenu(false);
+      if (result) setShowMenu(false);
     } catch (error) {
       console.log(error);
     } finally {
@@ -110,13 +110,13 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   };
 
   const handleAddBookmark = async (postId: string, uri: string) => {
-    await addBookmark(postId, uri);
-    setShowMenu(false);
+    const result = await addBookmark(postId, uri);
+    if (result) setShowMenu(false);
   };
 
   const handleDeleteBookmark = async (bookmarkId: string) => {
-    await deleteBookmark(bookmarkId);
-    setShowMenu(false);
+    const result = await deleteBookmark(bookmarkId);
+    if (result) setShowMenu(false);
   };
 
   const handleDeletePost = async () => {
@@ -178,7 +178,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   const handleBookmarks = (
     repost: PostView | undefined,
     post: PostView,
-    handleAddBookmark: (postId: string, uri: string) => Promise<void>,
+    handleAddBookmark: (postId: string, authorId: string) => Promise<void>,
     handleDeleteBookmark: (bookmarkId: string) => Promise<void>,
     setContentToast: (
       content: React.ReactNode,
@@ -192,13 +192,13 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       if (isBookmarked) {
         handleDeleteBookmark(repost?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(repost?.details?.id, repost?.details?.uri);
+        handleAddBookmark(repost?.details?.id, repost?.details?.author);
       }
     } else if (post) {
       if (isBookmarked) {
         handleDeleteBookmark(post?.bookmark?.id ?? '');
       } else {
-        handleAddBookmark(post?.details?.id, post?.details?.uri);
+        handleAddBookmark(post?.details?.id, post?.details?.author);
       }
     }
 

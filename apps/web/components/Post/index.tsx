@@ -28,6 +28,7 @@ import RepostedPost from './_RepostedPost';
 import DeletedPostMessage from './_DeletedPostMessage';
 import MainPostContent from './_MainPostContent';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -54,6 +55,7 @@ export default function Post({
   lineStyle,
   ...rest
 }: PostProps) {
+  const router = useRouter();
   const { pubky, deletePost } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
@@ -100,9 +102,9 @@ export default function Post({
   }, [post?.relationships?.reposted]);
 
   return (
-    <Link
+    <div
       className="w-full cursor-pointer"
-      href={Utils.encodePostUri(post?.details?.uri)}
+      onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
     >
       <div className="flex flex-col">
         <PostUI.Root>
@@ -251,6 +253,6 @@ export default function Post({
           </div>
         </PostUI.Root>
       </div>
-    </Link>
+    </div>
   );
 }

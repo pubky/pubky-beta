@@ -94,7 +94,7 @@ export default function Sidebar({
 
   return (
     <>
-      <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
+      <div className="w-[180px] hidden flex-col justify-start items-start gap-8 xl:inline-flex">
         <UserInfo
           scrolled={scrolled}
           uriImage={image}

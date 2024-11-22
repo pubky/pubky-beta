@@ -78,7 +78,7 @@ export function Buttons({
           {pubkeyUser ? (
             <Button.Medium
               className="w-full lg:w-[104px] bg-transparent cursor-default"
-              icon={<Icon.Check />}
+              icon={<Icon.User size="16" />}
             >
               Me
             </Button.Medium>

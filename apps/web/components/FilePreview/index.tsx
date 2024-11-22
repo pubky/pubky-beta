@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 import { Icon } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
 
 interface FilePreviewProps {
   file: File;
@@ -43,12 +44,16 @@ const FilePreview: React.FC<FilePreviewProps> = ({
       ) : isPDF ? (
         <div className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-gray-100 rounded-lg p-4">
           <Icon.FileText size="64" color="#05050a" />
-          <p className="mt-2 text-gray-700 text-sm text-center">{file.name}</p>
+          <p className="mt-2 text-gray-700 text-sm text-center break-all">
+            {Utils.minifyText(file.name, 50)}
+          </p>
         </div>
       ) : isAudio ? (
         <div className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-gray-100 rounded-lg p-4">
           <Icon.SpeakerHigh size="64" color="#05050a" />
-          <p className="mt-2 text-gray-700 text-sm text-center">{file.name}</p>
+          <p className="mt-2 text-gray-700 text-sm text-center">
+            {Utils.minifyText(file.name, 50)}
+          </p>
         </div>
       ) : (
         <p className="text-gray-500">Unsupported file type</p>

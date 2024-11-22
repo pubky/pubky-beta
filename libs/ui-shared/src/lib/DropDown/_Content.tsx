@@ -17,7 +17,7 @@ export const Content = ({
   isOpen = false,
   ...rest
 }: ContentProps) => {
-  const baseCSS = `w-[282px] border border-white border-opacity-30 mt-8 absolute z-10 px-6 pt-3 pb-6 opacity-100`;
+  const baseCSS = `w-[282px] border border-white rounded-2xl border-opacity-30 mt-8 absolute z-10 px-6 pt-3 pb-6 opacity-100`;
 
   return (
     <div>
