@@ -105,7 +105,8 @@ export async function getPostStream(
   return response.json();
 }
 
-export async function getPostStreamByUser(
+export async function getStreamPosts(
+  source: string,
   userId: string,
   viewerId?: string,
   limit = 10,
@@ -115,7 +116,7 @@ export async function getPostStreamByUser(
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams({
     author_id: userId,
-    source: 'author',
+    source: source,
     limit: String(limit),
   });
 
@@ -135,35 +136,6 @@ export async function getPostStreamByUser(
   const response = await fetch(
     `${BASE_URL}/stream/posts?${queryParams.toString()}`
   );
-
-  if (!response.ok) throw new Error('Failed to fetch post stream by user');
-
-  return response.json();
-}
-
-export async function getRepliesStreamByUser(
-  userId: string,
-  viewerId?: string,
-  skip?: number,
-  limit?: number
-): Promise<PostView[]> {
-  const queryParams = new URLSearchParams();
-
-  if (userId) {
-    queryParams.append('author_id', userId);
-    queryParams.append('source', 'author_replies');
-  }
-  if (viewerId) {
-    queryParams.append('viewer_id', viewerId);
-  }
-  if (skip !== undefined) {
-    queryParams.append('skip', String(skip));
-  }
-  if (limit !== undefined) {
-    queryParams.append('limit', String(limit));
-  }
-
-  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch post stream by user');
 
