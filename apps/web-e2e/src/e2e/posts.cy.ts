@@ -36,7 +36,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -58,7 +58,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -91,7 +91,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -122,7 +122,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -173,7 +173,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the post text and embedded link is displayed correctly in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -218,7 +218,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
@@ -230,7 +230,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -323,7 +323,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the post text and tags are displayed correctly in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -487,7 +487,7 @@ describe('posts', () => {
     deletePost(0, 1);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the repost is deleted
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -528,7 +528,7 @@ describe('posts', () => {
     });
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the repost is deleted
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
@@ -564,7 +564,7 @@ describe('posts', () => {
     deletePost(1);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the repost is still displayed in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
@@ -582,7 +582,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.reload();
+    cy.wait(500).reload();
 
     // reply to the post
     cy.slowDown(fastMs);
@@ -648,7 +648,7 @@ describe('posts', () => {
     cy.wait(2_000);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.reload();
+    cy.wait(500).reload();
 
     // verify the reply and original post are no longer displayed in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
