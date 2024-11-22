@@ -9,7 +9,6 @@ import {
   getPostStream,
   getPostStreamByReach,
   getPostReplies,
-  getBookmarkedPosts,
   getStreamPosts,
 } from '../services/postService';
 
@@ -147,15 +146,42 @@ export function usePostReplies(
   });
 }
 
-export function useBookmarkedPosts(
+export function useStreamPost(
+  source: string,
   userId: string,
   viewerId?: string,
+  limit?: number,
+  start?: number,
+  end?: number,
   skip?: number,
-  limit?: number
+  sort?: 'recent' | 'popularity',
+  tags?: string[]
 ) {
   return useQuery({
-    queryKey: ['bookmarkedPosts', userId, viewerId, skip, limit],
-    queryFn: () => getBookmarkedPosts(userId, viewerId, skip, limit),
+    queryKey: [
+      `${source}-postStream`,
+      source,
+      userId,
+      viewerId,
+      limit,
+      start,
+      end,
+      skip,
+      sort,
+      tags,
+    ],
+    queryFn: () =>
+      getStreamPosts(
+        source,
+        userId,
+        viewerId,
+        limit,
+        start,
+        end,
+        skip,
+        sort,
+        tags
+      ),
     retry: false,
   });
 }

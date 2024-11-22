@@ -112,7 +112,9 @@ export async function getStreamPosts(
   limit = 10,
   start?: number,
   end?: number,
-  skip?: number
+  skip?: number | undefined,
+  sort?: 'recent' | 'popularity' | undefined,
+  tags?: string[]
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams({
     author_id: userId,
@@ -122,13 +124,27 @@ export async function getStreamPosts(
 
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
+    queryParams.append('observer_id', viewerId);
   }
+
+  if (sort) {
+    if (sort === 'recent') queryParams.append('sorting', String('timeline'));
+    else if (sort === 'popularity')
+      queryParams.append('sorting', String('total_engagement'));
+  }
+
+  if (tags) {
+    queryParams.append('tags', String(tags));
+  }
+
   if (start !== undefined) {
     queryParams.append('start', String(start));
   }
+
   if (end !== undefined) {
     queryParams.append('end', String(end));
   }
+
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
   }
@@ -201,35 +217,4 @@ export async function getPostReplies(
 
   const data: PostView[] = await response.json();
   return data;
-}
-
-export async function getBookmarkedPosts(
-  userId: string,
-  viewerId?: string,
-  skip?: number,
-  limit?: number
-): Promise<PostView[]> {
-  const queryParams = new URLSearchParams();
-
-  if (userId) {
-    queryParams.append('user_id', userId);
-  }
-  if (viewerId) {
-    queryParams.append('viewer_id', viewerId);
-    queryParams.append('observer_id', viewerId);
-  }
-  if (skip !== undefined) {
-    queryParams.append('skip', String(skip));
-  }
-  if (limit !== undefined) {
-    queryParams.append('limit', String(limit));
-  }
-  queryParams.append('source', String('bookmarks'));
-  const response = await fetch(
-    `${BASE_URL}/stream/posts?${queryParams.toString()}`
-  );
-
-  if (!response.ok) throw new Error('Failed to fetch bookmarked posts');
-
-  return response.json();
 }
