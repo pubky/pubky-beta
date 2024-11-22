@@ -90,10 +90,15 @@ export default function Index() {
   }, [isLoggedIn, pubky]);
 
   return (
-    <Content.Main>
+    <Content.Main className="sm:pt-[125px]">
       <Header.Root>
-        <Header.Logo link={logoLink} />
-        <Header.Title className="hidden sm:flex" titleHeader="Sign in" />
+        <div className="flex gap-3 lg:gap-6 w-auto">
+          <Header.Logo link={logoLink} />
+          <Header.Title
+            titleHeader="Sign in"
+            className="hidden sm:flex justify-end sm:justify-start"
+          />
+        </div>
         <Header.Action icon={<Icon.User size="16" />} link="/onboarding/intro">
           New here?
         </Header.Action>
@@ -106,7 +111,7 @@ export default function Index() {
         >
           Choose to sign in with a QR, recovery file, or recovery phrase.
         </Typography.Body>
-        <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
+        <div className="w-full flex-col inline-flex lg:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
           <Card.SignIn />
           <Card.RecoveryFile
             errors={errors}

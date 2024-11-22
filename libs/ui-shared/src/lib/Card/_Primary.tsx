@@ -16,7 +16,7 @@ export const Primary = ({
   title,
   text,
   background = 'bg-white bg-opacity-10',
-  borderRadius = 'rounded-2xl',
+  borderRadius = 'rounded-lg',
   children,
   refCard,
   imageTitle,
@@ -37,11 +37,16 @@ export const Primary = ({
             text && 'gap-3'
           )}
         >
-          <div className="flex gap-1 items-center">
-            <Typography.Body variant="large-bold">{title}</Typography.Body>
+          <div className="flex lg:flex-col xl:flex-row gap-1 xl:items-center">
+            <Typography.Body className="tracking-normal" variant="large-bold">
+              {title}
+            </Typography.Body>
             {imageTitle}
           </div>
-          <Typography.Body className="text-opacity-80" variant="medium-light">
+          <Typography.Body
+            className="text-opacity-80 leading-snug"
+            variant="medium-light"
+          >
             {text}
           </Typography.Body>
         </div>

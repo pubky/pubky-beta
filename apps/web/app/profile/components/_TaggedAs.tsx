@@ -10,11 +10,11 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
 import { ImageByUri } from '@/components/ImageByUri';
 import Modal from '@/components/Modal';
 import { useEffect, useState } from 'react';
 import { getUserProfile } from '@/services/userService';
+import Link from 'next/link';
 
 type TaggedAsProps = {
   creatorPubky: string | undefined;
@@ -22,7 +22,6 @@ type TaggedAsProps = {
 };
 
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
-  const router = useRouter();
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const usePubky = creatorPubky || pubky;
   const { data } = useUserProfile(usePubky ?? '', pubky ?? '');
@@ -131,13 +130,14 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       </div>
                     </PostUtil.Tag>
                     {/**</div></TooltipUI.Root>*/}
-                    <Button.Action
-                      variant="custom"
-                      size="small"
-                      icon={<Icon.MagnifyingGlassLeft size="14" />}
-                      onClick={() => router.push(`/search?tags=${tag?.label}`)}
-                      className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                    />
+                    <Link href={`/search?tags=${tag?.label}`}>
+                      <Button.Action
+                        variant="custom"
+                        size="small"
+                        icon={<Icon.MagnifyingGlassLeft size="14" />}
+                        className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                      />
+                    </Link>
                     <div
                       //onClick={() => setShowModalProfileTag(true)}
                       className="cursor-pointer flex items-center"

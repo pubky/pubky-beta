@@ -5,7 +5,6 @@ import { Utils } from '@social/utils-shared';
 import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
 import { INotification, IUserProfile } from '@/types';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { ImageByUri } from '@/components/ImageByUri';
 
 type NotificationTagGroupProps = {
@@ -15,7 +14,6 @@ type NotificationTagGroupProps = {
 export default function NotificationTagGroup({
   notifications,
 }: NotificationTagGroupProps) {
-  const router = useRouter();
   const [user, setUser] = useState<IUserProfile | null>(null);
 
   useEffect(() => {
@@ -71,19 +69,18 @@ export default function NotificationTagGroup({
           </Typography.Body>
           {notifications.map((notification, index) => (
             <div key={index} className="flex gap-2 items-center flex-wrap">
-              <PostUtil.Tag
-                color={
-                  notification.body.tag &&
-                  Utils.generateRandomColor(notification.body.tag)
-                }
-                onClick={() =>
-                  router.push(`/search?tags=${notification.body.tag}`)
-                }
-                clicked={false}
-                boxShadow={false}
-              >
-                {notification.body.tag}
-              </PostUtil.Tag>
+              <Link href={`/search?tags=${notification.body.tag}`}>
+                <PostUtil.Tag
+                  color={
+                    notification.body.tag &&
+                    Utils.generateRandomColor(notification.body.tag)
+                  }
+                  clicked={false}
+                  boxShadow={false}
+                >
+                  {notification.body.tag}
+                </PostUtil.Tag>
+              </Link>
             </div>
           ))}
         </div>

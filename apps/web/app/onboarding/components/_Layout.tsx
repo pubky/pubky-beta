@@ -36,7 +36,7 @@ export default function OnboardingLayout({
   }, [pubky, pathname, isLoggedIn]);
 
   return (
-    <Content.Main className="pb-0">
+    <Content.Main className="pb-0 sm:pt-[125px]">
       <Header.Root>
         <div className="flex gap-3 lg:gap-6 w-full sm:w-auto justify-between sm:justify-start items-start">
           <Header.Logo link={logoLink} />
@@ -46,7 +46,7 @@ export default function OnboardingLayout({
           />
         </div>
         <Content.Stepper
-          className="w-[50%] lg:w-[70%] xl:w-full hidden sm:flex"
+          className="w-[50%] lg:w-[70%] xl:w-full ml-6 hidden sm:flex"
           currentStep={currentStep}
         />
       </Header.Root>

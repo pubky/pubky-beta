@@ -75,7 +75,7 @@ export default function Index() {
     <Content.Main shadowBottom>
       <Header.Root className="backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
-        <div className="flex gap-12 items-center">
+        <div className="flex gap-6 items-center">
           <div className="h-6 justify-start items-start gap-6 sm:inline-flex hidden">
             <Link
               target="_blank"
@@ -121,7 +121,7 @@ export default function Index() {
         <div className="relative flex gap-3 mt-6 sm:mt-12">
           <Link href="/onboarding/intro">
             <Button.Large
-              className="bg-[#c8ff00] border-[#c8ff00]"
+              className="w-auto lg:w-[156px] bg-[#c8ff00] border-[#c8ff00]"
               colorText="text-[#c8ff00]"
             >
               Create Account
@@ -130,18 +130,19 @@ export default function Index() {
           <Button.Large
             onClick={!loading ? () => handleSubmit() : undefined}
             variant="secondary"
-            className="w-auto"
+            className={`w-auto ${loading ? 'w-auto' : 'lg:w-[156px]'}`}
             loading={loading}
           >
             Explore Pubky
           </Button.Large>
-          <Button.Large
-            onClick={() => window.open('https://pubky.org', '_blank')}
-            variant="secondary"
-            className="w-auto hidden sm:flex"
-          >
-            Pubky Core
-          </Button.Large>
+          <Link href="https://pubky.org" target="_blank">
+            <Button.Large
+              variant="secondary"
+              className="w-auto lg:w-[156px] hidden sm:flex"
+            >
+              Pubky Core
+            </Button.Large>
+          </Link>
         </div>
         <div className="fixed bottom-12">
           <div className="mb-2 h-6 justify-start items-start gap-6 inline-flex sm:hidden">

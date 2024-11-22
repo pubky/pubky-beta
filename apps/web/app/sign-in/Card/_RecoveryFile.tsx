@@ -56,7 +56,7 @@ export default function RecoveryFile({
       className="w-full col-span-3"
     >
       <div className="flex-col inline-flex gap-4">
-        <div className="mt-4">
+        <div>
           <Input.Label value="Recovery file" />
           <Input.UploadFile
             required
@@ -69,7 +69,7 @@ export default function RecoveryFile({
             disabled={loading}
           />
         </div>
-        <div className="mt-4">
+        <div>
           <Input.Label value="Password" />
           <Input.Text
             className="h-[70px] mt-1"

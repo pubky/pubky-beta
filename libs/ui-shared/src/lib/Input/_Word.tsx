@@ -21,7 +21,7 @@ export const Word = ({
   ...rest
 }: WordProps) => {
   const baseCSS =
-    'w-full bg-white bg-opacity-10 px-3 py-2 rounded-lg outline-none text-white placeholder:text-white placeholder:text-opacity-50 placeholder:font-semibold justify-start items-start gap-[5px] inline-flex';
+    'w-full bg-white bg-opacity-10 h-9 px-3 py-2 rounded-lg outline-none text-white placeholder:text-white placeholder:text-opacity-50 placeholder:font-semibold justify-start items-start gap-[5px] inline-flex';
 
   const errorCSS = `text-red-500 text-sm mt-2`;
   const inputWithErrorStyle = `border border-red-500`;
@@ -35,7 +35,7 @@ export const Word = ({
         className={twMerge(
           baseCSS,
           rest.className,
-          error ? inputWithErrorStyle : '',
+          error ? inputWithErrorStyle : ''
         )}
         disabled={disabled}
         value={value}

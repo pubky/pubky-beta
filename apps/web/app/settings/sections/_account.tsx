@@ -5,6 +5,7 @@ import Modal from '@/components/Modal';
 import { Button, Icon, Input, Tooltip, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import Link from 'next/link';
 
 const passwordSchema = z.object({
   password: z
@@ -264,14 +265,15 @@ export default function Account() {
         <Typography.Body variant="medium" className="text-opacity-80">
           Update your bio or user picture, so friends can find you easier.
         </Typography.Body>
-        <Button.Large
-          icon={<Icon.Pencil size="16" />}
-          variant="secondary"
-          className="w-auto"
-          onClick={() => router.push('/settings/edit')}
-        >
-          Edit profile
-        </Button.Large>
+        <Link href="/settings/edit">
+          <Button.Large
+            icon={<Icon.Pencil size="16" />}
+            variant="secondary"
+            className="w-auto"
+          >
+            Edit profile
+          </Button.Large>
+        </Link>
       </div>
       <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">

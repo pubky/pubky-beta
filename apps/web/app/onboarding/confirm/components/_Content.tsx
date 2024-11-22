@@ -125,7 +125,7 @@ export default function Index() {
         </Typography.Body>
         <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
           <div className="p-12 flex-col justify-center items-center flex">
-            <div className="p-12">
+            <div className="p-7">
               <Icon.CheckCircle size="130" color="#C8FF00" />
               <Image alt="glow" fill src="/images/webp/glow-2.webp" />
             </div>

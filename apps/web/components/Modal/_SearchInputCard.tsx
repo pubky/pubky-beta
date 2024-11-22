@@ -5,6 +5,7 @@ import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useUsernameSearch } from '@/hooks/useUser';
 import { useHotTags } from '@/hooks/useTag';
+import Link from 'next/link';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -49,15 +50,15 @@ export default function SearchInputCard({
     >
       {inputValue !== '' && searchedUsers && searchedUsers.length > 0 ? (
         <div className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col gap-2">
-          <div
-            onClick={() => router.push(`/search?tags=${inputValue}`)}
+          <Link
+            href={`/search?tags=${inputValue}`}
             className="cursor-pointer hover:bg-white hover:bg-opacity-10 rounded flex items-center gap-2 mb-2"
           >
             <Icon.MagnifyingGlass size="20" />
             <Typography.Body variant="medium" className="text-opacity-80">
               Search &apos;{inputValue}&apos; as tag
             </Typography.Body>
-          </div>
+          </Link>
           {searchedUsers.map((user) => (
             <SideCard.User
               key={user.details.id}

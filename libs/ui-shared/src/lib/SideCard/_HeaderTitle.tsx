@@ -15,8 +15,8 @@ export const HeaderTitle = ({
       {...rest}
       variant="light"
       className={twMerge(
-        `text-white/50 text-2xl font-light font-['Inter Tight'] leading-[30px] tracking-wide`,
-        rest.className,
+        `text-white/50 text-2xl font-light font-InterTight leading-[30px] tracking-wide`,
+        rest.className
       )}
     >
       {children}

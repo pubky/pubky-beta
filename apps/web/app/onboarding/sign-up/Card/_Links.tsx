@@ -66,7 +66,7 @@ export default function Links({
           </div>
         ))}
         <Button.Transparent
-          className="w-[100px] mt-2"
+          className="w-[100px] mt-2 px-3 py-2 h-8"
           icon={
             <Icon.LinkSimple
               size="16"

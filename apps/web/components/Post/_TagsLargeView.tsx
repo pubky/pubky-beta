@@ -12,19 +12,18 @@ import {
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
-import { useRouter } from 'next/navigation';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag, PostView } from '@/types/Post';
 import { usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
+import Link from 'next/link';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
 }
 
 export default function TagsLargeView({ post }: TagsLargeViewProps) {
-  const router = useRouter();
   const { pubky, createTag, deleteTag } = usePubkyClientContext();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
@@ -256,13 +255,14 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     </div>
                   </PostUtil.Tag>
                 )}
-                <Button.Action
-                  variant="custom"
-                  size="small"
-                  icon={<Icon.MagnifyingGlassLeft size="14" />}
-                  onClick={() => router.push(`/search?tags=${tagObj?.label}`)}
-                  className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                />
+                <Link href={`/search?tags=${tagObj?.label}`}>
+                  <Button.Action
+                    variant="custom"
+                    size="small"
+                    icon={<Icon.MagnifyingGlassLeft size="14" />}
+                    className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                  />
+                </Link>
               </div>
               <div className="flex">
                 {displayedImages.map((image, imageIndex) => (

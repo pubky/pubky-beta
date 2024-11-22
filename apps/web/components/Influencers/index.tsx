@@ -5,10 +5,9 @@ import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
 import { useInfluencersUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Influencers() {
-  const router = useRouter();
   const { pubky } = usePubkyClientContext();
   const {
     data: influencers,
@@ -45,11 +44,12 @@ export default function Influencers() {
                 </div>
               );
             })}
-            <SideCard.Action
-              icon={<Icon.UsersLeft size="16" />}
-              text="See All"
-              onClick={() => router.push('/influencers')}
-            />
+            <Link href="/influencers">
+              <SideCard.Action
+                icon={<Icon.UsersLeft size="16" />}
+                text="See All"
+              />
+            </Link>
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">

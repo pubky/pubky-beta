@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface TaggedSectionProps {
   profileTags: UserTags[];
@@ -31,7 +31,6 @@ export default function TaggedSection({
   name,
 }: TaggedSectionProps) {
   const { pubky } = usePubkyClientContext();
-  const router = useRouter();
 
   return (
     <div className="w-full">
@@ -85,13 +84,14 @@ export default function TaggedSection({
                       </div>
                     </PostUtil.Tag>
                     {/**</TooltipUI.Root>*/}
-                    <Button.Action
-                      variant="custom"
-                      size="small"
-                      icon={<Icon.MagnifyingGlassLeft size="14" />}
-                      onClick={() => router.push(`/search?tags=${tag?.label}`)}
-                      className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                    />
+                    <Link href={`/search?tags=${tag?.label}`}>
+                      <Button.Action
+                        variant="custom"
+                        size="small"
+                        icon={<Icon.MagnifyingGlassLeft size="14" />}
+                        className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                      />
+                    </Link>
                     <PostUtil.Counter className="w-full">
                       {tag?.taggers_count}
                     </PostUtil.Counter>

@@ -48,7 +48,7 @@ export const Text = ({
   placeholder = '',
   ...rest
 }: TextProps) => {
-  const baseCSS = `w-full h-[70px] p-6 rounded-2xl bg-transparent border border-white border-opacity-30 border-dashed flex-col justify-start items-start inline-flex outline-none text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-30 text-[17px] font-normal font-InterTight leading-snug tracking-wide`;
+  const baseCSS = `w-full h-[70px] p-6 rounded-2xl bg-transparent border border-white border-opacity-30 border-dashed flex-col justify-start items-start inline-flex outline-none text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-20 text-[17px] font-normal font-InterTight leading-snug tracking-wide`;
   const errorCSS = `text-red-600 text-sm mt-2`;
   const inputPaddingRight = action ? inputPadding : '';
 
@@ -67,7 +67,7 @@ export const Text = ({
             baseCSS,
             inputPaddingRight,
             rest.className,
-            error ? 'border-red-600 border-opacity-100' : '',
+            error ? 'border-red-600 border-opacity-100' : ''
           )}
         />
         {action && (

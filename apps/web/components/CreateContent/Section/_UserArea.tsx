@@ -3,8 +3,8 @@
 import { Typography } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
 import { ImageByUri } from '@/components/ImageByUri';
+import Link from 'next/link';
 
 interface UserAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -20,7 +20,6 @@ export default function UserArea({
   variant,
 }: UserAreaProps) {
   const { pubky } = usePubkyClientContext();
-  const router = useRouter();
 
   return (
     <div className={`${!variant && 'items-center'} justify-start gap-3 flex`}>
@@ -36,9 +35,9 @@ export default function UserArea({
       {!variant && (
         <>
           {pubky ? (
-            <div
+            <Link
               className="cursor-pointer flex gap-4 items-center"
-              onClick={() => router.push('/profile')}
+              href="/profile"
             >
               <Typography.Body
                 className={`${
@@ -54,7 +53,7 @@ export default function UserArea({
                   {Utils.minifyPubky(pubky)}
                 </Typography.Label>
               </div>
-            </div>
+            </Link>
           ) : (
             <Typography.Body variant="medium-bold" className="text-opacity-50">
               Loading...

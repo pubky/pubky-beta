@@ -41,7 +41,7 @@ export default function Index() {
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
-    { url: '', title: 'email', placeHolder: 'user@provider.com' },
+    { url: '', title: 'x (twitter)', placeHolder: '@user' },
   ]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
@@ -246,7 +246,7 @@ export default function Index() {
         <Button.Large
           onClick={!loading ? () => handleSubmit() : undefined}
           icon={<Icon.Check />}
-          className="w-[140px]"
+          className="w-auto"
           loading={loading}
           id="onboarding-submit-button"
         >

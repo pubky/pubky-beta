@@ -9,7 +9,6 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
 import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import {
@@ -18,6 +17,7 @@ import {
   useUserProfile,
 } from '@/hooks/useUser';
 import { getUserDetails } from '@/services/userService';
+import Link from 'next/link';
 
 interface ProfileProps {
   post?: PostView;
@@ -25,7 +25,6 @@ interface ProfileProps {
 }
 
 export default function Profile({ post, profileId }: ProfileProps) {
-  const router = useRouter();
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [followingImages, setFollowingImages] = useState<
     { alt: string; src: string }[]
@@ -149,8 +148,8 @@ export default function Profile({ post, profileId }: ProfileProps) {
       className="cursor-default w-[300px]"
     >
       <div className="w-full flex flex-col justify-between">
-        <div
-          onClick={() => router.push(`/profile/${idAuthor}`)}
+        <Link
+          href={`/profile/${idAuthor}`}
           className="justify-start items-center gap-2 flex cursor-pointer"
         >
           <PostUI.ImageUser
@@ -168,7 +167,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
               {Utils.minifyPubky(idAuthor)}
             </Typography.Label>
           </div>
-        </div>
+        </Link>
       </div>
       <Typography.Body
         variant="medium"
@@ -185,16 +184,17 @@ export default function Profile({ post, profileId }: ProfileProps) {
             <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
           </div>
         ) : (
-          <div
+          <Link
             onClick={(event) => {
               event.stopPropagation();
-              ((followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0) &&
-                router.push(
-                  `/profile/${
+            }}
+            href={
+              (followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0
+                ? `/profile/${
                     idAuthor ? `${idAuthor}?tab=following` : '?tab=following'
                   }`
-                );
-            }}
+                : ''
+            }
             className={`flex-col gap-3 inline-flex ${
               (following?.length ?? 0) > 0 && 'cursor-pointer'
             }`}
@@ -206,23 +206,24 @@ export default function Profile({ post, profileId }: ProfileProps) {
               </Typography.Label>
             </div>
             {followingImages && <PostUI.UserPic images={followingImages} />}
-          </div>
+          </Link>
         )}
         {isLoadingFollowers ? (
           <div className="flex w-full justify-center min-h-[64px] items-center">
             <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
           </div>
         ) : (
-          <div
+          <Link
             onClick={(event) => {
               event.stopPropagation();
-              ((followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0) &&
-                router.push(
-                  `/profile/${
+            }}
+            href={
+              (followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0
+                ? `/profile/${
                     idAuthor ? `${idAuthor}?tab=followers` : '?tab=followers'
                   }`
-                );
-            }}
+                : ''
+            }
             className={`flex-col gap-3 inline-flex ${
               (followers?.length ?? 0) > 0 && 'cursor-pointer'
             }`}
@@ -234,7 +235,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
               </Typography.Label>
             </div>
             {followersImages && <PostUI.UserPic images={followersImages} />}
-          </div>
+          </Link>
         )}
       </div>
       <div>
@@ -289,16 +290,19 @@ export default function Profile({ post, profileId }: ProfileProps) {
           </Button.Transparent>
         )}
         {post?.details?.author === pubky && (
-          <Button.Transparent
-            icon={<Icon.Pencil size="16" />}
+          <Link
             onClick={(event) => {
               event.stopPropagation();
-              router.push('/settings/edit');
             }}
-            className="mt-3"
+            href="/settings/edit"
           >
-            Edit profile
-          </Button.Transparent>
+            <Button.Transparent
+              icon={<Icon.Pencil size="16" />}
+              className="mt-3"
+            >
+              Edit profile
+            </Button.Transparent>
+          </Link>
         )}
       </div>
     </Tooltip.Main>

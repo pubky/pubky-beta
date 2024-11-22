@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import { UserView } from '@/types/User';
+import Link from 'next/link';
 
 interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky: string | null | undefined;
@@ -144,14 +145,15 @@ export default function Buttons({
           >
             Sign out
           </Button.Medium>
-          <Button.Medium
-            id="profile-edit-btn"
-            className="px-3 w-auto h-8"
-            onClick={() => router.push('/settings/edit')}
-            icon={<Icon.Pencil size="16" />}
-          >
-            Edit
-          </Button.Medium>
+          <Link href="/settings/edit">
+            <Button.Medium
+              id="profile-edit-btn"
+              className="px-3 w-auto h-8"
+              icon={<Icon.Pencil size="16" />}
+            >
+              Edit
+            </Button.Medium>
+          </Link>
         </>
       )}
       <Button.Medium

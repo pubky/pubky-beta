@@ -1,14 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { SideCard, Typography } from '@social/ui-shared';
-// import { DropDown } from '../components/DropDown';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
 import { useHotTags } from '@/hooks/useTag';
+import Link from 'next/link';
 
 export default function HotTags() {
-  const router = useRouter();
   const { data, isLoading, isError } = useHotTags(0, 8);
   const hotTags = data;
   if (isError) console.error(isError);
@@ -40,22 +38,20 @@ export default function HotTags() {
           <>
             <div className="grid gap-3">
               {hotTags.slice(0, 8).map((tag, index) => (
-                <SideCard.Rank
-                  key={index}
-                  onClick={() => router.push(`/search?tags=${tag?.label}`)}
-                  rank={index + 1}
-                  tag={Utils.minifyText(tag?.label, 21)}
-                  color={tag?.label && Utils.generateRandomColor(tag?.label)}
-                  counter={`${tag?.post_count}`}
-                  boxShadow={false}
-                />
+                <Link key={index} href={`/search?tags=${tag?.label}`}>
+                  <SideCard.Rank
+                    rank={index + 1}
+                    tag={Utils.minifyText(tag?.label, 21)}
+                    color={tag?.label && Utils.generateRandomColor(tag?.label)}
+                    counter={`${tag?.post_count}`}
+                    boxShadow={false}
+                  />
+                </Link>
               ))}
             </div>
-            <SideCard.Action
-              onClick={() => router.push('/hot-tags')}
-              className="mt-4"
-              text="Explore All"
-            />
+            <Link href="/hot-tags">
+              <SideCard.Action className="mt-4" text="Explore All" />
+            </Link>
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">

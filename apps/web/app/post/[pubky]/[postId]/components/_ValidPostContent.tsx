@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 
 import { Typography, Post as PostUI, Icon } from '@social/ui-shared';
@@ -14,6 +13,7 @@ import { useUserProfile } from '@/hooks/useUser';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 import { usePubkyClientContext } from '@/contexts';
+import Link from 'next/link';
 
 export function ValidPostContent({ postRef, data }) {
   const { pubky } = usePubkyClientContext();
@@ -74,8 +74,6 @@ const NormalPost = ({ data }) => {
 };
 
 const LongPost = ({ data, user }) => {
-  const router = useRouter();
-
   return (
     <div className="flex gap-6">
       <div className="flex flex-col gap-4">
@@ -91,9 +89,9 @@ const LongPost = ({ data, user }) => {
               alt="user-image"
               uri={user?.data?.details?.image}
             />
-            <div
+            <Link
               className="cursor-pointer flex flex-col md:flex-row md:gap-4 md:items-center"
-              onClick={() => router.push(`/profile/${data?.details?.author}`)}
+              href={`/profile/${data?.details?.author}`}
             >
               <Typography.Body
                 className={`text-2xl hover:underline hover:decoration-solid`}
@@ -110,7 +108,7 @@ const LongPost = ({ data, user }) => {
                   {Utils.minifyPubky(data?.details?.author ?? '')}
                 </Typography.Label>
               </div>
-            </div>
+            </Link>
           </div>
           <PostUI.Time className="mr-2">
             <span className="hidden md:flex">
