@@ -108,26 +108,33 @@ export async function getPostStream(
 export async function getPostStreamByUser(
   userId: string,
   viewerId?: string,
-  skip?: number,
-  limit?: number
+  limit = 10,
+  start?: number,
+  end?: number,
+  skip?: number
 ): Promise<PostView[]> {
-  const queryParams = new URLSearchParams();
+  const queryParams = new URLSearchParams({
+    author_id: userId,
+    source: 'author',
+    limit: String(limit),
+  });
 
-  if (userId) {
-    queryParams.append('author_id', userId);
-    queryParams.append('source', 'author');
-  }
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
+  }
+  if (start !== undefined) {
+    queryParams.append('start', String(start));
+  }
+  if (end !== undefined) {
+    queryParams.append('end', String(end));
   }
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
   }
-  if (limit !== undefined) {
-    queryParams.append('limit', String(limit));
-  }
 
-  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
+  const response = await fetch(
+    `${BASE_URL}/stream/posts?${queryParams.toString()}`
+  );
 
   if (!response.ok) throw new Error('Failed to fetch post stream by user');
 

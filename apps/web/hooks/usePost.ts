@@ -64,12 +64,24 @@ export function usePostStream(
 export function usePostStreamByUser(
   userId: string,
   viewerId?: string,
-  skip?: number,
-  limit?: number
+  limit?: number,
+  start?: number,
+  end?: number,
+  skip?: number
 ) {
   return useQuery({
-    queryKey: ['postStreamByUser', userId, viewerId, skip, limit],
-    queryFn: () => getPostStreamByUser(userId, viewerId, skip, limit),
+    queryKey: [
+      'postStreamByUser',
+      userId,
+      viewerId,
+      skip,
+      limit,
+      start,
+      end,
+      skip,
+    ],
+    queryFn: () =>
+      getPostStreamByUser(userId, viewerId, limit, start, end, skip),
     retry: false,
   });
 }
