@@ -61,6 +61,11 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     saveCopiedPubkyToAlias(alias: string): void;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    saveCopiedTextToAlias(alias: string): void;
+  }
 }
 
 Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', skipOnboardingSlides: boolean = true, pubkyAlias?: string) => {
@@ -73,7 +78,7 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
 
   if (skipOnboardingSlides) {
     // TODO: remove wait workaround for pkarr rate limiting once using testnet
-    cy.wait(3000);
+    //cy.wait(3000);
 
     // click 'Skip Intro' button
     cy.get('#onboarding-skip-intro-btn').click();
@@ -143,14 +148,14 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.location('pathname').should('eq', '/sign-in');
 
   // TODO: remove wait workaround for pkarr rate limiting once using testnet
-  cy.wait(3000);
+  //cy.wait(3000);
 
   cy.get('#fileInput').selectFile(
     backupFilepath,
     { force: true } // force to bypass visibility check of hidden input field
   );
-  cy.get('#onboarding-password-input').type(passcode);
-  cy.get('#onboarding-sign-in-button').click();
+  cy.get('#sign-in-password-input').type(passcode);
+  cy.get('#sign-in-recovery-file-btn').click();
 
   cy.location('pathname').should('eq', '/home');
 });
@@ -221,6 +226,23 @@ Cypress.Commands.add('saveCopiedPubkyToAlias', (alias: string) => {
       expect(text).to.match(/^pk:/);
       return text;
     });
+    // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
+    // so an additional 'then' is needed to guarantee the alias is stored before the next test step
+  }).then((text) => {
+    // store pubky as alias
+    cy.wrap(text).as(alias);
+  });
+});
+
+// Stores the clipboard contents to an alias for later use
+// see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
+// note: aliases work in the context of as test and only the first test after before
+Cypress.Commands.add('saveCopiedTextToAlias', (alias: string) => {
+  cy.window().then((win) => {
+    // ensure focus is on the window before attempting to read clipboard
+    win.focus();
+    // requires browser to be in focus
+    return win.navigator.clipboard.readText();
     // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
     // so an additional 'then' is needed to guarantee the alias is stored before the next test step
   }).then((text) => {

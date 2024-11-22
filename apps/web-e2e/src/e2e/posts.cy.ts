@@ -657,5 +657,6 @@ describe('posts', () => {
     });
 
     // todo: check that reply still shown in own profile page
+    // todo: test article
   });
 });

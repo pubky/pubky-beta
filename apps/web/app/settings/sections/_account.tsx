@@ -208,6 +208,7 @@ export default function Account() {
         </Typography.Body>
         <Tooltip.RootSmall setShowTooltip={setShowTooltip}>
           <Button.Large
+            id='backup-account-btn'
             icon={
               <Icon.Lock
                 size="16"
@@ -247,6 +248,7 @@ export default function Account() {
           information, contacts, custom streams, and settings or preferences.
         </Typography.Body>
         <Button.Large
+          id='delete-account-btn'
           icon={<Icon.Trash size="16" />}
           variant="secondary"
           className="w-auto"
@@ -269,6 +271,7 @@ export default function Account() {
         </Typography.Body>
         <Link href="/settings/edit">
           <Button.Large
+            id="edit-profile-btn"
             icon={<Icon.Pencil size="16" />}
             variant="secondary"
             className="w-auto"
@@ -289,6 +292,7 @@ export default function Account() {
           function will export data related to pubky.app.
         </Typography.Body>
         <Button.Large
+          id='download-data-btn'
           icon={<Icon.DownloadSimple size="16" />}
           variant="secondary"
           className="w-auto"

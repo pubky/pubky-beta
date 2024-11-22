@@ -43,7 +43,7 @@ export default function Index() {
             className="w-full sm:w-[154px]"
             id="logout-link"
           >
-            <Button.Large variant="secondary" icon={<Icon.Key size="16" />}>
+            <Button.Large id="sign-back-in-btn" variant="secondary" icon={<Icon.Key size="16" />}>
               Sign back in
             </Button.Large>
           </Link>

@@ -62,7 +62,7 @@ export default function DeleteAccount({
           Cancel
         </Button.Large>
         <Modal.SubmitAction
-          id="delete-post-btn"
+          id="delete-account-btn"
           icon={<Icon.Trash size="16" color="#dc2626" />}
           className="bg-[#dc2626] border-[#dc2626]"
           colorText="text-[#dc2626]"

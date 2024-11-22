@@ -47,7 +47,7 @@ export const UploadFile = ({
           }}
         >
           <Icon.File size="16" />
-          <Typography.Label className="cursor-pointer normal-case">
+          <Typography.Label id='import-select-file' className="cursor-pointer normal-case">
             Select file
           </Typography.Label>
         </div>
