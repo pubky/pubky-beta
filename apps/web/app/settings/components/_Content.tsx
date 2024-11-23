@@ -31,11 +31,11 @@ export default function Index() {
   return (
     <Content.Main>
       <Components.Header className="hidden md:block" title="Settings" />
-      <Content.Grid className={'grid grid-cols-5 gap-6'}>
-        <Components.Sidebar className="hidden lg:block">
+      <Content.Grid className="flex gap-6">
+        <Components.Sidebar className="w-[280px] hidden lg:block">
           <Menu selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
         </Components.Sidebar>
-        <div className="col-span-5 lg:col-span-4 xl:col-span-3 flex-col inline-flex gap-3">
+        <div className="w-full flex-col inline-flex gap-3">
           <div className="lg:hidden flex">
             <MenuMobile
               selectedItem={selectedItem}
@@ -49,7 +49,7 @@ export default function Index() {
           {selectedItem === 'language' && <Section.Language />}
           {selectedItem === 'help' && <Section.Help />}
         </div>
-        <Components.Sidebar className="hidden xl:block">
+        <Components.Sidebar className="w-[280px] hidden xl:block">
           {selectedItem !== 'help' && <Faq />}
           <div className="self-start sticky top-[120px]">
             <Components.Feedback />

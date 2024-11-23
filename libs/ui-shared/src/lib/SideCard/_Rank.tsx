@@ -26,7 +26,7 @@ export const Rank = ({
       <PostUtil.Tag boxShadow={boxShadow} clicked={false} color={color}>
         <div className="flex gap-2 items-center">
           {tag}
-          <Typography.Caption variant="bold" className="text-opacity-60">
+          <Typography.Caption variant="bold" className="text-opacity-50">
             {counter}
           </Typography.Caption>
         </div>

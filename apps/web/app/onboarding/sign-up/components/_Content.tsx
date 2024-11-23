@@ -210,7 +210,7 @@ export default function Index() {
     <Onboarding.Layout currentStep={2}>
       <Input.Cursor
         placeholder="Your Name"
-        className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px]"
+        className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-20"
         defaultValue={name ? name : ''}
         disabled={loading}
         autoFocus

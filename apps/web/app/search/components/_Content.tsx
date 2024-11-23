@@ -22,7 +22,7 @@ export default function ContentSearch() {
       {layout === 'wide' && (
         <ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       )}
-      <Content.Grid className={'grid grid-cols-10 gap-6'}>
+      <Content.Grid className="flex gap-6">
         {layout !== 'wide' && (
           <SearchPage.LeftSidebar
             isFilterContentVisible={isFilterContentVisible}

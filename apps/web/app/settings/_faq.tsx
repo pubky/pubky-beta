@@ -19,15 +19,18 @@ export default function Faq() {
           href="/settings?section=help"
           className="cursor-pointer relative w-full p-6 rounded-2xl border border-white border-opacity-20 hover:border-opacity-30 flex-col justify-start items-start gap-6 inline-flex"
         >
-          <Typography.Body variant="medium-bold">{question}</Typography.Body>
+          <Typography.Body className="leading-[18px]" variant="small-bold">
+            {question}
+          </Typography.Body>
           <div className="absolute right-3 bottom-3">
-            <Icon.Next size="16" color="gray" />
+            <Icon.Next size="16" />
           </div>
         </Link>
       ))}
-      <Link href="/settings?section=help">
+      <Link className="w-full" href="/settings?section=help">
         <Button.Medium
           icon={<Icon.Question size="16" />}
+          textCSS='text-[13px]'
           className="py-2 px-3 h-8"
         >
           More FAQ

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Typography } from '../Typography';
 import { Icon } from '../Icon';
+import Link from 'next/link';
 
 interface GitHubProps {
   url: string;
@@ -88,7 +89,7 @@ export const GitHub = ({ url }: GitHubProps) => {
   }
 
   return (
-    <a
+    <Link
       href={`https://github.com/${url.split('github.com/')[1]}`}
       target="_blank"
       rel="noopener noreferrer"
@@ -150,6 +151,6 @@ export const GitHub = ({ url }: GitHubProps) => {
           </div>
         )}
       </div>
-    </a>
+    </Link>
   );
 };

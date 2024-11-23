@@ -1,6 +1,7 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
+import Link from 'next/link';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLAnchorElement> {
   uriImage: string;
@@ -19,10 +20,15 @@ export const Header = ({
   width = 96,
   height = 96,
   alt = 'user-pic',
+  href,
   ...rest
 }: HeaderProps) => {
   return (
-    <a {...rest} className={twMerge('flex-col gap-4 flex', rest.className)}>
+    <Link
+      href={href || ''}
+      {...rest}
+      className={twMerge('flex-col gap-4 flex', rest.className)}
+    >
       <ImageByUri
         width={width}
         height={height}
@@ -40,6 +46,6 @@ export const Header = ({
           </Typography.Label>
         </div>
       </div>
-    </a>
+    </Link>
   );
 };

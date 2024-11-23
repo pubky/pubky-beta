@@ -28,7 +28,7 @@ export default function Influencers() {
             {influencers.slice(0, 3).map((influencer, index: number) => {
               return (
                 <div key={index}>
-                  <SideCard.User
+                  <SideCard.UserSmall
                     uri={influencer.details.id.replace('pubky:', '')}
                     uriImage={
                       influencer?.details?.image || '/images/webp/Userpic.webp'
@@ -44,9 +44,10 @@ export default function Influencers() {
                 </div>
               );
             })}
-            <Link href="/influencers">
+            <Link href="/influencers" className="mt-2">
               <SideCard.Action
                 icon={<Icon.UsersLeft size="16" />}
+                textCSS="text-[13px]"
                 text="See All"
               />
             </Link>

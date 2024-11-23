@@ -43,7 +43,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                   </PostUtil.Tag>
                 </Link>
               </div>
-              <Typography.Body className="text-opacity-80" variant="small">
+              <Typography.Body className="text-opacity-80" variant="medium">
                 {tag?.post_count} posts this month
               </Typography.Body>
               <div className="flex items-center">

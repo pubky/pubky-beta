@@ -6,6 +6,7 @@ interface MediumButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant?: 'default' | 'line' | 'subtle';
   icon?: React.ReactNode;
+  textCSS?: string;
   disabled?: boolean;
   loading?: boolean;
   className?: string;
@@ -16,6 +17,7 @@ export const Medium = ({
   children,
   variant = 'default',
   icon,
+  textCSS,
   disabled = false,
   loading = false,
   ...rest
@@ -64,7 +66,10 @@ export const Medium = ({
         icon && <div>{icon}</div>
       )}
       {children && (
-        <Typography.Body variant="small-bold" className={color}>
+        <Typography.Body
+          variant="small-bold"
+          className={twMerge(color, textCSS)}
+        >
           {children}
         </Typography.Body>
       )}

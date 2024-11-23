@@ -56,7 +56,7 @@ function LinkPreview({ url }: { url: string }) {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-6">
       <div
         onClick={handleClick}
         className="cursor-pointer w-full mt-4 p-6 bg-white bg-opacity-10 border border-transparent hover:border-white hover:border-opacity-30 rounded-xl justify-between items-start inline-flex"

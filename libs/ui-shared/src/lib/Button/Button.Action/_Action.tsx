@@ -78,7 +78,7 @@ export const Action = ({
   const { iconSize, sizeClasses, labelClasses, labelSize, counterSize } =
     sizes[size];
 
-  const color = disabled ? 'text-gray-500' : 'text-white';
+  const color = disabled ? 'text-white/50' : 'text-white';
   const colorIcon = disabled ? 'grey' : undefined;
   const gap = counter && 'gap-1';
 

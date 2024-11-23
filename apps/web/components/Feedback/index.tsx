@@ -1,12 +1,13 @@
 'use client';
 
-import { Input, SideCard, Typography } from '@social/ui-shared';
+import { SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import { ImageByUri } from '../ImageByUri';
 import axios from 'axios';
 import Modal from '../Modal';
 import { usePubkyClientContext } from '@/contexts';
+import Link from 'next/link';
 
 export default function Feedback() {
   const { pubky, profile } = usePubkyClientContext();
@@ -41,10 +42,10 @@ export default function Feedback() {
     <>
       <div className="self-start sticky top-[120px] col-span-1">
         <SideCard.Header title="Feedback" />
-        <SideCard.Content>
-          <div className="p-6 w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
+        <SideCard.Content className="mt-3">
+          <div className="p-5 w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
             <div className="flex flex-col gap-3">
-              <div className="flex gap-2 items-center">
+              <Link href="/profile" className="flex gap-1 items-center">
                 <ImageByUri
                   alt="user"
                   uri={profile?.image ?? '/images/webp/Userpic.webp'}
@@ -52,26 +53,26 @@ export default function Feedback() {
                   height={32}
                   className="rounded-full w-8 h-8"
                 />
-                <Typography.Body variant="medium-bold">
+                <Typography.Body
+                  variant="medium-bold"
+                  className="hover:underline hover:decoration-solid"
+                >
                   {Utils.minifyText(
                     profile?.name ?? Utils.minifyPubky(pubky ?? ''),
                     10
                   )}
                 </Typography.Body>
-              </div>
+              </Link>
               <div
                 className="cursor-pointer"
                 onClick={() => setShowModal(true)}
               >
-                <Input.TextArea
-                  //value={message}
-                  className="pointer-events-none"
-                  //onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                  //  const target = e.target as HTMLTextAreaElement;
-                  //  setMessage(target.value);
-                  //}}
-                  placeholder="What do you think about Pubky? Any suggestions?"
-                />
+                <Typography.Body
+                  className="text-opacity-30 leading-snug tracking-wide"
+                  variant="medium"
+                >
+                  What do you think about Pubky? Any suggestions?
+                </Typography.Body>
               </div>
             </div>
           </div>

@@ -119,14 +119,16 @@ const LongPost = ({ data, user }) => {
             </span>
           </PostUI.Time>
         </div>
-        <ImageByUri
-          width={1000}
-          height={650}
-          className="w-[1200px] h-auto max-h-[500px] rounded-lg mb-4"
-          alt="article-image"
-          uri={data?.details?.attachments[0] ?? ''}
-          loading
-        />
+        {data?.details?.attachments[0] && (
+          <ImageByUri
+            width={1200}
+            height={650}
+            className="w-[1200px] h-auto max-h-[500px] rounded-lg mb-4"
+            alt="article-image"
+            uri={data?.details?.attachments[0] ?? ''}
+            loading
+          />
+        )}
         <div className="text-white break-words">
           <MarkdownPreview source={JSON.parse(data?.details?.content).body} />
         </div>

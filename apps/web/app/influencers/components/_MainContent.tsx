@@ -34,7 +34,7 @@ export default function MainContent() {
   }, [influencers]);
 
   return (
-    <div className="flex-col inline-flex gap-3 col-span-10 lg:col-span-9 xl:col-span-7 lg:ml-[70px] xl:ml-[45px]">
+    <div className="flex-col inline-flex gap-3 w-full">
       {isLoading ? (
         <div className="w-full">
           <Skeletons.Simple />

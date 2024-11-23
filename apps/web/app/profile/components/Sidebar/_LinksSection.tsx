@@ -149,11 +149,11 @@ export default function LinksSection({
                           <Typography.Body
                             id={`profile-link-${link.title.toLowerCase()}`}
                             className="text-opacity-80 hover:text-opacity-100"
-                            variant="small"
+                            variant="medium"
                           >
                             {Utils.minifyText(
                               renderSocialUsername(link.url),
-                              50
+                              20
                             )}
                           </Typography.Body>
                         </div>

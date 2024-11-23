@@ -19,7 +19,7 @@ export const Cursor = ({
   placeholder = '',
   ...rest
 }: CursorProps) => {
-  const baseCSS = `w-full h-24 bg-transparent rounded-[5px] outline-none text-white text-[17px] placeholder:text-white placeholder:text-opacity-20 font-normal font-InterTight leading-snug tracking-wide`;
+  const baseCSS = `w-full h-24 bg-transparent rounded-[5px] outline-none text-white text-[17px] placeholder:text-white placeholder:text-opacity-30 font-normal font-InterTight leading-snug tracking-wide`;
 
   const errorCSS = `text-red-500 text-sm mt-2`;
 

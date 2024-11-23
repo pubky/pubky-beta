@@ -15,7 +15,7 @@ export function LeftSidebar({
   };
 
   return (
-    <Components.Sidebar className="col-span-1 hidden lg:block">
+    <Components.Sidebar className="w-[280px] hidden lg:block">
       <div className={`self-start ${getSidebarClass(isFilterContentVisible)}`}>
         <Filter.Reach />
         <Filter.Sort />

@@ -3,6 +3,7 @@ import LinkParser from 'react-link-parser';
 import ProfileLink from '../Post/_ProfileLink';
 import { Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
+import Link from 'next/link';
 
 interface ParsingProps {
   children: string;
@@ -32,14 +33,14 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
         const trimmedTag = tag.trim().toLowerCase();
         const icon = tagsIcons[trimmedTag];
         return (
-          <a
+          <Link
             className="text-[#C8FF00] break-all inline-flex mr-1"
             href={`/search?tags=${tag.replace('#', '').trim()}`}
             target="_self"
             rel="noreferrer"
           >
             {tag} {icon && <span className="ml-1">{icon}</span>}
-          </a>
+          </Link>
         );
       },
     },
@@ -47,28 +48,28 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
       watchFor: 'link',
       render: (url: string) => {
         return (
-          <a
+          <Link
             className="text-[#C8FF00] break-all"
             href={url}
             target="_blank"
             rel="noreferrer"
           >
             {url}
-          </a>
+          </Link>
         );
       },
     },
     {
       watchFor: 'email',
       render: (url: string) => (
-        <a
+        <Link
           className="text-[#C8FF00] break-all"
           href={`mailto:${url.trim()}`}
           target="_blank"
           rel="noreferrer noopener"
         >
           {url}
-        </a>
+        </Link>
       ),
     },
   ];

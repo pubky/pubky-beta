@@ -101,12 +101,11 @@ export default function WhoFollow() {
             .map((recommendedProfile, index: number) => {
               const pubkeyUser =
                 pubky && recommendedProfile?.details?.id.includes(pubky);
-              const isFollowed =
-                followedUser[recommendedProfile.details.id];
+              const isFollowed = followedUser[recommendedProfile.details.id];
 
               return (
                 <div key={index}>
-                  <SideCard.User
+                  <SideCard.UserSmall
                     uri={recommendedProfile?.details?.id}
                     uriImage={
                       recommendedProfile?.details?.image ||
@@ -114,15 +113,16 @@ export default function WhoFollow() {
                     }
                     username={Utils.minifyText(
                       recommendedProfile?.details?.name,
-                      8
+                      11
                     )}
                     label={Utils.minifyPubky(recommendedProfile?.details?.id)}
                   >
                     {pubkeyUser ? (
                       <SideCard.FollowAction
                         text="Me"
-                        icon={<Icon.Check />}
+                        icon={<Icon.User size="16" />}
                         className="bg-transparent cursor-default"
+                        variant="small"
                       />
                     ) : isLoading ? (
                       <SideCard.FollowAction
@@ -155,7 +155,7 @@ export default function WhoFollow() {
                         variant="small"
                       />
                     )}
-                  </SideCard.User>
+                  </SideCard.UserSmall>
                 </div>
               );
             })

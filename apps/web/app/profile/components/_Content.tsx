@@ -41,7 +41,7 @@ export default function Index() {
             loading={isLoading}
             profile={user}
           />
-          <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
+          <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
             <Profile.Avatar
               className="lg:pl-12"
               username={user?.details?.name || Utils.minifyPubky(pubky ?? '')}
@@ -51,8 +51,8 @@ export default function Index() {
           </div>
         </Content.Grid>
       </div>
-      <Content.Grid className="grid grid-cols-6 gap-2">
-        <PostsLayout className="flex flex-col col-span-6 xl:col-span-5 gap-3 mt-[10px]">
+      <Content.Grid className="flex gap-2">
+        <PostsLayout className="flex flex-col w-full gap-3 mt-[10px]">
           <Profile.FilterTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}

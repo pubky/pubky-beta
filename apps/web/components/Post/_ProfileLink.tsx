@@ -3,6 +3,7 @@
 import { usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import { Utils } from '@social/utils-shared';
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 
 function ProfileLink({ pk }: { pk: string }) {
@@ -31,9 +32,9 @@ function ProfileLink({ pk }: { pk: string }) {
 
   return (
     <>
-      <a className="text-[#C8FF00] break-all" href={`/profile/${pkPart}`}>
+      <Link className="text-[#C8FF00] break-all" href={`/profile/${pkPart}`}>
         {userName ? `@${userName}` : Utils.minifyPubky(pkFound)}
-      </a>
+      </Link>
       {remainingPart}
     </>
   );

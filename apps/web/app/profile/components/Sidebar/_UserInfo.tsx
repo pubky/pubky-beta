@@ -77,34 +77,36 @@ export default function UserInfo({
         <div className="items-center inline-flex justify-between">
           <div className="justify-start items-center gap-2 inline-flex">
             <ImageByUri
-              width={35}
-              height={35}
-              className="w-[35px] h-[35px] rounded-full"
+              width={32}
+              height={32}
+              className="w-[32px] h-[32px] rounded-full"
               uri={uriImage}
               alt="user-pic"
             />
             <div>
-              <Typography.Body variant="medium-bold" className="-mb-2">
-                {Utils.minifyText(name, 8)}
-              </Typography.Body>
-              <Typography.Label className="text-[12px] text-opacity-50">
+              <div className="w-full gap-2 justify-between flex items-center -mb-2">
+                <Typography.Body variant="small-bold" className="leadning-none">
+                  {Utils.minifyText(name, 8)}
+                </Typography.Body>
+                <div className="relative">
+                  {showProfileMenu && (
+                    <Tooltip.ProfileMenu
+                      setShowProfileMenu={setShowProfileMenu}
+                      creatorPubky={pubkyUser}
+                      profile={profile}
+                    />
+                  )}
+                  <div
+                    className="cursor-pointer rounded-full"
+                    onClick={() => setShowProfileMenu(true)}
+                  >
+                    <Icon.DotsThreeOutline size="12" />
+                  </div>
+                </div>
+              </div>
+              <Typography.Label className="text-[11px] leading-none text-opacity-30">
                 {Utils.minifyPubky(pubkyUser)}
               </Typography.Label>
-            </div>
-          </div>
-          <div className="relative">
-            {showProfileMenu && (
-              <Tooltip.ProfileMenu
-                setShowProfileMenu={setShowProfileMenu}
-                creatorPubky={pubkyUser}
-                profile={profile}
-              />
-            )}
-            <div
-              className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10 p-2 -mt-[10px]"
-              onClick={() => setShowProfileMenu(true)}
-            >
-              <Icon.DotsThreeOutline size="12" />
             </div>
           </div>
         </div>

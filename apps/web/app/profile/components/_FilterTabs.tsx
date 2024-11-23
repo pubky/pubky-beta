@@ -17,7 +17,7 @@ const tabs = [
   {
     id: 0,
     key: 'notifications',
-    icon: <Icon.Bell size="24" color="white" />,
+    icon: <Icon.BellSimple size="24" color="white" />,
     label: 'Notifications',
   },
   {
@@ -151,8 +151,8 @@ export default function FilterTabs({
   };
 
   return (
-    <div className="flex gap-4">
-      <div className="w-[280px] self-start sticky top-[120px] hidden lg:block">
+    <div className="flex gap-2">
+      <div className="w-[280px] mt-1 self-start sticky top-[120px] hidden lg:block">
         {tabs.map((tab) => {
           if (
             creatorPubky &&
@@ -168,12 +168,17 @@ export default function FilterTabs({
               key={tab.id}
               onClick={() => handleTabClick(tab.id, tab.key)}
               className={`w-full py-2 px-3 items-center flex justify-between cursor-pointer ${
-                isActive && !loading
-                  ? 'opacity-100'
-                  : 'opacity-50 hover:opacity-100'
+                !isActive &&
+                'border-b border-transparent hover:border-white/30 hover:bg-gradient-to-t from-white/10 to-transparent'
               }`}
             >
-              <div className="flex gap-2 items-center">
+              <div
+                className={`flex gap-2 items-center ${
+                  isActive && !loading
+                    ? 'opacity-100'
+                    : 'opacity-50 hover:opacity-80'
+                }`}
+              >
                 {tab.icon}
                 <Typography.Body
                   className="tracking-normal"
@@ -187,10 +192,7 @@ export default function FilterTabs({
                   className="tracking-normal"
                   variant="small-bold"
                 >
-                  <span
-                    id="counter"
-                    className="ml-2 text-white text-opacity-30"
-                  >
+                  <span id="counter" className="text-[13px] ml-2 text-white/30">
                     {getTabNumber(tab.key)}
                   </span>
                 </Typography.Body>

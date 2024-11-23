@@ -43,7 +43,7 @@ export default function Logout({
         If you sign out without backup you will no longer be able to login.
       </Typography.Body>
       <div className="flex gap-4 mt-8">
-        <Link href="/logout">
+        <Link className="w-full" href="/logout">
           <Button.Large
             id="logout-modal-sign-out-btn"
             variant="secondary"
@@ -52,7 +52,7 @@ export default function Logout({
             Yes, sign out
           </Button.Large>
         </Link>
-        <Link href="/settings">
+        <Link className="w-full" href="/settings">
           <Modal.SubmitAction
             id="logout-modal-backup-btn"
             icon={<Icon.Lock size="16" />}

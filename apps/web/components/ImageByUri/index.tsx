@@ -1,7 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { getFile } from '@/services/fileService';
 import Skeletons from '../Skeletons';
 
@@ -74,7 +74,7 @@ const ImageByUri = ({
       {!imageUrl && loading ? (
         <Skeletons.Simple />
       ) : (
-        <Image
+        <img
           id={id}
           src={imageUrl || '/images/webp/Userpic.webp'}
           alt={alt}
@@ -83,7 +83,6 @@ const ImageByUri = ({
           className={className}
           style={style}
           onClick={onClick}
-          priority
         />
       )}
     </>

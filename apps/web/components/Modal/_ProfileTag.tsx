@@ -466,7 +466,7 @@ export default function ProfileTag({
                             {pubkeyUser ? (
                               <SideCard.FollowAction
                                 text="Me"
-                                icon={<Icon.Check />}
+                                icon={<Icon.User size="16" />}
                                 className="bg-transparent cursor-default"
                               />
                             ) : initLoadingFollowers ? (
