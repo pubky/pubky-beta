@@ -319,6 +319,29 @@ export async function getMostFollowedUsers(
   return response.json();
 }
 
+export async function getRecommendedUsers(
+  userId: string,
+  viewerId?: string,
+  skip?: number,
+  limit?: number
+): Promise<UserView[]> {
+  const queryParams = new URLSearchParams();
+
+  queryParams.append('user_id', String(userId));
+
+  if (viewerId) queryParams.append('viewer_id', viewerId);
+
+  queryParams.append('skip', String(skip));
+  queryParams.append('limit', String(limit));
+  queryParams.append('source', 'recommended');
+
+  const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
+
+  if (!response.ok) throw new Error('Failed to fetch recommended users');
+
+  return response.json();
+}
+
 export async function getInfluencersUsers(
   userId: string,
   viewerId?: string,

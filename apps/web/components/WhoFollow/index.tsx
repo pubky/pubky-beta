@@ -3,13 +3,13 @@
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
-import { useMostFollowedUsers } from '@/hooks/useUser';
+import { useRecommendedUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { data, isLoading, isError } = useMostFollowedUsers(
+  const { data, isLoading, isError } = useRecommendedUsers(
     pubky ?? '',
     pubky,
     0,

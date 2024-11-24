@@ -19,6 +19,7 @@ import {
   getUserStreamFriends,
   getUserStreamMuted,
   getUserMuted,
+  getRecommendedUsers,
 } from '../services/userService';
 import { getNotifications } from '@/services/notificationService';
 
@@ -180,6 +181,19 @@ export function useMostFollowedUsers(
   return useQuery({
     queryKey: ['mostFollowedUsers', viewerId, skip, limit],
     queryFn: () => getMostFollowedUsers(userId, viewerId, skip, limit),
+    retry: false,
+  });
+}
+
+export function useRecommendedUsers(
+  userId: string,
+  viewerId?: string,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['recommendedUsers', viewerId, skip, limit],
+    queryFn: () => getRecommendedUsers(userId, viewerId, skip, limit),
     retry: false,
   });
 }
