@@ -3,9 +3,10 @@
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
-import { useRecommendedUsers } from '@/hooks/useUser';
+import { useMostFollowedUsers, useRecommendedUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
+import { UserView } from '@/types/User';
 
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
@@ -15,8 +16,20 @@ export default function WhoFollow() {
     0,
     3
   );
+  const { data: mostFollowedUsers } = useMostFollowedUsers(
+    pubky ?? '',
+    pubky,
+    0,
+    3
+  );
 
-  const recommendedProfiles = data;
+  let recommendedProfiles: UserView[];
+  if (data && data.length >= 3) {
+    recommendedProfiles = data;
+  } else {
+    recommendedProfiles = mostFollowedUsers || [];
+  }
+
   const [loading, setLoading] = useState<{
     [pubky: string]: boolean;
   }>({});
