@@ -1,12 +1,17 @@
+import type { Metadata } from 'next';
 import { Content } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
+
+import { getSeoMetadata } from '@/components/HeaderSEO';
 import { CreatePost, Header } from '@/components';
 import { Post } from './components';
 import * as Components from '@/components';
-import type { Metadata } from 'next';
-import { Utils } from '@social/utils-shared';
+
+import { getFile } from '@/services/fileService';
+import { getUserDetails } from '@/services/userService';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
-const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
+const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
 
 type Props = {
   params: Promise<{ pubky: string; postId: string }>;
@@ -15,25 +20,39 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { pubky, postId } = await params;
 
-  const response = await fetch(`${BASE_URL}/post/${pubky}/${postId}`);
+  const response = await fetch(`${BASE_URL}/v0/post/${pubky}/${postId}`);
   const post = await response.json();
+  const fetchedFile =
+    post?.details?.attachments &&
+    (await getFile(post?.details?.attachments[0]));
+  const fileType = fetchedFile?.content_type;
+  const file =
+    fetchedFile &&
+    `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls).main}`;
 
   // title with just 20 characters
-  const postTilte = Utils.truncateText(post.details.content, 20);
-  const postDescrition = Utils.truncateText(post.details.content, 100);
+  const postTitle = Utils.truncateText(post.details.content, 20);
+  const profile = await getUserDetails(post?.details.author);
+  const profileName = Utils.truncateText(profile?.name, 20);
+  const description = Utils.truncateText(post.details.content, 100);
 
-  // TODO get images from post or previous images
-  // and add to openGraph
+  let title = `${profileName}`;
 
-  // TODO improve title with name of the author
+  if (postTitle) {
+    title = `${postTitle} | ${profileName}`;
+  }
 
-  return {
-    title: `${postTilte} | Post`,
-    description: postDescrition,
-    // openGraph: {
-    //   images: post.images || previousImages,
-    // },
-  };
+  let image = undefined;
+
+  if (fileType?.startsWith('image/')) {
+    image = file;
+  }
+
+  return getSeoMetadata({
+    title,
+    description,
+    image,
+  });
 }
 
 export default async function Index({ params }: Props) {
