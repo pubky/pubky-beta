@@ -35,7 +35,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const profile = await getUserDetails(post?.details.author);
   const profileName = Utils.truncateText(profile?.name, 20);
   const description = Utils.truncateText(post.details.content, 100);
-  const title = `${profileName} - ${postTitle}`;
+
+  let title = `${profileName}`;
+
+  if (postTitle) {
+    title = `${postTitle} | ${profileName}`;
+  }
 
   let image = undefined;
 
