@@ -11,7 +11,7 @@ import { getFile } from '@/services/fileService';
 import { getUserDetails } from '@/services/userService';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
-const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
+const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
 
 type Props = {
   params: Promise<{ pubky: string; postId: string }>;
@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (fileType?.startsWith('image/')) {
     image = file;
   }
+  console.log('image', image);
 
   return getSeoMetadata({
     title: `${postTilte || profileName} | Post`,
