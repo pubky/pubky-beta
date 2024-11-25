@@ -31,21 +31,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls).main}`;
 
   // title with just 20 characters
-  const postTilte = Utils.truncateText(post.details.content, 20);
+  const postTitle = Utils.truncateText(post.details.content, 20);
   const profile = await getUserDetails(post?.details.author);
   const profileName = Utils.truncateText(profile?.name, 20);
-  const postDescrition = Utils.truncateText(post.details.content, 100);
+  const description = Utils.truncateText(post.details.content, 100);
+  const title = `${profileName} - ${postTitle}`;
 
-  let image;
+  let image = undefined;
 
   if (fileType?.startsWith('image/')) {
     image = file;
   }
 
   return getSeoMetadata({
-    title: `${postTilte || profileName} | Post`,
-    description: postDescrition,
-    image: image,
+    title,
+    description,
+    image,
   });
 }
 
