@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Icon, Typography } from '@social/ui-shared';
 import { Skeleton } from '@/components';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
@@ -82,38 +82,41 @@ export default function FilterTabsMobile({
 }) {
   const { pubky } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
-  const [loadingTab, setLoadingTab] = useState(true);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const tab = params.get('tab');
-    const foundTab = tabs.find((t) => t.key === tab);
+    const pathParts = window.location.pathname.split('/');
+    const currentTab = new URLSearchParams(window.location.search).get('tab');
+    const isRoot = pathParts.length === (creatorPubky ? 3 : 2);
+    const foundTab = tabs.find((t) => t.key === currentTab);
 
     if (foundTab) {
       setActiveTab(foundTab.id);
-    } else {
-      const defaultTab =
-        !creatorPubky || creatorPubky === pubky ? tabs[0] : tabs[2];
+    } else if (isRoot) {
+      const defaultTab = creatorPubky ? tabs[2] : tabs[0]; // Posts or Notifications
       setActiveTab(defaultTab.id);
-      params.set('tab', defaultTab.key);
-      window.history.replaceState(
-        {},
-        '',
-        `${window.location.pathname}?${params.toString()}`
-      );
     }
-    setLoadingTab(false);
   }, [creatorPubky, pubky]);
 
   const handleTabClick = (id: number, key: string) => {
-    if (!loadingTab) {
-      setActiveTab(id);
-      const params = new URLSearchParams(window.location.search);
+    setActiveTab(id);
+
+    const isDefaultTab =
+      (creatorPubky && key === 'posts') ||
+      (!creatorPubky && key === 'notifications');
+
+    if (isDefaultTab) {
+      window.history.pushState(
+        {},
+        '',
+        `/profile${creatorPubky ? `/${creatorPubky}` : ''}`
+      );
+    } else {
+      const params = new URLSearchParams();
       params.set('tab', key);
       window.history.pushState(
         {},
         '',
-        `${window.location.pathname}?${params.toString()}`
+        `/profile${creatorPubky ? `/${creatorPubky}` : ''}?${params.toString()}`
       );
     }
   };
@@ -175,7 +178,7 @@ export default function FilterTabsMobile({
         })}
       </div>
       <div id="profile-tab-content" className="w-full">
-        {loading ? <Skeleton.Simple /> : <>{}</>}
+        {loading ? <Skeleton.Simple /> : <>{/* Tab content */}</>}
       </div>
     </div>
   );

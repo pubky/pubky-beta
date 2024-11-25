@@ -190,7 +190,7 @@ export default function Content({
           </Link>
         )}
         {videoId && (
-          <div className="w-full max-w-[560px] relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
+          <div className="w-full relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
             <iframe
               width="100%"
               height="315"
@@ -205,7 +205,7 @@ export default function Content({
           <LinkPreview url={preview} />
         )}
         {tweetId && (
-          <div className="no-scrollbar w-full max-w-[384px] overflow-y-auto">
+          <div className="rounded-2xl no-scrollbar w-full max-h-[744px] overflow-hidden">
             <Tweet id={tweetId} />
           </div>
         )}

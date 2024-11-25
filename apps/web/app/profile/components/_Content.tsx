@@ -28,19 +28,7 @@ export default function Index() {
       <Header className="hidden md:block" title="Profile" />
       <div>
         <Content.Grid className="pb-4 flex flex-col text-center lg:flex-row items-center gap-4 md:gap-8 relative">
-          <Profile.FilterTabsMobile
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            countContacts={{
-              followers: user?.counts?.followers ?? 0,
-              following: user?.counts?.following ?? 0,
-              friends: user?.counts?.friends ?? 0,
-            }}
-            countReplies={user?.counts?.replies}
-            countPosts={user?.counts?.posts}
-            loading={isLoading}
-            profile={user}
-          />
+        
           <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
             <Profile.Avatar
               className="lg:pl-12"
