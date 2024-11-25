@@ -13,8 +13,13 @@ export default function Index() {
   return (
     <Content.Main className="sm:pt-[125px]">
       <Header.Root>
-        <Header.Logo link='/onboarding' />
-        <Header.Title titleHeader="Signed out" />
+        <div className="flex gap-3 lg:gap-6 w-auto">
+          <Header.Logo link="/onboarding" />
+          <Header.Title
+            titleHeader="Signed out"
+            className="hidden sm:flex justify-end sm:justify-start"
+          />
+        </div>
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Bye bye!</Typography.Display>
