@@ -2,7 +2,7 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost } from '../support/posts';
+import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost, checkPostIsNotAtTopOfFeed } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -249,14 +249,7 @@ describe('posts', () => {
     cy.reload();
 
     // verify post is deleted
-    cy.get('#posts-feed').find('#timeline').children().its('length').then((length) => {
-      // if at least 1 post still exists, check it doesn't match the text of the deleted post
-      if (length > 0) {
-        cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
-          cy.get('#post-content-text').innerTextShouldNotEq(postContent);
-        });
-      };
-    });
+    checkPostIsNotAtTopOfFeed(postContent);
   });
 
   // todo: consider combining with 'can delete a post' test

@@ -1,3 +1,5 @@
+import { backupDownloadFilePath } from '../support/auth';
+import { latestPostInFeedContentEq, createQuickPost, checkPostIsNotAtTopOfFeed } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import path = require('path');
 
@@ -7,11 +9,14 @@ describe('settings', () => {
   });
 
   beforeEach(() => {
-    cy.onboardAsNewUser('Mr Settings', 'I like to change settings');
-    cy.get('#header-settings-btn').click();
+    cy.deleteDownloadsFolder();
   });
 
   it('Account settings function correctly', () => {
+    // create a new user
+    cy.onboardAsNewUser('Mr Account Settings', 'I like to test account settings');
+    cy.get('#header-settings-btn').click();
+
     // check back up account button shows modal (and store recovery phrase for later)
     cy.get('#backup-account-btn').click();
     cy.get('#modal-root').should('be.visible').within(() => {
@@ -31,8 +36,13 @@ describe('settings', () => {
 
     // check download your data downloads file
 
+    // navigate to account settings page and click button to download your data
     cy.get('#header-settings-btn').click();
-    cy.get('#download-data-btn').click();
+    cy.get('#download-data-btn').should('be.visible').should('contain.text', 'Download').click();
+
+    // wait for button to go to "Downloading..." then back to "Download"
+    cy.get('#download-data-btn').should('contain.text', 'Downloading');
+    cy.get('#download-data-btn').should('contain.text', 'Download')
 
     // verify backup file
     const downloadsFolder = Cypress.config('downloadsFolder');
@@ -72,7 +82,62 @@ describe('settings', () => {
 
   // TODO: add Privacy and Safety tests in a separate file
 
-  it.skip('Muted users settings displays muted users', () => {
+  it('Muted users settings displays muted users and hides posts in feed', () => {
+    // create user 1
+    cy.onboardAsNewUser('Mr Muted', 'I like to be muted');
+
+    // post something
+    const postContent = `I can be muted! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // Copy and store pubky for account 1
+    cy.get('#header-profile-pic').click();
+    cy.get('#profile-copy-pubkey-btn').click();
+    cy.saveCopiedPubkyToAlias('pubky1');
+    // log pubky for account 2
+    cy.get('@pubky1').then((ss) => { cy.log(`pubky1: ${ss}`); });
+
+    // sign out
+    cy.signOut(false);
+
+    // create user 2
+    cy.onboardAsNewUser('Mr Mute', 'I like to mute people');
+
+    // view user 1's post
+    latestPostInFeedContentEq(postContent);
+
+    // confirm that no users are muted yet in settings page
+    cy.get('#header-settings-btn').click();
+    cy.get('#settings-menu-item-muted_users').click();
+    cy.get('#muted-users-root').within(() => {
+      cy.get('h2:contains("No muted users yet")').should('be.visible');
+    });
+
+    // mute user 1
+    cy.get('@pubky1').then((text) => {
+      // type pubky for account 1 into search bar and press enter
+      cy.get('#header-search-input').type(`${text}{enter}`);
+    });
+    cy.get('#profile-menu-btn').click();
+    cy.get('#profile-menu-item-mute').click();
+
+    // check user 1's post is no longer seen in feed
+    cy.get('#header-home-btn').click();
+    checkPostIsNotAtTopOfFeed(postContent);
+
+    // confirm user 1 is now muted in settings page and unmute them
+    cy.get('#header-settings-btn').click();
+    cy.location('search').should('eq', '?section=account');
+    cy.get('#settings-menu-item-muted_users').should('be.visible').click();
+    cy.get('#muted-users-root').within(() => {
+      cy.get('div:contains("Mr Muted")').should('be.visible');
+      cy.get('#unmute-btn').click();
+      cy.get('#mute-btn').should('be.visible');
+    });
+
+    // check user 1's post is seen in feed again
+    cy.get('#header-home-btn').click();
+    latestPostInFeedContentEq(postContent);
 
   });
 

@@ -29,7 +29,7 @@ describe('contacts', () => {
     cy.get('#header-profile-pic').click();
     cy.get('#profile-copy-pubkey-btn').click();
     cy.saveCopiedPubkyToAlias('pubky1');
-    // log pubky for account 2
+    // log pubky for account 1
     cy.get('@pubky1').then((ss) => { cy.log(`pubky1: ${ss}`); });
 
     // Sign out of account 1

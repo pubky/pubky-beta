@@ -189,6 +189,7 @@ export default function Buttons({
           />
         )}
         <Button.Action
+          id="profile-menu-btn"
           size="small"
           variant="custom"
           icon={<Icon.DotsThreeOutline size="16" />}

@@ -61,6 +61,7 @@ export default function Menu({ selectedItem, setSelectedItem }: MenuProps) {
 
         return (
           <div
+            id={`settings-menu-item-${key}`}
             key={key}
             className={`${itemClass} w-full h-10 py-3 justify-between items-center inline-flex`}
             onClick={() => {

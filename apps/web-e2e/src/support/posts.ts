@@ -54,3 +54,14 @@ export const deletePost = (postIdx = 0, menuBtnIdx = 0) => {
     cy.get('#delete-post-btn').click();
   });
 };
+
+export const checkPostIsNotAtTopOfFeed = (postContent: string) => {
+  cy.get('#posts-feed').find('#timeline').children().its('length').then((length) => {
+    // if at least 1 post still exists, check it doesn't match the text of the deleted post
+    if (length > 0) {
+      cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+        cy.get('#post-content-text').innerTextShouldNotEq(postContent);
+      });
+    };
+  });
+};
