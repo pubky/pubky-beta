@@ -6,8 +6,13 @@ import Skeletons from '../Skeletons';
 import { useInfluencersUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
+import { twMerge } from 'tailwind-merge';
 
-export default function Influencers() {
+interface InfluencersProps {
+  style?: string;
+}
+
+export default function Influencers({ style }: InfluencersProps) {
   const { pubky } = usePubkyClientContext();
   const {
     data: influencers,
@@ -18,7 +23,7 @@ export default function Influencers() {
   if (isError) console.error(isError);
 
   return (
-    <div className="my-6">
+    <div className={twMerge('my-6', style)}>
       <SideCard.Header title="Influencers" />
       <SideCard.Content className="flex flex-col gap-2">
         {isLoading ? (
