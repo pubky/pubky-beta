@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { usePubkyClientContext } from '@/contexts';
 import { Icon, Input, Typography } from '@social/ui-shared';

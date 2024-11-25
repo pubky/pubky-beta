@@ -1,3 +1,5 @@
+'use client';
+
 import DropDown from '@/components/DropDown';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { useState } from 'react';
