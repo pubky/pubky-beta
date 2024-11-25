@@ -7,11 +7,8 @@ import {
   getPostCounts,
   getPostBookmark,
   getPostStream,
-  getPostStreamByUser,
-  getPostStreamByReach,
   getPostReplies,
-  getBookmarkedPosts,
-  getRepliesStreamByUser,
+  getStreamPosts,
 } from '../services/postService';
 
 export function usePost(authorId: string, postId: string, viewerId?: string) {
@@ -52,7 +49,7 @@ export function usePostStream(
   limit?: number,
   reach?: 'following' | 'friends' | 'followers' | 'all',
   sort?: 'recent' | 'popularity',
-  tags?: string[]
+  tags?: string[],
 ) {
   return useQuery({
     queryKey: ['postStream', viewerId, skip, limit, reach, sort, tags],
@@ -61,41 +58,34 @@ export function usePostStream(
   });
 }
 
-export function usePostStreamByUser(
-  userId: string,
-  viewerId?: string,
-  skip?: number,
-  limit?: number
-) {
-  return useQuery({
-    queryKey: ['postStreamByUser', userId, viewerId, skip, limit],
-    queryFn: () => getPostStreamByUser(userId, viewerId, skip, limit),
-    retry: false,
-  });
-}
-
 export function useRepliesStreamByUser(
   userId: string,
   viewerId?: string,
+  limit?: number,
+  start?: number,
+  end?: number,
   skip?: number,
-  limit?: number
 ) {
   return useQuery({
-    queryKey: ['repliesStreamByUser', userId, viewerId, skip, limit],
-    queryFn: () => getRepliesStreamByUser(userId, viewerId, skip, limit),
-    retry: false,
-  });
-}
-
-export function usePostStreamByReach(
-  viewerId: string,
-  reach: string,
-  skip?: number,
-  limit?: number
-) {
-  return useQuery({
-    queryKey: ['postStreamByReach', viewerId, reach, skip, limit],
-    queryFn: () => getPostStreamByReach(viewerId, reach, skip, limit),
+    queryKey: [
+      'repliesStreamByUser',
+      userId,
+      viewerId,
+      limit,
+      start,
+      end,
+      skip,
+    ],
+    queryFn: () =>
+      getStreamPosts(
+        'author_replies',
+        userId,
+        viewerId,
+        limit,
+        start,
+        end,
+        skip,
+      ),
     retry: false,
   });
 }
@@ -107,7 +97,7 @@ export function usePostReplies(
   skip?: number,
   limit?: number,
   start?: number,
-  end?: number
+  end?: number,
 ) {
   return useQuery({
     queryKey: [
@@ -126,15 +116,42 @@ export function usePostReplies(
   });
 }
 
-export function useBookmarkedPosts(
+export function useStreamPost(
+  source: string,
   userId: string,
   viewerId?: string,
+  limit?: number,
+  start?: number,
+  end?: number,
   skip?: number,
-  limit?: number
+  sort?: 'recent' | 'popularity',
+  tags?: string[],
 ) {
   return useQuery({
-    queryKey: ['bookmarkedPosts', userId, viewerId, skip, limit],
-    queryFn: () => getBookmarkedPosts(userId, viewerId, skip, limit),
+    queryKey: [
+      `${source}-postStream`,
+      source,
+      userId,
+      viewerId,
+      limit,
+      start,
+      end,
+      skip,
+      sort,
+      tags,
+    ],
+    queryFn: () =>
+      getStreamPosts(
+        source,
+        userId,
+        viewerId,
+        limit,
+        start,
+        end,
+        skip,
+        sort,
+        tags,
+      ),
     retry: false,
   });
 }

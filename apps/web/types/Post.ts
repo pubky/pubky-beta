@@ -53,10 +53,6 @@ export interface PostTag {
   taggers_count: number;
 }
 
-export interface PostStream {
-  posts: PostView[];
-}
-
 export interface Tag {
   tag_id: string;
   indexed_at: number;

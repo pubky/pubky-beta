@@ -105,8 +105,8 @@ type PubkyClientContextType = {
   searchTags: string[];
   repliesArray: PostView[] | undefined;
   setRepliesArray: (repliesArray: PostView[]) => void;
-  timelineProfile: PostView[] | undefined;
-  setTimelineProfile: (timelineProfile: PostView[]) => void;
+  timelineProfile: PostView[];
+  setTimelineProfile: React.Dispatch<React.SetStateAction<PostView[]>>;
   deletePost: (post_id: string) => Promise<boolean>;
   deleteAccount: (
     setProgress: React.Dispatch<React.SetStateAction<number>>
