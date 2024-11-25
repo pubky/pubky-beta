@@ -7,7 +7,6 @@ import {
   getPostCounts,
   getPostBookmark,
   getPostStream,
-  getPostStreamByReach,
   getPostReplies,
   getStreamPosts,
 } from '../services/postService';
@@ -50,27 +49,11 @@ export function usePostStream(
   limit?: number,
   reach?: 'following' | 'friends' | 'followers' | 'all',
   sort?: 'recent' | 'popularity',
-  tags?: string[]
+  tags?: string[],
 ) {
   return useQuery({
     queryKey: ['postStream', viewerId, skip, limit, reach, sort, tags],
     queryFn: () => getPostStream(viewerId, skip, limit, reach, sort, tags),
-    retry: false,
-  });
-}
-
-export function usePostStreamByUser(
-  userId: string,
-  viewerId?: string,
-  limit?: number,
-  start?: number,
-  end?: number,
-  skip?: number
-) {
-  return useQuery({
-    queryKey: ['postStreamByUser', userId, viewerId, limit, start, end, skip],
-    queryFn: () =>
-      getStreamPosts('author', userId, viewerId, limit, start, end, skip),
     retry: false,
   });
 }
@@ -81,7 +64,7 @@ export function useRepliesStreamByUser(
   limit?: number,
   start?: number,
   end?: number,
-  skip?: number
+  skip?: number,
 ) {
   return useQuery({
     queryKey: [
@@ -101,21 +84,8 @@ export function useRepliesStreamByUser(
         limit,
         start,
         end,
-        skip
+        skip,
       ),
-    retry: false,
-  });
-}
-
-export function usePostStreamByReach(
-  viewerId: string,
-  reach: string,
-  skip?: number,
-  limit?: number
-) {
-  return useQuery({
-    queryKey: ['postStreamByReach', viewerId, reach, skip, limit],
-    queryFn: () => getPostStreamByReach(viewerId, reach, skip, limit),
     retry: false,
   });
 }
@@ -127,7 +97,7 @@ export function usePostReplies(
   skip?: number,
   limit?: number,
   start?: number,
-  end?: number
+  end?: number,
 ) {
   return useQuery({
     queryKey: [
@@ -155,7 +125,7 @@ export function useStreamPost(
   end?: number,
   skip?: number,
   sort?: 'recent' | 'popularity',
-  tags?: string[]
+  tags?: string[],
 ) {
   return useQuery({
     queryKey: [
@@ -180,7 +150,7 @@ export function useStreamPost(
         end,
         skip,
         sort,
-        tags
+        tags,
       ),
     retry: false,
   });

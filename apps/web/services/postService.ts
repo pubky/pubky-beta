@@ -1,10 +1,4 @@
-import {
-  PostView,
-  PostCounts,
-  PostDetails,
-  PostStream,
-  Bookmark,
-} from '../types/Post';
+import { PostView, PostCounts, PostDetails, Bookmark } from '../types/Post';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
@@ -12,7 +6,7 @@ const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 export async function getPost(
   authorId: string,
   postId: string,
-  viewerId?: string
+  viewerId?: string,
 ): Promise<PostView> {
   const queryParams = new URLSearchParams();
 
@@ -21,7 +15,7 @@ export async function getPost(
   }
 
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}?${queryParams.toString()}`
+    `${BASE_URL}/post/${authorId}/${postId}?${queryParams.toString()}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch post');
@@ -31,10 +25,10 @@ export async function getPost(
 
 export async function getPostDetails(
   authorId: string,
-  postId: string
+  postId: string,
 ): Promise<PostDetails> {
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}/details`
+    `${BASE_URL}/post/${authorId}/${postId}/details`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch post details');
@@ -44,7 +38,7 @@ export async function getPostDetails(
 
 export async function getPostCounts(
   authorId: string,
-  postId: string
+  postId: string,
 ): Promise<PostCounts> {
   const response = await fetch(`${BASE_URL}/post/${authorId}/${postId}/counts`);
 
@@ -55,10 +49,10 @@ export async function getPostCounts(
 
 export async function getPostBookmark(
   authorId: string,
-  postId: string
+  postId: string,
 ): Promise<Bookmark> {
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}/bookmark`
+    `${BASE_URL}/post/${authorId}/${postId}/bookmark`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch post bookmark');
@@ -72,7 +66,7 @@ export async function getPostStream(
   limit?: number,
   reach?: 'following' | 'friends' | 'followers' | 'all',
   sort?: 'recent' | 'popularity',
-  tags?: string[]
+  tags?: string[],
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
 
@@ -114,7 +108,7 @@ export async function getStreamPosts(
   end?: number,
   skip?: number | undefined,
   sort?: 'recent' | 'popularity' | undefined,
-  tags?: string[]
+  tags?: string[],
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams({
     author_id: userId,
@@ -150,30 +144,10 @@ export async function getStreamPosts(
   }
 
   const response = await fetch(
-    `${BASE_URL}/stream/posts?${queryParams.toString()}`
+    `${BASE_URL}/stream/posts?${queryParams.toString()}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch post stream by user');
-
-  return response.json();
-}
-
-export async function getPostStreamByReach(
-  viewerId: string,
-  reach: string,
-  skip?: number,
-  limit?: number
-): Promise<PostStream> {
-  const queryParams = new URLSearchParams({
-    viewer_id: viewerId,
-    reach,
-    skip: String(skip),
-    limit: String(limit),
-  });
-
-  const response = await fetch(`${BASE_URL}/stream/posts/reach?${queryParams}`);
-
-  if (!response.ok) throw new Error('Failed to fetch post stream by reach');
 
   return response.json();
 }
@@ -185,7 +159,7 @@ export async function getPostReplies(
   limit = 10,
   start?: number,
   end?: number,
-  skip?: number
+  skip?: number,
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams({
     author_id: authorId,
