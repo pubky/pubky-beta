@@ -41,7 +41,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (fileType?.startsWith('image/')) {
     image = file;
   }
-  console.log('image', image);
 
   return getSeoMetadata({
     title: `${postTilte || profileName} | Post`,
