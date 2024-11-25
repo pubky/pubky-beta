@@ -1,32 +1,41 @@
+'use client';
+
+import { usePathname, useRouter } from 'next/navigation';
 import { Icon, Typography } from '@social/ui-shared';
 
 const menuItems: Record<
   string,
-  { icon: JSX.Element; label: string; disabled?: boolean }
+  { icon: JSX.Element; label: string; path: string; disabled?: boolean }
 > = {
   account: {
     icon: <Icon.User size="24" />,
     label: 'Account',
+    path: '/settings/account',
   },
   notifications: {
     icon: <Icon.BellSimple size="24" />,
     label: 'Notifications',
+    path: '/settings/notifications',
   },
   privacy_safety: {
     icon: <Icon.Shield size="24" />,
     label: 'Privacy & Safety',
+    path: '/settings/privacy-safety',
   },
   muted_users: {
     icon: <Icon.SpeakerSimpleSlash size="24" />,
-    label: 'Muted users',
+    label: 'Muted Users',
+    path: '/settings/muted-users',
   },
   language: {
     icon: <Icon.GlobeSimple size="24" />,
     label: 'Language',
+    path: '/settings/language',
   },
   help: {
     icon: <Icon.Question size="24" />,
     label: 'Help',
+    path: '/settings/help',
   },
 };
 
@@ -36,22 +45,30 @@ interface MenuProps {
 }
 
 export default function Menu({ selectedItem, setSelectedItem }: MenuProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+
   return (
     <div className="self-start sticky top-[120px]">
       {Object.keys(menuItems).map((key) => {
         const item = menuItems[key];
-        const isSelected = selectedItem === key;
+        const isSelected = pathname === item.path;
         const itemClass = item.disabled
-          ? 'opacity-20'
+          ? 'opacity-20 border-b border-transparent'
           : isSelected
-          ? 'cursor-pointer opacity-100'
+          ? 'cursor-pointer opacity-100 border-b border-transparent'
           : 'cursor-pointer border-b border-transparent hover:bg-gradient-to-t from-white/10 to-transparent hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
 
         return (
           <div
             key={key}
             className={`${itemClass} w-full h-10 py-3 justify-between items-center inline-flex`}
-            onClick={() => !item.disabled && setSelectedItem(key)}
+            onClick={() => {
+              if (!item.disabled) {
+                setSelectedItem(key);
+                router.push(item.path);
+              }
+            }}
           >
             <div className="justify-start items-center gap-2 flex">
               {item.icon}

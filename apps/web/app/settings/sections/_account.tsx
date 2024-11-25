@@ -1,3 +1,5 @@
+'use client';
+
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';

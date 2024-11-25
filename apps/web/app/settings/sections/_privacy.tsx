@@ -1,3 +1,5 @@
+'use client';
+
 import { Icon, Input, Typography } from '@social/ui-shared';
 
 export default function PrivacySafety() {

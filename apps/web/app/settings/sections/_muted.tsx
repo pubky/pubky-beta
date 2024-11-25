@@ -1,3 +1,5 @@
+'use client';
+
 import { ImageByUri } from '@/components/ImageByUri';
 import Skeletons from '@/components/Skeletons';
 import { usePubkyClientContext } from '@/contexts';

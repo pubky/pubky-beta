@@ -1,32 +1,41 @@
+'use client';
+
+import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from '@social/ui-shared';
 
 const menuItems: Record<
   string,
-  { icon: JSX.Element; label: string; disabled?: boolean }
+  { icon: JSX.Element; label: string; path: string; disabled?: boolean }
 > = {
   account: {
     icon: <Icon.User size="24" />,
     label: 'Account',
+    path: '/settings/account',
   },
   notifications: {
     icon: <Icon.BellSimple size="24" />,
     label: 'Notifications',
+    path: '/settings/notifications',
   },
   privacy_safety: {
     icon: <Icon.Shield size="24" />,
     label: 'Privacy & Safety',
+    path: '/settings/privacy-safety',
   },
   muted_users: {
     icon: <Icon.SpeakerSimpleSlash size="24" />,
-    label: 'Muted users',
+    label: 'Muted Users',
+    path: '/settings/muted-users',
   },
   language: {
     icon: <Icon.GlobeSimple size="24" />,
     label: 'Language',
+    path: '/settings/language',
   },
   help: {
     icon: <Icon.Question size="24" />,
     label: 'Help',
+    path: '/settings/help',
   },
 };
 
@@ -39,11 +48,14 @@ export default function MenuMobile({
   selectedItem,
   setSelectedItem,
 }: MenuMobileProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+
   return (
     <div className="flex gap-6 w-full justify-between mb-4">
       {Object.keys(menuItems).map((key) => {
         const item = menuItems[key];
-        const isSelected = selectedItem === key;
+        const isSelected = pathname === item.path;
         const itemClass = item.disabled
           ? 'opacity-20'
           : isSelected
@@ -54,7 +66,12 @@ export default function MenuMobile({
           <div
             key={key}
             className={`${itemClass} border-b border-white w-full pb-3 justify-center items-center inline-flex`}
-            onClick={() => !item.disabled && setSelectedItem(key)}
+            onClick={() => {
+              if (!item.disabled) {
+                setSelectedItem(key);
+                router.push(item.path);
+              }
+            }}
           >
             {item.icon}
           </div>
