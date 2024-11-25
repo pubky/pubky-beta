@@ -14,7 +14,7 @@ import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserDetails } from '@/types/User';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -27,6 +27,7 @@ export default function Header({
   largeView = false,
   repostView = false,
 }: PostProps) {
+  const router = useRouter();
   const { pubky } = usePubkyClientContext();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
 
@@ -39,9 +40,9 @@ export default function Header({
 
   return (
     <PostUI.Header className="w-full justify-between">
-      <Link
+      <div
         className="justify-start items-center gap-4 flex cursor-pointer"
-        href={`/profile/${author}`}
+        onClick={() => router.push(`/profile/${author}`)}
       >
         <PostUI.ImageUser
           uriImage={userDetails?.image || '/images/webp/Userpic.webp'}
@@ -68,7 +69,7 @@ export default function Header({
           </div>
           {showTooltipProfile && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
-      </Link>
+      </div>
       <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
         <span className="hidden md:flex">{Utils.timeAgo(indexed_at)}</span>
         <span className="md:hidden">{Utils.timeAgo(indexed_at, true)}</span>

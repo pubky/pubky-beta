@@ -1,74 +1,60 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon, Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
-import { useBookmarkedPosts } from '@/hooks/usePost';
+import { useStreamPost } from '@/hooks/usePost';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { PostView } from '@/types/Post';
 
 export default function Bookmarks() {
   const { pubky, deleteBookmark } = usePubkyClientContext();
-  const { data, isLoading } = useBookmarkedPosts(pubky ?? '', pubky ?? '');
-  const results = data;
-  const loader = useRef(null);
 
-  {
-    /**
-  const [cursor, setCursor] = useState('');
-  const loader = useRef(null);
+  const [timeline, setTimeline] = useState<PostView[]>([]);
+  const limit = 10;
+  const [start, setStart] = useState<number | undefined>(undefined);
 
-  const fetchData = async (pointer: string) => {
-    if (results && results) {
-      const newPostsTemp = results.reduce((acc: INewPost, post: IPost) => {
-        if (post?.bookmark?.id) {
-          acc[post.id] = post;
-        }
-        return acc;
-      }, {});
+  const { data, isLoading } = useStreamPost(
+    'bookmarks',
+    pubky ?? '',
+    pubky,
+    limit,
+    start,
+  );
 
-      setPosts((prev: INewPost) => ({ ...prev, ...newPostsTemp }));
-      //setCursor(results);
+  const fetchPosts = async () => {
+    try {
+      if (!data) return;
+
+      setStart(data[data.length - 1].details.indexed_at - 1);
+      setTimeline((prev) => [...prev, ...data]);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-    if (entries[0].isIntersecting && cursor) {
-      fetchData(cursor);
-    }
-  };
+  const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(handleIntersection, {
-      threshold: 0,
-    });
-    if (loader.current) observer.observe(loader.current);
+    setTimeline([]);
 
-    return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cursor]);
-
-  useEffect(() => {
-    setPosts({} as INewPost);
-    setCursor('');
-    fetchData('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  */
-  }
+    return () => {
+      setTimeline([]);
+    };
+  }, [setTimeline]);
 
   const handleDeleteBookmark = async (bookmarkId: string) => {
     await deleteBookmark(bookmarkId);
   };
 
   return (
-    <div id="bookmarks-content" className="flex flex-col gap-3">
-      {results &&
-        results?.length > 0 &&
-        results.map((post) => {
-          return (
+    <div className="flex flex-col gap-3">
+      {timeline.map(
+        (post) =>
+          post?.details?.content !== '[DELETED]' && (
             <div key={post.details.id} className="flex gap-2 items-center">
-              <Post key={post.details.id} post={post} />
+              <Post key={`post-${post.details.id}`} post={post} />
               {post?.details?.content === '[DELETED]' && post?.bookmark?.id && (
                 <div
                   onClick={() =>
@@ -82,13 +68,17 @@ export default function Bookmarks() {
                 </div>
               )}
             </div>
-          );
-        })}
-      {isLoading && <Skeleton.Simple />}
-      {(!results || results?.length === 0) && !isLoading && (
+          ),
+      )}
+      {isLoading && (
+        <div className="flex flex-col gap-3">
+          <Skeleton.Simple />
+        </div>
+      )}
+      {timeline.length === 0 && !isLoading && (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
           <Typography.H2 className="font-normal text-opacity-50">
-            No bookmarks yet.
+            No posts yet.
           </Typography.H2>
         </div>
       )}
