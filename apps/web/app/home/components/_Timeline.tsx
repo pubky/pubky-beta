@@ -5,7 +5,7 @@ import { Typography } from '@social/ui-shared';
 import * as Components from '@/components';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { usePostStream } from '@/hooks/usePost';
-import { UseUserMuted } from '@/hooks/useUser';
+import { UseUserList } from '@/hooks/useUser';
 import { ICustomFeed } from '@/types';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { PostReplies } from './_PostReplies';
@@ -112,7 +112,7 @@ export const Timeline = ({ selectedFeed, loadingFeed }: TimelineProps) => {
   const isMobile = useIsMobile();
   const [skip, setSkip] = useState(0);
   const { pubky } = usePubkyClientContext();
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
+  const { data: mutedUsers } = UseUserList(pubky ?? '', 'muted');
 
   const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
   const { timeline, isLoading, isError } = useTimelinePosts(

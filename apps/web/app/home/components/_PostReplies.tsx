@@ -4,7 +4,7 @@ import { Typography, Icon } from '@social/ui-shared';
 import * as Components from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { usePostReplies } from '@/hooks/usePost';
-import { UseUserMuted } from '@/hooks/useUser';
+import { UseUserList } from '@/hooks/useUser';
 import { Utils } from '@social/utils-shared';
 import CreateQuickReply from '@/components/CreateQuickReply';
 import Link from 'next/link';
@@ -27,7 +27,7 @@ export const PostReplies = ({
     post.details.author,
     post.details.id
   );
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
+  const { data: mutedUsers } = UseUserList(pubky ?? '', 'muted');
 
   const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (

@@ -3,22 +3,10 @@
 import { useQuery } from '@tanstack/react-query';
 import {
   getUserProfile,
-  getUserCounts,
-  getUserFollowers,
-  getUserFollowing,
-  getUserFriends,
-  getUserRelationship,
   searchUsers,
-  getUserStream,
-  getMostFollowedUsers,
-  getInfluencersUsers,
-  getUserTags,
   searchUsersByUsername,
-  getUserStreamFollowers,
-  getUserStreamFollowing,
-  getUserStreamFriends,
-  getUserStreamMuted,
-  getUserMuted,
+  getUserStream,
+  getUserList,
 } from '../services/userService';
 import { getNotifications } from '@/services/notificationService';
 
@@ -31,176 +19,53 @@ export function useUserProfile(userId: string, viewerId: string) {
   });
 }
 
-export function useUserCounts(userId: string) {
-  return useQuery({
-    queryKey: ['userCounts', userId],
-    queryFn: () => getUserCounts(userId),
-    retry: false,
-  });
-}
-
-export function UseUserStreamFollowers(
+export function UseUserStream(
   userId: string,
   viewerId: string,
-  skip?: number,
-  limit?: number,
-  source?: string
-) {
-  return useQuery({
-    queryKey: ['userStreamFollowers', userId, viewerId, skip, limit, source],
-    queryFn: () =>
-      getUserStreamFollowers(userId, viewerId, skip, limit, source),
-    retry: false,
-  });
-}
-
-export function UseUserStreamFollowing(
-  userId: string,
-  viewerId: string,
-  skip?: number,
-  limit?: number,
-  source?: string
-) {
-  return useQuery({
-    queryKey: ['userStreamFollowing', userId, viewerId, skip, limit, source],
-    queryFn: () =>
-      getUserStreamFollowing(userId, viewerId, skip, limit, source),
-    retry: false,
-  });
-}
-
-export function UseUserStreamFriends(
-  userId: string,
-  viewerId: string,
-  skip?: number,
-  limit?: number,
-  source?: string
-) {
-  return useQuery({
-    queryKey: ['userStreamFriends', userId, viewerId, skip, limit, source],
-    queryFn: () => getUserStreamFriends(userId, viewerId, skip, limit, source),
-    retry: false,
-  });
-}
-
-export function UseUserStreamMuted(
-  userId: string,
-  viewerId: string,
-  skip?: number,
-  limit?: number,
-  source?: string
-) {
-  return useQuery({
-    queryKey: ['userStreamMuted', userId, viewerId, skip, limit, source],
-    queryFn: () => getUserStreamMuted(userId, viewerId, skip, limit, source),
-    retry: false,
-  });
-}
-
-export function UseUserFollowers(
-  userId: string,
+  source:
+    | 'followers'
+    | 'following'
+    | 'friends'
+    | 'muted'
+    | 'most_followed'
+    | 'pioneers',
   skip?: number,
   limit?: number
 ) {
   return useQuery({
-    queryKey: ['userFollowers', userId, skip, limit],
-    queryFn: () => getUserFollowers(userId, skip, limit),
+    queryKey: ['userStream', userId, viewerId, source, skip, limit],
+    queryFn: () => getUserStream(userId, viewerId, source, skip, limit),
     retry: false,
   });
 }
 
-export function UseUserFollowing(
+export function UseUserList(
   userId: string,
+  source:
+    | 'followers'
+    | 'following'
+    | 'friends'
+    | 'muted'
+    | 'most_followed'
+    | 'pioneers',
   skip?: number,
   limit?: number
 ) {
   return useQuery({
-    queryKey: ['userFollowing', userId, skip, limit],
-    queryFn: () => getUserFollowing(userId, skip, limit),
-    retry: false,
-  });
-}
-
-export function UseUserFriends(userId: string, skip?: number, limit?: number) {
-  return useQuery({
-    queryKey: ['userFriends', userId, skip, limit],
-    queryFn: () => getUserFriends(userId, skip, limit),
-    retry: false,
-  });
-}
-
-export function UseUserMuted(userId: string, skip?: number, limit?: number) {
-  return useQuery({
-    queryKey: ['userMuted', userId, skip, limit],
-    queryFn: () => getUserMuted(userId, skip, limit),
-    retry: false,
-  });
-}
-
-export function useUserRelationship(userId: string, viewerId: string) {
-  return useQuery({
-    queryKey: ['userRelationship', userId, viewerId],
-    queryFn: () => getUserRelationship(userId, viewerId),
+    queryKey: ['userList', userId, source, skip, limit],
+    queryFn: () => getUserList(userId, source, skip, limit),
     retry: false,
   });
 }
 
 export function useSearchUsers(
-  username?: string,
+  username: string,
   skip?: number,
   limit?: number
 ) {
   return useQuery({
     queryKey: ['searchUsers', username, skip, limit],
     queryFn: () => searchUsers(username, skip, limit),
-    retry: false,
-  });
-}
-
-export function useUserStream(
-  userId: string,
-  viewerId?: string,
-  skip?: number,
-  limit?: number,
-  source?: string
-) {
-  return useQuery({
-    queryKey: ['userStream', userId, viewerId, skip, limit, source],
-    queryFn: () => getUserStream(userId, viewerId, skip, limit, source),
-    retry: false,
-  });
-}
-
-export function useMostFollowedUsers(
-  userId: string,
-  viewerId?: string,
-  skip?: number,
-  limit?: number
-) {
-  return useQuery({
-    queryKey: ['mostFollowedUsers', viewerId, skip, limit],
-    queryFn: () => getMostFollowedUsers(userId, viewerId, skip, limit),
-    retry: false,
-  });
-}
-
-export function useInfluencersUsers(
-  userId: string,
-  viewerId?: string,
-  skip?: number,
-  limit?: number
-) {
-  return useQuery({
-    queryKey: ['influencersUsers', viewerId, skip, limit],
-    queryFn: () => getInfluencersUsers(userId, viewerId, skip, limit),
-    retry: false,
-  });
-}
-
-export function useUserTags(userId: string) {
-  return useQuery({
-    queryKey: ['userTags', userId],
-    queryFn: () => getUserTags(userId),
     retry: false,
   });
 }
