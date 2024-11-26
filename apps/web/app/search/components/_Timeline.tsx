@@ -5,7 +5,7 @@ import { Typography } from '@social/ui-shared';
 import * as Components from '@/components';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { usePostStream } from '@/hooks/usePost';
-import { UseUserMuted } from '@/hooks/useUser';
+import { UseUserList } from '@/hooks/useUser';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
@@ -93,7 +93,7 @@ export const Timeline = () => {
   const [skip, setSkip] = useState(0);
   const { pubky, searchTags } = usePubkyClientContext();
   const { layout, reach, sort } = useFilterContext();
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
+  const { data: mutedUsers } = UseUserList(pubky ?? '', 'muted');
   const { timeline, isLoading, isError } = useTimelinePosts(
     pubky,
     skip,

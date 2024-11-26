@@ -4,12 +4,8 @@ import Skeletons from '@/components/Skeletons';
 import { TContacts } from '@/types';
 import Root from './_Root';
 import Contact from './_Contact';
-import {
-  UseUserStreamFollowers,
-  UseUserStreamFollowing,
-  UseUserStreamFriends,
-} from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
+import { UseUserStream } from '@/hooks/useUser';
 
 type ContactsContentProps = {
   contacts: TContacts;
@@ -19,13 +15,15 @@ type ContactsContentProps = {
 const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   const { pubky } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
-  const { data, isLoading, isError } =
-    contacts === 'followers'
-      ? UseUserStreamFollowers(usePubky ?? '', pubky ?? '')
-      : contacts === 'following'
-      ? UseUserStreamFollowing(usePubky ?? '', pubky ?? '')
-      : UseUserStreamFriends(usePubky ?? '', pubky ?? '');
-  const contactUsers = data;
+  const {
+    data: contactUsers,
+    isLoading,
+    isError,
+  } = UseUserStream(
+    usePubky ?? '',
+    pubky ?? '',
+    contacts
+  );
 
   if (isError) console.error(isError);
   {

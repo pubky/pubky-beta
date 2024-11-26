@@ -11,11 +11,7 @@ import {
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
-import {
-  UseUserFollowers,
-  UseUserFollowing,
-  useUserProfile,
-} from '@/hooks/useUser';
+import { UseUserList, useUserProfile } from '@/hooks/useUser';
 import { getUserDetails } from '@/services/userService';
 import Link from 'next/link';
 
@@ -40,14 +36,14 @@ export default function Profile({ post, profileId }: ProfileProps) {
     data: followers,
     isLoading: isLoadingFollowers,
     isError: isErrorFollowers,
-  } = UseUserFollowers(idAuthor ?? '');
+  } = UseUserList(idAuthor ?? '', 'followers');
   if (isErrorFollowers) console.error(isErrorFollowers);
 
   const {
     data: following,
     isLoading: isLoadingFollowing,
     isError: isErrorFollowing,
-  } = UseUserFollowing(idAuthor ?? '');
+  } = UseUserList(idAuthor ?? '', 'following');
   if (isErrorFollowing) console.error(isErrorFollowing);
 
   const [followed, setFollowed] = useState(false);
