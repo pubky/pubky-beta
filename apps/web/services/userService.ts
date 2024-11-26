@@ -206,7 +206,7 @@ export async function getUserTags(
 }
 
 // Get user notifications
-export async function getNotifications(
+export async function getUserNotifications(
   userId: string,
   start?: number,
   end?: number,

@@ -12,6 +12,7 @@ import {
   getUserMuted,
   getUserDetails,
   getUserTaggers,
+  getUserNotifications,
 } from '../services/userService';
 
 export function useUserProfile(userId: string, viewerId: string) {
@@ -108,6 +109,20 @@ export function useUserTags(
   return useQuery({
     queryKey: ['userTaggers', userId, limitTags, limitTaggers],
     queryFn: () => getUserTags(userId, limitTags, limitTaggers),
+    retry: false,
+  });
+}
+
+export function useUserNotifications(
+  userId: string,
+  start?: number,
+  end?: number,
+  skip?: number,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: ['userNotifications', userId, start, end, skip, limit],
+    queryFn: () => getUserNotifications(userId, start, end, skip, limit),
     retry: false,
   });
 }
