@@ -23,10 +23,10 @@ export function useTagsByReach(userId: string, reach: string) {
   });
 }
 
-export function useTagTaggers(label: string) {
+export function useTagTaggers(label: string, reach: string) {
   return useQuery({
-    queryKey: ['tagTaggers', label],
-    queryFn: () => getTagTaggers(label),
+    queryKey: ['tagTaggers', label, reach],
+    queryFn: () => getTagTaggers(label, reach),
     retry: false,
   });
 }

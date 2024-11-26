@@ -3,6 +3,7 @@ import { PubkyAppFile } from '@/types/Post';
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 
+// Get File details
 export async function getFile(fileUri: string): Promise<PubkyAppFile> {
   const fileUriEncoded = encodeURIComponent(fileUri);
 

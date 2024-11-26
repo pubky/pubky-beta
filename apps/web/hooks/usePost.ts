@@ -6,23 +6,33 @@ import {
   getPostDetails,
   getPostCounts,
   getPostBookmark,
-  getPostStream,
   getPostReplies,
-  getStreamPosts,
+  getPostByTaggers,
+  getPostByTags,
 } from '../services/postService';
 
-export function usePost(authorId: string, postId: string, viewerId?: string) {
+export function usePost(
+  authorId: string,
+  postId: string,
+  viewerId?: string,
+  maxTags?: number,
+  maxTaggers?: number
+) {
   return useQuery({
-    queryKey: ['post', authorId, postId, viewerId],
-    queryFn: () => getPost(authorId, postId, viewerId),
+    queryKey: ['post', authorId, postId, viewerId, maxTags, maxTaggers],
+    queryFn: () => getPost(authorId, postId, viewerId, maxTags, maxTaggers),
     retry: false,
   });
 }
 
-export function usePostDetails(authorId: string, postId: string) {
+export function usePostBookmark(
+  authorId: string,
+  postId: string,
+  viewerId?: string
+) {
   return useQuery({
-    queryKey: ['postDetails', authorId, postId],
-    queryFn: () => getPostDetails(authorId, postId),
+    queryKey: ['postBookmark', authorId, postId, viewerId],
+    queryFn: () => getPostBookmark(authorId, postId, viewerId),
     retry: false,
   });
 }
@@ -35,57 +45,10 @@ export function usePostCounts(authorId: string, postId: string) {
   });
 }
 
-export function usePostBookmark(authorId: string, postId: string) {
+export function usePostDetails(authorId: string, postId: string) {
   return useQuery({
-    queryKey: ['postBookmark', authorId, postId],
-    queryFn: () => getPostBookmark(authorId, postId),
-    retry: false,
-  });
-}
-
-export function usePostStream(
-  viewerId?: string,
-  skip?: number,
-  limit?: number,
-  reach?: 'following' | 'friends' | 'followers' | 'all',
-  sort?: 'recent' | 'popularity',
-  tags?: string[],
-) {
-  return useQuery({
-    queryKey: ['postStream', viewerId, skip, limit, reach, sort, tags],
-    queryFn: () => getPostStream(viewerId, skip, limit, reach, sort, tags),
-    retry: false,
-  });
-}
-
-export function useRepliesStreamByUser(
-  userId: string,
-  viewerId?: string,
-  limit?: number,
-  start?: number,
-  end?: number,
-  skip?: number,
-) {
-  return useQuery({
-    queryKey: [
-      'repliesStreamByUser',
-      userId,
-      viewerId,
-      limit,
-      start,
-      end,
-      skip,
-    ],
-    queryFn: () =>
-      getStreamPosts(
-        'author_replies',
-        userId,
-        viewerId,
-        limit,
-        start,
-        end,
-        skip,
-      ),
+    queryKey: ['postDetails', authorId, postId],
+    queryFn: () => getPostDetails(authorId, postId),
     retry: false,
   });
 }
@@ -97,7 +60,7 @@ export function usePostReplies(
   skip?: number,
   limit?: number,
   start?: number,
-  end?: number,
+  end?: number
 ) {
   return useQuery({
     queryKey: [
@@ -116,42 +79,24 @@ export function usePostReplies(
   });
 }
 
-export function useStreamPost(
-  source: string,
-  userId: string,
-  viewerId?: string,
-  limit?: number,
-  start?: number,
-  end?: number,
+export function usePostTaggers(
+  authorId: string,
+  postId: string,
+  label: string,
   skip?: number,
-  sort?: 'recent' | 'popularity',
-  tags?: string[],
+  limit?: number
 ) {
   return useQuery({
-    queryKey: [
-      `${source}-postStream`,
-      source,
-      userId,
-      viewerId,
-      limit,
-      start,
-      end,
-      skip,
-      sort,
-      tags,
-    ],
-    queryFn: () =>
-      getStreamPosts(
-        source,
-        userId,
-        viewerId,
-        limit,
-        start,
-        end,
-        skip,
-        sort,
-        tags,
-      ),
+    queryKey: ['postTaggers', authorId, postId, label, skip, limit],
+    queryFn: () => getPostByTaggers(authorId, postId, label, skip, limit),
+    retry: false,
+  });
+}
+
+export function usePostTags(authorId: string, postId: string) {
+  return useQuery({
+    queryKey: ['postTags', authorId, postId],
+    queryFn: () => getPostByTags(authorId, postId),
     retry: false,
   });
 }

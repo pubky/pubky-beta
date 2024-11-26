@@ -3,6 +3,7 @@ import { HotTag, TagsByReach, Taggers } from '../types/Tag';
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 
+// Get global hot tags
 export async function getHotTags(
   skip?: number,
   limit?: number,
@@ -24,17 +25,22 @@ export async function getHotTags(
   return response.json();
 }
 
+// Get global tags by reach
 export async function getTagsByReach(
   userId: string,
-  reach: string
+  reach: string // follower | following | friends
 ): Promise<TagsByReach> {
   const response = await fetch(`${BASE_URL}/tag/reached/${userId}/${reach}`);
   if (!response.ok) throw new Error('Failed to fetch tags by reach');
   return response.json();
 }
 
-export async function getTagTaggers(label: string): Promise<Taggers> {
-  const response = await fetch(`${BASE_URL}/tag/taggers/${label}`);
+// Get global tags by taggers
+export async function getTagTaggers(
+  label: string,
+  reach: string // follower | following | friends
+): Promise<Taggers> {
+  const response = await fetch(`${BASE_URL}/tag/taggers/${label}/${reach}`);
   if (!response.ok) throw new Error('Failed to fetch tag taggers');
   return response.json();
 }
