@@ -4,12 +4,12 @@ import { Fragment, useEffect, useState } from 'react';
 import { Typography } from '@social/ui-shared';
 import * as Components from '@/components';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { usePostStream } from '@/hooks/usePost';
 import { UseUserMuted } from '@/hooks/useUser';
 import { ICustomFeed } from '@/types';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { PostReplies } from './_PostReplies';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { useStreamPost } from '@/hooks/useStream';
 
 // Types
 interface TimelineProps {
@@ -72,7 +72,7 @@ const useTimelineFilters = (selectedFeed) => {
 
 const useTimelinePosts = (pubky, skip, limit, reach, sort, tagsFeed) => {
   const { timeline, setTimeline } = usePubkyClientContext();
-  const { data, isLoading, isError } = usePostStream(
+  const { data, isLoading, isError } = useStreamPost(
     pubky,
     skip,
     limit,

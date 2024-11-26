@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { Icon, Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
-import { useStreamPost } from '@/hooks/usePost';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
+import { useStreamPost2 } from '@/hooks/useStream';
 
 export default function Bookmarks() {
   const { pubky, deleteBookmark } = usePubkyClientContext();
@@ -15,7 +15,7 @@ export default function Bookmarks() {
   const limit = 10;
   const [start, setStart] = useState<number | undefined>(undefined);
 
-  const { data, isLoading } = useStreamPost(
+  const { data, isLoading } = useStreamPost2(
     'bookmarks',
     pubky ?? '',
     pubky,

@@ -6,7 +6,7 @@ import { Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
-import { useStreamPost } from '@/hooks/usePost';
+import { useStreamPost2 } from '@/hooks/useStream';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
@@ -15,12 +15,12 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
 
-  const { data, isLoading } = useStreamPost(
+  const { data, isLoading } = useStreamPost2(
     'author_replies',
     creatorPubky ?? pubky ?? '',
     pubky,
     limit,
-    start,
+    start
   );
 
   // https://nexus.staging.pubky.app/v0/stream/posts?
@@ -64,7 +64,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <Post key={`reply-${post.details.id}`} post={post} />
-          ),
+          )
       )}
       {isLoading && (
         <div className="flex flex-col gap-3">

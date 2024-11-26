@@ -2,9 +2,9 @@
 
 import Skeletons from '@/components/Skeletons';
 import { usePubkyClientContext } from '@/contexts';
-import { useInfluencersUsers } from '@/hooks/useUser';
 import { useEffect, useState } from 'react';
 import { Influencers } from '.';
+import { useStreamUsers } from '@/hooks/useStream';
 
 export interface LoadingInfluencers {
   [pubky: string]: boolean;
@@ -16,7 +16,7 @@ export default function MainContent() {
     data: influencers,
     isLoading,
     isError,
-  } = useInfluencersUsers(pubky ?? '', pubky);
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
   if (isError) console.error(isError);
 
   const [loadingInfluencers, setLoadingInfluencers] =

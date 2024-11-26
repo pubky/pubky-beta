@@ -3,15 +3,16 @@
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
-import { useMostFollowedUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
+import { useStreamUsers } from '@/hooks/useStream';
 
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { data, isLoading, isError } = useMostFollowedUsers(
+  const { data, isLoading, isError } = useStreamUsers(
     pubky ?? '',
-    pubky,
+    pubky ?? '',
+    'most_followed',
     0,
     3
   );

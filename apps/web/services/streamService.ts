@@ -6,6 +6,46 @@ const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 
 // Get stream posts
 export async function getStreamPosts(
+  viewerId?: string,
+  skip?: number,
+  limit?: number,
+  reach?: 'following' | 'friends' | 'followers' | 'all',
+  sort?: 'recent' | 'popularity',
+  tags?: string[],
+): Promise<PostView[]> {
+  const queryParams = new URLSearchParams();
+
+  if (viewerId) {
+    queryParams.append('viewer_id', viewerId);
+    queryParams.append('observer_id', viewerId);
+  }
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+  if (reach) {
+    queryParams.append('source', String(reach));
+  }
+  if (sort) {
+    if (sort === 'recent') queryParams.append('sorting', String('timeline'));
+    else if (sort === 'popularity')
+      queryParams.append('sorting', String('total_engagement'));
+  }
+  if (tags) {
+    queryParams.append('tags', String(tags));
+  }
+
+  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
+
+  if (!response.ok) throw new Error('Failed to fetch post stream');
+
+  return response.json();
+}
+
+// Get stream posts 2
+export async function getStreamPosts2(
   source: string,
   userId: string,
   viewerId?: string,
@@ -14,7 +54,7 @@ export async function getStreamPosts(
   end?: number,
   skip?: number | undefined,
   sort?: 'recent' | 'popularity' | undefined,
-  tags?: string[]
+  tags?: string[],
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams({
     author_id: userId,
@@ -50,7 +90,7 @@ export async function getStreamPosts(
   }
 
   const response = await fetch(
-    `${BASE_URL}/stream/posts?${queryParams.toString()}`
+    `${BASE_URL}/stream/posts?${queryParams.toString()}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch post stream by user');

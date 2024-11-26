@@ -3,11 +3,27 @@
 import { useQuery } from '@tanstack/react-query';
 import {
   getStreamPosts,
+  getStreamPosts2,
   getUserStream,
   searchUsersByUsername,
 } from '@/services/streamService';
 
 export function useStreamPost(
+  viewerId?: string,
+  skip?: number,
+  limit?: number,
+  reach?: 'following' | 'friends' | 'followers' | 'all',
+  sort?: 'recent' | 'popularity',
+  tags?: string[]
+) {
+  return useQuery({
+    queryKey: ['streamPost', viewerId, skip, limit, reach, sort, tags],
+    queryFn: () => getStreamPosts(viewerId, skip, limit, reach, sort, tags),
+    retry: false,
+  });
+}
+
+export function useStreamPost2(
   source: string,
   userId: string,
   viewerId?: string,
@@ -32,7 +48,7 @@ export function useStreamPost(
       tags,
     ],
     queryFn: () =>
-      getStreamPosts(
+      getStreamPosts2(
         source,
         userId,
         viewerId,

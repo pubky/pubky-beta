@@ -8,10 +8,10 @@ import {
   ReactNode,
 } from 'react';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { useUserNotifications } from '@/hooks/useUser';
 import { NotificationView } from '@/types/User';
 import { NotificationPreferences } from '@/types';
 import { defaultPreferences } from './_filters';
+import { useUserNotifications } from '@/hooks/useUser';
 
 type NotificationsContextType = {
   notifications: NotificationView[];
