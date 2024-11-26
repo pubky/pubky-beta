@@ -11,7 +11,7 @@ export default function Root({ children, ...rest }: RootProps) {
       {...rest}
       className={twMerge('w-full flex-col gap-6 inline-flex', rest.className)}
     >
-      <div className="flex-col gap-6 flex">
+      <div className="flex-col gap-2 flex">
         <Typography.H2>Notifications</Typography.H2>
         <div className="flex-col flex">{children}</div>
       </div>
