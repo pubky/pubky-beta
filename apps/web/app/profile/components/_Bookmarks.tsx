@@ -6,7 +6,7 @@ import { Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
-import { useStreamPost2 } from '@/hooks/useStream';
+import { useStreamPost } from '@/hooks/useStream';
 
 export default function Bookmarks() {
   const { pubky, deleteBookmark } = usePubkyClientContext();
@@ -15,10 +15,10 @@ export default function Bookmarks() {
   const limit = 10;
   const [start, setStart] = useState<number | undefined>(undefined);
 
-  const { data, isLoading } = useStreamPost2(
-    'bookmarks',
+  const { data, isLoading } = useStreamPost(
     pubky ?? '',
-    pubky,
+    'bookmarks',
+    undefined,
     limit,
     start,
   );
@@ -26,9 +26,11 @@ export default function Bookmarks() {
   const fetchPosts = async () => {
     try {
       if (!data) return;
-
-      setStart(data[data.length - 1].details.indexed_at - 1);
-      setTimeline((prev) => [...prev, ...data]);
+      const lastPost = data[data.length - 1];
+      if (lastPost.bookmark?.indexed_at) {
+        setStart(lastPost.bookmark.indexed_at - 1);
+        setTimeline((prev) => [...prev, ...data]);
+      }
     } catch (error) {
       console.error(error);
     }

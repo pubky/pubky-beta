@@ -1,66 +1,34 @@
+import { TSort, TSource } from '@/types';
 import { PostView } from '@/types/Post';
 import { UserView } from '@/types/User';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 
-// Get stream posts
 export async function getStreamPosts(
-  viewerId?: string,
-  skip?: number,
+  viewerId: string,
+  source?: TSource,
+  authorId?: string,
   limit?: number,
-  reach?: 'following' | 'friends' | 'followers' | 'all',
-  sort?: 'recent' | 'popularity',
+  start?: number,
+  end?: number,
+  skip?: number,
+  sort?: TSort,
   tags?: string[],
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
 
-  if (viewerId) {
-    queryParams.append('viewer_id', viewerId);
-    queryParams.append('observer_id', viewerId);
-  }
-  if (skip !== undefined) {
-    queryParams.append('skip', String(skip));
-  }
-  if (limit !== undefined) {
+  if (limit) {
     queryParams.append('limit', String(limit));
   }
-  if (reach) {
-    queryParams.append('source', String(reach));
-  }
-  if (sort) {
-    if (sort === 'recent') queryParams.append('sorting', String('timeline'));
-    else if (sort === 'popularity')
-      queryParams.append('sorting', String('total_engagement'));
-  }
-  if (tags) {
-    queryParams.append('tags', String(tags));
+
+  if (authorId) {
+    queryParams.append('author_id', authorId);
   }
 
-  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
-
-  if (!response.ok) throw new Error('Failed to fetch post stream');
-
-  return response.json();
-}
-
-// Get stream posts 2
-export async function getStreamPosts2(
-  source: string,
-  userId: string,
-  viewerId?: string,
-  limit = 10,
-  start?: number,
-  end?: number,
-  skip?: number | undefined,
-  sort?: 'recent' | 'popularity' | undefined,
-  tags?: string[],
-): Promise<PostView[]> {
-  const queryParams = new URLSearchParams({
-    author_id: userId,
-    source: source,
-    limit: String(limit),
-  });
+  if (source) {
+    queryParams.append('source', source);
+  }
 
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
@@ -88,23 +56,60 @@ export async function getStreamPosts2(
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
   }
-
+  console.log(`${BASE_URL}/stream/posts?${queryParams.toString()}`);
   const response = await fetch(
     `${BASE_URL}/stream/posts?${queryParams.toString()}`,
   );
 
-  if (!response.ok) throw new Error('Failed to fetch post stream by user');
+  if (!response.ok) throw new Error('Failed to fetch post stream.');
 
   return response.json();
+}
+
+function validateSourceParams(
+  source: TSource | undefined,
+  params: { [key: string]: any },
+) {
+  switch (source) {
+    case 'following':
+    case 'followers':
+    case 'friends':
+    case 'bookmarks':
+      if (!params.viewerId) {
+        console.warn(
+          `Source ${source} requires viewerId. Defaulting to 'all'.`,
+        );
+        return 'all';
+      }
+      break;
+    case 'post_replies':
+      if (!params.authorId || !params.postId) {
+        console.warn(
+          `Source ${source} requires authorId and postId. Defaulting to 'all'.`,
+        );
+        return 'all';
+      }
+      break;
+    case 'author':
+    case 'author_replies':
+      if (!params.authorId) {
+        console.warn(
+          `Source ${source} requires authorId. Defaulting to 'all'.`,
+        );
+        return 'all';
+      }
+      break;
+  }
+  return source;
 }
 
 // Get stream users
 export async function getUserStream(
   userId: string,
   viewerId: string,
-  source: string, // 'following', 'followers', 'friends', 'muted' and 'recommended'
+  source: TSource,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<UserView[]> {
   const queryParams = new URLSearchParams();
 
@@ -133,7 +138,7 @@ export async function searchUsersByUsername(
   username: string,
   viewerId?: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<UserView[]> {
   if (!username) throw new Error('Username is required');
 
@@ -149,7 +154,7 @@ export async function searchUsersByUsername(
   }
 
   const response = await fetch(
-    `${BASE_URL}/stream/users/username?${queryParams.toString()}`
+    `${BASE_URL}/stream/users/username?${queryParams.toString()}`,
   );
   if (!response.ok) throw new Error('Failed to search users by username');
   return response.json();

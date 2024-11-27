@@ -6,7 +6,7 @@ import { Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
-import { useStreamPost2 } from '@/hooks/useStream';
+import { useStreamPost } from '@/hooks/useStream';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
@@ -15,28 +15,14 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
 
-  const { data, isLoading } = useStreamPost2(
+  const { data, isLoading } = useStreamPost(
+    creatorPubky ?? pubky ?? '',
     'author_replies',
     creatorPubky ?? pubky ?? '',
-    pubky,
     limit,
-    start
+    start,
   );
 
-  // https://nexus.staging.pubky.app/v0/stream/posts?
-  // author_id=o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo
-  // &source=replies
-  // &limit=10
-  // &viewer_id=o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo
-  // &observer_id=o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo
-  // &start=1732190896560
-
-  // https://nexus.staging.pubky.app/v0/stream/posts?
-  // author_id=o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo
-  // &source=replies
-  // &limit=10
-  // &viewer_id=o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo
-  // &observer_id=o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo
   const fetchPosts = async () => {
     try {
       if (!data) return;
@@ -64,7 +50,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <Post key={`reply-${post.details.id}`} post={post} />
-          )
+          ),
       )}
       {isLoading && (
         <div className="flex flex-col gap-3">

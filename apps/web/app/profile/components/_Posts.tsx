@@ -6,7 +6,7 @@ import { Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
-import { useStreamPost2 } from '@/hooks/useStream';
+import { useStreamPost } from '@/hooks/useStream';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const { pubky } = usePubkyClientContext();
@@ -14,12 +14,13 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const limit = 10;
   const [start, setStart] = useState<number | undefined>(undefined);
-  const { data, isLoading } = useStreamPost2(
+
+  const { data, isLoading } = useStreamPost(
+    creatorPubky ?? pubky ?? '',
     'author',
     creatorPubky ?? pubky ?? '',
-    pubky,
     limit,
-    start
+    start,
   );
 
   const fetchPosts = async () => {
@@ -49,7 +50,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <Post key={`post-${post.details.id}`} post={post} />
-          )
+          ),
       )}
       {isLoading && (
         <div className="flex flex-col gap-3">
