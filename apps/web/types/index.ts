@@ -19,6 +19,13 @@ export type TSource =
   | 'author'
   | 'author_replies'
   | 'all';
+export type TSourceUser =
+  | 'following'
+  | 'friends'
+  | 'followers'
+  | 'recommended'
+  | 'muted'
+  | 'all';
 export type TLanguage = 'english' | 'spanish' | 'german' | 'french' | 'italian';
 export type TSort = 'recent' | 'popularity';
 export type THotTagsReach = 'following' | 'followers' | 'friends' | 'all';
@@ -203,7 +210,7 @@ export interface IPostContent {
 export interface ICustomFeed {
   tags?: string[];
   sort: TSort;
-  reach: TReach;
+  reach: TSource;
   layout: TLayouts;
   content: TContent;
 }

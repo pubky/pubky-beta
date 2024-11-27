@@ -12,9 +12,9 @@ export default function WhoFollow() {
   const { data, isLoading, isError } = useStreamUsers(
     pubky ?? '',
     pubky ?? '',
-    'most_followed',
+    'recommended',
     0,
-    3
+    3,
   );
 
   const recommendedProfiles = data;
@@ -34,7 +34,7 @@ export default function WhoFollow() {
           acc[profile.details.id] = profile.relationship?.following || false;
           return acc;
         },
-        {} as { [pubky: string]: boolean }
+        {} as { [pubky: string]: boolean },
       );
       setFollowedUser(initialFollowedState);
     }
@@ -114,7 +114,7 @@ export default function WhoFollow() {
                     }
                     username={Utils.minifyText(
                       recommendedProfile?.details?.name,
-                      11
+                      11,
                     )}
                     label={Utils.minifyPubky(recommendedProfile?.details?.id)}
                   >

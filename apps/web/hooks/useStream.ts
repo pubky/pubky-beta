@@ -6,7 +6,7 @@ import {
   getUserStream,
   searchUsersByUsername,
 } from '@/services/streamService';
-import { TSort, TSource } from '@/types';
+import { TSort, TSource, TSourceUser } from '@/types';
 
 export function useStreamPost(
   viewerId: string,
@@ -51,7 +51,7 @@ export function useStreamPost(
 export function useStreamUsers(
   userId: string,
   viewerId: string,
-  source: TSource,
+  source: TSourceUser,
   skip?: number,
   limit?: number,
 ) {

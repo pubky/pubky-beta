@@ -7,9 +7,9 @@ import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
 import { Section } from './Section';
 import { UserView } from '@/types/User';
-import { searchUsersByUsername } from '@/services/userService';
 import { twMerge } from 'tailwind-merge';
 import { Utils } from '@social/utils-shared';
+import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -79,13 +79,13 @@ export default function CreateContent({
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null
+    null,
   );
 
   const searchProfiles = async (text: string) => {
     try {
-      const result = await searchUsersByUsername(text);
-      return result || [];
+      const result = useStreamSearchUsersByUsername(text);
+      return result.data || [];
     } catch (error) {
       console.error('Error searching profiles:', error);
       return [];
@@ -108,8 +108,8 @@ export default function CreateContent({
     for (const query of searchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const searchResult = await searchUsersByUsername(username);
-        results = [...results, ...(searchResult || [])];
+        const searchResult = useStreamSearchUsersByUsername(username);
+        results = [...results, ...(searchResult.data || [])];
       } else if (query.startsWith('pk:')) {
         const searchResult = await searchProfiles(query);
         results = [...results, ...(searchResult || [])];
@@ -190,7 +190,7 @@ export default function CreateContent({
     setSelectedFiles &&
       setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     setFilePreviews((prevPreviews) =>
-      prevPreviews.filter((_, i) => i !== index)
+      prevPreviews.filter((_, i) => i !== index),
     );
   };
 
@@ -220,7 +220,7 @@ export default function CreateContent({
               } else {
                 setContentAlert(
                   'Maximum of 3 files can be uploaded',
-                  'warning'
+                  'warning',
                 );
                 setShow(true);
               }
@@ -254,7 +254,7 @@ export default function CreateContent({
         `${
           largeView ? 'p-12' : 'p-6'
         } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`,
-        className
+        className,
       )}
     >
       <div

@@ -13,7 +13,7 @@ export default function Influencers() {
     data: influencers,
     isLoading,
     isError,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers', 0, 3);
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended', 0, 3);
 
   if (isError) console.error(isError);
 

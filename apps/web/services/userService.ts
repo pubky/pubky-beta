@@ -12,7 +12,7 @@ const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 // User profile
 export async function getUserProfile(
   userId: string,
-  viewerId: string
+  viewerId: string,
 ): Promise<UserView> {
   if (!userId) throw new Error('User ID is required');
 
@@ -52,7 +52,7 @@ export async function getUserDetails(userId: string): Promise<UserDetails> {
 export async function getUserFollowers(
   userId: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
@@ -64,7 +64,7 @@ export async function getUserFollowers(
   }
 
   const response = await fetch(
-    `${BASE_URL}/user/${userId}/followers?${queryParams}`
+    `${BASE_URL}/user/${userId}/followers?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch user followers');
@@ -76,7 +76,7 @@ export async function getUserFollowers(
 export async function getUserFollowing(
   userId: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
@@ -88,7 +88,7 @@ export async function getUserFollowing(
   }
 
   const response = await fetch(
-    `${BASE_URL}/user/${userId}/following?${queryParams}`
+    `${BASE_URL}/user/${userId}/following?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch user following');
@@ -100,7 +100,7 @@ export async function getUserFollowing(
 export async function getUserFriends(
   userId: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
@@ -112,7 +112,7 @@ export async function getUserFriends(
   }
 
   const response = await fetch(
-    `${BASE_URL}/user/${userId}/friends?${queryParams}`
+    `${BASE_URL}/user/${userId}/friends?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch user friends');
@@ -124,7 +124,7 @@ export async function getUserFriends(
 export async function getUserMuted(
   userId: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
@@ -136,7 +136,7 @@ export async function getUserMuted(
   }
 
   const response = await fetch(
-    `${BASE_URL}/user/${userId}/muted?${queryParams}`
+    `${BASE_URL}/user/${userId}/muted?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch user muted');
@@ -147,10 +147,10 @@ export async function getUserMuted(
 // User relationship
 export async function getUserRelationship(
   userId: string,
-  viewerId: string
+  viewerId: string,
 ): Promise<Relationship> {
   const response = await fetch(
-    `${BASE_URL}/user/${userId}/relationship/${viewerId}`
+    `${BASE_URL}/user/${userId}/relationship/${viewerId}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch user relationship');
@@ -163,7 +163,7 @@ export async function getUserTaggers(
   userId: string,
   tagName: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
@@ -174,7 +174,7 @@ export async function getUserTaggers(
     queryParams.append('limit', String(limit));
   }
   const response = await fetch(
-    `${BASE_URL}/user/${userId}/taggers/${tagName}?${queryParams}`
+    `${BASE_URL}/user/${userId}/taggers/${tagName}?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch user tags');
@@ -186,7 +186,7 @@ export async function getUserTaggers(
 export async function getUserTags(
   userId: string,
   limitTags?: number,
-  limitTaggers?: number
+  limitTaggers?: number,
 ): Promise<UserTag[]> {
   const queryParams = new URLSearchParams();
 
@@ -197,7 +197,7 @@ export async function getUserTags(
     queryParams.append('limit_taggers', String(limitTaggers));
   }
   const response = await fetch(
-    `${BASE_URL}/user/${userId}/tags?${queryParams}`
+    `${BASE_URL}/user/${userId}/tags?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch user tags');
@@ -211,7 +211,7 @@ export async function getUserNotifications(
   start?: number,
   end?: number,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<any> {
   const queryParams = new URLSearchParams();
 
@@ -228,7 +228,7 @@ export async function getUserNotifications(
     queryParams.append('limit', String(limit));
   }
   const response = await fetch(
-    `${BASE_URL}/user/${userId}/notifications?${queryParams}`
+    `${BASE_URL}/user/${userId}/notifications?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch notifications');

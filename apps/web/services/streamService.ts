@@ -1,4 +1,4 @@
-import { TSort, TSource } from '@/types';
+import { TSort, TSource, TSourceUser } from '@/types';
 import { PostView } from '@/types/Post';
 import { UserView } from '@/types/User';
 
@@ -107,7 +107,7 @@ function validateSourceParams(
 export async function getUserStream(
   userId: string,
   viewerId: string,
-  source: TSource,
+  source: TSourceUser,
   skip?: number,
   limit?: number,
 ): Promise<UserView[]> {

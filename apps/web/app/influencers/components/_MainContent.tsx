@@ -16,7 +16,7 @@ export default function MainContent() {
     data: influencers,
     isLoading,
     isError,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended');
   if (isError) console.error(isError);
 
   const [loadingInfluencers, setLoadingInfluencers] =
@@ -25,10 +25,13 @@ export default function MainContent() {
 
   useEffect(() => {
     if (influencers) {
-      const initialFollowedState = influencers.reduce((acc, profile) => {
-        acc[profile.details.id] = profile.relationship?.following || false;
-        return acc;
-      }, {} as { [pubky: string]: boolean });
+      const initialFollowedState = influencers.reduce(
+        (acc, profile) => {
+          acc[profile.details.id] = profile.relationship?.following || false;
+          return acc;
+        },
+        {} as { [pubky: string]: boolean },
+      );
       setFollowed(initialFollowedState);
     }
   }, [influencers]);
