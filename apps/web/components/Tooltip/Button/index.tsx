@@ -8,6 +8,8 @@ import EditPost from './_EditPost';
 import EditProfile from './_EditProfile';
 import Follow from './_Follow';
 import Mute from './_Mute';
+import ReportPost from './_ReportPost';
+import ReportProfile from './_ReportProfile';
 
 export const ButtonTooltip = {
   Bookmark,
@@ -20,4 +22,6 @@ export const ButtonTooltip = {
   EditProfile,
   Follow,
   Mute,
+  ReportPost,
+  ReportProfile,
 };

@@ -20,20 +20,18 @@ export default function Feedback() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      await axios.post('https://synonym.to/api/chatwoot', {
+      await axios.post('/api/chatwoot', {
         message,
         name: profile?.name,
         email: `${pubky}@pubky.app`,
-        source: 'pubky',
+        source: 'Feedback',
       });
       setSent(true);
-      //setShowModal(true);
       setLoading(false);
       setMessage('');
     } catch (error) {
       console.error(error);
       setError(true);
-      //setShowModal(true);
       setLoading(false);
     }
   };
@@ -59,7 +57,7 @@ export default function Feedback() {
                 >
                   {Utils.minifyText(
                     profile?.name ?? Utils.minifyPubky(pubky ?? ''),
-                    10
+                    10,
                   )}
                 </Typography.Body>
               </Link>

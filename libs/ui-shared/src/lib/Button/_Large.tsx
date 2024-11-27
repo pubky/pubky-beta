@@ -24,7 +24,7 @@ export const Large = ({
   let stateButton = 'hover:bg-opacity-20';
 
   if (disabled) {
-    colorText = 'text-gray-500';
+    colorText = 'text-opacity-30';
     stateButton = 'border-opacity-30 bg-opacity-10 cursor-auto';
   }
 

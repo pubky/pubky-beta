@@ -8,39 +8,14 @@ import Modal from '@/components/Modal';
 
 interface DeletePostProps {
   post: PostView;
-  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowModalDeletePost: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function DeletePost({ post, setShowMenu }: DeletePostProps) {
-  const { pubky, deletePost, deleteFile } = usePubkyClientContext();
-  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
-  const { setContent, setShow } = useAlertContext();
-
-  const handleDeletePost = async () => {
-    try {
-      if (post?.details?.attachments) {
-        const fileDeletions = Object.values(post?.details?.attachments).map(
-          async (file) => {
-            await deleteFile(file);
-          }
-        );
-        await Promise.all(fileDeletions);
-      }
-
-      const result = await deletePost(post?.details?.id);
-
-      if (result) {
-        setContent('Post deleted successfully');
-      } else {
-        setContent('Something wrong. Try again', 'warning');
-      }
-      setShow(true);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setShowMenu(false);
-    }
-  };
+export default function DeletePost({
+  post,
+  setShowModalDeletePost,
+}: DeletePostProps) {
+  const { pubky } = usePubkyClientContext();
 
   return (
     <>
@@ -54,12 +29,6 @@ export default function DeletePost({ post, setShowMenu }: DeletePostProps) {
           Delete post
         </Tooltip.Item>
       )}
-
-      <Modal.DeletePost
-        showModalDeletePost={showModalDeletePost}
-        setShowModalDeletePost={setShowModalDeletePost}
-        handleDeletePost={handleDeletePost}
-      />
     </>
   );
 }

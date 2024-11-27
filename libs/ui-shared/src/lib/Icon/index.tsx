@@ -48,6 +48,7 @@ import {
   Trash,
   File,
   FileText,
+  Copy,
 } from './_Office';
 import {
   DotsNine,
@@ -98,6 +99,7 @@ import {
   UsersRight,
   UserCircle,
   Smiley,
+  SmileySad,
 } from './_People';
 import {
   Asterisk,
@@ -108,7 +110,15 @@ import {
 } from './_Communication';
 import { Activity } from './_Health';
 import { Fire } from './_Weather';
-import { Key, Lock, Warning, Shield, Question } from './_Security';
+import {
+  Key,
+  Lock,
+  Warning,
+  Shield,
+  Question,
+  Flag,
+  WarningOctagon,
+} from './_Security';
 import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether } from './_Tag';
 
 export const Icon = {
@@ -136,6 +146,7 @@ export const Icon = {
   CheckCircle,
   Clipboard,
   Clock,
+  Copy,
   Discord,
   DownloadSimple,
   DropdownIcon,
@@ -148,6 +159,7 @@ export const Icon = {
   Ellipse,
   File,
   FileText,
+  Flag,
   France,
   Fire,
   Facebook,
@@ -200,6 +212,7 @@ export const Icon = {
   Slashtags,
   Spain,
   Smiley,
+  SmileySad,
   SquaresFour,
   SquareHalf,
   SpeakerSimpleSlash,
@@ -224,6 +237,7 @@ export const Icon = {
   UserCircle,
   UserRectangle,
   Warning,
+  WarningOctagon,
   Youtube,
   X,
 };
