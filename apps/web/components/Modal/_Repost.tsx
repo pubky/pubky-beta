@@ -42,7 +42,7 @@ export default function Repost({
         post?.details?.author,
         content,
         'short',
-        selectedFiles
+        selectedFiles,
       );
 
       const hashtags = Utils.extractHashtags(content);
@@ -82,7 +82,7 @@ export default function Repost({
         post?.details?.id,
         post?.details?.author,
         '',
-        'short'
+        'short',
       );
 
       if (newRepost) {

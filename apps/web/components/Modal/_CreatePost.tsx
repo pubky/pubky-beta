@@ -21,6 +21,7 @@ export default function CreatePost({
   const [sendingPost, setSendingPost] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [isValidContent, setIsValidContent] = useState(false);
+  const [quote, setQuote] = useState<string>();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [placeholder, setPlaceholder] = useState('');
   const regex =
@@ -40,7 +41,7 @@ export default function CreatePost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, 'short', selectedFiles);
+      const newPost = await createPost(content, 'short', selectedFiles, quote);
       const match = newPost && newPost?.uri.match(regex);
 
       if (newPost && match) {
@@ -92,6 +93,7 @@ export default function CreatePost({
               content={contentPost}
               setContent={setContentPost}
               placeHolder={placeholder}
+              setQuote={setQuote}
               isValidContent={isValidContent}
               setIsValidContent={setIsValidContent}
               selectedFiles={selectedFiles}

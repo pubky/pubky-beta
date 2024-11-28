@@ -8,6 +8,7 @@ import { UserView } from '@/types/User';
 import Modal from '.';
 import Image from 'next/image';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
+import { searchUsersByUsername } from '@/services/streamService';
 
 interface CreateArticleProps {
   showModalArticle: boolean;
@@ -155,7 +156,7 @@ export default function CreateArticle({
 
   const searchProfiles = async (text: string) => {
     try {
-      const result = useStreamSearchUsersByUsername(text);
+      const result = await searchUsersByUsername(text);
       return result || [];
     } catch (error) {
       console.error('Error searching profiles:', error);

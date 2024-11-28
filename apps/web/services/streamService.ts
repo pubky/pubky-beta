@@ -148,22 +148,28 @@ export async function searchUsersByUsername(
   skip?: number,
   limit?: number,
 ): Promise<UserView[]> {
-  if (!username) throw new Error('Username is required');
+  try {
+    if (!username) throw new Error('Username is required');
 
-  const queryParams = new URLSearchParams({ username });
-  if (viewerId) {
-    queryParams.append('viewer_id', viewerId);
-  }
-  if (skip !== undefined) {
-    queryParams.append('skip', String(skip));
-  }
-  if (limit !== undefined) {
-    queryParams.append('limit', String(limit));
-  }
+    const queryParams = new URLSearchParams({ username });
+    if (viewerId) {
+      queryParams.append('viewer_id', viewerId);
+    }
+    if (skip !== undefined) {
+      queryParams.append('skip', String(skip));
+    }
+    if (limit !== undefined) {
+      queryParams.append('limit', String(limit));
+    }
 
-  const response = await fetch(
-    `${BASE_URL}/stream/users/username?${queryParams.toString()}`,
-  );
-  if (!response.ok) throw new Error('Failed to search users by username');
-  return response.json();
+    const response = await fetch(
+      `${BASE_URL}/stream/users/username?${queryParams.toString()}`,
+    );
+
+    if (!response.ok) throw new Error('Failed to search users by username');
+
+    return response.json();
+  } catch (error) {
+    return [];
+  }
 }

@@ -25,6 +25,7 @@ export default function CreateReply({
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const modalReplyRef = useRef<HTMLDivElement>(null);
   const [isValidContent, setIsValidContent] = useState(false);
+  const [quote, setQuote] = useState<string>();
   const [placeholder, setPlaceholder] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const regex =
@@ -55,6 +56,7 @@ export default function CreateReply({
         content,
         'short',
         selectedFiles,
+        quote,
       );
 
       const hashtags = Utils.extractHashtags(content);
@@ -135,6 +137,7 @@ export default function CreateReply({
             content={contentReply}
             setContent={setContentReply}
             isValidContent={isValidContent}
+            setQuote={setQuote}
             placeHolder={placeholder}
             setIsValidContent={setIsValidContent}
             selectedFiles={selectedFiles}
