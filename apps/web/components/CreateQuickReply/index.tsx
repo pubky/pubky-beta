@@ -18,6 +18,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sendingReply, setSendingReply] = useState(false);
   const [textArea, setTextArea] = useState(false);
+  const [quote, setQuote] = useState<string>();
   const [isValidContent, setIsValidContent] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [placeholder, setPlaceholder] = useState('');
@@ -38,7 +39,8 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
       post?.details?.uri,
       content,
       'short',
-      selectedFiles
+      selectedFiles,
+      quote,
     );
 
     const hashtags = Utils.extractHashtags(content);
@@ -70,6 +72,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
         setContent={setContentReply}
         setTextArea={setTextArea}
         isValidContent={isValidContent}
+        setQuote={setQuote}
         selectedFiles={selectedFiles}
         setSelectedFiles={setSelectedFiles}
         placeHolder={placeholder}

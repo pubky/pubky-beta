@@ -9,7 +9,7 @@ import { Section } from './Section';
 import { UserView } from '@/types/User';
 import { twMerge } from 'tailwind-merge';
 import { Utils } from '@social/utils-shared';
-import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
+import { searchUsersByUsername } from '@/services/streamService';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -38,6 +38,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
   isError?: boolean;
   setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
+  setQuote?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 export default function CreateContent({
@@ -68,6 +69,7 @@ export default function CreateContent({
   isError,
   setIsError,
   setShowModalPost,
+  setQuote,
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -84,8 +86,8 @@ export default function CreateContent({
 
   const searchProfiles = async (text: string) => {
     try {
-      const result = useStreamSearchUsersByUsername(text);
-      return result.data || [];
+      const result = await searchUsersByUsername(text);
+      return result || [];
     } catch (error) {
       console.error('Error searching profiles:', error);
       return [];
@@ -108,8 +110,8 @@ export default function CreateContent({
     for (const query of searchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const searchResult = useStreamSearchUsersByUsername(username);
-        results = [...results, ...(searchResult.data || [])];
+        const searchResult = await searchUsersByUsername(username);
+        results = [...results, ...(searchResult || [])];
       } else if (query.startsWith('pk:')) {
         const searchResult = await searchProfiles(query);
         results = [...results, ...(searchResult || [])];
@@ -290,7 +292,7 @@ export default function CreateContent({
             isError={isError}
           />
         </div>
-        <LinkPreviewer content={content} />
+        <LinkPreviewer setQuote={setQuote} content={content} />
         {selectedFiles && selectedFiles.length > 0 && (
           <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
             {selectedFiles.map((file, index) => (

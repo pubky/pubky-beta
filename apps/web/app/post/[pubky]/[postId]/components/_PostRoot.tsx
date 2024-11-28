@@ -26,6 +26,7 @@ export default function PostRoot({
   const [isValidContent, setIsValidContent] = useState(false);
   const [textArea, setTextArea] = useState(false);
   const [contentReply, setContentReply] = useState('');
+  const [quote, setQuote] = useState<string>();
   const [sendingReply, setSendingReply] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [placeholder, setPlaceholder] = useState('');
@@ -44,6 +45,7 @@ export default function PostRoot({
       content,
       'short',
       selectedFiles,
+      quote,
     );
 
     const hashtags = Utils.extractHashtags(content);
@@ -76,6 +78,7 @@ export default function PostRoot({
           setContent={setContentReply}
           setTextArea={setTextArea}
           placeHolder={placeholder}
+          setQuote={setQuote}
           isValidContent={isValidContent}
           setIsValidContent={setIsValidContent}
           selectedFiles={selectedFiles}

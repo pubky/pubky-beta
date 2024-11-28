@@ -23,6 +23,7 @@ export default function CreateQuickPost({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sendingPost, setSendingPost] = useState(false);
   const [textArea, setTextArea] = useState(false);
+  const [quote, setQuote] = useState<string>();
   const [isValidContent, setIsValidContent] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [placeholder, setPlaceholder] = useState('');
@@ -43,7 +44,7 @@ export default function CreateQuickPost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, 'short', selectedFiles);
+      const newPost = await createPost(content, 'short', selectedFiles, quote);
       const match = newPost && newPost?.uri.match(regex);
 
       if (newPost && match) {
@@ -111,6 +112,7 @@ export default function CreateQuickPost({
         <CreateContent
           id="quick-post-create-content"
           largeView={largeView}
+          setQuote={setQuote}
           handleSubmit={handleSubmit}
           content={contentPost}
           placeHolder={placeholder}

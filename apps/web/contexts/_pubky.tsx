@@ -40,7 +40,7 @@ type PubkyClientContextType = {
   setMnemonic: (mnemonic: string | undefined) => void;
   profile: PubkyAppUser | undefined;
   generateAuthUrl: (
-    caps?: string
+    caps?: string,
   ) => { url: string; promise: Promise<any> } | null;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
   loginWithAuthUrl: (publicKey: string) => Promise<string>;
@@ -52,27 +52,30 @@ type PubkyClientContextType = {
   createPost: (
     postContent: string,
     kind: PostKind,
-    files?: File[]
+    files?: File[],
+    quote?: string,
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
   editPost: (post: PostView, postContent: string) => Promise<string | false>;
   createArticle: (
     title: string,
     articleContent: string,
     kind: PostKind,
-    files?: File[]
+    files?: File[],
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
   createRepost: (
     originalPostId: string,
     originalauthorId: string,
     repostContent: string,
     kind: PostKind,
-    files?: File[]
+    files?: File[],
+    quote?: string,
   ) => Promise<string | false>;
   createReply: (
     originalPostUri: string,
     replyContent: string,
     kind: PostKind,
-    files?: File[]
+    files?: File[],
+    quote?: string,
   ) => Promise<string | false>;
   follow: (user_id: string) => Promise<boolean>;
   unfollow: (user_id: string) => Promise<boolean>;
@@ -84,12 +87,12 @@ type PubkyClientContextType = {
   createTag: (
     authorId: string,
     postId: string,
-    tagContent: string
+    tagContent: string,
   ) => Promise<boolean>;
   deleteTag: (
     author_id: string,
     post_id: string,
-    tagLabel: string
+    tagLabel: string,
   ) => Promise<boolean>;
   saveFeed: (feed: ICustomFeed, name: string) => Promise<boolean>;
   deleteFeed: (feed: ICustomFeed) => Promise<boolean>;
@@ -109,14 +112,14 @@ type PubkyClientContextType = {
   setTimelineProfile: React.Dispatch<React.SetStateAction<PostView[]>>;
   deletePost: (post_id: string) => Promise<boolean>;
   deleteAccount: (
-    setProgress: React.Dispatch<React.SetStateAction<number>>
+    setProgress: React.Dispatch<React.SetStateAction<number>>,
   ) => Promise<boolean>;
   downloadData: (
-    setProgress: React.Dispatch<React.SetStateAction<number>>
+    setProgress: React.Dispatch<React.SetStateAction<number>>,
   ) => Promise<boolean>;
   importData: (
     zipFile: File,
-    setProgress: React.Dispatch<React.SetStateAction<number>>
+    setProgress: React.Dispatch<React.SetStateAction<number>>,
   ) => Promise<boolean>;
   getTimestampNotification: () => Promise<number | boolean>;
   putTimestampNotification: (timestamp: number) => Promise<boolean>;
@@ -128,7 +131,7 @@ type PubkyClientContextType = {
   saveSettings: (
     notifications: NotificationPreferences,
     privacysafety?: any,
-    language?: string
+    language?: string,
   ) => Promise<boolean>;
   setReplies: React.Dispatch<React.SetStateAction<PostView[]>>;
   replies: PostView[];
@@ -148,25 +151,25 @@ export function PubkyClientWrapper({
   const [queryClient] = useState(() => new QueryClient());
   const [wasmLoaded, setWasmLoaded] = useState(false);
   const [pubky, setPubky] = useState<string | undefined>(
-    (Utils.storage.get('pubky_public_key') as string) || undefined
+    (Utils.storage.get('pubky_public_key') as string) || undefined,
   );
   const [seed, setSeed] = useState<string | undefined>(
-    (Utils.storage.get('seed') as string | undefined) || undefined
+    (Utils.storage.get('seed') as string | undefined) || undefined,
   );
   const [mnemonic, setMnemonic] = useState<string | undefined>(
-    (Utils.storage.get('mnemonic') as string | undefined) || undefined
+    (Utils.storage.get('mnemonic') as string | undefined) || undefined,
   );
   const [profile, setProfile] = useState<PubkyAppUser | undefined>(
-    (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined
+    (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined,
   );
   const [timeline, setTimeline] = useState<TimelineState | undefined>(
-    undefined
+    undefined,
   );
   const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
   const [replies, setReplies] = useState<PostView[]>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [repliesArray, setRepliesArray] = useState<PostView[]>(
-    {} as PostView[]
+    {} as PostView[],
   );
 
   useEffect(() => {
@@ -421,7 +424,7 @@ export function PubkyClientWrapper({
   };
 
   const saveProfile = async (
-    userProfile: PubkyAppUser
+    userProfile: PubkyAppUser,
   ): Promise<any | false> => {
     try {
       await ensureLoggedIn();
@@ -518,7 +521,8 @@ export function PubkyClientWrapper({
   const createPost = async (
     postContent: string,
     kind: PostKind,
-    files?: File[]
+    files?: File[],
+    quote?: string,
   ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
     try {
       await ensureLoggedIn();
@@ -530,6 +534,12 @@ export function PubkyClientWrapper({
       const newPost: PubkyAppPost = {
         content: postContent,
         kind,
+        ...(quote && {
+          embed: {
+            uri: quote,
+            kind: 'short',
+          },
+        }),
       };
 
       // List to store URIs of uploaded files
@@ -594,7 +604,7 @@ export function PubkyClientWrapper({
     title: string,
     articleContent: string,
     kind: PostKind,
-    files?: File[]
+    files?: File[],
   ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
     try {
       await ensureLoggedIn();
@@ -780,16 +790,16 @@ export function PubkyClientWrapper({
 
           // Update progress
           setProgress(Math.round(((index + 1) / totalFiles) * 100));
-        })
+        }),
       );
 
       const now = new Date();
       const formattedDateTime = `${now.getFullYear()}-${String(
-        now.getMonth() + 1
+        now.getMonth() + 1,
       ).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(
-        now.getHours()
+        now.getHours(),
       ).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(
-        now.getSeconds()
+        now.getSeconds(),
       ).padStart(2, '0')}`;
 
       const content = await zip.generateAsync({ type: 'blob' });
@@ -812,7 +822,7 @@ export function PubkyClientWrapper({
 
   const importData = async (
     zipFile: File,
-    setProgress: React.Dispatch<React.SetStateAction<number>>
+    setProgress: React.Dispatch<React.SetStateAction<number>>,
   ) => {
     try {
       await ensureLoggedIn();
@@ -825,13 +835,13 @@ export function PubkyClientWrapper({
 
       // Extract files under 'data/' directory
       const dataFiles = files.filter((filename) =>
-        filename.startsWith('data/')
+        filename.startsWith('data/'),
       );
 
       // Separate 'profile.json' and other files
       const profileFileName = 'pub/pubky.app/profile.json';
       const otherFiles = dataFiles.filter(
-        (filename) => filename !== profileFileName
+        (filename) => filename !== profileFileName,
       );
 
       // Sort other files in reverse alphanumeric order
@@ -947,7 +957,7 @@ export function PubkyClientWrapper({
   const saveSettings = async (
     notifications: NotificationPreferences,
     privacysafety?: any,
-    language?: string
+    language?: string,
   ) => {
     try {
       await ensureLoggedIn();
@@ -989,7 +999,7 @@ export function PubkyClientWrapper({
     try {
       const [url, promise] = client.authRequest(
         DEFAULT_HTTP_RELAY,
-        capabilities
+        capabilities,
       );
       return { url: String(url), promise };
     } catch (error) {
@@ -1003,7 +1013,8 @@ export function PubkyClientWrapper({
     originalauthorId: string,
     repostContent: string,
     kind: PostKind,
-    files?: File[]
+    files?: File[],
+    quote?: string,
   ): Promise<string | false> => {
     try {
       await ensureLoggedIn();
@@ -1019,6 +1030,12 @@ export function PubkyClientWrapper({
           uri: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`,
         },
         kind,
+        ...(quote && {
+          embed: {
+            uri: quote,
+            kind: 'short',
+          },
+        }),
       };
 
       // List to store URIs of uploaded files
@@ -1082,7 +1099,8 @@ export function PubkyClientWrapper({
     originalPostUri: string,
     replyContent: string,
     kind: PostKind,
-    files?: File[]
+    files?: File[],
+    quote?: string,
   ): Promise<string | false> => {
     try {
       await ensureLoggedIn();
@@ -1092,6 +1110,12 @@ export function PubkyClientWrapper({
         content: replyContent,
         kind,
         parent: originalPostUri,
+        ...(quote && {
+          embed: {
+            uri: quote,
+            kind: 'short',
+          },
+        }),
       };
 
       const uploadedFileUris: string[] = [];
@@ -1224,7 +1248,7 @@ export function PubkyClientWrapper({
 
   const addBookmark = async (
     postId: string,
-    authorId: string
+    authorId: string,
   ): Promise<boolean> => {
     try {
       await ensureLoggedIn();
@@ -1265,7 +1289,7 @@ export function PubkyClientWrapper({
   const createTag = async (
     authorId: string,
     postId: string,
-    tagContent: string
+    tagContent: string,
   ): Promise<boolean> => {
     try {
       await ensureLoggedIn();
@@ -1298,7 +1322,7 @@ export function PubkyClientWrapper({
 
   const saveFeed = async (
     feed: ICustomFeed,
-    name: string
+    name: string,
   ): Promise<boolean> => {
     try {
       await ensureLoggedIn();
@@ -1350,12 +1374,12 @@ export function PubkyClientWrapper({
             console.error(`Error fetching feed from ${uri}:`, error);
             return null;
           }
-        })
+        }),
       );
 
       // Filter out any null entries and assert the result type
       return feedsData.filter(
-        (feed): feed is { feed: ICustomFeed; name: string } => feed !== null
+        (feed): feed is { feed: ICustomFeed; name: string } => feed !== null,
       );
     } catch (error) {
       console.error('Error loading feeds:', error);
@@ -1388,7 +1412,7 @@ export function PubkyClientWrapper({
   const deleteTag = async (
     authorId: string,
     postId: string,
-    tagLabel: string
+    tagLabel: string,
   ): Promise<boolean> => {
     try {
       await ensureLoggedIn();
@@ -1411,7 +1435,7 @@ export function PubkyClientWrapper({
 
   const createTagProfile = async (
     profileId: string,
-    tagContent: string
+    tagContent: string,
   ): Promise<boolean> => {
     try {
       await ensureLoggedIn();
@@ -1444,7 +1468,7 @@ export function PubkyClientWrapper({
 
   const deleteTagProfile = async (
     profileId: string,
-    tagLabel: string
+    tagLabel: string,
   ): Promise<boolean> => {
     try {
       await ensureLoggedIn();
