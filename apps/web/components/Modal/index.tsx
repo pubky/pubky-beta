@@ -13,6 +13,8 @@ import Feedback from './_Feedback';
 import Link from './_Link';
 import Logout from './_Logout';
 import ProfileTag from './_ProfileTag';
+import ReportPost from './_ReportPost';
+import ReportProfile from './_ReportProfile';
 import Repost from './_Repost';
 import SearchedUsersCard from './_SearchedUsersCard';
 import SearchInputCard from './_SearchInputCard';
@@ -37,6 +39,8 @@ export const Modal = {
   Link,
   Logout,
   ProfileTag,
+  ReportPost,
+  ReportProfile,
   Repost,
   SearchedUsersCard,
   SearchInputCard,

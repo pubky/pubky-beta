@@ -7,33 +7,15 @@ interface DeletePostProps {
   showModalDeletePost: boolean;
   setShowModalDeletePost: React.Dispatch<React.SetStateAction<boolean>>;
   handleDeletePost: () => void;
+  modalDeletePostRef: React.RefObject<HTMLDivElement>;
 }
 
 export default function DeletePost({
   showModalDeletePost,
   setShowModalDeletePost,
   handleDeletePost,
+  modalDeletePostRef,
 }: DeletePostProps) {
-  const modalDeletePostRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutsideModalDeletePost = (event: MouseEvent) => {
-      if (
-        modalDeletePostRef.current &&
-        !modalDeletePostRef.current.contains(event.target as Node)
-      ) {
-        setShowModalDeletePost(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModalDeletePost);
-
-    return () => {
-      document.removeEventListener(
-        'mousedown',
-        handleClickOutsideModalDeletePost
-      );
-    };
-  }, [modalDeletePostRef, setShowModalDeletePost]);
   return (
     <Modal.Root
       show={showModalDeletePost}

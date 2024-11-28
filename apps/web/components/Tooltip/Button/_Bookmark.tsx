@@ -1,0 +1,98 @@
+import { Icon, Tooltip } from '@social/ui-shared';
+import { usePubkyClientContext, useToastContext } from '@/contexts';
+import { PostView } from '@/types/Post';
+import { useUserProfile } from '@/hooks/useUser';
+
+interface BookmarkProps {
+  post: PostView;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  repost?: PostView | undefined;
+}
+
+export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
+  const { pubky, addBookmark, deleteBookmark } = usePubkyClientContext();
+  const { setContent: setContentToast, setShow: setShowToast } =
+    useToastContext();
+  const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
+
+  const handleAddBookmark = async (postId: string, uri: string) => {
+    const result = await addBookmark(postId, uri);
+    if (result) setShowMenu(false);
+  };
+
+  const handleDeleteBookmark = async (bookmarkId: string) => {
+    const result = await deleteBookmark(bookmarkId);
+    if (result) setShowMenu(false);
+  };
+
+  const handleBookmarks = (
+    repost: PostView | undefined,
+    post: PostView,
+    handleAddBookmark: (postId: string, authorId: string) => Promise<void>,
+    handleDeleteBookmark: (bookmarkId: string) => Promise<void>,
+    setContentToast: (
+      content: React.ReactNode,
+      variant?: 'bookmark' | 'pubky' | 'link'
+    ) => void,
+    setShowToast: (show: boolean) => void
+  ) => {
+    const isBookmarked = repost ? repost.bookmark?.id : post?.bookmark?.id;
+
+    if (repost) {
+      if (isBookmarked) {
+        handleDeleteBookmark(repost?.bookmark?.id ?? '');
+      } else {
+        handleAddBookmark(repost?.details?.id, repost?.details?.author);
+      }
+    } else if (post) {
+      if (isBookmarked) {
+        handleDeleteBookmark(post?.bookmark?.id ?? '');
+      } else {
+        handleAddBookmark(post?.details?.id, post?.details?.author);
+      }
+    }
+
+    if (!isBookmarked) {
+      setContentToast(
+        `This post by ${author?.details?.name} was saved to your bookmarks.`,
+        'bookmark'
+      );
+      setShowToast(true);
+    }
+  };
+
+  return (
+    <Tooltip.Item
+      id="add-bookmark"
+      icon={
+        <Icon.BookmarkSimple
+          size="24"
+          opacity={repost?.bookmark?.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
+          color={
+            repost?.bookmark?.id
+              ? 'white'
+              : post?.bookmark?.id
+              ? 'white'
+              : 'white'
+          }
+        />
+      }
+      onClick={() =>
+        handleBookmarks(
+          repost,
+          post,
+          handleAddBookmark,
+          handleDeleteBookmark,
+          setContentToast,
+          setShowToast
+        )
+      }
+    >
+      {repost?.bookmark?.id
+        ? 'Remove Bookmark'
+        : post?.bookmark?.id
+        ? 'Remove Bookmark'
+        : 'Add Bookmark'}
+    </Tooltip.Item>
+  );
+}

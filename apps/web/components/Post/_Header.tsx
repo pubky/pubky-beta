@@ -42,7 +42,10 @@ export default function Header({
     <PostUI.Header className="w-full justify-between">
       <div
         className="justify-start items-center gap-4 flex cursor-pointer"
-        onClick={() => router.push(`/profile/${author}`)}
+        onClick={(event) => {
+          event.stopPropagation();
+          router.push(`/profile/${author}`);
+        }}
       >
         <PostUI.ImageUser
           uriImage={userDetails?.image || '/images/webp/Userpic.webp'}
@@ -57,7 +60,9 @@ export default function Header({
         >
           <div className="justify-start items-start lg:items-center flex lg:flex-row flex-col lg:gap-4">
             <PostUI.Username
-              className={`${largeView ? 'text-2xl' : ''} hover:underline hover:decoration-solid`}
+              className={`${
+                largeView ? 'text-2xl' : ''
+              } hover:underline hover:decoration-solid`}
             >
               {userDetails.name && Utils.minifyText(userDetails.name, 24)}
             </PostUI.Username>

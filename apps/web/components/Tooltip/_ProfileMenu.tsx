@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Icon, Tooltip } from '@social/ui-shared';
-import { usePubkyClientContext, useToastContext } from '@/contexts';
-import { Utils } from '@social/utils-shared';
+import { Tooltip } from '@social/ui-shared';
+import { usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
-import Link from 'next/link';
+import { ButtonTooltip } from './Button';
+import Modal from '../Modal';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,56 +18,20 @@ export default function ProfileMenu({
   creatorPubky,
   profile,
 }: TooltipProfileMenuProps) {
-  const { pubky, mute, unmute } = usePubkyClientContext();
-  const { setContent, setShow } = useToastContext();
-  const [muted, setMuted] = useState(false);
-  const [loadingMuted, setLoadingMuted] = useState(false);
-  const [initLoadingMuted, setInitLoadingMuted] = useState(true);
+  const { pubky } = usePubkyClientContext();
+  const [showModalReportProfile, setShowModalReportProfile] = useState(false);
   const tooltipProfileMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (profile) {
-          setInitLoadingMuted(false);
-          if (profile?.relationship?.muted) setMuted(true);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile, creatorPubky]);
-
-  const muteUser = async () => {
-    try {
-      if (!creatorPubky) return;
-      setLoadingMuted(true);
-
-      const result = await mute(creatorPubky);
-      setMuted(result);
-      setLoadingMuted(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const unmuteUser = async () => {
-    try {
-      if (!creatorPubky) return;
-      setLoadingMuted(true);
-
-      const result = await unmute(creatorPubky);
-      setMuted(!result);
-      setLoadingMuted(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const modalReportProfileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
+      if (modalReportProfileRef.current) {
+        if (!modalReportProfileRef.current.contains(event.target as Node)) {
+          setShowModalReportProfile(false);
+        }
+        return;
+      }
+
       if (
         tooltipProfileMenuRef.current &&
         !tooltipProfileMenuRef.current.contains(event.target as Node)
@@ -80,98 +44,48 @@ export default function ProfileMenu({
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideTooltip);
     };
-  }, [tooltipProfileMenuRef, setShowProfileMenu]);
-
-  const copyToClipboard = async (pubky: string) => {
-    try {
-      await navigator.clipboard.writeText(`pk:${pubky}`);
-      setShowProfileMenu(false);
-    } catch (error) {
-      console.log('Failed to copy: ', error);
-    }
-  };
-
-  const copyProfileUrlToClipboard = async (pubky: string) => {
-    try {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/profile/${pubky}`
-      );
-      setShowProfileMenu(false);
-    } catch (error) {
-      console.log('Failed to copy: ', error);
-    }
-  };
+  }, [
+    tooltipProfileMenuRef,
+    setShowProfileMenu,
+    modalReportProfileRef,
+    setShowModalReportProfile,
+  ]);
 
   return (
-    <div ref={tooltipProfileMenuRef}>
-      <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]">
-        {pubky === creatorPubky && (
-          <Link href="/settings/edit">
-            <Tooltip.Item
-              onClick={() => {
-                setShowProfileMenu(false);
-              }}
-              icon={<Icon.Pencil size="20" />}
-            >
-              Edit profile
-            </Tooltip.Item>
-          </Link>
-        )}
-        <Tooltip.Item
-          onClick={() => {
-            setContent(`pk:${creatorPubky}`, 'pubky');
-            setShow(true);
-            copyToClipboard(creatorPubky);
-          }}
-          icon={<Icon.Key size="20" />}
-        >
-          Copy user pubky
-        </Tooltip.Item>
-        <Tooltip.Item
-          onClick={() => {
-            setContent(`${window.location.origin}/profile/${pubky}`, 'link');
-            setShow(true);
-            copyProfileUrlToClipboard(creatorPubky);
-          }}
-          icon={<Icon.Link size="20" />}
-        >
-          Copy profile link
-        </Tooltip.Item>
-        {pubky !== creatorPubky ? (
-          initLoadingMuted ? (
-            <Tooltip.Item
-              loading={initLoadingMuted}
-              icon={<Icon.LoadingSpin size="20" />}
-            >
-              Loading...
-            </Tooltip.Item>
-          ) : muted ? (
-            <Tooltip.Item
-              loading={loadingMuted}
-              onClick={loadingMuted ? undefined : () => unmuteUser()}
-              icon={<Icon.SpeakerSimpleSlash size="20" />}
-            >
-              Unmute{' '}
-              {profile
-                ? Utils.minifyText(profile?.details?.name, 10)
-                : Utils.minifyPubky(creatorPubky)}
-            </Tooltip.Item>
-          ) : (
-            <Tooltip.Item
-              loading={loadingMuted}
-              onClick={loadingMuted ? undefined : () => muteUser()}
-              icon={<Icon.SpeakerHigh size="20" />}
-            >
-              Mute{' '}
-              {profile
-                ? Utils.minifyText(profile?.details?.name, 10)
-                : Utils.minifyPubky(creatorPubky)}
-            </Tooltip.Item>
-          )
-        ) : (
-          ''
-        )}
-      </Tooltip.Main>
-    </div>
+    <>
+      <div ref={tooltipProfileMenuRef}>
+        <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px]">
+          {creatorPubky !== pubky && (
+            <ButtonTooltip.Follow
+              pk={creatorPubky}
+              setShowMenu={setShowProfileMenu}
+            />
+          )}
+          {pubky === creatorPubky && (
+            <ButtonTooltip.EditProfile setShowMenu={setShowProfileMenu} />
+          )}
+          <ButtonTooltip.CopyUserPubky
+            pk={creatorPubky}
+            setShowMenu={setShowProfileMenu}
+          />
+          <ButtonTooltip.CopyLinkProfile creatorPubky={creatorPubky} />
+          {pubky !== creatorPubky && <ButtonTooltip.Mute pk={creatorPubky} />}
+          {pubky !== creatorPubky && (
+            <ButtonTooltip.ReportProfile
+              setShowModal={setShowModalReportProfile}
+            />
+          )}
+        </Tooltip.Main>
+      </div>
+      {showModalReportProfile && (
+        <Modal.ReportProfile
+          showModal={showModalReportProfile}
+          setShowModal={setShowModalReportProfile}
+          modalReportPostRef={modalReportProfileRef}
+          pk={creatorPubky}
+          name={profile?.details?.name}
+        />
+      )}
+    </>
   );
 }
