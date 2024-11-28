@@ -26,8 +26,15 @@ export async function getStreamPosts(
     queryParams.append('author_id', authorId);
   }
 
-  if (source) {
-    queryParams.append('source', source);
+  const validatedSource = validateSourceParams(source, {
+    authorId,
+    postId: '',
+  });
+
+  if (validatedSource) {
+    queryParams.append('source', validatedSource);
+  } else {
+    queryParams.append('source', 'all');
   }
 
   if (viewerId) {
@@ -56,7 +63,7 @@ export async function getStreamPosts(
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
   }
-  console.log(`${BASE_URL}/stream/posts?${queryParams.toString()}`);
+
   const response = await fetch(
     `${BASE_URL}/stream/posts?${queryParams.toString()}`,
   );
@@ -123,6 +130,8 @@ export async function getUserStream(
     queryParams.append('limit', String(limit));
   }
   queryParams.append('source', String(source));
+
+  console.log('query', `${BASE_URL}/stream/users?${queryParams}`);
 
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 

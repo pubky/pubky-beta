@@ -25,6 +25,8 @@ export type TSourceUser =
   | 'followers'
   | 'recommended'
   | 'muted'
+  | 'pioneers'
+  | 'most_followed'
   | 'all';
 export type TLanguage = 'english' | 'spanish' | 'german' | 'french' | 'italian';
 export type TSort = 'recent' | 'popularity';

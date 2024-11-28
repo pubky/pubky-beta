@@ -56,7 +56,14 @@ export function useStreamUsers(
   limit?: number,
 ) {
   return useQuery({
-    queryKey: ['streamUsers', userId, viewerId, source, skip, limit],
+    queryKey: [
+      source ? `${source}-streamUser` : 'streamUser',
+      userId,
+      viewerId,
+      source,
+      skip,
+      limit,
+    ],
     queryFn: () => getUserStream(userId, viewerId, source, skip, limit),
     retry: false,
   });

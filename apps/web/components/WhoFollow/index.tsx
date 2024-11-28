@@ -9,15 +9,12 @@ import { useStreamUsers } from '@/hooks/useStream';
 
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { data, isLoading, isError } = useStreamUsers(
-    pubky ?? '',
-    pubky ?? '',
-    'recommended',
-    0,
-    3,
-  );
+  const {
+    data: recommendedProfiles,
+    isLoading,
+    isError,
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'most_followed', 0, 3);
 
-  const recommendedProfiles = data;
   const [loading, setLoading] = useState<{
     [pubky: string]: boolean;
   }>({});

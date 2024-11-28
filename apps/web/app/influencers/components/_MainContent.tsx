@@ -16,7 +16,7 @@ export default function MainContent() {
     data: influencers,
     isLoading,
     isError,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended');
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
   if (isError) console.error(isError);
 
   const [loadingInfluencers, setLoadingInfluencers] =
