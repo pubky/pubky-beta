@@ -24,9 +24,7 @@ export default function SearchInputCard({
   const { data } = useStreamSearchUsersByUsername(inputValue ?? '', pubky);
   const searchedUsers = data ? data : [];
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  if (refCard?.current) {
-    refCard.current.focus();
-  }
+  const [isMouseInside, setIsMouseInside] = useState(false);
 
   const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
@@ -41,7 +39,7 @@ export default function SearchInputCard({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (searchedUsers.length === 0) return;
+    if (!isMouseInside || searchedUsers.length === 0) return;
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -76,6 +74,11 @@ export default function SearchInputCard({
       background="bg-[#05050A] border border-t-0 border-white border-opacity-20 z-10"
       onKeyDown={handleKeyDown}
       tabIndex={0}
+      onMouseEnter={() => {
+        setIsMouseInside(true);
+        refCard?.current?.focus();
+      }}
+      onMouseLeave={() => setIsMouseInside(false)}
     >
       {inputValue !== '' && searchedUsers && searchedUsers.length > 0 ? (
         <div className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col">
@@ -95,8 +98,7 @@ export default function SearchInputCard({
               uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
               username={Utils.minifyText(user?.details?.name, 20)}
               label={Utils.minifyPubky(user?.details?.id)}
-              className={`p-2 rounded-2xl ${selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'
-                }`}
+              className={`p-2 rounded-2xl ${selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'}`}
               onMouseEnter={() => setSelectedIndex(index)}
             />
           ))}
