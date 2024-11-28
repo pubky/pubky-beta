@@ -28,6 +28,7 @@ export async function getStreamPosts(
 
   const validatedSource = validateSourceParams(source, {
     authorId,
+    viewerId,
     postId: '',
   });
 
@@ -130,8 +131,6 @@ export async function getUserStream(
     queryParams.append('limit', String(limit));
   }
   queryParams.append('source', String(source));
-
-  console.log('query', `${BASE_URL}/stream/users?${queryParams}`);
 
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 
