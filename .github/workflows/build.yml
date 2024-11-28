@@ -36,7 +36,6 @@ jobs:
           echo "BASE_URL_SUPPORT=$BASE_URL_SUPPORT" >> .env
           echo "SUPPORT_API_ACCESS_TOKEN=$SUPPORT_API_ACCESS_TOKEN" >> .env
           echo "SUPPORT_ACCOUNT_ID=$SUPPORT_ACCOUNT_ID" >> .env
-          cat .env  # Debug to ensure values are being set
 
       - name: Install dependencies
         run: npm install --omit=dev
