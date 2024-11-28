@@ -10,6 +10,9 @@ const getTitle = (titleHeader: React.ReactNode) => {
   if (titleHeader === 'Feed') {
     return null;
   }
+  if (titleHeader === 'WhoToFollow') {
+    return 'Who\u00A0To\u00A0Follow';
+  }
   return titleHeader;
 };
 
