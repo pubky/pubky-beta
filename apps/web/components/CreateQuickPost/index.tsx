@@ -80,7 +80,7 @@ export default function CreateQuickPost({
           bookmark: undefined,
         };
 
-        if (!timeline) return;
+        //if (!timeline) return;
 
         const timelineCopy = {
           ...timeline,

@@ -14,7 +14,7 @@ import Link from 'next/link';
 interface RepostedPostProps {
   repostedPost?: PostView;
   loadingRepostedPost: boolean;
-  largeView: boolean;
+  largeView?: boolean;
   fullContent: boolean;
   line?: boolean;
   lineStyle?: string;
@@ -59,32 +59,35 @@ export default function RepostedPost({
         event.stopPropagation();
       }}
     >
-      <PostUI.MainCard className="mt-4">
-        <Header post={repostedPost} largeView={largeView} />
-        {line && <div className={twMerge(lineBaseCSS, lineStyle)} />}
+      <PostUI.MainCard className={restClassName}>
         <div>
-          <Content
-            post={repostedPost}
-            fullContent={fullContent}
-            largeView={largeView}
-          />
-        </div>
-        <div
-          className={`flex flex-col md:flex-row ${
-            largeView ? 'gap-2' : 'justify-between'
-          }`}
-        >
-          {!repostView && (
-            <Tags
-              showModalTag={showModalTag}
-              setShowModalTag={setShowModalTag}
-              largeView={largeView}
+          <Header post={repostedPost} largeView={largeView} />
+          {line && <div className={twMerge(lineBaseCSS, lineStyle)} />}
+          <div>
+            <Content
               post={repostedPost}
+              fullContent={fullContent}
+              largeView={largeView}
             />
-          )}
-          {!repostView && (
-            <Actions setShowModalTag={setShowModalTag} post={repostedPost} />
-          )}
+          </div>
+
+          <div
+            className={`flex flex-col md:flex-row ${
+              largeView ? 'gap-2' : 'justify-between'
+            }`}
+          >
+            {!repostView && (
+              <Tags
+                showModalTag={showModalTag}
+                setShowModalTag={setShowModalTag}
+                largeView={largeView}
+                post={repostedPost}
+              />
+            )}
+            {!repostView && (
+              <Actions setShowModalTag={setShowModalTag} post={repostedPost} />
+            )}
+          </div>
         </div>
         {largeView && <TagsLargeView post={repostedPost} />}
       </PostUI.MainCard>

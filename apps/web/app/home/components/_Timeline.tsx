@@ -7,6 +7,7 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
 import { Post, Skeleton } from '@/components';
+import { PostReplies } from './_PostReplies';
 
 export const Timeline = () => {
   const limit = 10;
@@ -65,8 +66,16 @@ export const Timeline = () => {
       {timeline.map(
         (post) =>
           post?.details?.content !== '[DELETED]' && (
-            <div key={post.details.id} className="flex gap-2 items-center">
+            <div key={post.details.id} className="flex flex-col">
               <Post key={`post-${post.details.id}`} post={post} />
+              {post?.counts?.replies > 0 && (
+                <PostReplies
+                  isMobile={false}
+                  homeView
+                  post={post}
+                  layout="columns"
+                />
+              )}
             </div>
           ),
       )}

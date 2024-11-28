@@ -43,7 +43,7 @@ export default function PostRoot({
       post?.details?.uri,
       content,
       'short',
-      selectedFiles
+      selectedFiles,
     );
 
     const hashtags = Utils.extractHashtags(content);
@@ -110,7 +110,11 @@ export default function PostRoot({
           }
           textArea={textArea}
         />
-        <Replies postId={post.details.id} pubkyAuthor={post.details.author} />
+        <Replies
+          postId={post.details.id}
+          pubkyAuthor={post.details.author}
+          postCountReplies={post?.counts?.replies}
+        />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}
