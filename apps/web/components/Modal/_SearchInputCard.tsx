@@ -24,9 +24,8 @@ export default function SearchInputCard({
   const { data } = useStreamSearchUsersByUsername(inputValue ?? '', pubky);
   const searchedUsers = data ? data : [];
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  if (cardRef.current) {
-    cardRef.current.focus();
+  if (refCard?.current) {
+    refCard.current.focus();
   }
 
   const handleTagSearch = (tag: string) => {
@@ -69,7 +68,7 @@ export default function SearchInputCard({
   return (
     <Card.Primary
       {...rest}
-      refCard={cardRef}
+      refCard={refCard}
       className={twMerge(
         'outline-none absolute top-12 rounded-b-2xl rounded-t-none p-6 pt-2',
         rest.className,
@@ -96,10 +95,9 @@ export default function SearchInputCard({
               uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
               username={Utils.minifyText(user?.details?.name, 20)}
               label={Utils.minifyPubky(user?.details?.id)}
-              className={`p-2 rounded-2xl ${
-                selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'
-              }`}
-              onMouseEnter={() => setSelectedIndex(index)} // Aggiorna il selectedIndex al passaggio del mouse
+              className={`p-2 rounded-2xl ${selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'
+                }`}
+              onMouseEnter={() => setSelectedIndex(index)}
             />
           ))}
         </div>
