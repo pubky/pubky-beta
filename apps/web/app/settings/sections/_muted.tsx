@@ -3,7 +3,7 @@
 import { ImageByUri } from '@/components/ImageByUri';
 import Skeletons from '@/components/Skeletons';
 import { usePubkyClientContext } from '@/contexts';
-import { UseUserStreamMuted } from '@/hooks/useUser';
+import { useStreamUsers } from '@/hooks/useStream';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
@@ -19,7 +19,7 @@ export default function MutedUsers() {
     data: mutedUsers,
     isLoading,
     isError,
-  } = UseUserStreamMuted(pubky ?? '', pubky ?? '');
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'muted');
   if (isError) console.error(isError);
 
   const [loadingMutedUsers, setLoadingMutedUsers] = useState<LoadingMutedUsers>(

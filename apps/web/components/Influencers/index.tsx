@@ -3,9 +3,9 @@
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
-import { useInfluencersUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
+import { useStreamUsers } from '@/hooks/useStream';
 
 export default function Influencers() {
   const { pubky } = usePubkyClientContext();
@@ -13,7 +13,7 @@ export default function Influencers() {
     data: influencers,
     isLoading,
     isError,
-  } = useInfluencersUsers(pubky ?? '', pubky, 0, 3);
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers', 0, 3);
 
   if (isError) console.error(isError);
 

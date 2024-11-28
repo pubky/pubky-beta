@@ -3,20 +3,18 @@
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
-import { useMostFollowedUsers } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
+import { useStreamUsers } from '@/hooks/useStream';
 
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { data, isLoading, isError } = useMostFollowedUsers(
-    pubky ?? '',
-    pubky,
-    0,
-    3
-  );
+  const {
+    data: recommendedProfiles,
+    isLoading,
+    isError,
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'most_followed', 0, 3);
 
-  const recommendedProfiles = data;
   const [loading, setLoading] = useState<{
     [pubky: string]: boolean;
   }>({});
@@ -33,7 +31,7 @@ export default function WhoFollow() {
           acc[profile.details.id] = profile.relationship?.following || false;
           return acc;
         },
-        {} as { [pubky: string]: boolean }
+        {} as { [pubky: string]: boolean },
       );
       setFollowedUser(initialFollowedState);
     }
@@ -113,7 +111,7 @@ export default function WhoFollow() {
                     }
                     username={Utils.minifyText(
                       recommendedProfile?.details?.name,
-                      11
+                      11,
                     )}
                     label={Utils.minifyPubky(recommendedProfile?.details?.id)}
                   >

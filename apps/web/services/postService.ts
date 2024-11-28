@@ -3,19 +3,28 @@ import { PostView, PostCounts, PostDetails, Bookmark } from '../types/Post';
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 
+// Get post
 export async function getPost(
   authorId: string,
   postId: string,
   viewerId?: string,
+  maxTags?: number,
+  maxTaggers?: number
 ): Promise<PostView> {
   const queryParams = new URLSearchParams();
 
   if (viewerId) {
     queryParams.append('viewer_id', viewerId);
   }
+  if (maxTags) {
+    queryParams.append('skip', String(maxTags));
+  }
+  if (maxTaggers) {
+    queryParams.append('max_taggers', String(maxTaggers));
+  }
 
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}?${queryParams.toString()}`,
+    `${BASE_URL}/post/${authorId}/${postId}?${queryParams}`
   );
 
   if (!response.ok) throw new Error('Failed to fetch post');
@@ -23,22 +32,31 @@ export async function getPost(
   return response.json();
 }
 
-export async function getPostDetails(
+// Get post bookmark
+export async function getPostBookmark(
   authorId: string,
   postId: string,
-): Promise<PostDetails> {
+  viewerId?: string
+): Promise<Bookmark> {
+  const queryParams = new URLSearchParams();
+
+  if (viewerId) {
+    queryParams.append('viewer_id', viewerId);
+  }
+
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}/details`,
+    `${BASE_URL}/post/${authorId}/${postId}/bookmark?${queryParams}`
   );
 
-  if (!response.ok) throw new Error('Failed to fetch post details');
+  if (!response.ok) throw new Error('Failed to fetch post bookmark');
 
   return response.json();
 }
 
+// Get post counts
 export async function getPostCounts(
   authorId: string,
-  postId: string,
+  postId: string
 ): Promise<PostCounts> {
   const response = await fetch(`${BASE_URL}/post/${authorId}/${postId}/counts`);
 
@@ -47,111 +65,21 @@ export async function getPostCounts(
   return response.json();
 }
 
-export async function getPostBookmark(
+// Get post details
+export async function getPostDetails(
   authorId: string,
-  postId: string,
-): Promise<Bookmark> {
+  postId: string
+): Promise<PostDetails> {
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}/bookmark`,
+    `${BASE_URL}/post/${authorId}/${postId}/details`
   );
 
-  if (!response.ok) throw new Error('Failed to fetch post bookmark');
+  if (!response.ok) throw new Error('Failed to fetch post details');
 
   return response.json();
 }
 
-export async function getPostStream(
-  viewerId?: string,
-  skip?: number,
-  limit?: number,
-  reach?: 'following' | 'friends' | 'followers' | 'all',
-  sort?: 'recent' | 'popularity',
-  tags?: string[],
-): Promise<PostView[]> {
-  const queryParams = new URLSearchParams();
-
-  if (viewerId) {
-    queryParams.append('viewer_id', viewerId);
-    queryParams.append('observer_id', viewerId);
-  }
-  if (skip !== undefined) {
-    queryParams.append('skip', String(skip));
-  }
-  if (limit !== undefined) {
-    queryParams.append('limit', String(limit));
-  }
-  if (reach) {
-    queryParams.append('source', String(reach));
-  }
-  if (sort) {
-    if (sort === 'recent') queryParams.append('sorting', String('timeline'));
-    else if (sort === 'popularity')
-      queryParams.append('sorting', String('total_engagement'));
-  }
-  if (tags) {
-    queryParams.append('tags', String(tags));
-  }
-
-  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams}`);
-
-  if (!response.ok) throw new Error('Failed to fetch post stream');
-
-  return response.json();
-}
-
-export async function getStreamPosts(
-  source: string,
-  userId: string,
-  viewerId?: string,
-  limit = 10,
-  start?: number,
-  end?: number,
-  skip?: number | undefined,
-  sort?: 'recent' | 'popularity' | undefined,
-  tags?: string[],
-): Promise<PostView[]> {
-  const queryParams = new URLSearchParams({
-    author_id: userId,
-    source: source,
-    limit: String(limit),
-  });
-
-  if (viewerId) {
-    queryParams.append('viewer_id', viewerId);
-    queryParams.append('observer_id', viewerId);
-  }
-
-  if (sort) {
-    if (sort === 'recent') queryParams.append('sorting', String('timeline'));
-    else if (sort === 'popularity')
-      queryParams.append('sorting', String('total_engagement'));
-  }
-
-  if (tags) {
-    queryParams.append('tags', String(tags));
-  }
-
-  if (start !== undefined) {
-    queryParams.append('start', String(start));
-  }
-
-  if (end !== undefined) {
-    queryParams.append('end', String(end));
-  }
-
-  if (skip !== undefined) {
-    queryParams.append('skip', String(skip));
-  }
-
-  const response = await fetch(
-    `${BASE_URL}/stream/posts?${queryParams.toString()}`,
-  );
-
-  if (!response.ok) throw new Error('Failed to fetch post stream by user');
-
-  return response.json();
-}
-
+// Get post replies
 export async function getPostReplies(
   authorId: string,
   postId: string,
@@ -159,7 +87,7 @@ export async function getPostReplies(
   limit = 10,
   start?: number,
   end?: number,
-  skip?: number,
+  skip?: number
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams({
     author_id: authorId,
@@ -191,4 +119,42 @@ export async function getPostReplies(
 
   const data: PostView[] = await response.json();
   return data;
+}
+
+// Get post by taggers
+export async function getPostByTaggers(
+  authorId: string,
+  postId: string,
+  label: string,
+  skip?: number,
+  limit?: number
+): Promise<string[]> {
+  const queryParams = new URLSearchParams();
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/post/${authorId}/${postId}/taggers/${label}?${queryParams}`
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch post by taggers');
+
+  return response.json();
+}
+
+// Get post by tags
+export async function getPostByTags(
+  authorId: string,
+  postId: string
+): Promise<string[]> {
+  const response = await fetch(`${BASE_URL}/post/${authorId}/${postId}/tags`);
+
+  if (!response.ok) throw new Error('Failed to fetch post by taggers');
+
+  return response.json();
 }

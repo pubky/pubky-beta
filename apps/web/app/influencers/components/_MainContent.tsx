@@ -2,9 +2,9 @@
 
 import Skeletons from '@/components/Skeletons';
 import { usePubkyClientContext } from '@/contexts';
-import { useInfluencersUsers } from '@/hooks/useUser';
 import { useEffect, useState } from 'react';
 import { Influencers } from '.';
+import { useStreamUsers } from '@/hooks/useStream';
 
 export interface LoadingInfluencers {
   [pubky: string]: boolean;
@@ -16,7 +16,7 @@ export default function MainContent() {
     data: influencers,
     isLoading,
     isError,
-  } = useInfluencersUsers(pubky ?? '', pubky);
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
   if (isError) console.error(isError);
 
   const [loadingInfluencers, setLoadingInfluencers] =
@@ -25,10 +25,13 @@ export default function MainContent() {
 
   useEffect(() => {
     if (influencers) {
-      const initialFollowedState = influencers.reduce((acc, profile) => {
-        acc[profile.details.id] = profile.relationship?.following || false;
-        return acc;
-      }, {} as { [pubky: string]: boolean });
+      const initialFollowedState = influencers.reduce(
+        (acc, profile) => {
+          acc[profile.details.id] = profile.relationship?.following || false;
+          return acc;
+        },
+        {} as { [pubky: string]: boolean },
+      );
       setFollowed(initialFollowedState);
     }
   }, [influencers]);

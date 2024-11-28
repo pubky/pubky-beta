@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
-import { useStreamPost } from '@/hooks/usePost';
 import { usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
+import { useStreamPost } from '@/hooks/useStream';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const { pubky } = usePubkyClientContext();
@@ -14,10 +14,11 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const limit = 10;
   const [start, setStart] = useState<number | undefined>(undefined);
+
   const { data, isLoading } = useStreamPost(
+    creatorPubky ?? pubky ?? '',
     'author',
     creatorPubky ?? pubky ?? '',
-    pubky,
     limit,
     start,
   );

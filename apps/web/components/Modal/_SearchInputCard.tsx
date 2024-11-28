@@ -3,9 +3,9 @@ import { Card, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { useUsernameSearch } from '@/hooks/useUser';
 import { useHotTags } from '@/hooks/useTag';
 import Link from 'next/link';
+import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -20,7 +20,7 @@ export default function SearchInputCard({
   const router = useRouter();
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
   const { data: hotTags, isLoading } = useHotTags(0, 10);
-  const { data } = useUsernameSearch(inputValue ?? '', pubky);
+  const { data } = useStreamSearchUsersByUsername(inputValue ?? '', pubky);
   const searchedUsers = data ? data : [];
 
   const handleTagSearch = (tag: string) => {

@@ -10,6 +10,24 @@ export type TStatus =
   | 'noStatus';
 export type TSize = 'full' | 'normal';
 export type TReach = 'following' | 'friends' | 'followers' | 'all';
+export type TSource =
+  | 'following'
+  | 'friends'
+  | 'followers'
+  | 'bookmarks'
+  | 'post_replies'
+  | 'author'
+  | 'author_replies'
+  | 'all';
+export type TSourceUser =
+  | 'following'
+  | 'friends'
+  | 'followers'
+  | 'recommended'
+  | 'muted'
+  | 'pioneers'
+  | 'most_followed'
+  | 'all';
 export type TLanguage = 'english' | 'spanish' | 'german' | 'french' | 'italian';
 export type TSort = 'recent' | 'popularity';
 export type THotTagsReach = 'following' | 'followers' | 'friends' | 'all';
@@ -36,13 +54,13 @@ export interface TClientContext {
   createRepost: (
     uri: string,
     content?: string,
-    file?: File[]
+    file?: File[],
   ) => Promise<IPost | null>;
   createReply: (
     content: string,
     uriPost: string,
     rootUri: string,
-    file?: File[]
+    file?: File[],
   ) => Promise<ICreateReplyResponse | null>;
   getFile: (uri: string) => Promise<IFileContent | null>;
   deleteFile: (id: string) => Promise<boolean>;
@@ -52,7 +70,7 @@ export interface TClientContext {
   deleteBookmark: (
     id: string,
     uri: string,
-    bookmarkId: string
+    bookmarkId: string,
   ) => Promise<IBookmark | null>;
   createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
   deleteTag: (uri: string, tag: string) => Promise<IDeleteTagResponse | null>;
@@ -62,7 +80,7 @@ export interface TClientContext {
   listUserFeed: (
     pubky: string,
     cursor: string,
-    limit?: number
+    limit?: number,
   ) => Promise<IFeed | null>;
   listBookmarkedPosts: (cursor: string, sort: TSort) => Promise<IFeed | null>;
   listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
@@ -70,19 +88,19 @@ export interface TClientContext {
   getMostFollowed: () => Promise<IMostFollowed[] | null>;
   getNotifications: () => Promise<NotificationsResponse | null>;
   getRecommendedProfiles: (
-    pk: string
+    pk: string,
   ) => Promise<IRecommendedProfiles[] | null>;
   listGlobalPosts: (
     cursor: string,
     reach: TReach,
     sort: TSort,
-    tags?: string[]
+    tags?: string[],
   ) => Promise<IFeed | null>;
   getPost: (uri: string) => Promise<IPost | null>;
   getUser: (pk: string) => Promise<IUserProfile | null>;
   decryptRecoveryFile: (
     password: string,
-    recoveryFile: Buffer
+    recoveryFile: Buffer,
   ) => Promise<IProfile | undefined>;
   searchTags: string[];
   updateStatus: (value: TStatus | string) => Promise<void>;
@@ -194,7 +212,7 @@ export interface IPostContent {
 export interface ICustomFeed {
   tags?: string[];
   sort: TSort;
-  reach: TReach;
+  reach: TSource;
   layout: TLayouts;
   content: TContent;
 }

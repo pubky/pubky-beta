@@ -6,8 +6,8 @@ import { Section } from '../CreateContent/Section';
 import LinkPreviewer from '../LinkPreview';
 import { UserView } from '@/types/User';
 import Modal from '.';
-import { searchUsersByUsername } from '@/services/userService';
 import Image from 'next/image';
+import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 
 interface CreateArticleProps {
   showModalArticle: boolean;
@@ -40,7 +40,7 @@ export default function CreateArticle({
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [placeholder, setPlaceholder] = useState('');
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null
+    null,
   );
   //const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
@@ -76,7 +76,7 @@ export default function CreateArticle({
         contentTitle,
         content,
         'long',
-        selectedFile
+        selectedFile,
       );
       const match = newArticle && newArticle?.uri.match(regex);
 
@@ -155,7 +155,7 @@ export default function CreateArticle({
 
   const searchProfiles = async (text: string) => {
     try {
-      const result = await searchUsersByUsername(text);
+      const result = useStreamSearchUsersByUsername(text);
       return result || [];
     } catch (error) {
       console.error('Error searching profiles:', error);
@@ -195,11 +195,8 @@ export default function CreateArticle({
     for (const query of searchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const searchResult = await searchUsersByUsername(username);
-        results = [...results, ...(searchResult || [])];
-      } else if (query.startsWith('pk:')) {
-        const searchResult = await searchProfiles(query);
-        results = [...results, ...(searchResult || [])];
+        const searchResult = useStreamSearchUsersByUsername(username);
+        results = [...results, ...(searchResult.data || [])];
       }
     }
     setSearchedUsers(results.length > 0 ? results : []);

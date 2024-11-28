@@ -38,7 +38,7 @@ export function MainContent({
         loadingFeed={loadingFeed}
         largeView={layout === 'wide'}
       />
-      <Timeline selectedFeed={selectedFeed} loadingFeed={loadingFeed} />
+      <Timeline />
     </Components.PostsLayout>
   );
 }

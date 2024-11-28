@@ -1,160 +1,87 @@
 'use client';
 
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Typography } from '@social/ui-shared';
-import * as Components from '@/components';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { usePostStream } from '@/hooks/usePost';
-import { UseUserMuted } from '@/hooks/useUser';
-import { ICustomFeed } from '@/types';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { PostReplies } from './_PostReplies';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { useStreamPost } from '@/hooks/useStream';
+import { PostView } from '@/types/Post';
+import { Post, Skeleton } from '@/components';
 
-// Types
-interface TimelineProps {
-  selectedFeed: ICustomFeed | undefined;
-  loadingFeed: boolean;
-}
-
-// Helper components
-const EmptyTimeline = () => (
-  <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-    <Typography.H2 className="font-normal text-opacity-50">
-      No posts
-    </Typography.H2>
-  </div>
-);
-
-const LoadingSkeleton = () => (
-  <div className="mt-4">
-    <Components.Skeleton.Simple />
-  </div>
-);
-
-const TimelinePost = ({ post, isMobile, layout, selectedFeed }) => (
-  <div>
-    <Components.Post
-      post={post}
-      largeView={!isMobile && layout === 'wide'}
-      line={!selectedFeed?.tags && Boolean(post?.relationships?.replied)}
-    />
-    {post?.counts?.replies > 0 && (
-      <PostReplies isMobile={isMobile} homeView post={post} layout={layout} />
-    )}
-  </div>
-);
-
-// Custom hook to manage filters
-const useTimelineFilters = (selectedFeed) => {
-  const { reach, layout, sort, setReach, setLayout, setSort } =
-    useFilterContext();
-  const [tagsFeed, setTagsFeed] = useState<string[]>();
-
-  useEffect(() => {
-    if (selectedFeed) {
-      setReach(selectedFeed.reach);
-      setLayout(selectedFeed.layout);
-      setSort(selectedFeed.sort);
-      if (selectedFeed?.tags?.length > 0) {
-        setTagsFeed(selectedFeed.tags);
-      }
-    } else {
-      setReach('all');
-      setLayout('columns');
-      setSort('recent');
-      setTagsFeed(undefined);
-    }
-  }, [selectedFeed]);
-
-  return { reach, layout, sort, tagsFeed };
-};
-
-const useTimelinePosts = (pubky, skip, limit, reach, sort, tagsFeed) => {
-  const { timeline, setTimeline } = usePubkyClientContext();
-  const { data, isLoading, isError } = usePostStream(
-    pubky,
-    skip,
-    limit,
-    reach,
-    sort,
-    tagsFeed && tagsFeed?.length > 0 ? tagsFeed : undefined
-  );
-
-  useEffect(() => {
-    if (!isLoading && data) {
-      if (skip === 0) {
-        const timelineObj = data.reduce((acc, post) => {
-          acc[post.details.id] = post;
-          return acc;
-        }, {});
-        setTimeline(timelineObj);
-        return;
-      }
-      if (!timeline) return;
-
-      const newPosts = data.reduce(
-        (acc, post) => {
-          acc[post.details.id] = post;
-          return acc;
-        },
-        { ...timeline }
-      );
-      setTimeline(newPosts);
-    }
-  }, [data, isLoading, reach]);
-
-  return { timeline, isLoading, isError };
-};
-
-export const Timeline = ({ selectedFeed, loadingFeed }: TimelineProps) => {
+export const Timeline = () => {
   const limit = 10;
-  const isMobile = useIsMobile();
-  const [skip, setSkip] = useState(0);
   const { pubky } = usePubkyClientContext();
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
+  const [timeline, setTimeline] = useState<PostView[]>([]);
+  const [start, setStart] = useState<number | undefined>(undefined);
 
-  const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
-  const { timeline, isLoading, isError } = useTimelinePosts(
-    pubky,
-    skip,
-    limit,
+  const { reach } = useFilterContext();
+
+  const { data, isLoading } = useStreamPost(
+    pubky ?? '',
     reach,
-    sort,
-    tagsFeed
+    'all',
+    limit,
+    start,
   );
 
-  const fetchMorePosts = () => {
-    if (isError) return;
-    setSkip(skip + limit);
+  const fetchPosts = async () => {
+    try {
+      if (!data) return;
+      const lastPost = data[data.length - 1];
+      if (lastPost.details?.indexed_at) {
+        // TODO: filter by muted users
+
+        setStart(lastPost.details.indexed_at - 1);
+        setTimeline((prev) => {
+          const newPosts = data.filter(
+            (post) => !prev.some((p) => p.details.id === post.details.id),
+          );
+          return [...prev, ...newPosts];
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const loader = useInfiniteScroll(fetchMorePosts, isLoading);
+  const loader = useInfiniteScroll(fetchPosts, isLoading);
 
-  const filteredPosts = timeline
-    ? Object.values(timeline).filter(
-        (post) => !mutedUsers?.includes(post?.details?.author)
-      )
-    : [];
+  useEffect(() => {
+    setTimeline([]);
+
+    return () => {
+      setTimeline([]);
+    };
+  }, [setTimeline]);
+
+  useEffect(() => {
+    setStart(undefined);
+    setTimeline([]);
+    fetchPosts();
+  }, [reach]);
 
   return (
-    <div className="flex-col inline-flex gap-3">
-      {timeline && Object.keys(timeline).length > 0
-        ? filteredPosts.map((post) => (
-            <Fragment key={post.details.id}>
-              {post?.details?.content !== '[DELETED]' && (
-                <TimelinePost
-                  post={post}
-                  isMobile={isMobile}
-                  layout={layout}
-                  selectedFeed={selectedFeed}
-                />
-              )}
-            </Fragment>
-          ))
-        : !isLoading && <EmptyTimeline />}
-
-      {((isLoading && !isError) || loadingFeed) && <LoadingSkeleton />}
+    <div className="flex flex-col gap-3">
+      {timeline.map(
+        (post) =>
+          post?.details?.content !== '[DELETED]' && (
+            <div key={post.details.id} className="flex gap-2 items-center">
+              <Post key={`post-${post.details.id}`} post={post} />
+            </div>
+          ),
+      )}
+      {isLoading && (
+        <div className="flex flex-col gap-3">
+          <Skeleton.Simple />
+        </div>
+      )}
+      {timeline.length === 0 && !isLoading && (
+        <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+          <Typography.H2 className="font-normal text-opacity-50">
+            No posts yet.
+          </Typography.H2>
+        </div>
+      )}
       <div ref={loader} />
     </div>
   );
