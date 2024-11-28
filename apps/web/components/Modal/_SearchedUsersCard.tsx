@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
@@ -17,6 +17,8 @@ export default function SearchedUsersCard({
 }: SearchedUsersCardProps) {
   const { pubky } = usePubkyClientContext();
   const [userProfiles, setUserProfiles] = useState<UserView[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchProfiles() {
@@ -33,17 +35,54 @@ export default function SearchedUsersCard({
     fetchProfiles();
   }, [searchedUsers, pubky]);
 
+  useEffect(() => {
+    if (cardRef.current) {
+      cardRef.current.focus();
+    }
+  }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (userProfiles.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex((prevIndex) =>
+        prevIndex === null || prevIndex === userProfiles.length - 1
+          ? 0
+          : prevIndex + 1,
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex((prevIndex) =>
+        prevIndex === null || prevIndex === 0
+          ? userProfiles.length - 1
+          : prevIndex - 1,
+      );
+    } else if (e.key === 'Enter' && selectedIndex !== null) {
+      const selectedUser = searchedUsers[selectedIndex];
+      if (selectedUser) handleUserClick(selectedUser.details.id);
+    }
+  };
+
   return (
     <div
       id="searched-users-card"
-      className="md:w-[300px] max-w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 p-4 flex flex-col gap-2 absolute bg-gradient-to-t from-[#07040a] to-[#1b1820]"
+      ref={cardRef}
+      className="md:w-[300px] max-w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 flex flex-col absolute bg-gradient-to-t p-2 from-[#07040a] to-[#1b1820]"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
     >
       {userProfiles.map((data, index) => {
         const user = searchedUsers[index];
+        const isSelected = selectedIndex === index;
+
         return (
           <div
             onClick={() => handleUserClick(user?.details?.id)}
-            className="cursor-pointer flex gap-2"
+            onMouseEnter={() => setSelectedIndex(index)}
+            className={`outline-none cursor-pointer flex gap-2 p-2 rounded-2xl ${
+              isSelected ? 'bg-white/10' : 'hover:bg-white/10'
+            }`}
             key={`${index}-${user?.details?.id}`}
           >
             <ImageByUri
