@@ -27,7 +27,7 @@ jobs:
       - name: Create .env
         env:
           BASE_URL_SUPPORT: ${{ secrets.BASE_URL_SUPPORT }}
-          SUPPORT_API_ACCESS_TOKEN: ${{ secrets.SECRETS_API_ACCESS_TOKEN }}
+          SUPPORT_API_ACCESS_TOKEN: ${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
           SUPPORT_ACCOUNT_ID: ${{ secrets.SUPPORT_ACCOUNT_ID }}
         run: |
           echo "NEXT_PUBLIC_HOMESERVER=ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy" >> .env
@@ -36,9 +36,14 @@ jobs:
           echo "BASE_URL_SUPPORT=$BASE_URL_SUPPORT" >> .env
           echo "SUPPORT_API_ACCESS_TOKEN=$SUPPORT_API_ACCESS_TOKEN" >> .env
           echo "SUPPORT_ACCOUNT_ID=$SUPPORT_ACCOUNT_ID" >> .env
+          cat .env  # Debug to ensure values are being set
 
       - name: Install dependencies
         run: npm install --omit=dev
 
       - name: Build prod
+        env:
+          BASE_URL_SUPPORT: ${{ secrets.BASE_URL_SUPPORT }}
+          SUPPORT_API_ACCESS_TOKEN: ${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
+          SUPPORT_ACCOUNT_ID: ${{ secrets.SUPPORT_ACCOUNT_ID }}
         run: npm run build
