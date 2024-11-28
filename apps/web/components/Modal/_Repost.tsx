@@ -24,7 +24,6 @@ export default function Repost({
   const { setContent, setShow } = useAlertContext();
   const [contentRepost, setContentRepost] = useState('');
   const [isValidContent, setIsValidContent] = useState(false);
-  const [quote, setQuote] = useState<string>();
   const [sendingRepost, setSendingRepost] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -44,7 +43,6 @@ export default function Repost({
         content,
         'short',
         selectedFiles,
-        quote,
       );
 
       const hashtags = Utils.extractHashtags(content);
@@ -130,7 +128,6 @@ export default function Repost({
             handleSubmit={handleSubmitRepost}
             content={contentRepost}
             setContent={setContentRepost}
-            setQuote={setQuote}
             isValidContent={isValidContent}
             setIsValidContent={setIsValidContent}
             selectedFiles={selectedFiles}

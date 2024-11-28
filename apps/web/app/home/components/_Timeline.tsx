@@ -8,14 +8,15 @@ import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
 import { Post, Skeleton } from '@/components';
 import { PostReplies } from './_PostReplies';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export const Timeline = () => {
   const limit = 10;
   const { pubky } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
-
-  const { reach } = useFilterContext();
+  const isMobile = useIsMobile();
+  const { reach, layout } = useFilterContext();
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
@@ -67,13 +68,17 @@ export const Timeline = () => {
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <div key={post.details.id} className="flex flex-col">
-              <Post key={`post-${post.details.id}`} post={post} />
+              <Post
+                largeView={!isMobile && layout === 'wide'}
+                key={`post-${post.details.id}`}
+                post={post}
+              />
               {post?.counts?.replies > 0 && (
                 <PostReplies
                   isMobile={false}
                   homeView
                   post={post}
-                  layout="columns"
+                  layout={layout}
                 />
               )}
             </div>

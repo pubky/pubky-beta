@@ -7,14 +7,15 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
 import { Post, Skeleton } from '@/components';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export const Timeline = () => {
   const limit = 10;
   const { pubky, searchTags } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
-
-  const { reach } = useFilterContext();
+  const isMobile = useIsMobile();
+  const { reach, layout } = useFilterContext();
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
@@ -70,7 +71,11 @@ export const Timeline = () => {
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <div key={post.details.id} className="flex gap-2 items-center">
-              <Post key={`post-${post.details.id}`} post={post} />
+              <Post
+                largeView={!isMobile && layout === 'wide'}
+                key={`post-${post.details.id}`}
+                post={post}
+              />
             </div>
           ),
       )}

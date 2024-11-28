@@ -68,7 +68,6 @@ type PubkyClientContextType = {
     repostContent: string,
     kind: PostKind,
     files?: File[],
-    quote?: string,
   ) => Promise<string | false>;
   createReply: (
     originalPostUri: string,
@@ -1014,7 +1013,6 @@ export function PubkyClientWrapper({
     repostContent: string,
     kind: PostKind,
     files?: File[],
-    quote?: string,
   ): Promise<string | false> => {
     try {
       await ensureLoggedIn();
@@ -1030,12 +1028,6 @@ export function PubkyClientWrapper({
           uri: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`,
         },
         kind,
-        ...(quote && {
-          embed: {
-            uri: quote,
-            kind: 'short',
-          },
-        }),
       };
 
       // List to store URIs of uploaded files

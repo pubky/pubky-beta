@@ -46,7 +46,7 @@ export default function LinkPreviewer({
           const postRegex = new RegExp(`${origin}/post/([^/]+)/([^/]+)`);
           const postMatch = url.match(postRegex);
 
-          if (postMatch) {
+          if (postMatch && setQuote) {
             const [_, creatorPubky, postId] = postMatch;
 
             try {
@@ -54,11 +54,9 @@ export default function LinkPreviewer({
 
               if (post) {
                 setPostPreview(post);
-                if (setQuote) {
-                  setQuote(
-                    `pubky://${creatorPubky}/pub/pubky.app/posts/${postId}`,
-                  );
-                }
+                setQuote(
+                  `pubky://${creatorPubky}/pub/pubky.app/posts/${postId}`,
+                );
               } else {
                 setPostPreview(undefined);
               }
