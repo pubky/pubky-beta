@@ -23,8 +23,8 @@ export default function SearchedUsersCard({
       if (searchedUsers.length > 0) {
         const profiles = await Promise.all(
           searchedUsers.map((user) =>
-            getUserProfile(user?.details?.id, pubky ?? '')
-          )
+            getUserProfile(user?.details?.id, pubky ?? ''),
+          ),
         );
         setUserProfiles(profiles);
       }
@@ -44,7 +44,7 @@ export default function SearchedUsersCard({
           <div
             onClick={() => handleUserClick(user?.details?.id)}
             className="cursor-pointer flex gap-2"
-            key={user?.details?.id}
+            key={`${index}-${user?.details?.id}`}
           >
             <ImageByUri
               width={40}

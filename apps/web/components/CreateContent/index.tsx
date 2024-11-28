@@ -89,7 +89,7 @@ export default function CreateContent({
       const result = await searchUsersByUsername(text);
       return result || [];
     } catch (error) {
-      console.error('Error searching profiles:', error);
+      // console.error('Error searching profiles:', error);
       return [];
     }
   };
