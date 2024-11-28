@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 
-const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL_SUPPORT;
-const ApiAccessToken = process.env.NEXT_PUBLIC_SUPPORT_API_ACCESS_TOKEN;
-const AccountId = process.env.NEXT_PUBLIC_SUPPORT_ACCOUNT_ID;
+const BaseUrl = process.env.BASE_URL_SUPPORT;
+const ApiAccessToken = process.env.SUPPORT_API_ACCESS_TOKEN;
+const AccountId = process.env.SUPPORT_ACCOUNT_ID;
 
 if (!BaseUrl || !ApiAccessToken || !AccountId) {
   throw new Error('Missing required environment variables');
