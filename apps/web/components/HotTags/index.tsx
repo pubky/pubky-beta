@@ -49,7 +49,7 @@ export default function HotTags() {
                 </Link>
               ))}
             </div>
-            <Link href="/hot-tags">
+            <Link href="/hot">
               <SideCard.Action textCSS='text-[13px]' className="mt-3" text="Explore All" />
             </Link>
           </>

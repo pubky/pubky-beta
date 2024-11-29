@@ -44,7 +44,7 @@ export default function Influencers() {
                 </div>
               );
             })}
-            <Link href="/influencers" className="mt-2">
+            <Link href="/hot#influencers" className="mt-2">
               <SideCard.Action
                 icon={<Icon.UsersLeft size="16" />}
                 textCSS="text-[13px]"

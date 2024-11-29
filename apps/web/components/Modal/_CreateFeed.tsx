@@ -1,4 +1,4 @@
-import { useFilterContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { ICustomFeed } from '@/types';
 import {
   Button,
@@ -22,6 +22,23 @@ interface CreateFeedProps {
   handleAddFeed: (feedToAdd: ICustomFeed, name: string) => void;
 }
 
+const iconsReach = {
+  all: <Icon.Broadcast />,
+  following: <Icon.UsersRight />,
+  friends: <Icon.Smiley />,
+};
+
+const iconsSort = {
+  recent: <Icon.Asterisk />,
+  popularity: <Icon.Fire />,
+};
+
+const iconsLayout = {
+  columns: <Icon.ThreeColumns />,
+  wide: <Icon.List />,
+  visual: <Icon.SquaresFour color="gray" />,
+};
+
 export default function CreateFeed({
   showModalCreateFeed,
   setShowModalCreateFeed,
@@ -31,6 +48,7 @@ export default function CreateFeed({
   nameFeed,
   handleAddFeed,
 }: CreateFeedProps) {
+  const { searchTags } = usePubkyClientContext();
   const { reach, layout, sort } = useFilterContext();
   const modalCreateFeedRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
@@ -38,6 +56,10 @@ export default function CreateFeed({
   const [loading, setLoading] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setTagsFeed(searchTags);
+  }, [searchTags]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -132,7 +154,7 @@ export default function CreateFeed({
         setShowModalCreateFeed(false);
         setTagsFeed([]);
       }}
-      className="md:w-[592px] max-h-[600px] justify-start"
+      className="md:w-[620px] max-h-[600px] overflow-y-auto justify-start"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -140,145 +162,161 @@ export default function CreateFeed({
           setTagsFeed([]);
         }}
       />
-      <Modal.Header title="Create Feed" />
-      <Typography.Body variant="medium">
-        Search for one or more tags and choose your preferred layout, sorting,
-        content and reach.
-      </Typography.Body>
-      <div className="my-4">
-        <div className="flex gap-8 flex-wrap mb-4">
+      <Modal.Header title="Save Feed" />
+      <div className="my-4 flex flex-col sm:flex-row gap-8">
+        <div className="w-full order-2 sm:order-1">
           <div>
-            <Typography.Body className="text-opacity-50" variant="small-bold">
-              Reach
-            </Typography.Body>
-            <Typography.Body className="-mt-1" variant="medium-bold">
-              {reach?.charAt(0).toUpperCase() + reach?.slice(1)}
-            </Typography.Body>
+            <Input.Text
+              value={nameFeed}
+              maxLength={20}
+              autoFocus
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setNameFeed(e.target.value)
+              }
+              placeholder="Add Feed name"
+            />
           </div>
-          <div>
-            <Typography.Body className="text-opacity-50" variant="small-bold">
-              Sort
-            </Typography.Body>
-            <Typography.Body className="-mt-1" variant="medium-bold">
-              {sort?.charAt(0).toUpperCase() + sort?.slice(1)}
-            </Typography.Body>
-          </div>
-          <div>
-            <Typography.Body className="text-opacity-50" variant="small-bold">
-              Layout
-            </Typography.Body>
-            <Typography.Body className="-mt-1" variant="medium-bold">
-              {layout?.charAt(0).toUpperCase() + layout?.slice(1)}
-            </Typography.Body>
-          </div>
-          <div>
-            <Typography.Body className="text-opacity-50" variant="small-bold">
-              Content
-            </Typography.Body>
-            <Typography.Body className="-mt-1" variant="medium-bold">
-              All
-            </Typography.Body>
-          </div>
-        </div>
-        <div>
-          <Input.Text
-            value={nameFeed}
-            maxLength={20}
-            autoFocus
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNameFeed(e.target.value)
-            }
-            placeholder="Add Feed name"
-          />
-        </div>
-        <div className="flex flex-row w-full mt-4">
-          {showEmojis && (
-            <div
-              className="absolute translate-y-[10%] translate-x-[30%] z-10"
-              ref={wrapperRefEmojis}
-            >
-              <EmojiPicker
-                theme={Theme.DARK}
-                emojiStyle={EmojiStyle.TWITTER}
-                onEmojiClick={(emojiObject) => {
-                  const emojiLength = new Blob([emojiObject.emoji]).size / 2;
+          <div className="flex flex-row w-full mt-4">
+            {showEmojis && (
+              <div
+                className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                ref={wrapperRefEmojis}
+              >
+                <EmojiPicker
+                  theme={Theme.DARK}
+                  emojiStyle={EmojiStyle.TWITTER}
+                  onEmojiClick={(emojiObject) => {
+                    const emojiLength = new Blob([emojiObject.emoji]).size / 2;
 
-                  if (tag.length + emojiLength <= 20) {
-                    setTag(tag + emojiObject.emoji);
-                  }
-                  setShowEmojis(false);
-                }}
-              />
-            </div>
-          )}
-          {/* <Input.Label value="Add tag" /> */}
-          <Input.Text
-            placeholder="tag"
-            value={tag}
-            maxLength={20}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            action={
-              <div className="flex gap-2">
-                <Button.Action
-                  id="add-btn"
-                  icon={<Icon.Plus size="18" />}
-                  variant="custom"
-                  size="medium"
-                  className={tag ? 'flex' : 'hidden'}
-                  onClick={handleAddTag}
-                />
-                <Button.Action
-                  id="emoji-btn"
-                  variant="custom"
-                  icon={<Icon.Smiley size="32" />}
-                  size="medium"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setShowEmojis(true);
+                    if (tag.length + emojiLength <= 20) {
+                      setTag(tag + emojiObject.emoji);
+                    }
+                    setShowEmojis(false);
                   }}
                 />
               </div>
-            }
-          />
-        </div>
-        <div className="mt-2 justify-start items-start">
-          {tagsFeed && tagsFeed.length > 0 ? (
-            <div className="justify-start items-start">
-              {tagsFeed.map((tag, index) => (
-                <PostUtil.Tag
-                  key={index}
-                  action={
-                    <div
-                      className="flex items-center"
-                      onClick={() => handleRemoveTag(index)}
-                    >
-                      <Icon.X size="16" />
-                    </div>
-                  }
-                  clicked
-                  color={tag && Utils.generateRandomColor(tag)}
-                  className="mr-2 my-1"
-                >
-                  {tag}
-                </PostUtil.Tag>
-              ))}
-            </div>
-          ) : (
-            <Typography.Body variant="small" className="text-opacity-30">
-              No tags yet.
+            )}
+            {/* <Input.Label value="Add tag" /> */}
+            <Input.Text
+              placeholder="tag"
+              value={tag}
+              maxLength={20}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              action={
+                <div className="flex gap-2">
+                  <Button.Action
+                    id="add-btn"
+                    icon={<Icon.Plus size="18" />}
+                    variant="custom"
+                    size="medium"
+                    className={tag ? 'flex' : 'hidden'}
+                    onClick={handleAddTag}
+                  />
+                  <Button.Action
+                    id="emoji-btn"
+                    variant="custom"
+                    icon={<Icon.Smiley size="32" />}
+                    size="medium"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setShowEmojis(true);
+                    }}
+                  />
+                </div>
+              }
+            />
+          </div>
+          <div className="mt-2 justify-start items-start">
+            {tagsFeed && tagsFeed.length > 0 ? (
+              <div className="justify-start items-start">
+                {tagsFeed.map((tag, index) => (
+                  <PostUtil.Tag
+                    key={index}
+                    action={
+                      <div
+                        className="flex items-center"
+                        onClick={() => handleRemoveTag(index)}
+                      >
+                        <Icon.X size="16" />
+                      </div>
+                    }
+                    clicked
+                    color={tag && Utils.generateRandomColor(tag)}
+                    className="mr-2 my-1"
+                  >
+                    {tag}
+                  </PostUtil.Tag>
+                ))}
+              </div>
+            ) : (
+              <Typography.Body variant="small" className="text-opacity-30">
+                No tags yet.
+              </Typography.Body>
+            )}
+          </div>
+          {tagsError && (
+            <Typography.Body variant="small" className="text-[#e95164]">
+              Max 4 tags
             </Typography.Body>
           )}
         </div>
-        {tagsError && (
-          <Typography.Body variant="small" className="text-[#e95164]">
-            Max 4 tags
-          </Typography.Body>
-        )}
+        <div className="flex gap-4 sm:gap-2 order-1 sm:order-2 sm:flex-col w-[180px]">
+          <div>
+            <Typography.Label className="text-opacity-30">
+              Reach
+            </Typography.Label>
+            <div className="flex gap-2">
+              <div>{iconsReach[reach]}</div>
+              <Typography.Body variant="medium-bold">
+                {reach?.charAt(0).toUpperCase() + reach?.slice(1)}
+              </Typography.Body>
+            </div>
+          </div>
+          <div>
+            <Typography.Label className="text-opacity-30">
+              Sort
+            </Typography.Label>
+            <div className="flex gap-2">
+              <div>{iconsSort[sort]}</div>
+              <Typography.Body variant="medium-bold">
+                {sort?.charAt(0).toUpperCase() + sort?.slice(1)}
+              </Typography.Body>
+            </div>
+          </div>
+          <div>
+            <Typography.Label className="text-opacity-30">
+              Content
+            </Typography.Label>
+            <div className="flex gap-2">
+              <div>
+                <Icon.Stack size="24" />
+              </div>
+              <Typography.Body variant="medium-bold">All</Typography.Body>
+            </div>
+          </div>
+          <div>
+            <Typography.Label className="text-opacity-30">
+              Layout
+            </Typography.Label>
+            <div className="flex gap-2">
+              <div>{iconsLayout[layout]}</div>
+              <Typography.Body variant="medium-bold">
+                {layout?.charAt(0).toUpperCase() + layout?.slice(1)}
+              </Typography.Body>
+            </div>
+          </div>
+        </div>
       </div>
       <Button.Medium
         loading={loading}
         disabled={!nameFeed || tagsFeed?.length === 0}
+        icon={
+          <Icon.Activity
+            size="16"
+            color={!nameFeed || tagsFeed?.length === 0 ? 'grey' : 'white'}
+          />
+        }
         onClick={() =>
           loading || !nameFeed || tagsFeed?.length === 0
             ? undefined
@@ -286,7 +324,7 @@ export default function CreateFeed({
         }
         className="mt-4"
       >
-        Save
+        Save Feed
       </Button.Medium>
     </Modal.Root>
   );

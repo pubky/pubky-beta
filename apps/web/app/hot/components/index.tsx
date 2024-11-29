@@ -1,11 +1,13 @@
 import Rank from './_Rank';
 import Content from './_Content';
 import { UserProfileForTag } from './_UserProfileForTag';
+import RenderInfluencers from './_RenderInfluencers';
 import RenderTags from './_RenderTags';
 
-export const HotTags = {
+export const Hot = {
   Rank,
   Content,
   UserProfileForTag,
+  RenderInfluencers,
   RenderTags,
 };

@@ -21,7 +21,7 @@ export default function ProtectedRoutes({
   const protectedRoutes = [
     '/followers',
     '/home',
-    '/hot-tags',
+    '/hot',
     '/notifications',
     '/post',
     '/profile',

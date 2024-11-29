@@ -20,12 +20,12 @@ const tabs = [
     icon: <Icon.BellSimple size="24" color="white" />,
     label: 'Notifications',
   },
-  {
-    id: 1,
-    key: 'bookmarks',
-    icon: <Icon.BookmarkSimple size="24" color="white" />,
-    label: 'Bookmarks',
-  },
+  //{
+  //  id: 1,
+  //  key: 'bookmarks',
+  //  icon: <Icon.BookmarkSimple size="24" color="white" />,
+  //  label: 'Bookmarks',
+  //},
   {
     id: 2,
     key: 'posts',

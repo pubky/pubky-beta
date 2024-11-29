@@ -10,9 +10,6 @@ const getTitle = (titleHeader: React.ReactNode) => {
   if (titleHeader === 'Feed') {
     return null;
   }
-  if (titleHeader === 'HotTags') {
-    return 'Hot\u00A0Tags';
-  }
   return titleHeader;
 };
 

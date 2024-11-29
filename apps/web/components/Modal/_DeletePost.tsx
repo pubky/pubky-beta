@@ -25,10 +25,10 @@ export default function DeletePost({
     >
       <Modal.CloseAction onClick={() => setShowModalDeletePost(false)} />
       <Modal.Header title="Delete Post" />
-      <Typography.Body className="text-opacity-60" variant="medium">
+      <Typography.Body className="text-opacity-60 my-4" variant="medium">
         Are you sure you want to delete this post?
       </Typography.Body>
-      <div className="flex gap-4 mt-8">
+      <div className="flex gap-4 mt-2">
         <Button.Large
           id="cancel-btn"
           variant="secondary"

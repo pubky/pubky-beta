@@ -36,7 +36,7 @@ export default function Index() {
 
   function renderNotifications(
     notifications: NotificationView[],
-    loadingNotifications: boolean
+    loadingNotifications: boolean,
   ) {
     if (loadingNotifications) {
       return <Skeleton.Simple />;

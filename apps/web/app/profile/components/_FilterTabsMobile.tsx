@@ -13,12 +13,12 @@ const tabs = [
     icon: <Icon.Bell size="24" color="white" />,
     label: 'Notifications',
   },
-  {
-    id: 1,
-    key: 'bookmarks',
-    icon: <Icon.BookmarkSimple size="24" color="white" />,
-    label: 'Bookmarks',
-  },
+  //{
+  //  id: 1,
+  //  key: 'bookmarks',
+  //  icon: <Icon.BookmarkSimple size="24" color="white" />,
+  //  label: 'Bookmarks',
+  //},
   {
     id: 2,
     key: 'posts',
@@ -99,7 +99,7 @@ export default function FilterTabsMobile({
       window.history.replaceState(
         {},
         '',
-        `${window.location.pathname}?${params.toString()}`
+        `${window.location.pathname}?${params.toString()}`,
       );
     }
     setLoadingTab(false);
@@ -113,7 +113,7 @@ export default function FilterTabsMobile({
       window.history.pushState(
         {},
         '',
-        `${window.location.pathname}?${params.toString()}`
+        `${window.location.pathname}?${params.toString()}`,
       );
     }
   };

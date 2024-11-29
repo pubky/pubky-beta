@@ -60,13 +60,13 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
           <Icon.MagnifyingGlassLeft size="24" />
         </Link>
         <Link
-          href="/influencers"
-          className={twMerge(buttonCSS, title === 'Influencers' && activeCSS)}
+          href="/bookmarks"
+          className={twMerge(buttonCSS, title === 'Bookmarks' && activeCSS)}
         >
-          <Icon.UsersLeft size="24" />
+          <Icon.BookmarkSimple size="24" />
         </Link>
         <Link
-          href="/hot-tags"
+          href="/hot"
           className={twMerge(buttonCSS, title === 'HotTags' && activeCSS)}
         >
           <Icon.Fire size="24" />

@@ -31,13 +31,13 @@ export default function DeleteAccount({
     };
     document.addEventListener(
       'mousedown',
-      handleClickOutsideModalDeleteAccount
+      handleClickOutsideModalDeleteAccount,
     );
 
     return () => {
       document.removeEventListener(
         'mousedown',
-        handleClickOutsideModalDeleteAccount
+        handleClickOutsideModalDeleteAccount,
       );
     };
   }, [modalDeleteAccountRef, setShowModalDeleteAccount]);
@@ -50,10 +50,10 @@ export default function DeleteAccount({
     >
       <Modal.CloseAction onClick={() => setShowModalDeleteAccount(false)} />
       <Modal.Header title="Delete Account" />
-      <Typography.Body className="text-opacity-60" variant="medium">
-        Are you sure you want to delete your account?
+      <Typography.Body className="text-opacity-60 my-4" variant="medium">
+        Are you sure? Your account information cannot be recovered.
       </Typography.Body>
-      <div className="flex gap-4 mt-8">
+      <div className="flex gap-4 mt-2">
         <Button.Large
           id="cancel-btn"
           variant="secondary"

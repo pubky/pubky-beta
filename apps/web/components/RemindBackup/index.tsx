@@ -15,7 +15,7 @@ const passwordSchema = z.object({
 });
 
 export default function RemindBackup() {
-  const { seed, setSeed, mnemonic, setMnemonic, getRecoveryFile } =
+  const { seed, setSeed, profile, mnemonic, setMnemonic, getRecoveryFile } =
     usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
@@ -44,7 +44,7 @@ export default function RemindBackup() {
   }, []);
 
   useEffect(() => {
-    if (seed || mnemonic) {
+    if ((seed || mnemonic) && profile?.name !== 'anonymous') {
       setDisposableAccount(true);
       setShowBackupSuccess(false);
     } else {
@@ -100,7 +100,7 @@ export default function RemindBackup() {
 
       if (!result.success) {
         setErrorPassword(
-          result.error.errors.map((err) => err.message).join(', ')
+          result.error.errors.map((err) => err.message).join(', '),
         );
         setLoadingRecoveryFile(false);
         return;

@@ -14,31 +14,42 @@ import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
 import { useHotTags } from '@/hooks/useTag';
 import React from 'react';
-import { HotTags } from '.';
+import { Hot } from '.';
+import { useStreamUsers } from '@/hooks/useStream';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function Index() {
+  const { pubky } = usePubkyClientContext();
   const { data, isLoading, isError } = useHotTags();
+  const {
+    data: influencers,
+    isLoading: isLoadingInfluencers,
+    isError: isErrorInfluencers,
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
   const hotTags = data || [];
-  if (isError) console.error(isError);
+  if (isError || isErrorInfluencers) console.error(isError);
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="HotTags" />
+      <Header className="hidden md:block" title="Hot" />
       <Content.Grid className="flex gap-6">
         <Sidebar className="w-[280px] self-start sticky top-[120px] hidden lg:block">
           <Filter.HotTagsReach />
           <Filter.TagsTimeFrame />
         </Sidebar>
         <div className="flex-col inline-flex gap-3 w-full">
-          {isLoading ? (
+          {isLoading || isLoadingInfluencers ? (
             <div className="w-full">
               <Skeletons.Simple />
             </div>
           ) : (
-            <HotTags.RenderTags
-              hotTags={hotTags}
-              loadingReachTags={isLoading}
-            />
+            <div className="flex flex-col gap-6">
+              <Hot.RenderTags hotTags={hotTags} loadingReachTags={isLoading} />
+              <Hot.RenderInfluencers
+                influencers={influencers}
+                initloadingInfluencers={isLoadingInfluencers}
+              />
+            </div>
           )}
         </div>
         <Sidebar className="w-[280px] hidden xl:block">
