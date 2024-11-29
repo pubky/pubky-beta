@@ -47,6 +47,16 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
     {
       watchFor: 'link',
       render: (url: string) => {
+        const isValidUrl = (value: string) => {
+          try {
+            new URL(value);
+            return true;
+          } catch {
+            return false;
+          }
+        };
+
+        if (!isValidUrl(url)) return url;
         return (
           <Link
             className="text-[#C8FF00] break-all"
@@ -61,16 +71,22 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
     },
     {
       watchFor: 'email',
-      render: (url: string) => (
-        <Link
-          className="text-[#C8FF00] break-all"
-          href={`mailto:${url.trim()}`}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          {url}
-        </Link>
-      ),
+      render: (url: string) => {
+        const isValidEmail = (value: string) =>
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+        if (!isValidEmail(url)) return url;
+        return (
+          <Link
+            className="text-[#C8FF00] break-all"
+            href={`mailto:${url.trim()}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {url}
+          </Link>
+        );
+      },
     },
   ];
 
