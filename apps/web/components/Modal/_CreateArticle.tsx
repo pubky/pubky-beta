@@ -464,7 +464,7 @@ export default function CreateArticle({
                         !isValidContent ||
                         selectedFile.length === 0 ||
                         isError ||
-                        !contentArticle
+                        !contentTitle
                       }
                       loading={sendingArticle}
                       onClick={
