@@ -54,7 +54,6 @@ export default function Index() {
         </div>
         <Sidebar className="w-[280px] hidden xl:block">
           <WhoFollow />
-          <Influencers />
           <Feedback />
         </Sidebar>
       </Content.Grid>
