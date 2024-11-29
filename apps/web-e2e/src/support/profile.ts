@@ -52,8 +52,7 @@ export const editProfileAndVerify = (profileData: Partial<Record<keyof typeof pr
 
   // TODO: remove workaround for slow profile edit and required manual refresh https://github.com/pubky/pubky-app/issues/493
   // Wait and reload the page to ensure changes are persisted
-  cy.wait(process.env.CI ? 5000 : 2000);
-  cy.reload();
+  cy.wait(process.env.CI ? 5000 : 2000).reload();
 
   // Verify the changes for each field in profileData
   Object.entries(profileData).forEach(([field, value]) => {

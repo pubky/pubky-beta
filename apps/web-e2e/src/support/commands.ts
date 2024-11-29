@@ -157,6 +157,9 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.get('#sign-in-password-input').type(passcode);
   cy.get('#sign-in-recovery-file-btn').click();
 
+  // TODO: remove workaround for indefinite loading issue on sign in button
+  cy.wait(1000).reload();
+
   cy.location('pathname').should('eq', '/home');
 });
 
