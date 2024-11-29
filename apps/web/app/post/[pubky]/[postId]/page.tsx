@@ -58,9 +58,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       image,
     });
   } catch (error) {
-    console.error(error);
     return getSeoMetadata({
       title: '404 | Post',
+      description: 'Post not found or an error occurred',
+      // image: `${BASE_URL}/default-error-image.png`, // TODO: Add default error image
     });
   }
 }
