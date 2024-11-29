@@ -354,7 +354,7 @@ export default function Intro() {
             </Button.Large>
             <Link href="/onboarding/sign-in">
               <Button.Large
-                id="onboarding-create-account-btn"
+                id="onboarding-skip-intro-btn"
                 className="w-auto"
                 variant="secondary">
                 Skip Intro
