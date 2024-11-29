@@ -26,9 +26,10 @@ export async function generateMetadata({ params }: Props) {
       image: file,
     });
   } catch (error) {
-    console.error(error);
     return getSeoMetadata({
       title: '404 | Profile',
+      description: 'User profile not found or an error occurred',
+      image: `${BASE_URL}/default-error-image.png`,
     });
   }
 }
