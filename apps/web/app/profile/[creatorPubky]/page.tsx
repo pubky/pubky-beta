@@ -12,18 +12,25 @@ type Props = {
 
 export async function generateMetadata({ params }: Props) {
   const { creatorPubky } = await params;
-  const profile = await getUserDetails(creatorPubky);
-  const profilePic = profile?.image && (await getFile(profile.image));
+  try {
+    const profile = await getUserDetails(creatorPubky);
+    const profilePic = profile?.image && (await getFile(profile.image));
 
-  const file =
-    profilePic &&
-    `${BASE_URL}/static/files/${JSON.parse(profilePic?.urls).main}`;
+    const file =
+      profilePic &&
+      `${BASE_URL}/static/files/${JSON.parse(profilePic?.urls).main}`;
 
-  return getSeoMetadata({
-    title: `${profile.name} | Profile`,
-    description: profile.bio,
-    image: file,
-  });
+    return getSeoMetadata({
+      title: `${profile.name} | Profile`,
+      description: profile.bio,
+      image: file,
+    });
+  } catch (error) {
+    console.error(error);
+    return getSeoMetadata({
+      title: '404 | Profile',
+    });
+  }
 }
 
 export default async function Index({ params }: Props) {

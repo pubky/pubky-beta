@@ -20,42 +20,49 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { pubky, postId } = await params;
 
-  const response = await fetch(`${BASE_URL}/v0/post/${pubky}/${postId}`);
-  const post = await response.json();
-  const fetchedFile =
-    post?.details?.attachments &&
-    (await getFile(post?.details?.attachments[0]));
-  const fileType = fetchedFile?.content_type;
-  const file =
-    fetchedFile &&
-    `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls).main}`;
+  try {
+    const response = await fetch(`${BASE_URL}/v0/post/${pubky}/${postId}`);
+    const post = await response.json();
+    const fetchedFile =
+      post?.details?.attachments &&
+      (await getFile(post?.details?.attachments[0]));
+    const fileType = fetchedFile?.content_type;
+    const file =
+      fetchedFile &&
+      `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls).main}`;
 
-  // title with just 20 characters
-  const postTitle =
-    post?.details?.kind === 'long'
-      ? Utils.truncateText(JSON.parse(post?.details?.content).title, 20)
-      : Utils.truncateText(post.details.content, 20);
-  const profile = await getUserDetails(post?.details.author);
-  const profileName = Utils.truncateText(profile?.name, 20);
-  const description = Utils.truncateText(post.details.content, 100);
+    // title with just 20 characters
+    const postTitle =
+      post?.details?.kind === 'long'
+        ? Utils.truncateText(JSON.parse(post?.details?.content).title, 20)
+        : Utils.truncateText(post.details.content, 20);
+    const profile = await getUserDetails(post?.details.author);
+    const profileName = Utils.truncateText(profile?.name, 20);
+    const description = Utils.truncateText(post.details.content, 100);
 
-  let title = `${profileName}`;
+    let title = `${profileName}`;
 
-  if (postTitle) {
-    title = `${postTitle} | ${profileName}`;
+    if (postTitle) {
+      title = `${postTitle} | ${profileName}`;
+    }
+
+    let image = undefined;
+
+    if (fileType?.startsWith('image/')) {
+      image = file;
+    }
+
+    return getSeoMetadata({
+      title,
+      description,
+      image,
+    });
+  } catch (error) {
+    console.error(error);
+    return getSeoMetadata({
+      title: '404 | Post',
+    });
   }
-
-  let image = undefined;
-
-  if (fileType?.startsWith('image/')) {
-    image = file;
-  }
-
-  return getSeoMetadata({
-    title,
-    description,
-    image,
-  });
 }
 
 export default async function Index({ params }: Props) {
