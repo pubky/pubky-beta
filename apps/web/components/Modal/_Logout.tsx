@@ -39,10 +39,10 @@ export default function Logout({
     >
       <Modal.CloseAction onClick={() => setShowModalLogout(false)} />
       <Modal.Header title="Sign out?" />
-      <Typography.Body className="text-left text-opacity-60" variant="medium">
+      <Typography.Body className="text-left text-opacity-60 my-4" variant="medium">
         If you sign out without backup you will no longer be able to login.
       </Typography.Body>
-      <div className="flex gap-4 mt-8">
+      <div className="flex gap-4 mt-2">
         <Link className="w-full" href="/logout">
           <Button.Large
             id="logout-modal-sign-out-btn"

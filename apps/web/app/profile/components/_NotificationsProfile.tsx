@@ -1,6 +1,6 @@
 'use client';
 
-import { Notifications } from '@/app/notifications/components';
+import { Notifications } from '@/app/profile/components/notifications/components';
 import { Skeleton } from '@/components';
 import { useFilterContext } from '@/contexts';
 import { NotificationView } from '@/types/User';
@@ -18,11 +18,16 @@ export default function NotificationsProfile({
   loading,
 }: NotificationsProps) {
   const [loadingNotifications, setLoadingNotifications] = useState(true);
+  const [showAll, setShowAll] = useState(false);
   const { unReadNotification } = useFilterContext();
 
   useEffect(() => {
     if (!loading) setLoadingNotifications(false);
   }, [loading]);
+
+  const displayedNotifications = showAll
+    ? notifications
+    : notifications?.slice(0, 10);
 
   return (
     <>
@@ -49,11 +54,9 @@ export default function NotificationsProfile({
                 ))}
             </div>
           )}
-          {notifications
-            ?.slice(unReadNotification, 10)
-            .map((notification, index) => {
-              {
-                /**if (Array.isArray(notification)) {
+          {displayedNotifications.map((notification, index) => {
+            {
+              /**if (Array.isArray(notification)) {
               if (
                 notification[0].type === 'follow' ||
                 notification[0].type === 'new_friend' ||
@@ -88,23 +91,22 @@ export default function NotificationsProfile({
                 />
               );
             }*/
-              }
-              return (
-                <Notifications.Notification
-                  key={index}
-                  notification={notification}
-                />
-              );
-            })}
-          {notifications?.length > 10 && (
-            <Link href={'/notifications'}>
-              <Button.Medium
-                icon={<Icon.Bell size="16" />}
-                className="mt-4 mb-8 w-auto"
-              >
-                Show All Notifications
-              </Button.Medium>
-            </Link>
+            }
+            return (
+              <Notifications.Notification
+                key={index}
+                notification={notification}
+              />
+            );
+          })}
+          {notifications?.length > 10 && !showAll && (
+            <Button.Medium
+              icon={<Icon.Bell size="16" />}
+              className="mt-4 mb-8 w-auto"
+              onClick={() => setShowAll(true)}
+            >
+              Show All Notifications
+            </Button.Medium>
           )}
         </div>
       )}

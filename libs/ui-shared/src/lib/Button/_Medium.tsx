@@ -27,7 +27,7 @@ export const Medium = ({
   let stateButton = 'hover:bg-opacity-20';
 
   if (disabled) {
-    color = 'text-gray-500';
+    color = 'text-opacity-30';
     colorBorder = 'border-gray-500';
     stateButton = 'bg-opacity-10 cursor-auto';
   }

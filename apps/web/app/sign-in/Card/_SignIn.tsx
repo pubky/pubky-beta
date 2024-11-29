@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 
 import { Content, Card, Typography, Icon } from '@social/ui-shared';
@@ -35,7 +37,7 @@ export default function SignIn() {
         const pubkey = await result.promise;
         if (pubkey) {
           const handleLoginResult = await loginWithAuthUrl(
-            String(pubkey.z32())
+            String(pubkey.z32()),
           );
           if (handleLoginResult) {
             setContent('Login successful!');

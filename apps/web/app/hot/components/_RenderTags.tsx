@@ -1,10 +1,10 @@
 'use client';
 
 import Skeletons from '@/components/Skeletons';
-import { PostUtil, Typography } from '@social/ui-shared';
+import { PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { HotTag } from '@/types/Tag';
-import { HotTags } from '.';
+import { Hot } from '.';
 import Link from 'next/link';
 
 interface RenderTagsProps {
@@ -21,13 +21,22 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
   const otherTags = hotTags.slice(3);
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
+      <Typography.H2 className="text-opacity-50 font-light">
+        Popular Tags
+      </Typography.H2>
       {firstThreeTags.length > 0 && (
-        <div className="w-full flex flex-col md:flex-row gap-4 mb-4">
+        <div className="w-full flex flex-col md:flex-row gap-4">
           {firstThreeTags.map((tag, index) => (
             <div
               key={index}
-              className="bg-white bg-opacity-10 lg:bg-transparent w-full p-6 flex flex-col gap-2 rounded-lg lg:border lg:border-white lg:border-opacity-20"
+              style={{
+                backgroundColor: Utils.hexToRgba(
+                  Utils.generateRandomColor(tag?.label),
+                  0.2,
+                ),
+              }}
+              className={`w-full p-6 flex flex-col gap-2 rounded-lg`}
             >
               <div className="flex gap-2">
                 <PostUtil.Counter className="bg-transparent">
@@ -36,7 +45,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                 <Link href={`/search?tags=${tag?.label}`}>
                   <PostUtil.Tag
                     color={tag?.label && Utils.generateRandomColor(tag?.label)}
-                    boxShadow={false}
+                    boxShadow
                     clicked={false}
                   >
                     {Utils.minifyText(tag?.label, 21)}
@@ -44,7 +53,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                 </Link>
               </div>
               <Typography.Body className="text-opacity-80" variant="medium">
-                {tag?.post_count} posts this month
+                {tag?.post_count} posts all time
               </Typography.Body>
               <div className="flex items-center">
                 {tag?.taggers_id.slice(0, 5).map((fromItem, fromIndex) => (
@@ -52,7 +61,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                     key={fromIndex}
                     className={fromIndex !== 0 ? '-ml-2' : ''}
                   >
-                    <HotTags.UserProfileForTag userId={fromItem} />
+                    <Hot.UserProfileForTag userId={fromItem} />
                   </div>
                 ))}
                 {tag?.taggers_id.length > 5 && (
@@ -65,25 +74,23 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
           ))}
         </div>
       )}
-      {otherTags.length > 0 &&
-        otherTags.map((tag, index) => (
-          <div className="flex gap-3" key={index + 3}>
-            <Link href={`/search?tags=${tag?.label}`}>
-              <HotTags.Rank
-                tag={tag?.label}
-                color={tag?.label && Utils.generateRandomColor(tag?.label)}
-                counter={`${tag?.post_count}`}
-                boxShadow={false}
-              />
-            </Link>
-            {tag?.taggers_id.slice(0, 15).map((fromItem, fromIndex) => (
-              <div key={fromIndex} className={fromIndex !== 0 ? '-ml-5' : ''}>
-                <HotTags.UserProfileForTag userId={fromItem} />
-              </div>
-            ))}
-          </div>
-        ))}
-    </>
+      <div className="flex flex-wrap gap-2">
+        {otherTags.length > 0 &&
+          otherTags.map((tag, index) => (
+            <div key={index + 3}>
+              <Link key={index} href={`/search?tags=${tag?.label}`}>
+                <SideCard.Rank
+                  rank={index + 1}
+                  tag={Utils.minifyText(tag?.label, 21)}
+                  color={tag?.label && Utils.generateRandomColor(tag?.label)}
+                  counter={`${tag?.post_count}`}
+                  boxShadow={false}
+                />
+              </Link>
+            </div>
+          ))}
+      </div>
+    </div>
   );
 };
 

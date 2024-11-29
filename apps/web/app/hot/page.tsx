@@ -1,11 +1,11 @@
 import { getSeoMetadata } from './../../components/HeaderSEO';
-import { Notifications } from './components/index';
+import { Hot } from './components/index';
 
 export const metadata = getSeoMetadata({
-  title: 'Notifications | Pubky.app',
+  title: 'Hot | Pubky.app',
   description: 'Pubky.app - Unlock the web.',
 });
 
 export default function Index() {
-  return <Notifications.Content />;
+  return <Hot.Content />;
 }

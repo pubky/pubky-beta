@@ -189,25 +189,25 @@ export default function Header({ title, className }: HeaderProps) {
               icon={<Icon.Activity size="24" />}
             />
           </Link>
-          <Link href="/hot-tags">
+          <Link href="/hot">
             <Button.Action
               id="header-hot-tags-btn"
               variant="menu"
-              label="Hot&#160;Tags"
-              active={title === `HotTags`}
-              className={title === 'HotTags' ? 'border-t border-white' : ''}
+              label="Hot"
+              active={title === `Hot`}
+              className={title === 'Hot' ? 'border-t border-white' : ''}
               icon={<Icon.Fire size="24" />}
             />
           </Link>
 
-          <Link href="/influencers">
+          <Link href="/bookmarks">
             <Button.Action
-              id="header-nfluencers-btn"
+              id="header-bookmarks-btn"
               variant="menu"
-              label="Influencers"
-              active={title === `Influencers`}
-              className={title === 'Influencers' ? 'border-t border-white' : ''}
-              icon={<Icon.UsersLeft size="24" />}
+              label="Bookmarks"
+              active={title === `Bookmarks`}
+              className={title === 'Bookmarks' ? 'border-t border-white' : ''}
+              icon={<Icon.BookmarkSimple size="24" />}
             />
           </Link>
           <Link href="/settings">
