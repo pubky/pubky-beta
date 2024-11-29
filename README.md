@@ -24,8 +24,8 @@ Create a `.env` file at the root of the project and include the following enviro
 
 ```
 NEXT_PUBLIC_HOMESERVER=z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo
-NEXT_PUBLIC_PKARR_RELAY=http://localhost:7258
 NEXT_PUBLIC_NEXUS=http://localhost:8080
+NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://demo.httprelay.io/link/
 NEXT_PUBLIC_TESTNET=true
 ```
 
@@ -33,8 +33,8 @@ NEXT_PUBLIC_TESTNET=true
 
 ```
 NEXT_PUBLIC_HOMESERVER=ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy
-NEXT_PUBLIC_PKARR_RELAY=https://relay.pkarr.org
 NEXT_PUBLIC_NEXUS=https://nexus.staging.pubky.app
+NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://demo.httprelay.io/link/
 ```
 
 ## :running: Running Scripts

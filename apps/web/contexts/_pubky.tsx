@@ -20,8 +20,9 @@ import * as bip39 from 'bip39';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
-const DEFAULT_HTTP_RELAY =
-  process.env.DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
+const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
+  process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
+  'https://demo.httprelay.io/link/';
 
 let client: PubkyClient;
 if (TESTNET) {
@@ -203,10 +204,6 @@ export function PubkyClientWrapper({
       Utils.storage.remove('backup');
       Utils.storage.remove('feed');
       Utils.storage.remove('unread');
-      setPubky(undefined);
-      setSeed(undefined);
-      setMnemonic(undefined);
-      setProfile(undefined);
 
       return true;
     } catch (error) {
@@ -997,7 +994,7 @@ export function PubkyClientWrapper({
 
     try {
       const [url, promise] = client.authRequest(
-        DEFAULT_HTTP_RELAY,
+        NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
         capabilities,
       );
       return { url: String(url), promise };
