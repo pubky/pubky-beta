@@ -18,6 +18,8 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   const { setContent, setShow } = useAlertContext();
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [showModalReportPost, setShowModalReportPost] = useState(false);
+  const [showModalEditPost, setShowModalEditPost] = useState(false);
+  const [showModalEditArticle, setShowModalEditArticle] = useState(false);
   const tooltipMenuRef = useRef<HTMLDivElement>(null);
   const modalDeletePostRef = useRef<HTMLDivElement>(null);
   const modalReportPostRef = useRef<HTMLDivElement>(null);
@@ -102,7 +104,11 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           {/**post?.details?.author === pubky && (
             <ButtonTooltip.EditProfile setShowMenu={setShowMenu}/>
           )*/}
-          <ButtonTooltip.EditPost post={post} />
+          <ButtonTooltip.EditPost
+            post={post}
+            setShowModalEditArticle={setShowModalEditArticle}
+            setShowModalEditPost={setShowModalEditPost}
+          />
           <ButtonTooltip.CopyUserPubky
             pk={post?.details?.author}
             setShowMenu={setShowMenu}
@@ -136,6 +142,20 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
           setShowModal={setShowModalReportPost}
           modalReportPostRef={modalReportPostRef}
           post={post}
+        />
+      )}
+      {showModalEditPost && (
+        <Modal.EditPost
+          showModalEditPost={showModalEditPost}
+          setShowModalEditPost={setShowModalEditPost}
+          post={post}
+        />
+      )}
+      {showModalEditArticle && (
+        <Modal.EditArticle
+          showModalEditArticle={showModalEditArticle}
+          setShowModalEditArticle={setShowModalEditArticle}
+          article={post}
         />
       )}
     </>

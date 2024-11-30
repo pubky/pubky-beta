@@ -50,9 +50,8 @@ export default function Content({
     const urls = text.match(urlRegex);
     if (urls) {
       const url = urls[0];
-      const origin = window.location.origin;
 
-      const postRegex = new RegExp(`${origin}/post/([^/]+)/([^/]+)`);
+      const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
       const postMatch = url.match(postRegex);
 
       if (postMatch) return;

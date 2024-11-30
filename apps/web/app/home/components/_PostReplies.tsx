@@ -8,9 +8,10 @@ import { UseUserMuted } from '@/hooks/useUser';
 import { Utils } from '@social/utils-shared';
 import CreateQuickReply from '@/components/CreateQuickReply';
 import Link from 'next/link';
+import { PostView } from '@/types/Post';
 
 interface PostRepliesProps {
-  post: any; // Define proper type
+  post: PostView;
   layout: string;
   homeView?: boolean;
   isMobile: boolean;
