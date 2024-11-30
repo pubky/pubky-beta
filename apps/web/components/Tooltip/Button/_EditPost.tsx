@@ -1,19 +1,19 @@
-'use client';
-
-import { useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
-import Modal from '@/components/Modal';
 
 interface EditPostProps {
   post: PostView;
+  setShowModalEditArticle: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function EditPost({ post }: EditPostProps) {
+export default function EditPost({
+  post,
+  setShowModalEditArticle,
+  setShowModalEditPost,
+}: EditPostProps) {
   const { pubky } = usePubkyClientContext();
-  const [showModalEditPost, setShowModalEditPost] = useState(false);
-  const [showModalEditArticle, setShowModalEditArticle] = useState(false);
 
   return (
     <>
@@ -37,20 +37,6 @@ export default function EditPost({ post }: EditPostProps) {
             </Tooltip.Item>
           )}
         </>
-      )}
-      {showModalEditPost && (
-        <Modal.EditPost
-          showModalEditPost={showModalEditPost}
-          setShowModalEditPost={setShowModalEditPost}
-          post={post}
-        />
-      )}
-      {showModalEditArticle && (
-        <Modal.EditArticle
-          showModalEditArticle={showModalEditArticle}
-          setShowModalEditArticle={setShowModalEditArticle}
-          article={post}
-        />
       )}
     </>
   );

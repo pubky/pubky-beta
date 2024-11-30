@@ -19,7 +19,7 @@ function ProfileLink({ pk }: { pk: string }) {
         setPkFound(pkFound);
         const result = await getUserProfile(
           pkFound.replace('pk:', '').trim(),
-          pubky ?? ''
+          pubky ?? '',
         );
         if (result) setUserName(result?.details?.name);
       }
@@ -33,7 +33,9 @@ function ProfileLink({ pk }: { pk: string }) {
   return (
     <>
       <Link className="text-[#C8FF00] break-all" href={`/profile/${pkPart}`}>
-        {userName ? `@${userName}` : Utils.minifyPubky(pkFound)}
+        {userName
+          ? `@${userName}`
+          : Utils.minifyPubky(pkFound.replace('pk:', ''))}
       </Link>
       {remainingPart}
     </>
