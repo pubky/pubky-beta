@@ -15,7 +15,7 @@
   },
   "private": true,
   "dependencies": {
-    "@noble/hashes": "^1.5.0",
+    "@noble/hashes": "^1.6.1",
     "@nx/next": "20.1.2",
     "@swc/helpers": "~0.5.15",
     "@synonymdev/pubky": "^0.2.1",
