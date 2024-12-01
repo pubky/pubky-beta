@@ -25,12 +25,7 @@ export const NewPostsNotifier = ({
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [newPostsCount, setNewPostsCount] = useState(0);
 
-  const {
-    data: newPostsData,
-    isLoading: isNewPostsLoading,
-    isError: isNewPostsError,
-    error: newPostsError,
-  } = useStreamPost(
+  const { data: newPostsData } = useStreamPost(
     pubky,
     reach,
     'all',
@@ -42,7 +37,7 @@ export const NewPostsNotifier = ({
     undefined,
     {
       enabled: true,
-      refetchInterval: 10000,
+      refetchInterval: 3000,
     } as UseQueryOptions<unknown, Error>,
   );
 
