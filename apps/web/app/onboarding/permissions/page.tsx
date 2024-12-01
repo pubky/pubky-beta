@@ -1,4 +1,4 @@
-import { getSeoMetadata } from '@/components/HeaderSEO';
+import { getSeoMetadata } from '@components/HeaderSEO';
 import { Permissions } from './components/index';
 
 export const metadata = getSeoMetadata({

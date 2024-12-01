@@ -1,3 +1,5 @@
+'use client';
+
 import { PostUtil, Typography } from '@social/ui-shared';
 import { UserView } from '@/types/User';
 import { Utils } from '@social/utils-shared';

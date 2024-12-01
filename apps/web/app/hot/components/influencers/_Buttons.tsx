@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Icon } from '@social/ui-shared';
 import { UserView } from '@/types/User';
 import { usePubkyClientContext } from '@/contexts';

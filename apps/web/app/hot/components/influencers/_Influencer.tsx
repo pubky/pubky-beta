@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { Typography } from '@social/ui-shared';

@@ -26,9 +26,19 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const fetchPosts = async () => {
     try {
       if (!data) return;
+      if (!Array.isArray(data)) return;
 
-      setStart(data[data.length - 1].details.indexed_at - 1);
-      setTimeline((prev) => [...prev, ...data]);
+      const lastPost = data[data.length - 1] as PostView;
+      if (lastPost.details?.indexed_at) {
+        setStart(lastPost.details.indexed_at - 1);
+        setTimeline((prev) => {
+          const newPosts = data.filter(
+            (post: PostView) =>
+              !prev.some((p) => p.details.id === post.details.id),
+          );
+          return [...prev, ...newPosts];
+        });
+      }
     } catch (error) {
       console.error(error);
     }

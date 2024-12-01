@@ -1,20 +1,13 @@
 'use client';
 
 import { Content } from '@social/ui-shared';
-import {
-  Influencers,
-  CreatePost,
-  Feedback,
-  Header,
-  Sidebar,
-  WhoFollow,
-} from '@/components';
+import { CreatePost, Feedback, Header, Sidebar, WhoFollow } from '@/components';
 import * as Components from '@/components';
 import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
 import { useHotTags } from '@/hooks/useTag';
 import React from 'react';
-import { Hot } from '.';
+import { Hot } from './index';
 import { useStreamUsers } from '@/hooks/useStream';
 import { usePubkyClientContext } from '@/contexts';
 
@@ -47,7 +40,7 @@ export default function Index() {
               <Hot.RenderTags hotTags={hotTags} loadingReachTags={isLoading} />
               <Hot.RenderInfluencers
                 influencers={influencers}
-                initloadingInfluencers={isLoadingInfluencers}
+                initLoadingInfluencers={isLoadingInfluencers}
               />
             </div>
           )}
