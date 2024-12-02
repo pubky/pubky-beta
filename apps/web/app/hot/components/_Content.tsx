@@ -7,9 +7,10 @@ import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
 import { useHotTags } from '@/hooks/useTag';
 import React from 'react';
-import { Hot } from './index';
-import { useStreamUsers } from '@/hooks/useStream';
+import { useStreamPost, useStreamUsers } from '@/hooks/useStream';
 import { usePubkyClientContext } from '@/contexts';
+import { Hot } from '.';
+import { PostView } from '@/types/Post';
 
 export default function Index() {
   const { pubky } = usePubkyClientContext();
@@ -19,8 +20,22 @@ export default function Index() {
     isLoading: isLoadingInfluencers,
     isError: isErrorInfluencers,
   } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
+  const {
+    data: posts,
+    isLoading: isLoadingPosts,
+    isError: isErrorPosts,
+  } = useStreamPost(
+    pubky ?? '',
+    'all',
+    undefined,
+    5,
+    undefined,
+    undefined,
+    undefined,
+    'popularity',
+  );
   const hotTags = data || [];
-  if (isError || isErrorInfluencers) console.error(isError);
+  if (isError || isErrorInfluencers || isErrorPosts) console.error(isError);
 
   return (
     <Content.Main>
@@ -31,7 +46,7 @@ export default function Index() {
           <Filter.TagsTimeFrame />
         </Sidebar>
         <div className="flex-col inline-flex gap-3 w-full">
-          {isLoading || isLoadingInfluencers ? (
+          {isLoading || isLoadingInfluencers || isLoadingPosts ? (
             <div className="w-full">
               <Skeletons.Simple />
             </div>
@@ -41,6 +56,10 @@ export default function Index() {
               <Hot.RenderInfluencers
                 influencers={influencers}
                 initLoadingInfluencers={isLoadingInfluencers}
+              />
+              <Hot.RenderPosts
+                posts={posts as PostView[]}
+                initloadingPosts={isLoadingPosts}
               />
             </div>
           )}
