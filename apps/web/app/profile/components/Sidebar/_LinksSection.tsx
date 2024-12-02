@@ -9,10 +9,10 @@ interface LinksSectionProps {
   setClickedLink: (link: string) => void;
 }
 
-const socialLinks = [
+export const socialLinks = [
   {
     name: 'X (twitter)',
-    url: 'https://x.com/@',
+    url: 'https://x.com/',
     icon: <Icon.Twitter size="16" />,
   },
   {
@@ -27,7 +27,7 @@ const socialLinks = [
   },
   {
     name: 'Instagram',
-    url: 'https://instagram.com/@',
+    url: 'https://instagram.com/',
     icon: <Icon.Instagram size="16" />,
   },
   {
@@ -52,12 +52,12 @@ const socialLinks = [
   },
   {
     name: 'Medium',
-    url: 'https://medium.com/@',
+    url: 'https://medium.com/',
     icon: <Icon.Medium size="16" />,
   },
   {
     name: 'Youtube',
-    url: 'https://youtube.com/@',
+    url: 'https://youtube.com/',
     icon: <Icon.Youtube width="16" height="16" />,
   },
   {
@@ -67,7 +67,7 @@ const socialLinks = [
   },
   {
     name: 'TikTok',
-    url: 'https://tiktok.com/@',
+    url: 'https://tiktok.com/',
     icon: <Icon.TikTok size="16" />,
   },
   {
@@ -90,7 +90,7 @@ export default function LinksSection({
 }: LinksSectionProps) {
   const renderSocialUsername = (linkUrl: string) => {
     const matchingSocialLink = socialLinks.find((socialLink) =>
-      linkUrl.includes(socialLink.url)
+      linkUrl.includes(socialLink.url),
     );
 
     if (matchingSocialLink) {
@@ -109,7 +109,7 @@ export default function LinksSection({
           <div className="flex-col inline-flex gap-2">
             {links.map((link, index) => {
               const icon = socialLinks.find((socialLink) =>
-                link.url.includes(socialLink.url)
+                link.url.includes(socialLink.url),
               )?.icon;
               const customIcon = linkTitleToIconMap[link.title.toLowerCase()];
 
@@ -129,7 +129,7 @@ export default function LinksSection({
                         <Link href={`${link.url}`} target="_blank">
                           <Typography.Body
                             className="text-opacity-80 hover:text-opacity-100"
-                            variant="small"
+                            variant="medium"
                           >
                             {link.url.replace(/^mailto:/, '')}
                           </Typography.Body>
@@ -153,7 +153,7 @@ export default function LinksSection({
                           >
                             {Utils.minifyText(
                               renderSocialUsername(link.url),
-                              20
+                              20,
                             )}
                           </Typography.Body>
                         </div>
