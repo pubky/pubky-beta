@@ -51,41 +51,6 @@ export default function Index() {
     }
 
     return notifications.map((notification, index) => {
-      {
-        /**if (Array.isArray(notification)) {
-        switch (notification[0].body.type) {
-          case 'Follow':
-          case 'NewFriend':
-          case 'LostFriend':
-            return (
-              <Notifications.NotificationGroup
-                key={index}
-                notifications={notification}
-              />
-            );
-          case 'TagProfile':
-            return (
-              <Notifications.NotificationTagGroup
-                key={index}
-                notifications={notification}
-              />
-            );
-          case 'TagPost':
-            return (
-              <Notifications.NotificationTagPostGroup
-                key={index}
-                notifications={notification}
-              />
-            );
-          default:
-            return null;
-        }
-      } else {
-        return (
-          <Notifications.Notification key={index} notification={notification} />
-        );
-      }*/
-      }
       return <Notifications key={index} notification={notification} />;
     });
   }

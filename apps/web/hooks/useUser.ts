@@ -43,7 +43,7 @@ export function useUserDetails(userId: string) {
 export function UseUserFollowers(
   userId: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ) {
   return useQuery({
     queryKey: ['userFollowers', userId, skip, limit],
@@ -55,7 +55,7 @@ export function UseUserFollowers(
 export function UseUserFollowing(
   userId: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ) {
   return useQuery({
     queryKey: ['userFollowing', userId, skip, limit],
@@ -92,7 +92,7 @@ export function useUserTaggers(
   userId: string,
   tagName: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ) {
   return useQuery({
     queryKey: ['userTaggers', userId, tagName, skip, limit],
@@ -104,7 +104,7 @@ export function useUserTaggers(
 export function useUserTags(
   userId: string,
   limitTags?: number,
-  limitTaggers?: number
+  limitTaggers?: number,
 ) {
   return useQuery({
     queryKey: ['userTaggers', userId, limitTags, limitTaggers],
@@ -118,11 +118,12 @@ export function useUserNotifications(
   start?: number,
   end?: number,
   skip?: number,
-  limit?: number
+  limit?: number,
 ) {
   return useQuery({
     queryKey: ['userNotifications', userId, start, end, skip, limit],
     queryFn: () => getUserNotifications(userId, start, end, skip, limit),
     retry: false,
+    refetchInterval: 3000,
   });
 }
