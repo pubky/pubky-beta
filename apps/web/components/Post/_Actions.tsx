@@ -73,7 +73,7 @@ const MenuButton = ({
       }
       onClick={(event) => {
         event.stopPropagation();
-        setShowMenu(true);
+        setShowMenu(!showMenu);
       }}
     />
   </div>
@@ -89,7 +89,7 @@ export default function Actions({
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   const { data: authorRepost } = useUserProfile(
     repost?.details?.author ?? '',
-    pubky ?? ''
+    pubky ?? '',
   );
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
   const { setContent: setContentToast, setShow: setShowToast } =
@@ -99,7 +99,7 @@ export default function Actions({
   const [showModalReply, setShowModalReply] = useState(false);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(
-    repost?.bookmark?.id ? repost?.bookmark?.id : post?.bookmark?.id ?? ''
+    repost?.bookmark?.id ? repost?.bookmark?.id : (post?.bookmark?.id ?? ''),
   );
 
   const handleAddBookmark = async (postId: string, authorId: string) => {
@@ -136,7 +136,7 @@ export default function Actions({
         `This post by ${
           repost ? authorRepost?.details?.name : author?.details?.name
         } was saved to your bookmarks.`,
-        'bookmark'
+        'bookmark',
       );
       setShowToast(true);
     }

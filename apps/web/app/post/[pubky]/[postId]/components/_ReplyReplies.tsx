@@ -7,13 +7,8 @@ import { Icon, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
 
-export const ReplyReplies = ({
-  reply,
-  postCountReplies,
-}: {
-  reply: PostView;
-  postCountReplies: number;
-}) => {
+export const ReplyReplies = ({ reply }: { reply: PostView }) => {
+  const { mutedUsers } = usePubkyClientContext();
   const { data: replyReplies } = usePostReplies(
     reply?.details?.author,
     reply?.details?.id,
@@ -30,18 +25,26 @@ export const ReplyReplies = ({
       <Icon.LineHorizontal size="14" color="#262626" />
     </div>
   );
-  //const [showAllReplies, setShowAllReplies] = useState(false);
 
   if (!replyReplies || replyReplies.length === 0) return null;
 
-  const displayedReplies = replyReplies.slice(0, 1);
-  //showAllReplies
-  //  ? replyReplies.replies
-  //  : replyReplies.replies.slice(0, 1);
-  const repliesLeft = postCountReplies - displayedReplies.length;
+  const filteredReplies = replyReplies.filter(
+    (reply) => !mutedUsers?.includes(reply?.details?.author),
+  );
+
+  const displayedReplies = filteredReplies.slice(0, 1);
+
+  const mutedRepliesCount = replyReplies.filter((reply) =>
+    mutedUsers?.includes(reply?.details?.author),
+  ).length;
+
+  const repliesLeft =
+    reply?.counts?.replies - displayedReplies.length - mutedRepliesCount;
+
+  const showQuickReply = displayedReplies.length > 0;
 
   return (
-    <div>
+    <>
       {displayedReplies.map((nestedReply) => (
         <div className="flex flex-col gap-3" key={nestedReply?.details?.id}>
           <Post
@@ -52,7 +55,6 @@ export const ReplyReplies = ({
         </div>
       ))}
       {repliesLeft > 0 && (
-        //&& !showAllReplies
         <div>
           <div className={lineBaseCSS} />
           {lineHorizontalCSS}
@@ -69,11 +71,13 @@ export const ReplyReplies = ({
           </Link>
         </div>
       )}
-      <div className="relative mt-3">
-        <div className={lineBaseCSS2} />
-        {lineHorizontalCSS2}
-        <CreateQuickReply post={reply} />
-      </div>
-    </div>
+      {showQuickReply && (
+        <div className="relative mt-3">
+          <div className={lineBaseCSS2} />
+          {lineHorizontalCSS2}
+          <CreateQuickReply post={reply} />
+        </div>
+      )}
+    </>
   );
 };

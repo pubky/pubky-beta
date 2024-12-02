@@ -23,12 +23,11 @@ export const PostReplies = ({
   homeView = false,
   isMobile,
 }: PostRepliesProps) => {
-  const { pubky } = usePubkyClientContext();
+  const { mutedUsers } = usePubkyClientContext();
   const { data: replies } = usePostReplies(
     post.details.author,
-    post.details.id
+    post.details.id,
   );
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
 
   const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[2px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
@@ -45,47 +44,60 @@ export const PostReplies = ({
 
   if (!replies || replies.length === 0) return null;
 
-  const displayedReplies = replies.slice(0, 2);
-  const repliesLeft = post?.counts?.replies - displayedReplies.length;
+  const filteredReplies = replies.filter(
+    (reply) => !mutedUsers?.includes(reply?.details?.author),
+  );
+
+  const displayedReplies = filteredReplies.slice(0, 2);
+
+  const mutedRepliesCount = replies.filter((reply) =>
+    mutedUsers?.includes(reply?.details?.author),
+  ).length;
+
+  const repliesLeft =
+    post?.counts?.replies - displayedReplies.length - mutedRepliesCount;
+
+  const showQuickReply = displayedReplies.length > 0;
 
   return (
-    <div className="mt-3 flex flex-col gap-3">
-      {displayedReplies
-        .filter((post) => !mutedUsers?.includes(post?.details?.author))
-        .reverse()
-        .map((reply) => (
-          <Components.Post
-            key={reply.details.id}
-            post={reply}
-            largeView={!isMobile && layout === 'wide'}
-            line={Boolean(reply?.relationships?.replied)}
-            homeView={homeView}
-          />
-        ))}
-      {repliesLeft > 0 && (
-        <div>
-          <div className={lineBaseCSS} />
-          {lineHorizontalCSS}
-          <Link href={Utils.encodePostUri(post?.details?.uri)}>
-            <Typography.Body
-              variant="small-bold"
-              className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
-            >
-              <Icon.PlusCircle />
-              {repliesLeft === 1
-                ? '1 more reply'
-                : `${repliesLeft} more replies`}
-            </Typography.Body>
-          </Link>
+    <>
+      {showQuickReply && (
+        <div className="mt-3 flex flex-col gap-3">
+          {displayedReplies.reverse().map((reply) => (
+            <Components.Post
+              key={reply.details.id}
+              post={reply}
+              largeView={!isMobile && layout === 'wide'}
+              line={Boolean(reply?.relationships?.replied)}
+              homeView={homeView}
+            />
+          ))}
+          {repliesLeft > 0 && (
+            <div>
+              <div className={lineBaseCSS} />
+              {lineHorizontalCSS}
+              <Link href={Utils.encodePostUri(post?.details?.uri)}>
+                <Typography.Body
+                  variant="small-bold"
+                  className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
+                >
+                  <Icon.PlusCircle />
+                  {repliesLeft === 1
+                    ? '1 more reply'
+                    : `${repliesLeft} more replies`}
+                </Typography.Body>
+              </Link>
+            </div>
+          )}
+          {post?.details?.content !== '[DELETED]' && (
+            <div className="relative">
+              <div className={lineBaseCSS2} />
+              {lineHorizontalCSS2}
+              <CreateQuickReply post={post} />
+            </div>
+          )}
         </div>
       )}
-      {post?.details?.content !== '[DELETED]' && (
-        <div className="relative">
-          <div className={lineBaseCSS2} />
-          {lineHorizontalCSS2}
-          <CreateQuickReply post={post} />
-        </div>
-      )}
-    </div>
+    </>
   );
 };

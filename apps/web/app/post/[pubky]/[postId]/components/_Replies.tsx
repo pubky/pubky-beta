@@ -14,13 +14,11 @@ import { PostView } from '@/types/Post';
 export default function Replies({
   pubkyAuthor,
   postId,
-  postCountReplies,
 }: {
   pubkyAuthor: string;
   postId: string;
-  postCountReplies: number;
 }) {
-  const { pubky, setReplies } = usePubkyClientContext();
+  const { pubky, setReplies, mutedUsers } = usePubkyClientContext();
   const limit = 5;
   const [start, setStart] = useState<number | undefined>(undefined);
   const [replies, setRepliesLocal] = useState<PostView[]>([]);
@@ -41,26 +39,32 @@ export default function Replies({
 
   const fetchReplies = async () => {
     if (isLoading) return;
-
+  
     try {
       if (repliesData && repliesData.length > 0) {
-        const newStart =
-          repliesData[repliesData.length - 1].details.indexed_at - 1;
-        setStart(newStart);
-        setRepliesLocal((prevReplies) => [
-          ...prevReplies,
-          ...repliesData.filter(
-            (reply) =>
-              !prevReplies.some((r) => r.details.id === reply.details.id),
-          ),
-        ]);
-        setReplies((prevReplies) => [
-          ...prevReplies,
-          ...repliesData.filter(
-            (reply) =>
-              !prevReplies.some((r) => r.details.id === reply.details.id),
-          ),
-        ]);
+        const filteredReplies = repliesData.filter(
+          (reply) => !mutedUsers?.includes(reply?.details?.author),
+        );
+  
+        if (filteredReplies.length > 0) {
+          const newStart =
+            filteredReplies[filteredReplies.length - 1].details.indexed_at - 1;
+          setStart(newStart);
+          setRepliesLocal((prevReplies) => [
+            ...prevReplies,
+            ...filteredReplies.filter(
+              (reply) =>
+                !prevReplies.some((r) => r.details.id === reply.details.id),
+            ),
+          ]);
+          setReplies((prevReplies) => [
+            ...prevReplies,
+            ...filteredReplies.filter(
+              (reply) =>
+                !prevReplies.some((r) => r.details.id === reply.details.id),
+            ),
+          ]);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -155,7 +159,6 @@ export default function Replies({
                 <Post post={reply} />
                 {reply?.counts?.replies > 0 && (
                   <ReplyReplies
-                    postCountReplies={postCountReplies}
                     reply={reply}
                   />
                 )}

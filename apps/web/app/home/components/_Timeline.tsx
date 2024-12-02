@@ -10,14 +10,20 @@ import { Post, Skeleton } from '@/components';
 import { PostReplies } from './_PostReplies';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { NewPostsNotifier } from './_NewPostsNotifier';
+import { UseUserMuted } from '@/hooks/useUser';
 
 export const Timeline = () => {
   const limit = 10;
-  const { pubky } = usePubkyClientContext();
+  const { pubky, setMutedUsers } = usePubkyClientContext();
+  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
   const { reach, layout, sort } = useFilterContext();
+
+  useEffect(() => {
+    setMutedUsers(mutedUsers);
+  }, [mutedUsers]);
 
   const { data, isLoading, isSuccess } = useStreamPost(
     pubky ?? '',
@@ -39,10 +45,13 @@ export const Timeline = () => {
       if (lastPost.details?.indexed_at) {
         setStart(lastPost.details.indexed_at - 1);
         setTimeline((prev) => {
-          const newPosts = data.filter(
-            (post: PostView) =>
-              !prev.some((p) => p.details.id === post.details.id),
-          );
+          const newPosts = data.filter((post) => {
+            const isMuted = mutedUsers?.includes(post?.details?.author);
+            const isAlreadyInTimeline = prev.some(
+              (p) => p.details.id === post.details.id,
+            );
+            return !isMuted && !isAlreadyInTimeline;
+          });
           return [...prev, ...newPosts];
         });
       }
