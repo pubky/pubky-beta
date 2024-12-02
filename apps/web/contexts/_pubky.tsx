@@ -133,8 +133,6 @@ type PubkyClientContextType = {
     privacysafety?: any,
     language?: string,
   ) => Promise<boolean>;
-  setReplies: React.Dispatch<React.SetStateAction<PostView[]>>;
-  replies: PostView[];
 };
 
 interface TimelineState {
@@ -1502,8 +1500,6 @@ export function PubkyClientWrapper({
   return (
     <PubkyClientContext.Provider
       value={{
-        replies,
-        setReplies,
         pubky,
         seed,
         profile,
