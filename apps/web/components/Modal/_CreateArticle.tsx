@@ -1,4 +1,10 @@
-import { Button, Icon, Input, Modal as ModalUI } from '@social/ui-shared';
+import {
+  Button,
+  Icon,
+  Input,
+  Modal as ModalUI,
+  Typography,
+} from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
@@ -26,6 +32,7 @@ export default function CreateArticle({
   const [isMobile, setIsMobile] = useState(false);
   const [isError, setIsError] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
+  const [errorFile, setErrorFile] = useState('');
   const [contentTitle, setContentTitle] = useState('');
   const [contentArticle, setContentArticle] = useState('');
   const [showModalTag, setShowModalTag] = useState(false);
@@ -234,7 +241,28 @@ export default function CreateArticle({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    const maxSizeInMB = 20;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
     if (file) {
+      const isImage = file.type.startsWith('image/');
+      const isVideo = file.type.startsWith('video/');
+      const isAudio = file.type.startsWith('audio/');
+      const isValidType =
+        (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+        (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+        (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
+        file.type === 'application/pdf';
+
+      if (!isValidType) {
+        setErrorFile('File type not supported.');
+        return;
+      }
+
+      if (file.size > maxSizeInBytes) {
+        setErrorFile('The maximum allowed size is 20 MB');
+        return;
+      }
       setSelectedFile([file]);
     }
   };
@@ -275,9 +303,17 @@ export default function CreateArticle({
 
     if (files) {
       const validFiles = Array.from(files).filter((file) => {
-        const isValidType = file.type.startsWith('image/');
+        const isImage = file.type.startsWith('image/');
+        const isVideo = file.type.startsWith('video/');
+        const isAudio = file.type.startsWith('audio/');
+        const isValidType =
+          (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+          (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+          (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
+          file.type === 'application/pdf';
+
         if (!isValidType) {
-          setContentAlert('File not supported', 'warning');
+          setContentAlert('File type not supported.', 'warning');
           setShow(true);
           return false;
         }
@@ -399,6 +435,12 @@ export default function CreateArticle({
                             Add file
                           </p>
                         </div>
+                        <Typography.Body
+                          className="text-red-500 mt-4"
+                          variant="small"
+                        >
+                          {errorFile}
+                        </Typography.Body>
                       </div>
                     )}
                   </div>
