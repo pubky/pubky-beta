@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
 import Modal from '../Modal';
-import { getUserProfile } from '@/services/userService';
+import { getUserMuted, getUserProfile } from '@/services/userService';
 
 export default function ProtectedRoutes({
   children,
@@ -14,7 +14,8 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, pubky, storeProfile, profile } = usePubkyClientContext();
+  const { isLoggedIn, pubky, storeProfile, profile, setMutedUsers } =
+    usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -47,6 +48,9 @@ export default function ProtectedRoutes({
 
       // check if user is logged in
       if (loggedIn) {
+        // fetch muted users
+        const mutedUsers = await getUserMuted(pubky ?? '');
+        setMutedUsers(mutedUsers);
         // check if user has a profile
         if (emptyProfile) {
           try {

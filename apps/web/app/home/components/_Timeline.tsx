@@ -10,20 +10,14 @@ import { Post, Skeleton } from '@/components';
 import { PostReplies } from './_PostReplies';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { NewPostsNotifier } from './_NewPostsNotifier';
-import { UseUserMuted } from '@/hooks/useUser';
 
 export const Timeline = () => {
   const limit = 10;
-  const { pubky, setMutedUsers } = usePubkyClientContext();
-  const { data: mutedUsers } = UseUserMuted(pubky ?? '');
+  const { pubky, mutedUsers } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
   const { reach, layout, sort } = useFilterContext();
-
-  useEffect(() => {
-    setMutedUsers(mutedUsers);
-  }, [mutedUsers]);
 
   const { data, isLoading, isSuccess } = useStreamPost(
     pubky ?? '',
