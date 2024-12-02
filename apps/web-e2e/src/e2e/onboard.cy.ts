@@ -5,6 +5,10 @@ import { slowCypressDown } from 'cypress-slow-down';
 describe('onboarding', () => {
   before(() => {
     slowCypressDown();
+
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(3_000);
+
     cy.deleteDownloadsFolder();
   });
 

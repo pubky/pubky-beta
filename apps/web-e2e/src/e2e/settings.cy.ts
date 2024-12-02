@@ -11,6 +11,9 @@ describe('settings', () => {
   });
 
   beforeEach(() => {
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(3_000);
+
     cy.deleteDownloadsFolder();
   });
 

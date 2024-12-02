@@ -136,6 +136,7 @@ export default function Replies({
     <>
       {newRepliesCount > 0 && (
         <Button.Medium
+          id="show-new-replies-button"
           className="new-posts-button mt-3"
           onClick={handleShowNewReplies}
         >

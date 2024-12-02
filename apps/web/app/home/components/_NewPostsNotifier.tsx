@@ -68,6 +68,7 @@ export const NewPostsNotifier = ({
     <>
       {newPostsCount > 0 && (
         <Button.Medium
+          id="show-new-posts-button"
           className="new-posts-button"
           onClick={handleShowNewPosts}
         >

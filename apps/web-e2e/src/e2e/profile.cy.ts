@@ -7,6 +7,9 @@ describe('profile', () => {
   });
 
   beforeEach(() => {
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(3_000);
+
     cy.onboardAsNewUser('Edit Me', 'This bio is editable');
   });
 
@@ -49,6 +52,9 @@ describe('profile', () => {
   });
 
   it('cancelling edit should not retain any changes made to own profile', () => {
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(3_000);
+
     // navigate to edit profile page
     cy.get('#header-profile-pic').click();
     cy.get('#profile-edit-btn').click();

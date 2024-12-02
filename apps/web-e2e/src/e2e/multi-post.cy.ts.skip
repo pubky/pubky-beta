@@ -36,6 +36,9 @@ describe('multi-post', () => {
       const postContent = `Day ${i} of trying to be productive. ${i/t*100}% complete.\n${Date.now()}`;
       createQuickPost(postContent);
 
+      // click the show new posts button
+      cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+
       // verify the post is displayed correctly in feed
       latestPostInFeedContentEq(postContent);
     };
