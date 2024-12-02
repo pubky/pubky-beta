@@ -88,6 +88,8 @@ export default function WhoFollow() {
     }
   };
 
+  if (recommendedProfiles === undefined) return <></>;
+
   return (
     <div className="mb-6">
       <SideCard.Header title="Who to Follow" />
