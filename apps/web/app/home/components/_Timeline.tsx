@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Typography } from '@social/ui-shared';
+import { Button, Typography } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
@@ -9,6 +9,7 @@ import { PostView } from '@/types/Post';
 import { Post, Skeleton } from '@/components';
 import { PostReplies } from './_PostReplies';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { NewPostsNotifier } from './_NewPostsNotifier';
 
 export const Timeline = () => {
   const limit = 10;
@@ -18,7 +19,7 @@ export const Timeline = () => {
   const isMobile = useIsMobile();
   const { reach, layout, sort } = useFilterContext();
 
-  const { data, isLoading } = useStreamPost(
+  const { data, isLoading, isSuccess } = useStreamPost(
     pubky ?? '',
     reach,
     'all',
@@ -26,20 +27,21 @@ export const Timeline = () => {
     start,
     undefined,
     undefined,
-    sort
+    sort,
   );
 
   const fetchPosts = async () => {
     try {
       if (!data) return;
-      const lastPost = data[data.length - 1];
-      if (lastPost.details?.indexed_at) {
-        // TODO: filter by muted users
+      if (!Array.isArray(data)) return;
 
+      const lastPost = data[data.length - 1] as PostView;
+      if (lastPost.details?.indexed_at) {
         setStart(lastPost.details.indexed_at - 1);
         setTimeline((prev) => {
           const newPosts = data.filter(
-            (post) => !prev.some((p) => p.details.id === post.details.id),
+            (post: PostView) =>
+              !prev.some((p) => p.details.id === post.details.id),
           );
           return [...prev, ...newPosts];
         });
@@ -65,8 +67,28 @@ export const Timeline = () => {
     fetchPosts();
   }, [reach, sort]);
 
+  const latestTimestamp =
+    timeline.length > 0 ? timeline[0].details.indexed_at : undefined;
+
   return (
     <div className="flex flex-col gap-3">
+      {isSuccess && latestTimestamp && (
+        <NewPostsNotifier
+          latestTimestamp={latestTimestamp}
+          pubky={pubky ?? ''}
+          reach={reach}
+          sort={sort}
+          addNewPosts={(newPosts: PostView[]) => {
+            newPosts.forEach((newPost) => {
+              if (
+                !timeline.some((post) => post.details.id === newPost.details.id)
+              ) {
+                setTimeline((prev) => [newPost, ...prev]);
+              }
+            });
+          }}
+        />
+      )}
       {timeline.map(
         (post) =>
           post?.details?.content !== '[DELETED]' && (

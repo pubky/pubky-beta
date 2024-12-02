@@ -9,7 +9,7 @@ export async function getPost(
   postId: string,
   viewerId?: string,
   maxTags?: number,
-  maxTaggers?: number
+  maxTaggers?: number,
 ): Promise<PostView> {
   const queryParams = new URLSearchParams();
 
@@ -24,7 +24,7 @@ export async function getPost(
   }
 
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}?${queryParams}`
+    `${BASE_URL}/post/${authorId}/${postId}?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch post');
@@ -36,7 +36,7 @@ export async function getPost(
 export async function getPostBookmark(
   authorId: string,
   postId: string,
-  viewerId?: string
+  viewerId?: string,
 ): Promise<Bookmark> {
   const queryParams = new URLSearchParams();
 
@@ -45,7 +45,7 @@ export async function getPostBookmark(
   }
 
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}/bookmark?${queryParams}`
+    `${BASE_URL}/post/${authorId}/${postId}/bookmark?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch post bookmark');
@@ -56,7 +56,7 @@ export async function getPostBookmark(
 // Get post counts
 export async function getPostCounts(
   authorId: string,
-  postId: string
+  postId: string,
 ): Promise<PostCounts> {
   const response = await fetch(`${BASE_URL}/post/${authorId}/${postId}/counts`);
 
@@ -68,10 +68,10 @@ export async function getPostCounts(
 // Get post details
 export async function getPostDetails(
   authorId: string,
-  postId: string
+  postId: string,
 ): Promise<PostDetails> {
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}/details`
+    `${BASE_URL}/post/${authorId}/${postId}/details`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch post details');
@@ -87,7 +87,7 @@ export async function getPostReplies(
   limit = 10,
   start?: number,
   end?: number,
-  skip?: number
+  skip?: number,
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams({
     author_id: authorId,
@@ -127,7 +127,7 @@ export async function getPostByTaggers(
   postId: string,
   label: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
@@ -139,7 +139,7 @@ export async function getPostByTaggers(
   }
 
   const response = await fetch(
-    `${BASE_URL}/post/${authorId}/${postId}/taggers/${label}?${queryParams}`
+    `${BASE_URL}/post/${authorId}/${postId}/taggers/${label}?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch post by taggers');
@@ -150,7 +150,7 @@ export async function getPostByTaggers(
 // Get post by tags
 export async function getPostByTags(
   authorId: string,
-  postId: string
+  postId: string,
 ): Promise<string[]> {
   const response = await fetch(`${BASE_URL}/post/${authorId}/${postId}/tags`);
 

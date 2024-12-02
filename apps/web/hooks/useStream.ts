@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import {
   getStreamPosts,
   getUserStream,
@@ -18,6 +18,7 @@ export function useStreamPost(
   skip?: number,
   sort?: TSort,
   tags?: string[],
+  options?: UseQueryOptions,
 ) {
   return useQuery({
     queryKey: [
@@ -45,6 +46,7 @@ export function useStreamPost(
         tags,
       ),
     retry: false,
+    ...options,
   });
 }
 

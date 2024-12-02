@@ -4,18 +4,18 @@ import Skeletons from '@/components/Skeletons';
 import { Typography } from '@social/ui-shared';
 import { UserView } from '@/types/User';
 import { useEffect, useState } from 'react';
-import { LoadingInfluencers } from '@/app/hot/components/influencers/_MainContent';
+import { LoadingInfluencers } from './influencers/_MainContent';
 import { usePubkyClientContext } from '@/contexts';
-import { Influencers } from '@/app/hot/components/influencers';
+import { Influencers } from './influencers';
 
 interface RenderInfluencersProps {
   influencers: UserView[] | undefined;
-  initloadingInfluencers: boolean;
+  initLoadingInfluencers: boolean;
 }
 
 const RenderInfluencers = ({
   influencers,
-  initloadingInfluencers,
+  initLoadingInfluencers,
 }: RenderInfluencersProps) => {
   const { pubky } = usePubkyClientContext();
   const [loadingInfluencers, setLoadingInfluencers] =
@@ -35,7 +35,7 @@ const RenderInfluencers = ({
     }
   }, [influencers]);
 
-  if (initloadingInfluencers) {
+  if (initLoadingInfluencers) {
     return <Skeletons.Simple />;
   }
 
@@ -66,7 +66,7 @@ const RenderInfluencers = ({
                     setFollowed={setFollowed}
                     pubkeyUser={pubkeyUser}
                     isFollowed={isFollowed}
-                    isLoading={initloadingInfluencers}
+                    isLoading={initLoadingInfluencers}
                   />
                 </div>
               </div>

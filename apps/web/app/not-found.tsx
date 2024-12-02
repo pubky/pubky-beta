@@ -1,5 +1,5 @@
 import { Error404 } from '@/components/404';
-import { getSeoMetadata } from '@/components/HeaderSEO';
+import { getSeoMetadata } from '@components/HeaderSEO';
 
 export const metadata = getSeoMetadata({
   title: '404 | Pubky.app',

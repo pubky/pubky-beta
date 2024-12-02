@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Content } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 
-import { getSeoMetadata } from '@/components/HeaderSEO';
+import { getSeoMetadata } from '@components/HeaderSEO';
 import { CreatePost, Header } from '@/components';
 import { Post } from './components';
 import * as Components from '@/components';

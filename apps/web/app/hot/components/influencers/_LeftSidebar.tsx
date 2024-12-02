@@ -1,3 +1,5 @@
+'use client';
+
 import { Filter } from '@/components/Filter';
 import * as Components from '@/components';
 

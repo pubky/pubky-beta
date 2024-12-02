@@ -1,3 +1,5 @@
+'use client';
+
 import { Typography } from '@social/ui-shared';
 import { UserView } from '@/types/User';
 

@@ -1,5 +1,5 @@
 import { UserProfile } from './components';
-import { getSeoMetadata } from '@/components/HeaderSEO';
+import { getSeoMetadata } from '@components/HeaderSEO';
 import { getFile } from '@/services/fileService';
 import { getUserDetails } from '@/services/userService';
 

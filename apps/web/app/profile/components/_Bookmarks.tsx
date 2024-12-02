@@ -26,10 +26,18 @@ export default function Bookmarks() {
   const fetchPosts = async () => {
     try {
       if (!data) return;
-      const lastPost = data[data.length - 1];
-      if (lastPost.bookmark?.indexed_at) {
-        setStart(lastPost.bookmark.indexed_at - 1);
-        setTimeline((prev) => [...prev, ...data]);
+      if (!Array.isArray(data)) return;
+
+      const lastPost = data[data.length - 1] as PostView;
+      if (lastPost.details?.indexed_at) {
+        setStart(lastPost.details.indexed_at - 1);
+        setTimeline((prev) => {
+          const newPosts = data.filter(
+            (post: PostView) =>
+              !prev.some((p) => p.details.id === post.details.id),
+          );
+          return [...prev, ...newPosts];
+        });
       }
     } catch (error) {
       console.error(error);

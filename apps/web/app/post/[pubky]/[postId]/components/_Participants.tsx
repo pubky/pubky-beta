@@ -42,15 +42,18 @@ export default function Participants({ author }: { author: string }) {
       ];
 
       const profiles = await Promise.all(
-        uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? ''))
+        uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? '')),
       );
 
-      const followedMap = profiles.reduce((acc, profile) => {
-        if (profile.relationship?.following) {
-          acc[profile.details.id] = true;
-        }
-        return acc;
-      }, {} as { [key: string]: boolean });
+      const followedMap = profiles.reduce(
+        (acc, profile) => {
+          if (profile.relationship?.following) {
+            acc[profile.details.id] = true;
+          }
+          return acc;
+        },
+        {} as { [key: string]: boolean },
+      );
 
       setParticipants(profiles);
 

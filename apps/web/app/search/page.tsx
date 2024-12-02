@@ -1,4 +1,4 @@
-import { getSeoMetadata } from '@/components/HeaderSEO';
+import { getSeoMetadata } from '@components/HeaderSEO';
 import { Content } from '@social/ui-shared';
 import * as Components from '@/components';
 import { SearchPage } from './components';
