@@ -89,6 +89,8 @@ jobs:
 
       - name: Run e2e tests (${{ matrix.browser }})
         uses: cypress-io/github-action@v6
+        env:
+          DEBUG: '@cypress/github-action'
         with:
           working-directory: pubky-app/apps/web-e2e
           config-file: cypress.config.ts
@@ -99,6 +101,7 @@ jobs:
           install: false
           start: npm run start:prod
           wait-on: 'http://localhost:4200'
+          wait-on-timeout: 180
 
       - name: Upload ${{ matrix.browser }} screenshots
         if: ${{ always() }}
