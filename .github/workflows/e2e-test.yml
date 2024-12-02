@@ -84,7 +84,7 @@ jobs:
           NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://demo.httprelay.io/link/
           BASE_URL_SUPPORT=${{ secrets.BASE_URL_SUPPORT }}
           SUPPORT_API_ACCESS_TOKEN=${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
-          SUPPORT_ACCOUNT_ID=${{ secrets.SUPPORT_ACCOUNT_ID }}" > .env
+          SUPPORT_ACCOUNT_ID=1" > .env
           npm install
 
       - name: Run e2e tests (${{ matrix.browser }})
