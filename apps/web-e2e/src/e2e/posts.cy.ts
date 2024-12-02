@@ -23,7 +23,7 @@ describe('posts', () => {
     cy.slowDown(defaultMs);
 
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(3_000);
+    cy.wait(10_000);
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {

@@ -8,7 +8,7 @@ describe('profile', () => {
 
   beforeEach(() => {
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(3_000);
+    cy.wait(10_000);
 
     cy.onboardAsNewUser('Edit Me', 'This bio is editable');
   });

@@ -12,7 +12,7 @@ describe('settings', () => {
 
   beforeEach(() => {
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(3_000);
+    cy.wait(10_000);
 
     cy.deleteDownloadsFolder();
   });
@@ -73,7 +73,7 @@ describe('settings', () => {
     cy.get('#sign-in-recovery-phrase-btn').click();
 
     // TODO: remove workaround for indefinite loading issue on sign in button
-    cy.wait(2000).reload();
+    cy.wait(5000).reload();
 
     cy.location('pathname').should('eq', '/onboarding/register');
     cy.get('#message-alert').should('be.visible').should('contain', 'your profile is empty');

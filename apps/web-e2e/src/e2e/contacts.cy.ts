@@ -4,6 +4,10 @@ import { slowCypressDown } from 'cypress-slow-down';
 describe('contacts', () => {
   before(() => {
     slowCypressDown();
+
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(10_000);
+
     cy.deleteDownloadsFolder();
   });
 
@@ -87,7 +91,7 @@ describe('contacts', () => {
     });
 
     // check number of listed followers is 1
-    cy.get('#profile-list-root').children().should('have.length', 1)
+    cy.get('#profile-list-root').children().should('be.visible').should('have.length', 1)
     cy.get('#profile-list-root').children().first().within(() => {
       // check that account 2 is listed as a follower
       cy.get('#list-profile-name').should('have.text', '#2 Friend');

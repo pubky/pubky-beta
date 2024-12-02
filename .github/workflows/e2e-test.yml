@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: [chrome] # [chrome, firefox]
+        browser: [firefox] # [chrome, firefox]
 
     steps:
       - name: Checkout this repository

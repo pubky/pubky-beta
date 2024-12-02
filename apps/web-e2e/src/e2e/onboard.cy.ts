@@ -5,11 +5,12 @@ import { slowCypressDown } from 'cypress-slow-down';
 describe('onboarding', () => {
   before(() => {
     slowCypressDown();
+  });
 
-    // TODO: remove workaround for pkarr rate limiting
-    cy.wait(3_000);
-
+  beforeEach(() => {
     cy.deleteDownloadsFolder();
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(10_000);
   });
 
   it('can onboard as a new user, viewing onboarding slides, go to home and logout', () => {
