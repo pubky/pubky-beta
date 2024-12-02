@@ -625,8 +625,12 @@ describe('posts', () => {
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
 
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
+    cy.waitReload();
+
     // reply to the post
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('#reply-btn').click();
     });
     cy.get('#modal-root').should('be.visible').within(() => {

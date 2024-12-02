@@ -276,7 +276,7 @@ Cypress.Commands.add('saveCopiedTextToAlias', (alias: string) => {
   });
 });
 
-Cypress.Commands.add('waitReload', (time = 1000) => {
+Cypress.Commands.add('waitReload', (time = 2000) => {
   cy.wait(time).reload();
 });
 
