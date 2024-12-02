@@ -36,7 +36,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -58,7 +58,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -91,7 +91,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -122,7 +122,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -173,7 +173,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the post text and embedded link is displayed correctly in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -218,7 +218,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
@@ -230,13 +230,13 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     // should test before and after refresh
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/523
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // delete the post
     deletePost();
@@ -339,7 +339,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/539
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // add tags to the post
     cy.get('#tag-btn').click();
@@ -398,12 +398,12 @@ describe('posts', () => {
     });
 
     // refresh page and check tag is still removed
-    cy.wait(1000).reload();
+    cy.waitReload();
     // TODO: FAILS HERE due to https://github.com/pubky/pubky-app/issues/544
     //cy.get('#tags').innerTextShouldNotContain(tag2);
   });
 
-  //todo: consider creating user to create the post to bookmark
+  // todo: consider creating user to create the post to bookmark
   it('can bookmark post then remove bookmark', () => {
     const postContent = `This post will be bookmarked! ${Date.now()}`;
 
@@ -411,7 +411,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/545
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // bookmark the post
     cy.slowDown(fastMs);
@@ -422,22 +422,26 @@ describe('posts', () => {
     cy.get('#toast').should('be.visible').find('h2').contains('bookmark')
     cy.slowDown(defaultMs);
 
-    // verify the post has been bookmarked in the profile page
-    cy.get('#header-profile-pic').click();
-    cy.get('#profile-tab-bookmarks').click();
-    cy.get('#bookmarks-content').children().first().within(() => {
+    // navigate to bookmarks page
+    cy.get('#header-bookmarks-btn').click();
+    cy.location('pathname').should('eq', '/bookmarks');
+
+    cy.get('#posts-feed').children().eq(0).should('have.length', 1).children().eq(0).within(() => {
+      // verify the post has been bookmarked
       cy.get('#post-content-text').innerTextShouldEq(postContent);
 
       // remove the bookmark
       cy.get('#bookmark-btn').click();
     });
 
-    // verify post is not longer listed on profile page
-    cy.wait(1000).reload();
-    cy.get('#bookmarks-content').should('contain.text', 'No bookmarks yet');
+    // refresh to update the bookmarks page
+    cy.waitReload();
+
+    //verify the post is no longer bookmarked
+    cy.get('#posts-feed').should('contain.text', 'No bookmarks yet')
   });
 
-  //todo: consider creating user to create the post to repost
+  // todo: consider creating user to create the post to repost
   it('can repost with content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted with content! ${Date.now()}`;
@@ -445,7 +449,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/546
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // repost with content
     cy.slowDown(fastMs);
@@ -467,7 +471,7 @@ describe('posts', () => {
 
     // verify the repost with content is displayed correctly in feed
     // TODO: remove manual refresh refresh, see https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
-    cy.wait(1000).reload();
+    cy.waitReload();
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       // check that both the repost text and original post text are displayed
       const expectedContent = [repostContent, postContent];
@@ -477,10 +481,10 @@ describe('posts', () => {
     });
 
     // delete the repost
-    deletePost(0, 1);
+    deletePost();
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the repost is deleted
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -496,7 +500,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/546
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // repost without content
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -510,7 +514,7 @@ describe('posts', () => {
 
     // verify the repost without content is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
-    cy.wait(1000).reload();
+    cy.waitReload();
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       // check that only original post text is displayed and not additional content text
       cy.get('#post-content-text').its('length').should('eq', 1);
@@ -521,7 +525,7 @@ describe('posts', () => {
     });
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the repost is deleted
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
@@ -537,7 +541,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/546
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // repost
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -551,13 +555,13 @@ describe('posts', () => {
     });
 
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // delete the original post (index 1 as the repost is at index 0)
     deletePost(1);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // verify the repost is still displayed in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
@@ -575,7 +579,7 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // reply to the post
     cy.slowDown(fastMs);
@@ -597,7 +601,7 @@ describe('posts', () => {
 
     // verify the reply is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
-    cy.wait(1000).reload();
+    cy.waitReload();
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
                     .innerTextShouldContain(replyContent);
@@ -608,7 +612,7 @@ describe('posts', () => {
 
     // verify the reply is deleted
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
-    cy.wait(1000).reload();
+    cy.waitReload();
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
                     .innerTextShouldNotContain(replyContent);
@@ -631,7 +635,7 @@ describe('posts', () => {
     });
 
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // delete the original post
     deletePost();

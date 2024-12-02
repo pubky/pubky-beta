@@ -35,7 +35,6 @@ export default function ContentBookmarks() {
           />
         )}
         <Components.PostsLayout
-          id="posts-feed"
           className="w-full flex-col inline-flex gap-3"
         >
           <Components.PostsLayout

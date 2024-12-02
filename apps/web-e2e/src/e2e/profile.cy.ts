@@ -66,7 +66,7 @@ describe('profile', () => {
     cy.location('pathname').should('eq', '/profile');
 
     // Reload the page to ensure changes are not persisted
-    cy.reload();
+    cy.waitReload();
     cy.get('#profile-username-header').invoke('text').should('eq', 'Edit Me');
     // This approach is necessary for bio due to additional space inserted before final word.
     cy.get('#profile-bio-content').should(($elem) => {

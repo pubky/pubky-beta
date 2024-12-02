@@ -49,7 +49,6 @@ export default function Index() {
         </div>
       </div>
       <Button.Large
-        id="onboarding-copy-pubky-btn"
         icon={<Icon.Clipboard size="16" />}
         className="w-[250px] flex md:hidden mb-12"
         variant="secondary"

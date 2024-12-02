@@ -78,7 +78,7 @@ describe('contacts', () => {
 
     // Check account 1 profile for updated followers
     // workaround: reload page to get updated counter https://github.com/pubky/pubky-app/issues/395
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // check followers tab and click it
     cy.get('#profile-tab-followers').within(($tab) => {
@@ -181,7 +181,7 @@ describe('contacts', () => {
     });
 
     // workaround: reload page to get updated counter https://github.com/pubky/pubky-app/issues/395
-    cy.wait(1000).reload();
+    cy.waitReload();
 
     // tab shows number of following is 1
     cy.get('#profile-tab-following').find('#counter').should('have.text', 1);

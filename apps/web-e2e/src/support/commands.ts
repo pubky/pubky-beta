@@ -66,6 +66,11 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     saveCopiedTextToAlias(alias: string): void;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    waitReload(): void;
+  }
 }
 
 Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', skipOnboardingSlides: boolean = true, pubkyAlias?: string) => {
@@ -78,7 +83,7 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
 
   if (skipOnboardingSlides) {
     // TODO: remove wait workaround for pkarr rate limiting once using testnet
-    //cy.wait(3000);
+    cy.wait(3000);
 
     // click 'Skip Intro' button
     cy.get('#onboarding-skip-intro-btn').click();
@@ -148,7 +153,7 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.location('pathname').should('eq', '/sign-in');
 
   // TODO: remove wait workaround for pkarr rate limiting once using testnet
-  //cy.wait(3000);
+  cy.wait(3000);
 
   cy.get('#fileInput').selectFile(
     backupFilepath,
@@ -158,7 +163,7 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.get('#sign-in-recovery-file-btn').click();
 
   // TODO: remove workaround for indefinite loading issue on sign in button
-  cy.wait(1000).reload();
+  cy.wait(2000).reload();
 
   cy.location('pathname').should('eq', '/home');
 });
@@ -252,6 +257,10 @@ Cypress.Commands.add('saveCopiedTextToAlias', (alias: string) => {
     // store pubky as alias
     cy.wrap(text).as(alias);
   });
+});
+
+Cypress.Commands.add('waitReload', () => {
+  cy.wait(1000).reload();
 });
 
 // To prevent Cypress from failing the test when running pubky-app with dev build:
