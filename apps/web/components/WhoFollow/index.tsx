@@ -6,51 +6,17 @@ import Skeletons from '../Skeletons';
 import { usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { useStreamUsers } from '@/hooks/useStream';
-import { getUserStream } from '@/services/streamService';
 import Link from 'next/link';
-import { UserView } from '@/types/User';
 
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const {
-    data: users,
-    isLoading,
-    isError,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended', 0, 3);
-  const [recommendedProfiles, setRecommendedProfiles] = useState<UserView[]>([]);
-
-  useEffect(() => {
-    async function getMostUsers() {
-      try {
-        const safeUsers = users || [];
-
-        if (safeUsers.length < 2) {
-          const mostUsers = await getUserStream(
-            pubky ?? '',
-            pubky ?? '',
-            'most_followed',
-            0,
-            3,
-          );
-          const uniqueMostUsers = (mostUsers || []).filter(
-            (mostUser) =>
-              mostUser?.details?.id !== pubky && // Exclude the current user
-              !safeUsers.some((user) => user?.details?.id === mostUser?.details?.id) // Exclude duplicates
-          );
-
-          const combinedUsers = [...safeUsers, ...uniqueMostUsers];
-
-          setRecommendedProfiles(combinedUsers);
-        } else {
-          setRecommendedProfiles(safeUsers);
-        }
-      } catch (error) {
-        console.error('Error fetching most followed users:', error);
-      }
-    }
-
-    getMostUsers();
-  }, []);
+  const { data: recommendedProfiles, isLoading } = useStreamUsers(
+    pubky ?? '',
+    pubky ?? '',
+    'recommended',
+    0,
+    3,
+  );
 
   const [loading, setLoading] = useState<{
     [pubky: string]: boolean;
@@ -58,8 +24,6 @@ export default function WhoFollow() {
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
-
-  if (isError) console.error(isError);
 
   useEffect(() => {
     if (recommendedProfiles) {

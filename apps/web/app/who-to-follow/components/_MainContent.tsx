@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { RecommendedUsers } from '.';
 import { useStreamUsers } from '@/hooks/useStream';
 import { getUserStream } from '@/services/streamService';
+import { Typography } from '@social/ui-shared';
 
 export interface LoadingUsers {
   [pubky: string]: boolean;
@@ -13,47 +14,11 @@ export interface LoadingUsers {
 
 export default function MainContent() {
   const { pubky } = usePubkyClientContext();
-  const {
-    data: users,
-    isLoading,
-    isError,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended');
-  const [recommendedProfiles, setRecommendedProfiles] = useState(users);
-
-  useEffect(() => {
-    async function getMostUsers() {
-      try {
-        const safeUsers = users || [];
-
-        if (safeUsers.length < 5) {
-          const mostUsers = await getUserStream(
-            pubky ?? '',
-            pubky ?? '',
-            'most_followed',
-          );
-
-          const uniqueMostUsers = (mostUsers || []).filter(
-            (mostUser) =>
-              mostUser?.details?.id !== pubky &&
-              !safeUsers.some(
-                (user) => user?.details?.id === mostUser?.details?.id,
-              ),
-          );
-
-          const combinedUsers = [...safeUsers, ...uniqueMostUsers];
-
-          setRecommendedProfiles(combinedUsers);
-        } else {
-          setRecommendedProfiles(safeUsers);
-        }
-      } catch (error) {
-        console.error('Error fetching most followed users:', error);
-      }
-    }
-
-    getMostUsers();
-  }, [users]);
-  if (isError) console.error(isError);
+  const { data: recommendedProfiles, isLoading } = useStreamUsers(
+    pubky ?? '',
+    pubky ?? '',
+    'recommended',
+  );
 
   const [loadingUsers, setLoadingUsers] = useState<LoadingUsers>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
@@ -77,7 +42,7 @@ export default function MainContent() {
         <div className="w-full">
           <Skeletons.Simple />
         </div>
-      ) : (
+      ) : recommendedProfiles && recommendedProfiles.length > 0 ? (
         <>
           {recommendedProfiles &&
             recommendedProfiles.map((user) => {
@@ -109,6 +74,12 @@ export default function MainContent() {
               );
             })}
         </>
+      ) : (
+        <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
+          <Typography.H2 className="font-normal text-opacity-30">
+            No users to follow
+          </Typography.H2>
+        </div>
       )}
     </div>
   );
