@@ -9,7 +9,8 @@ import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 
 export default function Participants({ author }: { author: string }) {
-  const { pubky, follow, unfollow, replies } = usePubkyClientContext();
+  const { pubky, follow, unfollow, replies, mutedUsers } =
+    usePubkyClientContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
   const [initLoadingAuthor, setInitLoadingAuthor] = useState(true);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -45,7 +46,11 @@ export default function Participants({ author }: { author: string }) {
         uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? '')),
       );
 
-      const followedMap = profiles.reduce(
+      const filteredProfiles = profiles.filter(
+        (profile) => !mutedUsers?.includes(profile.details.id),
+      );
+
+      const followedMap = filteredProfiles.reduce(
         (acc, profile) => {
           if (profile.relationship?.following) {
             acc[profile.details.id] = true;
@@ -55,7 +60,7 @@ export default function Participants({ author }: { author: string }) {
         {} as { [key: string]: boolean },
       );
 
-      setParticipants(profiles);
+      setParticipants(filteredProfiles);
 
       setFollowedUser((prevState) => ({ ...prevState, ...followedMap }));
     } catch (error) {

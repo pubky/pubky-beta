@@ -113,11 +113,7 @@ export default function PostRoot({
           }
           textArea={textArea}
         />
-        <Replies
-          postId={post.details.id}
-          pubkyAuthor={post.details.author}
-          postCountReplies={post?.counts?.replies}
-        />
+        <Replies postId={post.details.id} pubkyAuthor={post.details.author} />
         <Modal.TagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}

@@ -112,7 +112,7 @@ export default function TaggedSection({
             Tag{' '}
             {!creatorPubky || creatorPubky === pubky
               ? 'yourself'
-              : Utils.minifyText(name, 22)}
+              : Utils.minifyText(name, 9)}
           </Button.Medium>
         </div>
       )}

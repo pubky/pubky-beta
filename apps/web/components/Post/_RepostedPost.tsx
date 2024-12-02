@@ -9,7 +9,7 @@ import TagsLargeView from './_TagsLargeView';
 import { PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import { Skeleton } from '..';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface RepostedPostProps {
   repostedPost?: PostView;
@@ -36,6 +36,7 @@ export default function RepostedPost({
   setShowModalTag,
   restClassName,
 }: RepostedPostProps) {
+  const router = useRouter();
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
 
   if (loadingRepostedPost) {
@@ -53,10 +54,10 @@ export default function RepostedPost({
   }
 
   return (
-    <Link
-      href={Utils.encodePostUri(repostedPost.details.uri)}
+    <div
       onClick={(event) => {
         event.stopPropagation();
+        router.push(Utils.encodePostUri(repostedPost.details.uri));
       }}
     >
       <PostUI.MainCard className={restClassName}>
@@ -91,6 +92,6 @@ export default function RepostedPost({
         </div>
         {largeView && <TagsLargeView post={repostedPost} />}
       </PostUI.MainCard>
-    </Link>
+    </div>
   );
 }

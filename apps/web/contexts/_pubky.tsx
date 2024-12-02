@@ -135,6 +135,8 @@ type PubkyClientContextType = {
   ) => Promise<boolean>;
   setReplies: React.Dispatch<React.SetStateAction<PostView[]>>;
   replies: PostView[];
+  setMutedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  mutedUsers: string[] | undefined;
 };
 
 interface TimelineState {
@@ -165,6 +167,7 @@ export function PubkyClientWrapper({
   const [timeline, setTimeline] = useState<TimelineState | undefined>(
     undefined,
   );
+  const [mutedUsers, setMutedUsers] = useState<string[] | undefined>([]);
   const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
   const [replies, setReplies] = useState<PostView[]>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
@@ -1556,6 +1559,8 @@ export function PubkyClientWrapper({
         loadSettings,
         downloadData,
         importData,
+        mutedUsers,
+        setMutedUsers,
       }}
     >
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
