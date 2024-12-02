@@ -43,7 +43,7 @@ export default function TaggedSection({
             <>
               {profileTags.map((tag, index) => {
                 const isTagFound = tag?.taggers?.some(
-                  (fromItem) => fromItem === pubky
+                  (fromItem) => fromItem === pubky,
                 );
 
                 return (
@@ -112,7 +112,7 @@ export default function TaggedSection({
             Tag{' '}
             {!creatorPubky || creatorPubky === pubky
               ? 'yourself'
-              : Utils.minifyText(name, 22)}
+              : Utils.minifyText(name, 9)}
           </Button.Medium>
         </div>
       )}
