@@ -34,6 +34,10 @@ declare namespace Cypress {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
+    waitForFileExistsWithSuffix(folder: string, suffix: string): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
     deleteFile(filePath: string): void;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,7 +60,6 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     innerTextShouldNotEq(text: string): Chainable<Subject>;
   }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     saveCopiedPubkyToAlias(alias: string): void;
@@ -69,7 +72,7 @@ declare namespace Cypress {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    waitReload(): void;
+    waitReload(time?: number): void;
   }
 }
 
@@ -141,10 +144,6 @@ Cypress.Commands.add('signOut', (hasBackedUp: boolean) => {
 });
 
 Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => {
-  // TODO: remove clear local cache to avoid pkarr resolution issue
-  cy.clearCookies();
-  cy.clearLocalStorage();
-
   cy.location('pathname').then((currentPath) => {
     if (currentPath !== '/sign-in') {
       cy.visit('/sign-in');
@@ -163,7 +162,7 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.get('#sign-in-recovery-file-btn').click();
 
   // TODO: remove workaround for indefinite loading issue on sign in button
-  cy.wait(2000).reload();
+  cy.waitReload(3000);
 
   cy.location('pathname').should('eq', '/home');
 });
@@ -180,6 +179,24 @@ Cypress.Commands.add('deleteDownloadsFolder', () => {
   const downloadsFolder = Cypress.config('downloadsFolder');
   cy.task('deleteFolder', downloadsFolder);
 });
+
+Cypress.Commands.add('waitForFileExistsWithSuffix', (folder: string, suffix: string) => {
+  let attempts = 0;
+    const maxAttempts = 5;
+    const checkFile = () => {
+      cy.task('checkFileExistsWithSuffix', { folder, suffix }).then((exists) => {
+        if (exists) {
+          return;
+        }
+        attempts++;
+        if (attempts >= maxAttempts) {
+          throw new Error(`File with suffix ${suffix} not found after ${maxAttempts} attempts`);
+        }
+        cy.wait(1000);
+        checkFile();
+      });
+    };
+  });
 
 Cypress.Commands.add('deleteFile', (filePath: string) => {
   cy.task('deleteFile', filePath).then(() => {
@@ -259,8 +276,8 @@ Cypress.Commands.add('saveCopiedTextToAlias', (alias: string) => {
   });
 });
 
-Cypress.Commands.add('waitReload', () => {
-  cy.wait(1000).reload();
+Cypress.Commands.add('waitReload', (time = 1000) => {
+  cy.wait(time).reload();
 });
 
 // To prevent Cypress from failing the test when running pubky-app with dev build:

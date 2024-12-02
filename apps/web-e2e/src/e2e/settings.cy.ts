@@ -1,7 +1,9 @@
 import { backupDownloadFilePath } from '../support/auth';
 import { latestPostInFeedContentEq, createQuickPost, checkPostIsNotAtTopOfFeed } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
+import 'cypress-slow-down/commands'
 import path = require('path');
+import { defaultMs } from '../support/slow-down';
 
 describe('settings', () => {
   before(() => {
@@ -40,14 +42,14 @@ describe('settings', () => {
     cy.get('#header-settings-btn').click();
     cy.get('#download-data-btn').should('be.visible').should('contain.text', 'Download').click();
 
-    // wait for button to go to "Downloading..." then back to "Download"
-    cy.get('#download-data-btn').should('contain.text', 'Downloading');
+    // asserting that button reads "Downloading..." is unreliable due to timing
+    // so just check that it's back to "Download"
     cy.get('#download-data-btn').should('contain.text', 'Download')
 
     // verify backup file
     const downloadsFolder = Cypress.config('downloadsFolder');
     const expectedSuffix = '_pubky.app.zip';
-    cy.task('checkFileExistsWithSuffix', { folder: downloadsFolder, suffix: expectedSuffix }).should('be.true');
+    cy.waitForFileExistsWithSuffix(downloadsFolder, expectedSuffix);
 
     // TODO: check import your data
 

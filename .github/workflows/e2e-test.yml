@@ -81,6 +81,11 @@ jobs:
           touch .env
           echo "NEXT_PUBLIC_HOMESERVER=${{ secrets.HOMESERVER_PUBKY }}" >> .env
           echo "NEXT_PUBLIC_NEXUS=http://localhost:8080" >> .env
+          echo "NEXT_PUBLIC_TESTNET=false" >> .env
+          echo "NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://demo.httprelay.io/link/" >> .env
+          echo "BASE_URL_SUPPORT=${{ secrets.BASE_URL_SUPPORT }}" >> .env
+          echo "SUPPORT_API_ACCESS_TOKEN=${{ secrets.SUPPORT_API_ACCESS_TOKEN }}" >> .env
+          echo "SUPPORT_ACCOUNT_ID=${{ secrets.SUPPORT_ACCOUNT_ID }}" >> .env
           npm install
 
       - name: Run e2e tests (${{ matrix.browser }})
