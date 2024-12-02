@@ -73,7 +73,7 @@ const MenuButton = ({
       }
       onClick={(event) => {
         event.stopPropagation();
-        setShowMenu(true);
+        setShowMenu(!showMenu);
       }}
     />
   </div>

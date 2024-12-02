@@ -9,7 +9,8 @@ import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 
 export default function Participants({ author }: { author: string }) {
-  const { pubky, follow, unfollow, replies } = usePubkyClientContext();
+  const { pubky, follow, unfollow, replies, mutedUsers } =
+    usePubkyClientContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
   const [initLoadingAuthor, setInitLoadingAuthor] = useState(true);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -42,17 +43,24 @@ export default function Participants({ author }: { author: string }) {
       ];
 
       const profiles = await Promise.all(
-        uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? ''))
+        uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? '')),
       );
 
-      const followedMap = profiles.reduce((acc, profile) => {
-        if (profile.relationship?.following) {
-          acc[profile.details.id] = true;
-        }
-        return acc;
-      }, {} as { [key: string]: boolean });
+      const filteredProfiles = profiles.filter(
+        (profile) => !mutedUsers?.includes(profile.details.id),
+      );
 
-      setParticipants(profiles);
+      const followedMap = filteredProfiles.reduce(
+        (acc, profile) => {
+          if (profile.relationship?.following) {
+            acc[profile.details.id] = true;
+          }
+          return acc;
+        },
+        {} as { [key: string]: boolean },
+      );
+
+      setParticipants(filteredProfiles);
 
       setFollowedUser((prevState) => ({ ...prevState, ...followedMap }));
     } catch (error) {
@@ -61,6 +69,7 @@ export default function Participants({ author }: { author: string }) {
       setInitLoadingFollowers(false);
     }
   };
+
   useEffect(() => {
     fetchParticipants();
     // eslint-disable-next-line react-hooks/exhaustive-deps

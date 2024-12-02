@@ -11,7 +11,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 
 export const Timeline = () => {
   const limit = 10;
-  const { pubky, searchTags } = usePubkyClientContext();
+  const { pubky, searchTags, mutedUsers } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
@@ -34,13 +34,16 @@ export const Timeline = () => {
       if (!data) return;
       const lastPost = data[data.length - 1];
       if (lastPost.details?.indexed_at) {
-        // TODO: filter by muted users
-
         setStart(lastPost.details.indexed_at - 1);
         setTimeline((prev) => {
-          const newPosts = data.filter(
-            (post) => !prev.some((p) => p.details.id === post.details.id),
-          );
+          const newPosts = data.filter((post) => {
+            const isMuted = mutedUsers?.includes(post?.details?.author);
+            const isAlreadyInTimeline = prev.some(
+              (p) => p.details.id === post.details.id,
+            );
+            return !isMuted && !isAlreadyInTimeline;
+          });
+
           return [...prev, ...newPosts];
         });
       }

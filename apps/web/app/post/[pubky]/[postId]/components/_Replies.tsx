@@ -13,13 +13,11 @@ import { ReplyReplies } from './_ReplyReplies';
 export default function Replies({
   pubkyAuthor,
   postId,
-  postCountReplies,
 }: {
   pubkyAuthor: string;
   postId: string;
-  postCountReplies: number;
 }) {
-  const { pubky, replies, setReplies } = usePubkyClientContext();
+  const { pubky, replies, setReplies, mutedUsers } = usePubkyClientContext();
   const limit = 5;
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -40,10 +38,18 @@ export default function Replies({
         limit,
         start,
       );
-      setStart(newReplies[newReplies.length - 1].details.indexed_at - 1);
 
       if (newReplies && newReplies.length > 0) {
-        setReplies((prevReplies) => [...prevReplies, ...newReplies]);
+        const filteredReplies = newReplies.filter(
+          (reply) => !mutedUsers?.includes(reply?.details?.author),
+        );
+
+        setStart(
+          filteredReplies[filteredReplies.length - 1]?.details.indexed_at - 1 ||
+            start,
+        );
+
+        setReplies((prevReplies) => [...prevReplies, ...filteredReplies]);
       } else {
         setHasMore(false);
       }
@@ -106,12 +112,7 @@ export default function Replies({
                 className="flex flex-col gap-3"
               >
                 <Post post={reply} />
-                {reply?.counts?.replies > 0 && (
-                  <ReplyReplies
-                    postCountReplies={postCountReplies}
-                    reply={reply}
-                  />
-                )}
+                {reply?.counts?.replies > 0 && <ReplyReplies reply={reply} />}
               </div>
             );
           })}
