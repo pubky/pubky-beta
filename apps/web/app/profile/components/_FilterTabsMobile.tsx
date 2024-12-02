@@ -20,37 +20,37 @@ const tabs = [
   //  label: 'Bookmarks',
   //},
   {
-    id: 2,
+    id: 1,
     key: 'posts',
     icon: <Icon.FileText size="24" color="white" />,
     label: 'Posts',
   },
   {
-    id: 3,
+    id: 2,
     key: 'replies',
     icon: <Icon.File size="24" color="white" />,
     label: 'Replies',
   },
   {
-    id: 4,
+    id: 3,
     key: 'followers',
     icon: <Icon.UsersLeft size="24" color="white" />,
     label: 'Followers',
   },
   {
-    id: 5,
+    id: 4,
     key: 'following',
     icon: <Icon.UsersRight size="24" color="white" />,
     label: 'Following',
   },
   {
-    id: 6,
+    id: 5,
     key: 'friends',
     icon: <Icon.Smiley size="24" color="white" />,
     label: 'Friends',
   },
   {
-    id: 7,
+    id: 6,
     key: 'tagged',
     icon: <Icon.Tag size="24" color="white" />,
     label: 'Tagged',
@@ -93,7 +93,7 @@ export default function FilterTabsMobile({
       setActiveTab(foundTab.id);
     } else {
       const defaultTab =
-        !creatorPubky || creatorPubky === pubky ? tabs[0] : tabs[2];
+        !creatorPubky || creatorPubky === pubky ? tabs[0] : tabs[1];
       setActiveTab(defaultTab.id);
       params.set('tab', defaultTab.key);
       window.history.replaceState(

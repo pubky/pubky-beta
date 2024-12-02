@@ -5,7 +5,8 @@ import { usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { RecommendedUsers } from '.';
 import { useStreamUsers } from '@/hooks/useStream';
-import { getUserStream } from '@/services/streamService';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { UserView } from '@/types/User';
 import { Typography } from '@social/ui-shared';
 
 export interface LoadingUsers {
@@ -14,16 +15,19 @@ export interface LoadingUsers {
 
 export default function MainContent() {
   const { pubky } = usePubkyClientContext();
-  const { data: recommendedProfiles, isLoading } = useStreamUsers(
-    pubky ?? '',
-    pubky ?? '',
-    'recommended',
-  );
+  const limit = 10;
+  const [usersList, setUsersList] = useState<UserView[]>([]);
+  const [skip, setSkip] = useState(0);
+  const {
+    data: recommendedProfiles,
+    isLoading,
+    isSuccess,
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended', skip, limit);
 
   const [loadingUsers, setLoadingUsers] = useState<LoadingUsers>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
 
-  useEffect(() => {
+  const fetchStateUsers = () => {
     if (recommendedProfiles) {
       const initialFollowedState = recommendedProfiles.reduce(
         (acc, profile) => {
@@ -34,11 +38,37 @@ export default function MainContent() {
       );
       setFollowed(initialFollowedState);
     }
-  }, [recommendedProfiles]);
+  };
+
+  const fetchUsers = () => {
+    if (recommendedProfiles && Array.isArray(recommendedProfiles)) {
+      setUsersList((prev) => {
+        const newUsers = recommendedProfiles.filter(
+          (user) => !prev.some((u) => u.details.id === user.details.id),
+        );
+        return [...prev, ...newUsers];
+      });
+      setSkip((prev) => prev + limit);
+    }
+  };
+
+  const loader = useInfiniteScroll(fetchUsers, isLoading);
+
+  useEffect(() => {
+    setUsersList([]);
+    setSkip(0);
+  }, [recommendedProfiles, pubky]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      fetchUsers();
+      fetchStateUsers();
+    }
+  }, []);
 
   return (
     <div className="flex-col inline-flex gap-3 w-full">
-      {isLoading ? (
+      {isLoading && usersList.length === 0 ? (
         <div className="w-full">
           <Skeletons.Simple />
         </div>
@@ -73,6 +103,7 @@ export default function MainContent() {
                 </div>
               );
             })}
+          <div ref={loader} />
         </>
       ) : (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
