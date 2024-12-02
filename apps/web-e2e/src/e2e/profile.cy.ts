@@ -33,9 +33,9 @@ describe('profile', () => {
     cy.get('#edit-profile-link-github-input').should('be.visible')
       .and('have.value', 'https://github.com/synonymdev/bitkit');
 
-    // check the 'website' and 'email' example links are still shown
+    // check the 'website' and 'x(Twitter)' example links are still shown
     cy.get('#edit-profile-link-website-input').should('be.visible');
-    cy.get('#edit-profile-link-email-input').should('be.visible');
+    cy.get('#edit-profile-link-x\\ \\(twitter\\)-input').should('be.visible');
 
     // edit bio again, edit the Bluesky link and verify changes are persisted
     editProfileAndVerify({ bio: 'This bio has been edited again!', linkBluesky: 'https://bsky.app/profile/pubky.app' });
@@ -43,7 +43,7 @@ describe('profile', () => {
     // re-open edit page and check that default link types are not shown, only the new ones
     cy.get('#profile-edit-btn').click();
     cy.get('#edit-profile-link-website-input').should('not.exist');
-    cy.get('#edit-profile-link-email-input').should('not.exist');
+    cy.get('#edit-profile-link-x\\ \\(twitter\\)-input').should('not.exist');
     cy.get('#edit-profile-link-bluesky-input').should('be.visible');
     cy.get('#edit-profile-link-github-input').should('be.visible');
   });
