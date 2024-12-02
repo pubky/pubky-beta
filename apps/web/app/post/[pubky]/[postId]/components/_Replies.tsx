@@ -125,7 +125,7 @@ export default function Replies({
     <>
       {newRepliesCount > 0 && (
         <Button.Medium
-          className="new-posts-button"
+          className="new-posts-button mt-3"
           onClick={handleShowNewReplies}
         >
           Show {newRepliesCount} new {newRepliesCount > 1 ? 'replies' : 'reply'}
