@@ -12,7 +12,7 @@ export default function Contact({
   isLoading,
 }: {
   contacts: UserView[] | [] | undefined;
-  isLoading: false;
+  isLoading: boolean;
 }) {
   const { pubky, createTagProfile, deleteTagProfile, follow, unfollow } =
     usePubkyClientContext();
@@ -21,10 +21,13 @@ export default function Contact({
 
   useEffect(() => {
     if (contacts) {
-      const initialFollowedState = contacts.reduce((acc, profile) => {
-        acc[profile.details.id] = profile.relationship?.following || false;
-        return acc;
-      }, {} as { [pubky: string]: boolean });
+      const initialFollowedState = contacts.reduce(
+        (acc, profile) => {
+          acc[profile.details.id] = profile.relationship?.following || false;
+          return acc;
+        },
+        {} as { [pubky: string]: boolean },
+      );
       setFollowed(initialFollowedState);
     }
   }, [contacts]);
@@ -90,117 +93,6 @@ export default function Contact({
       console.log(error);
     }
   };
-  {
-    /** 
-  const [initLoadingContacts, setInitLoadingContacts] = useState(true);
-  const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
-  const [profiles, setProfiles] = useState<{ [key: string]: IUserProfile }>({});
-  const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (!pubky) return;
-        const following = await listFollowing(pubky);
-        if (following && contacts) {
-          following.following.forEach((user) => {
-            const uri = user.uri.replace('pubky:', '');
-            if (
-              contacts.some(
-                (contact) => contact.uri.replace('pubky:', '') === uri
-              )
-            ) {
-              setFollowed((prevState) => ({
-                ...prevState,
-                [uri]: true,
-              }));
-            }
-          });
-        }
-        setInitLoadingContacts(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [pubky, listFollowing, contacts]);
-
-  useEffect(() => {
-    async function fetchProfiles() {
-      if (contacts && contacts.length > 0) {
-        const profilePromises = contacts.map(async (contact) => {
-          const contactId = contact.uri.replace('pubky:', '');
-          const userProfile = await fetchProfile(contactId);
-          return { contactId, userProfile };
-        });
-
-        const profilesArray = await Promise.all(profilePromises);
-        const profilesMap: { [key: string]: IUserProfile } =
-          profilesArray.reduce((acc, { contactId, userProfile }) => {
-            if (userProfile) {
-              acc[contactId] = userProfile;
-            }
-            return acc;
-          }, {} as { [key: string]: IUserProfile });
-
-        setProfiles(profilesMap);
-      }
-    }
-
-    fetchProfiles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contacts]);
-
-  async function fetchProfile(pubky: string): Promise<IUserProfile | null> {
-    const userProfile = await getUserIndexed(pubky);
-    return userProfile;
-  }
-
-  const followUser = async (pubkyFollow: string) => {
-    try {
-      if (!pubkyFollow) return;
-      setLoadingContacts((prevLoadingUsers) => ({
-        ...prevLoadingUsers,
-        [pubkyFollow]: true,
-      }));
-
-      const result = await follow(pubkyFollow);
-      setFollowed((prevState) => ({
-        ...prevState,
-        [pubkyFollow]: result,
-      }));
-      setLoadingContacts((prevLoadingUsers) => ({
-        ...prevLoadingUsers,
-        [pubkyFollow]: false,
-      }));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const unfollowUser = async (pubkyUnfollow: string) => {
-    try {
-      if (!pubkyUnfollow) return;
-      setLoadingContacts((prevLoadingUsers) => ({
-        ...prevLoadingUsers,
-        [pubkyUnfollow]: true,
-      }));
-
-      const result = await unfollow(pubkyUnfollow);
-      setFollowed((prevState) => ({
-        ...prevState,
-        [pubkyUnfollow]: !result,
-      }));
-      setLoadingContacts((prevLoadingUsers) => ({
-        ...prevLoadingUsers,
-        [pubkyUnfollow]: false,
-      }));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  */
-  }
 
   return (
     <>
@@ -261,7 +153,7 @@ export default function Contact({
                   <div className="flex lg:justify-end gap-2 items-center lg:w-full">
                     {contact?.tags?.slice(0, 3).map((tag, index) => {
                       const isTagFound = tag?.taggers?.some(
-                        (fromItem) => fromItem === pubky
+                        (fromItem) => fromItem === pubky,
                       );
 
                       return (
@@ -273,11 +165,11 @@ export default function Contact({
                             isTagFound
                               ? handleDeleteProfileTag(
                                   contact?.details?.id,
-                                  tag?.label
+                                  tag?.label,
                                 )
                               : handleAddProfileTag(
                                   contact?.details?.id,
-                                  tag?.label
+                                  tag?.label,
                                 );
                           }}
                           color={

@@ -208,34 +208,33 @@ export default function FilterTabs({
           <>
             {(!creatorPubky || creatorPubky === pubky) && (
               <>
-                {activeTab === 0 ? (
+                {activeTab === 0 && (
                   <Profile.NotificationsProfile
                     notifications={notifications}
                     loading={loadingNotifications}
                   />
-                ) : (
-                  activeTab === 1 && <Profile.Bookmarks />
                 )}
+                {/**activeTab === 1 && <Profile.Bookmarks />*/}
               </>
             )}
-            {activeTab === 2 && <Profile.Posts creatorPubky={creatorPubky} />}
-            {activeTab === 3 && <Profile.Replies creatorPubky={creatorPubky} />}
-            {activeTab === 4 && (
+            {activeTab === 1 && <Profile.Posts creatorPubky={creatorPubky} />}
+            {activeTab === 2 && <Profile.Replies creatorPubky={creatorPubky} />}
+            {activeTab === 3 && (
               <ContactsProfile
                 creatorPubky={creatorPubky}
                 contacts="followers"
               />
             )}
-            {activeTab === 5 && (
+            {activeTab === 4 && (
               <ContactsProfile
                 creatorPubky={creatorPubky}
                 contacts="following"
               />
             )}
-            {activeTab === 6 && (
+            {activeTab === 5 && (
               <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
             )}
-            {activeTab === 7 && (
+            {activeTab === 6 && (
               <TaggedAs loading={loading} creatorPubky={creatorPubky} />
             )}
           </>

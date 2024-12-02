@@ -1,12 +1,13 @@
-import { Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { Typography } from '@social/ui-shared';
 import Skeletons from '@/components/Skeletons';
 import { TContacts } from '@/types';
 import Root from './_Root';
 import Contact from './_Contact';
-import {} from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { useStreamUsers } from '@/hooks/useStream';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { UserView } from '@/types/User';
 
 type ContactsContentProps = {
   contacts: TContacts;
@@ -15,128 +16,60 @@ type ContactsContentProps = {
 
 const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   const { pubky } = usePubkyClientContext();
+  const limit = 10;
+  const [usersList, setUsersList] = useState<UserView[]>([]);
+  const [skip, setSkip] = useState(0);
   const usePubky = creatorPubky ?? pubky;
+
   const {
     data: contactUsers,
     isLoading,
-    isError,
-  } = useStreamUsers(usePubky ?? '', pubky ?? '', contacts);
+    isSuccess,
+  } = useStreamUsers(usePubky ?? '', pubky ?? '', contacts, skip, limit);
 
-  if (isError) console.error(isError);
-  {
-    /** 
-  const [loading, setLoading] = useState(true);
-  const [loadingContacts, setLoadingContacts] = useState(true);
-  const [contactsUsers, setContactsUsers] = useState<
-    IFollowingResponse | IFollowersResponse | IFriendsResponse | null
-  >(null);
+  const fetchUsers = () => {
+    if (contactUsers && Array.isArray(contactUsers)) {
+      setUsersList((prev) => {
+        const newUsers = contactUsers.filter(
+          (user) => !prev.some((u) => u.details.id === user.details.id),
+        );
+        return [...prev, ...newUsers];
+      });
+      setSkip((prev) => prev + limit);
+    }
+  };
+
+  const loader = useInfiniteScroll(fetchUsers, isLoading);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        if (!pubky) return;
+    setUsersList([]);
+    setSkip(0);
+  }, [contacts, creatorPubky]);
 
-        let contactsFollowers;
-        let contactsFollowing;
-
-        if (creatorPubky) {
-          contactsFollowers = await listFollowers(creatorPubky);
-          contactsFollowing = await listFollowing(creatorPubky);
-        } else {
-          contactsFollowers = await listFollowers(pubky);
-          contactsFollowing = await listFollowing(pubky);
-        }
-
-        const followersIds = new Set(
-          contactsFollowers?.followers?.map((follower) =>
-            follower.uri.replace('pubky:', '')
-          ) || []
-        );
-
-        const mutualContacts =
-          contactsFollowing?.following?.filter((user) =>
-            followersIds.has(user.uri.replace('pubky:', ''))
-          ) || [];
-
-        const contactsFriends = {
-          count: mutualContacts.length,
-          friends: mutualContacts,
-        };
-
-        if (contacts === 'following') {
-          setContactsUsers(contactsFollowing);
-        } else if (contacts === 'followers') {
-          setContactsUsers(contactsFollowers);
-        } else if (contacts === 'friends') {
-          setContactsUsers(contactsFriends);
-        }
-
-        setLoadingContacts(false);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contacts]);
-
-  let contactsToShow:
-    | IFollowingResponse['following']
-    | IFollowersResponse['followers']
-    | IFriendsResponse['friends']
-    | [] = [];
-
-  if (!loadingContacts && contactsUsers) {
-    if (contacts === 'following' && 'following' in contactsUsers) {
-      contactsToShow = contactsUsers.following || [];
-    } else if (contacts === 'followers' && 'followers' in contactsUsers) {
-      contactsToShow = contactsUsers.followers || [];
-    } else if (contacts === 'friends' && 'friends' in contactsUsers) {
-      contactsToShow = contactsUsers.friends || [];
-    }
-  }
-    */
-  }
+  useEffect(() => {
+    if (isSuccess) fetchUsers();
+  }, [contactUsers]);
 
   return (
     <>
-      {isLoading ? (
+      {isLoading && usersList.length === 0 ? (
         <div className="mt-12">
           <Skeletons.Simple />
         </div>
-      ) : contactUsers && contactUsers?.length > 0 ? (
+      ) : usersList.length > 0 ? (
         <Root>
-          <Contact contacts={contactUsers} isLoading={isLoading} />
+          <Contact contacts={usersList} isLoading={isLoading} />
+          <div ref={loader} />
         </Root>
-      ) : contacts === 'followers' ? (
-        <Typography.H2
-          id="profile-no-followers"
-          className="mt-[100px] font-normal text-opacity-50 text-center"
-        >
-          No followers yet
-        </Typography.H2>
-      ) : contacts === 'following' ? (
-        <Typography.H2
-          id="profile-no-following"
-          className="mt-[100px] font-normal text-opacity-50 text-center"
-        >
-          No following yet
-        </Typography.H2>
-      ) : contacts === 'friends' ? (
-        <Typography.H2
-          id="profile-no-friends"
-          className="mt-[100px] font-normal text-opacity-50 text-center"
-        >
-          No friends yet
-        </Typography.H2>
       ) : (
-        <Typography.H2
-          id="profile-no-contacts"
-          className="mt-[100px] font-normal text-opacity-50 text-center"
-        >
-          No contacts yet
+        <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
+          {contacts === 'followers' && 'No followers yet'}
+          {contacts === 'following' && 'No following yet'}
+          {contacts === 'friends' && 'No friends yet'}
+          {contacts !== 'followers' &&
+            contacts !== 'following' &&
+            contacts !== 'friends' &&
+            'No contacts yet'}
         </Typography.H2>
       )}
     </>
