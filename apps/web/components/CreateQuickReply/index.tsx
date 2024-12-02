@@ -6,12 +6,14 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
+import { useRouter } from 'next/navigation';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
 }
 
 export default function CreateQuickReply({ post }: CreateQuickPostProps) {
+  const router = useRouter();
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
@@ -31,9 +33,9 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
-    //const rootUri = post.relationships?.replied
-    //  ? post.relationships?.replied
-    //  : post?.details?.uri;
+    // const rootUri = post.relationships?.replied
+    //   ? post.relationships?.replied
+    //   : post?.details?.uri;
 
     const sendReply = await createReply(
       post?.details?.uri,
@@ -59,6 +61,8 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
       setTextArea(false);
       setContent('Reply created!');
       setShow(true);
+
+      router.push(`/post/${post.details.author}/${post.details.id}`);
     }
   };
 

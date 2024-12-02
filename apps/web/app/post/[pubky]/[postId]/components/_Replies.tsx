@@ -2,13 +2,14 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 
-import { Typography } from '@social/ui-shared';
+import { Typography, Button } from '@social/ui-shared';
 import { Post } from '@/components';
 import Skeletons from '@/components/Skeletons';
 
 import { usePubkyClientContext } from '@/contexts';
-import { getPostReplies } from '@/services/postService';
+import { usePostReplies } from '@/hooks/usePost';
 import { ReplyReplies } from './_ReplyReplies';
+import { PostView } from '@/types/Post';
 
 export default function Replies({
   pubkyAuthor,
@@ -19,47 +20,84 @@ export default function Replies({
   postId: string;
   postCountReplies: number;
 }) {
-  const { pubky, replies, setReplies } = usePubkyClientContext();
+  const { pubky } = usePubkyClientContext();
   const limit = 5;
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const [start, setStart] = useState<number | undefined>(undefined);
+  const [replies, setReplies] = useState<PostView[]>([]);
+  const [newReplies, setNewReplies] = useState<PostView[]>([]);
+  const [newRepliesCount, setNewRepliesCount] = useState(0);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastReplyElementRef = useRef<HTMLDivElement | null>(null);
 
+  const { data: repliesData, isLoading } = usePostReplies(
+    pubkyAuthor,
+    postId,
+    pubky,
+    undefined,
+    limit,
+    start,
+  );
+
   const fetchReplies = async () => {
-    if (isLoading || !hasMore) return;
+    if (isLoading) return;
 
-    setIsLoading(true);
     try {
-      const newReplies = await getPostReplies(
-        pubkyAuthor,
-        postId,
-        pubky,
-        limit,
-        start,
-      );
-      setStart(newReplies[newReplies.length - 1].details.indexed_at - 1);
-
-      if (newReplies && newReplies.length > 0) {
-        setReplies((prevReplies) => [...prevReplies, ...newReplies]);
-      } else {
-        setHasMore(false);
+      if (repliesData && repliesData.length > 0) {
+        const newStart =
+          repliesData[repliesData.length - 1].details.indexed_at - 1;
+        setStart(newStart);
+        setReplies((prevReplies) => [
+          ...prevReplies,
+          ...repliesData.filter(
+            (reply) =>
+              !prevReplies.some((r) => r.details.id === reply.details.id),
+          ),
+        ]);
       }
     } catch (error) {
-      setHasMore(false);
-      setIsLoading(false);
-    } finally {
-      setIsLoading(false);
+      console.log(error);
     }
   };
 
+  const { data: newRepliesData } = usePostReplies(
+    pubkyAuthor,
+    postId,
+    pubky,
+    undefined,
+    10,
+    undefined,
+    replies?.[0]?.details?.indexed_at + 1,
+    {
+      enabled: true,
+      refetchInterval: 3000,
+    },
+  );
+
   useEffect(() => {
-    setReplies([]);
+    if (!newRepliesData) return;
+
+    const filteredNewReplies = newRepliesData.filter(
+      (reply) => !replies.some((r) => r.details.id === reply.details.id),
+    );
+
+    if (filteredNewReplies.length > 0) {
+      setNewReplies((prev) => [...prev, ...filteredNewReplies]);
+      setNewRepliesCount((prev) => prev + filteredNewReplies.length);
+    }
+  }, [newRepliesData, replies]);
+
+  const handleShowNewReplies = () => {
+    setReplies((prev) => [...newReplies, ...prev]);
+    setNewReplies([]);
+    setNewRepliesCount(0);
+  };
+
+  useEffect(() => {
+    if (isLoading) return;
+
     fetchReplies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoading]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -67,7 +105,7 @@ export default function Replies({
     if (observer.current) observer.current.disconnect();
 
     observer.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore) {
+      if (entries[0].isIntersecting) {
         fetchReplies();
       }
     });
@@ -81,16 +119,18 @@ export default function Replies({
         observer.current.disconnect();
       }
     };
-  }, [isLoading, hasMore, replies]);
-
-  useEffect(() => {
-    return () => {
-      setReplies([]);
-    };
-  }, [setReplies]);
+  }, [isLoading, replies]);
 
   return (
     <>
+      {newRepliesCount > 0 && (
+        <Button.Medium
+          className="new-posts-button"
+          onClick={handleShowNewReplies}
+        >
+          Show {newRepliesCount} new {newRepliesCount > 1 ? 'replies' : 'reply'}
+        </Button.Medium>
+      )}
       {replies.length === 0 && !isLoading ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">
           No replies yet.

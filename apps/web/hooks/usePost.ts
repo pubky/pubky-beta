@@ -16,7 +16,7 @@ export function usePost(
   postId: string,
   viewerId?: string,
   maxTags?: number,
-  maxTaggers?: number
+  maxTaggers?: number,
 ) {
   return useQuery({
     queryKey: ['post', authorId, postId, viewerId, maxTags, maxTaggers],
@@ -28,7 +28,7 @@ export function usePost(
 export function usePostBookmark(
   authorId: string,
   postId: string,
-  viewerId?: string
+  viewerId?: string,
 ) {
   return useQuery({
     queryKey: ['postBookmark', authorId, postId, viewerId],
@@ -60,7 +60,11 @@ export function usePostReplies(
   skip?: number,
   limit?: number,
   start?: number,
-  end?: number
+  end?: number,
+  options?: {
+    enabled?: boolean;
+    refetchInterval?: number;
+  },
 ) {
   return useQuery({
     queryKey: [
@@ -76,6 +80,7 @@ export function usePostReplies(
     queryFn: () =>
       getPostReplies(authorId, postId, viewerId, limit, start, end, skip),
     retry: false,
+    ...options,
   });
 }
 
@@ -84,7 +89,7 @@ export function usePostTaggers(
   postId: string,
   label: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ) {
   return useQuery({
     queryKey: ['postTaggers', authorId, postId, label, skip, limit],
