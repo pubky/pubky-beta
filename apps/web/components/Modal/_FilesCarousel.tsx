@@ -26,13 +26,13 @@ export default function FilesCarousel({
 
   const showPreviousFile = () => {
     setCurrentFileIndex((prevIndex) =>
-      prevIndex === 0 ? fileContents.length - 1 : prevIndex - 1
+      prevIndex === 0 ? fileContents.length - 1 : prevIndex - 1,
     );
   };
 
   const showNextFile = () => {
     setCurrentFileIndex((prevIndex) =>
-      prevIndex === fileContents.length - 1 ? 0 : prevIndex + 1
+      prevIndex === fileContents.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
@@ -60,45 +60,47 @@ export default function FilesCarousel({
       show={showModal}
       closeModal={() => setShowModal(false)}
       modalRef={modalRef}
-      className="relative sm:w-[60vw] sm:h-[70vh]"
+      className="max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
-      {fileContents.length > 1 && (
-        <div
-          className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
-          onClick={showPreviousFile}
-        >
-          <Icon.ArrowLeft size="16" />
+      <div className="relative sm:w-[50vw] sm:h-[65vh] flex items-center justify-center">
+        {fileContents.length > 1 && (
+          <div
+            className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
+            onClick={showPreviousFile}
+          >
+            <Icon.ArrowLeft size="16" />
+          </div>
+        )}
+        {isVideo ? (
+          <video
+            src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
+            controls
+            className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
+          />
+        ) : (
+          <img
+            src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
+            alt={`Modal view ${currentFileIndex}`}
+            width={800}
+            height={418}
+            className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
+          />
+        )}
+        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+          <Typography.Body className="text-opacity-80" variant="small">{`${
+            currentFileIndex + 1
+          } / ${fileContents.length}`}</Typography.Body>
         </div>
-      )}
-      {isVideo ? (
-        <video
-          src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
-          controls
-          className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
-        />
-      ) : (
-        <img
-          src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
-          alt={`Modal view ${currentFileIndex}`}
-          width={800}
-          height={418}
-          className="p-6 max-w-full w-auto h-auto max-h-full object-contain"
-        />
-      )}
-      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-        <Typography.Body className="text-opacity-80" variant="small">{`${
-          currentFileIndex + 1
-        } / ${fileContents.length}`}</Typography.Body>
+        {fileContents.length > 1 && (
+          <div
+            className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
+            onClick={showNextFile}
+          >
+            <Icon.ArrowRight size="16" />
+          </div>
+        )}
       </div>
-      {fileContents.length > 1 && (
-        <div
-          className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
-          onClick={showNextFile}
-        >
-          <Icon.ArrowRight size="16" />
-        </div>
-      )}
     </Modal.Root>
   );
 }

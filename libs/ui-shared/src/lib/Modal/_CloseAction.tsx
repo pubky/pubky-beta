@@ -1,3 +1,4 @@
+import { twMerge } from 'tailwind-merge';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 
@@ -9,7 +10,7 @@ export const CloseAction = ({ ...rest }: CloseActionProps) => {
       {...rest}
       variant="custom"
       icon={<Icon.X size="24" />}
-      className="absolute top-[-25px] right-[-25px]"
+      className={twMerge('absolute top-[-25px] right-[-25px]', rest.className)}
     />
   );
 };
