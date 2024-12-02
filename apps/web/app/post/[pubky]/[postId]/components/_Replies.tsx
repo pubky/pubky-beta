@@ -20,10 +20,10 @@ export default function Replies({
   postId: string;
   postCountReplies: number;
 }) {
-  const { pubky } = usePubkyClientContext();
+  const { pubky, setReplies } = usePubkyClientContext();
   const limit = 5;
   const [start, setStart] = useState<number | undefined>(undefined);
-  const [replies, setReplies] = useState<PostView[]>([]);
+  const [replies, setRepliesLocal] = useState<PostView[]>([]);
   const [newReplies, setNewReplies] = useState<PostView[]>([]);
   const [newRepliesCount, setNewRepliesCount] = useState(0);
 
@@ -47,6 +47,13 @@ export default function Replies({
         const newStart =
           repliesData[repliesData.length - 1].details.indexed_at - 1;
         setStart(newStart);
+        setRepliesLocal((prevReplies) => [
+          ...prevReplies,
+          ...repliesData.filter(
+            (reply) =>
+              !prevReplies.some((r) => r.details.id === reply.details.id),
+          ),
+        ]);
         setReplies((prevReplies) => [
           ...prevReplies,
           ...repliesData.filter(
@@ -88,7 +95,7 @@ export default function Replies({
   }, [newRepliesData, replies]);
 
   const handleShowNewReplies = () => {
-    setReplies((prev) => [...newReplies, ...prev]);
+    setRepliesLocal((prev) => [...newReplies, ...prev]);
     setNewReplies([]);
     setNewRepliesCount(0);
   };

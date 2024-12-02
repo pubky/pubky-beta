@@ -1,5 +1,6 @@
 'use client';
 
+import { usePubkyClientContext } from '@/contexts';
 import { Post } from '.';
 import { usePost } from '@/hooks/usePost';
 import { useEffect, useState } from 'react';
@@ -9,10 +10,15 @@ export default function Root({
 }: {
   params: Promise<{ pubky: string; postId: string }>;
 }) {
+  const { setReplies } = usePubkyClientContext();
   const [resolvedParams, setResolvedParams] = useState<{
     pubky: string;
     postId: string;
   } | null>(null);
+
+  useEffect(() => {
+    setReplies([]);
+  }, []);
 
   useEffect(() => {
     params.then((p) => setResolvedParams(p));
