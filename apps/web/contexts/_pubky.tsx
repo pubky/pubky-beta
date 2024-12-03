@@ -207,7 +207,17 @@ export function PubkyClientWrapper({
         client.signout(PublicKey.from(pubky));
 
         // Defer state update
-        setTimeout(() => setPubky(undefined), 0);
+        setTimeout(() => {
+          setProfile(undefined);
+          setSeed(undefined);
+          setMnemonic(undefined);
+          setTimeline(undefined);
+          setMutedUsers([]);
+          setTimelineProfile([]);
+          setReplies([]);
+          setSearchTags([]);
+          setPubky(undefined);
+        });
       }
 
       // Clear storage and states

@@ -49,74 +49,80 @@ export default function ProtectedRoutes({
     '/onboarding/permissions',
   ];
 
-  useEffect(() => {
-    const checkTimestamp = async () => {
-      const result = await getTimestampNotification();
-      setTimestamp(Number(result));
-    };
-    checkTimestamp();
-  }, [pubky]);
+  const checkTimestamp = async () => {
+    if (pubky === undefined) return;
 
-  useEffect(() => {
-    const settings = async () => {
-      const result = await loadSettings();
-      if (result) {
-        setNotificationPreferences(result.notifications);
-      } else {
-        setNotificationPreferences(defaultPreferences);
-      }
-    };
-    settings();
-  }, [pubky]);
+    const result = await getTimestampNotification();
+    setTimestamp(Number(result));
+  };
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      const pk = pubky || '';
+  const checkSettings = async () => {
+    if (pubky === undefined) return;
 
+    const result = await loadSettings();
+    if (result) {
+      setNotificationPreferences(result.notifications);
+    } else {
+      setNotificationPreferences(defaultPreferences);
+    }
+  };
+
+  const checkMutedUsers = async () => {
+    if (pubky === undefined) return;
+
+    const mutedUsers = await getUserMuted(pubky);
+    setMutedUsers(mutedUsers);
+  };
+
+  const checkProfileUser = async () => {
+    if (pubky === undefined) return;
+
+    const emptyProfile = profile ? false : true;
+
+    if (emptyProfile) {
       try {
-        const loggedIn = await isLoggedIn();
-        let emptyProfile = profile ? false : true;
+        const user = await getUserProfile(pubky, pubky);
+        storeProfile(user.details);
+      } catch (error) {
+        // if there is no profile, redirect to register a new one
+        router.push('/onboarding/register');
+        setLoading(false);
+        return;
+      }
+    }
+  };
 
-        // check if user is logged in
-        if (loggedIn) {
-          // fetch muted users
-          const mutedUsers = await getUserMuted(pubky ?? '');
-          setMutedUsers(mutedUsers);
-          // check if user has a profile
-          if (emptyProfile) {
-            try {
-              const user = await getUserProfile(pk, pk);
-              storeProfile(user.details);
-              emptyProfile = false;
-            } catch (error) {
-              // if there is no profile, redirect to register a new one
-              router.push('/onboarding/register');
-              setLoading(false);
-              return;
-            }
-          }
+  const checkLogin = async () => {
+    try {
+      const loggedIn = await isLoggedIn();
 
-          if (redirectLoggedUser.includes(pathname)) {
-            router.push('/home');
-            setLoading(false);
-            return;
-          }
-        } else {
-          if (protectedRoutes.includes(pathname)) {
-            router.push('/onboarding');
-            setLoading(false);
-            return;
-          }
+      // check if user is not logged in
+      if (!loggedIn) {
+        if (protectedRoutes.includes(pathname)) {
+          router.push('/onboarding');
         }
         setLoading(false);
-      } catch (error) {
-        console.log(error);
-        setLoading(false);
+        return;
       }
-    };
 
+      await checkProfileUser();
+
+      if (redirectLoggedUser.includes(pathname)) {
+        router.push('/home');
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     checkLogin();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    checkTimestamp();
+    checkSettings();
+    checkMutedUsers();
   }, [pubky]);
 
   return (
