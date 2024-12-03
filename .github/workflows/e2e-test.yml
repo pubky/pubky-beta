@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   pull_request:
 
+concurrency:
+  group: "e2e-test"
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest

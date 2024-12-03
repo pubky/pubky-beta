@@ -607,7 +607,7 @@ describe('posts', () => {
     cy.waitReload();
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
-                    .innerTextShouldContain(replyContent);
+      cy.wrap($post).innerTextShouldContain(replyContent);
     });
 
     // delete the reply (post is at index 1) (menuBtnIdx 1 for reply)
@@ -618,7 +618,7 @@ describe('posts', () => {
     cy.waitReload();
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
-                    .innerTextShouldNotContain(replyContent);
+      cy.wrap($post).innerTextShouldNotContain(replyContent);
     });
   });
 
