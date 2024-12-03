@@ -23,7 +23,7 @@ describe('posts', () => {
     cy.slowDown(defaultMs);
 
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(10_000);
+    cy.wait(process.env.CI ? 10_000 : 5_000);
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
@@ -36,10 +36,7 @@ describe('posts', () => {
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -59,9 +56,7 @@ describe('posts', () => {
     });
     cy.get('#modal-root').should('not.exist');
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -92,9 +87,7 @@ describe('posts', () => {
 
     createQuickPost(postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -123,9 +116,7 @@ describe('posts', () => {
       cy.get('textarea').should('have.value', '');
     });
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -174,9 +165,7 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // verify the post text and embedded link is displayed correctly in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -219,9 +208,7 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
@@ -230,10 +217,7 @@ describe('posts', () => {
   it('can delete a post', () => {
     const postContent = `I can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -244,12 +228,8 @@ describe('posts', () => {
     // delete the post
     deletePost();
 
-    // wait to guarantee delete is applied
-    // todo: consider try loop instead of wait
-    cy.wait(2_000);
-
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.reload();
+    cy.waitReload();
 
     // verify post is deleted
     checkPostIsNotAtTopOfFeed(postContent);
@@ -313,13 +293,7 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    // wait to guarantee tags are associated with the post
-    // todo: consider try loop instead of wait
-    cy.wait(2_000);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.reload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // verify the post text and tags are displayed correctly in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -367,13 +341,9 @@ describe('posts', () => {
       cy.get('#close-btn').click();
     });
 
-    // wait to guarantee tags are associated with the post
-    // todo: consider try loop instead of wait
-    cy.wait(2_000);
-
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/541
     // should test before and after refresh
-    cy.reload();
+    cy.waitReload();
 
     // within the latest post in the feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -580,9 +550,7 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // reply to the post
     cy.slowDown(fastMs);
@@ -627,9 +595,7 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
+    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
     // reply to the post
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -647,12 +613,8 @@ describe('posts', () => {
     // delete the original post
     deletePost();
 
-    // wait to guarantee delete is applied
-    // todo: consider try loop instead of wait
-    cy.wait(2_000);
-
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.reload();
+    cy.waitReload();
 
     // verify the reply and original post are no longer displayed in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
