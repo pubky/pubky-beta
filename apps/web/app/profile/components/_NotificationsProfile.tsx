@@ -2,35 +2,25 @@
 
 import { Notifications } from '@/app/profile/components/notifications/components';
 import { Skeleton } from '@/components';
-import { useFilterContext } from '@/contexts';
-import { NotificationView } from '@/types/User';
-import { Button, Icon, Typography } from '@social/ui-shared';
-import { useEffect, useState } from 'react';
+import { useFilterContext, useNotificationsContext } from '@/contexts';
+import { Typography } from '@social/ui-shared';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
-type NotificationsProps = {
-  notifications: NotificationView[];
-  loading: boolean;
-};
-
-export default function NotificationsProfile({
-  notifications,
-  loading,
-}: NotificationsProps) {
-  const [loadingNotifications, setLoadingNotifications] = useState(true);
-  const [showAll, setShowAll] = useState(false);
+export default function NotificationsProfile() {
+  const {
+    notifications,
+    loading: loadingNotifications,
+    loadMoreNotifications,
+  } = useNotificationsContext();
   const { unReadNotification } = useFilterContext();
 
-  useEffect(() => {
-    if (!loading) setLoadingNotifications(false);
-  }, [loading]);
+  const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
 
-  const displayedNotifications = showAll
-    ? notifications.slice(unReadNotification)
-    : notifications?.slice(unReadNotification, unReadNotification + 10);
+  const displayedNotifications = notifications.slice(unReadNotification);
 
   return (
     <>
-      {loadingNotifications ? (
+      {loadingNotifications && notifications.length === 0 ? (
         <Skeleton.Simple />
       ) : notifications?.length === 0 ? (
         <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
@@ -54,21 +44,18 @@ export default function NotificationsProfile({
             </div>
           )}
           {displayedNotifications.map((notification, index) => {
+            const isLastElement = index === displayedNotifications.length - 1;
+
             return (
-              <Notifications.Notification
-                key={index}
-                notification={notification}
-              />
+              <div key={index} ref={isLastElement ? loader : null}>
+                <Notifications.Notification notification={notification} />
+              </div>
             );
           })}
-          {notifications?.length > 10 && !showAll && (
-            <Button.Medium
-              icon={<Icon.Bell size="16" />}
-              className="mt-4 mb-8 w-auto"
-              onClick={() => setShowAll(true)}
-            >
-              Show All Notifications
-            </Button.Medium>
+          {loadingNotifications && (
+            <div className="flex justify-center mt-4 mb-8">
+              <Skeleton.Simple />
+            </div>
           )}
         </div>
       )}
