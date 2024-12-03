@@ -101,6 +101,7 @@ export default function ProtectedRoutes({
           ) {
             router.push('/home');
             setLoading(false);
+            await checkMutedUsers();
             return;
           }
         } else {
