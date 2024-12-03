@@ -78,8 +78,8 @@ export default function ProtectedRoutes({
         return true;
       } catch (error) {
         // Redirect to register if profile is empty
-        router.push('/onboarding/register');
         setLoading(false);
+        router.push('/onboarding/register');
         return false;
       }
     }
@@ -99,24 +99,24 @@ export default function ProtectedRoutes({
             publicRoutes.includes(pathname) ||
             pathname === '/onboarding/register'
           ) {
-            router.push('/home');
-            setLoading(false);
             await checkMutedUsers();
+            setLoading(false);
+            router.push('/home');
             return;
           }
         } else {
           // Allow visiting only publicRoutes when profile is empty
           if (!publicRoutes.includes(pathname)) {
-            router.push('/onboarding/register');
             setLoading(false);
+            router.push('/onboarding/register');
             return;
           }
         }
       } else {
         // Redirect non-logged users trying to access restricted routes
         if (!publicRoutes.includes(pathname)) {
-          router.push('/onboarding');
           setLoading(false);
+          router.push('/onboarding');
           return;
         }
       }
