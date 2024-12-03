@@ -205,9 +205,6 @@ export function PubkyClientWrapper({
       if (pubky) {
         // Logout client
         client.signout(PublicKey.from(pubky));
-
-        // Defer state update
-        setTimeout(() => setPubky(undefined), 0);
       }
 
       // Clear storage and states
@@ -219,6 +216,15 @@ export function PubkyClientWrapper({
       Utils.storage.remove('backup');
       Utils.storage.remove('feed');
       Utils.storage.remove('unread');
+
+      setTimeout(() => {
+        setPubky(undefined);
+        setProfile(undefined);
+        setMutedUsers(undefined);
+        setMnemonic(undefined);
+        setSeed(undefined);
+        setTimeline(undefined);
+      }, 0);
 
       return true;
     } catch (error) {

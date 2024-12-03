@@ -50,6 +50,8 @@ export default function ProtectedRoutes({
   ];
 
   useEffect(() => {
+    if (!pubky) return;
+
     const checkTimestamp = async () => {
       const result = await getTimestampNotification();
       setTimestamp(Number(result));
@@ -58,6 +60,8 @@ export default function ProtectedRoutes({
   }, [pubky]);
 
   useEffect(() => {
+    if (!pubky) return;
+
     const settings = async () => {
       const result = await loadSettings();
       if (result) {
@@ -79,9 +83,6 @@ export default function ProtectedRoutes({
 
         // check if user is logged in
         if (loggedIn) {
-          // fetch muted users
-          const mutedUsers = await getUserMuted(pubky ?? '');
-          setMutedUsers(mutedUsers);
           // check if user has a profile
           if (emptyProfile) {
             try {
@@ -99,6 +100,9 @@ export default function ProtectedRoutes({
           if (redirectLoggedUser.includes(pathname)) {
             router.push('/home');
             setLoading(false);
+            // fetch muted users
+            const mutedUsers = await getUserMuted(pubky ?? '');
+            setMutedUsers(mutedUsers);
             return;
           }
         } else {

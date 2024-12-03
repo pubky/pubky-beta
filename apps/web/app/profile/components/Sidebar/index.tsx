@@ -22,7 +22,7 @@ export default function Sidebar({
     usePubky ?? '',
     pubky ?? ''
   );
-  if (isError) console.error(isError);
+  //if (isError) console.error(isError);
   const profile = data;
   const name = profile?.details?.name ?? '';
   const bio = profile?.details.bio || 'No bio.';
