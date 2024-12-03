@@ -23,6 +23,8 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
   const tooltipMenuRef = useRef<HTMLDivElement>(null);
   const modalDeletePostRef = useRef<HTMLDivElement>(null);
   const modalReportPostRef = useRef<HTMLDivElement>(null);
+  const modalEditPostRef = useRef<HTMLDivElement>(null);
+  const modalEditArticleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
@@ -36,6 +38,19 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       if (modalReportPostRef.current) {
         if (!modalReportPostRef.current.contains(event.target as Node)) {
           setShowModalReportPost(false);
+        }
+        return;
+      }
+      if (modalEditPostRef.current) {
+        if (!modalEditPostRef.current.contains(event.target as Node)) {
+          setShowModalEditPost(false);
+        }
+        return;
+      }
+
+      if (modalEditArticleRef.current) {
+        if (!modalEditArticleRef.current.contains(event.target as Node)) {
+          setShowModalEditArticle(false);
         }
         return;
       }
@@ -60,6 +75,10 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
     setShowModalDeletePost,
     modalReportPostRef,
     setShowModalReportPost,
+    modalEditPostRef,
+    setShowModalEditPost,
+    modalEditArticleRef,
+    setShowModalEditArticle,
   ]);
 
   const handleDeletePost = async () => {
@@ -148,6 +167,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
         <Modal.EditPost
           showModalEditPost={showModalEditPost}
           setShowModalEditPost={setShowModalEditPost}
+          modalEditPostRef={modalEditPostRef}
           post={post}
         />
       )}
@@ -155,6 +175,7 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
         <Modal.EditArticle
           showModalEditArticle={showModalEditArticle}
           setShowModalEditArticle={setShowModalEditArticle}
+          modalEditArticleRef={modalEditArticleRef}
           article={post}
         />
       )}

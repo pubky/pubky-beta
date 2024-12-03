@@ -8,11 +8,13 @@ interface CreateEditPostProps {
   showModalEditPost: boolean;
   setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  modalEditPostRef: React.RefObject<HTMLDivElement>;
 }
 
 export default function EditPost({
   showModalEditPost,
   setShowModalEditPost,
+  modalEditPostRef,
   post,
 }: CreateEditPostProps) {
   const { editPost } = usePubkyClientContext();
@@ -20,7 +22,6 @@ export default function EditPost({
   const [contentEditPost, setContentEditPost] = useState('');
   const [sendingEditPost, setSendingEditPost] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);
-  const modalEditPostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setContentEditPost(post?.details?.content);
@@ -50,23 +51,6 @@ export default function EditPost({
       setSendingEditPost(false);
     }
   };
-
-  useEffect(() => {
-    const handleClickOutsideModals = (event: MouseEvent) => {
-      if (
-        modalEditPostRef.current &&
-        !modalEditPostRef.current.contains(event.target as Node)
-      ) {
-        setShowModalEditPost(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideModals);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModals);
-    };
-  }, [modalEditPostRef, setShowModalEditPost]);
 
   return (
     <Modal.Root

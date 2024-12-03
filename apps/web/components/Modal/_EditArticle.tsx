@@ -8,11 +8,13 @@ interface CreateEditArticleProps {
   showModalEditArticle: boolean;
   setShowModalEditArticle: React.Dispatch<React.SetStateAction<boolean>>;
   article: PostView;
+  modalEditArticleRef: React.RefObject<HTMLDivElement>;
 }
 
 export default function EditArticle({
   showModalEditArticle,
   setShowModalEditArticle,
+  modalEditArticleRef,
   article,
 }: CreateEditArticleProps) {
   const { editPost } = usePubkyClientContext();
@@ -22,18 +24,17 @@ export default function EditArticle({
   const [contentEditArticle, setContentEditArticle] = useState('');
   const [sendingEditArticle, setSendingEditArticle] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);
-  const modalEditArticleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setContentEditArticle(
       article?.details?.content
         ? JSON.parse(article?.details?.content).body
-        : ''
+        : '',
     );
     setInitTitle(
       article?.details?.content
         ? JSON.parse(article?.details?.content).title
-        : ''
+        : '',
     );
   }, [article]);
 
@@ -132,7 +133,7 @@ export default function EditArticle({
                             JSON.stringify({
                               title: initTitle,
                               body: contentEditArticle,
-                            })
+                            }),
                           )
                       : undefined
                   }
