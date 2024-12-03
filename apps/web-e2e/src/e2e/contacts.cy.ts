@@ -91,8 +91,7 @@ describe('contacts', () => {
     });
 
     // check number of listed followers is 1
-    cy.get('#profile-list-root').children().should('be.visible').should('have.length', 1)
-    cy.get('#profile-list-root').children().first().within(() => {
+    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
       // check that account 2 is listed as a follower
       cy.get('#list-profile-name').should('have.text', '#2 Friend');
       // check 0 tags
@@ -127,8 +126,7 @@ describe('contacts', () => {
     // check number of listed following is 1
     cy.get('#profile-tab-following').should('contain.text', 'Following');
     cy.get('#profile-tab-following').click();
-    cy.get('#profile-list-root').children().should('have.length', 1)
-    cy.get('#profile-list-root').children().first().within(() => {
+    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
       // check that account 1 is listed as a following
       // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
       cy.get('#list-profile-name').should('contain.text', '#1 Frien');
@@ -168,8 +166,7 @@ describe('contacts', () => {
     // Check account 1 (own) profile for follower
     cy.get('#profile-tab-followers').find('#counter').should('have.text', 1);
     cy.get('#profile-tab-followers').click();
-    cy.get('#profile-list-root').children().should('have.length', 1)
-    cy.get('#profile-list-root').children().first().within(() => {
+    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
       // check that account 2 is listed as a follower
       // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
       cy.get('#list-profile-name').should('contain.text', '#2 Frien');
@@ -194,8 +191,7 @@ describe('contacts', () => {
     // check number of listed friends is 1
     cy.get('#profile-tab-friends').should('contain.text', 'Friends');
     cy.get('#profile-tab-friends').click();
-    cy.get('#profile-list-root').children().should('have.length', 1)
-    cy.get('#profile-list-root').children().first().within(() => {
+    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
       // check that account 2 is listed as a friend
       // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
       cy.get('#list-profile-name').should('contain.text', '#2 Frien');
