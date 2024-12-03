@@ -25,13 +25,7 @@ const NotificationsContext = createContext<NotificationsContextType>({
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { pubky, timestamp, notificationPreferences } = usePubkyClientContext();
-  const { data: initNotifications } = useUserNotifications(
-    pubky ?? '',
-    undefined,
-    timestamp === 0 ? undefined : timestamp,
-    undefined,
-    10,
-  );
+  const { data: initNotifications } = useUserNotifications(pubky ?? '',);
   const { setUnReadNotification } = useFilterContext();
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
   const [loading, setLoading] = useState(true);

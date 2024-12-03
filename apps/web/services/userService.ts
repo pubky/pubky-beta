@@ -227,6 +227,7 @@ export async function getUserNotifications(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
+  console.log("response", `${BASE_URL}/user/${userId}/notifications?${queryParams}`)
   const response = await fetch(
     `${BASE_URL}/user/${userId}/notifications?${queryParams}`,
   );

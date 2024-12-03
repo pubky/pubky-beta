@@ -5,7 +5,6 @@ import { Skeleton } from '@/components';
 import { useFilterContext } from '@/contexts';
 import { NotificationView } from '@/types/User';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 type NotificationsProps = {
@@ -26,8 +25,8 @@ export default function NotificationsProfile({
   }, [loading]);
 
   const displayedNotifications = showAll
-    ? notifications
-    : notifications?.slice(0, 10);
+    ? notifications.slice(unReadNotification)
+    : notifications?.slice(unReadNotification, unReadNotification + 10);
 
   return (
     <>
@@ -55,43 +54,6 @@ export default function NotificationsProfile({
             </div>
           )}
           {displayedNotifications.map((notification, index) => {
-            {
-              /**if (Array.isArray(notification)) {
-              if (
-                notification[0].type === 'follow' ||
-                notification[0].type === 'new_friend' ||
-                notification[0].type === 'lost_friend'
-              ) {
-                return (
-                  <Notifications.NotificationGroup
-                    key={index}
-                    notifications={notification}
-                  />
-                );
-              } else if (notification[0].type === 'tag_profile') {
-                return (
-                  <Notifications.NotificationTagGroup
-                    key={index}
-                    notifications={notification}
-                  />
-                );
-              } else if (notification[0].type === 'tag_post') {
-                return (
-                  <Notifications.NotificationTagPostGroup
-                    key={index}
-                    notifications={notification}
-                  />
-                );
-              }
-            } else {
-              return (
-                <Notifications.Notification
-                  key={index}
-                  notification={notification}
-                />
-              );
-            }*/
-            }
             return (
               <Notifications.Notification
                 key={index}
