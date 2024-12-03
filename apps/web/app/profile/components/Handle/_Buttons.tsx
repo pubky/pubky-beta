@@ -68,7 +68,7 @@ export default function Buttons({
   const copyProfileUrlToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${window.location.origin}/profile/${pubkey}`
+        `${window.location.origin}/profile/${pubkey}`,
       );
     } catch (error) {
       console.log('Failed to copy: ', error);
@@ -176,7 +176,7 @@ export default function Buttons({
           setShow(true);
           copyProfileUrlToClipboard();
         }}
-        icon={<Icon.Link size="16" />}
+        icon={<Icon.Link size="14" />}
       >
         Link
       </Button.Medium>

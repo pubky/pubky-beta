@@ -14,7 +14,10 @@ export async function generateMetadata({ params }: Props) {
   const { creatorPubky } = await params;
   try {
     const profile = await getUserDetails(creatorPubky);
-    const profilePic = profile?.image && (await getFile(profile.image));
+    const profilePic =
+      profile?.image &&
+      profile.image !== 'null' &&
+      (await getFile(profile.image));
 
     const file =
       profilePic &&
@@ -23,7 +26,7 @@ export async function generateMetadata({ params }: Props) {
     return getSeoMetadata({
       title: `${profile.name} | Profile`,
       description: profile.bio,
-      image: file,
+      image: String(file),
     });
   } catch (error) {
     return getSeoMetadata({

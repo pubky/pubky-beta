@@ -15,7 +15,7 @@ export const Timeline = () => {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
-  const { reach, layout } = useFilterContext();
+  const { reach, layout, sort } = useFilterContext();
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
@@ -67,7 +67,7 @@ export const Timeline = () => {
     setStart(undefined);
     setTimeline([]);
     fetchPosts();
-  }, [reach]);
+  }, [searchTags, reach, sort]);
 
   return (
     <div className="flex flex-col gap-3">

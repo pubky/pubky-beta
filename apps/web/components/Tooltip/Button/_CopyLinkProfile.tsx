@@ -17,12 +17,12 @@ export default function CopyLinkProfile({
       onClick={() => {
         setContentToast(
           `${window.location.origin}/profile/${creatorPubky}`,
-          'link'
+          'link',
         );
         setShowToast(true);
         Utils.copyToClipboard(creatorPubky);
       }}
-      icon={<Icon.Link size="24" />}
+      icon={<Icon.Link size="20" />}
     >
       Copy profile link
     </Tooltip.Item>

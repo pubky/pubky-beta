@@ -47,7 +47,7 @@ export default function CustomFeeds({
       const storedFeed = Utils.storage.get('feed');
       if (storedFeed) {
         const matchingFeed = result.find(
-          (feed) => JSON.stringify(feed.feed) === JSON.stringify(storedFeed)
+          (feed) => JSON.stringify(feed.feed) === JSON.stringify(storedFeed),
         );
         if (matchingFeed) {
           setSelectedFeed(matchingFeed.feed);
@@ -100,11 +100,16 @@ export default function CustomFeeds({
             className={twMerge(
               baseCSS,
               !selectedFeed ? activeCSS : '',
-              rest.className
+              rest.className,
             )}
             onClick={handleForYouClick}
           >
-            <Typography.Body variant="small-bold">For You</Typography.Body>
+            <Typography.Body
+              className="text-[13px] leading-[13px]"
+              variant="small-bold"
+            >
+              For You
+            </Typography.Body>
           </div>
           {feeds?.map((feed, index) => {
             return (
@@ -113,11 +118,14 @@ export default function CustomFeeds({
                 className={twMerge(
                   baseCSS,
                   selectedFeed === feed.feed ? activeCSS : '',
-                  rest.className
+                  rest.className,
                 )}
                 onClick={() => handleFeedSelect(feed.feed)}
               >
-                <Typography.Body variant="small-bold">
+                <Typography.Body
+                  className="text-[13px] leading-[13px]"
+                  variant="small-bold"
+                >
                   {Utils.minifyText(feed.name, 11)}
                 </Typography.Body>
                 <div

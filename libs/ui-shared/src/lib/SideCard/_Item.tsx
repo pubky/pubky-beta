@@ -30,15 +30,21 @@ export const Item = ({
     >
       <div className={`w-full justify-start items-center contents`}>
         <div
-          className={`flex gap-2 items-center w-full ${disabled
+          className={`flex gap-2 items-center w-full ${
+            disabled
               ? 'opacity-20'
               : selected
                 ? 'opacity-100'
                 : 'opacity-50 hover:opacity-70'
-            } border-b border-transparent pb-1.5 ${!disabled && !selected && 'hover:border-white hover:border-opacity-20 hover:bg-gradient-to-t from-white/10 to-transparent'} text-white text-[15px] font-semibold font-InterTight leading-[18px] tracking-tight`}
+          } border-b border-transparent pb-1.5 ${!disabled && !selected && 'hover:border-white hover:border-opacity-20 hover:bg-gradient-to-t from-white/10 to-transparent'} text-white text-[15px] font-semibold font-InterTight leading-[18px] tracking-tight`}
         >
           {icon}
-          <Typography.Body variant="small-bold">{label}</Typography.Body>
+          <Typography.Body
+            className="leading-[18px] tracking-normal"
+            variant="small-bold"
+          >
+            {label}
+          </Typography.Body>
         </div>
       </div>
     </button>

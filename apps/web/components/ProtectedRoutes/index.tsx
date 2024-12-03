@@ -73,42 +73,46 @@ export default function ProtectedRoutes({
     const checkLogin = async () => {
       const pk = pubky || '';
 
-      const loggedIn = await isLoggedIn();
-      let emptyProfile = profile ? false : true;
+      try {
+        const loggedIn = await isLoggedIn();
+        let emptyProfile = profile ? false : true;
 
-      // check if user is logged in
-      if (loggedIn) {
-        // fetch muted users
-        const mutedUsers = await getUserMuted(pubky ?? '');
-        setMutedUsers(mutedUsers);
-        // check if user has a profile
-        if (emptyProfile) {
-          try {
-            const user = await getUserProfile(pk, pk);
-            storeProfile(user.details);
-            emptyProfile = false;
-          } catch (error) {
-            // if there is no profile, redirect to register a new one
-            router.push('/onboarding/register');
+        // check if user is logged in
+        if (loggedIn) {
+          // fetch muted users
+          const mutedUsers = await getUserMuted(pubky ?? '');
+          setMutedUsers(mutedUsers);
+          // check if user has a profile
+          if (emptyProfile) {
+            try {
+              const user = await getUserProfile(pk, pk);
+              storeProfile(user.details);
+              emptyProfile = false;
+            } catch (error) {
+              // if there is no profile, redirect to register a new one
+              router.push('/onboarding/register');
+              setLoading(false);
+              return;
+            }
+          }
+
+          if (redirectLoggedUser.includes(pathname)) {
+            router.push('/home');
+            setLoading(false);
+            return;
+          }
+        } else {
+          if (protectedRoutes.includes(pathname)) {
+            router.push('/onboarding');
             setLoading(false);
             return;
           }
         }
-
-        if (redirectLoggedUser.includes(pathname)) {
-          router.push('/home');
-          setLoading(false);
-          return;
-        }
-      } else {
-        if (protectedRoutes.includes(pathname)) {
-          router.push('/onboarding');
-          setLoading(false);
-          return;
-        }
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     checkLogin();
