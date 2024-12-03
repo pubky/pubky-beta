@@ -30,16 +30,16 @@ export const OptionText = ({
         <Typography.Label className="text-opacity-30">
           {subtitle}
         </Typography.Label>
-        <Typography.H2
-          className={`flex gap-2 items-center ${
+        <Typography.Body
+          className={`text-xl font-light font-InterTight leading-7 tracking-wide flex gap-1 items-center ${
             disabled
               ? 'text-white text-opacity-30 cursor-default'
               : 'text-white'
           }`}
-          variant="light"
+          variant="medium"
         >
           {iconText} {iconOption} {textOption}
-        </Typography.H2>
+        </Typography.Body>
       </div>
       <div
         className={twMerge(
@@ -47,7 +47,7 @@ export const OptionText = ({
           textOption ? (subtitle ? 'mt-6' : 'mt-1') : 'mt-0.5',
           isOpen ? 'rotate-180' : 'rotate-0',
           disabled && 'cursor-default',
-          rest.className
+          rest.className,
         )}
       >
         <Icon.DropdownIcon color={disabled ? 'gray' : 'white'} />

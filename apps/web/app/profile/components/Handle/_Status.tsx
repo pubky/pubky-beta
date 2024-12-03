@@ -43,7 +43,10 @@ export default function Status({ creatorPubky, status }: StatusProps) {
       ) : (
         status &&
         status !== 'noStatus' && (
-          <Typography.Body variant="medium" className="mt-1">
+          <Typography.Body
+            className="text-xl font-light font-InterTight leading-7 tracking-wide"
+            variant="medium"
+          >
             {emoji && (
               <>
                 {emoji} {text}

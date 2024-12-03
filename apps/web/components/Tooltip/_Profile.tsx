@@ -93,7 +93,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
                 alt: `userPic-${index + 1}`,
                 src: userDetails?.image || '/images/webp/Userpic.webp',
               };
-            })
+            }),
           );
 
           setFollowersImages(images);
@@ -128,7 +128,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
                 alt: `userPic-${index + 1}`,
                 src: userDetails?.image || '/images/webp/Userpic.webp',
               };
-            })
+            }),
           );
 
           setFollowingImages(images);
@@ -179,7 +179,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
           : 'No bio.'}
       </Typography.Body>
       <div className="grid grid-cols-2 gap-6 justify-start">
-        {isLoadingFollowing ? (
+        {isLoadingFollowing || !following ? (
           <div className="flex w-full justify-center min-h-[64px] items-center">
             <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
           </div>
@@ -208,7 +208,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
             {followingImages && <PostUI.UserPic images={followingImages} />}
           </Link>
         )}
-        {isLoadingFollowers ? (
+        {isLoadingFollowers || !followers ? (
           <div className="flex w-full justify-center min-h-[64px] items-center">
             <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
           </div>
@@ -239,37 +239,31 @@ export default function Profile({ post, profileId }: ProfileProps) {
         )}
       </div>
       <div>
-        {followed ? (
-          initLoadingFollowed ? (
+        {post?.details?.author === pubky && (
+          <Link
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+            href="/settings/edit"
+          >
             <Button.Transparent
-              loading={initLoadingFollowed}
-              className={
-                post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-              }
+              icon={<Icon.Pencil size="16" />}
+              className="mt-3"
             >
-              Loading
+              Edit profile
             </Button.Transparent>
-          ) : (
-            <Button.Transparent
-              onClick={
-                loadingFollowed
-                  ? undefined
-                  : (event) => {
-                      event.stopPropagation();
-                      unfollowUser();
-                    }
-              }
-              disabled={loadingFollowed}
-              loading={loadingFollowed}
-              icon={<Icon.UserMinus size="16" />}
-              className={
-                post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-              }
-            >
-              Unfollow
-            </Button.Transparent>
-          )
-        ) : (
+          </Link>
+        )}
+        {initLoadingFollowed ? (
+          <Button.Transparent
+            loading={initLoadingFollowed}
+            className={
+              post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+            }
+          >
+            Loading
+          </Button.Transparent>
+        ) : followed ? (
           <Button.Transparent
             onClick={
               loadingFollowed
@@ -288,21 +282,25 @@ export default function Profile({ post, profileId }: ProfileProps) {
           >
             Follow
           </Button.Transparent>
-        )}
-        {post?.details?.author === pubky && (
-          <Link
-            onClick={(event) => {
-              event.stopPropagation();
-            }}
-            href="/settings/edit"
+        ) : (
+          <Button.Transparent
+            onClick={
+              loadingFollowed
+                ? undefined
+                : (event) => {
+                    event.stopPropagation();
+                    unfollowUser();
+                  }
+            }
+            disabled={loadingFollowed}
+            loading={loadingFollowed}
+            icon={<Icon.UserMinus size="16" />}
+            className={
+              post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+            }
           >
-            <Button.Transparent
-              icon={<Icon.Pencil size="16" />}
-              className="mt-3"
-            >
-              Edit profile
-            </Button.Transparent>
-          </Link>
+            Unfollow
+          </Button.Transparent>
         )}
       </div>
     </Tooltip.Main>

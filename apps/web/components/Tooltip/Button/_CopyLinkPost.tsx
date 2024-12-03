@@ -17,19 +17,19 @@ export default function CopyLinkPost({ post, setShowMenu }: CopyLinkPostProps) {
       id="copy-post-link"
       onClick={() => {
         Utils.copyToClipboard(
-          `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`
+          `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`,
         );
         setContentToast(
           Utils.minifyText(
             `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`,
-            80
+            80,
           ),
-          'link'
+          'link',
         );
         setShowToast(true);
         setShowMenu(false);
       }}
-      icon={<Icon.Link size="24" />}
+      icon={<Icon.Link size="20" />}
     >
       Copy link to post
     </Tooltip.Item>

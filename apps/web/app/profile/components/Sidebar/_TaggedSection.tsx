@@ -34,7 +34,7 @@ export default function TaggedSection({
 
   return (
     <div className="w-full">
-      <SideCard.Header title="Tagged" />
+      <SideCard.Header title="Tagged as" />
       {loadingProfileTags ? (
         <Skeleton.Simple />
       ) : (
@@ -43,7 +43,7 @@ export default function TaggedSection({
             <>
               {profileTags.map((tag, index) => {
                 const isTagFound = tag?.taggers?.some(
-                  (fromItem) => fromItem === pubky
+                  (fromItem) => fromItem === pubky,
                 );
 
                 return (
