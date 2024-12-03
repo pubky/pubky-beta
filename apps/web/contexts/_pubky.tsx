@@ -205,9 +205,6 @@ export function PubkyClientWrapper({
       if (pubky) {
         // Logout client
         client.signout(PublicKey.from(pubky));
-
-        // Defer state update
-        setTimeout(() => setPubky(undefined), 0);
       }
 
       // Clear storage and states
@@ -219,6 +216,18 @@ export function PubkyClientWrapper({
       Utils.storage.remove('backup');
       Utils.storage.remove('feed');
       Utils.storage.remove('unread');
+
+      setTimeout(() => {
+        setProfile(undefined);
+        setSeed(undefined);
+        setMnemonic(undefined);
+        setTimeline(undefined);
+        setMutedUsers([]);
+        setTimelineProfile([]);
+        setReplies([]);
+        setSearchTags([]);
+        setPubky(undefined);
+      });
 
       return true;
     } catch (error) {
@@ -407,6 +416,9 @@ export function PubkyClientWrapper({
       Utils.storage.set('pubky_public_key', pk);
       setPubky(pk);
 
+      if (pubkeyProfile.name === '[DELETED]') {
+        pubkeyProfile.name = 'anonymous';
+      }
       Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
       setProfile(pubkeyProfile);
 
@@ -427,6 +439,9 @@ export function PubkyClientWrapper({
   };
 
   const storeProfile = async (userProfile: UserDetails): Promise<boolean> => {
+    if (userProfile.name === '[DELETED]') {
+      userProfile.name = 'anonymous';
+    }
     // Save the profile in storage
     Utils.storage.set('profile', JSON.stringify(userProfile));
     setProfile(userProfile);
@@ -476,6 +491,10 @@ export function PubkyClientWrapper({
 
       // Transform the profile to the PubkyAppUser format
       const pubkeyProfile: PubkyAppUser = toPubkeyProfile(userProfile);
+
+      if (pubkeyProfile.name === '[DELETED]') {
+        pubkeyProfile.name = 'anonymous';
+      }
 
       // Save the profile in storage
       Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
