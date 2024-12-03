@@ -6,6 +6,7 @@ import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
 import Modal from '../Modal';
 import { getUserMuted, getUserProfile } from '@/services/userService';
+import { defaultPreferences } from '@/contexts/_filters';
 
 export default function ProtectedRoutes({
   children,
@@ -14,8 +15,17 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, pubky, storeProfile, profile, setMutedUsers } =
-    usePubkyClientContext();
+  const {
+    isLoggedIn,
+    pubky,
+    storeProfile,
+    profile,
+    setMutedUsers,
+    getTimestampNotification,
+    setTimestamp,
+    loadSettings,
+    setNotificationPreferences,
+  } = usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -38,6 +48,26 @@ export default function ProtectedRoutes({
     '/onboarding/welcome',
     '/onboarding/permissions',
   ];
+
+  useEffect(() => {
+    const checkTimestamp = async () => {
+      const result = await getTimestampNotification();
+      setTimestamp(Number(result));
+    };
+    checkTimestamp();
+  }, []);
+
+  useEffect(() => {
+    const settings = async () => {
+      const result = await loadSettings();
+      if (result) {
+        setNotificationPreferences(result.notifications);
+      } else {
+        setNotificationPreferences(defaultPreferences);
+      }
+    };
+    settings();
+  }, []);
 
   useEffect(() => {
     const checkLogin = async () => {

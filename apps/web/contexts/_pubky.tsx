@@ -137,6 +137,12 @@ type PubkyClientContextType = {
   replies: PostView[];
   setMutedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   mutedUsers: string[] | undefined;
+  timestamp: number;
+  setTimestamp: React.Dispatch<React.SetStateAction<number>>;
+  notificationPreferences: NotificationPreferences;
+  setNotificationPreferences: React.Dispatch<
+    React.SetStateAction<NotificationPreferences>
+  >;
 };
 
 interface TimelineState {
@@ -174,6 +180,9 @@ export function PubkyClientWrapper({
   const [repliesArray, setRepliesArray] = useState<PostView[]>(
     {} as PostView[],
   );
+  const [timestamp, setTimestamp] = useState<number>(0);
+  const [notificationPreferences, setNotificationPreferences] =
+    useState<NotificationPreferences>({} as NotificationPreferences);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -922,6 +931,8 @@ export function PubkyClientWrapper({
       const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
       await client.put(lastReadUrl, lastReadBody);
 
+      setTimestamp(timestamp);
+
       return true;
     } catch (error) {
       console.error('Error put timestamp:', error);
@@ -1561,6 +1572,10 @@ export function PubkyClientWrapper({
         importData,
         mutedUsers,
         setMutedUsers,
+        timestamp,
+        setTimestamp,
+        notificationPreferences,
+        setNotificationPreferences,
       }}
     >
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
