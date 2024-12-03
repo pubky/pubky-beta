@@ -75,7 +75,7 @@ const NormalPost = ({ data }) => {
 
 const LongPost = ({ data, user }) => {
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex flex-col gap-4">
         <Typography.Display className="sm:leading-[64px]">
           {JSON.parse(data?.details?.content).title}
@@ -100,7 +100,7 @@ const LongPost = ({ data, user }) => {
                 {Utils.minifyText(
                   user?.data?.details?.name ??
                     Utils.minifyPubky(data?.details?.author),
-                  24
+                  24,
                 )}
               </Typography.Body>
               <div className="flex gap-1 -mt-1 md:mt-1 cursor-pointer">

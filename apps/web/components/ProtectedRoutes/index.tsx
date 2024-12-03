@@ -55,7 +55,7 @@ export default function ProtectedRoutes({
       setTimestamp(Number(result));
     };
     checkTimestamp();
-  }, []);
+  }, [pubky]);
 
   useEffect(() => {
     const settings = async () => {
@@ -67,7 +67,7 @@ export default function ProtectedRoutes({
       }
     };
     settings();
-  }, []);
+  }, [pubky]);
 
   useEffect(() => {
     const checkLogin = async () => {

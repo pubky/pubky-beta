@@ -52,7 +52,7 @@ export default function Notifications() {
         <Typography.Body variant="medium" className="text-opacity-80">
           Please select which notifications you want to receive on Pubky.
         </Typography.Body>
-        <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl shadow backdrop-blur-[50px] flex-col justify-start items-start gap-6 inline-flex">
+        <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl flex-col justify-start items-start gap-6 inline-flex">
           {Object.keys(preferences).map((type) => (
             <div
               key={type}

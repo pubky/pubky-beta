@@ -13,7 +13,7 @@ export default function PrivacySafety() {
         <Typography.Body variant="medium" className="text-opacity-80">
           Privacy is not a crime. Manage your visibility and safety on Pubky.
         </Typography.Body>
-        <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl shadow backdrop-blur-[50px] flex-col justify-start items-start gap-6 inline-flex">
+        <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl flex-col justify-start items-start gap-6 inline-flex">
           <div className="w-full h-8 justify-between items-center inline-flex">
             <Typography.Body variant="small-bold">
               Sign me out when inactive for 5 minutes

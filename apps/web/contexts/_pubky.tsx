@@ -205,6 +205,9 @@ export function PubkyClientWrapper({
       if (pubky) {
         // Logout client
         client.signout(PublicKey.from(pubky));
+
+        // Defer state update
+        setTimeout(() => setPubky(undefined), 0);
       }
 
       // Clear storage and states

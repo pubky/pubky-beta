@@ -87,8 +87,6 @@ export default function FilterTabs({
   loading: boolean;
   profile: UserView | null;
 }) {
-  const { notifications, loading: loadingNotifications } =
-    useNotificationsContext();
   const { pubky } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
   const [loadingTab, setLoadingTab] = useState(true);
@@ -208,12 +206,7 @@ export default function FilterTabs({
           <>
             {(!creatorPubky || creatorPubky === pubky) && (
               <>
-                {activeTab === 0 && (
-                  <Profile.NotificationsProfile
-                    notifications={notifications}
-                    loading={loadingNotifications}
-                  />
-                )}
+                {activeTab === 0 && <Profile.NotificationsProfile />}
                 {/**activeTab === 1 && <Profile.Bookmarks />*/}
               </>
             )}
