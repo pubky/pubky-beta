@@ -39,13 +39,13 @@ export default function Replies({
 
   const fetchReplies = async () => {
     if (isLoading) return;
-  
+
     try {
       if (repliesData && repliesData.length > 0) {
         const filteredReplies = repliesData.filter(
           (reply) => !mutedUsers?.includes(reply?.details?.author),
         );
-  
+
         if (filteredReplies.length > 0) {
           const newStart =
             filteredReplies[filteredReplies.length - 1].details.indexed_at - 1;
@@ -148,7 +148,7 @@ export default function Replies({
         </Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full mt-3">
-          {replies.map((reply, index) => {
+          {replies.reverse().map((reply, index) => {
             const isLastReply = replies.length === index + 1;
             return (
               <div
@@ -157,11 +157,7 @@ export default function Replies({
                 className="flex flex-col gap-3"
               >
                 <Post post={reply} />
-                {reply?.counts?.replies > 0 && (
-                  <ReplyReplies
-                    reply={reply}
-                  />
-                )}
+                {reply?.counts?.replies > 0 && <ReplyReplies reply={reply} />}
               </div>
             );
           })}
