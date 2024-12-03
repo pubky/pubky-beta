@@ -29,6 +29,7 @@ export default function ProtectedRoutes({
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
   const [loading, setLoading] = useState(true);
+  
   const protectedRoutes = [
     '/followers',
     '/home',
@@ -49,78 +50,83 @@ export default function ProtectedRoutes({
     '/onboarding/permissions',
   ];
 
-  useEffect(() => {
-    if (!pubky) return;
+  const checkTimestamp = async () => {
+    if (pubky === undefined) return;
 
-    const checkTimestamp = async () => {
-      const result = await getTimestampNotification();
-      setTimestamp(Number(result));
-    };
-    checkTimestamp();
-  }, [pubky]);
+    const result = await getTimestampNotification();
+    setTimestamp(Number(result));
+  };
 
-  useEffect(() => {
-    if (!pubky) return;
+  const checkSettings = async () => {
+    if (pubky === undefined) return;
 
-    const settings = async () => {
-      const result = await loadSettings();
-      if (result) {
-        setNotificationPreferences(result.notifications);
-      } else {
-        setNotificationPreferences(defaultPreferences);
-      }
-    };
-    settings();
-  }, [pubky]);
+    const result = await loadSettings();
+    if (result) {
+      setNotificationPreferences(result.notifications);
+    } else {
+      setNotificationPreferences(defaultPreferences);
+    }
+  };
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      const pk = pubky || '';
+  const checkMutedUsers = async () => {
+    if (pubky === undefined) return;
 
+    const mutedUsers = await getUserMuted(pubky);
+    setMutedUsers(mutedUsers);
+  };
+
+  const checkProfileUser = async () => {
+    if (pubky === undefined) return;
+
+    let emptyProfile = profile ? false : true;
+
+    if (emptyProfile) {
       try {
-        const loggedIn = await isLoggedIn();
-        let emptyProfile = profile ? false : true;
-
-        // check if user is logged in
-        if (loggedIn) {
-          // check if user has a profile
-          if (emptyProfile) {
-            try {
-              const user = await getUserProfile(pk, pk);
-              storeProfile(user.details);
-              emptyProfile = false;
-            } catch (error) {
-              // if there is no profile, redirect to register a new one
-              router.push('/onboarding/register');
-              setLoading(false);
-              return;
-            }
-          }
-
-          if (redirectLoggedUser.includes(pathname)) {
-            router.push('/home');
-            setLoading(false);
-            // fetch muted users
-            const mutedUsers = await getUserMuted(pubky ?? '');
-            setMutedUsers(mutedUsers);
-            return;
-          }
-        } else {
-          if (protectedRoutes.includes(pathname)) {
-            router.push('/onboarding');
-            setLoading(false);
-            return;
-          }
-        }
-        setLoading(false);
+        const pk = pubky || '';
+        const user = await getUserProfile(pk, pk);
+        storeProfile(user.details);
+        emptyProfile = false;
+        return true;
       } catch (error) {
-        console.log(error);
+        // if there is no profile, redirect to register a new one
+        router.push('/onboarding/register');
         setLoading(false);
+        return;
       }
-    };
+    }
+  };
 
+  const checkLogin = async () => {
+    try {
+      const loggedIn = await isLoggedIn();
+
+      if (loggedIn) {
+        const result = await checkProfileUser();
+
+        if (result && redirectLoggedUser.includes(pathname)) {
+          router.push('/home');
+          setLoading(false);
+          await checkMutedUsers();
+          return;
+        }
+      } else {
+        if (protectedRoutes.includes(pathname)) {
+          router.push('/onboarding');
+          setLoading(false);
+          return;
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     checkLogin();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    checkTimestamp();
+    checkSettings();
   }, [pubky]);
 
   return (

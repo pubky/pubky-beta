@@ -218,13 +218,16 @@ export function PubkyClientWrapper({
       Utils.storage.remove('unread');
 
       setTimeout(() => {
-        setPubky(undefined);
         setProfile(undefined);
-        setMutedUsers(undefined);
-        setMnemonic(undefined);
         setSeed(undefined);
+        setMnemonic(undefined);
         setTimeline(undefined);
-      }, 0);
+        setMutedUsers([]);
+        setTimelineProfile([]);
+        setReplies([]);
+        setSearchTags([]);
+        setPubky(undefined);
+      });
 
       return true;
     } catch (error) {
