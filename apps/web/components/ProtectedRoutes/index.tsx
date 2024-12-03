@@ -29,25 +29,14 @@ export default function ProtectedRoutes({
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
   const [loading, setLoading] = useState(true);
-  
-  const protectedRoutes = [
-    '/followers',
-    '/home',
-    '/hot',
-    '/notifications',
-    '/post',
-    '/profile',
-    '/search',
-    '/settings',
-  ];
 
-  const redirectLoggedUser = [
+  const publicRoutes = [
     '/onboarding',
-    '/login',
-    '/sign-up',
+    '/onboarding/intro',
+    '/onboarding/sign-in',
+    '/onboarding/sign-up',
+    '/logout',
     '/sign-in',
-    '/onboarding/welcome',
-    '/onboarding/permissions',
   ];
 
   const checkTimestamp = async () => {
@@ -88,43 +77,58 @@ export default function ProtectedRoutes({
         emptyProfile = false;
         return true;
       } catch (error) {
-        // if there is no profile, redirect to register a new one
+        // Redirect to register if profile is empty
         router.push('/onboarding/register');
         setLoading(false);
-        return;
+        return false;
       }
     }
+
+    return true;
   };
 
-  const checkLogin = async () => {
+  const checkAccess = async () => {
     try {
       const loggedIn = await isLoggedIn();
 
       if (loggedIn) {
-        const result = await checkProfileUser();
+        const hasProfile = await checkProfileUser();
 
-        if (result && redirectLoggedUser.includes(pathname)) {
-          router.push('/home');
-          setLoading(false);
-          await checkMutedUsers();
-          return;
+        if (hasProfile) {
+          if (
+            publicRoutes.includes(pathname) ||
+            pathname === '/onboarding/register'
+          ) {
+            router.push('/home');
+            setLoading(false);
+            return;
+          }
+        } else {
+          // Allow visiting only publicRoutes when profile is empty
+          if (!publicRoutes.includes(pathname)) {
+            router.push('/onboarding/register');
+            setLoading(false);
+            return;
+          }
         }
       } else {
-        if (protectedRoutes.includes(pathname)) {
+        // Redirect non-logged users trying to access restricted routes
+        if (!publicRoutes.includes(pathname)) {
           router.push('/onboarding');
           setLoading(false);
           return;
         }
       }
+
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    checkLogin();
+    checkAccess();
     checkTimestamp();
     checkSettings();
   }, [pubky]);
