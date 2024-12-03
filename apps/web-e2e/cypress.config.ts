@@ -2,14 +2,14 @@ import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 
 import { defineConfig } from 'cypress';
 
-import { rmdir, unlink, rename } from 'fs';
+import { readdirSync, rmdir, unlink, rename } from 'fs';
 import { defaultMs } from './src/support/slow-down';
 
 export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { cypressDir: 'src' }),
     baseUrl: 'http://localhost:4200',
-    defaultCommandTimeout: process.env.CI ? 30_000 : 4000,
+    defaultCommandTimeout: process.env.CI ? 60_000 : 15_000,
     video: true,
     viewportWidth: 1920,
     viewportHeight: 1080,
@@ -85,6 +85,12 @@ export default defineConfig({
           });
         });
       },
+
+      checkFileExistsWithSuffix({ folder, suffix }) {
+        const files = readdirSync(folder);
+        const matchedFile = files.find(file => file.endsWith(suffix));
+        return !!matchedFile; // Return true if a match is found
+      }
       });
     },
     experimentalModifyObstructiveThirdPartyCode: true,

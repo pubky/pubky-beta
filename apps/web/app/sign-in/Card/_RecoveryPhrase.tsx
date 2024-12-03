@@ -80,6 +80,7 @@ export default function RecoveryPhrase() {
       <div className="my-6 grid grid-rows-6 grid-flow-col gap-1">
         {Array.from({ length: 12 }, (_, index) => (
           <Input.Word
+            id={`recovery-phrase-input-${index}`}
             key={index}
             placeholder={`${index + 1}.`}
             value={words[index]}
@@ -120,6 +121,7 @@ export default function RecoveryPhrase() {
         loading={loading}
         className="mt-4 lg:mt-0"
         icon={<Icon.Key size="16" />}
+        id="sign-in-recovery-phrase-btn"
         variant="secondary"
       >
         Sign in

@@ -97,7 +97,7 @@ export default function MutedUsers() {
   };
 
   return (
-    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start gap-12 inline-flex">
+    <div id="muted-users-root" className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.SpeakerSimpleSlash size="24" />
@@ -163,6 +163,7 @@ export default function MutedUsers() {
                             </Button.Medium>
                           ) : isMuted ? (
                             <Button.Medium
+                              id="unmute-btn"
                               onClick={
                                 loadingMutedUsers[mutedUser?.details?.id]
                                   ? undefined
@@ -181,6 +182,7 @@ export default function MutedUsers() {
                             </Button.Medium>
                           ) : (
                             <Button.Medium
+                              id="mute-btn"
                               onClick={
                                 loadingMutedUsers[mutedUser?.details?.id]
                                   ? undefined

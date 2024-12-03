@@ -353,12 +353,16 @@ export default function Intro() {
               Back
             </Button.Large>
             <Link href="/onboarding/sign-in">
-              <Button.Large className="w-auto" variant="secondary">
+              <Button.Large
+                id="onboarding-skip-intro-btn"
+                className="w-auto"
+                variant="secondary">
                 Skip Intro
               </Button.Large>
             </Link>
           </div>
           <Button.Large
+            id='onboarding-continue-btn'
             className="w-auto"
             icon={<Icon.ArrowRight />}
             onClick={() =>

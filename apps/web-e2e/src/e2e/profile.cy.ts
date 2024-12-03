@@ -7,6 +7,9 @@ describe('profile', () => {
   });
 
   beforeEach(() => {
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(10_000);
+
     cy.onboardAsNewUser('Edit Me', 'This bio is editable');
   });
 
@@ -33,9 +36,9 @@ describe('profile', () => {
     cy.get('#edit-profile-link-github-input').should('be.visible')
       .and('have.value', 'https://github.com/synonymdev/bitkit');
 
-    // check the 'website' and 'email' example links are still shown
+    // check the 'website' and 'x(Twitter)' example links are still shown
     cy.get('#edit-profile-link-website-input').should('be.visible');
-    cy.get('#edit-profile-link-email-input').should('be.visible');
+    cy.get('#edit-profile-link-x\\ \\(twitter\\)-input').should('be.visible');
 
     // edit bio again, edit the Bluesky link and verify changes are persisted
     editProfileAndVerify({ bio: 'This bio has been edited again!', linkBluesky: 'https://bsky.app/profile/pubky.app' });
@@ -43,12 +46,15 @@ describe('profile', () => {
     // re-open edit page and check that default link types are not shown, only the new ones
     cy.get('#profile-edit-btn').click();
     cy.get('#edit-profile-link-website-input').should('not.exist');
-    cy.get('#edit-profile-link-email-input').should('not.exist');
+    cy.get('#edit-profile-link-x\\ \\(twitter\\)-input').should('not.exist');
     cy.get('#edit-profile-link-bluesky-input').should('be.visible');
     cy.get('#edit-profile-link-github-input').should('be.visible');
   });
 
   it('cancelling edit should not retain any changes made to own profile', () => {
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(3_000);
+
     // navigate to edit profile page
     cy.get('#header-profile-pic').click();
     cy.get('#profile-edit-btn').click();
@@ -66,7 +72,7 @@ describe('profile', () => {
     cy.location('pathname').should('eq', '/profile');
 
     // Reload the page to ensure changes are not persisted
-    cy.reload();
+    cy.waitReload();
     cy.get('#profile-username-header').invoke('text').should('eq', 'Edit Me');
     // This approach is necessary for bio due to additional space inserted before final word.
     cy.get('#profile-bio-content').should(($elem) => {

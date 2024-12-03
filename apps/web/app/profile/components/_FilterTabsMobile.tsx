@@ -155,7 +155,7 @@ export default function FilterTabsMobile({
           const isActive = activeTab === tab.id;
           return (
             <div
-              id={`profile-tab-${tab.key}`}
+              id={`mobile-profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() => handleTabClick(tab.id, tab.key)}
               className={`w-full pb-3 items-center gap-1 flex justify-between cursor-pointer border-b border-white ${
@@ -174,7 +174,7 @@ export default function FilterTabsMobile({
           );
         })}
       </div>
-      <div id="profile-tab-content" className="w-full">
+      <div id="mobile-profile-tab-content" className="w-full">
         {loading ? <Skeleton.Simple /> : <>{}</>}
       </div>
     </div>

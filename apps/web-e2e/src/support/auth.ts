@@ -1,8 +1,9 @@
-import moment = require('moment');
+//import moment = require('moment');
 import path = require('path');
 
 export const backupFilename = () : string => {
-  return `pubky_recovery_${moment().utc().format('YYYY-MM-DD')}.pkarr`
+  // return `pubky_recovery_${moment().utc().format('YYYY-MM-DD')}.pkarr`
+  return "recovery_key.pkarr";
 };
 
 export const backupDownloadFilePath = (filename : string = backupFilename()) : string => {

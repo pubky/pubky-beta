@@ -77,7 +77,7 @@ export default function RecoveryFile({
             error={errors.password}
             disabled={loading}
             placeholder="••••••••••••"
-            id="onboarding-password-input"
+            id="sign-in-password-input"
             onKeyDown={handleKeyDown}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setPassword(e.target.value)
@@ -120,7 +120,7 @@ export default function RecoveryFile({
         icon={<Icon.Key size="16" />}
         loading={loading}
         className="mt-4"
-        id="onboarding-sign-in-button"
+        id="sign-in-recovery-file-btn"
         variant="secondary"
       >
         Sign in

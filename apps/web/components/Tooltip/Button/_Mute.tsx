@@ -62,6 +62,7 @@ export default function Mute({ pk }: MuteProps) {
     <Tooltip.Item icon={<Icon.LoadingSpin size="24" />}>Loading</Tooltip.Item>
   ) : muted ? (
     <Tooltip.Item
+      id="profile-menu-item-unmute"
       onClick={loadingMuted ? undefined : unmuteUser}
       loading={loadingMuted}
       icon={<Icon.SpeakerSimpleSlash size="24" />}
@@ -70,6 +71,7 @@ export default function Mute({ pk }: MuteProps) {
     </Tooltip.Item>
   ) : (
     <Tooltip.Item
+      id="profile-menu-item-mute"
       onClick={loadingMuted ? undefined : muteUser}
       loading={loadingMuted}
       icon={<Icon.SpeakerHigh size="24" />}

@@ -171,6 +171,7 @@ export default function FilterTabs({
               }`}
             >
               <div
+                id="label"
                 className={`flex gap-2 items-center ${
                   isActive && !loading
                     ? 'opacity-100'

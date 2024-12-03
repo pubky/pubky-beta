@@ -152,7 +152,7 @@ export default function Phrase({
                     ) : (
                       <Icon.Clipboard size="12" />
                     )}
-                    <Typography.Body variant="small-bold">
+                    <Typography.Body id="backup-copy-recovery-phrase" variant="small-bold">
                       Copy to clipboard
                     </Typography.Body>
                   </div>
@@ -182,6 +182,7 @@ export default function Phrase({
               Back
             </Button.Large>
             <Button.Large
+              id="backup-reveal-confirm-recovery-phrase-btn"
               icon={showWords ? <Icon.ArrowRight /> : <Icon.Eye />}
               onClick={
                 showWords

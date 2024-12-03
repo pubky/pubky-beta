@@ -5,15 +5,21 @@ import { slowCypressDown } from 'cypress-slow-down';
 describe('onboarding', () => {
   before(() => {
     slowCypressDown();
-    cy.deleteDownloadsFolder();
   });
 
-  it('should onboard a new user, go to home and logout', () => {
-    cy.onboardAsNewUser('Satoshi Nakamoto', 'I am cypherpunk');
+  beforeEach(() => {
+    cy.deleteDownloadsFolder();
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(10_000);
+  });
+
+  it('can onboard as a new user, viewing onboarding slides, go to home and logout', () => {
+    // onboard as new user without skipping onboarding slides
+    cy.onboardAsNewUser('Satoshi Nakamoto', 'I am cypherpunk', false);
     cy.signOut(false);
   });
 
-  it('should login, save recovery file and use it to log back in', () => {
+  it('should login, skipping onboarding slides, save recovery file and use it to log back in', () => {
     const username = 'satoshin';
     cy.onboardAsNewUser(username);
     cy.backupRecoveryFile('666942');

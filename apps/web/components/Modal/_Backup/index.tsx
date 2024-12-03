@@ -42,6 +42,7 @@ export default function Backup({
       className="md:max-w-[792px] max-h-[600px] md:max-h-full overflow-y-auto"
     >
       <Modal.CloseAction
+        id="backup-close-btn"
         onClick={() => {
           setShowModalBackup(false);
           setShowWords(false);
@@ -91,6 +92,7 @@ export default function Backup({
                 <Icon.FileText size="128" />
               </div>
               <Button.Large
+                id="backup-recovery-phrase-btn"
                 icon={<Icon.FileText />}
                 onClick={() => setPhrase(true)}
               >
