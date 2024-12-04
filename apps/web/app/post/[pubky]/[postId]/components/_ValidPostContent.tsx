@@ -123,7 +123,7 @@ const LongPost = ({ data, user }) => {
           <ImageByUri
             width={1200}
             height={650}
-            className="w-[1200px] h-auto max-h-[500px] rounded-lg mb-4"
+            className="w-[1200px] h-auto rounded-lg mb-4"
             alt="article-image"
             uri={data?.details?.attachments[0] ?? ''}
             loading
