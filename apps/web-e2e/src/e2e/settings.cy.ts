@@ -17,7 +17,7 @@ describe('settings', () => {
     cy.deleteDownloadsFolder();
   });
 
-  // TODO: skipping due to strange issue on seed phrase recovery (ring of power), pkarr.pubky.app doesn't appear to be responding here in the test but does for my browser
+  // TODO: skipping due to https://github.com/pubky/pubky-app/issues/732
   it.skip('Account settings function correctly', () => {
     // create a new user
     cy.onboardAsNewUser('Mr Account Settings', 'I like to test account settings');
