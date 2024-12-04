@@ -1,3 +1,5 @@
+import { defaultMs } from "./slow-down";
+
 // select an emoji using the emoji picket by its data-full-name attribute
 export const selectEmoji = (emojiName: string) => {
   cy.get('#emoji-btn').click();
@@ -64,4 +66,14 @@ export const checkPostIsNotAtTopOfFeed = (postContent: string) => {
       });
     };
   });
+};
+
+// wait for 'show n new posts' button to be visible
+// check its counter displayes the correct number of new posts and click it
+export const clickShowNewPostsBtn = (expectedCounter = 1) => {
+  cy.get('#show-new-posts-button', { timeout: process.env.CI ? 120_000 : 15_000 })
+    .scrollIntoView()
+    .should('be.visible')
+    .should('contain.text', ` ${expectedCounter} `)
+    .click();
 };

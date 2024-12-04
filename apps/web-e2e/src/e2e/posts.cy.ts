@@ -2,7 +2,12 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost, checkPostIsNotAtTopOfFeed } from '../support/posts';
+import { selectEmoji,
+        latestPostInFeedContentEq,
+        deletePost,
+        createQuickPost,
+        checkPostIsNotAtTopOfFeed,
+        clickShowNewPostsBtn } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -36,7 +41,7 @@ describe('posts', () => {
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -56,7 +61,7 @@ describe('posts', () => {
     });
     cy.get('#modal-root').should('not.exist');
 
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -87,7 +92,7 @@ describe('posts', () => {
 
     createQuickPost(postContent);
 
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -116,7 +121,7 @@ describe('posts', () => {
       cy.get('textarea').should('have.value', '');
     });
 
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -165,7 +170,7 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // verify the post text and embedded link is displayed correctly in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -208,7 +213,7 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
@@ -217,7 +222,7 @@ describe('posts', () => {
   it('can delete a post', () => {
     const postContent = `I can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -293,7 +298,7 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // verify the post text and tags are displayed correctly in feed
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -550,7 +555,7 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // reply to the post
     cy.slowDown(fastMs);
@@ -595,7 +600,7 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
-    cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+    clickShowNewPostsBtn();
 
     // reply to the post
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
