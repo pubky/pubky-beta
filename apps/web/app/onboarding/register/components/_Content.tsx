@@ -12,6 +12,7 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
+import Link from 'next/link';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -110,42 +111,42 @@ export default function Index() {
         name: '',
         bio: '',
       });
-  
+
       const result = profileSchema.safeParse({
         name: name,
         bio: bio ? bio : undefined,
       });
-  
+
       if (!result.success) {
         const newErrors: FormErrors = result.error.flatten().fieldErrors;
-  
+
         const errorMessages = Object.keys(newErrors).reduce(
           (acc: { [key: string]: string }, key) => {
             acc[key] = newErrors[key].join(', ');
             return acc;
           },
-          {}
+          {},
         );
-  
+
         setErrors((prev) => ({ ...prev, ...errorMessages }));
         return;
       }
-  
+
       try {
         const linksObject: Links[] = [];
         const invalidLinkIndexes: number[] = [];
-  
+
         links.forEach((link, index) => {
           if (link.url) {
             let validationResult;
             const cleanUrl = link.url.replace('mailto:', '');
-  
+
             if (link.title === 'email') {
               validationResult = z
                 .string()
                 .email({ message: 'Invalid email address' })
                 .safeParse(cleanUrl);
-  
+
               if (validationResult.success) {
                 linksObject.push({
                   title: link.title,
@@ -160,19 +161,20 @@ export default function Index() {
                 .url({ message: 'Invalid website URL' })
                 .optional()
                 .safeParse(link.url);
-  
+
               if (!validationResult.success) {
                 const socialLink = socialLinks.find(
-                  (social) => social.name.toLowerCase() === link.title.toLowerCase()
+                  (social) =>
+                    social.name.toLowerCase() === link.title.toLowerCase(),
                 );
-  
+
                 if (socialLink) {
                   const completedUrl = `${socialLink.url}${link.url}`;
                   validationResult = z
                     .string()
                     .url({ message: 'Invalid website URL' })
                     .safeParse(completedUrl);
-  
+
                   if (validationResult.success) {
                     linksObject.push({
                       title: link.title,
@@ -193,7 +195,7 @@ export default function Index() {
             }
           }
         });
-  
+
         if (invalidLinkIndexes.length > 0) {
           const newErrors: FormErrors = {};
           invalidLinkIndexes.forEach((index) => {
@@ -210,7 +212,7 @@ export default function Index() {
           setLoading(false);
           return;
         }
-  
+
         await saveProfile({
           name,
           bio,
@@ -264,7 +266,17 @@ export default function Index() {
           defaultImage={generatedImage}
         />
       </div>
-      <div className="w-full max-w-[1200px] mt-6 justify-end items-center inline-flex">
+      <div className="w-full max-w-[1200px] mt-6 justify-between gap-6 items-center inline-flex">
+        <Link href="/logout">
+          <Button.Large
+            icon={<Icon.SignOut size="16" />}
+            className="w-auto"
+            variant="secondary"
+            id="onboarding-submit-button"
+          >
+            Signout
+          </Button.Large>
+        </Link>
         <Button.Large
           onClick={!loading ? () => handleSubmit() : undefined}
           icon={<Icon.Check />}

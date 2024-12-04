@@ -103,6 +103,10 @@ export default function ProtectedRoutes({
       const hasProfile = await checkProfileUser();
 
       if (!hasProfile) {
+        if (pathname === '/sign-in') {
+          router.push('/onboarding/register');
+          return;
+        }
         if (
           publicRoutes.includes(pathname) ||
           pathname === '/onboarding/register' ||
