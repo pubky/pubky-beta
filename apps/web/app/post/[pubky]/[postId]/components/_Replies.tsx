@@ -45,7 +45,6 @@ export default function Replies({
         const filteredReplies = repliesData.filter(
           (reply) => !mutedUsers?.includes(reply?.details?.author),
         );
-        console.log(filteredReplies);
         if (filteredReplies.length > 0) {
           const newStart =
             filteredReplies[filteredReplies.length - 1].details.indexed_at - 1;
