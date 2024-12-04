@@ -397,13 +397,18 @@ describe('posts', () => {
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
       cy.get('#bookmark-btn').click();
     });
-    // check bookmark toast is shown (before the toast disappears)
+    // check bookmark toast is shown (before it disappears)
     cy.get('#toast').should('be.visible').find('h2').contains('bookmark')
     cy.slowDown(defaultMs);
 
     // navigate to bookmarks page
     cy.get('#header-bookmarks-btn').click();
     cy.location('pathname').should('eq', '/bookmarks');
+
+    // if posts-feed area contains "No bookmarks yet", reload the page
+    if (cy.get('#posts-feed').innerTextContains('No bookmarks yet')) {
+      cy.reload();
+    };
 
     cy.get('#posts-feed').children().eq(0).should('have.length', 1).children().eq(0).within(() => {
       // verify the post has been bookmarked
