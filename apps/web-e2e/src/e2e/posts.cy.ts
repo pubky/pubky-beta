@@ -180,8 +180,7 @@ describe('posts', () => {
     });
   });
 
-  // TODO: unskip once 2 skipped pages bug is fixed https://github.com/pubky/pubky-app/issues/733
-  it.skip('can post with profile reference', () => {
+  it('can post with profile reference', () => {
     // create profile to refer to in a post
     cy.signOut(true);
     const uniquePrefix = Cypress._.uniqueId(Date.now().toString().slice(-3));
