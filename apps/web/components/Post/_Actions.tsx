@@ -28,6 +28,7 @@ const BookmarkButton = ({
     id="bookmark-btn"
     size="small"
     variant="custom"
+    disabled={loadingBookmarks}
     icon={
       loadingBookmarks ? (
         <div>
@@ -37,13 +38,13 @@ const BookmarkButton = ({
         <div>
           <Icon.BookmarkSimple
             size="16"
-            opacity={isBookmarked !== '' ? 1 : 0.2}
+            opacity={isBookmarked ? 1 : 0.2}
             color={'white'}
           />
         </div>
       )
     }
-    onClick={handleBookmarks}
+    onClick={loadingBookmarks ? undefined : () => handleBookmarks()}
   />
 );
 
@@ -103,10 +104,15 @@ export default function Actions({
   );
 
   const handleAddBookmark = async (postId: string, authorId: string) => {
-    setLoadingBookmarks(true);
-    await addBookmark(postId, authorId);
-    setIsBookmarked(postId);
-    setLoadingBookmarks(false);
+    try {
+      setLoadingBookmarks(true);
+      const result = await addBookmark(postId, authorId);
+      if (result) setIsBookmarked(String(result));
+      setLoadingBookmarks(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingBookmarks(false);
+    }
   };
 
   const handleDeleteBookmark = async (
@@ -114,10 +120,15 @@ export default function Actions({
     authorId: string,
     bookmarkId: string,
   ) => {
-    setLoadingBookmarks(true);
-    await deleteBookmark(postId, authorId, bookmarkId);
-    setIsBookmarked('');
-    setLoadingBookmarks(false);
+    try {
+      setLoadingBookmarks(true);
+      const result = await deleteBookmark(postId, authorId, bookmarkId);
+      if (result) setIsBookmarked('');
+      setLoadingBookmarks(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingBookmarks(false);
+    }
   };
 
   const handleBookmarks = async () => {
@@ -126,7 +137,7 @@ export default function Actions({
         await handleDeleteBookmark(
           repost.details.id,
           repost.details.author,
-          repost?.bookmark?.id ?? '',
+          repost?.bookmark?.id ?? isBookmarked,
         );
       } else {
         await handleAddBookmark(repost?.details?.id, repost?.details?.author);
@@ -136,7 +147,7 @@ export default function Actions({
         await handleDeleteBookmark(
           post.details.id,
           post.details.author,
-          post?.bookmark?.id ?? '',
+          post?.bookmark?.id ?? isBookmarked,
         );
       } else {
         await handleAddBookmark(post?.details?.id, post?.details?.author);
