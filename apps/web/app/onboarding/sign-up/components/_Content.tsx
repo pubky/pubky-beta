@@ -104,42 +104,42 @@ export default function Index() {
         name: '',
         bio: '',
       });
-  
+
       const result = profileSchema.safeParse({
         name: name,
         bio: bio ? bio : undefined,
       });
-  
+
       if (!result.success) {
         const newErrors: FormErrors = result.error.flatten().fieldErrors;
-  
+
         const errorMessages = Object.keys(newErrors).reduce(
           (acc: { [key: string]: string }, key) => {
             acc[key] = newErrors[key].join(', ');
             return acc;
           },
-          {}
+          {},
         );
-  
+
         setErrors((prev) => ({ ...prev, ...errorMessages }));
         return;
       }
-  
+
       try {
         const linksObject: Links[] = [];
         const invalidLinkIndexes: number[] = [];
-  
+
         links.forEach((link, index) => {
           if (link.url) {
             let validationResult;
             const cleanUrl = link.url.replace('mailto:', '');
-  
+
             if (link.title === 'email') {
               validationResult = z
                 .string()
                 .email({ message: 'Invalid email address' })
                 .safeParse(cleanUrl);
-  
+
               if (validationResult.success) {
                 linksObject.push({
                   title: link.title,
@@ -154,19 +154,20 @@ export default function Index() {
                 .url({ message: 'Invalid website URL' })
                 .optional()
                 .safeParse(link.url);
-  
+
               if (!validationResult.success) {
                 const socialLink = socialLinks.find(
-                  (social) => social.name.toLowerCase() === link.title.toLowerCase()
+                  (social) =>
+                    social.name.toLowerCase() === link.title.toLowerCase(),
                 );
-  
+
                 if (socialLink) {
                   const completedUrl = `${socialLink.url}${link.url}`;
                   validationResult = z
                     .string()
                     .url({ message: 'Invalid website URL' })
                     .safeParse(completedUrl);
-  
+
                   if (validationResult.success) {
                     linksObject.push({
                       title: link.title,
@@ -187,7 +188,7 @@ export default function Index() {
             }
           }
         });
-  
+
         if (invalidLinkIndexes.length > 0) {
           const newErrors: FormErrors = {};
           invalidLinkIndexes.forEach((index) => {
@@ -204,21 +205,20 @@ export default function Index() {
           setLoading(false);
           return;
         }
-  
+
         const signUpResponse = await signUp({
           name,
           bio,
           image: image instanceof File ? image : undefined,
           links: linksObject ? linksObject : undefined,
         });
-  
+
         if (!signUpResponse) {
           throw new Error('Something went wrong');
         }
+        router.push('/onboarding/pubky');
       } catch (error) {
         console.log(error);
-      } finally {
-        router.push('/onboarding/pubky');
         setLoading(false);
       }
     } catch (error) {

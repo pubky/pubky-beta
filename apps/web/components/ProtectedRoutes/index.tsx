@@ -16,7 +16,6 @@ export default function ProtectedRoutes({
   const router = useRouter();
   const pathname = usePathname();
   const {
-    isLoggedIn,
     pubky,
     storeProfile,
     profile,
@@ -42,101 +41,101 @@ export default function ProtectedRoutes({
   const checkTimestamp = async () => {
     if (pubky === undefined) return;
 
-    const result = await getTimestampNotification();
-    setTimestamp(Number(result));
+    try {
+      const result = await getTimestampNotification();
+      setTimestamp(Number(result));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const checkSettings = async () => {
     if (pubky === undefined) return;
 
-    const result = await loadSettings();
-    if (result) {
-      setNotificationPreferences(result.notifications);
-    } else {
-      setNotificationPreferences(defaultPreferences);
+    try {
+      const result = await loadSettings();
+      if (result) {
+        setNotificationPreferences(result.notifications);
+      } else {
+        setNotificationPreferences(defaultPreferences);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const checkMutedUsers = async () => {
     if (pubky === undefined) return;
+    if (!profile) return;
 
     try {
       const mutedUsers = await getUserMuted(pubky);
       setMutedUsers(mutedUsers ?? []);
     } catch (error) {
+      console.log(error);
       setMutedUsers([]);
     }
   };
 
   const checkProfileUser = async () => {
     if (pubky === undefined) return;
+    if (!profile) return;
 
-    let emptyProfile = profile ? false : true;
-
-    if (emptyProfile) {
-      try {
-        const pk = pubky || '';
-        const user = await getUserProfile(pk, pk);
-        storeProfile(user.details);
-        emptyProfile = false;
-        return true;
-      } catch (error) {
-        // Redirect to register if profile is empty
-        setLoading(false);
-        router.push('/onboarding/register');
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const checkAccess = async () => {
     try {
-      const loggedIn = await isLoggedIn();
-
-      if (loggedIn) {
-        const hasProfile = await checkProfileUser();
-
-        if (hasProfile) {
-          if (
-            publicRoutes.includes(pathname) ||
-            pathname === '/onboarding/register'
-          ) {
-            await checkMutedUsers();
-            setLoading(false);
-            router.push('/home');
-            return;
-          }
-        } else {
-          // Allow visiting only publicRoutes when profile is empty
-          if (!publicRoutes.includes(pathname)) {
-            setLoading(false);
-            router.push('/onboarding/register');
-            return;
-          }
-        }
-      } else {
-        // Redirect non-logged users trying to access restricted routes
-        if (!publicRoutes.includes(pathname)) {
-          setLoading(false);
-          router.push('/onboarding');
-          return;
-        }
-      }
-
-      setLoading(false);
+      const user = await getUserProfile(pubky, pubky);
+      storeProfile(user.details);
     } catch (error) {
-      console.error(error);
-      setLoading(false);
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    checkAccess();
+    if (pubky === undefined) return;
+
+    checkProfileUser();
+    checkMutedUsers();
     checkTimestamp();
     checkSettings();
   }, [pubky]);
+
+  useEffect(() => {
+    // check if the user is logged in
+    if (pubky) {
+      // check if the user has a profile
+      if (!profile) {
+        if (
+          publicRoutes.includes(pathname) ||
+          pathname === '/onboarding/register'
+        ) {
+          setLoading(false);
+          return;
+        } else {
+          router.push('/onboarding/register');
+          return;
+        }
+      }
+
+      // check if the user is trying to access a public route
+      if (
+        pathname === '/onboarding/register' ||
+        publicRoutes.includes(pathname)
+      ) {
+        router.push('/home');
+        return;
+      }
+
+      setLoading(false);
+      return;
+    }
+
+    // check if the not logged user is trying to access a public route
+    if (!publicRoutes.includes(pathname)) {
+      router.push('/onboarding');
+      return;
+    }
+
+    setLoading(false);
+  }, [pathname]);
 
   return (
     <>
