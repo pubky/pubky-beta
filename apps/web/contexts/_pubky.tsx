@@ -18,6 +18,7 @@ import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
 import { getPost } from '@/services/postService';
+import { getUserRelationship } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
@@ -1206,6 +1207,23 @@ export function PubkyClientWrapper({
 
       await client.put(followUrl, followDataBody);
 
+      // get user relationships and check if it is followed
+      // keep in a while loop until it is followed
+      let userFollow = false;
+
+      while (!userFollow) {
+        try {
+          const post = await getUserRelationship(user_id, pubky ?? '');
+          if (post.following === true) {
+            userFollow = true;
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+
       return true;
     } catch (error) {
       console.error('Error while following the user:', error);
@@ -1220,6 +1238,23 @@ export function PubkyClientWrapper({
       const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
 
       await client.delete(followUrl);
+
+      // get user relationships and check if it is unfollowed
+      // keep in a while loop until it is unfollowed
+      let userUnfollow = false;
+
+      while (!userUnfollow) {
+        try {
+          const post = await getUserRelationship(user_id, pubky ?? '');
+          if (post.following === false) {
+            userUnfollow = true;
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
 
       return true;
     } catch (error) {
