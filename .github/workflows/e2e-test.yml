@@ -72,11 +72,13 @@ jobs:
       - name: Build pubky-docker services
         working-directory: pubky-docker/development
         run: |
-          docker compose build \
+          docker buildx create --use
+          docker buildx build \
             --progress=plain \
             --build-arg CACHE_BUST=${{ github.run_id }} \
             --cache-from=type=local,src=/tmp/.buildx-cache \
-            --cache-to=type=local,dest=/tmp/.buildx-cache,mode=max
+            --cache-to=type=local,dest=/tmp/.buildx-cache,mode=max \
+            -f docker-compose.yml .
 
       - name: Start pubky-docker services
         working-directory: pubky-docker/development
