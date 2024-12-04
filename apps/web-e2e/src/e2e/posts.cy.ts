@@ -99,8 +99,9 @@ describe('posts', () => {
   });
 
   it('can post with emojis', () => {
-    const postContent = `🇦🇺😎🦎 I can post with emojis! ${Date.now()}`;
-    const postContentWithoutEmoji = ` I can post with emojis! ${Date.now()}`;
+    const suffix = Date.now();
+    const postContent = `🇦🇺😎🦎 I can post with emojis! ${suffix}`;
+    const postContentWithoutEmoji = ` I can post with emojis! ${suffix}`;
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
       // click on textarea to expand to view buttons
