@@ -9,7 +9,7 @@ on:
 
 concurrency:
   group: "e2e-test"
-  cancel-in-progress: true
+  cancel-in-progress: false # wait for all in-progress runs to complete before starting a new run
 
 jobs:
   test:
