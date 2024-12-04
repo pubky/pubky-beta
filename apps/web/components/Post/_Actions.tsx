@@ -109,9 +109,13 @@ export default function Actions({
     setLoadingBookmarks(false);
   };
 
-  const handleDeleteBookmark = async (bookmarkId: string) => {
+  const handleDeleteBookmark = async (
+    postId: string,
+    authorId: string,
+    bookmarkId: string,
+  ) => {
     setLoadingBookmarks(true);
-    await deleteBookmark(bookmarkId);
+    await deleteBookmark(postId, authorId, bookmarkId);
     setIsBookmarked('');
     setLoadingBookmarks(false);
   };
@@ -119,13 +123,21 @@ export default function Actions({
   const handleBookmarks = async () => {
     if (repost) {
       if (isBookmarked) {
-        await handleDeleteBookmark(repost?.bookmark?.id ?? '');
+        await handleDeleteBookmark(
+          repost.details.id,
+          repost.details.author,
+          repost?.bookmark?.id ?? '',
+        );
       } else {
         await handleAddBookmark(repost?.details?.id, repost?.details?.author);
       }
     } else {
       if (isBookmarked) {
-        await handleDeleteBookmark(post?.bookmark?.id ?? '');
+        await handleDeleteBookmark(
+          post.details.id,
+          post.details.author,
+          post?.bookmark?.id ?? '',
+        );
       } else {
         await handleAddBookmark(post?.details?.id, post?.details?.author);
       }
