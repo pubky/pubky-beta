@@ -82,7 +82,7 @@ type PubkyClientContextType = {
   deleteFile: (file_uri: string) => Promise<boolean>;
   mute: (user_id: string) => Promise<boolean>;
   unmute: (user_id: string) => Promise<boolean>;
-  addBookmark: (postId: string, authorId: string) => Promise<boolean>;
+  addBookmark: (postId: string, authorId: string) => Promise<boolean | string>;
   deleteBookmark: (bookmarkId: string) => Promise<boolean>;
   createTag: (
     authorId: string,
@@ -1274,7 +1274,7 @@ export function PubkyClientWrapper({
   const addBookmark = async (
     postId: string,
     authorId: string,
-  ): Promise<boolean> => {
+  ): Promise<string | boolean> => {
     try {
       await ensureLoggedIn();
 
@@ -1289,7 +1289,7 @@ export function PubkyClientWrapper({
 
       await client.put(bookmarkUrl, bookmarkDataBody);
 
-      return true;
+      return bookmarkId;
     } catch (error) {
       console.error('Error while bookmarking the post:', error);
       return false;
@@ -1306,7 +1306,7 @@ export function PubkyClientWrapper({
 
       return true;
     } catch (error) {
-      console.error('Error while unbookmarking the post:', error);
+      console.error('Error while undo bookmarking the post:', error);
       return false;
     }
   };

@@ -59,9 +59,12 @@ export default function ProtectedRoutes({
 
   const checkMutedUsers = async () => {
     if (pubky === undefined) return;
-
-    const mutedUsers = await getUserMuted(pubky);
-    setMutedUsers(mutedUsers);
+    try {
+      const mutedUsers = await getUserMuted(pubky);
+      setMutedUsers(mutedUsers ?? []);
+    } catch (error) {
+      setMutedUsers([]);
+    }
   };
 
   const checkProfileUser = async () => {
