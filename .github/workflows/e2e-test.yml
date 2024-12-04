@@ -59,7 +59,26 @@ jobs:
           sed -i 's/NEO4J_server_memory_heap_initial__size=4G/NEO4J_server_memory_heap_initial__size=1G/' neo4j.env
           sed -i 's/NEO4J_server_memory_heap_max__size=8G/NEO4J_server_memory_heap_max__size=2G/' neo4j.env
 
-      - name: Build and run pubky-docker
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Restore Docker cache
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: pubky-docker-cache-e2e-test
+          restore-keys: pubky-docker-cache-e2e-test
+
+      - name: Build pubky-docker services
+        working-directory: pubky-docker/development
+        run: |
+          docker compose build \
+            --progress=plain \
+            --build-arg CACHE_BUST=${{ github.run_id }} \
+            --cache-from=type=local,src=/tmp/.buildx-cache \
+            --cache-to=type=local,dest=/tmp/.buildx-cache,mode=max
+
+      - name: Start pubky-docker services
         working-directory: pubky-docker/development
         run: docker compose up -d
 
