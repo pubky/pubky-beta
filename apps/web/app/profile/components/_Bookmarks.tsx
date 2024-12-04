@@ -54,8 +54,12 @@ export default function Bookmarks() {
     };
   }, [setTimeline]);
 
-  const handleDeleteBookmark = async (bookmarkId: string) => {
-    await deleteBookmark(bookmarkId);
+  const handleDeleteBookmark = async (
+    postId: string,
+    authorId: string,
+    bookmarkId: string,
+  ) => {
+    await deleteBookmark(postId, authorId, bookmarkId);
   };
 
   return (
@@ -69,7 +73,11 @@ export default function Bookmarks() {
                 <div
                   onClick={() =>
                     post?.bookmark?.id
-                      ? handleDeleteBookmark(post?.bookmark?.id)
+                      ? handleDeleteBookmark(
+                          post.details.id,
+                          post.details.author,
+                          post?.bookmark?.id,
+                        )
                       : undefined
                   }
                   className="cursor-pointer"

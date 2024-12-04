@@ -20,12 +20,12 @@ export default function Replies({
 }) {
   const { pubky, setReplies, mutedUsers } = usePubkyClientContext();
   const limit = 5;
+
   const [start, setStart] = useState<number | undefined>(undefined);
-  const [replies, setRepliesLocal] = useState<PostView[]>([]);
+  const [repliesLocal, setRepliesLocal] = useState<PostView[]>([]);
   const [newReplies, setNewReplies] = useState<PostView[]>([]);
   const [newRepliesCount, setNewRepliesCount] = useState(0);
-
-  const observer = useRef<IntersectionObserver | null>(null);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const lastReplyElementRef = useRef<HTMLDivElement | null>(null);
 
   const { data: repliesData, isLoading } = usePostReplies(
@@ -37,40 +37,6 @@ export default function Replies({
     start,
   );
 
-  const fetchReplies = async () => {
-    if (isLoading) return;
-
-    try {
-      if (repliesData && repliesData.length > 0) {
-        const filteredReplies = repliesData.filter(
-          (reply) => !mutedUsers?.includes(reply?.details?.author),
-        );
-
-        if (filteredReplies.length > 0) {
-          const newStart =
-            filteredReplies[filteredReplies.length - 1].details.indexed_at - 1;
-          setStart(newStart);
-          setRepliesLocal((prevReplies) => [
-            ...prevReplies,
-            ...filteredReplies.filter(
-              (reply) =>
-                !prevReplies.some((r) => r.details.id === reply.details.id),
-            ),
-          ]);
-          setReplies((prevReplies) => [
-            ...prevReplies,
-            ...filteredReplies.filter(
-              (reply) =>
-                !prevReplies.some((r) => r.details.id === reply.details.id),
-            ),
-          ]);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const { data: newRepliesData } = usePostReplies(
     pubkyAuthor,
     postId,
@@ -78,59 +44,93 @@ export default function Replies({
     undefined,
     10,
     undefined,
-    replies?.[0]?.details?.indexed_at + 1,
+    repliesLocal.length > 0
+      ? repliesLocal[0]?.details?.indexed_at + 1
+      : undefined,
     {
       enabled: true,
       refetchInterval: 3000,
     },
   );
 
-  useEffect(() => {
-    if (!newRepliesData) return;
+  const mergeReplies = (
+    existingReplies: PostView[],
+    newReplies: PostView[],
+  ) => {
+    const existingIds = new Set(existingReplies.map((r) => r.details.id));
+    return [
+      ...existingReplies,
+      ...newReplies.filter((reply) => !existingIds.has(reply.details.id)),
+    ];
+  };
 
-    const filteredNewReplies = newRepliesData.filter(
-      (reply) => !replies.some((r) => r.details.id === reply.details.id),
+  const fetchReplies = () => {
+    if (isLoading || !repliesData) return;
+
+    const filteredReplies = repliesData.filter(
+      (reply) => !mutedUsers?.includes(reply.details.author),
     );
 
-    if (filteredNewReplies.length > 0) {
-      setNewReplies((prev) => [...prev, ...filteredNewReplies]);
-      setNewRepliesCount((prev) => prev + filteredNewReplies.length);
+    if (filteredReplies.length > 0) {
+      setRepliesLocal((prev) => mergeReplies(prev, filteredReplies));
+      setReplies((prev) => mergeReplies(prev, filteredReplies));
+      const newStart =
+        filteredReplies[filteredReplies.length - 1].details.indexed_at - 1;
+      setStart(newStart);
     }
-  }, [newRepliesData, replies]);
 
-  const handleShowNewReplies = () => {
-    setRepliesLocal((prev) => [...newReplies, ...prev]);
+    if (!initialLoadComplete) {
+      setInitialLoadComplete(true);
+      setNewReplies([]);
+      setNewRepliesCount(0);
+    }
+  };
+
+  const handleNewReplies = () => {
+    setRepliesLocal((prev) => mergeReplies(newReplies, prev));
+    setReplies((prev) => mergeReplies(newReplies, prev));
     setNewReplies([]);
     setNewRepliesCount(0);
   };
 
   useEffect(() => {
-    if (isLoading) return;
+    if (newRepliesData) {
+      const filteredNewReplies = newRepliesData.filter(
+        (reply) => !repliesLocal.some((r) => r.details.id === reply.details.id),
+      );
 
-    fetchReplies();
-  }, [isLoading]);
+      if (filteredNewReplies.length > 0) {
+        setNewReplies((prev) => mergeReplies(prev, filteredNewReplies));
+        setNewRepliesCount((prev) => prev + filteredNewReplies.length);
+      }
+    }
+  }, [newRepliesData]);
 
   useEffect(() => {
-    if (isLoading) return;
+    fetchReplies();
+  }, [isLoading, repliesData]);
 
-    if (observer.current) observer.current.disconnect();
-
-    observer.current = new IntersectionObserver((entries) => {
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
         fetchReplies();
       }
     });
 
     if (lastReplyElementRef.current) {
-      observer.current.observe(lastReplyElementRef.current);
+      observer.observe(lastReplyElementRef.current);
     }
 
     return () => {
-      if (observer.current) {
-        observer.current.disconnect();
+      if (lastReplyElementRef.current) {
+        observer.disconnect();
       }
     };
-  }, [isLoading, replies]);
+  }, [repliesLocal]);
+
+  useEffect(() => {
+    return () => setReplies([]);
+  }, [setReplies]);
 
   return (
     <>
@@ -138,30 +138,29 @@ export default function Replies({
         <Button.Medium
           id="show-new-replies-button"
           className="new-posts-button mt-3"
-          onClick={handleShowNewReplies}
+          onClick={handleNewReplies}
         >
           Show {newRepliesCount} new {newRepliesCount > 1 ? 'replies' : 'reply'}
         </Button.Medium>
       )}
-      {replies.length === 0 && !isLoading ? (
+      {repliesLocal.length === 0 && newRepliesCount === 0 && !isLoading ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">
           No replies yet.
         </Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full mt-3">
-          {replies.reverse().map((reply, index) => {
-            const isLastReply = replies.length === index + 1;
-            return (
-              <div
-                key={`reply-${reply.details.id}-${index}`}
-                ref={isLastReply ? lastReplyElementRef : null}
-                className="flex flex-col gap-3"
-              >
-                <Post post={reply} />
-                {reply?.counts?.replies > 0 && <ReplyReplies reply={reply} />}
-              </div>
-            );
-          })}
+          {repliesLocal.map((reply, index) => (
+            <div
+              key={`reply-${reply.details.id}`}
+              ref={
+                index === repliesLocal.length - 1 ? lastReplyElementRef : null
+              }
+              className="flex flex-col gap-3"
+            >
+              <Post post={reply} />
+              {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
+            </div>
+          ))}
           {isLoading && <Skeletons.Simple />}
         </div>
       )}

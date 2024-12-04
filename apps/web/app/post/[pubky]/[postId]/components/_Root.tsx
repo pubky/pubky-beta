@@ -10,7 +10,7 @@ export default function Root({
 }: {
   params: Promise<{ pubky: string; postId: string }>;
 }) {
-  const { setReplies } = usePubkyClientContext();
+  const { pubky, setReplies } = usePubkyClientContext();
   const [resolvedParams, setResolvedParams] = useState<{
     pubky: string;
     postId: string;
@@ -28,7 +28,11 @@ export default function Root({
     pubky: '',
     postId: '',
   };
-  const { data, isLoading, isError } = usePost(paramsPubky, paramsPostId);
+  const { data, isLoading, isError } = usePost(
+    paramsPubky,
+    paramsPostId,
+    pubky,
+  );
 
   if (isLoading) {
     return <Post.LoadingContent />;

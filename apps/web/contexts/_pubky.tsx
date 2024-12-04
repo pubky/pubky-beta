@@ -17,6 +17,8 @@ import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId'
 import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
+import { getPost } from '@/services/postService';
+import { getUserRelationship } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
@@ -82,8 +84,12 @@ type PubkyClientContextType = {
   deleteFile: (file_uri: string) => Promise<boolean>;
   mute: (user_id: string) => Promise<boolean>;
   unmute: (user_id: string) => Promise<boolean>;
-  addBookmark: (postId: string, authorId: string) => Promise<boolean>;
-  deleteBookmark: (bookmarkId: string) => Promise<boolean>;
+  addBookmark: (postId: string, authorId: string) => Promise<boolean | string>;
+  deleteBookmark: (
+    postId: string,
+    authorId: string,
+    bookmarkId: string,
+  ) => Promise<boolean>;
   createTag: (
     authorId: string,
     postId: string,
@@ -1201,6 +1207,23 @@ export function PubkyClientWrapper({
 
       await client.put(followUrl, followDataBody);
 
+      // get user relationships and check if it is followed
+      // keep in a while loop until it is followed
+      let userFollow = false;
+
+      while (!userFollow) {
+        try {
+          const post = await getUserRelationship(user_id, pubky ?? '');
+          if (post.following === true) {
+            userFollow = true;
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+
       return true;
     } catch (error) {
       console.error('Error while following the user:', error);
@@ -1215,6 +1238,23 @@ export function PubkyClientWrapper({
       const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
 
       await client.delete(followUrl);
+
+      // get user relationships and check if it is unfollowed
+      // keep in a while loop until it is unfollowed
+      let userUnfollow = false;
+
+      while (!userUnfollow) {
+        try {
+          const post = await getUserRelationship(user_id, pubky ?? '');
+          if (post.following === false) {
+            userUnfollow = true;
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
 
       return true;
     } catch (error) {
@@ -1274,7 +1314,7 @@ export function PubkyClientWrapper({
   const addBookmark = async (
     postId: string,
     authorId: string,
-  ): Promise<boolean> => {
+  ): Promise<boolean | string> => {
     try {
       await ensureLoggedIn();
 
@@ -1289,14 +1329,35 @@ export function PubkyClientWrapper({
 
       await client.put(bookmarkUrl, bookmarkDataBody);
 
-      return true;
+      // get post and check if it is bookmarked
+      // keep in a while loop until it is bookmarked
+      let bookmarked = false;
+
+      while (!bookmarked) {
+        try {
+          const post = await getPost(authorId, postId, pubky);
+          if (post?.bookmark) {
+            bookmarked = true;
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+
+      return bookmarkId;
     } catch (error) {
       console.error('Error while bookmarking the post:', error);
       return false;
     }
   };
 
-  const deleteBookmark = async (bookmarkId: string): Promise<boolean> => {
+  const deleteBookmark = async (
+    postId: string,
+    authorId: string,
+    bookmarkId: string,
+  ): Promise<boolean> => {
     try {
       await ensureLoggedIn();
 
@@ -1304,9 +1365,26 @@ export function PubkyClientWrapper({
 
       await client.delete(bookmarkUrl);
 
+      // get post and check if it is bookmarked
+      // keep in a while loop until it is bookmarked
+      let bookmarked = true;
+
+      while (bookmarked) {
+        try {
+          const post = await getPost(authorId, postId, pubky);
+          if (!post?.bookmark) {
+            bookmarked = false;
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+
       return true;
     } catch (error) {
-      console.error('Error while unbookmarking the post:', error);
+      console.error('Error while undo bookmark the post:', error);
       return false;
     }
   };

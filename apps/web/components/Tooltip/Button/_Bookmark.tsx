@@ -20,8 +20,12 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
     if (result) setShowMenu(false);
   };
 
-  const handleDeleteBookmark = async (bookmarkId: string) => {
-    const result = await deleteBookmark(bookmarkId);
+  const handleDeleteBookmark = async (
+    postId: string,
+    authorId: string,
+    bookmarkId: string,
+  ) => {
+    const result = await deleteBookmark(postId, authorId, bookmarkId);
     if (result) setShowMenu(false);
   };
 
@@ -29,24 +33,36 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
     repost: PostView | undefined,
     post: PostView,
     handleAddBookmark: (postId: string, authorId: string) => Promise<void>,
-    handleDeleteBookmark: (bookmarkId: string) => Promise<void>,
+    handleDeleteBookmark: (
+      postId: string,
+      authorId: string,
+      bookmarkId: string,
+    ) => Promise<void>,
     setContentToast: (
       content: React.ReactNode,
-      variant?: 'bookmark' | 'pubky' | 'link'
+      variant?: 'bookmark' | 'pubky' | 'link',
     ) => void,
-    setShowToast: (show: boolean) => void
+    setShowToast: (show: boolean) => void,
   ) => {
     const isBookmarked = repost ? repost.bookmark?.id : post?.bookmark?.id;
 
     if (repost) {
       if (isBookmarked) {
-        handleDeleteBookmark(repost?.bookmark?.id ?? '');
+        handleDeleteBookmark(
+          repost.details?.id,
+          repost.details.author,
+          repost?.bookmark?.id ?? '',
+        );
       } else {
         handleAddBookmark(repost?.details?.id, repost?.details?.author);
       }
     } else if (post) {
       if (isBookmarked) {
-        handleDeleteBookmark(post?.bookmark?.id ?? '');
+        handleDeleteBookmark(
+          post.details?.id,
+          post.details.author,
+          post?.bookmark?.id ?? '',
+        );
       } else {
         handleAddBookmark(post?.details?.id, post?.details?.author);
       }
@@ -55,7 +71,7 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
     if (!isBookmarked) {
       setContentToast(
         `This post by ${author?.details?.name} was saved to your bookmarks.`,
-        'bookmark'
+        'bookmark',
       );
       setShowToast(true);
     }
@@ -72,8 +88,8 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
             repost?.bookmark?.id
               ? 'white'
               : post?.bookmark?.id
-              ? 'white'
-              : 'white'
+                ? 'white'
+                : 'white'
           }
         />
       }
@@ -84,15 +100,15 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
           handleAddBookmark,
           handleDeleteBookmark,
           setContentToast,
-          setShowToast
+          setShowToast,
         )
       }
     >
       {repost?.bookmark?.id
         ? 'Remove Bookmark'
         : post?.bookmark?.id
-        ? 'Remove Bookmark'
-        : 'Add Bookmark'}
+          ? 'Remove Bookmark'
+          : 'Add Bookmark'}
     </Tooltip.Item>
   );
 }
