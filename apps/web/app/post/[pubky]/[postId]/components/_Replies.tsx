@@ -25,6 +25,7 @@ export default function Replies({
   const [repliesLocal, setRepliesLocal] = useState<PostView[]>([]);
   const [newReplies, setNewReplies] = useState<PostView[]>([]);
   const [newRepliesCount, setNewRepliesCount] = useState(0);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const lastReplyElementRef = useRef<HTMLDivElement | null>(null);
 
   const { data: repliesData, isLoading } = usePostReplies(
@@ -68,6 +69,10 @@ export default function Replies({
         filteredReplies[filteredReplies.length - 1].details.indexed_at - 1;
       setStart(newStart);
     }
+
+    if (!initialLoadComplete) {
+      setInitialLoadComplete(true);
+    }
   };
 
   const handleNewReplies = () => {
@@ -82,12 +87,20 @@ export default function Replies({
       const filteredNewReplies = newRepliesData.filter(
         (reply) => !repliesLocal.some((r) => r.details.id === reply.details.id),
       );
+
+      if (repliesLocal.length === 0 && filteredNewReplies.length > 0) {
+        setRepliesLocal(filteredNewReplies);
+        setReplies(filteredNewReplies);
+        setInitialLoadComplete(true);
+        return;
+      }
+
       if (filteredNewReplies.length > 0) {
         setNewReplies((prev) => [...prev, ...filteredNewReplies]);
         setNewRepliesCount((prev) => prev + filteredNewReplies.length);
       }
     }
-  }, [newRepliesData]);
+  }, [newRepliesData, repliesLocal]);
 
   useEffect(() => {
     fetchReplies();
@@ -134,7 +147,7 @@ export default function Replies({
         <div className="flex-col gap-3 inline-flex w-full mt-3">
           {repliesLocal.map((reply, index) => (
             <div
-              key={reply.details.id}
+              key={`reply-${reply.details.id}-${index}`}
               ref={
                 index === repliesLocal.length - 1 ? lastReplyElementRef : null
               }
