@@ -258,7 +258,7 @@ export default function Content({
                       alt={`Fetched file ${index}`}
                       width={800}
                       height={418}
-                      className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                      className="w-auto min-w-[200px] h-auto max-h-[744px] object-cover rounded-[10px] overflow-hidden"
                     />
                   ) : isPDF ? (
                     <div

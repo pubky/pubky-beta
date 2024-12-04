@@ -24,6 +24,8 @@ export default function ProtectedRoutes({
     setTimestamp,
     loadSettings,
     setNotificationPreferences,
+    newUser,
+    setNewUser,
   } = usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
@@ -79,33 +81,32 @@ export default function ProtectedRoutes({
 
   const checkProfileUser = async () => {
     if (pubky === undefined) return;
-    if (!profile) return;
 
-    try {
-      const user = await getUserProfile(pubky, pubky);
-      storeProfile(user.details);
-    } catch (error) {
-      console.log(error);
+    let emptyProfile = profile ? false : true;
+
+    if (emptyProfile) {
+      try {
+        const user = await getUserProfile(pubky, pubky);
+        storeProfile(user.details);
+        emptyProfile = false;
+        return true;
+      } catch (error) {
+        return false;
+      }
     }
+
+    return true;
   };
 
-  useEffect(() => {
-    if (pubky === undefined) return;
-
-    checkProfileUser();
-    checkMutedUsers();
-    checkTimestamp();
-    checkSettings();
-  }, [pubky]);
-
-  useEffect(() => {
-    // check if the user is logged in
+  const checkAccess = async () => {
     if (pubky) {
-      // check if the user has a profile
-      if (!profile) {
+      const hasProfile = await checkProfileUser();
+
+      if (!hasProfile) {
         if (
           publicRoutes.includes(pathname) ||
-          pathname === '/onboarding/register'
+          pathname === '/onboarding/register' ||
+          pathname === '/logout'
         ) {
           setLoading(false);
           return;
@@ -113,6 +114,11 @@ export default function ProtectedRoutes({
           router.push('/onboarding/register');
           return;
         }
+      }
+
+      if (pathname === '/logout' || newUser) {
+        setLoading(false);
+        return;
       }
 
       // check if the user is trying to access a public route
@@ -125,6 +131,7 @@ export default function ProtectedRoutes({
       }
 
       setLoading(false);
+      setNewUser(false);
       return;
     }
 
@@ -135,7 +142,17 @@ export default function ProtectedRoutes({
     }
 
     setLoading(false);
-  }, [pathname]);
+  };
+
+  useEffect(() => {
+    checkMutedUsers();
+    checkTimestamp();
+    checkSettings();
+  }, [pubky]);
+
+  useEffect(() => {
+    checkAccess();
+  }, [pubky, pathname]);
 
   return (
     <>

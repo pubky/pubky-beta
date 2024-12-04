@@ -42,6 +42,8 @@ type PubkyClientContextType = {
   mnemonic: string | undefined;
   setMnemonic: (mnemonic: string | undefined) => void;
   profile: PubkyAppUser | undefined;
+  newUser: boolean;
+  setNewUser: React.Dispatch<React.SetStateAction<boolean>>
   generateAuthUrl: (
     caps?: string,
   ) => { url: string; promise: Promise<any> } | null;
@@ -167,6 +169,7 @@ export function PubkyClientWrapper({
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined,
   );
+  const [newUser, setNewUser] = useState(false);
   const [seed, setSeed] = useState<string | undefined>(
     (Utils.storage.get('seed') as string | undefined) || undefined,
   );
@@ -411,6 +414,8 @@ export function PubkyClientWrapper({
 
       // Transform the profile to the PubkyAppUser format
       const pubkeyProfile: PubkyAppUser = toPubkeyProfile(userProfile);
+
+      setNewUser(true);
 
       // Save info in storage
       Utils.storage.set('seed', seed);
@@ -1618,6 +1623,8 @@ export function PubkyClientWrapper({
       value={{
         replies,
         setReplies,
+        newUser,
+        setNewUser,
         pubky,
         seed,
         profile,

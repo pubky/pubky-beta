@@ -60,7 +60,7 @@ export default function FilesCarousel({
       show={showModal}
       closeModal={() => setShowModal(false)}
       modalRef={modalRef}
-      className="max-h-[600px] overflow-y-auto"
+      className="max-h-[600px] overflow-y-auto overflow-x-hidden"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       <div className="relative sm:w-[50vw] sm:h-[65vh] flex items-center justify-center">
