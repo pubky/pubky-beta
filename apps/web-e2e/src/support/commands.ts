@@ -74,6 +74,11 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     waitReload(time?: number): void;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    waitForElementToDisappear(selector: string): void;
+  }
 }
 
 Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', skipOnboardingSlides: boolean = true, pubkyAlias?: string) => {
@@ -278,6 +283,14 @@ Cypress.Commands.add('saveCopiedTextToAlias', (alias: string) => {
 
 Cypress.Commands.add('waitReload', (time = 2000) => {
   cy.wait(time).reload();
+});
+
+Cypress.Commands.add('waitForElementToDisappear', (selector: string) => {
+  if (Cypress.$(selector).length > 0) {
+    cy.get(selector).should('not.exist');
+  } else {
+    cy.log(`${selector} not found; skipping disappearance check.`);
+  }
 });
 
 // To prevent Cypress from failing the test when running pubky-app with dev build:
