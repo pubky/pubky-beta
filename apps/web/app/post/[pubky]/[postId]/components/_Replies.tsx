@@ -53,18 +53,27 @@ export default function Replies({
     },
   );
 
+  const mergeReplies = (
+    existingReplies: PostView[],
+    newReplies: PostView[],
+  ) => {
+    const existingIds = new Set(existingReplies.map((r) => r.details.id));
+    return [
+      ...existingReplies,
+      ...newReplies.filter((reply) => !existingIds.has(reply.details.id)),
+    ];
+  };
+
   const fetchReplies = () => {
     if (isLoading || !repliesData) return;
 
     const filteredReplies = repliesData.filter(
-      (reply) =>
-        !mutedUsers?.includes(reply.details.author) &&
-        !repliesLocal.some((r) => r.details.id === reply.details.id),
+      (reply) => !mutedUsers?.includes(reply.details.author),
     );
 
     if (filteredReplies.length > 0) {
-      setRepliesLocal((prev) => [...prev, ...filteredReplies]);
-      setReplies((prev) => [...prev, ...filteredReplies]);
+      setRepliesLocal((prev) => mergeReplies(prev, filteredReplies));
+      setReplies((prev) => mergeReplies(prev, filteredReplies));
       const newStart =
         filteredReplies[filteredReplies.length - 1].details.indexed_at - 1;
       setStart(newStart);
@@ -72,12 +81,14 @@ export default function Replies({
 
     if (!initialLoadComplete) {
       setInitialLoadComplete(true);
+      setNewReplies([]);
+      setNewRepliesCount(0);
     }
   };
 
   const handleNewReplies = () => {
-    setRepliesLocal((prev) => [...newReplies, ...prev]);
-    setReplies((prev) => [...newReplies, ...prev]);
+    setRepliesLocal((prev) => mergeReplies(newReplies, prev));
+    setReplies((prev) => mergeReplies(newReplies, prev));
     setNewReplies([]);
     setNewRepliesCount(0);
   };
@@ -88,19 +99,12 @@ export default function Replies({
         (reply) => !repliesLocal.some((r) => r.details.id === reply.details.id),
       );
 
-      if (repliesLocal.length === 0 && filteredNewReplies.length > 0) {
-        setRepliesLocal(filteredNewReplies);
-        setReplies(filteredNewReplies);
-        setInitialLoadComplete(true);
-        return;
-      }
-
       if (filteredNewReplies.length > 0) {
-        setNewReplies((prev) => [...prev, ...filteredNewReplies]);
+        setNewReplies((prev) => mergeReplies(prev, filteredNewReplies));
         setNewRepliesCount((prev) => prev + filteredNewReplies.length);
       }
     }
-  }, [newRepliesData, repliesLocal]);
+  }, [newRepliesData]);
 
   useEffect(() => {
     fetchReplies();
@@ -147,7 +151,7 @@ export default function Replies({
         <div className="flex-col gap-3 inline-flex w-full mt-3">
           {repliesLocal.map((reply, index) => (
             <div
-              key={`reply-${reply.details.id}-${index}`}
+              key={`reply-${reply.details.id}`}
               ref={
                 index === repliesLocal.length - 1 ? lastReplyElementRef : null
               }
