@@ -21,8 +21,9 @@ import {
   SquareHalf,
   ThreeColumns,
   Eye,
+  LineHorizontal,
 } from './_Design';
-import { Plus, Minus, X } from './_Math';
+import { Plus, Minus, X, PlusCircle } from './_Math';
 import { GitFork } from './_Development';
 import { UnitedStates, Spain, Germany, France, Italy } from './_Flag';
 import {
@@ -34,6 +35,7 @@ import {
   Podcast,
   SlidersHorizontal,
   SpeakerSimpleSlash,
+  SpeakerHigh,
 } from './_Media';
 import {
   NoteBlank,
@@ -46,6 +48,7 @@ import {
   Trash,
   File,
   FileText,
+  Copy,
 } from './_Office';
 import {
   DotsNine,
@@ -63,7 +66,9 @@ import {
   DotsThree,
   DotsThreeVertical,
   DotsThreeOutline,
+  UploadSimple,
   SignOut,
+  SignIn,
 } from './_System';
 import {
   Android,
@@ -94,6 +99,7 @@ import {
   UsersRight,
   UserCircle,
   Smiley,
+  SmileySad,
 } from './_People';
 import {
   Asterisk,
@@ -104,7 +110,15 @@ import {
 } from './_Communication';
 import { Activity } from './_Health';
 import { Fire } from './_Weather';
-import { Key, Lock, Warning, Shield, Question } from './_Security';
+import {
+  Key,
+  Lock,
+  Warning,
+  Shield,
+  Question,
+  Flag,
+  WarningOctagon,
+} from './_Security';
 import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether } from './_Tag';
 
 export const Icon = {
@@ -132,6 +146,7 @@ export const Icon = {
   CheckCircle,
   Clipboard,
   Clock,
+  Copy,
   Discord,
   DownloadSimple,
   DropdownIcon,
@@ -144,6 +159,7 @@ export const Icon = {
   Ellipse,
   File,
   FileText,
+  Flag,
   France,
   Fire,
   Facebook,
@@ -166,6 +182,7 @@ export const Icon = {
   ListBullets,
   ListNumbers,
   LoadingSpin,
+  LineHorizontal,
   Lock,
   MagnifyingGlass,
   MagnifyingGlassLeft,
@@ -182,20 +199,24 @@ export const Icon = {
   PencilLine,
   Play,
   Plus,
+  PlusCircle,
   Podcast,
   Pubky,
   Question,
   Repost,
   SignOut,
+  SignIn,
   SlidersHorizontal,
   Shield,
   Synonym,
   Slashtags,
   Spain,
   Smiley,
+  SmileySad,
   SquaresFour,
   SquareHalf,
   SpeakerSimpleSlash,
+  SpeakerHigh,
   Spotify,
   Stack,
   Tag,
@@ -207,6 +228,7 @@ export const Icon = {
   Tether,
   Trash,
   UnitedStates,
+  UploadSimple,
   User,
   UsersLeft,
   UserMinus,
@@ -215,6 +237,7 @@ export const Icon = {
   UserCircle,
   UserRectangle,
   Warning,
+  WarningOctagon,
   Youtube,
   X,
 };

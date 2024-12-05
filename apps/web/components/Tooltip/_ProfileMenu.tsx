@@ -1,26 +1,37 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { Icon, Tooltip } from '@social/ui-shared';
-import { useRouter } from 'next/navigation';
-import { useClientContext, useToastContext } from '@/contexts';
+import { useEffect, useRef, useState } from 'react';
+import { Tooltip } from '@social/ui-shared';
+import { usePubkyClientContext } from '@/contexts';
+import { UserView } from '@/types/User';
+import { ButtonTooltip } from './Button';
+import Modal from '../Modal';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
   creatorPubky: string;
+  profile: UserView | null;
 }
 
 export default function ProfileMenu({
   setShowProfileMenu,
   creatorPubky,
+  profile,
 }: TooltipProfileMenuProps) {
-  const router = useRouter();
-  const { pubky } = useClientContext();
-  const { setContent, setShow } = useToastContext();
+  const { pubky } = usePubkyClientContext();
+  const [showModalReportProfile, setShowModalReportProfile] = useState(false);
   const tooltipProfileMenuRef = useRef<HTMLDivElement>(null);
+  const modalReportProfileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
+      if (modalReportProfileRef.current) {
+        if (!modalReportProfileRef.current.contains(event.target as Node)) {
+          setShowModalReportProfile(false);
+        }
+        return;
+      }
+
       if (
         tooltipProfileMenuRef.current &&
         !tooltipProfileMenuRef.current.contains(event.target as Node)
@@ -33,63 +44,48 @@ export default function ProfileMenu({
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideTooltip);
     };
-  }, [tooltipProfileMenuRef, setShowProfileMenu]);
-
-  const copyToClipboard = async (pubky: string) => {
-    try {
-      await navigator.clipboard.writeText(`pk:${pubky}`);
-      setShowProfileMenu(false);
-    } catch (error) {
-      console.log('Failed to copy: ', error);
-    }
-  };
-
-  const copyProfileUrlToClipboard = async (pubky: string) => {
-    try {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/profile/${pubky}`
-      );
-      setShowProfileMenu(false);
-    } catch (error) {
-      console.log('Failed to copy: ', error);
-    }
-  };
+  }, [
+    tooltipProfileMenuRef,
+    setShowProfileMenu,
+    modalReportProfileRef,
+    setShowModalReportProfile,
+  ]);
 
   return (
-    <div ref={tooltipProfileMenuRef}>
-      <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]">
-        {pubky === creatorPubky && (
-          <Tooltip.Item
-            onClick={() => {
-              router.push('/settings/edit');
-              setShowProfileMenu(false);
-            }}
-            icon={<Icon.Pencil size="20" />}
-          >
-            Edit profile
-          </Tooltip.Item>
-        )}
-        <Tooltip.Item
-          onClick={() => {
-            setContent(`pk:${creatorPubky}`, 'pubky');
-            setShow(true);
-            copyToClipboard(creatorPubky);
-          }}
-          icon={<Icon.Key size="20" />}
-        >
-          Copy user pubky
-        </Tooltip.Item>
-        <Tooltip.Item
-          onClick={() => {
-            setContent(`${window.location.origin}/profile/${pubky}`, 'link');
-            setShow(true);
-            copyProfileUrlToClipboard(creatorPubky);
-          }}
-          icon={<Icon.Link size="20" />}
-        >
-          Copy profile link
-        </Tooltip.Item>
-      </Tooltip.Main>
-    </div>
+    <>
+      <div ref={tooltipProfileMenuRef}>
+        <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px]">
+          {creatorPubky !== pubky && (
+            <ButtonTooltip.Follow
+              pk={creatorPubky}
+              setShowMenu={setShowProfileMenu}
+            />
+          )}
+          {pubky === creatorPubky && (
+            <ButtonTooltip.EditProfile setShowMenu={setShowProfileMenu} />
+          )}
+          <ButtonTooltip.CopyUserPubky
+            pk={creatorPubky}
+            setShowMenu={setShowProfileMenu}
+          />
+          <ButtonTooltip.CopyLinkProfile creatorPubky={creatorPubky} />
+          {pubky !== creatorPubky && <ButtonTooltip.Mute pk={creatorPubky} />}
+          {pubky !== creatorPubky && (
+            <ButtonTooltip.ReportProfile
+              setShowModal={setShowModalReportProfile}
+            />
+          )}
+        </Tooltip.Main>
+      </div>
+      {showModalReportProfile && (
+        <Modal.ReportProfile
+          showModal={showModalReportProfile}
+          setShowModal={setShowModalReportProfile}
+          modalReportPostRef={modalReportProfileRef}
+          pk={creatorPubky}
+          name={profile?.details?.name}
+        />
+      )}
+    </>
   );
 }

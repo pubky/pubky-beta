@@ -14,7 +14,10 @@ export const HeaderTitle = ({
     <Typography.H2
       {...rest}
       variant="light"
-      className={twMerge('text-opacity-50 font-light', rest.className)}
+      className={twMerge(
+        `text-white/50 text-2xl font-light font-InterTight leading-[30px] tracking-wide`,
+        rest.className
+      )}
     >
       {children}
     </Typography.H2>

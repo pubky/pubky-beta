@@ -16,6 +16,7 @@ interface LinksProps {
   setLinks: React.Dispatch<React.SetStateAction<Link[]>>;
   setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
   errors: Errors;
+  loading?: boolean;
 }
 
 export default function Links({
@@ -23,6 +24,7 @@ export default function Links({
   setLinks,
   setShowModalLink,
   errors,
+  loading,
 }: LinksProps) {
   const handleRemoveLink = (indexToRemove: number) => {
     setLinks((prevLinks) => {
@@ -34,7 +36,7 @@ export default function Links({
   };
 
   return (
-    <Card.Primary className="justify-start" title="Links">
+    <Card.Primary className="justify-start w-full col-span-3" title="Links">
       <div className="flex-col inline-flex gap-4 mt-4">
         {links.map((link, index) => (
           <div key={index}>
@@ -42,7 +44,8 @@ export default function Links({
             <Input.Text
               className="h-[70px] mt-2"
               placeholder={link.placeHolder}
-              value={link.url}
+              disabled={loading}
+              value={link.url.replace('mailto:', '')}
               error={errors[`link${index}` as keyof typeof errors]}
               action={
                 index > 1 && (
@@ -63,7 +66,7 @@ export default function Links({
           </div>
         ))}
         <Button.Transparent
-          className="w-[40%] mt-2"
+          className="w-[100px] mt-2 px-3 py-2 h-8"
           icon={
             <Icon.LinkSimple
               size="16"

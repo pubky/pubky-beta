@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
@@ -11,10 +10,11 @@ import {
   Menu,
   PostUtil,
 } from '@social/ui-shared';
-import { Modal } from '../Modal';
-import { useClientContext, useNotificationsContext } from '@/contexts';
-import { Utils } from '@social/utils-shared';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { ImageByUri } from '../ImageByUri';
+import { useRouter } from 'next/navigation';
+import Modal from '../Modal';
+import Filter from '../Filter';
 
 interface HeaderProps {
   title?: React.ReactNode;
@@ -23,33 +23,18 @@ interface HeaderProps {
 
 export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
-  const { pubky, getProfile, isLoggedIn, setSearchTags, searchTags } =
-    useClientContext();
-  const { notifications } = useNotificationsContext();
+  const { pubky, isLoggedIn, setSearchTags, searchTags, profile } =
+    usePubkyClientContext();
+  const { unReadNotification } = useFilterContext();
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
-  const [image, setImage] = useState('/images/Userpic.png');
-  const [name, setName] = useState('');
   const [logoLink, setLogoLink] = useState('/onboarding');
-  const [handler, setHandler] = useState('');
+  //const [handler, setHandler] = useState('');
   const [inputValue, setInputValue] = useState('');
+  const drawerFilterRef = useRef<HTMLDivElement>(null);
 
-  const drawerRef = useRef<HTMLDivElement>(null);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
-
-  async function fetchProfile() {
-    try {
-      const userProfile = await getProfile();
-
-      if (userProfile) {
-        setImage(userProfile.image || '/images/Userpic.png');
-        setName(userProfile.name || '');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async function fetchLoggedIn() {
     const loggedIn = await isLoggedIn();
@@ -61,9 +46,8 @@ export default function Header({ title, className }: HeaderProps) {
   }
 
   useEffect(() => {
-    setHandler(Utils.minifyPubky(pubky));
+    //setHandler(Utils.minifyPubky(pubky ?? ''));
     fetchLoggedIn();
-    fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
 
@@ -71,10 +55,10 @@ export default function Header({ title, className }: HeaderProps) {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
       {
         if (
-          drawerRef.current &&
-          !drawerRef.current.contains(event.target as Node)
+          drawerFilterRef.current &&
+          !drawerFilterRef.current.contains(event.target as Node)
         ) {
-          setDrawerOpen(false);
+          setDrawerFilterOpen(false);
         }
       }
       if (
@@ -126,174 +110,149 @@ export default function Header({ title, className }: HeaderProps) {
   };
 
   return (
-    <HeaderUI.Root>
-      <HeaderUI.Logo link={logoLink} />
-      <HeaderUI.Title titleHeader={title} className={className} />
-      <Input.Search>
-        {searchTags && (
-          <Input.SearchTags className="hidden sm:block">
-            {searchTags.map((searchTag, index) => (
-              <Input.SearchTag
-                key={index}
-                onClick={() => handleRemoveTag(index)}
-                action={
-                  <div className="mt-[3px]">
-                    <Icon.X key={index} />
-                  </div>
-                }
-                value={`${searchTag}`}
-                className="mr-2"
-              />
-            ))}
-          </Input.SearchTags>
-        )}
-        <Input.SearchInput
-          id="header-search-input"
-          value={inputValue}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setInputValue(e.target.value)
-          }
-          onKeyDown={handleKeyDown}
-          placeholder={!searchTags.length ? 'Search' : ''}
-          className="hidden sm:block"
-          onClick={() => setSearchInputCard(true)}
-          disabled={!!searchTags.length}
-        />
-        <Modal.SearchInputCard
-          className={searchInputCard ? 'hidden xl:block' : 'hidden'}
-          refCard={refSearchInputCard}
-          inputValue={inputValue}
-        />
-        <Input.SearchActions className="hidden sm:flex">
-          <div
-            className={inputValue && 'cursor-pointer'}
-            onClick={inputValue ? handleSearchTag : undefined}
-          >
-            <Icon.MagnifyingGlass />
-          </div>
-        </Input.SearchActions>
-      </Input.Search>
-      <div className="hidden lg:flex gap-4 items-center">
-        <Link href="/home">
-          <Button.Action
-            id="header-home-btn"
-            variant="menu"
-            label="Feed"
-            active={title === 'Feed'}
-            icon={<Icon.Activity size="24" />}
+    <HeaderUI.Root className="justify-start lg:justify-between">
+      <div className="w-full lg:w-auto flex gap-4 justify-between items-center">
+        <div
+          className="cursor-pointer flex lg:hidden"
+          onClick={() => setDrawerFilterOpen(true)}
+        >
+          <Icon.SlidersHorizontal size="24" />
+        </div>
+        <div className="flex gap-4 xl:min-w-[180px]">
+          <HeaderUI.Logo link={logoLink} />
+          <HeaderUI.Title
+            titleHeader={title}
+            className={`hidden lg:block ${className}`}
           />
-        </Link>
-        <Link href="/hot-tags">
-          <Button.Action
-            id="header-hot-tags-btn"
-            variant="menu"
-            label="Hot&#160;Tags"
-            active={title === `HotTags`}
-            icon={<Icon.Fire size="24" />}
-          />
-        </Link>
-        {/**
-        <Link href="/bookmarks">
-          <Button.Action
-            id="header-bookmarks-btn"
-            variant="menu"
-            label="Bookmarks"
-            active={title === 'Bookmarks'}
-            icon={<Icon.BookmarkSimple size="24" />}
-          />
-        </Link>
-        */}
-        <Link href="/settings">
-          <Button.Action
-            id="header-settings-btn"
-            variant="menu"
-            label="Settings"
-            active={title === 'Settings'}
-            icon={<Icon.GearSix size="24" />}
-          />
-        </Link>
-        <Link href="/profile" className="w-[48px] relative">
-          {notifications.length !== 0 && (
-            <PostUtil.Counter
-              textCSS="tracking-tight text-black font-semibold"
-              className="w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-white border-white"
-            >
-              {notifications.length}
-            </PostUtil.Counter>
-          )}
-          <ImageByUri
-            id="header-profile-pic"
-            width={48}
-            height={48}
-            className={`rounded-full w-[48px] h-[48px]`}
-            alt="user-pic"
-            uri={image}
-          />
+        </div>
+        <Link href="/settings" className="flex lg:hidden">
+          <Icon.GearSix size="24" />
         </Link>
       </div>
-      <>
-        <div
-          className="lg:hidden relative cursor-pointer"
-          onClick={() => setDrawerOpen(true)}
-        >
-          <Menu.ImageMenu uriImage={image} />
-        </div>
-        <Menu.Root drawerRef={drawerRef} drawerOpen={drawerOpen}>
-          <div className="w-full lg:w-60 flex-col gap-6 inline-flex">
-            <Menu.Header
-              href="/profile"
-              uriImage={image}
-              username={Utils.minifyText(name)}
-              handler={handler}
-            />
-            <div className="flex-col inline-flex">
-              <Menu.Section
-                href="/home"
-                icon={<Icon.Activity />}
-                text="Streams"
-                onClick={() => setDrawerOpen(false)}
-              />
-              <Menu.Section
-                href="/notifications"
-                icon={<Icon.Bell />}
-                text="Notifications"
-                counter={notifications.length}
-              />
-              <Menu.Section
-                href="/bookmarks"
-                icon={<Icon.BookmarkSimple />}
-                text="Bookmarks"
-                onClick={() => setDrawerOpen(false)}
-              />
-              <Menu.Section
-                href="/hot-tags"
-                icon={<Icon.Tag size="24" />}
-                text="Hot Tags"
-                onClick={() => setDrawerOpen(false)}
-              />
-              <Menu.Section
-                href="/settings"
-                icon={<Icon.GearSix />}
-                text="Settings"
-                onClick={() => setDrawerOpen(false)}
-              />
-              <Menu.Section
-                href="/profile"
-                icon={<Icon.UserRectangle />}
-                text="Profile"
-                onClick={() => setDrawerOpen(false)}
-              />
-              <Menu.Section
-                href="/logout"
-                icon={<Icon.UserMinus size="24" />}
-                text="Logout"
-                onClick={() => setDrawerOpen(false)}
-              />
+      <div className="w-full hidden lg:flex justify-between gap-6">
+        <Input.Search>
+          {searchTags && (
+            <Input.SearchTags className="hidden lg:block">
+              {searchTags.map((searchTag, index) => (
+                <Input.SearchTag
+                  key={index}
+                  onClick={() => handleRemoveTag(index)}
+                  action={
+                    <div className="mt-[3px]">
+                      <Icon.X key={index} />
+                    </div>
+                  }
+                  value={`${searchTag}`}
+                  className="mr-2"
+                />
+              ))}
+            </Input.SearchTags>
+          )}
+          <Input.SearchInput
+            id="header-search-input"
+            value={inputValue}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setInputValue(e.target.value)
+            }
+            onKeyDown={searchTags.length ? undefined : handleKeyDown}
+            maxLength={55}
+            placeholder={!searchTags.length ? 'Search' : ''}
+            className={`hidden lg:block ${
+              searchInputCard &&
+              'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
+            }`}
+            onClick={() => setSearchInputCard(true)}
+            readOnly={!!searchTags.length}
+          />
+          <Modal.SearchInputCard
+            className={searchInputCard ? 'hidden xl:block' : 'hidden'}
+            refCard={refSearchInputCard}
+            inputValue={inputValue}
+          />
+          <Input.SearchActions className="hidden lg:flex">
+            <div
+              className={inputValue && 'cursor-pointer'}
+              onClick={inputValue ? handleSearchTag : undefined}
+            >
+              <Icon.MagnifyingGlass />
             </div>
-          </div>
-        </Menu.Root>
-        <Menu.Bg drawerOpen={drawerOpen} />
-      </>
+          </Input.SearchActions>
+        </Input.Search>
+        <div className="hidden lg:flex gap-3 items-center">
+          <Link href="/home">
+            <Button.Action
+              id="header-home-btn"
+              variant="menu"
+              label="Feed"
+              active={title === 'Feed'}
+              className={title === 'Feed' ? 'border-t border-white' : ''}
+              icon={<Icon.Activity size="24" />}
+            />
+          </Link>
+          <Link href="/hot">
+            <Button.Action
+              id="header-hot-tags-btn"
+              variant="menu"
+              label="Hot"
+              active={title === `Hot`}
+              className={title === 'Hot' ? 'border-t border-white' : ''}
+              icon={<Icon.Fire size="24" />}
+            />
+          </Link>
+
+          <Link href="/bookmarks">
+            <Button.Action
+              id="header-bookmarks-btn"
+              variant="menu"
+              label="Bookmarks"
+              active={title === `Bookmarks`}
+              className={title === 'Bookmarks' ? 'border-t border-white' : ''}
+              icon={<Icon.BookmarkSimple size="24" />}
+            />
+          </Link>
+          <Link href="/settings">
+            <Button.Action
+              id="header-settings-btn"
+              variant="menu"
+              label="Settings"
+              active={title === 'Settings'}
+              className={title === 'Settings' ? 'border-t border-white' : ''}
+              icon={<Icon.GearSix size="24" />}
+            />
+          </Link>
+          <Link href="/profile" className="w-[48px] relative">
+            {unReadNotification !== 0 && (
+              <PostUtil.Counter
+                textCSS="tracking-tight text-black font-semibold text-[13px]"
+                className="p-0 w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-[#C8FF00] border-white"
+              >
+                {unReadNotification > 21 ? '+21' : unReadNotification}
+              </PostUtil.Counter>
+            )}
+            <ImageByUri
+              id="header-profile-pic"
+              width={48}
+              height={48}
+              className={`${
+                title === 'Profile' && 'border-t-2 border-white'
+              } rounded-full w-[48px] h-[48px]`}
+              alt="user-pic"
+              uri={String(profile?.image)}
+            />
+          </Link>
+        </div>
+      </div>
+      <Menu.Root
+        position="left"
+        drawerRef={drawerFilterRef}
+        drawerOpen={drawerFilterOpen}
+      >
+        <div className="overflow-y-auto max-h-full no-scrollbar">
+          <Filter.Reach />
+          <Filter.Sort />
+          <Filter.Content />
+        </div>
+      </Menu.Root>
     </HeaderUI.Root>
   );
 }

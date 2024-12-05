@@ -4,9 +4,9 @@ import { Button, Icon, Input, Modal, Typography } from '@social/ui-shared';
 import { useEffect, useRef } from 'react';
 import { ImageByUri } from '../ImageByUri';
 import { Utils } from '@social/utils-shared';
-import { IProfile } from '@/types';
-import { useClientContext } from '@/contexts';
-import { useRouter } from 'next/navigation';
+import { usePubkyClientContext } from '@/contexts/_pubky';
+import { PubkyAppUser } from '@/types/Post';
+import Link from 'next/link';
 
 interface FeedbackProps {
   showModal: boolean;
@@ -15,7 +15,7 @@ interface FeedbackProps {
   setError: React.Dispatch<React.SetStateAction<boolean>>;
   sent: boolean;
   setSent: React.Dispatch<React.SetStateAction<boolean>>;
-  profile: IProfile | undefined;
+  profile: PubkyAppUser | undefined;
   message: string;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
   handleSubmit: () => void;
@@ -35,8 +35,7 @@ export default function Feedback({
   handleSubmit,
   loading,
 }: FeedbackProps) {
-  const { pubky } = useClientContext();
-  const router = useRouter();
+  const { pubky } = usePubkyClientContext();
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -59,7 +58,7 @@ export default function Feedback({
       show={showModal}
       closeModal={() => setShowModal(false)}
       modalRef={modalRef}
-      className="w-[792px] max-h-[600] overflow-y-auto"
+      className="md:w-[792px] max-h-[600] overflow-y-auto"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       {!sent && !error && (
@@ -72,18 +71,21 @@ export default function Feedback({
                 height={32}
                 className="w-[32px] h-[32px] rounded-full"
                 alt="user-image"
-                uri={profile?.image}
+                uri={profile?.image ?? '/images/webp/Userpic.webp'}
               />
-              {profile?.name && pubky ? (
-                <div
+              {pubky ? (
+                <Link
                   className="cursor-pointer flex gap-4 items-center"
-                  onClick={() => router.push('/profile')}
+                  href="/profile"
                 >
                   <Typography.Body
                     className={`hover:underline hover:decoration-solid`}
                     variant="medium-bold"
                   >
-                    {Utils.minifyText(profile?.name, 24)}
+                    {Utils.minifyText(
+                      profile?.name ?? Utils.minifyPubky(pubky),
+                      24
+                    )}
                   </Typography.Body>
                   <div className="flex gap-1 cursor-pointer">
                     {/**<Icon.CheckCircle size="16" color="gray" />*/}
@@ -91,7 +93,7 @@ export default function Feedback({
                       {Utils.minifyPubky(pubky)}
                     </Typography.Label>
                   </div>
-                </div>
+                </Link>
               ) : (
                 <Typography.Body
                   variant="medium-bold"

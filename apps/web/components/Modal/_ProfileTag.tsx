@@ -11,20 +11,22 @@ import {
   SideCard,
 } from '@social/ui-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
-import { ITaggedProfile } from '@/types';
 import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
-import { useClientContext } from '@/contexts';
 import { ImageByUri } from '../ImageByUri';
+import { UserTags, UserView } from '@/types/User';
+import { usePubkyClientContext } from '@/contexts';
+import { getUserProfile } from '@/services/userService';
+import { PostTag } from '@/types/Post';
+import Link from 'next/link';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModalProfileTag: boolean;
   setShowModalProfileTag: React.Dispatch<React.SetStateAction<boolean>>;
-  profileTags: ITaggedProfile[];
+  profileTags: UserTags[];
   handleAddProfileTag: (tag: string) => void;
   handleDeleteProfileTag: (tag: string) => void;
-  selectedTag?: ITaggedProfile | null;
-  setSelectedTag?: React.Dispatch<React.SetStateAction<ITaggedProfile | null>>;
+  selectedTag?: UserTags | null;
+  setSelectedTag?: React.Dispatch<React.SetStateAction<UserTags | null>>;
   pubkyUser?: string;
   name?: string;
   uriImage?: string;
@@ -42,55 +44,83 @@ export default function ProfileTag({
   name,
   uriImage,
 }: ProfileTagProps) {
-  const router = useRouter();
-  const { pubky, follow, unfollow, listFollowing } = useClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
+  const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
   }>({});
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
+  const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>(
+    {}
+  );
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    async function fetchFollowing() {
-      try {
-        if (!pubky) return;
+    const fetchProfiles = async () => {
+      setInitLoadingFollowers(true);
 
-        const following = await listFollowing(pubky);
+      const profilesMap: { [key: string]: UserView } = {};
+      const followedMap: { [key: string]: boolean } = {};
+      const taggers = selectedTag?.taggers || [];
 
-        if (following) {
-          const followingIds = following.following.map((user) =>
-            user.uri.replace('pubky:', '')
-          );
+      await Promise.all(
+        taggers.map(async (user) => {
+          try {
+            const profile = await getUserProfile(user, pubky ?? '');
+            profilesMap[user] = profile;
 
-          const matchedFollowedIds = profileTags
-            .flatMap((tag) => tag.from)
-            .filter((profile) => followingIds.includes(profile.author.id));
-
-          if (matchedFollowedIds.length > 0) {
-            setInitLoadingFollowers(false);
-            matchedFollowedIds.forEach((followed) => {
-              setFollowedUser((prevState) => ({
-                ...prevState,
-                [followed.author.id]: true,
-              }));
-            });
-          } else {
-            setInitLoadingFollowers(false);
+            if (profile.relationship?.following) {
+              followedMap[user] = true;
+            } else {
+              followedMap[user] = false;
+            }
+          } catch (error) {
+            console.error(`Error fetching profile for user ${user}`, error);
           }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
+        })
+      );
 
-    fetchFollowing();
-  }, [pubky, listFollowing, profileTags]);
+      setUserProfiles(profilesMap);
+      setFollowedUser((prevState) => ({ ...prevState, ...followedMap }));
+      setInitLoadingFollowers(false);
+    };
+
+    fetchProfiles();
+  }, [selectedTag, pubky]);
+
+  const fetchProfileImages = async (tag: PostTag) => {
+    const images = await Promise.all(
+      tag.taggers.map(async (fromItem) => {
+        const profile = await getUserProfile(fromItem, pubky ?? '');
+        return profile?.details?.image || '/images/webp/Userpic.webp';
+      })
+    );
+    return images;
+  };
+
+  // Fetch images for all tags
+  useEffect(() => {
+    const fetchAllImages = async () => {
+      const imagesMap: { [label: string]: string[] } = {};
+      await Promise.all(
+        profileTags.map(async (tag) => {
+          const images = await fetchProfileImages(tag);
+          imagesMap[tag.label] = images.slice(0, 4);
+        })
+      );
+      setTagImages(imagesMap);
+    };
+
+    if (profileTags.length > 0) {
+      fetchAllImages();
+    }
+  }, [profileTags]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -189,7 +219,7 @@ export default function ProfileTag({
       closeModal={() => {
         setShowModalProfileTag(false);
       }}
-      className="w-[792px]"
+      className="md:w-[792px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
         onClick={() => {
@@ -199,7 +229,7 @@ export default function ProfileTag({
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <Modal.Header title={`Tag ${name}`} />
         <Modal.Content className="w-full flex flex-row">
-          <div className="flex gap-6">
+          <div className="flex flex-col lg:flex-row gap-6">
             <div>
               {showEmojis && (
                 <div
@@ -210,7 +240,12 @@ export default function ProfileTag({
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.TWITTER}
                     onEmojiClick={(emojiObject) => {
-                      setTag(tag + emojiObject.emoji);
+                      const emojiLength =
+                        new Blob([emojiObject.emoji]).size / 2;
+
+                      if (tag.length + emojiLength <= 20) {
+                        setTag(tag + emojiObject.emoji);
+                      }
                       setShowEmojis(false);
                     }}
                   />
@@ -220,7 +255,7 @@ export default function ProfileTag({
               <Input.Text
                 placeholder="tag"
                 value={tag}
-                className="w-96 mt-2 flex items-center"
+                className="w-full lg:w-96 mt-2 flex items-center"
                 maxLength={20}
                 autoFocus
                 onChange={handleChange}
@@ -258,7 +293,7 @@ export default function ProfileTag({
                 <SideCard.User
                   uri={pubkyUser}
                   className="mt-6"
-                  uriImage={uriImage || '/images/Userpic.png'}
+                  uriImage={uriImage || '/images/webp/Userpic.webp'}
                   username={Utils.minifyText(name, 16)}
                   label={Utils.minifyPubky(pubkyUser)}
                 />
@@ -270,16 +305,15 @@ export default function ProfileTag({
                 <>
                   {!selectedTag &&
                     profileTags.map((tag, index) => {
-                      const isTagFound = tag.from.some(
-                        (fromItem) => fromItem.author.id === pubky
+                      const isTagFound = tag?.taggers?.some(
+                        (fromItem) => fromItem === pubky
                       );
 
-                      const images = tag.from.map(
-                        (fromItem) => fromItem.author.profile.image
-                      );
-                      const displayedImages = images.slice(0, 4);
+                      const displayedImages = tagImages[tag.label] || [];
                       const extraImagesCount =
-                        images.length - displayedImages.length;
+                        displayedImages.length > 4
+                          ? displayedImages.length - 4
+                          : 0;
 
                       return (
                         <div className="flex gap-2" key={index}>
@@ -289,33 +323,33 @@ export default function ProfileTag({
                             onClick={(event) => {
                               event.stopPropagation();
                               isTagFound
-                                ? handleDeleteProfileTag(tag.tag)
-                                : handleAddProfileTag(tag.tag);
+                                ? handleDeleteProfileTag(tag?.label)
+                                : handleAddProfileTag(tag?.label);
                             }}
                             color={
-                              tag.tag && Utils.generateRandomColor(tag.tag)
+                              tag?.label &&
+                              Utils.generateRandomColor(tag?.label)
                             }
                           >
                             <div className="flex gap-2 items-center">
-                              {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
+                              {Utils.minifyText(tag?.label, 21)}
                               <Typography.Caption
                                 variant="bold"
-                                className="text-opacity-30"
+                                className="text-opacity-60"
                               >
-                                {tag.count}
+                                {tag?.taggers_count}
                               </Typography.Caption>
                             </div>
                           </PostUtil.Tag>
 
-                          <Button.Action
-                            variant="custom"
-                            size="small"
-                            icon={<Icon.MagnifyingGlassLeft size="14" />}
-                            onClick={() =>
-                              router.push(`/search?tags=${tag.tag}`)
-                            }
-                            className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                          />
+                          <Link href={`/search?tags=${tag?.label}`}>
+                            <Button.Action
+                              variant="custom"
+                              size="small"
+                              icon={<Icon.MagnifyingGlassLeft size="14" />}
+                              className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                            />
+                          </Link>
                           <div
                             onClick={() =>
                               setSelectedTag && setSelectedTag(tag)
@@ -366,74 +400,73 @@ export default function ProfileTag({
                         </div>
                         {selectedTag && (
                           <PostUtil.Tag
-                            clicked={selectedTag.from.some(
-                              (fromItem) => fromItem.author.id === pubky
+                            clicked={selectedTag.taggers.some(
+                              (fromItem) => fromItem === pubky
                             )}
                             onClick={(event) => {
                               event.stopPropagation();
-                              selectedTag.from.some(
-                                (fromItem) => fromItem.author.id === pubky
+                              selectedTag?.taggers.some(
+                                (fromItem) => fromItem === pubky
                               )
-                                ? handleDeleteProfileTag(selectedTag.tag)
-                                : handleAddProfileTag(selectedTag.tag);
+                                ? handleDeleteProfileTag(selectedTag.label)
+                                : handleAddProfileTag(selectedTag.label);
                             }}
                             color={
-                              selectedTag.tag &&
-                              Utils.generateRandomColor(selectedTag.tag)
+                              selectedTag.label &&
+                              Utils.generateRandomColor(selectedTag.label)
                             }
                           >
                             <div className="flex gap-2 items-center">
                               {Utils.minifyText(
-                                selectedTag.tag.replace(' ', ''),
+                                selectedTag.label.replace(' ', ''),
                                 20
                               )}
                               <Typography.Caption
                                 variant="bold"
-                                className="text-opacity-30"
+                                className="text-opacity-60"
                               >
-                                {selectedTag.count}
+                                {selectedTag?.taggers_count}
                               </Typography.Caption>
                             </div>
                           </PostUtil.Tag>
                         )}
-                        <Button.Action
-                          variant="custom"
-                          size="small"
-                          icon={<Icon.MagnifyingGlassLeft size="14" />}
-                          onClick={() =>
-                            router.push(`/search?tags=${selectedTag.tag}`)
-                          }
-                          className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                        />
+                        <Link href={`/search?tags=${selectedTag.label}`}>
+                          <Button.Action
+                            variant="custom"
+                            size="small"
+                            icon={<Icon.MagnifyingGlassLeft size="14" />}
+                            className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                          />
+                        </Link>
                       </div>
-                      {selectedTag.from.map((user, userIndex) => {
-                        const pubkeyUser =
-                          pubky && user?.author?.id.includes(pubky);
-                        const isFollowed =
-                          followedUser[user?.author?.id] || false;
+                      {selectedTag?.taggers?.map((user, userIndex) => {
+                        const profile = userProfiles[user];
+                        const pubkeyUser = pubky && user.includes(pubky);
+                        const isFollowed = followedUser[user];
+
                         return (
                           <div
                             key={userIndex}
                             className="w-full flex justify-between gap-10"
                           >
                             <SideCard.User
-                              uri={user?.author?.uri.replace('pubky:', '')}
+                              uri={profile?.details?.id.replace('pubky:', '')}
                               uriImage={
-                                user?.author?.profile?.image ||
-                                '/images/Userpic.png'
+                                profile?.details?.image ||
+                                '/images/webp/Userpic.webp'
                               }
                               username={
-                                user?.author?.profile?.name &&
-                                Utils.minifyText(user?.author?.profile?.name)
+                                profile?.details?.name &&
+                                Utils.minifyText(profile?.details?.name)
                               }
                               label={Utils.minifyPubky(
-                                user.author.uri.replace('pubky:', '')
+                                profile?.details?.id.replace('pubky:', '')
                               )}
                             />
                             {pubkeyUser ? (
                               <SideCard.FollowAction
                                 text="Me"
-                                icon={<Icon.Check />}
+                                icon={<Icon.User size="16" />}
                                 className="bg-transparent cursor-default"
                               />
                             ) : initLoadingFollowers ? (
@@ -445,24 +478,24 @@ export default function ProfileTag({
                             ) : isFollowed ? (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.author?.id]
+                                  loadingFollowers[user]
                                     ? undefined
-                                    : () => unfollowUser(user?.author?.id)
+                                    : () => unfollowUser(user)
                                 }
-                                disabled={loadingFollowers[user?.author?.id]}
-                                loading={loadingFollowers[user?.author?.id]}
+                                disabled={loadingFollowers[user]}
+                                loading={loadingFollowers[user]}
                                 icon={<Icon.Minus size="16" />}
                                 variant="small"
                               />
                             ) : (
                               <SideCard.FollowAction
                                 onClick={
-                                  loadingFollowers[user?.author?.id]
+                                  loadingFollowers[user]
                                     ? undefined
-                                    : () => followUser(user?.author?.id)
+                                    : () => followUser(user)
                                 }
-                                disabled={loadingFollowers[user?.author?.id]}
-                                loading={loadingFollowers[user?.author?.id]}
+                                disabled={loadingFollowers[user]}
+                                loading={loadingFollowers[user]}
                                 icon={<Icon.Plus size="16" />}
                                 variant="small"
                               />

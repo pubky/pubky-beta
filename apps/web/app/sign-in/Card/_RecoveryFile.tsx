@@ -52,11 +52,12 @@ export default function RecoveryFile({
   return (
     <Card.Primary
       title="Recovery File"
-      text="Upload your Pubky recovery file and enter your password."
+      text="Upload your recovery file, enter your password."
+      className="w-full col-span-3"
     >
       <div className="flex-col inline-flex gap-4">
         <div>
-          <Input.Label className="mt-4" value="Recovery file" />
+          <Input.Label value="Recovery file" />
           <Input.UploadFile
             required
             error={errors.recoveryFile}
@@ -65,16 +66,18 @@ export default function RecoveryFile({
             id="file_input"
             onChange={UploadRecoveryFile}
             accept=".pkarr"
+            disabled={loading}
           />
         </div>
         <div>
-          <Input.Label className="mt-4" value="Password" />
+          <Input.Label value="Password" />
           <Input.Text
             className="h-[70px] mt-1"
             type="password"
             error={errors.password}
+            disabled={loading}
             placeholder="••••••••••••"
-            id="onboarding-password-input"
+            id="sign-in-password-input"
             onKeyDown={handleKeyDown}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setPassword(e.target.value)
@@ -84,13 +87,18 @@ export default function RecoveryFile({
       </div>
       {loginError && (
         <div className="flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
-          <Typography.Body className="text-red-600" variant="small-bold">
+          <Typography.Body
+            className="break-words text-red-600"
+            variant="small-bold"
+          >
             {loginError === 'Invalid encryption key' ||
             loginError === 'Invalid recovery file'
               ? 'Recovery password or recovery file incorrect'
               : loginError}
           </Typography.Body>
-          <Icon.Warning color="#dc2626" />
+          <div>
+            <Icon.Warning color="#dc2626" />
+          </div>
         </div>
       )}
       {/**userNotFound && (
@@ -112,7 +120,8 @@ export default function RecoveryFile({
         icon={<Icon.Key size="16" />}
         loading={loading}
         className="mt-4"
-        id="onboarding-sign-in-button"
+        id="sign-in-recovery-file-btn"
+        variant="secondary"
       >
         Sign in
       </Button.Large>

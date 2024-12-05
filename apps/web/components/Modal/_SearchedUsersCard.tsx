@@ -1,10 +1,13 @@
-import { IUserProfile } from '@/types';
+import { useState, useEffect, useRef } from 'react';
 import { Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
+import { UserView } from '@/types/User';
+import { usePubkyClientContext } from '@/contexts';
+import { getUserProfile } from '@/services/userService';
 
 interface SearchedUsersCardProps {
-  searchedUsers: IUserProfile[];
+  searchedUsers: UserView[];
   handleUserClick: (userId: string) => void;
 }
 
@@ -12,36 +15,96 @@ export default function SearchedUsersCard({
   searchedUsers,
   handleUserClick,
 }: SearchedUsersCardProps) {
+  const { pubky } = usePubkyClientContext();
+  const [userProfiles, setUserProfiles] = useState<UserView[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isMouseInside, setIsMouseInside] = useState(false);
+
+  useEffect(() => {
+    async function fetchProfiles() {
+      if (searchedUsers.length > 0) {
+        const profiles = await Promise.all(
+          searchedUsers.map((user) =>
+            getUserProfile(user?.details?.id, pubky ?? ''),
+          ),
+        );
+        setUserProfiles(profiles);
+      }
+    }
+
+    fetchProfiles();
+  }, [searchedUsers, pubky]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!isMouseInside || searchedUsers.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex((prevIndex) =>
+        prevIndex === null || prevIndex === userProfiles.length - 1
+          ? 0
+          : prevIndex + 1,
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex((prevIndex) =>
+        prevIndex === null || prevIndex === 0
+          ? userProfiles.length - 1
+          : prevIndex - 1,
+      );
+    } else if (e.key === 'Enter' && selectedIndex !== null) {
+      const selectedUser = searchedUsers[selectedIndex];
+      if (selectedUser) handleUserClick(selectedUser.details.id);
+    }
+  };
+
   return (
     <div
-      className={
-        'w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 p-4 flex flex-col gap-2 absolute bg-gradient-to-t from-[#07040a] to-[#1b1820]'
-      }
+      id="searched-users-card"
+      ref={cardRef}
+      className="outline-none md:w-[300px] max-w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 flex flex-col absolute bg-gradient-to-t p-2 from-[#07040a] to-[#1b1820]"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={() => {
+        setIsMouseInside(true);
+        cardRef?.current?.focus();
+      }}
+      onMouseLeave={() => setIsMouseInside(false)}
     >
-      {searchedUsers.map((user) => (
-        <div
-          onClick={() => handleUserClick(user.userId)}
-          className="cursor-pointer flex gap-2"
-          key={user.userId}
-        >
-          <ImageByUri
-            width={40}
-            height={40}
-            className="rounded-full max-w-none h-none"
-            style={{ width: `${40}px`, height: `${40}px` }}
-            alt={'user'}
-            uri={user?.profile?.image}
-          />
-          <div className="flex-col justify-start items-start inline-flex">
-            <Typography.Body variant="medium-bold">
-              {Utils.minifyText(user?.profile?.name, 20)}
-            </Typography.Body>
-            <Typography.Label className="text-opacity-30 -mt-1">
-              {Utils.minifyPubky(user.userId)}
-            </Typography.Label>
+      {userProfiles.map((data, index) => {
+        const user = searchedUsers[index];
+        const isSelected = selectedIndex === index;
+
+        return (
+          <div
+            onClick={() => handleUserClick(user?.details?.id)}
+            onMouseEnter={() => setSelectedIndex(index)}
+            className={`cursor-pointer flex gap-2 p-2 rounded-2xl ${
+              isSelected ? 'bg-white/10' : 'hover:bg-white/10'
+            }`}
+            key={`${index}-${user?.details?.id}`}
+          >
+            <ImageByUri
+              width={40}
+              height={40}
+              className="rounded-full max-w-none h-none"
+              style={{ width: `${40}px`, height: `${40}px` }}
+              alt={'user'}
+              uri={data?.details?.image}
+            />
+            <div className="flex-col justify-start items-start inline-flex">
+              <Typography.Body variant="medium-bold">
+                {data?.details?.name &&
+                  Utils.minifyText(data?.details?.name, 20)}
+              </Typography.Body>
+              <Typography.Label className="text-opacity-30 -mt-1">
+                {Utils.minifyPubky(user?.details?.id)}
+              </Typography.Label>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

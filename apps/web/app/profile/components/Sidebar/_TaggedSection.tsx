@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components';
-import { useClientContext } from '@/contexts';
-import { ITaggedProfile } from '@/types';
+import { usePubkyClientContext } from '@/contexts';
+import { UserTags } from '@/types/User';
 import {
   Button,
   Icon,
@@ -9,10 +9,10 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface TaggedSectionProps {
-  profileTags: ITaggedProfile[];
+  profileTags: UserTags[];
   loadingProfileTags: boolean;
   handleAddProfileTag: (tag: string) => void;
   handleDeleteProfileTag: (tag: string) => void;
@@ -30,12 +30,11 @@ export default function TaggedSection({
   creatorPubky,
   name,
 }: TaggedSectionProps) {
-  const { pubky } = useClientContext();
-  const router = useRouter();
+  const { pubky } = usePubkyClientContext();
 
   return (
     <div className="w-full">
-      <SideCard.Header title="Tagged" />
+      <SideCard.Header title="Tagged as" />
       {loadingProfileTags ? (
         <Skeleton.Simple />
       ) : (
@@ -43,8 +42,8 @@ export default function TaggedSection({
           {profileTags.length > 0 ? (
             <>
               {profileTags.map((tag, index) => {
-                const isTagFound = tag.from.some(
-                  (fromItem) => fromItem.author.id === pubky
+                const isTagFound = tag?.taggers?.some(
+                  (fromItem) => fromItem === pubky,
                 );
 
                 return (
@@ -67,31 +66,34 @@ export default function TaggedSection({
                       onClick={(event) => {
                         event.stopPropagation();
                         isTagFound
-                          ? handleDeleteProfileTag(tag.tag)
-                          : handleAddProfileTag(tag.tag);
+                          ? handleDeleteProfileTag(tag?.label)
+                          : handleAddProfileTag(tag?.label);
                       }}
-                      color={tag.tag && Utils.generateRandomColor(tag.tag)}
+                      color={
+                        tag?.label && Utils.generateRandomColor(tag?.label)
+                      }
                     >
                       <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tag.tag.replace(' ', ''), 20)}
-                        <Typography.Caption
+                        {Utils.minifyText(tag?.label, 21)}
+                        {/**<Typography.Caption
                           variant="bold"
                           className="text-opacity-30"
                         >
-                          {tag.count}
-                        </Typography.Caption>
+                          {tag?.taggers_count}
+                        </Typography.Caption>*/}
                       </div>
                     </PostUtil.Tag>
-                    {/**</div></TooltipUI.Root>*/}
-                    <Button.Action
-                      variant="custom"
-                      size="small"
-                      icon={<Icon.MagnifyingGlassLeft size="14" />}
-                      onClick={() => router.push(`/search?tags=${tag.tag}`)}
-                      className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                    />
+                    {/**</TooltipUI.Root>*/}
+                    <Link href={`/search?tags=${tag?.label}`}>
+                      <Button.Action
+                        variant="custom"
+                        size="small"
+                        icon={<Icon.MagnifyingGlassLeft size="14" />}
+                        className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                      />
+                    </Link>
                     <PostUtil.Counter className="w-full">
-                      {tag.count}
+                      {tag?.taggers_count}
                     </PostUtil.Counter>
                   </div>
                 );
@@ -110,7 +112,7 @@ export default function TaggedSection({
             Tag{' '}
             {!creatorPubky || creatorPubky === pubky
               ? 'yourself'
-              : Utils.minifyText(name, 22)}
+              : Utils.minifyText(name, 9)}
           </Button.Medium>
         </div>
       )}

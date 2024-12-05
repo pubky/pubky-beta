@@ -14,7 +14,10 @@ interface BioProps {
 
 export default function Bio({ bio, setBio, errors }: BioProps) {
   return (
-    <Card.Primary className="justify-start gap-4" title="Profile">
+    <Card.Primary
+      className="justify-start gap-4 w-full col-span-3"
+      title="Profile"
+    >
       <div>
         <Input.Label value="Short bio" />
         <Card.Primary
@@ -23,7 +26,7 @@ export default function Bio({ bio, setBio, errors }: BioProps) {
         >
           <Input.TextArea
             placeholder="Short bio. Tell a bit about yourself."
-            className="h-[240px]"
+            className="h-[180px]"
             id="onboarding-bio-input"
             defaultValue={bio ? bio : ''}
             error={errors.bio}

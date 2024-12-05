@@ -1,9 +1,15 @@
+'use client';
+
 import { Icon, SideCard } from '@social/ui-shared';
 import { useFilterContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { TReach } from '@/types';
 
-export default function Reach() {
+interface ReachProps {
+  disabled?: boolean;
+}
+
+export default function Reach({ disabled = false }: ReachProps) {
   const { reach, setReach } = useFilterContext();
   const [loading, setLoading] = useState(true);
 
@@ -23,8 +29,8 @@ export default function Reach() {
   };
 
   return (
-    <div className="mb-6">
-      <SideCard.Header title="Reach" />
+    <div className="mb-8">
+      <SideCard.Header title="Reach" className="mb-2" />
       {Object.entries(icons).map(([key, icon]) => (
         <SideCard.Item
           key={key}
@@ -32,7 +38,8 @@ export default function Reach() {
           value={key}
           selected={loading ? false : reach === key}
           icon={icon}
-          onClick={() => handleItemClick(key as TReach)}
+          onClick={!disabled ? () => handleItemClick(key as TReach) : undefined}
+          disabled={disabled}
         />
       ))}
     </div>

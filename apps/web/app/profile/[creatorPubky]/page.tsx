@@ -1,119 +1,42 @@
-'use client';
+import { UserProfile } from './components';
+import { getSeoMetadata } from '@components/HeaderSEO';
+import { getFile } from '@/services/fileService';
+import { getUserDetails } from '@/services/userService';
 
-import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import { Content, Typography } from '@social/ui-shared';
-import { CreatePost, Header, PostsLayout } from '@/components';
-import { useClientContext } from '@/contexts';
-import { INewPost, IUserProfile } from '@/types';
-import { Profile } from '../components';
-import { Profile as ProfileCommon } from '../components';
+const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
+const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
 
-export default function Index({
-  params,
-}: {
-  params: { creatorPubky: string };
-}) {
-  const { getUserIndexed, setPosts } = useClientContext();
-  const creatorPubky = params.creatorPubky;
+type Props = {
+  params: Promise<{ creatorPubky: string }>;
+};
 
-  const [profile, setProfile] = useState<IUserProfile | undefined>();
-  const [loading, setLoading] = useState(true);
-  const [countContacts, setCountContacts] = useState({
-    followers: 0,
-    following: 0,
-    friends: 0,
-  });
-  const [userExist, setUserExist] = useState(true);
+export async function generateMetadata({ params }: Props) {
+  const { creatorPubky } = await params;
+  try {
+    const profile = await getUserDetails(creatorPubky);
+    const profilePic =
+      profile?.image &&
+      profile.image !== 'null' &&
+      (await getFile(profile.image));
 
-  const loader = useRef(null);
+    const file =
+      profilePic &&
+      `${BASE_URL}/static/files/${JSON.parse(profilePic?.urls).main}`;
 
-  async function fetchProfile() {
-    try {
-      const userProfile = await getUserIndexed(creatorPubky);
-
-      if (userProfile && userProfile.profile) {
-        setProfile(userProfile);
-        setCountContacts({
-          followers: userProfile.followersCount,
-          following: userProfile.followingCount,
-          friends: userProfile.friendsCount,
-        });
-      } else {
-        setUserExist(false);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
+    return getSeoMetadata({
+      title: `${profile.name} | Profile`,
+      description: profile.bio,
+      image: String(file),
+    });
+  } catch (error) {
+    return getSeoMetadata({
+      title: '404 | Profile',
+      description: 'User profile not found or an error occurred',
+      // image: `${BASE_URL}/default-error-image.png`, // TODO: Add default error image
+    });
   }
+}
 
-  useEffect(() => {
-    setPosts({} as INewPost);
-    fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  let content;
-  if (userExist) {
-    content = (
-      <>
-        <div>
-          <Content.Grid className="flex flex-col text-start lg:flex-row items-center gap-8 relative">
-            <ProfileCommon.Avatar
-              username={profile?.profile?.name || 'Loading...'}
-              uriImage={profile?.profile?.image || '/images/Userpic.png'}
-            />
-            <ProfileCommon.Handle
-              className="-mt-4"
-              username={profile?.profile?.name || 'Loading...'}
-              pubkey={creatorPubky ?? ''}
-              creatorPubky={creatorPubky}
-              status={profile?.profile?.status}
-            />
-          </Content.Grid>
-        </div>
-        <Content.Grid className="grid grid-cols-5 gap-2">
-          <PostsLayout className="flex flex-col col-span-5 xl:col-span-4 gap-3 mt-[10px]">
-            <Profile.FilterTabs
-              countContacts={countContacts}
-              countPosts={profile?.postsCount}
-              creatorPubky={creatorPubky}
-              loading={loading}
-              profile={profile}
-            />
-          </PostsLayout>
-          <Profile.Sidebar creatorPubky={creatorPubky} />
-        </Content.Grid>
-        <CreatePost />
-        <div ref={loader} />
-      </>
-    );
-  } else {
-    content = (
-      <Content.Grid>
-        <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
-          <Typography.Body
-            variant="small"
-            className="text-opacity-50 text-center"
-          >
-            This profile was not found or has been deleted by its author.
-            <Link
-              href="/home"
-              className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
-            >
-              Go home
-            </Link>
-          </Typography.Body>
-        </div>
-      </Content.Grid>
-    );
-  }
-
-  return (
-    <Content.Main>
-      <Header className="hidden md:block" />
-      {content}
-    </Content.Main>
-  );
+export default async function Index({ params }: Props) {
+  return <UserProfile.Content params={params} />;
 }

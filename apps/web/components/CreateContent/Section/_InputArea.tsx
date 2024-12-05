@@ -5,22 +5,29 @@ import { useState } from 'react';
 import { useAlertContext } from '@/contexts';
 import Modal from '../../Modal';
 import { Utils } from '@social/utils-shared';
-import { IUserProfile } from '@/types';
+import { UserView } from '@/types/User';
+import { twMerge } from 'tailwind-merge';
 
 interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
-  selectedFiles: File[];
-  setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  selectedFiles?: File[];
+  setSelectedFiles?: React.Dispatch<React.SetStateAction<File[]>>;
   content: string;
   setContent: (content: string) => void;
-  setSearchedUsers: React.Dispatch<React.SetStateAction<IUserProfile[]>>;
-  searchedUsers: IUserProfile[];
+  setSearchedUsers: React.Dispatch<React.SetStateAction<UserView[]>>;
+  searchedUsers: UserView[];
   setCursorPosition: React.Dispatch<React.SetStateAction<number>>;
   setTextArea?: React.Dispatch<React.SetStateAction<boolean>>;
   largeView?: boolean;
   setIsValidContent: React.Dispatch<React.SetStateAction<boolean>>;
   autoFocus?: boolean;
   placeHolder?: string;
-  setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
+  setFilePreviews?: React.Dispatch<React.SetStateAction<string[]>>;
+  loading?: boolean;
+  className?: string;
+  maxLength?: number;
+  markdown?: boolean;
+  isError?: boolean;
+  setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function InputArea({
@@ -37,6 +44,12 @@ export default function InputArea({
   autoFocus,
   placeHolder,
   setFilePreviews,
+  loading,
+  className,
+  maxLength = 1000,
+  markdown,
+  isError,
+  setIsError,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { setContent: setContentAlert, setShow } = useAlertContext();
@@ -68,35 +81,61 @@ export default function InputArea({
     setIsDragging(false);
 
     const files = event.dataTransfer.files;
-    const maxSizeInMB = 6;
+    const maxSizeInMB = 20;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (files) {
       const validFiles = Array.from(files).filter((file) => {
+        const isImage = file.type.startsWith('image/');
+        const isVideo = file.type.startsWith('video/');
+        const isAudio = file.type.startsWith('audio/');
+
         const isValidType =
-          file.type.startsWith('image/') ||
-          file.type.startsWith('video/') ||
+          (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+          (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+          (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
           file.type === 'application/pdf';
+
         if (!isValidType) {
-          setContentAlert('File not supported', 'warning');
+          setContentAlert('File type not supported.', 'warning');
           setShow(true);
           return false;
         }
+
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 6 MB', 'warning');
+          setContentAlert('The maximum allowed size is 20 MB.', 'warning');
           setShow(true);
           return false;
         }
+
         return true;
       });
 
-      const newFiles = validFiles.slice(0, 3 - selectedFiles.length);
-      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+      if (selectedFiles && selectedFiles.length + validFiles.length > 3) {
+        setContentAlert('Max 3 files only.', 'warning');
+        setShow(true);
+        return;
+      }
 
-      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
-      setFilePreviews((prevPreviews) =>
-        [...prevPreviews, ...newPreviews].slice(0, 3)
-      );
+      const newFiles =
+        selectedFiles && validFiles.slice(0, 3 - selectedFiles.length);
+      const newPreviews =
+        newFiles && newFiles.map((file) => URL.createObjectURL(file));
+
+      setSelectedFiles &&
+        newFiles &&
+        setSelectedFiles((prevFiles) =>
+          [...prevFiles, ...newFiles].slice(0, 3)
+        );
+      newPreviews &&
+        setFilePreviews &&
+        setFilePreviews((prevPreviews) =>
+          [...prevPreviews, ...newPreviews].slice(0, 3)
+        );
+
+      if (newFiles && newFiles?.length > 0 && setTextArea) {
+        setTextArea(true);
+      }
     }
   };
 
@@ -108,6 +147,17 @@ export default function InputArea({
     setSearchedUsers([]);
   };
 
+  const handleEditorChange = (text: string) => {
+    if (text.length > maxLength) {
+      setIsError && setIsError(true);
+    } else {
+      setIsError && setIsError(false);
+    }
+    setContent(text);
+    setCursorPosition(text.length);
+    setIsValidContent(Utils.isValidContent(text));
+  };
+
   return (
     <div
       onDragEnter={handleDragEnter}
@@ -116,25 +166,40 @@ export default function InputArea({
       onDrop={handleDrop}
       className="w-full relative"
     >
-      <Input.CursorArea
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-          setContent(e.target.value);
-          setCursorPosition(e.target.selectionStart);
-          setIsValidContent(Utils.isValidContent(e.target.value));
-        }}
-        onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-          setCursorPosition(e.currentTarget.selectionStart);
-        }}
-        autoFocus={autoFocus}
-        value={content}
-        maxLength={300}
-        onClick={() => setTextArea && setTextArea(true)}
-        className={`w-full max-h-[300px] h-auto mt-4 ${
-          largeView && 'text-2xl min-h-[50px]'
-        }`}
-        placeholder={placeHolder}
-      />
-      {isDragging && (
+      {markdown ? (
+        <Input.MarkdownEditorComponent
+          onChange={handleEditorChange}
+          placeHolder={placeHolder}
+          autoFocus={autoFocus}
+          value={content}
+          isError={isError}
+          maxLength={maxLength}
+        />
+      ) : (
+        <Input.CursorArea
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setContent(e.target.value);
+            setCursorPosition(e.target.selectionStart);
+            setIsValidContent(Utils.isValidContent(e.target.value));
+          }}
+          disabled={loading}
+          onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+            setCursorPosition(e.currentTarget.selectionStart);
+          }}
+          autoFocus={autoFocus}
+          value={content}
+          maxLength={maxLength}
+          onClick={() => setTextArea && setTextArea(true)}
+          className={twMerge(
+            `w-full max-h-[300px] h-auto ${
+              largeView && 'text-2xl min-h-[50px]'
+            }`,
+            className
+          )}
+          placeholder={placeHolder}
+        />
+      )}
+      {isDragging && selectedFiles && (
         <div className="flex justify-center items-center z-50">
           <Icon.Plus size="64" color="gray" />
         </div>

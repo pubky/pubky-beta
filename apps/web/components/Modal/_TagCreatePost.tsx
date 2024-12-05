@@ -111,6 +111,7 @@ export default function TagCreatePost({
       className="w-full"
     >
       <Modal.CloseAction
+        id="close-btn"
         onClick={() => {
           setShowModalTag(false);
           setTagsError(false);
@@ -118,7 +119,7 @@ export default function TagCreatePost({
       />
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <Modal.Header title="Tag" />
-        <Modal.Content className="flex flex-row w-[350px]">
+        <Modal.Content className="flex flex-row md:w-[350px]">
           <div className="w-full flex-col inline-flex">
             {/**  <div>
               <Typography.Label className="text-opacity-30 font-medium">
@@ -178,7 +179,7 @@ export default function TagCreatePost({
                   </div>
                 ) : (
                   <Typography.Body variant="small" className="text-opacity-30">
-                    Not tags yet.
+                    No tags yet.
                   </Typography.Body>
                 )}
               </div>
@@ -193,10 +194,16 @@ export default function TagCreatePost({
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.TWITTER}
                     onEmojiClick={(emojiObject) => {
-                      setTag(tag + emojiObject.emoji);
+                      const emojiLength =
+                        new Blob([emojiObject.emoji]).size / 2;
+
+                      if (tag.length + emojiLength <= 20) {
+                        setTag(tag + emojiObject.emoji);
+                      }
                       setShowEmojis(false);
                     }}
                   />
+                  ;
                 </div>
               )}
               {/* <Input.Label value="Add tag" /> */}
@@ -210,6 +217,7 @@ export default function TagCreatePost({
                 action={
                   <div className="flex gap-2">
                     <Button.Action
+                      id="add-btn"
                       icon={<Icon.Plus size="18" />}
                       variant="custom"
                       size="medium"
@@ -217,6 +225,7 @@ export default function TagCreatePost({
                       onClick={handleAddTag}
                     />
                     <Button.Action
+                      id="emoji-btn"
                       variant="custom"
                       icon={<Icon.Smiley size="32" />}
                       size="medium"

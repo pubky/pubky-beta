@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { z } from 'zod';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import Modal from '../Modal';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
+import { usePubkyClientContext } from '@/contexts';
 
 const passwordSchema = z.object({
   password: z
@@ -14,7 +15,8 @@ const passwordSchema = z.object({
 });
 
 export default function RemindBackup() {
-  const { seed, setSeed, getRecoveryFile } = useClientContext();
+  const { seed, setSeed, profile, mnemonic, setMnemonic, getRecoveryFile } =
+    usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
   const [remindMeLater, setRemindMeLater] = useState(false);
@@ -42,7 +44,7 @@ export default function RemindBackup() {
   }, []);
 
   useEffect(() => {
-    if (seed) {
+    if ((seed || mnemonic) && profile?.name !== 'anonymous') {
       setDisposableAccount(true);
       setShowBackupSuccess(false);
     } else {
@@ -51,7 +53,7 @@ export default function RemindBackup() {
         setShowBackupSuccess(true);
       }
     }
-  }, [seed, backupCloseMessage]);
+  }, [seed, mnemonic, backupCloseMessage]);
 
   useEffect(() => {
     if (backupCloseMessage) {
@@ -77,7 +79,8 @@ export default function RemindBackup() {
       element.download = filename;
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
-      setSeed(null);
+      setSeed(undefined);
+      setMnemonic(undefined);
     } catch (error) {
       console.log(error);
     }
@@ -97,7 +100,7 @@ export default function RemindBackup() {
 
       if (!result.success) {
         setErrorPassword(
-          result.error.errors.map((err) => err.message).join(', ')
+          result.error.errors.map((err) => err.message).join(', '),
         );
         setLoadingRecoveryFile(false);
         return;
@@ -108,9 +111,14 @@ export default function RemindBackup() {
         throw new Error('Something went wrong');
       }
 
-      const { recoveryFile, filename } = recoveryFileResponse;
-      await handleDownloadRecoveryFile({ recoveryFile, filename });
+      await handleDownloadRecoveryFile({
+        recoveryFile: recoveryFileResponse,
+        filename: 'recovery_key.pkarr',
+      });
+
       Utils.storage.remove('seed');
+      Utils.storage.remove('mnemonic');
+
       setShowModalBackup(false);
     } catch (error) {
       console.log(error);
@@ -149,49 +157,72 @@ export default function RemindBackup() {
         <div
           className={`${
             remindMeLater && 'hidden'
-          } w-full p-12 bg-white bg-opacity-20 rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex mb-6`}
+          } relative w-full px-6 py-3 sm:px-12 sm:py-9 bg-white rounded-lg shadow border border-white flex-col justify-start items-start gap-2 inline-flex mb-3`}
         >
-          <Typography.H1 className="text-4xl">
+          {/**<div
+            onClick={RemindMe}
+            className="hidden sm:block cursor-pointer hover:bg-opacity-20 w-12 h-12 absolute right-[25px] top-[25px] p-3 bg-black bg-opacity-10 rounded-[48px] backdrop-blur-[20px] justify-center items-center inline-flex"
+          >
+            <Icon.X size="24" color="#05050a" />
+          </div>*/}
+          <Typography.Body
+            variant="large-bold"
+            className="text-[#05050a] text-2xl"
+          >
             Back up your account
-          </Typography.H1>
-          <Typography.Body className="text-opacity-80" variant="medium">
-            Time to back up your account. Without a backup you lose your account
-            if you close your browser!
           </Typography.Body>
-          <div className="w-full xl:w-[40%] max-w-full flex gap-6">
-            <Button.Large
-              id="remind-backup-now-btn"
-              onClick={() => setShowModalBackup(true)}
-              icon={<Icon.Lock size="16" />}
+          <div className="w-full md:flex justify-between gap-4">
+            <Typography.Body
+              className="w-full text-[#05050a] mb-4 md:mb-0"
+              variant="medium"
             >
-              Backup now
-            </Button.Large>
-            <Button.Large
-              onClick={RemindMe}
-              variant="secondary"
-              icon={<Icon.Clock size="16" />}
-            >
-              Remind me later
-            </Button.Large>
+              Time to back up your account.
+              <br /> Without a backup you lose your account if you close your
+              browser!
+            </Typography.Body>
+            <div className="w-full flex gap-6 md:justify-end">
+              <Button.Large
+                onClick={RemindMe}
+                variant="secondary"
+                className="w-auto shadow-none bg-black bg-opacity-10 hover:bg-opacity-20 border border-transparent"
+                colorText="text-[#05050a]"
+                icon={<Icon.Clock size="16" color="#05050a" />}
+              >
+                <span className="hidden sm:block">Remind me later</span>
+                <span className="block sm:hidden">Later</span>
+              </Button.Large>
+              <Button.Large
+                id="remind-backup-now-btn"
+                className="w-auto shadow-none bg-black bg-opacity-10 hover:bg-opacity-20 border border-[#05050a]"
+                colorText="text-[#05050a]"
+                onClick={() => setShowModalBackup(true)}
+                icon={<Icon.Lock size="16" color="#05050a" />}
+              >
+                Backup now
+              </Button.Large>
+            </div>
           </div>
         </div>
       ) : (
         showBackupSuccess && (
           <div
-            className={`mb-6 w-full p-4 bg-white bg-opacity-20 rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
+            className={`mb-6 w-full p-4 bg-white rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
           >
             <div className="w-full flex justify-between">
               <div className="flex gap-2">
                 <div className="relative">
-                  <Icon.CheckCircle size="20" />
+                  <Icon.CheckCircle size="20" color="#05050a" />
                 </div>
-                <Typography.Body className="text-opacity-80" variant="small">
-                  Backup successful! Your seed has been deleted and now you can
-                  make login via the chosen recovery method.
+                <Typography.Body
+                  className="text-[#05050a] text-opacity-80"
+                  variant="small-bold"
+                >
+                  Backup successful! Your recovery file/phrase has been deleted
+                  and now you can make login via the chosen recovery method.
                 </Typography.Body>
               </div>
               <div className="cursor-pointer" onClick={Closed}>
-                <Icon.X size="20" />
+                <Icon.X size="20" color="#05050a" />
               </div>
             </div>
           </div>
@@ -205,6 +236,7 @@ export default function RemindBackup() {
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
         errors={errorPassword}
+        setShowBackupSuccess={setShowBackupSuccess}
       />
     </div>
   );

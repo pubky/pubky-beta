@@ -17,7 +17,7 @@ function LinkPreview({ url }: { url: string }) {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `/api/preview?url=${encodeURIComponent(url)}`
+          `/api/preview?url=${encodeURIComponent(url)}`,
         );
         const data = await response.text();
         const parser = new DOMParser();
@@ -56,28 +56,34 @@ function LinkPreview({ url }: { url: string }) {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-6">
       <div
         onClick={handleClick}
-        className="cursor-pointer w-full mt-4 p-6 bg-white bg-opacity-10 border border-transparent hover:border-white hover:border-opacity-30 rounded-xl justify-between items-start inline-flex"
+        className="cursor-pointer w-full mt-4 p-6 bg-white bg-opacity-10 border border-transparent hover:border-white hover:border-opacity-30 rounded-xl justify-between gap-6 items-start inline-flex"
       >
-        <div className="grow shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
+        <div className="grow shrink basis-0 flex-col justify-start items-start inline-flex">
           {previewData.title && (
-            <Typography.H2>
+            <Typography.H2 className="break-all">
               {previewData.title.length > 40
                 ? previewData.title.slice(0, 40) + '...'
                 : previewData.title}
             </Typography.H2>
           )}
           {previewData.description ? (
-            <Typography.Body variant="small" className="text-opacity-80">
+            <Typography.Body
+              variant="small"
+              className="break-all text-opacity-80"
+            >
               {' '}
               {previewData.description.length > 150
                 ? previewData.description.slice(0, 150) + '...'
                 : previewData.description}
             </Typography.Body>
           ) : (
-            <Typography.Body variant="small" className="text-opacity-80">
+            <Typography.Body
+              variant="small"
+              className="break-all text-opacity-80"
+            >
               {' '}
               {url.length > 60 ? url.slice(0, 60) + '...' : url}
             </Typography.Body>

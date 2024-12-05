@@ -1,0 +1,107 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Content } from '@social/ui-shared';
+import { Header } from '@/components';
+import { usePubkyClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
+import { useUserProfile } from '@/hooks/useUser';
+import { Links } from '@/types/Post';
+import { CardComponent } from '../Cards';
+import { Edit } from '.';
+
+export default function Index() {
+  const { pubky, profile } = usePubkyClientContext();
+  const { data: profileUser } = useUserProfile(pubky ?? '', pubky ?? '');
+  const [handler, setHandler] = useState(pubky);
+  const [name, setName] = useState('');
+  const [status, setStatus] = useState<string | undefined>('');
+  const [image, setImage] = useState<File | string | undefined>(profile?.image);
+  const [bio, setBio] = useState('');
+  const [prevImage, setPrevImage] = useState<File | string>('');
+  const [loading, setLoading] = useState(false);
+  const [links, setLinks] = useState<Links[]>([
+    { url: '', title: 'website', placeHolder: 'https://' },
+    { url: '', title: 'x (twitter)', placeHolder: '@user' },
+  ]);
+  const [errors, setErrors] = useState({
+    name: '',
+    bio: '',
+  });
+
+  useEffect(() => {
+    if (!pubky) return;
+
+    setHandler(Utils.minifyPubky(pubky));
+
+    async function fetchData() {
+      try {
+        const userProfile = profileUser;
+
+        if (userProfile) {
+          setName(userProfile?.details?.name);
+          setStatus(userProfile?.details?.status);
+          setBio(userProfile?.details?.bio || '');
+          setImage(userProfile?.details?.image || '/images/webp/Userpic.webp');
+          setPrevImage(
+            userProfile?.details?.image || '/images/webp/Userpic.webp'
+          );
+          if (
+            userProfile?.details?.links &&
+            userProfile?.details?.links?.length > 0
+          )
+            setLinks(userProfile?.details?.links);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubky, profile]);
+
+  return (
+    <Content.Main>
+      <Header className="hidden md:block" title="Settings" />
+      <Content.Grid>
+        <Edit.UserInfo
+          name={name}
+          setName={setName}
+          handler={handler}
+          errors={errors}
+          loading={loading}
+        />
+        <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
+          <CardComponent.Bio
+            bio={bio}
+            setBio={setBio}
+            loading={loading}
+            errors={errors}
+          />
+          <CardComponent.Links
+            links={links}
+            setLinks={setLinks}
+            errors={errors}
+            loading={loading}
+          />
+          <CardComponent.Pic
+            image={image}
+            setImage={setImage}
+            loading={loading}
+          />
+        </div>
+        <Edit.Buttons
+          image={image}
+          prevImage={prevImage}
+          loading={loading}
+          setLoading={setLoading}
+          setErrors={setErrors}
+          bio={bio}
+          links={links}
+          name={name}
+          status={status}
+        />
+      </Content.Grid>
+    </Content.Main>
+  );
+}

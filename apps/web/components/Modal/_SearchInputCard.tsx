@@ -1,10 +1,12 @@
 import { useRouter } from 'next/navigation';
 import { Card, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
-import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { IUserProfile } from '@/types';
+import { useHotTags } from '@/hooks/useTag';
+import Link from 'next/link';
+import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
+import { useState, useEffect, useRef } from 'react';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -17,34 +19,14 @@ export default function SearchInputCard({
   ...rest
 }: SearchInputCardProps) {
   const router = useRouter();
-  const { hotTags, searchUsers } = useClientContext();
-  const [searchedUsers, setSearchedUsers] = useState<IUserProfile[] | null>();
-  const [loading, setLoading] = useState(true);
+  const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
+  const { data: hotTags, isLoading } = useHotTags(0, 10);
+  const { data } = useStreamSearchUsersByUsername(inputValue ?? '', pubky);
+  const searchedUsers = data ? data : [];
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [isMouseInside, setIsMouseInside] = useState(false);
 
-  useEffect(() => {
-    if (hotTags) {
-      setLoading(false);
-    }
-  }, [hotTags]);
-
-  useEffect(() => {
-    if (inputValue) {
-      SearchListUsers(inputValue);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue]);
-
-  const SearchListUsers = async (inputValue: string) => {
-    const result = await searchUsers(inputValue);
-    if (result) {
-      setSearchedUsers(result);
-    } else {
-      setSearchedUsers([]);
-    }
-  };
-
-  {
-    /** const handleTagSearch = (tag: string) => {
+  const handleTagSearch = (tag: string) => {
     if (searchTags.includes(tag)) return;
 
     if (searchTags.length < 3) {
@@ -54,73 +36,77 @@ export default function SearchInputCard({
       setSearchTags(newSearchTags);
     }
     router.push('/search');
-  };*/
-  }
+  };
 
-  {
-    /**  const handleRemoveTag = (indexToRemove: number) => {
-    const newTags = [...searchTags];
-    newTags.splice(indexToRemove, 1);
-    setSearchTags(newTags);
-  };*/
-  }
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!isMouseInside || searchedUsers.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex((prevIndex) =>
+        prevIndex === null || prevIndex === searchedUsers.length - 1
+          ? 0
+          : prevIndex + 1,
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex((prevIndex) =>
+        prevIndex === null || prevIndex === 0
+          ? searchedUsers.length - 1
+          : prevIndex - 1,
+      );
+    } else if (e.key === 'Enter' && selectedIndex !== null) {
+      const selectedUser = searchedUsers[selectedIndex];
+      if (selectedUser) {
+        router.push(`/profile/${selectedUser.details.id}`);
+      }
+    }
+  };
 
   return (
     <Card.Primary
       {...rest}
       refCard={refCard}
-      className={twMerge('absolute top-16', rest.className)}
-      background="bg-[#05050A] border border-white border-opacity-30"
+      className={twMerge(
+        'outline-none absolute top-12 rounded-b-2xl rounded-t-none p-6 pt-2',
+        rest.className,
+      )}
+      background="bg-[#05050A] border border-t-0 border-white border-opacity-20 z-10"
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      onMouseEnter={() => {
+        setIsMouseInside(true);
+        refCard?.current?.focus();
+      }}
+      onMouseLeave={() => setIsMouseInside(false)}
     >
       {inputValue !== '' && searchedUsers && searchedUsers.length > 0 ? (
-        <div className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col gap-2">
-          <div
-            onClick={() => router.push(`/search?tags=${inputValue}`)}
-            className="cursor-pointer hover:bg-white hover:bg-opacity-10 rounded flex items-center gap-2 mb-2"
+        <div className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col">
+          <Link
+            href={`/search?tags=${inputValue}`}
+            className="cursor-pointer opacity-80 hover:opacity-100 rounded flex items-center gap-2 mb-2"
           >
             <Icon.MagnifyingGlass size="20" />
-            <Typography.Body variant="medium" className="text-opacity-80">
+            <Typography.Body variant="medium">
               Search &apos;{inputValue}&apos; as tag
             </Typography.Body>
-          </div>
-          {searchedUsers.map((user) => (
+          </Link>
+          {searchedUsers.map((user, index) => (
             <SideCard.User
-              key={user.userId}
-              uri={user.userId}
-              uriImage={user.profile?.image || '/images/Userpic.png'}
-              username={Utils.minifyText(user.profile?.name)}
-              label={Utils.minifyPubky(user.userId)}
+              key={user.details.id}
+              uri={user.details.id}
+              uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
+              username={Utils.minifyText(user?.details?.name, 20)}
+              label={Utils.minifyPubky(user?.details?.id)}
+              className={`p-2 rounded-2xl ${selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'}`}
+              onMouseEnter={() => setSelectedIndex(index)}
             />
           ))}
         </div>
       ) : (
         <div className="flex-col gap-6 inline-flex">
-          {/**{searchTags.length > 0 && (
-            <div>
-              <Typography.Label className="text-opacity-30">
-                Searched tags
-              </Typography.Label>
-              <div className="mt-2 justify-start items-start">
-                {searchTags.map((searchTag, index) => (
-                  <PostUtil.Tag
-                    key={index}
-                    clicked
-                    action={
-                      <div className="mt-[3px]">
-                        <Icon.X key={index} />
-                      </div>
-                    }
-                    onClick={() => handleRemoveTag(index)}
-                    className="mr-2 my-1"
-                  >
-                    {searchTag}
-                  </PostUtil.Tag>
-                ))}
-              </div>
-            </div>
-          )}*/}
           <div>
-            {loading ? (
+            {isLoading ? (
               <Typography.Body variant="small" className="text-opacity-30">
                 Loading...
               </Typography.Body>
@@ -134,12 +120,12 @@ export default function SearchInputCard({
                     <PostUtil.Tag
                       key={index}
                       clicked={false}
-                      onClick={() => router.push(`/search?tags=${tag.tag}`)}
-                      color={tag.tag && Utils.generateRandomColor(tag.tag)}
+                      onClick={() => handleTagSearch(tag.label)}
+                      color={tag.label && Utils.generateRandomColor(tag.label)}
                       className="mr-2 my-1"
                       boxShadow={false}
                     >
-                      {tag.tag}
+                      {tag.label}
                     </PostUtil.Tag>
                   ))}
                 </div>
@@ -150,36 +136,6 @@ export default function SearchInputCard({
               </Typography.Body>
             )}
           </div>
-          {/**<div>
-            <Typography.Label className="text-opacity-30 font-medium">
-              Emotag
-            </Typography.Label>
-            <div className="mt-2 gap-2 inline-flex">
-              <PostUtil.Tag clicked={false} color="red">
-                🔥
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked={false} color="cyan">
-                👀
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked={false} color="purple">
-                😂
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked={false} color="yellow">
-                👍
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked={false} color="blue">
-                ⭐
-              </PostUtil.Tag>
-              <PostUtil.Tag clicked={false} color="green">
-                🙏
-              </PostUtil.Tag>
-              <Button.Action
-                size="small"
-                variant="custom"
-                icon={<Icon.Smiley />}
-              />
-            </div>
-    </div>*/}
         </div>
       )}
     </Card.Primary>

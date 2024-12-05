@@ -21,10 +21,6 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'secretproject.nuh.dev',
-      },
-      {
-        protocol: 'https',
         hostname: 'staging.pubky.app',
       },
       {
@@ -33,9 +29,31 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'privky.app',
+        hostname: 'nexus.staging.pubky.app',
+      },
+      {
+        protocol: 'https',
+        hostname: 'nexus.pubky.app',
       },
     ],
+  },
+  cleanDistDir: false,
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('@synonymdev/pubky');
+    }
+
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+    };
+
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: 'webassembly/async',
+    });
+
+    return config;
   },
   async redirects() {
     return [

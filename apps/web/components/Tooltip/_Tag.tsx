@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Icon, Tooltip, Typography, PostUtil } from '@social/ui-shared';
 import { ITaggedPost, ITaggedProfile } from '@/types';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
+import Link from 'next/link';
 
 interface TagProps {
   tags: ITaggedPost;
@@ -20,13 +20,12 @@ export default function Tag({
   setShowModalTags,
   setSelectedTag,
 }: TagProps) {
-  const router = useRouter();
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const images = tags.from.map((fromItem) => {
     if (fromItem.author?.profile?.image) {
       return fromItem.author?.profile?.image;
     }
-    return '/images/Userpic.png';
+    return '/images/webp/Userpic.webp';
   });
   const displayedImages = images.slice(0, 4);
   const extraImagesCount = images.length - displayedImages.length;
@@ -77,11 +76,11 @@ export default function Tag({
                 </PostUtil.Counter>
               )}
             </div>
-            <div
+            <Link
               onClick={(event) => {
                 event.stopPropagation();
-                router.push(`/search?tags=${tags.tag}`);
               }}
+              href={`/search?tags=${tags.tag}`}
               className="p-2 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 cursor-pointer inline-flex items-center justify-center gap-1"
             >
               <div>
@@ -93,7 +92,7 @@ export default function Tag({
               >
                 {Utils.minifyText(tags.tag, 20)}
               </Typography.Body>
-            </div>
+            </Link>
           </div>
         )}
       </div>

@@ -10,8 +10,8 @@ const getTitle = (titleHeader: React.ReactNode) => {
   if (titleHeader === 'Feed') {
     return null;
   }
-  if (titleHeader === 'HotTags') {
-    return 'Hot\u00A0Tags';
+  if (titleHeader === 'WhoToFollow') {
+    return 'Who\u00A0To\u00A0Follow';
   }
   return titleHeader;
 };
@@ -20,7 +20,10 @@ export const Title = ({ titleHeader, className, ...rest }: HeaderProps) => {
   const title = getTitle(titleHeader);
 
   return (
-    <div {...rest} className={twMerge('grow', className)}>
+    <div
+      {...rest}
+      className={twMerge('grow', className, 'self-end bottom-[6px] relative')}
+    >
       {title && (
         <Typography.PageTitle className="text-opacity-50">
           {title}

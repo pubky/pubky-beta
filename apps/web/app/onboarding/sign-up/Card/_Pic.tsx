@@ -1,67 +1,64 @@
 import { ImageByUri } from '@/components/ImageByUri';
+import Modal from '@/components/Modal';
+import { useAlertContext } from '@/contexts';
 import { Button, Card, Icon } from '@social/ui-shared';
+import { useState } from 'react';
 
 interface PicProps {
-  image: File | string;
-  setImage: React.Dispatch<React.SetStateAction<File | string>>;
+  image: File | string | undefined;
+  setImage: React.Dispatch<React.SetStateAction<File | string | undefined>>;
+  loading: boolean;
+  defaultImage: File | undefined;
 }
 
-export default function Pic({ image, setImage }: PicProps) {
+export default function Pic({
+  image,
+  setImage,
+  loading,
+  defaultImage,
+}: PicProps) {
+  const { setContent, setShow } = useAlertContext();
+  const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const handleUploadImage = () => {
-    if (image === '/images/Userpic.png') {
+    if (image === defaultImage) {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      setImage('/images/Userpic.png');
-      //const idImage = Utils.encodeImageId(image);
-      //if (idImage) deleteFile(idImage);
+      defaultImage && setImage(defaultImage);
+      setSelectedImage(null);
     }
   };
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const maxSizeInMB = 20;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
     const file = event.target.files?.[0];
+
     if (file) {
+      if (file.size > maxSizeInBytes) {
+        setContent('The maximum allowed size is 20 MB', 'warning');
+        setShow(true);
+        return;
+      }
+
       const img = new Image();
-      img.src = URL.createObjectURL(file);
+      const newImageUrl = URL.createObjectURL(file);
+      img.src = newImageUrl;
 
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const size = Math.min(img.width, img.height);
-
-        canvas.width = size;
-        canvas.height = size;
-
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(
-            img,
-            (img.width - size) / 2,
-            (img.height - size) / 2,
-            size,
-            size,
-            0,
-            0,
-            size,
-            size
-          );
-
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const croppedFile = new File([blob], file.name, {
-                type: file.type,
-              });
-              setImage(croppedFile);
-            }
-          }, file.type);
-        }
+        setSelectedImage(newImageUrl);
+        setShowModalCroppedImage(true);
       };
+      event.target.value = '';
     }
   };
 
   const getButtonIconImage = () => {
-    return image === '/images/Userpic.png' ? (
+    return image === defaultImage ? (
       <div>
         <Icon.File size="16" />
       </div>
@@ -73,40 +70,56 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const getButtonLabelImage = () => {
-    return image === '/images/Userpic.png' ? 'Choose file' : undefined;
+    return image === defaultImage ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === '/images/Userpic.png' ? 'w-auto' : 'w-[38px] h-[38px]';
+    return image === defaultImage
+      ? 'w-[120px] lg:w-[85%] xl:w-8/12'
+      : 'w-[38px] h-[38px]';
   };
 
   return (
-    <Card.Primary className="justify-start z-10" title="Picture">
-      {image && (
-        <div className="relative">
-          <ImageByUri
-            width={150}
-            height={150}
-            className="w-80 h-80 mt-12 rounded-full"
-            alt="user"
-            uri={image}
-          />
-          <Button.Transparent
-            icon={getButtonIconImage()}
-            onClick={handleUploadImage}
-            className={`${getButtonWidthImage()} mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
-          >
-            {getButtonLabelImage()}
-          </Button.Transparent>
-        </div>
+    <>
+      <Card.Primary
+        className="justify-start z-10 w-full col-span-2"
+        title="Picture"
+      >
+        {image && (
+          <div className="relative flex items-center justify-center">
+            <ImageByUri
+              width={100}
+              height={100}
+              className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
+              alt="user"
+              uri={image}
+            />
+            <Button.Transparent
+              icon={getButtonIconImage()}
+              onClick={handleUploadImage}
+              className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+            >
+              {getButtonLabelImage()}
+            </Button.Transparent>
+          </div>
+        )}
+        <input
+          id="fileInput"
+          type="file"
+          accept="image/*"
+          onChange={UploadPic}
+          className="hidden"
+          disabled={loading}
+        />
+      </Card.Primary>
+      {showModalCroppedImage && selectedImage && (
+        <Modal.CroppedImage
+          showModalCroppedImage={showModalCroppedImage}
+          setShowModalCroppedImage={setShowModalCroppedImage}
+          image={selectedImage}
+          setImage={setImage}
+        />
       )}
-      <input
-        id="fileInput"
-        type="file"
-        accept="image/*"
-        onChange={UploadPic}
-        className="hidden"
-      />
-    </Card.Primary>
+    </>
   );
 }

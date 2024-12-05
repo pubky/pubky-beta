@@ -2,9 +2,15 @@ import { Icon, SideCard } from '@social/ui-shared';
 
 export default function Content() {
   return (
-    <div className="mb-6">
+    <div className="mb-8">
       <SideCard.Header title="Content" />
-      <SideCard.Item label="All" value="all" selected icon={<Icon.Stack />} />
+      <SideCard.Item
+        label="All"
+        value="all"
+        selected
+        icon={<Icon.Stack />}
+        className="mt-2"
+      />
       <SideCard.Item
         label="Posts"
         value="posts"

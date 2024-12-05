@@ -54,21 +54,21 @@ export const Action = ({
   const sizes = {
     small: {
       iconSize: '12px',
-      sizeClasses: counter ? 'w-11 h-8 p-2' : 'w-8 h-8 p-2',
+      sizeClasses: counter ? 'w-auto h-8 p-2' : 'w-8 h-8 p-2',
       labelClasses: counter ? 'px-3 mt-8' : 'w-8 mt-8',
       labelSize: 'text-[10px]',
       counterSize: 'text-[13px]',
     },
     medium: {
       iconSize: '20px',
-      sizeClasses: counter ? 'w-16 h-12 p-3' : 'w-12 h-12 p-3',
+      sizeClasses: counter ? 'w-auto h-12 p-3' : 'w-12 h-12 p-3',
       labelClasses: counter ? 'px-5 mt-12' : 'w-12 mt-12',
       labelSize: 'text-[13px]',
       counterSize: 'text-[15px]',
     },
     large: {
       iconSize: '32px',
-      sizeClasses: counter ? 'w-24 h-16 p-6' : 'w-16 h-16 p-6',
+      sizeClasses: counter ? 'w-auto h-16 p-6' : 'w-16 h-16 p-6',
       labelClasses: counter ? 'px-8 mt-16' : 'w-16 mt-16',
       labelSize: 'text-[15px]',
       counterSize: 'text-[17px]',
@@ -78,9 +78,9 @@ export const Action = ({
   const { iconSize, sizeClasses, labelClasses, labelSize, counterSize } =
     sizes[size];
 
-  const color = disabled ? 'text-gray-500' : 'text-white';
+  const color = disabled ? 'text-white/50' : 'text-white';
   const colorIcon = disabled ? 'grey' : undefined;
-  const gap = counter && 'gap-1.5';
+  const gap = counter && 'gap-1';
 
   const defaultBg = 'bg-white bg-opacity-10';
   const stateButtonDisabled = 'bg-opacity-10 cursor-auto';

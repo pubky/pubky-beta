@@ -1,81 +1,61 @@
-import { Notifications } from '@/app/notifications/components';
+'use client';
+
+import { Notifications } from '@/app/profile/components/notifications/components';
 import { Skeleton } from '@/components';
-import { INotification } from '@/types';
-import { Button, Icon, Typography } from '@social/ui-shared';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useFilterContext, useNotificationsContext } from '@/contexts';
+import { Typography } from '@social/ui-shared';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
-type NotificationsProps = {
-  notifications: INotification[] | (INotification | INotification[])[];
-  loading: boolean;
-};
+export default function NotificationsProfile() {
+  const {
+    notifications,
+    loading: loadingNotifications,
+    loadMoreNotifications,
+  } = useNotificationsContext();
+  const { unReadNotification } = useFilterContext();
 
-export default function NotificationsProfile({
-  notifications,
-  loading,
-}: NotificationsProps) {
-  const [loadingNotifications, setLoadingNotifications] = useState(true);
+  const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
 
-  useEffect(() => {
-    if (!loading) setLoadingNotifications(false);
-  }, [loading]);
+  const displayedNotifications = notifications.slice(unReadNotification);
 
   return (
     <>
-      {loadingNotifications ? (
+      {loadingNotifications && notifications.length === 0 ? (
         <Skeleton.Simple />
-      ) : notifications.length === 0 ? (
+      ) : notifications?.length === 0 ? (
         <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
           No notification yet
         </Typography.H2>
       ) : (
         <div>
-          {notifications.slice(0, 10).map((notification, index) => {
-            if (Array.isArray(notification)) {
-              if (
-                notification[0].type === 'follow' ||
-                notification[0].type === 'new_friend' ||
-                notification[0].type === 'lost_friend'
-              ) {
-                return (
-                  <Notifications.NotificationGroup
+          {unReadNotification > 0 && (
+            <div className="mb-12">
+              <Typography.Body className="font-semibold">
+                New Notifications
+              </Typography.Body>
+              {notifications
+                .slice(0, unReadNotification)
+                .map((notification, index) => (
+                  <Notifications.Notification
                     key={index}
-                    notifications={notification}
+                    notification={notification}
                   />
-                );
-              } else if (notification[0].type === 'tag_profile') {
-                return (
-                  <Notifications.NotificationTagGroup
-                    key={index}
-                    notifications={notification}
-                  />
-                );
-              } else if (notification[0].type === 'tag_post') {
-                return (
-                  <Notifications.NotificationTagPostGroup
-                    key={index}
-                    notifications={notification}
-                  />
-                );
-              }
-            } else {
-              return (
-                <Notifications.Notification
-                  key={index}
-                  notification={notification}
-                />
-              );
-            }
+                ))}
+            </div>
+          )}
+          {displayedNotifications.map((notification, index) => {
+            const isLastElement = index === displayedNotifications.length - 1;
+
+            return (
+              <div key={index} ref={isLastElement ? loader : null}>
+                <Notifications.Notification notification={notification} />
+              </div>
+            );
           })}
-          {notifications.length > 10 && (
-            <Link href={'/notifications'}>
-              <Button.Medium
-                icon={<Icon.Bell size="16" />}
-                className="mt-4 mb-8 w-auto"
-              >
-                Show All Notifications
-              </Button.Medium>
-            </Link>
+          {loadingNotifications && (
+            <div className="flex justify-center mt-4 mb-8">
+              <Skeleton.Simple />
+            </div>
           )}
         </div>
       )}

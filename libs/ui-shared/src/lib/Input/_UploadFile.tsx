@@ -7,6 +7,7 @@ interface UploadFileProps extends React.HTMLAttributes<HTMLInputElement> {
   required?: boolean;
   fileName?: string;
   accept?: string;
+  disabled?: boolean;
 }
 
 export const UploadFile = ({
@@ -14,6 +15,7 @@ export const UploadFile = ({
   required = false,
   fileName,
   accept,
+  disabled,
   ...rest
 }: UploadFileProps) => {
   const baseCSS = `w-full h-[70px] p-6 rounded-2xl border border-white border-opacity-30 border-dashed flex justify-between items-center`;
@@ -45,7 +47,7 @@ export const UploadFile = ({
           }}
         >
           <Icon.File size="16" />
-          <Typography.Label className="cursor-pointer normal-case">
+          <Typography.Label id='import-select-file' className="cursor-pointer normal-case">
             Select file
           </Typography.Label>
         </div>
@@ -54,6 +56,7 @@ export const UploadFile = ({
         {...rest}
         type="file"
         required={required}
+        disabled={disabled}
         id="fileInput"
         className="hidden"
         accept={accept}

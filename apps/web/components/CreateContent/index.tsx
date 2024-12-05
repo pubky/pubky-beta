@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useClientContext, useAlertContext } from '@/contexts';
-import { IUserProfile } from '@/types';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import Modal from '../Modal';
 import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
 import { Section } from './Section';
+import { UserView } from '@/types/User';
+import { twMerge } from 'tailwind-merge';
+import { Utils } from '@social/utils-shared';
+import { searchUsersByUsername } from '@/services/streamService';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -22,13 +25,24 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   setIsValidContent: React.Dispatch<React.SetStateAction<boolean>>;
   placeHolder?: string;
   children?: React.ReactNode;
-  selectedFiles: File[];
-  setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  arrayTags: string[];
-  setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedFiles?: File[];
+  setSelectedFiles?: React.Dispatch<React.SetStateAction<File[]>>;
+  arrayTags?: string[];
+  setArrayTags?: React.Dispatch<React.SetStateAction<string[]>>;
+  loading?: boolean;
+  variant?: 'small';
+  className?: string;
+  article?: boolean;
+  markdown?: boolean;
+  maxLength?: number;
+  setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
+  isError?: boolean;
+  setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
+  setQuote?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 export default function CreateContent({
+  id,
   largeView = false,
   autoFocus,
   visibleTextArea = false,
@@ -40,34 +54,42 @@ export default function CreateContent({
   button,
   isValidContent,
   setIsValidContent,
-  placeHolder = "What's on your mind?",
+  placeHolder,
   selectedFiles,
   setSelectedFiles,
   arrayTags,
   setArrayTags,
   children,
+  loading,
+  variant,
+  className,
+  article,
+  markdown,
+  maxLength = 1000,
+  isError,
+  setIsError,
+  setShowModalPost,
+  setQuote,
 }: CreateContentProps) {
-  const { pubky, getProfile, searchUsers } = useClientContext();
+  const { profile, pubky } = usePubkyClientContext();
   const { setContent: setContentAlert, setShow } = useAlertContext();
-  const [name, setName] = useState('');
-  const [pic, setPic] = useState('/images/Userpic.png');
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
-  const [searchedUsers, setSearchedUsers] = useState<IUserProfile[]>([]);
+  const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null
+    null,
   );
 
   const searchProfiles = async (text: string) => {
     try {
-      const result = await searchUsers(text);
+      const result = await searchUsersByUsername(text);
       return result || [];
     } catch (error) {
-      console.error('Error searching profiles:', error);
+      // console.error('Error searching profiles:', error);
       return [];
     }
   };
@@ -83,12 +105,12 @@ export default function CreateContent({
       return;
     }
 
-    let results: IUserProfile[] = [];
+    let results: UserView[] = [];
 
     for (const query of searchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const searchResult = await searchUsers(username);
+        const searchResult = await searchUsersByUsername(username);
         results = [...results, ...(searchResult || [])];
       } else if (query.startsWith('pk:')) {
         const searchResult = await searchProfiles(query);
@@ -112,25 +134,6 @@ export default function CreateContent({
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
-
-  async function fetchProfile() {
-    try {
-      if (!pubky) return;
-      const userProfile = await getProfile();
-
-      if (userProfile) {
-        setPic(userProfile?.image || '/images/Userpic.png');
-        setName(userProfile?.name);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -170,7 +173,8 @@ export default function CreateContent({
       if (
         (event.ctrlKey || event.metaKey) &&
         event.key === 'Enter' &&
-        isValidContent
+        isValidContent &&
+        !isError
       ) {
         handleSubmit(content);
       }
@@ -185,9 +189,10 @@ export default function CreateContent({
   }, [isValidContent, content]);
 
   const removeFile = (index: number) => {
-    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setSelectedFiles &&
+      setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     setFilePreviews((prevPreviews) =>
-      prevPreviews.filter((_, i) => i !== index)
+      prevPreviews.filter((_, i) => i !== index),
     );
   };
 
@@ -205,10 +210,11 @@ export default function CreateContent({
               file &&
               (file.type.startsWith('image/') || file.type.startsWith('video/'))
             ) {
-              if (selectedFiles.length < 3) {
+              if (selectedFiles && selectedFiles.length < 3) {
                 const filePreview = URL.createObjectURL(file);
 
-                setSelectedFiles((prevFiles) => [...prevFiles, file]);
+                setSelectedFiles &&
+                  setSelectedFiles((prevFiles) => [...prevFiles, file]);
                 setFilePreviews((prevPreviews) => [
                   ...prevPreviews,
                   filePreview,
@@ -216,7 +222,7 @@ export default function CreateContent({
               } else {
                 setContentAlert(
                   'Maximum of 3 files can be uploaded',
-                  'warning'
+                  'warning',
                 );
                 setShow(true);
               }
@@ -245,32 +251,49 @@ export default function CreateContent({
 
   return (
     <div
-      className={`${
-        largeView ? 'p-12' : 'p-6'
-      } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`}
+      id={`${id}`}
+      className={twMerge(
+        `${
+          largeView ? 'p-12' : 'p-6'
+        } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`,
+        className,
+      )}
     >
-      <Section.UserArea uriPic={pic} name={name} largeView={largeView} />
       <div
         ref={wrapperRef}
-        className="w-full flex justify-between gap-6 items-start flex-col"
+        className="w-full flex justify-between gap-3 items-start flex-col"
       >
-        <Section.InputArea
-          selectedFiles={selectedFiles}
-          setSelectedFiles={setSelectedFiles}
-          content={content}
-          setContent={setContent}
-          searchedUsers={searchedUsers}
-          setSearchedUsers={setSearchedUsers}
-          setCursorPosition={setCursorPosition}
-          setTextArea={setTextArea}
-          largeView={largeView}
-          setIsValidContent={setIsValidContent}
-          autoFocus={autoFocus}
-          placeHolder={placeHolder}
-          setFilePreviews={setFilePreviews}
-        />
-        <LinkPreviewer content={content} />
-        {selectedFiles.length > 0 && (
+        <div className={variant ? 'flex w-full gap-4' : 'w-full'}>
+          <Section.UserArea
+            uriPic={(profile?.image as string) ?? '/images/webp/Userpic.webp'}
+            name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
+            largeView={largeView}
+            variant={variant}
+          />
+          <Section.InputArea
+            selectedFiles={selectedFiles}
+            setSelectedFiles={setSelectedFiles}
+            content={content}
+            className="mt-[6px]"
+            setContent={setContent}
+            searchedUsers={searchedUsers}
+            setSearchedUsers={setSearchedUsers}
+            setCursorPosition={setCursorPosition}
+            setTextArea={setTextArea}
+            largeView={largeView}
+            setIsValidContent={setIsValidContent}
+            autoFocus={autoFocus}
+            placeHolder={placeHolder}
+            setFilePreviews={setFilePreviews}
+            loading={loading}
+            markdown={markdown}
+            maxLength={maxLength}
+            setIsError={setIsError}
+            isError={isError}
+          />
+        </div>
+        <LinkPreviewer setQuote={setQuote} content={content} />
+        {selectedFiles && selectedFiles.length > 0 && (
           <div className="relative mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
             {selectedFiles.map((file, index) => (
               <FilePreview
@@ -304,14 +327,20 @@ export default function CreateContent({
           button={button}
           wrapperRefEmojis={wrapperRefEmojis}
           setShowModalTag={setShowModalTag}
+          article={article}
+          markdown={markdown}
+          maxLength={maxLength}
+          setShowModalPost={setShowModalPost}
         />
       </div>
-      <Modal.TagCreatePost
-        arrayTags={arrayTags}
-        setArrayTags={setArrayTags}
-        showModalTag={showModalTag}
-        setShowModalTag={setShowModalTag}
-      />
+      {arrayTags && setArrayTags && (
+        <Modal.TagCreatePost
+          arrayTags={arrayTags}
+          setArrayTags={setArrayTags}
+          showModalTag={showModalTag}
+          setShowModalTag={setShowModalTag}
+        />
+      )}
     </div>
   );
 }

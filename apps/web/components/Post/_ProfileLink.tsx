@@ -1,10 +1,14 @@
 'use client';
 
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { getUserProfile } from '@/services/userService';
+import { Utils } from '@social/utils-shared';
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 
 function ProfileLink({ pk }: { pk: string }) {
-  const { getUserIndexed } = useClientContext();
+  const { pubky } = usePubkyClientContext();
+  const [pkFound, setPkFound] = useState<string>('');
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -12,21 +16,27 @@ function ProfileLink({ pk }: { pk: string }) {
       const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
       if (pkMatch) {
         const pkFound = pkMatch[0];
-        const result = await getUserIndexed(pkFound.replace('pk:', '').trim());
-        if (result) setUserName(result?.profile?.name);
+        setPkFound(pkFound);
+        const result = await getUserProfile(
+          pkFound.replace('pk:', '').trim(),
+          pubky ?? '',
+        );
+        if (result) setUserName(result?.details?.name);
       }
     };
     fetchUser();
-  }, [pk, getUserIndexed]);
+  }, [pk]);
 
   const pkPart = pk.replace('pk:', '').trim();
   const remainingPart = pk.replace(`pk:${pkPart}`, '');
 
   return (
     <>
-      <a className="text-white break-all" href={`/profile/${pkPart}`}>
-        {userName ? `@${userName}` : 'Loading...'}
-      </a>
+      <Link className="text-[#C8FF00] break-all" href={`/profile/${pkPart}`}>
+        {userName
+          ? `@${userName}`
+          : Utils.minifyPubky(pkFound.replace('pk:', ''))}
+      </Link>
       {remainingPart}
     </>
   );

@@ -2,12 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 import { Modal } from '../Modal';
-import { IPost } from '@/types';
+import { PostView } from '@/types/Post';
 
 interface RepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
-  post: IPost;
+  post: PostView;
   handleRepost: () => Promise<void>;
 }
 
@@ -41,7 +41,6 @@ export default function Repost({
       showModalRepost={showModalRepost}
       setShowModalRepost={setShowModalRepost}
       modalRepostRef={modalRepostRef}
-      handleRepost={handleRepost}
     />
   );
 }

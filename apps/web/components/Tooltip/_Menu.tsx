@@ -1,42 +1,60 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Icon, Tooltip } from '@social/ui-shared';
-import { useRouter } from 'next/navigation';
-import { useClientContext, useAlertContext, useToastContext } from '@/contexts';
-import { IPost } from '@/types';
-import { Utils } from '@social/utils-shared';
+import { Tooltip } from '@social/ui-shared';
+import { PostView } from '@/types/Post';
+import { ButtonTooltip } from './Button';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import Modal from '../Modal';
 
 interface TooltipMenuProps {
-  post: IPost;
+  post: PostView;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  repost?: IPost;
+  repost?: PostView;
 }
 
 export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
-  const {
-    pubky,
-    follow,
-    unfollow,
-    listFollowers,
-    createBookmark,
-    deleteBookmark,
-    deletePost,
-    deleteFile,
-  } = useClientContext();
-  const { setContent: setContentToast, setShow: setShowToast } =
-    useToastContext();
-  const tooltipMenuRef = useRef<HTMLDivElement>(null);
-  const [followed, setFollowed] = useState(false);
-  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
-  const [loadingFollowed, setLoadingFollowed] = useState(false);
-  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
+  const { pubky, deleteFile, deletePost } = usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
-  const router = useRouter();
+  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
+  const [showModalReportPost, setShowModalReportPost] = useState(false);
+  const [showModalEditPost, setShowModalEditPost] = useState(false);
+  const [showModalEditArticle, setShowModalEditArticle] = useState(false);
+  const tooltipMenuRef = useRef<HTMLDivElement>(null);
+  const modalDeletePostRef = useRef<HTMLDivElement>(null);
+  const modalReportPostRef = useRef<HTMLDivElement>(null);
+  const modalEditPostRef = useRef<HTMLDivElement>(null);
+  const modalEditArticleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
+      if (modalDeletePostRef.current) {
+        if (!modalDeletePostRef.current.contains(event.target as Node)) {
+          setShowModalDeletePost(false);
+        }
+        return;
+      }
+
+      if (modalReportPostRef.current) {
+        if (!modalReportPostRef.current.contains(event.target as Node)) {
+          setShowModalReportPost(false);
+        }
+        return;
+      }
+      if (modalEditPostRef.current) {
+        if (!modalEditPostRef.current.contains(event.target as Node)) {
+          setShowModalEditPost(false);
+        }
+        return;
+      }
+
+      if (modalEditArticleRef.current) {
+        if (!modalEditArticleRef.current.contains(event.target as Node)) {
+          setShowModalEditArticle(false);
+        }
+        return;
+      }
+
       if (
         tooltipMenuRef.current &&
         !tooltipMenuRef.current.contains(event.target as Node)
@@ -44,102 +62,37 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
         setShowMenu(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutsideTooltip);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideTooltip);
     };
-  }, [tooltipMenuRef, setShowMenu]);
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (error) {
-      console.log('Failed to copy: ', error);
-    }
-  };
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const pubkey = post?.author?.id || pubky;
-
-        if (!pubkey) return;
-
-        const followersList = await listFollowers(pubkey);
-
-        if (followersList) {
-          setInitLoadingFollowed(false);
-
-          const isFollowed = followersList.followers.some(
-            (user) => user.uri.replace('pubky:', '') === pubky
-          );
-
-          setFollowed(isFollowed);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [post?.author?.id, pubky, listFollowers]);
-
-  const followUser = async () => {
-    if (!post?.author?.id) return;
-
-    setLoadingFollowed(true);
-    try {
-      const result = await follow(post?.author?.id);
-      setFollowed(result);
-      setShowMenu(false);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingFollowed(false);
-    }
-  };
-
-  const unfollowUser = async () => {
-    if (!post?.author?.id) return;
-
-    setLoadingFollowed(true);
-    try {
-      const result = await unfollow(post?.author?.id);
-      setFollowed(!result);
-      setShowMenu(false);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingFollowed(false);
-    }
-  };
-
-  const handleAddBookmark = async (postId: string, uri: string) => {
-    await createBookmark(postId, uri);
-    setShowMenu(false);
-  };
-
-  const handleDeleteBookmark = async (
-    postId: string,
-    postUri: string,
-    bookmarkId: string
-  ) => {
-    await deleteBookmark(postId, postUri, bookmarkId);
-    setShowMenu(false);
-  };
+  }, [
+    tooltipMenuRef,
+    setShowMenu,
+    modalDeletePostRef,
+    setShowModalDeletePost,
+    modalReportPostRef,
+    setShowModalReportPost,
+    modalEditPostRef,
+    setShowModalEditPost,
+    modalEditArticleRef,
+    setShowModalEditArticle,
+  ]);
 
   const handleDeletePost = async () => {
     try {
-      if (post?.post?.files) {
-        const fileDeletions = Object.values(post.post.files).map(
+      if (post?.details?.attachments) {
+        const fileDeletions = Object.values(post?.details?.attachments).map(
           async (file) => {
-            await deleteFile(file.fileId);
-          }
+            await deleteFile(file);
+          },
         );
         await Promise.all(fileDeletions);
       }
 
-      const result = await deletePost(post?.id);
+      const result = await deletePost(post?.details?.id);
 
       if (result) {
         setContent('Post deleted successfully');
@@ -153,185 +106,79 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       setShowMenu(false);
     }
   };
-  const renderFollowButton = () => {
-    if (post?.author?.id === pubky) return null;
-
-    if (initLoadingFollowed) {
-      return (
-        <Tooltip.Item icon={<Icon.LoadingSpin size="24" />}>
-          Loading
-        </Tooltip.Item>
-      );
-    }
-
-    return followed ? (
-      <Tooltip.Item
-        onClick={loadingFollowed ? undefined : unfollowUser}
-        loading={loadingFollowed}
-        icon={<Icon.UserMinus size="24" />}
-      >
-        Unfollow {Utils.minifyText(post?.author?.profile?.name, 10)}
-      </Tooltip.Item>
-    ) : (
-      <Tooltip.Item
-        onClick={loadingFollowed ? undefined : followUser}
-        loading={loadingFollowed}
-        icon={<Icon.UserPlus size="24" />}
-      >
-        Follow {Utils.minifyText(post?.author?.profile?.name)}
-      </Tooltip.Item>
-    );
-  };
-
-  const handleBookmarks = (
-    repost: IPost | undefined,
-    post: IPost,
-    handleAddBookmark: (postId: string, uri: string) => Promise<void>,
-    handleDeleteBookmark: (
-      postId: string,
-      postUri: string,
-      bookmarkId: string
-    ) => Promise<void>,
-    setContentToast: (
-      content: React.ReactNode,
-      variant?: 'bookmark' | 'pubky' | 'link'
-    ) => void,
-    setShowToast: (show: boolean) => void
-  ) => {
-    const isBookmarked = repost ? repost.bookmark?.id : post?.bookmark?.id;
-
-    if (repost) {
-      if (isBookmarked) {
-        handleDeleteBookmark(repost.id, repost.uri, repost.bookmark.id);
-      } else {
-        handleAddBookmark(repost.id, repost.uri);
-      }
-    } else if (post) {
-      if (isBookmarked) {
-        handleDeleteBookmark(post.id, post.uri, post.bookmark.id);
-      } else {
-        handleAddBookmark(post.id, post.uri);
-      }
-    }
-
-    if (!isBookmarked) {
-      setContentToast(
-        `This post by ${
-          repost ? repost?.author?.profile?.name : post?.author?.profile?.name
-        } was saved to your bookmarks.`,
-        'bookmark'
-      );
-      setShowToast(true);
-    }
-  };
 
   return (
     <>
       <div ref={tooltipMenuRef}>
-        <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[250px]">
-          {renderFollowButton()}
-          {post?.author?.id === pubky && (
-            <Tooltip.Item
-              onClick={() => {
-                router.push('/settings/edit');
-                setShowMenu(false);
-              }}
-              icon={<Icon.Pencil size="20" />}
-            >
-              Edit profile
-            </Tooltip.Item>
+        <Tooltip.Main
+          id="post-tooltip-menu"
+          className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px] z-40"
+        >
+          {post?.details?.author !== pubky && (
+            <ButtonTooltip.Follow
+              pk={post?.details?.author}
+              setShowMenu={setShowMenu}
+            />
           )}
-          <Tooltip.Item
-            onClick={() => {
-              copyToClipboard(`pk:${post.author.id}`);
-              setContentToast(`pk:${post.author.id}`, 'pubky');
-              setShowToast(true);
-              setShowMenu(false);
-            }}
-            icon={<Icon.Key size="20" />}
-          >
-            Copy user pubky
-          </Tooltip.Item>
-          <Tooltip.Item
-            onClick={() => {
-              copyToClipboard(
-                `${window.location.origin}/post/${post.author.id}/${post.id}`
-              );
-              setContentToast(
-                Utils.minifyText(
-                  `${window.location.origin}/post/${post.author.id}/${post.id}`,
-                  80
-                ),
-                'link'
-              );
-              setShowToast(true);
-              setShowMenu(false);
-            }}
-            icon={<Icon.Link size="20" />}
-          >
-            Copy link to post
-          </Tooltip.Item>
-          <Tooltip.Item
-            onClick={() => {
-              copyToClipboard(post.post.content);
-              setContentToast(
-                Utils.minifyContent(post.post.content, 1),
-                'text'
-              );
-              setShowToast(true);
-              setShowMenu(false);
-            }}
-            icon={<Icon.FileText size="20" />}
-          >
-            Copy text of post
-          </Tooltip.Item>
-          <Tooltip.Item
-            icon={
-              <Icon.BookmarkSimple
-                size="20"
-                opacity={repost?.bookmark.id ? 1 : post?.bookmark?.id ? 1 : 0.2}
-                color={
-                  repost?.bookmark.id
-                    ? 'white'
-                    : post?.bookmark?.id
-                    ? 'white'
-                    : 'white'
-                }
-              />
-            }
-            onClick={() =>
-              handleBookmarks(
-                repost,
-                post,
-                handleAddBookmark,
-                handleDeleteBookmark,
-                setContentToast,
-                setShowToast
-              )
-            }
-          >
-            {repost?.bookmark?.id
-              ? 'Remove Bookmark'
-              : post?.bookmark?.id
-              ? 'Remove Bookmark'
-              : 'Add Bookmark'}
-          </Tooltip.Item>
-          {post?.author?.id === pubky && (
-            <Tooltip.Item
-              onClick={() => setShowModalDeletePost(true)}
-              icon={<Icon.Trash size="20" color={'#EF4444'} />}
-              cssText="text-red-500"
-            >
-              Delete post
-            </Tooltip.Item>
+          {/**post?.details?.author === pubky && (
+            <ButtonTooltip.EditProfile setShowMenu={setShowMenu}/>
+          )*/}
+          <ButtonTooltip.EditPost
+            post={post}
+            setShowModalEditArticle={setShowModalEditArticle}
+            setShowModalEditPost={setShowModalEditPost}
+          />
+          <ButtonTooltip.CopyUserPubky
+            pk={post?.details?.author}
+            setShowMenu={setShowMenu}
+          />
+          <ButtonTooltip.CopyLinkPost post={post} setShowMenu={setShowMenu} />
+          <ButtonTooltip.CopyTextPost post={post} setShowMenu={setShowMenu} />
+          {/**<ButtonTooltip.Bookmark post={post} repost={repost} setShowMenu={setShowMenu} />*/}
+          {post?.details?.author !== pubky && (
+            <ButtonTooltip.Mute pk={post?.details?.author} />
+          )}
+          <ButtonTooltip.DeletePost
+            post={post}
+            setShowModalDeletePost={setShowModalDeletePost}
+          />
+          {post?.details?.author !== pubky && (
+            <ButtonTooltip.ReportPost setShowModal={setShowModalReportPost} />
           )}
         </Tooltip.Main>
+      </div>
+      {showModalDeletePost && (
         <Modal.DeletePost
           showModalDeletePost={showModalDeletePost}
           setShowModalDeletePost={setShowModalDeletePost}
           handleDeletePost={handleDeletePost}
+          modalDeletePostRef={modalDeletePostRef}
         />
-      </div>
+      )}
+      {showModalReportPost && (
+        <Modal.ReportPost
+          showModal={showModalReportPost}
+          setShowModal={setShowModalReportPost}
+          modalReportPostRef={modalReportPostRef}
+          post={post}
+        />
+      )}
+      {showModalEditPost && (
+        <Modal.EditPost
+          showModalEditPost={showModalEditPost}
+          setShowModalEditPost={setShowModalEditPost}
+          modalEditPostRef={modalEditPostRef}
+          post={post}
+        />
+      )}
+      {showModalEditArticle && (
+        <Modal.EditArticle
+          showModalEditArticle={showModalEditArticle}
+          setShowModalEditArticle={setShowModalEditArticle}
+          modalEditArticleRef={modalEditArticleRef}
+          article={post}
+        />
+      )}
     </>
   );
 }

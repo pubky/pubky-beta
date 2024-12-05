@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
 interface LogoutProps {
@@ -13,7 +13,6 @@ export default function Logout({
   showModalLogout,
   setShowModalLogout,
 }: LogoutProps) {
-  const router = useRouter();
   const modalLogoutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,29 +35,31 @@ export default function Logout({
       show={showModalLogout}
       closeModal={() => setShowModalLogout(false)}
       modalRef={modalLogoutRef}
-      className="w-[588px]"
+      className="max-w-[1200px] md:min-w-[588px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction onClick={() => setShowModalLogout(false)} />
       <Modal.Header title="Sign out?" />
-      <Typography.Body className="text-left text-opacity-60" variant="medium">
+      <Typography.Body className="text-left text-opacity-60 my-4" variant="medium">
         If you sign out without backup you will no longer be able to login.
       </Typography.Body>
-      <div className="flex gap-4 mt-8">
-        <Button.Large
-          id="logout-modal-sign-out-btn"
-          variant="secondary"
-          icon={<Icon.SignOut size="16" />}
-          onClick={() => router.push(`/logout`)}
-        >
-          Yes, sign out
-        </Button.Large>
-        <Modal.SubmitAction
-          id="logout-modal-backup-btn"
-          icon={<Icon.Lock size="16" />}
-          onClick={() => router.push(`/settings`)}
-        >
-          Backup
-        </Modal.SubmitAction>
+      <div className="flex gap-4 mt-2">
+        <Link className="w-full" href="/logout">
+          <Button.Large
+            id="logout-modal-sign-out-btn"
+            variant="secondary"
+            icon={<Icon.SignOut size="16" />}
+          >
+            Yes, sign out
+          </Button.Large>
+        </Link>
+        <Link className="w-full" href="/settings">
+          <Modal.SubmitAction
+            id="logout-modal-backup-btn"
+            icon={<Icon.Lock size="16" />}
+          >
+            Backup
+          </Modal.SubmitAction>
+        </Link>
       </div>
     </Modal.Root>
   );

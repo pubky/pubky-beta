@@ -35,8 +35,11 @@ export default function CreatePost() {
 
   return (
     <>
-      <div className="fixed bottom-5 right-5 sm:bottom-10 sm:right-10 z-50">
-        <Button.Create onClick={() => setShowModalPost(true)} />
+      <div className="hidden lg:flex fixed bottom-5 right-5 sm:bottom-10 sm:right-10 z-50">
+        <Button.Create
+          id="new-post-btn"
+          onClick={() => setShowModalPost(true)}
+        />
       </div>
 
       <Modal.CreatePost

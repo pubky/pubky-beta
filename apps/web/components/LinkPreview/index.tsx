@@ -3,19 +3,31 @@
 import { useEffect, useState } from 'react';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
-import { Preview, Post } from '@social/ui-shared';
+import { Preview, Post as PostUI } from '@social/ui-shared';
+import { Spotify } from 'react-spotify-embed';
+import { usePubkyClientContext } from '@/contexts';
+import { PostView } from '@/types/Post';
+import { getPost } from '@/services/postService';
+import { Post } from '@/components';
 
 interface LinkPreviewerProps {
   content: string;
+  setQuote?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export default function LinkPreviewer({ content }: LinkPreviewerProps) {
+export default function LinkPreviewer({
+  content,
+  setQuote,
+}: LinkPreviewerProps) {
+  const { pubky } = usePubkyClientContext();
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
+  const [spotifyUrl, setSpotifyUrl] = useState('');
+  const [postPreview, setPostPreview] = useState<PostView>();
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null
+    null,
   );
 
   const checkForLink = (text: string) => {
@@ -24,41 +36,61 @@ export default function LinkPreviewer({ content }: LinkPreviewerProps) {
     }
 
     try {
-      const timeout = setTimeout(() => {
+      const timeout = setTimeout(async () => {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         const urls = text.match(urlRegex);
         if (urls) {
           const url = urls[0];
+
+          const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
+          const postMatch = url.match(postRegex);
+
+          if (postMatch && setQuote) {
+            const [_, creatorPubky, postId] = postMatch;
+
+            try {
+              const post = await getPost(creatorPubky, postId, pubky);
+
+              if (post) {
+                setPostPreview(post);
+                setQuote(
+                  `pubky://${creatorPubky}/pub/pubky.app/posts/${postId}`,
+                );
+              } else {
+                setPostPreview(undefined);
+              }
+            } catch (error) {
+              console.error('Failed to fetch post:', error);
+              setPostPreview(undefined);
+            }
+
+            setPreview('');
+            return;
+          }
+
           setPreview(url);
 
           const youtubeId = getYouTubeID(url);
-          if (youtubeId) {
-            setVideoId(youtubeId);
-          } else {
-            setVideoId('');
-          }
+          setVideoId(youtubeId || '');
 
           const twitterRegex =
             /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
           const twitterMatch = url.match(twitterRegex);
-          if (twitterMatch) {
-            const tweetId = twitterMatch[3];
-            setTweetId(tweetId);
-          } else {
-            setTweetId('');
-          }
+          setTweetId(twitterMatch ? twitterMatch[3] : '');
+
           const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
           const githubMatch = url.match(githubRegex);
-          if (githubMatch) {
-            setGithubUrl(githubMatch[0]);
-          } else {
-            setGithubUrl('');
-          }
+          setGithubUrl(githubMatch ? githubMatch[0] : '');
+
+          const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
+          setSpotifyUrl(spotifyRegex.test(url) ? url : '');
         } else {
           setPreview('');
+          setPostPreview(undefined);
           setVideoId('');
           setTweetId('');
           setGithubUrl('');
+          setSpotifyUrl('');
         }
       }, 100);
 
@@ -75,6 +107,11 @@ export default function LinkPreviewer({ content }: LinkPreviewerProps) {
 
   return (
     <>
+      {postPreview && (
+        <div className="w-full mb-4">
+          <Post post={postPreview} repostView />
+        </div>
+      )}
       {videoId && (
         <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
           <iframe
@@ -87,9 +124,9 @@ export default function LinkPreviewer({ content }: LinkPreviewerProps) {
           ></iframe>
         </div>
       )}
-      {preview && !videoId && !tweetId && !githubUrl && (
+      {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
         <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
-          <Post.LinkPreview url={preview} />
+          <PostUI.LinkPreview url={preview} />
         </div>
       )}
       {tweetId && (
@@ -98,6 +135,7 @@ export default function LinkPreviewer({ content }: LinkPreviewerProps) {
         </div>
       )}
       {githubUrl && <Preview.GitHub url={githubUrl} />}
+      {spotifyUrl && <Spotify link={spotifyUrl} />}
     </>
   );
 }

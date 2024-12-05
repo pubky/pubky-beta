@@ -15,3 +15,15 @@
 
 // Import commands.ts using ES2015 syntax:
 import './commands';
+
+// uses Chrome DevTools Protocol to allow clipboard permissions
+// resolves 'NotAllowedError: Document is not focused.' in CI
+if (Cypress.browser.family === 'chromium') {
+  Cypress.automation('remote:debugger:protocol', {
+    command: 'Browser.grantPermissions',
+    params: {
+      permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+      origin: window.location.origin,
+    },
+  });
+};

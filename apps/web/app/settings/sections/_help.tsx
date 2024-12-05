@@ -1,3 +1,5 @@
+'use client';
+
 import DropDown from '@/components/DropDown';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { useState } from 'react';
@@ -45,7 +47,7 @@ export default function Help() {
   };
 
   return (
-    <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Question size="24" />
@@ -80,7 +82,7 @@ export default function Help() {
           className="w-auto"
           onClick={() =>
             window.open(
-              'https://docs.google.com/document/d/1BHF-rOB31wXsQgC1w7scRaYBlxo9fwu8ygV28x_fEOE/edit?usp=sharing'
+              'https://support.synonym.to/hc/pubky-app-help-center/en'
             )
           }
           icon={<Icon.FileText width="16" height="16" />}
@@ -98,9 +100,9 @@ export default function Help() {
         </Typography.Body>
         <Button.Large
           variant="secondary"
-          className="w-auto cursor-default"
-          disabled
-          icon={<Icon.Telegram width="16" height="16" color="gray" />}
+          className="w-auto"
+          onClick={() => window.open('https://t.me/pubkychat', '_blank')}
+          icon={<Icon.Telegram width="16" height="16" />}
         >
           Pubky Support (Telegram)
         </Button.Large>

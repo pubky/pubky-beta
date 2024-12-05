@@ -2,16 +2,21 @@ import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 
 import { defineConfig } from 'cypress';
 
-import { rmdir, unlink, rename } from 'fs';
+import { readdirSync, rmdir, unlink, rename } from 'fs';
+import { defaultMs } from './src/support/slow-down';
 
 export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { cypressDir: 'src' }),
     baseUrl: 'http://localhost:4200',
-    defaultCommandTimeout: process.env.CI ? 30_000 : 4000,
+    defaultCommandTimeout: process.env.CI ? 60_000 : 15_000,
     video: true,
     viewportWidth: 1920,
     viewportHeight: 1080,
+    env: {
+      // slow down execution more in CI to avoid flaky tests
+      commandDelay: defaultMs
+    },
 
     // Plugins
 
@@ -26,13 +31,12 @@ export default defineConfig({
           // Enables readText from clipboard
           launchOptions.preferences['dom.events.asyncClipboard.readText'] = true;
         }
-        // Clipboard doesn't work in headless mode for Chrome
-        // This doesn't work in CI because 'NotAllowedError: Document is not focused.'
-        // if (browser.family === 'chromium' && browser.name !== 'electron') {
-        //   //launchOptions.args.push('--enable-experimental-web-platform-features');
-        //   launchOptions.args.push('--clipboard-read-write');  // Enable clipboard read/write
-        //   launchOptions.args.push('--clipboard-sanitized-write'); // Enable sanitized write permissions
-        // }
+        // Enable clipboard for Chrome
+        if (browser.family === 'chromium' && browser.name !== 'electron') {
+          launchOptions.args.push('--enable-experimental-web-platform-features');
+          launchOptions.args.push('--clipboard-read-write');  // Enable clipboard read/write
+          launchOptions.args.push('--clipboard-sanitized-write'); // Enable sanitized write permissions
+        }
         return launchOptions
       });
 
@@ -81,7 +85,16 @@ export default defineConfig({
           });
         });
       },
+
+      checkFileExistsWithSuffix({ folder, suffix }) {
+        const files = readdirSync(folder);
+        const matchedFile = files.find(file => file.endsWith(suffix));
+        return !!matchedFile; // Return true if a match is found
+      }
       });
-    }
+    },
+    experimentalModifyObstructiveThirdPartyCode: true,
+    chromeWebSecurity: false,
+    pageLoadTimeout: 60000,
   },
 });

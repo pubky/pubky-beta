@@ -7,53 +7,37 @@ interface DeletePostProps {
   showModalDeletePost: boolean;
   setShowModalDeletePost: React.Dispatch<React.SetStateAction<boolean>>;
   handleDeletePost: () => void;
+  modalDeletePostRef: React.RefObject<HTMLDivElement>;
 }
 
 export default function DeletePost({
   showModalDeletePost,
   setShowModalDeletePost,
   handleDeletePost,
+  modalDeletePostRef,
 }: DeletePostProps) {
-  const modalDeletePostRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutsideModalDeletePost = (event: MouseEvent) => {
-      if (
-        modalDeletePostRef.current &&
-        !modalDeletePostRef.current.contains(event.target as Node)
-      ) {
-        setShowModalDeletePost(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModalDeletePost);
-
-    return () => {
-      document.removeEventListener(
-        'mousedown',
-        handleClickOutsideModalDeletePost
-      );
-    };
-  }, [modalDeletePostRef, setShowModalDeletePost]);
   return (
     <Modal.Root
       show={showModalDeletePost}
       closeModal={() => setShowModalDeletePost(false)}
       modalRef={modalDeletePostRef}
-      className="w-[588px]"
+      className="max-w-[1200px] md:min-w-[588px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction onClick={() => setShowModalDeletePost(false)} />
       <Modal.Header title="Delete Post" />
-      <Typography.Body className="text-opacity-60" variant="medium">
+      <Typography.Body className="text-opacity-60 my-4" variant="medium">
         Are you sure you want to delete this post?
       </Typography.Body>
-      <div className="flex gap-4 mt-8">
+      <div className="flex gap-4 mt-2">
         <Button.Large
+          id="cancel-btn"
           variant="secondary"
           onClick={() => setShowModalDeletePost(false)}
         >
           Cancel
         </Button.Large>
         <Modal.SubmitAction
+          id="delete-post-btn"
           icon={<Icon.Trash size="16" />}
           onClick={() => {
             handleDeletePost();

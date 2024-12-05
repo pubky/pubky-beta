@@ -1,37 +1,15 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { SideCard, Typography } from '@social/ui-shared';
-// import { DropDown } from '../components/DropDown';
-import { useClientContext } from '@/contexts';
-import { useEffect, useState } from 'react';
-import { ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
+import { useHotTags } from '@/hooks/useTag';
+import Link from 'next/link';
 
 export default function HotTags() {
-  const router = useRouter();
-  const { getHotTags } = useClientContext();
-  const [hotTags, setHotTags] = useState<ITaggedPost[] | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchTags() {
-      try {
-        const result = await getHotTags();
-
-        if (result) {
-          setHotTags(result);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchTags();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data, isLoading, isError } = useHotTags(0, 8);
+  const hotTags = data;
+  if (isError) console.error(isError);
 
   {
     /** const handleTagSearch = (tag: string) => {
@@ -54,28 +32,26 @@ export default function HotTags() {
         {/**<DropDown.TagsTimeframe type="text" />*/}
       </SideCard.Header>
       <SideCard.Content>
-        {loading ? (
+        {isLoading ? (
           <Skeletons.Simple />
         ) : hotTags && hotTags.length > 0 ? (
           <>
-            <div className="grid gap-3">
+            <div className="grid gap-2">
               {hotTags.slice(0, 8).map((tag, index) => (
-                <SideCard.Rank
-                  key={index}
-                  onClick={() => router.push(`/search?tags=${tag.tag}`)}
-                  rank={index + 1}
-                  tag={Utils.minifyText(tag.tag, 15)}
-                  color={tag.tag && Utils.generateRandomColor(tag.tag)}
-                  counter={`${tag.count}`}
-                  boxShadow={false}
-                />
+                <Link key={index} href={`/search?tags=${tag?.label}`}>
+                  <SideCard.Rank
+                    rank={index + 1}
+                    tag={Utils.minifyText(tag?.label, 21)}
+                    color={tag?.label && Utils.generateRandomColor(tag?.label)}
+                    counter={`${tag?.post_count}`}
+                    boxShadow={false}
+                  />
+                </Link>
               ))}
             </div>
-            <SideCard.Action
-              onClick={() => router.push('/hot-tags')}
-              className="mt-4"
-              text="Explore All"
-            />
+            <Link href="/hot">
+              <SideCard.Action textCSS='text-[13px]' className="mt-3" text="Explore All" />
+            </Link>
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">

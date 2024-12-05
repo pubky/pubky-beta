@@ -1,28 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CreateContent from '../CreateContent';
-import { Utils } from '@social/utils-shared';
-import { useAlertContext, useClientContext } from '@/contexts';
-import { INewPost } from '@/types';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
+import { PostView } from '@/types/Post';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
+  loadingFeed?: boolean;
 }
 
 export default function CreateQuickPost({
   largeView = false,
+  loadingFeed,
 }: CreateQuickPostProps) {
-  const { pubky, getProfile, createPost, setPosts, createTag } =
-    useClientContext();
+  const { pubky, createPost, createTag, setTimeline, timeline } =
+    usePubkyClientContext();
   const { setContent, setShow } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sendingPost, setSendingPost] = useState(false);
   const [textArea, setTextArea] = useState(false);
+  const [quote, setQuote] = useState<string>();
   const [isValidContent, setIsValidContent] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
+  const [placeholder, setPlaceholder] = useState('');
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+  useEffect(() => {
+    setPlaceholder(Utils.promptPlaceholder('post'));
+  }, []);
 
   const handleSubmit = async (content: string) => {
     if (sendingPost) {
@@ -34,37 +44,51 @@ export default function CreateQuickPost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, selectedFiles);
+      const newPost = await createPost(content, 'short', selectedFiles, quote);
+      const match = newPost && newPost?.uri.match(regex);
 
-      if (newPost) {
+      if (newPost && match) {
+        const postId = match[2];
         for (const tag of updatedTags) {
-          await createTag(newPost.uri, tag);
+          await createTag(pubky ?? '', postId, tag);
         }
 
-        const userProfile = await getProfile();
+        const postWithFullDetails: PostView = {
+          details: {
+            content: newPost.details.content || '',
+            id: postId,
+            indexed_at: Date.now(),
+            author: pubky ?? '',
+            kind: newPost.details.kind || 'short',
+            uri: newPost.uri || '',
+          },
+          counts: {
+            tags: 0,
+            replies: 0,
+            reposts: 0,
+          },
+          tags: updatedTags.map((tag) => ({
+            name: tag,
+            label: tag,
+            taggers: [],
+            taggers_count: 0,
+          })),
+          relationships: {
+            replied: undefined,
+            reposted: undefined,
+            mentioned: [],
+          },
+          bookmark: undefined,
+        };
 
-        if (userProfile) {
-          newPost.tags = updatedTags.map((tag) => ({
-            tag,
-            count: 1,
-            from: [
-              {
-                id: `${pubky}`,
-                createdAt: Date.now(),
-                indexedAt: Date.now(),
-                author: {
-                  id: `${pubky}`,
-                  uri: `pubky:${pubky}`,
-                  profile: userProfile,
-                },
-              },
-            ],
-          }));
-        }
-        setPosts((prev: INewPost) => ({
-          ...{ [newPost.id]: newPost },
-          ...prev,
-        }));
+        //if (!timeline) return;
+
+        const timelineCopy = {
+          ...timeline,
+          [postId]: postWithFullDetails,
+        };
+
+        setTimeline(timelineCopy);
         setContent('Post created!');
         setShow(true);
       } else {
@@ -83,41 +107,53 @@ export default function CreateQuickPost({
   };
 
   return (
-    <CreateContent
-      largeView={largeView}
-      handleSubmit={handleSubmit}
-      content={contentPost}
-      setContent={setContentPost}
-      setTextArea={setTextArea}
-      isValidContent={isValidContent}
-      selectedFiles={selectedFiles}
-      setSelectedFiles={setSelectedFiles}
-      arrayTags={arrayTags}
-      setArrayTags={setArrayTags}
-      setIsValidContent={setIsValidContent}
-      button={
-        <Button.Medium
-          className="w-auto"
-          variant="line"
-          icon={
-            <Icon.PaperPlaneRight
-              color={
-                !isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'
-              }
-            />
-          }
-          disabled={!isValidContent && selectedFiles.length === 0}
+    <>
+      {!loadingFeed && (
+        <CreateContent
+          id="quick-post-create-content"
+          largeView={largeView}
+          setQuote={setQuote}
+          handleSubmit={handleSubmit}
+          content={contentPost}
+          placeHolder={placeholder}
+          setContent={setContentPost}
+          setTextArea={setTextArea}
+          isValidContent={isValidContent}
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          arrayTags={arrayTags}
+          setArrayTags={setArrayTags}
+          setIsValidContent={setIsValidContent}
           loading={sendingPost}
-          onClick={
-            (isValidContent || selectedFiles.length > 0) && !sendingPost
-              ? () => handleSubmit(contentPost)
-              : undefined
+          article
+          button={
+            <Button.Medium
+              id="post-btn"
+              className="w-auto"
+              variant="line"
+              icon={
+                <Icon.PaperPlaneRight
+                  color={
+                    !isValidContent && selectedFiles.length === 0
+                      ? 'gray'
+                      : 'white'
+                  }
+                />
+              }
+              disabled={!isValidContent && selectedFiles.length === 0}
+              loading={sendingPost}
+              onClick={
+                (isValidContent || selectedFiles.length > 0) && !sendingPost
+                  ? () => handleSubmit(contentPost)
+                  : undefined
+              }
+            >
+              Post
+            </Button.Medium>
           }
-        >
-          Post
-        </Button.Medium>
-      }
-      textArea={textArea}
-    />
+          textArea={textArea}
+        />
+      )}
+    </>
   );
 }

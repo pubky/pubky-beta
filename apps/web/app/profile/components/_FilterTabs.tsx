@@ -1,30 +1,42 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { Icon, Typography } from '@social/ui-shared';
 import { Profile } from './';
 import { Skeleton } from '@/components';
 import ContactsProfile from './_ContactsProfile/ContactsProfile';
-import { useClientContext, useNotificationsContext } from '@/contexts';
+import {
+  useFilterContext,
+  useNotificationsContext,
+  usePubkyClientContext,
+} from '@/contexts';
 import TaggedAs from './_TaggedAs';
-import { IUserProfile } from '@/types';
+import { UserView } from '@/types/User';
 
 const tabs = [
   {
     id: 0,
     key: 'notifications',
-    icon: <Icon.Bell size="24" color="white" />,
+    icon: <Icon.BellSimple size="24" color="white" />,
     label: 'Notifications',
   },
+  //{
+  //  id: 1,
+  //  key: 'bookmarks',
+  //  icon: <Icon.BookmarkSimple size="24" color="white" />,
+  //  label: 'Bookmarks',
+  //},
   {
     id: 1,
-    key: 'bookmarks',
-    icon: <Icon.BookmarkSimple size="24" color="white" />,
-    label: 'Bookmarks',
-  },
-  {
-    id: 2,
     key: 'posts',
     icon: <Icon.FileText size="24" color="white" />,
     label: 'Posts',
+  },
+  {
+    id: 2,
+    key: 'replies',
+    icon: <Icon.File size="24" color="white" />,
+    label: 'Replies',
   },
   {
     id: 3,
@@ -53,26 +65,30 @@ const tabs = [
 ];
 
 export default function FilterTabs({
+  activeTab,
+  setActiveTab,
   creatorPubky,
   countPosts,
+  countReplies,
   countContacts,
   loading,
   profile,
 }: {
+  activeTab: number;
+  setActiveTab: React.Dispatch<React.SetStateAction<number>>;
   creatorPubky?: string;
   countPosts: number | undefined;
+  countReplies: number | undefined;
   countContacts: {
     followers: number;
     following: number;
     friends: number;
   };
   loading: boolean;
-  profile: IUserProfile | undefined;
+  profile: UserView | null;
 }) {
-  const { notifications, loading: loadingNotifications } =
-    useNotificationsContext();
-  const { pubky } = useClientContext();
-  const [activeTab, setActiveTab] = useState(0);
+  const { pubky } = usePubkyClientContext();
+  const { unReadNotification } = useFilterContext();
   const [loadingTab, setLoadingTab] = useState(true);
 
   useEffect(() => {
@@ -84,13 +100,13 @@ export default function FilterTabs({
       setActiveTab(foundTab.id);
     } else {
       const defaultTab =
-        !creatorPubky || creatorPubky === pubky ? tabs[0] : tabs[2];
+        !creatorPubky || creatorPubky === pubky ? tabs[0] : tabs[1];
       setActiveTab(defaultTab.id);
       params.set('tab', defaultTab.key);
       window.history.replaceState(
         {},
         '',
-        `${window.location.pathname}?${params.toString()}`
+        `${window.location.pathname}?${params.toString()}`,
       );
     }
     setLoadingTab(false);
@@ -104,7 +120,7 @@ export default function FilterTabs({
       window.history.pushState(
         {},
         '',
-        `${window.location.pathname}?${params.toString()}`
+        `${window.location.pathname}?${params.toString()}`,
       );
     }
   };
@@ -112,9 +128,13 @@ export default function FilterTabs({
   const getTabNumber = (key: string) => {
     switch (key) {
       case 'notifications':
-        return notifications.length;
+        return unReadNotification;
+      case 'bookmarks':
+        return profile?.counts?.bookmarks;
       case 'posts':
         return countPosts || 0;
+      case 'replies':
+        return countReplies || 0;
       case 'followers':
         return countContacts.followers || 0;
       case 'following':
@@ -122,15 +142,15 @@ export default function FilterTabs({
       case 'friends':
         return countContacts.friends || 0;
       case 'tagged':
-        return profile?.taggedAs.length || 0;
+        return profile?.tags.length || 0;
       default:
         return null;
     }
   };
 
   return (
-    <div className="flex gap-4">
-      <div className="w-[300px] self-start sticky top-[120px]">
+    <div className="flex gap-2">
+      <div className="w-[280px] mt-1 self-start sticky top-[120px] hidden lg:block">
         {tabs.map((tab) => {
           if (
             creatorPubky &&
@@ -145,47 +165,54 @@ export default function FilterTabs({
               id={`profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() => handleTabClick(tab.id, tab.key)}
-              className={`w-full h-12 px-3 items-center gap-2 flex justify-between cursor-pointer ${
-                isActive && !loading
-                  ? 'opacity-100'
-                  : 'opacity-50 hover:opacity-100'
+              className={`w-full py-2 px-3 items-center flex justify-between cursor-pointer ${
+                !isActive &&
+                'border-b border-transparent hover:border-white/30 hover:bg-gradient-to-t from-white/10 to-transparent'
               }`}
             >
-              <div className="flex gap-2 items-center">
+              <div
+                id="label"
+                className={`flex gap-2 items-center ${
+                  isActive && !loading
+                    ? 'opacity-100'
+                    : 'opacity-50 hover:opacity-80'
+                }`}
+              >
                 {tab.icon}
-                <Typography.Caption className="tracking-normal" variant="bold">
+                <Typography.Body
+                  className="tracking-normal"
+                  variant="small-bold"
+                >
                   {tab.label}
-                </Typography.Caption>
+                </Typography.Body>
               </div>
               {!loading && tab.key && (
-                <Typography.Caption className="tracking-normal" variant="bold">
-                  <span id='counter' className="ml-2 text-white text-opacity-30">
+                <Typography.Body
+                  className="tracking-normal"
+                  variant="small-bold"
+                >
+                  <span id="counter" className="text-[13px] ml-2 text-white/30">
                     {getTabNumber(tab.key)}
                   </span>
-                </Typography.Caption>
+                </Typography.Body>
               )}
             </div>
           );
         })}
       </div>
-      <div id='profile-tab-content' className="w-full">
+      <div id="profile-tab-content" className="w-full">
         {loading ? (
           <Skeleton.Simple />
         ) : (
           <>
             {(!creatorPubky || creatorPubky === pubky) && (
               <>
-                {activeTab === 0 ? (
-                  <Profile.NotificationsProfile
-                    notifications={notifications}
-                    loading={loadingNotifications}
-                  />
-                ) : (
-                  activeTab === 1 && <Profile.Bookmarks />
-                )}
+                {activeTab === 0 && <Profile.NotificationsProfile />}
+                {/**activeTab === 1 && <Profile.Bookmarks />*/}
               </>
             )}
-            {activeTab === 2 && <Profile.Posts creatorPubky={creatorPubky} />}
+            {activeTab === 1 && <Profile.Posts creatorPubky={creatorPubky} />}
+            {activeTab === 2 && <Profile.Replies creatorPubky={creatorPubky} />}
             {activeTab === 3 && (
               <ContactsProfile
                 creatorPubky={creatorPubky}
@@ -202,11 +229,7 @@ export default function FilterTabs({
               <ContactsProfile creatorPubky={creatorPubky} contacts="friends" />
             )}
             {activeTab === 6 && (
-              <TaggedAs
-                profile={profile}
-                loading={loading}
-                creatorPubky={creatorPubky}
-              />
+              <TaggedAs loading={loading} creatorPubky={creatorPubky} />
             )}
           </>
         )}

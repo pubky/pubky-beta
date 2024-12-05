@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
 import Modal from '../Modal';
+import { getUserMuted, getUserProfile } from '@/services/userService';
+import { defaultPreferences } from '@/contexts/_filters';
 
 export default function ProtectedRoutes({
   children,
@@ -14,93 +15,161 @@ export default function ProtectedRoutes({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, session, setSearchTags, logout } = useClientContext();
+  const {
+    pubky,
+    storeProfile,
+    profile,
+    setMutedUsers,
+    getTimestampNotification,
+    setTimestamp,
+    loadSettings,
+    setNotificationPreferences,
+    newUser,
+    setNewUser,
+  } = usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
-  const protectedRoutes = [
-    '/followers',
-    '/home',
-    '/hot-tags',
-    '/notifications',
-    '/post',
-    '/profile',
-    '/search',
-    '/settings',
-  ];
+  const [loading, setLoading] = useState(true);
 
-  const redirectLoggedUser = ['/onboarding', '/login', '/sign-up', '/sign-in'];
-
-  const notRedirectUser = [
-    '/onboarding/welcome',
-    '/onboarding/permissions',
-    '/onboarding/confirm',
+  const publicRoutes = [
+    '/onboarding',
+    '/onboarding/intro',
+    '/onboarding/sign-in',
     '/onboarding/sign-up',
+    '/logout',
+    '/sign-in',
   ];
 
-  useEffect(() => {
-    const isProtected = protectedRoutes.includes(pathname);
+  const checkTimestamp = async () => {
+    if (pubky === undefined) return;
 
-    const checkLogin = async () => {
-      const loggedIn = await isLoggedIn();
+    try {
+      const result = await getTimestampNotification();
+      setTimestamp(Number(result));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-      // exceptions for the onboarding process
-      if (notRedirectUser.includes(pathname)) {
+  const checkSettings = async () => {
+    if (pubky === undefined) return;
+
+    try {
+      const result = await loadSettings();
+      if (result) {
+        setNotificationPreferences(result.notifications);
+      } else {
+        setNotificationPreferences(defaultPreferences);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkMutedUsers = async () => {
+    if (pubky === undefined) return;
+    if (!profile) return;
+
+    try {
+      const mutedUsers = await getUserMuted(pubky);
+      setMutedUsers(mutedUsers ?? []);
+    } catch (error) {
+      console.log(error);
+      setMutedUsers([]);
+    }
+  };
+
+  const checkProfileUser = async () => {
+    if (pubky === undefined) return;
+
+    let emptyProfile = profile ? false : true;
+
+    if (emptyProfile) {
+      try {
+        const user = await getUserProfile(pubky, pubky);
+        storeProfile(user.details);
+        emptyProfile = false;
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const checkAccess = async () => {
+    if (pubky) {
+      const hasProfile = await checkProfileUser();
+
+      if (!hasProfile) {
+        if (pathname === '/sign-in') {
+          router.push('/onboarding/register');
+          return;
+        }
+        if (
+          publicRoutes.includes(pathname) ||
+          pathname === '/onboarding/register' ||
+          pathname === '/logout'
+        ) {
+          setLoading(false);
+          return;
+        } else {
+          router.push('/onboarding/register');
+          return;
+        }
+      }
+
+      if (pathname === '/logout' || newUser) {
+        setLoading(false);
         return;
       }
 
-      if (!loggedIn && isProtected) {
-        router.push('/onboarding');
-        return;
-      }
-      if (loggedIn && redirectLoggedUser.includes(pathname)) {
+      // check if the user is trying to access a public route
+      if (
+        pathname === '/onboarding/register' ||
+        publicRoutes.includes(pathname)
+      ) {
         router.push('/home');
         return;
       }
-    };
 
-    checkLogin();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, router, pathname]);
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const loggedIn: any = await session();
-      const isProtected = protectedRoutes.includes(pathname);
-
-      if (
-        isProtected &&
-        loggedIn &&
-        typeof loggedIn === 'object' &&
-        'users' in loggedIn
-      ) {
-        if (Object.keys(loggedIn.users).length > 0) {
-          setShowModal(false);
-        } else {
-          await logout();
-          router.push('/sign-in');
-          //setShowModal(true);
-        }
-      } else if (loggedIn === false) {
-        setShowServerDown(true);
-      }
-    };
-
-    checkLoginStatus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, pathname]);
-
-  useEffect(() => {
-    if (pathname !== '/search') {
-      setSearchTags([]);
+      setLoading(false);
+      setNewUser(false);
+      return;
     }
-  }, [pathname, setSearchTags]);
+
+    // check if the not logged user is trying to access a public route
+    if (!publicRoutes.includes(pathname)) {
+      router.push('/onboarding');
+      return;
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    checkMutedUsers();
+    checkTimestamp();
+    checkSettings();
+  }, [pubky]);
+
+  useEffect(() => {
+    checkAccess();
+  }, [pubky, pathname]);
 
   return (
     <>
       <div className="z-index-999">
         <NextTopLoader color="white" />
       </div>
-      {children}
+      {loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white" />
+        </div>
+      ) : (
+        children
+      )}
       {showModal && (
         <Modal.SessionExpired
           setShowModal={setShowModal}

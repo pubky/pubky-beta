@@ -6,6 +6,7 @@ interface MediumButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant?: 'default' | 'line' | 'subtle';
   icon?: React.ReactNode;
+  textCSS?: string;
   disabled?: boolean;
   loading?: boolean;
   className?: string;
@@ -16,6 +17,7 @@ export const Medium = ({
   children,
   variant = 'default',
   icon,
+  textCSS,
   disabled = false,
   loading = false,
   ...rest
@@ -25,7 +27,7 @@ export const Medium = ({
   let stateButton = 'hover:bg-opacity-20';
 
   if (disabled) {
-    color = 'text-gray-500';
+    color = 'text-opacity-30';
     colorBorder = 'border-gray-500';
     stateButton = 'bg-opacity-10 cursor-auto';
   }
@@ -56,9 +58,18 @@ export const Medium = ({
       ref={rest.ref}
       className={twMerge(cssButton, cssColorButton, rest.className)}
     >
-      {loading ? <Icon.LoadingSpin size="16" /> : icon && <div>{icon}</div>}
+      {loading ? (
+        <div>
+          <Icon.LoadingSpin size="16" />
+        </div>
+      ) : (
+        icon && <div>{icon}</div>
+      )}
       {children && (
-        <Typography.Body variant="small-bold" className={color}>
+        <Typography.Body
+          variant="small-bold"
+          className={twMerge(color, textCSS)}
+        >
           {children}
         </Typography.Body>
       )}

@@ -1,20 +1,43 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useClientContext } from '@/contexts';
 import { Post, Skeleton } from '@/components';
-import { IPost, IReply } from '@/types';
 import { Typography } from '@social/ui-shared';
+import { PostView } from '@/types/Post';
+import { getPost } from '@/services/postService';
+import { usePubkyClientContext } from '@/contexts';
 
 interface ParentPostState {
   [uri: string]: {
-    post: IPost | null;
+    post: PostView | null;
     loading: boolean;
   };
 }
 
-export default function RootParent({ replies }: { replies: IReply }) {
-  const { getPost } = useClientContext();
+export default function RootParent({
+  parentURI,
+  postRef,
+}: {
+  parentURI: string;
+  postRef: React.RefObject<HTMLDivElement>;
+}) {
+  const { pubky } = usePubkyClientContext();
+  const [isMobile, setIsMobile] = useState(false);
   const [parentURIs, setParentURIs] = useState<string[]>([]);
   const [parentPosts, setParentPosts] = useState<ParentPostState>({});
+  const regex =
+    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1280);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const fetchParentURIs = async (
@@ -24,9 +47,17 @@ export default function RootParent({ replies }: { replies: IReply }) {
       if (!parentURI) return collectedURIs;
       collectedURIs.push(parentURI);
       try {
-        const parentPost = await getPost(parentURI);
-        if (parentPost && parentPost.post && parentPost.post.parent) {
-          return await fetchParentURIs(parentPost.post.parent, collectedURIs);
+        const match = parentURI.match(regex);
+        if (match) {
+          const authorId = match[1];
+          const postId = match[2];
+          const parentPost = await getPost(authorId, postId, pubky ?? '');
+          if (parentPost?.relationships?.replied) {
+            return await fetchParentURIs(
+              parentPost?.relationships?.replied,
+              collectedURIs
+            );
+          }
         }
       } catch (error) {
         console.error('Error fetching parent post:', error);
@@ -36,11 +67,8 @@ export default function RootParent({ replies }: { replies: IReply }) {
 
     const fetchParentPosts = async () => {
       try {
-        if (replies?.post?.post?.parent) {
-          const parentURIList = await fetchParentURIs(
-            replies.post.post.parent,
-            []
-          );
+        if (parentURI) {
+          const parentURIList = await fetchParentURIs(parentURI, []);
           setParentURIs(parentURIList);
         }
       } catch (error) {
@@ -48,11 +76,11 @@ export default function RootParent({ replies }: { replies: IReply }) {
       }
     };
 
-    if (replies) {
+    if (parentURI) {
       fetchParentPosts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [replies]);
+  }, [parentURI]);
 
   useEffect(() => {
     const fetchPost = async (parentURI: string) => {
@@ -61,11 +89,16 @@ export default function RootParent({ replies }: { replies: IReply }) {
           ...prevState,
           [parentURI]: { post: null, loading: true },
         }));
-        const post = await getPost(parentURI);
-        setParentPosts((prevState) => ({
-          ...prevState,
-          [parentURI]: { post: post || null, loading: false },
-        }));
+        const match = parentURI.match(regex);
+        if (match) {
+          const authorId = match[1];
+          const postId = match[2];
+          const post = await getPost(authorId, postId, pubky ?? '');
+          setParentPosts((prevState) => ({
+            ...prevState,
+            [parentURI]: { post: post || null, loading: false },
+          }));
+        }
       } catch (error) {
         console.error('Error fetching parent post:', error);
         setParentPosts((prevState) => ({
@@ -87,6 +120,12 @@ export default function RootParent({ replies }: { replies: IReply }) {
     (uri) => parentPosts[uri]?.loading === false
   );
 
+  useEffect(() => {
+    if (allParentPostsLoaded && postRef?.current) {
+      postRef.current.scrollIntoView();
+    }
+  }, [allParentPostsLoaded]);
+
   if (!allParentPostsLoaded) {
     return <Skeleton.Simple />;
   }
@@ -94,24 +133,30 @@ export default function RootParent({ replies }: { replies: IReply }) {
   return parentURIs.map((parentURI, index) => {
     const reversedIndex = parentURIs.length - 1 - index;
     const post = parentPosts[parentURIs[reversedIndex]];
+    const isLine = index > 0;
 
-    return post && post.post ? (
-      <Post
-        key={parentURI}
-        post={post.post}
-        size="full"
-        className={index === 0 ? 'rounded-bl-none' : ''}
-        line={!(index === 0)}
-      />
-    ) : (
-      <div
-        key={parentURI}
-        className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]"
-      >
-        <Typography.Body variant="small" className="text-opacity-50">
-          This post was not found or has been deleted by its author.
-        </Typography.Body>
-        <div className="absolute -ml-1 mt-1.5 border-l-2 border-neutral-800 h-[50px]" />
+    if (!post?.post)
+      return (
+        <div
+          key={parentURI}
+          className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]"
+        >
+          <Typography.Body variant="small" className="text-opacity-50">
+            This post has been deleted by its author.
+          </Typography.Body>
+          <div className="absolute -ml-[1px] mt-1.5 border-l-[1px] border-neutral-800 h-[50px]" />
+        </div>
+      );
+
+    return (
+      <div key={parentURI}>
+        <Post
+          homeView
+          post={post.post}
+          size="full"
+          largeView={!isMobile}
+          line={isLine}
+        />
       </div>
     );
   });

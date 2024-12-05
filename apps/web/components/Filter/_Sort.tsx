@@ -1,9 +1,15 @@
+'use client';
+
 import { Icon, SideCard } from '@social/ui-shared';
 import { useFilterContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { TSort } from '@/types';
 
-export default function Sort() {
+interface SortProps {
+  disabled?: boolean;
+}
+
+export default function Sort({ disabled = false }: SortProps) {
   const { sort, setSort } = useFilterContext();
   const [loading, setLoading] = useState(true);
 
@@ -22,8 +28,8 @@ export default function Sort() {
   };
 
   return (
-    <div className="mb-6">
-      <SideCard.Header title="Sort" />
+    <div className="mb-8">
+      <SideCard.Header title="Sort" className="mb-2" />
       {Object.entries(icons).map(([key, icon]) => (
         <SideCard.Item
           key={key}
@@ -31,7 +37,8 @@ export default function Sort() {
           value={key}
           selected={loading ? false : sort === key}
           icon={icon}
-          onClick={() => handleItemClick(key as TSort)}
+          onClick={!disabled ? () => handleItemClick(key as TSort) : undefined}
+          disabled={disabled}
         />
       ))}
     </div>

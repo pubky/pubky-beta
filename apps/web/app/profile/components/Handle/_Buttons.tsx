@@ -1,8 +1,10 @@
 import { Button, Icon } from '@social/ui-shared';
-import { useClientContext, useToastContext } from '@/contexts';
+import { usePubkyClientContext, useToastContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
+import { UserView } from '@/types/User';
+import Link from 'next/link';
 
 interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky: string | null | undefined;
@@ -16,6 +18,7 @@ interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   setShowModalLogout: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
+  profile: UserView | null;
 }
 
 export default function Buttons({
@@ -30,8 +33,9 @@ export default function Buttons({
   setShowModalLogout,
   setLoadingFollowed,
   setFollowed,
+  profile,
 }: ButtonsProps) {
-  const { pubky, follow, unfollow } = useClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
   const { setContent, setShow } = useToastContext();
   const router = useRouter();
 
@@ -64,7 +68,7 @@ export default function Buttons({
   const copyProfileUrlToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${window.location.origin}/profile/${pubkey}`
+        `${window.location.origin}/profile/${pubkey}`,
       );
     } catch (error) {
       console.log('Failed to copy: ', error);
@@ -141,19 +145,20 @@ export default function Buttons({
           >
             Sign out
           </Button.Medium>
-          <Button.Medium
-            id="profile-edit-btn"
-            className="px-3 w-auto h-8"
-            onClick={() => router.push('/settings/edit')}
-            icon={<Icon.Pencil size="16" />}
-          >
-            Edit
-          </Button.Medium>
+          <Link href="/settings/edit">
+            <Button.Medium
+              id="profile-edit-btn"
+              className="px-3 w-auto h-8"
+              icon={<Icon.Pencil size="16" />}
+            >
+              Edit
+            </Button.Medium>
+          </Link>
         </>
       )}
       <Button.Medium
         id="profile-copy-pubkey-btn"
-        className="px-3 w-auto h-8"
+        className="px-3 w-auto h-8 uppercase"
         onClick={() => {
           setContent(`pk:${pubkey}`, 'pubky');
           setShow(true);
@@ -171,7 +176,7 @@ export default function Buttons({
           setShow(true);
           copyProfileUrlToClipboard();
         }}
-        icon={<Icon.Link size="16" />}
+        icon={<Icon.Link size="14" />}
       >
         Link
       </Button.Medium>
@@ -180,14 +185,18 @@ export default function Buttons({
           <Tooltip.ProfileMenu
             setShowProfileMenu={setShowProfileMenu}
             creatorPubky={creatorPubky ?? pubkey}
+            profile={profile}
           />
         )}
-        <Button.Action
-          size="small"
-          variant="custom"
-          icon={<Icon.DotsThreeOutline size="16" />}
-          onClick={() => setShowProfileMenu(true)}
-        />
+        {creatorPubky && (
+          <Button.Action
+            id="profile-menu-btn"
+            size="small"
+            variant="custom"
+            icon={<Icon.DotsThreeOutline size="16" />}
+            onClick={() => setShowProfileMenu(true)}
+          />
+        )}
       </div>
     </>
   );

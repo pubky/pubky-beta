@@ -1,5 +1,7 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { useFilterContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Icon, Input, Typography } from '@social/ui-shared';
 
 const defaultPreferences = {
@@ -12,29 +14,36 @@ const defaultPreferences = {
   reply: true,
   repost: true,
   post_deleted: true,
+  post_edited: true,
 };
 
 type NotificationType = keyof typeof defaultPreferences;
 
 export default function Notifications() {
-  const { notificationPreferences, setNotificationPreferences } =
-    useFilterContext();
+  const { saveSettings, loadSettings } = usePubkyClientContext();
   const [preferences, setPreferences] = useState(defaultPreferences);
 
-  useEffect(() => {
-    if (notificationPreferences) {
-      setPreferences(notificationPreferences);
+  const handleLoadSettings = async () => {
+    const result = await loadSettings();
+    if (result) {
+      setPreferences(result.notifications);
+    } else {
+      saveSettings(preferences);
     }
-  }, [notificationPreferences]);
+  };
+
+  useEffect(() => {
+    handleLoadSettings();
+  }, []);
 
   const handleToggle = (type: NotificationType) => {
     const updatedPreferences = { ...preferences, [type]: !preferences[type] };
     setPreferences(updatedPreferences);
-    setNotificationPreferences(updatedPreferences);
+    saveSettings(updatedPreferences);
   };
 
   return (
-    <div className="p-12 bg-white bg-opacity-10 rounded-2xl flex-col justify-start items-start gap-12 inline-flex">
+    <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.BellSimple size="24" />
@@ -43,7 +52,7 @@ export default function Notifications() {
         <Typography.Body variant="medium" className="text-opacity-80">
           Please select which notifications you want to receive on Pubky.
         </Typography.Body>
-        <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl shadow backdrop-blur-[50px] flex-col justify-start items-start gap-6 inline-flex">
+        <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl flex-col justify-start items-start gap-6 inline-flex">
           {Object.keys(preferences).map((type) => (
             <div
               key={type}
@@ -84,6 +93,8 @@ const getNotificationLabel = (type: NotificationType) => {
       return 'New repost to your post';
     case 'post_deleted':
       return 'Someone deleted a post you replied/reposted';
+    case 'post_edited':
+      return 'Someone edited a post you replied/reposted';
     default:
       return '';
   }

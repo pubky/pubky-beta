@@ -30,7 +30,9 @@ export const Transparent = ({
       {loading ? <Icon.LoadingSpin size="24" /> : icon}
       {children && (
         <Typography.Body
-          className={disabled ? 'text-white text-opacity-20' : ''}
+          className={`text-[13px] ${
+            disabled ? 'text-white text-opacity-20' : ''
+          }`}
           variant="small-bold"
         >
           {children}

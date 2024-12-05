@@ -1,35 +1,41 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { ITaggedProfile } from '@/types';
 import { Modal } from '@/components/Modal';
 import UserInfo from './_UserInfo';
 import BioSection from './_BioSection';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
+import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
+import { UserTags } from '@/types/User';
 
 export default function Sidebar({
   creatorPubky,
 }: {
   creatorPubky?: string | null;
 }) {
-  const { pubky, getProfile, listFollowers, getUser, createTag, deleteTag } =
-    useClientContext();
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('No bio.');
-  const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
-  const [image, setImage] = useState('/images/Userpic.png');
-  const [profileTags, setProfileTags] = useState<ITaggedProfile[]>([]);
+  const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
+  const usePubky = creatorPubky ?? pubky;
+  const { data, isLoading, isError } = useUserProfile(
+    usePubky ?? '',
+    pubky ?? ''
+  );
+  //if (isError) console.error(isError);
+  const profile = data;
+  const name = profile?.details?.name ?? '';
+  const bio = profile?.details.bio || 'No bio.';
+  const links = profile?.details?.links ?? [];
+  const image = profile?.details?.image ?? '/images/webp/Userpic.webp';
+  const profileTags = profile?.tags ?? [];
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   //const [showTooltipProfile, setShowTooltipProfile] = useState('');
-  const [loadingProfileTags, setLoadingProfileTags] = useState(true);
-  const [pubkyUser, setPubkyUser] = useState('');
-  const [loading, setLoading] = useState(true);
+  //const [loadingProfileTags, setLoadingProfileTags] = useState(true);
+  //const [pubkyUser, setPubkyUser] = useState('');
+  //const [loading, setLoading] = useState(true);
   const [followed, setFollowed] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedProfile | null>(null);
-  const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
+  const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
@@ -40,25 +46,9 @@ export default function Sidebar({
   useEffect(() => {
     async function fetchData() {
       try {
-        let pubkey = creatorPubky;
-
-        if (!pubkey) {
-          pubkey = pubky;
-        }
-
-        if (!pubkey) return;
-
-        const followersList = await listFollowers(pubkey);
-
-        if (followersList) {
-          setInitLoadingFollowed(false);
-
-          followersList.followers.forEach((user) => {
-            const uri = user.uri.replace('pubky:', '');
-            if (uri === pubky) {
-              setFollowed(true);
-            }
-          });
+        if (profile) {
+          //setInitLoadingFollowed(false);
+          if (profile?.relationship?.following) setFollowed(true);
         }
       } catch (error) {
         console.log(error);
@@ -66,58 +56,14 @@ export default function Sidebar({
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [followed, creatorPubky]);
-
-  async function fetchProfile() {
-    try {
-      let profile = null;
-      if (creatorPubky) {
-        const userProfile = await getUser(creatorPubky);
-
-        if (userProfile) {
-          profile = userProfile?.profile;
-          setPubkyUser(creatorPubky);
-          setProfileTags(userProfile?.taggedAs);
-        }
-      } else {
-        if (!pubky) return;
-        const userProfile = await getUser(pubky);
-        setPubkyUser(pubky || '');
-
-        if (userProfile) {
-          profile = userProfile.profile;
-          setProfileTags(userProfile?.taggedAs);
-        }
-      }
-
-      if (profile) {
-        setName(profile?.name || '');
-        setBio(profile?.bio || 'No bio.');
-        setImage(profile?.image || '/images/Userpic.png');
-        setLinks(
-          profile?.links.map((link) => ({ title: link.title, url: link.url }))
-        );
-
-        setLoading(false);
-      }
-      setLoadingProfileTags(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky, getProfile, getUser, creatorPubky]);
+  }, [profile, creatorPubky]);
 
   const handleAddProfileTag = async (tag: string) => {
     const pubKeyToUse =
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await createTag(pubKeyToUse, tag);
-      fetchProfile();
+      await createTagProfile(pubKeyToUse, tag);
     }
   };
 
@@ -126,8 +72,7 @@ export default function Sidebar({
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await deleteTag(pubKeyToUse, tag);
-      fetchProfile();
+      await deleteTagProfile(pubKeyToUse, tag);
     }
   };
 
@@ -149,27 +94,28 @@ export default function Sidebar({
 
   return (
     <>
-      <div className="col-span-1 hidden flex-col justify-start items-start gap-8 xl:inline-flex">
+      <div className="w-[180px] hidden flex-col justify-start items-start gap-8 xl:inline-flex">
         <UserInfo
           scrolled={scrolled}
           uriImage={image}
           name={name}
+          profile={profile}
           creatorPubky={creatorPubky}
-          pubkyUser={pubkyUser}
+          pubkyUser={usePubky ?? ''}
           showProfileMenu={showProfileMenu}
           setShowProfileMenu={setShowProfileMenu}
           bio={bio}
-          initLoadingFollowed={initLoadingFollowed}
+          initLoadingFollowed={isLoading}
           followed={followed}
           setFollowed={setFollowed}
           loadingFollowed={loadingFollowed}
           setLoadingFollowed={setLoadingFollowed}
         />
         <div className="w-full flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
-          <BioSection id="profile-bio-content" loading={loading} bio={bio} />
+          <BioSection id="profile-bio-content" loading={isLoading} bio={bio} />
           <TaggedSection
             profileTags={profileTags}
-            loadingProfileTags={loadingProfileTags}
+            loadingProfileTags={isLoading}
             handleAddProfileTag={handleAddProfileTag}
             handleDeleteProfileTag={handleDeleteProfileTag}
             setShowModalProfileTag={setShowModalProfileTag}
@@ -198,7 +144,7 @@ export default function Sidebar({
         handleDeleteProfileTag={handleDeleteProfileTag}
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
-        pubkyUser={pubkyUser}
+        pubkyUser={usePubky}
         name={name}
         uriImage={image}
       />

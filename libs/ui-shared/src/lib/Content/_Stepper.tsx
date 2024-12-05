@@ -41,8 +41,8 @@ export const Stepper = ({
             <span
               className={`${
                 stepNumber === currentStep
-                  ? 'text-white'
-                  : 'text-white text-opacity-30'
+                  ? 'text-white font-semibold'
+                  : 'text-white text-opacity-30 font-semibold'
               }`}
             >
               {stepNumber}
@@ -54,7 +54,7 @@ export const Stepper = ({
     );
   };
 
-  const stepComponents = [];
+  const stepComponents: JSX.Element[] = [];
   for (let i = 1; i <= steps; i++) {
     stepComponents.push(renderStep(i));
   }
@@ -63,7 +63,7 @@ export const Stepper = ({
     <div
       {...rest}
       className={twMerge(
-        `w-full max-w-[785px] flex justify-between items-center mx-auto`,
+        `w-full flex justify-between items-center mx-auto`,
         rest.className
       )}
     >

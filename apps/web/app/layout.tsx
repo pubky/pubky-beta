@@ -2,17 +2,12 @@ import './global.css';
 
 import {
   AlertWrapper,
-  ClientWrapper,
   FilterWrapper,
   NotificationsWrapper,
   ToastWrapper,
 } from '@/contexts';
 import { ProtectedRoutes } from '@/components';
-
-export const metadata = {
-  title: 'Pubky',
-  description: 'Pubky social',
-};
+import { PubkyClientWrapper } from '@/contexts/_pubky';
 
 export default function RootLayout({
   children,
@@ -22,8 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <FilterWrapper>
-          <ClientWrapper>
+        <PubkyClientWrapper>
+          <FilterWrapper>
             <AlertWrapper>
               <NotificationsWrapper>
                 <ToastWrapper>
@@ -31,8 +26,8 @@ export default function RootLayout({
                 </ToastWrapper>
               </NotificationsWrapper>
             </AlertWrapper>
-          </ClientWrapper>
-        </FilterWrapper>
+          </FilterWrapper>
+        </PubkyClientWrapper>
       </body>
     </html>
   );

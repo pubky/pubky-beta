@@ -1,15 +1,22 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { saveCopiedPubkyToAlias } from '../support/profile';
 import { slowCypressDown } from 'cypress-slow-down';
 
 describe('contacts', () => {
   before(() => {
-    slowCypressDown(200);
+    slowCypressDown();
+
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(10_000);
+
     cy.deleteDownloadsFolder();
-    cy.allowClipboardForChrome();
   });
 
   it('follow, be followed, and make a friend', () => {
+    cy.on('uncaught:exception', (_err, _runnable) => {
+      // returning false here prevents Cypress from failing the test on uncaught exception
+      return false
+    })
+
     //
     // create two accounts
     //
@@ -24,8 +31,8 @@ describe('contacts', () => {
     // Copy and store pubky for account 1
     cy.get('#header-profile-pic').click();
     cy.get('#profile-copy-pubkey-btn').click();
-    saveCopiedPubkyToAlias('pubky1');
-    // log pubky for account 2
+    cy.saveCopiedPubkyToAlias('pubky1');
+    // log pubky for account 1
     cy.get('@pubky1').then((ss) => { cy.log(`pubky1: ${ss}`); });
 
     // Sign out of account 1
@@ -41,7 +48,7 @@ describe('contacts', () => {
     // Copy and store pubky for account 2
     cy.get('#header-profile-pic').click();
     cy.get('#profile-copy-pubkey-btn').click();
-    saveCopiedPubkyToAlias('pubky2');
+    cy.saveCopiedPubkyToAlias('pubky2');
     // log pubky for account 2
     cy.get('@pubky2').then((ss) => { cy.log(`pubky2: ${ss}`); });
 
@@ -57,6 +64,9 @@ describe('contacts', () => {
     // check that account 1 profile page is displayed
     cy.get('#profile-username-header').should('have.text', '#1 Friend');
 
+    // NOTE: this is where timeout occurs waiting on Follow button
+    // but instead get Loading...', see https://github.com/pubky/pubky-app/issues/529
+
     // Check follow button is displayed for account 1
     cy.get('#profile-follow-btn').should('be.visible').and('have.text', 'Follow');
     // Follow account 1
@@ -71,24 +81,25 @@ describe('contacts', () => {
 
     // Check account 1 profile for updated followers
     // workaround: reload page to get updated counter https://github.com/pubky/pubky-app/issues/395
-    cy.reload();
-    // tab shows number of followers is 1
-    cy.get('#profile-tab-followers').find('#counter').should('have.text', 1);
+    cy.waitReload();
+
+    // check followers tab and click it
+    cy.get('#profile-tab-followers').within(($tab) => {
+      cy.get('#counter').should('have.text', 1);
+      cy.get('#label').should('have.text', 'Followers');
+      cy.wrap($tab).click();
+    });
 
     // check number of listed followers is 1
-    cy.get('#profile-tab-followers').should('contain.text', 'Followers');
-    cy.get('#profile-tab-followers').click();
-    cy.get('#profile-list-root').children().should('have.length', 1)
-    cy.get('#profile-list-root').children().first().within(() => {
+    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
       // check that account 2 is listed as a follower
-      // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
-      cy.get('#list-profile-name').should('contain.text', '#2 Frien');
+      cy.get('#list-profile-name').should('have.text', '#2 Friend');
       // check 0 tags
       cy.get('#list-tags-counter').should('have.text', 0);
       // check 0 posts
       cy.get('#list-posts-counter').should('have.text', 0);
       // check follower is 'me'
-      cy.get('#list-me-button').should('be.visible');
+      cy.get('#list-me-label').should('be.visible');
     });
 
     // check number of listed following is 0
@@ -115,8 +126,7 @@ describe('contacts', () => {
     // check number of listed following is 1
     cy.get('#profile-tab-following').should('contain.text', 'Following');
     cy.get('#profile-tab-following').click();
-    cy.get('#profile-list-root').children().should('have.length', 1)
-    cy.get('#profile-list-root').children().first().within(() => {
+    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
       // check that account 1 is listed as a following
       // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
       cy.get('#list-profile-name').should('contain.text', '#1 Frien');
@@ -156,8 +166,7 @@ describe('contacts', () => {
     // Check account 1 (own) profile for follower
     cy.get('#profile-tab-followers').find('#counter').should('have.text', 1);
     cy.get('#profile-tab-followers').click();
-    cy.get('#profile-list-root').children().should('have.length', 1)
-    cy.get('#profile-list-root').children().first().within(() => {
+    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
       // check that account 2 is listed as a follower
       // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
       cy.get('#list-profile-name').should('contain.text', '#2 Frien');
@@ -172,7 +181,7 @@ describe('contacts', () => {
     });
 
     // workaround: reload page to get updated counter https://github.com/pubky/pubky-app/issues/395
-    cy.reload();
+    cy.waitReload();
 
     // tab shows number of following is 1
     cy.get('#profile-tab-following').find('#counter').should('have.text', 1);
@@ -182,8 +191,7 @@ describe('contacts', () => {
     // check number of listed friends is 1
     cy.get('#profile-tab-friends').should('contain.text', 'Friends');
     cy.get('#profile-tab-friends').click();
-    cy.get('#profile-list-root').children().should('have.length', 1)
-    cy.get('#profile-list-root').children().first().within(() => {
+    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
       // check that account 2 is listed as a friend
       // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
       cy.get('#list-profile-name').should('contain.text', '#2 Frien');

@@ -8,6 +8,8 @@ import EmojiPicker, {
 } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext } from '@/contexts';
+import { useState } from 'react';
+import Modal from '@/components/Modal';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   visibleTextArea: boolean;
@@ -18,17 +20,22 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   cursorPosition: number;
   setCursorPosition: React.Dispatch<React.SetStateAction<number>>;
   setIsValidContent: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  selectedFiles: File[];
-  setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
-  arrayTags: string[];
-  setFilePreviews: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedFiles?: React.Dispatch<React.SetStateAction<File[]>>;
+  selectedFiles?: File[];
+  setArrayTags?: React.Dispatch<React.SetStateAction<string[]>>;
+  arrayTags?: string[];
+  setFilePreviews?: React.Dispatch<React.SetStateAction<string[]>>;
   showEmojis: boolean;
   setShowEmojis: React.Dispatch<React.SetStateAction<boolean>>;
   largeView: boolean;
   button: React.ReactNode;
   wrapperRefEmojis: React.RefObject<HTMLDivElement>;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
+  article?: boolean;
+  markdown?: boolean;
+  noFile?: boolean;
+  maxLength?: number;
+  setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function FooterArea({
@@ -51,41 +58,78 @@ export default function FooterArea({
   wrapperRefEmojis,
   setShowModalTag,
   button,
+  article,
+  markdown,
+  noFile,
+  maxLength = 1000,
+  setShowModalPost,
 }: FooterAreaProps) {
   const { setContent: setContentAlert, setShow } = useAlertContext();
+  const [openModalArticle, setOpenModalArticle] = useState(false);
 
   const handleEmojiClick = (emojiObject: EmojiClickData) => {
     const textBeforeCursor = content.slice(0, cursorPosition);
     const textAfterCursor = content.slice(cursorPosition);
     const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
 
-    setContent(newText);
-    setCursorPosition(cursorPosition + emojiObject.emoji.length);
-    setIsValidContent(Utils.isValidContent(newText));
+    if (newText.length <= maxLength) {
+      setContent(newText);
+      setCursorPosition(cursorPosition + emojiObject.emoji.length);
+      setIsValidContent(Utils.isValidContent(newText));
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    const maxSizeInMB = 6;
+    const maxSizeInMB = 20;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (files) {
       const validFiles = Array.from(files).filter((file) => {
+        const isImage = file.type.startsWith('image/');
+        const isVideo = file.type.startsWith('video/');
+        const isAudio = file.type.startsWith('audio/');
+        const isValidType =
+          (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+          (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+          (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
+          file.type === 'application/pdf';
+
+        if (!isValidType) {
+          setContentAlert('File type not supported.', 'warning');
+          setShow(true);
+          return false;
+        }
+
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 6 MB', 'warning');
+          setContentAlert('The maximum allowed size is 20 MB', 'warning');
           setShow(true);
           return false;
         }
         return true;
       });
 
-      const newFiles = validFiles.slice(0, 3 - selectedFiles.length);
-      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+      if (selectedFiles && selectedFiles.length + validFiles.length > 3) {
+        setContentAlert('Max 3 files only.', 'warning');
+        setShow(true);
+        return;
+      }
 
-      const newFilePreviews = newFiles.map((file) => URL.createObjectURL(file));
-      setFilePreviews((prevPreviews) =>
-        [...prevPreviews, ...newFilePreviews].slice(0, 3)
-      );
+      const newFiles =
+        selectedFiles && validFiles.slice(0, 3 - selectedFiles.length);
+      setSelectedFiles &&
+        newFiles &&
+        setSelectedFiles((prevFiles) =>
+          [...prevFiles, ...newFiles].slice(0, 3)
+        );
+
+      const newFilePreviews =
+        newFiles && newFiles.map((file) => URL.createObjectURL(file));
+      newFilePreviews &&
+        setFilePreviews &&
+        setFilePreviews((prevPreviews) =>
+          [...prevPreviews, ...newFilePreviews].slice(0, 3)
+        );
     }
   };
 
@@ -95,10 +139,10 @@ export default function FooterArea({
         textArea ||
         content ||
         showModalTag ||
-        arrayTags.length > 0) && (
-        <Post.Actions className="w-full">
-          {arrayTags.length > 0 && (
-            <div className="gap-2 flex h-full items-center">
+        (arrayTags && arrayTags.length > 0)) && (
+        <>
+          {arrayTags && arrayTags.length > 0 && (
+            <div id="tags" className="gap-2 flex h-full items-center">
               {arrayTags.map((tag, index) => (
                 <PostUtil.Tag
                   key={index}
@@ -108,6 +152,7 @@ export default function FooterArea({
                     <div
                       className="flex items-center"
                       onClick={() =>
+                        setArrayTags &&
                         setArrayTags((prev) =>
                           prev.filter((item) => item !== tag)
                         )
@@ -122,58 +167,161 @@ export default function FooterArea({
               ))}
             </div>
           )}
-          {showEmojis && (
-            <div
-              className={`absolute translate-y-[10%] ${
-                largeView
-                  ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
-                  : 'translate-x-[30%]'
-              } z-10`}
-              ref={wrapperRefEmojis}
-            >
-              <EmojiPicker
-                theme={Theme.DARK}
-                emojiStyle={EmojiStyle.TWITTER}
-                onEmojiClick={handleEmojiClick}
-              />
+          <Post.Actions className="w-full flex-col sm:flex-row">
+            {showEmojis && (
+              <div
+                id="emoji-picker"
+                className={`absolute translate-y-[10%] ${
+                  largeView
+                    ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
+                    : markdown
+                    ? 'translate-x-[0%] md:translate-x-[150%]'
+                    : 'translate-x-[30%]'
+                } z-10`}
+                ref={wrapperRefEmojis}
+              >
+                <EmojiPicker
+                  theme={Theme.DARK}
+                  emojiStyle={EmojiStyle.TWITTER}
+                  onEmojiClick={handleEmojiClick}
+                />
+              </div>
+            )}
+            <div className="grow" />
+            <div className="w-full justify-end flex gap-2">
+              <div
+                id="content-length"
+                className="text-opacity-30 text-white text-sm mt-4 mr-2"
+              >
+                {content.length} / {maxLength}
+              </div>
+              <div className="hidden sm:flex gap-2">
+                <Button.Action
+                  id="tag-btn"
+                  variant="custom"
+                  icon={
+                    <Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />
+                  }
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setShowModalTag(true);
+                  }}
+                  disabled={!arrayTags}
+                />
+                <Button.Action
+                  id="emoji-btn"
+                  variant="custom"
+                  icon={<Icon.Smiley size="32" />}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setShowEmojis(true);
+                  }}
+                />
+                {article && (
+                  <Button.Action
+                    variant="custom"
+                    icon={<Icon.Newspaper size="32" />}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setOpenModalArticle(true);
+                    }}
+                  />
+                )}
+                {!noFile && (
+                  <Button.Action
+                    id="media-upload-btn"
+                    variant="custom"
+                    icon={
+                      <Icon.ImageSquare
+                        size="32"
+                        color={!selectedFiles ? 'gray' : 'white'}
+                      />
+                    }
+                    onClick={() =>
+                      document.getElementById('fileInput')?.click()
+                    }
+                    disabled={!selectedFiles}
+                  >
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept="image/*,video/*,audio/*,.pdf"
+                      className="hidden"
+                      onChange={handleFileChange}
+                      disabled={!selectedFiles}
+                      multiple
+                    />
+                  </Button.Action>
+                )}
+              </div>
+              {button}
             </div>
-          )}
-          <div className="grow" />
-          <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
-            {content.length} / 300
-          </div>
-          <Button.Action
-            variant="custom"
-            icon={<Icon.Tag size="32" />}
-            onClick={(event) => {
-              event.stopPropagation();
-              setShowModalTag(true);
-            }}
-          />
-          <Button.Action
-            variant="custom"
-            icon={<Icon.Smiley size="32" />}
-            onClick={(event) => {
-              event.stopPropagation();
-              setShowEmojis(true);
-            }}
-          />
-          <Button.Action
-            variant="custom"
-            icon={<Icon.ImageSquare size="32" />}
-            onClick={() => document.getElementById('fileInput')?.click()}
-          >
-            <input
-              id="fileInput"
-              type="file"
-              accept="image/*,video/*"
-              className="hidden"
-              onChange={handleFileChange}
-              multiple
+            <div className="w-full flex sm:hidden gap-2 mt-4 justify-end">
+              <Button.Action
+                id="tag-btn"
+                variant="custom"
+                icon={
+                  <Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />
+                }
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowModalTag(true);
+                }}
+                disabled={!arrayTags}
+              />
+              <Button.Action
+                id="emoji-btn"
+                variant="custom"
+                icon={<Icon.Smiley size="32" />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowEmojis(true);
+                }}
+              />
+              {article && (
+                <Button.Action
+                  variant="custom"
+                  icon={<Icon.Newspaper size="32" />}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setOpenModalArticle(true);
+                  }}
+                />
+              )}
+              {!noFile && (
+                <Button.Action
+                  id="media-upload-btn"
+                  variant="custom"
+                  icon={
+                    <Icon.ImageSquare
+                      size="32"
+                      color={!selectedFiles ? 'gray' : 'white'}
+                    />
+                  }
+                  onClick={() => document.getElementById('fileInput')?.click()}
+                  disabled={!selectedFiles}
+                >
+                  <input
+                    id="fileInput"
+                    type="file"
+                    accept="image/*,video/*,audio/*,.pdf"
+                    className="hidden"
+                    onChange={handleFileChange}
+                    disabled={!selectedFiles}
+                    multiple
+                  />
+                </Button.Action>
+              )}
+            </div>
+          </Post.Actions>
+          {openModalArticle && (
+            <Modal.CreateArticle
+              showModalArticle={openModalArticle}
+              setShowModalArticle={setOpenModalArticle}
+              setShowModalPost={setShowModalPost}
             />
-          </Button.Action>
-          {button}
-        </Post.Actions>
+          )}
+        </>
       )}
     </>
   );

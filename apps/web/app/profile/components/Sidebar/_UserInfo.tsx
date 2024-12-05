@@ -2,8 +2,9 @@ import { Typography, Button, Icon, SideCard } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import Parsing from '@/components/Content/_Parsing';
-import { useClientContext } from '@/contexts';
 import { ImageByUri } from '@/components/ImageByUri';
+import { usePubkyClientContext } from '@/contexts';
+import { UserView } from '@/types/User';
 
 interface UserInfoProps {
   scrolled: boolean;
@@ -14,6 +15,7 @@ interface UserInfoProps {
   showProfileMenu: boolean;
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
   bio: string;
+  profile: UserView | null;
   initLoadingFollowed: boolean;
   followed: boolean;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,6 +30,7 @@ export default function UserInfo({
   creatorPubky,
   pubkyUser,
   setShowProfileMenu,
+  profile,
   showProfileMenu,
   bio,
   initLoadingFollowed,
@@ -36,7 +39,7 @@ export default function UserInfo({
   loadingFollowed,
   setLoadingFollowed,
 }: UserInfoProps) {
-  const { pubky, follow, unfollow } = useClientContext();
+  const { pubky, follow, unfollow } = usePubkyClientContext();
 
   const followUser = async () => {
     try {
@@ -72,35 +75,38 @@ export default function UserInfo({
     >
       <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
         <div className="items-center inline-flex justify-between">
-          <div className="justify-start items-center gap-3 inline-flex">
+          <div className="justify-start items-center gap-2 inline-flex">
             <ImageByUri
-              width={40}
-              height={40}
-              className="w-[40px] h-[40px] rounded-full"
+              width={32}
+              height={32}
+              className="w-[32px] h-[32px] rounded-full"
               uri={uriImage}
               alt="user-pic"
             />
             <div>
-              <Typography.Body variant="medium-bold" className="-mb-2">
-                {Utils.minifyText(name, 15)}
-              </Typography.Body>
-              <Typography.Label className="text-[12px] text-opacity-50">
-                {pubkyUser ? Utils.minifyPubky(pubkyUser) : 'Loading...'}
+              <div className="w-full gap-2 justify-between flex items-center -mb-2">
+                <Typography.Body variant="small-bold" className="leadning-none">
+                  {Utils.minifyText(name, 8)}
+                </Typography.Body>
+                <div className="relative">
+                  {showProfileMenu && (
+                    <Tooltip.ProfileMenu
+                      setShowProfileMenu={setShowProfileMenu}
+                      creatorPubky={pubkyUser}
+                      profile={profile}
+                    />
+                  )}
+                  <div
+                    className="cursor-pointer rounded-full"
+                    onClick={() => setShowProfileMenu(true)}
+                  >
+                    <Icon.DotsThreeOutline size="12" />
+                  </div>
+                </div>
+              </div>
+              <Typography.Label className="text-[11px] leading-none text-opacity-30">
+                {Utils.minifyPubky(pubkyUser)}
               </Typography.Label>
-            </div>
-          </div>
-          <div className="relative">
-            {showProfileMenu && (
-              <Tooltip.ProfileMenu
-                setShowProfileMenu={setShowProfileMenu}
-                creatorPubky={pubkyUser}
-              />
-            )}
-            <div
-              className="cursor-pointer rounded-full hover:bg-white hover:bg-opacity-10 p-2 -mt-[10px]"
-              onClick={() => setShowProfileMenu(true)}
-            >
-              <Icon.DotsThreeOutline size="16" />
             </div>
           </div>
         </div>

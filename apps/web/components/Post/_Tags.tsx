@@ -10,151 +10,146 @@ import {
   Tooltip as TooltipUI,
   Typography,
 } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
-import { IPost, ITaggedPost } from '@/types';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
+import { PostTag, PostView } from '@/types/Post';
+import { usePubkyClientContext } from '@/contexts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
-  post: IPost;
+  post: PostView;
   largeView?: boolean;
+  showModalTag: boolean;
+  setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Tags({ post, largeView = false }: PostProps) {
+export default function Tags({
+  post,
+  largeView = false,
+  showModalTag,
+  setShowModalTag,
+}: PostProps) {
   const [showTooltipTag, setShowTooltipTag] = useState('');
-  const { pubky, posts, setPosts, getPost, deleteTag, createTag } =
-    useClientContext();
-  const [tags, setTags] = useState<ITaggedPost[]>([]);
-  const [showModalTag, setShowModalTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<ITaggedPost | null>(null);
+  const { pubky, createTag, deleteTag } = usePubkyClientContext();
+  const [tags, setTags] = useState<PostTag[]>([]);
+  const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
+  const [loadingTags, setLoadingTags] = useState('');
 
   useEffect(() => {
     if (post?.tags) {
-      //const sortedTags = post?.tags.slice().sort((a, b) => b.count - a.count);
-      setTags(post.tags);
+      const sortedTags = post?.tags
+        .slice()
+        .sort((a, b) => b.taggers_count - a.taggers_count);
+      setTags(sortedTags);
     }
   }, [post?.tags]);
 
-  const updatePosts = async () => {
-    const updatedPost = await getPost(post.uri);
-
-    if (!updatedPost) return;
-
-    const updatedPosts = Object.keys(posts).map((key) => {
-      if (posts[key].uri === updatedPost.uri) return updatedPost;
-      return posts[key];
-    });
-    setPosts(updatedPosts);
-  };
-
   const handleDeleteTag = async (tag: string) => {
-    await deleteTag(post.uri, tag);
-    updatePosts();
+    setLoadingTags(tag);
+    await deleteTag(post?.details?.author, post?.details?.id, tag);
+    // delete my user from tag from post.tags
+    const newTags = tags.map((tagObj) => {
+      if (tagObj.label === tag) {
+        return {
+          ...tagObj,
+          taggers_count: tagObj.taggers_count - 1,
+          taggers: tagObj.taggers.filter((fromItem) => fromItem !== pubky),
+        };
+      }
+      return tagObj;
+    });
+    setTags(newTags);
+    setLoadingTags('');
   };
 
   const handleAddTag = async (tag: string) => {
-    await createTag(post.uri, tag);
-    updatePosts();
+    setLoadingTags(tag);
+    await createTag(post?.details?.author, post?.details?.id, tag);
+    // add tag to post.tags
+    const newTags: PostTag[] = tags.map((tagObj) => {
+      if (tagObj.label === tag) {
+        return {
+          ...tagObj,
+          taggers_count: tagObj.taggers_count + 1,
+          taggers: [...tagObj.taggers, pubky ?? ''],
+        };
+      }
+      return tagObj;
+    });
+    setTags(newTags);
+    setLoadingTags('');
   };
-
-  {
-    /**  const handleTagSearch = (tag: string) => {
-    if (searchTags.includes(tag)) return;
-
-    if (searchTags.length < 3) {
-      setSearchTags([...searchTags, tag]);
-    } else {
-      const newSearchTags = [...searchTags.slice(1), tag];
-      setSearchTags(newSearchTags);
-    }
-    router.push('/search');
-  };
-
-  if (post?.tags?.length === 0) {
-    return <></>;
-  }*/
-  }
 
   return (
     <div
-      className="mt-6 cursor-default"
+      className="lg:mt-6 cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
-      <div className={`flex-row inline-flex gap-2 mt-6 lg:mt-0`}>
-        <Button.Action
-          size="small"
-          variant="custom"
-          icon={<Icon.Tag size="16" />}
-          counter={post?.tags?.length}
-          onClick={() => {
-            setShowModalTag(true);
-          }}
-        />
+      <div
+        id="tags"
+        className={`flex-row inline-flex gap-2 flex-wrap mt-6 lg:mt-0`}
+      >
+        <div className="hidden md:flex">
+          <Button.Action
+            id="tag-btn"
+            size="small"
+            variant="custom"
+            icon={<Icon.Tag size="16" />}
+            counter={post?.tags?.length}
+            onClick={() => {
+              setShowModalTag(true);
+            }}
+          />
+        </div>
         {!largeView &&
-          tags.map((tagObj, index) => {
-            const isTagFound = tagObj.from.some(
-              (fromItem) => fromItem.author.id === pubky
+          tags.slice(0, 3).map((tagObj, index) => {
+            const isTagFound = tagObj?.taggers?.some(
+              (fromItem) => fromItem === pubky
             );
-
             return (
               <PostUI.Footer key={index}>
                 <TooltipUI.Root
-                  delay={800}
+                  delay={0}
                   setShowTooltip={setShowTooltipTag}
-                  tagId={tagObj.tag}
+                  tagId={tagObj?.label}
                 >
-                  {showTooltipTag === tagObj.tag && (
+                  {showTooltipTag === tagObj?.label && (
                     <Tooltip.Tag2
                       setSelectedTag={setSelectedTag}
                       setShowModalTags={setShowModalTag}
                       tags={tagObj}
                     />
                   )}
-                  <PostUtil.Tag
-                    clicked={isTagFound}
-                    color={tagObj.tag && Utils.generateRandomColor(tagObj.tag)}
-                    onClick={() =>
-                      isTagFound
-                        ? handleDeleteTag(tagObj.tag)
-                        : handleAddTag(tagObj.tag)
-                    }
-                  >
-                    <div className="flex gap-2 items-center">
-                      {Utils.minifyText(tagObj.tag.replace(' ', ''), 14)}
-                      <Typography.Caption
-                        variant="bold"
-                        className="text-opacity-30"
-                      >
-                        {tagObj.count}
-                      </Typography.Caption>
-                    </div>
-                  </PostUtil.Tag>
+                  {tagObj.taggers_count > 0 && (
+                    <PostUtil.Tag
+                      id={`tag-${index}`}
+                      clicked={isTagFound}
+                      color={
+                        tagObj?.label &&
+                        Utils.generateRandomColor(tagObj?.label)
+                      }
+                      onClick={() =>
+                        isTagFound
+                          ? handleDeleteTag(tagObj?.label)
+                          : handleAddTag(tagObj?.label)
+                      }
+                    >
+                      <div className="flex gap-2 items-center">
+                        {Utils.minifyText(tagObj?.label, 13)}
+                        {loadingTags === tagObj?.label ? (
+                          <Icon.LoadingSpin size="16" />
+                        ) : (
+                          <Typography.Caption
+                            variant="bold"
+                            className="text-opacity-60"
+                          >
+                            {tagObj?.taggers_count}
+                          </Typography.Caption>
+                        )}
+                      </div>
+                    </PostUtil.Tag>
+                  )}
                 </TooltipUI.Root>
-                {/* <Button.Action
-                variant="custom"
-                size="small"
-                icon={isTagFound ? <Icon.Minus /> : <Icon.Plus />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  isTagFound
-                    ? handleDeleteTag(tagObj.tag)
-                    : handleAddTag(tagObj.tag);
-                }}
-              />
-              <PostUtil.Counter counter={tagObj.count} />
-              {tagObj?.from.slice(0, 5).map((fromItem, fromIndex: number) => (
-                <Image
-                  width={32}
-                  height={32}
-                  alt={`pic-${fromIndex + 1}`}
-                  key={fromIndex}
-                  className={`w-[32px] h-[32px] rounded-full ${
-                    fromIndex !== 0 ? '-ml-5' : ''
-                  }`}
-                  src={fromItem.author?.profile?.image || '/images/Userpic.png'}
-                />
-              ))} */}
               </PostUI.Footer>
             );
           })}
@@ -162,6 +157,11 @@ export default function Tags({ post, largeView = false }: PostProps) {
       <Modal.Tag
         post={post}
         tags={tags}
+        updatePostInTimeline={(newTag: PostView) => {
+          setLoadingTags(newTag?.details.content);
+          setTags(newTag.tags);
+          setLoadingTags('');
+        }}
         handleAddTag={handleAddTag}
         handleDeleteTag={handleDeleteTag}
         showModalTag={showModalTag}

@@ -1,8 +1,8 @@
 import { Typography } from '@social/ui-shared';
-import { useClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { DropDown } from '@/components/DropDown';
 import { TStatus } from '@/types';
+import { usePubkyClientContext } from '@/contexts';
 
 interface StatusProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky: string | null | undefined;
@@ -10,7 +10,7 @@ interface StatusProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Status({ creatorPubky, status }: StatusProps) {
-  const { pubky } = useClientContext();
+  const { pubky } = usePubkyClientContext();
 
   const extractEmojiAndText = (status: string) => {
     const emojiRegex =
@@ -43,7 +43,10 @@ export default function Status({ creatorPubky, status }: StatusProps) {
       ) : (
         status &&
         status !== 'noStatus' && (
-          <Typography.Body variant="medium" className="mt-1">
+          <Typography.Body
+            className="text-xl font-light font-InterTight leading-7 tracking-wide"
+            variant="medium"
+          >
             {emoji && (
               <>
                 {emoji} {text}

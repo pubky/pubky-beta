@@ -3,6 +3,7 @@ import LinkParser from 'react-link-parser';
 import ProfileLink from '../Post/_ProfileLink';
 import { Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
+import Link from 'next/link';
 
 interface ParsingProps {
   children: string;
@@ -32,44 +33,60 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
         const trimmedTag = tag.trim().toLowerCase();
         const icon = tagsIcons[trimmedTag];
         return (
-          <a
-            className="text-white break-all inline-flex mr-1"
+          <Link
+            className="text-[#C8FF00] break-all inline-flex mr-1"
             href={`/search?tags=${tag.replace('#', '').trim()}`}
             target="_self"
             rel="noreferrer"
           >
             {tag} {icon && <span className="ml-1">{icon}</span>}
-          </a>
+          </Link>
         );
       },
     },
     {
       watchFor: 'link',
       render: (url: string) => {
+        const isValidUrl = (value: string) => {
+          try {
+            new URL(value);
+            return true;
+          } catch {
+            return false;
+          }
+        };
+
+        if (!isValidUrl(url)) return url;
         return (
-          <a
-            className="text-white break-all"
+          <Link
+            className="text-[#C8FF00] break-all"
             href={url}
             target="_blank"
             rel="noreferrer"
           >
             {url}
-          </a>
+          </Link>
         );
       },
     },
     {
       watchFor: 'email',
-      render: (url: string) => (
-        <a
-          className="text-white break-all"
-          href={`mailto:${url.trim()}`}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          {url}
-        </a>
-      ),
+      render: (url: string) => {
+        const isValidEmail = (value: string) =>
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+        if (!isValidEmail(url)) return url;
+        return (
+          <Link
+            className="text-[#C8FF00] break-all"
+            href={`mailto:${url.trim()}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {url}
+          </Link>
+        );
+      },
     },
   ];
 
