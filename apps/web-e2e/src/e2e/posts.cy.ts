@@ -38,6 +38,13 @@ describe('posts', () => {
     });
   });
 
+  // TODO: remove temp script to add 12 posts, workaround for no 'Show New Posts' button, see https://github.com/pubky/pubky-app/issues/738
+  it('add 12 posts', () => {
+    for (let i = 0; i < 12; i++) {
+      createQuickPost(`Post ${i + 1}`);
+    }
+  });
+
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
