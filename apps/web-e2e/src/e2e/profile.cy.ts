@@ -8,7 +8,7 @@ describe('profile', () => {
 
   beforeEach(() => {
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(process.env.CI ? 10_000 : 5_000);
+    cy.wait(Cypress.env('ci') ? 10_000 : 5_000);
 
     cy.onboardAsNewUser('Edit Me', 'This bio is editable');
   });

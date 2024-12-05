@@ -28,7 +28,7 @@ describe('posts', () => {
     cy.slowDown(defaultMs);
 
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(process.env.CI ? 10_000 : 5_000);
+    cy.wait(Cypress.env('ci') ? 10_000 : 5_000);
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
@@ -510,6 +510,7 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     cy.waitReload();
+    if (Cypress.env('ci')) cy.wait(3000);
 
     // verify the repost is deleted
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
@@ -565,7 +566,7 @@ describe('posts', () => {
 
     // TODO: remove wait for any existing message alerts to disappear, see https://github.com/pubky/pubky-app/issues/729
     cy.waitForElementToDisappear('#message-alert');
-  
+
     // reply to the post
     cy.slowDown(fastMs);
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
@@ -587,6 +588,7 @@ describe('posts', () => {
     // verify the reply is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.waitReload();
+    if (Cypress.env('ci')) cy.wait(3000);
     cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
       cy.wrap($post).innerTextShouldContain(replyContent);

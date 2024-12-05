@@ -173,11 +173,14 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
 
   // TODO: remove workaround for indefinite loading issue on sign in button, https://github.com/pubky/pubky-app/issues/719
   cy.waitReload(5000);
-  // if path is /sign-in still then try sign in again
+  // if path is still /sign-in after reload then try sign in again
   cy.location('pathname').then((path) => {
     if (path === '/sign-in') {
       cy.wait(3000);
-
+    };
+  });
+  cy.location('pathname').then((path) => {
+    if (path === '/sign-in') {
       cy.get('#fileInput').selectFile(
         backupFilepath,
         { force: true } // force to bypass visibility check of hidden input field
@@ -187,9 +190,9 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
 
       cy.waitReload(5000);
     };
-
-    cy.location('pathname').should('eq', '/home');
   });
+
+  cy.location('pathname').should('eq', '/home');
 });
 
 Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
