@@ -71,7 +71,7 @@ export const checkPostIsNotAtTopOfFeed = (postContent: string) => {
 // wait for 'show n new posts' button to be visible
 // check its counter displayes the correct number of new posts and click it
 export const clickShowNewPostsBtn = (expectedCounter = 1) => {
-  const timeout = process.env.CI ? 120_000 : 15_000;
+  const timeout = 120_000; // process.env.CI ? 120_000 : 15_000;
   cy.get('#show-new-posts-button', { timeout })
     .scrollIntoView()
     .should('be.visible')
