@@ -43,10 +43,10 @@ type PubkyClientContextType = {
   setMnemonic: (mnemonic: string | undefined) => void;
   profile: PubkyAppUser | undefined;
   newUser: boolean;
-  setNewUser: React.Dispatch<React.SetStateAction<boolean>>
+  setNewUser: React.Dispatch<React.SetStateAction<boolean>>;
   generateAuthUrl: (
     caps?: string,
-  ) => { url: string; promise: Promise<any> } | null;
+  ) => Promise<{ url: string; promise: any } | null>;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
   loginWithAuthUrl: (publicKey: string) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
@@ -1035,12 +1035,12 @@ export function PubkyClientWrapper({
     }
   };
 
-  const generateAuthUrl = (caps?: string) => {
+  const generateAuthUrl = async (caps?: string) => {
     const capabilities =
       caps || '/pub/pubky.app/:rw,/pub/example.com/nested:rw';
 
     try {
-      const [url, promise] = client.authRequest(
+      const [url, promise] = await client.authRequest(
         NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
         capabilities,
       );

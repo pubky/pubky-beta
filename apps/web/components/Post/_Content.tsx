@@ -134,10 +134,7 @@ export default function Content({
   const showMore = !fullContent && cleanedText !== minifiedContent;
 
   return (
-    <div
-      className="w-full cursor-text"
-      onClick={(event) => event.stopPropagation()}
-    >
+    <div className="w-full">
       <div
         id="post-content-text"
         className={`text-white break-words ${largeView && 'text-2xl'}`}
@@ -195,6 +192,7 @@ export default function Content({
             Show more
           </Link>
         )}
+        <div onClick={(event) => event.stopPropagation()}>
         {videoId && (
           <div className="w-full max-w-[560px] relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
             <iframe
@@ -317,6 +315,7 @@ export default function Content({
             setShowModal={setShowModal}
           />
         )}
+        </div>
       </div>
     </div>
   );

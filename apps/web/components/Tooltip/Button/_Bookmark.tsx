@@ -11,8 +11,7 @@ interface BookmarkProps {
 
 export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
   const { pubky, addBookmark, deleteBookmark } = usePubkyClientContext();
-  const { setContent: setContentToast, setShow: setShowToast } =
-    useToastContext();
+  const { addToast } = useToastContext();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
 
   const handleAddBookmark = async (postId: string, uri: string) => {
@@ -38,11 +37,10 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
       authorId: string,
       bookmarkId: string,
     ) => Promise<void>,
-    setContentToast: (
+    addToast: (
       content: React.ReactNode,
       variant?: 'bookmark' | 'pubky' | 'link',
     ) => void,
-    setShowToast: (show: boolean) => void,
   ) => {
     const isBookmarked = repost ? repost.bookmark?.id : post?.bookmark?.id;
 
@@ -69,11 +67,10 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
     }
 
     if (!isBookmarked) {
-      setContentToast(
+      addToast(
         `This post by ${author?.details?.name} was saved to your bookmarks.`,
         'bookmark',
       );
-      setShowToast(true);
     }
   };
 
@@ -99,8 +96,7 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
           post,
           handleAddBookmark,
           handleDeleteBookmark,
-          setContentToast,
-          setShowToast,
+          addToast,
         )
       }
     >

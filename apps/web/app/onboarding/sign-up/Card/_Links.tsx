@@ -44,6 +44,7 @@ export default function Links({
             <Input.Text
               className="h-[70px] mt-2"
               placeholder={link.placeHolder}
+              maxLength={50}
               disabled={loading}
               value={link.url.replace('mailto:', '')}
               error={errors[`link${index}` as keyof typeof errors]}

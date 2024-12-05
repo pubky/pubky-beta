@@ -9,8 +9,7 @@ interface CopyLinkPostProps {
 }
 
 export default function CopyLinkPost({ post, setShowMenu }: CopyLinkPostProps) {
-  const { setContent: setContentToast, setShow: setShowToast } =
-    useToastContext();
+  const { addToast } = useToastContext();
 
   return (
     <Tooltip.Item
@@ -19,14 +18,13 @@ export default function CopyLinkPost({ post, setShowMenu }: CopyLinkPostProps) {
         Utils.copyToClipboard(
           `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`,
         );
-        setContentToast(
+        addToast(
           Utils.minifyText(
             `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`,
             80,
           ),
           'link',
         );
-        setShowToast(true);
         setShowMenu(false);
       }}
       icon={<Icon.Link size="20" />}

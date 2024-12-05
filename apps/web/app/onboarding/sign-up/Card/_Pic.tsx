@@ -17,7 +17,7 @@ export default function Pic({
   loading,
   defaultImage,
 }: PicProps) {
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -40,8 +40,7 @@ export default function Pic({
 
     if (file) {
       if (file.size > maxSizeInBytes) {
-        setContent('The maximum allowed size is 20 MB', 'warning');
-        setShow(true);
+        addAlert('The maximum allowed size is 20 MB', 'warning');
         return;
       }
 

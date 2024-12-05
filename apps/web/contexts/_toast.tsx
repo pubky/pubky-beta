@@ -2,58 +2,41 @@
 
 import { Toast } from '@/components';
 import { Icon } from '@social/ui-shared';
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { ReactNode, createContext, useContext, useState } from 'react';
+
+type ToastMessage = {
+  id: number;
+  content: ReactNode;
+  variant?: 'bookmark' | 'pubky' | 'link' | 'text';
+};
 
 type ToastContextType = {
-  icon: ReactNode;
-  content: ReactNode;
-  show: boolean;
-  setIcon: (icon: string) => void;
-  setContent: (
+  addToast: (
     content: React.ReactNode,
-    variant?: 'bookmark' | 'pubky' | 'link' | 'text'
+    variant?: 'bookmark' | 'pubky' | 'link' | 'text',
   ) => void;
-  setShow: (show: boolean) => void;
 };
 
 const ToastContext = createContext<ToastContextType>({
-  icon: '',
-  content: null,
-  show: false,
-  setIcon: () => {},
-  setContent: () => {},
-  setShow: () => {},
+  addToast: () => {},
 });
 
 export function ToastWrapper({ children }: { children: React.ReactNode }) {
-  const [icon, setIcon] = useState('');
-  const [content, setContent] = useState<React.ReactNode>();
-  const [variant, setVariant] = useState<
-    'bookmark' | 'pubky' | 'link' | 'text'
-  >('link');
-  const [show, setShow] = useState(false);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  useEffect(() => {
-    if (show) {
-      setTimeout(() => setShow(false), 2000);
-    }
-  }, [show]);
-
-  const handleSetContent = (
+  const addToast = (
     content: React.ReactNode,
-    variant: 'bookmark' | 'pubky' | 'link' | 'text' = 'link'
+    variant: 'bookmark' | 'pubky' | 'link' | 'text' = 'link',
   ) => {
-    setContent(content);
-    setVariant(variant);
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, content, variant }]);
+
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    }, 2000);
   };
 
-  const iconToShow = (() => {
+  const iconToShow = (variant: 'bookmark' | 'pubky' | 'link' | 'text') => {
     switch (variant) {
       case 'bookmark':
         return <Icon.BookmarkSimple size="24" opacity={1} color="white" />;
@@ -65,9 +48,9 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
       default:
         return <Icon.Link size="24" />;
     }
-  })();
+  };
 
-  const titleToShow = (() => {
+  const titleToShow = (variant: 'bookmark' | 'pubky' | 'link' | 'text') => {
     switch (variant) {
       case 'bookmark':
         return 'Save as bookmark';
@@ -79,25 +62,21 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
       default:
         return 'Link copied to clipboard';
     }
-  })();
+  };
 
   return (
-    <ToastContext.Provider
-      value={{
-        icon,
-        content,
-        show,
-        setContent: handleSetContent,
-        setIcon,
-        setShow,
-      }}
-    >
+    <ToastContext.Provider value={{ addToast }}>
       {children}
-      {show && (
-        <Toast icon={iconToShow} title={titleToShow} variant={variant}>
+      {toasts.map(({ id, content, variant = 'link' }) => (
+        <Toast
+          key={id}
+          icon={iconToShow(variant)}
+          title={titleToShow(variant)}
+          variant={variant}
+        >
           {content}
         </Toast>
-      )}
+      ))}
     </ToastContext.Provider>
   );
 }

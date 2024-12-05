@@ -1,6 +1,6 @@
 import { Button, Icon, Modal } from '@social/ui-shared';
 import CreateContent from '../CreateContent';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 
@@ -18,7 +18,7 @@ export default function EditArticle({
   article,
 }: CreateEditArticleProps) {
   const { editPost } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [isError, setIsError] = useState(false);
   const [initTitle, setInitTitle] = useState('');
   const [contentEditArticle, setContentEditArticle] = useState('');
@@ -48,11 +48,9 @@ export default function EditArticle({
       const editPostUser = await editPost(article, content);
 
       if (editPostUser) {
-        setContent('Article edited!');
-        setShow(true);
+        addAlert('Article edited!');
       } else {
-        setContent('Something went wrong. Try again', 'warning');
-        setShow(true);
+        addAlert('Something went wrong. Try again', 'warning');
       }
       setContentEditArticle('');
       setShowModalEditArticle(false);

@@ -14,7 +14,7 @@ interface PicProps {
 
 export default function Pic({ image, setImage, loading }: PicProps) {
   const { pubky, profile } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [defaultImage, setDefaultImage] = useState<File | string>();
   const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -65,8 +65,7 @@ export default function Pic({ image, setImage, loading }: PicProps) {
 
     if (file) {
       if (file.size > maxSizeInBytes) {
-        setContent('The maximum allowed size is 20 MB', 'warning');
-        setShow(true);
+        addAlert('The maximum allowed size is 20 MB', 'warning');
         return;
       }
 

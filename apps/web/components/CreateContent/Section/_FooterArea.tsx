@@ -64,7 +64,7 @@ export default function FooterArea({
   maxLength = 1000,
   setShowModalPost,
 }: FooterAreaProps) {
-  const { setContent: setContentAlert, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [openModalArticle, setOpenModalArticle] = useState(false);
 
   const handleEmojiClick = (emojiObject: EmojiClickData) => {
@@ -96,22 +96,19 @@ export default function FooterArea({
           file.type === 'application/pdf';
 
         if (!isValidType) {
-          setContentAlert('File type not supported.', 'warning');
-          setShow(true);
+          addAlert('File type not supported.', 'warning');
           return false;
         }
 
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 20 MB', 'warning');
-          setShow(true);
+          addAlert('The maximum allowed size is 20 MB', 'warning');
           return false;
         }
         return true;
       });
 
       if (selectedFiles && selectedFiles.length + validFiles.length > 3) {
-        setContentAlert('Max 3 files only.', 'warning');
-        setShow(true);
+        addAlert('Max 3 files only.', 'warning');
         return;
       }
 
@@ -120,7 +117,7 @@ export default function FooterArea({
       setSelectedFiles &&
         newFiles &&
         setSelectedFiles((prevFiles) =>
-          [...prevFiles, ...newFiles].slice(0, 3)
+          [...prevFiles, ...newFiles].slice(0, 3),
         );
 
       const newFilePreviews =
@@ -128,7 +125,7 @@ export default function FooterArea({
       newFilePreviews &&
         setFilePreviews &&
         setFilePreviews((prevPreviews) =>
-          [...prevPreviews, ...newFilePreviews].slice(0, 3)
+          [...prevPreviews, ...newFilePreviews].slice(0, 3),
         );
     }
   };
@@ -154,7 +151,7 @@ export default function FooterArea({
                       onClick={() =>
                         setArrayTags &&
                         setArrayTags((prev) =>
-                          prev.filter((item) => item !== tag)
+                          prev.filter((item) => item !== tag),
                         )
                       }
                     >
@@ -175,8 +172,8 @@ export default function FooterArea({
                   largeView
                     ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
                     : markdown
-                    ? 'translate-x-[0%] md:translate-x-[150%]'
-                    : 'translate-x-[30%]'
+                      ? 'translate-x-[0%] md:translate-x-[150%]'
+                      : 'translate-x-[30%]'
                 } z-10`}
                 ref={wrapperRefEmojis}
               >

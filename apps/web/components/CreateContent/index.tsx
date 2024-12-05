@@ -72,7 +72,7 @@ export default function CreateContent({
   setQuote,
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
-  const { setContent: setContentAlert, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -220,15 +220,10 @@ export default function CreateContent({
                   filePreview,
                 ]);
               } else {
-                setContentAlert(
-                  'Maximum of 3 files can be uploaded',
-                  'warning',
-                );
-                setShow(true);
+                addAlert('Maximum of 3 files can be uploaded', 'warning');
               }
             } else {
-              setContentAlert('File not supported', 'warning');
-              setShow(true);
+              addAlert('File not supported', 'warning');
             }
           }
         }
@@ -240,14 +235,7 @@ export default function CreateContent({
     return () => {
       document.removeEventListener('paste', handlePaste);
     };
-  }, [
-    selectedFiles,
-    setContentAlert,
-    setShow,
-    textArea,
-    setSelectedFiles,
-    setFilePreviews,
-  ]);
+  }, [selectedFiles, addAlert, textArea, setSelectedFiles, setFilePreviews]);
 
   return (
     <div

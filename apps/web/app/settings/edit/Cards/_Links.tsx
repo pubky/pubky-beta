@@ -70,6 +70,7 @@ export default function Links({
                 id={`edit-profile-link-${link.title.toLowerCase()}-input`}
                 className="h-[70px] mt-2"
                 placeholder={link.placeHolder}
+                maxLength={50}
                 disabled={loading}
                 value={link.url.replace('mailto:', '')}
                 error={errors[`link${index}` as keyof typeof errors]}

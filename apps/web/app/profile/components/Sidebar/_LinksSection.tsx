@@ -1,5 +1,4 @@
 import { Icon, SideCard, Typography } from '@social/ui-shared';
-import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
 
 interface LinksSectionProps {
@@ -13,73 +12,133 @@ export const socialLinks = [
   {
     name: 'X (twitter)',
     url: 'https://x.com/',
-    icon: <Icon.Twitter size="16" />,
+    icon: (
+      <div>
+        <Icon.Twitter size="16" />
+      </div>
+    ),
   },
   {
     name: 'Telegram',
     url: 'https://t.me/',
-    icon: <Icon.Telegram width="16" height="16" />,
+    icon: (
+      <div>
+        <Icon.Telegram width="16" height="16" />
+      </div>
+    ),
   },
   {
     name: 'Discord',
     url: 'https://discord.gg/',
-    icon: <Icon.Discord size="16" />,
+    icon: (
+      <div>
+        <Icon.Discord size="16" />
+      </div>
+    ),
   },
   {
     name: 'Instagram',
     url: 'https://instagram.com/',
-    icon: <Icon.Instagram size="16" />,
+    icon: (
+      <div>
+        <Icon.Instagram size="16" />
+      </div>
+    ),
   },
   {
     name: 'Facebook',
     url: 'https://facebook.com/',
-    icon: <Icon.Facebook size="16" />,
+    icon: (
+      <div>
+        <Icon.Facebook size="16" />
+      </div>
+    ),
   },
   {
     name: 'LinkedIn',
     url: 'https://linkedin.com/in/',
-    icon: <Icon.LinkedIn size="16" />,
+    icon: (
+      <div>
+        <Icon.LinkedIn size="16" />
+      </div>
+    ),
   },
   {
     name: 'Github',
     url: 'https://github.com/',
-    icon: <Icon.Github size="16" />,
+    icon: (
+      <div>
+        <Icon.Github size="16" />
+      </div>
+    ),
   },
   {
     name: 'Calendly',
     url: 'https://calendly.com/',
-    icon: <Icon.Calendly size="16" />,
+    icon: (
+      <div>
+        <Icon.Calendly size="16" />
+      </div>
+    ),
   },
   {
     name: 'Medium',
     url: 'https://medium.com/',
-    icon: <Icon.Medium size="16" />,
+    icon: (
+      <div>
+        <Icon.Medium size="16" />
+      </div>
+    ),
   },
   {
     name: 'Youtube',
     url: 'https://youtube.com/',
-    icon: <Icon.Youtube width="16" height="16" />,
+    icon: (
+      <div>
+        <Icon.Youtube width="16" height="16" />
+      </div>
+    ),
   },
   {
     name: 'Twitch',
     url: 'https://twitch.tv/',
-    icon: <Icon.Twitch size="16" />,
+    icon: (
+      <div>
+        <Icon.Twitch size="16" />
+      </div>
+    ),
   },
   {
     name: 'TikTok',
     url: 'https://tiktok.com/',
-    icon: <Icon.TikTok size="16" />,
+    icon: (
+      <div>
+        <Icon.TikTok size="16" />
+      </div>
+    ),
   },
   {
     name: 'Spotify',
     url: 'https://spotify.com/user/',
-    icon: <Icon.Spotify size="16" />,
+    icon: (
+      <div>
+        <Icon.Spotify size="16" />
+      </div>
+    ),
   },
 ];
 
 const linkTitleToIconMap: { [key: string]: JSX.Element } = {
-  email: <Icon.Envelope size="16" />,
-  mail: <Icon.Envelope size="16" />,
+  email: (
+    <div>
+      <Icon.Envelope size="16" />
+    </div>
+  ),
+  mail: (
+    <div>
+      <Icon.Envelope size="16" />
+    </div>
+  ),
 };
 
 export default function LinksSection({
@@ -122,13 +181,15 @@ export default function LinksSection({
                       ) : icon ? (
                         icon
                       ) : (
-                        <Icon.Link size="16" />
+                        <div>
+                          <Icon.Link size="16" />
+                        </div>
                       )}
                       {link.title.toLocaleLowerCase() === 'email' ||
                       link.title.toLocaleLowerCase() === 'mail' ? (
                         <Link href={`${link.url}`} target="_blank">
                           <Typography.Body
-                            className="text-opacity-80 hover:text-opacity-100"
+                            className="text-opacity-80 hover:text-opacity-100 break-all leading-none"
                             variant="medium"
                           >
                             {link.url.replace(/^mailto:/, '')}
@@ -148,13 +209,10 @@ export default function LinksSection({
                         >
                           <Typography.Body
                             id={`profile-link-${link.title.toLowerCase()}`}
-                            className="text-opacity-80 hover:text-opacity-100"
+                            className="text-opacity-80 hover:text-opacity-100 break-all leading-none"
                             variant="medium"
                           >
-                            {Utils.minifyText(
-                              renderSocialUsername(link.url),
-                              20,
-                            )}
+                            {renderSocialUsername(link.url)}
                           </Typography.Body>
                         </div>
                       )}

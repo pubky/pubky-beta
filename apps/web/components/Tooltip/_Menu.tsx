@@ -13,9 +13,9 @@ interface TooltipMenuProps {
   repost?: PostView;
 }
 
-export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
+export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
   const { pubky, deleteFile, deletePost } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [showModalReportPost, setShowModalReportPost] = useState(false);
   const [showModalEditPost, setShowModalEditPost] = useState(false);
@@ -95,11 +95,10 @@ export default function Menu({ post, repost, setShowMenu }: TooltipMenuProps) {
       const result = await deletePost(post?.details?.id);
 
       if (result) {
-        setContent('Post deleted successfully');
+        addAlert('Post deleted successfully');
       } else {
-        setContent('Something wrong. Try again', 'warning');
+        addAlert('Something wrong. Try again', 'warning');
       }
-      setShow(true);
     } catch (error) {
       console.log(error);
     } finally {

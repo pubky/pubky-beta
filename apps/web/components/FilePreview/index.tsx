@@ -33,13 +33,13 @@ const FilePreview: React.FC<FilePreviewProps> = ({
         <video
           src={filePreview}
           controls
-          className="max-w-full max-h-[216px] min-w-[200px] rounded-lg"
+          className="max-w-full max-h-[216px] min-w-[200px] rounded-lg object-contain"
         />
       ) : isImage ? (
         <img
           src={filePreview}
           alt={`Selected file ${index + 1}`}
-          className="max-w-full max-h-[216px] min-w-[200px] rounded-lg"
+          className="max-h-[216px] w-auto rounded-lg object-contain"
         />
       ) : isPDF ? (
         <div className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-gray-100 rounded-lg p-4">

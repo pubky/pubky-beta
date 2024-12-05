@@ -9,8 +9,7 @@ interface CopyTextPostProps {
 }
 
 export default function CopyTextPost({ post, setShowMenu }: CopyTextPostProps) {
-  const { setContent: setContentToast, setShow: setShowToast } =
-    useToastContext();
+  const { addToast } = useToastContext();
 
   return (
     <>
@@ -19,11 +18,7 @@ export default function CopyTextPost({ post, setShowMenu }: CopyTextPostProps) {
           id="copy-post-text"
           onClick={() => {
             Utils.copyToClipboard(post.details?.content);
-            setContentToast(
-              Utils.minifyContent(post.details?.content, 1),
-              'text'
-            );
-            setShowToast(true);
+            addToast(Utils.minifyContent(post.details?.content, 1), 'text');
             setShowMenu(false);
           }}
           icon={<Icon.FileText size="24" />}

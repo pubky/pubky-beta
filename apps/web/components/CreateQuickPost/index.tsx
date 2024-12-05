@@ -18,7 +18,7 @@ export default function CreateQuickPost({
 }: CreateQuickPostProps) {
   const { pubky, createPost, createTag, setTimeline, timeline } =
     usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sendingPost, setSendingPost] = useState(false);
@@ -89,11 +89,9 @@ export default function CreateQuickPost({
         };
 
         setTimeline(timelineCopy);
-        setContent('Post created!');
-        setShow(true);
+        addAlert('Post created!');
       } else {
-        setContent('Something wrong. Try again', 'warning');
-        setShow(true);
+        addAlert('Something wrong. Try again', 'warning');
       }
       setArrayTags([]);
       setContentPost('');

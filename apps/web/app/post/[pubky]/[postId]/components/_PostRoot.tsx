@@ -19,7 +19,7 @@ export default function PostRoot({
   updatePost: () => void;
 }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -63,8 +63,7 @@ export default function PostRoot({
       setSelectedFiles([]);
       updatePost();
       setTextArea(false);
-      setContent('Reply created!');
-      setShow(true);
+      addAlert('Reply created!');
     }
   };
 

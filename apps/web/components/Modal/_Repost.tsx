@@ -6,12 +6,12 @@ import Post from '../Post';
 
 import CreateContent from '../CreateContent';
 import { PostView } from '@/types/Post';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface CreateRepostProps {
   showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
-  modalRepostRef?: React.RefObject<HTMLDivElement>;
 }
 
 export default function Repost({
@@ -21,7 +21,7 @@ export default function Repost({
 }: CreateRepostProps) {
   const { pubky, createRepost, createTag } = usePubkyClientContext();
   const modalRepostRef = useRef<HTMLDivElement>(null);
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [contentRepost, setContentRepost] = useState('');
   const [isValidContent, setIsValidContent] = useState(false);
   const [sendingRepost, setSendingRepost] = useState(false);
@@ -29,6 +29,8 @@ export default function Repost({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+    useDrawerClickOutside(modalRepostRef, () => setShowModalRepost(false));
 
   const handleSubmitRepost = async (content: string) => {
     if (sendingRepost) {
@@ -54,11 +56,9 @@ export default function Repost({
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', repostId, tag);
         }
-        setContent('Repost created!');
-        setShow(true);
+        addAlert('Repost created!');
       } else {
-        setContent('Something wrong. Try again', 'warning');
-        setShow(true);
+        addAlert('Something wrong. Try again', 'warning');
       }
       setArrayTags([]);
       setContentRepost('');
@@ -86,11 +86,9 @@ export default function Repost({
       );
 
       if (newRepost) {
-        setContent('Repost created!');
-        setShow(true);
+        addAlert('Repost created!');
       } else {
-        setContent('Something wrong. Try again', 'warning');
-        setShow(true);
+        addAlert('Something wrong. Try again', 'warning');
       }
       setArrayTags([]);
       setContentRepost('');
@@ -117,7 +115,7 @@ export default function Repost({
         onClick={() => {
           setShowModalRepost(false);
           setArrayTags([]);
-          setContent('');
+          setContentRepost('');
         }}
       />
       <Modal.Header title="Repost" />

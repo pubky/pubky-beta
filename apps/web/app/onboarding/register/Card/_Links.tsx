@@ -42,6 +42,7 @@ export default function Links({
             <Input.Text
               className="h-[70px] mt-2"
               placeholder={link.placeHolder}
+              maxLength={50}
               value={link.url}
               error={errors[`link${index}` as keyof typeof errors]}
               action={

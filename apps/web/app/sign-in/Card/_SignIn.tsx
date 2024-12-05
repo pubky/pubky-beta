@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-import { Content, Card, Typography, Icon } from '@social/ui-shared';
+import { Content, Card, Typography } from '@social/ui-shared';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -15,9 +15,8 @@ import { Utils } from '@social/utils-shared';
 
 export default function SignIn() {
   const { generateAuthUrl, loginWithAuthUrl } = usePubkyClientContext();
-  const { setContent: setContentToast, setShow: setShowToast } =
-    useToastContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addToast } = useToastContext();
+  const { addAlert } = useAlertContext();
   const [loginError, setLoginError] = useState('');
   const [authUrl, setAuthUrl] = useState('');
   const [qrSize, setQrSize] = useState(210);
@@ -28,7 +27,7 @@ export default function SignIn() {
   }, []);
 
   const handleGenerateAuthUrl = async () => {
-    const result = generateAuthUrl();
+    const result = await generateAuthUrl();
 
     if (result && result.url) {
       setAuthUrl(result.url);
@@ -40,17 +39,13 @@ export default function SignIn() {
             String(pubkey.z32()),
           );
           if (handleLoginResult) {
-            setContent('Login successful!');
-            setShow(true);
+            addAlert('Login successful!');
           }
         }
       } catch (error: unknown | { message: string }) {
         const errorMessage =
-          (error as Error)?.message === 'aead::Error'
-            ? 'Failed to login.'
-            : (error as Error)?.message;
-        setLoginError(errorMessage);
-        console.error('Login error:', error);
+          error === 'aead::Error' ? 'Failed to login.' : error;
+        setLoginError(String(errorMessage));
       }
     }
   };
@@ -58,8 +53,7 @@ export default function SignIn() {
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(authUrl);
-      setContentToast(Utils.minifyText(authUrl, 80));
-      setShowToast(true);
+      addToast(Utils.minifyText(authUrl, 80));
     } catch (error) {
       console.error('Failed to copy text:', error);
     }
@@ -101,7 +95,7 @@ export default function SignIn() {
       className="w-full col-span-2"
     >
       <div className="relative" onClick={copyToClipboard}>
-        {authUrl ? (
+        {authUrl && !loginError ? (
           <div className="rounded-lg mt-6 flex justify-center-center">
             <QRCodeSVG
               value={authUrl}
@@ -114,24 +108,26 @@ export default function SignIn() {
             />
           </div>
         ) : (
-          <Image
-            width={320}
-            height={320}
-            className="blur-[3px] rounded-lg mt-6"
-            alt="qr"
-            src="/images/webp/qr.webp"
-          />
+          <>
+            <Image
+              width={320}
+              height={320}
+              className="blur-[3px] rounded-lg mt-6"
+              alt="qr"
+              src="/images/webp/qr.webp"
+            />
+            <div className="w-full inset-0 flex items-center justify-right left-8 absolute">
+              <Typography.H2
+                style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 5% 100%)' }}
+                className="text-[20px] mt-4 font-black text-center w-full px-4 py-2.5 bg-[#2a2a2f]"
+              >
+                Not Available
+              </Typography.H2>
+            </div>
+          </>
         )}
-        {/**<div className="w-full inset-0 flex items-center justify-right left-8 absolute">
-          <Typography.H2
-            style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 5% 100%)' }}
-            className="text-[20px] mt-4 font-black text-center w-full px-4 py-2.5 bg-[#2a2a2f]"
-          >
-            COMING SOON
-          </Typography.H2>
-        </div>*/}
       </div>
-      {loginError && (
+      {/**loginError && (
         <div className="flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
           <Typography.Body
             className="break-words text-red-600"
@@ -143,7 +139,7 @@ export default function SignIn() {
             <Icon.Warning color="#dc2626" />
           </div>
         </div>
-      )}
+      )*/}
       <Content.LinksStoreApp />
     </Card.Primary>
   );

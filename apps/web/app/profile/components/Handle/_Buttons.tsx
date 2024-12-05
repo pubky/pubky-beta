@@ -36,7 +36,7 @@ export default function Buttons({
   profile,
 }: ButtonsProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { setContent, setShow } = useToastContext();
+  const { addToast } = useToastContext();
   const router = useRouter();
 
   const followUser = async () => {
@@ -160,8 +160,7 @@ export default function Buttons({
         id="profile-copy-pubkey-btn"
         className="px-3 w-auto h-8 uppercase"
         onClick={() => {
-          setContent(`pk:${pubkey}`, 'pubky');
-          setShow(true);
+          addToast(`pk:${pubkey}`, 'pubky');
           copyToClipboard();
         }}
         icon={<Icon.Key size="16" />}
@@ -172,23 +171,22 @@ export default function Buttons({
         id="profile-copy-link-btn"
         className="px-3 w-auto h-8"
         onClick={() => {
-          setContent(`${window.location.origin}/profile/${pubkey}`, 'link');
-          setShow(true);
+          addToast(`${window.location.origin}/profile/${pubkey}`, 'link');
           copyProfileUrlToClipboard();
         }}
         icon={<Icon.Link size="14" />}
       >
         Link
       </Button.Medium>
-      <div className="relative">
-        {showProfileMenu && (
-          <Tooltip.ProfileMenu
-            setShowProfileMenu={setShowProfileMenu}
-            creatorPubky={creatorPubky ?? pubkey}
-            profile={profile}
-          />
-        )}
-        {creatorPubky && (
+      {creatorPubky && (
+        <div className="relative">
+          {showProfileMenu && (
+            <Tooltip.ProfileMenu
+              setShowProfileMenu={setShowProfileMenu}
+              creatorPubky={creatorPubky ?? pubkey}
+              profile={profile}
+            />
+          )}
           <Button.Action
             id="profile-menu-btn"
             size="small"
@@ -196,8 +194,8 @@ export default function Buttons({
             icon={<Icon.DotsThreeOutline size="16" />}
             onClick={() => setShowProfileMenu(true)}
           />
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 }

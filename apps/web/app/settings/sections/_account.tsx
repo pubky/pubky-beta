@@ -27,7 +27,7 @@ export default function Account() {
     downloadData,
     importData,
   } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [fileName, setFileName] = useState('file.zip');
   const [deleteProgress, setDeleteProgress] = useState(0);
   const [deletingAccount, setDeletingAccount] = useState(false);
@@ -51,11 +51,9 @@ export default function Account() {
     const result = await deleteAccount(setDeleteProgress);
 
     if (result) {
-      setContent('Account deleted successfully!');
-      setShow(true);
+      addAlert('Account deleted successfully!');
     } else {
-      setContent('Error deleting account', 'warning');
-      setShow(true);
+      addAlert('Error deleting account', 'warning');
     }
 
     setDeletingAccount(false);
@@ -70,20 +68,18 @@ export default function Account() {
     try {
       const result = await downloadData(setProgressDownload);
       if (result) {
-        setContent('Data downloaded!');
-        setShow(true);
+        addAlert('Data downloaded!');
       }
     } catch (error) {
       console.error(error);
-      setContent('Something went wrong', 'warning');
-      setShow(true);
+      addAlert('Something went wrong', 'warning');
     } finally {
       setLoadingDownload(false);
     }
   };
 
   const handleImportData = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       setFileName(event.target.files[0].name);
@@ -97,11 +93,9 @@ export default function Account() {
     const result = await importData(file, setImportProgress);
 
     if (result) {
-      setContent('Data imported successfully!');
-      setShow(true);
+      addAlert('Data imported successfully!');
     } else {
-      setContent('Error importing data', 'warning');
-      setShow(true);
+      addAlert('Error importing data', 'warning');
     }
 
     router.push('/profile');
@@ -154,7 +148,7 @@ export default function Account() {
 
       if (!result.success) {
         setErrorPassword(
-          result.error.errors.map((err) => err.message).join(', ')
+          result.error.errors.map((err) => err.message).join(', '),
         );
         setLoadingRecoveryFile(false);
         return;
@@ -208,7 +202,7 @@ export default function Account() {
         </Typography.Body>
         <Tooltip.RootSmall setShowTooltip={setShowTooltip}>
           <Button.Large
-            id='backup-account-btn'
+            id="backup-account-btn"
             icon={
               <Icon.Lock
                 size="16"
@@ -248,7 +242,7 @@ export default function Account() {
           information, contacts, custom streams, and settings or preferences.
         </Typography.Body>
         <Button.Large
-          id='delete-account-btn'
+          id="delete-account-btn"
           icon={<Icon.Trash size="16" />}
           variant="secondary"
           className="w-auto"
@@ -292,7 +286,7 @@ export default function Account() {
           function will export data related to pubky.app.
         </Typography.Body>
         <Button.Large
-          id='download-data-btn'
+          id="download-data-btn"
           icon={<Icon.DownloadSimple size="16" />}
           variant="secondary"
           className="w-auto"

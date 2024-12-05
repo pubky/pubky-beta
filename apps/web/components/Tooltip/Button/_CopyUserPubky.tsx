@@ -8,16 +8,14 @@ interface CopyUserPubkyProps {
 }
 
 export default function CopyUserPubky({ pk, setShowMenu }: CopyUserPubkyProps) {
-  const { setContent: setContentToast, setShow: setShowToast } =
-    useToastContext();
+  const { addToast } = useToastContext();
 
   return (
     <Tooltip.Item
       id="copy-user-pubky"
       onClick={() => {
         Utils.copyToClipboard(`pk:${pk}`);
-        setContentToast(`pk:${pk}`, 'pubky');
-        setShowToast(true);
+        addToast(`pk:${pk}`, 'pubky');
         setShowMenu(false);
       }}
       icon={<Icon.Key size="24" />}
