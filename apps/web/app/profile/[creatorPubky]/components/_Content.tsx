@@ -64,16 +64,10 @@ export default function Index({
             <Profile.FilterTabsMobile
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              countContacts={{
-                followers: profile?.counts?.followers ?? 0,
-                following: profile?.counts?.following ?? 0,
-                friends: profile?.counts?.friends ?? 0,
-              }}
-              countReplies={profile?.counts?.replies}
-              countPosts={profile?.counts?.posts}
+              userCounts={profile?.counts}
+              userTags={profile?.tags.length}
               loading={isLoading}
               creatorPubky={creatorPubky}
-              profile={profile}
             />
             <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
               <Profile.Avatar
@@ -86,7 +80,7 @@ export default function Index({
                 }
               />
               <Profile.Handle
-                profile={profile}
+                profileUser={profile}
                 pubkey={creatorPubky ?? ''}
                 creatorPubky={creatorPubky}
               />
@@ -98,18 +92,10 @@ export default function Index({
             <Profile.FilterTabs
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              countContacts={{
-                followers: profile?.counts?.followers ?? 0,
-                following: profile?.counts?.following ?? 0,
-                friends: profile?.counts?.friends ?? 0,
-              }}
-              countPosts={
-                (profile?.counts?.posts ?? 0) - (profile?.counts?.replies ?? 0)
-              }
-              countReplies={profile?.counts?.replies}
+              userCounts={profile?.counts}
+              userTags={profile?.tags.length}
               loading={isLoading}
               creatorPubky={creatorPubky}
-              profile={profile}
             />
           </PostsLayout>
           <Profile.Sidebar creatorPubky={creatorPubky} />

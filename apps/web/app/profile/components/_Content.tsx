@@ -10,9 +10,12 @@ import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 
 export default function Index() {
-  const { pubky, putTimestampNotification } = usePubkyClientContext();
+  const { pubky, putTimestampNotification, profile } = usePubkyClientContext();
   const [activeTab, setActiveTab] = useState(0);
-  const { data: user, isLoading } = useUserProfile(pubky ?? '', pubky ?? '');
+  const { data: userData, isLoading } = useUserProfile(
+    pubky ?? '',
+    pubky ?? '',
+  );
   const loader = useRef(null);
   const timestamp = Date.now();
 
@@ -31,23 +34,20 @@ export default function Index() {
           <Profile.FilterTabsMobile
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            countContacts={{
-              followers: user?.counts?.followers ?? 0,
-              following: user?.counts?.following ?? 0,
-              friends: user?.counts?.friends ?? 0,
-            }}
-            countReplies={user?.counts?.replies}
-            countPosts={user?.counts?.posts}
+            userCounts={userData?.counts}
+            userTags={userData?.tags.length}
             loading={isLoading}
-            profile={user}
           />
           <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
             <Profile.Avatar
               className="lg:pl-12"
-              username={user?.details?.name || Utils.minifyPubky(pubky ?? '')}
-              uriImage={user?.details?.image as string}
+              username={profile?.name || Utils.minifyPubky(pubky ?? '')}
+              uriImage={profile?.image as string}
             />
-            <Profile.Handle profile={user} pubkey={pubky ? pubky : ''} />
+            <Profile.Handle
+              profileUser={userData}
+              pubkey={pubky ? pubky : ''}
+            />
           </div>
         </Content.Grid>
       </div>
@@ -56,17 +56,9 @@ export default function Index() {
           <Profile.FilterTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            countContacts={{
-              followers: user?.counts?.followers ?? 0,
-              following: user?.counts?.following ?? 0,
-              friends: user?.counts?.friends ?? 0,
-            }}
-            countPosts={
-              (user?.counts?.posts ?? 0) - (user?.counts?.replies ?? 0)
-            }
-            countReplies={user?.counts?.replies}
+            userCounts={userData?.counts}
+            userTags={userData?.tags.length}
             loading={isLoading}
-            profile={user}
           />
         </PostsLayout>
         <Profile.Sidebar />

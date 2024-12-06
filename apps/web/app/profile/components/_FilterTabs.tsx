@@ -5,13 +5,9 @@ import { Icon, Typography } from '@social/ui-shared';
 import { Profile } from './';
 import { Skeleton } from '@/components';
 import ContactsProfile from './_ContactsProfile/ContactsProfile';
-import {
-  useFilterContext,
-  useNotificationsContext,
-  usePubkyClientContext,
-} from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import TaggedAs from './_TaggedAs';
-import { UserView } from '@/types/User';
+import { UserCounts } from '@/types/User';
 
 const tabs = [
   {
@@ -67,25 +63,17 @@ const tabs = [
 export default function FilterTabs({
   activeTab,
   setActiveTab,
-  creatorPubky,
-  countPosts,
-  countReplies,
-  countContacts,
+  userCounts,
+  userTags,
   loading,
-  profile,
+  creatorPubky,
 }: {
   activeTab: number;
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;
-  creatorPubky?: string;
-  countPosts: number | undefined;
-  countReplies: number | undefined;
-  countContacts: {
-    followers: number;
-    following: number;
-    friends: number;
-  };
+  userCounts: UserCounts | undefined;
+  userTags: number | undefined;
   loading: boolean;
-  profile: UserView | null;
+  creatorPubky?: string;
 }) {
   const { pubky } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
@@ -130,19 +118,19 @@ export default function FilterTabs({
       case 'notifications':
         return unReadNotification;
       case 'bookmarks':
-        return profile?.counts?.bookmarks;
+        return userCounts?.bookmarks || 0;
       case 'posts':
-        return countPosts || 0;
+        return userCounts?.posts || 0;
       case 'replies':
-        return countReplies || 0;
+        return userCounts?.replies || 0;
       case 'followers':
-        return countContacts.followers || 0;
+        return userCounts?.followers || 0;
       case 'following':
-        return countContacts.following || 0;
+        return userCounts?.following || 0;
       case 'friends':
-        return countContacts.friends || 0;
+        return userCounts?.friends || 0;
       case 'tagged':
-        return profile?.tags.length || 0;
+        return userTags || 0;
       default:
         return null;
     }

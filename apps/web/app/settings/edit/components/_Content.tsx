@@ -5,14 +5,12 @@ import { Content } from '@social/ui-shared';
 import { Header } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { useUserProfile } from '@/hooks/useUser';
 import { Links } from '@/types/Post';
 import { CardComponent } from '../Cards';
 import { Edit } from '.';
 
 export default function Index() {
   const { pubky, profile } = usePubkyClientContext();
-  const { data: profileUser } = useUserProfile(pubky ?? '', pubky ?? '');
   const [handler, setHandler] = useState(pubky);
   const [name, setName] = useState('');
   const [status, setStatus] = useState<string | undefined>('');
@@ -32,25 +30,17 @@ export default function Index() {
   useEffect(() => {
     if (!pubky) return;
 
-    setHandler(Utils.minifyPubky(pubky));
-
     async function fetchData() {
       try {
-        const userProfile = profileUser;
-
-        if (userProfile) {
-          setName(userProfile?.details?.name);
-          setStatus(userProfile?.details?.status);
-          setBio(userProfile?.details?.bio || '');
-          setImage(userProfile?.details?.image || '/images/webp/Userpic.webp');
-          setPrevImage(
-            userProfile?.details?.image || '/images/webp/Userpic.webp'
-          );
-          if (
-            userProfile?.details?.links &&
-            userProfile?.details?.links?.length > 0
-          )
-            setLinks(userProfile?.details?.links);
+        if (profile) {
+          setHandler(Utils.minifyPubky(pubky ?? ''));
+          setName(profile?.name);
+          setStatus(profile?.status);
+          setBio(profile?.bio || '');
+          setImage(profile?.image || '/images/webp/Userpic.webp');
+          setPrevImage(profile.image || '/images/webp/Userpic.webp');
+          if (profile.links && profile.links.length > 0)
+            setLinks(profile?.links);
         }
       } catch (error) {
         console.log(error);
@@ -58,7 +48,7 @@ export default function Index() {
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubky, profile]);
+  }, [pubky]);
 
   return (
     <Content.Main>

@@ -9,16 +9,17 @@ import Buttons from './_Buttons';
 import Status from './_Status';
 import { usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
+import { TStatus } from '@/types';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   pubkey: string;
-  profile: UserView | null;
+  profileUser: UserView | null;
   creatorPubky?: string | null;
 }
 
 export default function Handle({
   pubkey,
-  profile,
+  profileUser,
   creatorPubky,
   ...rest
 }: HandleProps) {
@@ -29,16 +30,16 @@ export default function Handle({
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
-  const username = profile?.details?.name || Utils.minifyPubky(pubkey);
-  const bio = profile?.details?.bio || 'No bio.';
-  const status = profile?.details?.status || 'noStatus';
+  const username = profileUser?.details?.name || Utils.minifyPubky(pubkey);
+  const bio = profileUser?.details?.bio || 'No bio.';
+  const status = profileUser?.details?.status || 'noStatus';
 
   useEffect(() => {
     async function fetchData() {
       try {
-        if (profile) {
+        if (profileUser) {
           setInitLoadingFollowed(false);
-          if (profile?.relationship?.following) setFollowed(true);
+          if (profileUser?.relationship?.following) setFollowed(true);
         }
       } catch (error) {
         console.log(error);
@@ -46,7 +47,7 @@ export default function Handle({
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile, creatorPubky]);
+  }, [profileUser, creatorPubky]);
 
   useEffect(() => {
     if (seed) {
@@ -89,9 +90,9 @@ export default function Handle({
               setLoadingFollowed={setLoadingFollowed}
               setFollowed={setFollowed}
               setShowProfileMenu={setShowProfileMenu}
-              profile={profile}
+              profile={profileUser}
             />
-            <Status creatorPubky={creatorPubky} status={status} />
+            <Status creatorPubky={creatorPubky} status={status as TStatus} />
           </div>
         </>
       ) : (

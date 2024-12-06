@@ -18,7 +18,7 @@ import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
 import { getPost } from '@/services/postService';
-import { getUserRelationship } from '@/services/userService';
+import { getUserDetails, getUserRelationship } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
@@ -496,7 +496,6 @@ export function PubkyClientWrapper({
         await client.put(fileUrl, fileBody);
 
         // Store the file URI
-
         userProfile.image = fileUrl;
       }
 
@@ -520,13 +519,41 @@ export function PubkyClientWrapper({
       // Send the profile to the homeserver
       await client.put(profileUrl, body);
 
+      let userEdited = false;
+      while (!userEdited) {
+        try {
+          const newProfile = await getUserDetails(pubky ?? '');
+
+          if (areProfilesEqual(newProfile, pubkeyProfile)) {
+            userEdited = true;
+            break;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+
       return pubkeyProfile;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return false;
     }
   };
 
+  const areProfilesEqual = (
+    profile1: PubkyAppUser,
+    profile2: PubkyAppUser,
+  ): boolean => {
+    return (
+      profile1.name === profile2.name &&
+      profile1.bio === profile2.bio &&
+      profile1.image === profile2.image &&
+      JSON.stringify(profile1.links) === JSON.stringify(profile2.links) &&
+      profile1.status === profile2.status
+    );
+  };
   const updateStatus = async (value: TStatus | string) => {
     try {
       if (!pubky) throw new Error('Pubky required');

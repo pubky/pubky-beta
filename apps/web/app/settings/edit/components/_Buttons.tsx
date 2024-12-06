@@ -59,36 +59,36 @@ export default function Buttons({
         name: '',
         bio: '',
       });
-  
+
       const result = profileSchema.safeParse({
         name,
         bio: bio || undefined,
       });
-  
+
       if (!result.success) {
         const newErrors: FormErrors = result.error.flatten().fieldErrors;
-  
+
         const errorMessages = Object.keys(newErrors).reduce(
           (acc: { [key: string]: string }, key) => {
             acc[key] = newErrors[key].join(', ');
             return acc;
           },
-          {}
+          {},
         );
-  
+
         setErrors((prev) => ({ ...prev, ...errorMessages }));
         setLoading(false);
         return;
       }
-  
+
       const linksObject: { title: string; url: string }[] = [];
       const invalidLinkIndexes: number[] = [];
-  
+
       links.forEach((link, index) => {
         if (link.url) {
           let validationResult;
           const cleanUrl = link.url.replace('mailto:', '');
-  
+
           if (
             link.title.toLowerCase() === 'email' ||
             link.title.toLowerCase() === 'mail'
@@ -97,7 +97,7 @@ export default function Buttons({
               .string()
               .email({ message: 'Invalid email address' })
               .safeParse(cleanUrl);
-  
+
             if (validationResult.success) {
               linksObject.push({
                 title: link.title,
@@ -112,19 +112,20 @@ export default function Buttons({
               .url({ message: 'Invalid website URL' })
               .optional()
               .safeParse(link.url);
-  
+
             if (!validationResult.success) {
               const socialLink = socialLinks.find(
-                (social) => social.name.toLowerCase() === link.title.toLowerCase()
+                (social) =>
+                  social.name.toLowerCase() === link.title.toLowerCase(),
               );
-  
+
               if (socialLink) {
                 const completedUrl = `${socialLink.url}${link.url}`;
                 validationResult = z
                   .string()
                   .url({ message: 'Invalid website URL' })
                   .safeParse(completedUrl);
-  
+
                 if (validationResult.success) {
                   linksObject.push({
                     title: link.title,
@@ -145,7 +146,7 @@ export default function Buttons({
           }
         }
       });
-  
+
       if (invalidLinkIndexes.length > 0) {
         const newErrors: FormErrors = {};
         invalidLinkIndexes.forEach((index) => {
@@ -162,7 +163,7 @@ export default function Buttons({
         setLoading(false);
         return;
       }
-  
+
       await saveProfile({
         name,
         bio,
@@ -170,7 +171,7 @@ export default function Buttons({
         links: linksObject,
         status: status,
       });
-  
+
       if (
         prevImage &&
         prevImage !== '/images/webp/Userpic.webp' &&
@@ -180,7 +181,7 @@ export default function Buttons({
         await deleteFile(src);
         await deleteFile(String(prevImage));
       }
-  
+
       router.push('/profile');
     } catch (error) {
       console.log(error);
