@@ -29,10 +29,7 @@ export default function NotificationsProfile() {
       ) : (
         <div>
           {unReadNotification > 0 && (
-            <div className="mb-12">
-              <Typography.Body className="font-semibold">
-                New Notifications
-              </Typography.Body>
+            <div className="bg-[#C8FF00] bg-opacity-10 rounded-lg px-2">
               {notifications
                 .slice(0, unReadNotification)
                 .map((notification, index) => (
@@ -47,7 +44,11 @@ export default function NotificationsProfile() {
             const isLastElement = index === displayedNotifications.length - 1;
 
             return (
-              <div key={index} ref={isLastElement ? loader : null}>
+              <div
+                className="px-2"
+                key={index}
+                ref={isLastElement ? loader : null}
+              >
                 <Notifications.Notification notification={notification} />
               </div>
             );
