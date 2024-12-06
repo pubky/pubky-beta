@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Typography } from '@social/ui-shared';
+import { Icon, Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
 import { useStreamPost } from '@/hooks/useStream';
+import { Profile } from '.';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
@@ -14,6 +15,11 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const { pubky } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
+  const lineHorizontalCSS = (
+    <div className="absolute ml-[9px]">
+      <Icon.LineHorizontal size="14" color="#262626" />
+    </div>
+  );
 
   const { data, isLoading } = useStreamPost(
     creatorPubky ?? pubky ?? '',
@@ -22,6 +28,8 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     limit,
     start,
   );
+
+  console.log('data', data);
 
   const fetchPosts = async () => {
     try {
@@ -59,7 +67,21 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
       {timeline.map(
         (post) =>
           post?.details?.content !== '[DELETED]' && (
-            <Post key={`reply-${post.details.id}`} post={post} />
+            <div
+              key={`reply-${post.details.id}`}
+              className="flex flex-col gap-3"
+            >
+              {post?.relationships?.replied && (
+                <Profile.ParentPost parentURI={post?.relationships?.replied} />
+              )}
+              <div className="flex items-center relative">
+                <div
+                  className={`ml-[9px] absolute border-l-[1px] h-[56%] -top-4 border-neutral-800`}
+                />
+                {lineHorizontalCSS}
+                <Post className="ml-6" post={post} />
+              </div>
+            </div>
           ),
       )}
       {isLoading && (
