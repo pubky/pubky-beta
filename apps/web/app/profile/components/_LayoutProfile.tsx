@@ -15,12 +15,11 @@ export default function LayoutProfile({
 }: {
   children: React.ReactNode;
 }) {
-  const { pubky, putTimestampNotification, profile } = usePubkyClientContext();
+  const { pubky, profile } = usePubkyClientContext();
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const { data: userData } = useUserProfile(pubky ?? '', pubky ?? '');
   const loader = useRef(null);
-  const timestamp = Date.now();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -33,13 +32,6 @@ export default function LayoutProfile({
     setActiveTab(foundTab ? foundTab.id : 0);
     setLoading(false);
   }, [pathname]);
-
-  useEffect(() => {
-    const putTimestamp = async () => {
-      await putTimestampNotification(timestamp);
-    };
-    putTimestamp();
-  }, [timestamp, putTimestampNotification]);
 
   return (
     <Content.Main>

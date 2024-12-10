@@ -2,9 +2,14 @@
 
 import { Notifications } from '@/app/profile/components/notifications/components';
 import { Skeleton } from '@/components';
-import { useFilterContext, useNotificationsContext } from '@/contexts';
+import {
+  useFilterContext,
+  useNotificationsContext,
+  usePubkyClientContext,
+} from '@/contexts';
 import { Typography } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { useEffect } from 'react';
 
 export default function NotificationsProfile() {
   const {
@@ -13,10 +18,19 @@ export default function NotificationsProfile() {
     loadMoreNotifications,
   } = useNotificationsContext();
   const { unReadNotification } = useFilterContext();
+  const { putTimestampNotification } = usePubkyClientContext();
+  const timestamp = Date.now();
 
   const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
 
   const displayedNotifications = notifications.slice(unReadNotification);
+
+  useEffect(() => {
+    const putTimestamp = async () => {
+      await putTimestampNotification(timestamp);
+    };
+    putTimestamp();
+  }, []);
 
   return (
     <>
