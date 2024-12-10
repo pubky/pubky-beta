@@ -29,8 +29,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     start,
   );
 
-  console.log('data', data);
-
   const fetchPosts = async () => {
     try {
       if (!data) return;
