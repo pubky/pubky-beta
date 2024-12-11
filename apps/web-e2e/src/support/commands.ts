@@ -44,23 +44,18 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     renameFile(fromPath: string, toPath: string): void;
   }
-
   interface Chainable<Subject> {
     innerTextShouldEq(text: string): Chainable<Subject>;
   }
-
   interface Chainable<Subject> {
     innerTextShouldContain(text: string): Chainable<Subject>;
   }
-
   interface Chainable<Subject> {
     innerTextContains(text: string): Chainable<Subject>;
   }
-
   interface Chainable<Subject> {
     innerTextShouldNotContain(text: string): Chainable<Subject>;
   }
-
   interface Chainable<Subject> {
     innerTextShouldNotEq(text: string): Chainable<Subject>;
   }
@@ -68,20 +63,24 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     saveCopiedPubkyToAlias(alias: string): void;
   }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     saveCopiedTextToAlias(alias: string): void;
   }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     waitReload(time?: number): void;
   }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     waitForElementToDisappear(selector: string): void;
+  }
+  interface Chainable<Subject> {
+    findPostInFeed(filterText: string, postIdx?: number): Chainable<Subject>;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    cannotFindPostInFeed(filterText: string): void;
   }
 }
 
@@ -321,6 +320,30 @@ Cypress.Commands.add('waitForElementToDisappear', (selector: string) => {
   } else {
     cy.log(`${selector} not found; skipping disappearance check.`);
   }
+});
+
+// finds first with no args
+Cypress.Commands.add('findPostInFeed', (filterText?, postIdx = 0) => {
+  // set default index to 1 to skip the quick post area
+  // postIdx = postIdx ?? (filterText === undefined ? 1 : 0);
+
+  cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().then($posts => {
+    // optionally filter posts by contained text
+    return filterText
+      // cannot use :contains due to additional space inserted between each word in the post content
+      ? $posts.filter((_idx, element) => element.innerText.includes(filterText))
+      : $posts
+  }).eq(postIdx);
+});
+
+Cypress.Commands.add('cannotFindPostInFeed', (filterText) => {
+  cy.get('#posts-feed').find('#timeline').children().then($posts => {
+    // Filter posts by text and assert none are found
+    const matchingPosts = $posts.filter((_idx, element) => element.innerText.includes(filterText));
+
+    // Assert that no posts are found with the provided text
+    expect(matchingPosts).to.have.length(0);
+  });
 });
 
 // To prevent Cypress from failing the test when running pubky-app with dev build:

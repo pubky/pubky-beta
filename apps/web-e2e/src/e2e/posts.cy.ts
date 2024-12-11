@@ -7,7 +7,8 @@ import { selectEmoji,
         deletePost,
         createQuickPost,
         checkPostIsNotAtTopOfFeed,
-        clickShowNewPostsBtn } from '../support/posts';
+        clickShowNewPostsBtn,
+        repostPost} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -444,17 +445,7 @@ describe('posts', () => {
 
     // repost with content
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
-      cy.get('#repost-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(($modal) => {
-      cy.get('h1').contains('Repost');
-      // check that the post content is displayed in the repost modal
-      cy.wrap($modal).contains(postContent);
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(repostContent);
-      cy.get('#repost-btn').click();
-    });
+    repostPost({ repostContent, postContent });
 
     // check repost message is shown (before the alert disappears)
     cy.get('#message-alert').should('be.visible').and('contain.text', 'Repost');
@@ -494,14 +485,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // repost without content
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
-      cy.get('#repost-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(() => {
-      cy.get('h1').contains('Repost');
-      cy.get('textarea').should('have.value', '');
-      cy.get('#repost-btn').click();
-    });
+    repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
@@ -536,15 +520,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // repost
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
-      cy.get('#repost-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(() => {
-      cy.get('h1').contains('Repost');
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(repostContent);
-      cy.get('#repost-btn').click();
-    });
+    repostPost({ repostContent, postContent });
 
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.waitReload();
