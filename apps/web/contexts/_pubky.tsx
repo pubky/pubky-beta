@@ -51,6 +51,7 @@ type PubkyClientContextType = {
   loginWithAuthUrl: (publicKey: string) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
+  isSessionActive: () => Promise<boolean>;
   logout: () => boolean;
   signUp: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
   saveProfile: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
@@ -241,6 +242,21 @@ export function PubkyClientWrapper({
       return true;
     } catch (error) {
       console.log(error);
+      return false;
+    }
+  };
+
+  const isSessionActive = async () => {
+    try {
+      if (pubky) {
+        const publicKey = PublicKey.from(pubky);
+        const session = await client.session(publicKey);
+        if (session && pubky) return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error(error);
       return false;
     }
   };
@@ -1661,6 +1677,7 @@ export function PubkyClientWrapper({
         loginWithMnemonic,
         loginWithAuthUrl,
         isLoggedIn,
+        isSessionActive,
         logout,
         signUp,
         setSeed,

@@ -26,6 +26,8 @@ export default function ProtectedRoutes({
     setNotificationPreferences,
     newUser,
     setNewUser,
+    isSessionActive,
+    logout,
   } = usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
   const [showServerDown, setShowServerDown] = useState(false);
@@ -99,7 +101,9 @@ export default function ProtectedRoutes({
   };
 
   const checkAccess = async () => {
-    if (pubky) {
+    const sessionActive = await isSessionActive();
+
+    if (sessionActive && pubky) {
       const hasProfile = await checkProfileUser();
 
       if (!hasProfile) {
@@ -141,6 +145,7 @@ export default function ProtectedRoutes({
 
     // check if the not logged user is trying to access a public route
     if (!publicRoutes.includes(pathname)) {
+      if (pubky) logout();
       router.push('/onboarding');
       return;
     }
