@@ -566,10 +566,14 @@ export function PubkyClientWrapper({
       profile1.name === profile2.name &&
       profile1.bio === profile2.bio &&
       profile1.image === profile2.image &&
-      JSON.stringify(profile1.links) === JSON.stringify(profile2.links) &&
+      ((!profile1.links && !profile2.links) ||
+        (!!profile1.links &&
+          !!profile2.links &&
+          JSON.stringify(profile1.links) === JSON.stringify(profile2.links))) &&
       profile1.status === profile2.status
     );
   };
+
   const updateStatus = async (value: TStatus | string) => {
     try {
       if (!pubky) throw new Error('Pubky required');
