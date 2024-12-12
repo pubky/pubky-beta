@@ -8,7 +8,8 @@ import { selectEmoji,
         createQuickPost,
         checkPostIsNotAtTopOfFeed,
         clickShowNewPostsBtn,
-        repostPost} from '../support/posts';
+        repostPost,
+        tagPost} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -333,27 +334,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // add tags to the post
-    cy.get('#tag-btn').click();
-    cy.get('#modal-root').within(() => {
-      cy.get('h1').contains('Tag Post');
-
-      // add tags to the post
-      for (const tag of [tag1, tag2, tag3]) {
-        cy.get('input').type(tag);
-        cy.get('#add-btn').should('be.visible').click();
-      };
-
-      // TODO: uncomment once bug is fixed, see https://github.com/pubky/pubky-app/issues/541
-      // check current tags in modal
-      // cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
-      //   cy.wrap(divs.eq(0)).contains(tag1);
-      //   cy.wrap(divs.eq(1)).contains(tag2);
-      //   cy.wrap(divs.eq(2)).contains(tag3);
-      // });
-
-      // close modal
-      cy.get('#close-btn').click();
-    });
+    tagPost(postContent, [tag1, tag2, tag3]);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/541
     // should test before and after refresh
