@@ -2,7 +2,7 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { cannotFindPostInFeed, countPostsInFeed, createQuickPost, repostPost } from '../support/posts';
+import { cannotFindPostInFeed, checkPostIsAtIndexInFeed, countPostsInFeed, createQuickPost, repostPost } from '../support/posts';
 import { searchAndFollowProfile } from '../support/contacts';
 //import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost } from '../support/posts';
 //import { defaultMs, fastMs } from '../support/slow-down';
@@ -68,10 +68,11 @@ describe('feed and filters', () => {
     cy.signOut(true);
   });
 
-  it('can filter to view all posts', () => {
+  it('can filter to view all posts in the recent sorting order (default view)', () => {
     // * sign in as profile 2 and view Reach All posts, all can be seen
     cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
     // Reach All is the default view so no need to click
+    // Recent is the default sort so no need to click
 
     // check all posts are visible
     cy.findPostInFeed(profile1.postText1).should('be.visible');
@@ -80,6 +81,14 @@ describe('feed and filters', () => {
     cy.findPostInFeed(profile2.repostText).should('be.visible');
     cy.findPostInFeed(profile3.postText).should('be.visible');
     cy.findPostInFeed(profile4.postText).should('be.visible');
+
+    // check posts are in the correct order
+    checkPostIsAtIndexInFeed(profile4.postText, 0);
+    checkPostIsAtIndexInFeed(profile3.postText, 1);
+    checkPostIsAtIndexInFeed(profile2.repostText, 2);
+    checkPostIsAtIndexInFeed(profile2.postText, 3);
+    checkPostIsAtIndexInFeed(profile1.postText2, 4);
+    checkPostIsAtIndexInFeed(profile1.postText1, 5);
 
     cy.signOut(true);
 
@@ -175,5 +184,5 @@ describe('feed and filters', () => {
     cannotFindPostInFeed(profile3.postText);
     cannotFindPostInFeed(profile4.postText);
   });
-  it.skip('can sort by ')
+  it.skip('can sort by popularity')
 });

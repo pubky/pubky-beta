@@ -85,6 +85,12 @@ export const checkPostIsNotAtTopOfFeed = (postContent: string) => {
   });
 };
 
+export const checkPostIsAtIndexInFeed = (postContent: string, index: number) => {
+  cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(index).within(() => {
+    cy.get('#post-content-text').innerTextShouldEq(postContent);
+  });
+};
+
 // wait for 'show n new posts' button to be visible
 // check its counter displayes the correct number of new posts and click it
 export const clickShowNewPostsBtn = (expectedCounter = 1) => {
