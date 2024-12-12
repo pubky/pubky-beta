@@ -94,3 +94,21 @@ export const clickShowNewPostsBtn = (expectedCounter = 1) => {
     .should('contain.text', ` ${expectedCounter} `)
     .click();
 };
+
+const findAndCountPostsInFeed = (filterText: string, expectedCount: number) => {
+  cy.get('#posts-feed').find('#timeline').children().then($posts => {
+    // Filter posts by text and assert none are found
+    const matchingPosts = $posts.filter((_idx, element) => element.innerText.includes(filterText));
+
+    // Assert that the correct number of posts are found with the provided text
+    expect(matchingPosts).to.have.length(expectedCount);
+  });
+};
+
+export const cannotFindPostInFeed = (filterText: string) => {
+  findAndCountPostsInFeed(filterText, 0);
+};
+
+export const countPostsInFeed = (filterText: string, expectedCount: number) => {
+  findAndCountPostsInFeed(filterText, expectedCount);
+};

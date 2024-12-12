@@ -2,7 +2,7 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { createQuickPost, repostPost } from '../support/posts';
+import { cannotFindPostInFeed, countPostsInFeed, createQuickPost, repostPost } from '../support/posts';
 import { searchAndFollowProfile } from '../support/contacts';
 //import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost } from '../support/posts';
 //import { defaultMs, fastMs } from '../support/slow-down';
@@ -96,22 +96,48 @@ describe('feed and filters', () => {
     cy.findPostInFeed(profile4.postText).should('be.visible');
   });
 
-  it.skip('can filter to view only posts and reposts of following', () => {
+  it.only('can filter to view only posts and reposts of following', () => {
     // * sign in as profile 2 and view Reach Following, profile 1's posts can be seen
     cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
-    cy.get('#reach-following-btn').click();
+    // click the following button in the leftmost (first) sidebar item
+    cy.get('#sidebar').first().find('#reach-following-btn').click();
 
     // check only profile 1's posts are visible
     cy.findPostInFeed(profile1.postText1).should('be.visible');
     cy.findPostInFeed(profile1.postText2).should('be.visible');
-    cy.cannotFindPostInFeed(profile2.postText);
-    // CONTINUE HERE
+    cannotFindPostInFeed(profile2.postText);
+    cannotFindPostInFeed(profile2.repostText);
+    cannotFindPostInFeed(profile3.postText);
+    cannotFindPostInFeed(profile4.postText);
 
+    cy.signOut(true);
 
     // * sign in as profile 3 and view Reach Following, only profile 2's post can be seen
+    cy.signIn(backupDownloadFilePath(`${profile3.username}.pkarr`));
+    cy.get('#sidebar').first().find('#reach-following-btn').click();
+
+    cy.findPostInFeed(profile2.postText).should('be.visible');
+    cy.findPostInFeed(profile2.repostText).should('be.visible');
+    countPostsInFeed(profile1.postText2, 1); // 1 occurrence due to profile 2 reposting profile 1's post
+    cannotFindPostInFeed(profile1.postText1);
+    cannotFindPostInFeed(profile3.postText);
+    cannotFindPostInFeed(profile4.postText);
+
+    cy.signOut(true);
 
     // * sign in as profile 4 and view Reach Following, no posts can be seen
+    cy.signIn(backupDownloadFilePath(`${profile4.username}.pkarr`));
+    cy.get('#sidebar').first().find('#reach-following-btn').click();
+
+    cannotFindPostInFeed(profile1.postText1);
+    cannotFindPostInFeed(profile1.postText2);
+    cannotFindPostInFeed(profile2.postText);
+    cannotFindPostInFeed(profile2.repostText);
+    cannotFindPostInFeed(profile3.postText);
+    cannotFindPostInFeed(profile4.postText);
+    cy.get('#posts-feed').find('#timeline').should('contain.text', 'No posts yet');
   });
+
   it.skip('can filter view only posts and reposts of friends')
   it.skip('can sort by ')
 });

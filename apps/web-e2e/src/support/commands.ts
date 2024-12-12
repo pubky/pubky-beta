@@ -78,10 +78,6 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     findPostInFeed(filterText: string, postIdx?: number): Chainable<Subject>;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    cannotFindPostInFeed(filterText: string): void;
-  }
 }
 
 Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', skipOnboardingSlides: boolean = true, pubkyAlias?: string) => {
@@ -334,16 +330,6 @@ Cypress.Commands.add('findPostInFeed', (filterText?, postIdx = 0) => {
       ? $posts.filter((_idx, element) => element.innerText.includes(filterText))
       : $posts
   }).eq(postIdx);
-});
-
-Cypress.Commands.add('cannotFindPostInFeed', (filterText) => {
-  cy.get('#posts-feed').find('#timeline').children().then($posts => {
-    // Filter posts by text and assert none are found
-    const matchingPosts = $posts.filter((_idx, element) => element.innerText.includes(filterText));
-
-    // Assert that no posts are found with the provided text
-    expect(matchingPosts).to.have.length(0);
-  });
 });
 
 // To prevent Cypress from failing the test when running pubky-app with dev build:
