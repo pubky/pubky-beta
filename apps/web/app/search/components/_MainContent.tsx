@@ -91,9 +91,7 @@ export function MainContent({ layout }: MainContentProps) {
   }, [refSearchInputCard]);
 
   return (
-    <Components.PostsLayout
-      className="w-full flex-col inline-flex gap-3"
-    >
+    <Components.PostsLayout className="w-full flex-col inline-flex gap-3">
       <Input.Search className="lg:hidden">
         {searchTags && (
           <Input.SearchTags>
@@ -119,7 +117,7 @@ export function MainContent({ layout }: MainContentProps) {
             setInputValue(e.target.value)
           }
           maxLength={55}
-          onKeyDown={handleKeyDown}
+          onKeyDown={!inputValue ? undefined : handleKeyDown}
           className={`${
             searchInputCard &&
             'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'

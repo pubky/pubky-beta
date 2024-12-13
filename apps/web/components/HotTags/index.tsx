@@ -43,14 +43,18 @@ export default function HotTags() {
                     rank={index + 1}
                     tag={Utils.minifyText(tag?.label, 21)}
                     color={tag?.label && Utils.generateRandomColor(tag?.label)}
-                    counter={`${tag?.post_count}`}
+                    counter={`${tag?.tagged_count}`}
                     boxShadow={false}
                   />
                 </Link>
               ))}
             </div>
             <Link href="/hot">
-              <SideCard.Action textCSS='text-[13px]' className="mt-3" text="Explore All" />
+              <SideCard.Action
+                textCSS="text-[13px]"
+                className="mt-3"
+                text="Explore All"
+              />
             </Link>
           </>
         ) : (

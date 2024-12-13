@@ -7,7 +7,7 @@ const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 export async function getHotTags(
   skip?: number,
   limit?: number,
-  maxTaggers?: number
+  maxTaggers?: number,
 ): Promise<HotTag[]> {
   const queryParams = new URLSearchParams();
 
@@ -20,7 +20,7 @@ export async function getHotTags(
   if (maxTaggers) {
     queryParams.append('max_taggers', String(maxTaggers));
   }
-  const response = await fetch(`${BASE_URL}/tag/hot?${queryParams}`);
+  const response = await fetch(`${BASE_URL}/tags/hot?${queryParams}`);
   if (!response.ok) throw new Error('Failed to fetch hot tags');
   return response.json();
 }
@@ -28,7 +28,7 @@ export async function getHotTags(
 // Get global tags by reach
 export async function getTagsByReach(
   userId: string,
-  reach: string // follower | following | friends
+  reach: string, // follower | following | friends
 ): Promise<TagsByReach> {
   const response = await fetch(`${BASE_URL}/tag/reached/${userId}/${reach}`);
   if (!response.ok) throw new Error('Failed to fetch tags by reach');
@@ -38,7 +38,7 @@ export async function getTagsByReach(
 // Get global tags by taggers
 export async function getTagTaggers(
   label: string,
-  reach: string // follower | following | friends
+  reach: string, // follower | following | friends
 ): Promise<Taggers> {
   const response = await fetch(`${BASE_URL}/tag/taggers/${label}/${reach}`);
   if (!response.ok) throw new Error('Failed to fetch tag taggers');
