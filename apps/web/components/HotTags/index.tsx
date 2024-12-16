@@ -27,7 +27,7 @@ export default function HotTags() {
   }
 
   return (
-    <div className="col-span-1 mb-6">
+    <div id="hot-tags" className="col-span-1 mb-6">
       <SideCard.Header title="Hot tags">
         {/**<DropDown.TagsTimeframe type="text" />*/}
       </SideCard.Header>
@@ -36,7 +36,7 @@ export default function HotTags() {
           <Skeletons.Simple />
         ) : hotTags && hotTags.length > 0 ? (
           <>
-            <div className="grid gap-2">
+            <div id="hot-tags-list" className="grid gap-2">
               {hotTags.slice(0, 8).map((tag, index) => (
                 <Link key={index} href={`/search?tags=${tag?.label}`}>
                   <SideCard.Rank

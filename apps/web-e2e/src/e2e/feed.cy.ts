@@ -109,13 +109,19 @@ describe('feed and filters', () => {
     cy.findPostInFeed(profile2.repostText).should('be.visible');
     cy.findPostInFeed(profile3.postText).should('be.visible');
     cy.findPostInFeed(profile4.postText).should('be.visible');
+
+    // * check some Hot tags are visible
+    cy.get('#right-sidebar').find('#hot-tags').should('be.visible').within(($hotTags) => {
+      cy.wrap($hotTags).innerTextShouldNotContain('No tags yet');
+      cy.get('#hot-tags-list').should('be.visible').find('a').should('have.length.above', 5);
+    });
   });
 
   it('can filter to view only posts and reposts of following', () => {
     // * sign in as profile 2 and view Reach Following, only profile 1's posts can be seen
     cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
     // click the following button in the leftmost (first) sidebar item
-    cy.get('#sidebar').first().find('#reach-following-btn').click();
+    cy.get('#left-sidebar').find('#reach-following-btn').click();
 
     cy.findPostInFeed(profile1.postText1).should('be.visible');
     cy.findPostInFeed(profile1.postText2).should('be.visible');
@@ -128,7 +134,7 @@ describe('feed and filters', () => {
 
     // * sign in as profile 3 and view Reach Following, only profile 2's post can be seen
     cy.signIn(backupDownloadFilePath(`${profile3.username}.pkarr`));
-    cy.get('#sidebar').first().find('#reach-following-btn').click();
+    cy.get('#left-sidebar').find('#reach-following-btn').click();
 
     cy.findPostInFeed(profile2.postText).should('be.visible');
     cy.findPostInFeed(profile2.repostText).should('be.visible');
@@ -141,7 +147,7 @@ describe('feed and filters', () => {
 
     // * sign in as profile 4 and view Reach Following, no posts can be seen
     cy.signIn(backupDownloadFilePath(`${profile4.username}.pkarr`));
-    cy.get('#sidebar').first().find('#reach-following-btn').click();
+    cy.get('#left-sidebar').find('#reach-following-btn').click();
 
     cannotFindPostInFeed(profile1.postText1);
     cannotFindPostInFeed(profile1.postText2);
@@ -155,7 +161,7 @@ describe('feed and filters', () => {
   it('can filter view only posts and reposts of friends', () => {
     // * sign in as profile 1 and view Reach Friends, only profile 2's post can be seen
     cy.signIn(backupDownloadFilePath(`${profile1.username}.pkarr`));
-    cy.get('#sidebar').first().find('#reach-friends-btn').click();
+    cy.get('#left-sidebar').find('#reach-friends-btn').click();
 
     cy.findPostInFeed(profile2.postText).should('be.visible');
     cy.findPostInFeed(profile2.repostText).should('be.visible');
@@ -168,7 +174,7 @@ describe('feed and filters', () => {
 
     // * sign in as profile 2 and view Reach Friends, only profile 1's posts can be seen
     cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
-    cy.get('#sidebar').first().find('#reach-friends-btn').click();
+    cy.get('#left-sidebar').find('#reach-friends-btn').click();
 
     cy.findPostInFeed(profile1.postText1).should('be.visible');
     cy.findPostInFeed(profile1.postText2).should('be.visible');
@@ -181,7 +187,7 @@ describe('feed and filters', () => {
 
     // * sign in as profile 3 and view Reach Friends, no posts can be seen
     cy.signIn(backupDownloadFilePath(`${profile3.username}.pkarr`));
-    cy.get('#sidebar').first().find('#reach-friends-btn').click();
+    cy.get('#left-sidebar').find('#reach-friends-btn').click();
 
     cannotFindPostInFeed(profile1.postText1);
     cannotFindPostInFeed(profile1.postText2);
@@ -194,8 +200,8 @@ describe('feed and filters', () => {
   it('can sort by popularity', () => {
     // * sign in as profile 1 and sort by Popularity with Reach Following posts
     cy.signIn(backupDownloadFilePath(`${profile1.username}.pkarr`));
-    cy.get('#sidebar').first().find('#reach-following-btn').click();
-    cy.get('#sidebar').first().find('#sort-popularity-btn').click();
+    cy.get('#left-sidebar').find('#reach-following-btn').click();
+    cy.get('#left-sidebar').find('#sort-popularity-btn').click();
 
     // * check the posts are in the correct order
     // profile 3's post is the most popular because it has 5 tags
