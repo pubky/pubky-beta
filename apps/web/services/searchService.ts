@@ -1,4 +1,4 @@
-import { UserSearch, UserView } from '@/types/User';
+import { UserSearch } from '@/types/User';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
@@ -10,7 +10,7 @@ export async function searchPostsByTags(
   start?: number,
   end?: number,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<UserSearch> {
   const queryParams = new URLSearchParams();
 
@@ -31,7 +31,7 @@ export async function searchPostsByTags(
   }
 
   const response = await fetch(
-    `${BASE_URL}/search/tags/${label}?${queryParams}`
+    `${BASE_URL}/search/tags/${label}?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to search users');
@@ -43,7 +43,7 @@ export async function searchPostsByTags(
 export async function searchUsers(
   username: string,
   skip?: number,
-  limit?: number
+  limit?: number,
 ): Promise<UserSearch> {
   const queryParams = new URLSearchParams();
 

@@ -30,7 +30,6 @@ export default function ProtectedRoutes({
     logout,
   } = usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
-  const [showServerDown, setShowServerDown] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const publicRoutes = [
@@ -179,12 +178,6 @@ export default function ProtectedRoutes({
         <Modal.SessionExpired
           setShowModal={setShowModal}
           showModal={showModal}
-        />
-      )}
-      {showServerDown && (
-        <Modal.ServerDown
-          setShowModal={setShowServerDown}
-          showModal={showServerDown}
         />
       )}
     </>

@@ -18,7 +18,6 @@ import ReportProfile from './_ReportProfile';
 import Repost from './_Repost';
 import SearchedUsersCard from './_SearchedUsersCard';
 import SearchInputCard from './_SearchInputCard';
-import ServerDown from './_ServerDown';
 import SessionExpired from './_SessionExpired';
 import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
@@ -44,7 +43,6 @@ export const Modal = {
   Repost,
   SearchedUsersCard,
   SearchInputCard,
-  ServerDown,
   SessionExpired,
   Tag,
   TagCreatePost,

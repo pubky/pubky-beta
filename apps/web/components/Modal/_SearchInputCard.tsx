@@ -6,7 +6,7 @@ import { Utils } from '@social/utils-shared';
 import { useHotTags } from '@/hooks/useTag';
 import Link from 'next/link';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;

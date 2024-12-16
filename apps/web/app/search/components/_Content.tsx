@@ -29,7 +29,7 @@ export default function ContentSearch() {
             filterContentRef={filterContentRef}
           />
         )}
-        <SearchPage.MainContent layout={layout} />
+        <SearchPage.MainContent />
         {layout !== 'wide' && <SearchPage.RightSidebar />}
       </Content.Grid>
       <Menu.Root

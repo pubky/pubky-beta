@@ -4,7 +4,6 @@ import { usePubkyClientContext } from '@/contexts';
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
 import axios from 'axios';
 import { useState } from 'react';
-import { PostView } from '@/types/Post';
 import InputReport from './Components/InputReport';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';

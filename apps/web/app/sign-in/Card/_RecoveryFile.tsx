@@ -11,7 +11,7 @@ interface RecoveryFileProps {
   setFileName: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
   loginError: string;
-  userNotFound: boolean;
+  // userNotFound: boolean;
   loading: boolean;
   handleSubmit: () => void;
   setRecoveryFile: React.Dispatch<React.SetStateAction<Buffer | null>>;
@@ -23,7 +23,7 @@ export default function RecoveryFile({
   setFileName,
   setPassword,
   loginError,
-  userNotFound,
+  // userNotFound,
   loading,
   handleSubmit,
   setRecoveryFile,

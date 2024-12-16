@@ -40,11 +40,11 @@ const menuItems: Record<
 };
 
 interface MenuProps {
-  selectedItem: string | null;
+  // selectedItem: string | null;
   setSelectedItem: (item: string | null) => void;
 }
 
-export default function Menu({ selectedItem, setSelectedItem }: MenuProps) {
+export default function Menu({ setSelectedItem }: MenuProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -56,8 +56,8 @@ export default function Menu({ selectedItem, setSelectedItem }: MenuProps) {
         const itemClass = item.disabled
           ? 'opacity-20 border-b border-transparent'
           : isSelected
-          ? 'cursor-pointer opacity-100 border-b border-transparent'
-          : 'cursor-pointer border-b border-transparent hover:bg-gradient-to-t from-white/10 to-transparent hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
+            ? 'cursor-pointer opacity-100 border-b border-transparent'
+            : 'cursor-pointer border-b border-transparent hover:bg-gradient-to-t from-white/10 to-transparent hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
 
         return (
           <div

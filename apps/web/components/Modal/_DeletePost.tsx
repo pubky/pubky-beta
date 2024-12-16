@@ -1,7 +1,6 @@
 'use client';
 
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
-import { useEffect, useRef } from 'react';
 
 interface DeletePostProps {
   showModalDeletePost: boolean;

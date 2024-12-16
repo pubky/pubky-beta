@@ -10,18 +10,12 @@ import { usePubkyClientContext } from '@/contexts';
 
 interface TagProps {
   tags: PostTag | null;
-  setShowModalTags: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedTag?: React.Dispatch<React.SetStateAction<PostTag | null>>;
 }
 
-export default function Tag2({
-  tags,
-  setShowModalTags,
-  setSelectedTag,
-}: TagProps) {
+export default function Tag2({ tags }: TagProps) {
   const { pubky } = usePubkyClientContext();
   const [showTooltipProfile, setShowTooltipProfile] = useState<number | null>(
-    null
+    null,
   );
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [images, setImages] = useState<string[]>([]);
@@ -33,7 +27,7 @@ export default function Tag2({
           tags.taggers.map(async (fromItem) => {
             const profile = await getUserProfile(fromItem, pubky ?? '');
             return profile?.details?.image ?? '/images/webp/Userpic.webp';
-          })
+          }),
         );
         setImages(fetchedImages);
         setLoadingFollowers(false);

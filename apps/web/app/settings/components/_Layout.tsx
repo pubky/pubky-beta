@@ -8,12 +8,8 @@ import MenuMobile from '../_menuMobile';
 import Faq from '../_faq';
 import Version from '../_version';
 
-export default function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [selectedItem, setSelectedItem] = useState<string | null>('account');
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const [_, setSelectedItem] = useState<string | null>('account');
 
   return (
     <Content.Main>
@@ -21,16 +17,13 @@ export default function Layout({
       <Content.Grid className="flex gap-6">
         {/* Sidebar menu */}
         <Components.Sidebar className="w-[280px] hidden lg:block">
-          <Menu selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
+          <Menu setSelectedItem={setSelectedItem} />
         </Components.Sidebar>
 
         {/* Main content (children will be rendered here) */}
         <div className="w-full flex-col inline-flex gap-3">
           <div className="lg:hidden flex">
-            <MenuMobile
-              selectedItem={selectedItem}
-              setSelectedItem={setSelectedItem}
-            />
+            <MenuMobile setSelectedItem={setSelectedItem} />
           </div>
           {children}
         </div>

@@ -104,7 +104,7 @@ export default function Tags({
         {!largeView &&
           tags.slice(0, 3).map((tagObj, index) => {
             const isTagFound = tagObj?.taggers?.some(
-              (fromItem) => fromItem === pubky
+              (fromItem) => fromItem === pubky,
             );
             return (
               <PostUI.Footer key={index}>
@@ -114,11 +114,7 @@ export default function Tags({
                   tagId={tagObj?.label}
                 >
                   {showTooltipTag === tagObj?.label && (
-                    <Tooltip.Tag2
-                      setSelectedTag={setSelectedTag}
-                      setShowModalTags={setShowModalTag}
-                      tags={tagObj}
-                    />
+                    <Tooltip.Tag2 tags={tagObj} />
                   )}
                   {tagObj.taggers_count > 0 && (
                     <PostUtil.Tag

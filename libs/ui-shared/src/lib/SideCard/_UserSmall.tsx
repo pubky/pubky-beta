@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 import Link from 'next/link';
@@ -37,7 +36,7 @@ export const UserSmall = ({
       {...rest}
       className={twMerge(
         `justify-between items-center inline-flex w-full`,
-        rest.className
+        rest.className,
       )}
     >
       <Link href={`/profile/${uri}`} className="gap-1 inline-flex ">

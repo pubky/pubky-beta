@@ -42,12 +42,12 @@ export default function CroppedImage({
     return () => {
       document.removeEventListener(
         'mousedown',
-        handleClickOutsideModalCroppedImage
+        handleClickOutsideModalCroppedImage,
       );
     };
   }, [modalCroppedImageRef, setShowModalCroppedImage]);
 
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+  const onCropComplete = useCallback((croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
@@ -75,14 +75,14 @@ export default function CroppedImage({
           0,
           0,
           croppedAreaPixels.width,
-          croppedAreaPixels.height
+          croppedAreaPixels.height,
         );
 
         return new Promise<File>((resolve) => {
           canvas.toBlob((blob) => {
             if (blob) {
               resolve(
-                new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' })
+                new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' }),
               );
             }
           }, 'image/jpeg');

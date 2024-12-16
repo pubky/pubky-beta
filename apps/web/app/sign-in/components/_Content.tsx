@@ -29,7 +29,7 @@ export default function Index() {
     recoveryFile: '',
   });
   const [loginError, setLoginError] = useState('');
-  const [userNotFound, setUserNotFound] = useState(false);
+  // const [userNotFound, setUserNotFound] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -57,7 +57,7 @@ export default function Index() {
             acc[key] = newErrors[key].join(', ');
             return acc;
           },
-          {}
+          {},
         );
         setErrors((prev) => ({ ...prev, ...errorMessages }));
         setLoading(false);
@@ -72,7 +72,7 @@ export default function Index() {
           : (error as Error)?.message;
       setLoginError(errorMessage);
       setLoading(false);
-      setUserNotFound(false);
+      // setUserNotFound(false);
       console.error('Login error:', error);
     }
   };
@@ -119,7 +119,7 @@ export default function Index() {
             setFileName={setFileName}
             setPassword={setPassword}
             loginError={loginError}
-            userNotFound={userNotFound}
+            // userNotFound={userNotFound}
             loading={loading}
             handleSubmit={handleSubmit}
             setRecoveryFile={setRecoveryFile}

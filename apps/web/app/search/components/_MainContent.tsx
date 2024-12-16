@@ -6,14 +6,14 @@ import { Icon, Input } from '@social/ui-shared';
 import Modal from '@/components/Modal';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { TLayouts } from '@/types';
+// import { TLayouts } from '@/types';
 import { Timeline } from './_Timeline';
 
-interface MainContentProps {
-  layout: TLayouts;
-}
+// interface MainContentProps {
+//   layout: TLayouts;
+// }
 
-export function MainContent({ layout }: MainContentProps) {
+export function MainContent() {
   const { searchTags, setSearchTags } = usePubkyClientContext();
   const searchParams = useSearchParams();
   const router = useRouter();

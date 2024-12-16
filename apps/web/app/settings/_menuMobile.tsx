@@ -40,12 +40,12 @@ const menuItems: Record<
 };
 
 interface MenuMobileProps {
-  selectedItem: string | null;
+  // selectedItem: string | null;
   setSelectedItem: (item: string | null) => void;
 }
 
 export default function MenuMobile({
-  selectedItem,
+  // selectedItem,
   setSelectedItem,
 }: MenuMobileProps) {
   const pathname = usePathname();
@@ -59,8 +59,8 @@ export default function MenuMobile({
         const itemClass = item.disabled
           ? 'opacity-20'
           : isSelected
-          ? 'cursor-pointer opacity-100'
-          : 'cursor-pointer hover:bg-white hover:bg-opacity-10 hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
+            ? 'cursor-pointer opacity-100'
+            : 'cursor-pointer hover:bg-white hover:bg-opacity-10 hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
 
         return (
           <div

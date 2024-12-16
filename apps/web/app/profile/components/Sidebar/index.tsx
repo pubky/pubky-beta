@@ -18,10 +18,7 @@ export default function Sidebar({
 }) {
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
-  const { data, isLoading, isError } = useUserProfile(
-    usePubky ?? '',
-    pubky ?? ''
-  );
+  const { data, isLoading } = useUserProfile(usePubky ?? '', pubky ?? '');
   //if (isError) console.error(isError);
   const profile = data;
   const name = profile?.details?.name ?? '';
