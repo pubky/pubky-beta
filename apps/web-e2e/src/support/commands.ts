@@ -183,6 +183,7 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
       cy.get('#sign-in-password-input').type(passcode);
       cy.get('#sign-in-recovery-file-btn').click();
 
+      // TODO: REMOVE WORKAROUND FOR BUG https://github.com/pubky/pubky-app/issues/719
       cy.waitReload(5000);
     };
   });

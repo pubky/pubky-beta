@@ -111,9 +111,11 @@ describe('feed and filters', () => {
     cy.findPostInFeed(profile4.postText).should('be.visible');
 
     // * check some Hot tags are visible
-    cy.get('#right-sidebar').find('#hot-tags').should('be.visible').within(($hotTags) => {
-      cy.wrap($hotTags).innerTextShouldNotContain('No tags yet');
-      cy.get('#hot-tags-list').should('be.visible').find('a').should('have.length.above', 5);
+    cy.get('#right-sidebar').find('#hot-tags').should('be.visible').within(() => {
+      cy.get('#hot-tags-content')
+        .should('be.visible')
+        .innerTextShouldNotContain('No tags yet')
+        .find('a').should('have.length.above', 5);
     });
   });
 

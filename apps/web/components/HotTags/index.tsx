@@ -31,12 +31,12 @@ export default function HotTags() {
       <SideCard.Header title="Hot tags">
         {/**<DropDown.TagsTimeframe type="text" />*/}
       </SideCard.Header>
-      <SideCard.Content>
+      <SideCard.Content id="hot-tags-content">
         {isLoading ? (
           <Skeletons.Simple />
         ) : hotTags && hotTags.length > 0 ? (
           <>
-            <div id="hot-tags-list" className="grid gap-2">
+            <div className="grid gap-2">
               {hotTags.slice(0, 8).map((tag, index) => (
                 <Link key={index} href={`/search?tags=${tag?.label}`}>
                   <SideCard.Rank
