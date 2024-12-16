@@ -5,7 +5,6 @@ import { Content, Menu } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
 import { useFilterContext } from '@/contexts';
-import { ICustomFeed } from '@/types';
 import { useFilterVisibility } from '@/hooks/useFilterVisibility';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { LeftSidebar } from './_LeftSidebar';
@@ -15,8 +14,6 @@ import { BookmarksPage } from '.';
 export default function ContentBookmarks() {
   const { layout } = useFilterContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
-  const [loadingFeed, setLoadingFeed] = useState(true);
-  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
   const { isFilterContentVisible, filterContentRef } = useFilterVisibility();
   const drawerFilterRef = useRef<HTMLDivElement>(null);
 

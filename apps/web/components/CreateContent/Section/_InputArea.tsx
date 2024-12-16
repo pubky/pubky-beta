@@ -52,7 +52,7 @@ export default function InputArea({
   setIsError,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const { setContent: setContentAlert, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -97,14 +97,12 @@ export default function InputArea({
           file.type === 'application/pdf';
 
         if (!isValidType) {
-          setContentAlert('File type not supported.', 'warning');
-          setShow(true);
+          addAlert('File type not supported.', 'warning');
           return false;
         }
 
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 20 MB.', 'warning');
-          setShow(true);
+          addAlert('The maximum allowed size is 20 MB.', 'warning');
           return false;
         }
 
@@ -112,8 +110,7 @@ export default function InputArea({
       });
 
       if (selectedFiles && selectedFiles.length + validFiles.length > 3) {
-        setContentAlert('Max 3 files only.', 'warning');
-        setShow(true);
+        addAlert('Max 3 files only.', 'warning');
         return;
       }
 
@@ -125,12 +122,12 @@ export default function InputArea({
       setSelectedFiles &&
         newFiles &&
         setSelectedFiles((prevFiles) =>
-          [...prevFiles, ...newFiles].slice(0, 3)
+          [...prevFiles, ...newFiles].slice(0, 3),
         );
       newPreviews &&
         setFilePreviews &&
         setFilePreviews((prevPreviews) =>
-          [...prevPreviews, ...newPreviews].slice(0, 3)
+          [...prevPreviews, ...newPreviews].slice(0, 3),
         );
 
       if (newFiles && newFiles?.length > 0 && setTextArea) {
@@ -194,7 +191,7 @@ export default function InputArea({
             `w-full max-h-[300px] h-auto ${
               largeView && 'text-2xl min-h-[50px]'
             }`,
-            className
+            className,
           )}
           placeholder={placeHolder}
         />

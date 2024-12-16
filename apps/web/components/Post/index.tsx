@@ -57,7 +57,7 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
   const { pubky, deletePost } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
   const [showModalTag, setShowModalTag] = useState(false);
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
@@ -68,11 +68,9 @@ export default function Post({
   const handleDeletePost = async () => {
     const result = await deletePost(post?.details?.id);
     if (result) {
-      setContent('Post deleted successfully');
-      setShow(true);
+      addAlert('Post deleted successfully');
     } else {
-      setContent('Something wrong. Try again', 'warning');
-      setShow(true);
+      addAlert('Something wrong. Try again', 'warning');
     }
   };
 
@@ -105,7 +103,14 @@ export default function Post({
   return (
     <div
       className="w-full cursor-pointer"
-      onClick={() => router.push(Utils.encodePostUri(post?.details?.uri))}
+      onClick={(event) => {
+        const selection = window.getSelection();
+        if (!selection || selection.toString().length === 0) {
+          router.push(Utils.encodePostUri(post?.details?.uri));
+        } else {
+          event.stopPropagation();
+        }
+      }}
     >
       <div className="flex flex-col">
         <PostUI.Root>

@@ -47,30 +47,32 @@ export default function Header({
           router.push(`/profile/${author}`);
         }}
       >
-        <PostUI.ImageUser
-          uriImage={userDetails?.image || '/images/webp/Userpic.webp'}
-          alt="user"
-          width={largeView ? 48 : 32}
-          height={largeView ? 48 : 32}
-        />
         <TooltipUI.Root
           delay={500}
           tagId="1"
           setShowTooltip={setShowTooltipProfile}
         >
-          <div className="justify-start items-start lg:items-center flex lg:flex-row flex-col lg:gap-4">
-            <PostUI.Username
-              className={`${
-                largeView ? 'text-2xl' : ''
-              } hover:underline hover:decoration-solid`}
-            >
-              {userDetails.name && Utils.minifyText(userDetails.name, 24)}
-            </PostUI.Username>
-            {!repostView && (
-              <Typography.Label className="cursor-pointer text-opacity-30 -mt-1 lg:mt-0">
-                {Utils.minifyPubky(author)}
-              </Typography.Label>
-            )}
+          <div className="justify-start items-center gap-2 flex cursor-pointer">
+            <PostUI.ImageUser
+              uriImage={userDetails?.image || '/images/webp/Userpic.webp'}
+              alt="user"
+              width={largeView ? 48 : 32}
+              height={largeView ? 48 : 32}
+            />
+            <div className="justify-start items-start lg:items-center flex lg:flex-row flex-col lg:gap-4">
+              <PostUI.Username
+                className={`${
+                  largeView ? 'text-2xl' : ''
+                } hover:underline hover:decoration-solid`}
+              >
+                {userDetails.name && Utils.minifyText(userDetails.name, 24)}
+              </PostUI.Username>
+              {!repostView && (
+                <Typography.Label className="cursor-pointer text-opacity-30 -mt-1 lg:mt-0">
+                  {Utils.minifyPubky(author)}
+                </Typography.Label>
+              )}
+            </div>
           </div>
           {showTooltipProfile && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>

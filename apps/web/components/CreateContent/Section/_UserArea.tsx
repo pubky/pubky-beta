@@ -22,7 +22,10 @@ export default function UserArea({
   const { pubky } = usePubkyClientContext();
 
   return (
-    <div className={`${!variant && 'items-center'} justify-start gap-3 flex`}>
+    <Link
+      href="/profile"
+      className={`${!variant && 'items-center'} justify-start gap-2 flex`}
+    >
       <ImageByUri
         width={largeView ? 48 : 32}
         height={largeView ? 48 : 32}
@@ -35,10 +38,7 @@ export default function UserArea({
       {!variant && (
         <>
           {pubky ? (
-            <Link
-              className="cursor-pointer flex gap-4 items-center"
-              href="/profile"
-            >
+            <div className="cursor-pointer flex gap-4 items-center">
               <Typography.Body
                 className={`${
                   largeView && 'text-2xl'
@@ -53,7 +53,7 @@ export default function UserArea({
                   {Utils.minifyPubky(pubky)}
                 </Typography.Label>
               </div>
-            </Link>
+            </div>
           ) : (
             <Typography.Body variant="medium-bold" className="text-opacity-50">
               Loading...
@@ -61,6 +61,6 @@ export default function UserArea({
           )}
         </>
       )}
-    </div>
+    </Link>
   );
 }

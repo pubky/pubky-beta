@@ -154,7 +154,7 @@ export default function Header({ title, className }: HeaderProps) {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setInputValue(e.target.value)
             }
-            onKeyDown={searchTags.length ? undefined : handleKeyDown}
+            onKeyDown={!inputValue ? undefined : handleKeyDown}
             maxLength={55}
             placeholder={!searchTags.length ? 'Search' : ''}
             className={`hidden lg:block ${

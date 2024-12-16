@@ -16,7 +16,7 @@ export default function CreatePost({
   modalPostRef,
 }: CreatePostProps) {
   const { pubky, createPost, createTag } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -50,11 +50,9 @@ export default function CreatePost({
           await createTag(pubky ?? '', postId, tag);
         }
 
-        setContent('Post created!');
-        setShow(true);
+        addAlert('Post created!');
       } else {
-        setContent('Something wrong. Try again', 'warning');
-        setShow(true);
+        addAlert('Something wrong. Try again', 'warning');
       }
       setArrayTags([]);
       setContentPost('');

@@ -83,6 +83,21 @@ export default function Profile({ post, profileId }: ProfileProps) {
   useEffect(() => {
     async function fetchData() {
       try {
+        if (author) {
+          setInitLoadingFollowed(false);
+          if (author?.relationship?.following) setFollowed(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [author]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
         const followersList = followers;
 
         if (followersList) {
@@ -97,20 +112,11 @@ export default function Profile({ post, profileId }: ProfileProps) {
           );
 
           setFollowersImages(images);
-          setInitLoadingFollowed(false);
-
-          followersList.forEach((user) => {
-            const uri = user?.replace('pubky:', '');
-            if (uri === pubky) {
-              setFollowed(true);
-            }
-          });
         }
       } catch (error) {
         console.log(error);
       }
     }
-
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [followers]);
@@ -270,25 +276,6 @@ export default function Profile({ post, profileId }: ProfileProps) {
                 ? undefined
                 : (event) => {
                     event.stopPropagation();
-                    followUser();
-                  }
-            }
-            disabled={loadingFollowed}
-            loading={loadingFollowed}
-            icon={<Icon.UserPlus size="16" />}
-            className={
-              post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-            }
-          >
-            Follow
-          </Button.Transparent>
-        ) : (
-          <Button.Transparent
-            onClick={
-              loadingFollowed
-                ? undefined
-                : (event) => {
-                    event.stopPropagation();
                     unfollowUser();
                   }
             }
@@ -300,6 +287,25 @@ export default function Profile({ post, profileId }: ProfileProps) {
             }
           >
             Unfollow
+          </Button.Transparent>
+        ) : (
+          <Button.Transparent
+            onClick={
+              loadingFollowed
+                ? undefined
+                : (event) => {
+                    event.stopPropagation();
+                    followUser();
+                  }
+            }
+            disabled={loadingFollowed}
+            loading={loadingFollowed}
+            icon={<Icon.UserPlus size="16" />}
+            className={
+              post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+            }
+          >
+            Follow
           </Button.Transparent>
         )}
       </div>

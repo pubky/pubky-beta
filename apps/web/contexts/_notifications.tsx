@@ -29,7 +29,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { pubky, timestamp, notificationPreferences } = usePubkyClientContext();
   const { setUnReadNotification } = useFilterContext();
 
-  const limit = 10;
+  const limit = 30;
   const [skip, setSkip] = useState(0);
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
   const [loading, setLoading] = useState(true);
@@ -124,7 +124,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (notificationPreferences) {
       fetchNotifications();
-      const interval = setInterval(fetchNotifications, 3000);
+      const interval = setInterval(fetchNotifications, 60000);
       return () => clearInterval(interval);
     }
   }, [pubky, notificationPreferences, initNotifications]);

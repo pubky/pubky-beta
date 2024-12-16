@@ -1,3 +1,5 @@
+import { TStatus } from '.';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PostCounts {
   replies: number;
@@ -97,7 +99,7 @@ export interface PubkyAppUser {
   bio?: string;
   image?: string | File;
   links?: Links[];
-  status?: string;
+  status?: TStatus | string;
 }
 
 export type PostStreamReach = 'Following' | 'Followers' | 'Friends';

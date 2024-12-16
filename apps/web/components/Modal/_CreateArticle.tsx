@@ -14,7 +14,6 @@ import { UserView } from '@/types/User';
 import Modal from '.';
 import Image from 'next/image';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
-import { searchUsersByUsername } from '@/services/streamService';
 
 interface CreateArticleProps {
   showModalArticle: boolean;
@@ -31,7 +30,7 @@ export default function CreateArticle({
   const [isDragging, setIsDragging] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isError, setIsError] = useState(false);
-  const { setContent: setContentAlert, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [errorFile, setErrorFile] = useState('');
   const [contentTitle, setContentTitle] = useState('');
   const [contentArticle, setContentArticle] = useState('');
@@ -94,11 +93,9 @@ export default function CreateArticle({
           await createTag(pubky ?? '', postId, tag);
         }
 
-        setContentAlert('Article created!');
-        setShow(true);
+        addAlert('Article created!');
       } else {
-        setContentAlert('Something wrong. Try again', 'warning');
-        setShow(true);
+        addAlert('Something wrong. Try again', 'warning');
       }
       setArrayTags([]);
       setContentArticle('');
@@ -161,7 +158,8 @@ export default function CreateArticle({
     };
   }, [wrapperRef, contentArticle]);
 
-  const searchProfiles = async (text: string) => {
+  {
+    /**const searchProfiles = async (text: string) => {
     try {
       const result = await searchUsersByUsername(text);
       return result || [];
@@ -169,7 +167,8 @@ export default function CreateArticle({
       console.error('Error searching profiles:', error);
       return [];
     }
-  };
+  }; */
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -313,13 +312,11 @@ export default function CreateArticle({
           file.type === 'application/pdf';
 
         if (!isValidType) {
-          setContentAlert('File type not supported.', 'warning');
-          setShow(true);
+          addAlert('File type not supported.', 'warning');
           return false;
         }
         if (file.size > maxSizeInBytes) {
-          setContentAlert('The maximum allowed size is 20 MB', 'warning');
-          setShow(true);
+          addAlert('The maximum allowed size is 20 MB', 'warning');
           return false;
         }
         return true;

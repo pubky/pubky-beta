@@ -14,7 +14,7 @@ export const Message = ({
   variant = 'default',
   ...rest
 }: MessageProps) => {
-  const baseCSS = `fixed bottom-8 left-1/2 transform -translate-x-1/2 py-2 px-4 rounded-md shadow border`;
+  const baseCSS = `relative py-2 px-4 rounded-md shadow border w-full`;
 
   let variantCSS = '';
 
@@ -24,13 +24,17 @@ export const Message = ({
       break;
     case 'default':
     default:
-      variantCSS = 'bg-white bg-opacity-20 backdrop-blur-[50px]  border-white';
+      variantCSS = 'bg-white bg-opacity-20 backdrop-blur-[50px] border-white';
       break;
   }
 
   return (
-    <div id='message-alert' {...rest} className={twMerge(baseCSS, variantCSS, rest.className)}>
-      <div className="flex gap-2">
+    <div
+      id="message-alert"
+      {...rest}
+      className={twMerge(baseCSS, variantCSS, rest.className)}
+    >
+      <div className="flex gap-2 items-center">
         {icon && <div className="relative">{icon}</div>}
         <Typography.Body className="text-opacity-80" variant="small">
           {children}

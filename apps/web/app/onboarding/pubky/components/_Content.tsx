@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 export default function Index() {
   const { pubky } = usePubkyClientContext();
-  const { setContent, setShow } = useToastContext();
+  const { addToast } = useToastContext();
 
   const handleCopy = async () => {
     try {
@@ -53,8 +53,7 @@ export default function Index() {
         className="w-[250px] flex md:hidden mb-12"
         variant="secondary"
         onClick={() => {
-          setContent(`pk:${pubky}`, 'pubky');
-          setShow(true);
+          addToast(`pk:${pubky}`, 'pubky');
           handleCopy();
         }}
       >
@@ -76,8 +75,7 @@ export default function Index() {
           className="w-[250px] hidden md:flex"
           variant="secondary"
           onClick={() => {
-            setContent(`pk:${pubky}`, 'pubky');
-            setShow(true);
+            addToast(`pk:${pubky}`, 'pubky');
             handleCopy();
           }}
         >

@@ -1,3 +1,5 @@
+'use client';
+
 import { Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
@@ -17,8 +19,8 @@ import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
 
 type TaggedAsProps = {
-  creatorPubky: string | undefined;
-  loading: boolean;
+  creatorPubky?: string | undefined;
+  loading?: boolean;
 };
 
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
@@ -31,7 +33,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>(
-    []
+    [],
   );
 
   useEffect(() => {
@@ -43,10 +45,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
               tag?.taggers?.map(async (fromItem) => {
                 const profile = await getUserProfile(fromItem, pubky ?? '');
                 return profile?.details?.image;
-              }) ?? []
+              }) ?? [],
             );
             return images;
-          })
+          }),
         );
         setTaggedImages(allImages);
       }
@@ -84,7 +86,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             <>
               {profileTags.map((tag, index) => {
                 const isTagFound = tag?.taggers?.some(
-                  (fromItem) => fromItem === pubky
+                  (fromItem) => fromItem === pubky,
                 );
 
                 const images = taggedImages[index] || [];

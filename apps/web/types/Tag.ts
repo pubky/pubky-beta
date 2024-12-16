@@ -1,6 +1,6 @@
 export interface HotTag {
   label: string;
-  post_count: number;
+  tagged_count: number;
   taggers_count: number;
   taggers_id: string[];
 }

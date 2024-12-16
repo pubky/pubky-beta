@@ -46,17 +46,18 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
     },
     {
       watchFor: 'link',
-      render: (url: string) => {
-        const isValidUrl = (value: string) => {
+      render: (url) => {
+        const isValidUrl = (value) => {
           try {
-            new URL(value);
-            return true;
+            const parsedUrl = new URL(value);
+            return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
           } catch {
             return false;
           }
         };
-
-        if (!isValidUrl(url)) return url;
+    
+        if (!isValidUrl(url.trim())) return url;
+    
         return (
           <Link
             className="text-[#C8FF00] break-all"

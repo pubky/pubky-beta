@@ -1,5 +1,6 @@
 import { getSeoMetadata } from '@components/HeaderSEO';
 import { Profile } from './components/index';
+import LayoutProfile from './components/_LayoutProfile';
 
 export const metadata = getSeoMetadata({
   title: 'Profile | Pubky.app',
@@ -7,5 +8,9 @@ export const metadata = getSeoMetadata({
 });
 
 export default function Index() {
-  return <Profile.Content />;
+  return (
+    <LayoutProfile>
+      <Profile.NotificationsProfile />
+    </LayoutProfile>
+  );
 }

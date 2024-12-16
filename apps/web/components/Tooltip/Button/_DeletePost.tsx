@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
-import Modal from '@/components/Modal';
 
 interface DeletePostProps {
   post: PostView;

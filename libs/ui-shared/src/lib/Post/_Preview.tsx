@@ -64,8 +64,8 @@ function LinkPreview({ url }: { url: string }) {
         <div className="grow shrink basis-0 flex-col justify-start items-start inline-flex">
           {previewData.title && (
             <Typography.H2 className="break-all">
-              {previewData.title.length > 40
-                ? previewData.title.slice(0, 40) + '...'
+              {previewData.title.length > 82
+                ? previewData.title.slice(0, 82) + '...'
                 : previewData.title}
             </Typography.H2>
           )}

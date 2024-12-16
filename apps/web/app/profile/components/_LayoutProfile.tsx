@@ -1,27 +1,37 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Content } from '@social/ui-shared';
 import * as Components from '@/components';
 import { CreatePost, Header, PostsLayout } from '@/components';
-import { Profile } from '../components';
+import { Profile } from '.';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 
-export default function Index() {
-  const { pubky, putTimestampNotification } = usePubkyClientContext();
+export default function LayoutProfile({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { pubky, profile } = usePubkyClientContext();
   const [activeTab, setActiveTab] = useState(0);
-  const { data: user, isLoading } = useUserProfile(pubky ?? '', pubky ?? '');
+  const [loading, setLoading] = useState(true);
+  const { data: userData } = useUserProfile(pubky ?? '', pubky ?? '');
   const loader = useRef(null);
-  const timestamp = Date.now();
+  const pathname = usePathname();
 
   useEffect(() => {
-    const PutTimestamp = async () => {
-      await putTimestampNotification(timestamp);
-    };
-    PutTimestamp();
-  }, []);
+    setLoading(true);
+    const pathSegments = pathname?.split('/');
+    const lastSegment = pathSegments?.pop();
+    const foundTab = Profile.FilterTabs.tabs.find(
+      (tab) => tab.key === lastSegment,
+    );
+    setActiveTab(foundTab ? foundTab.id : 0);
+    setLoading(false);
+  }, [pathname]);
 
   return (
     <Content.Main>
@@ -31,23 +41,18 @@ export default function Index() {
           <Profile.FilterTabsMobile
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            countContacts={{
-              followers: user?.counts?.followers ?? 0,
-              following: user?.counts?.following ?? 0,
-              friends: user?.counts?.friends ?? 0,
-            }}
-            countReplies={user?.counts?.replies}
-            countPosts={user?.counts?.posts}
-            loading={isLoading}
-            profile={user}
+            userCounts={userData?.counts}
+            userTags={userData?.tags.length}
+            loading={loading}
+            setLoading={setLoading}
           />
           <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
             <Profile.Avatar
               className="lg:pl-12"
-              username={user?.details?.name || Utils.minifyPubky(pubky ?? '')}
-              uriImage={user?.details?.image as string}
+              username={profile?.name || Utils.minifyPubky(pubky ?? '')}
+              uriImage={profile?.image as string}
             />
-            <Profile.Handle profile={user} pubkey={pubky ? pubky : ''} />
+            <Profile.Handle profileUser={userData} pubkey={pubky ?? ''} />
           </div>
         </Content.Grid>
       </div>
@@ -56,18 +61,13 @@ export default function Index() {
           <Profile.FilterTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            countContacts={{
-              followers: user?.counts?.followers ?? 0,
-              following: user?.counts?.following ?? 0,
-              friends: user?.counts?.friends ?? 0,
-            }}
-            countPosts={
-              (user?.counts?.posts ?? 0) - (user?.counts?.replies ?? 0)
-            }
-            countReplies={user?.counts?.replies}
-            loading={isLoading}
-            profile={user}
-          />
+            loading={loading}
+            setLoading={setLoading}
+            userCounts={userData?.counts}
+            userTags={userData?.tags.length}
+          >
+            {children}
+          </Profile.FilterTabs>
         </PostsLayout>
         <Profile.Sidebar />
       </Content.Grid>

@@ -1,6 +1,8 @@
+import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
 import Modal from '@/components/Modal';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { Button, Card, Icon, Input } from '@social/ui-shared';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface Errors {
   name: string;
@@ -28,6 +30,7 @@ export default function Links({
 }: LinksProps) {
   const [showModalLink, setShowModalLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
+  useDrawerClickOutside(modalLinkRef, () => setShowModalLink(false));
 
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
@@ -37,27 +40,21 @@ export default function Links({
   const handleRemoveLink = (indexToRemove: number) => {
     setLinks((prevLinks) => {
       const updatedLinks = prevLinks.filter(
-        (_, index) => index !== indexToRemove
+        (_, index) => index !== indexToRemove,
       );
       return updatedLinks;
     });
   };
 
-  useEffect(() => {
-    const handleClickOutsideModal = (event: MouseEvent) => {
-      if (
-        modalLinkRef.current &&
-        !modalLinkRef.current.contains(event.target as Node)
-      ) {
-        setShowModalLink(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModal);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModal);
-    };
-  }, [modalLinkRef, setShowModalLink]);
+  const extractUsername = (url: string): string => {
+    const matchedSocial = socialLinks.find((social) =>
+      url.startsWith(social.url),
+    );
+    if (matchedSocial) {
+      return url.replace(matchedSocial.url, '');
+    }
+    return url;
+  };
 
   return (
     <>
@@ -70,8 +67,9 @@ export default function Links({
                 id={`edit-profile-link-${link.title.toLowerCase()}-input`}
                 className="h-[70px] mt-2"
                 placeholder={link.placeHolder}
+                maxLength={50}
                 disabled={loading}
-                value={link.url.replace('mailto:', '')}
+                value={extractUsername(link.url).replace('mailto:', '')}
                 error={errors[`link${index}` as keyof typeof errors]}
                 action={
                   <div

@@ -15,7 +15,7 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function CreateQuickReply({ post }: CreateQuickPostProps) {
   const router = useRouter();
   const { pubky, createReply, createTag } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sendingReply, setSendingReply] = useState(false);
@@ -59,8 +59,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
       setArrayTags([]);
       setSelectedFiles([]);
       setTextArea(false);
-      setContent('Reply created!');
-      setShow(true);
+      addAlert('Reply created!');
 
       router.push(`/post/${post.details.author}/${post.details.id}`);
     }

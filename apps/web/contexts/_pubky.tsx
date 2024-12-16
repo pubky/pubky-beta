@@ -18,7 +18,7 @@ import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
 import { getPost } from '@/services/postService';
-import { getUserRelationship } from '@/services/userService';
+import { getUserDetails, getUserRelationship } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
@@ -43,14 +43,15 @@ type PubkyClientContextType = {
   setMnemonic: (mnemonic: string | undefined) => void;
   profile: PubkyAppUser | undefined;
   newUser: boolean;
-  setNewUser: React.Dispatch<React.SetStateAction<boolean>>
+  setNewUser: React.Dispatch<React.SetStateAction<boolean>>;
   generateAuthUrl: (
     caps?: string,
-  ) => { url: string; promise: Promise<any> } | null;
+  ) => Promise<{ url: string; promise: any } | null>;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
   loginWithAuthUrl: (publicKey: string) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
+  isSessionActive: () => Promise<boolean>;
   logout: () => boolean;
   signUp: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
   saveProfile: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
@@ -241,6 +242,21 @@ export function PubkyClientWrapper({
       return true;
     } catch (error) {
       console.log(error);
+      return false;
+    }
+  };
+
+  const isSessionActive = async () => {
+    try {
+      if (pubky) {
+        const publicKey = PublicKey.from(pubky);
+        const session = await client.session(publicKey);
+        if (session && pubky) return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error(error);
       return false;
     }
   };
@@ -496,7 +512,6 @@ export function PubkyClientWrapper({
         await client.put(fileUrl, fileBody);
 
         // Store the file URI
-
         userProfile.image = fileUrl;
       }
 
@@ -520,11 +535,43 @@ export function PubkyClientWrapper({
       // Send the profile to the homeserver
       await client.put(profileUrl, body);
 
+      let userEdited = false;
+      while (!userEdited) {
+        try {
+          const newProfile = await getUserDetails(pubky ?? '');
+
+          if (areProfilesEqual(newProfile, pubkeyProfile)) {
+            userEdited = true;
+            break;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+
       return pubkeyProfile;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return false;
     }
+  };
+
+  const areProfilesEqual = (
+    profile1: PubkyAppUser,
+    profile2: PubkyAppUser,
+  ): boolean => {
+    return (
+      profile1.name === profile2.name &&
+      profile1.bio === profile2.bio &&
+      profile1.image === profile2.image &&
+      ((!profile1.links && !profile2.links) ||
+        (!!profile1.links &&
+          !!profile2.links &&
+          JSON.stringify(profile1.links) === JSON.stringify(profile2.links))) &&
+      profile1.status === profile2.status
+    );
   };
 
   const updateStatus = async (value: TStatus | string) => {
@@ -1035,12 +1082,12 @@ export function PubkyClientWrapper({
     }
   };
 
-  const generateAuthUrl = (caps?: string) => {
+  const generateAuthUrl = async (caps?: string) => {
     const capabilities =
       caps || '/pub/pubky.app/:rw,/pub/example.com/nested:rw';
 
     try {
-      const [url, promise] = client.authRequest(
+      const [url, promise] = await client.authRequest(
         NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
         capabilities,
       );
@@ -1634,6 +1681,7 @@ export function PubkyClientWrapper({
         loginWithMnemonic,
         loginWithAuthUrl,
         isLoggedIn,
+        isSessionActive,
         logout,
         signUp,
         setSeed,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button, Typography } from '@social/ui-shared';
+import { Typography } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
@@ -74,7 +74,7 @@ export const Timeline = () => {
     timeline.length > 0 ? timeline[0].details.indexed_at : undefined;
 
   return (
-    <div id="timeline"className="flex flex-col gap-3">
+    <div id="timeline" className="flex flex-col gap-3">
       {isSuccess && latestTimestamp && (
         <NewPostsNotifier
           latestTimestamp={latestTimestamp}

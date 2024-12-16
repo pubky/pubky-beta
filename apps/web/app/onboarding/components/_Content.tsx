@@ -3,30 +3,20 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button, Icon } from '@social/ui-shared';
-import { useRouter } from 'next/navigation';
 import * as jdenticon from 'jdenticon';
 import { usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { useRouter } from 'next/navigation';
 
 export default function Index() {
-  const [isMobile, setIsMobile] = useState(false);
   const { pubky, signUp, isLoggedIn } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const router = useRouter();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [loading, setLoading] = useState(false);
   const links: Links[] = [];
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -41,9 +31,8 @@ export default function Index() {
   }, [pubky, isLoggedIn]);
 
   const handleSubmit = async () => {
-    if (loading) {
-      return;
-    }
+    if (loading) return;
+
     try {
       setLoading(true);
 
@@ -63,11 +52,12 @@ export default function Index() {
       if (!signUpResponse) {
         throw new Error('Something went wrong');
       }
+
+      setTimeout(() => {
+        router.push('/home');
+      }, 5000);
     } catch (error) {
       console.log(error);
-    } finally {
-      router.push('/home');
-      setLoading(false);
     }
   };
 

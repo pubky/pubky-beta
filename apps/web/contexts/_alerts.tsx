@@ -1,53 +1,38 @@
 'use client';
 
 import { Alert, Icon } from '@social/ui-shared';
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useContext, useState } from 'react';
+
+type AlertMessage = {
+  id: number;
+  content: string;
+  variant?: 'default' | 'warning';
+};
 
 type AlertContextType = {
-  icon: ReactNode;
-  content: string;
-  show: boolean;
-  setIcon: (icon: string) => void;
-  setContent: (content: string, variant?: 'default' | 'warning') => void;
-  setShow: (show: boolean) => void;
+  addAlert: (content: string, variant?: 'default' | 'warning') => void;
 };
 
 const AlertContext = createContext<AlertContextType>({
-  icon: '',
-  content: '',
-  show: false,
-  setIcon: () => {},
-  setContent: () => {},
-  setShow: () => {},
+  addAlert: () => {},
 });
 
 export function AlertWrapper({ children }: { children: React.ReactNode }) {
-  const [icon, setIcon] = useState('');
-  const [content, setContent] = useState('');
-  const [variant, setVariant] = useState<'default' | 'warning'>('default');
-  const [show, setShow] = useState(false);
+  const [alerts, setAlerts] = useState<AlertMessage[]>([]);
 
-  useEffect(() => {
-    if (show) {
-      setTimeout(() => setShow(false), 5000);
-    }
-  }, [show]);
-
-  const handleSetContent = (
+  const addAlert = (
     content: string,
-    variant: 'default' | 'warning' = 'default'
+    variant: 'default' | 'warning' = 'default',
   ) => {
-    setContent(content);
-    setVariant(variant);
+    const id = Date.now();
+    setAlerts((prev) => [...prev, { id, content, variant }]);
+
+    setTimeout(() => {
+      setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+    }, 5000);
   };
 
-  const iconToShow = (() => {
+  const iconToShow = (variant: 'default' | 'warning') => {
     switch (variant) {
       case 'warning':
         return <Icon.Warning size="20" />;
@@ -55,25 +40,18 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
       default:
         return <Icon.CheckCircle size="20" />;
     }
-  })();
+  };
 
   return (
-    <AlertContext.Provider
-      value={{
-        icon,
-        content,
-        show,
-        setContent: handleSetContent,
-        setIcon,
-        setShow,
-      }}
-    >
+    <AlertContext.Provider value={{ addAlert }}>
       {children}
-      {show && (
-        <Alert.Message icon={iconToShow} variant={variant}>
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col gap-2">
+      {alerts.map(({ id, content, variant = 'default' }) => (
+        <Alert.Message key={id} icon={iconToShow(variant)} variant={variant}>
           {content}
         </Alert.Message>
-      )}
+      ))}
+      </div>
     </AlertContext.Provider>
   );
 }

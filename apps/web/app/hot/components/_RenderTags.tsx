@@ -53,7 +53,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                 </Link>
               </div>
               <Typography.Body className="text-opacity-80" variant="medium">
-                {tag?.post_count} posts all time
+                {tag?.tagged_count} posts all time
               </Typography.Body>
               <div className="flex items-center">
                 {tag?.taggers_id.slice(0, 5).map((fromItem, fromIndex) => (
@@ -83,7 +83,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                   rank={index + 1}
                   tag={Utils.minifyText(tag?.label, 21)}
                   color={tag?.label && Utils.generateRandomColor(tag?.label)}
-                  counter={`${tag?.post_count}`}
+                  counter={`${tag?.tagged_count}`}
                   boxShadow={false}
                 />
               </Link>

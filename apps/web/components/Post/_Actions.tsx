@@ -44,7 +44,10 @@ const BookmarkButton = ({
         </div>
       )
     }
-    onClick={loadingBookmarks ? undefined : () => handleBookmarks()}
+    onClick={(event) => {
+      event.stopPropagation();
+      loadingBookmarks ? undefined : () => handleBookmarks();
+    }}
   />
 );
 
@@ -59,7 +62,7 @@ const MenuButton = ({
   post: PostView;
   repost?: PostView;
 }) => (
-  <div className="relative" onClick={(event) => event.stopPropagation()}>
+  <div className="relative cursor-default" onClick={(event) => event.stopPropagation()}>
     {showMenu && (
       <Tooltip.Menu post={post} repost={repost} setShowMenu={setShowMenu} />
     )}
@@ -93,8 +96,7 @@ export default function Actions({
     pubky ?? '',
   );
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
-  const { setContent: setContentToast, setShow: setShowToast } =
-    useToastContext();
+  const { addToast } = useToastContext();
   const [showMenu, setShowMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
@@ -155,34 +157,33 @@ export default function Actions({
     }
 
     if (!isBookmarked) {
-      setContentToast(
+      addToast(
         `This post by ${
           repost ? authorRepost?.details?.name : author?.details?.name
         } was saved to your bookmarks.`,
         'bookmark',
       );
-      setShowToast(true);
     }
   };
 
   return (
-    <div
-      className="cursor-default mt-6"
-      onClick={(event) => event.stopPropagation()}
-    >
+    <div className="mt-6">
       <PostUI.Actions>
         <Button.Action
           id="tag-btn"
           size="small"
           variant="custom"
           className="md:hidden"
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowModalTag(true);
+          }}
           icon={
             <div>
               <Icon.Tag size="16" />
             </div>
           }
           counter={post?.tags?.length}
-          onClick={() => setShowModalTag(true)}
         />
         <Button.Action
           id="reply-btn"
@@ -231,16 +232,21 @@ export default function Actions({
           repost={repost}
         />
       </PostUI.Actions>
-      <Modal.Repost
-        post={post}
-        showModalRepost={showModalRepost}
-        setShowModalRepost={setShowModalRepost}
-      />
-      <Modal.CreateReply
-        post={post}
-        showModalReply={showModalReply}
-        setShowModalReply={setShowModalReply}
-      />
+      <div
+        className="cursor-default"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <Modal.Repost
+          post={post}
+          showModalRepost={showModalRepost}
+          setShowModalRepost={setShowModalRepost}
+        />
+        <Modal.CreateReply
+          post={post}
+          showModalReply={showModalReply}
+          setShowModalReply={setShowModalReply}
+        />
+      </div>
     </div>
   );
 }

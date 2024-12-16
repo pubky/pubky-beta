@@ -31,7 +31,7 @@ const profileSchema = z.object({
 
 export default function Index() {
   const { pubky, profile, saveProfile } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
 
   const router = useRouter();
 
@@ -92,8 +92,7 @@ export default function Index() {
   }, [modalLinkRef, setShowModalLink]);
 
   useEffect(() => {
-    setContent('Add info, your profile is empty.', 'warning');
-    setShow(true);
+    addAlert('Add info, your profile is empty.', 'warning');
   }, [pubky]);
 
   const handleAddLink = (title: string, url: string) => {
@@ -274,7 +273,7 @@ export default function Index() {
             variant="secondary"
             id="onboarding-submit-button"
           >
-            Signout
+            Sign out
           </Button.Large>
         </Link>
         <Button.Large

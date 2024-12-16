@@ -19,7 +19,7 @@ export default function CreateReply({
   post,
 }: CreateReplyProps) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
-  const { setContent, setShow } = useAlertContext();
+  const { addAlert } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -68,11 +68,9 @@ export default function CreateReply({
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', replyId, tag);
         }
-        setContent('Reply created!');
-        setShow(true);
+        addAlert('Reply created!');
       } else {
-        setContent('Something wrong. Try again', 'warning');
-        setShow(true);
+        addAlert('Something wrong. Try again', 'warning');
       }
       setArrayTags([]);
       setContentReply('');
@@ -116,7 +114,7 @@ export default function CreateReply({
         onClick={() => {
           setShowModalReply(false);
           setArrayTags([]);
-          setContent('');
+          setContentReply('');
         }}
       />
       <Modal.Header title="Reply" />

@@ -9,17 +9,12 @@ interface CopyLinkProfileProps {
 export default function CopyLinkProfile({
   creatorPubky,
 }: CopyLinkProfileProps) {
-  const { setContent: setContentToast, setShow: setShowToast } =
-    useToastContext();
+  const { addToast } = useToastContext();
 
   return (
     <Tooltip.Item
       onClick={() => {
-        setContentToast(
-          `${window.location.origin}/profile/${creatorPubky}`,
-          'link',
-        );
-        setShowToast(true);
+        addToast(`${window.location.origin}/profile/${creatorPubky}`, 'link');
         Utils.copyToClipboard(creatorPubky);
       }}
       icon={<Icon.Link size="20" />}

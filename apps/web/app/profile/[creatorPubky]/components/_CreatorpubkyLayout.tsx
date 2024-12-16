@@ -10,14 +10,19 @@ import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import Skeletons from '@/components/Skeletons';
 import { Utils } from '@social/utils-shared';
+import { usePathname } from 'next/navigation';
 
-export default function Index({
+export default function CreatorpubkyLayout({
   params,
+  children,
 }: {
   params: Promise<{ creatorPubky: string }>;
+  children: React.ReactNode;
 }) {
   const { pubky } = usePubkyClientContext();
+  const pathname = usePathname();
   const [activeTab, setActiveTab] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [resolvedParams, setResolvedParams] = useState<{
     creatorPubky: string;
   } | null>(null);
@@ -34,6 +39,17 @@ export default function Index({
   } = useUserProfile(creatorPubky, pubky ?? '');
   const loader = useRef(null);
   let content;
+
+  useEffect(() => {
+    setLoading(true);
+    const pathSegments = pathname?.split('/');
+    const lastSegment = pathSegments?.pop();
+    const key =
+      creatorPubky && lastSegment === creatorPubky ? 'posts' : lastSegment;
+    const foundTab = Profile.FilterTabs.tabs.find((tab) => tab.key === key);
+    setActiveTab(foundTab ? foundTab.id : 0);
+    setLoading(false);
+  }, [pathname, creatorPubky]);
 
   if (isLoading) {
     content = <Skeletons.Simple />;
@@ -64,16 +80,11 @@ export default function Index({
             <Profile.FilterTabsMobile
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              countContacts={{
-                followers: profile?.counts?.followers ?? 0,
-                following: profile?.counts?.following ?? 0,
-                friends: profile?.counts?.friends ?? 0,
-              }}
-              countReplies={profile?.counts?.replies}
-              countPosts={profile?.counts?.posts}
-              loading={isLoading}
+              userCounts={profile?.counts}
+              userTags={profile?.tags.length}
+              loading={loading}
+              setLoading={setLoading}
               creatorPubky={creatorPubky}
-              profile={profile}
             />
             <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
               <Profile.Avatar
@@ -86,7 +97,7 @@ export default function Index({
                 }
               />
               <Profile.Handle
-                profile={profile}
+                profileUser={profile}
                 pubkey={creatorPubky ?? ''}
                 creatorPubky={creatorPubky}
               />
@@ -98,19 +109,14 @@ export default function Index({
             <Profile.FilterTabs
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              countContacts={{
-                followers: profile?.counts?.followers ?? 0,
-                following: profile?.counts?.following ?? 0,
-                friends: profile?.counts?.friends ?? 0,
-              }}
-              countPosts={
-                (profile?.counts?.posts ?? 0) - (profile?.counts?.replies ?? 0)
-              }
-              countReplies={profile?.counts?.replies}
-              loading={isLoading}
+              loading={loading}
+              setLoading={setLoading}
+              userCounts={profile?.counts}
+              userTags={profile?.tags.length}
               creatorPubky={creatorPubky}
-              profile={profile}
-            />
+            >
+              {children}
+            </Profile.FilterTabs>
           </PostsLayout>
           <Profile.Sidebar creatorPubky={creatorPubky} />
         </Content.Grid>

@@ -2,9 +2,14 @@
 
 import { Notifications } from '@/app/profile/components/notifications/components';
 import { Skeleton } from '@/components';
-import { useFilterContext, useNotificationsContext } from '@/contexts';
+import {
+  useFilterContext,
+  useNotificationsContext,
+  usePubkyClientContext,
+} from '@/contexts';
 import { Typography } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { useEffect } from 'react';
 
 export default function NotificationsProfile() {
   const {
@@ -13,10 +18,19 @@ export default function NotificationsProfile() {
     loadMoreNotifications,
   } = useNotificationsContext();
   const { unReadNotification } = useFilterContext();
+  const { putTimestampNotification } = usePubkyClientContext();
+  const timestamp = Date.now();
 
   const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
 
   const displayedNotifications = notifications.slice(unReadNotification);
+
+  useEffect(() => {
+    const putTimestamp = async () => {
+      await putTimestampNotification(timestamp);
+    };
+    putTimestamp();
+  }, []);
 
   return (
     <>
@@ -29,10 +43,7 @@ export default function NotificationsProfile() {
       ) : (
         <div>
           {unReadNotification > 0 && (
-            <div className="mb-12">
-              <Typography.Body className="font-semibold">
-                New Notifications
-              </Typography.Body>
+            <div className="bg-[#C8FF00] bg-opacity-10 rounded-lg px-2">
               {notifications
                 .slice(0, unReadNotification)
                 .map((notification, index) => (
@@ -47,7 +58,11 @@ export default function NotificationsProfile() {
             const isLastElement = index === displayedNotifications.length - 1;
 
             return (
-              <div key={index} ref={isLastElement ? loader : null}>
+              <div
+                className="px-2"
+                key={index}
+                ref={isLastElement ? loader : null}
+              >
                 <Notifications.Notification notification={notification} />
               </div>
             );
