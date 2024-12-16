@@ -157,7 +157,7 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.location('pathname').should('eq', '/sign-in');
 
   // TODO: remove wait workaround for pkarr rate limiting once using testnet
-  cy.wait(3000);
+  cy.wait(3_000);
 
   cy.get('#fileInput').selectFile(
     backupFilepath,
@@ -167,24 +167,11 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.get('#sign-in-recovery-file-btn').click();
 
   // TODO: remove workaround for indefinite loading issue on sign in button, https://github.com/pubky/pubky-app/issues/719
-  cy.waitReload(5000);
-  // if path is still /sign-in after reload then try sign in again
+  // if location is still /sign-in after 10 seconds then refresh page
+  cy.wait(6_000);
   cy.location('pathname').then((path) => {
     if (path === '/sign-in') {
-      cy.wait(3000);
-    };
-  });
-  cy.location('pathname').then((path) => {
-    if (path === '/sign-in') {
-      cy.get('#fileInput').selectFile(
-        backupFilepath,
-        { force: true } // force to bypass visibility check of hidden input field
-      );
-      cy.get('#sign-in-password-input').type(passcode);
-      cy.get('#sign-in-recovery-file-btn').click();
-
-      // TODO: REMOVE WORKAROUND FOR BUG https://github.com/pubky/pubky-app/issues/719
-      cy.waitReload(5000);
+      cy.reload();
     };
   });
 
