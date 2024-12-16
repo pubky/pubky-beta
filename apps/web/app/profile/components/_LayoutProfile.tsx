@@ -1,30 +1,37 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Content } from '@social/ui-shared';
 import * as Components from '@/components';
 import { CreatePost, Header, PostsLayout } from '@/components';
-import { Profile } from '../components';
+import { Profile } from '.';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 
-export default function Index() {
-  const { pubky, putTimestampNotification, profile } = usePubkyClientContext();
+export default function LayoutProfile({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { pubky, profile } = usePubkyClientContext();
   const [activeTab, setActiveTab] = useState(0);
-  const { data: userData, isLoading } = useUserProfile(
-    pubky ?? '',
-    pubky ?? '',
-  );
+  const [loading, setLoading] = useState(true);
+  const { data: userData } = useUserProfile(pubky ?? '', pubky ?? '');
   const loader = useRef(null);
-  const timestamp = Date.now();
+  const pathname = usePathname();
 
   useEffect(() => {
-    const PutTimestamp = async () => {
-      await putTimestampNotification(timestamp);
-    };
-    PutTimestamp();
-  }, []);
+    setLoading(true);
+    const pathSegments = pathname?.split('/');
+    const lastSegment = pathSegments?.pop();
+    const foundTab = Profile.FilterTabs.tabs.find(
+      (tab) => tab.key === lastSegment,
+    );
+    setActiveTab(foundTab ? foundTab.id : 0);
+    setLoading(false);
+  }, [pathname]);
 
   return (
     <Content.Main>
@@ -36,7 +43,8 @@ export default function Index() {
             setActiveTab={setActiveTab}
             userCounts={userData?.counts}
             userTags={userData?.tags.length}
-            loading={isLoading}
+            loading={loading}
+            setLoading={setLoading}
           />
           <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
             <Profile.Avatar
@@ -44,10 +52,7 @@ export default function Index() {
               username={profile?.name || Utils.minifyPubky(pubky ?? '')}
               uriImage={profile?.image as string}
             />
-            <Profile.Handle
-              profileUser={userData}
-              pubkey={pubky ? pubky : ''}
-            />
+            <Profile.Handle profileUser={userData} pubkey={pubky ?? ''} />
           </div>
         </Content.Grid>
       </div>
@@ -56,10 +61,13 @@ export default function Index() {
           <Profile.FilterTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}
+            loading={loading}
+            setLoading={setLoading}
             userCounts={userData?.counts}
             userTags={userData?.tags.length}
-            loading={isLoading}
-          />
+          >
+            {children}
+          </Profile.FilterTabs>
         </PostsLayout>
         <Profile.Sidebar />
       </Content.Grid>

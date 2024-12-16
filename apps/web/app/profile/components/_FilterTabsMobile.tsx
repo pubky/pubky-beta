@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Icon, Typography } from '@social/ui-shared';
-import { Skeleton } from '@/components';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { UserCounts } from '@/types/User';
+import { useRouter } from 'next/navigation';
 
 const tabs = [
   {
@@ -57,12 +56,22 @@ const tabs = [
   },
 ];
 
+const generateTabUrl = (key: string, creatorPubky?: string) => {
+  if (creatorPubky) {
+    return key === 'posts'
+      ? `/profile/${creatorPubky}`
+      : `/profile/${creatorPubky}/${key}`;
+  }
+  return key === 'notifications' ? '/profile' : `/profile/${key}`;
+};
+
 export default function FilterTabsMobile({
   activeTab,
   setActiveTab,
   userCounts,
   userTags,
   loading,
+  setLoading,
   creatorPubky,
 }: {
   activeTab: number;
@@ -70,44 +79,18 @@ export default function FilterTabsMobile({
   userCounts: UserCounts | undefined;
   userTags: number | undefined;
   loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   creatorPubky?: string;
 }) {
   const { pubky } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
-  const [loadingTab, setLoadingTab] = useState(true);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const tab = params.get('tab');
-    const foundTab = tabs.find((t) => t.key === tab);
-
-    if (foundTab) {
-      setActiveTab(foundTab.id);
-    } else {
-      const defaultTab =
-        !creatorPubky || creatorPubky === pubky ? tabs[0] : tabs[1];
-      setActiveTab(defaultTab.id);
-      params.set('tab', defaultTab.key);
-      window.history.replaceState(
-        {},
-        '',
-        `${window.location.pathname}?${params.toString()}`,
-      );
-    }
-    setLoadingTab(false);
-  }, [creatorPubky, pubky]);
+  const router = useRouter();
 
   const handleTabClick = (id: number, key: string) => {
-    if (!loadingTab) {
-      setActiveTab(id);
-      const params = new URLSearchParams(window.location.search);
-      params.set('tab', key);
-      window.history.pushState(
-        {},
-        '',
-        `${window.location.pathname}?${params.toString()}`,
-      );
-    }
+    setLoading(true);
+    setActiveTab(id);
+    const url = generateTabUrl(key, creatorPubky);
+    router.push(url);
   };
 
   const getTabNumber = (key: string) => {
@@ -157,17 +140,12 @@ export default function FilterTabsMobile({
               }`}
             >
               {tab.icon}
-              {!loading && tab.key && (
-                <Typography.Caption className="tracking-normal" variant="bold">
-                  <span id="counter">{getTabNumber(tab.key)}</span>
-                </Typography.Caption>
-              )}
+              <Typography.Caption className="tracking-normal" variant="bold">
+                <span id="counter">{getTabNumber(tab.key)}</span>
+              </Typography.Caption>
             </div>
           );
         })}
-      </div>
-      <div id="mobile-profile-tab-content" className="w-full">
-        {loading ? <Skeleton.Simple /> : <>{}</>}
       </div>
     </div>
   );

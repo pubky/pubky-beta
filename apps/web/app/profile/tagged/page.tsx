@@ -1,16 +1,16 @@
 import { getSeoMetadata } from '@components/HeaderSEO';
-import { Profile } from './components/index';
-import LayoutProfile from './components/_LayoutProfile';
+import LayoutProfile from '../components/_LayoutProfile';
+import TaggedAs from '../components/_TaggedAs';
 
 export const metadata = getSeoMetadata({
-  title: 'Profile | Pubky.app',
+  title: 'Tagged as | Pubky.app',
   description: 'Pubky.app - Unlock the web.',
 });
 
 export default function Index() {
   return (
     <LayoutProfile>
-      <Profile.NotificationsProfile />
+      <TaggedAs />
     </LayoutProfile>
   );
 }

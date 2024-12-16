@@ -1,16 +1,16 @@
 import { getSeoMetadata } from '@components/HeaderSEO';
-import { Profile } from './components/index';
-import LayoutProfile from './components/_LayoutProfile';
+import LayoutProfile from '../components/_LayoutProfile';
+import ContactsProfile from '../components/_ContactsProfile/ContactsProfile';
 
 export const metadata = getSeoMetadata({
-  title: 'Profile | Pubky.app',
+  title: 'Friends | Pubky.app',
   description: 'Pubky.app - Unlock the web.',
 });
 
 export default function Index() {
   return (
     <LayoutProfile>
-      <Profile.NotificationsProfile />
+      <ContactsProfile contacts="friends" />
     </LayoutProfile>
   );
 }
