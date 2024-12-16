@@ -76,6 +76,9 @@ declare namespace Cypress {
     waitForElementToDisappear(selector: string): void;
   }
   interface Chainable<Subject> {
+    findFirstPostInFeed(filterText?: string): Chainable<Subject>;
+  }
+  interface Chainable<Subject> {
     findPostInFeed(postIdx?: number, filterText?: string): Chainable<Subject>;
   }
 }
@@ -306,8 +309,7 @@ Cypress.Commands.add('waitForElementToDisappear', (selector: string) => {
   }
 });
 
-// finds first with no args
-Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?) => {
+const findPostInFeed = (postIdx = 0, filterText?) => {
   // A function to check if timeline contains 'No post yet'.
   // If it does then wait 1 second and check again.
   // This is a wait for the timeline to load after the page loads.
@@ -336,6 +338,14 @@ Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?) => {
       ? $posts.filter((_idx, element) => element.innerText.includes(filterText))
       : $posts
   }).eq(postIdx);
+};
+
+Cypress.Commands.add('findFirstPostInFeed', (filterText?) => {
+  findPostInFeed(0, filterText);
+});
+
+Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?) => {
+  findPostInFeed(postIdx, filterText);
 });
 
 // To prevent Cypress from failing the test when running pubky-app with dev build:

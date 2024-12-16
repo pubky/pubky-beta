@@ -183,7 +183,7 @@ describe('posts', () => {
     clickShowNewPostsBtn();
 
     // verify the post text and embedded link is displayed correctly in feed
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('iframe').should('be.visible');
       cy.get('iframe').should('have.attr', 'src', embedLink);
@@ -262,7 +262,7 @@ describe('posts', () => {
     cy.signIn(backupDownloadFilePath(username + '.pkarr'));
 
     // try to delete the post made by the other account
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // open post menu and check delete is not available
       cy.get('#menu-btn').should('be.visible').click();
       cy.get('#post-tooltip-menu').should('be.visible').within(() => {
@@ -311,7 +311,7 @@ describe('posts', () => {
     clickShowNewPostsBtn();
 
     // verify the post text and tags are displayed correctly in feed
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // check text
       cy.get('#post-content-text').innerTextShouldEq(postContent);
 
@@ -341,7 +341,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // within the latest post in the feed
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#tags').children().its('length').then((_oldLength) => {
         cy.get('#tags').within(() => {
           // verify the tags are displayed in the post
@@ -383,7 +383,7 @@ describe('posts', () => {
 
     // bookmark the post
     cy.slowDown(fastMs);
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#bookmark-btn').click();
     });
     // check bookmark toast is shown (before it disappears)
@@ -435,7 +435,7 @@ describe('posts', () => {
     // verify the repost with content is displayed correctly in feed
     // TODO: remove manual refresh refresh, see https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
     cy.waitReload();
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // check that both the repost text and original post text are displayed
       const expectedContent = [repostContent, postContent];
       cy.get('#post-content-text').each((elem, index) => {
@@ -450,7 +450,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // verify the repost is deleted
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // check that first post is the original post
       cy.get('#post-content-text').innerTextShouldEq(postContent);
     });
@@ -472,7 +472,7 @@ describe('posts', () => {
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
     cy.waitReload();
 
-    cy.findPostInFeed(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       // check that only original post text is displayed and not additional content text
       cy.get('#post-content-text').its('length').should('eq', 1);
       cy.wrap($post).innerTextShouldContain(username + ' reposted');
@@ -486,7 +486,7 @@ describe('posts', () => {
     if (Cypress.env('ci')) cy.wait(3000);
 
     // verify the repost is deleted
-    cy.findPostInFeed(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldNotContain('Undo repost');
       cy.wrap($post).get('#post-content-text').innerTextShouldEq(postContent);
     });
@@ -514,7 +514,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // verify the repost is still displayed in feed
-    cy.findPostInFeed(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       // check that only the repost text is displayed and not the original content text
       cy.wrap($post).innerTextShouldContain("This post has been deleted")
       cy.get('#post-content-text').innerTextShouldEq(repostContent);
@@ -534,7 +534,7 @@ describe('posts', () => {
 
     // reply to the post
     cy.slowDown(fastMs);
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#reply-btn').click();
     });
     cy.get('#modal-root').should('be.visible').within(($modal) => {
@@ -554,7 +554,7 @@ describe('posts', () => {
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.waitReload();
     if (Cypress.env('ci')) cy.wait(3000);
-    cy.findPostInFeed(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
       cy.wrap($post).innerTextShouldContain(replyContent);
     });
@@ -565,7 +565,7 @@ describe('posts', () => {
     // verify the reply is deleted
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.waitReload();
-    cy.findPostInFeed(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
       cy.wrap($post).innerTextShouldNotContain(replyContent);
     });
@@ -579,7 +579,7 @@ describe('posts', () => {
     clickShowNewPostsBtn();
 
     // reply to the post
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('#reply-btn').click();
     });
@@ -598,7 +598,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // verify the reply and original post are no longer displayed in feed
-    cy.findPostInFeed(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldNotContain(replyContent);
       cy.get('#post-content-text').innerTextShouldNotContain(postContent);
     });

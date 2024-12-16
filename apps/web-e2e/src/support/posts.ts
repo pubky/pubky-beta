@@ -55,7 +55,7 @@ export const repostPost = ({repostContent, postContent, filterText, postIdx}: {r
 
 // tag a post with any number of tags
 export const tagPost = (postContent: string, tags: string[]) => {
-  cy.findPostInFeed(0, postContent).within(() => {
+  cy.findFirstPostInFeed(postContent).within(() => {
     cy.get('#tag-btn').click();
     cy.get('#modal-root').within(() => {
       cy.get('h1').contains('Tag Post');
