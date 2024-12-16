@@ -103,7 +103,7 @@ export default function ProtectedRoutes({
   const checkAccess = async () => {
     const sessionActive = await isSessionActive();
 
-    if (sessionActive && pubky) {
+    if (sessionActive) {
       const hasProfile = await checkProfileUser();
 
       if (!hasProfile) {
