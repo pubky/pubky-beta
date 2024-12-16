@@ -29,7 +29,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { pubky, timestamp, notificationPreferences } = usePubkyClientContext();
   const { setUnReadNotification } = useFilterContext();
 
-  const limit = 10;
+  const limit = 30;
   const [skip, setSkip] = useState(0);
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
   const [loading, setLoading] = useState(true);
