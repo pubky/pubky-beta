@@ -15,10 +15,16 @@ export async function generateMetadata({ params }: Props) {
   const { creatorPubky } = await params;
   try {
     const profile = await getUserDetails(creatorPubky);
-    const profilePic =
-      profile?.image &&
-      profile.image !== 'null' &&
-      (await getFile(profile.image));
+    let profilePic;
+
+    try {
+      profilePic =
+        profile?.image &&
+        profile.image !== 'null' &&
+        (await getFile(profile.image));
+    } catch (error) {
+      console.error(error);
+    }
 
     const file =
       profilePic &&
