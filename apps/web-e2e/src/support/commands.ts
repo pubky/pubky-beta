@@ -76,7 +76,7 @@ declare namespace Cypress {
     waitForElementToDisappear(selector: string): void;
   }
   interface Chainable<Subject> {
-    findPostInFeed(filterText: string, postIdx?: number): Chainable<Subject>;
+    findPostInFeed(postIdx?: number, filterText?: string): Chainable<Subject>;
   }
 }
 
@@ -230,7 +230,7 @@ Cypress.Commands.add('innerTextShouldEq', { prevSubject: 'element' }, (subject, 
 
 // Useful when 'should.contain' doesn't work due to additional space inserted before final word.
 Cypress.Commands.add('innerTextContains', { prevSubject: 'element' }, (subject, text) => {
-  cy.wrap(subject).should(($elem) => {
+  return cy.wrap(subject).then(($elem) => {
     return $elem.get(0).innerText.includes(text);
   });
 });
@@ -307,11 +307,29 @@ Cypress.Commands.add('waitForElementToDisappear', (selector: string) => {
 });
 
 // finds first with no args
-Cypress.Commands.add('findPostInFeed', (filterText?, postIdx = 0) => {
-  // set default index to 1 to skip the quick post area
-  // postIdx = postIdx ?? (filterText === undefined ? 1 : 0);
+Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?) => {
+  // A function to check if timeline contains 'No post yet'.
+  // If it does then wait 1 second and check again.
+  // This is a wait for the timeline to load after the page loads.
+  const checkTimeline = (t = 5) => {
+    if (t === 0) assert(false, 'findPostInFeed: Timeline not loaded after 5 seconds');
+    cy.get('#posts-feed').find('#timeline').then(($timeline) => {
+      // if contains 'No post yet' then wait 1 second and check again
+      cy.wrap($timeline).innerTextContains('No posts yet').then((hasNoPosts) => {
+        if (hasNoPosts) {
+          cy.log('findPostInFeed: Timeline not loaded; waiting 1 second and checking again');
+          cy.wait(1000);
+          checkTimeline(t - 1);
+        }
+      });
+    });
+  };
 
-  cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().then($posts => {
+  // check timeline 5 times to be ready for a post to be found
+  checkTimeline(5);
+
+  // find the post in the timeline
+  cy.get('#posts-feed').find('#timeline').children().should('have.length.gte', 1).then($posts => {
     // optionally filter posts by contained text
     return filterText
       // cannot use :contains due to additional space inserted between each word in the post content
