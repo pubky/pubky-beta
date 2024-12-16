@@ -4,7 +4,6 @@ import { Typography, Icon } from '@social/ui-shared';
 import * as Components from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { usePostReplies } from '@/hooks/usePost';
-import { UseUserMuted } from '@/hooks/useUser';
 import { Utils } from '@social/utils-shared';
 import CreateQuickReply from '@/components/CreateQuickReply';
 import Link from 'next/link';
