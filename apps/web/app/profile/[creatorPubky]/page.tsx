@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props) {
         profile.image !== 'null' &&
         (await getFile(profile.image));
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
 
     const file =
