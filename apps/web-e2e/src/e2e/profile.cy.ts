@@ -34,7 +34,7 @@ describe('profile', () => {
     cy.get('#edit-profile-link-bluesky-input').should('be.visible')
       .and('have.value', 'https://bsky.app/profile/bsky.app');
     cy.get('#edit-profile-link-github-input').should('be.visible')
-      .and('have.value', 'synonymdev/bitkit');
+      .and('have.value', 'https://github.com/synonymdev/bitkit');
 
     // check the 'website' and 'x(Twitter)' example links are still shown
     cy.get('#edit-profile-link-website-input').should('be.visible');

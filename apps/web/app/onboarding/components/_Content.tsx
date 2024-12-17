@@ -119,7 +119,6 @@ export default function Index() {
             </Button.Large>
           </Link>
           <Button.Large
-            id="onboarding-explore-pubky-btn"
             onClick={!loading ? () => handleSubmit() : undefined}
             variant="secondary"
             className={`w-auto ${loading ? 'w-auto' : 'lg:w-[156px]'}`}

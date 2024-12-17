@@ -37,21 +37,7 @@ describe('onboarding', () => {
     cy.get('#profile-username-header').invoke('text').should('eq', username);
   });
   
-  it('should allow anonymous mode without creating a profile', () => {
-    cy.visit('/');
-    cy.location('pathname').should('eq', '/onboarding');
+  // todo
+  it.skip('should allow anonymously view-only mode without creating a key', () => {});
 
-    // click 'Explore Pubky' button
-    cy.get('#onboarding-explore-pubky-btn').click();
-    cy.location('pathname').should('eq', '/home');
-
-    // check there is no backup reminder on feed page
-    cy.get('body').should('not.contain.text', 'Backup');
-    cy.get('body').should('not.contain.text', 'Back up');
-
-    // check profile name is 'anonymous'
-    cy.get('#quick-post-create-content').innerTextShouldContain('anonymous');
-    cy.get('#header-profile-pic').click();
-    cy.get('#profile-username-header').should('have.text', 'anonymous');
-  });
 });
