@@ -15,7 +15,8 @@ export default defineConfig({
     viewportHeight: 1080,
     env: {
       // slow down execution more in CI to avoid flaky tests
-      commandDelay: defaultMs
+      commandDelay: defaultMs,
+      ci: process.env.CI,
     },
 
     // Plugins

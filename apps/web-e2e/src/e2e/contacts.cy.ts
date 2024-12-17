@@ -6,7 +6,7 @@ describe('contacts', () => {
     slowCypressDown();
 
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(10_000);
+    cy.wait(process.env.CI ? 10_000 : 5_000);
 
     cy.deleteDownloadsFolder();
   });

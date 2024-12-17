@@ -1,0 +1,219 @@
+import { backupDownloadFilePath } from '../support/auth';
+import { slowCypressDown } from 'cypress-slow-down'
+// registers the cy.slowDown and cy.slowDownEnd commands
+import 'cypress-slow-down/commands'
+import { cannotFindPostInFeed, checkPostIsAtIndexInFeed, countPostsInFeed, createQuickPost, repostPost, tagPost } from '../support/posts';
+import { searchAndFollowProfile } from '../support/contacts';
+//import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost } from '../support/posts';
+//import { defaultMs, fastMs } from '../support/slow-down';
+
+// Profile 1 follows Profile 2 and is friends with Profile 2. Profile 1 also follows Profile 3 and Profile 4.
+const profile1 = {username: "Profile #1", bio: "Follows Profile #2", pubkyAlias: "pubky_1", postText1: `Profile 1's post ${Date.now()}`, postText2: `Profile 1's post to be reposted ${Date.now()}`};
+// Profile 2 follows Profile 1 and is friends with Profile 1.
+const profile2 = {username: "Profile #2", bio: "Follows Profile #1", pubkyAlias: "pubky_2", postText: `Profile 2's post ${Date.now()}`, repostText: "Repost of Profile 1's post"};
+// Profile 3 follows profile 2 but is not followed back
+const profile3 = {username: "Profile #3", bio: "Follows Profile #2", pubkyAlias: "pubky_3", postText: `Profile 3's post ${Date.now()}`};
+// Profile 4 follows noone and is followed by no-one
+const profile4 = {username: "Profile #4", bio: "Follows no-one", pubkyAlias: "pubky_4", postText: `Profile 4's post ${Date.now()}`};
+
+describe('feed and filters', () => {
+  before(() => {
+    slowCypressDown();
+    cy.deleteDownloadsFolder();
+
+    // * create profile 1 of 4 and post
+    cy.onboardAsNewUser(profile1.username, profile1.bio, true, profile1.pubkyAlias);
+    cy.backupRecoveryFile();
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile1.username + '.pkarr'));
+    createQuickPost(profile1.postText1);
+    createQuickPost(profile1.postText2);
+    cy.signOut(true);
+
+    // * create profile 2 of 4, post and repost profile 1's post
+    cy.onboardAsNewUser(profile2.username, profile2.bio, true, profile2.pubkyAlias);
+    cy.backupRecoveryFile();
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile2.username + '.pkarr'));
+    createQuickPost(profile2.postText);
+    // find Profile 1's latest post and repost it
+    repostPost({repostContent: profile2.repostText, filterText: profile1.postText2});
+    // follow Profile 1
+    cy.get(`@${profile1.pubkyAlias}`).then((pubky) => {
+      searchAndFollowProfile(`${pubky}`, profile1.username);
+    });
+    cy.signOut(true);
+
+    // * create profile 3 of 4, post and repost profile 2's post
+    cy.onboardAsNewUser(profile3.username, profile3.bio, true, profile3.pubkyAlias);
+    cy.backupRecoveryFile();
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile3.username + '.pkarr'));
+    createQuickPost(profile3.postText);
+    // follow profile 2
+    cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
+      searchAndFollowProfile(`${pubky}`, profile2.username);
+    });
+    cy.signOut(true);
+
+    // * create profile 4 of 4 and post
+    cy.onboardAsNewUser(profile4.username, profile4.bio, true, profile4.pubkyAlias);
+    cy.backupRecoveryFile();
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile4.username + '.pkarr'));
+    createQuickPost(profile4.postText);
+    // tag profile 3's post 5 times for max popularity
+    tagPost(profile3.postText, ['p3tag1', 'p3tag2', 'p3tag3', 'p3tag4', 'p3tag5']);
+    // tag profile 2's post 4 times to make it the second most popular
+    tagPost(profile2.postText, ['p2tag1', 'p2tag2', 'p2tag3', 'p2tag4']);
+    cy.signOut(true);
+
+    // * sign back in as profile 1 and follow profile 2, 3 and 4.
+    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    [profile2, profile3, profile4].forEach(profile => {
+      cy.get(`@${profile.pubkyAlias}`).then((pubky) => {
+        searchAndFollowProfile(`${pubky}`, profile.username);
+      });
+    });
+    cy.signOut(true);
+  });
+
+  it('can filter to view all posts in the recent sorting order (default view)', () => {
+    // * sign in as profile 2 and view Reach All posts, all can be seen
+    cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
+    // Reach All is the default view so no need to click
+    // Recent is the default sort so no need to click
+
+    // check all posts are visible
+    cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
+    cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
+    cy.findFirstPostInFeed(profile2.postText).should('be.visible');
+    cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
+    cy.findFirstPostInFeed(profile3.postText).should('be.visible');
+    cy.findFirstPostInFeed(profile4.postText).should('be.visible');
+
+    // check posts are in the correct order
+    checkPostIsAtIndexInFeed(profile4.postText, 0);
+    checkPostIsAtIndexInFeed(profile3.postText, 1);
+    checkPostIsAtIndexInFeed(profile2.repostText, 2);
+    checkPostIsAtIndexInFeed(profile2.postText, 3);
+    checkPostIsAtIndexInFeed(profile1.postText2, 4);
+    checkPostIsAtIndexInFeed(profile1.postText1, 5);
+
+    cy.signOut(true);
+
+    // * sign in as profile 4 and view Reach All posts, all can be seen
+    cy.signIn(backupDownloadFilePath(`${profile4.username}.pkarr`));
+    // Reach All is the default view so no need to click
+
+    // check all posts are visible
+    cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
+    cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
+    cy.findFirstPostInFeed(profile2.postText).should('be.visible');
+    cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
+    cy.findFirstPostInFeed(profile3.postText).should('be.visible');
+    cy.findFirstPostInFeed(profile4.postText).should('be.visible');
+
+    // * check some Hot tags are visible
+    cy.get('#right-sidebar').find('#hot-tags').should('be.visible').within(() => {
+      cy.get('#hot-tags-content')
+        .should('be.visible')
+        .innerTextShouldNotContain('No tags yet')
+        .find('a').should('have.length.above', 5);
+    });
+  });
+
+  it('can filter to view only posts and reposts of following', () => {
+    // * sign in as profile 2 and view Reach Following, only profile 1's posts can be seen
+    cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
+    // click the following button in the leftmost (first) sidebar item
+    cy.get('#left-sidebar').find('#reach-following-btn').click();
+
+    cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
+    cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
+    cannotFindPostInFeed(profile2.postText);
+    cannotFindPostInFeed(profile2.repostText);
+    cannotFindPostInFeed(profile3.postText);
+    cannotFindPostInFeed(profile4.postText);
+
+    cy.signOut(true);
+
+    // * sign in as profile 3 and view Reach Following, only profile 2's post can be seen
+    cy.signIn(backupDownloadFilePath(`${profile3.username}.pkarr`));
+    cy.get('#left-sidebar').find('#reach-following-btn').click();
+
+    cy.findFirstPostInFeed(profile2.postText).should('be.visible');
+    cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
+    countPostsInFeed(profile1.postText2, 1); // 1 occurrence due to profile 2 reposting profile 1's post
+    cannotFindPostInFeed(profile1.postText1);
+    cannotFindPostInFeed(profile3.postText);
+    cannotFindPostInFeed(profile4.postText);
+
+    cy.signOut(true);
+
+    // * sign in as profile 4 and view Reach Following, no posts can be seen
+    cy.signIn(backupDownloadFilePath(`${profile4.username}.pkarr`));
+    cy.get('#left-sidebar').find('#reach-following-btn').click();
+
+    cannotFindPostInFeed(profile1.postText1);
+    cannotFindPostInFeed(profile1.postText2);
+    cannotFindPostInFeed(profile2.postText);
+    cannotFindPostInFeed(profile2.repostText);
+    cannotFindPostInFeed(profile3.postText);
+    cannotFindPostInFeed(profile4.postText);
+    cy.get('#posts-feed').find('#timeline').should('contain.text', 'No posts yet');
+  });
+
+  it('can filter view only posts and reposts of friends', () => {
+    // * sign in as profile 1 and view Reach Friends, only profile 2's post can be seen
+    cy.signIn(backupDownloadFilePath(`${profile1.username}.pkarr`));
+    cy.get('#left-sidebar').find('#reach-friends-btn').click();
+
+    cy.findFirstPostInFeed(profile2.postText).should('be.visible');
+    cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
+    countPostsInFeed(profile1.postText2, 1); // just 1 occurrence due to profile 2 reposting profile 1's post
+    cannotFindPostInFeed(profile1.postText1);
+    cannotFindPostInFeed(profile3.postText);
+    cannotFindPostInFeed(profile4.postText);
+
+    cy.signOut(true);
+
+    // * sign in as profile 2 and view Reach Friends, only profile 1's posts can be seen
+    cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
+    cy.get('#left-sidebar').find('#reach-friends-btn').click();
+
+    cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
+    cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
+    cannotFindPostInFeed(profile2.postText);
+    cannotFindPostInFeed(profile2.repostText);
+    cannotFindPostInFeed(profile3.postText);
+    cannotFindPostInFeed(profile4.postText);
+
+    cy.signOut(true);
+
+    // * sign in as profile 3 and view Reach Friends, no posts can be seen
+    cy.signIn(backupDownloadFilePath(`${profile3.username}.pkarr`));
+    cy.get('#left-sidebar').find('#reach-friends-btn').click();
+
+    cannotFindPostInFeed(profile1.postText1);
+    cannotFindPostInFeed(profile1.postText2);
+    cannotFindPostInFeed(profile2.postText);
+    cannotFindPostInFeed(profile2.repostText);
+    cannotFindPostInFeed(profile3.postText);
+    cannotFindPostInFeed(profile4.postText);
+  });
+
+  it('can sort by popularity', () => {
+    // * sign in as profile 1 and sort by Popularity with Reach Following posts
+    cy.signIn(backupDownloadFilePath(`${profile1.username}.pkarr`));
+    cy.get('#left-sidebar').find('#reach-following-btn').click();
+    cy.get('#left-sidebar').find('#sort-popularity-btn').click();
+
+    // * check the posts are in the correct order
+    // profile 3's post is the most popular because it has 5 tags
+    checkPostIsAtIndexInFeed(profile3.postText, 0);
+    // profile 2's post is the second most popular because it has 4 tags
+    checkPostIsAtIndexInFeed(profile2.postText, 1);
+    // profile 1's second post would be the third most popular because it has 1 repost but
+    // own posts are not seen when filtering by following
+    // the remaining posts are of equal popularity so they are sorted by recency
+    checkPostIsAtIndexInFeed(profile4.postText, 2);
+    checkPostIsAtIndexInFeed(profile2.repostText, 3);
+  });
+});

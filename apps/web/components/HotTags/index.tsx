@@ -27,11 +27,11 @@ export default function HotTags() {
   }
 
   return (
-    <div className="col-span-1 mb-6">
+    <div id="hot-tags" className="col-span-1 mb-6">
       <SideCard.Header title="Hot tags">
         {/**<DropDown.TagsTimeframe type="text" />*/}
       </SideCard.Header>
-      <SideCard.Content>
+      <SideCard.Content id="hot-tags-content">
         {isLoading ? (
           <Skeletons.Simple />
         ) : hotTags && hotTags.length > 0 ? (

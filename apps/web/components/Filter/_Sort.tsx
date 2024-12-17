@@ -32,6 +32,7 @@ export default function Sort({ disabled = false }: SortProps) {
       <SideCard.Header title="Sort" className="mb-2" />
       {Object.entries(icons).map(([key, icon]) => (
         <SideCard.Item
+          id={`sort-${key}-btn`}
           key={key}
           label={key.charAt(0).toUpperCase() + key.slice(1)}
           value={key}

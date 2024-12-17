@@ -9,14 +9,14 @@ on:
 
 concurrency:
   group: "e2e-test"
-  cancel-in-progress: true
+  cancel-in-progress: false # wait for all in-progress runs to complete before starting a new run
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: [firefox] # [chrome, firefox]
+        browser: [chrome] # [chrome, firefox]
 
     steps:
       - name: Checkout this repository

@@ -44,19 +44,18 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     renameFile(fromPath: string, toPath: string): void;
   }
-
   interface Chainable<Subject> {
     innerTextShouldEq(text: string): Chainable<Subject>;
   }
-
   interface Chainable<Subject> {
     innerTextShouldContain(text: string): Chainable<Subject>;
   }
-
+  interface Chainable<Subject> {
+    innerTextContains(text: string): Chainable<Subject>;
+  }
   interface Chainable<Subject> {
     innerTextShouldNotContain(text: string): Chainable<Subject>;
   }
-
   interface Chainable<Subject> {
     innerTextShouldNotEq(text: string): Chainable<Subject>;
   }
@@ -64,15 +63,23 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     saveCopiedPubkyToAlias(alias: string): void;
   }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     saveCopiedTextToAlias(alias: string): void;
   }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     waitReload(time?: number): void;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    waitForElementToDisappear(selector: string): void;
+  }
+  interface Chainable<Subject> {
+    findFirstPostInFeed(filterText?: string): Chainable<Subject>;
+  }
+  interface Chainable<Subject> {
+    findPostInFeed(postIdx?: number, filterText?: string): Chainable<Subject>;
   }
 }
 
@@ -125,6 +132,7 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
   cy.location('pathname').should('eq', '/onboarding/confirm');
 
   cy.get('#onboarding-start-exploring-btn').click();
+
   cy.location('pathname').should('eq', '/home');
 });
 
@@ -152,7 +160,7 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.location('pathname').should('eq', '/sign-in');
 
   // TODO: remove wait workaround for pkarr rate limiting once using testnet
-  cy.wait(3000);
+  cy.wait(3_000);
 
   cy.get('#fileInput').selectFile(
     backupFilepath,
@@ -162,7 +170,13 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.get('#sign-in-recovery-file-btn').click();
 
   // TODO: remove workaround for indefinite loading issue on sign in button, https://github.com/pubky/pubky-app/issues/719
-  cy.waitReload(5000);
+  // if location is still /sign-in after 10 seconds then refresh page
+  cy.wait(6_000);
+  cy.location('pathname').then((path) => {
+    if (path === '/sign-in') {
+      cy.reload();
+    };
+  });
 
   cy.location('pathname').should('eq', '/home');
 });
@@ -214,6 +228,13 @@ Cypress.Commands.add('renameFile', (fromPath: string, toPath: string) => {
 Cypress.Commands.add('innerTextShouldEq', { prevSubject: 'element' }, (subject, text) => {
   cy.wrap(subject).should(($elem) => {
     expect($elem.get(0).innerText).to.eq(text);
+  });
+});
+
+// Useful when 'should.contain' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextContains', { prevSubject: 'element' }, (subject, text) => {
+  return cy.wrap(subject).then(($elem) => {
+    return $elem.get(0).innerText.includes(text);
   });
 });
 
@@ -278,6 +299,53 @@ Cypress.Commands.add('saveCopiedTextToAlias', (alias: string) => {
 
 Cypress.Commands.add('waitReload', (time = 2000) => {
   cy.wait(time).reload();
+});
+
+Cypress.Commands.add('waitForElementToDisappear', (selector: string) => {
+  if (Cypress.$(selector).length > 0) {
+    cy.get(selector).should('not.exist');
+  } else {
+    cy.log(`${selector} not found; skipping disappearance check.`);
+  }
+});
+
+const findPostInFeed = (postIdx = 0, filterText?) => {
+  // A function to check if timeline contains 'No post yet'.
+  // If it does then wait 1 second and check again.
+  // This is a wait for the timeline to load after the page loads.
+  const checkTimeline = (t = 5) => {
+    if (t === 0) assert(false, 'findPostInFeed: Timeline not loaded after 5 seconds');
+    cy.get('#posts-feed').find('#timeline').then(($timeline) => {
+      // if contains 'No post yet' then wait 1 second and check again
+      cy.wrap($timeline).innerTextContains('No posts yet').then((hasNoPosts) => {
+        if (hasNoPosts) {
+          cy.log('findPostInFeed: Timeline not loaded; waiting 1 second and checking again');
+          cy.wait(1000);
+          checkTimeline(t - 1);
+        }
+      });
+    });
+  };
+
+  // check timeline 5 times to be ready for a post to be found
+  checkTimeline(5);
+
+  // find the post in the timeline
+  cy.get('#posts-feed').find('#timeline').children().should('have.length.gte', 1).then($posts => {
+    // optionally filter posts by contained text
+    return filterText
+      // cannot use :contains due to additional space inserted between each word in the post content
+      ? $posts.filter((_idx, element) => element.innerText.includes(filterText))
+      : $posts
+  }).eq(postIdx);
+};
+
+Cypress.Commands.add('findFirstPostInFeed', (filterText?) => {
+  findPostInFeed(0, filterText);
+});
+
+Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?) => {
+  findPostInFeed(postIdx, filterText);
 });
 
 // To prevent Cypress from failing the test when running pubky-app with dev build:

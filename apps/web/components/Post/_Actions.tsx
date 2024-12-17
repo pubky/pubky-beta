@@ -170,7 +170,7 @@ export default function Actions({
     <div className="mt-6">
       <PostUI.Actions>
         <Button.Action
-          id="tag-btn"
+          id="mobile-tag-btn"
           size="small"
           variant="custom"
           className="md:hidden"

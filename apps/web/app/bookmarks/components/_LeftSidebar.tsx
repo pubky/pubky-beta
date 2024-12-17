@@ -15,7 +15,7 @@ export function LeftSidebar({
   };
 
   return (
-    <Components.Sidebar className="w-[280px] hidden lg:block">
+    <Components.Sidebar id="left-sidebar" className="w-[280px] hidden lg:block">
       <div className={`self-start ${getSidebarClass(isFilterContentVisible)}`}>
         <Filter.Sort />
       </div>

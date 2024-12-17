@@ -3,7 +3,7 @@ import * as Components from '@/components';
 
 export function LeftSidebar() {
   return (
-    <Components.Sidebar className="w-[280px] self-start sticky top-[120px] hidden lg:block">
+    <Components.Sidebar id="left-sidebar" className="w-[280px] self-start sticky top-[120px] hidden lg:block">
       <Filter.HotTagsReach />
       <Filter.TagsTimeFrame />
     </Components.Sidebar>

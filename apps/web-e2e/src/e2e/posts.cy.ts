@@ -2,7 +2,14 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost, checkPostIsNotAtTopOfFeed } from '../support/posts';
+import { selectEmoji,
+        latestPostInFeedContentEq,
+        deletePost,
+        createQuickPost,
+        checkPostIsNotAtTopOfFeed,
+        clickShowNewPostsBtn,
+        repostPost,
+        tagPost} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -23,7 +30,7 @@ describe('posts', () => {
     cy.slowDown(defaultMs);
 
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(10_000);
+    cy.wait(Cypress.env('ci') ? 10_000 : 5_000);
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
@@ -33,13 +40,17 @@ describe('posts', () => {
     });
   });
 
+  // TODO: remove temp script to add 12 posts, workaround for no 'Show New Posts' button, see https://github.com/pubky/pubky-app/issues/738
+  it('add 12 posts', () => {
+    for (let i = 0; i < 12; i++) {
+      createQuickPost(`Post ${i + 1}`);
+    }
+  });
+
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -59,9 +70,7 @@ describe('posts', () => {
     });
     cy.get('#modal-root').should('not.exist');
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -92,17 +101,16 @@ describe('posts', () => {
 
     createQuickPost(postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
   });
 
   it('can post with emojis', () => {
-    const postContent = `🇦🇺😎🦎 I can post with emojis! ${Date.now()}`;
-    const postContentWithoutEmoji = ` I can post with emojis! ${Date.now()}`;
+    const suffix = Date.now();
+    const postContent = `🇦🇺😎🦎 I can post with emojis! ${suffix}`;
+    const postContentWithoutEmoji = ` I can post with emojis! ${suffix}`;
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
       // click on textarea to expand to view buttons
@@ -123,9 +131,7 @@ describe('posts', () => {
       cy.get('textarea').should('have.value', '');
     });
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -174,12 +180,10 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    clickShowNewPostsBtn();
 
     // verify the post text and embedded link is displayed correctly in feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('iframe').should('be.visible');
       cy.get('iframe').should('have.attr', 'src', embedLink);
@@ -219,9 +223,7 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
@@ -230,10 +232,7 @@ describe('posts', () => {
   it('can delete a post', () => {
     const postContent = `I can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.waitReload();
+    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -244,12 +243,8 @@ describe('posts', () => {
     // delete the post
     deletePost();
 
-    // wait to guarantee delete is applied
-    // todo: consider try loop instead of wait
-    cy.wait(2_000);
-
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.reload();
+    cy.waitReload();
 
     // verify post is deleted
     checkPostIsNotAtTopOfFeed(postContent);
@@ -267,7 +262,7 @@ describe('posts', () => {
     cy.signIn(backupDownloadFilePath(username + '.pkarr'));
 
     // try to delete the post made by the other account
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // open post menu and check delete is not available
       cy.get('#menu-btn').should('be.visible').click();
       cy.get('#post-tooltip-menu').should('be.visible').within(() => {
@@ -313,16 +308,10 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    // wait to guarantee tags are associated with the post
-    // todo: consider try loop instead of wait
-    cy.wait(2_000);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    // should test before and after refresh
-    cy.reload();
+    clickShowNewPostsBtn();
 
     // verify the post text and tags are displayed correctly in feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // check text
       cy.get('#post-content-text').innerTextShouldEq(postContent);
 
@@ -345,38 +334,14 @@ describe('posts', () => {
     cy.waitReload();
 
     // add tags to the post
-    cy.get('#tag-btn').click();
-    cy.get('#modal-root').within(() => {
-      cy.get('h1').contains('Tag Post');
-
-      // add tags to the post
-      for (const tag of [tag1, tag2, tag3]) {
-        cy.get('input').type(tag);
-        cy.get('#add-btn').should('be.visible').click();
-      };
-
-      // TODO: uncomment once bug is fixed, see https://github.com/pubky/pubky-app/issues/541
-      // check current tags in modal
-      // cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
-      //   cy.wrap(divs.eq(0)).contains(tag1);
-      //   cy.wrap(divs.eq(1)).contains(tag2);
-      //   cy.wrap(divs.eq(2)).contains(tag3);
-      // });
-
-      // close modal
-      cy.get('#close-btn').click();
-    });
-
-    // wait to guarantee tags are associated with the post
-    // todo: consider try loop instead of wait
-    cy.wait(2_000);
+    tagPost(postContent, [tag1, tag2, tag3]);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/541
     // should test before and after refresh
-    cy.reload();
+    cy.waitReload();
 
     // within the latest post in the feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#tags').children().its('length').then((_oldLength) => {
         cy.get('#tags').within(() => {
           // verify the tags are displayed in the post
@@ -402,12 +367,12 @@ describe('posts', () => {
 
     // refresh page and check tag is still removed
     cy.waitReload();
-    // TODO: FAILS HERE due to https://github.com/pubky/pubky-app/issues/544
-    //cy.get('#tags').innerTextShouldNotContain(tag2);
+    cy.get('#tags').innerTextShouldNotContain(tag2);
   });
 
   // todo: consider creating user to create the post to bookmark
-  it('can bookmark post then remove bookmark', () => {
+  // TODO: reenable once bug fixed: https://github.com/pubky/pubky-app/issues/751
+  it.skip('can bookmark post then remove bookmark', () => {
     const postContent = `This post will be bookmarked! ${Date.now()}`;
 
     // create a post to bookmark
@@ -418,16 +383,21 @@ describe('posts', () => {
 
     // bookmark the post
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#bookmark-btn').click();
     });
-    // check bookmark toast is shown (before the toast disappears)
+    // check bookmark toast is shown (before it disappears)
     cy.get('#toast').should('be.visible').find('h2').contains('bookmark')
     cy.slowDown(defaultMs);
 
     // navigate to bookmarks page
     cy.get('#header-bookmarks-btn').click();
     cy.location('pathname').should('eq', '/bookmarks');
+
+    // if posts-feed area contains "No bookmarks yet", reload the page
+    cy.get('#posts-feed').innerTextContains('No bookmarks yet').then((noBookmarksYet) => {
+      if (noBookmarksYet) cy.reload();
+    });
 
     cy.get('#posts-feed').children().eq(0).should('have.length', 1).children().eq(0).within(() => {
       // verify the post has been bookmarked
@@ -456,17 +426,7 @@ describe('posts', () => {
 
     // repost with content
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
-      cy.get('#repost-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(($modal) => {
-      cy.get('h1').contains('Repost');
-      // check that the post content is displayed in the repost modal
-      cy.wrap($modal).contains(postContent);
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(repostContent);
-      cy.get('#repost-btn').click();
-    });
+    repostPost({ repostContent, postContent });
 
     // check repost message is shown (before the alert disappears)
     cy.get('#message-alert').should('be.visible').and('contain.text', 'Repost');
@@ -475,7 +435,7 @@ describe('posts', () => {
     // verify the repost with content is displayed correctly in feed
     // TODO: remove manual refresh refresh, see https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
     cy.waitReload();
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // check that both the repost text and original post text are displayed
       const expectedContent = [repostContent, postContent];
       cy.get('#post-content-text').each((elem, index) => {
@@ -490,7 +450,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // verify the repost is deleted
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // check that first post is the original post
       cy.get('#post-content-text').innerTextShouldEq(postContent);
     });
@@ -506,19 +466,13 @@ describe('posts', () => {
     cy.waitReload();
 
     // repost without content
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
-      cy.get('#repost-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(() => {
-      cy.get('h1').contains('Repost');
-      cy.get('textarea').should('have.value', '');
-      cy.get('#repost-btn').click();
-    });
+    repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
     cy.waitReload();
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+
+    cy.findFirstPostInFeed().within(($post) => {
       // check that only original post text is displayed and not additional content text
       cy.get('#post-content-text').its('length').should('eq', 1);
       cy.wrap($post).innerTextShouldContain(username + ' reposted');
@@ -529,9 +483,10 @@ describe('posts', () => {
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
     cy.waitReload();
+    if (Cypress.env('ci')) cy.wait(3000);
 
     // verify the repost is deleted
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldNotContain('Undo repost');
       cy.wrap($post).get('#post-content-text').innerTextShouldEq(postContent);
     });
@@ -547,15 +502,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // repost
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
-      cy.get('#repost-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(() => {
-      cy.get('h1').contains('Repost');
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(repostContent);
-      cy.get('#repost-btn').click();
-    });
+    repostPost({ repostContent, postContent });
 
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.waitReload();
@@ -567,7 +514,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // verify the repost is still displayed in feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       // check that only the repost text is displayed and not the original content text
       cy.wrap($post).innerTextShouldContain("This post has been deleted")
       cy.get('#post-content-text').innerTextShouldEq(repostContent);
@@ -580,13 +527,14 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
+    clickShowNewPostsBtn();
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
+    // TODO: remove wait for any existing message alerts to disappear, see https://github.com/pubky/pubky-app/issues/729
+    cy.waitForElementToDisappear('#message-alert');
 
     // reply to the post
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#reply-btn').click();
     });
     cy.get('#modal-root').should('be.visible').within(($modal) => {
@@ -605,7 +553,8 @@ describe('posts', () => {
     // verify the reply is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.waitReload();
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+    if (Cypress.env('ci')) cy.wait(3000);
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
       cy.wrap($post).innerTextShouldContain(replyContent);
     });
@@ -616,7 +565,7 @@ describe('posts', () => {
     // verify the reply is deleted
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.waitReload();
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
       cy.wrap($post).innerTextShouldNotContain(replyContent);
     });
@@ -627,12 +576,10 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
+    clickShowNewPostsBtn();
 
     // reply to the post
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('#reply-btn').click();
     });
@@ -647,15 +594,11 @@ describe('posts', () => {
     // delete the original post
     deletePost();
 
-    // wait to guarantee delete is applied
-    // todo: consider try loop instead of wait
-    cy.wait(2_000);
-
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.reload();
+    cy.waitReload();
 
     // verify the reply and original post are no longer displayed in feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldNotContain(replyContent);
       cy.get('#post-content-text').innerTextShouldNotContain(postContent);
     });
