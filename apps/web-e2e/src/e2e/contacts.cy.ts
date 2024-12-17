@@ -1,5 +1,6 @@
 import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
+import { searchAndFollowProfile } from '../support/contacts';
 
 describe('contacts', () => {
   before(() => {
@@ -56,24 +57,10 @@ describe('contacts', () => {
     // search for profile and follow
     //
 
-    // Search for account 1
-    cy.get('@pubky1').then((text) => {
-      // type pubky for account 1 into search bar and press enter
-      cy.get('#header-search-input').type(`${text}{enter}`);
+    // follow account 1
+    cy.get('@pubky1').then((pubky) => {
+      searchAndFollowProfile(`${pubky}`, '#1 Friend');
     });
-    // check that account 1 profile page is displayed
-    cy.get('#profile-username-header').should('have.text', '#1 Friend');
-
-    // NOTE: this is where timeout occurs waiting on Follow button
-    // but instead get Loading...', see https://github.com/pubky/pubky-app/issues/529
-
-    // Check follow button is displayed for account 1
-    cy.get('#profile-follow-btn').should('be.visible').and('have.text', 'Follow');
-    // Follow account 1
-    cy.get('#profile-follow-btn').click();
-    // Check follow button is now unfollow
-    cy.get('#profile-follow-btn').should('not.exist');
-    cy.get('#profile-unfollow-btn').should('be.visible').and('have.text', 'Unfollow');
 
     //
     // check other profile shows me as new follower
@@ -160,8 +147,6 @@ describe('contacts', () => {
     // Sign in account 1
     cy.signIn(backupDownloadFilePath('pubky1.pkarr'));
     cy.get('#header-profile-pic').click();
-
-    // todo: check notifications for new follower
 
     // Check account 1 (own) profile for follower
     cy.get('#profile-tab-followers').find('#counter').should('have.text', 1);

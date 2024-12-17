@@ -70,3 +70,11 @@ export const editProfileAndVerify = (profileData: Partial<Record<keyof typeof pr
     })
   });
 };
+
+export const clickFollowButton = () => {
+  cy.get('#profile-follow-btn').click();
+
+  // Check follow button is now unfollow
+  cy.get('#profile-follow-btn').should('not.exist');
+  cy.get('#profile-unfollow-btn').should('be.visible').and('have.text', 'Unfollow');
+};

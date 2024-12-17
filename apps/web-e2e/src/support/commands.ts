@@ -137,7 +137,12 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
 });
 
 Cypress.Commands.add('signOut', (hasBackedUp: boolean) => {
-  cy.get('#header-profile-pic').click();
+  cy.location('pathname').then((currentPath) => {
+    if (currentPath !== '/profile') {
+      cy.get('#header-profile-pic').click();
+    };
+  });
+
   cy.location('pathname').should('eq', '/profile');
 
   cy.get('#profile-sign-out-btn').click();

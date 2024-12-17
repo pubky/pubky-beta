@@ -529,9 +529,6 @@ describe('posts', () => {
     createQuickPost(postContent);
     clickShowNewPostsBtn();
 
-    // TODO: remove wait for any existing message alerts to disappear, see https://github.com/pubky/pubky-app/issues/729
-    cy.waitForElementToDisappear('#message-alert');
-
     // reply to the post
     cy.slowDown(fastMs);
     cy.findFirstPostInFeed().within(() => {
