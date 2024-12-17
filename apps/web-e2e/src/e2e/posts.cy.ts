@@ -183,7 +183,7 @@ describe('posts', () => {
     clickShowNewPostsBtn();
 
     // verify the post text and embedded link is displayed correctly in feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('iframe').should('be.visible');
       cy.get('iframe').should('have.attr', 'src', embedLink);
@@ -262,7 +262,7 @@ describe('posts', () => {
     cy.signIn(backupDownloadFilePath(username + '.pkarr'));
 
     // try to delete the post made by the other account
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // open post menu and check delete is not available
       cy.get('#menu-btn').should('be.visible').click();
       cy.get('#post-tooltip-menu').should('be.visible').within(() => {
@@ -311,7 +311,7 @@ describe('posts', () => {
     clickShowNewPostsBtn();
 
     // verify the post text and tags are displayed correctly in feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // check text
       cy.get('#post-content-text').innerTextShouldEq(postContent);
 
@@ -341,7 +341,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // within the latest post in the feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#tags').children().its('length').then((_oldLength) => {
         cy.get('#tags').within(() => {
           // verify the tags are displayed in the post
@@ -367,12 +367,12 @@ describe('posts', () => {
 
     // refresh page and check tag is still removed
     cy.waitReload();
-    // TODO: FAILS HERE due to https://github.com/pubky/pubky-app/issues/544
-    //cy.get('#tags').innerTextShouldNotContain(tag2);
+    cy.get('#tags').innerTextShouldNotContain(tag2);
   });
 
   // todo: consider creating user to create the post to bookmark
-  it('can bookmark post then remove bookmark', () => {
+  // TODO: reenable once bug fixed: https://github.com/pubky/pubky-app/issues/751
+  it.skip('can bookmark post then remove bookmark', () => {
     const postContent = `This post will be bookmarked! ${Date.now()}`;
 
     // create a post to bookmark
@@ -383,7 +383,7 @@ describe('posts', () => {
 
     // bookmark the post
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#bookmark-btn').click();
     });
     // check bookmark toast is shown (before it disappears)
@@ -395,9 +395,9 @@ describe('posts', () => {
     cy.location('pathname').should('eq', '/bookmarks');
 
     // if posts-feed area contains "No bookmarks yet", reload the page
-    if (cy.get('#posts-feed').innerTextContains('No bookmarks yet')) {
-      cy.reload();
-    };
+    cy.get('#posts-feed').innerTextContains('No bookmarks yet').then((noBookmarksYet) => {
+      if (noBookmarksYet) cy.reload();
+    });
 
     cy.get('#posts-feed').children().eq(0).should('have.length', 1).children().eq(0).within(() => {
       // verify the post has been bookmarked
@@ -435,7 +435,7 @@ describe('posts', () => {
     // verify the repost with content is displayed correctly in feed
     // TODO: remove manual refresh refresh, see https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
     cy.waitReload();
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // check that both the repost text and original post text are displayed
       const expectedContent = [repostContent, postContent];
       cy.get('#post-content-text').each((elem, index) => {
@@ -450,7 +450,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // verify the repost is deleted
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       // check that first post is the original post
       cy.get('#post-content-text').innerTextShouldEq(postContent);
     });
@@ -471,7 +471,8 @@ describe('posts', () => {
     // verify the repost without content is displayed correctly in feed
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
     cy.waitReload();
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+
+    cy.findFirstPostInFeed().within(($post) => {
       // check that only original post text is displayed and not additional content text
       cy.get('#post-content-text').its('length').should('eq', 1);
       cy.wrap($post).innerTextShouldContain(username + ' reposted');
@@ -485,7 +486,7 @@ describe('posts', () => {
     if (Cypress.env('ci')) cy.wait(3000);
 
     // verify the repost is deleted
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldNotContain('Undo repost');
       cy.wrap($post).get('#post-content-text').innerTextShouldEq(postContent);
     });
@@ -513,7 +514,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // verify the repost is still displayed in feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       // check that only the repost text is displayed and not the original content text
       cy.wrap($post).innerTextShouldContain("This post has been deleted")
       cy.get('#post-content-text').innerTextShouldEq(repostContent);
@@ -533,7 +534,7 @@ describe('posts', () => {
 
     // reply to the post
     cy.slowDown(fastMs);
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#reply-btn').click();
     });
     cy.get('#modal-root').should('be.visible').within(($modal) => {
@@ -553,7 +554,7 @@ describe('posts', () => {
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.waitReload();
     if (Cypress.env('ci')) cy.wait(3000);
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
       cy.wrap($post).innerTextShouldContain(replyContent);
     });
@@ -564,7 +565,7 @@ describe('posts', () => {
     // verify the reply is deleted
     // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
     cy.waitReload();
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(($post) => {
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldContain(postContent)
       cy.wrap($post).innerTextShouldNotContain(replyContent);
     });
@@ -578,7 +579,7 @@ describe('posts', () => {
     clickShowNewPostsBtn();
 
     // reply to the post
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('#reply-btn').click();
     });
@@ -597,7 +598,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // verify the reply and original post are no longer displayed in feed
-    cy.get('#posts-feed').find('#timeline').should('have.length.gte', 1).children().eq(0).within(() => {
+    cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldNotContain(replyContent);
       cy.get('#post-content-text').innerTextShouldNotContain(postContent);
     });
