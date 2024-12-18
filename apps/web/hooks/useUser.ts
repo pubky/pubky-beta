@@ -124,6 +124,6 @@ export function useUserNotifications(
     queryKey: ['userNotifications', userId, start, end, skip, limit],
     queryFn: () => getUserNotifications(userId, start, end, skip, limit),
     retry: false,
-    refetchInterval: 3000,
+    refetchInterval: 30000,
   });
 }
