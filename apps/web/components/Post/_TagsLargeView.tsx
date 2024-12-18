@@ -31,7 +31,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const [tag, setTag] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
-    {}
+    {},
   );
   const [loadingTags, setLoadingTags] = useState('');
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
@@ -100,7 +100,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             }
             return null;
           })
-          .filter(Boolean)
+          .filter(Boolean),
       );
 
       await Promise.all(taggerPromises);
@@ -214,7 +214,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
         )}
         {tags.map((tagObj, index) => {
           const isTagFound = tagObj?.taggers.some(
-            (fromItem) => fromItem === pubky
+            (fromItem) => fromItem === pubky,
           );
 
           const displayedImages = tagObj?.taggers
@@ -269,7 +269,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   <ImageByUri
                     width={32}
                     height={32}
-                    key={index}
+                    key={imageIndex}
                     className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
                       imageIndex > 0 && '-ml-2'
                     }`}
