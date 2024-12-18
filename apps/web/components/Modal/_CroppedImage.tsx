@@ -47,8 +47,8 @@ export default function CroppedImage({
     };
   }, [modalCroppedImageRef, setShowModalCroppedImage]);
 
-  const onCropComplete = useCallback((croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    if (croppedArea) setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
   const getCroppedImg = useCallback(async () => {
