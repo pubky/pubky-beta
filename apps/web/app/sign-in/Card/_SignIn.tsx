@@ -27,6 +27,7 @@ export default function SignIn() {
   }, []);
 
   const handleGenerateAuthUrl = async () => {
+    setLoginError('');
     const result = await generateAuthUrl();
 
     if (result && result.url) {
@@ -43,9 +44,9 @@ export default function SignIn() {
           }
         }
       } catch (error: unknown | { message: string }) {
-        const errorMessage =
-          error === 'aead::Error' ? 'Failed to login.' : error;
+        const errorMessage = error === 'aead::Error' ? 'Failed to login.' : '';
         setLoginError(String(errorMessage));
+        handleGenerateAuthUrl();
       }
     }
   };
