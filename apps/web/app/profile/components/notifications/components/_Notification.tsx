@@ -53,12 +53,12 @@ const notificationType = {
   post_deleted: {
     type: 'post_deleted',
     icon: <Icon.Trash size="16" />,
-    text: 'deleted a post',
+    text: 'deleted',
   },
   post_edited: {
     type: 'post_edited',
     icon: <Icon.PencilLine size="16" />,
-    text: 'edited a post',
+    text: 'edited',
   },
 };
 
@@ -168,17 +168,23 @@ export default function Notification({
       : '';
 
   const deletedPostLink =
-    (notification.body.delete_source === 'reply_parent' ||
+    (notification.body.delete_source === 'reply' ||
+      notification.body.delete_source === 'repost' ||
+      notification.body.delete_source === 'reply_parent' ||
       notification.body.delete_source === 'repost_embed') &&
     notification.body.linked_uri
       ? Utils.encodePostUri(notification.body.linked_uri)
       : '';
 
   const editedPostLink =
-    (notification.body.edit_source === 'reply_parent' ||
-      notification.body.edit_source === 'repost_embed') &&
-    notification.body.linked_uri
-      ? Utils.encodePostUri(notification.body.linked_uri)
+    (notification.body.edit_source === 'reply' ||
+      notification.body.edit_source === 'repost' ||
+      notification.body.edit_source === 'bookmark' ||
+      notification.body.edit_source === 'reply_parent' ||
+      notification.body.edit_source === 'repost_embed' ||
+      notification.body.edit_source === 'tagged_post') &&
+    notification.body.edited_uri
+      ? Utils.encodePostUri(notification.body.edited_uri)
       : '';
 
   return (
@@ -213,21 +219,37 @@ export default function Notification({
                 {user === null
                   ? Utils.minifyPubky(userId)
                   : user
-                  ? Utils.minifyText(user?.details?.name, 20)
-                  : '[DELETED]'}
+                    ? Utils.minifyText(user?.details?.name, 20)
+                    : '[DELETED]'}
               </Typography.Body>
             </Link>
           )}
           <Typography.Body variant="medium-bold" className="text-opacity-50">
             {currentNotificationType.text}
             {notification.body.type === notificationType?.post_deleted?.type &&
-              (notification.body.delete_source === 'reply_parent'
-                ? ' you replied'
-                : ' you reposted')}
+              (notification.body.delete_source === 'reply'
+                ? ' a reply of your post'
+                : notification.body.delete_source === 'repost'
+                  ? 'a repost of your post'
+                  : notification.body.delete_source === 'bookmark'
+                    ? ' a post you bookmarked'
+                    : notification.body.delete_source === 'reply_parent'
+                      ? ' a post you replied'
+                      : notification.body.delete_source === 'repost_embed'
+                        ? ' a post you reposted'
+                        : ' a post you tagged')}
             {notification.body.type === notificationType?.post_edited?.type &&
-              (notification.body.edit_source === 'reply_parent'
-                ? ' you replied'
-                : ' you reposted')}
+              (notification.body.delete_source === 'reply'
+                ? ' a reply of your post'
+                : notification.body.delete_source === 'repost'
+                  ? 'a repost of your post'
+                  : notification.body.delete_source === 'bookmark'
+                    ? ' a post you bookmarked'
+                    : notification.body.delete_source === 'reply_parent'
+                      ? ' a post you replied'
+                      : notification.body.delete_source === 'repost_embed'
+                        ? ' a post you reposted'
+                        : ' a post you tagged')}
           </Typography.Body>
           {(notification.body.type === notificationType?.tag_profile?.type ||
             notification.body.type === notificationType?.tag_post?.type) && (
@@ -303,9 +325,13 @@ export default function Notification({
                   variant="small"
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
-                  {notification.body.delete_source === 'reply_parent'
-                    ? 'View reply'
-                    : 'View repost'}
+                  {notification.body.delete_source === 'reply' ||
+                  notification.body.delete_source === 'repost' ||
+                  notification.body.delete_source === 'tagged_post'
+                    ? 'View post'
+                    : notification.body.delete_source === 'reply_parent'
+                      ? 'View reply'
+                      : 'View repost'}
                 </Typography.Body>
               </Link>
             )}
@@ -316,9 +342,11 @@ export default function Notification({
                   variant="small"
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
-                  {notification.body.edit_source === 'reply_parent'
+                  {notification.body.edit_source === 'reply'
                     ? 'View reply'
-                    : 'View repost'}
+                    : notification.body.edit_source === 'repost'
+                      ? 'View repost'
+                      : 'View post'}
                 </Typography.Body>
               </Link>
             )}
