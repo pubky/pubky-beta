@@ -46,7 +46,7 @@ const BookmarkButton = ({
     }
     onClick={(event) => {
       event.stopPropagation();
-      loadingBookmarks ? undefined : () => handleBookmarks();
+      loadingBookmarks ? undefined : handleBookmarks();
     }}
   />
 );
@@ -62,7 +62,10 @@ const MenuButton = ({
   post: PostView;
   repost?: PostView;
 }) => (
-  <div className="relative cursor-default" onClick={(event) => event.stopPropagation()}>
+  <div
+    className="relative cursor-default"
+    onClick={(event) => event.stopPropagation()}
+  >
     {showMenu && (
       <Tooltip.Menu post={post} repost={repost} setShowMenu={setShowMenu} />
     )}
