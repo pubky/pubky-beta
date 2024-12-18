@@ -117,7 +117,7 @@ export function MainContent() {
             setInputValue(e.target.value)
           }
           maxLength={55}
-          onKeyDown={!inputValue ? undefined : handleKeyDown}
+          onKeyDown={inputValue.trim() === '' ? undefined : handleKeyDown}
           className={`${
             searchInputCard &&
             'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
