@@ -1,6 +1,6 @@
 'use client';
 
-import { z } from 'zod';
+import { set, z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -122,6 +122,7 @@ export default function Index() {
         );
 
         setErrors((prev) => ({ ...prev, ...errorMessages }));
+        setLoading(false);
         return;
       }
 
