@@ -53,9 +53,7 @@ export default function Index() {
         throw new Error('Something went wrong');
       }
 
-      setTimeout(() => {
-        router.push('/home');
-      }, 5000);
+      router.push('/home');
     } catch (error) {
       console.log(error);
     }
