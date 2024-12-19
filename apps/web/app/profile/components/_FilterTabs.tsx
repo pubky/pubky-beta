@@ -90,6 +90,8 @@ export default function FilterTabs({
   const router = useRouter();
 
   const handleTabClick = (id: number, key: string) => {
+    if (id === activeTab) return;
+
     setLoading(true);
     setActiveTab(id);
     const url = generateTabUrl(key, creatorPubky);
