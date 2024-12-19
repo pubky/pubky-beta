@@ -12,7 +12,7 @@ import {
 } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { ImageByUri } from '../ImageByUri';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Modal from '../Modal';
 import Filter from '../Filter';
 
@@ -23,6 +23,7 @@ interface HeaderProps {
 
 export default function Header({ title, className }: HeaderProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { pubky, isLoggedIn, setSearchTags, searchTags, profile } =
     usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
@@ -74,6 +75,12 @@ export default function Header({ title, className }: HeaderProps) {
       document.removeEventListener('mousedown', handleClickOutsideDrawer);
     };
   }, [refSearchInputCard]);
+
+  useEffect(() => {
+    if (pathname !== '/search') {
+      setSearchTags([]);
+    }
+  }, [pathname, setSearchTags]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
