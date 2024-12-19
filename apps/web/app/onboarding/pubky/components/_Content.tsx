@@ -5,16 +5,32 @@ import { Button, Icon, Typography } from '@social/ui-shared';
 import { usePubkyClientContext, useToastContext } from '@/contexts';
 import { Onboarding } from '../../components';
 import Image from 'next/image';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Index() {
   const { pubky } = usePubkyClientContext();
   const { addToast } = useToastContext();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(`pk:${pubky}`);
     } catch (error) {
       console.log('Failed to copy: ', error);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (loading) return;
+
+    try {
+      setLoading(true);
+      router.push('/onboarding/confirm');
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
   };
 
@@ -81,11 +97,16 @@ export default function Index() {
         >
           Copy pubky to clipboard
         </Button.Large>
-        <Link id="onboarding-confirm-link" href="/onboarding/confirm">
-          <Button.Large icon={<Icon.ArrowRight />} className="w-[140px] z-20">
-            Continue
-          </Button.Large>
-        </Link>
+        <Button.Large
+          id="onboarding-confirm-link"
+          disabled={loading}
+          loading={loading}
+          onClick={handleSubmit}
+          icon={<Icon.ArrowRight />}
+          className="w-[140px] z-20"
+        >
+          Continue
+        </Button.Large>
       </div>
     </Onboarding.Layout>
   );
