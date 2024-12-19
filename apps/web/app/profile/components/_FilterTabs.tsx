@@ -105,7 +105,7 @@ export default function FilterTabs({
       case 'bookmarks':
         return userCounts?.bookmarks || 0;
       case 'posts':
-        return userCounts?.posts || 0;
+        return (userCounts?.posts || 0) - (userCounts?.replies || 0);
       case 'replies':
         return userCounts?.replies || 0;
       case 'followers':
