@@ -1,13 +1,15 @@
 'use client';
 
 import { Button, Content, Header, Icon, Typography } from '@social/ui-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Index() {
   const { logout } = usePubkyClientContext();
+  const { resetDefault } = useFilterContext();
 
+  resetDefault();
   logout();
 
   return (
@@ -43,7 +45,11 @@ export default function Index() {
             className="w-full sm:w-[154px]"
             id="logout-link"
           >
-            <Button.Large id="sign-back-in-btn" variant="secondary" icon={<Icon.Key size="16" />}>
+            <Button.Large
+              id="sign-back-in-btn"
+              variant="secondary"
+              icon={<Icon.Key size="16" />}
+            >
               Sign back in
             </Button.Large>
           </Link>
