@@ -37,7 +37,7 @@ export const NewPostsNotifier = ({
     undefined,
     {
       enabled: true,
-      refetchInterval: 3000,
+      // refetchInterval: 3000,
     } as UseQueryOptions<unknown, Error>,
   );
 

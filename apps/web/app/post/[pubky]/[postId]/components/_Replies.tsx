@@ -49,7 +49,7 @@ export default function Replies({
       : undefined,
     {
       enabled: true,
-      refetchInterval: 3000,
+      // refetchInterval: 3000,
     },
   );
 
