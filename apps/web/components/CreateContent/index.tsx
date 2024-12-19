@@ -197,45 +197,40 @@ export default function CreateContent({
   };
 
   useEffect(() => {
-    const handlePaste = (event: ClipboardEvent) => {
-      if (!textArea) return;
-
-      const items = event.clipboardData?.items;
-      if (items) {
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          if (item.kind === 'file') {
-            const file = item.getAsFile();
-            if (
-              file &&
-              (file.type.startsWith('image/') || file.type.startsWith('video/'))
-            ) {
-              if (selectedFiles && selectedFiles.length < 3) {
-                const filePreview = URL.createObjectURL(file);
-
-                setSelectedFiles &&
-                  setSelectedFiles((prevFiles) => [...prevFiles, file]);
-                setFilePreviews((prevPreviews) => [
-                  ...prevPreviews,
-                  filePreview,
-                ]);
-              } else {
-                addAlert('Maximum of 3 files can be uploaded', 'warning');
-              }
-            } else {
-              addAlert('File not supported', 'warning');
-            }
-          }
-        }
-      }
-    };
-
     document.addEventListener('paste', handlePaste);
 
     return () => {
       document.removeEventListener('paste', handlePaste);
     };
   }, [selectedFiles, addAlert, textArea, setSelectedFiles, setFilePreviews]);
+
+  const handlePaste = (event: ClipboardEvent) => {
+    const items = event.clipboardData?.items;
+    if (items) {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.kind === 'file') {
+          const file = item.getAsFile();
+          if (
+            file &&
+            (file.type.startsWith('image/') || file.type.startsWith('video/'))
+          ) {
+            if (selectedFiles && selectedFiles.length < 3) {
+              const filePreview = URL.createObjectURL(file);
+
+              setSelectedFiles &&
+                setSelectedFiles((prevFiles) => [...prevFiles, file]);
+              setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
+            } else {
+              addAlert('Maximum of 3 files can be uploaded', 'warning');
+            }
+          } else {
+            addAlert('File not supported', 'warning');
+          }
+        }
+      }
+    }
+  };
 
   return (
     <div
@@ -278,6 +273,7 @@ export default function CreateContent({
             maxLength={maxLength}
             setIsError={setIsError}
             isError={isError}
+            handlePaste={handlePaste}
           />
         </div>
         <LinkPreviewer setQuote={setQuote} content={content} />
