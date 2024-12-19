@@ -223,7 +223,6 @@ export default function Index() {
       }
     } catch (error) {
       console.log(error);
-    } finally {
       setLoading(false);
     }
   };
