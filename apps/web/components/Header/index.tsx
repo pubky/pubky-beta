@@ -165,7 +165,7 @@ export default function Header({ title, className }: HeaderProps) {
             readOnly={!!searchTags.length}
           />
           <Modal.SearchInputCard
-            className={searchInputCard ? 'hidden xl:block' : 'hidden'}
+            className={searchInputCard ? 'hidden lg:block' : 'hidden'}
             refCard={refSearchInputCard}
             inputValue={inputValue}
           />
