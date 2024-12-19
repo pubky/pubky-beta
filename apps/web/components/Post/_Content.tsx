@@ -192,129 +192,152 @@ export default function Content({
             Show more
           </Link>
         )}
-        <div onClick={(event) => event.stopPropagation()}>
-        {videoId && (
-          <div className="w-full max-w-[560px] relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
-            <iframe
-              width="100%"
-              height="315"
-              src={`https://www.youtube.com/embed/${videoId}`}
-              title="YouTube video player"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-        )}
-        {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
-          <LinkPreview url={preview} />
-        )}
-        {tweetId && (
-          <div className="no-scrollbar w-full max-w-[384px] overflow-y-auto">
-            <Tweet id={tweetId} />
-          </div>
-        )}
-        {githubUrl && <GitHub url={githubUrl} />}
-        {spotifyUrl && (
-          <div className="mt-4">
-            <Spotify link={spotifyUrl} />
-          </div>
-        )}
-        {fileContents.length > 0 && post?.details?.kind !== 'long' && (
-          <div
-            className={`mt-4 flex flex-col md:grid gap-4 ${
-              fileContents.length === 1
-                ? 'grid-cols-1'
-                : fileContents.length === 2
-                  ? 'grid-cols-2'
-                  : 'grid-cols-2'
-            }`}
-          >
-            {fileContents.map((file, index) => {
-              const isVideo = file?.content_type.startsWith('video');
-              const isImage = file?.content_type.startsWith('image');
-              const isPDF = file?.content_type === 'application/pdf';
-              const isAudio = file?.content_type.startsWith('audio');
-              // const widthImage = fileContents.length > 1 ? 'w-full' : 'w-auto';
+        <div>
+          {videoId && (
+            <div
+              onClick={(event) => event.stopPropagation()}
+              className="w-full max-w-[560px] relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden"
+            >
+              <iframe
+                width="100%"
+                height="315"
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title="YouTube video player"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          )}
+          {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
+            <div onClick={(event) => event.stopPropagation()}>
+              <LinkPreview url={preview} />
+            </div>
+          )}
+          {tweetId && (
+            <div
+              onClick={(event) => event.stopPropagation()}
+              className="no-scrollbar w-full max-w-[384px] overflow-y-auto"
+            >
+              <Tweet id={tweetId} />
+            </div>
+          )}
+          {githubUrl && (
+            <div onClick={(event) => event.stopPropagation()}>
+              <GitHub url={githubUrl} />
+            </div>
+          )}
+          {spotifyUrl && (
+            <div onClick={(event) => event.stopPropagation()} className="mt-4">
+              <Spotify link={spotifyUrl} />
+            </div>
+          )}
+          {fileContents.length > 0 && post?.details?.kind !== 'long' && (
+            <div
+              className={`mt-4 flex flex-col md:grid gap-4 ${
+                fileContents.length === 1
+                  ? 'grid-cols-1'
+                  : fileContents.length === 2
+                    ? 'grid-cols-2'
+                    : 'grid-cols-2'
+              }`}
+            >
+              {fileContents.map((file, index) => {
+                const isVideo = file?.content_type.startsWith('video');
+                const isImage = file?.content_type.startsWith('image');
+                const isPDF = file?.content_type === 'application/pdf';
+                const isAudio = file?.content_type.startsWith('audio');
+                // const widthImage = fileContents.length > 1 ? 'w-full' : 'w-auto';
 
-              return (
-                <div
-                  key={index}
-                  className={`relative cursor-pointer ${
-                    fileContents.length === 3 && index === 0 ? 'col-span-2' : ''
-                  }`}
-                  onClick={() => (isImage ? openModal(index) : undefined)}
-                >
-                  {isVideo ? (
-                    <video
-                      src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                      controls
-                      className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
-                    />
-                  ) : isImage ? (
-                    <img
-                      src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                      alt={`Fetched file ${index}`}
-                      width={800}
-                      height={418}
-                      className="w-auto min-w-[200px] h-auto max-h-[744px] object-cover rounded-[10px] overflow-hidden"
-                    />
-                  ) : isPDF ? (
-                    <div
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        window.open(
-                          `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                          '_blank',
-                        );
-                      }}
-                      className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
-                    >
-                      <div className="flex gap-2 items-center">
-                        <Icon.FileText size="20" />
-                        <Typography.Body
-                          className="text-opacity-80"
-                          variant="small-bold"
-                        >
-                          {Utils.minifyText(
-                            file?.name ??
-                              `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                            isMobile ? 20 : 60,
-                          )}
-                        </Typography.Body>
-                      </div>
-                      <Button.Medium
-                        className="w-auto h-8 px-3 py-2"
-                        icon={<Icon.DownloadSimple size="16" />}
-                      >
-                        Download
-                      </Button.Medium>
-                    </div>
-                  ) : isAudio ? (
-                    <audio controls>
-                      <source
+                return (
+                  <div
+                    key={index}
+                    className={`relative cursor-pointer ${
+                      fileContents.length === 3 && index === 0
+                        ? 'col-span-2'
+                        : ''
+                    }`}
+                  >
+                    {isVideo ? (
+                      <video
                         src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                        type="audio/mpeg"
+                        controls
+                        onClick={(event) => event.stopPropagation()}
+                        className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
                       />
-                      Browser do not support audio.
-                    </audio>
-                  ) : (
-                    <p className="text-gray-500">Unsupported file type</p>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-        {children}
-        {showModal && fileContents.length > 0 && (
-          <FilesCarousel
-            fileContents={fileContents}
-            currentFileIndex={currentFileIndex}
-            setCurrentFileIndex={setCurrentFileIndex}
-            showModal={showModal}
-            setShowModal={setShowModal}
-          />
-        )}
+                    ) : isImage ? (
+                      <img
+                        src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          isImage ? openModal(index) : undefined;
+                        }}
+                        alt={`Fetched file ${index}`}
+                        width={800}
+                        height={418}
+                        className="w-auto min-w-[200px] h-auto max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                      />
+                    ) : isPDF ? (
+                      <div
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          window.open(
+                            `${BASE_URL}/${JSON.parse(file?.urls).main}`,
+                            '_blank',
+                          );
+                        }}
+                        className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
+                      >
+                        <div className="flex gap-2 items-center">
+                          <Icon.FileText size="20" />
+                          <Typography.Body
+                            className="text-opacity-80"
+                            variant="small-bold"
+                          >
+                            {Utils.minifyText(
+                              file?.name ??
+                                `${BASE_URL}/${JSON.parse(file?.urls).main}`,
+                              isMobile ? 20 : 60,
+                            )}
+                          </Typography.Body>
+                        </div>
+                        <Button.Medium
+                          className="w-auto h-8 px-3 py-2"
+                          icon={<Icon.DownloadSimple size="16" />}
+                        >
+                          Download
+                        </Button.Medium>
+                      </div>
+                    ) : isAudio ? (
+                      <audio
+                        onClick={(event) => event.stopPropagation()}
+                        controls
+                      >
+                        <source
+                          src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                          type="audio/mpeg"
+                        />
+                        Browser do not support audio.
+                      </audio>
+                    ) : (
+                      <p className="text-gray-500">Unsupported file type</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div onClick={(event) => event.stopPropagation()}>{children}</div>
+          {showModal && fileContents.length > 0 && (
+            <div onClick={(event) => event.stopPropagation()}>
+              <FilesCarousel
+                fileContents={fileContents}
+                currentFileIndex={currentFileIndex}
+                setCurrentFileIndex={setCurrentFileIndex}
+                showModal={showModal}
+                setShowModal={setShowModal}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
