@@ -28,6 +28,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   markdown?: boolean;
   isError?: boolean;
   setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
+  handlePaste?: any;
 }
 
 export default function InputArea({
@@ -50,6 +51,7 @@ export default function InputArea({
   markdown,
   isError,
   setIsError,
+  handlePaste,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { addAlert } = useAlertContext();
@@ -157,6 +159,7 @@ export default function InputArea({
 
   return (
     <div
+      onPaste={handlePaste}
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
