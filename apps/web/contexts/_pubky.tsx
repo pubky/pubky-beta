@@ -458,6 +458,24 @@ export function PubkyClientWrapper({
       // Send the profile to the homeserver
       await client.put(profileUrl, body);
 
+      if (pubkeyProfile.name === 'anonymous') {
+        let userEdited = false;
+        while (!userEdited) {
+          try {
+            const newProfile = await getUserDetails(pk ?? '');
+
+            if (areProfilesEqual(newProfile, pubkeyProfile)) {
+              userEdited = true;
+              break;
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          } catch (error) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+        }
+      }
+
       return pubkeyProfile;
     } catch (error) {
       console.log(error);
