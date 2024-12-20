@@ -46,7 +46,7 @@ export default function Join() {
       } catch (error: unknown | { message: string }) {
         const errorMessage = error === 'aead::Error' ? 'Failed to login.' : '';
         setLoginError(String(errorMessage));
-        // handleGenerateAuthUrl();
+        if (!errorMessage) handleGenerateAuthUrl();
       }
     }
   };
