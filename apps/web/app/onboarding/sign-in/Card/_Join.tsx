@@ -50,7 +50,6 @@ export default function Join() {
 
           if (errorMessage) {
             setLoginError(errorMessage);
-          } else {
             handleGenerateAuthUrl();
           }
         } catch (error) {

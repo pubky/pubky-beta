@@ -50,7 +50,6 @@ export default function SignIn() {
 
           if (errorMessage) {
             setLoginError(errorMessage);
-          } else {
             handleGenerateAuthUrl();
           }
         } catch (error) {
