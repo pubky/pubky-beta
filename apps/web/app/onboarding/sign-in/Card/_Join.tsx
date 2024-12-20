@@ -44,9 +44,18 @@ export default function Join() {
           }
         }
       } catch (error: unknown | { message: string }) {
-        const errorMessage = error === 'aead::Error' ? 'Failed to login.' : '';
-        setLoginError(String(errorMessage));
-        if (!errorMessage) handleGenerateAuthUrl();
+        try {
+          const errorMessage =
+            error === 'aead::Error' ? 'Failed to login.' : null;
+
+          if (errorMessage) {
+            setLoginError(errorMessage);
+          } else {
+            handleGenerateAuthUrl();
+          }
+        } catch (error) {
+          console.error('Unexpected error occurred:', error);
+        }
       }
     }
   };
