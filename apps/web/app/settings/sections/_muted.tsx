@@ -20,10 +20,10 @@ export default function MutedUsers() {
     isLoading,
     isError,
   } = useStreamUsers(pubky ?? '', pubky ?? '', 'muted');
-  if (isError) console.error(isError);
+  if (isError) console.log(isError);
 
   const [loadingMutedUsers, setLoadingMutedUsers] = useState<LoadingMutedUsers>(
-    {}
+    {},
   );
   const [muted, setMuted] = useState<{ [pubky: string]: boolean }>({});
   const [isLoadingUnmuteAll, setIsLoadingUnmuteAll] = useState(false);
@@ -79,25 +79,28 @@ export default function MutedUsers() {
         setLoadingMutedUsers(
           mutedUsers.reduce(
             (acc, user) => ({ ...acc, [user.details.id]: true }),
-            {}
-          )
+            {},
+          ),
         );
 
         await Promise.all(
-          mutedUsers.map((user) => unmuteUser(user.details.id))
+          mutedUsers.map((user) => unmuteUser(user.details.id)),
         );
 
         setLoadingMutedUsers({});
       }
     } catch (error) {
-      console.error('Error while unmute all users:', error);
+      console.log('Error while unmute all users:', error);
     } finally {
       setIsLoadingUnmuteAll(false);
     }
   };
 
   return (
-    <div id="muted-users-root" className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start gap-12 inline-flex">
+    <div
+      id="muted-users-root"
+      className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start gap-12 inline-flex"
+    >
       <div className="w-full flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
           <Icon.SpeakerSimpleSlash size="24" />
