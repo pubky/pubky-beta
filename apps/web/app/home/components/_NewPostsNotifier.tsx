@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Button } from '@social/ui-shared';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
@@ -24,6 +24,45 @@ export const NewPostsNotifier = ({
 }: NewPostsNotifierProps) => {
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [newPostsCount, setNewPostsCount] = useState(0);
+  const [shouldFetch, setShouldFetch] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
+  const [fetchCounter, setFetchCounter] = useState(0);
+
+  // Refs for scroll control
+  const lastScrollY = useRef(0);
+  const throttleTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const handleScroll = useCallback(() => {
+    // Cancel if there's a pending timeout
+    if (throttleTimeout.current) return;
+
+    throttleTimeout.current = setTimeout(() => {
+      const currentScrollY = window.scrollY;
+
+      // Check if scrolling up and within top 300px
+      const isScrollingUp = currentScrollY < lastScrollY.current;
+      const isNearTop = currentScrollY < 300;
+
+      if (isScrollingUp && isNearTop && !hasFetched) {
+        setShouldFetch(true);
+        setFetchCounter((prev) => prev + 1);
+      }
+
+      lastScrollY.current = currentScrollY;
+      throttleTimeout.current = null;
+    }, 500); // Wait 500ms between each check
+  }, [hasFetched]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      // Clear pending timeout when unmounting
+      if (throttleTimeout.current) {
+        clearTimeout(throttleTimeout.current);
+      }
+    };
+  }, [handleScroll]);
 
   const { data: newPostsData } = useStreamPost(
     pubky,
@@ -36,8 +75,8 @@ export const NewPostsNotifier = ({
     sort,
     undefined,
     {
-      enabled: true,
-      // refetchInterval: 3000,
+      enabled: shouldFetch,
+      queryKey: ['stream-posts', fetchCounter],
     } as UseQueryOptions<unknown, Error>,
   );
 
@@ -56,12 +95,19 @@ export const NewPostsNotifier = ({
         setNewPostsCount((prev) => prev + filteredNewPosts.length);
       }
     }
-  }, [newPostsData]);
+
+    setHasFetched(true);
+    setShouldFetch(false);
+  }, [newPostsData, newPosts]);
 
   const handleShowNewPosts = () => {
     addNewPosts(newPosts);
     setNewPosts([]);
     setNewPostsCount(0);
+    setHasFetched(false);
+    setShouldFetch(false);
+    setFetchCounter(0);
+    lastScrollY.current = window.scrollY;
   };
 
   return (
