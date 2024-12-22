@@ -15,6 +15,7 @@ export default function Index() {
   const isMobile = useIsMobile();
   const router = useRouter();
   const [logoLink, setLogoLink] = useState('/onboarding');
+  const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const links: Links[] = [];
 
@@ -32,10 +33,17 @@ export default function Index() {
 
   const handleSubmit = async () => {
     if (loading) return;
+    setLoading(true);
+
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        const nextValue = Math.min(prev + Math.random() * 15, 100);
+        if (nextValue >= 100) clearInterval(interval);
+        return nextValue;
+      });
+    }, 1000);
 
     try {
-      setLoading(true);
-
       const id = Math.random().toString(36).substring(2, 15);
       const size = 200;
       const svgCode = jdenticon.toSvg(id, size);
@@ -53,9 +61,11 @@ export default function Index() {
         throw new Error('Something went wrong');
       }
 
+      clearInterval(interval);
       router.push('/home');
     } catch (error) {
       console.log(error);
+      clearInterval(interval);
     }
   };
 
@@ -123,7 +133,9 @@ export default function Index() {
             className={`w-auto ${loading ? 'w-auto' : 'lg:w-[156px]'}`}
             loading={loading}
           >
-            Explore Pubky
+            {loading
+              ? `Creating Profile... ${Math.floor(progress)}%`
+              : 'Explore Pubky'}
           </Button.Large>
           <Link href="https://pubky.org" target="_blank">
             <Button.Large
