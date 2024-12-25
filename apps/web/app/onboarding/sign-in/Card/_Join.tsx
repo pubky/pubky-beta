@@ -89,15 +89,15 @@ export default function Join() {
 
   return (
     <Card.Primary
-      title="Join with"
-      text="Scan the QR with Bitkit or any other Pubky Core powered wallet."
+      title="Use"
+      text="Scan the QR with Pubky Ring or any other Pubky Core powered wallet."
       imageTitle={
-        <Link href="https://bitkit.to" target="_blank">
+        <Link className="ml-2" href="https://github.com/pubky" target="_blank">
           <Image
-            width={88}
-            height={26}
+            width={142}
+            height={30}
             alt="bitkit"
-            src="/images/webp/bitkit.webp"
+            src="/images/webp/pubky-ring.webp"
           />
         </Link>
       }
@@ -105,7 +105,7 @@ export default function Join() {
     >
       <div className="relative" onClick={copyToClipboard}>
         {authUrl && !loginError ? (
-          <div className="rounded-lg mt-6 flex justify-center-center">
+          <div className="relative w-fit mt-6">
             <QRCodeSVG
               value={authUrl}
               size={qrSize}
@@ -115,6 +115,15 @@ export default function Join() {
               className="cursor-pointer bg-white p-2 rounded-lg"
               ref={canvasRef}
             />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-[41.63px] h-[41.63px] bg-black rounded-[50px] flex items-center justify-center">
+                <img
+                  className="w-[15.72px] h-6"
+                  src="/images/webp/pubky-ring-mark.svg"
+                  alt="Logo"
+                />
+              </div>
+            </div>
           </div>
         ) : (
           <>
