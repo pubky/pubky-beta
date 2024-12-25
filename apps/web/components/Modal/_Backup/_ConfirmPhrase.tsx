@@ -116,8 +116,8 @@ export default function ConfirmPhrase({
               onClick={() => handleSelectWord(word)}
               className={`py-2 px-4 rounded-full cursor-pointer ${
                 selectedWords.includes(word)
-                  ? 'bg-white bg-opacity-20'
-                  : 'bg-white bg-opacity-10'
+                  ? 'bg-white bg-opacity-10'
+                  : 'bg-white bg-opacity-20 hover:bg-opacity-30'
               }`}
               variant="small-bold"
             >
