@@ -8,10 +8,11 @@ import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
 
 export const ReplyReplies = ({ reply }: { reply: PostView }) => {
-  const { mutedUsers } = usePubkyClientContext();
+  const { pubky, mutedUsers } = usePubkyClientContext();
   const { data: replyReplies } = usePostReplies(
     reply?.details?.author,
     reply?.details?.id,
+    pubky,
   );
   const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (

@@ -22,10 +22,11 @@ export const PostReplies = ({
   homeView = false,
   isMobile,
 }: PostRepliesProps) => {
-  const { mutedUsers } = usePubkyClientContext();
+  const { pubky, mutedUsers } = usePubkyClientContext();
   const { data: replies } = usePostReplies(
     post.details.author,
     post.details.id,
+    pubky,
   );
 
   const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
@@ -62,7 +63,7 @@ export const PostReplies = ({
     <>
       {showQuickReply && (
         <div className="mt-3 flex flex-col gap-3">
-          {displayedReplies.reverse().map((reply) => (
+          {displayedReplies.map((reply) => (
             <Components.Post
               key={reply.details.id}
               post={reply}
