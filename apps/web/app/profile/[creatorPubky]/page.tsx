@@ -13,13 +13,24 @@ type Props = {
 
 export async function generateMetadata({ params }: Props) {
   const { creatorPubky } = await params;
+
+  const get404Seo = () =>
+    getSeoMetadata({
+      title: '404 | Profile',
+      description: 'User profile not found or an error occurred',
+      // image: `${BASE_URL}/default-error-image.png`, // TODO: Add default error image
+    });
+
   try {
     const profile = await getUserDetails(creatorPubky);
-    let profilePic;
+    if (!profile || profile.name === '[DELETED]') {
+      return get404Seo();
+    }
 
+    let profilePic;
     try {
       profilePic =
-        profile?.image &&
+        profile.image &&
         profile.image !== 'null' &&
         (await getFile(profile.image));
     } catch (error) {
@@ -36,11 +47,7 @@ export async function generateMetadata({ params }: Props) {
       image: String(file),
     });
   } catch (error) {
-    return getSeoMetadata({
-      title: '404 | Profile',
-      description: 'User profile not found or an error occurred',
-      // image: `${BASE_URL}/default-error-image.png`, // TODO: Add default error image
-    });
+    return get404Seo();
   }
 }
 

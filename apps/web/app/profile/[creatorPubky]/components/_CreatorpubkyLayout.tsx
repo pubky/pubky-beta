@@ -53,7 +53,7 @@ export default function CreatorpubkyLayout({
 
   if (isLoading) {
     content = <Skeletons.Simple />;
-  } else if (!profile && isError) {
+  } else if ((!profile && isError) || profile?.details?.name === '[DELETED]') {
     content = (
       <Content.Grid>
         <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
