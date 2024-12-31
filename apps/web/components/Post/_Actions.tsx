@@ -176,7 +176,6 @@ export default function Actions({
           id="mobile-tag-btn"
           size="small"
           variant="custom"
-          className="md:hidden"
           onClick={(event) => {
             event.stopPropagation();
             setShowModalTag(true);

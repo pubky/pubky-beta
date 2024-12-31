@@ -37,6 +37,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </Components.Sidebar>
       </Content.Grid>
+      <Components.CreatePost />
       <Components.FooterMobile />
     </Content.Main>
   );

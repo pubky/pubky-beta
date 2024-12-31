@@ -15,7 +15,7 @@ import Modal from '../Modal';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag, PostView } from '@/types/Post';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
 
@@ -29,6 +29,9 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
   const [tag, setTag] = useState('');
+  const [tagInput, setTagInput] = useState('');
+  const { addAlert } = useAlertContext();
+  const [addTagInput, setAddTagInput] = useState<boolean>(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
     {},
@@ -133,6 +136,27 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     };
   }, [wrapperRefEmojis]);
 
+  const handleFastAddTag = async () => {
+    await createTag(post?.details?.author, post?.details?.id, tagInput);
+    setAddTagInput(false);
+    setTagInput('');
+    addAlert('Tag added!');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleFastAddTag();
+    }
+  };
+
+  const handleChangeTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valueWithoutSpaces = e.target.value
+      .toLowerCase()
+      .replace(/\s/g, '')
+      .replace(/!/g, '');
+    setTagInput(valueWithoutSpaces);
+  };
+
   return (
     <div
       className="mt-2 cursor-default"
@@ -140,18 +164,18 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     >
       <div className={`flex-col inline-flex gap-2`}>
         <div className="w-96 mb-4 flex gap-2 items-center">
-          <Icon.Tag size="14" color="white" />
+          <Icon.Tag size="14" color="gray" />
           <Typography.Label className="text-opacity-30">
-            {tags.length > 0 ? 'Top tags' : 'Tag Post'}
+            {tags.length > 0 ? 'Tags' : 'Tag Post'}
           </Typography.Label>
-          {tags.length > 0 && (
+          {/**tags.length > 0 && (
             <Button.Medium
               onClick={() => setShowModalTag(true)}
               className="w-auto h-8 px-3 py-2"
             >
               See all
             </Button.Medium>
-          )}
+          )*/}
         </div>
         {tags.length === 0 && (
           <div>
@@ -286,6 +310,48 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             </PostUI.Footer>
           );
         })}
+        {tags.length > 0 && (
+          <div className="hidden md:flex">
+            {addTagInput ? (
+              <div className="w-fit">
+                <Input.Text
+                  placeholder="tag"
+                  className="h-[32px] p-3 text-[14px] rounded-lg"
+                  value={tagInput}
+                  maxLength={20}
+                  onChange={handleChangeTagInput}
+                  onKeyDown={handleKeyDown}
+                  autoFocus
+                  action={
+                    <div className="flex gap-1 -mr-2">
+                      <div
+                        onClick={handleFastAddTag}
+                        className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
+                      >
+                        <Icon.Plus size="12" />
+                      </div>
+                      <div
+                        onClick={() => setAddTagInput(false)}
+                        className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                      >
+                        <Icon.X size="12" />
+                      </div>
+                    </div>
+                  }
+                />
+              </div>
+            ) : (
+              <div
+                onClick={() => setAddTagInput(true)}
+                className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
+              >
+                <div>
+                  <Icon.Plus size="16" />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
       <Modal.Tag
         post={post}
