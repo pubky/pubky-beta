@@ -89,7 +89,7 @@ import {
   Discord,
 } from './_Social';
 import { Clock, Calendar } from './_Time';
-import { Globe, GlobeSimple } from './_Maps';
+import { Globe, GlobeSimple, Crosshair } from './_Maps';
 import {
   User,
   UserPlus,
@@ -147,6 +147,7 @@ export const Icon = {
   Clipboard,
   Clock,
   Copy,
+  Crosshair,
   Discord,
   DownloadSimple,
   DropdownIcon,

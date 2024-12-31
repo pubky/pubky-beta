@@ -18,6 +18,7 @@ import {
 } from '@/hooks/useUser';
 import { getUserDetails } from '@/services/userService';
 import Link from 'next/link';
+import Parsing from '../Content/_Parsing';
 
 interface ProfileProps {
   post?: PostView;
@@ -167,7 +168,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
               className={`hover:underline hover:decoration-solid`}
             >
               {author?.details?.name &&
-                Utils.minifyText(author?.details?.name, 12)}
+                Utils.minifyText(author?.details?.name, 18)}
             </PostUI.Username>
             <Typography.Label className="text-opacity-30 -mt-1">
               {Utils.minifyPubky(idAuthor)}
@@ -180,9 +181,11 @@ export default function Profile({ post, profileId }: ProfileProps) {
         className="scrollbar-thin scrollbar-webkit my-3 text-opacity-80 break-words max-h-[150px] overflow-y-auto"
         onClick={(event) => event.stopPropagation()}
       >
-        {author?.details?.bio
-          ? Utils.minifyText(author?.details?.bio, 50)
-          : 'No bio.'}
+        <Parsing>
+          {author?.details?.bio
+            ? Utils.truncateText(author?.details?.bio, 80)
+            : 'No bio.'}
+        </Parsing>
       </Typography.Body>
       <div className="grid grid-cols-2 gap-6 justify-start">
         {isLoadingFollowing || !following ? (

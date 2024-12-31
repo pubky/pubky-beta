@@ -37,7 +37,7 @@ export default function HotTags() {
         ) : hotTags && hotTags.length > 0 ? (
           <>
             <div className="grid gap-2">
-              {hotTags.slice(0, 8).map((tag, index) => (
+              {hotTags.slice(0, 5).map((tag, index) => (
                 <Link key={index} href={`/search?tags=${tag?.label}`}>
                   <SideCard.Rank
                     rank={index + 1}
