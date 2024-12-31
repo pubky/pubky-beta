@@ -161,7 +161,7 @@ export default function Tags({
               </PostUI.Footer>
             );
           })}
-        {tags.length < 3 && (
+        {tags.length < 3 && !largeView && (
           <div className="hidden md:flex">
             {addTagInput ? (
               <Input.Text
