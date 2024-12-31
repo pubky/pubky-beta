@@ -10,7 +10,7 @@ export const metadata = getSeoMetadata({
 
 export default function Index() {
   return (
-    <Content.Main>
+    <Content.Main className="pb-0">
       <Components.Header className="hidden md:block" title="Feed" />
       <Components.RemindBackup />
       <HomePage.Content />

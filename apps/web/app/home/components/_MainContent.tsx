@@ -8,6 +8,7 @@ interface MainContentProps {
   setSelectedFeed: (feed: ICustomFeed | undefined) => void;
   loadingFeed: boolean;
   setLoadingFeed: React.Dispatch<React.SetStateAction<boolean>>;
+  ref?: React.RefObject<HTMLDivElement>;
 }
 
 export function MainContent({
@@ -16,9 +17,11 @@ export function MainContent({
   setSelectedFeed,
   loadingFeed,
   setLoadingFeed,
+  ref,
 }: MainContentProps) {
   return (
     <Components.PostsLayout
+      ref={ref}
       id="posts-feed"
       className="w-full flex-col inline-flex gap-3"
     >

@@ -1,12 +1,22 @@
 import * as Components from '@/components';
 
-export function RightSidebar() {
+interface RightSidebarProps {
+  ref?: React.RefObject<HTMLDivElement>;
+}
+
+export function RightSidebar({ ref }: RightSidebarProps) {
   return (
-    <Components.Sidebar id="right-sidebar" className="w-[280px] hidden xl:block">
-      <Components.WhoFollow />
-      <Components.Influencers />
-      <Components.HotTags />
-      <Components.Feedback />
+    <Components.Sidebar
+      ref={ref}
+      id="right-sidebar"
+      className="sticky top-24 h-screen w-[180px] overflow-y-auto no-scrollbar flex-shrink-0 hidden xl:block"
+    >
+      <div className="pb-20 mb-20">
+        <Components.WhoFollow />
+        <Components.Influencers />
+        <Components.HotTags />
+        <Components.Feedback />
+      </div>
     </Components.Sidebar>
   );
 }

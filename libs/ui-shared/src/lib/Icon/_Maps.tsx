@@ -109,8 +109,8 @@ export const Crosshair = ({ size = '32', color = 'white' }: IconProps) => (
       fill={color}
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M16 23.5C16.5523 23.5 17 23.9477 17 24.5V29.5C17 30.0523 16.5523 30.5 16 30.5C15.4477 30.5 15 30.0523 15 29.5V24.5C15 23.9477 15.4477 23.5 16 23.5Z"
       fill={color}
     />
