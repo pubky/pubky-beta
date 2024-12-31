@@ -152,6 +152,8 @@ type PubkyClientContextType = {
   setNotificationPreferences: React.Dispatch<
     React.SetStateAction<NotificationPreferences>
   >;
+  newPosts: PostView[];
+  setNewPosts: React.Dispatch<React.SetStateAction<PostView[]>>;
 };
 
 interface TimelineState {
@@ -193,6 +195,7 @@ export function PubkyClientWrapper({
   const [timestamp, setTimestamp] = useState<number>(0);
   const [notificationPreferences, setNotificationPreferences] =
     useState<NotificationPreferences>({} as NotificationPreferences);
+  const [newPosts, setNewPosts] = useState<PostView[]>([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -698,6 +701,24 @@ export function PubkyClientWrapper({
 
       // Send the post to the homeserver
       await client.put(postUrl, postBody);
+
+      const newPostView: PostView = {
+        uri: postUrl,
+        details: {
+          ...newPost,
+          author: pubky,
+          id: postId,
+          indexed_at: Date.now(), // Fixing the type issue by using a number instead of a string
+          uri: postUrl,
+        },
+        counts: { replies: 0, reposts: 0, likes: 0, bookmarks: 0 },
+        tags: [],
+        cached: 'homeserver',
+      } as unknown as PostView; // Converting to 'unknown' first to avoid type overlap issue
+
+      console.log(newPostView);
+
+      setNewPosts((prev: PostView[]) => [newPostView, ...prev]);
 
       return { uri: postUrl, details: newPost };
     } catch (error) {
@@ -1686,6 +1707,8 @@ export function PubkyClientWrapper({
   return (
     <PubkyClientContext.Provider
       value={{
+        newPosts,
+        setNewPosts,
         replies,
         setReplies,
         newUser,

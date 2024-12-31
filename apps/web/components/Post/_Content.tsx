@@ -41,6 +41,7 @@ export default function Content({
   const [fileContents, setFileContents] = useState<FileContent[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
   const text = post?.details?.content;
   const files = post?.details?.attachments;
   const uri = post?.details?.uri;
@@ -99,27 +100,76 @@ export default function Content({
   }, [text]);
 
   useEffect(() => {
+    const retryInterval = 5000; // 5 seconds
+    let retryTimeouts: NodeJS.Timeout[] = [];
+
+    const fetchFile = async (
+      fileUri: string,
+      retryCount = 0,
+    ): Promise<FileContent | null> => {
+      try {
+        const fetchedFile = await getFile(fileUri);
+        return fetchedFile;
+      } catch (error) {
+        // Return skeleton and schedule retry
+        if (retryCount < 5) {
+          // Limit retries to prevent infinite loops
+          const timeoutId = setTimeout(async () => {
+            const result = await fetchFile(fileUri, retryCount + 1);
+            if (result) {
+              // Update the specific file in fileContents
+              setFileContents((prev) =>
+                prev.map((f) =>
+                  f.urls === JSON.stringify({ main: 'skeleton' })
+                    ? { ...result, urls: result.urls }
+                    : f,
+                ),
+              );
+            }
+          }, retryInterval);
+          retryTimeouts.push(timeoutId);
+        }
+        return {
+          content_type: 'skeleton',
+          urls: JSON.stringify({ main: 'skeleton' }),
+          name: 'Loading...',
+          created_at: Date.now(),
+          src: 'skeleton',
+          uri: fileUri,
+          id: `skeleton-${fileUri}`,
+          indexed_at: Date.now(),
+          owner_id: `skeleton-${fileUri}`,
+          size: 0,
+        };
+      }
+    };
+
     const fetchFiles = async () => {
       if (files) {
+        setLoading(true);
         const fileUris = Object.values(files).map((file) => file);
         const fetchedFiles = await Promise.all(
-          fileUris.map(async (fileUri) => {
-            const fetchedFile = await getFile(fileUri);
-            return fetchedFile ? fetchedFile : null;
-          }),
+          fileUris.map((fileUri) => fetchFile(fileUri)),
         );
+
         setFileContents(
           fetchedFiles
-            .filter((file) => file !== null)
+            .filter((file): file is FileContent => file !== null)
             .map((file) => ({
               ...file,
-              urls: file!.urls, // Ensure 'urls' is a string
-            })) as FileContent[],
+              urls: file.urls,
+            })),
         );
+        setLoading(false);
       }
     };
 
     fetchFiles();
+
+    // Cleanup timeouts on unmount
+    return () => {
+      retryTimeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+    };
   }, [files]);
 
   const openModal = (index: number) => {
@@ -132,6 +182,10 @@ export default function Content({
   const contentText = fullContent ? cleanedText : minifiedContent;
 
   const showMore = !fullContent && cleanedText !== minifiedContent;
+
+  const renderSkeleton = () => (
+    <div className="animate-pulse bg-gray-700 rounded-[10px] w-full h-[350px]" />
+  );
 
   return (
     <div className="w-full">
@@ -160,19 +214,25 @@ export default function Content({
                       </div>
                     </div>
                     <div>
-                      {fileContents.map((file, index) => {
-                        return (
-                          <div key={index} className="relative">
-                            <img
-                              src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                              alt={`Fetched file ${index}`}
-                              width={360}
-                              height={200}
-                              className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
-                            />
-                          </div>
-                        );
-                      })}
+                      {loading
+                        ? renderSkeleton()
+                        : fileContents.map((file, index) => {
+                            return (
+                              <div key={index} className="relative">
+                                {file.content_type === 'skeleton' ? (
+                                  renderSkeleton()
+                                ) : (
+                                  <img
+                                    src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                    alt={`Fetched file ${index}`}
+                                    width={360}
+                                    height={200}
+                                    className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
                     </div>
                   </div>
                 );
@@ -241,89 +301,93 @@ export default function Content({
                     : 'grid-cols-2'
               }`}
             >
-              {fileContents.map((file, index) => {
-                const isVideo = file?.content_type.startsWith('video');
-                const isImage = file?.content_type.startsWith('image');
-                const isPDF = file?.content_type === 'application/pdf';
-                const isAudio = file?.content_type.startsWith('audio');
-                // const widthImage = fileContents.length > 1 ? 'w-full' : 'w-auto';
+              {loading
+                ? renderSkeleton()
+                : fileContents.map((file, index) => {
+                    const isVideo = file?.content_type.startsWith('video');
+                    const isImage = file?.content_type.startsWith('image');
+                    const isPDF = file?.content_type === 'application/pdf';
+                    const isAudio = file?.content_type.startsWith('audio');
+                    const isSkeleton = file?.content_type === 'skeleton';
 
-                return (
-                  <div
-                    key={index}
-                    className={`relative cursor-pointer ${
-                      fileContents.length === 3 && index === 0
-                        ? 'col-span-2'
-                        : ''
-                    }`}
-                  >
-                    {isVideo ? (
-                      <video
-                        src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                        controls
-                        onClick={(event) => event.stopPropagation()}
-                        className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
-                      />
-                    ) : isImage ? (
-                      <img
-                        src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          isImage ? openModal(index) : undefined;
-                        }}
-                        alt={`Fetched file ${index}`}
-                        width={800}
-                        height={418}
-                        className="w-auto min-w-[200px] h-auto max-h-[744px] object-cover rounded-[10px] overflow-hidden"
-                      />
-                    ) : isPDF ? (
+                    return (
                       <div
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          window.open(
-                            `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                            '_blank',
-                          );
-                        }}
-                        className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
+                        key={index}
+                        className={`relative cursor-pointer ${
+                          fileContents.length === 3 && index === 0
+                            ? 'col-span-2'
+                            : ''
+                        }`}
                       >
-                        <div className="flex gap-2 items-center">
-                          <Icon.FileText size="20" />
-                          <Typography.Body
-                            className="text-opacity-80"
-                            variant="small-bold"
-                          >
-                            {Utils.minifyText(
-                              file?.name ??
+                        {isSkeleton ? (
+                          renderSkeleton()
+                        ) : isVideo ? (
+                          <video
+                            src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                            controls
+                            onClick={(event) => event.stopPropagation()}
+                            className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                          />
+                        ) : isImage ? (
+                          <img
+                            src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              isImage ? openModal(index) : undefined;
+                            }}
+                            alt={`Fetched file ${index}`}
+                            width={800}
+                            height={418}
+                            className="w-auto min-w-[200px] h-auto max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                          />
+                        ) : isPDF ? (
+                          <div
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              window.open(
                                 `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                              isMobile ? 20 : 60,
-                            )}
-                          </Typography.Body>
-                        </div>
-                        <Button.Medium
-                          className="w-auto h-8 px-3 py-2"
-                          icon={<Icon.DownloadSimple size="16" />}
-                        >
-                          Download
-                        </Button.Medium>
+                                '_blank',
+                              );
+                            }}
+                            className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
+                          >
+                            <div className="flex gap-2 items-center">
+                              <Icon.FileText size="20" />
+                              <Typography.Body
+                                className="text-opacity-80"
+                                variant="small-bold"
+                              >
+                                {Utils.minifyText(
+                                  file?.name ??
+                                    `${BASE_URL}/${JSON.parse(file?.urls).main}`,
+                                  isMobile ? 20 : 60,
+                                )}
+                              </Typography.Body>
+                            </div>
+                            <Button.Medium
+                              className="w-auto h-8 px-3 py-2"
+                              icon={<Icon.DownloadSimple size="16" />}
+                            >
+                              Download
+                            </Button.Medium>
+                          </div>
+                        ) : isAudio ? (
+                          <audio
+                            onClick={(event) => event.stopPropagation()}
+                            controls
+                          >
+                            <source
+                              src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                              type="audio/mpeg"
+                            />
+                            Browser do not support audio.
+                          </audio>
+                        ) : (
+                          <p className="text-gray-500">Unsupported file type</p>
+                        )}
                       </div>
-                    ) : isAudio ? (
-                      <audio
-                        onClick={(event) => event.stopPropagation()}
-                        controls
-                      >
-                        <source
-                          src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                          type="audio/mpeg"
-                        />
-                        Browser do not support audio.
-                      </audio>
-                    ) : (
-                      <p className="text-gray-500">Unsupported file type</p>
-                    )}
-                  </div>
-                );
-              })}
+                    );
+                  })}
             </div>
           )}
           <div onClick={(event) => event.stopPropagation()}>{children}</div>

@@ -43,7 +43,7 @@ const useTimelineFilters = (selectedFeed) => {
 
 export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const limit = 10;
-  const { pubky, mutedUsers } = usePubkyClientContext();
+  const { pubky, mutedUsers, newPosts } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
@@ -123,6 +123,13 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           }}
         />
       )}
+
+      {newPosts.map((post) => (
+        <div key={post.details.id} className="flex flex-col">
+          <Post post={post} />
+        </div>
+      ))}
+
       {timeline.map(
         (post) =>
           post?.details?.content !== '[DELETED]' && (

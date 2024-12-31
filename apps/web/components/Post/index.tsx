@@ -145,9 +145,7 @@ export default function Post({
                       <RepostedPost
                         repostedPost={repostedPost}
                         loadingRepostedPost={loadingRepostedPost}
-                        //largeView={largeView}
                         fullContent={fullContent}
-                        //line={line}
                         lineStyle={lineStyle}
                         repostView
                         showModalTag={showModalTag}
@@ -251,7 +249,6 @@ export default function Post({
                         loadingRepostedPost={loadingRepostedPost}
                         largeView={largeView}
                         fullContent={fullContent}
-                        //line={line}
                         lineStyle={lineStyle}
                         repostView={repostView}
                         showModalTag={showModalTag}
