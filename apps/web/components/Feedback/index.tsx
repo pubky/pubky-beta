@@ -36,6 +36,8 @@ export default function Feedback() {
     }
   };
 
+  if (!pubky) return;
+
   return (
     <>
       <div className="col-span-1">

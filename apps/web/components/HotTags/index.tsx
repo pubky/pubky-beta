@@ -5,8 +5,10 @@ import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
 import { useHotTags } from '@/hooks/useTag';
 import Link from 'next/link';
+import { usePubkyClientContext } from '@/contexts';
 
 export default function HotTags() {
+  const { pubky } = usePubkyClientContext();
   const { data, isLoading, isError } = useHotTags(0, 8);
   const hotTags = data;
   if (isError) console.error(isError);
@@ -38,7 +40,10 @@ export default function HotTags() {
           <>
             <div className="grid gap-2">
               {hotTags.slice(0, 5).map((tag, index) => (
-                <Link key={index} href={`/search?tags=${tag?.label}`}>
+                <Link
+                  key={index}
+                  href={pubky ? `/search?tags=${tag?.label}` : ''}
+                >
                   <SideCard.Rank
                     rank={index + 1}
                     tag={Utils.minifyText(tag?.label, 21)}
@@ -49,13 +54,15 @@ export default function HotTags() {
                 </Link>
               ))}
             </div>
-            <Link href="/hot">
-              <SideCard.Action
-                textCSS="text-[13px]"
-                className="mt-3"
-                text="Explore All"
-              />
-            </Link>
+            {pubky && (
+              <Link href="/hot">
+                <SideCard.Action
+                  textCSS="text-[13px]"
+                  className="mt-3"
+                  text="Explore All"
+                />
+              </Link>
+            )}
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">

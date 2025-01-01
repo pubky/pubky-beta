@@ -13,6 +13,7 @@ interface FooterMobileProps {
 }
 
 const FooterMobile = ({ title }: FooterMobileProps) => {
+  const { pubky } = usePubkyClientContext();
   const buttonCSS =
     'cursor-pointer p-3 bg-white/20 rounded-[48px] backdrop-blur-[32px] justify-center items-center inline-flex';
   const activeCSS = 'border-t border-white';
@@ -38,6 +39,9 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
       document.removeEventListener('mousedown', handleClickOutsideModals);
     };
   }, [modalPostRef]);
+
+  if (!pubky) return;
+
   return (
     <div className="flex justify-center lg:hidden">
       <div className="max-w-[380px] sm:max-w-[600px] md:max-w-[720px] w-full p-6 bg-[#05050a] rounded-tl-2xl rounded-tr-2xl flex gap-2 w-full justify-between justify-center fixed bottom-0 z-50">

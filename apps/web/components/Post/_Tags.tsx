@@ -14,7 +14,11 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
 import { PostTag, PostView } from '@/types/Post';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import {
+  useAlertContext,
+  usePubkyClientContext,
+  useJoinModal,
+} from '@/contexts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -31,6 +35,7 @@ export default function Tags({
 }: PostProps) {
   const [showTooltipTag, setShowTooltipTag] = useState('');
   const { pubky, createTag, deleteTag } = usePubkyClientContext();
+  const { openJoinModal } = useJoinModal();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [tagInput, setTagInput] = useState('');
   const { addAlert } = useAlertContext();
@@ -137,9 +142,11 @@ export default function Tags({
                         Utils.generateRandomColor(tagObj?.label)
                       }
                       onClick={() =>
-                        isTagFound
-                          ? handleDeleteTag(tagObj?.label)
-                          : handleAddTag(tagObj?.label)
+                        pubky
+                          ? isTagFound
+                            ? handleDeleteTag(tagObj?.label)
+                            : handleAddTag(tagObj?.label)
+                          : openJoinModal()
                       }
                     >
                       <div className="flex gap-2 items-center">
@@ -191,7 +198,7 @@ export default function Tags({
               />
             ) : (
               <div
-                onClick={() => setAddTagInput(true)}
+                onClick={() => (pubky ? setAddTagInput(true) : openJoinModal())}
                 className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
               >
                 <div>
