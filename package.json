@@ -60,7 +60,7 @@
     "@swc/cli": "^0.5.1",
     "@swc/core": "~1.9.2",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "16.0.1",
+    "@testing-library/react": "16.1.0",
     "@types/next": "^9.0.0",
     "@types/node": "22.9.1",
     "@types/react": "^18.3.12",
