@@ -108,6 +108,7 @@ export default function TaggedSection({
             </Typography.Body>
           )}
           <Button.Medium
+            id="profile-tag-btn"
             className="mt-2 w-auto h-8 inline-flex items-center"
             onClick={() => (pubky ? setShowModalProfileTag(true) : openJoin())}
             icon={<Icon.Tag size="16" />}

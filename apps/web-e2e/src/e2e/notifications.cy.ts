@@ -1,10 +1,10 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { latestPostInFeedContentEq, createQuickPost, checkPostIsNotAtTopOfFeed } from '../support/posts';
+import { latestPostInFeedContentEq, createQuickPost, checkPostIsNotAtTopOfFeed, clickShowNewPostsBtn } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands'
 import path = require('path');
 import { defaultMs } from '../support/slow-down';
-import { searchAndFollowProfile } from '../support/contacts';
+import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
 import { clickFollowButton } from '../support/profile';
 
 const profile1 = { username: "Notif #1", pubkyAlias: "pubky_1" };
@@ -68,6 +68,7 @@ describe('settings', () => {
     cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
+    // TODO: fails here due to displaying other user's notifications alongside current user's notifications (2 instead of 1), see https://github.com/pubky/pubky-app/issues/810
     cy.get('#profile-tab-content > div').children().should('have.length', 1).first().within(() => {
       cy.contains(profile2.username)
       cy.contains("is your friend now");
@@ -77,6 +78,7 @@ describe('settings', () => {
     // * profile 2 checks notification for lost friend
     // * profile 2 unfollows profile 1
     // * profile 1 checks absence of notifications
+
     // * profile 1 disables follow notifications
     // * profile 2 disables friend notifications
     // * profile 2 follows profile 1
@@ -85,7 +87,40 @@ describe('settings', () => {
     // * profile 2 checks for follow notification? and absence of friend notification
   });
 
-  it('can be notified for tagged post and profile');
+  it.only('can be notified for tagged post and profile', () => {
+    // * profile 1 creates a post
+    createQuickPost(`I will be notified when this post is tagged! ${Date.now()}`);
+    clickShowNewPostsBtn();
+
+    // * profile 1 tags profile 2's profile
+    cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
+      searchForProfile(`${pubky}`, profile2.username);
+    });
+
+    // add one tag to profile
+    cy.get('#profile-tag-btn').click();
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('h1').contains('Tag');
+      cy.get('input').type("Nice");
+      cy.get('#add-btn').should('be.visible').click();
+      cy.get('#close-btn').click();
+    });
+
+    // CONTINUE HERE
+
+
+    // * profile 2 checks for notification for tagged profile
+    // * profile 2 tags profile 1's post
+    // * profile 1 checks for notification for tagged post
+
+    // * profile 1 disables notifications for tagged profile
+    // * profile 2 disables notifications for tagged post
+    // * profile 2 creates a post
+    // * profile 2 tags profile 1's profile
+    // * profile 1 checks for absence of notifications
+    // * profile 1 tags profile 2's post
+    // * profile 2 checks for absence of notifications
+  });
   it('can be notified for profile being mentioned in a post');
   it('can be notified for your post being replied and reposted');
   it('can be notified for a post being deleted that you replied and reposted');
