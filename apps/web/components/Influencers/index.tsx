@@ -49,13 +49,15 @@ export default function Influencers({ style }: InfluencersProps) {
                 </div>
               );
             })}
-            <Link href="/hot#influencers" className="mt-2">
-              <SideCard.Action
-                icon={<Icon.UsersLeft size="16" />}
-                textCSS="text-[13px]"
-                text="See All"
-              />
-            </Link>
+            {pubky && (
+              <Link href="/hot#influencers" className="mt-2">
+                <SideCard.Action
+                  icon={<Icon.UsersLeft size="16" />}
+                  textCSS="text-[13px]"
+                  text="See All"
+                />
+              </Link>
+            )}
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">

@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 
 import {
-  Button,
   Icon,
+  Input,
   Post as PostUI,
   PostUtil,
   Tooltip as TooltipUI,
@@ -14,7 +14,11 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
 import { PostTag, PostView } from '@/types/Post';
-import { usePubkyClientContext } from '@/contexts';
+import {
+  useAlertContext,
+  usePubkyClientContext,
+  useJoinModal,
+} from '@/contexts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -31,7 +35,11 @@ export default function Tags({
 }: PostProps) {
   const [showTooltipTag, setShowTooltipTag] = useState('');
   const { pubky, createTag, deleteTag } = usePubkyClientContext();
+  const { openJoinModal } = useJoinModal();
   const [tags, setTags] = useState<PostTag[]>([]);
+  const [tagInput, setTagInput] = useState('');
+  const { addAlert } = useAlertContext();
+  const [addTagInput, setAddTagInput] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
   const [loadingTags, setLoadingTags] = useState('');
 
@@ -80,6 +88,27 @@ export default function Tags({
     setLoadingTags('');
   };
 
+  const handleFastAddTag = async () => {
+    await createTag(post?.details?.author, post?.details?.id, tagInput);
+    setAddTagInput(false);
+    setTagInput('');
+    addAlert('Tag added!');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleFastAddTag();
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valueWithoutSpaces = e.target.value
+      .toLowerCase()
+      .replace(/\s/g, '')
+      .replace(/!/g, '');
+    setTagInput(valueWithoutSpaces);
+  };
+
   return (
     <div
       className="lg:mt-6 cursor-default"
@@ -89,18 +118,6 @@ export default function Tags({
         id="tags"
         className={`flex-row inline-flex gap-2 flex-wrap mt-6 lg:mt-0`}
       >
-        <div className="hidden md:flex">
-          <Button.Action
-            id="tag-btn"
-            size="small"
-            variant="custom"
-            icon={<Icon.Tag size="16" />}
-            counter={post?.tags?.length}
-            onClick={() => {
-              setShowModalTag(true);
-            }}
-          />
-        </div>
         {!largeView &&
           tags.slice(0, 3).map((tagObj, index) => {
             const isTagFound = tagObj?.taggers?.some(
@@ -125,9 +142,11 @@ export default function Tags({
                         Utils.generateRandomColor(tagObj?.label)
                       }
                       onClick={() =>
-                        isTagFound
-                          ? handleDeleteTag(tagObj?.label)
-                          : handleAddTag(tagObj?.label)
+                        pubky
+                          ? isTagFound
+                            ? handleDeleteTag(tagObj?.label)
+                            : handleAddTag(tagObj?.label)
+                          : openJoinModal()
                       }
                     >
                       <div className="flex gap-2 items-center">
@@ -149,6 +168,46 @@ export default function Tags({
               </PostUI.Footer>
             );
           })}
+        {tags.length < 3 && !largeView && (
+          <div className="hidden md:flex">
+            {addTagInput ? (
+              <Input.Text
+                placeholder="tag"
+                className="h-[32px] p-3 text-[14px] rounded-lg"
+                value={tagInput}
+                maxLength={20}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                action={
+                  <div className="flex gap-1 -mr-2">
+                    <div
+                      onClick={handleFastAddTag}
+                      className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
+                    >
+                      <Icon.Plus size="12" />
+                    </div>
+                    <div
+                      onClick={() => setAddTagInput(false)}
+                      className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                    >
+                      <Icon.X size="12" />
+                    </div>
+                  </div>
+                }
+              />
+            ) : (
+              <div
+                onClick={() => (pubky ? setAddTagInput(true) : openJoinModal())}
+                className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
+              >
+                <div>
+                  <Icon.Plus size="16" />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
       <Modal.Tag
         post={post}

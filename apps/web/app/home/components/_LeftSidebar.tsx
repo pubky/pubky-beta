@@ -2,25 +2,19 @@ import { Filter } from '@/components/Filter';
 import * as Components from '@/components';
 
 interface LeftSidebarProps {
-  isFilterContentVisible: boolean;
-  filterContentRef: React.RefObject<HTMLDivElement>;
+  ref?: React.RefObject<HTMLDivElement>;
 }
 
-export function LeftSidebar({
-  isFilterContentVisible,
-  filterContentRef,
-}: LeftSidebarProps) {
-  const getSidebarClass = (isFilterContentVisible: boolean) => {
-    return isFilterContentVisible ? '' : 'sticky top-[120px]';
-  };
-
+export function LeftSidebar({ ref }: LeftSidebarProps) {
   return (
-    <Components.Sidebar id="left-sidebar" className="w-[280px] hidden lg:block">
-      <div className={`self-start ${getSidebarClass(isFilterContentVisible)}`}>
-        <Filter.Reach />
-        <Filter.Sort />
-      </div>
-      <div ref={filterContentRef}>
+    <Components.Sidebar
+      ref={ref}
+      id="left-sidebar"
+      className="w-[280px] hidden lg:block"
+    >
+      <Filter.Reach />
+      <Filter.Sort />
+      <div className="self-start sticky top-[100px]">
         <Filter.Content />
         <Filter.Layout />
       </div>

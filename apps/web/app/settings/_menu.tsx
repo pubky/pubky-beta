@@ -57,7 +57,7 @@ export default function Menu({ setSelectedItem }: MenuProps) {
           ? 'opacity-20 border-b border-transparent'
           : isSelected
             ? 'cursor-pointer opacity-100 border-b border-transparent'
-            : 'cursor-pointer border-b border-transparent hover:bg-gradient-to-t from-white/10 to-transparent hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-100 opacity-60';
+            : 'cursor-pointer border-b border-transparent hover:bg-gradient-to-t from-white/10 to-transparent hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-70 opacity-50';
 
         return (
           <div
@@ -77,7 +77,7 @@ export default function Menu({ setSelectedItem }: MenuProps) {
                 {item.label}
               </Typography.Body>
             </div>
-            <Icon.Next size="24" />
+            {/**  <Icon.Next size="24" /> */}
           </div>
         );
       })}

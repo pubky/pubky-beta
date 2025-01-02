@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { Utils } from '@social/utils-shared';
 import {
@@ -13,6 +13,7 @@ import {
   TTimeframe,
   NotificationPreferences,
   TSource,
+  ICustomFeed,
 } from './../types';
 
 type FilterContextType = {
@@ -35,6 +36,10 @@ type FilterContextType = {
   unReadNotification: number;
   setUnReadNotification: React.Dispatch<React.SetStateAction<number>>;
   resetDefault: () => void;
+  selectedFeed: ICustomFeed | undefined;
+  setSelectedFeed: React.Dispatch<
+    React.SetStateAction<ICustomFeed | undefined>
+  >;
 };
 
 export const defaultPreferences: NotificationPreferences = {
@@ -70,6 +75,8 @@ const FilterContext = createContext<FilterContextType>({
   unReadNotification: 0,
   setUnReadNotification: () => {},
   resetDefault: () => {},
+  selectedFeed: undefined,
+  setSelectedFeed: () => {},
 });
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
@@ -101,6 +108,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [unReadNotification, setUnReadNotification] = useState<number>(
     (Utils.storage.get('unread') as number) || 0,
   );
+  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
 
   const resetDefault = () => {
     setTimeout(() => {
@@ -163,6 +171,8 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         unReadNotification,
         setUnReadNotification,
         resetDefault,
+        selectedFeed,
+        setSelectedFeed,
       }}
     >
       {children}

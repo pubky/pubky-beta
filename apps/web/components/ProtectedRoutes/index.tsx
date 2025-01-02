@@ -41,6 +41,18 @@ export default function ProtectedRoutes({
     '/sign-in',
   ];
 
+  const isDynamicPublicRoute = (path: string) => {
+    const dynamicPublicRoutes = [
+      '/post/[userId]/[postId]',
+      '/profile/[userId]',
+    ];
+    return dynamicPublicRoutes.some((route) =>
+      new RegExp(
+        `^${route.replace(/\[.*?\]/g, '[^/]+').replace(/\//g, '\\/')}$`,
+      ).test(path),
+    );
+  };
+
   const checkTimestamp = async () => {
     if (pubky === undefined) return;
 
@@ -143,7 +155,7 @@ export default function ProtectedRoutes({
     }
 
     // check if the not logged user is trying to access a public route
-    if (!publicRoutes.includes(pathname)) {
+    if (!publicRoutes.includes(pathname) && !isDynamicPublicRoute(pathname)) {
       if (pubky) logout();
       router.push('/onboarding');
       return;

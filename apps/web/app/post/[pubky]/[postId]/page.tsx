@@ -3,7 +3,7 @@ import { Content } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 
 import { getSeoMetadata } from '@components/HeaderSEO';
-import { CreatePost, Header } from '@/components';
+import { CreatePost } from '@/components';
 import { Post } from './components';
 import * as Components from '@/components';
 
@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Index({ params }: Props) {
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Post" />
+      <Post.Header />
 
       <Content.Grid className="flex justify-between flex-col gap-3">
         <Post.Root params={params} />

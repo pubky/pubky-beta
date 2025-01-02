@@ -11,8 +11,8 @@ export const metadata = getSeoMetadata({
 
 export default function Index() {
   return (
-    <Content.Main>
-      <Components.Header className="hidden md:block" title="Bookmarks" />
+    <Content.Main className="pb-0">
+      <BookmarksPage.Header />
       <Components.RemindBackup />
       <BookmarksPage.Content />
       <Components.CreatePost />

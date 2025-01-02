@@ -158,8 +158,12 @@ export default function LinksSection({
       if (username) return username;
     }
 
-    return linkUrl || '';
+    return removeUrlPrefix(linkUrl) || '';
   };
+
+  const removeUrlPrefix = (url: string) =>
+    url.replace(/^(https?:\/\/(www\.)?|www\.)/, '');
+
   return (
     <>
       {links.length > 0 && (

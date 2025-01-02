@@ -1,5 +1,9 @@
 import { Button, Icon } from '@social/ui-shared';
-import { usePubkyClientContext, useToastContext } from '@/contexts';
+import {
+  useJoinModal,
+  usePubkyClientContext,
+  useToastContext,
+} from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
@@ -36,6 +40,7 @@ export default function Buttons({
   profile,
 }: ButtonsProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const { openJoinModal } = useJoinModal();
   const { addToast } = useToastContext();
   const router = useRouter();
 
@@ -116,7 +121,11 @@ export default function Buttons({
           ) : (
             <Button.Large
               id="profile-follow-btn"
-              onClick={loadingFollowed ? undefined : () => followUser()}
+              onClick={
+                loadingFollowed
+                  ? undefined
+                  : () => (pubky ? followUser() : openJoinModal())
+              }
               disabled={loadingFollowed}
               loading={loadingFollowed}
               icon={<Icon.UserPlus size="16" />}
@@ -192,7 +201,7 @@ export default function Buttons({
             size="small"
             variant="custom"
             icon={<Icon.DotsThreeOutline size="16" />}
-            onClick={() => setShowProfileMenu(true)}
+            onClick={() => (pubky ? setShowProfileMenu(true) : openJoinModal())}
           />
         </div>
       )}

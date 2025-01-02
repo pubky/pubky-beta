@@ -429,7 +429,7 @@ export default function CreateArticle({
                         >
                           <Icon.Plus size="64" />
                           <p className="mt-2 text-white text-sm text-center">
-                            Add file
+                            Add image
                           </p>
                         </div>
                         <Typography.Body

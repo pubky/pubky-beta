@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Typography } from '@social/ui-shared';
+import { Icon, Typography } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
@@ -11,12 +11,11 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 
 export const Timeline = () => {
   const limit = 10;
-  const { pubky } = usePubkyClientContext();
+  const { pubky, addBookmark, deleteBookmark } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
   const { sort, layout } = useFilterContext();
-
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
     'bookmarks',
@@ -27,6 +26,8 @@ export const Timeline = () => {
     undefined,
     sort,
   );
+  const [loadingBookmarks, setLoadingBookmarks] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState('');
 
   const fetchPosts = async () => {
     try {
@@ -65,20 +66,82 @@ export const Timeline = () => {
     fetchPosts();
   }, [sort]);
 
+  const handleAddBookmark = async (postId: string, authorId: string) => {
+    try {
+      setLoadingBookmarks(true);
+      const result = await addBookmark(postId, authorId);
+      if (result) setIsBookmarked(String(result));
+      setLoadingBookmarks(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingBookmarks(false);
+    }
+  };
+
+  const handleDeleteBookmark = async (
+    postId: string,
+    authorId: string,
+    bookmarkId: string,
+  ) => {
+    try {
+      setLoadingBookmarks(true);
+      const result = await deleteBookmark(postId, authorId, bookmarkId);
+      if (result) setIsBookmarked('');
+      setLoadingBookmarks(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingBookmarks(false);
+    }
+  };
+
+  useEffect(() => {
+    if (timeline.length > 0) {
+      const bookmarkedPost = timeline.find((post) => post?.bookmark?.id);
+      setIsBookmarked(bookmarkedPost?.bookmark?.id ?? '');
+    }
+  }, [timeline]);
+
   return (
     <div className="flex flex-col gap-3">
-      {timeline.map(
-        (post) =>
-          post?.details?.content !== '[DELETED]' && (
-            <div key={post.details.id} className="flex flex-col">
-              <Post
-                largeView={!isMobile && layout === 'wide'}
-                key={`post-${post.details.id}`}
-                post={post}
-              />
-            </div>
-          ),
-      )}
+      {timeline.map((post) => (
+        <div key={post.details.id} className="flex flex-col">
+          <div className="flex gap-2 items-center">
+            <Post
+              largeView={!isMobile && layout === 'wide'}
+              key={`post-${post.details.id}`}
+              post={post}
+            />
+            {post?.details?.content === '[DELETED]' && (
+              <>
+                {loadingBookmarks ? (
+                  <Icon.LoadingSpin size="24" />
+                ) : (
+                  <div
+                    className="cursor-pointer"
+                    onClick={() =>
+                      isBookmarked && post?.bookmark?.id
+                        ? handleDeleteBookmark(
+                            post?.details?.id,
+                            post?.details?.author,
+                            post?.bookmark?.id,
+                          )
+                        : handleAddBookmark(
+                            post?.details?.id,
+                            post?.details?.author,
+                          )
+                    }
+                  >
+                    <Icon.BookmarkSimple
+                      size="24"
+                      opacity={isBookmarked ? 1 : 0.2}
+                    />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      ))}
       {isLoading && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
