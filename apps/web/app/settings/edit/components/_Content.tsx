@@ -52,7 +52,7 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Settings" />
+      <Header title="Settings" />
       <Content.Grid>
         <Edit.UserInfo
           name={name}

@@ -156,10 +156,6 @@ type PubkyClientContextType = {
   setNewPosts: React.Dispatch<React.SetStateAction<PostView[]>>;
 };
 
-interface TimelineState {
-  [key: string]: PostView;
-}
-
 const PubkyClientContext = createContext({} as PubkyClientContextType);
 
 export function PubkyClientWrapper({

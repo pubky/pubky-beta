@@ -181,7 +181,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
         <Modal.EditArticle
           showModalEditArticle={showModalEditArticle}
           setShowModalEditArticle={setShowModalEditArticle}
-          // modalEditArticleRef={modalEditArticleRef}
+          modalEditArticleRef={modalEditArticleRef}
           article={post}
         />
       )}
