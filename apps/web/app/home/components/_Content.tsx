@@ -6,7 +6,6 @@ import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
 import { useFilterContext } from '@/contexts';
 import { ICustomFeed } from '@/types';
-import { useFilterVisibility } from '@/hooks/useFilterVisibility';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { LeftSidebar } from './_LeftSidebar';
 import { RightSidebar } from './_RightSidebar';
@@ -17,7 +16,6 @@ export default function ContentHome() {
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [loadingFeed, setLoadingFeed] = useState(true);
   const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
-  const { isFilterContentVisible, filterContentRef } = useFilterVisibility();
   const drawerFilterRef = useRef<HTMLDivElement>(null);
 
   useDrawerClickOutside(drawerFilterRef, () => setDrawerFilterOpen(false));
@@ -28,12 +26,7 @@ export default function ContentHome() {
         <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       )}
       <Content.Grid className="flex gap-6">
-        {layout !== 'wide' && (
-          <LeftSidebar
-            isFilterContentVisible={isFilterContentVisible}
-            filterContentRef={filterContentRef}
-          />
-        )}
+        {layout !== 'wide' && <LeftSidebar />}
         <MainContent
           layout={layout}
           selectedFeed={selectedFeed}

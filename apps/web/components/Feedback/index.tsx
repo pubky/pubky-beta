@@ -38,7 +38,7 @@ export default function Feedback() {
 
   return (
     <>
-      <div className="self-start sticky top-[120px] col-span-1">
+      <div className="col-span-1">
         <SideCard.Header title="Feedback" />
         <SideCard.Content className="mt-3">
           <div className="p-5 w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">

@@ -1,4 +1,4 @@
-export type TLayouts = 'columns' | 'wide' | 'visual';
+export type TLayouts = 'columns' | 'wide' | 'visual' | 'focus';
 export type TStatus =
   | 'available'
   | 'away'

@@ -5,7 +5,6 @@ import { Content, Menu } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
 import { useFilterContext } from '@/contexts';
-import { useFilterVisibility } from '@/hooks/useFilterVisibility';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { LeftSidebar } from './_LeftSidebar';
 import { RightSidebar } from './_RightSidebar';
@@ -14,7 +13,6 @@ import { BookmarksPage } from '.';
 export default function ContentBookmarks() {
   const { layout } = useFilterContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
-  const { isFilterContentVisible, filterContentRef } = useFilterVisibility();
   const drawerFilterRef = useRef<HTMLDivElement>(null);
 
   useDrawerClickOutside(drawerFilterRef, () => setDrawerFilterOpen(false));
@@ -25,15 +23,8 @@ export default function ContentBookmarks() {
         <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
       )}
       <Content.Grid className="flex gap-6">
-        {layout !== 'wide' && (
-          <LeftSidebar
-            isFilterContentVisible={isFilterContentVisible}
-            filterContentRef={filterContentRef}
-          />
-        )}
-        <Components.PostsLayout
-          className="w-full flex-col inline-flex gap-3"
-        >
+        {layout !== 'wide' && <LeftSidebar />}
+        <Components.PostsLayout className="w-full flex-col inline-flex gap-3">
           <Components.PostsLayout
             id="posts-feed"
             className="w-full flex-col inline-flex gap-3"
