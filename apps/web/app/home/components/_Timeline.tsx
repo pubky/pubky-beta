@@ -10,14 +10,44 @@ import { Post, Skeleton } from '@/components';
 import { PostReplies } from './_PostReplies';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { NewPostsNotifier } from './_NewPostsNotifier';
+import { ICustomFeed } from '@/types';
 
-export const Timeline = () => {
+interface TimelineProps {
+  selectedFeed: ICustomFeed | undefined;
+}
+
+// Custom hook to manage filters
+const useTimelineFilters = (selectedFeed) => {
+  const { reach, layout, sort, setReach, setLayout, setSort } =
+    useFilterContext();
+  const [tagsFeed, setTagsFeed] = useState<string[]>();
+
+  useEffect(() => {
+    if (selectedFeed) {
+      setReach(selectedFeed.reach);
+      setLayout(selectedFeed.layout);
+      setSort(selectedFeed.sort);
+      if (selectedFeed?.tags?.length > 0) {
+        setTagsFeed(selectedFeed.tags);
+      }
+    } else {
+      setReach('all');
+      setLayout('columns');
+      setSort('recent');
+      setTagsFeed(undefined);
+    }
+  }, [selectedFeed]);
+
+  return { reach, layout, sort, tagsFeed };
+};
+
+export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const limit = 10;
   const { pubky, mutedUsers } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
-  const { reach, layout, sort } = useFilterContext();
+  const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
 
   const { data, isLoading, isSuccess } = useStreamPost(
     pubky ?? '',
@@ -28,6 +58,7 @@ export const Timeline = () => {
     undefined,
     undefined,
     sort,
+    tagsFeed,
   );
 
   const fetchPosts = async () => {
@@ -68,7 +99,7 @@ export const Timeline = () => {
     setStart(undefined);
     setTimeline([]);
     fetchPosts();
-  }, [reach, sort]);
+  }, [reach, sort, tagsFeed]);
 
   const latestTimestamp =
     timeline.length > 0 ? timeline[0].details.indexed_at : undefined;

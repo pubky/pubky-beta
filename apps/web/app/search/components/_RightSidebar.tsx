@@ -13,6 +13,8 @@ export function RightSidebar({ ref }: RightSidebarProps) {
     >
       <Components.WhoFollow />
       <Components.Influencers />
+      <Components.WhoFollow />
+      <Components.Influencers />
       <div className="self-start sticky top-[100px]">
         <Components.HotTags />
         <Components.Feedback />

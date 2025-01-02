@@ -7,6 +7,7 @@ import DropDown from './DropDown/_DropDown';
 import Feedback from './Feedback';
 import FooterMobile from './FooterMobile.tsx';
 import Header from './Header';
+import HeaderMobile from './HeaderMobile.tsx';
 import HotTags from './HotTags';
 import LinkPreviewer from './LinkPreview';
 import Post from './Post';
@@ -29,6 +30,7 @@ export {
   Feedback,
   FooterMobile,
   Header,
+  HeaderMobile,
   HotTags,
   LinkPreviewer,
   Post,

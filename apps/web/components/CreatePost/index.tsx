@@ -3,8 +3,11 @@
 import { Button } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from '../Modal';
+import { usePubkyClientContext, useJoinModal } from '@/contexts';
 
 export default function CreatePost() {
+  const { pubky } = usePubkyClientContext();
+  const { openJoinModal } = useJoinModal();
   const [showModalPost, setShowModalPost] = useState(false);
   const [showModalLink, setShowModalLink] = useState(false);
   const modalPostRef = useRef<HTMLDivElement>(null);
@@ -38,7 +41,7 @@ export default function CreatePost() {
       <div className="hidden lg:flex fixed bottom-5 right-5 sm:bottom-10 sm:right-10 z-50">
         <Button.Create
           id="new-post-btn"
-          onClick={() => setShowModalPost(true)}
+          onClick={() => (pubky ? setShowModalPost(true) : openJoinModal())}
         />
       </div>
 

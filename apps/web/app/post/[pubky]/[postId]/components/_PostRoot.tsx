@@ -67,6 +67,8 @@ export default function PostRoot({
     }
   };
 
+  if (!pubky) return;
+
   return (
     <div ref={wrapperRef} className="grid gap-6 xl:grid-cols-3">
       <Post.Root className="col-span-2">

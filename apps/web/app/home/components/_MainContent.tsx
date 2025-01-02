@@ -1,6 +1,7 @@
 import * as Components from '@/components';
 import { Timeline } from './_Timeline';
 import { ICustomFeed } from '@/types';
+import { usePubkyClientContext } from '@/contexts';
 
 interface MainContentProps {
   layout: string;
@@ -19,29 +20,34 @@ export function MainContent({
   setLoadingFeed,
   ref,
 }: MainContentProps) {
+  const { pubky } = usePubkyClientContext();
   return (
     <Components.PostsLayout
       ref={ref}
       id="posts-feed"
       className="w-full flex-col inline-flex gap-3"
     >
-      <Components.CustomFeeds
-        selectedFeed={selectedFeed}
-        setSelectedFeed={(setState) => {
-          if (typeof setState === 'function') {
-            setSelectedFeed(undefined);
-          } else {
-            setSelectedFeed(setState);
-          }
-        }}
-        loading={loadingFeed}
-        setLoading={setLoadingFeed}
-      />
-      <Components.CreateQuickPost
-        loadingFeed={loadingFeed}
-        largeView={layout === 'wide'}
-      />
-      <Timeline />
+      {pubky && (
+        <>
+          <Components.CustomFeeds
+            selectedFeed={selectedFeed}
+            setSelectedFeed={(setState) => {
+              if (typeof setState === 'function') {
+                setSelectedFeed(undefined);
+              } else {
+                setSelectedFeed(setState);
+              }
+            }}
+            loading={loadingFeed}
+            setLoading={setLoadingFeed}
+          />
+          <Components.CreateQuickPost
+            loadingFeed={loadingFeed}
+            largeView={layout === 'wide'}
+          />
+        </>
+      )}
+      <Timeline selectedFeed={selectedFeed} />
     </Components.PostsLayout>
   );
 }

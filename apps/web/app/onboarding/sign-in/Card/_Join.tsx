@@ -50,8 +50,8 @@ export default function Join() {
 
           if (errorMessage) {
             setLoginError(errorMessage);
-            handleGenerateAuthUrl();
           }
+          handleGenerateAuthUrl();
         } catch (error) {
           console.error('Unexpected error occurred:', error);
         }

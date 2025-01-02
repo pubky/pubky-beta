@@ -3,7 +3,7 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import Parsing from '@/components/Content/_Parsing';
 import { ImageByUri } from '@/components/ImageByUri';
-import { usePubkyClientContext } from '@/contexts';
+import { useJoinModal, usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
 
 interface UserInfoProps {
@@ -40,6 +40,7 @@ export default function UserInfo({
   setLoadingFollowed,
 }: UserInfoProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const { openJoinModal } = useJoinModal();
 
   const followUser = async () => {
     try {
@@ -84,10 +85,18 @@ export default function UserInfo({
               alt="user-pic"
             />
             <div>
-              <div className="w-full gap-2 justify-between flex items-center -mb-2">
-                <Typography.Body variant="small-bold" className="leadning-none">
-                  {Utils.minifyText(name, 8)}
-                </Typography.Body>
+              <div className="w-full gap-2 justify-between flex items-center">
+                <div className="flex flex-col justify-center">
+                  <Typography.Body
+                    variant="small-bold"
+                    className="leadning-none"
+                  >
+                    {Utils.minifyText(name, 8)}
+                  </Typography.Body>
+                  <Typography.Label className="text-[11px] leading-none text-opacity-30">
+                    {Utils.minifyPubky(pubkyUser)}
+                  </Typography.Label>
+                </div>
                 <div className="relative">
                   {showProfileMenu && (
                     <Tooltip.ProfileMenu
@@ -98,15 +107,14 @@ export default function UserInfo({
                   )}
                   <div
                     className="cursor-pointer rounded-full"
-                    onClick={() => setShowProfileMenu(true)}
+                    onClick={() =>
+                      pubky ? setShowProfileMenu(true) : openJoinModal()
+                    }
                   >
                     <Icon.DotsThreeOutline size="12" />
                   </div>
                 </div>
               </div>
-              <Typography.Label className="text-[11px] leading-none text-opacity-30">
-                {Utils.minifyPubky(pubkyUser)}
-              </Typography.Label>
             </div>
           </div>
         </div>
@@ -144,7 +152,11 @@ export default function UserInfo({
           </Button.Medium>
         ) : (
           <Button.Medium
-            onClick={loadingFollowed ? undefined : () => followUser()}
+            onClick={
+              loadingFollowed
+                ? undefined
+                : () => (pubky ? followUser() : openJoinModal)
+            }
             disabled={loadingFollowed}
             loading={loadingFollowed}
             variant="default"

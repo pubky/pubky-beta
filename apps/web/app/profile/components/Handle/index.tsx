@@ -10,6 +10,7 @@ import Status from './_Status';
 import { usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
 import { TStatus } from '@/types';
+import Parsing from '@/components/Content/_Parsing';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   pubkey: string;
@@ -73,7 +74,7 @@ export default function Handle({
                 variant="medium"
                 className="text-opacity-80 md:hidden"
               >
-                {Utils.minifyText(bio.toString(), 30)}
+                <Parsing>{bio}</Parsing>
               </Typography.Body>
             )}
           </div>

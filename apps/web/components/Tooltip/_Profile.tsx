@@ -200,7 +200,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
             href={
               (followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0
                 ? `/profile/${
-                    idAuthor ? `${idAuthor}?tab=following` : '?tab=following'
+                    idAuthor ? `${idAuthor}/following` : '/following'
                   }`
                 : ''
             }
@@ -229,7 +229,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
             href={
               (followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0
                 ? `/profile/${
-                    idAuthor ? `${idAuthor}?tab=followers` : '?tab=followers'
+                    idAuthor ? `${idAuthor}/followers` : '/followers'
                   }`
                 : ''
             }
@@ -263,53 +263,57 @@ export default function Profile({ post, profileId }: ProfileProps) {
             </Button.Transparent>
           </Link>
         )}
-        {initLoadingFollowed ? (
-          <Button.Transparent
-            loading={initLoadingFollowed}
-            className={
-              post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-            }
-          >
-            Loading
-          </Button.Transparent>
-        ) : followed ? (
-          <Button.Transparent
-            onClick={
-              loadingFollowed
-                ? undefined
-                : (event) => {
-                    event.stopPropagation();
-                    unfollowUser();
-                  }
-            }
-            disabled={loadingFollowed}
-            loading={loadingFollowed}
-            icon={<Icon.UserMinus size="16" />}
-            className={
-              post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-            }
-          >
-            Unfollow
-          </Button.Transparent>
-        ) : (
-          <Button.Transparent
-            onClick={
-              loadingFollowed
-                ? undefined
-                : (event) => {
-                    event.stopPropagation();
-                    followUser();
-                  }
-            }
-            disabled={loadingFollowed}
-            loading={loadingFollowed}
-            icon={<Icon.UserPlus size="16" />}
-            className={
-              post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-            }
-          >
-            Follow
-          </Button.Transparent>
+        {pubky && (
+          <>
+            {initLoadingFollowed ? (
+              <Button.Transparent
+                loading={initLoadingFollowed}
+                className={
+                  post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+                }
+              >
+                Loading
+              </Button.Transparent>
+            ) : followed ? (
+              <Button.Transparent
+                onClick={
+                  loadingFollowed
+                    ? undefined
+                    : (event) => {
+                        event.stopPropagation();
+                        unfollowUser();
+                      }
+                }
+                disabled={loadingFollowed}
+                loading={loadingFollowed}
+                icon={<Icon.UserMinus size="16" />}
+                className={
+                  post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+                }
+              >
+                Unfollow
+              </Button.Transparent>
+            ) : (
+              <Button.Transparent
+                onClick={
+                  loadingFollowed
+                    ? undefined
+                    : (event) => {
+                        event.stopPropagation();
+                        followUser();
+                      }
+                }
+                disabled={loadingFollowed}
+                loading={loadingFollowed}
+                icon={<Icon.UserPlus size="16" />}
+                className={
+                  post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
+                }
+              >
+                Follow
+              </Button.Transparent>
+            )}
+          </>
         )}
       </div>
     </Tooltip.Main>

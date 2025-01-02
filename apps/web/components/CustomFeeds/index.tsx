@@ -25,7 +25,7 @@ export default function CustomFeeds({
   ...rest
 }: CustomFeedsProps) {
   const baseCSS =
-    'cursor-pointer hover:bg-opacity-20 py-3 px-5 justify-center items-center gap-2 inline-flex bg-white bg-opacity-10 rounded-tl-lg rounded-tr-lg';
+    'cursor-pointer hover:bg-opacity-20 py-3 px-5 justify-center items-center gap-2 hidden lg:inline-flex bg-white bg-opacity-10 rounded-tl-lg rounded-tr-lg';
   const activeCSS =
     'bg-white bg-opacity-20 rounded-tr-lg border-t border-white';
   const [showModalCreateFeed, setShowModalCreateFeed] = useState(false);
