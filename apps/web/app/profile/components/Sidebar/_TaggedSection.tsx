@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components';
-import { usePubkyClientContext } from '@/contexts';
+import { useJoinModal, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 import {
   Button,
@@ -31,6 +31,7 @@ export default function TaggedSection({
   name,
 }: TaggedSectionProps) {
   const { pubky } = usePubkyClientContext();
+  const { openJoinModal } = useJoinModal();
 
   return (
     <div className="w-full">
@@ -65,9 +66,11 @@ export default function TaggedSection({
                       clicked={isTagFound}
                       onClick={(event) => {
                         event.stopPropagation();
-                        isTagFound
-                          ? handleDeleteProfileTag(tag?.label)
-                          : handleAddProfileTag(tag?.label);
+                        pubky
+                          ? isTagFound
+                            ? handleDeleteProfileTag(tag?.label)
+                            : handleAddProfileTag(tag?.label)
+                          : openJoinModal();
                       }}
                       color={
                         tag?.label && Utils.generateRandomColor(tag?.label)
@@ -84,7 +87,7 @@ export default function TaggedSection({
                       </div>
                     </PostUtil.Tag>
                     {/**</TooltipUI.Root>*/}
-                    <Link href={`/search?tags=${tag?.label}`}>
+                    <Link href={pubky ? `/search?tags=${tag?.label}` : ''}>
                       <Button.Action
                         variant="custom"
                         size="small"
@@ -106,7 +109,9 @@ export default function TaggedSection({
           )}
           <Button.Medium
             className="mt-2 w-auto h-8 inline-flex items-center"
-            onClick={() => setShowModalProfileTag(true)}
+            onClick={() =>
+              pubky ? setShowModalProfileTag(true) : openJoinModal()
+            }
             icon={<Icon.Tag size="16" />}
           >
             Tag{' '}

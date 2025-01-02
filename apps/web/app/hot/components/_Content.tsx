@@ -1,7 +1,7 @@
 'use client';
 
 import { Content } from '@social/ui-shared';
-import { CreatePost, Feedback, Header, Sidebar, WhoFollow } from '@/components';
+import { CreatePost, Feedback, Sidebar, WhoFollow } from '@/components';
 import * as Components from '@/components';
 import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
@@ -39,7 +39,7 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Hot" />
+      <Hot.Header />
       <Content.Grid className="flex gap-6">
         <Sidebar className="w-[280px] self-start sticky top-[120px] hidden lg:block">
           <Filter.HotTagsReach />

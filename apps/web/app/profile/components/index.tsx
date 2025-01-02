@@ -8,12 +8,14 @@ import Bookmarks from './_Bookmarks';
 import Posts from './_Posts';
 import Replies from './_Replies';
 import Sidebar from './Sidebar';
+import { Header } from './_Header';
 
 export const Profile = {
   Avatar,
   Handle,
   FilterTabs,
   FilterTabsMobile,
+  Header,
   NotificationsProfile,
   ParentPost,
   Bookmarks,

@@ -11,7 +11,7 @@ export const metadata = getSeoMetadata({
 export default function Index() {
   return (
     <Content.Main className="pb-0">
-      <Components.Header className="hidden md:block" title="Search" />
+      <SearchPage.Header />
       <SearchPage.Content />
       <Components.CreatePost />
       <Components.FooterMobile title="Search" />
