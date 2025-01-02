@@ -9,11 +9,13 @@ export function RightSidebar({ ref }: RightSidebarProps) {
     <Components.Sidebar
       ref={ref}
       id="right-sidebar"
-      className="sticky top-24 h-screen w-[180px] overflow-y-auto no-scrollbar flex-shrink-0 hidden xl:block"
+      className="w-[280px] hidden xl:block"
     >
-      <div className="pb-20 mb-20">
-        <Components.WhoFollow />
-        <Components.Influencers />
+      <Components.WhoFollow />
+      <Components.Influencers />
+      <Components.WhoFollow />
+      <Components.Influencers />
+      <div className="self-start sticky top-[100px]">
         <Components.HotTags />
         <Components.Feedback />
       </div>
