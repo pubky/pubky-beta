@@ -111,8 +111,8 @@ type PubkyClientContextType = {
   getRecoveryFile: (password: string) => Promise<any | null>;
   storeProfile: (userProfile: UserDetails) => Promise<boolean>;
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
-  timeline: TimelineState | undefined;
-  setTimeline: (timeline: TimelineState) => void;
+  timeline: PostView[];
+  setTimeline: React.Dispatch<React.SetStateAction<PostView[]>>;
   setSearchTags: (value: string[]) => any;
   searchTags: string[];
   repliesArray: PostView[] | undefined;
@@ -182,9 +182,6 @@ export function PubkyClientWrapper({
   const [profile, setProfile] = useState<PubkyAppUser | undefined>(
     (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined,
   );
-  const [timeline, setTimeline] = useState<TimelineState | undefined>(
-    undefined,
-  );
   const [mutedUsers, setMutedUsers] = useState<string[] | undefined>([]);
   const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
   const [replies, setReplies] = useState<PostView[]>([]);
@@ -196,6 +193,7 @@ export function PubkyClientWrapper({
   const [notificationPreferences, setNotificationPreferences] =
     useState<NotificationPreferences>({} as NotificationPreferences);
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
+  const [timeline, setTimeline] = useState<PostView[]>([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -234,7 +232,7 @@ export function PubkyClientWrapper({
         setProfile(undefined);
         setSeed(undefined);
         setMnemonic(undefined);
-        setTimeline(undefined);
+        setTimeline([]);
         setMutedUsers([]);
         setTimelineProfile([]);
         setReplies([]);

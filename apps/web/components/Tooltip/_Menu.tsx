@@ -14,7 +14,8 @@ interface TooltipMenuProps {
 }
 
 export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
-  const { pubky, deleteFile, deletePost } = usePubkyClientContext();
+  const { pubky, deleteFile, deletePost, setTimeline, setNewPosts } =
+    usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [showModalReportPost, setShowModalReportPost] = useState(false);
@@ -96,6 +97,12 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
 
       if (result) {
         addAlert('Post deleted successfully');
+        setTimeline((prevTimeline) =>
+          prevTimeline.filter((p) => p.details.id !== post?.details?.id),
+        );
+        setNewPosts((prevNewPosts) =>
+          prevNewPosts.filter((p) => p.details.id !== post?.details?.id),
+        );
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
@@ -174,7 +181,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
         <Modal.EditArticle
           showModalEditArticle={showModalEditArticle}
           setShowModalEditArticle={setShowModalEditArticle}
-          modalEditArticleRef={modalEditArticleRef}
+          // modalEditArticleRef={modalEditArticleRef}
           article={post}
         />
       )}

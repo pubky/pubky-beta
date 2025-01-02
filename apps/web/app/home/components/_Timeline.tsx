@@ -43,8 +43,8 @@ const useTimelineFilters = (selectedFeed) => {
 
 export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const limit = 10;
-  const { pubky, mutedUsers, newPosts } = usePubkyClientContext();
-  const [timeline, setTimeline] = useState<PostView[]>([]);
+  const { pubky, mutedUsers, newPosts, timeline, setTimeline } =
+    usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
   const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
@@ -89,15 +89,15 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
   useEffect(() => {
     setTimeline([]);
+    setStart(undefined);
 
     return () => {
+      setStart(undefined);
       setTimeline([]);
     };
-  }, [setTimeline]);
+  }, [setTimeline, setStart]);
 
   useEffect(() => {
-    setStart(undefined);
-    setTimeline([]);
     fetchPosts();
   }, [reach, sort, tagsFeed]);
 

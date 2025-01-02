@@ -16,8 +16,7 @@ export default function CreateQuickPost({
   largeView = false,
   loadingFeed,
 }: CreateQuickPostProps) {
-  const { pubky, createPost, createTag, setTimeline, timeline } =
-    usePubkyClientContext();
+  const { pubky, createPost, createTag, setTimeline } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -81,14 +80,7 @@ export default function CreateQuickPost({
           bookmark: undefined,
         };
 
-        //if (!timeline) return;
-
-        const timelineCopy = {
-          ...timeline,
-          [postId]: postWithFullDetails,
-        };
-
-        setTimeline(timelineCopy);
+        setTimeline((prevTimeline) => [...prevTimeline, postWithFullDetails]);
         addAlert('Post created!');
       } else {
         addAlert('Something wrong. Try again', 'warning');

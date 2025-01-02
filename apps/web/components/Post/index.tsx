@@ -56,7 +56,8 @@ export default function Post({
   ...rest
 }: PostProps) {
   const router = useRouter();
-  const { pubky, deletePost } = usePubkyClientContext();
+  const { pubky, deletePost, setTimeline, setNewPosts } =
+    usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
   const [showModalTag, setShowModalTag] = useState(false);
@@ -69,6 +70,12 @@ export default function Post({
     const result = await deletePost(post?.details?.id);
     if (result) {
       addAlert('Post deleted successfully');
+      setTimeline((prevTimeline) =>
+        prevTimeline.filter((p) => p.details.id !== post?.details?.id),
+      );
+      setNewPosts((prevNewPosts) =>
+        prevNewPosts.filter((p) => p.details.id !== post?.details?.id),
+      );
     } else {
       addAlert('Something wrong. Try again', 'warning');
     }
