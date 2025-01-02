@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { Content, Typography } from '@social/ui-shared';
 import * as Components from '@/components';
-import { CreatePost, Header, PostsLayout } from '@/components';
+import { CreatePost, PostsLayout } from '@/components';
 import { Profile } from '../../components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import Skeletons from '@/components/Skeletons';
 import { Utils } from '@social/utils-shared';
 import { usePathname } from 'next/navigation';
+import { Header } from './_Header';
 
 export default function CreatorpubkyLayout({
   params,
@@ -129,7 +130,7 @@ export default function CreatorpubkyLayout({
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" />
+      <Header />
       {content}
     </Content.Main>
   );

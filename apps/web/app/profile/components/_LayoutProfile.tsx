@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Content } from '@social/ui-shared';
 import * as Components from '@/components';
-import { CreatePost, Header, PostsLayout } from '@/components';
+import { CreatePost, PostsLayout } from '@/components';
 import { Profile } from '.';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
@@ -35,7 +35,7 @@ export default function LayoutProfile({
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Profile" />
+      <Profile.Header />
       <div>
         <Content.Grid className="pb-4 flex flex-col text-center lg:flex-row items-center gap-4 md:gap-8 relative">
           <Profile.FilterTabsMobile

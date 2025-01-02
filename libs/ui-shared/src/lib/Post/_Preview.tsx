@@ -59,7 +59,7 @@ function LinkPreview({ url }: { url: string }) {
     <div className="w-full mb-6">
       <div
         onClick={handleClick}
-        className="cursor-pointer w-full mt-4 p-6 bg-white bg-opacity-10 border border-transparent hover:border-white hover:border-opacity-30 rounded-xl justify-between gap-6 items-start inline-flex"
+        className="cursor-pointer w-full mt-4 p-6 bg-white bg-opacity-10 border border-transparent hover:border-white hover:border-opacity-30 rounded-xl justify-between gap-6 items-start flex flex-col lg:flex-row"
       >
         <div className="grow shrink basis-0 flex-col justify-start items-start inline-flex">
           {previewData.title && (
@@ -92,7 +92,7 @@ function LinkPreview({ url }: { url: string }) {
         {previewData.image && (
           <img
             alt="preview-link"
-            className="w-40 h-[90px] rounded-lg"
+            className="w-auto max-h-[200px] lg:w-40 lg:h-[90px] rounded-lg"
             src={previewData.image}
           />
         )}
