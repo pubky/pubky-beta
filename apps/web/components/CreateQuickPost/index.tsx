@@ -131,7 +131,9 @@ export default function CreateQuickPost({
                   }
                 />
               }
-              disabled={!isValidContent && selectedFiles.length === 0}
+              disabled={
+                (!isValidContent && selectedFiles.length === 0) || sendingPost
+              }
               loading={sendingPost}
               onClick={
                 (isValidContent || selectedFiles.length > 0) && !sendingPost
