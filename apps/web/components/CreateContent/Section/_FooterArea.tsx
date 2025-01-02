@@ -36,6 +36,7 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   noFile?: boolean;
   maxLength?: number;
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
 }
 
 export default function FooterArea({
@@ -63,6 +64,7 @@ export default function FooterArea({
   noFile,
   maxLength = 1000,
   setShowModalPost,
+  loading,
 }: FooterAreaProps) {
   const { addAlert } = useAlertContext();
   const [openModalArticle, setOpenModalArticle] = useState(false);
@@ -149,6 +151,7 @@ export default function FooterArea({
                     <div
                       className="flex items-center"
                       onClick={() =>
+                        !loading &&
                         setArrayTags &&
                         setArrayTags((prev) =>
                           prev.filter((item) => item !== tag),
@@ -201,9 +204,9 @@ export default function FooterArea({
                   }
                   onClick={(event) => {
                     event.stopPropagation();
-                    setShowModalTag(true);
+                    !loading && setShowModalTag(true);
                   }}
-                  disabled={!arrayTags}
+                  disabled={!arrayTags || loading}
                 />
                 <Button.Action
                   id="emoji-btn"
@@ -211,8 +214,9 @@ export default function FooterArea({
                   icon={<Icon.Smiley size="32" />}
                   onClick={(event) => {
                     event.stopPropagation();
-                    setShowEmojis(true);
+                    !loading && setShowEmojis(true);
                   }}
+                  disabled={loading}
                 />
                 {article && (
                   <Button.Action
@@ -220,8 +224,9 @@ export default function FooterArea({
                     icon={<Icon.Newspaper size="32" />}
                     onClick={(event) => {
                       event.stopPropagation();
-                      setOpenModalArticle(true);
+                      !loading && setOpenModalArticle(true);
                     }}
+                    disabled={loading}
                   />
                 )}
                 {!noFile && (
@@ -235,9 +240,9 @@ export default function FooterArea({
                       />
                     }
                     onClick={() =>
-                      document.getElementById('fileInput')?.click()
+                      !loading && document.getElementById('fileInput')?.click()
                     }
-                    disabled={!selectedFiles}
+                    disabled={!selectedFiles || loading}
                   >
                     <input
                       id="fileInput"
@@ -245,7 +250,7 @@ export default function FooterArea({
                       accept="image/*,video/*,audio/*,.pdf"
                       className="hidden"
                       onChange={handleFileChange}
-                      disabled={!selectedFiles}
+                      disabled={!selectedFiles || loading}
                       multiple
                     />
                   </Button.Action>
@@ -262,9 +267,9 @@ export default function FooterArea({
                 }
                 onClick={(event) => {
                   event.stopPropagation();
-                  setShowModalTag(true);
+                  !loading && setShowModalTag(true);
                 }}
-                disabled={!arrayTags}
+                disabled={!arrayTags || loading}
               />
               <Button.Action
                 id="emoji-btn"
@@ -272,8 +277,9 @@ export default function FooterArea({
                 icon={<Icon.Smiley size="32" />}
                 onClick={(event) => {
                   event.stopPropagation();
-                  setShowEmojis(true);
+                  !loading && setShowEmojis(true);
                 }}
+                disabled={loading}
               />
               {article && (
                 <Button.Action
@@ -281,8 +287,9 @@ export default function FooterArea({
                   icon={<Icon.Newspaper size="32" />}
                   onClick={(event) => {
                     event.stopPropagation();
-                    setOpenModalArticle(true);
+                    !loading && setOpenModalArticle(true);
                   }}
+                  disabled={loading}
                 />
               )}
               {!noFile && (
@@ -295,8 +302,10 @@ export default function FooterArea({
                       color={!selectedFiles ? 'gray' : 'white'}
                     />
                   }
-                  onClick={() => document.getElementById('fileInput')?.click()}
-                  disabled={!selectedFiles}
+                  onClick={() =>
+                    !loading && document.getElementById('fileInput')?.click()
+                  }
+                  disabled={!selectedFiles || loading}
                 >
                   <input
                     id="fileInput"
@@ -304,7 +313,7 @@ export default function FooterArea({
                     accept="image/*,video/*,audio/*,.pdf"
                     className="hidden"
                     onChange={handleFileChange}
-                    disabled={!selectedFiles}
+                    disabled={!selectedFiles || loading}
                     multiple
                   />
                 </Button.Action>

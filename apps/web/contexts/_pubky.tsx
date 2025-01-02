@@ -1685,13 +1685,6 @@ export function PubkyClientWrapper({
   const toPubkeyProfile = (profile: PubkyAppUser): PubkyAppUser => {
     if (!profile) throw new Error('Profile is required');
 
-    //const linksArray = Object.entries(profile.links || {}).map(
-    //  ([title, url]) => ({
-    //    title,
-    //    url,
-    //  })
-    //);
-
     return {
       name: profile.name || 'anonymous',
       bio: profile.bio || '',
