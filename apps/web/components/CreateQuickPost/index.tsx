@@ -109,6 +109,7 @@ export default function CreateQuickPost({
       {!loadingFeed && (
         <CreateContent
           id="quick-post-create-content"
+          className="hidden lg:flex"
           largeView={largeView}
           setQuote={setQuote}
           handleSubmit={handleSubmit}

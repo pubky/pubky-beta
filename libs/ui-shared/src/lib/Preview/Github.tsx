@@ -33,7 +33,7 @@ export const GitHub = ({ url }: GitHubProps) => {
         setLoading(true);
         setError(null);
         const response = await fetch(
-          `https://api.github.com/repos/${url.split('github.com/')[1]}`
+          `https://api.github.com/repos/${url.split('github.com/')[1]}`,
         );
 
         if (!response.ok) {
@@ -53,7 +53,7 @@ export const GitHub = ({ url }: GitHubProps) => {
         setOwnerAvatar(avatarUrl);
 
         const previewResponse = await fetch(
-          `/api/preview?url=${encodeURIComponent(url)}`
+          `/api/preview?url=${encodeURIComponent(url)}`,
         );
 
         if (!previewResponse.ok) {
@@ -93,7 +93,7 @@ export const GitHub = ({ url }: GitHubProps) => {
       href={`https://github.com/${url.split('github.com/')[1]}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-full max-w-[700px] p-4 border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden block"
+      className="w-full p-4 border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden block"
     >
       <div className="flex flex-col md:flex-row gap-4 justify-between">
         <div className="flex items-center">

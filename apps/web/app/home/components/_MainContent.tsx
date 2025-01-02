@@ -47,7 +47,7 @@ export function MainContent({
           />
         </>
       )}
-      <Timeline />
+      <Timeline selectedFeed={selectedFeed} />
     </Components.PostsLayout>
   );
 }
