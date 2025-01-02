@@ -78,6 +78,7 @@ export default function CreateQuickPost({
             mentioned: [],
           },
           bookmark: undefined,
+          cached: 'local',
         };
 
         setTimeline((prevTimeline) => [...prevTimeline, postWithFullDetails]);
