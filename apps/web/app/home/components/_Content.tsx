@@ -5,17 +5,15 @@ import { Content, Menu } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
 import { useFilterContext } from '@/contexts';
-import { ICustomFeed } from '@/types';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { LeftSidebar } from './_LeftSidebar';
 import { RightSidebar } from './_RightSidebar';
 import { MainContent } from './_MainContent';
 
 export default function ContentHome() {
-  const { layout } = useFilterContext();
+  const { layout, selectedFeed, setSelectedFeed } = useFilterContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [loadingFeed, setLoadingFeed] = useState(true);
-  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
   const drawerFilterRef = useRef<HTMLDivElement>(null);
 
   useDrawerClickOutside(drawerFilterRef, () => setDrawerFilterOpen(false));

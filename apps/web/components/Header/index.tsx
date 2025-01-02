@@ -7,7 +7,6 @@ import {
   Input,
   Icon,
   Button,
-  Menu,
   PostUtil,
 } from '@social/ui-shared';
 import {
@@ -18,14 +17,12 @@ import {
 import { ImageByUri } from '../ImageByUri';
 import { usePathname, useRouter } from 'next/navigation';
 import Modal from '../Modal';
-import Filter from '../Filter';
 
 interface HeaderProps {
   title?: React.ReactNode;
-  className?: string;
 }
 
-export default function Header({ title, className }: HeaderProps) {
+export default function Header({ title }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { pubky, isLoggedIn, setSearchTags, searchTags, profile } =
@@ -33,12 +30,9 @@ export default function Header({ title, className }: HeaderProps) {
   const { unReadNotification } = useFilterContext();
   const { openJoinModal } = useJoinModal();
 
-  const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [searchInputCard, setSearchInputCard] = useState(false);
   const [logoLink, setLogoLink] = useState('/onboarding');
-  //const [handler, setHandler] = useState('');
   const [inputValue, setInputValue] = useState('');
-  const drawerFilterRef = useRef<HTMLDivElement>(null);
 
   const refSearchInputCard = useRef<HTMLDivElement>(null);
 
@@ -52,21 +46,12 @@ export default function Header({ title, className }: HeaderProps) {
   }
 
   useEffect(() => {
-    //setHandler(Utils.minifyPubky(pubky ?? ''));
     fetchLoggedIn();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubky]);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
-      {
-        if (
-          drawerFilterRef.current &&
-          !drawerFilterRef.current.contains(event.target as Node)
-        ) {
-          setDrawerFilterOpen(false);
-        }
-      }
       if (
         refSearchInputCard.current &&
         !refSearchInputCard.current.contains(event.target as Node)
@@ -122,34 +107,18 @@ export default function Header({ title, className }: HeaderProps) {
   };
 
   return (
-    <HeaderUI.Root className="justify-start lg:justify-between">
-      <div className="w-full lg:w-auto flex gap-4 justify-between items-center">
-        {pubky && (
-          <div
-            className="cursor-pointer flex lg:hidden"
-            onClick={() => setDrawerFilterOpen(true)}
-          >
-            <Icon.SlidersHorizontal size="24" />
-          </div>
-        )}
+    <HeaderUI.Root className="justify-between hidden lg:flex">
+      <div className="flex gap-4 justify-between items-center">
         <div className="flex gap-4 xl:min-w-[180px]">
           <HeaderUI.Logo link={logoLink} />
-          <HeaderUI.Title
-            titleHeader={title}
-            className={`hidden lg:block ${className}`}
-          />
+          <HeaderUI.Title titleHeader={title} />
         </div>
-        {pubky && (
-          <Link href="/settings" className="flex lg:hidden">
-            <Icon.GearSix size="24" />
-          </Link>
-        )}
       </div>
       {pubky ? (
-        <div className="w-full hidden lg:flex justify-between gap-6">
+        <div className="w-full flex justify-between gap-6">
           <Input.Search>
             {searchTags && (
-              <Input.SearchTags className="hidden lg:block">
+              <Input.SearchTags>
                 {searchTags.map((searchTag, index) => (
                   <Input.SearchTag
                     key={index}
@@ -174,7 +143,7 @@ export default function Header({ title, className }: HeaderProps) {
               onKeyDown={inputValue.trim() === '' ? undefined : handleKeyDown}
               maxLength={55}
               placeholder={!searchTags.length ? 'Search' : ''}
-              className={`hidden lg:block ${
+              className={`${
                 searchInputCard &&
                 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
               }`}
@@ -182,7 +151,7 @@ export default function Header({ title, className }: HeaderProps) {
               readOnly={!!searchTags.length}
             />
             <Modal.SearchInputCard
-              className={searchInputCard ? 'hidden lg:block' : 'hidden'}
+              className={searchInputCard ? 'block' : 'hidden'}
               refCard={refSearchInputCard}
               inputValue={inputValue}
             />
@@ -269,17 +238,6 @@ export default function Header({ title, className }: HeaderProps) {
           icon={<Icon.User size="24" />}
         />
       )}
-      <Menu.Root
-        position="left"
-        drawerRef={drawerFilterRef}
-        drawerOpen={drawerFilterOpen}
-      >
-        <div className="overflow-y-auto max-h-full no-scrollbar">
-          <Filter.Reach />
-          <Filter.Sort />
-          <Filter.Content />
-        </div>
-      </Menu.Root>
     </HeaderUI.Root>
   );
 }

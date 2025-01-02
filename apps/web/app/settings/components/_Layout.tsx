@@ -7,13 +7,14 @@ import Menu from '../_menu';
 import MenuMobile from '../_menuMobile';
 import Faq from '../_faq';
 import Version from '../_version';
+import { Settings } from '.';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [_, setSelectedItem] = useState<string | null>('account');
 
   return (
     <Content.Main>
-      <Components.Header className="hidden md:block" title="Settings" />
+      <Settings.Header />
       <Content.Grid className="flex gap-6">
         {/* Sidebar menu */}
         <Components.Sidebar className="w-[280px] hidden lg:block">
