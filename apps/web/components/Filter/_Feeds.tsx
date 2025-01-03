@@ -5,11 +5,11 @@ import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { ICustomFeed } from '@/types';
 import { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
-import Modal from '../Modal';
+import { BottomSheet } from '../BottomSheet';
 
 export default function Feeds() {
   const { selectedFeed, setSelectedFeed } = useFilterContext();
-  const [showModalCreateFeed, setShowModalCreateFeed] = useState(false);
+  const [showSheetCreateFeed, setShowSheetCreateFeed] = useState(false);
   const [tagsFeed, setTagsFeed] = useState<string[]>([]);
   const [nameFeed, setNameFeed] = useState<string>('');
   const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
@@ -106,19 +106,19 @@ export default function Feeds() {
           );
         })}
         <Button.Medium
-          onClick={() => setShowModalCreateFeed(true)}
+          onClick={() => setShowSheetCreateFeed(true)}
           className="mt-4"
           icon={<Icon.Plus size="16" />}
         >
           New feed
         </Button.Medium>
       </div>
-      <Modal.CreateFeed
+      <BottomSheet.CreateFeed
         setNameFeed={setNameFeed}
         nameFeed={nameFeed}
         handleAddFeed={handleAddFeed}
-        setShowModalCreateFeed={setShowModalCreateFeed}
-        showModalCreateFeed={showModalCreateFeed}
+        setShow={setShowSheetCreateFeed}
+        show={showSheetCreateFeed}
         setTagsFeed={setTagsFeed}
         tagsFeed={tagsFeed}
       />

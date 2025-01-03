@@ -1,4 +1,5 @@
 import CreateArticle from './_CreateArticle';
+import CreateFeed from './_CreateFeed';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
 import CreateRepost from './_CreateRepost';
@@ -14,6 +15,7 @@ import TagCreatePost from './_TagCreatePost';
 
 export const BottomSheet = {
   CreateArticle,
+  CreateFeed,
   CreatePost,
   CreateReply,
   CreateRepost,
