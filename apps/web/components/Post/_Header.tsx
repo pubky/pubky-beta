@@ -6,6 +6,7 @@ import {
   Post as PostUI,
   Typography,
   Tooltip as TooltipUI,
+  Icon,
 } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
@@ -77,10 +78,30 @@ export default function Header({
           {showTooltipProfile && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
-      <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
-        <span className="hidden md:flex">{Utils.timeAgo(indexed_at)}</span>
-        <span className="md:hidden">{Utils.timeAgo(indexed_at, true)}</span>
-      </PostUI.Time>
+      <div className="relative flex items-center gap-0">
+        <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
+          <span className="hidden md:flex">{Utils.timeAgo(indexed_at)}</span>
+          <span className="md:hidden">{Utils.timeAgo(indexed_at, true)}</span>
+        </PostUI.Time>
+        <div className="inline-flex items-center gap-0">
+          <Tooltip.TooltipCheckMark content="Saved in your homeserver">
+            <div className="relative left-[13px] z-0 top-[2px]">
+              <Icon.Check size="20" color={'#00BA7C'} opacity={1} />
+            </div>
+          </Tooltip.TooltipCheckMark>
+          <div className="relative z-10 top-[5px]">
+            {post?.cached === 'nexus' || post?.cached === undefined ? (
+              <Tooltip.TooltipCheckMark content={'Indexed by Pubky Nexus'}>
+                <Icon.Check size="20" color={'#00BA7C'} opacity={1} />
+              </Tooltip.TooltipCheckMark>
+            ) : (
+              <Tooltip.TooltipCheckMark content={'Indexing...'}>
+                <Icon.Check size="20" color={'#A3A3A3'} opacity={0.2} />
+              </Tooltip.TooltipCheckMark>
+            )}
+          </div>
+        </div>
+      </div>
     </PostUI.Header>
   );
 }

@@ -36,6 +36,7 @@ export interface PostView {
   tags: PostTag[];
   relationships?: PostRelationships;
   bookmark?: Bookmark;
+  cached: 'local' | 'homeserver' | 'nexus';
 }
 
 export interface PostRelationships {

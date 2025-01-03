@@ -464,6 +464,7 @@ export default function CreateArticle({
                 </div>
                 <LinkPreviewer content={contentArticle} />
                 <Section.FooterArea
+                  loading={sendingArticle}
                   visibleTextArea
                   textArea
                   content={contentArticle}

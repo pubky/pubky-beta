@@ -286,12 +286,14 @@ export default function CreateContent({
                 filePreview={filePreviews[index]}
                 index={index}
                 removeFile={removeFile}
+                loading={loading || false}
               />
             ))}
           </div>
         )}
         {children}
         <Section.FooterArea
+          loading={loading || false}
           visibleTextArea={visibleTextArea}
           textArea={textArea}
           content={content}
