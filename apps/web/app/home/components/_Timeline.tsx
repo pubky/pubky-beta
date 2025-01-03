@@ -42,18 +42,22 @@ const useTimelineFilters = (selectedFeed) => {
 };
 
 export const Timeline = ({ selectedFeed }: TimelineProps) => {
-  const limit = 10;
   const { pubky, mutedUsers, newPosts, timeline, setTimeline } =
     usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
   const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
 
-  const { data, isLoading, isSuccess } = useStreamPost(
+  const clearTimeline = () => {
+    setTimeline([]);
+    setStart(undefined);
+  };
+
+  const { data, isLoading } = useStreamPost(
     pubky ?? '',
     reach,
     'all',
-    limit,
+    10,
     start,
     undefined,
     undefined,
@@ -63,68 +67,44 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
   const fetchPosts = async () => {
     try {
-      if (!data) return;
-      if (!Array.isArray(data)) return;
+      if (!data || !Array.isArray(data) || data.length === 0) return;
 
       const lastPost = data[data.length - 1] as PostView;
-      if (lastPost.details?.indexed_at) {
-        setStart(lastPost.details.indexed_at - 1);
-        setTimeline((prev) => {
-          const newPosts = data.filter((post) => {
-            const isMuted = mutedUsers?.includes(post?.details?.author);
-            const isAlreadyInTimeline = prev.some(
-              (p) => p.details.id === post.details.id,
-            );
-            return !isMuted && !isAlreadyInTimeline;
-          });
-          return [...prev, ...newPosts];
-        });
-      }
+      if (!lastPost?.details?.indexed_at) return;
+
+      setStart(lastPost.details.indexed_at - 1);
+
+      setTimeline((prev) => {
+        // Filter out muted users and duplicate posts in one pass
+        const posts = data.filter(
+          (post) =>
+            post?.details?.author && // Ensure post has required data
+            !mutedUsers?.includes(post.details.author) &&
+            !prev.some((p) => p.details.id === post.details.id),
+        );
+
+        return posts.length > 0 ? [...prev, ...posts] : prev;
+      });
     } catch (error) {
-      console.error(error);
+      console.log('Error fetching posts:', error);
+      // Could add error handling/user notification here
     }
   };
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   useEffect(() => {
-    setTimeline([]);
-    setStart(undefined);
-
-    return () => {
-      setStart(undefined);
-      setTimeline([]);
-    };
-  }, [setTimeline, setStart]);
-
-  useEffect(() => {
-    setTimeline([]);
-    setStart(undefined);
+    clearTimeline();
     fetchPosts();
   }, [reach, sort, tagsFeed]);
 
-  const latestTimestamp =
-    timeline.length > 0 ? timeline[0].details.indexed_at : undefined;
+  useEffect(() => {
+    return clearTimeline;
+  }, [setTimeline, setStart]);
 
   return (
     <div id="timeline" className="flex flex-col gap-3">
-      {isSuccess && latestTimestamp && (
-        <NewPostsNotifier
-          latestTimestamp={latestTimestamp}
-          pubky={pubky ?? ''}
-          reach={reach}
-          sort={sort}
-          addNewPosts={(newPosts: PostView[]) => {
-            newPosts.forEach((newPost) => {
-              if (
-                !timeline.some((post) => post.details.id === newPost.details.id)
-              ) {
-                setTimeline((prev) => [newPost, ...prev]);
-              }
-            });
-          }}
-        />
-      )}
+      {!isLoading && <NewPostsNotifier />}
 
       {newPosts.map((post) => (
         <div key={post.details.id} className="flex flex-col">

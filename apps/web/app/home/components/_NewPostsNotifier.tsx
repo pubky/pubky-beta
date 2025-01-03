@@ -5,28 +5,17 @@ import { Button } from '@social/ui-shared';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
 import { UseQueryOptions } from '@tanstack/react-query';
-import { TSort, TSource } from '@/types';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 
-type NewPostsNotifierProps = {
-  latestTimestamp: number;
-  pubky: string;
-  reach: TSource;
-  sort: TSort;
-  addNewPosts: (newPosts: PostView[]) => void;
-};
-
-export const NewPostsNotifier = ({
-  latestTimestamp,
-  pubky,
-  reach,
-  sort,
-  addNewPosts,
-}: NewPostsNotifierProps) => {
+export const NewPostsNotifier = () => {
+  const { reach, sort } = useFilterContext();
+  const { timeline, setTimeline, pubky } = usePubkyClientContext();
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [newPostsCount, setNewPostsCount] = useState(0);
   const [shouldFetch, setShouldFetch] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [fetchCounter, setFetchCounter] = useState(0);
+  const [latestTimestamp, setLatestTimestamp] = useState<number | null>(null);
 
   // Refs for scroll control
   const lastScrollY = useRef(0);
@@ -64,19 +53,28 @@ export const NewPostsNotifier = ({
     };
   }, [handleScroll]);
 
+  useEffect(() => {
+    if (timeline.length > 0) {
+      const mostRecentTimestamp = Math.max(
+        ...timeline.map((post) => post.details.indexed_at),
+      );
+      setLatestTimestamp(mostRecentTimestamp);
+    }
+  }, [timeline]);
+
   const { data: newPostsData } = useStreamPost(
-    pubky,
+    pubky ?? '',
     reach,
     'all',
     10,
     undefined,
-    latestTimestamp + 1,
+    latestTimestamp ? latestTimestamp + 1 : undefined,
     undefined,
     sort,
     undefined,
     {
-      enabled: shouldFetch,
-      queryKey: ['stream-posts', fetchCounter],
+      enabled: shouldFetch && latestTimestamp !== null,
+      queryKey: ['stream-posts', fetchCounter, latestTimestamp],
     } as UseQueryOptions<unknown, Error>,
   );
 
@@ -87,22 +85,34 @@ export const NewPostsNotifier = ({
     if (newPostsData.length > 0) {
       const filteredNewPosts = newPostsData.filter(
         (post: PostView) =>
-          !newPosts.some((p) => p.details.id === post.details.id),
+          post.details.indexed_at > (latestTimestamp || 0) &&
+          !newPosts.some((p) => p.details.id === post.details.id) &&
+          !timeline.some((p) => p.details.id === post.details.id),
       );
 
       if (filteredNewPosts.length > 0) {
         setNewPosts((prev) => [...prev, ...filteredNewPosts]);
         setNewPostsCount((prev) => prev + filteredNewPosts.length);
+
+        // Update latestTimestamp with the most recent post
+        const newMostRecent = Math.max(
+          ...filteredNewPosts.map((post) => post.details.indexed_at),
+        );
+        setLatestTimestamp((prev) => Math.max(prev || 0, newMostRecent));
       }
     }
 
     setHasFetched(true);
     setShouldFetch(false);
-  }, [newPostsData, newPosts]);
+  }, [newPostsData, newPosts, timeline, latestTimestamp]);
 
   const handleShowNewPosts = () => {
-    addNewPosts(newPosts);
+    const uniqueNewPosts = newPosts.filter(
+      (newPost) =>
+        !timeline.some((post) => post.details.id === newPost.details.id),
+    );
     setNewPosts([]);
+    setTimeline((prev) => [...uniqueNewPosts, ...prev]);
     setNewPostsCount(0);
     setHasFetched(false);
     setShouldFetch(false);
