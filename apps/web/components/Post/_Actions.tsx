@@ -124,6 +124,7 @@ export default function Actions({
   const { addToast } = useToastContext();
   const [showMenu, setShowMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
+  const [showSheetRepost, setShowSheetRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
   const [showSheetReply, setShowSheetReply] = useState(false);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
@@ -249,7 +250,11 @@ export default function Actions({
             counter={post?.counts?.reposts}
             onClick={(event) => {
               event.stopPropagation();
-              pubky ? setShowModalRepost(true) : openJoinModal();
+              pubky
+                ? isMobile
+                  ? setShowSheetRepost(true)
+                  : setShowModalRepost(true)
+                : openJoinModal();
             }}
           />
         </div>
@@ -273,6 +278,11 @@ export default function Actions({
           post={post}
           showModalRepost={showModalRepost}
           setShowModalRepost={setShowModalRepost}
+        />
+        <BottomSheet.CreateRepost
+          post={post}
+          show={showSheetRepost}
+          setShow={setShowSheetRepost}
         />
         <Modal.CreateReply
           post={post}
