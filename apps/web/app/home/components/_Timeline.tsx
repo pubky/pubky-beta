@@ -98,6 +98,8 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   }, [setTimeline, setStart]);
 
   useEffect(() => {
+    setTimeline([]);
+    setStart(undefined);
     fetchPosts();
   }, [reach, sort, tagsFeed]);
 
