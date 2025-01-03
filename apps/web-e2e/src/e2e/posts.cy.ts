@@ -9,7 +9,7 @@ import { selectEmoji,
         checkPostIsNotAtTopOfFeed,
         clickShowNewPostsBtn,
         repostPost,
-        tagPost} from '../support/posts';
+        tagPostInFeed} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -335,7 +335,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // add tags to the post
-    tagPost(postContent, [tag1, tag2, tag3]);
+    tagPostInFeed(postContent, [tag1, tag2, tag3]);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/541
     // should test before and after refresh

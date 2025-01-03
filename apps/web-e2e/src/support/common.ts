@@ -1,0 +1,25 @@
+// tag a post or profile using modal with any number of tags
+// use once modal is visible
+// profileName is optional, it can be used to check header is `Tag {profileName}`
+export const addTags = (tags: string[], profileName?: string) => {
+  cy.get('#modal-root').within(() => {
+    cy.get('h1').contains(profileName ? `Tag ${profileName}` : 'Tag Post');
+
+    // add tags to the post
+    for (const tag of tags) {
+      cy.get('input').type(tag);
+      cy.get('#add-btn').should('be.visible').click();
+    };
+
+    // TODO: uncomment once bug is fixed, see https://github.com/pubky/pubky-app/issues/541
+    // check current tags in modal
+    // cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
+    //   cy.wrap(divs.eq(0)).contains(tag1);
+    //   cy.wrap(divs.eq(1)).contains(tag2);
+    //   cy.wrap(divs.eq(2)).contains(tag3);
+    // });
+
+    // close modal
+    cy.get('#close-btn').click();
+  });
+};

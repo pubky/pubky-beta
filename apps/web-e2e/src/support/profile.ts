@@ -78,3 +78,30 @@ export const clickFollowButton = () => {
   cy.get('#profile-follow-btn').should('not.exist');
   cy.get('#profile-unfollow-btn').should('be.visible').and('have.text', 'Unfollow');
 };
+
+// wait for notifications to load profile names (prevents 'no longer attached to the DOM' error when checking list of notifications)
+export const waitForNotificationsToLoad = (attempts: number = 5) => {
+  if (attempts <= 0) assert(false, `waitForNotificationsToLoad: Notifications not loaded`);
+
+  cy.get('#profile-tab-content > div').then(($notificationsList) => {
+    cy.wrap($notificationsList).invoke('text').then((text) => {
+      // if contains 'pk:' then pubky is being used whilst waiting for profile name
+      if (text.includes('No notifications yet') || text.includes('Loading') || text.includes('pk:')) {
+        cy.wait(1000);
+        waitForNotificationsToLoad(attempts - 1);
+      }
+    });
+  });
+};
+
+export const checkLatestNotification = (expectedContent: string[], profileToNavigateTo?: string) => {
+  waitForNotificationsToLoad();
+  cy.get('#profile-tab-content > div').children().should('have.length.at.least', 1).first().within(() => {
+    // assert that each expected string is present in the first notification listed
+    expectedContent.forEach((content) => {
+      cy.contains(content);
+    });
+    // if profile name is provided, navigate to it in the notification
+    if (profileToNavigateTo) cy.get('a').contains(profileToNavigateTo).click();
+  });
+};

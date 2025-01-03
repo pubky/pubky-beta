@@ -71,9 +71,8 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     waitReload(time?: number): void;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
-    waitForElementToDisappear(selector: string): void;
+    waitReloadWhileElementDoesNotExist(selector: string, attempts?: number): void;
   }
   interface Chainable<Subject> {
     findFirstPostInFeed(filterText?: string): Chainable<Subject>;
@@ -282,6 +281,9 @@ Cypress.Commands.add('saveCopiedPubkyToAlias', (alias: string) => {
   }).then((text) => {
     // store pubky as alias
     cy.wrap(text).as(alias);
+    // also store pubky in Cypress env to be used in beforeEach to re-create aliases because they are cleared at end of each test
+    // e.g. cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
+    Cypress.env(alias, text);
   });
 });
 
@@ -306,12 +308,25 @@ Cypress.Commands.add('waitReload', (time = 2000) => {
   cy.wait(time).reload();
 });
 
-Cypress.Commands.add('waitForElementToDisappear', (selector: string) => {
-  if (Cypress.$(selector).length > 0) {
-    cy.get(selector).should('not.exist');
-  } else {
-    cy.log(`${selector} not found; skipping disappearance check.`);
-  }
+Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts = 5) => {
+  const go = (attempts: number) => {
+    if (attempts <= 0) assert(false, `waitReloadWhileElementDoesNotExist: ${selector} not found`);
+    cy.get('body').then(($body) => {
+
+      if ($body.find(selector).length === 0) {
+        cy.log(`waitReloadWhileElementDoesNotExist: ${selector} not found; waiting 1 second and reloading.`);
+        cy.reload();
+        // wait for page to load before checking again
+        cy.wait(1000);
+        go(attempts - 1);
+      } else {
+        cy.log(`waitReloadWhileElementDoesNotExist: ${selector} found; continuing.`);
+        return;
+      }
+    });
+  };
+  cy.log(`waitReloadWhileElementDoesNotExist: starting with selector: ${selector} and attempts: ${attempts}.`);
+  go(attempts);
 });
 
 const findPostInFeed = (postIdx = 0, filterText?) => {
@@ -319,7 +334,7 @@ const findPostInFeed = (postIdx = 0, filterText?) => {
   // If it does then wait 1 second and check again.
   // This is a wait for the timeline to load after the page loads.
   const checkTimeline = (t = 5) => {
-    if (t === 0) assert(false, 'findPostInFeed: Timeline not loaded after 5 seconds');
+    if (t === 0) assert(false, `findPostInFeed: Timeline not loaded`);
     cy.get('#posts-feed').find('#timeline').then(($timeline) => {
       // if contains 'No post yet' then wait 1 second and check again
       cy.wrap($timeline).innerTextContains('No posts yet').then((hasNoPosts) => {

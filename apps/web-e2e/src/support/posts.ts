@@ -1,4 +1,4 @@
-import { defaultMs } from "./slow-down";
+import { addTags } from "./common";
 
 // select an emoji using the emoji picket by its data-full-name attribute
 export const selectEmoji = (emojiName: string) => {
@@ -53,30 +53,11 @@ export const repostPost = ({repostContent, postContent, filterText, postIdx}: {r
   });
 };
 
-// tag a post with any number of tags
-export const tagPost = (postContent: string, tags: string[]) => {
+// tag a post in feed with any number of tags
+export const tagPostInFeed = (postContent: string, tags: string[]) => {
   cy.findFirstPostInFeed(postContent).within(() => {
     cy.get('#tag-btn').click();
-    cy.get('#modal-root').within(() => {
-      cy.get('h1').contains('Tag Post');
-
-      // add tags to the post
-      for (const tag of tags) {
-        cy.get('input').type(tag);
-        cy.get('#add-btn').should('be.visible').click();
-      };
-
-      // TODO: uncomment once bug is fixed, see https://github.com/pubky/pubky-app/issues/541
-      // check current tags in modal
-      // cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
-      //   cy.wrap(divs.eq(0)).contains(tag1);
-      //   cy.wrap(divs.eq(1)).contains(tag2);
-      //   cy.wrap(divs.eq(2)).contains(tag3);
-      // });
-
-      // close modal
-      cy.get('#close-btn').click();
-    });
+    addTags(tags);
   });
 };
 
@@ -133,7 +114,7 @@ export const clickShowNewPostsBtn = (expectedCounter = 1) => {
   cy.reload();
   // recursively loop 5 times for 5 seconds, if timeline contains text "No posts yet" or "Loading" wait 1 second and try again
   const checkTimelineRecursively = (attempts: number) => {
-    if (attempts <= 0) expect(false, "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds");
+    if (attempts <= 0) assert(false, "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds");
 
     cy.get('#posts-feed').find('#timeline').invoke('text').then((text) => {
       if (text.includes('No posts yet') || text.includes('Loading')) {

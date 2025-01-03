@@ -112,6 +112,7 @@ export default function Post({
 
   return (
     <div
+      id="post-container"
       className="w-full cursor-pointer"
       onClick={(event) => {
         const selection = window.getSelection();
