@@ -10,6 +10,7 @@ import DeleteAccount from './_DeleteAccount';
 import DeletePost from './_DeletePost';
 import EditArticle from './_EditArticle';
 import EditPost from './_EditPost';
+import Feedback from './_Feedback';
 import Menu from './_Menu';
 import MenuProfile from './_MenuProfile';
 import ReportPost from './_ReportPost';
@@ -30,6 +31,7 @@ export const BottomSheet = {
   DeletePost,
   EditArticle,
   EditPost,
+  Feedback,
   Menu,
   MenuProfile,
   ReportPost,
