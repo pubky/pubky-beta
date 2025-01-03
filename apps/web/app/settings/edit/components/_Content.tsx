@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Content } from '@social/ui-shared';
-import { Header } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { Links } from '@/types/Post';
@@ -52,7 +51,7 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Settings" />
+      <Edit.Header />
       <Content.Grid>
         <Edit.UserInfo
           name={name}

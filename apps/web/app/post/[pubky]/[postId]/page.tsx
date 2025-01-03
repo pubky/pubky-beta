@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Index({ params }: Props) {
   return (
-    <Content.Main>
+    <Content.Main className="pt-[80px]">
       <Post.Header />
 
       <Content.Grid className="flex justify-between flex-col gap-3">

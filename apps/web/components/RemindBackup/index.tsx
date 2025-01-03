@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 import Modal from '../Modal';
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts';
+import { BottomSheet } from '../BottomSheet';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const passwordSchema = z.object({
   password: z
@@ -17,12 +19,14 @@ const passwordSchema = z.object({
 export default function RemindBackup() {
   const { seed, setSeed, profile, mnemonic, setMnemonic, getRecoveryFile } =
     usePubkyClientContext();
+  const isMobile = useIsMobile();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
   const [remindMeLater, setRemindMeLater] = useState(false);
   const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
   const [password, setPassword] = useState('');
   const [showModalBackup, setShowModalBackup] = useState(false);
+  const [showSheetBackup, setShowSheetBackup] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
   const [errorPassword, setErrorPassword] = useState<string>('');
   const backupCloseMessage = Utils.storage.get('backup');
@@ -120,6 +124,7 @@ export default function RemindBackup() {
       Utils.storage.remove('mnemonic');
 
       setShowModalBackup(false);
+      setShowSheetBackup(false);
     } catch (error) {
       console.log(error);
     } finally {
@@ -195,7 +200,9 @@ export default function RemindBackup() {
                 id="remind-backup-now-btn"
                 className="w-auto shadow-none bg-black bg-opacity-10 hover:bg-opacity-20 border border-[#05050a]"
                 colorText="text-[#05050a]"
-                onClick={() => setShowModalBackup(true)}
+                onClick={() =>
+                  isMobile ? setShowSheetBackup(true) : setShowModalBackup(true)
+                }
                 icon={<Icon.Lock size="16" color="#05050a" />}
               >
                 Backup now
@@ -235,6 +242,15 @@ export default function RemindBackup() {
         showModalBackup={showModalBackup}
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
+        errors={errorPassword}
+        setShowBackupSuccess={setShowBackupSuccess}
+      />
+      <BottomSheet.Backup
+        loading={loadingRecoveryFile}
+        setPassword={setPassword}
+        handleSubmit={handleRecoveryFile}
+        show={showSheetBackup}
+        setShow={setShowSheetBackup}
         errors={errorPassword}
         setShowBackupSuccess={setShowBackupSuccess}
       />

@@ -9,6 +9,8 @@ import { Modal } from '@/components/Modal';
 import { Onboarding } from '../../components';
 import Image from 'next/image';
 import { usePubkyClientContext } from '@/contexts';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '@/components';
 
 const passwordSchema = z.object({
   password: z
@@ -19,7 +21,9 @@ const passwordSchema = z.object({
 export default function Index() {
   const { getRecoveryFile } = usePubkyClientContext();
   const { seed, setSeed, mnemonic, setMnemonic } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const [showModalBackup, setShowModalBackup] = useState(false);
+  const [showSheetBackup, setShowSheetBackup] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
   const [password, setPassword] = useState('');
@@ -106,6 +110,7 @@ export default function Index() {
       Utils.storage.remove('seed');
       Utils.storage.remove('mnemonic');
       setShowModalBackup(false);
+      setShowSheetBackup(false);
     } catch (error) {
       console.log(error);
     } finally {
@@ -136,7 +141,12 @@ export default function Index() {
             icon={<Icon.Lock color={disposableAccount ? ' white' : 'gray'} />}
             disabled={!disposableAccount}
             onClick={
-              disposableAccount ? () => setShowModalBackup(true) : undefined
+              disposableAccount
+                ? () =>
+                    isMobile
+                      ? setShowSheetBackup(true)
+                      : setShowModalBackup(true)
+                : undefined
             }
             className="w-auto md:hidden flex mb-12"
             variant="secondary"
@@ -207,6 +217,14 @@ export default function Index() {
         showModalBackup={showModalBackup}
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
+        errors={errors}
+      />
+      <BottomSheet.Backup
+        loading={loading}
+        setPassword={setPassword}
+        handleSubmit={handleSubmit}
+        show={showSheetBackup}
+        setShow={setShowSheetBackup}
         errors={errors}
       />
     </>

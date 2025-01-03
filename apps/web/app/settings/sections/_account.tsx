@@ -8,6 +8,8 @@ import { Button, Icon, Input, Tooltip, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '@/components';
 
 const passwordSchema = z.object({
   password: z
@@ -28,6 +30,7 @@ export default function Account() {
     importData,
   } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
+  const isMobile = useIsMobile();
   const [fileName, setFileName] = useState('file.zip');
   const [deleteProgress, setDeleteProgress] = useState(0);
   const [deletingAccount, setDeletingAccount] = useState(false);
@@ -37,6 +40,7 @@ export default function Account() {
   const [importingData, setImportingData] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalBackup, setShowModalBackup] = useState(false);
+  const [showSheetBackup, setShowSheetBackup] = useState(false);
   const [showModalDeleteAccount, setShowModalDeleteAccount] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
@@ -167,6 +171,7 @@ export default function Account() {
       Utils.storage.remove('seed');
       Utils.storage.remove('mnemonic');
       setShowModalBackup(false);
+      setShowSheetBackup(false);
     } catch (error) {
       console.log(error);
     } finally {
@@ -213,7 +218,12 @@ export default function Account() {
             className="w-auto"
             disabled={!disposableAccount}
             onClick={
-              disposableAccount ? () => setShowModalBackup(true) : undefined
+              disposableAccount
+                ? () =>
+                    isMobile
+                      ? setShowSheetBackup(true)
+                      : setShowModalBackup(true)
+                : undefined
             }
           >
             Back up account
@@ -335,6 +345,14 @@ export default function Account() {
         showModalDeleteAccount={showModalDeleteAccount}
         setShowModalDeleteAccount={setShowModalDeleteAccount}
         handleDeleteAccount={handleDeleteAccount}
+      />
+      <BottomSheet.Backup
+        loading={loadingRecoveryFile}
+        setPassword={setPassword}
+        handleSubmit={handleRecoveryFile}
+        show={showSheetBackup}
+        setShow={setShowSheetBackup}
+        errors={errorPassword}
       />
     </div>
   );
