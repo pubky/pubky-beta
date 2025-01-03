@@ -9,6 +9,9 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import { UserView } from '@/types/User';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '@/components';
 
 interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky: string | null | undefined;
@@ -17,8 +20,6 @@ interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   followed: boolean;
   loadingFollowed: boolean;
   disposableAccount: boolean;
-  showProfileMenu: boolean;
-  setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
   setShowModalLogout: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,8 +33,6 @@ export default function Buttons({
   followed,
   loadingFollowed,
   disposableAccount,
-  showProfileMenu,
-  setShowProfileMenu,
   setShowModalLogout,
   setLoadingFollowed,
   setFollowed,
@@ -41,8 +40,11 @@ export default function Buttons({
 }: ButtonsProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { openJoinModal } = useJoinModal();
+  const isMobile = useIsMobile();
   const { addToast } = useToastContext();
   const router = useRouter();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showSheetProfileMenu, setShowSheetProfileMenu] = useState(false);
 
   const followUser = async () => {
     try {
@@ -201,10 +203,22 @@ export default function Buttons({
             size="small"
             variant="custom"
             icon={<Icon.DotsThreeOutline size="16" />}
-            onClick={() => (pubky ? setShowProfileMenu(true) : openJoinModal())}
+            onClick={() =>
+              pubky
+                ? isMobile
+                  ? setShowSheetProfileMenu(true)
+                  : setShowProfileMenu(true)
+                : openJoinModal()
+            }
           />
         </div>
       )}
+      <BottomSheet.MenuProfile
+        show={showSheetProfileMenu}
+        setShow={setShowSheetProfileMenu}
+        creatorPubky={creatorPubky ?? pubkey}
+        profile={profile}
+      />
     </>
   );
 }

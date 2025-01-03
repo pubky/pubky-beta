@@ -80,7 +80,10 @@ export default function Status({ status, subtitle }: StatusProps) {
       subtitle={subtitle}
       className={openDropdown ? 'z-20' : ''}
     >
-      <DropDownUI.Content isOpen={openDropdown} className="right-0 top-0">
+      <DropDownUI.Content
+        isOpen={openDropdown}
+        className="-right-20 lg:right-0 top-0"
+      >
         <DropDownUI.Item
           label="Available"
           value="available"
@@ -242,7 +245,7 @@ export default function Status({ status, subtitle }: StatusProps) {
         <div>
           {showEmojis && (
             <div
-              className="absolute translate-y-[10%] translate-x-[30%] z-10"
+              className="absolute translate-y-[20%] -translate-x-[15%] lg:translate-x-[30%] z-10"
               ref={wrapperRefEmojis}
             >
               <EmojiPicker
