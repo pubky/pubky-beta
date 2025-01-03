@@ -21,6 +21,7 @@ interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   loadingFollowed: boolean;
   disposableAccount: boolean;
   setShowModalLogout: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSheetLogout: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   profile: UserView | null;
@@ -34,6 +35,7 @@ export default function Buttons({
   loadingFollowed,
   disposableAccount,
   setShowModalLogout,
+  setShowSheetLogout,
   setLoadingFollowed,
   setFollowed,
   profile,
@@ -149,7 +151,10 @@ export default function Buttons({
             className="px-3 w-21 h-8"
             onClick={
               disposableAccount
-                ? () => setShowModalLogout(true)
+                ? () =>
+                    isMobile
+                      ? setShowSheetLogout(true)
+                      : setShowModalLogout(true)
                 : () => router.push('/logout')
             }
             icon={<Icon.SignOut />}

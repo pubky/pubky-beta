@@ -13,6 +13,7 @@ import EditPost from './_EditPost';
 import Feedback from './_Feedback';
 import FilesCarousel from './_FilesCarousel';
 import Link from './_Link';
+import Logout from './_Logout';
 import Menu from './_Menu';
 import MenuProfile from './_MenuProfile';
 import ReportPost from './_ReportPost';
@@ -36,6 +37,7 @@ export const BottomSheet = {
   Feedback,
   FilesCarousel,
   Link,
+  Logout,
   Menu,
   MenuProfile,
   ReportPost,
