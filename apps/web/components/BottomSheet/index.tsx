@@ -5,6 +5,7 @@ import CreateFeed from './_CreateFeed';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
 import CreateRepost from './_CreateRepost';
+import CroppedImage from './_CroppedImage';
 import DeleteAccount from './_DeleteAccount';
 import DeletePost from './_DeletePost';
 import EditArticle from './_EditArticle';
@@ -24,6 +25,7 @@ export const BottomSheet = {
   CreatePost,
   CreateReply,
   CreateRepost,
+  CroppedImage,
   DeleteAccount,
   DeletePost,
   EditArticle,
