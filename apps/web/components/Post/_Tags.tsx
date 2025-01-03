@@ -109,6 +109,8 @@ export default function Tags({
     setTagInput(valueWithoutSpaces);
   };
 
+  if (tags.length === 0) return;
+
   return (
     <div
       className="lg:mt-6 cursor-default"

@@ -38,7 +38,7 @@ export default function Index() {
   if (isError || isErrorInfluencers || isErrorPosts) console.error(isError);
 
   return (
-    <Content.Main>
+    <Content.Main className="pt-[80px]">
       <Hot.Header />
       <Content.Grid className="flex gap-6">
         <Sidebar className="w-[280px] self-start sticky top-[120px] hidden lg:block">

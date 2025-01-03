@@ -29,7 +29,7 @@ export const UploadFile = ({
         className={twMerge(
           baseCSS,
           rest.className,
-          error ? 'border-red-600 border-opacity-100' : ''
+          error ? 'border-red-600 border-opacity-100' : '',
         )}
       >
         <Typography.Body className="text-opacity-30" variant="medium">
@@ -47,8 +47,11 @@ export const UploadFile = ({
           }}
         >
           <Icon.File size="16" />
-          <Typography.Label id='import-select-file' className="cursor-pointer normal-case">
-            Select file
+          <Typography.Label
+            id="import-select-file"
+            className="flex gap-1 cursor-pointer normal-case"
+          >
+            <span className="flex lg:hidden xl:flex">Select</span> file
           </Typography.Label>
         </div>
       </div>

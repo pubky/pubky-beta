@@ -188,7 +188,7 @@ export default function Notification({
       : '';
 
   return (
-    <div className="py-3 justify-between items-start flex flex-row">
+    <div className="py-3 justify-between items-start flex flex-row border-b md:border-0 border-white border-opacity-10">
       <div className="flex md:gap-4 flex-col sm:flex-row">
         <Button.Action
           size="small"
