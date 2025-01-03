@@ -42,6 +42,7 @@ export default function Account() {
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [showSheetBackup, setShowSheetBackup] = useState(false);
   const [showModalDeleteAccount, setShowModalDeleteAccount] = useState(false);
+  const [showSheetDeleteAccount, setShowSheetDeleteAccount] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
   const [password, setPassword] = useState('');
@@ -62,6 +63,7 @@ export default function Account() {
 
     setDeletingAccount(false);
     setShowModalDeleteAccount(false);
+    setShowSheetDeleteAccount(false);
     router.push('/logout');
   };
 
@@ -256,7 +258,11 @@ export default function Account() {
           icon={<Icon.Trash size="16" />}
           variant="secondary"
           className="w-auto"
-          onClick={() => setShowModalDeleteAccount(true)}
+          onClick={() =>
+            isMobile
+              ? setShowSheetDeleteAccount(true)
+              : setShowModalDeleteAccount(true)
+          }
           loading={deletingAccount}
         >
           {deletingAccount
@@ -353,6 +359,13 @@ export default function Account() {
         show={showSheetBackup}
         setShow={setShowSheetBackup}
         errors={errorPassword}
+      />
+      <BottomSheet.DeleteAccount
+        deletingAccount={deletingAccount}
+        deleteProgress={deleteProgress}
+        show={showSheetDeleteAccount}
+        setShow={setShowSheetDeleteAccount}
+        handleDeleteAccount={handleDeleteAccount}
       />
     </div>
   );
