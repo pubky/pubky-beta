@@ -12,6 +12,7 @@ import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import Modal from '../Modal';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '../BottomSheet';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -124,6 +125,7 @@ export default function Actions({
   const [showMenu, setShowMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
+  const [showSheetReply, setShowSheetReply] = useState(false);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(
     repost?.bookmark?.id ? repost?.bookmark?.id : (post?.bookmark?.id ?? ''),
@@ -224,7 +226,11 @@ export default function Actions({
           counter={post?.counts?.replies}
           onClick={(event) => {
             event.stopPropagation();
-            pubky ? setShowModalReply(true) : openJoinModal();
+            pubky
+              ? isMobile
+                ? setShowSheetReply(true)
+                : setShowModalReply(true)
+              : openJoinModal();
           }}
         />
         <div className="relative">
@@ -272,6 +278,11 @@ export default function Actions({
           post={post}
           showModalReply={showModalReply}
           setShowModalReply={setShowModalReply}
+        />
+        <BottomSheet.CreateReply
+          post={post}
+          show={showSheetReply}
+          setShow={setShowSheetReply}
         />
       </div>
     </div>
