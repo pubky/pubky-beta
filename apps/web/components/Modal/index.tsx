@@ -10,6 +10,7 @@ import DeletePost from './_DeletePost';
 import EditArticle from './_EditArticle';
 import EditPost from './_EditPost';
 import Feedback from './_Feedback';
+import FilesCarousel from './_FilesCarousel';
 import Link from './_Link';
 import Logout from './_Logout';
 import ProfileTag from './_ProfileTag';
@@ -35,6 +36,7 @@ export const Modal = {
   EditArticle,
   EditPost,
   Feedback,
+  FilesCarousel,
   Link,
   Logout,
   ProfileTag,

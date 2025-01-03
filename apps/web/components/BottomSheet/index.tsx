@@ -11,6 +11,7 @@ import DeletePost from './_DeletePost';
 import EditArticle from './_EditArticle';
 import EditPost from './_EditPost';
 import Feedback from './_Feedback';
+import FilesCarousel from './_FilesCarousel';
 import Menu from './_Menu';
 import MenuProfile from './_MenuProfile';
 import ReportPost from './_ReportPost';
@@ -32,6 +33,7 @@ export const BottomSheet = {
   EditArticle,
   EditPost,
   Feedback,
+  FilesCarousel,
   Menu,
   MenuProfile,
   ReportPost,
