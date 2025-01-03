@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton } from '@/components';
+import { BottomSheet, Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
@@ -17,6 +17,7 @@ import Modal from '@/components/Modal';
 import { useEffect, useState } from 'react';
 import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 type TaggedAsProps = {
   creatorPubky?: string | undefined;
@@ -25,12 +26,14 @@ type TaggedAsProps = {
 
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const usePubky = creatorPubky || pubky;
   const { data } = useUserProfile(usePubky ?? '', pubky ?? '');
   const name = data?.details?.name;
   const image = data?.details?.image;
   const profileTags = data?.tags;
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
+  const [showSheetProfileTag, setShowSheetProfileTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>(
     [],
@@ -173,7 +176,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
           )}
           <Button.Medium
             className="mt-2 w-auto h-8 inline-flex items-center"
-            onClick={() => setShowModalProfileTag(true)}
+            onClick={() =>
+              isMobile
+                ? setShowSheetProfileTag(true)
+                : setShowModalProfileTag(true)
+            }
             icon={<Icon.Tag size="16" />}
           >
             Tag{' '}
@@ -187,6 +194,18 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         profileTags={profileTags ?? []}
         showModalProfileTag={showModalProfileTag}
         setShowModalProfileTag={setShowModalProfileTag}
+        handleAddProfileTag={handleAddProfileTag}
+        handleDeleteProfileTag={handleDeleteProfileTag}
+        selectedTag={selectedTag}
+        setSelectedTag={setSelectedTag}
+        pubkyUser={creatorPubky}
+        name={name}
+        uriImage={image}
+      />
+      <BottomSheet.TagProfile
+        profileTags={profileTags ?? []}
+        show={showSheetProfileTag}
+        setShow={setShowSheetProfileTag}
         handleAddProfileTag={handleAddProfileTag}
         handleDeleteProfileTag={handleDeleteProfileTag}
         selectedTag={selectedTag}
