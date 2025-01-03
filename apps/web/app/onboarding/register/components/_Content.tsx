@@ -13,6 +13,7 @@ import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
 import Link from 'next/link';
+import { BottomSheet } from '@/components';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -40,6 +41,7 @@ export default function Index() {
   const [image, setImage] = useState<File | string | undefined>('');
   const [generatedImage, setGeneratedImage] = useState<File>();
   const [showModalLink, setShowModalLink] = useState(false);
+  const [showSheetLink, setShowSheetLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
@@ -98,6 +100,7 @@ export default function Index() {
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
     setShowModalLink(false);
+    setShowSheetLink(false);
   };
 
   const handleSubmit = async () => {
@@ -257,6 +260,7 @@ export default function Index() {
           links={links}
           setLinks={setLinks}
           setShowModalLink={setShowModalLink}
+          setShowSheetLink={setShowSheetLink}
           errors={errors}
         />
         <Card.Pic
@@ -290,6 +294,11 @@ export default function Index() {
         showModalLink={showModalLink}
         setShowModalLink={setShowModalLink}
         modalLinkRef={modalLinkRef}
+        onAddLink={handleAddLink}
+      />
+      <BottomSheet.Link
+        show={showSheetLink}
+        setShow={setShowSheetLink}
         onAddLink={handleAddLink}
       />
     </Onboarding.Layout>

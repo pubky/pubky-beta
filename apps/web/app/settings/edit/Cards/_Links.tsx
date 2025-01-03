@@ -1,6 +1,8 @@
 import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
+import { BottomSheet } from '@/components';
 import Modal from '@/components/Modal';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { Button, Card, Icon, Input } from '@social/ui-shared';
 import { useRef, useState } from 'react';
 
@@ -28,13 +30,16 @@ export default function Links({
   errors,
   loading,
 }: LinksProps) {
+  const isMobile = useIsMobile();
   const [showModalLink, setShowModalLink] = useState(false);
+  const [showSheetLink, setShowSheetLink] = useState(false);
   const modalLinkRef = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(modalLinkRef, () => setShowModalLink(false));
 
   const handleAddLink = (title: string, url: string) => {
     setLinks([...links, { title, url }]);
     setShowModalLink(false);
+    setShowSheetLink(false);
   };
 
   const handleRemoveLink = (indexToRemove: number) => {
@@ -101,7 +106,10 @@ export default function Links({
               />
             }
             onClick={
-              links.length > 3 ? undefined : () => setShowModalLink(true)
+              links.length > 3
+                ? undefined
+                : () =>
+                    isMobile ? setShowSheetLink(true) : setShowModalLink(true)
             }
             disabled={links.length > 3}
           >
@@ -113,6 +121,13 @@ export default function Links({
             showModalLink={showModalLink}
             setShowModalLink={setShowModalLink}
             modalLinkRef={modalLinkRef}
+            onAddLink={handleAddLink}
+          />
+        )}
+        {showSheetLink && (
+          <BottomSheet.Link
+            show={showSheetLink}
+            setShow={setShowSheetLink}
             onAddLink={handleAddLink}
           />
         )}

@@ -9,19 +9,11 @@ export default function CreatePost() {
   const { pubky } = usePubkyClientContext();
   const { openJoinModal } = useJoinModal();
   const [showModalPost, setShowModalPost] = useState(false);
-  const [showModalLink, setShowModalLink] = useState(false);
   const modalPostRef = useRef<HTMLDivElement>(null);
-  const modalLinkRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideModals = (event: MouseEvent) => {
       if (
-        modalLinkRef.current &&
-        !modalLinkRef.current.contains(event.target as Node)
-      ) {
-        setShowModalLink(false);
-      } else if (
-        !showModalLink &&
         modalPostRef.current &&
         !modalPostRef.current.contains(event.target as Node)
       ) {
@@ -34,7 +26,7 @@ export default function CreatePost() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideModals);
     };
-  }, [modalPostRef, modalLinkRef, showModalLink]);
+  }, [modalPostRef]);
 
   return (
     <>
@@ -49,15 +41,6 @@ export default function CreatePost() {
         showModalPost={showModalPost}
         setShowModalPost={setShowModalPost}
         modalPostRef={modalPostRef}
-      />
-      <Modal.Link
-        showModalLink={showModalLink}
-        setShowModalLink={setShowModalLink}
-        modalLinkRef={modalLinkRef}
-        onAddLink={() => {
-          setShowModalLink(false);
-          setShowModalPost(true);
-        }}
       />
     </>
   );

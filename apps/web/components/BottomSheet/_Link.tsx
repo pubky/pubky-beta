@@ -1,6 +1,12 @@
 'use client';
 
-import { Icon, Input, Modal, Typography, Button } from '@social/ui-shared';
+import {
+  BottomSheet,
+  Button,
+  Icon,
+  Input,
+  Typography,
+} from '@social/ui-shared';
 import { useState } from 'react';
 
 const socialLinks = [
@@ -20,32 +26,34 @@ const socialLinks = [
 ];
 
 interface LinkProps {
-  showModalLink: boolean;
-  setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
-  modalLinkRef: React.RefObject<HTMLDivElement>;
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
   onAddLink: (title: string, url: string) => void;
+  title?: string;
+  className?: string;
 }
 
 export default function Link({
-  showModalLink,
-  setShowModalLink,
-  modalLinkRef,
+  show,
+  setShow,
   onAddLink,
+  title,
+  className,
 }: LinkProps) {
-  const [title, setTitle] = useState('');
+  const [titleLink, setTitleLink] = useState('');
   const [url, setUrl] = useState('');
   const [showHints, setShowHints] = useState(false);
   const disabled = !url || !title;
 
   const handleAddLink = () => {
-    onAddLink(title, url);
-    setShowModalLink(false);
-    setTitle('');
+    onAddLink(titleLink, url);
+    setShow(false);
+    setTitleLink('');
     setUrl('');
   };
 
   const handleSocialClick = (socialData: { name: string; url: string }) => {
-    setTitle(socialData.name);
+    setTitleLink(socialData.name);
     setUrl(socialData.url);
     setShowHints(false);
   };
@@ -68,14 +76,12 @@ export default function Link({
   };
 
   return (
-    <Modal.Root
-      show={showModalLink}
-      closeModal={() => setShowModalLink(false)}
-      modalRef={modalLinkRef}
-      className="sm:w-[592px] h-[480px] justify-start"
+    <BottomSheet.Root
+      show={show}
+      setShow={setShow}
+      title={title ?? 'Add Profile Link'}
+      className={className}
     >
-      <Modal.CloseAction onClick={() => setShowModalLink(false)} />
-      <Modal.Header id="add-profile-link-header" title="Add Profile Link" />
       {showHints ? (
         <div className="flex flex-wrap gap-1.5 mt-2">
           <div
@@ -108,7 +114,7 @@ export default function Link({
                 value={title}
                 onKeyDown={handleKeyDown}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setTitle(e.target.value)
+                  setTitleLink(e.target.value)
                 }
                 action={
                   <div
@@ -148,7 +154,7 @@ export default function Link({
             </div>
           </div>
           <div className="w-full mt-4">
-            <Modal.SubmitAction
+            <Button.Large
               id="add-profile-link-submit-btn"
               icon={
                 <Icon.LinkSimple
@@ -160,10 +166,10 @@ export default function Link({
               disabled={disabled}
             >
               Add link
-            </Modal.SubmitAction>
+            </Button.Large>
           </div>
         </>
       )}
-    </Modal.Root>
+    </BottomSheet.Root>
   );
 }
