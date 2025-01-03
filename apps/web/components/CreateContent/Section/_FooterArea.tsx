@@ -10,13 +10,13 @@ import { Utils } from '@social/utils-shared';
 import { useAlertContext } from '@/contexts';
 import { useState } from 'react';
 import Modal from '@/components/Modal';
+import { BottomSheet } from '@/components/BottomSheet';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   visibleTextArea: boolean;
   textArea: boolean | undefined;
   content: string;
   setContent: (content: string) => void;
-  showModalTag: boolean;
   cursorPosition: number;
   setCursorPosition: React.Dispatch<React.SetStateAction<number>>;
   setIsValidContent: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,7 +30,6 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView: boolean;
   button: React.ReactNode;
   wrapperRefEmojis: React.RefObject<HTMLDivElement>;
-  setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
   article?: boolean;
   markdown?: boolean;
   noFile?: boolean;
@@ -43,7 +42,6 @@ export default function FooterArea({
   textArea,
   content,
   setContent,
-  showModalTag,
   cursorPosition,
   setCursorPosition,
   setIsValidContent,
@@ -56,7 +54,6 @@ export default function FooterArea({
   setFilePreviews,
   setShowEmojis,
   wrapperRefEmojis,
-  setShowModalTag,
   button,
   article,
   markdown,
@@ -65,6 +62,9 @@ export default function FooterArea({
   setShowModalPost,
 }: FooterAreaProps) {
   const { addAlert } = useAlertContext();
+  const [showModalTag, setShowModalTag] = useState(false);
+  const [showSheetTag, setShowSheetTag] = useState(false);
+  const [showSheetArticle, setShowSheetArticle] = useState(false);
   const [openModalArticle, setOpenModalArticle] = useState(false);
 
   const handleEmojiClick = (emojiObject: EmojiClickData) => {
@@ -262,18 +262,9 @@ export default function FooterArea({
                 }
                 onClick={(event) => {
                   event.stopPropagation();
-                  setShowModalTag(true);
+                  setShowSheetTag(true);
                 }}
                 disabled={!arrayTags}
-              />
-              <Button.Action
-                id="emoji-btn"
-                variant="custom"
-                icon={<Icon.Smiley size="32" />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setShowEmojis(true);
-                }}
               />
               {article && (
                 <Button.Action
@@ -281,7 +272,7 @@ export default function FooterArea({
                   icon={<Icon.Newspaper size="32" />}
                   onClick={(event) => {
                     event.stopPropagation();
-                    setOpenModalArticle(true);
+                    setShowSheetArticle(true);
                   }}
                 />
               )}
@@ -317,6 +308,28 @@ export default function FooterArea({
               setShowModalArticle={setOpenModalArticle}
               setShowModalPost={setShowModalPost}
             />
+          )}
+          {showSheetArticle && (
+            <BottomSheet.CreateArticle
+              show={showSheetArticle}
+              setShow={setShowSheetArticle}
+            />
+          )}
+          {arrayTags && setArrayTags && (
+            <>
+              <Modal.TagCreatePost
+                arrayTags={arrayTags}
+                setArrayTags={setArrayTags}
+                showModalTag={showModalTag}
+                setShowModalTag={setShowModalTag}
+              />
+              <BottomSheet.TagCreatePost
+                arrayTags={arrayTags}
+                setArrayTags={setArrayTags}
+                show={showSheetTag}
+                setShow={setShowSheetTag}
+              />
+            </>
           )}
         </>
       )}

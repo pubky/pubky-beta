@@ -15,7 +15,9 @@ interface MainPostContentProps {
   lineStyle?: string;
   repostView: boolean;
   showModalTag: boolean;
+  showSheetTag: boolean;
   setShowModalTag: any;
+  setShowSheetTag: any;
   restClassName?: string;
 }
 
@@ -28,6 +30,8 @@ export default function MainPostContent({
   repostView,
   showModalTag,
   setShowModalTag,
+  showSheetTag,
+  setShowSheetTag,
   restClassName,
 }: MainPostContentProps) {
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
@@ -68,12 +72,18 @@ export default function MainPostContent({
                 <Tags
                   showModalTag={showModalTag}
                   setShowModalTag={setShowModalTag}
+                  showSheetTag={showSheetTag}
+                  setShowSheetTag={setShowSheetTag}
                   largeView={largeView}
                   post={post}
                 />
               )}
               {!repostView && (
-                <Actions setShowModalTag={setShowModalTag} post={post} />
+                <Actions
+                  setShowSheetTag={setShowSheetTag}
+                  setShowModalTag={setShowModalTag}
+                  post={post}
+                />
               )}
             </div>
           </div>

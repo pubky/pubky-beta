@@ -1,33 +1,38 @@
+'use client';
+
 import {
+  BottomSheet,
   Button,
   Icon,
   Input,
-  Modal as ModalUI,
   Typography,
 } from '@social/ui-shared';
-import { useEffect, useRef, useState } from 'react';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { Section } from '../CreateContent/Section';
-import LinkPreviewer from '../LinkPreview';
-import { UserView } from '@/types/User';
 import Image from 'next/image';
+import LinkPreviewer from '../LinkPreview';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { useEffect, useRef, useState } from 'react';
+import { UserView } from '@/types/User';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 
 interface CreateArticleProps {
-  showModalArticle: boolean;
-  setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  title?: string;
+  className?: string;
 }
 
 export default function CreateArticle({
-  showModalArticle,
-  setShowModalArticle,
-  setShowModalPost,
+  show,
+  setShow,
+  title,
+  className,
 }: CreateArticleProps) {
   const { pubky, createArticle, createTag, profile } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const [isDragging, setIsDragging] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [isError, setIsError] = useState(false);
   const { addAlert } = useAlertContext();
   const [errorFile, setErrorFile] = useState('');
@@ -39,7 +44,6 @@ export default function CreateArticle({
   const [isValidContent, setIsValidContent] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const modalArticleRef = useRef<HTMLDivElement>(null);
   const [showEmojis, setShowEmojis] = useState(false);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
@@ -54,17 +58,6 @@ export default function CreateArticle({
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('article'));
-  }, []);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1280);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const handleSubmit = async (content: string) => {
@@ -97,8 +90,7 @@ export default function CreateArticle({
       }
       setArrayTags([]);
       setContentArticle('');
-      setShowModalPost && setShowModalPost(false);
-      setShowModalArticle(false);
+      setShow(false);
       setSelectedFile([]);
     } catch (error) {
       console.log(error);
@@ -106,23 +98,6 @@ export default function CreateArticle({
       setSendingArticle(false);
     }
   };
-
-  useEffect(() => {
-    const handleClickOutsideModals = (event: MouseEvent) => {
-      if (
-        modalArticleRef.current &&
-        !modalArticleRef.current.contains(event.target as Node)
-      ) {
-        setShowModalArticle(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideModals);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModals);
-    };
-  }, [modalArticleRef, setShowModalArticle]);
 
   useEffect(() => {
     if (debounceTimeout) {
@@ -138,51 +113,6 @@ export default function CreateArticle({
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contentArticle]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-        //if (setTextArea) setTextArea(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRef, contentArticle]);
-
-  {
-    /**const searchProfiles = async (text: string) => {
-    try {
-      const result = await searchUsersByUsername(text);
-      return result || [];
-    } catch (error) {
-      console.error('Error searching profiles:', error);
-      return [];
-    }
-  }; */
-  }
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
 
   const searchUsername = async (content: string) => {
     const pkMatches = content.match(/(pk:[^\s]+)/g);
@@ -336,30 +266,16 @@ export default function CreateArticle({
   };
 
   return (
-    <ModalUI.Root
-      modalRef={modalArticleRef}
-      show={showModalArticle}
-      closeModal={() => {
-        setShowModalArticle(false);
-        //setArrayTags([]);
-      }}
-      className="md:w-[1200px] max-h-[600px] overflow-y-auto max-w-[1200px]"
+    <BottomSheet.Root
+      show={show}
+      setShow={setShow}
+      title={title ?? 'New Article'}
+      className={className}
     >
-      <ModalUI.CloseAction
-        onClick={() => {
-          setShowModalArticle(false);
-          //setArrayTags([]);
-          //setContent('');
-        }}
-      />
       <div className="flex flex-col gap-4">
-        <ModalUI.Header title="New Article" />
         <div className="flex items-center relative">
           <div className="w-full">
-            <div
-              //id={`${id}`}
-              className="w-full rounded-lg flex-col justify-start items-start inline-flex"
-            >
+            <div className="w-full rounded-lg flex-col justify-start items-start inline-flex">
               <div
                 ref={wrapperRef}
                 className="w-full flex justify-between gap-3 items-start flex-col"
@@ -469,12 +385,9 @@ export default function CreateArticle({
                   cursorPosition={cursorPosition}
                   setCursorPosition={setCursorPosition}
                   setIsValidContent={setIsValidContent}
-                  //setSelectedFiles={setSelectedFiles}
-                  //selectedFiles={selectedFiles}
                   setArrayTags={setArrayTags}
                   maxLength={50000}
                   arrayTags={arrayTags}
-                  //setFilePreviews={setFilePreviews}
                   showEmojis={showEmojis}
                   setShowEmojis={setShowEmojis}
                   largeView={!isMobile}
@@ -523,6 +436,6 @@ export default function CreateArticle({
           </div>
         </div>
       </div>
-    </ModalUI.Root>
+    </BottomSheet.Root>
   );
 }

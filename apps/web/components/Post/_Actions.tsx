@@ -11,12 +11,14 @@ import Tooltip from '../Tooltip';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import Modal from '../Modal';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   repost?: PostView;
   deleteRepost?: boolean;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSheetTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const BookmarkButton = ({
@@ -107,9 +109,11 @@ export default function Actions({
   repost,
   deleteRepost = false,
   setShowModalTag,
+  setShowSheetTag,
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { openJoinModal } = useJoinModal();
+  const isMobile = useIsMobile();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   const { data: authorRepost } = useUserProfile(
     repost?.details?.author ?? '',
@@ -195,7 +199,11 @@ export default function Actions({
           variant="custom"
           onClick={(event) => {
             event.stopPropagation();
-            pubky ? setShowModalTag(true) : openJoinModal();
+            pubky
+              ? isMobile
+                ? setShowSheetTag(true)
+                : setShowModalTag(true)
+              : openJoinModal();
           }}
           icon={
             <div>

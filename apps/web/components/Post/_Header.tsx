@@ -15,6 +15,7 @@ import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserDetails } from '@/types/User';
 import { useRouter } from 'next/navigation';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -29,6 +30,7 @@ export default function Header({
 }: PostProps) {
   const router = useRouter();
   const { pubky } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
@@ -74,7 +76,7 @@ export default function Header({
               )}
             </div>
           </div>
-          {showTooltipProfile && <Tooltip.Profile post={post} />}
+          {showTooltipProfile && !isMobile && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
       <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>

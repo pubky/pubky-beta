@@ -77,7 +77,7 @@ export default function CreatorpubkyLayout({
     content = (
       <>
         <div>
-          <Content.Grid className="pb-4 flex flex-col text-start lg:flex-row items-center gap-8 relative">
+          <Content.Grid className="pb-4 flex flex-col text-start lg:flex-row items-center gap-4 md:gap-8 relative">
             <Profile.FilterTabsMobile
               activeTab={activeTab}
               setActiveTab={setActiveTab}

@@ -582,3 +582,15 @@ export const SignIn = ({ size = '32', color = 'white' }: IconProps) => (
     />
   </svg>
 );
+
+export const HomeIndicator = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height="4"
+    viewBox="0 0 32 4"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect width={size} height="4" rx="2" fill={color} />
+  </svg>
+);

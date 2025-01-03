@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
-import Modal from '../Modal';
 import LinkPreviewer from '../LinkPreview';
 import FilePreview from '../FilePreview';
 import { Section } from './Section';
@@ -73,7 +72,6 @@ export default function CreateContent({
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const [showModalTag, setShowModalTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
@@ -296,7 +294,6 @@ export default function CreateContent({
           textArea={textArea}
           content={content}
           setContent={setContent}
-          showModalTag={showModalTag}
           cursorPosition={cursorPosition}
           setCursorPosition={setCursorPosition}
           setIsValidContent={setIsValidContent}
@@ -310,21 +307,12 @@ export default function CreateContent({
           largeView={largeView}
           button={button}
           wrapperRefEmojis={wrapperRefEmojis}
-          setShowModalTag={setShowModalTag}
           article={article}
           markdown={markdown}
           maxLength={maxLength}
           setShowModalPost={setShowModalPost}
         />
       </div>
-      {arrayTags && setArrayTags && (
-        <Modal.TagCreatePost
-          arrayTags={arrayTags}
-          setArrayTags={setArrayTags}
-          showModalTag={showModalTag}
-          setShowModalTag={setShowModalTag}
-        />
-      )}
     </div>
   );
 }
