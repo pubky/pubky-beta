@@ -6,6 +6,7 @@ import {
   Post as PostUI,
   Typography,
   Tooltip as TooltipUI,
+  Icon,
 } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
@@ -77,10 +78,28 @@ export default function Header({
           {showTooltipProfile && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
-      <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
-        <span className="hidden md:flex">{Utils.timeAgo(indexed_at)}</span>
-        <span className="md:hidden">{Utils.timeAgo(indexed_at, true)}</span>
-      </PostUI.Time>
+      <div className="relative flex items-center gap-0">
+        <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
+          <span className="hidden md:flex">{Utils.timeAgo(indexed_at)}</span>
+          <span className="md:hidden">{Utils.timeAgo(indexed_at, true)}</span>
+        </PostUI.Time>
+        <div className="inline-flex items-center gap-0">
+          <div className="relative left-[13px] z-0 top-[2px]">
+            <Icon.Check size="20" color={'#00BA7C'} opacity={1} />
+          </div>
+          <div className="relative z-10 top-[2px]">
+            <Icon.Check
+              size="20"
+              color={
+                post?.cached === 'nexus' || post?.cached === undefined
+                  ? '#00BA7C'
+                  : '#737373'
+              }
+              opacity={post?.cached === 'nexus' ? 1 : 0.2}
+            />
+          </div>
+        </div>
+      </div>
     </PostUI.Header>
   );
 }

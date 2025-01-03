@@ -11,6 +11,7 @@ import { PostReplies } from './_PostReplies';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { NewPostsNotifier } from './_NewPostsNotifier';
 import { ICustomFeed } from '@/types';
+import { getPost } from '@/services/postService';
 
 interface TimelineProps {
   selectedFeed: ICustomFeed | undefined;
@@ -42,7 +43,7 @@ const useTimelineFilters = (selectedFeed) => {
 };
 
 export const Timeline = ({ selectedFeed }: TimelineProps) => {
-  const { pubky, mutedUsers, newPosts, timeline, setTimeline } =
+  const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline } =
     usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile();
@@ -101,6 +102,48 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   useEffect(() => {
     return clearTimeline;
   }, [setTimeline, setStart]);
+
+  useEffect(() => {
+    const fetchNexusData = async () => {
+      if (!newPosts.length) return;
+
+      const homeserverPosts = newPosts.filter(
+        (post) => post.cached === 'homeserver' || post.cached === undefined,
+      );
+      if (!homeserverPosts.length) return;
+
+      try {
+        const nexusData = await getPost(
+          homeserverPosts[0].details.author,
+          homeserverPosts[0].details.id,
+          pubky ?? '',
+          undefined,
+          undefined,
+        );
+
+        if (!nexusData) return;
+
+        setNewPosts((prev) => {
+          return prev.map((post) => {
+            if (post.details.id === nexusData.details.id) {
+              return {
+                ...post,
+                ...nexusData,
+                cached: 'nexus',
+              };
+            }
+            return post;
+          });
+        });
+      } catch (error) {
+        console.error('Error fetching Nexus data:', error);
+      }
+    };
+
+    const interval = setInterval(fetchNexusData, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [newPosts, pubky, reach, sort, tagsFeed, start]);
 
   return (
     <div id="timeline" className="flex flex-col gap-3">

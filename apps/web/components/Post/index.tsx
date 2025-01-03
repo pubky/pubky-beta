@@ -137,9 +137,27 @@ export default function Post({
                     className={twMerge(
                       line && 'ml-6',
                       largeView && 'p-12 inline-flex flex-row gap-12',
+                      'relative',
                       rest.className,
                     )}
                   >
+                    <div className="absolute top-3 right-3 flex gap-1">
+                      <Icon.CheckCircle
+                        size="16"
+                        color={
+                          post?.cached === 'homeserver' ||
+                          post?.cached === 'nexus'
+                            ? '#00BA7C'
+                            : 'white'
+                        }
+                        opacity={0.2}
+                      />
+                      <Icon.CheckCircle
+                        size="16"
+                        color={post?.cached === 'nexus' ? '#00BA7C' : 'white'}
+                        opacity={0.2}
+                      />
+                    </div>
                     <div className="flex-col justify-between inline-flex">
                       <div>
                         <Header post={post} largeView={largeView} />
