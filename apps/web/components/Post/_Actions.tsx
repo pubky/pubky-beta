@@ -69,15 +69,20 @@ const BookmarkButton = ({
 const MenuButton = ({
   showMenu,
   setShowMenu,
+  showSheetMenu,
+  setShowSheetMenu,
   post,
   repost,
 }: {
   showMenu: boolean;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  showSheetMenu: boolean;
+  setShowSheetMenu: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
   repost?: PostView;
 }) => {
   const { pubky } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const { openJoinModal } = useJoinModal();
   return (
     <div
@@ -98,8 +103,18 @@ const MenuButton = ({
         }
         onClick={(event) => {
           event.stopPropagation();
-          pubky ? setShowMenu(!showMenu) : openJoinModal();
+          pubky
+            ? isMobile
+              ? setShowSheetMenu(true)
+              : setShowMenu(!showMenu)
+            : openJoinModal();
         }}
+      />
+      <BottomSheet.Menu
+        post={post}
+        repost={repost}
+        show={showSheetMenu}
+        setShow={setShowSheetMenu}
       />
     </div>
   );
@@ -123,6 +138,7 @@ export default function Actions({
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
   const { addToast } = useToastContext();
   const [showMenu, setShowMenu] = useState(false);
+  const [showSheetMenu, setShowSheetMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
   const [showSheetRepost, setShowSheetRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
@@ -266,6 +282,8 @@ export default function Actions({
         <MenuButton
           showMenu={showMenu}
           setShowMenu={setShowMenu}
+          showSheetMenu={showSheetMenu}
+          setShowSheetMenu={setShowSheetMenu}
           post={post}
           repost={repost}
         />

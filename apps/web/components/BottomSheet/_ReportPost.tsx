@@ -1,24 +1,26 @@
 'use client';
 
+import InputReport from '@/components/Modal/_ReportPost/components/InputReport';
 import { usePubkyClientContext } from '@/contexts';
-import { Button, Icon, Modal, Typography } from '@social/ui-shared';
+import { PostView } from '@/types/Post';
+import { BottomSheet, Button, Icon, Typography } from '@social/ui-shared';
 import axios from 'axios';
 import { useState } from 'react';
-import InputReport from './components/InputReport';
-import { PostView } from '@/types/Post';
 
 interface ReportPostProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  modalReportPostRef: React.RefObject<HTMLDivElement>;
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  title?: string;
+  className?: string;
 }
 
 export default function ReportPost({
-  showModal,
-  setShowModal,
-  modalReportPostRef,
+  show,
+  setShow,
   post,
+  title,
+  className,
 }: ReportPostProps) {
   const { profile, pubky } = usePubkyClientContext();
   const [selectedItem, setSelectedItem] = useState<string>('Privacy');
@@ -59,13 +61,12 @@ export default function ReportPost({
   };
 
   return (
-    <Modal.Root
-      show={showModal}
-      closeModal={() => setShowModal(false)}
-      modalRef={modalReportPostRef}
-      className="lg:w-[588px] max-w-[1200px] max-h-[600] overflow-y-auto"
+    <BottomSheet.Root
+      show={show}
+      setShow={setShow}
+      title={title}
+      className={className}
     >
-      <Modal.CloseAction onClick={() => setShowModal(false)} />
       {showInput ? (
         <>
           <InputReport
@@ -78,12 +79,12 @@ export default function ReportPost({
             setMessage={setMessage}
             handleSubmit={handleSubmit}
             loading={loading}
-            setShowModal={setShowModal}
+            setShowModal={setShow}
           />
         </>
       ) : (
         <>
-          <Modal.Header title="Report Post" />
+          <Typography.H1>Report Post</Typography.H1>
           <Typography.Body className="text-opacity-80 my-6" variant="medium">
             What sort of issue are you reporting?
           </Typography.Body>
@@ -114,7 +115,7 @@ export default function ReportPost({
         <div className="flex gap-4 mt-8">
           <Button.Large
             id="cancel-report"
-            onClick={() => setShowModal(false)}
+            onClick={() => setShow(false)}
             variant="secondary"
           >
             Cancel
@@ -124,6 +125,6 @@ export default function ReportPost({
           </Button.Large>
         </div>
       )}
-    </Modal.Root>
+    </BottomSheet.Root>
   );
 }
