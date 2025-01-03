@@ -702,15 +702,13 @@ export function PubkyClientWrapper({
           ...newPost,
           author: pubky,
           id: postId,
-          indexed_at: Date.now(), // Fixing the type issue by using a number instead of a string
+          indexed_at: Date.now(),
           uri: postUrl,
         },
         counts: { replies: 0, reposts: 0, likes: 0, bookmarks: 0 },
         tags: [],
         cached: 'homeserver',
-      } as unknown as PostView; // Converting to 'unknown' first to avoid type overlap issue
-
-      console.log(newPostView);
+      } as unknown as PostView;
 
       setNewPosts((prev: PostView[]) => [newPostView, ...prev]);
 

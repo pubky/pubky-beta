@@ -84,6 +84,15 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
 
   const handleDeletePost = async () => {
     try {
+      // Close the menu optimistically before deleting the post
+      setShowMenu(false);
+      setTimeline((prevTimeline) =>
+        prevTimeline.filter((p) => p.details.id !== post?.details?.id),
+      );
+      setNewPosts((prevNewPosts) =>
+        prevNewPosts.filter((p) => p.details.id !== post?.details?.id),
+      );
+
       if (post?.details?.attachments) {
         const fileDeletions = Object.values(post?.details?.attachments).map(
           async (file) => {
@@ -97,19 +106,11 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
 
       if (result) {
         addAlert('Post deleted successfully');
-        setTimeline((prevTimeline) =>
-          prevTimeline.filter((p) => p.details.id !== post?.details?.id),
-        );
-        setNewPosts((prevNewPosts) =>
-          prevNewPosts.filter((p) => p.details.id !== post?.details?.id),
-        );
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      setShowMenu(false);
     }
   };
 
