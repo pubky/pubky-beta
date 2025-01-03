@@ -1,67 +1,66 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from '@social/ui-shared';
-import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
-import { UseQueryOptions } from '@tanstack/react-query';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { useStreamPost } from '@/hooks/useStream';
+import { UseQueryOptions } from '@tanstack/react-query';
 
-export const NewPostsNotifier = () => {
+export function NewPostsNotifier() {
   const { reach, sort } = useFilterContext();
   const { timeline, setTimeline, pubky } = usePubkyClientContext();
+
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [newPostsCount, setNewPostsCount] = useState(0);
   const [shouldFetch, setShouldFetch] = useState(false);
-  const [hasFetched, setHasFetched] = useState(false);
-  const [fetchCounter, setFetchCounter] = useState(0);
   const [latestTimestamp, setLatestTimestamp] = useState<number | null>(null);
 
-  // Refs for scroll control
+  // Scroll-related refs
   const lastScrollY = useRef(0);
   const throttleTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  // Update latestTimestamp whenever the timeline changes
+  useEffect(() => {
+    if (timeline.length > 0) {
+      const maxIndexedAt = Math.max(
+        ...timeline.map((p) => p.details.indexed_at),
+      );
+      setLatestTimestamp(maxIndexedAt);
+    } else {
+      setLatestTimestamp(null);
+    }
+  }, [timeline]);
+
+  // Scroll handler to check if user scrolled up near the top
   const handleScroll = useCallback(() => {
-    // Cancel if there's a pending timeout
     if (throttleTimeout.current) return;
 
     throttleTimeout.current = setTimeout(() => {
       const currentScrollY = window.scrollY;
-
-      // Check if scrolling up and within top 300px
       const isScrollingUp = currentScrollY < lastScrollY.current;
       const isNearTop = currentScrollY < 300;
 
-      if (isScrollingUp && isNearTop && !hasFetched) {
+      // If user scrolls up and we're near the top, trigger fetch
+      if (isScrollingUp && isNearTop) {
         setShouldFetch(true);
-        setFetchCounter((prev) => prev + 1);
       }
 
       lastScrollY.current = currentScrollY;
       throttleTimeout.current = null;
-    }, 500); // Wait 500ms between each check
-  }, [hasFetched]);
+    }, 500);
+  }, []);
 
+  // Add/remove the scroll event listener
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      // Clear pending timeout when unmounting
-      if (throttleTimeout.current) {
-        clearTimeout(throttleTimeout.current);
-      }
+      if (throttleTimeout.current) clearTimeout(throttleTimeout.current);
     };
   }, [handleScroll]);
 
-  useEffect(() => {
-    if (timeline.length > 0) {
-      const mostRecentTimestamp = Math.max(
-        ...timeline.map((post) => post.details.indexed_at),
-      );
-      setLatestTimestamp(mostRecentTimestamp);
-    }
-  }, [timeline]);
-
+  // Query: fetch posts newer than the latestTimestamp
   const { data: newPostsData } = useStreamPost(
     pubky ?? '',
     reach,
@@ -74,50 +73,44 @@ export const NewPostsNotifier = () => {
     undefined,
     {
       enabled: shouldFetch && latestTimestamp !== null,
-      queryKey: ['stream-posts', fetchCounter, latestTimestamp],
+      queryKey: ['new-posts', latestTimestamp],
     } as UseQueryOptions<unknown, Error>,
   );
 
+  // Process new data
   useEffect(() => {
-    if (!newPostsData) return;
-    if (!Array.isArray(newPostsData)) return;
+    if (!newPostsData || !Array.isArray(newPostsData)) return;
 
     if (newPostsData.length > 0) {
-      const filteredNewPosts = newPostsData.filter(
+      const filtered = newPostsData.filter(
         (post: PostView) =>
-          post.details.indexed_at > (latestTimestamp || 0) &&
-          !newPosts.some((p) => p.details.id === post.details.id) &&
-          !timeline.some((p) => p.details.id === post.details.id),
+          !timeline.some((p) => p.details.id === post.details.id) &&
+          !newPosts.some((p) => p.details.id === post.details.id),
       );
 
-      if (filteredNewPosts.length > 0) {
-        setNewPosts((prev) => [...prev, ...filteredNewPosts]);
-        setNewPostsCount((prev) => prev + filteredNewPosts.length);
+      if (filtered.length > 0) {
+        setNewPosts((prev) => [...prev, ...filtered]);
+        setNewPostsCount((prev) => prev + filtered.length);
 
-        // Update latestTimestamp with the most recent post
-        const newMostRecent = Math.max(
-          ...filteredNewPosts.map((post) => post.details.indexed_at),
+        const newMaxTimestamp = Math.max(
+          ...filtered.map((p) => p.details.indexed_at),
         );
-        setLatestTimestamp((prev) => Math.max(prev || 0, newMostRecent));
+        setLatestTimestamp((prev) => {
+          if (prev === null) return newMaxTimestamp;
+          return Math.max(prev, newMaxTimestamp);
+        });
       }
     }
 
-    setHasFetched(true);
     setShouldFetch(false);
-  }, [newPostsData, newPosts, timeline, latestTimestamp]);
+  }, [newPostsData, newPosts, timeline]);
 
+  // Handler to merge new posts into the main timeline
   const handleShowNewPosts = () => {
-    const uniqueNewPosts = newPosts.filter(
-      (newPost) =>
-        !timeline.some((post) => post.details.id === newPost.details.id),
-    );
+    setTimeline((prev) => [...newPosts, ...prev]);
     setNewPosts([]);
-    setTimeline((prev) => [...uniqueNewPosts, ...prev]);
     setNewPostsCount(0);
-    setHasFetched(false);
     setShouldFetch(false);
-    setFetchCounter(0);
-    lastScrollY.current = window.scrollY;
   };
 
   return (
@@ -133,4 +126,4 @@ export const NewPostsNotifier = () => {
       )}
     </>
   );
-};
+}
