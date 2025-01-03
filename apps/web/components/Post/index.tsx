@@ -142,21 +142,25 @@ export default function Post({
                     )}
                   >
                     <div className="absolute top-3 right-3 flex gap-1">
-                      <Icon.CheckCircle
-                        size="16"
-                        color={
-                          post?.cached === 'homeserver' ||
-                          post?.cached === 'nexus'
-                            ? '#00BA7C'
-                            : 'white'
-                        }
-                        opacity={0.2}
-                      />
-                      <Icon.CheckCircle
-                        size="16"
-                        color={post?.cached === 'nexus' ? '#00BA7C' : 'white'}
-                        opacity={0.2}
-                      />
+                      <Tooltip.TooltipCheckMark content="Saved in your homeserver">
+                        <Icon.CheckCircle
+                          size="16"
+                          color={
+                            post?.cached === 'homeserver' ||
+                            post?.cached === 'nexus'
+                              ? '#00BA7C'
+                              : 'white'
+                          }
+                          opacity={0.2}
+                        />
+                      </Tooltip.TooltipCheckMark>
+                      <Tooltip.TooltipCheckMark content="Indexed by PubkyApp">
+                        <Icon.CheckCircle
+                          size="16"
+                          color={post?.cached === 'nexus' ? '#00BA7C' : 'white'}
+                          opacity={0.2}
+                        />
+                      </Tooltip.TooltipCheckMark>
                     </div>
                     <div className="flex-col justify-between inline-flex">
                       <div>

@@ -84,19 +84,21 @@ export default function Header({
           <span className="md:hidden">{Utils.timeAgo(indexed_at, true)}</span>
         </PostUI.Time>
         <div className="inline-flex items-center gap-0">
-          <div className="relative left-[13px] z-0 top-[2px]">
-            <Icon.Check size="20" color={'#00BA7C'} opacity={1} />
-          </div>
-          <div className="relative z-10 top-[2px]">
-            <Icon.Check
-              size="20"
-              color={
-                post?.cached === 'nexus' || post?.cached === undefined
-                  ? '#00BA7C'
-                  : '#737373'
-              }
-              opacity={post?.cached === 'nexus' ? 1 : 0.2}
-            />
+          <Tooltip.TooltipCheckMark content="Saved in your homeserver">
+            <div className="relative left-[13px] z-0 top-[2px]">
+              <Icon.Check size="20" color={'#00BA7C'} opacity={1} />
+            </div>
+          </Tooltip.TooltipCheckMark>
+          <div className="relative z-10 top-[5px]">
+            {post?.cached === 'nexus' || post?.cached === undefined ? (
+              <Tooltip.TooltipCheckMark content={'Indexed by Pubky Nexus'}>
+                <Icon.Check size="20" color={'#00BA7C'} opacity={1} />
+              </Tooltip.TooltipCheckMark>
+            ) : (
+              <Tooltip.TooltipCheckMark content={'Indexing...'}>
+                <Icon.Check size="20" color={'#A3A3A3'} opacity={0.2} />
+              </Tooltip.TooltipCheckMark>
+            )}
           </div>
         </div>
       </div>
