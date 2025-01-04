@@ -14,7 +14,7 @@ import Feedback from './_Feedback';
 import FilesCarousel from './_FilesCarousel';
 import Link from './_Link';
 import Logout from './_Logout';
-import ProfileTag from './_ProfileTag';
+import ProfileTag from './_TagProfile';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
 import SearchedUsersCard from './_SearchedUsersCard';
