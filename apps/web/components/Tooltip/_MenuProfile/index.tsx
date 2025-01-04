@@ -2,10 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Tooltip } from '@social/ui-shared';
-import { usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
-import { ButtonTooltip } from './Button';
-import Modal from '../Modal';
+import Modal from '@/components/Modal';
+import ContentProfileMenu from './_Content';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,7 +17,6 @@ export default function ProfileMenu({
   creatorPubky,
   profile,
 }: TooltipProfileMenuProps) {
-  const { pubky } = usePubkyClientContext();
   const [showModalReportProfile, setShowModalReportProfile] = useState(false);
   const tooltipProfileMenuRef = useRef<HTMLDivElement>(null);
   const modalReportProfileRef = useRef<HTMLDivElement>(null);
@@ -55,26 +53,11 @@ export default function ProfileMenu({
     <>
       <div ref={tooltipProfileMenuRef}>
         <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px]">
-          {creatorPubky !== pubky && (
-            <ButtonTooltip.Follow
-              pk={creatorPubky}
-              setShowMenu={setShowProfileMenu}
-            />
-          )}
-          {pubky === creatorPubky && (
-            <ButtonTooltip.EditProfile setShowMenu={setShowProfileMenu} />
-          )}
-          <ButtonTooltip.CopyUserPubky
-            pk={creatorPubky}
-            setShowMenu={setShowProfileMenu}
+          <ContentProfileMenu
+            setShowProfileMenu={setShowProfileMenu}
+            setShowModalReportProfile={setShowModalReportProfile}
+            creatorPubky={creatorPubky}
           />
-          <ButtonTooltip.CopyLinkProfile creatorPubky={creatorPubky} />
-          {pubky !== creatorPubky && <ButtonTooltip.Mute pk={creatorPubky} />}
-          {pubky !== creatorPubky && (
-            <ButtonTooltip.ReportProfile
-              setShowModal={setShowModalReportProfile}
-            />
-          )}
         </Tooltip.Main>
       </div>
       {showModalReportProfile && (

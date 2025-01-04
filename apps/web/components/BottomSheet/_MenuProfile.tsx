@@ -1,11 +1,10 @@
 'use client';
 
 import { BottomSheet as BottomSheetUI } from '@social/ui-shared';
-import { ButtonTooltip } from '../Tooltip/Button';
-import { usePubkyClientContext } from '@/contexts';
 import { useState } from 'react';
 import { UserView } from '@/types/User';
 import { BottomSheet } from '.';
+import ContentProfileMenu from '../Tooltip/_MenuProfile/_Content';
 
 interface MenuProfileProps {
   show: boolean;
@@ -24,7 +23,6 @@ export default function MenuProfile({
   title,
   className,
 }: MenuProfileProps) {
-  const { pubky } = usePubkyClientContext();
   const [showSheetReportProfile, setShowSheetReportProfile] = useState(false);
 
   return (
@@ -34,18 +32,11 @@ export default function MenuProfile({
       title={title}
       className={className}
     >
-      {creatorPubky !== pubky && (
-        <ButtonTooltip.Follow pk={creatorPubky} setShowMenu={setShow} />
-      )}
-      {pubky === creatorPubky && (
-        <ButtonTooltip.EditProfile setShowMenu={setShow} />
-      )}
-      <ButtonTooltip.CopyUserPubky pk={creatorPubky} setShowMenu={setShow} />
-      <ButtonTooltip.CopyLinkProfile creatorPubky={creatorPubky} />
-      {pubky !== creatorPubky && <ButtonTooltip.Mute pk={creatorPubky} />}
-      {pubky !== creatorPubky && (
-        <ButtonTooltip.ReportProfile setShowModal={setShowSheetReportProfile} />
-      )}
+      <ContentProfileMenu
+        setShowProfileMenu={setShow}
+        setShowModalReportProfile={setShowSheetReportProfile}
+        creatorPubky={creatorPubky}
+      />
       {showSheetReportProfile && (
         <BottomSheet.ReportProfile
           show={showSheetReportProfile}
