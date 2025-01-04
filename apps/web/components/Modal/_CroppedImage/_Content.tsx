@@ -10,14 +10,12 @@ interface CroppedArea {
 }
 
 interface CroppedImageProps {
-  showModalCroppedImage: boolean;
   setShowModalCroppedImage: React.Dispatch<React.SetStateAction<boolean>>;
   image: string | undefined;
   setImage: React.Dispatch<React.SetStateAction<File | string | undefined>>;
 }
 
-export default function CroppedImage({
-  showModalCroppedImage,
+export default function ContentCroppedImage({
   setShowModalCroppedImage,
   image,
   setImage,
@@ -102,14 +100,7 @@ export default function CroppedImage({
   };
 
   return (
-    <Modal.Root
-      show={showModalCroppedImage}
-      closeModal={() => setShowModalCroppedImage(false)}
-      modalRef={modalCroppedImageRef}
-      className="max-w-[1200px] md:min-w-[588px] max-h-[600px] overflow-y-auto"
-    >
-      <Modal.CloseAction onClick={() => setShowModalCroppedImage(false)} />
-      <Modal.Header title="Cropped Image" />
+    <>
       <div className="relative h-[400px] bg-white bg-opacity-20 border-2 border-white border-opacity-20 rounded-2xl mt-4">
         <Cropper
           image={image}
@@ -135,6 +126,6 @@ export default function CroppedImage({
           Done
         </Modal.SubmitAction>
       </div>
-    </Modal.Root>
+    </>
   );
 }
