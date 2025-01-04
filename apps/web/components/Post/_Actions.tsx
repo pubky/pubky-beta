@@ -292,7 +292,7 @@ export default function Actions({
         className="cursor-default"
         onClick={(event) => event.stopPropagation()}
       >
-        <Modal.Repost
+        <Modal.CreateRepost
           post={post}
           showModalRepost={showModalRepost}
           setShowModalRepost={setShowModalRepost}

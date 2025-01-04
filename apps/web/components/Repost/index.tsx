@@ -15,7 +15,7 @@ export default function Repost({
   post,
 }: RepostProps) {
   return (
-    <Modal.Repost
+    <Modal.CreateRepost
       post={post}
       showModalRepost={showModalRepost}
       setShowModalRepost={setShowModalRepost}

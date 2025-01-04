@@ -1,26 +1,22 @@
-import { Button, Icon, Modal } from '@social/ui-shared';
-import { useRef, useState } from 'react';
+import { Button, Icon } from '@social/ui-shared';
+import { useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import Post from '../Post';
 
-import CreateContent from '../CreateContent';
 import { PostView } from '@/types/Post';
-import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import CreateContent from '@/components/CreateContent';
+import Post from '@/components/Post';
 
 interface CreateRepostProps {
-  showModalRepost: boolean;
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
 }
 
-export default function Repost({
-  showModalRepost,
+export default function ContentCreateRepost({
   setShowModalRepost,
   post,
 }: CreateRepostProps) {
   const { pubky, createRepost, createTag } = usePubkyClientContext();
-  const modalRepostRef = useRef<HTMLDivElement>(null);
   const { addAlert } = useAlertContext();
   const [contentRepost, setContentRepost] = useState('');
   const [isValidContent, setIsValidContent] = useState(false);
@@ -29,8 +25,6 @@ export default function Repost({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
-
-    useDrawerClickOutside(modalRepostRef, () => setShowModalRepost(false));
 
   const handleSubmitRepost = async (content: string) => {
     if (sendingRepost) {
@@ -102,68 +96,50 @@ export default function Repost({
   };
 
   return (
-    <Modal.Root
-      modalRef={modalRepostRef}
-      show={showModalRepost}
-      closeModal={() => {
-        setShowModalRepost(false);
-        setArrayTags([]);
-      }}
-      className="md:w-[792px] max-w-[1200px] max-h-[600px] overflow-y-auto"
-    >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalRepost(false);
-          setArrayTags([]);
-          setContentRepost('');
-        }}
-      />
-      <Modal.Header title="Repost" />
-      <div className="flex items-center relative">
-        <div className="w-full mt-6">
-          <CreateContent
-            id="repost-create-content"
-            handleSubmit={handleSubmitRepost}
-            content={contentRepost}
-            setContent={setContentRepost}
-            isValidContent={isValidContent}
-            setIsValidContent={setIsValidContent}
-            selectedFiles={selectedFiles}
-            setSelectedFiles={setSelectedFiles}
-            loading={sendingRepost}
-            arrayTags={arrayTags}
-            setArrayTags={setArrayTags}
-            placeHolder="Optional comment"
-            button={
-              <Button.Medium
-                id="repost-btn"
-                className="w-auto"
-                variant="line"
-                loading={sendingRepost}
-                onClick={
-                  !sendingRepost
-                    ? isValidContent || selectedFiles.length > 0
-                      ? () => handleSubmitRepost(contentRepost)
-                      : () => handleSubmitQuickRepost()
-                    : undefined
-                }
-                icon={<Icon.Repost color="white" />}
-              >
-                Repost
-              </Button.Medium>
-            }
-            autoFocus
-            visibleTextArea
-          >
-            <Post
-              post={post}
-              repostView
-              className="mt-2 max-h-[600px] overflow-y-auto"
-              //rounded-bl-none
-            />
-          </CreateContent>
-        </div>
+    <div className="flex items-center relative">
+      <div className="w-full">
+        <CreateContent
+          id="repost-create-content"
+          handleSubmit={handleSubmitRepost}
+          content={contentRepost}
+          setContent={setContentRepost}
+          isValidContent={isValidContent}
+          setIsValidContent={setIsValidContent}
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          loading={sendingRepost}
+          arrayTags={arrayTags}
+          setArrayTags={setArrayTags}
+          placeHolder="Optional comment"
+          button={
+            <Button.Medium
+              id="repost-btn"
+              className="w-auto"
+              variant="line"
+              loading={sendingRepost}
+              onClick={
+                !sendingRepost
+                  ? isValidContent || selectedFiles.length > 0
+                    ? () => handleSubmitRepost(contentRepost)
+                    : () => handleSubmitQuickRepost()
+                  : undefined
+              }
+              icon={<Icon.Repost color="white" />}
+            >
+              Repost
+            </Button.Medium>
+          }
+          autoFocus
+          visibleTextArea
+        >
+          <Post
+            post={post}
+            repostView
+            className="mt-2 max-h-[600px] overflow-y-auto"
+            //rounded-bl-none
+          />
+        </CreateContent>
       </div>
-    </Modal.Root>
+    </div>
   );
 }

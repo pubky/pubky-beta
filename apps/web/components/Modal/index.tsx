@@ -4,6 +4,7 @@ import CreateArticle from './_CreateArticle';
 import CreateFeed from './_CreateFeed';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
+import CreateRepost from './_CreateRepost';
 import CroppedImage from './_CroppedImage';
 import DeleteAccount from './_DeleteAccount';
 import DeletePost from './_DeletePost';
@@ -16,7 +17,6 @@ import Logout from './_Logout';
 import ProfileTag from './_ProfileTag';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
-import Repost from './_Repost';
 import SearchedUsersCard from './_SearchedUsersCard';
 import SearchInputCard from './_SearchInputCard';
 import SessionExpired from './_SessionExpired';
@@ -30,6 +30,7 @@ export const Modal = {
   CreateFeed,
   CreatePost,
   CreateReply,
+  CreateRepost,
   CroppedImage,
   DeleteAccount,
   DeletePost,
@@ -42,7 +43,6 @@ export const Modal = {
   ProfileTag,
   ReportPost,
   ReportProfile,
-  Repost,
   SearchedUsersCard,
   SearchInputCard,
   SessionExpired,
