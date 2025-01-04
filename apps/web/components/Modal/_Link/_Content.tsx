@@ -20,16 +20,12 @@ const socialLinks = [
 ];
 
 interface LinkProps {
-  showModalLink: boolean;
   setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
-  modalLinkRef: React.RefObject<HTMLDivElement>;
   onAddLink: (title: string, url: string) => void;
 }
 
-export default function Link({
-  showModalLink,
+export default function ContentLink({
   setShowModalLink,
-  modalLinkRef,
   onAddLink,
 }: LinkProps) {
   const [title, setTitle] = useState('');
@@ -68,14 +64,7 @@ export default function Link({
   };
 
   return (
-    <Modal.Root
-      show={showModalLink}
-      closeModal={() => setShowModalLink(false)}
-      modalRef={modalLinkRef}
-      className="sm:w-[592px] h-[480px] justify-start"
-    >
-      <Modal.CloseAction onClick={() => setShowModalLink(false)} />
-      <Modal.Header id="add-profile-link-header" title="Add Profile Link" />
+    <>
       {showHints ? (
         <div className="flex flex-wrap gap-1.5 mt-2">
           <div
@@ -164,6 +153,6 @@ export default function Link({
           </div>
         </>
       )}
-    </Modal.Root>
+    </>
   );
 }
