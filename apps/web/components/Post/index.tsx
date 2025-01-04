@@ -57,7 +57,8 @@ export default function Post({
   ...rest
 }: PostProps) {
   const router = useRouter();
-  const { pubky, deletePost } = usePubkyClientContext();
+  const { pubky, deletePost, setTimeline, setNewPosts } =
+    usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const isMobile = useIsMobile();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
@@ -72,6 +73,12 @@ export default function Post({
     const result = await deletePost(post?.details?.id);
     if (result) {
       addAlert('Post deleted successfully');
+      setTimeline((prevTimeline) =>
+        prevTimeline.filter((p) => p.details.id !== post?.details?.id),
+      );
+      setNewPosts((prevNewPosts) =>
+        prevNewPosts.filter((p) => p.details.id !== post?.details?.id),
+      );
     } else {
       addAlert('Something wrong. Try again', 'warning');
     }
@@ -133,9 +140,31 @@ export default function Post({
                     className={twMerge(
                       line && 'ml-6',
                       largeView && 'p-12 inline-flex flex-row gap-12',
+                      'relative',
                       rest.className,
                     )}
                   >
+                    <div className="absolute top-3 right-3 flex gap-1">
+                      <Tooltip.TooltipCheckMark content="Saved in your homeserver">
+                        <Icon.CheckCircle
+                          size="16"
+                          color={
+                            post?.cached === 'homeserver' ||
+                            post?.cached === 'nexus'
+                              ? '#00BA7C'
+                              : 'white'
+                          }
+                          opacity={0.2}
+                        />
+                      </Tooltip.TooltipCheckMark>
+                      <Tooltip.TooltipCheckMark content="Indexed by PubkyApp">
+                        <Icon.CheckCircle
+                          size="16"
+                          color={post?.cached === 'nexus' ? '#00BA7C' : 'white'}
+                          opacity={0.2}
+                        />
+                      </Tooltip.TooltipCheckMark>
+                    </div>
                     <div className="flex-col justify-between inline-flex">
                       <div>
                         <Header post={post} largeView={largeView} />
@@ -148,9 +177,7 @@ export default function Post({
                       <RepostedPost
                         repostedPost={repostedPost}
                         loadingRepostedPost={loadingRepostedPost}
-                        //largeView={largeView}
                         fullContent={fullContent}
-                        //line={line}
                         lineStyle={lineStyle}
                         repostView
                         showModalTag={showModalTag}
@@ -259,7 +286,6 @@ export default function Post({
                         loadingRepostedPost={loadingRepostedPost}
                         largeView={largeView}
                         fullContent={fullContent}
-                        //line={line}
                         lineStyle={lineStyle}
                         repostView={repostView}
                         showModalTag={showModalTag}

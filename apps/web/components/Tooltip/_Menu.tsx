@@ -14,7 +14,8 @@ interface TooltipMenuProps {
 }
 
 export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
-  const { pubky, deleteFile, deletePost } = usePubkyClientContext();
+  const { pubky, deleteFile, deletePost, setTimeline, setNewPosts } =
+    usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [showModalReportPost, setShowModalReportPost] = useState(false);
@@ -83,6 +84,15 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
 
   const handleDeletePost = async () => {
     try {
+      // Close the menu optimistically before deleting the post
+      setShowMenu(false);
+      setTimeline((prevTimeline) =>
+        prevTimeline.filter((p) => p.details.id !== post?.details?.id),
+      );
+      setNewPosts((prevNewPosts) =>
+        prevNewPosts.filter((p) => p.details.id !== post?.details?.id),
+      );
+
       if (post?.details?.attachments) {
         const fileDeletions = Object.values(post?.details?.attachments).map(
           async (file) => {
@@ -101,8 +111,6 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      setShowMenu(false);
     }
   };
 

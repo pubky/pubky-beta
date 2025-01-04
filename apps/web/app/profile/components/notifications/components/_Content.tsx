@@ -57,7 +57,7 @@ export default function Index() {
 
   return (
     <Content.Main>
-      <Header className="hidden md:block" title="Notifications" />
+      <Header title="Notifications" />
       <Content.Grid className="flex w-full justify-between items-start gap-12">
         <Root>{renderNotifications(notifications, loadingNotifications)}</Root>
         <Sidebar className="self-start sticky top-[120px] hidden xl:block w-[20%]">
