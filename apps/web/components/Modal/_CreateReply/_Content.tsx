@@ -1,20 +1,18 @@
-import { Button, Icon, Modal } from '@social/ui-shared';
-import { useEffect, useRef, useState } from 'react';
+import { Button, Icon } from '@social/ui-shared';
+import { useEffect, useState } from 'react';
 
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import Post from '../Post';
-import CreateContent from '../CreateContent';
 import { PostView } from '@/types/Post';
+import Post from '@/components/Post';
+import CreateContent from '@/components/CreateContent';
 
 interface CreateReplyProps {
-  showModalReply: boolean;
   setShowModalReply: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
 }
 
-export default function CreateReply({
-  showModalReply,
+export default function ContentCreateReply({
   setShowModalReply,
   post,
 }: CreateReplyProps) {
@@ -23,7 +21,6 @@ export default function CreateReply({
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
-  const modalReplyRef = useRef<HTMLDivElement>(null);
   const [isValidContent, setIsValidContent] = useState(false);
   const [quote, setQuote] = useState<string>();
   const [placeholder, setPlaceholder] = useState('');
@@ -83,41 +80,8 @@ export default function CreateReply({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutsideModals = (event: MouseEvent) => {
-      if (
-        modalReplyRef.current &&
-        !modalReplyRef.current.contains(event.target as Node)
-      ) {
-        setShowModalReply(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideModals);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModals);
-    };
-  }, [modalReplyRef, setShowModalReply]);
-
   return (
-    <Modal.Root
-      modalRef={modalReplyRef}
-      show={showModalReply}
-      closeModal={() => {
-        setShowModalReply(false);
-        setArrayTags([]);
-      }}
-      className="md:w-[792px] max-w-[1200px] max-h-[600px] overflow-y-auto"
-    >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalReply(false);
-          setArrayTags([]);
-          setContentReply('');
-        }}
-      />
-      <Modal.Header title="Reply" />
+    <>
       <Post
         post={post}
         repostView
@@ -173,6 +137,6 @@ export default function CreateReply({
           />
         </div>
       </div>
-    </Modal.Root>
+    </>
   );
 }
