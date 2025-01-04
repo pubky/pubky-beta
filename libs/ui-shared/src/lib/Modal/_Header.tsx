@@ -9,7 +9,9 @@ interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Header = ({ id, title, children, ...rest }: HeaderProps) => {
   return (
     <div className="flex">
-      <Typography.H1 id={id}>{title}</Typography.H1>
+      <Typography.H1 className="text-2xl md:text-[38px]" id={id}>
+        {title}
+      </Typography.H1>
       <div className="ml-4">
         <div {...rest} className={twMerge(`gap-3 flex`, rest.className)}>
           {children}

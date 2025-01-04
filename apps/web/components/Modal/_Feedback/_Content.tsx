@@ -1,15 +1,14 @@
 'use client';
 
 import { Button, Icon, Input, Modal, Typography } from '@social/ui-shared';
-import { useEffect, useRef } from 'react';
-import { ImageByUri } from '../ImageByUri';
+
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts/_pubky';
 import { PubkyAppUser } from '@/types/Post';
 import Link from 'next/link';
+import { ImageByUri } from '@/components/ImageByUri';
 
 interface FeedbackProps {
-  showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   error: boolean;
   setError: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,8 +21,7 @@ interface FeedbackProps {
   loading: boolean;
 }
 
-export default function Feedback({
-  showModal,
+export default function ContentFeedback({
   setShowModal,
   error,
   setError,
@@ -36,31 +34,9 @@ export default function Feedback({
   loading,
 }: FeedbackProps) {
   const { pubky } = usePubkyClientContext();
-  const modalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutsideModal = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        setShowModal(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModal);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModal);
-    };
-  }, [modalRef, setShowModal]);
   return (
-    <Modal.Root
-      show={showModal}
-      closeModal={() => setShowModal(false)}
-      modalRef={modalRef}
-      className="md:w-[792px] max-h-[600] overflow-y-auto"
-    >
-      <Modal.CloseAction onClick={() => setShowModal(false)} />
+    <>
       {!sent && !error && (
         <>
           <Modal.Header title="Provide Feedback" />
@@ -84,7 +60,7 @@ export default function Feedback({
                   >
                     {Utils.minifyText(
                       profile?.name ?? Utils.minifyPubky(pubky),
-                      24
+                      24,
                     )}
                   </Typography.Body>
                   <div className="flex gap-1 cursor-pointer">
@@ -164,6 +140,6 @@ export default function Feedback({
           </div>
         </>
       )}
-    </Modal.Root>
+    </>
   );
 }
