@@ -1,55 +1,22 @@
 'use client';
 
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
-import { useEffect, useRef } from 'react';
 
 interface DeleteAccountProps {
-  showModalDeleteAccount: boolean;
   setShowModalDeleteAccount: React.Dispatch<React.SetStateAction<boolean>>;
   handleDeleteAccount: () => void;
   deletingAccount: boolean;
   deleteProgress: number;
 }
 
-export default function DeleteAccount({
-  showModalDeleteAccount,
+export default function ContentDeleteAccount({
   setShowModalDeleteAccount,
   handleDeleteAccount,
   deletingAccount,
   deleteProgress,
 }: DeleteAccountProps) {
-  const modalDeleteAccountRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutsideModalDeleteAccount = (event: MouseEvent) => {
-      if (
-        modalDeleteAccountRef.current &&
-        !modalDeleteAccountRef.current.contains(event.target as Node)
-      ) {
-        setShowModalDeleteAccount(false);
-      }
-    };
-    document.addEventListener(
-      'mousedown',
-      handleClickOutsideModalDeleteAccount,
-    );
-
-    return () => {
-      document.removeEventListener(
-        'mousedown',
-        handleClickOutsideModalDeleteAccount,
-      );
-    };
-  }, [modalDeleteAccountRef, setShowModalDeleteAccount]);
   return (
-    <Modal.Root
-      show={showModalDeleteAccount}
-      closeModal={() => setShowModalDeleteAccount(false)}
-      modalRef={modalDeleteAccountRef}
-      className="max-w-[1200px] md:min-w-[588px] max-h-[600px] overflow-y-auto"
-    >
-      <Modal.CloseAction onClick={() => setShowModalDeleteAccount(false)} />
-      <Modal.Header title="Delete Account" />
+    <>
       <Typography.Body className="text-opacity-60 my-4" variant="medium">
         Are you sure? Your account information cannot be recovered.
       </Typography.Body>
@@ -74,6 +41,6 @@ export default function DeleteAccount({
             : 'Delete Account'}
         </Modal.SubmitAction>
       </div>
-    </Modal.Root>
+    </>
   );
 }
