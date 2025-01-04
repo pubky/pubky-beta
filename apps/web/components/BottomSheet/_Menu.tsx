@@ -1,11 +1,11 @@
 'use client';
 
 import { BottomSheet as BottomSheetUI } from '@social/ui-shared';
-import { ButtonTooltip } from '../Tooltip/Button';
 import { useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import { BottomSheet } from '.';
+import ContentMenu from '../Tooltip/_Menu/_Content';
 
 interface MenuProps {
   show: boolean;
@@ -23,7 +23,7 @@ export default function Menu({
   title,
   className,
 }: MenuProps) {
-  const { pubky, deleteFile, deletePost } = usePubkyClientContext();
+  const { deleteFile, deletePost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [showSheetDeletePost, setShowSheetDeletePost] = useState(false);
   const [showSheetReportPost, setShowSheetReportPost] = useState(false);
@@ -61,37 +61,14 @@ export default function Menu({
       title={title}
       className={className}
     >
-      {post?.details?.author !== pubky && (
-        <ButtonTooltip.Follow
-          pk={post?.details?.author}
-          setShowMenu={setShow}
-        />
-      )}
-      {/**post?.details?.author === pubky && (
-            <ButtonTooltip.EditProfile setShowMenu={setShowMenu}/>
-          )*/}
-      <ButtonTooltip.EditPost
+      <ContentMenu
         post={post}
-        setShowModalEditArticle={setShowSheetEditArticle}
-        setShowModalEditPost={setShowSheetEditPost}
-      />
-      <ButtonTooltip.CopyUserPubky
-        pk={post?.details?.author}
         setShowMenu={setShow}
-      />
-      <ButtonTooltip.CopyLinkPost post={post} setShowMenu={setShow} />
-      <ButtonTooltip.CopyTextPost post={post} setShowMenu={setShow} />
-      {/**<ButtonTooltip.Bookmark post={post} repost={repost} setShowMenu={setShowMenu} />*/}
-      {post?.details?.author !== pubky && (
-        <ButtonTooltip.Mute pk={post?.details?.author} />
-      )}
-      <ButtonTooltip.DeletePost
-        post={post}
         setShowModalDeletePost={setShowSheetDeletePost}
+        setShowModalReportPost={setShowSheetReportPost}
+        setShowModalEditPost={setShowSheetEditPost}
+        setShowModalEditArticle={setShowSheetEditArticle}
       />
-      {post?.details?.author !== pubky && (
-        <ButtonTooltip.ReportPost setShowModal={setShowSheetReportPost} />
-      )}
       {showSheetDeletePost && (
         <BottomSheet.DeletePost
           show={showSheetDeletePost}

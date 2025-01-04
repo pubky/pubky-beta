@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Tooltip } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
-import { ButtonTooltip } from './Button';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
-import Modal from '../Modal';
+import ContentMenu from './_Content';
+import Modal from '@/components/Modal';
 
 interface TooltipMenuProps {
   post: PostView;
@@ -14,7 +14,7 @@ interface TooltipMenuProps {
 }
 
 export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
-  const { pubky, deleteFile, deletePost, setTimeline, setNewPosts } =
+  const { deleteFile, deletePost, setTimeline, setNewPosts } =
     usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
@@ -121,37 +121,14 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
           id="post-tooltip-menu"
           className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px] z-40"
         >
-          {post?.details?.author !== pubky && (
-            <ButtonTooltip.Follow
-              pk={post?.details?.author}
-              setShowMenu={setShowMenu}
-            />
-          )}
-          {/**post?.details?.author === pubky && (
-            <ButtonTooltip.EditProfile setShowMenu={setShowMenu}/>
-          )*/}
-          <ButtonTooltip.EditPost
+          <ContentMenu
             post={post}
-            setShowModalEditArticle={setShowModalEditArticle}
-            setShowModalEditPost={setShowModalEditPost}
-          />
-          <ButtonTooltip.CopyUserPubky
-            pk={post?.details?.author}
             setShowMenu={setShowMenu}
-          />
-          <ButtonTooltip.CopyLinkPost post={post} setShowMenu={setShowMenu} />
-          <ButtonTooltip.CopyTextPost post={post} setShowMenu={setShowMenu} />
-          {/**<ButtonTooltip.Bookmark post={post} repost={repost} setShowMenu={setShowMenu} />*/}
-          {post?.details?.author !== pubky && (
-            <ButtonTooltip.Mute pk={post?.details?.author} />
-          )}
-          <ButtonTooltip.DeletePost
-            post={post}
             setShowModalDeletePost={setShowModalDeletePost}
+            setShowModalReportPost={setShowModalReportPost}
+            setShowModalEditPost={setShowModalEditPost}
+            setShowModalEditArticle={setShowModalEditArticle}
           />
-          {post?.details?.author !== pubky && (
-            <ButtonTooltip.ReportPost setShowModal={setShowModalReportPost} />
-          )}
         </Tooltip.Main>
       </div>
       {showModalDeletePost && (
