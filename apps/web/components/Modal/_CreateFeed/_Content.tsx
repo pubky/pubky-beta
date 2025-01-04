@@ -1,19 +1,11 @@
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { ICustomFeed } from '@/types';
-import {
-  Button,
-  Icon,
-  Input,
-  Modal,
-  PostUtil,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, Input, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface CreateFeedProps {
-  showModalCreateFeed: boolean;
   setShowModalCreateFeed: React.Dispatch<React.SetStateAction<boolean>>;
   setTagsFeed: React.Dispatch<React.SetStateAction<string[]>>;
   tagsFeed: string[];
@@ -39,8 +31,7 @@ const iconsLayout = {
   visual: <Icon.SquaresFour color="gray" />,
 };
 
-export default function CreateFeed({
-  showModalCreateFeed,
+export default function ContentCreateFeed({
   setShowModalCreateFeed,
   setTagsFeed,
   tagsFeed,
@@ -50,7 +41,6 @@ export default function CreateFeed({
 }: CreateFeedProps) {
   const { searchTags } = usePubkyClientContext();
   const { reach, layout, sort } = useFilterContext();
-  const modalCreateFeedRef = useRef<HTMLDivElement>(null);
   const [tag, setTag] = useState('');
   const [tagsError, setTagsError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -114,23 +104,6 @@ export default function CreateFeed({
   };
 
   useEffect(() => {
-    const handleClickOutsideModals = (event: MouseEvent) => {
-      if (
-        modalCreateFeedRef.current &&
-        !modalCreateFeedRef.current.contains(event.target as Node)
-      ) {
-        setShowModalCreateFeed(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideModals);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModals);
-    };
-  }, [modalCreateFeedRef, setShowModalCreateFeed]);
-
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         wrapperRefEmojis.current &&
@@ -147,22 +120,7 @@ export default function CreateFeed({
   }, [wrapperRefEmojis]);
 
   return (
-    <Modal.Root
-      modalRef={modalCreateFeedRef}
-      show={showModalCreateFeed}
-      closeModal={() => {
-        setShowModalCreateFeed(false);
-        setTagsFeed([]);
-      }}
-      className="md:w-[620px] max-h-[600px] overflow-y-auto justify-start"
-    >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalCreateFeed(false);
-          setTagsFeed([]);
-        }}
-      />
-      <Modal.Header title="Save Feed" />
+    <>
       <div className="my-4 flex flex-col sm:flex-row gap-8">
         <div className="w-full order-2 sm:order-1">
           <div>
@@ -216,6 +174,7 @@ export default function CreateFeed({
                   <Button.Action
                     id="emoji-btn"
                     variant="custom"
+                    className="hidden lg:flex"
                     icon={<Icon.Smiley size="32" />}
                     size="medium"
                     onClick={(event) => {
@@ -326,6 +285,6 @@ export default function CreateFeed({
       >
         Save Feed
       </Button.Medium>
-    </Modal.Root>
+    </>
   );
 }
