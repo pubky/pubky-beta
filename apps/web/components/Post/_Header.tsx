@@ -91,7 +91,7 @@ export default function Header({
               <Icon.Check size="20" color={'#00BA7C'} opacity={1} />
             </div>
           </Tooltip.TooltipCheckMark>
-          <div className="relative z-10 top-[5px]">
+          <div className="relative top-[5px]">
             {post?.cached === 'nexus' || post?.cached === undefined ? (
               <Tooltip.TooltipCheckMark content={'Indexed by Pubky Nexus'}>
                 <Icon.Check size="20" color={'#00BA7C'} opacity={1} />

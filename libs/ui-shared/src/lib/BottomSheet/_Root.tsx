@@ -19,7 +19,7 @@ export default function Root({
 }: RootBottomSheetProps) {
   const bottomSheetRef = useRef<HTMLDivElement>(null);
   const baseCSS =
-    'max-h-screen overflow-y-auto min-h-[420px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-24 border border-white border-opacity-20';
+    'max-h-screen overflow-y-auto min-h-[420px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-24 border border-white border-opacity-20 z-50';
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
