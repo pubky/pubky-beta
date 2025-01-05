@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, Typography } from '@social/ui-shared';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface RootBottomSheetProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -10,6 +10,7 @@ interface RootBottomSheetProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   children?: React.ReactNode;
 }
+
 export default function Root({
   show,
   setShow,
@@ -18,9 +19,24 @@ export default function Root({
   ...rest
 }: RootBottomSheetProps) {
   const bottomSheetRef = useRef<HTMLDivElement>(null);
-  const baseCSS =
-    'max-h-screen overflow-y-auto min-h-[420px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-24 border border-white border-opacity-20 z-50';
+  const [isVisible, setIsVisible] = useState(false);
+  const [animateIn, setAnimateIn] = useState(false);
 
+  const baseCSS =
+    'max-h-screen overflow-y-auto min-h-[420px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-24 border border-white border-opacity-20 z-50 transition-transform duration-300';
+
+  useEffect(() => {
+    if (show) {
+      setIsVisible(true);
+      setTimeout(() => setAnimateIn(true), 10);
+    } else {
+      setAnimateIn(false);
+      const timeout = setTimeout(() => setIsVisible(false), 300); // Tempo per la transizione
+      return () => clearTimeout(timeout);
+    }
+  }, [show]);
+
+  // Chiudi il BottomSheet quando clicchi all'esterno
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -40,7 +56,7 @@ export default function Root({
     };
   }, [show, setShow]);
 
-  if (!show) return null;
+  if (!isVisible) return null;
 
   return (
     <div
@@ -50,7 +66,10 @@ export default function Root({
     >
       <div
         ref={bottomSheetRef}
-        className={twMerge(baseCSS, rest.className)}
+        className={twMerge(
+          baseCSS,
+          animateIn ? 'translate-y-0' : 'translate-y-full',
+        )}
         onClick={(e) => e.stopPropagation()}
       >
         <div
