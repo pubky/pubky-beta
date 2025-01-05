@@ -29,6 +29,7 @@ export default function ContentSearch() {
         position="left"
         drawerRef={drawerFilterRef}
         drawerOpen={drawerFilterOpen}
+        setDrawerOpen={setDrawerFilterOpen}
       >
         <div className="overflow-y-auto max-h-full no-scrollbar">
           <Filter.Reach />

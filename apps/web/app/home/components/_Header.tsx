@@ -60,6 +60,7 @@ export function Header() {
           position="left"
           drawerRef={drawerFilterRef}
           drawerOpen={drawerFilterOpen}
+          setDrawerOpen={setDrawerFilterOpen}
           className="w-[70%] border-r border-white"
         >
           <div className="overflow-y-auto max-h-full no-scrollbar">
@@ -72,6 +73,7 @@ export function Header() {
           position="right"
           drawerRef={drawerFeedsRef}
           drawerOpen={drawerFeedsOpen}
+          setDrawerOpen={setDrawerFeedsOpen}
           className="w-[70%] border-l border-white"
         >
           <div className="overflow-y-auto max-h-full no-scrollbar">

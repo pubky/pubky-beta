@@ -21,22 +21,26 @@ export default function Root({
   const bottomSheetRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
+  const [startY, setStartY] = useState<number | null>(null);
 
   const baseCSS =
-    'max-h-screen overflow-y-auto min-h-[420px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-24 border border-white border-opacity-20 z-50 transition-transform duration-300';
+    'max-h-[90vh] overflow-y-auto min-h-[420px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-24 border border-white border-opacity-20 z-50 transition-transform duration-300 touch-action-none';
 
   useEffect(() => {
     if (show) {
       setIsVisible(true);
+      document.body.classList.add('overflow-hidden');
       setTimeout(() => setAnimateIn(true), 10);
     } else {
       setAnimateIn(false);
-      const timeout = setTimeout(() => setIsVisible(false), 300); // Tempo per la transizione
+      const timeout = setTimeout(() => {
+        setIsVisible(false);
+        document.body.classList.remove('overflow-hidden');
+      }, 300);
       return () => clearTimeout(timeout);
     }
   }, [show]);
 
-  // Chiudi il BottomSheet quando clicchi all'esterno
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -56,6 +60,22 @@ export default function Root({
     };
   }, [show, setShow]);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setStartY(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (startY === null) return;
+
+    const currentY = e.touches[0].clientY;
+    const diffY = currentY - startY;
+
+    if (diffY > 100) {
+      e.preventDefault();
+      setShow(false);
+    }
+  };
+
   if (!isVisible) return null;
 
   return (
@@ -74,7 +94,9 @@ export default function Root({
       >
         <div
           onClick={() => setShow(false)}
-          className="flex items-center mt-2 mb-6 justify-center cursor-pointer"
+          className="flex items-center mt-2 mb-6 justify-center cursor-pointer z-50"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
         >
           <Icon.HomeIndicator color="gray" />
         </div>
