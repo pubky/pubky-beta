@@ -227,7 +227,7 @@ export default function ContentProfileTag({
             }
           }}
           action={
-            <div className="flex gap-2">
+            <div className="flex">
               <Button.Action
                 icon={<Icon.Plus size="18" />}
                 variant="custom"
@@ -241,6 +241,7 @@ export default function ContentProfileTag({
               <Button.Action
                 variant="custom"
                 icon={<Icon.Smiley size="32" />}
+                className="hidden ml-2 lg:flex"
                 size="medium"
                 onClick={(event) => {
                   event.stopPropagation();

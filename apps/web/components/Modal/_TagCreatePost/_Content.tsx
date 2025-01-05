@@ -137,7 +137,7 @@ export default function ContentTagCreatePost({
           autoFocus
           onKeyDown={handleKeyDown}
           action={
-            <div className="flex gap-2">
+            <div className="flex">
               <Button.Action
                 id="add-btn"
                 icon={<Icon.Plus size="18" />}
@@ -150,6 +150,7 @@ export default function ContentTagCreatePost({
                 id="emoji-btn"
                 variant="custom"
                 icon={<Icon.Smiley size="32" />}
+                className="hidden ml-2 lg:flex"
                 size="medium"
                 onClick={(event) => {
                   event.stopPropagation();

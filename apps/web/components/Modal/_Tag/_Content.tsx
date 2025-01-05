@@ -270,7 +270,7 @@ export default function ContentTag({
             }
           }}
           action={
-            <div className="flex gap-2">
+            <div className="flex">
               <Button.Action
                 id="add-btn"
                 icon={<Icon.Plus size="18" />}
@@ -286,6 +286,7 @@ export default function ContentTag({
                 variant="custom"
                 icon={<Icon.Smiley size="32" />}
                 size="medium"
+                className="hidden ml-2 lg:flex"
                 disabled={loading}
                 onClick={(event) => {
                   event.stopPropagation();
