@@ -12,7 +12,7 @@ export const Main = ({
   shadowBottom,
   ...rest
 }: RootProps) => {
-  const baseCSS = `pt-[100px] sm:pt-[150px] w-full h-full min-w-[420px] pb-20 min-h-screen relative`;
+  const baseCSS = `pt-[100px] sm:pt-[150px] w-full h-full min-w-[400px] pb-20 min-h-screen relative`;
 
   return (
     <div {...rest} className={twMerge(baseCSS, background, rest.className)}>

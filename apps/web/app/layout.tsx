@@ -1,4 +1,5 @@
 import './global.css';
+import DynamicMeta from '@/components/DynamicMeta';
 
 import {
   AlertWrapper,
@@ -17,7 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <head>
+        <DynamicMeta />
+      </head>
+      <body className="overflow-x-hidden max-w-full">
         <PubkyClientWrapper>
           <FilterWrapper>
             <AlertWrapper>
