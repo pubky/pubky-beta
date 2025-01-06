@@ -325,18 +325,22 @@ export default function FooterArea({
           )}
           {arrayTags && setArrayTags && (
             <>
-              <Modal.TagCreatePost
-                arrayTags={arrayTags}
-                setArrayTags={setArrayTags}
-                showModalTag={showModalTag}
-                setShowModalTag={setShowModalTag}
-              />
-              <BottomSheet.TagCreatePost
-                arrayTags={arrayTags}
-                setArrayTags={setArrayTags}
-                show={showSheetTag}
-                setShow={setShowSheetTag}
-              />
+              {showModalTag && (
+                <Modal.TagCreatePost
+                  arrayTags={arrayTags}
+                  setArrayTags={setArrayTags}
+                  showModalTag={showModalTag}
+                  setShowModalTag={setShowModalTag}
+                />
+              )}
+              {showSheetTag && (
+                <BottomSheet.TagCreatePost
+                  arrayTags={arrayTags}
+                  setArrayTags={setArrayTags}
+                  show={showSheetTag}
+                  setShow={setShowSheetTag}
+                />
+              )}
             </>
           )}
         </>
