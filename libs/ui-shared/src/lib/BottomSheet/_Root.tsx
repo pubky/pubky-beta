@@ -88,7 +88,8 @@ export default function Root({
         ref={bottomSheetRef}
         className={twMerge(
           baseCSS,
-          animateIn ? 'translate-y-0' : 'translate-y-full',
+          animateIn ? 'translate-y-none' : 'translate-y-full',
+          rest.className,
         )}
         onClick={(e) => e.stopPropagation()}
       >
