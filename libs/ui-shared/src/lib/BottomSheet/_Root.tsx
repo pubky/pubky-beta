@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, Typography } from '@social/ui-shared';
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface RootBottomSheetProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -18,7 +18,6 @@ export default function Root({
   children,
   ...rest
 }: RootBottomSheetProps) {
-  const bottomSheetRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
   const [startY, setStartY] = useState<number | null>(null);
@@ -40,25 +39,6 @@ export default function Root({
       return () => clearTimeout(timeout);
     }
   }, [show]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        bottomSheetRef.current &&
-        !bottomSheetRef.current.contains(event.target as Node)
-      ) {
-        setShow(false);
-      }
-    };
-
-    if (show) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [show, setShow]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartY(e.touches[0].clientY);
@@ -85,7 +65,6 @@ export default function Root({
       onClick={() => setShow(false)}
     >
       <div
-        ref={bottomSheetRef}
         className={twMerge(
           baseCSS,
           animateIn ? 'translate-y-none' : 'translate-y-full',

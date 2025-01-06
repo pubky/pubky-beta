@@ -78,12 +78,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
           />
         </Link>
       </div>
-      {showSheetPost && (
-        <BottomSheet.CreatePost
-          show={showSheetPost}
-          setShow={setShowSheetPost}
-        />
-      )}
+      <BottomSheet.CreatePost show={showSheetPost} setShow={setShowSheetPost} />
     </div>
   );
 };
