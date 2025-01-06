@@ -9,7 +9,8 @@ import { selectEmoji,
         checkPostIsNotAtTopOfFeed,
         clickShowNewPostsBtn,
         repostPost,
-        tagPostInFeed} from '../support/posts';
+        tagPostInFeed,
+        replyToPost} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -532,17 +533,7 @@ describe('posts', () => {
 
     // reply to the post
     cy.slowDown(fastMs);
-    cy.findFirstPostInFeed().within(() => {
-      cy.get('#reply-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(($modal) => {
-      cy.get('h1').contains('Reply');
-      // check that the post content is displayed in the reply modal
-      cy.wrap($modal).contains(postContent);
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(replyContent);
-      cy.get('#reply-btn').click();
-    });
+    replyToPost({replyContent, postContent});
 
     // check reply message is shown (before the alert disappears)
     cy.get('#message-alert').should('be.visible').and('contain.text', 'Reply');

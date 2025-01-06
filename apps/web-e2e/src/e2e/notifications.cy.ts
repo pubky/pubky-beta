@@ -1,5 +1,5 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost } from '../support/posts';
+import { createQuickPost, replyToPost } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands'
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
@@ -167,7 +167,6 @@ describe('settings', () => {
     cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
       createQuickPost(`This is a post for @${pubky}! ${Date.now()}`);
     });
-    //clickShowNewPostsBtn(); dnt need
 
     // * profile 2 checks for notification for being mentioned in a post
     cy.signOut(true);
@@ -189,7 +188,33 @@ describe('settings', () => {
     // * profile 2 checks for absence of notifications
   });
 
-  it('can be notified for your post being replied and reposted');
+  it('can be notified for your post being replied', () => {
+    // * profile 1 creates a post (1)
+    createQuickPost(`I will be notified when this post is replied to! ${Date.now()}`);
+
+    // * profile 2 replies to profile 1's post (1)
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    replyToPost({replyContent: "I replied to your post!"});
+
+    // * profile 1 checks for notification for being replied to
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    // wait and reload if notification counter doesn't show
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.get('#header-notification-counter').should('have.text', '1');
+    cy.get('#header-profile-pic').click();
+    // TODO: change expected text once corrected, see https://github.com/pubky/pubky-app/pull/820
+    //checkLatestNotification([profile2.username, "replied to your post"]);
+    checkLatestNotification([profile2.username, "replied your post"]);
+
+    // TODO: add checks for disabled notifications
+    // * profile 1 disables notifications for being replied to
+    // * profile 1 creates a post (2)
+    // * profile 2 replies to profile 1's post (2)
+    // * profile 1 checks for absence of notifications
+  });
+
   it('can be notified for a post being deleted that you replied and reposted');
   it('can be notified for a post being edited that you replied and reposted');
   it('can display counter for multiple new notifications');

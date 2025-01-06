@@ -333,7 +333,7 @@ const findPostInFeed = (postIdx = 0, filterText?) => {
   // A function to check if timeline contains 'No post yet'.
   // If it does then wait 1 second and check again.
   // This is a wait for the timeline to load after the page loads.
-  const checkTimeline = (t = 5) => {
+  const checkTimelineReady = (t = 5) => {
     if (t === 0) assert(false, `findPostInFeed: Timeline not loaded`);
     cy.get('#posts-feed').find('#timeline').then(($timeline) => {
       // if contains 'No post yet' then wait 1 second and check again
@@ -341,14 +341,14 @@ const findPostInFeed = (postIdx = 0, filterText?) => {
         if (hasNoPosts) {
           cy.log('findPostInFeed: Timeline not loaded; waiting 1 second and checking again');
           cy.wait(1000);
-          checkTimeline(t - 1);
+          checkTimelineReady(t - 1);
         }
       });
     });
   };
 
   // check timeline 5 times to be ready for a post to be found
-  checkTimeline(5);
+  checkTimelineReady(5);
 
   // find the post in the timeline
   cy.get('#posts-feed').find('#timeline').children().should('have.length.gte', 1).then($posts => {
