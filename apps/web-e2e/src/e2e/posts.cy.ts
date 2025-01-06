@@ -548,7 +548,7 @@ describe('posts', () => {
       cy.wrap($post).innerTextShouldContain(replyContent);
     });
 
-    // delete the reply (post is at index 1) (menuBtnIdx 1 for reply)
+    // delete the reply (post is at index 0) (menuBtnIdx 1 for reply)
     deletePost(0, 1);
 
     // verify the reply is deleted

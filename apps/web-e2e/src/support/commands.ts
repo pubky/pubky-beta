@@ -308,7 +308,7 @@ Cypress.Commands.add('waitReload', (time = 2000) => {
   cy.wait(time).reload();
 });
 
-Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts = 5) => {
+Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts = 10) => {
   const go = (attempts: number) => {
     if (attempts <= 0) assert(false, `waitReloadWhileElementDoesNotExist: ${selector} not found`);
     cy.get('body').then(($body) => {

@@ -1,5 +1,5 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, fastTagPost, replyToPost, repostPost, tagPostInFeed } from '../support/posts';
+import { createQuickPost, deletePost, fastTagPost, replyToPost, repostPost, tagPostInFeed } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands'
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
@@ -236,7 +236,30 @@ describe('settings', () => {
     // * profile 1 checks for absence of notifications
   });
 
-  it('can be notified for a post being deleted that you replied and reposted');
+  it('can be notified for a post being deleted that you replied to', () => {
+    // * profile 1 creates a post that will be replied to and then deleted
+    createQuickPost(`The one who replies to this post will be notified when it is deleted! ${Date.now()}`);
+
+    // * profile 2 replies to profile 1's post
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    replyToPost({replyContent: "I replied to your post!"});
+
+    // * profile 1 deletes profile 1's post
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    deletePost();
+
+    // * profile 2 checks for notification for post being deleted
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    // wait and reload if notification counter doesn't show
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.get('#header-notification-counter').should('have.text', '1');
+    cy.get('#header-profile-pic').click();
+    // TODO: add 'to' when merged https://github.com/pubky/pubky-app/pull/822
+    checkLatestNotification([profile1.username, "deleted a post you replied"]);
+  });
   it('can be notified for a post being edited that you replied and reposted');
   it('can display counter for multiple new notifications');
 });
