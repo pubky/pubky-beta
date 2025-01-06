@@ -145,6 +145,22 @@ export const checkPostIsAtIndexInFeed = (postContent: string, index: number) => 
   });
 };
 
+// wait for feed timeline to not show "No posts yet" or "Loading"
+export const waitForFeedToLoad = (seconds: number = 5) => {
+  const checkTimelineRecursively = (attempts: number) => {
+    if (attempts <= 0) assert(false, "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds");
+
+    cy.get('#posts-feed').find('#timeline').invoke('text').then((text) => {
+      if (text.includes('No posts yet') || text.includes('Loading')) {
+        cy.wait(1000);
+        checkTimelineRecursively(attempts - 1);
+      }
+    });
+  };
+
+  checkTimelineRecursively(seconds);
+};
+
 // wait for 'show n new posts' button to be visible
 // check its counter displayes the correct number of new posts and click it
 export const clickShowNewPostsBtn = (expectedCounter = 1) => {
@@ -158,19 +174,7 @@ export const clickShowNewPostsBtn = (expectedCounter = 1) => {
   // meanwhile, just refresh the page to show new posts
   cy.wait(3_000);
   cy.reload();
-  // recursively loop 5 times for 5 seconds, if timeline contains text "No posts yet" or "Loading" wait 1 second and try again
-  const checkTimelineRecursively = (attempts: number) => {
-    if (attempts <= 0) assert(false, "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds");
-
-    cy.get('#posts-feed').find('#timeline').invoke('text').then((text) => {
-      if (text.includes('No posts yet') || text.includes('Loading')) {
-        cy.wait(1000);
-        checkTimelineRecursively(attempts - 1);
-      }
-    });
-  };
-
-  checkTimelineRecursively(5);
+  waitForFeedToLoad();
 };
 
 const findAndCountPostsInFeed = (filterText: string, expectedCount: number) => {

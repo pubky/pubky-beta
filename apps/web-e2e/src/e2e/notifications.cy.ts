@@ -101,7 +101,6 @@ describe('settings', () => {
   it('can be notified for tagged post and profile', () => {
     // * profile 1 creates a post
     createQuickPost(`I will be notified when this post is tagged! ${Date.now()}`);
-    //clickShowNewPostsBtn(); dnt need
 
     // * profile 1 tags profile 2's profile
     cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {

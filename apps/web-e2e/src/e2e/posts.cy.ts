@@ -7,10 +7,10 @@ import { selectEmoji,
         deletePost,
         createQuickPost,
         checkPostIsNotAtTopOfFeed,
-        clickShowNewPostsBtn,
         repostPost,
         fastTagPostInFeed,
-        replyToPost} from '../support/posts';
+        replyToPost,
+        waitForFeedToLoad} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -52,9 +52,13 @@ describe('posts', () => {
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
-    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
+    latestPostInFeedContentEq(postContent);
+
+    // reload and check post is still displayed correctly
+    cy.reload();
+    waitForFeedToLoad();
     latestPostInFeedContentEq(postContent);
   });
 
@@ -72,9 +76,12 @@ describe('posts', () => {
     });
     cy.get('#modal-root').should('not.exist');
 
-    clickShowNewPostsBtn();
-
     // verify the post is displayed correctly in feed
+    latestPostInFeedContentEq(postContent);
+
+    // reload and check post is still displayed correctly
+    cy.reload();
+    waitForFeedToLoad();
     latestPostInFeedContentEq(postContent);
   });
 
@@ -103,8 +110,6 @@ describe('posts', () => {
 
     createQuickPost(postContent);
 
-    clickShowNewPostsBtn();
-
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
   });
@@ -132,8 +137,6 @@ describe('posts', () => {
       // wait for textarea to be cleared to ensure post is submitted
       cy.get('textarea').should('have.value', '');
     });
-
-    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -182,8 +185,6 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    clickShowNewPostsBtn();
-
     // verify the post text and embedded link is displayed correctly in feed
     cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
@@ -225,8 +226,6 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    clickShowNewPostsBtn();
-
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
   });
@@ -234,7 +233,6 @@ describe('posts', () => {
   it('can delete a post', () => {
     const postContent = `I can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
-    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -309,8 +307,6 @@ describe('posts', () => {
       // submit the post
       cy.get('#post-btn').click();
     });
-
-    clickShowNewPostsBtn();
 
     // verify the post text and tags are displayed correctly in feed
     cy.findFirstPostInFeed().within(() => {
@@ -529,7 +525,6 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
-    clickShowNewPostsBtn();
 
     // reply to the post
     cy.slowDown(fastMs);
@@ -565,7 +560,6 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
-    clickShowNewPostsBtn();
 
     // reply to the post
     cy.findFirstPostInFeed().within(() => {
