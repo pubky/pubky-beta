@@ -1,5 +1,3 @@
-import { addTags } from "./common";
-
 // select an emoji using the emoji picket by its data-full-name attribute
 export const selectEmoji = (emojiName: string) => {
   cy.get('#emoji-btn').click();
@@ -68,11 +66,21 @@ export const repostPost = ({repostContent, postContent, filterText, postIdx}: {r
   });
 };
 
+// find a post first and use within it. Useful for fast tagging posts not in the feed.
+export const fastTagPost = (tags: string[]) => {
+  cy.get('#tags').within(() => {
+    tags.forEach((tag) => {
+      cy.get('#show-add-tag-input-btn').click();
+      cy.get('input').type(tag);
+      cy.get('#add-tag-btn').click();
+    });
+  });
+};
+
 // tag a post in feed with any number of tags
-export const tagPostInFeed = (postContent: string, tags: string[]) => {
+export const fastTagPostInFeed = (tags: string[], postContent?: string) => {
   cy.findFirstPostInFeed(postContent).within(() => {
-    cy.get('#tag-btn').click();
-    addTags(tags);
+    fastTagPost(tags);
   });
 };
 

@@ -2,7 +2,7 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { cannotFindPostInFeed, checkPostIsAtIndexInFeed, countPostsInFeed, createQuickPost, repostPost, tagPostInFeed } from '../support/posts';
+import { cannotFindPostInFeed, checkPostIsAtIndexInFeed, countPostsInFeed, createQuickPost, fastTagPostInFeed, repostPost } from '../support/posts';
 import { searchAndFollowProfile } from '../support/contacts';
 //import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost } from '../support/posts';
 //import { defaultMs, fastMs } from '../support/slow-down';
@@ -59,9 +59,9 @@ describe('feed and filters', () => {
     cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile4.username + '.pkarr'));
     createQuickPost(profile4.postText);
     // tag profile 3's post 5 times for max popularity
-    tagPostInFeed(profile3.postText, ['p3tag1', 'p3tag2', 'p3tag3', 'p3tag4', 'p3tag5']);
+    fastTagPostInFeed(['p3tag1', 'p3tag2', 'p3tag3', 'p3tag4', 'p3tag5'], profile3.postText);
     // tag profile 2's post 4 times to make it the second most popular
-    tagPostInFeed(profile2.postText, ['p2tag1', 'p2tag2', 'p2tag3', 'p2tag4']);
+    fastTagPostInFeed(['p2tag1', 'p2tag2', 'p2tag3', 'p2tag4'], profile2.postText);
     cy.signOut(true);
 
     // * sign back in as profile 1 and follow profile 2, 3 and 4.

@@ -229,7 +229,8 @@ export default function Tags({
                     action={
                       <div className="flex gap-1 -mr-2">
                         <div
-                          onClick={handleFastAddTag}
+                          id="add-tag-btn"
+                        onClick={handleFastAddTag}
                           className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
                         >
                           <Icon.Plus size="12" />
@@ -242,7 +243,8 @@ export default function Tags({
                             <Icon.Smiley size="12" />
                           </div>
                           <div
-                            onClick={() => setAddTagInput(false)}
+                            id="close-add-tag-input-btn"
+                        onClick={() => setAddTagInput(false)}
                             className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
                           >
                             <Icon.X size="12" />
@@ -254,6 +256,7 @@ export default function Tags({
                 </>
               ) : (
                 <div
+                  id="show-add-tag-input-btn"
                   onClick={() => (pubky ? setAddTagInput(true) : openJoin())}
                   className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
                 >

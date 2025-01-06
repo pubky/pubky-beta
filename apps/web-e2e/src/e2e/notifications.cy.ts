@@ -1,10 +1,10 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, replyToPost } from '../support/posts';
+import { createQuickPost, fastTagPost, replyToPost, repostPost, tagPostInFeed } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands'
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
 import { clickFollowButton } from '../support/profile';
-import { addTags } from '../support/common';
+import { addTagsWithModal } from '../support/common';
 import { checkLatestNotification } from '../support/profile';
 
 const profile1 = { username: "Notif #1", pubkyAlias: "pubky_1" };
@@ -111,7 +111,7 @@ describe('settings', () => {
     // add one tag to profile
     cy.get('#profile-tag-btn').click();
     const profileTag = 'nice';
-    addTags([profileTag], profile2.username);
+    addTagsWithModal([profileTag], profile2.username);
 
     // * profile 2 checks for notification for tagged profile
     cy.signOut(true);
@@ -133,13 +133,11 @@ describe('settings', () => {
     });
     // click Posts tab to show profile 1's posts
     cy.get('#profile-tab-posts').click();
+    const postTag = 'ilike';
     // check profile 1 has at least 1 post and click tag button for the first post
     cy.get('#profile-tab-content').find('#post-container').should('have.length.at.least', 1).first().within(() => {
-      cy.get('#tag-btn').click();
+      fastTagPost([postTag]);
     });
-    // add one tag to the post
-    const postTag = 'ilike';
-    addTags([postTag]);
 
     // * profile 1 checks for notification for tagged post
     cy.signOut(true);
@@ -188,7 +186,7 @@ describe('settings', () => {
     // * profile 2 checks for absence of notifications
   });
 
-  it('can be notified for your post being replied', () => {
+  it('can be notified for your post being replied to', () => {
     // * profile 1 creates a post (1)
     createQuickPost(`I will be notified when this post is replied to! ${Date.now()}`);
 
@@ -204,14 +202,37 @@ describe('settings', () => {
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
-    // TODO: change expected text once corrected, see https://github.com/pubky/pubky-app/pull/820
-    //checkLatestNotification([profile2.username, "replied to your post"]);
-    checkLatestNotification([profile2.username, "replied your post"]);
+    checkLatestNotification([profile2.username, "replied to your post"]);
 
     // TODO: add checks for disabled notifications
     // * profile 1 disables notifications for being replied to
     // * profile 1 creates a post (2)
     // * profile 2 replies to profile 1's post (2)
+    // * profile 1 checks for absence of notifications
+  });
+
+  it('can be notified for your post being reposed', () => {
+    // * profile 1 creates a post (1)
+    createQuickPost(`I will be notified when this post is reposted! ${Date.now()}`);
+
+    // * profile 2 reposts profile 1's post (1)
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    repostPost({repostContent: "I reposted your post!"});
+
+    // * profile 1 checks for notification for being reposted
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    // wait and reload if notification counter doesn't show
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.get('#header-notification-counter').should('have.text', '1');
+    cy.get('#header-profile-pic').click();
+    checkLatestNotification([profile2.username, "reposted your post"]);
+
+    // TODO: add checks for disabled notifications
+    // * profile 1 disables notifications for being reposted
+    // * profile 1 creates a post (2)
+    // * profile 2 reposts profile 1's post (2)
     // * profile 1 checks for absence of notifications
   });
 

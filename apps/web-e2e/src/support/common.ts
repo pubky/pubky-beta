@@ -1,7 +1,7 @@
 // tag a post or profile using modal with any number of tags
 // use once modal is visible
 // profileName is optional, it can be used to check header is `Tag {profileName}`
-export const addTags = (tags: string[], profileName?: string) => {
+export const addTagsWithModal = (tags: string[], profileName?: string) => {
   cy.get('#modal-root').within(() => {
     cy.get('h1').contains(profileName ? `Tag ${profileName}` : 'Tag Post');
 
