@@ -15,11 +15,11 @@ const DynamicMeta = () => {
         metaTag = document.createElement('meta');
         metaTag.name = 'viewport';
         metaTag.content =
-          'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+          'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes';
         document.head.appendChild(metaTag);
       } else {
         metaTag.content =
-          'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+          'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes';
       }
     };
 
