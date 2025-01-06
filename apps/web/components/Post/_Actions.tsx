@@ -11,12 +11,15 @@ import Tooltip from '../Tooltip';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import Modal from '../Modal';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '../BottomSheet';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   repost?: PostView;
   deleteRepost?: boolean;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSheetTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const BookmarkButton = ({
@@ -66,15 +69,20 @@ const BookmarkButton = ({
 const MenuButton = ({
   showMenu,
   setShowMenu,
+  showSheetMenu,
+  setShowSheetMenu,
   post,
   repost,
 }: {
   showMenu: boolean;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  showSheetMenu: boolean;
+  setShowSheetMenu: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
   repost?: PostView;
 }) => {
   const { pubky } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const { openJoinModal } = useJoinModal();
   return (
     <div
@@ -95,8 +103,18 @@ const MenuButton = ({
         }
         onClick={(event) => {
           event.stopPropagation();
-          pubky ? setShowMenu(!showMenu) : openJoinModal();
+          pubky
+            ? isMobile
+              ? setShowSheetMenu(true)
+              : setShowMenu(!showMenu)
+            : openJoinModal();
         }}
+      />
+      <BottomSheet.Menu
+        post={post}
+        repost={repost}
+        show={showSheetMenu}
+        setShow={setShowSheetMenu}
       />
     </div>
   );
@@ -107,9 +125,11 @@ export default function Actions({
   repost,
   deleteRepost = false,
   setShowModalTag,
+  setShowSheetTag,
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { openJoinModal } = useJoinModal();
+  const isMobile = useIsMobile();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   const { data: authorRepost } = useUserProfile(
     repost?.details?.author ?? '',
@@ -118,8 +138,11 @@ export default function Actions({
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
   const { addToast } = useToastContext();
   const [showMenu, setShowMenu] = useState(false);
+  const [showSheetMenu, setShowSheetMenu] = useState(false);
   const [showModalRepost, setShowModalRepost] = useState(false);
+  const [showSheetRepost, setShowSheetRepost] = useState(false);
   const [showModalReply, setShowModalReply] = useState(false);
+  const [showSheetReply, setShowSheetReply] = useState(false);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(
     repost?.bookmark?.id ? repost?.bookmark?.id : (post?.bookmark?.id ?? ''),
@@ -195,7 +218,11 @@ export default function Actions({
           variant="custom"
           onClick={(event) => {
             event.stopPropagation();
-            pubky ? setShowModalTag(true) : openJoinModal();
+            pubky
+              ? isMobile
+                ? setShowSheetTag(true)
+                : setShowModalTag(true)
+              : openJoinModal();
           }}
           icon={
             <div>
@@ -216,7 +243,11 @@ export default function Actions({
           counter={post?.counts?.replies}
           onClick={(event) => {
             event.stopPropagation();
-            pubky ? setShowModalReply(true) : openJoinModal();
+            pubky
+              ? isMobile
+                ? setShowSheetReply(true)
+                : setShowModalReply(true)
+              : openJoinModal();
           }}
         />
         <div className="relative">
@@ -235,7 +266,11 @@ export default function Actions({
             counter={post?.counts?.reposts}
             onClick={(event) => {
               event.stopPropagation();
-              pubky ? setShowModalRepost(true) : openJoinModal();
+              pubky
+                ? isMobile
+                  ? setShowSheetRepost(true)
+                  : setShowModalRepost(true)
+                : openJoinModal();
             }}
           />
         </div>
@@ -247,6 +282,8 @@ export default function Actions({
         <MenuButton
           showMenu={showMenu}
           setShowMenu={setShowMenu}
+          showSheetMenu={showSheetMenu}
+          setShowSheetMenu={setShowSheetMenu}
           post={post}
           repost={repost}
         />
@@ -255,15 +292,25 @@ export default function Actions({
         className="cursor-default"
         onClick={(event) => event.stopPropagation()}
       >
-        <Modal.Repost
+        <Modal.CreateRepost
           post={post}
           showModalRepost={showModalRepost}
           setShowModalRepost={setShowModalRepost}
+        />
+        <BottomSheet.CreateRepost
+          post={post}
+          show={showSheetRepost}
+          setShow={setShowSheetRepost}
         />
         <Modal.CreateReply
           post={post}
           showModalReply={showModalReply}
           setShowModalReply={setShowModalReply}
+        />
+        <BottomSheet.CreateReply
+          post={post}
+          show={showSheetReply}
+          setShow={setShowSheetReply}
         />
       </div>
     </div>

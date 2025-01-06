@@ -10,6 +10,7 @@ import LinksSection from './_LinksSection';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
+import { BottomSheet } from '@/components';
 
 export default function Sidebar({
   creatorPubky,
@@ -35,6 +36,7 @@ export default function Sidebar({
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showModalCheckLink, setShowModalCheckLink] = useState(false);
+  const [showSheetCheckLink, setShowSheetCheckLink] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const checkLink = Utils.storage.get('checkLink') as boolean;
@@ -124,6 +126,7 @@ export default function Sidebar({
             links={links}
             checkLink={checkLink}
             setShowModalCheckLink={setShowModalCheckLink}
+            setShowSheetCheckLink={setShowSheetCheckLink}
             setClickedLink={setClickedLink}
           />
         </div>
@@ -144,6 +147,11 @@ export default function Sidebar({
         pubkyUser={usePubky}
         name={name}
         uriImage={image}
+      />
+      <BottomSheet.CheckLink
+        show={showSheetCheckLink}
+        setShow={setShowSheetCheckLink}
+        clickedLink={clickedLink}
       />
     </>
   );

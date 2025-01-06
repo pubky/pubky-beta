@@ -1,4 +1,5 @@
 import Influencers from './Influencers';
+import { BottomSheet } from './BottomSheet';
 import CreatePost from './CreatePost';
 import CustomFeeds from './CustomFeeds';
 import CreateQuickPost from './CreateQuickPost';
@@ -22,6 +23,7 @@ import RemindBackup from './RemindBackup';
 
 export {
   Influencers,
+  BottomSheet,
   CreatePost,
   CustomFeeds,
   CreateQuickPost,

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Content } from '@social/ui-shared';
 import * as Components from '@/components';
 import Menu from '../_menu';
@@ -10,7 +11,17 @@ import Version from '../_version';
 import { Settings } from '.';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [_, setSelectedItem] = useState<string | null>('account');
+  const [isHelpSection, setIsHelpSection] = useState(false);
+
+  useEffect(() => {
+    if (pathname === '/settings/help') {
+      setIsHelpSection(true);
+    } else {
+      setIsHelpSection(false);
+    }
+  }, [pathname]);
 
   return (
     <Content.Main>
@@ -31,7 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Sidebar extras */}
         <Components.Sidebar className="w-[280px] hidden xl:block">
-          <Faq />
+          {!isHelpSection && <Faq />}
           <div className="self-start sticky top-[120px]">
             <Components.Feedback />
             <Version />

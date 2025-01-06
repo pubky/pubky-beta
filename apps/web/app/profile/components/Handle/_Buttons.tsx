@@ -9,6 +9,9 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import { UserView } from '@/types/User';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '@/components';
 
 interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky: string | null | undefined;
@@ -17,9 +20,8 @@ interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   followed: boolean;
   loadingFollowed: boolean;
   disposableAccount: boolean;
-  showProfileMenu: boolean;
-  setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
   setShowModalLogout: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSheetLogout: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   profile: UserView | null;
@@ -32,17 +34,19 @@ export default function Buttons({
   followed,
   loadingFollowed,
   disposableAccount,
-  showProfileMenu,
-  setShowProfileMenu,
   setShowModalLogout,
+  setShowSheetLogout,
   setLoadingFollowed,
   setFollowed,
   profile,
 }: ButtonsProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { openJoinModal } = useJoinModal();
+  const isMobile = useIsMobile();
   const { addToast } = useToastContext();
   const router = useRouter();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showSheetProfileMenu, setShowSheetProfileMenu] = useState(false);
 
   const followUser = async () => {
     try {
@@ -147,7 +151,10 @@ export default function Buttons({
             className="px-3 w-21 h-8"
             onClick={
               disposableAccount
-                ? () => setShowModalLogout(true)
+                ? () =>
+                    isMobile
+                      ? setShowSheetLogout(true)
+                      : setShowModalLogout(true)
                 : () => router.push('/logout')
             }
             icon={<Icon.SignOut />}
@@ -201,10 +208,22 @@ export default function Buttons({
             size="small"
             variant="custom"
             icon={<Icon.DotsThreeOutline size="16" />}
-            onClick={() => (pubky ? setShowProfileMenu(true) : openJoinModal())}
+            onClick={() =>
+              pubky
+                ? isMobile
+                  ? setShowSheetProfileMenu(true)
+                  : setShowProfileMenu(true)
+                : openJoinModal()
+            }
           />
         </div>
       )}
+      <BottomSheet.MenuProfile
+        show={showSheetProfileMenu}
+        setShow={setShowSheetProfileMenu}
+        creatorPubky={creatorPubky ?? pubkey}
+        profile={profile}
+      />
     </>
   );
 }

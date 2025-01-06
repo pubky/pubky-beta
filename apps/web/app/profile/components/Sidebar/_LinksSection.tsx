@@ -1,3 +1,4 @@
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import Link from 'next/link';
 
@@ -5,6 +6,7 @@ interface LinksSectionProps {
   links: { title: string; url: string }[];
   checkLink: boolean;
   setShowModalCheckLink: (show: boolean) => void;
+  setShowSheetCheckLink: (show: boolean) => void;
   setClickedLink: (link: string) => void;
 }
 
@@ -145,8 +147,11 @@ export default function LinksSection({
   links,
   checkLink,
   setShowModalCheckLink,
+  setShowSheetCheckLink,
   setClickedLink,
 }: LinksSectionProps) {
+  const isMobile = useIsMobile();
+
   const renderSocialUsername = (linkUrl: string) => {
     const matchingSocialLink = socialLinks.find((socialLink) =>
       linkUrl.includes(socialLink.url),
@@ -206,7 +211,9 @@ export default function LinksSection({
                             checkLink === false
                               ? () => window.open(link.url, '_blank')
                               : () => {
-                                  setShowModalCheckLink(true);
+                                  isMobile
+                                    ? setShowSheetCheckLink(true)
+                                    : setShowModalCheckLink(true);
                                   setClickedLink(link.url);
                                 }
                           }

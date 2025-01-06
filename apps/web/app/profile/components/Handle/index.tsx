@@ -11,6 +11,7 @@ import { usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
 import { TStatus } from '@/types';
 import Parsing from '@/components/Content/_Parsing';
+import { BottomSheet } from '@/components';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   pubkey: string;
@@ -27,7 +28,7 @@ export default function Handle({
   const { seed } = usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showSheetLogout, setShowSheetLogout] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
@@ -86,11 +87,10 @@ export default function Handle({
               followed={followed}
               loadingFollowed={loadingFollowed}
               disposableAccount={disposableAccount}
-              showProfileMenu={showProfileMenu}
               setShowModalLogout={setShowModalLogout}
+              setShowSheetLogout={setShowSheetLogout}
               setLoadingFollowed={setLoadingFollowed}
               setFollowed={setFollowed}
-              setShowProfileMenu={setShowProfileMenu}
               profile={profileUser}
             />
             <Status creatorPubky={creatorPubky} status={status as TStatus} />
@@ -105,6 +105,7 @@ export default function Handle({
         showModalLogout={showModalLogout}
         setShowModalLogout={setShowModalLogout}
       />
+      <BottomSheet.Logout show={showSheetLogout} setShow={setShowSheetLogout} />
     </div>
   );
 }

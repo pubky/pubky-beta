@@ -1,6 +1,8 @@
+import { BottomSheet } from '@/components';
 import { ImageByUri } from '@/components/ImageByUri';
 import Modal from '@/components/Modal';
 import { useAlertContext } from '@/contexts';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { Button, Card, Icon } from '@social/ui-shared';
 import { useState } from 'react';
 
@@ -18,7 +20,9 @@ export default function Pic({
   defaultImage,
 }: PicProps) {
   const { addAlert } = useAlertContext();
+  const isMobile = useIsMobile();
   const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
+  const [showSheetCroppedImage, setShowSheetCroppedImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleUploadImage = () => {
@@ -50,7 +54,11 @@ export default function Pic({
 
       img.onload = () => {
         setSelectedImage(newImageUrl);
-        setShowModalCroppedImage(true);
+        if (isMobile) {
+          setShowSheetCroppedImage(true);
+        } else {
+          setShowModalCroppedImage(true);
+        }
       };
       event.target.value = '';
     }
@@ -111,13 +119,21 @@ export default function Pic({
           disabled={loading}
         />
       </Card.Primary>
-      {showModalCroppedImage && selectedImage && (
-        <Modal.CroppedImage
-          showModalCroppedImage={showModalCroppedImage}
-          setShowModalCroppedImage={setShowModalCroppedImage}
-          image={selectedImage}
-          setImage={setImage}
-        />
+      {selectedImage && (
+        <>
+          <Modal.CroppedImage
+            showModalCroppedImage={showModalCroppedImage}
+            setShowModalCroppedImage={setShowModalCroppedImage}
+            image={selectedImage}
+            setImage={setImage}
+          />
+          <BottomSheet.CroppedImage
+            show={showSheetCroppedImage}
+            setShow={setShowSheetCroppedImage}
+            image={selectedImage}
+            setImage={setImage}
+          />
+        </>
       )}
     </>
   );

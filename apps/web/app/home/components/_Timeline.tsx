@@ -10,7 +10,7 @@ import { Post, Skeleton } from '@/components';
 import { PostReplies } from './_PostReplies';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { NewPostsNotifier } from './_NewPostsNotifier';
-import { ICustomFeed } from '@/types';
+import { ICustomFeed, TLayouts, TSort, TSource } from '@/types';
 import { getPost } from '@/services/postService';
 
 interface TimelineProps {
@@ -32,9 +32,9 @@ const useTimelineFilters = (selectedFeed) => {
         setTagsFeed(selectedFeed.tags);
       }
     } else {
-      setReach('all');
-      setLayout('columns');
-      setSort('recent');
+      setReach((localStorage.getItem('reach') || 'all') as TSource);
+      setLayout((localStorage.getItem('layout') || 'columns') as TLayouts);
+      setSort((localStorage.getItem('sort') || 'recent') as TSort);
       setTagsFeed(undefined);
     }
   }, [selectedFeed]);

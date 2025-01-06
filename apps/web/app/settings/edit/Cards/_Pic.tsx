@@ -5,6 +5,8 @@ import { Button, Card, Icon } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import * as jdenticon from 'jdenticon';
 import { Utils } from '@social/utils-shared';
+import { BottomSheet } from '@/components';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface PicProps {
   image: File | string | undefined;
@@ -15,8 +17,10 @@ interface PicProps {
 export default function Pic({ image, setImage, loading }: PicProps) {
   const { pubky, profile } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
+  const isMobile = useIsMobile();
   const [defaultImage, setDefaultImage] = useState<File | string>();
   const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
+  const [showSheetCroppedImage, setShowSheetCroppedImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -75,7 +79,11 @@ export default function Pic({ image, setImage, loading }: PicProps) {
 
       img.onload = () => {
         setSelectedImage(newImageUrl);
-        setShowModalCroppedImage(true);
+        if (isMobile) {
+          setShowSheetCroppedImage(true);
+        } else {
+          setShowModalCroppedImage(true);
+        }
       };
       event.target.value = '';
     }
@@ -135,13 +143,21 @@ export default function Pic({ image, setImage, loading }: PicProps) {
           disabled={loading}
         />
       </Card.Primary>
-      {showModalCroppedImage && selectedImage && (
-        <Modal.CroppedImage
-          showModalCroppedImage={showModalCroppedImage}
-          setShowModalCroppedImage={setShowModalCroppedImage}
-          image={selectedImage}
-          setImage={setImage}
-        />
+      {selectedImage && (
+        <>
+          <Modal.CroppedImage
+            showModalCroppedImage={showModalCroppedImage}
+            setShowModalCroppedImage={setShowModalCroppedImage}
+            image={selectedImage}
+            setImage={setImage}
+          />
+          <BottomSheet.CroppedImage
+            show={showSheetCroppedImage}
+            setShow={setShowSheetCroppedImage}
+            image={selectedImage}
+            setImage={setImage}
+          />
+        </>
       )}
     </>
   );

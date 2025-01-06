@@ -7,7 +7,6 @@ import LinkPreview from 'libs/ui-shared/src/lib/Post/_Preview';
 import { GitHub } from 'libs/ui-shared/src/lib/Preview/Github';
 import { useEffect, useState } from 'react';
 import { Tweet } from 'react-tweet';
-import FilesCarousel from '../Modal/_FilesCarousel';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { FileContent, PostView } from '@/types/Post';
@@ -16,6 +15,8 @@ import { Spotify } from 'react-spotify-embed';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Link from 'next/link';
+import Modal from '../Modal';
+import { BottomSheet } from '../BottomSheet';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -40,6 +41,7 @@ export default function Content({
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [fileContents, setFileContents] = useState<FileContent[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [showSheet, setShowSheet] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const text = post?.details?.content;
@@ -174,7 +176,11 @@ export default function Content({
 
   const openModal = (index: number) => {
     setCurrentFileIndex(index);
-    setShowModal(true);
+    if (isMobile) {
+      setShowSheet(true);
+    } else {
+      setShowModal(true);
+    }
   };
 
   const cleanedText = cleanText(text.toString());
@@ -391,16 +397,29 @@ export default function Content({
             </div>
           )}
           <div onClick={(event) => event.stopPropagation()}>{children}</div>
-          {showModal && fileContents.length > 0 && (
-            <div onClick={(event) => event.stopPropagation()}>
-              <FilesCarousel
-                fileContents={fileContents}
-                currentFileIndex={currentFileIndex}
-                setCurrentFileIndex={setCurrentFileIndex}
-                showModal={showModal}
-                setShowModal={setShowModal}
-              />
-            </div>
+          {fileContents.length > 0 && (
+            <>
+              <div onClick={(event) => event.stopPropagation()}>
+                {showModal && (
+                  <Modal.FilesCarousel
+                    fileContents={fileContents}
+                    currentFileIndex={currentFileIndex}
+                    setCurrentFileIndex={setCurrentFileIndex}
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                  />
+                )}
+                {showSheet && (
+                  <BottomSheet.FilesCarousel
+                    show={showSheet}
+                    setShow={setShowSheet}
+                    fileContents={fileContents}
+                    currentFileIndex={currentFileIndex}
+                    setCurrentFileIndex={setCurrentFileIndex}
+                  />
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

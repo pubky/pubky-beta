@@ -29,6 +29,7 @@ import DeletedPostMessage from './_DeletedPostMessage';
 import MainPostContent from './_MainPostContent';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -59,8 +60,10 @@ export default function Post({
   const { pubky, deletePost, setTimeline, setNewPosts } =
     usePubkyClientContext();
   const { addAlert } = useAlertContext();
+  const isMobile = useIsMobile();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
   const [showModalTag, setShowModalTag] = useState(false);
+  const [showSheetTag, setShowSheetTag] = useState(false);
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
@@ -179,6 +182,8 @@ export default function Post({
                         repostView
                         showModalTag={showModalTag}
                         setShowModalTag={setShowModalTag}
+                        showSheetTag={showSheetTag}
+                        setShowSheetTag={setShowSheetTag}
                         restClassName="mt-4"
                       />
                       <div
@@ -190,6 +195,8 @@ export default function Post({
                           <Tags
                             showModalTag={showModalTag}
                             setShowModalTag={setShowModalTag}
+                            showSheetTag={showSheetTag}
+                            setShowSheetTag={setShowSheetTag}
                             largeView={largeView}
                             post={post}
                           />
@@ -197,6 +204,7 @@ export default function Post({
                         {!repostView && (
                           <Actions
                             setShowModalTag={setShowModalTag}
+                            setShowSheetTag={setShowSheetTag}
                             post={post}
                           />
                         )}
@@ -250,7 +258,7 @@ export default function Post({
                                 reposted{' '}
                               </PostUI.Username>
                             </Link>
-                            {showTooltipProfile !== '' && (
+                            {showTooltipProfile !== '' && !isMobile && (
                               <Tooltip.Profile post={post} />
                             )}
                           </TooltipUI.Root>
@@ -282,6 +290,8 @@ export default function Post({
                         repostView={repostView}
                         showModalTag={showModalTag}
                         setShowModalTag={setShowModalTag}
+                        showSheetTag={showSheetTag}
+                        setShowSheetTag={setShowSheetTag}
                         restClassName={twMerge(
                           'rounded-tl-none rounded-tr-none',
                           largeView && 'p-12 inline-flex flex-row gap-12',
@@ -307,6 +317,8 @@ export default function Post({
                 repostView={repostView}
                 showModalTag={showModalTag}
                 setShowModalTag={setShowModalTag}
+                showSheetTag={showSheetTag}
+                setShowSheetTag={setShowSheetTag}
                 restClassName={rest.className}
               />
             )}

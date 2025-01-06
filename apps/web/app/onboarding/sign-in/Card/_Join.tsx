@@ -72,9 +72,9 @@ export default function Join() {
     const updateSize = () => {
       if (window.innerWidth <= 640) {
         setQrSize(320);
-      } else if (window.innerWidth <= 1024) {
+      } else if (window.innerWidth <= 1023) {
         setQrSize(250);
-      } else if (window.innerWidth <= 1280) {
+      } else if (window.innerWidth <= 1279) {
         setQrSize(140);
       } else {
         setQrSize(210);

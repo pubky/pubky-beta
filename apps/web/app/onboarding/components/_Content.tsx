@@ -134,7 +134,9 @@ export default function Index() {
             loading={loading}
           >
             {loading
-              ? `Creating Profile... ${Math.floor(progress)}%`
+              ? isMobile
+                ? `Profile... ${Math.floor(progress)}%`
+                : `Creating Profile... ${Math.floor(progress)}%`
               : 'Explore Pubky'}
           </Button.Large>
           <Link href="https://pubky.org" target="_blank">

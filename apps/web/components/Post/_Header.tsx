@@ -16,6 +16,7 @@ import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserDetails } from '@/types/User';
 import { useRouter } from 'next/navigation';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -30,6 +31,7 @@ export default function Header({
 }: PostProps) {
   const router = useRouter();
   const { pubky } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
@@ -75,7 +77,7 @@ export default function Header({
               )}
             </div>
           </div>
-          {showTooltipProfile && <Tooltip.Profile post={post} />}
+          {showTooltipProfile && !isMobile && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
       <div className="relative flex items-center gap-0">
@@ -89,7 +91,7 @@ export default function Header({
               <Icon.Check size="20" color={'#00BA7C'} opacity={1} />
             </div>
           </Tooltip.TooltipCheckMark>
-          <div className="relative z-10 top-[5px]">
+          <div className="relative top-[5px]">
             {post?.cached === 'nexus' || post?.cached === undefined ? (
               <Tooltip.TooltipCheckMark content={'Indexed by Pubky Nexus'}>
                 <Icon.Check size="20" color={'#00BA7C'} opacity={1} />

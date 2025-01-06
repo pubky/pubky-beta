@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Icon, PostUtil } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 import Link from 'next/link';
 import { ImageByUri } from '../ImageByUri';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import Modal from '../Modal';
+import { BottomSheet } from '../BottomSheet';
 
 interface FooterMobileProps {
   title?: string;
@@ -20,31 +20,13 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
 
   const { profile } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
-  const [showModalPost, setShowModalPost] = useState(false);
-  const modalPostRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutsideModals = (event: MouseEvent) => {
-      if (
-        modalPostRef.current &&
-        !modalPostRef.current.contains(event.target as Node)
-      ) {
-        setShowModalPost(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideModals);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModals);
-    };
-  }, [modalPostRef]);
+  const [showSheetPost, setShowSheetPost] = useState(false);
 
   if (!pubky) return;
 
   return (
     <div className="flex justify-center lg:hidden">
-      <div className="max-w-[380px] sm:max-w-[600px] md:max-w-[720px] w-full p-6 bg-gradient-to-t from-[#05050a] via-[#05050a] via-40% to-transparent flex gap-2 w-full justify-between justify-center fixed bottom-0 z-50">
+      <div className="max-w-[380px] sm:max-w-[600px] md:max-w-[720px] w-full p-6 bg-gradient-to-t from-[#05050a] via-[#05050a] via-40% to-transparent flex gap-2 w-full justify-between justify-center fixed bottom-0 z-40">
         <Link
           href="/home"
           className={twMerge(buttonCSS, title === 'Feed' && activeCSS)}
@@ -52,7 +34,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
           <Icon.Activity size="24" />
         </Link>
         <div
-          onClick={() => setShowModalPost(true)}
+          onClick={() => setShowSheetPost(true)}
           className={twMerge(buttonCSS)}
         >
           <Icon.Plus size="24" />
@@ -96,11 +78,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
           />
         </Link>
       </div>
-      <Modal.CreatePost
-        showModalPost={showModalPost}
-        setShowModalPost={setShowModalPost}
-        modalPostRef={modalPostRef}
-      />
+      <BottomSheet.CreatePost show={showSheetPost} setShow={setShowSheetPost} />
     </div>
   );
 };

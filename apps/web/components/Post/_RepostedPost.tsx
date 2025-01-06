@@ -21,6 +21,8 @@ interface RepostedPostProps {
   repostView: boolean;
   showModalTag: boolean;
   setShowModalTag: any;
+  showSheetTag: boolean;
+  setShowSheetTag: any;
   restClassName?: string;
 }
 
@@ -34,6 +36,8 @@ export default function RepostedPost({
   repostView,
   showModalTag,
   setShowModalTag,
+  showSheetTag,
+  setShowSheetTag,
   restClassName,
 }: RepostedPostProps) {
   const router = useRouter();
@@ -81,12 +85,18 @@ export default function RepostedPost({
               <Tags
                 showModalTag={showModalTag}
                 setShowModalTag={setShowModalTag}
+                showSheetTag={showSheetTag}
+                setShowSheetTag={setShowSheetTag}
                 largeView={largeView}
                 post={repostedPost}
               />
             )}
             {!repostView && (
-              <Actions setShowModalTag={setShowModalTag} post={repostedPost} />
+              <Actions
+                setShowModalTag={setShowModalTag}
+                setShowSheetTag={setShowSheetTag}
+                post={repostedPost}
+              />
             )}
           </div>
         </div>

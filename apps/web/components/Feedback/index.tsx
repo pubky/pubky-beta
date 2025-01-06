@@ -8,11 +8,15 @@ import axios from 'axios';
 import Modal from '../Modal';
 import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '../BottomSheet';
 
 export default function Feedback() {
   const { pubky, profile } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const [message, setMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [showSheetFeedback, setShowSheetFeedback] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState(false);
@@ -65,7 +69,9 @@ export default function Feedback() {
               </Link>
               <div
                 className="cursor-pointer"
-                onClick={() => setShowModal(true)}
+                onClick={() =>
+                  isMobile ? setShowSheetFeedback(true) : setShowModal(true)
+                }
               >
                 <Typography.Body
                   className="text-opacity-30 leading-snug tracking-wide"
@@ -81,6 +87,19 @@ export default function Feedback() {
       <Modal.Feedback
         showModal={showModal}
         setShowModal={setShowModal}
+        error={error}
+        setError={setError}
+        sent={sent}
+        setSent={setSent}
+        profile={profile}
+        message={message}
+        setMessage={setMessage}
+        handleSubmit={handleSubmit}
+        loading={loading}
+      />
+      <BottomSheet.Feedback
+        show={showSheetFeedback}
+        setShow={setShowSheetFeedback}
         error={error}
         setError={setError}
         sent={sent}

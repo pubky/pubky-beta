@@ -1,3 +1,4 @@
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { Button, Card, Icon, Input } from '@social/ui-shared';
 
 interface Errors {
@@ -15,6 +16,7 @@ interface LinksProps {
   links: Link[];
   setLinks: React.Dispatch<React.SetStateAction<Link[]>>;
   setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSheetLink: React.Dispatch<React.SetStateAction<boolean>>;
   errors: Errors;
 }
 
@@ -22,12 +24,15 @@ export default function Links({
   links,
   setLinks,
   setShowModalLink,
+  setShowSheetLink,
   errors,
 }: LinksProps) {
+  const isMobile = useIsMobile();
+
   const handleRemoveLink = (indexToRemove: number) => {
     setLinks((prevLinks) => {
       const updatedLinks = prevLinks.filter(
-        (_, index) => index !== indexToRemove
+        (_, index) => index !== indexToRemove,
       );
       return updatedLinks;
     });
@@ -71,7 +76,12 @@ export default function Links({
               color={links.length > 3 ? 'gray' : 'white'}
             />
           }
-          onClick={links.length > 3 ? undefined : () => setShowModalLink(true)}
+          onClick={
+            links.length > 3
+              ? undefined
+              : () =>
+                  isMobile ? setShowSheetLink(true) : setShowModalLink(true)
+          }
           disabled={links.length > 3}
         >
           Add link

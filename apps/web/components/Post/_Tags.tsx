@@ -19,12 +19,16 @@ import {
   usePubkyClientContext,
   useJoinModal,
 } from '@/contexts';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '../BottomSheet';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   largeView?: boolean;
   showModalTag: boolean;
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
+  showSheetTag: boolean;
+  setShowSheetTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Tags({
@@ -32,9 +36,12 @@ export default function Tags({
   largeView = false,
   showModalTag,
   setShowModalTag,
+  showSheetTag,
+  setShowSheetTag,
 }: PostProps) {
   const [showTooltipTag, setShowTooltipTag] = useState('');
   const { pubky, createTag, deleteTag } = usePubkyClientContext();
+  const isMobile = useIsMobile(768);
   const { openJoinModal } = useJoinModal();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [tagInput, setTagInput] = useState('');
@@ -114,101 +121,107 @@ export default function Tags({
       className="lg:mt-6 cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
-      <div
-        id="tags"
-        className={`flex-row inline-flex gap-2 flex-wrap mt-6 lg:mt-0`}
-      >
-        {!largeView &&
-          tags.slice(0, 3).map((tagObj, index) => {
-            const isTagFound = tagObj?.taggers?.some(
-              (fromItem) => fromItem === pubky,
-            );
-            return (
-              <PostUI.Footer key={index}>
-                <TooltipUI.Root
-                  delay={0}
-                  setShowTooltip={setShowTooltipTag}
-                  tagId={tagObj?.label}
-                >
-                  {showTooltipTag === tagObj?.label && (
-                    <Tooltip.Tag2 tags={tagObj} />
-                  )}
-                  {tagObj.taggers_count > 0 && (
-                    <PostUtil.Tag
-                      id={`tag-${index}`}
-                      clicked={isTagFound}
-                      color={
-                        tagObj?.label &&
-                        Utils.generateRandomColor(tagObj?.label)
-                      }
-                      onClick={() =>
-                        pubky
-                          ? isTagFound
-                            ? handleDeleteTag(tagObj?.label)
-                            : handleAddTag(tagObj?.label)
-                          : openJoinModal()
-                      }
-                    >
-                      <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tagObj?.label, 13)}
-                        {loadingTags === tagObj?.label ? (
-                          <Icon.LoadingSpin size="16" />
-                        ) : (
-                          <Typography.Caption
-                            variant="bold"
-                            className="text-opacity-60"
-                          >
-                            {tagObj?.taggers_count}
-                          </Typography.Caption>
-                        )}
+      {isMobile && tags.length === 0 ? (
+        ''
+      ) : (
+        <div
+          id="tags"
+          className={`flex-row inline-flex gap-2 flex-wrap mt-6 lg:mt-0`}
+        >
+          {!largeView &&
+            tags.slice(0, 3).map((tagObj, index) => {
+              const isTagFound = tagObj?.taggers?.some(
+                (fromItem) => fromItem === pubky,
+              );
+              return (
+                <PostUI.Footer key={index}>
+                  <TooltipUI.Root
+                    delay={0}
+                    setShowTooltip={setShowTooltipTag}
+                    tagId={tagObj?.label}
+                  >
+                    {showTooltipTag === tagObj?.label && (
+                      <Tooltip.Tag2 tags={tagObj} />
+                    )}
+                    {tagObj.taggers_count > 0 && (
+                      <PostUtil.Tag
+                        id={`tag-${index}`}
+                        clicked={isTagFound}
+                        color={
+                          tagObj?.label &&
+                          Utils.generateRandomColor(tagObj?.label)
+                        }
+                        onClick={() =>
+                          pubky
+                            ? isTagFound
+                              ? handleDeleteTag(tagObj?.label)
+                              : handleAddTag(tagObj?.label)
+                            : openJoinModal()
+                        }
+                      >
+                        <div className="flex gap-2 items-center">
+                          {Utils.minifyText(tagObj?.label, 13)}
+                          {loadingTags === tagObj?.label ? (
+                            <Icon.LoadingSpin size="16" />
+                          ) : (
+                            <Typography.Caption
+                              variant="bold"
+                              className="text-opacity-60"
+                            >
+                              {tagObj?.taggers_count}
+                            </Typography.Caption>
+                          )}
+                        </div>
+                      </PostUtil.Tag>
+                    )}
+                  </TooltipUI.Root>
+                </PostUI.Footer>
+              );
+            })}
+          {tags.length < 3 && !largeView && (
+            <div className="hidden md:flex">
+              {addTagInput ? (
+                <Input.Text
+                  placeholder="tag"
+                  className="h-[32px] p-3 text-[14px] rounded-lg"
+                  value={tagInput}
+                  maxLength={20}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                  autoFocus
+                  action={
+                    <div className="flex gap-1 -mr-2">
+                      <div
+                        onClick={handleFastAddTag}
+                        className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
+                      >
+                        <Icon.Plus size="12" />
                       </div>
-                    </PostUtil.Tag>
-                  )}
-                </TooltipUI.Root>
-              </PostUI.Footer>
-            );
-          })}
-        {tags.length < 3 && !largeView && (
-          <div className="hidden md:flex">
-            {addTagInput ? (
-              <Input.Text
-                placeholder="tag"
-                className="h-[32px] p-3 text-[14px] rounded-lg"
-                value={tagInput}
-                maxLength={20}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                autoFocus
-                action={
-                  <div className="flex gap-1 -mr-2">
-                    <div
-                      onClick={handleFastAddTag}
-                      className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
-                    >
-                      <Icon.Plus size="12" />
+                      <div
+                        onClick={() => setAddTagInput(false)}
+                        className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                      >
+                        <Icon.X size="12" />
+                      </div>
                     </div>
-                    <div
-                      onClick={() => setAddTagInput(false)}
-                      className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                    >
-                      <Icon.X size="12" />
-                    </div>
+                  }
+                />
+              ) : (
+                <div
+                  onClick={() =>
+                    pubky ? setAddTagInput(true) : openJoinModal()
+                  }
+                  className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
+                >
+                  <div>
+                    <Icon.Plus size="16" />
                   </div>
-                }
-              />
-            ) : (
-              <div
-                onClick={() => (pubky ? setAddTagInput(true) : openJoinModal())}
-                className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
-              >
-                <div>
-                  <Icon.Plus size="16" />
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
       <Modal.Tag
         post={post}
         tags={tags}
@@ -221,6 +234,21 @@ export default function Tags({
         handleDeleteTag={handleDeleteTag}
         showModalTag={showModalTag}
         setShowModalTag={setShowModalTag}
+        selectedTag={selectedTag}
+        setSelectedTag={setSelectedTag}
+      />
+      <BottomSheet.Tag
+        post={post}
+        tags={tags}
+        updatePostInTimeline={(newTag: PostView) => {
+          setLoadingTags(newTag?.details.content);
+          setTags(newTag.tags);
+          setLoadingTags('');
+        }}
+        handleAddTag={handleAddTag}
+        handleDeleteTag={handleDeleteTag}
+        show={showSheetTag}
+        setShow={setShowSheetTag}
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
       />
