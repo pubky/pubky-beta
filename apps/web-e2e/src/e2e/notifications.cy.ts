@@ -1,5 +1,5 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, deletePost, fastTagPost, replyToPost, repostPost, tagPostInFeed } from '../support/posts';
+import { createQuickPost, deletePost, editPost, fastTagPost, replyToPost, repostPost, tagPostInFeed } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands'
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
@@ -237,15 +237,47 @@ describe('settings', () => {
   });
 
   it('can be notified for a post being deleted that you replied to', () => {
-    // * profile 1 creates a post that will be replied to and then deleted
+    // * profile 1 creates a post (1) that will be replied to and then deleted
     createQuickPost(`The one who replies to this post will be notified when it is deleted! ${Date.now()}`);
 
-    // * profile 2 replies to profile 1's post
+    // * profile 2 replies to profile 1's post (1)
     cy.signOut(true);
     cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
     replyToPost({replyContent: "I replied to your post!"});
 
-    // * profile 1 deletes profile 1's post
+    // * profile 1 deletes own post (1)
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    deletePost();
+
+    // * profile 2 checks for notification for post (1) being deleted
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    // wait and reload if notification counter doesn't show
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.get('#header-notification-counter').should('have.text', '1');
+    cy.get('#header-profile-pic').click();
+    // TODO: add 'to' when merged https://github.com/pubky/pubky-app/pull/822
+    checkLatestNotification([profile1.username, "deleted a post you replied"]);
+
+    // TODO: add checks for disabled notifications
+    // * profile 2 disables notifications for being replied to
+    // * profile 1 creates a post that will be replied to and then deleted
+    // * profile 2 replies to profile 1's post
+    // * profile 1 deletes own post
+    // * profile 2 checks for absence of notifications
+  });
+
+  it('can be notified for a post being deleted that you reposted', () => {
+    // * profile 1 creates a post (1) that will be reposted and then deleted
+    createQuickPost(`The one who reposts this post will be notified when it is deleted! ${Date.now()}`);
+
+    // * profile 2 reposts profile 1's post
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    repostPost({repostContent: "I reposted your post!"});
+
+    // * profile 1 deletes own post (1)
     cy.signOut(true);
     cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
     deletePost();
@@ -257,9 +289,79 @@ describe('settings', () => {
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
-    // TODO: add 'to' when merged https://github.com/pubky/pubky-app/pull/822
-    checkLatestNotification([profile1.username, "deleted a post you replied"]);
+    checkLatestNotification([profile1.username, "deleted a post you reposted"]);
+
+    // TODO: add checks for disabled notifications
+    // * profile 2 disables notifications for being reposted
+    // * profile 1 creates a post (2) that will be reposted and then deleted
+    // * profile 2 reposts profile 1's post (2)
+    // * profile 1 deletes own post (2)
+    // * profile 2 checks for absence of notifications
   });
-  it('can be notified for a post being edited that you replied and reposted');
+
+  // failing due to wrong notification "edited a post you replied", see https://github.com/pubky/pubky-app/issues/823
+  it.skip('can be notified for a post being edited that you replied', () => {
+    // * profile 1 creates a post (1) that will be replied to and then edited
+    createQuickPost(`The one who replies to this post will be notified when it is edited! ${Date.now()}`);
+
+    // * profile 2 replies to profile 1's post (1)
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    replyToPost({replyContent: "I replied to your post!"});
+
+    // * profile 1 edits own post (1)
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    editPost("I edited my post!");
+
+    // * profile 2 checks for notification for post (1) being edited
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    // wait and reload if notification counter doesn't show
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.get('#header-notification-counter').should('have.text', '1');
+    cy.get('#header-profile-pic').click();
+    checkLatestNotification([profile1.username, "edited a post you replied to"]);
+
+    // TODO: add checks for disabled notifications
+    // * profile 2 disables notifications for being replied to
+    // * profile 1 creates a post (2) that will be replied to and then edited
+    // * profile 2 replies to profile 1's post (2)
+    // * profile 1 edits own post (2)
+    // * profile 2 checks for absence of notifications
+  });
+
+  // failing due to wrong notification "edited a post you tagged", see https://github.com/pubky/pubky-app/issues/823
+  it.skip('can be notified for a post being edited that you reposted', () => {
+    // * profile 1 creates a post (1) that will be reposted and then edited
+    createQuickPost(`The one who reposts this post will be notified when it is edited! ${Date.now()}`);
+
+    // * profile 2 reposts profile 1's post (1)
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    repostPost({repostContent: "I reposted your post!"});
+
+    // * profile 1 edits own post (1)
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    editPost("I edited my post!");
+
+    // * profile 2 checks for notification for post (1) being edited
+    cy.signOut(true);
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    // wait and reload if notification counter doesn't show
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.get('#header-notification-counter').should('have.text', '1');
+    cy.get('#header-profile-pic').click();
+    checkLatestNotification([profile1.username, "edited a post you reposted"]);
+
+    // TODO: add checks for disabled notifications
+    // * profile 2 disables notifications for being reposted
+    // * profile 1 creates a post (2) that will be reposted and then edited
+    // * profile 2 reposts profile 1's post (2)
+    // * profile 1 edits own post (2)
+    // * profile 2 checks for absence of notifications
+  });
+
   it('can display counter for multiple new notifications');
 });

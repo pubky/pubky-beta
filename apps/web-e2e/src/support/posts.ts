@@ -85,11 +85,34 @@ export const fastTagPostInFeed = (tags: string[], postContent?: string) => {
 };
 
 // menuBtnIdx: 0 for original post, 1 for reply
-export const deletePost = (postIdx = 0, menuBtnIdx = 0) => {
+
+export const editPost = (newPostContent: string, postIdx = 0, menuBtnIdx = 0) => {
+  // find post and click menu button
   cy.findPostInFeed(postIdx).within(() => {
-    // delete the repost
-    // cy.find('#menu-btn').eq(menuBtnIdx).should('be.visible').click();
-    // '[id="menu-btn"]' will find all with id
+    // '[id="menu-btn"]' finds all with id
+    cy.get('[id="menu-btn"]').eq(menuBtnIdx).should('be.visible').click();
+    cy.get('#post-tooltip-menu').should('be.visible').within(() => {
+      cy.get('#edit-post').should('be.visible')
+        .innerTextShouldEq('Edit post')
+        .get('#edit-post').click();
+    });
+  });
+
+  // input edited post content in modal and submit
+  cy.get('#modal-root').should('be.visible').within(() => {
+    cy.get('h1').contains('Edit Post');
+    cy.get('textarea')
+      .clear()
+      .type(newPostContent);
+    cy.get('#post-btn').click();
+  });
+};
+
+// menuBtnIdx: 0 for original post, 1 for reply
+export const deletePost = (postIdx = 0, menuBtnIdx = 0) => {
+  // find post and click menu button
+  cy.findPostInFeed(postIdx).within(() => {
+    // '[id="menu-btn"]' finds all with id
     cy.get('[id="menu-btn"]').eq(menuBtnIdx).should('be.visible').click();
     cy.get('#post-tooltip-menu').should('be.visible').within(() => {
       cy.get('#delete-post').should('be.visible')
