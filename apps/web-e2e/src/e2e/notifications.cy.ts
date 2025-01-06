@@ -161,7 +161,34 @@ describe('settings', () => {
     // * profile 1 tags profile 2's post
     // * profile 2 checks for absence of notifications
   });
-  it('can be notified for profile being mentioned in a post');
+
+  it('can be notified for profile being mentioned in a post', () => {
+    // * profile 1 creates a post mentioning profile 2
+    cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
+      createQuickPost(`This is a post for @${pubky}! ${Date.now()}`);
+    });
+    //clickShowNewPostsBtn(); dnt need
+
+    // * profile 2 checks for notification for being mentioned in a post
+    cy.signOut(true);
+    // TODO: remove workaround reload for notification counter and tab content not showing correctly, see https://github.com/pubky/pubky-app/issues/810
+    cy.waitReload(3000)
+    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    // wait and reload if notification counter doesn't show
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    // check notification counter on profile picture is 1
+    cy.get('#header-notification-counter').should('have.text', '1');
+    // navigate to profile 2 profile page
+    cy.get('#header-profile-pic').click();
+    // check latest notification on profile page
+    checkLatestNotification([profile1.username, "mentioned you in a post"]);
+
+    // TODO: add checks for disabled notifications
+    // * profile 2 disables notifications for being mentioned in a post
+    // * profile 1 creates a post mentioning profile 2
+    // * profile 2 checks for absence of notifications
+  });
+
   it('can be notified for your post being replied and reposted');
   it('can be notified for a post being deleted that you replied and reposted');
   it('can be notified for a post being edited that you replied and reposted');
