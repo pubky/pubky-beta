@@ -38,7 +38,7 @@ const notificationType = {
   reply: {
     type: 'reply',
     icon: <Icon.ChatCircleText size="16" />,
-    text: 'replied your post',
+    text: 'replied to your post',
   },
   repost: {
     type: 'repost',
