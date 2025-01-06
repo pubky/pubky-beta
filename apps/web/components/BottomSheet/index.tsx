@@ -18,6 +18,7 @@ import Menu from './_Menu';
 import MenuProfile from './_MenuProfile';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
+import Status from './_Status';
 import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
 import TagProfile from './_TagProfile';
@@ -43,6 +44,7 @@ export const BottomSheet = {
   MenuProfile,
   ReportPost,
   ReportProfile,
+  Status,
   Tag,
   TagCreatePost,
   TagProfile,

@@ -3,6 +3,8 @@ import { Utils } from '@social/utils-shared';
 import { DropDown } from '@/components/DropDown';
 import { TStatus } from '@/types';
 import { usePubkyClientContext } from '@/contexts';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '@/components';
 
 interface StatusProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky: string | null | undefined;
@@ -11,6 +13,7 @@ interface StatusProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Status({ creatorPubky, status }: StatusProps) {
   const { pubky } = usePubkyClientContext();
+  const isMobile = useIsMobile();
 
   const extractEmojiAndText = (status: string) => {
     const emojiRegex =
@@ -33,7 +36,13 @@ export default function Status({ creatorPubky, status }: StatusProps) {
       {!creatorPubky || creatorPubky === pubky ? (
         <div className="flex flex-col justify-center items-center">
           {status ? (
-            <DropDown.Status status={status} />
+            <>
+              {isMobile ? (
+                <BottomSheet.Status status={status} />
+              ) : (
+                <DropDown.Status status={status} />
+              )}
+            </>
           ) : (
             <Typography.Body className="text-opacity-50" variant="small">
               Loading Status...
