@@ -7,6 +7,12 @@ import { useRouter } from 'next/navigation';
 
 const tabs = [
   {
+    id: 6,
+    key: 'tagged',
+    icon: <Icon.UserRectangle size="24" color="white" />,
+    label: 'Tagged',
+  },
+  {
     id: 0,
     key: 'notifications',
     icon: <Icon.Bell size="24" color="white" />,
@@ -48,12 +54,6 @@ const tabs = [
     icon: <Icon.Smiley size="24" color="white" />,
     label: 'Friends',
   },
-  {
-    id: 6,
-    key: 'tagged',
-    icon: <Icon.Tag size="24" color="white" />,
-    label: 'Tagged',
-  },
 ];
 
 const generateTabUrl = (key: string, creatorPubky?: string) => {
@@ -69,7 +69,7 @@ export default function FilterTabsMobile({
   activeTab,
   setActiveTab,
   userCounts,
-  userTags,
+  //userTags,
   loading,
   setLoading,
   creatorPubky,
@@ -113,7 +113,7 @@ export default function FilterTabsMobile({
       case 'friends':
         return userCounts?.friends || 0;
       case 'tagged':
-        return userTags || 0;
+        return null;
       default:
         return null;
     }
@@ -145,9 +145,11 @@ export default function FilterTabsMobile({
               }`}
             >
               {tab.icon}
-              <Typography.Caption className="tracking-normal" variant="bold">
-                <span id="counter">{getTabNumber(tab.key)}</span>
-              </Typography.Caption>
+              {getTabNumber(tab.key) !== null && (
+                <Typography.Caption className="tracking-normal" variant="bold">
+                  <span id="counter">{getTabNumber(tab.key)}</span>
+                </Typography.Caption>
+              )}
             </div>
           );
         })}
