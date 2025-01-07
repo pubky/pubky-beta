@@ -6,7 +6,7 @@ interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Root = ({ children, reference, ...rest }: DropdownProps) => {
-  const baseCSS = `relative inline-block`;
+  const baseCSS = `relative table`;
 
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)} ref={reference}>
