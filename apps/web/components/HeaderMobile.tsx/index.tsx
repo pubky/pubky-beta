@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Header as HeaderUI } from '@social/ui-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { Header as HeaderUI, Icon } from '@social/ui-shared';
+import { useJoin, usePubkyClientContext } from '@/contexts';
 import { usePathname } from 'next/navigation';
 
 interface HeaderMobileProps {
@@ -17,6 +17,7 @@ export default function HeaderMobile({
   children,
 }: HeaderMobileProps) {
   const pathname = usePathname();
+  const { openJoin } = useJoin();
   const { pubky, isLoggedIn, setSearchTags } = usePubkyClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
 
@@ -48,7 +49,16 @@ export default function HeaderMobile({
           <HeaderUI.Logo link={logoLink} />
           <HeaderUI.Title />
         </div>
-        {pubky && <>{rightIcon}</>}
+        {pubky ? (
+          <>{rightIcon}</>
+        ) : (
+          <div
+            onClick={openJoin}
+            className="mr-2 p-2 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full cursor-pointer"
+          >
+            <Icon.User size="20" />
+          </div>
+        )}
       </div>
       {children}
     </HeaderUI.Root>

@@ -2,11 +2,7 @@
 
 import { useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
-import {
-  useJoinModal,
-  usePubkyClientContext,
-  useToastContext,
-} from '@/contexts';
+import { useJoin, usePubkyClientContext, useToastContext } from '@/contexts';
 import Tooltip from '../Tooltip';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
@@ -32,7 +28,7 @@ const BookmarkButton = ({
   handleBookmarks: () => void;
 }) => {
   const { pubky } = usePubkyClientContext();
-  const { openJoinModal } = useJoinModal();
+  const { openJoin } = useJoin();
   return (
     <Button.Action
       id="bookmark-btn"
@@ -56,11 +52,7 @@ const BookmarkButton = ({
       }
       onClick={(event) => {
         event.stopPropagation();
-        loadingBookmarks
-          ? undefined
-          : pubky
-            ? handleBookmarks()
-            : openJoinModal();
+        loadingBookmarks ? undefined : pubky ? handleBookmarks() : openJoin();
       }}
     />
   );
@@ -83,7 +75,7 @@ const MenuButton = ({
 }) => {
   const { pubky } = usePubkyClientContext();
   const isMobile = useIsMobile();
-  const { openJoinModal } = useJoinModal();
+  const { openJoin } = useJoin();
   return (
     <div
       className="relative cursor-default"
@@ -107,7 +99,7 @@ const MenuButton = ({
             ? isMobile
               ? setShowSheetMenu(true)
               : setShowMenu(!showMenu)
-            : openJoinModal();
+            : openJoin();
         }}
       />
       <BottomSheet.Menu
@@ -128,7 +120,7 @@ export default function Actions({
   setShowSheetTag,
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
-  const { openJoinModal } = useJoinModal();
+  const { openJoin } = useJoin();
   const isMobile = useIsMobile();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   const { data: authorRepost } = useUserProfile(
@@ -222,7 +214,7 @@ export default function Actions({
               ? isMobile
                 ? setShowSheetTag(true)
                 : setShowModalTag(true)
-              : openJoinModal();
+              : openJoin();
           }}
           icon={
             <div>
@@ -247,7 +239,7 @@ export default function Actions({
               ? isMobile
                 ? setShowSheetReply(true)
                 : setShowModalReply(true)
-              : openJoinModal();
+              : openJoin();
           }}
         />
         <div className="relative">
@@ -270,7 +262,7 @@ export default function Actions({
                 ? isMobile
                   ? setShowSheetRepost(true)
                   : setShowModalRepost(true)
-                : openJoinModal();
+                : openJoin();
             }}
           />
         </div>

@@ -1,9 +1,5 @@
 import { Button, Icon } from '@social/ui-shared';
-import {
-  useJoinModal,
-  usePubkyClientContext,
-  useToastContext,
-} from '@/contexts';
+import { useJoin, usePubkyClientContext, useToastContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
@@ -41,7 +37,7 @@ export default function Buttons({
   profile,
 }: ButtonsProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { openJoinModal } = useJoinModal();
+  const { openJoin } = useJoin();
   const isMobile = useIsMobile();
   const { addToast } = useToastContext();
   const router = useRouter();
@@ -128,7 +124,7 @@ export default function Buttons({
               onClick={
                 loadingFollowed
                   ? undefined
-                  : () => (pubky ? followUser() : openJoinModal())
+                  : () => (pubky ? followUser() : openJoin())
               }
               disabled={loadingFollowed}
               loading={loadingFollowed}
@@ -213,7 +209,7 @@ export default function Buttons({
                 ? isMobile
                   ? setShowSheetProfileMenu(true)
                   : setShowProfileMenu(true)
-                : openJoinModal()
+                : openJoin()
             }
           />
         </div>
