@@ -2,7 +2,7 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { cannotFindPostInFeed, checkPostIsAtIndexInFeed, countPostsInFeed, createQuickPost, fastTagPostInFeed, repostPost } from '../support/posts';
+import { cannotFindPostInFeed, checkPostIsAtIndexInFeed, countPostsInFeed, createQuickPost, fastTagPostInFeed, repostPost, waitForFeedToLoad } from '../support/posts';
 import { searchAndFollowProfile } from '../support/contacts';
 //import { selectEmoji, latestPostInFeedContentEq, deletePost, createQuickPost } from '../support/posts';
 //import { defaultMs, fastMs } from '../support/slow-down';
@@ -124,6 +124,7 @@ describe('feed and filters', () => {
     cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
     // click the following button in the leftmost (first) sidebar item
     cy.get('#left-sidebar').find('#reach-following-btn').click();
+    waitForFeedToLoad();
 
     cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
     cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
@@ -137,6 +138,7 @@ describe('feed and filters', () => {
     // * sign in as profile 3 and view Reach Following, only profile 2's post can be seen
     cy.signIn(backupDownloadFilePath(`${profile3.username}.pkarr`));
     cy.get('#left-sidebar').find('#reach-following-btn').click();
+    waitForFeedToLoad();
 
     cy.findFirstPostInFeed(profile2.postText).should('be.visible');
     cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
@@ -164,6 +166,7 @@ describe('feed and filters', () => {
     // * sign in as profile 1 and view Reach Friends, only profile 2's post can be seen
     cy.signIn(backupDownloadFilePath(`${profile1.username}.pkarr`));
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
+    waitForFeedToLoad();
 
     cy.findFirstPostInFeed(profile2.postText).should('be.visible');
     cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
@@ -177,7 +180,7 @@ describe('feed and filters', () => {
     // * sign in as profile 2 and view Reach Friends, only profile 1's posts can be seen
     cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
-
+    waitForFeedToLoad();
     cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
     cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
     cannotFindPostInFeed(profile2.postText);
@@ -204,6 +207,7 @@ describe('feed and filters', () => {
     cy.signIn(backupDownloadFilePath(`${profile1.username}.pkarr`));
     cy.get('#left-sidebar').find('#reach-following-btn').click();
     cy.get('#left-sidebar').find('#sort-popularity-btn').click();
+    waitForFeedToLoad();
 
     // * check the posts are in the correct order
     // profile 3's post is the most popular because it has 5 tags

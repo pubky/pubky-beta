@@ -88,7 +88,7 @@ jobs:
           echo "NEXT_PUBLIC_HOMESERVER=${{ secrets.HOMESERVER_PUBKY }}
           NEXT_PUBLIC_NEXUS=http://localhost:8080
           NEXT_PUBLIC_TESTNET=false
-          NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://demo.httprelay.io/link/
+          NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://httprelay.staging.pubky.app/link/
           BASE_URL_SUPPORT=${{ secrets.BASE_URL_SUPPORT }}
           SUPPORT_API_ACCESS_TOKEN=${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
           SUPPORT_ACCOUNT_ID=1" > .env

@@ -31,7 +31,7 @@ describe('posts', () => {
     cy.slowDown(defaultMs);
 
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(Cypress.env('ci') ? 10_000 : 5_000);
+    cy.wait(10_000);
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
@@ -237,16 +237,15 @@ describe('posts', () => {
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/523
-    cy.waitReload();
-
     // delete the post
     deletePost();
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
-
     // verify post is deleted
+    checkPostIsNotAtTopOfFeed(postContent);
+
+    // reload and check post is still deleted
+    cy.reload();
+    waitForFeedToLoad();
     checkPostIsNotAtTopOfFeed(postContent);
   });
 
@@ -419,9 +418,6 @@ describe('posts', () => {
     const repostContent = 'Reposted with content!';
     createQuickPost(postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/546
-    cy.waitReload();
-
     // repost with content
     cy.slowDown(fastMs);
     repostPost({ repostContent, postContent });
@@ -443,9 +439,6 @@ describe('posts', () => {
 
     // delete the repost
     deletePost();
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
 
     // verify the repost is deleted
     cy.findFirstPostInFeed().within(() => {
@@ -588,5 +581,6 @@ describe('posts', () => {
 
     // todo: check that reply still shown in own profile page
     // todo: test article
+    // todo: test 'Show n new posts' button
   });
 });

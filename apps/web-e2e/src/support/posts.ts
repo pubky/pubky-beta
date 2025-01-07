@@ -146,14 +146,14 @@ export const checkPostIsAtIndexInFeed = (postContent: string, index: number) => 
 };
 
 // wait for feed timeline to not show "No posts yet" or "Loading"
-export const waitForFeedToLoad = (seconds: number = 5) => {
-  const checkTimelineRecursively = (attempts: number) => {
+export const waitForFeedToLoad = (seconds: number = 6) => {
+  const checkTimelineRecursively = (attempts: number, firstCheck: boolean = true) => {
     if (attempts <= 0) assert(false, "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds");
 
     cy.get('#posts-feed').find('#timeline').invoke('text').then((text) => {
       if (text.includes('No posts yet') || text.includes('Loading')) {
-        cy.wait(1000);
-        checkTimelineRecursively(attempts - 1);
+        firstCheck ? cy.wait(200) : cy.wait(1000);
+        checkTimelineRecursively(attempts - 1, false);
       }
     });
   };

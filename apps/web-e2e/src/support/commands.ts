@@ -174,8 +174,8 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.get('#sign-in-recovery-file-btn').click();
 
   // TODO: remove workaround for indefinite loading issue on sign in button, https://github.com/pubky/pubky-app/issues/719
-  // if location is still /sign-in after 10 seconds then refresh page
-  cy.wait(6_000);
+  // if location is still /sign-in after 5 seconds (10 in CI) then refresh page
+  cy.wait(Cypress.env('ci') ? 10_000 : 5_000);
   cy.location('pathname').then((path) => {
     if (path === '/sign-in') {
       cy.reload();
@@ -308,16 +308,26 @@ Cypress.Commands.add('waitReload', (time = 2000) => {
   cy.wait(time).reload();
 });
 
-Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts = 10) => {
+// wait 3 minutes for element to appear by default
+Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts = 30) => {
   const go = (attempts: number) => {
     if (attempts <= 0) assert(false, `waitReloadWhileElementDoesNotExist: ${selector} not found`);
-    cy.get('body').then(($body) => {
 
+    cy.get('body').then(($body) => {
       if ($body.find(selector).length === 0) {
-        cy.log(`waitReloadWhileElementDoesNotExist: ${selector} not found; waiting 1 second and reloading.`);
+        cy.log(`waitReloadWhileElementDoesNotExist: ${selector} not found; waiting and reloading.`);
+        // TODO: reduce long wait workaround for pkarr
+        cy.wait(9_000);
         cy.reload();
         // wait for page to load before checking again
-        cy.wait(1000);
+        // TODO: improve wait by detecting presence of key element on page (e.g. profile picture)
+        cy.wait(Cypress.env('ci') ? 3_000 : 1_000);
+        // TODO: remove failure for error case where location is /onboarding (pkarr 429)
+        cy.location('pathname').then((path) => {
+          if (path === '/onboarding') {
+            assert(false, 'waitReloadWhileElementDoesNotExist: location is /onboarding, probably pkarr 429');
+          }
+        });
         go(attempts - 1);
       } else {
         cy.log(`waitReloadWhileElementDoesNotExist: ${selector} found; continuing.`);

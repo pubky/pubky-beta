@@ -10,7 +10,7 @@ import { checkLatestNotification } from '../support/profile';
 const profile1 = { username: "Notif #1", pubkyAlias: "pubky_1" };
 const profile2 = { username: "Notif #2", pubkyAlias: "pubky_2" };
 
-describe('settings', () => {
+describe('notifications', () => {
   before(() => {
     slowCypressDown();
     cy.deleteDownloadsFolder();
@@ -36,7 +36,7 @@ describe('settings', () => {
     cy.wrap(Cypress.env(profile2.pubkyAlias)).as(profile2.pubkyAlias);
 
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(Cypress.env('ci') ? 10_000 : 5_000);
+    cy.wait(10_000);
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
@@ -193,6 +193,7 @@ describe('settings', () => {
     cy.signOut(true);
     cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
     replyToPost({replyContent: "I replied to your post!"});
+    cy.wait(1000); // TODO: remove workaround for notifictation counter not showing for profile 1
 
     // * profile 1 checks for notification for being replied to
     cy.signOut(true);
@@ -256,8 +257,7 @@ describe('settings', () => {
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
-    // TODO: add 'to' when merged https://github.com/pubky/pubky-app/pull/822
-    checkLatestNotification([profile1.username, "deleted a post you replied"]);
+    checkLatestNotification([profile1.username, "deleted a post you replied to"]);
 
     // TODO: add checks for disabled notifications
     // * profile 2 disables notifications for being replied to
