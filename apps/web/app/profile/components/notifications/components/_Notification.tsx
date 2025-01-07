@@ -234,7 +234,7 @@ export default function Notification({
                   : notification.body.delete_source === 'bookmark'
                     ? ' a post you bookmarked'
                     : notification.body.delete_source === 'reply_parent'
-                      ? ' a post you replied'
+                      ? ' a post you replied to'
                       : notification.body.delete_source === 'repost_embed'
                         ? ' a post you reposted'
                         : ' a post you tagged')}
@@ -246,7 +246,7 @@ export default function Notification({
                   : notification.body.delete_source === 'bookmark'
                     ? ' a post you bookmarked'
                     : notification.body.delete_source === 'reply_parent'
-                      ? ' a post you replied'
+                      ? ' a post you replied to'
                       : notification.body.delete_source === 'repost_embed'
                         ? ' a post you reposted'
                         : ' a post you tagged')}
