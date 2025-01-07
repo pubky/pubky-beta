@@ -101,7 +101,7 @@ export const Root = ({
         id="drawer-example"
         className={twMerge(
           baseCSS,
-          animateIn ? 'translate-x-0' : translateClass,
+          animateIn ? 'translate-x-none' : translateClass,
           rest.className,
         )}
         tabIndex={-1}
