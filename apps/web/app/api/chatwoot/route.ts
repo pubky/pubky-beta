@@ -1,13 +1,9 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 
-const BaseUrl = process.env.BASE_URL_SUPPORT;
-const ApiAccessToken = process.env.SUPPORT_API_ACCESS_TOKEN;
-const AccountId = process.env.SUPPORT_ACCOUNT_ID;
-
-if (!BaseUrl || !ApiAccessToken || !AccountId) {
-  throw new Error('Missing required environment variables');
-}
+const BaseUrl = `${process.env.BASE_URL_SUPPORT}`;
+const ApiAccessToken = `${process.env.SUPPORT_API_ACCESS_TOKEN}`;
+const AccountId = `${process.env.SUPPORT_ACCOUNT_ID}`;
 
 const config = {
   headers: {
@@ -105,7 +101,6 @@ export async function POST(req: Request) {
   }
 }
 
-// Gestione dei metodi non supportati
 export async function GET() {
   return NextResponse.json(
     { error: 'Method not allowed. Use POST instead.' },
