@@ -55,12 +55,33 @@ export const Root = ({
     const diffX = startX - currentX;
     const threshold = 100;
 
-    if (position === 'left' && diffX > threshold) {
-      setDrawerOpen(false);
-    } else if (position === 'right' && diffX < -threshold) {
-      setDrawerOpen(false);
+    if (drawerOpen) {
+      if (position === 'left' && diffX > threshold) {
+        setDrawerOpen(false);
+      } else if (position === 'right' && diffX < -threshold) {
+        setDrawerOpen(false);
+      }
+    } else {
+      if (position === 'left' && diffX < -threshold) {
+        setDrawerOpen(true);
+      } else if (position === 'right' && diffX > threshold) {
+        setDrawerOpen(true);
+      }
     }
   };
+
+  if (!isVisible && !drawerOpen) {
+    // Render swipe zone for opening the drawer
+    const swipeZoneCSS = position === 'left' ? 'left-0' : 'right-0';
+
+    return (
+      <div
+        className={`fixed top-0 ${swipeZoneCSS} w-10 h-screen z-40`} // Narrow zone for swipe detection
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+      />
+    );
+  }
 
   if (!isVisible) return null;
 
@@ -80,7 +101,7 @@ export const Root = ({
         id="drawer-example"
         className={twMerge(
           baseCSS,
-          animateIn ? 'translate-x-0' : translateClass,
+          animateIn ? 'translate-x-none' : translateClass,
           rest.className,
         )}
         tabIndex={-1}

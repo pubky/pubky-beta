@@ -5,6 +5,7 @@ import { Icon, Tooltip } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useUserProfile } from '@/hooks/useUser';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface TooltipMenuProps {
   pk: string;
@@ -13,6 +14,7 @@ interface TooltipMenuProps {
 
 export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const { data: author } = useUserProfile(pk, pubky ?? '');
   const [followed, setFollowed] = useState(false);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
@@ -70,7 +72,8 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
       loading={loadingFollowed}
       icon={<Icon.UserMinus size="24" />}
     >
-      Unfollow {Utils.minifyText(author?.details?.name ?? '', 10)}
+      Unfollow{' '}
+      {Utils.minifyText(author?.details?.name ?? '', isMobile ? 30 : 10)}
     </Tooltip.Item>
   ) : (
     <Tooltip.Item
@@ -78,7 +81,7 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
       loading={loadingFollowed}
       icon={<Icon.UserPlus size="24" />}
     >
-      Follow {Utils.minifyText(author?.details?.name ?? '', 10)}
+      Follow {Utils.minifyText(author?.details?.name ?? '', isMobile ? 30 : 10)}
     </Tooltip.Item>
   );
 }

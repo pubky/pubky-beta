@@ -173,7 +173,10 @@ export default function LinksSection({
     <>
       {links.length > 0 && (
         <div className="flex-col inline-flex gap-2">
-          <SideCard.Header title="Links" />
+          <SideCard.Header className="hidden lg:flex" title="Links" />
+          <Typography.Body variant="large-bold" className="flex lg:hidden">
+            Links
+          </Typography.Body>
           <div className="flex-col inline-flex gap-2">
             {links.map((link, index) => {
               const icon = socialLinks.find((socialLink) =>

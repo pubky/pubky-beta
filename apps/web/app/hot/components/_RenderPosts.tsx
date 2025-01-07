@@ -15,7 +15,7 @@ const RenderPosts = ({ posts, initloadingPosts }: RenderPostsProps) => {
 
   return (
     <div className="flex flex-col gap-3" id="hot-posts">
-      <Typography.H2 className="text-opacity-50 font-light">
+      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">
         Hot Posts
       </Typography.H2>
       {posts?.map((post) => (

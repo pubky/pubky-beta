@@ -12,12 +12,15 @@ import EditArticle from './_EditArticle';
 import EditPost from './_EditPost';
 import Feedback from './_Feedback';
 import FilesCarousel from './_FilesCarousel';
+import Layout from './_Layout';
 import Link from './_Link';
 import Logout from './_Logout';
 import Menu from './_Menu';
 import MenuProfile from './_MenuProfile';
+import Reach from './_Reach';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
+import SortPosts from './_SortPosts';
 import Status from './_Status';
 import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
@@ -38,12 +41,15 @@ export const BottomSheet = {
   EditPost,
   Feedback,
   FilesCarousel,
+  Layout,
   Link,
   Logout,
   Menu,
   MenuProfile,
+  Reach,
   ReportPost,
   ReportProfile,
+  SortPosts,
   Status,
   Tag,
   TagCreatePost,

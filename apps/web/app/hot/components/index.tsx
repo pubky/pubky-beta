@@ -5,6 +5,7 @@ import { UserProfileForTag } from './_UserProfileForTag';
 import RenderInfluencers from './_RenderInfluencers';
 import RenderPosts from './_RenderPosts';
 import RenderTags from './_RenderTags';
+import TabsMobile from './_TabsMobile';
 
 export const Hot = {
   Rank,
@@ -14,4 +15,5 @@ export const Hot = {
   RenderInfluencers,
   RenderPosts,
   RenderTags,
+  TabsMobile,
 };

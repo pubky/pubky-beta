@@ -1,4 +1,7 @@
+import { BottomSheet } from '@/components/BottomSheet';
+import DropDown from '@/components/DropDown';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { ICustomFeed } from '@/types';
 import { Button, Icon, Input, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
@@ -14,23 +17,6 @@ interface CreateFeedProps {
   handleAddFeed: (feedToAdd: ICustomFeed, name: string) => void;
 }
 
-const iconsReach = {
-  all: <Icon.Broadcast />,
-  following: <Icon.UsersRight />,
-  friends: <Icon.Smiley />,
-};
-
-const iconsSort = {
-  recent: <Icon.Asterisk />,
-  popularity: <Icon.Fire />,
-};
-
-const iconsLayout = {
-  columns: <Icon.ThreeColumns />,
-  wide: <Icon.List />,
-  visual: <Icon.SquaresFour color="gray" />,
-};
-
 export default function ContentCreateFeed({
   setShowModalCreateFeed,
   setTagsFeed,
@@ -41,6 +27,7 @@ export default function ContentCreateFeed({
 }: CreateFeedProps) {
   const { searchTags } = usePubkyClientContext();
   const { reach, layout, sort } = useFilterContext();
+  const isMobile = useIsMobile();
   const [tag, setTag] = useState('');
   const [tagsError, setTagsError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -162,7 +149,7 @@ export default function ContentCreateFeed({
               onChange={handleChange}
               onKeyDown={handleKeyDown}
               action={
-                <div className="flex gap-2">
+                <div className="flex">
                   <Button.Action
                     id="add-btn"
                     icon={<Icon.Plus size="18" />}
@@ -174,7 +161,7 @@ export default function ContentCreateFeed({
                   <Button.Action
                     id="emoji-btn"
                     variant="custom"
-                    className="hidden lg:flex"
+                    className="hidden ml-2 lg:flex"
                     icon={<Icon.Smiley size="32" />}
                     size="medium"
                     onClick={(event) => {
@@ -225,23 +212,13 @@ export default function ContentCreateFeed({
             <Typography.Label className="text-opacity-30">
               Reach
             </Typography.Label>
-            <div className="flex gap-2">
-              <div>{iconsReach[reach]}</div>
-              <Typography.Body variant="medium-bold">
-                {reach?.charAt(0).toUpperCase() + reach?.slice(1)}
-              </Typography.Body>
-            </div>
+            {isMobile ? <BottomSheet.Reach /> : <DropDown.Reach />}
           </div>
           <div>
             <Typography.Label className="text-opacity-30">
               Sort
             </Typography.Label>
-            <div className="flex gap-2">
-              <div>{iconsSort[sort]}</div>
-              <Typography.Body variant="medium-bold">
-                {sort?.charAt(0).toUpperCase() + sort?.slice(1)}
-              </Typography.Body>
-            </div>
+            {isMobile ? <BottomSheet.SortPosts /> : <DropDown.SortPosts />}{' '}
           </div>
           <div>
             <Typography.Label className="text-opacity-30">
@@ -254,17 +231,14 @@ export default function ContentCreateFeed({
               <Typography.Body variant="medium-bold">All</Typography.Body>
             </div>
           </div>
-          <div>
-            <Typography.Label className="text-opacity-30">
-              Layout
-            </Typography.Label>
-            <div className="flex gap-2">
-              <div>{iconsLayout[layout]}</div>
-              <Typography.Body variant="medium-bold">
-                {layout?.charAt(0).toUpperCase() + layout?.slice(1)}
-              </Typography.Body>
+          {!isMobile && (
+            <div>
+              <Typography.Label className="text-opacity-30">
+                Layout
+              </Typography.Label>
+              <DropDown.Layout />
             </div>
-          </div>
+          )}
         </div>
       </div>
       <Button.Medium

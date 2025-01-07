@@ -1,15 +1,17 @@
 'use client';
 
 import { Icon, Typography } from '@social/ui-shared';
-import {
-  useFilterContext,
-  useJoinModal,
-  usePubkyClientContext,
-} from '@/contexts';
+import { useFilterContext, useJoin, usePubkyClientContext } from '@/contexts';
 import { UserCounts } from '@/types/User';
 import { useRouter } from 'next/navigation';
 
 const tabs = [
+  {
+    id: 6,
+    key: 'tagged',
+    icon: <Icon.UserRectangle size="24" color="white" />,
+    label: 'Tagged',
+  },
   {
     id: 0,
     key: 'notifications',
@@ -52,12 +54,6 @@ const tabs = [
     icon: <Icon.Smiley size="24" color="white" />,
     label: 'Friends',
   },
-  {
-    id: 6,
-    key: 'tagged',
-    icon: <Icon.Tag size="24" color="white" />,
-    label: 'Tagged',
-  },
 ];
 
 const generateTabUrl = (key: string, creatorPubky?: string) => {
@@ -73,7 +69,7 @@ export default function FilterTabsMobile({
   activeTab,
   setActiveTab,
   userCounts,
-  userTags,
+  //userTags,
   loading,
   setLoading,
   creatorPubky,
@@ -87,7 +83,7 @@ export default function FilterTabsMobile({
   creatorPubky?: string;
 }) {
   const { pubky } = usePubkyClientContext();
-  const { openJoinModal } = useJoinModal();
+  const { openJoin } = useJoin();
   const { unReadNotification } = useFilterContext();
   const router = useRouter();
 
@@ -117,7 +113,7 @@ export default function FilterTabsMobile({
       case 'friends':
         return userCounts?.friends || 0;
       case 'tagged':
-        return userTags || 0;
+        return null;
       default:
         return null;
     }
@@ -140,7 +136,7 @@ export default function FilterTabsMobile({
               id={`mobile-profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() =>
-                pubky ? handleTabClick(tab.id, tab.key) : openJoinModal()
+                pubky ? handleTabClick(tab.id, tab.key) : openJoin()
               }
               className={`w-full pb-3 items-center gap-1 flex justify-between cursor-pointer border-b border-white ${
                 isActive && !loading
@@ -149,9 +145,11 @@ export default function FilterTabsMobile({
               }`}
             >
               {tab.icon}
-              <Typography.Caption className="tracking-normal" variant="bold">
-                <span id="counter">{getTabNumber(tab.key)}</span>
-              </Typography.Caption>
+              {getTabNumber(tab.key) !== null && (
+                <Typography.Caption className="tracking-normal" variant="bold">
+                  <span id="counter">{getTabNumber(tab.key)}</span>
+                </Typography.Caption>
+              )}
             </div>
           );
         })}

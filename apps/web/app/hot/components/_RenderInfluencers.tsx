@@ -40,8 +40,8 @@ const RenderInfluencers = ({
   }
 
   return (
-    <div className="flex flex-col gap-3" id="influencers">
-      <Typography.H2 className="text-opacity-50 font-light">
+    <div className="flex flex-col gap-3">
+      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">
         Influencers
       </Typography.H2>
       {influencers &&

@@ -15,11 +15,7 @@ import Modal from '../Modal';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag, PostView } from '@/types/Post';
-import {
-  useAlertContext,
-  usePubkyClientContext,
-  useJoinModal,
-} from '@/contexts';
+import { useAlertContext, usePubkyClientContext, useJoin } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
 
@@ -29,7 +25,7 @@ interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const { pubky, createTag, deleteTag } = usePubkyClientContext();
-  const { openJoinModal } = useJoinModal();
+  const { openJoin } = useJoin();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
@@ -206,7 +202,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             <Input.Text
               placeholder="tag"
               value={tag}
-              onClick={openJoinModal}
+              onClick={openJoin}
               readonly={!pubky}
               className="w-96 mt-2 flex items-center"
               maxLength={20}
@@ -235,7 +231,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     size="medium"
                     onClick={(event) => {
                       event.stopPropagation();
-                      pubky ? setShowEmojis(true) : openJoinModal();
+                      pubky ? setShowEmojis(true) : openJoin();
                     }}
                   />
                 </div>
@@ -270,7 +266,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                         ? isTagFound
                           ? handleDeleteTag(tagObj?.label)
                           : handleAddTag(tagObj?.label)
-                        : openJoinModal()
+                        : openJoin()
                     }
                   >
                     <div className="flex gap-2 items-center">
@@ -351,7 +347,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               </div>
             ) : (
               <div
-                onClick={() => (pubky ? setAddTagInput(true) : openJoinModal())}
+                onClick={() => (pubky ? setAddTagInput(true) : openJoin())}
                 className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
               >
                 <div>
