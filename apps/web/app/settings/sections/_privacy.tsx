@@ -1,8 +1,22 @@
 'use client';
 
 import { Icon, Input, Typography } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
+import { useEffect, useState } from 'react';
 
 export default function PrivacySafety() {
+  const [isChecked, setIsChecked] = useState(true);
+  const defaultChecked = Utils.storage.get('checkLink');
+
+  useEffect(() => {
+    if (defaultChecked !== null) setIsChecked(Boolean(defaultChecked));
+  }, [defaultChecked]);
+
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+    Utils.storage.set('checkLink', !isChecked);
+  };
+
   return (
     <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
@@ -14,6 +28,12 @@ export default function PrivacySafety() {
           Privacy is not a crime. Manage your visibility and safety on Pubky.
         </Typography.Body>
         <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl flex-col justify-start items-start gap-6 inline-flex">
+          <div className="w-full h-8 justify-between items-center inline-flex">
+            <Typography.Body variant="small-bold">
+              Show CheckLink before redirecting
+            </Typography.Body>
+            <Input.Switch checked={isChecked} onChange={handleCheckboxChange} />
+          </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
             <Typography.Body variant="small-bold">
               Sign me out when inactive for 5 minutes
