@@ -22,7 +22,10 @@ import { getUserDetails, getUserRelationship } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
-const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = `${process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY}`;
+const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env
+  .NEXT_PUBLIC_DEFAULT_HTTP_RELAY
+  ? `${process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY}`
+  : 'https://demo.httprelay.io/link/';
 
 let client: PubkyClient;
 if (TESTNET) {
