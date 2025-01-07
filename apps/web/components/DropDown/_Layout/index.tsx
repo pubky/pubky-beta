@@ -17,9 +17,9 @@ export default function Layout() {
     loading: <Icon.LoadingSpin className="animate-spin" />,
   };
   const [dropdownValue, setDropdownValue] = useState({
-    value: layout ?? 'columns',
-    textOption: layout?.charAt(0).toUpperCase() + layout?.slice(1) ?? 'Columns',
-    iconOption: icons[layout] ?? icons.columns,
+    value: layout || 'columns',
+    textOption: layout?.charAt(0).toUpperCase() + layout?.slice(1) || 'Columns',
+    iconOption: icons[layout] || icons.columns,
   });
 
   return (

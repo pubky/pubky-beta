@@ -16,9 +16,9 @@ export default function SortPosts() {
     loading: <Icon.LoadingSpin className="animate-spin" />,
   };
   const [dropdownValue, setDropdownValue] = useState({
-    value: sort ?? 'recent',
-    textOption: sort?.charAt(0).toUpperCase() + sort?.slice(1) ?? 'Recent',
-    iconOption: icons[sort] ?? icons.recent,
+    value: sort || 'recent',
+    textOption: sort?.charAt(0).toUpperCase() + sort?.slice(1) || 'Recent',
+    iconOption: icons[sort] || icons.recent,
   });
 
   return (

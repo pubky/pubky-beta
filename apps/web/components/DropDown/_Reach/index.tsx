@@ -18,9 +18,9 @@ export default function Reach() {
   };
 
   const [dropdownValue, setDropdownValue] = useState({
-    value: reach ?? 'all',
-    textOption: reach?.charAt(0).toUpperCase() + reach?.slice(1) ?? 'All',
-    iconOption: icons[reach] ?? icons.all,
+    value: reach || 'all',
+    textOption: reach?.charAt(0).toUpperCase() + reach?.slice(1) || 'All',
+    iconOption: icons[reach] || icons.all,
   });
 
   return (

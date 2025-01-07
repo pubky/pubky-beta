@@ -22,9 +22,9 @@ export default function Reach({ title, className }: ReachProps) {
   const { reach } = useFilterContext();
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
-    value: reach ?? 'all',
-    textOption: reach?.charAt(0).toUpperCase() + reach?.slice(1) ?? 'All',
-    iconOption: icons[reach] ?? icons.all,
+    value: reach || 'all',
+    textOption: reach?.charAt(0).toUpperCase() + reach?.slice(1) || 'All',
+    iconOption: icons[reach] || icons.all,
   });
 
   return (

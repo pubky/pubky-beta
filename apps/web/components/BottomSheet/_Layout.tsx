@@ -22,9 +22,9 @@ export default function Layout({ title, className }: LayoutProps) {
   const { layout } = useFilterContext();
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
-    value: layout ?? 'columns',
-    textOption: layout?.charAt(0).toUpperCase() + layout?.slice(1) ?? 'Columns',
-    iconOption: icons[layout] ?? icons.columns,
+    value: layout || 'columns',
+    textOption: layout.charAt(0).toUpperCase() + layout.slice(1) || 'Columns',
+    iconOption: icons[layout] || icons.columns,
   });
 
   return (

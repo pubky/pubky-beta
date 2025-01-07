@@ -20,9 +20,9 @@ export default function SortPosts({ title, className }: SortPostsProps) {
   const { sort } = useFilterContext();
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
-    value: sort ?? 'recent',
-    textOption: sort?.charAt(0).toUpperCase() + sort?.slice(1) ?? 'Recent',
-    iconOption: icons[sort] ?? icons.recent,
+    value: sort || 'recent',
+    textOption: sort?.charAt(0).toUpperCase() + sort?.slice(1) || 'Recent',
+    iconOption: icons[sort] || icons.recent,
   });
 
   return (
