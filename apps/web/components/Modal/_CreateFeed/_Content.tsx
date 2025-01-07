@@ -162,7 +162,7 @@ export default function ContentCreateFeed({
               onChange={handleChange}
               onKeyDown={handleKeyDown}
               action={
-                <div className="flex gap-2">
+                <div className="flex">
                   <Button.Action
                     id="add-btn"
                     icon={<Icon.Plus size="18" />}
@@ -174,7 +174,7 @@ export default function ContentCreateFeed({
                   <Button.Action
                     id="emoji-btn"
                     variant="custom"
-                    className="hidden lg:flex"
+                    className="hidden ml-2 lg:flex"
                     icon={<Icon.Smiley size="32" />}
                     size="medium"
                     onClick={(event) => {
