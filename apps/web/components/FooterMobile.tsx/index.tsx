@@ -46,16 +46,16 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
           <Icon.MagnifyingGlassLeft size="24" />
         </Link>
         <Link
-          href="/bookmarks"
-          className={twMerge(buttonCSS, title === 'Bookmarks' && activeCSS)}
-        >
-          <Icon.BookmarkSimple size="24" />
-        </Link>
-        <Link
           href="/hot"
           className={twMerge(buttonCSS, title === 'HotTags' && activeCSS)}
         >
           <Icon.Fire size="24" />
+        </Link>
+        <Link
+          href="/bookmarks"
+          className={twMerge(buttonCSS, title === 'Bookmarks' && activeCSS)}
+        >
+          <Icon.BookmarkSimple size="24" />
         </Link>
         <Link href="/profile" className="w-[48px] relative">
           {unReadNotification !== 0 && (
