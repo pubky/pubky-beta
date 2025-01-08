@@ -2,8 +2,12 @@
 
 import { Icon, Typography } from '@social/ui-shared';
 import { DropDown } from '@/components/DropDown';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '@/components';
 
 export default function Language() {
+  const isMobile = useIsMobile(1024);
+
   return (
     <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start gap-12 inline-flex">
       <div className="w-full flex-col justify-start items-start gap-6 flex">
@@ -14,14 +18,14 @@ export default function Language() {
         <Typography.Body variant="medium" className="text-opacity-80">
           Choose your preferred language for the Pubky interface.
         </Typography.Body>
-        <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl flex-col justify-start items-start gap-6 inline-flex">
+        <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl flex-col justify-start items-start gap-2 inline-flex">
           <Typography.Caption
             className="uppercase text-opacity-30"
             variant="bold"
           >
             Display language
           </Typography.Caption>
-          <DropDown.Languages />
+          {isMobile ? <BottomSheet.Languages /> : <DropDown.Languages />}
         </div>
       </div>
     </div>
