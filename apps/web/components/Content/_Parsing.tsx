@@ -39,6 +39,7 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
             href={`/search?tags=${tag.replace('#', '').trim()}`}
             target="_self"
             rel="noreferrer"
+            onClick={(event) => event.stopPropagation()}
           >
             {tag} {icon && <span className="ml-1">{icon}</span>}
           </Link>
@@ -67,6 +68,7 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
             href={url}
             target="_blank"
             rel="noreferrer"
+            onClick={(event) => event.stopPropagation()}
           >
             {url}
           </Link>
@@ -86,6 +88,7 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
             href={`mailto:${url.trim()}`}
             target="_blank"
             rel="noreferrer noopener"
+            onClick={(event) => event.stopPropagation()}
           >
             {url}
           </Link>
