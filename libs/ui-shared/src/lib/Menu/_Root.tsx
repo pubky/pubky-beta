@@ -76,7 +76,7 @@ export const Root = ({
 
     return (
       <div
-        className={`fixed top-0 ${swipeZoneCSS} w-10 h-screen z-40`} // Narrow zone for swipe detection
+        className={`fixed bottom-0 ${swipeZoneCSS} w-4 h-[90vh] z-40`} // Narrow zone for swipe detection
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
       />
