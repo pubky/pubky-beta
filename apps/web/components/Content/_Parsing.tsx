@@ -17,6 +17,7 @@ const tagsIcons: { [key: string]: JSX.Element } = {
   '#bitkit': <Icon.Bitkit size="24" />,
   '#bitcoin': <Icon.Bitcoin size="24" />,
   '#tether': <Icon.Tether size="24" />,
+  '#pubky': <Icon.PubkyIcon size="22" />,
 };
 
 const Parsing = ({ children, fullContent = false }: ParsingProps) => {
@@ -50,14 +51,16 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
         const isValidUrl = (value) => {
           try {
             const parsedUrl = new URL(value);
-            return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+            return (
+              parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:'
+            );
           } catch {
             return false;
           }
         };
-    
+
         if (!isValidUrl(url.trim())) return url;
-    
+
         return (
           <Link
             className="text-[#C8FF00] break-all"

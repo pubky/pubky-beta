@@ -120,7 +120,15 @@ import {
   Flag,
   WarningOctagon,
 } from './_Security';
-import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether } from './_Tag';
+import {
+  Synonym,
+  Slashtags,
+  Blocktank,
+  Bitkit,
+  Bitcoin,
+  Tether,
+  PubkyIcon,
+} from './_Tag';
 
 export const Icon = {
   Android,
@@ -205,6 +213,7 @@ export const Icon = {
   PlusCircle,
   Podcast,
   Pubky,
+  PubkyIcon,
   Question,
   Repost,
   SignOut,

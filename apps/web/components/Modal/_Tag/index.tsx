@@ -67,7 +67,7 @@ export default function Tag({
           setTagsError(false);
         }}
       />
-      <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
+      <div className="w-full items-stretch flex-col inline-flex gap-6">
         <Modal.Header title="Tag Post" />
         <Modal.Content className="flex flex-row w-full">
           <ContentTag

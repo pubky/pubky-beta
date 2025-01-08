@@ -12,6 +12,7 @@ import EditArticle from './_EditArticle';
 import EditPost from './_EditPost';
 import Feedback from './_Feedback';
 import FilesCarousel from './_FilesCarousel';
+import Languages from './_Languages';
 import Layout from './_Layout';
 import Link from './_Link';
 import Logout from './_Logout';
@@ -41,6 +42,7 @@ export const BottomSheet = {
   EditPost,
   Feedback,
   FilesCarousel,
+  Languages,
   Layout,
   Link,
   Logout,

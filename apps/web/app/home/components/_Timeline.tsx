@@ -166,7 +166,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
               />
               {post?.counts?.replies > 0 && (
                 <PostReplies
-                  isMobile={false}
+                  isMobile={isMobile}
                   homeView
                   post={post}
                   layout={layout}
