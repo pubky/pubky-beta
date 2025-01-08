@@ -26,7 +26,11 @@ export default function EditPost({
       title={title}
       className={className}
     >
-      <ContentEditPost setShowModalEditPost={setShow} post={post} />
+      <ContentEditPost
+        setShowModalEditPost={setShow}
+        post={post}
+        handleCloseModal={() => setShow(false)}
+      />
     </BottomSheet.Root>
   );
 }
