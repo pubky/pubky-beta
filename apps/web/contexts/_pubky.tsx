@@ -1099,10 +1099,10 @@ export function PubkyClientWrapper({
       const settings = await client.fetch(settingsUrl);
 
       const jsonString =
-      settings &&
-      (Object.values(settings) as number[])
-        .map((asciiCode: number) => String.fromCharCode(asciiCode))
-        .join('');
+        settings &&
+        (Object.values(settings) as number[])
+          .map((asciiCode: number) => String.fromCharCode(asciiCode))
+          .join('');
 
       const parsedData = jsonString && JSON.parse(jsonString);
 
