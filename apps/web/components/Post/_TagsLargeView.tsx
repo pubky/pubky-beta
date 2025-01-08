@@ -202,7 +202,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             <Input.Text
               placeholder="tag"
               value={tag}
-              onClick={openJoin}
+              onClick={() => !pubky && openJoin()}
               readonly={!pubky}
               className="w-96 mt-2 flex items-center"
               maxLength={20}
