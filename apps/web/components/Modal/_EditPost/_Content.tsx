@@ -7,13 +7,15 @@ import CreateContent from '@/components/CreateContent';
 interface CreateEditPostProps {
   setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  handleCloseModal: () => void;
 }
 
 export default function ContentEditPost({
   setShowModalEditPost,
   post,
+  handleCloseModal,
 }: CreateEditPostProps) {
-  const { editPost } = usePubkyClientContext();
+  const { editPost, timeline, setTimeline } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentEditPost, setContentEditPost] = useState('');
   const [sendingEditPost, setSendingEditPost] = useState(false);
@@ -24,23 +26,32 @@ export default function ContentEditPost({
   }, [post]);
 
   const handleSubmit = async (content: string) => {
+    handleCloseModal();
     if (sendingEditPost) {
       return;
     }
     try {
       setSendingEditPost(true);
-
       const editPostUser = await editPost(post, content);
 
       if (editPostUser) {
+        // change the content of the post in the timeline
+        const newTimeline = timeline.map((p) => {
+          if (p.details.id === post.details.id) {
+            return { ...p, details: { ...p.details, content } };
+          }
+          return p;
+        });
+        setTimeline(newTimeline);
+
+        setContentEditPost('');
         addAlert('Post edited!');
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
-      setContentEditPost('');
-      setShowModalEditPost(false);
     } catch (error) {
       console.log(error);
+      addAlert('Error editing post', 'warning');
     } finally {
       setSendingEditPost(false);
     }
@@ -71,7 +82,12 @@ export default function ContentEditPost({
               disabled={!isValidContent}
               loading={sendingEditPost}
               onClick={
-                isValidContent ? () => handleSubmit(contentEditPost) : undefined
+                isValidContent
+                  ? () => {
+                      handleSubmit(contentEditPost);
+                      setShowModalEditPost(false);
+                    }
+                  : undefined
               }
             >
               Edit

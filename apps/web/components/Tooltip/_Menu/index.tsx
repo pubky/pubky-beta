@@ -151,6 +151,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
         <Modal.EditPost
           showModalEditPost={showModalEditPost}
           setShowModalEditPost={setShowModalEditPost}
+          handleCloseModal={() => setShowMenu(false)}
           modalEditPostRef={modalEditPostRef}
           post={post}
         />
