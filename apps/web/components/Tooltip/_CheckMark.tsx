@@ -32,10 +32,9 @@ export default function TooltipCheckMark({
           id="tooltip-checkmark"
           className={clsx(
             'absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2',
-            'w-max px-2 py-1',
-            'bg-neutral-900 text-neutral-200 text-sm',
-            'rounded-md shadow-md whitespace-nowrap',
-            'cursor-default',
+            'w-max px-2 py-1 text-sm whitespace-nowrap',
+            'bg-neutral-900 text-neutral-200 rounded-md shadow-md cursor-default',
+            'transition-opacity duration-200 ease-out opacity-100',
           )}
         >
           {content}
