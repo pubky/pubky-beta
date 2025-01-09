@@ -2,6 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { PostUtil } from '../PostUtil';
 import { Post } from '../Post';
 import { Typography } from '../Typography';
+import Link from 'next/link';
 
 interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
   rank: number;
@@ -10,6 +11,7 @@ interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
   counter?: React.ReactNode;
   images?: { alt: string; src: string }[];
   boxShadow?: boolean;
+  href?: string;
 }
 export const Rank = ({
   rank,
@@ -17,20 +19,23 @@ export const Rank = ({
   counter,
   color,
   images,
+  href,
   boxShadow = true,
   ...rest
 }: RankProps) => {
   const baseCSS = 'justify-start items-center gap-3 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <PostUtil.Tag boxShadow={boxShadow} clicked={false} color={color}>
-        <div className="flex gap-2 items-center">
-          {tag}
-          <Typography.Caption variant="bold" className="text-opacity-50">
-            {counter}
-          </Typography.Caption>
-        </div>
-      </PostUtil.Tag>
+      <Link href={href ?? ''}>
+        <PostUtil.Tag boxShadow={boxShadow} clicked={false} color={color}>
+          <div className="flex gap-2 items-center">
+            {tag}
+            <Typography.Caption variant="bold" className="text-opacity-50">
+              {counter}
+            </Typography.Caption>
+          </div>
+        </PostUtil.Tag>
+      </Link>
       {/**{counter && <PostUtil.Counter counter={counter} />}*/}
       {images && <Post.UserPic images={images} />}
     </div>

@@ -40,18 +40,15 @@ export default function HotTags() {
           <>
             <div className="grid gap-2">
               {hotTags.slice(0, 5).map((tag, index) => (
-                <Link
+                <SideCard.Rank
                   key={index}
+                  rank={index + 1}
                   href={pubky ? `/search?tags=${tag?.label}` : ''}
-                >
-                  <SideCard.Rank
-                    rank={index + 1}
-                    tag={Utils.minifyText(tag?.label, 21)}
-                    color={tag?.label && Utils.generateRandomColor(tag?.label)}
-                    counter={`${tag?.tagged_count}`}
-                    boxShadow={false}
-                  />
-                </Link>
+                  tag={Utils.minifyText(tag?.label, 21)}
+                  color={tag?.label && Utils.generateRandomColor(tag?.label)}
+                  counter={`${tag?.tagged_count}`}
+                  boxShadow={false}
+                />
               ))}
             </div>
             {pubky && (

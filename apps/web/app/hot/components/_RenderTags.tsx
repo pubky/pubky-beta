@@ -83,17 +83,15 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
       <div className="flex flex-wrap gap-2">
         {otherTags.length > 0 &&
           otherTags.map((tag, index) => (
-            <div key={index + 3}>
-              <Link key={index} href={`/search?tags=${tag?.label}`}>
-                <SideCard.Rank
-                  rank={index + 1}
-                  tag={Utils.minifyText(tag?.label, 21)}
-                  color={tag?.label && Utils.generateRandomColor(tag?.label)}
-                  counter={`${tag?.tagged_count}`}
-                  boxShadow={false}
-                />
-              </Link>
-            </div>
+            <SideCard.Rank
+              key={index}
+              href={`/search?tags=${tag?.label}`}
+              rank={index + 1}
+              tag={Utils.minifyText(tag?.label, 21)}
+              color={tag?.label && Utils.generateRandomColor(tag?.label)}
+              counter={`${tag?.tagged_count}`}
+              boxShadow={false}
+            />
           ))}
       </div>
     </div>
