@@ -1050,16 +1050,9 @@ export function PubkyClientWrapper({
       await ensureLoggedIn();
 
       const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
-      const lastRead = await client.fetch(lastReadUrl);
-      const jsonString =
-        lastRead &&
-        (Object.values(lastRead) as number[])
-          .map((asciiCode: number) => String.fromCharCode(asciiCode))
-          .join('');
-
-      const parsedData = jsonString && JSON.parse(jsonString);
-      const timestamp = Number(parsedData.timestamp);
-
+      const response = await client.fetch(lastReadUrl);
+      const lastRead = await response.json();
+      const timestamp = Number(lastRead.timestamp);
       return timestamp;
     } catch (error) {
       // console.error('Error get timestamp:', error);
