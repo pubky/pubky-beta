@@ -890,16 +890,17 @@ export function PubkyClientWrapper({
     }
   };
 
-  const downloadData = async (setProgress) => {
+  const downloadData = async (setProgress: (val: number) => void) => {
     try {
       await ensureLoggedIn();
 
       const userDataUrl = `pubky://${pubky}/pub/pubky.app`;
-      let cursor = undefined;
+      let cursor: string | undefined = undefined;
       const dataList: string[] = [];
       const limit = 500;
       let hasMore = true;
-      // Loop until no more URLs are returned
+
+      // 1) Gather the list of files from pubky
       do {
         const batch = await client.list(userDataUrl, cursor, false, limit);
         if (batch.length === 0) {
@@ -909,6 +910,8 @@ export function PubkyClientWrapper({
           cursor = batch[batch.length - 1];
         }
       } while (hasMore);
+
+      // 2) Prepare a JSZip instance and create the 'data' folder
       const zip = new JSZip();
       const dataFolder = zip.folder('data');
       if (!dataFolder) {
@@ -917,25 +920,28 @@ export function PubkyClientWrapper({
 
       const totalFiles = dataList.length;
 
-      // Process all files and update progress
+      // 3) Fetch each file as a Response, convert to ArrayBuffer, then decide if JSON or binary
       await Promise.all(
         dataList.map(async (dataUrl, index) => {
-          const result = await client.fetch(dataUrl);
+          // Get the Response object
+          const response = await client.fetch(dataUrl);
 
-          if (result === undefined) {
-            return;
-          }
+          // Convert to ArrayBuffer
+          const arrayBuffer = await response.arrayBuffer();
 
+          // Derive a file name from the pubky URL
           const fileName = dataUrl.split(`pubky://${pubky}/`)[1];
 
+          // Try to decode as JSON (text) — if it fails, store binary
           try {
             const decoder = new TextDecoder('utf-8');
-            const decodedString = decoder.decode(result);
+            const decodedString = decoder.decode(arrayBuffer);
             const parsedData = JSON.parse(decodedString);
             dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
-          } catch {
-            // Save as binary if not JSON
-            dataFolder.file(fileName, result);
+          } catch (err) {
+            dataFolder.file(fileName, new Uint8Array(arrayBuffer), {
+              binary: true,
+            });
           }
 
           // Update progress
@@ -1089,17 +1095,10 @@ export function PubkyClientWrapper({
       await ensureLoggedIn();
 
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
-      const settings = await client.fetch(settingsUrl);
+      const response = await client.fetch(settingsUrl);
+      const settings = await response.json();
 
-      const jsonString =
-        settings &&
-        (Object.values(settings) as number[])
-          .map((asciiCode: number) => String.fromCharCode(asciiCode))
-          .join('');
-
-      const parsedData = jsonString && JSON.parse(jsonString);
-
-      return parsedData;
+      return settings;
     } catch (error) {
       console.error('Error load settings:', error);
       return null;
@@ -1629,13 +1628,9 @@ export function PubkyClientWrapper({
       const feedsData = await Promise.all(
         feedUris.map(async (uri) => {
           try {
-            const result = await client.fetch(uri);
-            if (result) {
-              const decodedString = new TextDecoder('utf-8').decode(result);
-              const parsedData = JSON.parse(decodedString);
-              return { feed: parsedData.feed, name: parsedData.name };
-            }
-            return null; // Handle cases where the result might be undefined
+            const response = await client.fetch(uri);
+            const feed = await response.json();
+            return feed;
           } catch (error) {
             console.error(`Error fetching feed from ${uri}:`, error);
             return null;
