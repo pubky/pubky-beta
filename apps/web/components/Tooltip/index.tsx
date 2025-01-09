@@ -4,7 +4,7 @@ import ProfileMenu from './_MenuProfile';
 import RepostMenu from './_RepostMenu';
 import Tag from './_Tag';
 import Tag2 from './_Tag2';
-import TooltipCheckMark from './_CheckMark';
+import CheckedPost from './_CheckedPost';
 
 export const Tooltip = {
   Menu,
@@ -13,7 +13,7 @@ export const Tooltip = {
   RepostMenu,
   Tag,
   Tag2,
-  TooltipCheckMark,
+  CheckedPost,
 };
 
 export default Tooltip;
