@@ -50,7 +50,9 @@ export default function CreateReply({
           //setContentReply('');
         }}
       />
-      <Modal.Header title="Reply" />
+      <div className="mb-4">
+        <Modal.Header title="Reply" />
+      </div>
       <ContentCreateReply setShowModalReply={setShowModalReply} post={post} />
     </Modal.Root>
   );

@@ -35,6 +35,7 @@ export default function Header({
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
+  const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
 
   const {
     details: { author, indexed_at },
@@ -77,7 +78,9 @@ export default function Header({
               )}
             </div>
           </div>
-          {showTooltipProfile && !isMobile && <Tooltip.Profile post={post} />}
+          {showTooltipProfile && !isMobile && !repostView && (
+            <Tooltip.Profile post={post} />
+          )}
         </TooltipUI.Root>
       </div>
       <div className="relative flex items-center gap-0">
@@ -85,27 +88,17 @@ export default function Header({
           <span className="hidden md:flex">{Utils.timeAgo(indexed_at)}</span>
           <span className="md:hidden">{Utils.timeAgo(indexed_at, true)}</span>
         </PostUI.Time>
-        <Tooltip.TooltipCheckMark
-          content={
-            <div className="p-2 w-48 bg-neutral-900 rounded shadow-md text-sm text-neutral-200">
-              <div className="flex items-start gap-2 mb-1">
+        {post?.details?.author === pubky && (
+          <TooltipUI.Root
+            delay={50}
+            tagId="1"
+            setShowTooltip={setShowTooltipPostChecked}
+          >
+            <div className="inline-flex items-center ml-2 top-[6px] relative">
+              <Icon.Check size="20" color="#00BA7C" />
+              <div className="relative right-[10px]">
                 <Icon.Check
-                  size="16"
-                  color="#00BA7C"
-                  opacity={1}
-                  className="mt-0.5"
-                />
-                <div>
-                  <p className="leading-tight text-neutral-50">
-                    Saved in Homeserver
-                  </p>
-                  <p className="text-xs text-neutral-400">Stored in server</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2">
-                <Icon.Check
-                  size="16"
+                  size="20"
                   color={
                     post?.cached === 'nexus' || post?.cached === undefined
                       ? '#00BA7C'
@@ -114,43 +107,16 @@ export default function Header({
                   opacity={
                     post?.cached === 'nexus' || post?.cached === undefined
                       ? 1
-                      : 0.5
+                      : 0.2
                   }
-                  className="mt-0.5"
                 />
-                <div>
-                  <p className="leading-tight text-neutral-50">
-                    {post?.cached === 'nexus' || post?.cached === undefined
-                      ? 'Indexed by Nexus'
-                      : 'Indexing in Nexus'}
-                  </p>
-                  <p className="text-xs text-neutral-400">
-                    Available for searches
-                  </p>
-                </div>
               </div>
             </div>
-          }
-        >
-          <div className="inline-flex items-center ml-2 top-[2px] relative">
-            <Icon.Check size="20" color="#00BA7C" />
-            <div className="relative right-[10px]">
-              <Icon.Check
-                size="20"
-                color={
-                  post?.cached === 'nexus' || post?.cached === undefined
-                    ? '#00BA7C'
-                    : '#A3A3A3'
-                }
-                opacity={
-                  post?.cached === 'nexus' || post?.cached === undefined
-                    ? 1
-                    : 0.2
-                }
-              />
-            </div>
-          </div>
-        </Tooltip.TooltipCheckMark>
+            {showTooltipPostChecked && !isMobile && !repostView && (
+              <Tooltip.CheckedPost cached={post?.cached} />
+            )}
+          </TooltipUI.Root>
+        )}
       </div>
     </PostUI.Header>
   );
