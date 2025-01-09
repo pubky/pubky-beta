@@ -36,10 +36,9 @@ export function ValidPostContent({ postRef, data }) {
         )}
       </div>
       <div className="mt-3">
-        <Post.PostRoot
+      <Post.PostRoot
           uri={data?.details.id}
           post={data}
-          updatePost={() => console.log('updated')}
         />
       </div>
     </>
