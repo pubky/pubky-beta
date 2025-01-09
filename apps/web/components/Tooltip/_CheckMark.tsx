@@ -26,7 +26,6 @@ export default function TooltipCheckMark({
       className={clsx('relative inline-flex', className)}
     >
       {children}
-
       <div
         className={clsx(
           'absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2',
