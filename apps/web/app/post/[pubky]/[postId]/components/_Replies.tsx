@@ -72,11 +72,14 @@ export default function Replies({
     );
 
     if (filteredReplies.length > 0) {
-      setRepliesLocal((prev) => mergeReplies(prev, filteredReplies));
+      setRepliesLocal((prev) => {
+        const updatedReplies = mergeReplies(prev, filteredReplies);
+        return updatedReplies.length !== prev.length ? updatedReplies : prev;
+      });
       setReplies((prev) => mergeReplies(prev, filteredReplies));
-      const newStart =
-        filteredReplies[filteredReplies.length - 1].details.indexed_at - 1;
-      setStart(newStart);
+      setStart(
+        filteredReplies[filteredReplies.length - 1].details.indexed_at - 1,
+      );
     }
 
     if (!initialLoadComplete) {
@@ -107,8 +110,10 @@ export default function Replies({
   }, [newRepliesData]);
 
   useEffect(() => {
-    fetchReplies();
-  }, [isLoading, repliesData]);
+    if (!isLoading && repliesData) {
+      fetchReplies();
+    }
+  }, [isLoading, repliesData, initialLoadComplete]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -121,16 +126,12 @@ export default function Replies({
       observer.observe(lastReplyElementRef.current);
     }
 
-    return () => {
-      if (lastReplyElementRef.current) {
-        observer.disconnect();
-      }
-    };
-  }, [repliesLocal]);
+    return () => observer.disconnect();
+  }, [lastReplyElementRef.current]);
 
   useEffect(() => {
     return () => setReplies([]);
-  }, [setReplies]);
+  }, []);
 
   return (
     <>

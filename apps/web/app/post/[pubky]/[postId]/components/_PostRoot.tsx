@@ -10,14 +10,7 @@ import CreateContent from '@/components/CreateContent';
 import { PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 
-export default function PostRoot({
-  post,
-  updatePost,
-}: {
-  uri: string;
-  post: PostView;
-  updatePost: () => void;
-}) {
+export default function PostRoot({ post }: { uri: string; post: PostView }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -61,7 +54,6 @@ export default function PostRoot({
       setContentReply('');
       setArrayTags([]);
       setSelectedFiles([]);
-      updatePost();
       setTextArea(false);
       addAlert('Reply created!');
     }
