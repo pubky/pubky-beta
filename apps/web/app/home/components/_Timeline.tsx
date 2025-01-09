@@ -88,7 +88,6 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       });
     } catch (error) {
       console.log('Error fetching posts:', error);
-      // Could add error handling/user notification here
     }
   };
 
@@ -136,11 +135,11 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           });
         });
       } catch (error) {
-        console.error('Error fetching Nexus data:', error);
+        console.log('Error fetching Nexus data:', error);
       }
     };
 
-    const interval = setInterval(fetchNexusData, 5000); // Poll every 5 seconds
+    const interval = setInterval(fetchNexusData, 2000); // Poll every 2 seconds
 
     return () => clearInterval(interval);
   }, [newPosts, pubky, reach, sort, tagsFeed, start]);
