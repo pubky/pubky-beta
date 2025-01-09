@@ -871,7 +871,7 @@ export function PubkyClientWrapper({
       for (let index = 0; index < filesToDelete.length; index++) {
         await client.fetch(filesToDelete[index], {
           method: 'DELETE',
-          credentials: 'include ',
+          credentials: 'include',
         });
         setProgress(Math.round(((index + 1) / totalFiles) * 100));
       }
@@ -879,7 +879,7 @@ export function PubkyClientWrapper({
       // Finally, delete profile.json and update progress to 100%
       await client.fetch(profileUrl, {
         method: 'DELETE',
-        credentials: 'include ',
+        credentials: 'include',
       });
       setProgress(100);
 
@@ -1148,7 +1148,7 @@ export function PubkyClientWrapper({
       // Send the post to the homeserver
       await client.fetch(postUrl, {
         method: 'DELETE',
-        credentials: 'include ',
+        credentials: 'include',
       });
 
       return true;
@@ -1385,7 +1385,7 @@ export function PubkyClientWrapper({
 
       await client.fetch(followUrl, {
         method: 'DELETE',
-        credentials: 'include ',
+        credentials: 'include',
       });
 
       // get user relationships and check if it is unfollowed
@@ -1418,7 +1418,7 @@ export function PubkyClientWrapper({
 
       await client.fetch(file_uri, {
         method: 'DELETE',
-        credentials: 'include ',
+        credentials: 'include',
       });
 
       return true;
@@ -1459,7 +1459,7 @@ export function PubkyClientWrapper({
 
       await client.fetch(muteUrl, {
         method: 'DELETE',
-        credentials: 'include ',
+        credentials: 'include',
       });
 
       return true;
@@ -1526,7 +1526,7 @@ export function PubkyClientWrapper({
 
       await client.fetch(bookmarkUrl, {
         method: 'DELETE',
-        credentials: 'include ',
+        credentials: 'include',
       });
 
       // get post and check if it is bookmarked
@@ -1675,7 +1675,7 @@ export function PubkyClientWrapper({
       // Delete the feed from the homeserver
       await client.fetch(feedUrl, {
         method: 'DELETE',
-        credentials: 'include ',
+        credentials: 'include',
       });
 
       return true;
@@ -1700,7 +1700,7 @@ export function PubkyClientWrapper({
       ).toUpperCase();
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
-      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include ' });
+      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include' });
 
       return true;
     } catch (error) {
@@ -1758,7 +1758,7 @@ export function PubkyClientWrapper({
       ).toUpperCase();
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
-      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include ' });
+      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include' });
 
       return true;
     } catch (error) {
