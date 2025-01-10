@@ -122,12 +122,19 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    if (!pubky) {
+      setNotifications([]);
+      setUnReadNotification(0);
+      setSkip(0);
+      return;
+    }
+
     if (notificationPreferences) {
       fetchNotifications();
       const interval = setInterval(fetchNotifications, 60000);
       return () => clearInterval(interval);
     }
-  }, [pubky, notificationPreferences, initNotifications]);
+  }, [pubky, notificationPreferences]);
 
   return (
     <NotificationsContext.Provider
