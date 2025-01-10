@@ -5,10 +5,6 @@ import { searchAndFollowProfile } from '../support/contacts';
 describe('contacts', () => {
   before(() => {
     slowCypressDown();
-
-    // TODO: remove workaround for pkarr rate limiting
-    cy.wait(process.env.CI ? 10_000 : 5_000);
-
     cy.deleteDownloadsFolder();
   });
 
