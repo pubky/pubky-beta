@@ -116,7 +116,7 @@ export default function Index() {
             </div>
           )}
         </div>
-        <Sidebar className="w-[280px] hidden xl:block">
+        <Sidebar className="w-[280px] hidden xl:block self-start sticky top-[100px]">
           <WhoFollow />
           <Feedback />
         </Sidebar>
