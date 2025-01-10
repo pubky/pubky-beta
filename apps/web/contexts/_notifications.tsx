@@ -32,7 +32,9 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const limit = 30;
   const [skip, setSkip] = useState(0);
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [prevPubky, setPrevPubky] = useState<string | null>(null);
 
   const { data: initNotifications } = useUserNotifications(
     pubky ?? '',
@@ -55,35 +57,32 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   };
 
   const fetchNotifications = async () => {
-    try {
-      if (!pubky || !notificationPreferences) return;
+    if (!pubky || !notificationPreferences || !hasMore) return;
 
+    try {
       setLoading(true);
 
       if (initNotifications) {
         const filteredNotifications = initNotifications.filter(
-          (notification: NotificationView) => {
-            return (
-              notificationPreferences &&
-              notificationPreferences[
-                notification.body.type as keyof typeof notificationPreferences
-              ]
-            );
-          },
+          (notification: NotificationView) =>
+            notificationPreferences[
+              notification.body.type as keyof typeof notificationPreferences
+            ],
         );
 
         updateNotifications(filteredNotifications);
 
         const unreadCount = filteredNotifications.reduce(
-          (count: number, notification: NotificationView) => {
-            if (timestamp && notification.timestamp > timestamp) {
-              return count + 1;
-            }
-            return count;
-          },
+          (count, notification) =>
+            timestamp && notification.timestamp > timestamp ? count + 1 : count,
           0,
         );
+
         setUnReadNotification(unreadCount);
+
+        if (filteredNotifications.length < limit) {
+          setHasMore(false);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -93,26 +92,26 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   };
 
   const loadMoreNotifications = async () => {
-    try {
-      if (!pubky || !notificationPreferences) return;
+    if (!pubky || !notificationPreferences || !hasMore || loading) return;
 
+    try {
       setLoading(true);
 
       if (initNotifications) {
         const filteredNotifications = initNotifications.filter(
-          (notification: NotificationView) => {
-            return (
-              notificationPreferences &&
-              notificationPreferences[
-                notification.body.type as keyof typeof notificationPreferences
-              ]
-            );
-          },
+          (notification: NotificationView) =>
+            notificationPreferences[
+              notification.body.type as keyof typeof notificationPreferences
+            ],
         );
 
         updateNotifications(filteredNotifications);
 
-        setSkip((prev) => prev + limit);
+        if (filteredNotifications.length < limit) {
+          setHasMore(false);
+        } else {
+          setSkip((prev) => prev + limit); 
+        }
       }
     } catch (err) {
       console.error(err);
@@ -122,12 +121,20 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (notificationPreferences) {
+    if (pubky !== prevPubky) {
+      setPrevPubky(pubky ?? '');
+      setNotifications([]);
+      setUnReadNotification(0);
+      setSkip(0);
+      setHasMore(true);
+    }
+
+    if (notificationPreferences && pubky) {
       fetchNotifications();
       const interval = setInterval(fetchNotifications, 60000);
       return () => clearInterval(interval);
     }
-  }, [pubky, notificationPreferences, initNotifications]);
+  }, [pubky, notificationPreferences]);
 
   return (
     <NotificationsContext.Provider

@@ -234,20 +234,20 @@ export default function Notification({
                   : notification.body.delete_source === 'bookmark'
                     ? ' a post you bookmarked'
                     : notification.body.delete_source === 'reply_parent'
-                      ? ' a post you replied to'
+                      ? ' a post you replied'
                       : notification.body.delete_source === 'repost_embed'
                         ? ' a post you reposted'
                         : ' a post you tagged')}
             {notification.body.type === notificationType?.post_edited?.type &&
-              (notification.body.delete_source === 'reply'
+              (notification.body.edit_source === 'reply'
                 ? ' a reply of your post'
-                : notification.body.delete_source === 'repost'
+                : notification.body.edit_source === 'repost'
                   ? 'a repost of your post'
-                  : notification.body.delete_source === 'bookmark'
+                  : notification.body.edit_source === 'bookmark'
                     ? ' a post you bookmarked'
-                    : notification.body.delete_source === 'reply_parent'
-                      ? ' a post you replied to'
-                      : notification.body.delete_source === 'repost_embed'
+                    : notification.body.edit_source === 'reply_parent'
+                      ? ' a post you replied'
+                      : notification.body.edit_source === 'repost_embed'
                         ? ' a post you reposted'
                         : ' a post you tagged')}
           </Typography.Body>
