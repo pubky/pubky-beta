@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   Icon,
@@ -17,6 +17,7 @@ import { PostTag, PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext, useJoin } from '@/contexts';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { BottomSheet } from '../BottomSheet';
+import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -40,11 +41,13 @@ export default function Tags({
   const isMobile = useIsMobile(768);
   const { openJoin } = useJoin();
   const [tags, setTags] = useState<PostTag[]>([]);
+  const [showEmojis, setShowEmojis] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const { addAlert } = useAlertContext();
   const [addTagInput, setAddTagInput] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
   const [loadingTags, setLoadingTags] = useState('');
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (post?.tags) {
@@ -112,6 +115,22 @@ export default function Tags({
     setTagInput(valueWithoutSpaces);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRefEmojis.current &&
+        !wrapperRefEmojis.current.contains(event.target as Node)
+      ) {
+        setShowEmojis(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [wrapperRefEmojis]);
+
   return (
     <div
       className="lg:mt-6 cursor-default"
@@ -177,31 +196,62 @@ export default function Tags({
           {tags.length < 3 && !largeView && (
             <div className="hidden md:flex">
               {addTagInput ? (
-                <Input.Text
-                  placeholder="tag"
-                  className="h-[32px] p-3 text-[14px] rounded-lg"
-                  value={tagInput}
-                  maxLength={20}
-                  onChange={handleChange}
-                  onKeyDown={handleKeyDown}
-                  autoFocus
-                  action={
-                    <div className="flex gap-1 -mr-2">
-                      <div
-                        onClick={handleFastAddTag}
-                        className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
-                      >
-                        <Icon.Plus size="12" />
-                      </div>
-                      <div
-                        onClick={() => setAddTagInput(false)}
-                        className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                      >
-                        <Icon.X size="12" />
-                      </div>
+                <>
+                  {showEmojis && (
+                    <div
+                      className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                      ref={wrapperRefEmojis}
+                    >
+                      <EmojiPicker
+                        theme={Theme.DARK}
+                        emojiStyle={EmojiStyle.TWITTER}
+                        onEmojiClick={(emojiObject) => {
+                          const emojiLength =
+                            new Blob([emojiObject.emoji]).size / 2;
+
+                          if (tagInput.length + emojiLength <= 20) {
+                            setTagInput(tagInput + emojiObject.emoji);
+                          }
+                          setShowEmojis(false);
+                        }}
+                      />
                     </div>
-                  }
-                />
+                  )}
+
+                  <Input.Text
+                    placeholder="tag"
+                    className="h-[32px] p-3 text-[14px] rounded-lg"
+                    value={tagInput}
+                    maxLength={20}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    action={
+                      <div className="flex gap-1 -mr-2">
+                        <div
+                          onClick={handleFastAddTag}
+                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
+                        >
+                          <Icon.Plus size="12" />
+                        </div>
+                        <div className="flex">
+                          <div
+                            onClick={() => setShowEmojis(true)}
+                            className="hidden mr-1 lg:flex cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                          >
+                            <Icon.Smiley size="12" />
+                          </div>
+                          <div
+                            onClick={() => setAddTagInput(false)}
+                            className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                          >
+                            <Icon.X size="12" />
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  />
+                </>
               ) : (
                 <div
                   onClick={() => (pubky ? setAddTagInput(true) : openJoin())}
