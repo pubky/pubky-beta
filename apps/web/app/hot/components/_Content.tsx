@@ -7,10 +7,9 @@ import Skeletons from '@/components/Skeletons';
 import Filter from '@/components/Filter';
 import { useHotTags } from '@/hooks/useTag';
 import React, { useEffect, useState } from 'react';
-import { useStreamPost, useStreamUsers } from '@/hooks/useStream';
+import { useStreamUsers } from '@/hooks/useStream';
 import { usePubkyClientContext } from '@/contexts';
 import { Hot } from '.';
-import { PostView } from '@/types/Post';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { usePathname } from 'next/navigation';
 
@@ -24,22 +23,9 @@ export default function Index() {
     isLoading: isLoadingInfluencers,
     isError: isErrorInfluencers,
   } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
-  const {
-    data: posts,
-    isLoading: isLoadingPosts,
-    isError: isErrorPosts,
-  } = useStreamPost(
-    pubky ?? '',
-    'all',
-    undefined,
-    5,
-    undefined,
-    undefined,
-    undefined,
-    'popularity',
-  );
   const hotTags = data || [];
-  if (isError || isErrorInfluencers || isErrorPosts) console.error(isError);
+  if (isError || isErrorInfluencers)
+    console.error(isError && isErrorInfluencers);
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
@@ -68,9 +54,9 @@ export default function Index() {
           <Hot.TabsMobile
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            loading={isLoading || isLoadingInfluencers || isLoadingPosts}
+            loading={isLoading || isLoadingInfluencers}
           />
-          {isLoading || isLoadingInfluencers || isLoadingPosts ? (
+          {isLoading || isLoadingInfluencers ? (
             <div className="w-full">
               <Skeletons.Simple />
             </div>
@@ -90,12 +76,7 @@ export default function Index() {
                       initLoadingInfluencers={isLoadingInfluencers}
                     />
                   )}
-                  {activeTab === 2 && (
-                    <Hot.RenderPosts
-                      posts={posts as PostView[]}
-                      initloadingPosts={isLoadingPosts}
-                    />
-                  )}
+                  {activeTab === 2 && <Hot.RenderPosts />}
                 </>
               ) : (
                 <>
@@ -107,10 +88,7 @@ export default function Index() {
                     influencers={influencers}
                     initLoadingInfluencers={isLoadingInfluencers}
                   />
-                  <Hot.RenderPosts
-                    posts={posts as PostView[]}
-                    initloadingPosts={isLoadingPosts}
-                  />
+                  <Hot.RenderPosts />
                 </>
               )}
             </div>
