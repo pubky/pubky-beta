@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // title with just 20 characters
     const postTitle =
       post?.details?.kind === 'long'
-        ? Utils.truncateText(JSON.parse(post?.details?.content).title, 20)
-        : Utils.truncateText(post.details.content, 20);
+        ? Utils.truncateText(JSON.parse(post?.details?.content).title, 50)
+        : Utils.truncateText(post.details.content, 50);
     const profile = await getUserDetails(post?.details.author);
     const profileName = Utils.truncateText(profile?.name, 20);
     const description = Utils.truncateText(post.details.content, 100);

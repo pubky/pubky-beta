@@ -32,7 +32,11 @@ function ProfileLink({ pk }: { pk: string }) {
 
   return (
     <>
-      <Link className="text-[#C8FF00] break-all" href={`/profile/${pkPart}`}>
+      <Link
+        className="text-[#C8FF00] break-all"
+        href={`/profile/${pkPart}`}
+        onClick={(event) => event.stopPropagation()}
+      >
         {userName
           ? `@${userName}`
           : Utils.minifyPubky(pkFound.replace('pk:', ''))}
