@@ -318,7 +318,7 @@ export default function ContentCreateArticle({
                 className="h-auto text-[40px] font-bold sm:text-[64px]"
                 defaultValue={contentTitle}
                 disabled={sendingArticle}
-                maxLength={30}
+                maxLength={50}
                 autoCorrect="off"
                 //error={errors.name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
