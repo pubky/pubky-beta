@@ -14,6 +14,7 @@ export default function Index() {
   const { pubky, signUp, isLoggedIn } = usePubkyClientContext();
   const isMobile = useIsMobile();
   const router = useRouter();
+  const currentYear = new Date().getFullYear();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -176,7 +177,7 @@ export default function Index() {
             variant="small"
             className="text-[13.5px] text-opacity-30 font-normal"
           >
-            Synonym Software Ltd. ©2024.
+            Synonym Software Ltd. ©{currentYear || 2025}.
           </Typography.Body>
         </div>
       </Content.Grid>
