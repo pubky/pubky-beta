@@ -41,6 +41,7 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push('@synonymdev/pubky');
+      config.externals.push('pubky-app-specs');
     }
 
     config.experiments = {

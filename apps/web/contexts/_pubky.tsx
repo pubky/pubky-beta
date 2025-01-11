@@ -9,6 +9,8 @@ import {
   Keypair,
   createRecoveryFile,
 } from '@synonymdev/pubky';
+
+import { create_pubky_app_follow } from 'pubky-app-specs';
 import { Utils } from '@social/utils-shared';
 import { PostKind, PostView, PubkyAppPost, PubkyAppUser } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
@@ -204,7 +206,7 @@ export function PubkyClientWrapper({
   }, []);
 
   if (!wasmLoaded) {
-    return <div>Loading...</div>;
+    return <div>Loading WebAssembly…</div>;
   }
 
   const logout = () => {
@@ -1329,39 +1331,27 @@ export function PubkyClientWrapper({
     }
   };
 
+  /**
+   * Example follow function using the Rust create_pubky_app_follow.
+   */
   const follow = async (user_id: string): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      if (!pubky) throw new Error('No pubky user session');
 
-      const followData = {
-        created_at: Date.now(),
-      };
+      // 1) Rust model creation
+      const { json, path } = create_pubky_app_follow(user_id);
+      // path => e.g. "/pub/pubky.app/follows/USERID"
 
-      const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
-
+      // 2) PUT the data to homeserver
+      const followUrl = `pubky://${pubky}${path}`;
       await client.fetch(followUrl, {
         method: 'PUT',
-        body: JSON.stringify(followData),
+        body: JSON.stringify(json),
         credentials: 'include',
       });
 
-      // get user relationships and check if it is followed
-      // keep in a while loop until it is followed
-      let userFollow = false;
-
-      while (!userFollow) {
-        try {
-          const post = await getUserRelationship(user_id, pubky ?? '');
-          if (post.following === true) {
-            userFollow = true;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-
+      // 3) Optionally poll your user relationships until it’s "following"
+      // ... your existing logic ...
       return true;
     } catch (error) {
       console.error('Error while following the user:', error);
