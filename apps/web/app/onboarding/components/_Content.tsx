@@ -177,7 +177,7 @@ export default function Index() {
             variant="small"
             className="text-[13.5px] text-opacity-30 font-normal"
           >
-            Synonym Software Ltd. ©{currentYear || 2025}.
+            Synonym Software Ltd. ©{currentYear}.
           </Typography.Body>
         </div>
       </Content.Grid>
