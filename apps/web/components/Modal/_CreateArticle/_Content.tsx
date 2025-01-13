@@ -318,7 +318,7 @@ export default function ContentCreateArticle({
                 className="h-auto text-[40px] font-bold sm:text-[64px]"
                 defaultValue={contentTitle}
                 disabled={sendingArticle}
-                maxLength={30}
+                maxLength={50}
                 autoCorrect="off"
                 //error={errors.name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -341,13 +341,15 @@ export default function ContentCreateArticle({
                     >
                       <Icon.Trash size="20" />
                     </div>
-                    <Image
-                      src={URL.createObjectURL(selectedFile[0])}
-                      alt="Uploaded Preview"
-                      className="w-[1200px] h-auto max-h-[500px] rounded-lg"
-                      width={1000}
-                      height={650}
-                    />
+                    <div className="max-h-[500px] overflow-y-auto no-scrollbar">
+                      <Image
+                        src={URL.createObjectURL(selectedFile[0])}
+                        alt="Uploaded Preview"
+                        className="w-[1200px] rounded-lg"
+                        width={1000}
+                        height={650}
+                      />
+                    </div>
                   </div>
                 ) : (
                   <div

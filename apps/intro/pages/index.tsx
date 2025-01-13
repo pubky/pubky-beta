@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 export default function Index() {
   const [isMobile, setIsMobile] = useState(false);
+  const currentYear = new Date().getFullYear();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -75,7 +76,7 @@ export default function Index() {
           variant="small"
           className="fixed bottom-12 text-[13.5px] text-opacity-30 font-normal"
         >
-          Synonym Software Ltd. ©2024.
+          Synonym Software Ltd. ©{currentYear}.
         </Typography.Body>
       </Content.Grid>
       <div className="w-full">

@@ -76,7 +76,7 @@ const LongPost = ({ data, user }) => {
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex flex-col gap-4">
-        <Typography.Display className="sm:leading-[64px]">
+        <Typography.Display className="sm:leading-[64px] break-all">
           {JSON.parse(data?.details?.content).title}
         </Typography.Display>
         <div className="flex w-full gap-4 justify-between items-center">
