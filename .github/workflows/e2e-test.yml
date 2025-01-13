@@ -8,7 +8,7 @@ on:
       - master
 
 concurrency:
-  group: "e2e-test"
+  group: 'e2e-test'
   cancel-in-progress: false # wait for all in-progress runs to complete before starting a new run
 
 jobs:
@@ -42,8 +42,6 @@ jobs:
           YQ_BINARY=yq_linux_amd64
           YQ_VERSION=v4.44.3
           wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ_BINARY}.tar.gz -O - | tar xz && sudo mv ${YQ_BINARY} /usr/bin/yq
-          yq -i 'del(.services.pkarr)' docker-compose.yml
-          yq -i 'del(.services.client)' docker-compose.yml
           yq -i 'del(.services.homeserver.depends_on)' docker-compose.yml
 
       - name: Modify homeserver.config.toml
@@ -59,9 +57,15 @@ jobs:
           sed -i 's/NEO4J_server_memory_heap_initial__size=4G/NEO4J_server_memory_heap_initial__size=1G/' neo4j.env
           sed -i 's/NEO4J_server_memory_heap_max__size=8G/NEO4J_server_memory_heap_max__size=2G/' neo4j.env
 
-      - name: Build and run pubky-docker
+      - name: Build pubky-docker
         working-directory: pubky-docker/development
-        run: docker compose up -d
+        run: |
+          docker compose build nexus-watcher homeserver
+          docker compose build nexus-service
+
+      - name: Run pubky-docker
+        working-directory: pubky-docker/development
+        run: docker compose up -d nexus-watcher nexus-service nexus-redis nexus-neo4j homeserver
 
       - name: Wait for pubky-docker to start
         run: |
