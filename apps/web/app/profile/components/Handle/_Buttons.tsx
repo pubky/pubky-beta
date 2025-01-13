@@ -190,7 +190,7 @@ export default function Buttons({
       >
         Link
       </Button.Medium>
-      {creatorPubky && (
+      {creatorPubky && creatorPubky !== pubky && (
         <div className="relative">
           {showProfileMenu && (
             <Tooltip.ProfileMenu
