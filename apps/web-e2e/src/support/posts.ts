@@ -172,7 +172,7 @@ export const clickShowNewPostsBtn = (expectedCounter = 1) => {
   //   .click();
 
   // meanwhile, just refresh the page to show new posts
-  //cy.wait(3_000);
+  cy.wait(3_000);
   cy.reload();
   waitForFeedToLoad();
 };

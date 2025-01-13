@@ -113,10 +113,9 @@ describe('feed and filters', () => {
     // * check some Hot tags are visible
     cy.get('#right-sidebar').find('#hot-tags').should('be.visible').within(() => {
       cy.get('#hot-tags-content')
-      .should('be.visible')
-      .innerTextShouldNotContain('No tags yet')
-      // TODO: increase expected length when hot tags show as expected, see https://github.com/pubky/pubky-app/issues/842
-      //.find('a').should('have.length.above', 1);
+        .should('be.visible')
+        .innerTextShouldNotContain('No tags yet')
+        .find('a').should('have.length.above', 5);
     });
   });
 

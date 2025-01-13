@@ -35,6 +35,9 @@ describe('notifications', () => {
     cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
     cy.wrap(Cypress.env(profile2.pubkyAlias)).as(profile2.pubkyAlias);
 
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(10_000);
+
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {

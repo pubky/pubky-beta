@@ -30,6 +30,9 @@ describe('posts', () => {
     // in case it gets changed by a test and not reset
     cy.slowDown(defaultMs);
 
+    // TODO: remove workaround for pkarr rate limiting
+    cy.wait(10_000);
+
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
