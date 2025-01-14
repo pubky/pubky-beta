@@ -1,5 +1,3 @@
-import { defaultMs } from "./slow-down";
-
 // select an emoji using the emoji picket by its data-full-name attribute
 export const selectEmoji = (emojiName: string) => {
   cy.get('#emoji-btn').click();
@@ -36,6 +34,21 @@ export const createQuickPost = (postContent: string, expectedPostLength? : numbe
   });
 };
 
+// reply to any post in the feed that contains the filterText by index
+export const replyToPost = ({replyContent, postContent, filterText, postIdx}: {replyContent: string, postContent?: string, filterText?: string, postIdx?: number}) => {
+  cy.findPostInFeed(postIdx, filterText).within(() => {
+    cy.get('#reply-btn').click();
+  });
+  cy.get('#modal-root').should('be.visible').within(($modal) => {
+    cy.get('h1').contains('Reply');
+    // check that the post content is displayed in the reply modal
+    if (postContent) cy.wrap($modal).contains(postContent);
+    cy.get('textarea').should('have.value', '');
+    cy.get('textarea').type(replyContent);
+    cy.get('#reply-btn').click();
+  });
+};
+
 // repost any post in the feed that contains the filterText by index
 // if no arguments or just repostContent is provided then it reposts the latest post in the feed
 // TODO: default filterText value to filter out the quick post area then can change default index to 0
@@ -53,39 +66,53 @@ export const repostPost = ({repostContent, postContent, filterText, postIdx}: {r
   });
 };
 
-// tag a post with any number of tags
-export const tagPost = (postContent: string, tags: string[]) => {
-  cy.findFirstPostInFeed(postContent).within(() => {
-    cy.get('#tag-btn').click();
-    cy.get('#modal-root').within(() => {
-      cy.get('h1').contains('Tag Post');
-
-      // add tags to the post
-      for (const tag of tags) {
-        cy.get('input').type(tag);
-        cy.get('#add-btn').should('be.visible').click();
-      };
-
-      // TODO: uncomment once bug is fixed, see https://github.com/pubky/pubky-app/issues/541
-      // check current tags in modal
-      // cy.get('#current-tags').children('div').should('have.length', 3).then((divs) => {
-      //   cy.wrap(divs.eq(0)).contains(tag1);
-      //   cy.wrap(divs.eq(1)).contains(tag2);
-      //   cy.wrap(divs.eq(2)).contains(tag3);
-      // });
-
-      // close modal
-      cy.get('#close-btn').click();
+// find a post first and use within it. Useful for fast tagging posts not in the feed.
+export const fastTagPost = (tags: string[]) => {
+  cy.get('#tags').within(() => {
+    tags.forEach((tag) => {
+      cy.get('#show-add-tag-input-btn').click();
+      cy.get('input').type(tag);
+      cy.get('#add-tag-btn').click();
     });
+  });
+};
+
+// tag a post in feed with any number of tags
+export const fastTagPostInFeed = (tags: string[], postContent?: string) => {
+  cy.findFirstPostInFeed(postContent).within(() => {
+    fastTagPost(tags);
+  });
+};
+
+// menuBtnIdx: 0 for original post, 1 for reply
+
+export const editPost = (newPostContent: string, postIdx = 0, menuBtnIdx = 0) => {
+  // find post and click menu button
+  cy.findPostInFeed(postIdx).within(() => {
+    // '[id="menu-btn"]' finds all with id
+    cy.get('[id="menu-btn"]').eq(menuBtnIdx).should('be.visible').click();
+    cy.get('#post-tooltip-menu').should('be.visible').within(() => {
+      cy.get('#edit-post').should('be.visible')
+        .innerTextShouldEq('Edit post')
+        .get('#edit-post').click();
+    });
+  });
+
+  // input edited post content in modal and submit
+  cy.get('#modal-root').should('be.visible').within(() => {
+    cy.get('h1').contains('Edit Post');
+    cy.get('textarea')
+      .clear()
+      .type(newPostContent);
+    cy.get('#post-btn').click();
   });
 };
 
 // menuBtnIdx: 0 for original post, 1 for reply
 export const deletePost = (postIdx = 0, menuBtnIdx = 0) => {
+  // find post and click menu button
   cy.findPostInFeed(postIdx).within(() => {
-    // delete the repost
-    // cy.find('#menu-btn').eq(menuBtnIdx).should('be.visible').click();
-    // '[id="menu-btn"]' will find all with id
+    // '[id="menu-btn"]' finds all with id
     cy.get('[id="menu-btn"]').eq(menuBtnIdx).should('be.visible').click();
     cy.get('#post-tooltip-menu').should('be.visible').within(() => {
       cy.get('#delete-post').should('be.visible')
@@ -118,14 +145,36 @@ export const checkPostIsAtIndexInFeed = (postContent: string, index: number) => 
   });
 };
 
+// wait for feed timeline to not show "No posts yet" or "Loading"
+export const waitForFeedToLoad = (seconds: number = 6) => {
+  const checkTimelineRecursively = (attempts: number, firstCheck: boolean = true) => {
+    if (attempts <= 0) assert(false, "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds");
+
+    cy.get('#posts-feed').find('#timeline').invoke('text').then((text) => {
+      if (text.includes('No posts yet') || text.includes('Loading')) {
+        firstCheck ? cy.wait(200) : cy.wait(1000);
+        checkTimelineRecursively(attempts - 1, false);
+      }
+    });
+  };
+
+  checkTimelineRecursively(seconds);
+};
+
 // wait for 'show n new posts' button to be visible
 // check its counter displayes the correct number of new posts and click it
 export const clickShowNewPostsBtn = (expectedCounter = 1) => {
-  cy.get('#show-new-posts-button', { timeout: Cypress.env('ci') ? 60_000 : 15_000 })
-    .scrollIntoView()
-    .should('be.visible')
-    .should('contain.text', ` ${expectedCounter} `)
-    .click();
+  // TODO: uncomment original code once 'show n new posts' button is showing again after creating a new post
+  // cy.get('#show-new-posts-button', { timeout: Cypress.env('ci') ? 60_000 : 15_000 })
+  //   .scrollIntoView()
+  //   .should('be.visible')
+  //   .should('contain.text', ` ${expectedCounter} `)
+  //   .click();
+
+  // meanwhile, just refresh the page to show new posts
+  cy.wait(3_000);
+  cy.reload();
+  waitForFeedToLoad();
 };
 
 const findAndCountPostsInFeed = (filterText: string, expectedCount: number) => {

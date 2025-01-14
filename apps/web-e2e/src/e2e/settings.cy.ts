@@ -17,8 +17,7 @@ describe('settings', () => {
     cy.deleteDownloadsFolder();
   });
 
-  // TODO: skipping due to https://github.com/pubky/pubky-app/issues/732
-  it.skip('Account settings function correctly', () => {
+  it('Account settings function correctly', () => {
     // create a new user
     cy.onboardAsNewUser('Mr Account Settings', 'I like to test account settings');
     cy.get('#header-settings-btn').click();
@@ -79,12 +78,6 @@ describe('settings', () => {
     cy.location('pathname').should('eq', '/onboarding/register');
     cy.get('#message-alert').should('be.visible').should('contain', 'your profile is empty');
   });
-
-  it.skip('Notifications settings is displayed correctly', () => {
-
-  });
-
-  // TODO: add Notifications tests in a separate file
 
   it.skip('Privacy and Safety settings is displayed correctly', () => {
 

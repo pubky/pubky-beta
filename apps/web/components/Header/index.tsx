@@ -205,6 +205,7 @@ export default function Header({ title }: HeaderProps) {
             <Link href="/profile" className="w-[48px] relative">
               {unReadNotification !== 0 && (
                 <PostUtil.Counter
+                  id="header-notification-counter"
                   textCSS="tracking-tight text-black font-semibold text-[13px]"
                   className="p-0 w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-[#C8FF00] border-white"
                 >

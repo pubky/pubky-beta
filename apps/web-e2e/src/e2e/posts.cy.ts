@@ -7,9 +7,10 @@ import { selectEmoji,
         deletePost,
         createQuickPost,
         checkPostIsNotAtTopOfFeed,
-        clickShowNewPostsBtn,
         repostPost,
-        tagPost} from '../support/posts';
+        fastTagPostInFeed,
+        replyToPost,
+        waitForFeedToLoad} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -30,7 +31,7 @@ describe('posts', () => {
     cy.slowDown(defaultMs);
 
     // TODO: remove workaround for pkarr rate limiting
-    cy.wait(Cypress.env('ci') ? 10_000 : 5_000);
+    cy.wait(10_000);
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
@@ -41,18 +42,23 @@ describe('posts', () => {
   });
 
   // TODO: remove temp script to add 12 posts, workaround for no 'Show New Posts' button, see https://github.com/pubky/pubky-app/issues/738
-  it('add 12 posts', () => {
-    for (let i = 0; i < 12; i++) {
-      createQuickPost(`Post ${i + 1}`);
-    }
-  });
+  // TODO: comment out if needed once 'Show New Posts' button is showing again
+  // it('add 12 posts', () => {
+  //   for (let i = 0; i < 12; i++) {
+  //     createQuickPost(`Post ${i + 1}`);
+  //   }
+  // });
 
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
-    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
+    latestPostInFeedContentEq(postContent);
+
+    // reload and check post is still displayed correctly
+    cy.reload();
+    waitForFeedToLoad();
     latestPostInFeedContentEq(postContent);
   });
 
@@ -70,9 +76,12 @@ describe('posts', () => {
     });
     cy.get('#modal-root').should('not.exist');
 
-    clickShowNewPostsBtn();
-
     // verify the post is displayed correctly in feed
+    latestPostInFeedContentEq(postContent);
+
+    // reload and check post is still displayed correctly
+    cy.reload();
+    waitForFeedToLoad();
     latestPostInFeedContentEq(postContent);
   });
 
@@ -101,8 +110,6 @@ describe('posts', () => {
 
     createQuickPost(postContent);
 
-    clickShowNewPostsBtn();
-
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
   });
@@ -130,8 +137,6 @@ describe('posts', () => {
       // wait for textarea to be cleared to ensure post is submitted
       cy.get('textarea').should('have.value', '');
     });
-
-    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
@@ -180,8 +185,6 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    clickShowNewPostsBtn();
-
     // verify the post text and embedded link is displayed correctly in feed
     cy.findFirstPostInFeed().within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
@@ -223,8 +226,6 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    clickShowNewPostsBtn();
-
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
   });
@@ -232,21 +233,19 @@ describe('posts', () => {
   it('can delete a post', () => {
     const postContent = `I can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
-    clickShowNewPostsBtn();
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/523
-    cy.waitReload();
-
     // delete the post
     deletePost();
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
-
     // verify post is deleted
+    checkPostIsNotAtTopOfFeed(postContent);
+
+    // reload and check post is still deleted
+    cy.reload();
+    waitForFeedToLoad();
     checkPostIsNotAtTopOfFeed(postContent);
   });
 
@@ -308,8 +307,6 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    clickShowNewPostsBtn();
-
     // verify the post text and tags are displayed correctly in feed
     cy.findFirstPostInFeed().within(() => {
       // check text
@@ -334,7 +331,7 @@ describe('posts', () => {
     cy.waitReload();
 
     // add tags to the post
-    tagPost(postContent, [tag1, tag2, tag3]);
+    fastTagPostInFeed([tag1, tag2, tag3], postContent);
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/541
     // should test before and after refresh
@@ -421,9 +418,6 @@ describe('posts', () => {
     const repostContent = 'Reposted with content!';
     createQuickPost(postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/546
-    cy.waitReload();
-
     // repost with content
     cy.slowDown(fastMs);
     repostPost({ repostContent, postContent });
@@ -445,9 +439,6 @@ describe('posts', () => {
 
     // delete the repost
     deletePost();
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
 
     // verify the repost is deleted
     cy.findFirstPostInFeed().within(() => {
@@ -527,24 +518,10 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
-    clickShowNewPostsBtn();
-
-    // TODO: remove wait for any existing message alerts to disappear, see https://github.com/pubky/pubky-app/issues/729
-    cy.waitForElementToDisappear('#message-alert');
 
     // reply to the post
     cy.slowDown(fastMs);
-    cy.findFirstPostInFeed().within(() => {
-      cy.get('#reply-btn').click();
-    });
-    cy.get('#modal-root').should('be.visible').within(($modal) => {
-      cy.get('h1').contains('Reply');
-      // check that the post content is displayed in the reply modal
-      cy.wrap($modal).contains(postContent);
-      cy.get('textarea').should('have.value', '');
-      cy.get('textarea').type(replyContent);
-      cy.get('#reply-btn').click();
-    });
+    replyToPost({replyContent, postContent});
 
     // check reply message is shown (before the alert disappears)
     cy.get('#message-alert').should('be.visible').and('contain.text', 'Reply');
@@ -559,7 +536,7 @@ describe('posts', () => {
       cy.wrap($post).innerTextShouldContain(replyContent);
     });
 
-    // delete the reply (post is at index 1) (menuBtnIdx 1 for reply)
+    // delete the reply (post is at index 0) (menuBtnIdx 1 for reply)
     deletePost(0, 1);
 
     // verify the reply is deleted
@@ -576,7 +553,6 @@ describe('posts', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
     createQuickPost(postContent);
-    clickShowNewPostsBtn();
 
     // reply to the post
     cy.findFirstPostInFeed().within(() => {
@@ -605,5 +581,6 @@ describe('posts', () => {
 
     // todo: check that reply still shown in own profile page
     // todo: test article
+    // todo: test 'Show n new posts' button
   });
 });

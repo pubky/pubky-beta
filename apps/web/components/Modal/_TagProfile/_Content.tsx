@@ -229,6 +229,7 @@ export default function ContentProfileTag({
           action={
             <div className="flex">
               <Button.Action
+                id="add-btn"
                 icon={<Icon.Plus size="18" />}
                 variant="custom"
                 size="medium"

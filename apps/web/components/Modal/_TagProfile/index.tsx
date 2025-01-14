@@ -58,6 +58,7 @@ export default function ProfileTag({
       className="md:w-[792px] max-h-[600px] overflow-y-auto"
     >
       <Modal.CloseAction
+        id="close-btn"
         onClick={() => {
           setShowModalProfileTag(false);
         }}
