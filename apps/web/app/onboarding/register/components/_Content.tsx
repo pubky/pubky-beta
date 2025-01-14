@@ -215,12 +215,13 @@ export default function Index() {
           return;
         }
 
-        await saveProfile({
+        const response = await saveProfile({
           name,
           bio,
           image,
           links: linksObject,
         });
+        if (response) router.push('/home');
       } catch (error) {
         console.log(error);
       } finally {

@@ -5,6 +5,8 @@ import { z } from 'zod';
 import { usePubkyClientContext } from '@/contexts';
 import { Content, Typography, Header, Icon } from '@social/ui-shared';
 import { Card } from '../Card';
+import { useRouter } from 'next/navigation';
+
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -19,6 +21,7 @@ const loginSchema = z.object({
 
 export default function Index() {
   const { loginWithFile, isLoggedIn, pubky } = usePubkyClientContext();
+  const router = useRouter();
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [fileName, setFileName] = useState('recovery_file.pkarr');
 
@@ -63,7 +66,11 @@ export default function Index() {
         return;
       }
 
-      await loginWithFile(result.data?.password, result.data?.recoveryFile);
+      const response = await loginWithFile(
+        result.data?.password,
+        result.data?.recoveryFile,
+      );
+      if (response) router.push('/home');
     } catch (error: unknown | { message: string }) {
       const errorMessage =
         (error as Error)?.message === 'aead::Error'
