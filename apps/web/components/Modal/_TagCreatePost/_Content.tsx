@@ -109,24 +109,30 @@ export default function ContentTagCreatePost({
       </div>
       <div className="flex flex-row w-full mt-4">
         {showEmojis && (
-          <div
-            className="absolute translate-y-[10%] translate-x-[30%] z-10"
-            ref={wrapperRefEmojis}
-          >
-            <EmojiPicker
-              theme={Theme.DARK}
-              emojiStyle={EmojiStyle.TWITTER}
-              onEmojiClick={(emojiObject) => {
-                const emojiLength = new Blob([emojiObject.emoji]).size / 2;
-
-                if (tag.length + emojiLength <= 20) {
-                  setTag(tag + emojiObject.emoji);
-                }
-                setShowEmojis(false);
-              }}
+          <>
+            <div
+              className="fixed inset-0 bg-black bg-opacity-30 z-[9998]"
+              onClick={() => setShowEmojis(false)}
             />
-            ;
-          </div>
+            <div
+              id="emoji-picker"
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
+              ref={wrapperRefEmojis}
+            >
+              <EmojiPicker
+                theme={Theme.DARK}
+                emojiStyle={EmojiStyle.TWITTER}
+                onEmojiClick={(emojiObject) => {
+                  const emojiLength = new Blob([emojiObject.emoji]).size / 2;
+
+                  if (tag.length + emojiLength <= 20) {
+                    setTag(tag + emojiObject.emoji);
+                  }
+                  setShowEmojis(false);
+                }}
+              />
+            </div>
+          </>
         )}
         {/* <Input.Label value="Add tag" /> */}
         <Input.Text
