@@ -270,7 +270,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     }
                   >
                     <div className="flex gap-2 items-center">
-                      {Utils.minifyText(tagObj?.label, 13)}
+                      {Utils.minifyText(tagObj?.label, 20)}
                       {loadingTags === tagObj?.label ? (
                         <Icon.LoadingSpin size="16" />
                       ) : (

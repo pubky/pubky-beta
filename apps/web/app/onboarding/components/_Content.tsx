@@ -3,22 +3,22 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button, Icon } from '@social/ui-shared';
-import * as jdenticon from 'jdenticon';
+//import * as jdenticon from 'jdenticon';
 import { usePubkyClientContext } from '@/contexts';
-import { Links } from '@/types/Post';
-import { Utils } from '@social/utils-shared';
+//import { Links } from '@/types/Post';
+//import { Utils } from '@social/utils-shared';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { useRouter } from 'next/navigation';
+//import { useRouter } from 'next/navigation';
 
 export default function Index() {
-  const { pubky, signUp, isLoggedIn } = usePubkyClientContext();
+  const { pubky, isLoggedIn } = usePubkyClientContext();
   const isMobile = useIsMobile();
-  const router = useRouter();
+  //const router = useRouter();
   const currentYear = new Date().getFullYear();
   const [logoLink, setLogoLink] = useState('/onboarding');
-  const [progress, setProgress] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const links: Links[] = [];
+  //const [progress, setProgress] = useState(0);
+  //const [loading, setLoading] = useState(false);
+  //const links: Links[] = [];
 
   useEffect(() => {
     async function fetchData() {
@@ -32,6 +32,8 @@ export default function Index() {
     fetchData();
   }, [pubky, isLoggedIn]);
 
+  {
+    /** 
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
@@ -68,7 +70,8 @@ export default function Index() {
       console.log(error);
       clearInterval(interval);
     }
-  };
+  };*/
+  }
 
   return (
     <Content.Main shadowBottom>
@@ -127,6 +130,7 @@ export default function Index() {
               Create Account
             </Button.Large>
           </Link>
+          {/** 
           <Button.Large
             id="onboarding-explore-pubky-btn"
             onClick={!loading ? () => handleSubmit() : undefined}
@@ -140,6 +144,7 @@ export default function Index() {
                 : `Creating Profile... ${Math.floor(progress)}%`
               : 'Explore Pubky'}
           </Button.Large>
+          */}
           <Link href="https://pubky.org" target="_blank">
             <Button.Large
               variant="secondary"

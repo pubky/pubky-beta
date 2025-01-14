@@ -114,6 +114,7 @@ import { Fire } from './_Weather';
 import {
   Key,
   Lock,
+  LockKeyOpen,
   Warning,
   Shield,
   Question,
@@ -195,6 +196,7 @@ export const Icon = {
   LoadingSpin,
   LineHorizontal,
   Lock,
+  LockKeyOpen,
   MagnifyingGlass,
   MagnifyingGlassLeft,
   Medium,
