@@ -13,7 +13,6 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
-import { codes } from '@/components/ProtectedRoutes';
 
 export default function Index() {
   const { isLoggedIn, pubky } = usePubkyClientContext();
@@ -24,7 +23,7 @@ export default function Index() {
   const [error, setError] = useState('');
   const [logoLink, setLogoLink] = useState('/onboarding');
 
-  const handleInviteCode = () => {
+  const handleInviteCode = async () => {
     setLoading(true);
     setError('');
     setSuccess('');
@@ -35,19 +34,31 @@ export default function Index() {
       return;
     }
 
-    if (!codes.includes(inviteCode)) {
-      setError('Incorrect invite code. Please try again.');
-      setLoading(false);
-      return;
-    }
+    try {
+      const response = await fetch('/api/invite-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inviteCode }),
+      });
 
-    setSuccess('Invite code valid. Welcome to the Pubky Private Beta.');
-    setError('');
-    Utils.storage.set('inviteCode', inviteCode);
+      const data = await response.json();
 
-    setTimeout(() => {
+      if (!data.valid) {
+        setError('Incorrect invite code. Please try again.');
+        setLoading(false);
+        return;
+      }
+
+      setSuccess('Invite code valid. Welcome to the Pubky Private Beta.');
+      setError('');
+
+      Utils.storage.set('inviteCode', inviteCode);
       router.push('/onboarding/sign-in');
-    }, 1000); // 1 second
+    } catch (error) {
+      console.error('Error during invite code validation:', error);
+      setError('An error occurred. Please try again later.');
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -61,6 +72,11 @@ export default function Index() {
     }
     fetchData();
   }, [isLoggedIn, pubky]);
+
+  useEffect(() => {
+    const initialInviteCode = Utils.storage.get('inviteCode');
+    if (initialInviteCode) setInviteCode(String(initialInviteCode));
+  }, []);
 
   return (
     <Content.Main className="sm:pt-[125px]">

@@ -9,8 +9,6 @@ import { getUserMuted, getUserProfile } from '@/services/userService';
 import { defaultPreferences } from '@/contexts/_filters';
 import { Utils } from '@social/utils-shared';
 
-export const codes = ['X8L57MB3'];
-
 export default function ProtectedRoutes({
   children,
 }: {
@@ -45,26 +43,42 @@ export default function ProtectedRoutes({
     '/invite-code',
   ];
 
-  const checkInviteCode = () => {
-    const inviteCode = String(Utils.storage.get('inviteCode'));
+  const checkInviteCode = async () => {
+    const inviteCode = Utils.storage.get('inviteCode');
 
     if (
       ['/sign-in', '/onboarding/sign-in', '/onboarding/sign-up'].includes(
         pathname,
       ) &&
-      (!inviteCode || !codes.includes(inviteCode))
+      !inviteCode
     ) {
       router.push('/invite-code');
       return false;
     }
 
-    if (
-      pathname === '/invite-code' &&
-      inviteCode &&
-      codes.includes(inviteCode)
-    ) {
-      router.push('/onboarding/sign-in');
-      return false;
+    if (inviteCode) {
+      try {
+        const response = await fetch('/api/invite-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ inviteCode }),
+        });
+        const data = await response.json();
+
+        if (!data.valid) {
+          router.push('/invite-code');
+          return false;
+        }
+
+        if (pathname === '/invite-code') {
+          router.push('/onboarding/sign-in');
+          return false;
+        }
+      } catch (error) {
+        console.error('Error verifying invitation code:', error);
+        router.push('/invite-code');
+        return false;
+      }
     }
 
     return true;
@@ -200,8 +214,8 @@ export default function ProtectedRoutes({
   }, [pubky]);
 
   useEffect(() => {
-    checkAccess();
     checkInviteCode();
+    checkAccess();
   }, [pubky, pathname]);
 
   return (
