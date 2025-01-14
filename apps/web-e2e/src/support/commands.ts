@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+import { passInviteCode } from "./common";
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -101,13 +103,11 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
     // click 'Continue' button 6 times to skip onboarding slides
     for (let i = 0; i < 6; i++) {
       cy.get('#onboarding-continue-btn').click();
-      if (i === 5) {
-        cy.location('pathname').should('eq', '/onboarding/sign-in');
-      } else {
-        cy.location('pathname').should('eq', '/onboarding/intro');
-      }
+      if (i < 5) cy.location('pathname').should('eq', '/onboarding/intro');
     };
   };
+
+  passInviteCode();
 
   cy.get('#onboarding-sign-up-link').click();
   cy.location('pathname').should('eq', '/onboarding/sign-up');
@@ -159,8 +159,16 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.location('pathname').then((currentPath) => {
     if (currentPath !== '/sign-in') {
       cy.visit('/sign-in');
+      passInviteCode();
     };
   });
+
+  cy.location('pathname').then((currentPath) => {
+    if (currentPath === '/onboarding/sign-in') {
+      cy.visit('/sign-in');
+    };
+  });
+
   cy.location('pathname').should('eq', '/sign-in');
 
   // TODO: remove wait workaround for pkarr rate limiting once using testnet
