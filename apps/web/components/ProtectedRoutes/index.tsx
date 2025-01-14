@@ -7,6 +7,9 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../Modal';
 import { getUserMuted, getUserProfile } from '@/services/userService';
 import { defaultPreferences } from '@/contexts/_filters';
+import { Utils } from '@social/utils-shared';
+
+export const codes = ['X8L57MB3'];
 
 export default function ProtectedRoutes({
   children,
@@ -39,7 +42,33 @@ export default function ProtectedRoutes({
     '/onboarding/sign-up',
     '/logout',
     '/sign-in',
+    '/invite-code',
   ];
+
+  const checkInviteCode = () => {
+    const inviteCode = String(Utils.storage.get('inviteCode'));
+
+    if (
+      ['/sign-in', '/onboarding/sign-in', '/onboarding/sign-up'].includes(
+        pathname,
+      ) &&
+      (!inviteCode || !codes.includes(inviteCode))
+    ) {
+      router.push('/invite-code');
+      return false;
+    }
+
+    if (
+      pathname === '/invite-code' &&
+      inviteCode &&
+      codes.includes(inviteCode)
+    ) {
+      router.push('/onboarding/sign-in');
+      return false;
+    }
+
+    return true;
+  };
 
   const isDynamicPublicRoute = (path: string) => {
     const dynamicPublicRoutes = [
@@ -172,6 +201,7 @@ export default function ProtectedRoutes({
 
   useEffect(() => {
     checkAccess();
+    checkInviteCode();
   }, [pubky, pathname]);
 
   return (
