@@ -248,7 +248,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
         )}
       </div>
       <div>
-        {post?.details?.author === pubky && (
+        {idAuthor === pubky && (
           <Link
             onClick={(event) => {
               event.stopPropagation();
@@ -268,9 +268,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
             {initLoadingFollowed ? (
               <Button.Transparent
                 loading={initLoadingFollowed}
-                className={
-                  post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-                }
+                className={idAuthor === pubky ? 'hidden' : 'w-full mt-3'}
               >
                 Loading
               </Button.Transparent>
@@ -287,9 +285,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
                 disabled={loadingFollowed}
                 loading={loadingFollowed}
                 icon={<Icon.UserMinus size="16" />}
-                className={
-                  post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-                }
+                className={idAuthor === pubky ? 'hidden' : 'w-full mt-3'}
               >
                 Unfollow
               </Button.Transparent>
@@ -306,9 +302,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
                 disabled={loadingFollowed}
                 loading={loadingFollowed}
                 icon={<Icon.UserPlus size="16" />}
-                className={
-                  post?.details?.author === pubky ? 'hidden' : 'w-full mt-3'
-                }
+                className={idAuthor === pubky ? 'hidden' : 'w-full mt-3'}
               >
                 Follow
               </Button.Transparent>
