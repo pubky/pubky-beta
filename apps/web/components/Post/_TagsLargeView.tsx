@@ -182,7 +182,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           <div>
             {showEmojis && (
               <div
-                className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                className="absolute translate-y-[15%] translate-x-[5%] z-10"
                 ref={wrapperRefEmojis}
               >
                 <EmojiPicker
