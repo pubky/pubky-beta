@@ -36,7 +36,7 @@ export default function Backup({
         setShowWords(false);
       }}
       modalRef={modalBackupRef}
-      className="md:max-w-[792px] max-h-[600px] md:max-h-full overflow-y-auto"
+      className="md:max-w-[792px] max-h-[600px] md:max-h-full overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction
         id="backup-close-btn"

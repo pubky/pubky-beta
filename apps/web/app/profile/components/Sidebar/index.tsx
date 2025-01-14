@@ -77,7 +77,7 @@ export default function Sidebar({
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 1100) {
+      if (window.scrollY > 1400) {
         setScrolled(true);
       } else {
         setScrolled(false);

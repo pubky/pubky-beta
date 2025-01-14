@@ -32,7 +32,7 @@ export default function ModalJoin({
       show={isJoinOpen}
       closeModal={() => setIsJoinOpen(false)}
       modalRef={joinRef}
-      className="md:max-w-[792px] max-h-[600px] md:max-h-full overflow-y-auto"
+      className="md:max-w-[792px] max-h-[600px] md:max-h-full overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setIsJoinOpen(false)} />
       <Modal.Header title="Join Pubky" />
