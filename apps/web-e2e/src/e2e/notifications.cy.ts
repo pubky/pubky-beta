@@ -299,7 +299,7 @@ describe('notifications', () => {
   });
 
   // failing due to wrong notification "edited a post you replied", see https://github.com/pubky/pubky-app/issues/823
-  it.skip('can be notified for a post being edited that you replied', () => {
+  it('can be notified for a post being edited that you replied', () => {
     // * profile 1 creates a post (1) that will be replied to and then edited
     createQuickPost(`The one who replies to this post will be notified when it is edited! ${Date.now()}`);
 
@@ -331,7 +331,7 @@ describe('notifications', () => {
   });
 
   // failing due to wrong notification "edited a post you tagged", see https://github.com/pubky/pubky-app/issues/823
-  it.skip('can be notified for a post being edited that you reposted', () => {
+  it('can be notified for a post being edited that you reposted', () => {
     // * profile 1 creates a post (1) that will be reposted and then edited
     createQuickPost(`The one who reposts this post will be notified when it is edited! ${Date.now()}`);
 
