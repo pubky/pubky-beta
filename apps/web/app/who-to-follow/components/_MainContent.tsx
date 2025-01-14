@@ -1,51 +1,39 @@
 'use client';
 
+import { useEffect, useState, Suspense } from 'react';
+import { Typography } from '@social/ui-shared';
 import Skeletons from '@/components/Skeletons';
 import { usePubkyClientContext } from '@/contexts';
-import { useEffect, useState } from 'react';
-import { RecommendedUsers } from '.';
 import { useStreamUsers } from '@/hooks/useStream';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { UserView } from '@/types/User';
-import { Typography } from '@social/ui-shared';
+import Root from '@/app/profile/components/_ContactsProfile/_Root';
+import Contact from '@/app/profile/components/_ContactsProfile/_Contact';
 
-export interface LoadingUsers {
-  [pubky: string]: boolean;
-}
-
-export default function MainContent() {
+const ContactsContent = () => {
   const { pubky } = usePubkyClientContext();
   const limit = 10;
   const [usersList, setUsersList] = useState<UserView[]>([]);
   const [skip, setSkip] = useState(0);
-  const {
-    data: recommendedProfiles,
-    isLoading,
-    isSuccess,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended', skip, limit);
+  const [hasMore, setHasMore] = useState(true);
 
-  const [loadingUsers, setLoadingUsers] = useState<LoadingUsers>({});
-  const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
-
-  const fetchStateUsers = () => {
-    if (recommendedProfiles) {
-      const initialFollowedState = recommendedProfiles.reduce(
-        (acc, profile) => {
-          acc[profile.details.id] = profile.relationship?.following || false;
-          return acc;
-        },
-        {} as { [pubky: string]: boolean },
-      );
-      setFollowed(initialFollowedState);
-    }
-  };
+  const { data: contactUsers, isLoading } = useStreamUsers(
+    pubky ?? '',
+    pubky ?? '',
+    'recommended',
+    skip,
+    limit,
+  );
 
   const fetchUsers = () => {
-    if (recommendedProfiles && Array.isArray(recommendedProfiles)) {
+    if (isLoading || !hasMore) return;
+
+    if (contactUsers && Array.isArray(contactUsers)) {
       setUsersList((prev) => {
-        const newUsers = recommendedProfiles.filter(
+        const newUsers = contactUsers.filter(
           (user) => !prev.some((u) => u.details.id === user.details.id),
         );
+        setHasMore(newUsers.length >= limit);
         return [...prev, ...newUsers];
       });
       setSkip((prev) => prev + limit);
@@ -57,54 +45,19 @@ export default function MainContent() {
   useEffect(() => {
     setUsersList([]);
     setSkip(0);
-  }, [recommendedProfiles, pubky]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      fetchUsers();
-      fetchStateUsers();
-    }
-  }, []);
+    setHasMore(true);
+  }, [pubky]);
 
   return (
-    <div className="flex-col inline-flex gap-3 w-full">
+    <div className='w-full'>
       {isLoading && usersList.length === 0 ? (
-        <div className="w-full">
+        <div className="mt-12">
           <Skeletons.Simple />
         </div>
-      ) : recommendedProfiles && recommendedProfiles.length > 0 ? (
-        <>
-          {recommendedProfiles &&
-            recommendedProfiles.map((user) => {
-              const pubkeyUser = pubky && user?.details?.id.includes(pubky);
-              const isFollowed = followed[user?.details?.id];
-
-              return (
-                <div key={`user-${user?.details?.id}`} className="w-full">
-                  <div className="w-full">
-                    <div className="p-6 rounded-2xl bg-white bg-opacity-10 lg:p-0 lg:bg-transparent flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
-                      <div className="w-full flex justify-between items-center">
-                        <RecommendedUsers.User user={user} />
-                        <RecommendedUsers.Counters mobile user={user} />
-                      </div>
-                      <RecommendedUsers.Tags user={user} />
-                      <RecommendedUsers.Counters user={user} />
-                      <RecommendedUsers.Buttons
-                        user={user}
-                        setLoadingUsers={setLoadingUsers}
-                        loadingUsers={loadingUsers}
-                        setFollowed={setFollowed}
-                        pubkeyUser={pubkeyUser}
-                        isFollowed={isFollowed}
-                        isLoading={isLoading}
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          <div ref={loader} />
-        </>
+      ) : usersList.length > 0 ? (
+        <Root>
+          <Contact contacts={usersList} isLoading={isLoading} />
+        </Root>
       ) : (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
           <Typography.H2 className="font-normal text-opacity-30">
@@ -112,6 +65,15 @@ export default function MainContent() {
           </Typography.H2>
         </div>
       )}
+       {hasMore && <div ref={loader} />}
     </div>
+  );
+};
+
+export default function MainContent() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ContactsContent />
+    </Suspense>
   );
 }

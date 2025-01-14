@@ -21,20 +21,26 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   const limit = 10;
   const [usersList, setUsersList] = useState<UserView[]>([]);
   const [skip, setSkip] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const usePubky = creatorPubky ?? pubky;
 
-  const {
-    data: contactUsers,
-    isLoading,
-    isSuccess,
-  } = useStreamUsers(usePubky ?? '', pubky ?? '', contacts, skip, limit);
+  const { data: contactUsers, isLoading } = useStreamUsers(
+    usePubky ?? '',
+    pubky ?? '',
+    contacts,
+    skip,
+    limit,
+  );
 
   const fetchUsers = () => {
+    if (isLoading || !hasMore) return;
+
     if (contactUsers && Array.isArray(contactUsers)) {
       setUsersList((prev) => {
         const newUsers = contactUsers.filter(
           (user) => !prev.some((u) => u.details.id === user.details.id),
         );
+        setHasMore(newUsers.length >= limit);
         return [...prev, ...newUsers];
       });
       setSkip((prev) => prev + limit);
@@ -46,11 +52,8 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   useEffect(() => {
     setUsersList([]);
     setSkip(0);
+    setHasMore(true);
   }, [contacts, creatorPubky]);
-
-  useEffect(() => {
-    if (isSuccess) fetchUsers();
-  }, [contactUsers]);
 
   return (
     <>
@@ -61,7 +64,6 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
       ) : usersList.length > 0 ? (
         <Root>
           <Contact contacts={usersList} isLoading={isLoading} />
-          <div ref={loader} />
         </Root>
       ) : (
         <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
@@ -74,6 +76,7 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
             'No contacts yet'}
         </Typography.H2>
       )}
+      {hasMore && <div ref={loader} />}
     </>
   );
 };
