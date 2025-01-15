@@ -12,9 +12,11 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Utils } from '@social/utils-shared';
+import { useRouter } from 'next/navigation';
 
 export default function Join() {
   const { generateAuthUrl, loginWithAuthUrl } = usePubkyClientContext();
+  const router = useRouter();
   const { addToast } = useToastContext();
   const { addAlert } = useAlertContext();
   const [loginError, setLoginError] = useState('');
@@ -41,6 +43,7 @@ export default function Join() {
           );
           if (handleLoginResult) {
             addAlert('Login successful!');
+            router.push('/home');
           }
         }
       } catch (error: unknown | { message: string }) {
