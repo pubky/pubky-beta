@@ -113,8 +113,10 @@ export function MainContent() {
   return (
     <Components.PostsLayout className="w-full flex-col inline-flex gap-3">
       <div
-        className={`lg:hidden lg:hidden sticky top-20 bg-[#05050A] z-10 transition-transform duration-300 ${
-          isSearchBarVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        className={`lg:hidden lg:hidden sticky top-20 z-10 transition-transform duration-300 ${
+          isSearchBarVisible
+            ? 'translate-y-0 opacity-100'
+            : '-translate-y-full opacity-0'
         }`}
       >
         <Input.Search>
