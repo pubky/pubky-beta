@@ -8,6 +8,7 @@ import { usePubkyClientContext } from '@/contexts';
 //import { Links } from '@/types/Post';
 //import { Utils } from '@social/utils-shared';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { Utils } from '@social/utils-shared';
 //import { useRouter } from 'next/navigation';
 
 export default function Index() {
@@ -15,6 +16,7 @@ export default function Index() {
   const isMobile = useIsMobile();
   //const router = useRouter();
   const currentYear = new Date().getFullYear();
+  const inviteCode = Utils.storage.get('inviteCode');
   const [logoLink, setLogoLink] = useState('/onboarding');
   //const [progress, setProgress] = useState(0);
   //const [loading, setLoading] = useState(false);
@@ -103,6 +105,7 @@ export default function Index() {
           </div>
           <Header.Action
             icon={<Icon.SignIn size="16" />}
+            link={inviteCode ? '/sign-in' : '/invite-code'}
             id="onboarding-sign-in-btn"
           >
             Sign in

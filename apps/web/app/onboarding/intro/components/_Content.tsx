@@ -5,10 +5,12 @@ import { useEffect, useState } from 'react';
 import { usePubkyClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Utils } from '@social/utils-shared';
 
 export default function Intro() {
   const { pubky, isLoggedIn } = usePubkyClientContext();
   const router = useRouter();
+  const inviteCode = Utils.storage.get('inviteCode');
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [currentIntro, setCurrentIntro] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -352,22 +354,25 @@ export default function Intro() {
             >
               Back
             </Button.Large>
-            <Link href="/onboarding/sign-in">
+            <Link href={inviteCode ? '/onboarding/sign-in' : '/invite-code'}>
               <Button.Large
                 id="onboarding-skip-intro-btn"
                 className="w-auto"
-                variant="secondary">
+                variant="secondary"
+              >
                 Skip Intro
               </Button.Large>
             </Link>
           </div>
           <Button.Large
-            id='onboarding-continue-btn'
+            id="onboarding-continue-btn"
             className="w-auto"
             icon={<Icon.ArrowRight />}
             onClick={() =>
               currentIntro === totalIntros - 1
-                ? router.push('/onboarding/sign-in')
+                ? router.push(
+                    inviteCode ? '/onboarding/sign-in' : '/invite-code',
+                  )
                 : handleNext()
             }
           >
