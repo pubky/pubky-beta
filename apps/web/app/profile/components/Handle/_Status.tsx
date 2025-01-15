@@ -13,7 +13,7 @@ interface StatusProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Status({ creatorPubky, status }: StatusProps) {
   const { pubky } = usePubkyClientContext();
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1024);
 
   const extractEmojiAndText = (status: string) => {
     const emojiRegex =
