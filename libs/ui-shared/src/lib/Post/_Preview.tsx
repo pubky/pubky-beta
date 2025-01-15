@@ -6,12 +6,21 @@ import { Typography } from '../Typography';
 interface PreviewData {
   title: string;
   description: string;
-  image: string;
+  image: string | null;
 }
 
 function LinkPreview({ url }: { url: string }) {
   const [previewData, setPreviewData] = useState<PreviewData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const isValidImage = (url: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = url;
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +41,13 @@ function LinkPreview({ url }: { url: string }) {
             .querySelector('meta[property="og:image"]')
             ?.getAttribute('content') || '';
 
-        setPreviewData({ title, description, image });
+        const validImage = image ? await isValidImage(image) : false;
+
+        setPreviewData({
+          title,
+          description,
+          image: validImage ? image : null,
+        });
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -72,7 +87,7 @@ function LinkPreview({ url }: { url: string }) {
           {previewData.description ? (
             <Typography.Body
               variant="small"
-              className="break-all text-opacity-80"
+              className="break-all text-opacity-80 leading-5"
             >
               {' '}
               {previewData.description.length > 150
@@ -82,7 +97,7 @@ function LinkPreview({ url }: { url: string }) {
           ) : (
             <Typography.Body
               variant="small"
-              className="break-all text-opacity-80"
+              className="break-all text-opacity-80 leading-5"
             >
               {' '}
               {url.length > 60 ? url.slice(0, 60) + '...' : url}

@@ -33,6 +33,13 @@ body {
   -moz-osx-font-smoothing: grayscale !important;
 }
 
+@media screen and (min-width: 1024px) {
+	html {
+		margin-left: calc(100vw - 100%);
+		margin-right: 0;
+	}
+}
+
 .md-editor {
   background-color: #05050a !important;
 }
