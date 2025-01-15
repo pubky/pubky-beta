@@ -24,7 +24,8 @@ interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function TagsLargeView({ post }: TagsLargeViewProps) {
-  const { pubky, createTag, deleteTag } = usePubkyClientContext();
+  const { pubky, timeline, setTimeline, createTag, deleteTag } =
+    usePubkyClientContext();
   const { openJoin } = useJoin();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
@@ -137,10 +138,51 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     };
   }, [wrapperRefEmojis]);
 
+  const updateTagsAndTimeline = (tag: string) => {
+    let newTags: PostTag[] = tags;
+    const existingTag = tags.find((tagObj) => tagObj.label === tag);
+
+    if (existingTag) {
+      newTags = tags.map((tagObj) => {
+        if (tagObj.label === tag) {
+          return {
+            ...tagObj,
+            taggers_count: tagObj.taggers_count + 1,
+            taggers: [...tagObj.taggers, pubky ?? ''],
+          };
+        }
+        return tagObj;
+      });
+    } else {
+      newTags = [
+        ...tags,
+        {
+          label: tag,
+          taggers_count: 1,
+          taggers: [pubky ?? ''],
+        },
+      ];
+    }
+
+    setTags(newTags);
+
+    const newTimeline = timeline.map((timelinePost) => {
+      if (timelinePost?.details?.id === post?.details?.id) {
+        return { ...timelinePost, tags: newTags };
+      }
+      return timelinePost;
+    });
+
+    setTimeline(newTimeline);
+  };
+
   const handleFastAddTag = async () => {
+    setLoadingTags(tagInput);
     await createTag(post?.details?.author, post?.details?.id, tagInput);
+    updateTagsAndTimeline(tagInput);
     setAddTagInput(false);
     setTagInput('');
+    setLoadingTags('');
     addAlert('Tag added!');
   };
 
@@ -339,7 +381,6 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     />
                   </div>
                 )}
-
                 <div className="w-fit">
                   <Input.Text
                     placeholder="tag"
@@ -348,14 +389,19 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     maxLength={20}
                     onChange={handleChangeTagInput}
                     onKeyDown={handleKeyDown}
+                    disabled={loadingTags !== ''}
                     autoFocus
                     action={
                       <div className="flex gap-1 -mr-2">
                         <div
-                          onClick={handleFastAddTag}
-                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
+                          onClick={!loadingTags ? handleFastAddTag : undefined}
+                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white ${loadingTags ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
                         >
-                          <Icon.Plus size="12" />
+                          {loadingTags ? (
+                            <Icon.LoadingSpin size="12" />
+                          ) : (
+                            <Icon.Plus size="12" />
+                          )}
                         </div>
                         <div className="flex">
                           <div
