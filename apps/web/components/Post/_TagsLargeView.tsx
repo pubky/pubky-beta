@@ -182,7 +182,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           <div>
             {showEmojis && (
               <div
-                className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                className="absolute translate-y-[15%] translate-x-[5%] z-10"
                 ref={wrapperRefEmojis}
               >
                 <EmojiPicker
@@ -318,33 +318,64 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
         {tags.length > 0 && (
           <div className="hidden md:flex">
             {addTagInput ? (
-              <div className="w-fit">
-                <Input.Text
-                  placeholder="tag"
-                  className="h-[32px] p-3 text-[14px] rounded-lg"
-                  value={tagInput}
-                  maxLength={20}
-                  onChange={handleChangeTagInput}
-                  onKeyDown={handleKeyDown}
-                  autoFocus
-                  action={
-                    <div className="flex gap-1 -mr-2">
-                      <div
-                        onClick={handleFastAddTag}
-                        className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
-                      >
-                        <Icon.Plus size="12" />
+              <>
+                {showEmojis && (
+                  <div
+                    className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                    ref={wrapperRefEmojis}
+                  >
+                    <EmojiPicker
+                      theme={Theme.DARK}
+                      emojiStyle={EmojiStyle.TWITTER}
+                      onEmojiClick={(emojiObject) => {
+                        const emojiLength =
+                          new Blob([emojiObject.emoji]).size / 2;
+
+                        if (tagInput.length + emojiLength <= 20) {
+                          setTagInput(tagInput + emojiObject.emoji);
+                        }
+                        setShowEmojis(false);
+                      }}
+                    />
+                  </div>
+                )}
+
+                <div className="w-fit">
+                  <Input.Text
+                    placeholder="tag"
+                    className="h-[32px] p-3 text-[14px] rounded-lg"
+                    value={tagInput}
+                    maxLength={20}
+                    onChange={handleChangeTagInput}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    action={
+                      <div className="flex gap-1 -mr-2">
+                        <div
+                          onClick={handleFastAddTag}
+                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
+                        >
+                          <Icon.Plus size="12" />
+                        </div>
+                        <div className="flex">
+                          <div
+                            onClick={() => setShowEmojis(true)}
+                            className="hidden mr-1 lg:flex cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                          >
+                            <Icon.Smiley size="12" />
+                          </div>
+                          <div
+                            onClick={() => setAddTagInput(false)}
+                            className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                          >
+                            <Icon.X size="12" />
+                          </div>
+                        </div>
                       </div>
-                      <div
-                        onClick={() => setAddTagInput(false)}
-                        className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                      >
-                        <Icon.X size="12" />
-                      </div>
-                    </div>
-                  }
-                />
-              </div>
+                    }
+                  />
+                </div>
+              </>
             ) : (
               <div
                 onClick={() => (pubky ? setAddTagInput(true) : openJoin())}

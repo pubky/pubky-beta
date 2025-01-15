@@ -135,7 +135,7 @@ export default function ContentCreateRepost({
           <Post
             post={post}
             repostView
-            className="mt-2 max-h-[600px] overflow-y-auto"
+            className="mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
             //rounded-bl-none
           />
         </CreateContent>

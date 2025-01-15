@@ -12,8 +12,8 @@ interface HeaderMobileProps {
 }
 
 export default function HeaderMobile({
-  leftIcon = <div></div>,
-  rightIcon = <div></div>,
+  leftIcon,
+  rightIcon,
   children,
 }: HeaderMobileProps) {
   const pathname = usePathname();
@@ -42,19 +42,27 @@ export default function HeaderMobile({
   }, [pathname, setSearchTags]);
 
   return (
-    <HeaderUI.Root className="justify-start flex lg:hidden">
-      <div className="w-full flex gap-4 justify-between items-center">
-        {pubky && <>{leftIcon}</>}
-        <div className="flex gap-4 xl:min-w-[180px]">
+    <HeaderUI.Root className="flex lg:hidden items-center">
+      <div className="relative flex w-full items-center">
+        {pubky && (
+          <div className="absolute left-0">
+            {leftIcon}
+          </div>
+        )}
+
+        <div className="mx-auto flex gap-4 items-center">
           <HeaderUI.Logo link={logoLink} />
           <HeaderUI.Title />
         </div>
+
         {pubky ? (
-          <>{rightIcon}</>
+          <div className="absolute right-0">
+            {rightIcon}
+          </div>
         ) : (
           <div
             onClick={openJoin}
-            className="mr-2 p-2 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full cursor-pointer"
+            className="absolute right-0 mr-2 p-2 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full cursor-pointer"
           >
             <Icon.User size="20" />
           </div>

@@ -36,10 +36,7 @@ export function ValidPostContent({ postRef, data }) {
         )}
       </div>
       <div className="mt-3">
-      <Post.PostRoot
-          uri={data?.details.id}
-          post={data}
-        />
+        <Post.PostRoot uri={data?.details.id} post={data} />
       </div>
     </>
   );
@@ -73,6 +70,7 @@ const NormalPost = ({ data }) => {
 };
 
 const LongPost = ({ data, user }) => {
+  const isMobile = useIsMobile();
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex flex-col gap-4">
@@ -110,12 +108,7 @@ const LongPost = ({ data, user }) => {
             </Link>
           </div>
           <PostUI.Time className="mr-2">
-            <span className="hidden md:flex">
-              {Utils.timeAgo(data?.details?.indexed_at)}
-            </span>
-            <span className="md:hidden">
-              {Utils.timeAgo(data?.details?.indexed_at, true)}
-            </span>
+            {Utils.timeAgo(data?.details?.indexed_at, isMobile)}
           </PostUI.Time>
         </div>
         {data?.details?.attachments[0] && (

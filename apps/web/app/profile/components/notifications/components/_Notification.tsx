@@ -8,6 +8,7 @@ import { ImageByUri } from '@/components/ImageByUri';
 import { getUserProfile } from '@/services/userService';
 import { usePubkyClientContext } from '@/contexts';
 import { NotificationView, UserView } from '@/types/User';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const notificationType = {
   follow: {
@@ -70,6 +71,7 @@ export default function Notification({
   notification: NotificationView;
 }) {
   const { pubky } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const [user, setUser] = useState<UserView | null | undefined>(null);
 
   async function fetchProfile(userId: string) {
@@ -355,12 +357,7 @@ export default function Notification({
       <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex opacity-30">
         <Typography.Caption className="uppercase font-bold items-center flex gap-1 md:gap-2 text-white">
           <Icon.Clock size="16" />
-          <span className="hidden md:block">
-            {Utils.timeAgo(notification.timestamp)}
-          </span>
-          <span className="md:hidden">
-            {Utils.timeAgo(notification.timestamp, true)}
-          </span>
+          {Utils.timeAgo(notification.timestamp, isMobile)}
         </Typography.Caption>
       </div>
     </div>

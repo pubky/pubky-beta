@@ -13,6 +13,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
+import Link from 'next/link';
 
 export default function Index() {
   const { isLoggedIn, pubky } = usePubkyClientContext();
@@ -138,14 +139,15 @@ export default function Index() {
           </div>
         </div>
         <div className="w-full max-w-[1200px] justify-between items-center inline-flex">
-          <Button.Large
-            icon={<Icon.ArrowLeft />}
-            className="w-[140px]"
-            variant="secondary"
-            onClick={() => router.back()}
-          >
-            Back
-          </Button.Large>
+          <Link href="/onboarding">
+            <Button.Large
+              icon={<Icon.ArrowLeft />}
+              className="w-[140px]"
+              variant="secondary"
+            >
+              Back
+            </Button.Large>
+          </Link>
           <Button.Large
             onClick={!loading ? () => handleInviteCode() : undefined}
             icon={<Icon.ArrowRight />}

@@ -58,12 +58,11 @@ const tabs = [
 ];
 
 const generateTabUrl = (key: string, creatorPubky?: string) => {
-  if (creatorPubky) {
+  if (key === 'posts')
     return key === 'posts'
       ? `/profile/${creatorPubky}`
       : `/profile/${creatorPubky}/${key}`;
-  }
-  return key === 'notifications' ? '/profile' : `/profile/${key}`;
+  else return key === 'notifications' ? '/profile' : `/profile/${key}`;
 };
 
 export default function FilterTabs({

@@ -120,7 +120,7 @@ export default function UserInfo({
         </div>
         <Typography.Body
           variant="small"
-          className="text-opacity-80 break-words max-h-[300px] overflow-y-auto"
+          className="text-opacity-80 break-words"
         >
           <Parsing>{bio}</Parsing>
         </Typography.Body>

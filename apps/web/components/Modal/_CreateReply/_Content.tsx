@@ -85,7 +85,7 @@ export default function ContentCreateReply({
       <Post
         post={post}
         repostView
-        className="mt-2 max-h-[600px] overflow-y-auto"
+        className="mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
       />
       <div className="flex items-center relative">
         <div

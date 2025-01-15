@@ -43,47 +43,6 @@ export default function ProtectedRoutes({
     '/invite-code',
   ];
 
-  const checkInviteCode = async () => {
-    const inviteCode = Utils.storage.get('inviteCode');
-
-    if (
-      ['/sign-in', '/onboarding/sign-in', '/onboarding/sign-up'].includes(
-        pathname,
-      ) &&
-      !inviteCode
-    ) {
-      router.push('/invite-code');
-      return false;
-    }
-
-    if (inviteCode) {
-      try {
-        const response = await fetch('/api/invite-code', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ inviteCode }),
-        });
-        const data = await response.json();
-
-        if (!data.valid) {
-          router.push('/invite-code');
-          return false;
-        }
-
-        if (pathname === '/invite-code') {
-          router.push('/onboarding/sign-in');
-          return false;
-        }
-      } catch (error) {
-        console.error('Error verifying invitation code:', error);
-        router.push('/invite-code');
-        return false;
-      }
-    }
-
-    return true;
-  };
-
   const isDynamicPublicRoute = (path: string) => {
     const dynamicPublicRoutes = [
       '/post/[userId]/[postId]',
@@ -183,7 +142,7 @@ export default function ProtectedRoutes({
         return;
       }
 
-      // check if the user is trying to access a public route
+      // Check if the user is trying to access a public route
       if (
         pathname === '/onboarding/register' ||
         publicRoutes.includes(pathname)
@@ -197,11 +156,49 @@ export default function ProtectedRoutes({
       return;
     }
 
-    // check if the not logged user is trying to access a public route
+    // Check if the not logged user is trying to access a public route
     if (!publicRoutes.includes(pathname) && !isDynamicPublicRoute(pathname)) {
       if (pubky) logout();
       router.push('/onboarding');
       return;
+    }
+
+    // Check invite code
+    const inviteCode = Utils.storage.get('inviteCode');
+
+    if (
+      ['/sign-in', '/onboarding/sign-in', '/onboarding/sign-up'].includes(
+        pathname,
+      ) &&
+      !inviteCode
+    ) {
+      router.push('/invite-code');
+      return;
+    }
+
+    if (inviteCode) {
+      try {
+        const response = await fetch('/api/invite-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ inviteCode }),
+        });
+        const data = await response.json();
+
+        if (!data.valid) {
+          router.push('/invite-code');
+          return;
+        }
+
+        if (pathname === '/invite-code') {
+          router.push('/onboarding/sign-in');
+          return;
+        }
+      } catch (error) {
+        console.error('Error verifying invitation code:', error);
+        router.push('/invite-code');
+        return;
+      }
     }
 
     setLoading(false);
@@ -214,7 +211,6 @@ export default function ProtectedRoutes({
   }, [pubky]);
 
   useEffect(() => {
-    checkInviteCode();
     checkAccess();
   }, [pubky, pathname]);
 

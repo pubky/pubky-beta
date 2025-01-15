@@ -88,6 +88,18 @@ export default function Buttons({
     }
   };
 
+  const handleLogoutClick = () => {
+    if (disposableAccount) {
+      if (isMobile) {
+        setShowSheetLogout(true);
+      } else {
+        setShowModalLogout(true);
+      }
+    } else {
+      router.push('/logout');
+    }
+  };
+
   return (
     <>
       {creatorPubky && (
@@ -145,14 +157,7 @@ export default function Buttons({
           <Button.Medium
             id="profile-sign-out-btn"
             className="px-3 w-21 h-8"
-            onClick={
-              disposableAccount
-                ? () =>
-                    isMobile
-                      ? setShowSheetLogout(true)
-                      : setShowModalLogout(true)
-                : () => router.push('/logout')
-            }
+            onClick={handleLogoutClick}
             icon={<Icon.SignOut />}
           >
             Sign out

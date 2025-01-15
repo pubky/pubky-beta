@@ -20,6 +20,8 @@ export function MainContent() {
   const [inputValue, setInputValue] = useState('');
   const [searchInputCard, setSearchInputCard] = useState(false);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
+  const [isSearchBarVisible, setIsSearchBarVisible] = useState(true); // Stato per la visibilità della barra
+  const lastScrollY = useRef(0);
 
   const handleRemoveTag = (indexToRemove: number) => {
     const newTags = [...searchTags];
@@ -90,56 +92,82 @@ export function MainContent() {
     };
   }, [refSearchInputCard]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY.current && isSearchBarVisible) {
+        setIsSearchBarVisible(false);
+      } else if (currentScrollY < lastScrollY.current && !isSearchBarVisible) {
+        setIsSearchBarVisible(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isSearchBarVisible]);
+
   return (
     <Components.PostsLayout className="w-full flex-col inline-flex gap-3">
-      <Input.Search className="lg:hidden">
-        {searchTags && (
-          <Input.SearchTags>
-            {searchTags.map((searchTag, index) => (
-              <Input.SearchTag
-                key={index}
-                onClick={() => handleRemoveTag(index)}
-                action={
-                  <div className="mt-[3px]">
-                    <Icon.X key={index} />
-                  </div>
-                }
-                value={`${searchTag}`}
-                className="mr-2"
-              />
-            ))}
-          </Input.SearchTags>
-        )}
-        <Input.SearchInput
-          id="header-search-input"
-          value={inputValue}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setInputValue(e.target.value)
-          }
-          maxLength={55}
-          onKeyDown={inputValue.trim() === '' ? undefined : handleKeyDown}
-          className={`${
-            searchInputCard &&
-            'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
-          }`}
-          placeholder={!searchTags.length ? 'Search' : ''}
-          onClick={() => setSearchInputCard(true)}
-          readOnly={!!searchTags.length}
-        />
-        <Modal.SearchInputCard
-          className={searchInputCard ? 'block lg:hidden' : 'hidden'}
-          refCard={refSearchInputCard}
-          inputValue={inputValue}
-        />
-        <Input.SearchActions className="hidden lg:flex">
-          <div
-            className={inputValue && 'cursor-pointer'}
-            onClick={inputValue ? handleSearchTag : undefined}
-          >
-            <Icon.MagnifyingGlass />
-          </div>
-        </Input.SearchActions>
-      </Input.Search>
+      <div
+        className={`lg:hidden lg:hidden sticky top-20 z-10 transition-transform duration-300 ${
+          isSearchBarVisible
+            ? 'translate-y-0 opacity-100'
+            : '-translate-y-full opacity-0'
+        }`}
+      >
+        <Input.Search>
+          {searchTags && (
+            <Input.SearchTags>
+              {searchTags.map((searchTag, index) => (
+                <Input.SearchTag
+                  key={index}
+                  onClick={() => handleRemoveTag(index)}
+                  action={
+                    <div className="mt-[3px]">
+                      <Icon.X key={index} />
+                    </div>
+                  }
+                  value={`${searchTag}`}
+                  className="mr-2"
+                />
+              ))}
+            </Input.SearchTags>
+          )}
+          <Input.SearchInput
+            id="header-search-input"
+            value={inputValue}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setInputValue(e.target.value)
+            }
+            maxLength={55}
+            onKeyDown={inputValue.trim() === '' ? undefined : handleKeyDown}
+            className={`${
+              searchInputCard &&
+              'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
+            }`}
+            placeholder={!searchTags.length ? 'Search' : ''}
+            onClick={() => setSearchInputCard(true)}
+            readOnly={!!searchTags.length}
+          />
+          <Modal.SearchInputCard
+            className={searchInputCard ? 'block lg:hidden' : 'hidden'}
+            refCard={refSearchInputCard}
+            inputValue={inputValue}
+          />
+          <Input.SearchActions className="hidden lg:flex">
+            <div
+              className={inputValue && 'cursor-pointer'}
+              onClick={inputValue ? handleSearchTag : undefined}
+            >
+              <Icon.MagnifyingGlass />
+            </div>
+          </Input.SearchActions>
+        </Input.Search>
+      </div>
       <Timeline />
     </Components.PostsLayout>
   );

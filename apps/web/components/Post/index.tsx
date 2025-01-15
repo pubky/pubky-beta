@@ -233,7 +233,10 @@ export default function Post({
                               <PostUI.Username className="text-[13px] text-opacity-80">
                                 <span className="cursor-pointer hover:underline hover:decoration-solid">
                                   {data?.details?.name &&
-                                    Utils.minifyText(data?.details?.name)}{' '}
+                                    Utils.minifyText(
+                                      data?.details?.name,
+                                      14,
+                                    )}{' '}
                                 </span>
                                 reposted{' '}
                               </PostUI.Username>
@@ -258,7 +261,7 @@ export default function Post({
                             )}
                         </div>
                         <PostUI.Time>
-                          {Utils.timeAgo(post?.details?.indexed_at)}
+                          {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
                         </PostUI.Time>
                       </PostUI.RepostCard>
                       <RepostedPost

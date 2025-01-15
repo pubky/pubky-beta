@@ -41,7 +41,7 @@ export default function CheckLink({
       show={showModalCheckLink}
       closeModal={() => setShowModalCheckLink(false)}
       modalRef={modalCheckLinkRef}
-      className="max-w-[1200px] md:min-w-[588px] max-h-[600px] overflow-y-auto"
+      className="max-w-[1200px] md:min-w-[588px] max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModalCheckLink(false)} />
       <Modal.Header title="Double-check this link" />

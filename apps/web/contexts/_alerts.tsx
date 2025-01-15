@@ -45,7 +45,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   return (
     <AlertContext.Provider value={{ addAlert }}>
       {children}
-      <div className="fixed bottom-24 lg:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col gap-2">
+      <div className="fixed z-max bottom-24 lg:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col gap-2">
         {alerts.map(({ id, content, variant = 'default' }) => (
           <Alert.Message key={id} icon={iconToShow(variant)} variant={variant}>
             {content}

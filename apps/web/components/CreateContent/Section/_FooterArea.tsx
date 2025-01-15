@@ -51,13 +51,13 @@ export default function FooterArea({
   setArrayTags,
   arrayTags,
   showEmojis,
-  largeView,
+  //largeView,
   setFilePreviews,
   setShowEmojis,
   wrapperRefEmojis,
   button,
   article,
-  markdown,
+  //markdown,
   noFile,
   maxLength = 1000,
   setShowModalPost,
@@ -169,23 +169,23 @@ export default function FooterArea({
           )}
           <Post.Actions className="w-full flex-col sm:flex-row">
             {showEmojis && (
-              <div
-                id="emoji-picker"
-                className={`absolute translate-y-[10%] ${
-                  largeView
-                    ? 'translate-x-[0%] md:translate-x-[30%] lg:translate-x-[80%] xl:translate-x-[165%]'
-                    : markdown
-                      ? 'translate-x-[0%] md:translate-x-[150%]'
-                      : 'translate-x-[30%]'
-                } z-10`}
-                ref={wrapperRefEmojis}
-              >
-                <EmojiPicker
-                  theme={Theme.DARK}
-                  emojiStyle={EmojiStyle.TWITTER}
-                  onEmojiClick={handleEmojiClick}
+              <>
+                <div
+                  className="fixed inset-0 bg-black bg-opacity-30 z-[9998]"
+                  onClick={() => setShowEmojis(false)}
                 />
-              </div>
+                <div
+                  id="emoji-picker"
+                  className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
+                  ref={wrapperRefEmojis}
+                >
+                  <EmojiPicker
+                    theme={Theme.DARK}
+                    emojiStyle={EmojiStyle.TWITTER}
+                    onEmojiClick={handleEmojiClick}
+                  />
+                </div>
+              </>
             )}
             <div className="grow" />
             <div className="w-full justify-end flex gap-2">
@@ -335,11 +335,11 @@ export default function FooterArea({
               )}
               {showSheetTag && (
                 <BottomSheet.TagCreatePost
-                arrayTags={arrayTags}
-                setArrayTags={setArrayTags}
-                show={showSheetTag}
-                setShow={setShowSheetTag}
-              />
+                  arrayTags={arrayTags}
+                  setArrayTags={setArrayTags}
+                  show={showSheetTag}
+                  setShow={setShowSheetTag}
+                />
               )}
             </>
           )}

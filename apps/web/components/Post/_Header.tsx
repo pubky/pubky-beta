@@ -85,8 +85,7 @@ export default function Header({
       </div>
       <div className="relative flex items-center gap-0">
         <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
-          <span className="hidden md:flex">{Utils.timeAgo(indexed_at)}</span>
-          <span className="md:hidden">{Utils.timeAgo(indexed_at, true)}</span>
+        {Utils.timeAgo(indexed_at, isMobile)}
         </PostUI.Time>
         {post?.details?.author === pubky && (
           <TooltipUI.Root
