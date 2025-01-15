@@ -2,10 +2,12 @@
 
 import { usePubkyClientContext } from '@/contexts';
 import { Card, Input, Button, Icon, Typography } from '@social/ui-shared';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function RecoveryPhrase() {
   const { loginWithMnemonic } = usePubkyClientContext();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [words, setWords] = useState(Array(12).fill(''));
@@ -53,7 +55,8 @@ export default function RecoveryPhrase() {
 
     try {
       const mnemonic = words.join(' ').trim();
-      await loginWithMnemonic(mnemonic);
+      const response = await loginWithMnemonic(mnemonic);
+      if (response) router.push('/home');
     } catch (error: unknown | { message: string }) {
       const errorMessage =
         (error as Error)?.message === 'aead::Error'

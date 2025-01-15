@@ -17,16 +17,16 @@ export default function Sidebar({
 }: {
   creatorPubky?: string | null;
 }) {
-  const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
+  const { pubky, profile, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
   const { data, isLoading } = useUserProfile(usePubky ?? '', pubky ?? '');
   //if (isError) console.error(isError);
-  const profile = data;
-  const name = profile?.details?.name ?? '';
-  const bio = profile?.details.bio || 'No bio.';
-  const links = profile?.details?.links ?? [];
-  const image = profile?.details?.image ?? '/images/webp/Userpic.webp';
-  const profileTags = profile?.tags ?? [];
+  const profileUser = data;
+  const name = profileUser?.details?.name ?? '';
+  const bio = profileUser?.details.bio || 'No bio.';
+  const links = profile?.links || profileUser?.details?.links;
+  const image = profileUser?.details?.image ?? '/images/webp/Userpic.webp';
+  const profileTags = profileUser?.tags ?? [];
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   //const [showTooltipProfile, setShowTooltipProfile] = useState('');
   //const [loadingProfileTags, setLoadingProfileTags] = useState(true);
@@ -47,7 +47,7 @@ export default function Sidebar({
       try {
         if (profile) {
           //setInitLoadingFollowed(false);
-          if (profile?.relationship?.following) setFollowed(true);
+          if (profileUser?.relationship?.following) setFollowed(true);
         }
       } catch (error) {
         console.log(error);
@@ -98,7 +98,7 @@ export default function Sidebar({
           scrolled={scrolled}
           uriImage={image}
           name={name}
-          profile={profile}
+          profile={profileUser}
           creatorPubky={creatorPubky}
           pubkyUser={usePubky ?? ''}
           showProfileMenu={showProfileMenu}
@@ -123,7 +123,7 @@ export default function Sidebar({
           />
 
           <LinksSection
-            links={links}
+            links={links || []}
             checkLink={checkLink}
             setShowModalCheckLink={setShowModalCheckLink}
             setShowSheetCheckLink={setShowSheetCheckLink}

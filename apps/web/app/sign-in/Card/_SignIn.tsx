@@ -12,9 +12,11 @@ import {
   useToastContext,
 } from '@/contexts';
 import { Utils } from '@social/utils-shared';
+import { useRouter } from 'next/navigation';
 
 export default function SignIn() {
   const { generateAuthUrl, loginWithAuthUrl } = usePubkyClientContext();
+  const router = useRouter();
   const { addToast } = useToastContext();
   const { addAlert } = useAlertContext();
   const [loginError, setLoginError] = useState('');
@@ -41,6 +43,7 @@ export default function SignIn() {
           );
           if (handleLoginResult) {
             addAlert('Login successful!');
+            router.push('/home');
           }
         }
       } catch (error: unknown | { message: string }) {
@@ -103,7 +106,7 @@ export default function SignIn() {
       }
       className="w-full col-span-2"
     >
-      <div className="relative" onClick={copyToClipboard}>
+      <div className="relative cursor-pointer" onClick={copyToClipboard}>
         {authUrl && !loginError ? (
           <div className="relative w-fit mt-6">
             <QRCodeSVG
@@ -111,7 +114,7 @@ export default function SignIn() {
               size={qrSize}
               bgColor="#ffffff"
               fgColor="#000000"
-              className="cursor-pointer bg-white p-2 rounded-lg"
+              className="bg-white p-2 rounded-lg"
               level="Q"
               ref={canvasRef}
             />

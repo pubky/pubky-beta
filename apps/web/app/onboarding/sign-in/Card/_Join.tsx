@@ -12,9 +12,11 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Utils } from '@social/utils-shared';
+import { useRouter } from 'next/navigation';
 
 export default function Join() {
   const { generateAuthUrl, loginWithAuthUrl } = usePubkyClientContext();
+  const router = useRouter();
   const { addToast } = useToastContext();
   const { addAlert } = useAlertContext();
   const [loginError, setLoginError] = useState('');
@@ -41,6 +43,7 @@ export default function Join() {
           );
           if (handleLoginResult) {
             addAlert('Login successful!');
+            router.push('/home');
           }
         }
       } catch (error: unknown | { message: string }) {
@@ -103,7 +106,7 @@ export default function Join() {
       }
       className="w-full col-span-2"
     >
-      <div className="relative" onClick={copyToClipboard}>
+      <div className="relative cursor-pointer" onClick={copyToClipboard}>
         {authUrl && !loginError ? (
           <div className="relative w-fit mt-6">
             <QRCodeSVG
@@ -112,7 +115,7 @@ export default function Join() {
               bgColor="#ffffff"
               fgColor="#000000"
               level="Q"
-              className="cursor-pointer bg-white p-2 rounded-lg"
+              className="bg-white p-2 rounded-lg"
               ref={canvasRef}
             />
             <div className="absolute inset-0 flex items-center justify-center">
