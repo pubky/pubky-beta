@@ -37,7 +37,8 @@ describe('onboarding', () => {
     cy.get('#profile-username-header').invoke('text').should('eq', username);
   });
   
-  it('should allow anonymous mode without creating a profile', () => {
+  // the 'Explore Pubky' button got removed in https://github.com/pubky/pubky-app/commit/3ccd24b2201b1d4129decf8f06ae9e457cf36bf1
+  it.skip('should allow anonymous mode without creating a profile', () => {
     cy.visit('/');
     cy.location('pathname').should('eq', '/onboarding');
 
