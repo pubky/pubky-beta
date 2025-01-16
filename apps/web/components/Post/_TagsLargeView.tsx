@@ -138,10 +138,18 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
   }, [wrapperRefEmojis]);
 
   const handleFastAddTag = async () => {
-    await createTag(post?.details?.author, post?.details?.id, tagInput);
-    setAddTagInput(false);
-    setTagInput('');
-    addAlert('Tag added!');
+    const response = await createTag(
+      post?.details?.author,
+      post?.details?.id,
+      tagInput,
+    );
+    if (response) {
+      setAddTagInput(false);
+      setTagInput('');
+      addAlert('Tag added!');
+    } else {
+      addAlert('Something went wrong', 'warning');
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
