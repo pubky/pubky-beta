@@ -17,21 +17,17 @@ export default function Sidebar({
 }: {
   creatorPubky?: string | null;
 }) {
-  const { pubky, profile, createTagProfile, deleteTagProfile } = usePubkyClientContext();
+  const { pubky, profile, createTagProfile, deleteTagProfile } =
+    usePubkyClientContext();
   const usePubky = creatorPubky ?? pubky;
   const { data, isLoading } = useUserProfile(usePubky ?? '', pubky ?? '');
-  //if (isError) console.error(isError);
   const profileUser = data;
   const name = profileUser?.details?.name ?? '';
   const bio = profileUser?.details.bio || 'No bio.';
-  const links = profile?.links || profileUser?.details?.links;
+  const links = creatorPubky ? profileUser?.details?.links : profile?.links;
   const image = profileUser?.details?.image ?? '/images/webp/Userpic.webp';
   const profileTags = profileUser?.tags ?? [];
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
-  //const [showTooltipProfile, setShowTooltipProfile] = useState('');
-  //const [loadingProfileTags, setLoadingProfileTags] = useState(true);
-  //const [pubkyUser, setPubkyUser] = useState('');
-  //const [loading, setLoading] = useState(true);
   const [followed, setFollowed] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
@@ -46,7 +42,6 @@ export default function Sidebar({
     async function fetchData() {
       try {
         if (profile) {
-          //setInitLoadingFollowed(false);
           if (profileUser?.relationship?.following) setFollowed(true);
         }
       } catch (error) {
