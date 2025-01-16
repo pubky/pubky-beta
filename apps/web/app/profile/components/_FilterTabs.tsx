@@ -58,7 +58,7 @@ const tabs = [
 ];
 
 const generateTabUrl = (key: string, creatorPubky?: string) => {
-  if (key === 'posts')
+  if (creatorPubky)
     return key === 'posts'
       ? `/profile/${creatorPubky}`
       : `/profile/${creatorPubky}/${key}`;

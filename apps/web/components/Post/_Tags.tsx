@@ -37,7 +37,8 @@ export default function Tags({
   setShowSheetTag,
 }: PostProps) {
   const [showTooltipTag, setShowTooltipTag] = useState('');
-  const { pubky, createTag, deleteTag } = usePubkyClientContext();
+  const { pubky, timeline, setTimeline, createTag, deleteTag } =
+    usePubkyClientContext();
   const isMobile = useIsMobile(768);
   const { openJoin } = useJoin();
   const [tags, setTags] = useState<PostTag[]>([]);
@@ -76,28 +77,62 @@ export default function Tags({
     setLoadingTags('');
   };
 
-  const handleAddTag = async (tag: string) => {
-    setLoadingTags(tag);
-    await createTag(post?.details?.author, post?.details?.id, tag);
-    // add tag to post.tags
-    const newTags: PostTag[] = tags.map((tagObj) => {
-      if (tagObj.label === tag) {
-        return {
-          ...tagObj,
-          taggers_count: tagObj.taggers_count + 1,
-          taggers: [...tagObj.taggers, pubky ?? ''],
-        };
-      }
-      return tagObj;
-    });
+  const updateTagsAndTimeline = (tag: string) => {
+    let newTags: PostTag[] = tags;
+    const existingTag = tags.find((tagObj) => tagObj.label === tag);
+
+    if (existingTag) {
+      newTags = tags.map((tagObj) => {
+        if (tagObj.label === tag) {
+          return {
+            ...tagObj,
+            taggers_count: tagObj.taggers_count + 1,
+            taggers: [...tagObj.taggers, pubky ?? ''],
+          };
+        }
+        return tagObj;
+      });
+    } else {
+      newTags = [
+        ...tags,
+        {
+          label: tag,
+          taggers_count: 1,
+          taggers: [pubky ?? ''],
+        },
+      ];
+    }
+
     setTags(newTags);
+
+    const newTimeline = timeline.map((timelinePost) => {
+      if (timelinePost?.details?.id === post?.details?.id) {
+        return { ...timelinePost, tags: newTags };
+      }
+      return timelinePost;
+    });
+
+    setTimeline(newTimeline);
+  };
+
+  const handleAddTag = async (tag: string) => {
+    // loading tag
+    setLoadingTags(tag);
+
+    // create tag
+    await createTag(post?.details?.author, post?.details?.id, tag);
+
+    updateTagsAndTimeline(tag);
     setLoadingTags('');
   };
 
   const handleFastAddTag = async () => {
+    setLoadingTags(tagInput);
     await createTag(post?.details?.author, post?.details?.id, tagInput);
+    updateTagsAndTimeline(tagInput);
     setAddTagInput(false);
     setTagInput('');
+    setLoadingTags('');
     addAlert('Tag added!');
   };
 
@@ -193,7 +228,7 @@ export default function Tags({
                 </PostUI.Footer>
               );
             })}
-          {tags.length < 3 && !largeView && (
+          {!largeView && (
             <div className="hidden md:flex">
               {addTagInput ? (
                 <>
@@ -226,14 +261,19 @@ export default function Tags({
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
                     autoFocus
+                    disabled={loadingTags !== ''}
                     action={
                       <div className="flex gap-1 -mr-2">
                         <div
                           id="add-tag-btn"
-                        onClick={handleFastAddTag}
-                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
+                          onClick={!loadingTags ? handleFastAddTag : undefined}
+                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 ${loadingTags ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
                         >
-                          <Icon.Plus size="12" />
+                          {loadingTags ? (
+                            <Icon.LoadingSpin size="12" />
+                          ) : (
+                            <Icon.Plus size="12" />
+                          )}
                         </div>
                         <div className="flex">
                           <div
@@ -244,7 +284,7 @@ export default function Tags({
                           </div>
                           <div
                             id="close-add-tag-input-btn"
-                        onClick={() => setAddTagInput(false)}
+                            onClick={() => setAddTagInput(false)}
                             className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
                           >
                             <Icon.X size="12" />
