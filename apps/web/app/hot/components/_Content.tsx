@@ -22,7 +22,7 @@ export default function Index() {
     data: influencers,
     isLoading: isLoadingInfluencers,
     isError: isErrorInfluencers,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers', undefined, 5);
   const hotTags = data || [];
   if (isError || isErrorInfluencers)
     console.error(isError && isErrorInfluencers);
