@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Header as HeaderUI, Icon } from '@social/ui-shared';
 import { useJoin, usePubkyClientContext } from '@/contexts';
 import { usePathname } from 'next/navigation';
+import useIsScrollup from '@/hooks/useIsScrollUp';
 
 interface HeaderMobileProps {
   leftIcon?: React.ReactNode;
@@ -19,6 +20,7 @@ export default function HeaderMobile({
   const pathname = usePathname();
   const { openJoin } = useJoin();
   const { pubky, isLoggedIn, setSearchTags } = usePubkyClientContext();
+  const isVisible = useIsScrollup();
   const [logoLink, setLogoLink] = useState('/onboarding');
 
   async function fetchLoggedIn() {
@@ -42,13 +44,11 @@ export default function HeaderMobile({
   }, [pathname, setSearchTags]);
 
   return (
-    <HeaderUI.Root className="flex lg:hidden items-center">
+    <HeaderUI.Root
+      className={`flex lg:hidden items-center ${!isVisible && 'hidden'}`}
+    >
       <div className="relative flex w-full items-center">
-        {pubky && (
-          <div className="absolute left-0">
-            {leftIcon}
-          </div>
-        )}
+        {pubky && <div className="absolute left-0">{leftIcon}</div>}
 
         <div className="mx-auto flex gap-4 items-center">
           <HeaderUI.Logo link={logoLink} />
@@ -56,9 +56,7 @@ export default function HeaderMobile({
         </div>
 
         {pubky ? (
-          <div className="absolute right-0">
-            {rightIcon}
-          </div>
+          <div className="absolute right-0">{rightIcon}</div>
         ) : (
           <div
             onClick={openJoin}

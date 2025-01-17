@@ -8,11 +8,13 @@ import CreateContent from '@/components/CreateContent';
 interface CreateEditArticleProps {
   setShowModalEditArticle: React.Dispatch<React.SetStateAction<boolean>>;
   article: PostView;
+  className?: string;
 }
 
 export default function ContentEditArticle({
   setShowModalEditArticle,
   article,
+  className,
 }: CreateEditArticleProps) {
   const { editPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -70,6 +72,7 @@ export default function ContentEditArticle({
           setContent={setContentEditArticle}
           isValidContent={isValidContent}
           maxLength={50000}
+          className={className}
           setIsValidContent={setIsValidContent}
           loading={sendingEditArticle}
           markdown

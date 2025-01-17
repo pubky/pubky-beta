@@ -7,10 +7,12 @@ import CreateContent from '@/components/CreateContent';
 
 interface CreatePostProps {
   setShowModalPost: React.Dispatch<React.SetStateAction<boolean>>;
+  className?: string;
 }
 
 export default function ContentCreatePost({
   setShowModalPost,
+  className,
 }: CreatePostProps) {
   const { pubky, createPost, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -65,6 +67,7 @@ export default function ContentCreatePost({
     <div className="w-full">
       <CreateContent
         id="new-post-create-content"
+        className={className}
         handleSubmit={handleSubmit}
         content={contentPost}
         setContent={setContentPost}

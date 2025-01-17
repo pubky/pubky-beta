@@ -11,6 +11,7 @@ import { useAlertContext } from '@/contexts';
 import { useState } from 'react';
 import Modal from '@/components/Modal';
 import { BottomSheet } from '@/components/BottomSheet';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   visibleTextArea: boolean;
@@ -64,6 +65,7 @@ export default function FooterArea({
   loading,
 }: FooterAreaProps) {
   const { addAlert } = useAlertContext();
+  const isMobile = useIsMobile();
   const [showModalTag, setShowModalTag] = useState(false);
   const [showSheetTag, setShowSheetTag] = useState(false);
   const [showSheetArticle, setShowSheetArticle] = useState(false);
@@ -195,7 +197,7 @@ export default function FooterArea({
               >
                 {content.length} / {maxLength}
               </div>
-              <div className="hidden sm:flex gap-2">
+              <div className="flex gap-2">
                 <Button.Action
                   id="tag-btn"
                   variant="custom"
@@ -204,31 +206,41 @@ export default function FooterArea({
                   }
                   onClick={(event) => {
                     event.stopPropagation();
-                    !loading && setShowModalTag(true);
+                    if (!loading) {
+                      if (isMobile) setShowSheetTag(true);
+                      else setShowModalTag(true);
+                    }
                   }}
                   disabled={!arrayTags || loading}
                 />
-                <Button.Action
-                  id="emoji-btn"
-                  variant="custom"
-                  icon={<Icon.Smiley size="32" />}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    !loading && setShowEmojis(true);
-                  }}
-                  disabled={loading}
-                />
-                {article && (
+                <div className="hidden sm:flex">
                   <Button.Action
+                    id="emoji-btn"
                     variant="custom"
-                    icon={<Icon.Newspaper size="32" />}
+                    icon={<Icon.Smiley size="32" />}
                     onClick={(event) => {
                       event.stopPropagation();
-                      !loading && setOpenModalArticle(true);
+                      !loading && setShowEmojis(true);
                     }}
                     disabled={loading}
                   />
-                )}
+                </div>
+                <div className="hidden sm:flex">
+                  {article && (
+                    <Button.Action
+                      variant="custom"
+                      icon={<Icon.Newspaper size="32" />}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        if (!loading) {
+                          if (isMobile) setShowSheetArticle(true);
+                          else setOpenModalArticle(true);
+                        }
+                      }}
+                      disabled={loading}
+                    />
+                  )}
+                </div>
                 {!noFile && (
                   <Button.Action
                     id="media-upload-btn"
@@ -257,57 +269,6 @@ export default function FooterArea({
                 )}
               </div>
               {button}
-            </div>
-            <div className="w-full flex sm:hidden gap-2 mt-4 justify-end">
-              <Button.Action
-                id="tag-btn"
-                variant="custom"
-                icon={
-                  <Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />
-                }
-                onClick={(event) => {
-                  event.stopPropagation();
-                  !loading && setShowSheetTag(true);
-                }}
-                disabled={!arrayTags || loading}
-              />
-              {article && (
-                <Button.Action
-                  variant="custom"
-                  icon={<Icon.Newspaper size="32" />}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    !loading && setShowSheetArticle(true);
-                  }}
-                  disabled={loading}
-                />
-              )}
-              {!noFile && (
-                <Button.Action
-                  id="media-upload-btn"
-                  variant="custom"
-                  icon={
-                    <Icon.ImageSquare
-                      size="32"
-                      color={!selectedFiles ? 'gray' : 'white'}
-                    />
-                  }
-                  onClick={() =>
-                    !loading && document.getElementById('fileInput')?.click()
-                  }
-                  disabled={!selectedFiles || loading}
-                >
-                  <input
-                    id="fileInput"
-                    type="file"
-                    accept="image/*,video/*,audio/*,.pdf"
-                    className="hidden"
-                    onChange={handleFileChange}
-                    disabled={!selectedFiles || loading}
-                    multiple
-                  />
-                </Button.Action>
-              )}
             </div>
           </Post.Actions>
           {openModalArticle && (

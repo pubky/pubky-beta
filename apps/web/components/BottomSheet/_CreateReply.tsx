@@ -23,10 +23,14 @@ export default function CreateReply({
     <BottomSheet.Root
       show={show}
       setShow={setShow}
-      title={title ?? 'Reply'}
+      title={title}
       className={className}
     >
-      <ContentCreateReply setShowModalReply={setShow} post={post} />
+      <ContentCreateReply
+        className="p-0 border-none"
+        setShowModalReply={setShow}
+        post={post}
+      />
     </BottomSheet.Root>
   );
 }

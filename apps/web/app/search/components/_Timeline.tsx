@@ -14,7 +14,7 @@ export const Timeline = () => {
   const { pubky, searchTags, mutedUsers } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1280);
   const { reach, layout, sort } = useFilterContext();
 
   const { data, isLoading } = useStreamPost(

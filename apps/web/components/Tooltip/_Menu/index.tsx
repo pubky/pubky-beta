@@ -105,7 +105,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
       const result = await deletePost(post?.details?.id);
 
       if (result) {
-        addAlert('Post deleted successfully');
+        addAlert('Post deleted');
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }

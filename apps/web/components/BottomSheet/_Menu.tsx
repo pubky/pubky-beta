@@ -44,7 +44,7 @@ export default function Menu({
       const result = await deletePost(post?.details?.id);
 
       if (result) {
-        addAlert('Post deleted successfully');
+        addAlert('Post deleted');
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }

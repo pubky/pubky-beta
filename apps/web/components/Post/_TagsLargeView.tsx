@@ -297,7 +297,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             </PostUI.Footer>
           );
         })}
-        <div className="hidden md:flex">
+        <div className="flex">
           {addTagInput ? (
             <>
               {showEmojis && (
@@ -334,7 +334,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     <div className="flex gap-1 -mr-2">
                       <div
                         onClick={!loadingTags ? handleFastAddTag : undefined}
-                        className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white ${loadingTags ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
+                        className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
                       >
                         {loadingTags ? (
                           <Icon.LoadingSpin size="12" />

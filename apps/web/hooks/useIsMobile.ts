@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export function useIsMobile(breakpoint: number = 1280) {
+export function useIsMobile(breakpoint: number = 1024) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {

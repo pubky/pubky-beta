@@ -46,7 +46,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline } =
     usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1280);
   const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
 
   const clearTimeline = () => {

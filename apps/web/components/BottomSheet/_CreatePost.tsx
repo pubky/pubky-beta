@@ -23,7 +23,10 @@ export default function CreatePost({
       title={title}
       className={className}
     >
-      <ContentCreatePost setShowModalPost={setShow} />
+      <ContentCreatePost
+        className="p-0 border-none"
+        setShowModalPost={setShow}
+      />
     </BottomSheet.Root>
   );
 }

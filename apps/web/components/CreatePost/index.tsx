@@ -6,6 +6,7 @@ import { Modal } from '../Modal';
 import { usePubkyClientContext, useJoin } from '@/contexts';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { BottomSheet } from '../BottomSheet';
+import useIsScrollup from '@/hooks/useIsScrollUp';
 
 export default function CreatePost() {
   const { pubky } = usePubkyClientContext();
@@ -13,6 +14,7 @@ export default function CreatePost() {
   const { openJoin } = useJoin();
   const [showModalPost, setShowModalPost] = useState(false);
   const [showSheetPost, setShowSheetPost] = useState(false);
+  const isVisible = useIsScrollup();
   const modalPostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,7 +36,11 @@ export default function CreatePost() {
 
   return (
     <>
-      <div className="flex fixed bottom-24 right-5 lg:bottom-10 lg:right-10 z-40 backdrop-blur-2xl rounded-[96px]">
+      <div
+        className={`flex fixed bottom-24 right-5 lg:bottom-10 lg:right-10 z-40 backdrop-blur-2xl rounded-[96px] ${
+          isMobile && (isVisible ? 'opacity-100' : 'opacity-20')
+        }`}
+      >
         <Button.Create
           id="new-post-btn"
           onClick={() =>

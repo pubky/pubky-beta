@@ -8,12 +8,14 @@ interface CreateEditPostProps {
   setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
   handleCloseModal: () => void;
+  className?: string;
 }
 
 export default function ContentEditPost({
   setShowModalEditPost,
   post,
   handleCloseModal,
+  className,
 }: CreateEditPostProps) {
   const { editPost, timeline, setTimeline } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -64,6 +66,7 @@ export default function ContentEditPost({
           id="new-post-create-content"
           handleSubmit={handleSubmit}
           content={contentEditPost}
+          className={className}
           placeHolder="Edit post"
           setContent={setContentEditPost}
           isValidContent={isValidContent}

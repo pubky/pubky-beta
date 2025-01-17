@@ -10,11 +10,13 @@ import CreateContent from '@/components/CreateContent';
 interface CreateReplyProps {
   setShowModalReply: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  className?: string;
 }
 
 export default function ContentCreateReply({
   setShowModalReply,
   post,
+  className,
 }: CreateReplyProps) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -28,7 +30,7 @@ export default function ContentCreateReply({
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
   const lineHorizontalCSS = (
-    <div className="absolute ml-[9px]">
+    <div className="hidden lg:flex absolute ml-[9px]">
       <Icon.LineHorizontal size="14" color="#262626" />
     </div>
   );
@@ -89,14 +91,15 @@ export default function ContentCreateReply({
       />
       <div className="flex items-center relative">
         <div
-          className={`ml-[9px] absolute border-l-[1px] h-[49%] top-0 border-neutral-800`}
+          className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[49%] top-0 border-neutral-800`}
         />
         {lineHorizontalCSS}
-        <div className="w-full ml-6 mt-6">
+        <div className="w-full lg:ml-6 mt-6">
           <CreateContent
             id="create-reply-create-content"
             handleSubmit={handleSubmit}
             content={contentReply}
+            className={className}
             setContent={setContentReply}
             isValidContent={isValidContent}
             setQuote={setQuote}

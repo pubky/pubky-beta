@@ -10,11 +10,13 @@ import Post from '@/components/Post';
 interface CreateRepostProps {
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  className?: string;
 }
 
 export default function ContentCreateRepost({
   setShowModalRepost,
   post,
+  className,
 }: CreateRepostProps) {
   const { pubky, createRepost, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -102,6 +104,7 @@ export default function ContentCreateRepost({
           id="repost-create-content"
           handleSubmit={handleSubmitRepost}
           content={contentRepost}
+          className={className}
           setContent={setContentRepost}
           isValidContent={isValidContent}
           setIsValidContent={setIsValidContent}

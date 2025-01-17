@@ -23,10 +23,14 @@ export default function CreateRepost({
     <BottomSheet.Root
       show={show}
       setShow={setShow}
-      title={title ?? 'Repost'}
+      title={title}
       className={className}
     >
-      <ContentCreateRepost setShowModalRepost={setShow} post={post} />
+      <ContentCreateRepost
+        className="p-0 border-none"
+        setShowModalRepost={setShow}
+        post={post}
+      />
     </BottomSheet.Root>
   );
 }

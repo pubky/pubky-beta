@@ -6,6 +6,7 @@ import { twMerge } from 'tailwind-merge';
 import Link from 'next/link';
 import { ImageByUri } from '../ImageByUri';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import useIsScrollup from '@/hooks/useIsScrollUp';
 
 interface FooterMobileProps {
   title?: string;
@@ -13,6 +14,8 @@ interface FooterMobileProps {
 
 const FooterMobile = ({ title }: FooterMobileProps) => {
   const { pubky } = usePubkyClientContext();
+  const isVisible = useIsScrollup();
+
   const buttonCSS =
     'cursor-pointer p-3 bg-white/20 rounded-[48px] backdrop-blur-[32px] justify-center items-center inline-flex';
   const activeCSS = 'border-t border-white';
@@ -23,7 +26,11 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
   if (!pubky) return;
 
   return (
-    <div className="flex justify-center lg:hidden">
+    <div
+      className={`flex justify-center lg:hidden ${
+        isVisible ? 'opacity-100' : 'opacity-20'
+      }`}
+    >
       <div className="max-w-[380px] sm:max-w-[600px] md:max-w-[720px] w-full p-6 bg-gradient-to-t from-[#05050a] via-[#05050a] via-40% to-transparent flex gap-2 w-full justify-between justify-center fixed bottom-0 z-40">
         <Link
           href="/home"

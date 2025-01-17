@@ -219,27 +219,29 @@ export default function Content({
                         <MarkdownPreview source={truncatedBody} />
                       </div>
                     </div>
-                    <div>
-                      {loading
-                        ? renderSkeleton()
-                        : fileContents.map((file, index) => {
-                            return (
-                              <div key={index} className="relative">
-                                {file.content_type === 'skeleton' ? (
-                                  renderSkeleton()
-                                ) : (
-                                  <img
-                                    src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                                    alt={`Fetched file ${index}`}
-                                    width={360}
-                                    height={200}
-                                    className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
-                                  />
-                                )}
-                              </div>
-                            );
-                          })}
-                    </div>
+                    {fileContents.length > 0 && (
+                      <div>
+                        {loading
+                          ? renderSkeleton()
+                          : fileContents.map((file, index) => {
+                              return (
+                                <div key={index} className="relative">
+                                  {file.content_type === 'skeleton' ? (
+                                    renderSkeleton()
+                                  ) : (
+                                    <img
+                                      src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                      alt={`Fetched file ${index}`}
+                                      width={360}
+                                      height={200}
+                                      className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
+                                    />
+                                  )}
+                                </div>
+                              );
+                            })}
+                      </div>
+                    )}
                   </div>
                 );
               }
