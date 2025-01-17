@@ -128,12 +128,19 @@ export default function Tags({
 
   const handleFastAddTag = async () => {
     setLoadingTags(tagInput);
-    await createTag(post?.details?.author, post?.details?.id, tagInput);
-    updateTagsAndTimeline(tagInput);
-    setAddTagInput(false);
-    setTagInput('');
-    setLoadingTags('');
-    addAlert('Tag added!');
+    const response = await createTag(
+      post?.details?.author,
+      post?.details?.id,
+      tagInput,
+    );
+    if (response) {
+      updateTagsAndTimeline(tagInput);
+      setAddTagInput(false);
+      setTagInput('');
+      setLoadingTags('');
+    } else {
+      addAlert('Something went wrong', 'warning');
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
