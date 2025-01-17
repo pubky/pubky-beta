@@ -53,7 +53,7 @@ export default function MainPostContent({
           restClassName,
         )}
       >
-        <div className="flex-col justify-between inline-flex">
+        <div className="w-full flex-col justify-between inline-flex">
           <div>
             <Header post={post} largeView={largeView} repostView={repostView} />
             <Content

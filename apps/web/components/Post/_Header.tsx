@@ -85,7 +85,7 @@ export default function Header({
       </div>
       <div className="relative flex items-center gap-0">
         <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
-        {Utils.timeAgo(indexed_at, isMobile)}
+          {Utils.timeAgo(indexed_at, isMobile)}
         </PostUI.Time>
         {post?.details?.author === pubky && (
           <TooltipUI.Root
@@ -93,7 +93,7 @@ export default function Header({
             tagId="1"
             setShowTooltip={setShowTooltipPostChecked}
           >
-            <div className="inline-flex items-center ml-2 top-[6px] relative">
+            <div className="inline-flex items-center ml-2 top-[7px] relative">
               <Icon.Check size="20" color="#00BA7C" />
               <div className="relative right-[10px]">
                 <Icon.Check

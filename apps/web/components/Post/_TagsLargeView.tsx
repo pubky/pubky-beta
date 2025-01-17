@@ -30,7 +30,6 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
-  const [tag, setTag] = useState('');
   const [tagInput, setTagInput] = useState('');
   const { addAlert } = useAlertContext();
   const [addTagInput, setAddTagInput] = useState<boolean>(false);
@@ -116,11 +115,6 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
       fetchProfileImages();
     }
   }, [tags, pubky]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '');
-    setTag(valueWithoutSpaces);
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -213,7 +207,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
       onClick={(event) => event.stopPropagation()}
     >
       <div className={`flex-col inline-flex gap-2`}>
-        <div className="w-96 mb-4 flex gap-2 items-center">
+        <div className="w-96 mb-4 flex gap-2 items-center mt-[5px]">
           <Icon.Tag size="14" color="gray" />
           <Typography.Label className="text-opacity-30">
             {tags.length > 0 ? 'Tags' : 'Tag Post'}
@@ -227,67 +221,6 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             </Button.Medium>
           )*/}
         </div>
-        {tags.length === 0 && (
-          <div>
-            {showEmojis && (
-              <div
-                className="absolute translate-y-[15%] translate-x-[5%] z-10"
-                ref={wrapperRefEmojis}
-              >
-                <EmojiPicker
-                  theme={Theme.DARK}
-                  emojiStyle={EmojiStyle.TWITTER}
-                  onEmojiClick={(emojiObject) => {
-                    const emojiLength = new Blob([emojiObject.emoji]).size / 2;
-
-                    if (tag.length + emojiLength <= 20) {
-                      setTag(tag + emojiObject.emoji);
-                    }
-                    setShowEmojis(false);
-                  }}
-                />
-              </div>
-            )}
-            <Input.Text
-              placeholder="tag"
-              value={tag}
-              onClick={() => !pubky && openJoin()}
-              readonly={!pubky}
-              className="w-96 mt-2 flex items-center"
-              maxLength={20}
-              onChange={handleChange}
-              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                if (e.key === 'Enter') {
-                  handleAddTag(tag);
-                  setTag('');
-                }
-              }}
-              action={
-                <div className="flex gap-2">
-                  <Button.Action
-                    icon={<Icon.Plus size="18" />}
-                    className={tag ? 'flex' : 'hidden'}
-                    variant="custom"
-                    size="medium"
-                    onClick={() => {
-                      handleAddTag(tag);
-                      setTag('');
-                    }}
-                  />
-                  <Button.Action
-                    variant="custom"
-                    icon={<Icon.Smiley size="32" />}
-                    size="medium"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      pubky ? setShowEmojis(true) : openJoin();
-                    }}
-                  />
-                </div>
-              }
-            />
-          </div>
-        )}
         {tags.map((tagObj, index) => {
           const isTagFound = tagObj?.taggers.some(
             (fromItem) => fromItem === pubky,
@@ -364,83 +297,81 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             </PostUI.Footer>
           );
         })}
-        {tags.length > 0 && (
-          <div className="hidden md:flex">
-            {addTagInput ? (
-              <>
-                {showEmojis && (
-                  <div
-                    className="absolute translate-y-[10%] translate-x-[30%] z-10"
-                    ref={wrapperRefEmojis}
-                  >
-                    <EmojiPicker
-                      theme={Theme.DARK}
-                      emojiStyle={EmojiStyle.TWITTER}
-                      onEmojiClick={(emojiObject) => {
-                        const emojiLength =
-                          new Blob([emojiObject.emoji]).size / 2;
+        <div className="hidden md:flex">
+          {addTagInput ? (
+            <>
+              {showEmojis && (
+                <div
+                  className="absolute translate-y-[10%] translate-x-[0%] z-10"
+                  ref={wrapperRefEmojis}
+                >
+                  <EmojiPicker
+                    theme={Theme.DARK}
+                    emojiStyle={EmojiStyle.TWITTER}
+                    onEmojiClick={(emojiObject) => {
+                      const emojiLength =
+                        new Blob([emojiObject.emoji]).size / 2;
 
-                        if (tagInput.length + emojiLength <= 20) {
-                          setTagInput(tagInput + emojiObject.emoji);
-                        }
-                        setShowEmojis(false);
-                      }}
-                    />
-                  </div>
-                )}
-                <div className="w-fit">
-                  <Input.Text
-                    placeholder="tag"
-                    className="h-[32px] p-3 text-[14px] rounded-lg"
-                    value={tagInput}
-                    maxLength={20}
-                    onChange={handleChangeTagInput}
-                    onKeyDown={handleKeyDown}
-                    disabled={loadingTags !== ''}
-                    autoFocus
-                    action={
-                      <div className="flex gap-1 -mr-2">
-                        <div
-                          onClick={!loadingTags ? handleFastAddTag : undefined}
-                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white ${loadingTags ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
-                        >
-                          {loadingTags ? (
-                            <Icon.LoadingSpin size="12" />
-                          ) : (
-                            <Icon.Plus size="12" />
-                          )}
-                        </div>
-                        <div className="flex">
-                          <div
-                            onClick={() => setShowEmojis(true)}
-                            className="hidden mr-1 lg:flex cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                          >
-                            <Icon.Smiley size="12" />
-                          </div>
-                          <div
-                            onClick={() => setAddTagInput(false)}
-                            className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                          >
-                            <Icon.X size="12" />
-                          </div>
-                        </div>
-                      </div>
-                    }
+                      if (tagInput.length + emojiLength <= 20) {
+                        setTagInput(tagInput + emojiObject.emoji);
+                      }
+                      setShowEmojis(false);
+                    }}
                   />
                 </div>
-              </>
-            ) : (
-              <div
-                onClick={() => (pubky ? setAddTagInput(true) : openJoin())}
-                className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
-              >
-                <div>
-                  <Icon.Plus size="16" />
-                </div>
+              )}
+              <div className="w-fit">
+                <Input.Text
+                  placeholder="tag"
+                  className="h-[32px] p-3 text-[14px] rounded-lg"
+                  value={tagInput}
+                  maxLength={20}
+                  onChange={handleChangeTagInput}
+                  onKeyDown={handleKeyDown}
+                  disabled={loadingTags !== ''}
+                  autoFocus
+                  action={
+                    <div className="flex gap-1 -mr-2">
+                      <div
+                        onClick={!loadingTags ? handleFastAddTag : undefined}
+                        className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white ${loadingTags ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
+                      >
+                        {loadingTags ? (
+                          <Icon.LoadingSpin size="12" />
+                        ) : (
+                          <Icon.Plus size="12" />
+                        )}
+                      </div>
+                      <div className="flex">
+                        <div
+                          onClick={() => setShowEmojis(true)}
+                          className="hidden mr-1 lg:flex cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                        >
+                          <Icon.Smiley size="12" />
+                        </div>
+                        <div
+                          onClick={() => setAddTagInput(false)}
+                          className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                        >
+                          <Icon.X size="12" />
+                        </div>
+                      </div>
+                    </div>
+                  }
+                />
               </div>
-            )}
-          </div>
-        )}
+            </>
+          ) : (
+            <div
+              onClick={() => (pubky ? setAddTagInput(true) : openJoin())}
+              className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
+            >
+              <div>
+                <Icon.Plus size="16" />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <Modal.Tag
         post={post}
