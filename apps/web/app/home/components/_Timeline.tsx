@@ -150,7 +150,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
       {newPosts.map((post) => (
         <div key={post.details.id} className="flex flex-col">
-          <Post post={post} />
+          <Post post={post} largeView={!isMobile && layout === 'wide'} />
         </div>
       ))}
 
