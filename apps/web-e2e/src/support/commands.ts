@@ -93,12 +93,8 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
   cy.location('pathname').should('eq', '/onboarding/intro');
 
   if (skipOnboardingSlides) {
-    // TODO: remove wait workaround for pkarr rate limiting once using testnet
-    cy.wait(3000);
-
     // click 'Skip Intro' button
     cy.get('#onboarding-skip-intro-btn').click();
-
   } else {
     // click 'Continue' button 6 times to skip onboarding slides
     for (let i = 0; i < 6; i++) {
@@ -170,9 +166,6 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   });
 
   cy.location('pathname').should('eq', '/sign-in');
-
-  // TODO: remove wait workaround for pkarr rate limiting once using testnet
-  cy.wait(3_000);
 
   cy.get('#fileInput').selectFile(
     backupFilepath,
@@ -324,18 +317,11 @@ Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts =
     cy.get('body').then(($body) => {
       if ($body.find(selector).length === 0) {
         cy.log(`waitReloadWhileElementDoesNotExist: ${selector} not found; waiting and reloading.`);
-        // TODO: reduce long wait workaround for pkarr
-        cy.wait(9_000);
+        cy.wait(1_000);
         cy.reload();
         // wait for page to load before checking again
         // TODO: improve wait by detecting presence of key element on page (e.g. profile picture)
         cy.wait(Cypress.env('ci') ? 3_000 : 1_000);
-        // TODO: remove failure for error case where location is /onboarding (pkarr 429)
-        cy.location('pathname').then((path) => {
-          if (path === '/onboarding') {
-            assert(false, 'waitReloadWhileElementDoesNotExist: location is /onboarding, probably pkarr 429');
-          }
-        });
         go(attempts - 1);
       } else {
         cy.log(`waitReloadWhileElementDoesNotExist: ${selector} found; continuing.`);
