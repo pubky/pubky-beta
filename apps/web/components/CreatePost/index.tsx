@@ -30,7 +30,7 @@ export default function CreatePost() {
 
   return (
     <>
-      <div className="hidden lg:flex fixed bottom-5 right-5 sm:bottom-10 sm:right-10 z-40">
+      <div className="hidden lg:flex fixed bottom-5 right-5 sm:bottom-10 sm:right-10 z-40 backdrop-blur-2xl rounded-[96px]">
         <Button.Create
           id="new-post-btn"
           onClick={() => (pubky ? setShowModalPost(true) : openJoin())}
