@@ -61,7 +61,7 @@ export default function Root({
   return (
     <div
       {...rest}
-      className="fixed inset-0 bg-transparent z-50 flex items-end"
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end"
       onClick={() => setShow(false)}
     >
       <div
