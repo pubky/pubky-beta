@@ -71,18 +71,15 @@ export const Timeline = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      {timeline.map(
-        (post) =>
-          post?.details?.content !== '[DELETED]' && (
-            <div key={post.details.id} className="flex gap-2 items-center">
-              <Post
-                largeView={!isMobile && layout === 'wide'}
-                key={`post-${post.details.id}`}
-                post={post}
-              />
-            </div>
-          ),
-      )}
+      {timeline.map((post) => (
+        <div key={post.details.id} className="flex gap-2 items-center">
+          <Post
+            largeView={!isMobile && layout === 'wide'}
+            key={`post-${post.details.id}`}
+            post={post}
+          />
+        </div>
+      ))}
       {isLoading && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
