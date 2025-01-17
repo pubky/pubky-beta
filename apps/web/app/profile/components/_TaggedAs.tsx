@@ -79,13 +79,14 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
     // loading tag
     setLoadingTags(tag);
+    console.log('pubKeyToUse', pubKeyToUse);
     if (pubKeyToUse) {
       // before adding tag, check if tag already exists and is not the same pubky
       const tagExists = profileTags.find((t) => t.label === tag);
 
       if (tagExists) {
         // check if tag is the same pubky
-        if (tagExists.taggers.includes(pubKeyToUse)) {
+        if (tagExists.taggers.includes(pubky || '')) {
           setLoadingTags('');
         } else {
           // add tag to taggers
@@ -94,7 +95,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
           // update profileTags with new taggers
           const newProfileTags = profileTags.map((t) => {
             if (t.label === tag) {
-              return { ...t, taggers: [...t.taggers, pubKeyToUse] };
+              return { ...t, taggers: [...t.taggers, pubky || ''] };
             }
             return t;
           });
@@ -108,7 +109,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
           ...profileTags,
           {
             label: tag,
-            taggers: [pubKeyToUse],
+            taggers: [pubky || ''],
             taggers_count: 1,
           },
         ]);
@@ -134,11 +135,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
       const tagExists = profileTags.find((t) => t.label === tag);
       if (tagExists) {
         // check if pubkeyToUse is in taggers
-        if (tagExists.taggers.includes(pubKeyToUse)) {
+        if (tagExists.taggers.includes(pubky || '')) {
           // remove tagger from tag but keep the tag but update the taggers_count
           tagExists.taggers_count--;
           tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubKeyToUse,
+            (t) => t !== pubky || '',
           );
           setProfileTags(
             profileTags.map((t) => (t.label === tag ? tagExists : t)),
@@ -147,7 +148,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
           // remove tag from taggers
           tagExists.taggers_count--;
           tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubKeyToUse,
+            (t) => t !== pubky || '',
           );
           setProfileTags(
             profileTags.map((t) => (t.label === tag ? tagExists : t)),
