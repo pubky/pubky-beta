@@ -47,7 +47,7 @@ export default function DeleteAccount({
       show={showModalDeleteAccount}
       closeModal={() => setShowModalDeleteAccount(false)}
       modalRef={modalDeleteAccountRef}
-      className="max-w-[1200px] md:min-w-[588px] max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
+      className="max-w-[1200px] md:min-w-[588px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModalDeleteAccount(false)} />
       <Modal.Header title="Delete Account" />

@@ -22,7 +22,7 @@ export default function EditPost({
       modalRef={modalEditPostRef}
       show={showModalEditPost}
       closeModal={() => setShowModalEditPost(false)}
-      className="md:w-[792px] max-h-[600px] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
+      className="md:w-[792px] max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModalEditPost(false)} />
       <div className="flex flex-col gap-4">

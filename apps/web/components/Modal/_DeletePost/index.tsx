@@ -21,7 +21,7 @@ export default function DeletePost({
       show={showModalDeletePost}
       closeModal={() => setShowModalDeletePost(false)}
       modalRef={modalDeletePostRef}
-      className="max-w-[1200px] md:min-w-[588px] max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
+      className="max-w-[1200px] md:min-w-[588px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModalDeletePost(false)} />
       <Modal.Header title="Delete Post" />

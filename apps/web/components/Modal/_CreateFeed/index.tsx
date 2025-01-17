@@ -49,7 +49,7 @@ export default function CreateFeed({
         setShowModalCreateFeed(false);
         setTagsFeed([]);
       }}
-      className="md:w-[620px] max-h-[600px] overflow-y-auto justify-start scrollbar-thin scrollbar-webkit"
+      className="md:w-[620px] max-h-[90vh] overflow-y-auto justify-start scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction
         onClick={() => {

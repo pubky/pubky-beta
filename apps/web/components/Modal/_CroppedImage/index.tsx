@@ -41,7 +41,7 @@ export default function CroppedImage({
       show={showModalCroppedImage}
       closeModal={() => setShowModalCroppedImage(false)}
       modalRef={modalCroppedImageRef}
-      className="max-w-[1200px] md:min-w-[588px] max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
+      className="max-w-[1200px] md:min-w-[588px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModalCroppedImage(false)} />
       <Modal.Header title="Cropped Image" />

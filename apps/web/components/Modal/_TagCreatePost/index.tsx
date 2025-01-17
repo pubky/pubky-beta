@@ -43,7 +43,7 @@ export default function TagCreatePost({
         setShowModalTag(false);
         setTagsError(false);
       }}
-      className="w-full"
+      className="w-full md:w-[792px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction
         id="close-btn"

@@ -23,7 +23,7 @@ export default function ReportProfile({
       show={showModal}
       closeModal={() => setShowModal(false)}
       modalRef={modalReportPostRef}
-      className="lg:w-[588px] max-w-[1200px] max-h-[600] overflow-y-auto scrollbar-thin scrollbar-webkit"
+      className="lg:w-[588px] max-w-[1200px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       <ContentReportProfile setShowModal={setShowModal} pk={pk} name={name} />
