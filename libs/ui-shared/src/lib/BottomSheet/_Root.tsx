@@ -9,6 +9,7 @@ interface RootBottomSheetProps extends React.HTMLAttributes<HTMLDivElement> {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   title?: string;
   children?: React.ReactNode;
+  homeIndicatorCSS?: string;
 }
 
 export default function Root({
@@ -16,6 +17,7 @@ export default function Root({
   setShow,
   title,
   children,
+  homeIndicatorCSS,
   ...rest
 }: RootBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false);
@@ -61,7 +63,7 @@ export default function Root({
   return (
     <div
       {...rest}
-      className="fixed inset-0 bg-transparent z-50 flex items-end"
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end"
       onClick={() => setShow(false)}
     >
       <div
@@ -74,7 +76,10 @@ export default function Root({
       >
         <div
           onClick={() => setShow(false)}
-          className="flex items-center mt-2 mb-6 justify-center cursor-pointer z-50"
+          className={twMerge(
+            'flex items-center mt-2 mb-4 justify-center cursor-pointer z-50',
+            homeIndicatorCSS,
+          )}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
         >

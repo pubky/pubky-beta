@@ -438,7 +438,6 @@ export default function ContentCreateArticle({
                     <Icon.PaperPlaneRight
                       color={
                         !isValidContent ||
-                        selectedFile.length === 0 ||
                         isError ||
                         !contentTitle
                           ? 'gray'
@@ -448,14 +447,12 @@ export default function ContentCreateArticle({
                   }
                   disabled={
                     !isValidContent ||
-                    selectedFile.length === 0 ||
                     isError ||
                     !contentTitle
                   }
                   loading={sendingArticle}
                   onClick={
                     isValidContent &&
-                    selectedFile.length > 0 &&
                     contentTitle &&
                     !isError &&
                     !sendingArticle

@@ -25,8 +25,8 @@ export function Header() {
       <Components.Header title="Profile" />
       <Components.HeaderMobile
         leftIcon={
-          <Link href="/settings">
-            <Icon.GearSix size="20" />
+          <Link href="/settings/edit">
+            <Icon.Pencil size="20" />
           </Link>
         }
         rightIcon={

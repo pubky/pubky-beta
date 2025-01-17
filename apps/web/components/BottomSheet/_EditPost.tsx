@@ -28,6 +28,7 @@ export default function EditPost({
     >
       <ContentEditPost
         setShowModalEditPost={setShow}
+        className="p-0 border-none"
         post={post}
         handleCloseModal={() => setShow(false)}
       />

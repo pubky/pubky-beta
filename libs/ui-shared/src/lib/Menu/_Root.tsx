@@ -76,7 +76,7 @@ export const Root = ({
 
     return (
       <div
-        className={`fixed bottom-0 ${swipeZoneCSS} w-4 h-[90vh] z-40`} // Narrow zone for swipe detection
+        className={`fixed bottom-0 ${swipeZoneCSS} w-4 h-[90vh] z-40 `} // Narrow zone for swipe detection
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
       />
@@ -88,7 +88,7 @@ export const Root = ({
   return (
     <div className="fixed inset-0 z-50">
       <div
-        className={`absolute inset-0 bg-transparent transition-opacity ${
+        className={`absolute inset-0 bg-black bg-opacity-50 transition-opacity ${
           animateIn ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={() => setDrawerOpen(false)}

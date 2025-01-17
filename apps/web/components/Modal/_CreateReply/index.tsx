@@ -41,7 +41,7 @@ export default function CreateReply({
         setShowModalReply(false);
         //setArrayTags([]);
       }}
-      className="md:w-[792px] max-w-[1200px] max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
+      className="md:w-[792px] max-w-[1200px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction
         onClick={() => {

@@ -128,12 +128,19 @@ export default function Tags({
 
   const handleFastAddTag = async () => {
     setLoadingTags(tagInput);
-    await createTag(post?.details?.author, post?.details?.id, tagInput);
-    updateTagsAndTimeline(tagInput);
-    setAddTagInput(false);
-    setTagInput('');
-    setLoadingTags('');
-    addAlert('Tag added!');
+    const response = await createTag(
+      post?.details?.author,
+      post?.details?.id,
+      tagInput,
+    );
+    if (response) {
+      updateTagsAndTimeline(tagInput);
+      setAddTagInput(false);
+      setTagInput('');
+      setLoadingTags('');
+    } else {
+      addAlert('Something went wrong', 'warning');
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -176,7 +183,7 @@ export default function Tags({
       ) : (
         <div
           id="tags"
-          className={`flex-row inline-flex gap-2 flex-wrap mt-6 lg:mt-0`}
+          className={`flex-row inline-flex gap-2 flex-wrap mt-2 lg:mt-0`}
         >
           {!largeView &&
             tags.slice(0, 3).map((tagObj, index) => {

@@ -44,13 +44,13 @@ export function MainContent() {
       router.push(`/profile/${profileId}`);
     } else {
       const trimmedValue = inputValue.trim();
-      if (searchTags.includes(trimmedValue.slice(0))) return;
+      const tags = trimmedValue.split(' ').filter((tag) => tag.length > 0);
 
-      if (searchTags.length < 3) {
-        setSearchTags([...searchTags, trimmedValue.slice(0)]);
-      } else {
-        const newSearchTags = [...searchTags.slice(0), trimmedValue.slice(0)];
-        setSearchTags(newSearchTags);
+      const newTags = tags.filter((tag) => !searchTags.includes(tag));
+
+      if (newTags.length > 0) {
+        const updatedTags = [...searchTags, ...newTags].slice(0, 3);
+        setSearchTags(updatedTags);
       }
       setInputValue('');
       router.push('/search');

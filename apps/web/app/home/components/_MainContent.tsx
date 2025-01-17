@@ -1,7 +1,10 @@
+'use client';
+
 import * as Components from '@/components';
 import { Timeline } from './_Timeline';
 import { ICustomFeed } from '@/types';
 import { usePubkyClientContext } from '@/contexts';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface MainContentProps {
   layout: string;
@@ -21,6 +24,8 @@ export function MainContent({
   ref,
 }: MainContentProps) {
   const { pubky } = usePubkyClientContext();
+  const isMobile = useIsMobile(1280);
+
   return (
     <Components.PostsLayout
       ref={ref}
@@ -43,7 +48,7 @@ export function MainContent({
           />
           <Components.CreateQuickPost
             loadingFeed={loadingFeed}
-            largeView={layout === 'wide'}
+            largeView={!isMobile && layout === 'wide'}
           />
         </>
       )}

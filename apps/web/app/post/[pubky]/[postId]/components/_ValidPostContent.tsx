@@ -73,7 +73,7 @@ const LongPost = ({ data, user }) => {
   const isMobile = useIsMobile();
   return (
     <div className="flex flex-col lg:flex-row gap-6">
-      <div className="flex flex-col gap-4">
+      <div className="w-auto lg:w-[1200px] flex flex-col gap-4">
         <Typography.Display className="sm:leading-[64px] break-all">
           {JSON.parse(data?.details?.content).title}
         </Typography.Display>
@@ -111,7 +111,7 @@ const LongPost = ({ data, user }) => {
             {Utils.timeAgo(data?.details?.indexed_at, isMobile)}
           </PostUI.Time>
         </div>
-        {data?.details?.attachments[0] && (
+        {data?.details?.attachments && data?.details?.attachments[0] && (
           <ImageByUri
             width={1200}
             height={650}

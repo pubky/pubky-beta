@@ -593,10 +593,7 @@ export function PubkyClientWrapper({
       profile1.name === profile2.name &&
       profile1.bio === profile2.bio &&
       profile1.image === profile2.image &&
-      ((!profile1.links && !profile2.links) ||
-        (!!profile1.links &&
-          !!profile2.links &&
-          JSON.stringify(profile1.links) === JSON.stringify(profile2.links))) &&
+      //No links check
       profile1.status === profile2.status
     );
   };

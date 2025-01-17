@@ -67,8 +67,10 @@ type NotificationTypeKey = keyof typeof notificationType;
 
 export default function Notification({
   notification,
+  unread,
 }: {
   notification: NotificationView;
+  unread?: boolean;
 }) {
   const { pubky } = usePubkyClientContext();
   const isMobile = useIsMobile();
@@ -190,15 +192,26 @@ export default function Notification({
       : '';
 
   return (
-    <div className="py-3 justify-between items-start flex flex-row border-b md:border-0 border-white border-opacity-10">
-      <div className="flex md:gap-4 flex-col sm:flex-row">
-        <Button.Action
-          size="small"
-          variant="custom"
-          icon={currentNotificationType.icon}
-          className="hidden md:flex bg-gradient-none border border-white border-opacity-30"
-          disabled
-        />
+    <div className="py-2 justify-between items-start flex flex-row border-b md:border-0 border-white border-opacity-10">
+      <div className="flex gap-2 flex-col sm:flex-row">
+        <div className="flex gap-2">
+          {user && (
+            <ImageByUri
+              width={32}
+              height={32}
+              className="w-[32px] h-[32px] rounded-full sm:hidden"
+              alt="user-pic"
+              uri={user?.details?.image || '/images/webp/Userpic.webp'}
+            />
+          )}
+          <Button.Action
+            size="small"
+            variant="custom"
+            icon={currentNotificationType.icon}
+            className={`bg-gradient-none border backdrop-blur-[20px] ${unread ? 'border-[#c8ff00]' : 'border-white border-opacity-30'}`}
+            disabled
+          />
+        </div>
         <div className="flex gap-2 items-center flex-wrap">
           {userId && (
             <Link
@@ -209,7 +222,7 @@ export default function Notification({
                 <ImageByUri
                   width={32}
                   height={32}
-                  className="w-[32px] h-[32px] rounded-full"
+                  className="w-[32px] h-[32px] rounded-full hidden sm:flex"
                   alt="user-pic"
                   uri={user?.details?.image || '/images/webp/Userpic.webp'}
                 />
@@ -271,10 +284,10 @@ export default function Notification({
           {postLink && (
             <Link href={postLink}>
               <Typography.Body
-                variant="small"
+                variant="small-bold"
                 className="text-white text-opacity-80 hover:text-opacity-100"
               >
-                View post
+                View Post
               </Typography.Body>
             </Link>
           )}
@@ -282,7 +295,7 @@ export default function Notification({
             <>
               <Link href={replyLink}>
                 <Typography.Body
-                  variant="small"
+                  variant="small-bold"
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   View Reply
@@ -291,7 +304,7 @@ export default function Notification({
               <Typography.Body variant="small">{' - '}</Typography.Body>
               <Link href={parentPostReplyLink}>
                 <Typography.Body
-                  variant="small"
+                  variant="small-bold"
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   View Post
@@ -303,7 +316,7 @@ export default function Notification({
             <>
               <Link href={repostLink}>
                 <Typography.Body
-                  variant="small"
+                  variant="small-bold"
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   View Repost
@@ -312,7 +325,7 @@ export default function Notification({
               <Typography.Body variant="small">{' - '}</Typography.Body>
               <Link href={embedLink}>
                 <Typography.Body
-                  variant="small"
+                  variant="small-bold"
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   View Post
@@ -330,10 +343,10 @@ export default function Notification({
                   {notification.body.delete_source === 'reply' ||
                   notification.body.delete_source === 'repost' ||
                   notification.body.delete_source === 'tagged_post'
-                    ? 'View post'
+                    ? 'View Post'
                     : notification.body.delete_source === 'reply_parent'
-                      ? 'View reply'
-                      : 'View repost'}
+                      ? 'View Reply'
+                      : 'View Repost'}
                 </Typography.Body>
               </Link>
             )}
@@ -345,10 +358,10 @@ export default function Notification({
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   {notification.body.edit_source === 'reply'
-                    ? 'View reply'
+                    ? 'View Reply'
                     : notification.body.edit_source === 'repost'
-                      ? 'View repost'
-                      : 'View post'}
+                      ? 'View Repost'
+                      : 'View Post'}
                 </Typography.Body>
               </Link>
             )}

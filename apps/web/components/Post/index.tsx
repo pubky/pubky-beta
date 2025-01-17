@@ -72,7 +72,7 @@ export default function Post({
   const handleDeletePost = async () => {
     const result = await deletePost(post?.details?.id);
     if (result) {
-      addAlert('Post deleted successfully');
+      addAlert('Post deleted');
       setTimeline((prevTimeline) =>
         prevTimeline.filter((p) => p.details.id !== post?.details?.id),
       );
@@ -145,7 +145,7 @@ export default function Post({
                       rest.className,
                     )}
                   >
-                    <div className="flex-col justify-between inline-flex">
+                    <div className="w-full flex-col justify-between inline-flex">
                       <div>
                         <Header post={post} largeView={largeView} />
                         <Content

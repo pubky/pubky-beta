@@ -101,7 +101,7 @@ export default function Index() {
           id="onboarding-name-input"
           autoCorrect="off"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setInviteCode(e.target.value);
+            setInviteCode(e.target.value.toUpperCase());
             setError('');
           }}
         />

@@ -40,7 +40,7 @@ export default function CreateArticle({
         setShowModalArticle(false);
         //setArrayTags([]);
       }}
-      className="max-h-[600px] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
+      className="max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction
         onClick={() => {

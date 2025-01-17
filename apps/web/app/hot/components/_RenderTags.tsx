@@ -26,14 +26,14 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
         Popular Tags
       </Typography.H2>
       {firstThreeTags.length > 0 && (
-        <div className="w-full flex flex-col md:flex-row gap-4">
+        <div className="w-full flex flex-col md:flex-row gap-3">
           {firstThreeTags.map((tag, index) => (
             <div
               key={index}
               style={{
                 backgroundColor: Utils.hexToRgba(
                   Utils.generateRandomColor(tag?.label),
-                  0.2,
+                  0.3,
                 ),
               }}
               className={`w-full p-6 flex flex-col gap-2 rounded-lg`}
@@ -45,15 +45,9 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                       {index + 1}
                     </PostUtil.Counter>
                     <Link href={`/search?tags=${tag?.label}`}>
-                      <PostUtil.Tag
-                        color={
-                          tag?.label && Utils.generateRandomColor(tag?.label)
-                        }
-                        boxShadow
-                        clicked={false}
-                      >
+                      <Typography.Body variant="large-bold">
                         {Utils.minifyText(tag?.label, 21)}
-                      </PostUtil.Tag>
+                      </Typography.Body>
                     </Link>
                   </div>
                   <Typography.Body className="text-opacity-80" variant="medium">
@@ -80,7 +74,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
           ))}
         </div>
       )}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1">
         {otherTags.length > 0 &&
           otherTags.map((tag, index) => (
             <SideCard.Rank

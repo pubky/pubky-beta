@@ -5,7 +5,7 @@ interface SearchTagsProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const SearchTags = ({ tags, ...rest }: SearchTagsProps) => {
-  const baseCSS = 'absolute top-[20%] left-6 flex items-center gap-2';
+  const baseCSS = 'absolute top-[20%] left-6 flex items-center';
 
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>

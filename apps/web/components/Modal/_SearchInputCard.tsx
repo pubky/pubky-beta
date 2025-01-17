@@ -5,8 +5,9 @@ import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useHotTags } from '@/hooks/useTag';
 import Link from 'next/link';
-import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { UserView } from '@/types/User';
+import { searchUsersByUsername } from '@/services/streamService';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -21,8 +22,10 @@ export default function SearchInputCard({
   const router = useRouter();
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
   const { data: hotTags, isLoading } = useHotTags(0, 10);
-  const { data } = useStreamSearchUsersByUsername(inputValue ?? '', pubky);
-  const searchedUsers = data ? data : [];
+  const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null,
+  );
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isMouseInside, setIsMouseInside] = useState(false);
 
@@ -63,6 +66,25 @@ export default function SearchInputCard({
     }
   };
 
+  useEffect(() => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    const timeout = setTimeout(async () => {
+      if (inputValue && inputValue.trim() !== '') {
+        const response = await searchUsersByUsername(inputValue.trim(), pubky);
+        setSearchedUsers(response || []);
+      } else {
+        setSearchedUsers([]);
+      }
+    }, 500);
+
+    setDebounceTimeout(timeout);
+
+    return () => clearTimeout(timeout);
+  }, [inputValue, pubky]);
+
   return (
     <Card.Primary
       {...rest}
@@ -98,7 +120,9 @@ export default function SearchInputCard({
               uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
               username={Utils.minifyText(user?.details?.name, 20)}
               label={Utils.minifyPubky(user?.details?.id)}
-              className={`p-2 rounded-2xl ${selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'}`}
+              className={`p-2 rounded-2xl ${
+                selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'
+              }`}
               onMouseEnter={() => setSelectedIndex(index)}
             />
           ))}

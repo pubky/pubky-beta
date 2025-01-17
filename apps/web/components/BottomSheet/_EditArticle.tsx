@@ -26,7 +26,11 @@ export default function EditArticle({
       title={title}
       className={className}
     >
-      <ContentEditArticle setShowModalEditArticle={setShow} article={article} />
+      <ContentEditArticle
+        className="p-0 border-none"
+        setShowModalEditArticle={setShow}
+        article={article}
+      />
     </BottomSheet.Root>
   );
 }

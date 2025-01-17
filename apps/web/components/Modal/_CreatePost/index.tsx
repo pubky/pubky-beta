@@ -20,7 +20,7 @@ export default function CreatePost({
         setShowModalPost(false);
         //setArrayTags([]);
       }}
-      className="md:w-[792px] max-h-[600px] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
+      className="md:w-[792px] max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction
         onClick={() => {
