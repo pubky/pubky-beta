@@ -183,7 +183,7 @@ export default function Tags({
       ) : (
         <div
           id="tags"
-          className={`flex-row inline-flex gap-2 flex-wrap mt-6 lg:mt-0`}
+          className={`flex-row inline-flex gap-2 flex-wrap mt-2 lg:mt-0`}
         >
           {!largeView &&
             tags.slice(0, 3).map((tagObj, index) => {
