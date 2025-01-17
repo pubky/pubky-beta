@@ -80,7 +80,7 @@ export default function TaggedSection({
                     >
                       <div className="flex gap-2 items-center">
                         {Utils.minifyText(tag?.label, 20)}
-                        {loadingTags === tag?.label ?? (
+                        {loadingTags === tag?.label && (
                           <Icon.LoadingSpin size="16" />
                         )}
                       </div>
