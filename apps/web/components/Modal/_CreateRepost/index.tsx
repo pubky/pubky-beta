@@ -1,7 +1,6 @@
 import { Modal } from '@social/ui-shared';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { PostView } from '@/types/Post';
-import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import ContentCreateRepost from './_Content';
 
 interface CreateRepostProps {
@@ -16,7 +15,23 @@ export default function CreateRepost({
   post,
 }: CreateRepostProps) {
   const modalRepostRef = useRef<HTMLDivElement>(null);
-  useDrawerClickOutside(modalRepostRef, () => setShowModalRepost(false));
+
+  useEffect(() => {
+    const handleClickOutsideModals = (event: MouseEvent) => {
+      if (
+        modalRepostRef.current &&
+        !modalRepostRef.current.contains(event.target as Node)
+      ) {
+        setShowModalRepost(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideModals);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideModals);
+    };
+  }, [modalRepostRef, setShowModalRepost]);
 
   return (
     <Modal.Root
