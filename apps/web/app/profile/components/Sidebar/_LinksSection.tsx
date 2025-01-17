@@ -154,17 +154,19 @@ export default function LinksSection({
   const isMobile = useIsMobile();
 
   const renderSocialUsername = (linkUrl: string) => {
+    const cleanedUrl = linkUrl.endsWith('/') ? linkUrl.slice(0, -1) : linkUrl;
+
     const matchingSocialLink = socialLinks.find((socialLink) =>
-      linkUrl.includes(socialLink.url),
+      cleanedUrl.includes(socialLink.url),
     );
 
     if (matchingSocialLink) {
-      const usernameStartIndex = linkUrl.lastIndexOf('/') + 1;
-      const username = linkUrl.substring(usernameStartIndex);
+      const usernameStartIndex = cleanedUrl.lastIndexOf('/') + 1;
+      const username = cleanedUrl.substring(usernameStartIndex);
       if (username) return username;
     }
 
-    return removeUrlPrefix(linkUrl) || '';
+    return removeUrlPrefix(cleanedUrl) || '';
   };
 
   const removeUrlPrefix = (url: string) =>
