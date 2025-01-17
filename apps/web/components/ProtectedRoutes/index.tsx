@@ -156,9 +156,10 @@ export default function ProtectedRoutes({
       return;
     }
 
+    if (pubky) logout();
+
     // Check if the not logged user is trying to access a public route
     if (!publicRoutes.includes(pathname) && !isDynamicPublicRoute(pathname)) {
-      if (pubky) logout();
       router.push('/onboarding');
       return;
     }
