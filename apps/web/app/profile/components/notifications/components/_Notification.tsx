@@ -343,10 +343,10 @@ export default function Notification({
                   {notification.body.delete_source === 'reply' ||
                   notification.body.delete_source === 'repost' ||
                   notification.body.delete_source === 'tagged_post'
-                    ? 'View post'
+                    ? 'View Post'
                     : notification.body.delete_source === 'reply_parent'
-                      ? 'View reply'
-                      : 'View repost'}
+                      ? 'View Reply'
+                      : 'View Repost'}
                 </Typography.Body>
               </Link>
             )}
@@ -358,10 +358,10 @@ export default function Notification({
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   {notification.body.edit_source === 'reply'
-                    ? 'View reply'
+                    ? 'View Reply'
                     : notification.body.edit_source === 'repost'
-                      ? 'View repost'
-                      : 'View post'}
+                      ? 'View Repost'
+                      : 'View Post'}
                 </Typography.Body>
               </Link>
             )}
