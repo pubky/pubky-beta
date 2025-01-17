@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
-  PubkyClient,
+  Client,
   PublicKey,
   decryptRecoveryFile,
   Keypair,
@@ -26,11 +26,11 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
   process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
   'https://demo.httprelay.io/link/';
 
-let client: PubkyClient;
+let client: Client;
 if (TESTNET) {
-  client = PubkyClient.testnet();
+  client = Client.testnet();
 } else {
-  client = new PubkyClient();
+  client = new Client();
 }
 
 const homeserver = PublicKey.from(HOMESERVER_PUBLIC_KEY);
@@ -399,7 +399,11 @@ export function PubkyClientWrapper({
         const blobUrl = `pubky://${pk}/pub/pubky.app/blobs/${blobId}`;
         const blobBody = Buffer.from(fileContent);
 
-        await client.put(blobUrl, blobBody);
+        await client.fetch(blobUrl, {
+          method: 'PUT',
+          body: blobBody,
+          credentials: 'include',
+        });
 
         // Create the PubkyAppFile object
         const fileId = generateTimestampId().toUpperCase();
@@ -411,14 +415,15 @@ export function PubkyClientWrapper({
           size: file.size,
         };
 
-        // Serialize to JSON and convert to Buffer
-        const fileBody = Buffer.from(JSON.stringify(newFile));
-
         // File URL
         const fileUrl = `pubky://${pk}/pub/pubky.app/files/${fileId}`;
 
         // Send the file to the homeserver
-        await client.put(fileUrl, fileBody);
+        await client.fetch(fileUrl, {
+          method: 'PUT',
+          body: JSON.stringify(newFile),
+          credentials: 'include',
+        });
 
         // Store the file URI
 
@@ -446,14 +451,15 @@ export function PubkyClientWrapper({
       Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
       setProfile(pubkeyProfile);
 
-      // Serialize to JSON and convert to Buffer
-      const body = Buffer.from(JSON.stringify(pubkeyProfile));
-
       // Profile URL (fixed address)
       const profileUrl = `pubky://${pk}/pub/pubky.app/profile.json`;
 
       // Send the profile to the homeserver
-      await client.put(profileUrl, body);
+      await client.fetch(profileUrl, {
+        method: 'PUT',
+        body: JSON.stringify(pubkeyProfile),
+        credentials: 'include',
+      });
 
       if (pubkeyProfile.name === 'anonymous') {
         let userEdited = false;
@@ -505,7 +511,11 @@ export function PubkyClientWrapper({
         const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
         const blobBody = Buffer.from(fileContent);
 
-        await client.put(blobUrl, blobBody);
+        await client.fetch(blobUrl, {
+          method: 'PUT',
+          body: blobBody,
+          credentials: 'include',
+        });
 
         // Create the PubkyAppFile object
         const fileId = generateTimestampId().toUpperCase();
@@ -517,14 +527,15 @@ export function PubkyClientWrapper({
           size: file.size,
         };
 
-        // Serialize to JSON and convert to Buffer
-        const fileBody = Buffer.from(JSON.stringify(newFile));
-
         // File URL
         const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
 
         // Send the file to the homeserver
-        await client.put(fileUrl, fileBody);
+        await client.fetch(fileUrl, {
+          method: 'PUT',
+          body: JSON.stringify(newFile),
+          credentials: 'include',
+        });
 
         // Store the file URI
         userProfile.image = fileUrl;
@@ -541,14 +552,15 @@ export function PubkyClientWrapper({
       Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
       setProfile(pubkeyProfile);
 
-      // Serialize to JSON and convert to Buffer
-      const body = Buffer.from(JSON.stringify(pubkeyProfile));
-
       // Profile URL (fixed address)
       const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
 
       // Send the profile to the homeserver
-      await client.put(profileUrl, body);
+      await client.fetch(profileUrl, {
+        method: 'PUT',
+        body: JSON.stringify(pubkeyProfile),
+        credentials: 'include',
+      });
 
       let userEdited = false;
       while (!userEdited) {
@@ -606,14 +618,15 @@ export function PubkyClientWrapper({
       Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
       setProfile(pubkeyProfile);
 
-      // Serialize to JSON and convert to Buffer
-      const body = Buffer.from(JSON.stringify(pubkeyProfile));
-
       // Profile URL (fixed address)
       const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
 
       // Send the profile to the homeserver
-      await client.put(profileUrl, body);
+      await client.fetch(profileUrl, {
+        method: 'PUT',
+        body: JSON.stringify(pubkeyProfile),
+        credentials: 'include',
+      });
 
       return pubkeyProfile;
     } catch (error) {
@@ -658,7 +671,11 @@ export function PubkyClientWrapper({
           const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
           const blobBody = Buffer.from(fileContent);
 
-          await client.put(blobUrl, blobBody);
+          await client.fetch(blobUrl, {
+            method: 'PUT',
+            body: blobBody,
+            credentials: 'include',
+          });
 
           // Create the PubkyAppFile object
           const fileId = generateTimestampId().toUpperCase();
@@ -670,14 +687,15 @@ export function PubkyClientWrapper({
             size: file.size,
           };
 
-          // Serialize to JSON and convert to Buffer
-          const fileBody = Buffer.from(JSON.stringify(newFile));
-
           // File URL
           const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
 
           // Send the file to the homeserver
-          await client.put(fileUrl, fileBody);
+          await client.fetch(fileUrl, {
+            method: 'PUT',
+            body: JSON.stringify(newFile),
+            credentials: 'include',
+          });
 
           // Store the file URI
           uploadedFileUris.push(fileUrl);
@@ -687,14 +705,15 @@ export function PubkyClientWrapper({
         newPost.attachments = uploadedFileUris;
       }
 
-      // Serialize the post to JSON and convert to Buffer
-      const postBody = Buffer.from(JSON.stringify(newPost));
-
       // Post URL
       const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
 
       // Send the post to the homeserver
-      await client.put(postUrl, postBody);
+      await client.fetch(postUrl, {
+        method: 'PUT',
+        body: JSON.stringify(newPost),
+        credentials: 'include',
+      });
 
       const newPostView: PostView = {
         uri: postUrl,
@@ -753,7 +772,11 @@ export function PubkyClientWrapper({
           const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
           const blobBody = Buffer.from(fileContent);
 
-          await client.put(blobUrl, blobBody);
+          await client.fetch(blobUrl, {
+            method: 'PUT',
+            body: blobBody,
+            credentials: 'include',
+          });
 
           // Create the PubkyAppFile object
           const fileId = generateTimestampId().toUpperCase();
@@ -765,14 +788,15 @@ export function PubkyClientWrapper({
             size: file.size,
           };
 
-          // Serialize to JSON and convert to Buffer
-          const fileBody = Buffer.from(JSON.stringify(newFile));
-
           // File URL
           const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
 
           // Send the file to the homeserver
-          await client.put(fileUrl, fileBody);
+          await client.fetch(fileUrl, {
+            method: 'PUT',
+            body: JSON.stringify(newFile),
+            credentials: 'include',
+          });
 
           // Store the file URI
           uploadedFileUris.push(fileUrl);
@@ -782,14 +806,15 @@ export function PubkyClientWrapper({
         newArticle.attachments = uploadedFileUris;
       }
 
-      // Serialize the post to JSON and convert to Buffer
-      const articleBody = Buffer.from(JSON.stringify(newArticle));
-
       // Post URL
       const articleUrl = `pubky://${pubky}/pub/pubky.app/posts/${articleId}`;
 
       // Send the post to the homeserver
-      await client.put(articleUrl, articleBody);
+      await client.fetch(articleUrl, {
+        method: 'PUT',
+        body: JSON.stringify(newArticle),
+        credentials: 'include',
+      });
 
       return { uri: articleUrl, details: newArticle };
     } catch (error) {
@@ -808,15 +833,15 @@ export function PubkyClientWrapper({
         attachments: post?.details?.attachments,
         relationships: post?.relationships,
       };
-
-      // Serialize the post to JSON and convert to Buffer
-      const postBody = Buffer.from(JSON.stringify(editPost));
-
       // Post URL
       const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${post?.details?.id}`;
 
       // Send the post to the homeserver
-      await client.put(postUrl, postBody);
+      await client.fetch(postUrl, {
+        method: 'PUT',
+        body: JSON.stringify(editPost),
+        credentials: 'include',
+      });
 
       return postUrl;
     } catch (error) {
@@ -844,12 +869,18 @@ export function PubkyClientWrapper({
 
       // Delete each file (excluding profile.json) and update progress
       for (let index = 0; index < filesToDelete.length; index++) {
-        await client.delete(filesToDelete[index]);
+        await client.fetch(filesToDelete[index], {
+          method: 'DELETE',
+          credentials: 'include',
+        });
         setProgress(Math.round(((index + 1) / totalFiles) * 100));
       }
 
       // Finally, delete profile.json and update progress to 100%
-      await client.delete(profileUrl);
+      await client.fetch(profileUrl, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
       setProgress(100);
 
       return true;
@@ -859,16 +890,17 @@ export function PubkyClientWrapper({
     }
   };
 
-  const downloadData = async (setProgress) => {
+  const downloadData = async (setProgress: (val: number) => void) => {
     try {
       await ensureLoggedIn();
 
       const userDataUrl = `pubky://${pubky}/pub/pubky.app`;
-      let cursor = undefined;
+      let cursor: string | undefined = undefined;
       const dataList: string[] = [];
       const limit = 500;
       let hasMore = true;
-      // Loop until no more URLs are returned
+
+      // 1) Gather the list of files from pubky
       do {
         const batch = await client.list(userDataUrl, cursor, false, limit);
         if (batch.length === 0) {
@@ -878,6 +910,8 @@ export function PubkyClientWrapper({
           cursor = batch[batch.length - 1];
         }
       } while (hasMore);
+
+      // 2) Prepare a JSZip instance and create the 'data' folder
       const zip = new JSZip();
       const dataFolder = zip.folder('data');
       if (!dataFolder) {
@@ -886,25 +920,28 @@ export function PubkyClientWrapper({
 
       const totalFiles = dataList.length;
 
-      // Process all files and update progress
+      // 3) Fetch each file as a Response, convert to ArrayBuffer, then decide if JSON or binary
       await Promise.all(
         dataList.map(async (dataUrl, index) => {
-          const result = await client.get(dataUrl);
+          // Get the Response object
+          const response = await client.fetch(dataUrl);
 
-          if (result === undefined) {
-            return;
-          }
+          // Convert to ArrayBuffer
+          const arrayBuffer = await response.arrayBuffer();
 
+          // Derive a file name from the pubky URL
           const fileName = dataUrl.split(`pubky://${pubky}/`)[1];
 
+          // Try to decode as JSON (text) — if it fails, store binary
           try {
             const decoder = new TextDecoder('utf-8');
-            const decodedString = decoder.decode(result);
+            const decodedString = decoder.decode(arrayBuffer);
             const parsedData = JSON.parse(decodedString);
             dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
-          } catch {
-            // Save as binary if not JSON
-            dataFolder.file(fileName, result);
+          } catch (err) {
+            dataFolder.file(fileName, new Uint8Array(arrayBuffer), {
+              binary: true,
+            });
           }
 
           // Update progress
@@ -994,7 +1031,11 @@ export function PubkyClientWrapper({
         const dataUrl = `pubky://${pubky}/${filename.replace('data/', '')}`;
 
         // Upload the file
-        await client.put(dataUrl, new Uint8Array(content));
+        await client.fetch(dataUrl, {
+          method: 'PUT',
+          body: new Uint8Array(content),
+          credentials: 'include',
+        });
 
         // Update progress
         setProgress(Math.round(((index + 1) / totalFiles) * 100));
@@ -1015,16 +1056,9 @@ export function PubkyClientWrapper({
       await ensureLoggedIn();
 
       const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
-      const lastRead = await client.get(lastReadUrl);
-      const jsonString =
-        lastRead &&
-        Object.values(lastRead)
-          .map((asciiCode: number) => String.fromCharCode(asciiCode))
-          .join('');
-
-      const parsedData = jsonString && JSON.parse(jsonString);
-      const timestamp = Number(parsedData.timestamp);
-
+      const response = await client.fetch(lastReadUrl);
+      const lastRead = await response.json();
+      const timestamp = Number(lastRead.timestamp);
       return timestamp;
     } catch (error) {
       // console.error('Error get timestamp:', error);
@@ -1036,11 +1070,14 @@ export function PubkyClientWrapper({
     try {
       await ensureLoggedIn();
 
-      const body = { timestamp: timestamp };
-      const lastReadBody = Buffer.from(JSON.stringify(body));
+      const lastRead = { timestamp: timestamp };
 
       const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
-      await client.put(lastReadUrl, lastReadBody);
+      await client.fetch(lastReadUrl, {
+        method: 'PUT',
+        body: JSON.stringify(lastRead),
+        credentials: 'include',
+      });
 
       setTimestamp(timestamp);
 
@@ -1058,17 +1095,10 @@ export function PubkyClientWrapper({
       await ensureLoggedIn();
 
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
-      const settings = await client.get(settingsUrl);
+      const response = await client.fetch(settingsUrl);
+      const settings = await response.json();
 
-      const jsonString =
-        settings &&
-        Object.values(settings)
-          .map((asciiCode: number) => String.fromCharCode(asciiCode))
-          .join('');
-
-      const parsedData = jsonString && JSON.parse(jsonString);
-
-      return parsedData;
+      return settings;
     } catch (error) {
       console.error('Error load settings:', error);
       return null;
@@ -1083,11 +1113,15 @@ export function PubkyClientWrapper({
     try {
       await ensureLoggedIn();
 
-      const body = { notifications, privacysafety, language };
-      const settingsBody = Buffer.from(JSON.stringify(body));
+      const settings = { notifications, privacysafety, language };
 
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
-      await client.put(settingsUrl, settingsBody);
+
+      await client.fetch(settingsUrl, {
+        method: 'PUT',
+        body: JSON.stringify(settings),
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1104,7 +1138,10 @@ export function PubkyClientWrapper({
       const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
 
       // Send the post to the homeserver
-      await client.delete(postUrl);
+      await client.fetch(postUrl, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1164,7 +1201,11 @@ export function PubkyClientWrapper({
           const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
           const blobBody = Buffer.from(fileContent);
 
-          await client.put(blobUrl, blobBody);
+          await client.fetch(blobUrl, {
+            method: 'PUT',
+            body: blobBody,
+            credentials: 'include',
+          });
 
           // Create the PubkyAppFile object
           const fileId = generateTimestampId().toUpperCase();
@@ -1176,14 +1217,15 @@ export function PubkyClientWrapper({
             size: file.size,
           };
 
-          // Serialize to JSON and convert to Buffer
-          const fileBody = Buffer.from(JSON.stringify(newFile));
-
           // File URL
           const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
 
           // Send the file to the homeserver
-          await client.put(fileUrl, fileBody);
+          await client.fetch(fileUrl, {
+            method: 'PUT',
+            body: JSON.stringify(newFile),
+            credentials: 'include',
+          });
 
           // Store the file URI
           uploadedFileUris.push(fileUrl);
@@ -1193,14 +1235,15 @@ export function PubkyClientWrapper({
         newRepost.attachments = uploadedFileUris;
       }
 
-      // Serialize the repost to JSON and convert to Buffer
-      const repostBody = Buffer.from(JSON.stringify(newRepost));
-
       // Repost URL
       const repostUrl = `pubky://${pubky}/pub/pubky.app/posts/${repostId}`;
 
       // Send the post to the homeserver
-      await client.put(repostUrl, repostBody);
+      await client.fetch(repostUrl, {
+        method: 'PUT',
+        body: JSON.stringify(newRepost),
+        credentials: 'include',
+      });
 
       return repostUrl;
     } catch (error) {
@@ -1241,7 +1284,11 @@ export function PubkyClientWrapper({
           const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
           const blobBody = Buffer.from(fileContent);
 
-          await client.put(blobUrl, blobBody);
+          await client.fetch(blobUrl, {
+            method: 'PUT',
+            body: blobBody,
+            credentials: 'include',
+          });
 
           const fileId = generateTimestampId().toUpperCase();
           const newFile = {
@@ -1252,11 +1299,13 @@ export function PubkyClientWrapper({
             size: file.size,
           };
 
-          const fileBody = Buffer.from(JSON.stringify(newFile));
-
           const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
 
-          await client.put(fileUrl, fileBody);
+          await client.fetch(fileUrl, {
+            method: 'PUT',
+            body: JSON.stringify(newFile),
+            credentials: 'include',
+          });
 
           uploadedFileUris.push(fileUrl);
         }
@@ -1265,10 +1314,13 @@ export function PubkyClientWrapper({
         replyPost.attachments = uploadedFileUris;
       }
 
-      const replyBody = Buffer.from(JSON.stringify(replyPost));
       const replyUrl = `pubky://${pubky}/pub/pubky.app/posts/${replyId}`;
 
-      await client.put(replyUrl, replyBody);
+      await client.fetch(replyUrl, {
+        method: 'PUT',
+        body: JSON.stringify(replyPost),
+        credentials: 'include',
+      });
 
       return replyUrl;
     } catch (error) {
@@ -1285,10 +1337,13 @@ export function PubkyClientWrapper({
         created_at: Date.now(),
       };
 
-      const followDataBody = Buffer.from(JSON.stringify(followData));
       const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
 
-      await client.put(followUrl, followDataBody);
+      await client.fetch(followUrl, {
+        method: 'PUT',
+        body: JSON.stringify(followData),
+        credentials: 'include',
+      });
 
       // get user relationships and check if it is followed
       // keep in a while loop until it is followed
@@ -1320,7 +1375,10 @@ export function PubkyClientWrapper({
 
       const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
 
-      await client.delete(followUrl);
+      await client.fetch(followUrl, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       // get user relationships and check if it is unfollowed
       // keep in a while loop until it is unfollowed
@@ -1350,7 +1408,10 @@ export function PubkyClientWrapper({
     try {
       await ensureLoggedIn();
 
-      await client.delete(file_uri);
+      await client.fetch(file_uri, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1367,10 +1428,13 @@ export function PubkyClientWrapper({
         created_at: Date.now(),
       };
 
-      const muteDataBody = Buffer.from(JSON.stringify(muteData));
       const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
 
-      await client.put(muteUrl, muteDataBody);
+      await client.fetch(muteUrl, {
+        method: 'PUT',
+        body: JSON.stringify(muteData),
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1385,7 +1449,10 @@ export function PubkyClientWrapper({
 
       const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
 
-      await client.delete(muteUrl);
+      await client.fetch(muteUrl, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1406,11 +1473,14 @@ export function PubkyClientWrapper({
         created_at: Date.now(),
       };
 
-      const bookmarkDataBody = Buffer.from(JSON.stringify(bookmarkData));
       const bookmarkId = (await generateHashId(bookmarkData.uri)).toUpperCase();
       const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
 
-      await client.put(bookmarkUrl, bookmarkDataBody);
+      await client.fetch(bookmarkUrl, {
+        method: 'PUT',
+        body: JSON.stringify(bookmarkData),
+        credentials: 'include',
+      });
 
       // get post and check if it is bookmarked
       // keep in a while loop until it is bookmarked
@@ -1446,7 +1516,10 @@ export function PubkyClientWrapper({
 
       const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
 
-      await client.delete(bookmarkUrl);
+      await client.fetch(bookmarkUrl, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       // get post and check if it is bookmarked
       // keep in a while loop until it is bookmarked
@@ -1490,14 +1563,17 @@ export function PubkyClientWrapper({
         created_at: Date.now(),
       };
 
-      const tagBody = Buffer.from(JSON.stringify(tagData));
       const tagId = (
         await generateHashId(`${tagData.uri}:${tagData.label}`)
       ).toUpperCase();
 
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
-      await client.put(tagUrl, tagBody);
+      await client.fetch(tagUrl, {
+        method: 'PUT',
+        body: JSON.stringify(tagData),
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1519,14 +1595,17 @@ export function PubkyClientWrapper({
         created_at: Date.now(),
       };
 
-      const feedBody = Buffer.from(JSON.stringify(feedData));
       const feedId = (
         await generateHashId(JSON.stringify(feed).toLowerCase())
       ).toUpperCase();
 
       const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
 
-      await client.put(feedUrl, feedBody);
+      await client.fetch(feedUrl, {
+        method: 'PUT',
+        body: JSON.stringify(feedData),
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1549,13 +1628,9 @@ export function PubkyClientWrapper({
       const feedsData = await Promise.all(
         feedUris.map(async (uri) => {
           try {
-            const result = await client.get(uri);
-            if (result) {
-              const decodedString = new TextDecoder('utf-8').decode(result);
-              const parsedData = JSON.parse(decodedString);
-              return { feed: parsedData.feed, name: parsedData.name };
-            }
-            return null; // Handle cases where the result might be undefined
+            const response = await client.fetch(uri);
+            const feed = await response.json();
+            return feed;
           } catch (error) {
             console.error(`Error fetching feed from ${uri}:`, error);
             return null;
@@ -1586,7 +1661,10 @@ export function PubkyClientWrapper({
       const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
 
       // Delete the feed from the homeserver
-      await client.delete(feedUrl);
+      await client.fetch(feedUrl, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1610,7 +1688,7 @@ export function PubkyClientWrapper({
       ).toUpperCase();
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
-      await client.delete(tagUrl);
+      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include' });
 
       return true;
     } catch (error) {
@@ -1636,14 +1714,17 @@ export function PubkyClientWrapper({
         created_at: Date.now(),
       };
 
-      const tagBody = Buffer.from(JSON.stringify(tagData));
       const tagId = (
         await generateHashId(`${tagData.uri}:${tagData.label}`)
       ).toUpperCase();
 
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
-      await client.put(tagUrl, tagBody);
+      await client.fetch(tagUrl, {
+        method: 'PUT',
+        body: JSON.stringify(tagData),
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1665,7 +1746,7 @@ export function PubkyClientWrapper({
       ).toUpperCase();
       const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
 
-      await client.delete(tagUrl);
+      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include' });
 
       return true;
     } catch (error) {
