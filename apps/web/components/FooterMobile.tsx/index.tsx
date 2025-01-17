@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Icon, PostUtil } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 import Link from 'next/link';
 import { ImageByUri } from '../ImageByUri';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { BottomSheet } from '../BottomSheet';
 
 interface FooterMobileProps {
   title?: string;
@@ -20,7 +19,6 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
 
   const { profile } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
-  const [showSheetPost, setShowSheetPost] = useState(false);
 
   if (!pubky) return;
 
@@ -33,12 +31,6 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
         >
           <Icon.Activity size="24" />
         </Link>
-        <div
-          onClick={() => setShowSheetPost(true)}
-          className={twMerge(buttonCSS)}
-        >
-          <Icon.Plus size="24" />
-        </div>
         <Link
           href="/search"
           className={twMerge(buttonCSS, title === 'Search' && activeCSS)}
@@ -56,6 +48,12 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
           className={twMerge(buttonCSS, title === 'Bookmarks' && activeCSS)}
         >
           <Icon.BookmarkSimple size="24" />
+        </Link>
+        <Link
+          href="/settings"
+          className={twMerge(buttonCSS, title === 'Settings' && activeCSS)}
+        >
+          <Icon.GearSix size="24" />
         </Link>
         <Link href="/profile" className="w-[48px] relative">
           {unReadNotification !== 0 && (
@@ -78,7 +76,6 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
           />
         </Link>
       </div>
-      <BottomSheet.CreatePost show={showSheetPost} setShow={setShowSheetPost} />
     </div>
   );
 };

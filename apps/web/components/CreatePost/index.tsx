@@ -4,11 +4,15 @@ import { Button } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from '../Modal';
 import { usePubkyClientContext, useJoin } from '@/contexts';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { BottomSheet } from '../BottomSheet';
 
 export default function CreatePost() {
   const { pubky } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const { openJoin } = useJoin();
   const [showModalPost, setShowModalPost] = useState(false);
+  const [showSheetPost, setShowSheetPost] = useState(false);
   const modalPostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,13 +34,20 @@ export default function CreatePost() {
 
   return (
     <>
-      <div className="hidden lg:flex fixed bottom-5 right-5 sm:bottom-10 sm:right-10 z-40 backdrop-blur-2xl rounded-[96px]">
+      <div className="flex fixed bottom-24 right-5 lg:bottom-10 lg:right-10 z-40 backdrop-blur-2xl rounded-[96px]">
         <Button.Create
           id="new-post-btn"
-          onClick={() => (pubky ? setShowModalPost(true) : openJoin())}
+          onClick={() =>
+            pubky
+              ? isMobile
+                ? setShowSheetPost(true)
+                : setShowModalPost(true)
+              : openJoin()
+          }
         />
       </div>
 
+      <BottomSheet.CreatePost show={showSheetPost} setShow={setShowSheetPost} />
       <Modal.CreatePost
         showModalPost={showModalPost}
         setShowModalPost={setShowModalPost}
