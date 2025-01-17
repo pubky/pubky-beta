@@ -225,8 +225,8 @@ export default function FooterArea({
                     disabled={loading}
                   />
                 </div>
-                <div className="hidden sm:flex">
-                  {article && (
+                {article && (
+                  <div className="hidden sm:flex">
                     <Button.Action
                       variant="custom"
                       icon={<Icon.Newspaper size="32" />}
@@ -239,8 +239,8 @@ export default function FooterArea({
                       }}
                       disabled={loading}
                     />
-                  )}
-                </div>
+                  </div>
+                )}
                 {!noFile && (
                   <Button.Action
                     id="media-upload-btn"
