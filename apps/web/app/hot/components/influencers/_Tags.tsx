@@ -82,11 +82,11 @@ export function Tags({ influencer }: TagsProps) {
       const tagExists = profileTags.find((t) => t.label === tag);
       if (tagExists) {
         // check if pubkeyToUse is in taggers
-        if (tagExists.taggers.includes(pubKeyToUse)) {
+        if (tagExists.taggers.includes(pubky || '')) {
           // remove tagger from tag but keep the tag but update the taggers_count
           tagExists.taggers_count--;
           tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubKeyToUse,
+            (t) => t !== pubky || '',
           );
           setProfileTags(
             profileTags.map((t) => (t.label === tag ? tagExists : t)),
@@ -95,7 +95,7 @@ export function Tags({ influencer }: TagsProps) {
           // remove tag from taggers
           tagExists.taggers_count--;
           tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubKeyToUse,
+            (t) => t !== pubky || '',
           );
           setProfileTags(
             profileTags.map((t) => (t.label === tag ? tagExists : t)),
