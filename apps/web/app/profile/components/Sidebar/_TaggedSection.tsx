@@ -19,6 +19,7 @@ interface TaggedSectionProps {
   setShowModalProfileTag: (show: boolean) => void;
   creatorPubky: string | null | undefined;
   name: string;
+  loadingTags: string;
 }
 
 export default function TaggedSection({
@@ -29,6 +30,7 @@ export default function TaggedSection({
   setShowModalProfileTag,
   creatorPubky,
   name,
+  loadingTags,
 }: TaggedSectionProps) {
   const { pubky } = usePubkyClientContext();
   const { openJoin } = useJoin();
@@ -77,13 +79,10 @@ export default function TaggedSection({
                       }
                     >
                       <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tag?.label, 21)}
-                        {/**<Typography.Caption
-                          variant="bold"
-                          className="text-opacity-30"
-                        >
-                          {tag?.taggers_count}
-                        </Typography.Caption>*/}
+                        {Utils.minifyText(tag?.label, 20)}
+                        {loadingTags === tag?.label && (
+                          <Icon.LoadingSpin size="16" />
+                        )}
                       </div>
                     </PostUtil.Tag>
                     {/**</TooltipUI.Root>*/}

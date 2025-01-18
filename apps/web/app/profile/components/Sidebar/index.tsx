@@ -8,7 +8,7 @@ import BioSection from './_BioSection';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
 import { useUserProfile } from '@/hooks/useUser';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 import { BottomSheet } from '@/components';
 
@@ -17,16 +17,19 @@ export default function Sidebar({
 }: {
   creatorPubky?: string | null;
 }) {
+  const { addAlert } = useAlertContext();
   const { pubky, profile, createTagProfile, deleteTagProfile } =
     usePubkyClientContext();
-  const usePubky = creatorPubky ?? pubky;
-  const { data, isLoading } = useUserProfile(usePubky ?? '', pubky ?? '');
+  const userPubky = creatorPubky ?? pubky;
+  const { data, isLoading } = useUserProfile(userPubky ?? '', pubky ?? '');
   const profileUser = data;
   const name = profileUser?.details?.name ?? '';
   const bio = profileUser?.details.bio || 'No bio.';
   const links = creatorPubky ? profileUser?.details?.links : profile?.links;
   const image = profileUser?.details?.image ?? '/images/webp/Userpic.webp';
-  const profileTags = profileUser?.tags ?? [];
+  const [profileTags, setProfileTags] = useState<UserTags[]>(
+    profileUser?.tags ?? [],
+  );
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
@@ -37,6 +40,11 @@ export default function Sidebar({
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const checkLink = Utils.storage.get('checkLink') as boolean;
   const [scrolled, setScrolled] = useState(false);
+  const [loadingTags, setLoadingTags] = useState('');
+
+  useEffect(() => {
+    setProfileTags(profileUser?.tags ?? []);
+  }, [profileUser?.tags]);
 
   useEffect(() => {
     async function fetchData() {
@@ -56,8 +64,48 @@ export default function Sidebar({
     const pubKeyToUse =
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
+    // loading tag
+    setLoadingTags(tag);
     if (pubKeyToUse) {
-      await createTagProfile(pubKeyToUse, tag);
+      // before adding tag, check if tag already exists and is not the same pubky
+      const tagExists = profileTags.find((t) => t.label === tag);
+
+      if (tagExists) {
+        // check if tag is the same pubky
+        if (tagExists.taggers.includes(pubKeyToUse)) {
+          setLoadingTags('');
+        } else {
+          // add tag to taggers
+          tagExists.taggers_count++;
+
+          // update profileTags with new taggers
+          const newProfileTags = profileTags.map((t) => {
+            if (t.label === tag) {
+              return { ...t, taggers: [...t.taggers, pubKeyToUse] };
+            }
+            return t;
+          });
+
+          // update tag in UI
+          setProfileTags(newProfileTags);
+        }
+      } else {
+        // update tag optimistic in the UI
+        setProfileTags([
+          ...profileTags,
+          {
+            label: tag,
+            taggers: [pubKeyToUse],
+            taggers_count: 1,
+          },
+        ]);
+      }
+      const response = await createTagProfile(pubKeyToUse, tag);
+      if (!response) {
+        // show error message
+        addAlert('Error adding tag', 'warning');
+      }
+      setLoadingTags('');
     }
   };
 
@@ -65,8 +113,40 @@ export default function Sidebar({
     const pubKeyToUse =
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
+    // loading tag
+    setLoadingTags(tag);
+
     if (pubKeyToUse) {
-      await deleteTagProfile(pubKeyToUse, tag);
+      // check if tag exists in profileTags
+      const tagExists = profileTags.find((t) => t.label === tag);
+      if (tagExists) {
+        // check if pubkeyToUse is in taggers
+        if (tagExists.taggers.includes(pubKeyToUse)) {
+          // remove tagger from tag but keep the tag but update the taggers_count
+          tagExists.taggers_count--;
+          tagExists.taggers = tagExists.taggers.filter(
+            (t) => t !== pubKeyToUse,
+          );
+          setProfileTags(
+            profileTags.map((t) => (t.label === tag ? tagExists : t)),
+          );
+        } else {
+          // remove tag from taggers
+          tagExists.taggers_count--;
+          tagExists.taggers = tagExists.taggers.filter(
+            (t) => t !== pubKeyToUse,
+          );
+          setProfileTags(
+            profileTags.map((t) => (t.label === tag ? tagExists : t)),
+          );
+        }
+      }
+
+      const response = await deleteTagProfile(pubKeyToUse, tag);
+      if (!response) {
+        addAlert('Error deleting tag', 'warning');
+      }
+      setLoadingTags('');
     }
   };
 
@@ -95,7 +175,7 @@ export default function Sidebar({
           name={name}
           profile={profileUser}
           creatorPubky={creatorPubky}
-          pubkyUser={usePubky ?? ''}
+          pubkyUser={userPubky ?? ''}
           showProfileMenu={showProfileMenu}
           setShowProfileMenu={setShowProfileMenu}
           bio={bio}
@@ -115,6 +195,7 @@ export default function Sidebar({
             setShowModalProfileTag={setShowModalProfileTag}
             creatorPubky={creatorPubky}
             name={name}
+            loadingTags={loadingTags}
           />
 
           <LinksSection
@@ -139,7 +220,7 @@ export default function Sidebar({
         handleDeleteProfileTag={handleDeleteProfileTag}
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
-        pubkyUser={usePubky}
+        pubkyUser={userPubky}
         name={name}
         uriImage={image}
       />

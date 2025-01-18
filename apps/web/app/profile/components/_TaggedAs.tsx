@@ -2,7 +2,7 @@
 
 import { BottomSheet, Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useJoin, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 import {
   Button,
@@ -26,13 +26,15 @@ type TaggedAsProps = {
 };
 
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
+  const { openJoin } = useJoin();
+  const { addAlert } = useAlertContext();
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const isMobile = useIsMobile();
-  const usePubky = creatorPubky || pubky;
-  const { data } = useUserProfile(usePubky ?? '', pubky ?? '');
+  const usePubky = creatorPubky || pubky || '';
+  const { data } = useUserProfile(usePubky, pubky ?? '');
   const name = data?.details?.name;
   const image = data?.details?.image;
-  const profileTags = data?.tags;
+  const [profileTags, setProfileTags] = useState<UserTags[]>(data?.tags ?? []);
   const links = data?.details?.links ?? [];
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   const [showSheetProfileTag, setShowSheetProfileTag] = useState(false);
@@ -44,6 +46,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>(
     [],
   );
+  const [loadingTags, setLoadingTags] = useState('');
+
+  useEffect(() => {
+    setProfileTags(data?.tags ?? []);
+  }, [data?.tags]);
 
   useEffect(() => {
     const fetchTaggedImages = async () => {
@@ -67,20 +74,93 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   }, [profileTags, pubky]);
 
   const handleAddProfileTag = async (tag: string) => {
-    const pubKeyToUse =
-      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+    // loading tag
+    setLoadingTags(tag);
+    if (usePubky) {
+      // before adding tag, check if tag already exists and is not the same pubky
+      const tagExists = profileTags.find((t) => t.label === tag);
 
-    if (pubKeyToUse) {
-      await createTagProfile(pubKeyToUse, tag);
+      if (tagExists) {
+        // check if tag is the same pubky
+        if (tagExists.taggers.includes(pubky || '')) {
+          setLoadingTags('');
+        } else {
+          // add tag to taggers
+          tagExists.taggers_count++;
+
+          // update profileTags with new taggers
+          const newProfileTags = profileTags.map((t) => {
+            if (t.label === tag) {
+              return { ...t, taggers: [...t.taggers, pubky || ''] };
+            }
+            return t;
+          });
+
+          console.log('newProfileTags', newProfileTags);
+
+          // update tag in UI
+          setProfileTags(newProfileTags);
+        }
+      } else {
+        // update tag optimistic in the UI
+        setProfileTags([
+          ...profileTags,
+          {
+            label: tag,
+            taggers: [pubky || ''],
+            taggers_count: 1,
+          },
+        ]);
+      }
+      const response = await createTagProfile(usePubky, tag);
+      if (!response) {
+        // show error message
+        addAlert('Error adding tag', 'warning');
+      }
+      setLoadingTags('');
     }
   };
 
   const handleDeleteProfileTag = async (tag: string) => {
-    const pubKeyToUse =
-      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+    // loading tag
+    setLoadingTags(tag);
 
-    if (pubKeyToUse) {
-      await deleteTagProfile(pubKeyToUse, tag);
+    if (usePubky) {
+      // check if tag exists in profileTags
+      const tagExists = profileTags.find((t) => t.label === tag);
+
+      if (tagExists) {
+        // check if usePubky is in taggers
+        if (tagExists.taggers.includes(pubky || '')) {
+          // remove tagger from tag but keep the tag but update the taggers_count
+          if (tagExists.taggers_count >= 1) {
+            tagExists.taggers_count--;
+          }
+          tagExists.taggers = tagExists.taggers.filter(
+            (t) => t !== pubky || '',
+          );
+          setProfileTags(
+            profileTags.map((t) => (t.label === tag ? tagExists : t)),
+          );
+        } else {
+          // remove tag from taggers
+          if (tagExists.taggers_count >= 1) {
+            tagExists.taggers_count--;
+          }
+          tagExists.taggers = tagExists.taggers.filter(
+            (t) => t !== pubky || '',
+          );
+          setProfileTags(
+            profileTags.map((t) => (t.label === tag ? tagExists : t)),
+          );
+        }
+      }
+
+      const response = await deleteTagProfile(usePubky, tag);
+      if (!response) {
+        addAlert('Error deleting tag', 'warning');
+      }
+      setLoadingTags('');
     }
   };
 
@@ -112,42 +192,28 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
                   return (
                     <div className="flex gap-2" key={index}>
-                      {/**<TooltipUI.Root
-                  delay={500}
-                  setShowTooltip={setShowTooltipProfile}
-                  tagId={tag.tag}
-                >
-                  {showTooltipProfile === tag.tag && (
-                    <Tooltip.Tag
-                      setShowModalTags={setShowModalProfileTag}
-                      setSelectedTag={setSelectedTag}
-                      tags={tag}
-                    />
-                  )}*/}
                       <PostUtil.Tag
                         key={index}
                         clicked={isTagFound}
                         onClick={(event) => {
                           event.stopPropagation();
-                          isTagFound
-                            ? handleDeleteProfileTag(tag?.label)
-                            : handleAddProfileTag(tag?.label);
+                          pubky
+                            ? isTagFound
+                              ? handleDeleteProfileTag(tag?.label)
+                              : handleAddProfileTag(tag?.label)
+                            : openJoin();
                         }}
                         color={
                           tag?.label && Utils.generateRandomColor(tag?.label)
                         }
                       >
                         <div className="flex gap-2 items-center">
-                          {Utils.minifyText(tag?.label, 21)}
-                          <Typography.Caption
-                            variant="bold"
-                            className="text-opacity-60"
-                          >
-                            {tag?.taggers_count}
-                          </Typography.Caption>
+                          {Utils.minifyText(tag?.label, 20)}
+                          {loadingTags === tag?.label && (
+                            <Icon.LoadingSpin size="16" />
+                          )}
                         </div>
                       </PostUtil.Tag>
-                      {/**</div></TooltipUI.Root>*/}
                       <Link href={`/search?tags=${tag?.label}`}>
                         <Button.Action
                           variant="custom"
@@ -156,10 +222,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                           className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                         />
                       </Link>
-                      <div
-                        //onClick={() => setShowModalProfileTag(true)}
-                        className="cursor-pointer flex items-center"
-                      >
+                      <div className="cursor-pointer flex items-center">
                         {displayedImages?.map((image, imageIndex) => (
                           <ImageByUri
                             width={32}
