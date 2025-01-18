@@ -1165,7 +1165,7 @@ export function PubkyClientWrapper({
 
   const createRepost = async (
     originalPostId: string,
-    originalauthorId: string,
+    originalAuthorId: string,
     repostContent: string,
     kind: PostKind,
     files?: File[],
@@ -1181,10 +1181,39 @@ export function PubkyClientWrapper({
         content: repostContent,
         embed: {
           kind: 'short',
-          uri: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`,
+          uri: `pubky://${originalAuthorId}/pub/pubky.app/posts/${originalPostId}`,
         },
         kind,
       };
+
+      const repostedPost = timeline.find(
+        (post) => post.details.id === originalPostId,
+      );
+
+      // Add the repost to the timeline
+      setTimeline([
+        {
+          details: {
+            id: repostId,
+            author: repostedPost?.details.author ?? '',
+            content: repostContent,
+            kind,
+            uri: repostedPost?.details.uri ?? '',
+            indexed_at: repostedPost?.details.indexed_at ?? Date.now(),
+          },
+          relationships: {
+            reposted: originalPostId,
+          },
+          counts: {
+            replies: repostedPost?.counts.replies ?? 0,
+            reposts: repostedPost?.counts.reposts ?? 0,
+            tags: repostedPost?.counts.tags ?? 0,
+          },
+          tags: repostedPost?.tags ?? [],
+          cached: repostedPost?.cached ?? 'local',
+        },
+        ...timeline,
+      ]);
 
       // List to store URIs of uploaded files
       const uploadedFileUris: string[] = [];
