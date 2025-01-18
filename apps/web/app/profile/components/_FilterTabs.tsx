@@ -161,7 +161,7 @@ export default function FilterTabs({
                   {tab.label}
                 </Typography.Body>
               </div>
-              {!loading && tab.key && (
+              {tab.key && (
                 <Typography.Body
                   className="tracking-normal"
                   variant="small-bold"
