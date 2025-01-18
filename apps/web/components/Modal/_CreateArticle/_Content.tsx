@@ -19,7 +19,8 @@ export default function ContentCreateArticle({
   setShowModalArticle,
   setShowModalPost,
 }: CreateArticleProps) {
-  const { pubky, createArticle, createTag, profile } = usePubkyClientContext();
+  const { pubky, createArticle, createTag, profile, setTimeline, timeline } =
+    usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
   const isMobile = useIsMobile();
   const [isError, setIsError] = useState(false);
@@ -72,6 +73,47 @@ export default function ContentCreateArticle({
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', postId, tag);
         }
+
+        // transform tags to tag_id
+        const tags = updatedTags.map((tag) => {
+          return {
+            label: tag,
+            taggers: [pubky ?? ''],
+            taggers_count: 1,
+          };
+        });
+
+        const newPost = {
+          details: newArticle.details,
+          relationships: {
+            reposted: postId,
+          },
+          counts: {
+            replies: 0,
+            reposts: 0,
+            tags: 0,
+          },
+          tags: tags,
+          cached: {},
+        };
+
+        // set the article to the timeline
+        setTimeline([
+          {
+            details: {
+              author: pubky ?? '',
+              id: newPost.relationships.reposted,
+              indexed_at: Date.now(),
+              uri: newArticle?.uri,
+              ...newPost.details,
+            },
+            relationships: newArticle.details.relationships,
+            counts: newPost.counts,
+            tags: tags,
+            cached: 'local',
+          },
+          ...timeline,
+        ]);
 
         addAlert('Article created!');
       } else {
