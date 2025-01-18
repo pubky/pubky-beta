@@ -134,7 +134,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       const interval = setInterval(fetchNotifications, 60000);
       return () => clearInterval(interval);
     }
-  }, [pubky, notificationPreferences]);
+  }, [pubky, notificationPreferences, timestamp]);
 
   return (
     <NotificationsContext.Provider

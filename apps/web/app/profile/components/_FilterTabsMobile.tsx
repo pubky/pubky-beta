@@ -98,7 +98,7 @@ export default function FilterTabsMobile({
   const getTabNumber = (key: string) => {
     switch (key) {
       case 'notifications':
-        return unReadNotification;
+        return unReadNotification || null;
       case 'bookmarks':
         return userCounts?.bookmarks || 0;
       case 'posts':
