@@ -1,9 +1,9 @@
 'use client';
 
-import { Icon, PostUtil } from '@social/ui-shared';
+import { PostUtil, Typography } from '@social/ui-shared';
 import { UserTags, UserView } from '@/types/User';
 import { Utils } from '@social/utils-shared';
-import { useAlertContext, useJoin, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 
 interface TagsProps {
@@ -11,110 +11,76 @@ interface TagsProps {
 }
 
 export function Tags({ influencer }: TagsProps) {
-  const { openJoin } = useJoin();
   const { addAlert } = useAlertContext();
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
+  const usePubky = influencer?.details?.id || pubky || '';
   const [profileTags, setProfileTags] = useState<UserTags[]>(
     influencer?.tags ?? [],
   );
-  const [loadingTags, setLoadingTags] = useState('');
 
   useEffect(() => {
     setProfileTags(influencer?.tags ?? []);
   }, [influencer?.tags]);
 
-  const handleAddProfileTag = async (creatorPubky: string, tag: string) => {
-    const pubKeyToUse = creatorPubky || pubky;
-
-    // loading tag
-    setLoadingTags(tag);
-    if (pubKeyToUse) {
-      // before adding tag, check if tag already exists and is not the same pubky
+  const handleAddProfileTag = async (tag: string) => {
+    if (usePubky) {
       const tagExists = profileTags.find((t) => t.label === tag);
 
       if (tagExists) {
-        // check if tag is the same pubky
-        if (tagExists.taggers.includes(pubKeyToUse)) {
-          setLoadingTags('');
-        } else {
-          // add tag to taggers
-          tagExists.taggers_count++;
-
-          // update profileTags with new taggers
-          const newProfileTags = profileTags.map((t) => {
-            if (t.label === tag) {
-              return { ...t, taggers: [...t.taggers, pubKeyToUse] };
-            }
-            return t;
-          });
-
-          // update tag in UI
-          setProfileTags(newProfileTags);
+        if (!tagExists.taggers.includes(pubky || '')) {
+          const updatedTags = profileTags.map((t) =>
+            t.label === tag
+              ? {
+                  ...t,
+                  taggers: [...t.taggers, pubky || ''],
+                  taggers_count: t.taggers_count + 1,
+                }
+              : t,
+          );
+          setProfileTags(updatedTags);
         }
       } else {
-        // update tag optimistic in the UI
-        setProfileTags([
-          ...profileTags,
-          {
-            label: tag,
-            taggers: [pubKeyToUse],
-            taggers_count: 1,
-          },
-        ]);
+        const newTag = {
+          label: tag,
+          taggers: [pubky || ''],
+          taggers_count: 1,
+        };
+        setProfileTags([...profileTags, newTag]);
       }
-      const response = await createTagProfile(pubKeyToUse, tag);
+
+      const response = await createTagProfile(usePubky, tag);
       if (!response) {
-        // show error message
         addAlert('Error adding tag', 'warning');
       }
-      setLoadingTags('');
     }
   };
 
-  const handleDeleteProfileTag = async (creatorPubky: string, tag: string) => {
-    const pubKeyToUse = creatorPubky || pubky;
+  const handleDeleteProfileTag = async (tag: string) => {
+    if (usePubky) {
+      const updatedTags = profileTags
+        .map((t) =>
+          t.label === tag
+            ? {
+                ...t,
+                taggers: t.taggers.filter((tagger) => tagger !== pubky),
+                taggers_count: Math.max(t.taggers_count - 1, 0),
+              }
+            : t,
+        )
+        .filter((t) => t.taggers_count > 0);
+      setProfileTags(updatedTags);
 
-    // loading tag
-    setLoadingTags(tag);
-
-    if (pubKeyToUse) {
-      // check if tag exists in profileTags
-      const tagExists = profileTags.find((t) => t.label === tag);
-      if (tagExists) {
-        // check if pubkeyToUse is in taggers
-        if (tagExists.taggers.includes(pubky || '')) {
-          // remove tagger from tag but keep the tag but update the taggers_count
-          tagExists.taggers_count--;
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubky || '',
-          );
-          setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
-          );
-        } else {
-          // remove tag from taggers
-          tagExists.taggers_count--;
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubky || '',
-          );
-          setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
-          );
-        }
-      }
-
-      const response = await deleteTagProfile(pubKeyToUse, tag);
+      const response = await deleteTagProfile(usePubky, tag);
       if (!response) {
         addAlert('Error deleting tag', 'warning');
       }
-      setLoadingTags('');
     }
   };
 
   return (
     <div className="flex lg:justify-end gap-2 items-center lg:w-full">
-      {influencer?.tags?.slice(0, 3).map((tag, index) => {
-        const isTagFound = tag?.taggers?.some((fromItem) => fromItem === pubky);
+      {profileTags.slice(0, 3).map((tag, index) => {
+        const isTagFound = tag.taggers.includes(pubky || '');
 
         return (
           <PostUtil.Tag
@@ -122,17 +88,17 @@ export function Tags({ influencer }: TagsProps) {
             clicked={isTagFound}
             onClick={(event) => {
               event.stopPropagation();
-              pubky
-                ? isTagFound
-                  ? handleDeleteProfileTag(influencer?.details?.id, tag?.label)
-                  : handleAddProfileTag(influencer?.details?.id, tag?.label)
-                : openJoin();
+              isTagFound
+                ? handleDeleteProfileTag(tag.label)
+                : handleAddProfileTag(tag.label);
             }}
-            color={tag?.label && Utils.generateRandomColor(tag?.label)}
+            color={tag.label && Utils.generateRandomColor(tag.label)}
           >
             <div className="flex gap-2 items-center">
-              {Utils.minifyText(tag?.label, 20)}
-              {loadingTags === tag?.label && <Icon.LoadingSpin size="16" />}
+              {Utils.minifyText(tag.label, 20)}
+              <Typography.Caption variant="bold" className="text-opacity-60">
+                {tag.taggers_count}
+              </Typography.Caption>
             </div>
           </PostUtil.Tag>
         );

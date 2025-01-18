@@ -46,7 +46,6 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>(
     [],
   );
-  const [loadingTags, setLoadingTags] = useState('');
 
   useEffect(() => {
     setProfileTags(data?.tags ?? []);
@@ -74,35 +73,16 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   }, [profileTags, pubky]);
 
   const handleAddProfileTag = async (tag: string) => {
-    // loading tag
-    setLoadingTags(tag);
     if (usePubky) {
-      // before adding tag, check if tag already exists and is not the same pubky
       const tagExists = profileTags.find((t) => t.label === tag);
 
       if (tagExists) {
-        // check if tag is the same pubky
-        if (tagExists.taggers.includes(pubky || '')) {
-          setLoadingTags('');
-        } else {
-          // add tag to taggers
+        if (!tagExists.taggers.includes(pubky || '')) {
           tagExists.taggers_count++;
-
-          // update profileTags with new taggers
-          const newProfileTags = profileTags.map((t) => {
-            if (t.label === tag) {
-              return { ...t, taggers: [...t.taggers, pubky || ''] };
-            }
-            return t;
-          });
-
-          console.log('newProfileTags', newProfileTags);
-
-          // update tag in UI
-          setProfileTags(newProfileTags);
+          tagExists.taggers.push(pubky || '');
+          setProfileTags([...profileTags]);
         }
       } else {
-        // update tag optimistic in the UI
         setProfileTags([
           ...profileTags,
           {
@@ -112,55 +92,32 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
           },
         ]);
       }
+
       const response = await createTagProfile(usePubky, tag);
       if (!response) {
-        // show error message
         addAlert('Error adding tag', 'warning');
       }
-      setLoadingTags('');
     }
   };
 
   const handleDeleteProfileTag = async (tag: string) => {
-    // loading tag
-    setLoadingTags(tag);
-
     if (usePubky) {
-      // check if tag exists in profileTags
       const tagExists = profileTags.find((t) => t.label === tag);
 
-      if (tagExists) {
-        // check if usePubky is in taggers
-        if (tagExists.taggers.includes(pubky || '')) {
-          // remove tagger from tag but keep the tag but update the taggers_count
-          if (tagExists.taggers_count >= 1) {
-            tagExists.taggers_count--;
-          }
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubky || '',
-          );
-          setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
-          );
-        } else {
-          // remove tag from taggers
-          if (tagExists.taggers_count >= 1) {
-            tagExists.taggers_count--;
-          }
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubky || '',
-          );
-          setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
-          );
-        }
+      if (tagExists && tagExists.taggers.includes(pubky || '')) {
+        tagExists.taggers_count--;
+        tagExists.taggers = tagExists.taggers.filter((t) => t !== pubky);
+        setProfileTags(
+          tagExists.taggers_count > 0
+            ? [...profileTags]
+            : profileTags.filter((t) => t.label !== tag),
+        );
       }
 
       const response = await deleteTagProfile(usePubky, tag);
       if (!response) {
         addAlert('Error deleting tag', 'warning');
       }
-      setLoadingTags('');
     }
   };
 
@@ -178,73 +135,67 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
       ) : (
         <>
           <div className="mt-4 justify-start items-start gap-2 flex flex-col">
-            {profileTags && profileTags.length > 0 ? (
-              <>
-                {profileTags.map((tag, index) => {
-                  const isTagFound = tag?.taggers?.some(
-                    (fromItem) => fromItem === pubky,
-                  );
+            {profileTags.length > 0 ? (
+              profileTags.map((tag, index) => {
+                const isTagFound = tag.taggers.includes(pubky || '');
+                const images = taggedImages[index] || [];
+                const displayedImages = images.slice(0, 15);
+                const extraImagesCount = images.length - displayedImages.length;
 
-                  const images = taggedImages[index] || [];
-                  const displayedImages = images?.slice(0, 15);
-                  const extraImagesCount =
-                    images?.length - displayedImages?.length;
-
-                  return (
-                    <div className="flex gap-2" key={index}>
-                      <PostUtil.Tag
-                        key={index}
-                        clicked={isTagFound}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          pubky
-                            ? isTagFound
-                              ? handleDeleteProfileTag(tag?.label)
-                              : handleAddProfileTag(tag?.label)
-                            : openJoin();
-                        }}
-                        color={
-                          tag?.label && Utils.generateRandomColor(tag?.label)
-                        }
-                      >
-                        <div className="flex gap-2 items-center">
-                          {Utils.minifyText(tag?.label, 20)}
-                          {loadingTags === tag?.label && (
-                            <Icon.LoadingSpin size="16" />
-                          )}
-                        </div>
-                      </PostUtil.Tag>
-                      <Link href={`/search?tags=${tag?.label}`}>
-                        <Button.Action
-                          variant="custom"
-                          size="small"
-                          icon={<Icon.MagnifyingGlassLeft size="14" />}
-                          className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                        />
-                      </Link>
-                      <div className="cursor-pointer flex items-center">
-                        {displayedImages?.map((image, imageIndex) => (
-                          <ImageByUri
-                            width={32}
-                            height={32}
-                            key={`${tag?.label}-${imageIndex}`}
-                            className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                              imageIndex > 0 && '-ml-2'
-                            }`}
-                            alt={`tag-${imageIndex + 1}`}
-                            uri={image}
-                          />
-                        ))}
-                        {extraImagesCount > 0 && (
-                          <PostUtil.Counter className="-ml-2">
-                            +{extraImagesCount}
-                          </PostUtil.Counter>
-                        )}
+                return (
+                  <div className="flex gap-2" key={index}>
+                    <PostUtil.Tag
+                      clicked={isTagFound}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        pubky
+                          ? isTagFound
+                            ? handleDeleteProfileTag(tag.label)
+                            : handleAddProfileTag(tag.label)
+                          : openJoin();
+                      }}
+                      color={Utils.generateRandomColor(tag.label)}
+                    >
+                      <div className="flex gap-2 items-center">
+                        {Utils.minifyText(tag.label, 20)}
+                        <Typography.Caption
+                          variant="bold"
+                          className="text-opacity-60"
+                        >
+                          {tag.taggers_count}
+                        </Typography.Caption>
                       </div>
+                    </PostUtil.Tag>
+                    <Link href={`/search?tags=${tag.label}`}>
+                      <Button.Action
+                        variant="custom"
+                        size="small"
+                        icon={<Icon.MagnifyingGlassLeft size="14" />}
+                        className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                      />
+                    </Link>
+                    <div className="cursor-pointer flex items-center">
+                      {displayedImages.map((image, imageIndex) => (
+                        <ImageByUri
+                          key={imageIndex}
+                          uri={image}
+                          width={32}
+                          height={32}
+                          className={`w-[32px] h-[32px] rounded-full shadow ${
+                            imageIndex > 0 && '-ml-2'
+                          }`}
+                          alt={`tag-${imageIndex + 1}`}
+                        />
+                      ))}
+                      {extraImagesCount > 0 && (
+                        <PostUtil.Counter className="-ml-2">
+                          +{extraImagesCount}
+                        </PostUtil.Counter>
+                      )}
                     </div>
-                  );
-                })}
-              </>
+                  </div>
+                );
+              })
             ) : (
               <Typography.Body variant="small" className="text-opacity-50">
                 No tags yet
@@ -277,7 +228,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         </>
       )}
       <Modal.ProfileTag
-        profileTags={profileTags ?? []}
+        profileTags={profileTags}
         showModalProfileTag={showModalProfileTag}
         setShowModalProfileTag={setShowModalProfileTag}
         handleAddProfileTag={handleAddProfileTag}
@@ -289,7 +240,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         uriImage={image}
       />
       <BottomSheet.TagProfile
-        profileTags={profileTags ?? []}
+        profileTags={profileTags}
         show={showSheetProfileTag}
         setShow={setShowSheetProfileTag}
         handleAddProfileTag={handleAddProfileTag}
