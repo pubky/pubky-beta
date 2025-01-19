@@ -63,18 +63,21 @@ export default function Tags({
     setLoadingTags(tag);
     await deleteTag(post?.details?.author, post?.details?.id, tag);
     // delete my user from tag from post.tags
-    const newTags = tags.map((tagObj) => {
-      if (tagObj.label === tag) {
-        return {
-          ...tagObj,
-          taggers_count: tagObj.taggers_count - 1,
-          taggers: tagObj.taggers.filter((fromItem) => fromItem !== pubky),
-        };
-      }
-      return tagObj;
-    });
+
+    const newTags = tags
+      .map((tagObj) => {
+        if (tagObj.label === tag) {
+          return {
+            ...tagObj,
+            taggers_count: tagObj.taggers_count - 1,
+            taggers: tagObj.taggers.filter((fromItem) => fromItem !== pubky),
+          };
+        }
+        return tagObj;
+      })
+      .filter((tagObj) => tagObj.taggers_count > 0);
+
     setTags(newTags);
-    setLoadingTags('');
   };
 
   const updateTagsAndTimeline = (tag: string) => {
@@ -183,7 +186,11 @@ export default function Tags({
       ) : (
         <div
           id="tags"
-          className={`flex-row inline-flex gap-2 flex-wrap mt-2 lg:mt-0`}
+          className={`${
+            tags && tags.filter((tagObj) => tagObj.taggers_count > 0).length > 0
+              ? 'gap-2'
+              : ''
+          } flex-row inline-flex items-center flex-wrap mt-2 lg:mt-0`}
         >
           {!largeView &&
             tags.slice(0, 3).map((tagObj, index) => {
@@ -218,16 +225,12 @@ export default function Tags({
                       >
                         <div className="flex gap-2 items-center">
                           {Utils.minifyText(tagObj?.label, 20)}
-                          {loadingTags === tagObj?.label ? (
-                            <Icon.LoadingSpin size="16" />
-                          ) : (
-                            <Typography.Caption
-                              variant="bold"
-                              className="text-opacity-60"
-                            >
-                              {tagObj?.taggers_count}
-                            </Typography.Caption>
-                          )}
+                          <Typography.Caption
+                            variant="bold"
+                            className="text-opacity-60"
+                          >
+                            {tagObj?.taggers_count}
+                          </Typography.Caption>
                         </div>
                       </PostUtil.Tag>
                     )}
@@ -274,7 +277,7 @@ export default function Tags({
                         <div
                           id="add-tag-btn"
                           onClick={!loadingTags ? handleFastAddTag : undefined}
-                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 ${loadingTags ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
+                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 hover:opacity-100`}
                         >
                           {loadingTags ? (
                             <Icon.LoadingSpin size="12" />
