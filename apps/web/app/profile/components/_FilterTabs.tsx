@@ -58,11 +58,13 @@ const tabs = [
 ];
 
 const generateTabUrl = (key: string, creatorPubky?: string) => {
-  if (creatorPubky)
+  if (creatorPubky) {
+    if (key === 'notifications') return '/profile';
     return key === 'posts'
       ? `/profile/${creatorPubky}`
       : `/profile/${creatorPubky}/${key}`;
-  else return key === 'notifications' ? '/profile' : `/profile/${key}`;
+  }
+  return key === 'notifications' ? '/profile' : `/profile/${key}`;
 };
 
 export default function FilterTabs({
@@ -101,7 +103,7 @@ export default function FilterTabs({
   const getTabNumber = (key: string) => {
     switch (key) {
       case 'notifications':
-        return unReadNotification;
+        return unReadNotification || null;
       case 'bookmarks':
         return userCounts?.bookmarks || 0;
       case 'posts':
@@ -161,7 +163,7 @@ export default function FilterTabs({
                   {tab.label}
                 </Typography.Body>
               </div>
-              {!loading && tab.key && (
+              {tab.key && (
                 <Typography.Body
                   className="tracking-normal"
                   variant="small-bold"
