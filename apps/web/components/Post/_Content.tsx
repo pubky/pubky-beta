@@ -74,7 +74,7 @@ export default function Content({
         setTweetId(tweetId);
       }
 
-      const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
+      const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+(?:\/.*)?/;
       const githubMatch = url.match(githubRegex);
       if (githubMatch) {
         setGithubUrl(githubMatch[0]);
