@@ -1,10 +1,18 @@
 // select an emoji using the emoji picket by its data-full-name attribute
-export const selectEmoji = (emojiName: string) => {
+export const selectEmojis = (emojiName: string[]) => {
+  // open emoji picker
   cy.get('#emoji-btn').click();
-  cy.get('#emoji-picker').should('be.visible');
-  cy.get('#emoji-picker').within(() => {
-    cy.get(`button[data-full-name*="${emojiName}"]`).click();
+
+  // select each emoji
+  emojiName.forEach((emoji) => {
+    cy.get('#emoji-picker').should('be.visible');
+    cy.get('#emoji-picker').within(() => {
+      cy.get(`button[data-full-name*="${emoji}"]`).click();
+    });
   });
+
+  // close emoji picker by clicking outside of it
+  cy.get('#emoji-picker').parent().click('left');
 };
 
 // verify that a post in the feed has the expected content, post is located by index
