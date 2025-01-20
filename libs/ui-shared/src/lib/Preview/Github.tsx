@@ -32,8 +32,11 @@ export const GitHub = ({ url }: GitHubProps) => {
       try {
         setLoading(true);
         setError(null);
+
+        const repoPath = url.split('github.com/')[1].split('/')[0] + '/' + url.split('github.com/')[1].split('/')[1];
+
         const response = await fetch(
-          `https://api.github.com/repos/${url.split('github.com/')[1]}`,
+          `https://api.github.com/repos/${repoPath}`,
         );
 
         if (!response.ok) {
@@ -90,7 +93,7 @@ export const GitHub = ({ url }: GitHubProps) => {
 
   return (
     <Link
-      href={`https://github.com/${url.split('github.com/')[1]}`}
+      href={url}
       target="_blank"
       rel="noopener noreferrer"
       className="w-full p-4 border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden block"
