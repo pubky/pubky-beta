@@ -4,10 +4,12 @@ import { Button, Content, Header, Icon, Typography } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Utils } from '@social/utils-shared';
 
 export default function Index() {
   const { logout } = usePubkyClientContext();
   const { resetDefault } = useFilterContext();
+  const inviteCode = Utils.storage.get('inviteCode');
 
   resetDefault();
   logout();
@@ -41,7 +43,7 @@ export default function Index() {
         </div>
         <div className="flex-col justify-center items-center flex">
           <Link
-            href="/sign-in"
+            href={inviteCode ? '/sign-in' : '/invite-code'}
             className="w-full sm:w-[154px]"
             id="logout-link"
           >
