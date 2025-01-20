@@ -61,46 +61,39 @@ export default function Sidebar({
   }, [profile, creatorPubky]);
 
   const handleAddProfileTag = async (tag: string) => {
-    const pubKeyToUse =
-      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
-
     // loading tag
     setLoadingTags(tag);
-    if (pubKeyToUse) {
+    if (userPubky) {
       // before adding tag, check if tag already exists and is not the same pubky
       const tagExists = profileTags.find((t) => t.label === tag);
 
       if (tagExists) {
         // check if tag is the same pubky
-        if (tagExists.taggers.includes(pubKeyToUse)) {
+        if (!tagExists.taggers.includes(pubky || '')) {
           setLoadingTags('');
-        } else {
-          // add tag to taggers
-          tagExists.taggers_count++;
-
           // update profileTags with new taggers
-          const newProfileTags = profileTags.map((t) => {
-            if (t.label === tag) {
-              return { ...t, taggers: [...t.taggers, pubKeyToUse] };
-            }
-            return t;
-          });
-
-          // update tag in UI
-          setProfileTags(newProfileTags);
+          const updatedTags = profileTags.map((t) =>
+            t.label === tag
+              ? {
+                  ...t,
+                  taggers: [...t.taggers, pubky || ''],
+                  taggers_count: t.taggers_count + 1,
+                }
+              : t,
+          );
+          setProfileTags(updatedTags);
         }
       } else {
+        const newTag = {
+          label: tag,
+          taggers: [pubky || ''],
+          taggers_count: 1,
+        };
         // update tag optimistic in the UI
-        setProfileTags([
-          ...profileTags,
-          {
-            label: tag,
-            taggers: [pubKeyToUse],
-            taggers_count: 1,
-          },
-        ]);
+        setProfileTags([...profileTags, newTag]);
       }
-      const response = await createTagProfile(pubKeyToUse, tag);
+
+      const response = await createTagProfile(userPubky, tag);
       if (!response) {
         // show error message
         addAlert('Error adding tag', 'warning');
@@ -110,39 +103,23 @@ export default function Sidebar({
   };
 
   const handleDeleteProfileTag = async (tag: string) => {
-    const pubKeyToUse =
-      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
-
     // loading tag
     setLoadingTags(tag);
+    if (userPubky) {
+      const updatedTags = profileTags
+        .map((t) =>
+          t.label === tag
+            ? {
+                ...t,
+                taggers: t.taggers.filter((tagger) => tagger !== pubky),
+                taggers_count: Math.max(t.taggers_count - 1, 0),
+              }
+            : t,
+        )
+        .filter((t) => t.taggers_count > 0);
+      setProfileTags(updatedTags);
 
-    if (pubKeyToUse) {
-      // check if tag exists in profileTags
-      const tagExists = profileTags.find((t) => t.label === tag);
-      if (tagExists) {
-        // check if pubkeyToUse is in taggers
-        if (tagExists.taggers.includes(pubKeyToUse)) {
-          // remove tagger from tag but keep the tag but update the taggers_count
-          tagExists.taggers_count--;
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubKeyToUse,
-          );
-          setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
-          );
-        } else {
-          // remove tag from taggers
-          tagExists.taggers_count--;
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubKeyToUse,
-          );
-          setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
-          );
-        }
-      }
-
-      const response = await deleteTagProfile(pubKeyToUse, tag);
+      const response = await deleteTagProfile(userPubky, tag);
       if (!response) {
         addAlert('Error deleting tag', 'warning');
       }
