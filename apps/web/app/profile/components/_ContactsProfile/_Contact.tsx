@@ -18,6 +18,10 @@ export default function Contact({
     usePubkyClientContext();
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
+  const [profileTags, setProfileTags] = useState<{
+    [pubky: string]: UserView['tags'];
+  }>({});
+  const [loadingTags, setLoadingTags] = useState('');
 
   useEffect(() => {
     if (contacts) {
@@ -29,32 +33,93 @@ export default function Contact({
         {} as { [pubky: string]: boolean },
       );
       setFollowed(initialFollowedState);
+
+      const initialTagsState = contacts.reduce(
+        (acc, profile) => {
+          acc[profile.details.id] = profile.tags || [];
+          return acc;
+        },
+        {} as { [pubky: string]: UserView['tags'] },
+      );
+      setProfileTags(initialTagsState);
     }
   }, [contacts]);
 
   const handleAddProfileTag = async (creatorPubky: string, tag: string) => {
+    // loading tag
+    setLoadingTags(tag);
     const pubKeyToUse =
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await createTagProfile(pubKeyToUse, tag);
+      const currentTags = profileTags[creatorPubky] || [];
+      const tagExists = currentTags.find((t) => t.label === tag);
+
+      if (tagExists) {
+        setLoadingTags('');
+        tagExists.taggers_count++;
+        tagExists.taggers.push(pubky || '');
+        setProfileTags((prev) => ({
+          ...prev,
+          [creatorPubky]: [...currentTags],
+        }));
+      } else {
+        setProfileTags((prev) => ({
+          ...prev,
+          [creatorPubky]: [
+            ...currentTags,
+            { label: tag, taggers: [pubky || ''], taggers_count: 1 },
+          ],
+        }));
+      }
+
+      const response = await createTagProfile(pubKeyToUse, tag);
+      if (!response) {
+        console.error('Error adding tag');
+      }
+      setLoadingTags('');
     }
   };
 
   const handleDeleteProfileTag = async (creatorPubky: string, tag: string) => {
+    // loading tag
+    setLoadingTags(tag);
     const pubKeyToUse =
       (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
-      await deleteTagProfile(pubKeyToUse, tag);
+      const currentTags = profileTags[creatorPubky] || [];
+      const tagExists = currentTags.find((t) => t.label === tag);
+
+      if (tagExists) {
+        setLoadingTags('');
+        tagExists.taggers_count--;
+        tagExists.taggers = tagExists.taggers.filter(
+          (tagger) => tagger !== pubky,
+        );
+
+        setProfileTags((prev) => ({
+          ...prev,
+          [creatorPubky]:
+            tagExists.taggers_count > 0
+              ? [...currentTags]
+              : currentTags.filter((t) => t.label !== tag),
+        }));
+      }
+
+      const response = await deleteTagProfile(pubKeyToUse, tag);
+      if (!response) {
+        console.error('Error deleting tag');
+      }
+      setLoadingTags('');
     }
   };
 
   const followUser = async (pubkyFollow: string) => {
     try {
       if (!pubkyFollow) return;
-      setLoadingContacts((prevLoadingUsers) => ({
-        ...prevLoadingUsers,
+      setLoadingContacts((prev) => ({
+        ...prev,
         [pubkyFollow]: true,
       }));
 
@@ -63,8 +128,8 @@ export default function Contact({
         ...prevState,
         [pubkyFollow]: result,
       }));
-      setLoadingContacts((prevLoadingUsers) => ({
-        ...prevLoadingUsers,
+      setLoadingContacts((prev) => ({
+        ...prev,
         [pubkyFollow]: false,
       }));
     } catch (error) {
@@ -75,8 +140,8 @@ export default function Contact({
   const unfollowUser = async (pubkyUnfollow: string) => {
     try {
       if (!pubkyUnfollow) return;
-      setLoadingContacts((prevLoadingUsers) => ({
-        ...prevLoadingUsers,
+      setLoadingContacts((prev) => ({
+        ...prev,
         [pubkyUnfollow]: true,
       }));
 
@@ -85,8 +150,8 @@ export default function Contact({
         ...prevState,
         [pubkyUnfollow]: !result,
       }));
-      setLoadingContacts((prevLoadingUsers) => ({
-        ...prevLoadingUsers,
+      setLoadingContacts((prev) => ({
+        ...prev,
         [pubkyUnfollow]: false,
       }));
     } catch (error) {
@@ -100,6 +165,7 @@ export default function Contact({
         contacts.map((contact) => {
           const pubkeyUser = pubky && contact?.details?.id.includes(pubky);
           const isFollowed = followed[contact?.details?.id];
+          const contactTags = profileTags[contact.details.id] || [];
 
           return (
             <div key={contact?.details?.id} className="w-full">
@@ -120,7 +186,10 @@ export default function Contact({
                         className="rounded-full w-[48px] h-[48px] max-w-none"
                       />
                       <div className="flex-col justify-center items-start inline-flex">
-                        <Typography.Body id='list-profile-name' variant="medium-bold">
+                        <Typography.Body
+                          id="list-profile-name"
+                          variant="medium-bold"
+                        >
                           {contact?.details.name &&
                             Utils.minifyText(contact?.details?.name, 20)}
                         </Typography.Body>
@@ -151,7 +220,7 @@ export default function Contact({
                     </div>
                   </div>
                   <div className="flex lg:justify-end gap-2 items-center lg:w-full">
-                    {contact?.tags?.slice(0, 3).map((tag, index) => {
+                    {contactTags.slice(0, 3).map((tag, index) => {
                       const isTagFound = tag?.taggers?.some(
                         (fromItem) => fromItem === pubky,
                       );
@@ -159,7 +228,7 @@ export default function Contact({
                       return (
                         <PostUtil.Tag
                           key={index}
-                          clicked={false}
+                          clicked={isTagFound}
                           onClick={(event) => {
                             event.stopPropagation();
                             isTagFound
@@ -177,13 +246,17 @@ export default function Contact({
                           }
                         >
                           <div className="flex gap-2 items-center">
-                            {Utils.minifyText(tag?.label, 10)}
-                            <Typography.Caption
-                              variant="bold"
-                              className="text-opacity-60"
-                            >
-                              {tag?.taggers_count}
-                            </Typography.Caption>
+                            {Utils.minifyText(tag?.label, 20)}
+                            {loadingTags === tag?.label ? (
+                              <Icon.LoadingSpin size="12" />
+                            ) : (
+                              <Typography.Caption
+                                variant="bold"
+                                className="text-opacity-60"
+                              >
+                                {tag.taggers_count}
+                              </Typography.Caption>
+                            )}
                           </div>
                         </PostUtil.Tag>
                       );
@@ -193,7 +266,10 @@ export default function Contact({
                     <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
                       Tags
                     </Typography.Label>
-                    <Typography.Body id='list-tags-counter' variant="medium-bold">
+                    <Typography.Body
+                      id="list-tags-counter"
+                      variant="medium-bold"
+                    >
                       {contact?.counts?.tags ?? 0}
                     </Typography.Body>
                   </div>
@@ -201,14 +277,17 @@ export default function Contact({
                     <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
                       Posts
                     </Typography.Label>
-                    <Typography.Body id='list-posts-counter' variant="medium-bold">
+                    <Typography.Body
+                      id="list-posts-counter"
+                      variant="medium-bold"
+                    >
                       {contact?.counts?.posts ?? 0}
                     </Typography.Body>
                   </div>
                   <div className="flex gap-4">
                     {pubkeyUser ? (
                       <Button.Medium
-                        id='list-me-label'
+                        id="list-me-label"
                         className="w-full lg:w-[104px] bg-transparent cursor-default"
                         icon={<Icon.User size="16" />}
                       >
@@ -220,7 +299,7 @@ export default function Contact({
                       </Button.Medium>
                     ) : isFollowed ? (
                       <Button.Medium
-                        id='list-unfollow-button'
+                        id="list-unfollow-button"
                         onClick={
                           loadingContacts[contact?.details?.id]
                             ? undefined
@@ -235,7 +314,7 @@ export default function Contact({
                       </Button.Medium>
                     ) : (
                       <Button.Medium
-                        id='list-follow-button'
+                        id="list-follow-button"
                         onClick={
                           loadingContacts[contact?.details?.id]
                             ? undefined
