@@ -38,14 +38,6 @@ describe('posts', () => {
     });
   });
 
-  // TODO: remove temp script to add 12 posts, workaround for no 'Show New Posts' button, see https://github.com/pubky/pubky-app/issues/738
-  // TODO: comment out if needed once 'Show New Posts' button is showing again
-  // it('add 12 posts', () => {
-  //   for (let i = 0; i < 12; i++) {
-  //     createQuickPost(`Post ${i + 1}`);
-  //   }
-  // });
-
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
@@ -322,44 +314,53 @@ describe('posts', () => {
 
     createQuickPost(postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/539
-    cy.waitReload();
-
     // add tags to the post
     fastTagPostInFeed([tag1, tag2, tag3], postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/541
-    // should test before and after refresh
-    cy.waitReload();
-
-    // within the latest post in the feed
+    // check tags are displayed within the latest post in the feed
     cy.findFirstPostInFeed().within(() => {
-      cy.get('#tags').children().its('length').then((_oldLength) => {
-        cy.get('#tags').within(() => {
-          // verify the tags are displayed in the post
-          cy.get('#tag-0').contains(tag3);
-          cy.get('#tag-1').contains(tag2);
-          cy.get('#tag-2').contains(tag1);
+      // length is 4 because of the '+' button
+      cy.get('#tags').children().its('length').should('eq', 4);
+      cy.get('#tags').innerTextShouldContain(tag1);
+      cy.get('#tags').innerTextShouldContain(tag2);
+      cy.get('#tags').innerTextShouldContain(tag3);
+    });
 
-          // remove tag from the post
-          cy.get('#tag-1').click();
-        });
+    // refresh page before checking tags are still displayed
+    cy.reload();
+    waitForFeedToLoad();
 
-        // verify the tag is removed from the post and other tags remain
-        // TODO: check children length once bug fixed, see https://github.com/pubky/pubky-app/issues/543
-        //cy.get('#tags').children().should('have.length', oldLength - 1);
-
-        cy.get('#tags').innerTextShouldNotContain(tag2);
-        cy.get('#tags').within(() => {
-          cy.get('#tag-0').should('exist').contains(tag3);
-          cy.get('#tag-2').should('exist').contains(tag1);
-        });
+    // check tags are still displayed
+    cy.findFirstPostInFeed().within(() => {
+      // length is 4 because of the '+' button
+      cy.get('#tags').children().its('length').should('eq', 4);
+      cy.get('#tags').innerTextShouldContain(tag1);
+      cy.get('#tags').innerTextShouldContain(tag2);
+      cy.get('#tags').innerTextShouldContain(tag3);
+      // remove a tag from the post
+      cy.get('#tags').within(() => {
+        cy.get('#tag-1').click();
       });
     });
 
-    // refresh page and check tag is still removed
-    cy.waitReload();
+    // verify the tag is removed from the post and other tags remain
+    // TODO: check children length once bug fixed, see https://github.com/pubky/pubky-app/issues/543
+    //cy.get('#tags').children().should('have.length', oldLength - 1);
+
     cy.get('#tags').innerTextShouldNotContain(tag2);
+    cy.get('#tags').within(() => {
+      cy.get('#tag-0').should('exist').contains(tag3);
+      cy.get('#tag-2').should('exist').contains(tag1);
+    });
+
+    // refresh page before checking tag is still removed
+    cy.reload();
+    waitForFeedToLoad();
+
+    // check tag is still removed
+    cy.findFirstPostInFeed().within(() => {
+      cy.get('#tags').innerTextShouldNotContain(tag2);
+    });
   });
 
   // todo: consider creating user to create the post to bookmark

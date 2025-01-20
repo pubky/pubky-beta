@@ -52,7 +52,7 @@ describe('notifications', () => {
     // * profile 2 checks notification for new follower
     cy.signOut(true);
     // TODO: remove workaround reload for notification counter and tab content not showing correctly, see https://github.com/pubky/pubky-app/issues/810
-    cy.waitReload(3000)
+    cy.reload();
     cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
@@ -69,7 +69,7 @@ describe('notifications', () => {
     // * profile 1 checks notification for new follower and friend
     cy.signOut(true);
     // TODO: remove workaround reload for notification counter and tab content not showing correctly, see https://github.com/pubky/pubky-app/issues/810
-    cy.waitReload(3000)
+    cy.reload();
     cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
@@ -112,7 +112,7 @@ describe('notifications', () => {
     // * profile 2 checks for notification for tagged profile
     cy.signOut(true);
     // TODO: remove workaround reload for notification counter and tab content not showing correctly, see https://github.com/pubky/pubky-app/issues/810
-    cy.waitReload(3000)
+    cy.reload();
     cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
@@ -138,7 +138,7 @@ describe('notifications', () => {
     // * profile 1 checks for notification for tagged post
     cy.signOut(true);
     // TODO: remove workaround reload for notification counter and tab content not showing correctly, see https://github.com/pubky/pubky-app/issues/810
-    cy.waitReload(3000)
+    cy.reload();
     cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
@@ -165,7 +165,7 @@ describe('notifications', () => {
     // * profile 2 checks for notification for being mentioned in a post
     cy.signOut(true);
     // TODO: remove workaround reload for notification counter and tab content not showing correctly, see https://github.com/pubky/pubky-app/issues/810
-    cy.waitReload(3000)
+    cy.reload();
     cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
