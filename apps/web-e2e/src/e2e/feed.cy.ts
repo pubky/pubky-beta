@@ -88,6 +88,10 @@ describe('feed and filters', () => {
     cy.findFirstPostInFeed(profile3.postText).should('be.visible');
     cy.findFirstPostInFeed(profile4.postText).should('be.visible');
 
+    // TODO: remove refrest hen bug is fixed, see https://github.com/pubky/pubky-app/issues/882
+    cy.reload();
+    waitForFeedToLoad();
+
     // check posts are in the correct order
     checkPostIsAtIndexInFeed(profile4.postText, 0);
     checkPostIsAtIndexInFeed(profile3.postText, 1);

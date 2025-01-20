@@ -2,15 +2,15 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down'
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands'
-import { selectEmoji,
-        latestPostInFeedContentEq,
+import { latestPostInFeedContentEq,
         deletePost,
         createQuickPost,
         checkPostIsNotAtTopOfFeed,
         repostPost,
         fastTagPostInFeed,
         replyToPost,
-        waitForFeedToLoad} from '../support/posts';
+        waitForFeedToLoad,
+        selectEmojis} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -29,9 +29,6 @@ describe('posts', () => {
   beforeEach(() => {
     // in case it gets changed by a test and not reset
     cy.slowDown(defaultMs);
-
-    // TODO: remove workaround for pkarr rate limiting
-    cy.wait(10_000);
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
@@ -123,10 +120,8 @@ describe('posts', () => {
       // click on textarea to expand to view buttons
       cy.get('textarea').click();
 
-      // add emojis using emoji picker
-      selectEmoji('australia flag');
-      selectEmoji('smiling face with sunglasses');
-      selectEmoji('lizard');
+      // add 3 emojis using emoji picker
+      selectEmojis(['australia flag', 'smiling face with sunglasses', 'lizard']);
 
       // type the rest of the post
       cy.get('textarea').type(postContentWithoutEmoji);

@@ -7,10 +7,6 @@ on:
       - dev
       - master
 
-concurrency:
-  group: 'e2e-test'
-  cancel-in-progress: false # wait for all in-progress runs to complete before starting a new run
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -28,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: pubky/pubky-docker
-          ref: catch-21/update
+          ref: 9cabcb733495ad2e81c619696902b0a31d956957
           path: pubky-docker
           submodules: true
           token: ${{ secrets.READ_REPOS }}
@@ -44,10 +40,6 @@ jobs:
           wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ_BINARY}.tar.gz -O - | tar xz && sudo mv ${YQ_BINARY} /usr/bin/yq
           yq -i 'del(.services.homeserver.depends_on)' docker-compose.yml
 
-      - name: Modify homeserver.config.toml
-        working-directory: pubky-docker/development
-        run: sed -i 's/secret_key = "0123000000000000000000000000000000000000000000000000000000000000"/secret_key = "${{ secrets.HOMESERVER_SECRET_KEY }}"/' homeserver.config.toml
-
       # reduce neo4j memory to prevent
       # ERROR Invalid memory configuration - exceeds physical memory. Check the configured values for server.memory.pagecache.size and server.memory.heap.max_size
       - name: Modify neo4j.env
@@ -57,11 +49,15 @@ jobs:
           sed -i 's/NEO4J_server_memory_heap_initial__size=4G/NEO4J_server_memory_heap_initial__size=1G/' neo4j.env
           sed -i 's/NEO4J_server_memory_heap_max__size=8G/NEO4J_server_memory_heap_max__size=2G/' neo4j.env
 
+      - name: Prepare pubky-docker .env
+        working-directory: pubky-docker/development
+        run: |
+          cp .env-sample .env
+
       - name: Build pubky-docker
         working-directory: pubky-docker/development
         run: |
-          docker compose build nexus-watcher homeserver
-          docker compose build nexus-service
+          docker compose build nexus-service nexus-watcher homeserver
 
       - name: Run pubky-docker
         working-directory: pubky-docker/development
@@ -89,10 +85,10 @@ jobs:
       - name: Build pubky-app frontend
         working-directory: pubky-app
         run: |
-          echo "NEXT_PUBLIC_HOMESERVER=${{ secrets.HOMESERVER_PUBKY }}
+          echo "NEXT_PUBLIC_HOMESERVER=8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
           NEXT_PUBLIC_NEXUS=http://localhost:8080
-          NEXT_PUBLIC_TESTNET=false
-          NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://httprelay.staging.pubky.app/link/
+          NEXT_PUBLIC_TESTNET=true
+          NEXT_PUBLIC_DEFAULT_HTTP_RELAY=http://localhost:15412/link/
           BASE_URL_SUPPORT=${{ secrets.BASE_URL_SUPPORT }}
           SUPPORT_API_ACCESS_TOKEN=${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
           SUPPORT_ACCOUNT_ID=1" > .env
