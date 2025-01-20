@@ -209,8 +209,15 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       >
                         <div className="flex gap-2 items-center">
                           {Utils.minifyText(tag?.label, 20)}
-                          {loadingTags === tag?.label && (
-                            <Icon.LoadingSpin size="16" />
+                          {loadingTags === tag?.label ? (
+                            <Icon.LoadingSpin size="12" />
+                          ) : (
+                            <Typography.Caption
+                              variant="bold"
+                              className="text-opacity-60"
+                            >
+                              {tag.taggers_count}
+                            </Typography.Caption>
                           )}
                         </div>
                       </PostUtil.Tag>
