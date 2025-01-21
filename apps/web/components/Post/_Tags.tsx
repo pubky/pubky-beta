@@ -183,7 +183,11 @@ export default function Tags({
       ) : (
         <div
           id="tags"
-          className={`flex-row inline-flex gap-2 flex-wrap mt-2 lg:mt-0`}
+          className={`${
+            tags && tags.filter((tagObj) => tagObj.taggers_count > 0).length > 0
+              ? 'gap-2'
+              : ''
+          } flex-row inline-flex items-center flex-wrap mt-2 lg:mt-0`}
         >
           {!largeView &&
             tags.slice(0, 3).map((tagObj, index) => {
@@ -219,7 +223,7 @@ export default function Tags({
                         <div className="flex gap-2 items-center">
                           {Utils.minifyText(tagObj?.label, 20)}
                           {loadingTags === tagObj?.label ? (
-                            <Icon.LoadingSpin size="16" />
+                            <Icon.LoadingSpin size="12" />
                           ) : (
                             <Typography.Caption
                               variant="bold"
