@@ -80,9 +80,6 @@ export default function TaggedSection({
                     >
                       <div className="flex gap-2 items-center">
                         {Utils.minifyText(tag?.label, 20)}
-                        {loadingTags === tag?.label && (
-                          <Icon.LoadingSpin size="16" />
-                        )}
                       </div>
                     </PostUtil.Tag>
                     {/**</TooltipUI.Root>*/}
@@ -95,7 +92,11 @@ export default function TaggedSection({
                       />
                     </Link>
                     <PostUtil.Counter className="w-full">
-                      {tag?.taggers_count}
+                      {loadingTags === tag?.label ? (
+                        <Icon.LoadingSpin size="12" />
+                      ) : (
+                        tag?.taggers_count
+                      )}
                     </PostUtil.Counter>
                   </div>
                 );
