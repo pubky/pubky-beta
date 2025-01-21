@@ -18,6 +18,7 @@
     "@nx/next": "20.1.2",
     "@swc/helpers": "~0.5.15",
     "@synonymdev/pubky": "^0.4.0-rc3",
+    "pubky-app-specs": "file:./pubky-app-specs",
     "@tanstack/react-query": "^5.60.6",
     "@types/jest": "^29.5.14",
     "@uiw/react-markdown-editor": "^6.1.2",

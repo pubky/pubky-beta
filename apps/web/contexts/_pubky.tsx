@@ -26,6 +26,8 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
   process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
   'https://demo.httprelay.io/link/';
 
+import init, { create_pubky_app_follow } from 'pubky-app-specs';
+
 let client: Client;
 if (TESTNET) {
   client = Client.testnet();
@@ -190,6 +192,18 @@ export function PubkyClientWrapper({
     useState<NotificationPreferences>({} as NotificationPreferences);
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
+
+  const [wasmLoaded2, setWasmLoaded2] = useState(false);
+
+  useEffect(() => {
+    // Let’s fetch/instantiate from a URL we control
+    console.log('BBBBBB');
+    if (!wasmLoaded2) {
+      init('/wasm/pubky_app_specs_bg.wasm')
+        .then(() => console.log(create_pubky_app_follow('someId')))
+        .catch(console.error);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

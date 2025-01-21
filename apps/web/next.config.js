@@ -2,6 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
+const path = require('path');
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -38,6 +39,7 @@ const nextConfig = {
     ],
   },
   cleanDistDir: false,
+  transpilePackages: ['pubky-app-specs'],
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push('@synonymdev/pubky');
@@ -51,6 +53,9 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.wasm$/,
       type: 'webassembly/async',
+      include: [
+        path.resolve(__dirname, 'pubky-app-specs'), 
+      ],
     });
 
     return config;
