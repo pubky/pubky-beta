@@ -96,7 +96,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   useEffect(() => {
     clearTimeline();
     fetchPosts();
-  }, [reach, sort, tagsFeed]);
+  }, [reach, sort, tagsFeed, mutedUsers]);
 
   useEffect(() => {
     return clearTimeline;
