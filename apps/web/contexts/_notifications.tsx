@@ -8,7 +8,7 @@ import {
   ReactNode,
 } from 'react';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { NotificationView } from '@/types/User';
+import { BodyNotification, NotificationView } from '@/types/User';
 import { useUserNotifications } from '@/hooks/useUser';
 
 type NotificationsContextType = {
@@ -26,7 +26,8 @@ const NotificationsContext = createContext<NotificationsContextType>({
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
-  const { pubky, timestamp, notificationPreferences } = usePubkyClientContext();
+  const { pubky, timestamp, notificationPreferences, mutedUsers } =
+    usePubkyClientContext();
   const { setUnReadNotification } = useFilterContext();
 
   const limit = 30;
@@ -56,6 +57,30 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     });
   };
 
+  const extractSenderPubky = (notification: BodyNotification) => {
+    return (
+      notification.followed_by ||
+      notification.tagged_by ||
+      notification.replied_by ||
+      notification.reposted_by ||
+      notification.mentioned_by ||
+      notification.deleted_by ||
+      notification.edited_by
+    );
+  };
+
+  const filterNotifications = (notifications: NotificationView[]) =>
+    notifications.filter((notification) => {
+      const senderPubky = extractSenderPubky(notification.body);
+      return (
+        senderPubky &&
+        !mutedUsers?.includes(senderPubky) &&
+        notificationPreferences[
+          notification.body.type as keyof typeof notificationPreferences
+        ]
+      );
+    });
+
   const fetchNotifications = async () => {
     if (!pubky || !notificationPreferences || !hasMore) return;
 
@@ -63,12 +88,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       setLoading(true);
 
       if (initNotifications) {
-        const filteredNotifications = initNotifications.filter(
-          (notification: NotificationView) =>
-            notificationPreferences[
-              notification.body.type as keyof typeof notificationPreferences
-            ],
-        );
+        const filteredNotifications = filterNotifications(initNotifications);
 
         updateNotifications(filteredNotifications);
 
@@ -98,19 +118,14 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       setLoading(true);
 
       if (initNotifications) {
-        const filteredNotifications = initNotifications.filter(
-          (notification: NotificationView) =>
-            notificationPreferences[
-              notification.body.type as keyof typeof notificationPreferences
-            ],
-        );
+        const filteredNotifications = filterNotifications(initNotifications);
 
         updateNotifications(filteredNotifications);
 
         if (filteredNotifications.length < limit) {
           setHasMore(false);
         } else {
-          setSkip((prev) => prev + limit); 
+          setSkip((prev) => prev + limit);
         }
       }
     } catch (err) {

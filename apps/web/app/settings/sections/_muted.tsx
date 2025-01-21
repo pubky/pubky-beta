@@ -14,7 +14,7 @@ export interface LoadingMutedUsers {
 }
 
 export default function MutedUsers() {
-  const { pubky, mute, unmute } = usePubkyClientContext();
+  const { pubky, mute, unmute, setMutedUsers } = usePubkyClientContext();
   const {
     data: mutedUsers,
     isLoading,
@@ -41,6 +41,11 @@ export default function MutedUsers() {
         ...prevState,
         [pubkyMute]: result,
       }));
+
+      if (result) {
+        setMutedUsers((prev) => (prev ? [...prev, pubkyMute] : [pubkyMute]));
+      }
+
       setLoadingMutedUsers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyMute]: false,
@@ -63,6 +68,11 @@ export default function MutedUsers() {
         ...prevState,
         [pubkyUnmute]: !result,
       }));
+
+      if (result) {
+        setMutedUsers((prev) => prev?.filter((user) => user !== pubkyUnmute));
+      }
+
       setLoadingMutedUsers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
         [pubkyUnmute]: false,
@@ -87,6 +97,7 @@ export default function MutedUsers() {
           mutedUsers.map((user) => unmuteUser(user.details.id)),
         );
 
+        setMutedUsers([]);
         setLoadingMutedUsers({});
       }
     } catch (error) {
