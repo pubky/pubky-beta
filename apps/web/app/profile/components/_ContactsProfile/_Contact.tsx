@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { Button, Icon, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { LoadingContacts } from '@/types';
 
@@ -16,6 +16,7 @@ export default function Contact({
 }) {
   const { pubky, createTagProfile, deleteTagProfile, follow, unfollow } =
     usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
   const [profileTags, setProfileTags] = useState<{
@@ -124,6 +125,11 @@ export default function Contact({
       }));
 
       const result = await follow(pubkyFollow);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed((prevState) => ({
         ...prevState,
         [pubkyFollow]: result,
@@ -146,6 +152,11 @@ export default function Contact({
       }));
 
       const result = await unfollow(pubkyUnfollow);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed((prevState) => ({
         ...prevState,
         [pubkyUnfollow]: !result,

@@ -1336,11 +1336,16 @@ export function PubkyClientWrapper({
 
       const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
 
-      await client.fetch(followUrl, {
+      const response = await client.fetch(followUrl, {
         method: 'PUT',
         body: JSON.stringify(followData),
         credentials: 'include',
       });
+
+      if (!response.ok) {
+        const errorMessage = `Error ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
+      }
 
       // get user relationships and check if it is followed
       // keep in a while loop until it is followed
@@ -1372,10 +1377,15 @@ export function PubkyClientWrapper({
 
       const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
 
-      await client.fetch(followUrl, {
+      const response = await client.fetch(followUrl, {
         method: 'DELETE',
         credentials: 'include',
       });
+
+      if (!response.ok) {
+        const errorMessage = `Error ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
+      }
 
       // get user relationships and check if it is unfollowed
       // keep in a while loop until it is unfollowed
@@ -1473,11 +1483,16 @@ export function PubkyClientWrapper({
       const bookmarkId = (await generateHashId(bookmarkData.uri)).toUpperCase();
       const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
 
-      await client.fetch(bookmarkUrl, {
+      const response = await client.fetch(bookmarkUrl, {
         method: 'PUT',
         body: JSON.stringify(bookmarkData),
         credentials: 'include',
       });
+
+      if (!response.ok) {
+        const errorMessage = `Error ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
+      }
 
       // get post and check if it is bookmarked
       // keep in a while loop until it is bookmarked
@@ -1513,10 +1528,15 @@ export function PubkyClientWrapper({
 
       const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
 
-      await client.fetch(bookmarkUrl, {
+      const response = await client.fetch(bookmarkUrl, {
         method: 'DELETE',
         credentials: 'include',
       });
+
+      if (!response.ok) {
+        const errorMessage = `Error ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
+      }
 
       // get post and check if it is bookmarked
       // keep in a while loop until it is bookmarked

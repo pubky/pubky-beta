@@ -1,5 +1,9 @@
 import { Icon, Tooltip } from '@social/ui-shared';
-import { usePubkyClientContext, useToastContext } from '@/contexts';
+import {
+  useAlertContext,
+  usePubkyClientContext,
+  useToastContext,
+} from '@/contexts';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 
@@ -11,11 +15,17 @@ interface BookmarkProps {
 
 export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
   const { pubky, addBookmark, deleteBookmark } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const { addToast } = useToastContext();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
 
   const handleAddBookmark = async (postId: string, uri: string) => {
     const result = await addBookmark(postId, uri);
+
+    if (!result) {
+      addAlert('Something went wrong!', 'warning');
+    }
+
     if (result) setShowMenu(false);
   };
 
@@ -25,6 +35,11 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
     bookmarkId: string,
   ) => {
     const result = await deleteBookmark(postId, authorId, bookmarkId);
+
+    if (!result) {
+      addAlert('Something went wrong!', 'warning');
+    }
+
     if (result) setShowMenu(false);
   };
 

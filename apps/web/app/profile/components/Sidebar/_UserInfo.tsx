@@ -3,7 +3,7 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import Parsing from '@/components/Content/_Parsing';
 import { ImageByUri } from '@/components/ImageByUri';
-import { useJoin, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useJoin, usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
 
 interface UserInfoProps {
@@ -40,6 +40,7 @@ export default function UserInfo({
   setLoadingFollowed,
 }: UserInfoProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const { openJoin } = useJoin();
 
   const followUser = async () => {
@@ -48,6 +49,11 @@ export default function UserInfo({
       setLoadingFollowed(true);
 
       const result = await follow(creatorPubky);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
@@ -61,6 +67,11 @@ export default function UserInfo({
       setLoadingFollowed(true);
 
       const result = await unfollow(creatorPubky);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {

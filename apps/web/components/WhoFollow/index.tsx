@@ -3,13 +3,14 @@
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { useStreamUsers } from '@/hooks/useStream';
 import Link from 'next/link';
 
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const { data: recommendedProfiles, isLoading } = useStreamUsers(
     pubky ?? '',
     pubky ?? '',
@@ -49,6 +50,10 @@ export default function WhoFollow() {
 
       const result = await follow(pubkyFollow);
 
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowedUser((prevState) => ({
         ...prevState,
         [pubkyFollow]: result,
@@ -73,6 +78,10 @@ export default function WhoFollow() {
       }));
 
       const result = await unfollow(pubkyUnfollow);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
 
       setFollowedUser((prevState) => ({
         ...prevState,
