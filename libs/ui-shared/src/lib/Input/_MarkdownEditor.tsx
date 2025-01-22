@@ -53,7 +53,7 @@ export const MarkdownEditorComponent = ({
       'html',
     ],
     events: {
-      contentChanged: function (e: any, editor: any) {
+      contentChanged: function (_: any, editor: any) {
         try {
           if (editor && editor.html) {
             onChange(editor.html.get());
