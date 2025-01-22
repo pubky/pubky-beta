@@ -52,6 +52,7 @@ export const MarkdownEditorComponent = ({
       'redo',
       'html',
     ],
+    linkAlwaysBlank: true,
     events: {
       contentChanged: function (_: any, editor: any) {
         try {
