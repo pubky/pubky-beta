@@ -1,6 +1,6 @@
 'use client';
 
-import MarkdownPreview from '@uiw/react-markdown-preview';
+import FroalaEditorView from 'react-froala-wysiwyg/FroalaEditorView';
 
 import { Typography, Post as PostUI, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
@@ -122,7 +122,7 @@ const LongPost = ({ data, user }) => {
           />
         )}
         <div className="text-white break-words">
-          <MarkdownPreview source={JSON.parse(data?.details?.content).body} />
+          <FroalaEditorView model={JSON.parse(data?.details?.content).body} />
         </div>
       </div>
       <TagsLargeView post={data} />
