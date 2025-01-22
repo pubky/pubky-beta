@@ -58,7 +58,7 @@ export default function FooterArea({
   wrapperRefEmojis,
   button,
   article,
-  markdown,
+  //markdown,
   noFile,
   maxLength = 1000,
   setShowModalPost,
@@ -191,14 +191,12 @@ export default function FooterArea({
             )}
             <div className="grow" />
             <div className="w-full justify-end flex gap-2">
-              {!markdown && (
-                <div
-                  id="content-length"
-                  className="text-opacity-30 text-white text-sm mt-4 mr-2"
-                >
-                  {content.length} / {maxLength}
-                </div>
-              )}
+              <div
+                id="content-length"
+                className="text-opacity-30 text-white text-sm mt-4 mr-2"
+              >
+                {content.length} / {maxLength}
+              </div>
               <div className="flex gap-2">
                 <Button.Action
                   id="tag-btn"

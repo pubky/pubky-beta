@@ -147,25 +147,14 @@ export default function InputArea({
   };
 
   const handleEditorChange = (text: string) => {
-    try {
-      if (!text) {
-        setIsError && setIsError(false);
-        setContent('');
-        setCursorPosition(0);
-        setIsValidContent(false);
-        return;
-      }
-
-      const isOverMaxLength = text.length > maxLength;
-      setIsError && setIsError(isOverMaxLength);
-
-      setContent(text);
-      setCursorPosition(text.length);
-
-      setIsValidContent(Utils.isValidContent(text));
-    } catch (error) {
-      console.error('Error updating content:', error);
+    if (text.length > maxLength) {
+      setIsError && setIsError(true);
+    } else {
+      setIsError && setIsError(false);
     }
+    setContent(text);
+    setCursorPosition(text.length);
+    setIsValidContent(Utils.isValidContent(text));
   };
 
   return (

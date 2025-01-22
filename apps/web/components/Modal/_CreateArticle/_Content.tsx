@@ -429,7 +429,6 @@ export default function ContentCreateArticle({
               setShowEmojis={setShowEmojis}
               largeView={!isMobile}
               noFile
-              markdown
               button={
                 <Button.Medium
                   id="post-btn"
@@ -438,13 +437,19 @@ export default function ContentCreateArticle({
                   icon={
                     <Icon.PaperPlaneRight
                       color={
-                        !isValidContent || isError || !contentTitle
+                        !isValidContent ||
+                        isError ||
+                        !contentTitle
                           ? 'gray'
                           : 'white'
                       }
                     />
                   }
-                  disabled={!isValidContent || isError || !contentTitle}
+                  disabled={
+                    !isValidContent ||
+                    isError ||
+                    !contentTitle
+                  }
                   loading={sendingArticle}
                   onClick={
                     isValidContent &&

@@ -1,16 +1,4 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
-
-const FroalaEditorComponent = dynamic(() => import('react-froala-wysiwyg'), {
-  ssr: false,
-});
-
-if (typeof window !== 'undefined') {
-  require('froala-editor/js/plugins.pkgd.min.js');
-}
+import MarkdownEditor from '@uiw/react-markdown-editor';
 
 interface MarkdownEditorProps {
   placeHolder?: string;
@@ -32,56 +20,16 @@ export const MarkdownEditorComponent = ({
 }: MarkdownEditorProps) => {
   const errorCSS = `text-red-500 text-sm mt-2`;
 
-  // Config
-  const config = {
-    heightMin: 400,
-    placeholderText: placeHolder,
-    charCounterCount: maxLength ? true : false,
-    charCounterMax: maxLength,
-    imageInsertButtons: ['imageByURL'],
-    imageUpload: false,
-    quickInsertEnabled: false,
-    toolbarButtons: [
-      'bold',
-      'italic',
-      'underline',
-      'fontSize',
-      '|',
-      'align',
-      'formatOL',
-      'formatUL',
-      'paragraphFormat',
-      '|',
-      'insertLink',
-      'insertImage',
-      '|',
-      'undo',
-      'redo',
-      'html',
-    ],
-    linkAlwaysBlank: true,
-    events: {
-      contentChanged: function (_: any, editor: any) {
-        try {
-          if (editor && editor.html) {
-            onChange(editor.html.get());
-          }
-        } catch (error) {
-          console.error('Error handling content:', error);
-        }
-      },
-    },
-    autofocus: autoFocus,
-    theme: 'dark',
-  };
-
   return (
-    <div className="w-full relative mt-4">
-      <FroalaEditorComponent
-        tag="textarea"
-        config={config}
-        model={value}
-        onModelChange={(newValue: string) => onChange(newValue)}
+    <div className="w-full relative">
+      <MarkdownEditor
+        value={value}
+        visible
+        onChange={onChange}
+        height="400px"
+        className="mt-2"
+        placeholder={placeHolder}
+        autoFocus={autoFocus}
         {...rest}
       />
       {isError && <div className={errorCSS}>Max length {maxLength}</div>}
