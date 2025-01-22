@@ -51,6 +51,12 @@ jobs:
           sed -i 's/NEO4J_server_memory_heap_initial__size=4G/NEO4J_server_memory_heap_initial__size=1G/' neo4j.env
           sed -i 's/NEO4J_server_memory_heap_max__size=8G/NEO4J_server_memory_heap_max__size=2G/' neo4j.env
 
+      # reduce watcher sleep time to speed up new notification detection
+      - name: Modify nexus.testnet.env
+        working-directory: pubky-docker/development
+        run: |
+          sed -i 's/WATCHER_SLEEP=500/WATCHER_SLEEP=100/' nexus.testnet.env
+
       - name: Prepare pubky-docker .env
         working-directory: pubky-docker/development
         run: |
