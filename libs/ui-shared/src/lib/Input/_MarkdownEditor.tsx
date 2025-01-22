@@ -8,6 +8,10 @@ const FroalaEditorComponent = dynamic(() => import('react-froala-wysiwyg'), {
   ssr: false,
 });
 
+if (typeof window !== 'undefined') {
+  require('froala-editor/js/plugins.pkgd.min.js');
+}
+
 interface MarkdownEditorProps {
   placeHolder?: string;
   onChange: (value: string) => void;
