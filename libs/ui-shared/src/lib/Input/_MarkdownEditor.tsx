@@ -5,7 +5,7 @@ import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
 
 const FroalaEditorComponent = dynamic(() => import('react-froala-wysiwyg'), {
-  ssr: false,
+  ssr: true,
 });
 
 if (typeof window !== 'undefined') {
@@ -34,6 +34,7 @@ export const MarkdownEditorComponent = ({
 
   // Config
   const config = {
+    Key: "ABCDE-12345-FGHIJ-67890-KLMNO",
     heightMin: 400,
     placeholderText: placeHolder,
     charCounterCount: maxLength ? true : false,
