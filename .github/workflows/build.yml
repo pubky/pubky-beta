@@ -21,7 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: '18' # Versão LTS
           cache: 'npm'
 
       - name: Create .env
@@ -37,12 +37,23 @@ jobs:
           echo "SUPPORT_API_ACCESS_TOKEN=$SUPPORT_API_ACCESS_TOKEN" >> .env
           echo "SUPPORT_ACCOUNT_ID=$SUPPORT_ACCOUNT_ID" >> .env
 
+      - name: Cache NX workspace
+        uses: actions/cache@v3
+        with:
+          path: .nx/cache
+          key: ${{ runner.os }}-nx-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-nx-
+
       - name: Install dependencies
-        run: npm install --omit=dev
+        run: npm ci
+
+      - name: TypeScript Check
+        run: npx tsc --noEmit
 
       - name: Build prod
         env:
           BASE_URL_SUPPORT: ${{ secrets.BASE_URL_SUPPORT }}
           SUPPORT_API_ACCESS_TOKEN: ${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
           SUPPORT_ACCOUNT_ID: ${{ secrets.SUPPORT_ACCOUNT_ID }}
-        run: npm run build
+        run: npm run build --verbose
