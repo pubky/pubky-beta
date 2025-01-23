@@ -12,7 +12,7 @@ import Contact from '@/app/profile/components/_ContactsProfile/_Contact';
 
 const ContactsContent = () => {
   const { pubky } = usePubkyClientContext();
-  const limit = 10;
+  const limit = 30;
   const [usersList, setUsersList] = useState<UserView[]>([]);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -49,7 +49,7 @@ const ContactsContent = () => {
   }, [pubky]);
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       {isLoading && usersList.length === 0 ? (
         <div className="mt-12">
           <Skeletons.Simple />
@@ -65,7 +65,7 @@ const ContactsContent = () => {
           </Typography.H2>
         </div>
       )}
-       {hasMore && <div ref={loader} />}
+      {hasMore && <div ref={loader} />}
     </div>
   );
 };
