@@ -16,11 +16,11 @@ interface RenderTagsProps {
 const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
   const { timeframe } = useFilterContext();
   const timeframeLabel =
-          timeframe === 'all_time'
-            ? 'all time'
-            : timeframe === 'this_month'
-              ? 'this month'
-              : 'today';
+    timeframe === 'all_time'
+      ? 'all time'
+      : timeframe === 'this_month'
+        ? 'this month'
+        : 'today';
 
   if (loadingReachTags) {
     return <Skeletons.Simple />;
@@ -34,6 +34,11 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
       <Typography.H2 className="hidden lg:block text-opacity-50 font-light">
         Popular Tags
       </Typography.H2>
+      {hotTags.length === 0 && (
+        <Typography.Body variant="small" className="text-opacity-50">
+          No tags to show
+        </Typography.Body>
+      )}
       {firstThreeTags.length > 0 && (
         <div className="w-full flex flex-col md:flex-row gap-3">
           {firstThreeTags.map((tag, index) => (
