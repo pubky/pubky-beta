@@ -1,7 +1,5 @@
 'use client';
 
-import MarkdownPreview from '@uiw/react-markdown-preview';
-
 import { Typography, Post as PostUI, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { Post as PostComponent } from '@/components';
@@ -121,9 +119,12 @@ const LongPost = ({ data, user }) => {
             loading
           />
         )}
-        <div className="text-white break-words">
-          <MarkdownPreview source={JSON.parse(data?.details?.content).body} />
-        </div>
+        <div
+          className="text-white break-words"
+          dangerouslySetInnerHTML={{
+            __html: JSON.parse(data?.details?.content).body,
+          }}
+        ></div>
       </div>
       <TagsLargeView post={data} />
     </div>

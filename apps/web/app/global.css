@@ -34,100 +34,36 @@ body {
 }
 
 @media screen and (min-width: 1024px) {
-	html {
-		margin-left: calc(100vw - 100%);
-		margin-right: 0;
-	}
+  html {
+    margin-left: calc(100vw - 100%);
+    margin-right: 0;
+  }
 }
 
-.md-editor {
-  background-color: #05050a !important;
+.rsw-editor {
+  min-height: 400px !important;
+  border: none !important;
 }
 
-.md-editor-toolbar button {
+.rsw-ce {
   color: white !important;
+  outline: none !important;
 }
 
-.ͼ1b {
+.rsw-toolbar {
   background-color: #05050a !important;
-}
-
-.ͼ1b .cm-gutters {
-  background-color: #05050a !important;
-  display: none !important;
-}
-
-.md-editor-toolbar {
-  gap: 10px !important;
-}
-
-.md-editor-toolbar-warp:not(.md-editor-toolbar-bottom) {
-  border: 1px solid #ffffff29 !important;
   border-radius: 8px !important;
-  padding: 6px 8px 6px 8px !important;
+  border: 1px solid #ffffff29 !important;
 }
 
-.ͼ1b .cm-activeLine {
-  background-color: #05050a !important;
-}
-
-.ͼ2 .cm-activeLine {
-  background-color: #05050a !important;
-}
-
-.ͼ1 .cm-line {
-  color: white !important;
-  padding: 10px 10px 0px 10px !important;
-  font-size: 14px !important;
-}
-
-.ͼ4 .cm-line {
-  caret-color: white !important;
-}
-
-.ͼ4 .cm-line::selection {
-  background-color: #0056b3 !important;
-}
-
-.wmde-markdown {
-  color: white !important;
-  background-color: transparent !important;
-}
-
-.md-editor-preview {
-  background-color: #05050a !important;
-  border-left: 1px solid #ffffff29 !important;
-}
-
-.ͼo .cm-activeLine::selection {
-  background-color: #0056b3 !important;
-}
-
-.ͼo .cm-gutters {
-  display: none !important;
-}
-
-.ͼ4 .cm-content {
-  caret-color: white !important;
-  background-color: #05050a !important;
-}
-
-.ͼai .cm-scroller {
-  background-color: #05050a !important;
-}
-
-.ͼ2 .cm-gutters {
-  display: none !important;
-}
-
-.ͼo .cm-activeLine {
-  background-color: #05050a !important;
-}
-
-.ͼ13 {
+.rsw-btn {
   color: white !important;
 }
 
-.md-editor-toolbar button.active {
-  background-color: #05050a !important;
+.rsw-btn:hover {
+  background-color: rgba(128, 128, 128, 0.5) !important;
+}
+
+.rsw-btn[data-active='true'] {
+  background-color: rgba(128, 128, 128, 0.5) !important;
 }
