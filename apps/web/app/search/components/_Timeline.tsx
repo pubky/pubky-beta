@@ -67,7 +67,7 @@ export const Timeline = () => {
     setStart(undefined);
     setTimeline([]);
     fetchPosts();
-  }, [searchTags, reach, sort]);
+  }, [searchTags, reach, sort, mutedUsers]);
 
   return (
     <div className="flex flex-col gap-3">

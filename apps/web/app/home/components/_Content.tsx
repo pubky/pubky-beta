@@ -43,8 +43,8 @@ export default function ContentHome() {
         <div className="overflow-y-auto max-h-full no-scrollbar">
           <Filter.Reach />
           <Filter.Sort />
-          <Filter.Layout setDrawerFilterOpen={setDrawerFilterOpen} />
           <Filter.Content />
+          <Filter.Layout setDrawerFilterOpen={setDrawerFilterOpen} />
         </div>
       </Menu.Root>
     </>

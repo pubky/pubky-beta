@@ -12,7 +12,7 @@ import {
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
 import { UserTags, UserView } from '@/types/User';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import { PostTag } from '@/types/Post';
 import Link from 'next/link';
@@ -40,6 +40,7 @@ export default function ContentProfileTag({
   uriImage,
 }: ProfileTagProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const [tag, setTag] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -127,6 +128,10 @@ export default function ContentProfileTag({
 
       const result = await follow(pubkyFollow);
 
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowedUser((prevState) => ({
         ...prevState,
         [pubkyFollow]: result,
@@ -151,6 +156,10 @@ export default function ContentProfileTag({
       }));
 
       const result = await unfollow(pubkyUnfollow);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
 
       setFollowedUser((prevState) => ({
         ...prevState,

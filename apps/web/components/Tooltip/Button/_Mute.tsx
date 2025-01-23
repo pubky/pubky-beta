@@ -10,7 +10,7 @@ interface MuteProps {
 }
 
 export default function Mute({ pk }: MuteProps) {
-  const { pubky, mute, unmute } = usePubkyClientContext();
+  const { pubky, mute, unmute, setMutedUsers } = usePubkyClientContext();
   const { data: author } = useUserProfile(pk, pubky ?? '');
   const [initLoadingMuted, setInitLoadingMuted] = useState(true);
   const [muted, setMuted] = useState(false);
@@ -37,7 +37,10 @@ export default function Mute({ pk }: MuteProps) {
       setLoadingMuted(true);
 
       const result = await mute(pk);
-      setMuted(result);
+      if (result) {
+        setMuted(result);
+        setMutedUsers((prev) => (prev ? [...prev, pk] : [pk]));
+      }
       setLoadingMuted(false);
     } catch (error) {
       console.log(error);
@@ -51,7 +54,12 @@ export default function Mute({ pk }: MuteProps) {
       setLoadingMuted(true);
 
       const result = await unmute(pk);
-      setMuted(!result);
+      if (result) {
+        setMuted(!result);
+        setMutedUsers((prev) =>
+          prev ? prev.filter((user) => user !== pk) : [],
+        );
+      }
       setLoadingMuted(false);
     } catch (error) {
       console.log(error);

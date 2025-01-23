@@ -44,7 +44,7 @@ export interface NotificationView {
   timestamp: number;
 }
 
-interface BodyNotification {
+export interface BodyNotification {
   followed_by?: string;
   unfollowed_by?: string;
   post_uri?: string;

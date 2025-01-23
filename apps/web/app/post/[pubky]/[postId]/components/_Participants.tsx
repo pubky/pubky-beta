@@ -4,13 +4,14 @@ import { Icon, Button, SideCard } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
 import { useUserProfile } from '@/hooks/useUser';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 
 export default function Participants({ author }: { author: string }) {
   const { pubky, follow, unfollow, replies, mutedUsers } =
     usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
   const [initLoadingAuthor, setInitLoadingAuthor] = useState(true);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -85,6 +86,10 @@ export default function Participants({ author }: { author: string }) {
 
       const result = await follow(pubkyFollow);
 
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowedUser((prevState) => ({
         ...prevState,
         [pubkyFollow]: result,
@@ -109,6 +114,10 @@ export default function Participants({ author }: { author: string }) {
       }));
 
       const result = await unfollow(pubkyUnfollow);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
 
       setFollowedUser((prevState) => ({
         ...prevState,

@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import {
   UseUserFollowers,
@@ -27,6 +27,7 @@ interface ProfileProps {
 
 export default function Profile({ post, profileId }: ProfileProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const [followingImages, setFollowingImages] = useState<
     { alt: string; src: string }[]
   >([]);
@@ -61,6 +62,11 @@ export default function Profile({ post, profileId }: ProfileProps) {
       setLoadingFollowed(true);
 
       const result = await follow(idAuthor);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
@@ -74,6 +80,11 @@ export default function Profile({ post, profileId }: ProfileProps) {
       setLoadingFollowed(true);
 
       const result = await unfollow(idAuthor);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {
