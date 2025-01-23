@@ -26,7 +26,7 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
   process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
   'https://demo.httprelay.io/link/';
 
-import init, { create_pubky_app_follow } from 'pubky-app-specs';
+import init, { create_pubky_app_follow, PubkyAppSpecs } from 'pubky-app-specs';
 
 let client: Client;
 if (TESTNET) {
@@ -166,10 +166,11 @@ export function PubkyClientWrapper({
   children: React.ReactNode;
 }) {
   const [queryClient] = useState(() => new QueryClient());
-  const [wasmLoaded, setWasmLoaded] = useState(false);
+  const [specsWasmLoaded, setSpecsWasmLoaded] = useState(false);
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined,
   );
+  const [specs, setSpecs] = useState<PubkyAppSpecs | undefined>(undefined);
   const [newUser, setNewUser] = useState(false);
   const [seed, setSeed] = useState<string | undefined>(
     (Utils.storage.get('seed') as string | undefined) || undefined,
@@ -193,31 +194,23 @@ export function PubkyClientWrapper({
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
 
-  const [wasmLoaded2, setWasmLoaded2] = useState(false);
-
   useEffect(() => {
-    // Let’s fetch/instantiate from a URL we control
-    console.log('BBBBBB');
-    if (!wasmLoaded2) {
-      init('/wasm/pubky_app_specs_bg.wasm')
-        .then(() => console.log(create_pubky_app_follow('someId')))
+    if (!specsWasmLoaded) {
+      init()
+        .then(() => setSpecsWasmLoaded(true))
         .catch(console.error);
     }
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      import('base32.js')
-        .then(() => {
-          setWasmLoaded(true);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    if (specsWasmLoaded && pubky) {
+      // We instantiate a new PubkyAppSpecs when our user's pubky_id
+      // changes so the URLs generated are always correct.
+      setSpecs(new PubkyAppSpecs(pubky));
     }
-  }, []);
+  }, [specsWasmLoaded, pubky]);
 
-  if (!wasmLoaded) {
+  if (!specsWasmLoaded) {
     return <div>Loading...</div>;
   }
 
@@ -1344,15 +1337,11 @@ export function PubkyClientWrapper({
     try {
       await ensureLoggedIn();
 
-      const followData = {
-        created_at: Date.now(),
-      };
+      const follow = specs?.createFollow(user_id);
 
-      const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
-
-      await client.fetch(followUrl, {
+      await client.fetch(follow.url, {
         method: 'PUT',
-        body: JSON.stringify(followData),
+        body: JSON.stringify(follow.json),
         credentials: 'include',
       });
 

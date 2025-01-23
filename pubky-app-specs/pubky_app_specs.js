@@ -346,6 +346,52 @@ export function create_pubky_app_last_read() {
     return takeFromExternrefTable0(ret[0]);
 }
 
+const PubkyAppSpecsFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_pubkyappspecs_free(ptr >>> 0, 1));
+/**
+ * Represents a user's single link with a title and URL.
+ */
+export class PubkyAppSpecs {
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        PubkyAppSpecsFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_pubkyappspecs_free(ptr, 0);
+    }
+    /**
+     * Creates a new `PubkyAppSpecs` instance.
+     * @param {string} pubky_id
+     */
+    constructor(pubky_id) {
+        const ptr0 = passStringToWasm0(pubky_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.pubkyappspecs_new(ptr0, len0);
+        this.__wbg_ptr = ret >>> 0;
+        PubkyAppSpecsFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+    /**
+     * @param {string} followee_id
+     * @returns {any}
+     */
+    createFollow(followee_id) {
+        const ptr0 = passStringToWasm0(followee_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.pubkyappspecs_createFollow(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+}
+
 const PubkyAppUserFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_pubkyappuser_free(ptr >>> 0, 1));
@@ -553,10 +599,6 @@ function __wbg_get_imports() {
         const ret = new Object();
         return ret;
     };
-    imports.wbg.__wbg_new_5e0be73521bc8c17 = function() {
-        const ret = new Map();
-        return ret;
-    };
     imports.wbg.__wbg_new_78feb108b6472713 = function() {
         const ret = new Array();
         return ret;
@@ -590,10 +632,6 @@ function __wbg_get_imports() {
     imports.wbg.__wbg_set_65595bdd868b3009 = function(arg0, arg1, arg2) {
         arg0.set(arg1, arg2 >>> 0);
     };
-    imports.wbg.__wbg_set_8fc6bf8a5b1071d1 = function(arg0, arg1, arg2) {
-        const ret = arg0.set(arg1, arg2);
-        return ret;
-    };
     imports.wbg.__wbg_set_bb8cecf6a62b9f46 = function() { return handleError(function (arg0, arg1, arg2) {
         const ret = Reflect.set(arg0, arg1, arg2);
         return ret;
@@ -604,10 +642,6 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbindgen_bigint_from_i64 = function(arg0) {
         const ret = arg0;
-        return ret;
-    };
-    imports.wbg.__wbindgen_bigint_from_u64 = function(arg0) {
-        const ret = BigInt.asUintN(64, arg0);
         return ret;
     };
     imports.wbg.__wbindgen_boolean_get = function(arg0) {

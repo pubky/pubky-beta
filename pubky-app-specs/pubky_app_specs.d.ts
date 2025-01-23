@@ -10,6 +10,17 @@ export function create_pubky_app_follow(pubky_id: string): any;
 export function create_pubky_app_mute(pubky_id: string): any;
 export function create_pubky_app_last_read(): any;
 /**
+ * Represents a user's single link with a title and URL.
+ */
+export class PubkyAppSpecs {
+  free(): void;
+  /**
+   * Creates a new `PubkyAppSpecs` instance.
+   */
+  constructor(pubky_id: string);
+  createFollow(followee_id: string): any;
+}
+/**
  * URI: /pub/pubky.app/profile.json
  */
 export class PubkyAppUser {
@@ -40,6 +51,9 @@ export interface InitOutput {
   readonly pubkyappuser_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => number;
   readonly pubkyappuser_get_data: (a: number) => [number, number, number];
   readonly pubkyappuserlink_new: (a: number, b: number, c: number, d: number) => number;
+  readonly __wbg_pubkyappspecs_free: (a: number, b: number) => void;
+  readonly pubkyappspecs_new: (a: number, b: number) => number;
+  readonly pubkyappspecs_createFollow: (a: number, b: number, c: number) => [number, number, number];
   readonly create_pubky_app_user: (a: number, b: number, c: number, d: number, e: number, f: number, g: any, h: number, i: number) => [number, number, number];
   readonly create_pubky_app_feed: (a: any, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number, number];
   readonly create_pubky_app_file: (a: number, b: number, c: number, d: number, e: number, f: number, g: bigint) => [number, number, number];
