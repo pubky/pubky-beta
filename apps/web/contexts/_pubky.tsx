@@ -26,7 +26,7 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
   process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
   'https://demo.httprelay.io/link/';
 
-import init, { create_pubky_app_follow, PubkyAppSpecs } from 'pubky-app-specs';
+import init, { PubkyAppSpecs } from 'pubky-app-specs';
 
 let client: Client;
 if (TESTNET) {
@@ -276,10 +276,13 @@ export function PubkyClientWrapper({
     return true;
   };
 
-  const ensureLoggedIn = async (): Promise<void> => {
+  const ensureReady = async (): Promise<void> => {
     const loggedIn = await isLoggedIn();
     if (!loggedIn) {
       throw new Error('User is not logged in');
+    }
+    if (!specs) {
+      throw new Error('Pubky app specs not ready');
     }
   };
 
@@ -508,7 +511,7 @@ export function PubkyClientWrapper({
     userProfile: PubkyAppUser,
   ): Promise<any | false> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       if (userProfile.image instanceof File) {
         const file = userProfile.image;
@@ -645,7 +648,7 @@ export function PubkyClientWrapper({
     quote?: string,
   ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       // Generate a timestamp ID for the post
       const postId = generateTimestampId().toUpperCase();
@@ -749,7 +752,7 @@ export function PubkyClientWrapper({
     files?: File[],
   ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       // Generate a timestamp ID for the article
       const articleId = generateTimestampId().toUpperCase();
@@ -829,7 +832,7 @@ export function PubkyClientWrapper({
 
   const editPost = async (post: PostView, postContent: string) => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const editPost: PubkyAppPost = {
         content: postContent,
@@ -856,7 +859,7 @@ export function PubkyClientWrapper({
 
   const deleteAccount = async (setProgress) => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const baseDirectory = `pubky://${pubky}/pub/pubky.app/`;
       const dataList = await client.list(baseDirectory);
@@ -896,7 +899,7 @@ export function PubkyClientWrapper({
 
   const downloadData = async (setProgress: (val: number) => void) => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const userDataUrl = `pubky://${pubky}/pub/pubky.app`;
       let cursor: string | undefined = undefined;
@@ -985,7 +988,7 @@ export function PubkyClientWrapper({
     setProgress: React.Dispatch<React.SetStateAction<number>>,
   ) => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       // Load the zip file using JSZip
       const zip = await JSZip.loadAsync(zipFile);
@@ -1057,7 +1060,7 @@ export function PubkyClientWrapper({
 
   const getTimestampNotification = async () => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
       const response = await client.fetch(lastReadUrl);
@@ -1072,7 +1075,7 @@ export function PubkyClientWrapper({
 
   const putTimestampNotification = async (timestamp: number) => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const lastRead = { timestamp: timestamp };
 
@@ -1096,7 +1099,7 @@ export function PubkyClientWrapper({
     try {
       if (!pubky) return null;
 
-      await ensureLoggedIn();
+      await ensureReady();
 
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
       const response = await client.fetch(settingsUrl);
@@ -1115,7 +1118,7 @@ export function PubkyClientWrapper({
     language?: string,
   ) => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const settings = { notifications, privacysafety, language };
 
@@ -1136,7 +1139,7 @@ export function PubkyClientWrapper({
 
   const deletePost = async (postId: string): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       // Post URL
       const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
@@ -1178,7 +1181,7 @@ export function PubkyClientWrapper({
     files?: File[],
   ): Promise<string | false> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       // Generate a timestamp ID for the repost
       const repostId = generateTimestampId().toUpperCase();
@@ -1264,7 +1267,7 @@ export function PubkyClientWrapper({
     quote?: string,
   ): Promise<string | false> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const replyId = generateTimestampId().toUpperCase();
       const replyPost: PubkyAppPost = {
@@ -1335,13 +1338,13 @@ export function PubkyClientWrapper({
 
   const follow = async (user_id: string): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady(); // ensure is logged in and specs are initialized
 
-      const follow = specs?.createFollow(user_id);
+      const follow = specs.createFollow(user_id);
 
-      await client.fetch(follow.url, {
+      const response = await client.fetch(follow.url, {
         method: 'PUT',
-        body: JSON.stringify(follow.json),
+        body: follow.json,
         credentials: 'include',
       });
 
@@ -1376,7 +1379,7 @@ export function PubkyClientWrapper({
 
   const unfollow = async (user_id: string): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
 
@@ -1416,7 +1419,7 @@ export function PubkyClientWrapper({
 
   const deleteFile = async (file_uri: string): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       await client.fetch(file_uri, {
         method: 'DELETE',
@@ -1432,7 +1435,7 @@ export function PubkyClientWrapper({
 
   const mute = async (user_id: string): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const muteData = {
         created_at: Date.now(),
@@ -1455,7 +1458,7 @@ export function PubkyClientWrapper({
 
   const unmute = async (user_id: string): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
 
@@ -1476,7 +1479,7 @@ export function PubkyClientWrapper({
     authorId: string,
   ): Promise<boolean | string> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const bookmarkData = {
         uri: `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
@@ -1527,7 +1530,7 @@ export function PubkyClientWrapper({
     bookmarkId: string,
   ): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
 
@@ -1571,7 +1574,7 @@ export function PubkyClientWrapper({
     tagContent: string,
   ): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       if (!tagContent || tagContent.trim() === '') {
         throw new Error('Tag content cannot be empty');
@@ -1607,7 +1610,7 @@ export function PubkyClientWrapper({
     name: string,
   ): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const feedData = {
         feed,
@@ -1638,7 +1641,7 @@ export function PubkyClientWrapper({
     { feed: ICustomFeed; name: string }[]
   > => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       // Define the feeds directory path
       const feedsDirUrl = `pubky://${pubky}/pub/pubky.app/feeds/`;
@@ -1670,7 +1673,7 @@ export function PubkyClientWrapper({
 
   const deleteFeed = async (feed: ICustomFeed): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       // Compute the hash ID for the feed based on the feed options
       const feedId = (
@@ -1699,7 +1702,7 @@ export function PubkyClientWrapper({
     tagLabel: string,
   ): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const uriPost = `pubky://${authorId}/pub/pubky.app/posts/${postId}`;
 
@@ -1722,7 +1725,7 @@ export function PubkyClientWrapper({
     tagContent: string,
   ): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       if (!tagContent || tagContent.trim() === '') {
         throw new Error('Tag content cannot be empty');
@@ -1758,7 +1761,7 @@ export function PubkyClientWrapper({
     tagLabel: string,
   ): Promise<boolean> => {
     try {
-      await ensureLoggedIn();
+      await ensureReady();
 
       const profileUri = `pubky://${profileId}/pub/pubky.app/profile.json`;
       const tagId = (
