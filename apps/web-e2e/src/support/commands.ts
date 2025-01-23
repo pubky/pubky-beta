@@ -174,15 +174,6 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.get('#sign-in-password-input').type(passcode);
   cy.get('#sign-in-recovery-file-btn').click();
 
-  // TODO: remove workaround for indefinite loading issue on sign in button, https://github.com/pubky/pubky-app/issues/719
-  // if location is still /sign-in after 5 seconds (10 in CI) then refresh page
-  cy.wait(Cypress.env('ci') ? 10_000 : 5_000);
-  cy.location('pathname').then((path) => {
-    if (path === '/sign-in') {
-      cy.reload();
-    };
-  });
-
   cy.location('pathname').should('eq', '/home');
 });
 

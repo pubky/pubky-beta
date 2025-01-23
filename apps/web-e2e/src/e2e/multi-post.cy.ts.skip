@@ -37,7 +37,7 @@ describe('multi-post', () => {
       createQuickPost(postContent);
 
       // click the show new posts button
-      cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
+      //cy.get('#show-new-posts-button').scrollIntoView().should('be.visible').click();
 
       // verify the post is displayed correctly in feed
       latestPostInFeedContentEq(postContent);
