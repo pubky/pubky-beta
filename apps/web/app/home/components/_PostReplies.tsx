@@ -63,18 +63,15 @@ export const PostReplies = ({
     <>
       {showQuickReply && (
         <div className="mt-3 flex flex-col gap-3">
-          {displayedReplies.map(
-            (reply) =>
-              reply?.details?.content !== '[DELETED]' && (
-                <Components.Post
-                  key={reply.details.id}
-                  post={reply}
-                  largeView={!isMobile && layout === 'wide'}
-                  line={Boolean(reply?.relationships?.replied)}
-                  homeView={homeView}
-                />
-              ),
-          )}
+          {displayedReplies.map((reply) => (
+            <Components.Post
+              key={reply.details.id}
+              post={reply}
+              largeView={!isMobile && layout === 'wide'}
+              line={Boolean(reply?.relationships?.replied)}
+              homeView={homeView}
+            />
+          ))}
           {repliesLeft > 0 && (
             <div>
               <div className={lineBaseCSS} />
