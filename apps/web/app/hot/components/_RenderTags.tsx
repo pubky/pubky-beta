@@ -35,7 +35,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
         Popular Tags
       </Typography.H2>
       {hotTags.length === 0 && (
-        <Typography.Body variant="small" className="text-opacity-50">
+        <Typography.Body className="text-center mt-6 text-opacity-50 lg:text-left lg:mt-0 lg:text-[15px]">
           No tags to show
         </Typography.Body>
       )}
