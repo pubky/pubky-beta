@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Pubky App Specs Demo</title>
+  </head>
+  <body>
+    <script type="module">
+      import init, { create_pubky_app_follow } from "./pubky_app_specs.js";
+
+      async function main() {
+        try {
+          // 1) Initialize and await
+          // Option A: If your .wasm is at the same path as "pubky_app_specs_bg.wasm", do:
+          await init();
+
+          // Option B (often safer): explicitly provide the .wasm URL
+          // await init("./pubky_app_specs_bg.wasm");
+
+          // 2) Now call the function
+          const result = create_pubky_app_follow("nonsense");
+          console.log("Success:", result);
+        } catch (err) {
+          console.error("Error creating follow:", err);
+        }
+      }
+
+      main();
+    </script>
+  </body>
+</html>

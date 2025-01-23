@@ -89,6 +89,71 @@ function handleError(f, args) {
     }
 }
 
+function debugString(val) {
+    // primitive types
+    const type = typeof val;
+    if (type == 'number' || type == 'boolean' || val == null) {
+        return  `${val}`;
+    }
+    if (type == 'string') {
+        return `"${val}"`;
+    }
+    if (type == 'symbol') {
+        const description = val.description;
+        if (description == null) {
+            return 'Symbol';
+        } else {
+            return `Symbol(${description})`;
+        }
+    }
+    if (type == 'function') {
+        const name = val.name;
+        if (typeof name == 'string' && name.length > 0) {
+            return `Function(${name})`;
+        } else {
+            return 'Function';
+        }
+    }
+    // objects
+    if (Array.isArray(val)) {
+        const length = val.length;
+        let debug = '[';
+        if (length > 0) {
+            debug += debugString(val[0]);
+        }
+        for(let i = 1; i < length; i++) {
+            debug += ', ' + debugString(val[i]);
+        }
+        debug += ']';
+        return debug;
+    }
+    // Test for built-in
+    const builtInMatches = /\[object ([^\]]+)\]/.exec(toString.call(val));
+    let className;
+    if (builtInMatches && builtInMatches.length > 1) {
+        className = builtInMatches[1];
+    } else {
+        // Failed to match the standard '[object ClassName]'
+        return toString.call(val);
+    }
+    if (className == 'Object') {
+        // we're a user defined class or Object
+        // JSON.stringify avoids problems with cycles, and is generally much
+        // easier than looping through ownProperties of `val`.
+        try {
+            return 'Object(' + JSON.stringify(val) + ')';
+        } catch (_) {
+            return 'Object';
+        }
+    }
+    // errors
+    if (val instanceof Error) {
+        return `${val.name}: ${val.message}\n${val.stack}`;
+    }
+    // TODO we could test for more things here, like `Set`s and `Map`s.
+    return className;
+}
+
 const cachedTextDecoder = (typeof TextDecoder !== 'undefined' ? new TextDecoder('utf-8', { ignoreBOM: true, fatal: true }) : { decode: () => { throw Error('TextDecoder not available') } } );
 
 if (typeof TextDecoder !== 'undefined') { cachedTextDecoder.decode(); };
@@ -102,6 +167,23 @@ function isLikeNone(x) {
     return x === undefined || x === null;
 }
 
+function takeFromExternrefTable0(idx) {
+    const value = wasm.__wbindgen_export_4.get(idx);
+    wasm.__externref_table_dealloc(idx);
+    return value;
+}
+
+function getArrayJsValueFromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    const mem = getDataViewMemory0();
+    const result = [];
+    for (let i = ptr; i < ptr + 4 * len; i += 4) {
+        result.push(wasm.__wbindgen_export_4.get(mem.getUint32(i, true)));
+    }
+    wasm.__externref_drop_slice(ptr, len);
+    return result;
+}
+
 function passArrayJsValueToWasm0(array, malloc) {
     const ptr = malloc(array.length * 4, 4) >>> 0;
     for (let i = 0; i < array.length; i++) {
@@ -112,15 +194,50 @@ function passArrayJsValueToWasm0(array, malloc) {
     return ptr;
 }
 
-function takeFromExternrefTable0(idx) {
-    const value = wasm.__wbindgen_export_4.get(idx);
-    wasm.__externref_table_dealloc(idx);
-    return value;
+const FollowResultFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_followresult_free(ptr >>> 0, 1));
+
+export class FollowResult {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(FollowResult.prototype);
+        obj.__wbg_ptr = ptr;
+        FollowResultFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        FollowResultFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_followresult_free(ptr, 0);
+    }
+    /**
+     * @returns {Meta}
+     */
+    get meta() {
+        const ret = wasm.followresult_meta(this.__wbg_ptr);
+        return Meta.__wrap(ret);
+    }
+    /**
+     * @returns {PubkyAppFollow}
+     */
+    get follow() {
+        const ret = wasm.followresult_follow(this.__wbg_ptr);
+        return PubkyAppFollow.__wrap(ret);
+    }
 }
 
-const CreateResultFinalization = (typeof FinalizationRegistry === 'undefined')
+const MetaFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_createresult_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_meta_free(ptr >>> 0, 1));
 /**
  * Each FFI function:
  * - Accepts minimal fields in a JavaScript-friendly manner (e.g. strings, JSON).
@@ -129,26 +246,26 @@ const CreateResultFinalization = (typeof FinalizationRegistry === 'undefined')
  * - Generates the path (if applicable).
  * - Returns { json, id, path, url } or a descriptive error.
  */
-export class CreateResult {
+export class Meta {
 
     static __wrap(ptr) {
         ptr = ptr >>> 0;
-        const obj = Object.create(CreateResult.prototype);
+        const obj = Object.create(Meta.prototype);
         obj.__wbg_ptr = ptr;
-        CreateResultFinalization.register(obj, obj.__wbg_ptr, obj);
+        MetaFinalization.register(obj, obj.__wbg_ptr, obj);
         return obj;
     }
 
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
         this.__wbg_ptr = 0;
-        CreateResultFinalization.unregister(this);
+        MetaFinalization.unregister(this);
         return ptr;
     }
 
     free() {
         const ptr = this.__destroy_into_raw();
-        wasm.__wbg_createresult_free(ptr, 0);
+        wasm.__wbg_meta_free(ptr, 0);
     }
     /**
      * @returns {string}
@@ -157,7 +274,7 @@ export class CreateResult {
         let deferred1_0;
         let deferred1_1;
         try {
-            const ret = wasm.createresult_id(this.__wbg_ptr);
+            const ret = wasm.meta_id(this.__wbg_ptr);
             deferred1_0 = ret[0];
             deferred1_1 = ret[1];
             return getStringFromWasm0(ret[0], ret[1]);
@@ -172,7 +289,7 @@ export class CreateResult {
         let deferred1_0;
         let deferred1_1;
         try {
-            const ret = wasm.createresult_path(this.__wbg_ptr);
+            const ret = wasm.meta_path(this.__wbg_ptr);
             deferred1_0 = ret[0];
             deferred1_1 = ret[1];
             return getStringFromWasm0(ret[0], ret[1]);
@@ -187,7 +304,7 @@ export class CreateResult {
         let deferred1_0;
         let deferred1_1;
         try {
-            const ret = wasm.createresult_url(this.__wbg_ptr);
+            const ret = wasm.meta_url(this.__wbg_ptr);
             deferred1_0 = ret[0];
             deferred1_1 = ret[1];
             return getStringFromWasm0(ret[0], ret[1]);
@@ -195,58 +312,134 @@ export class CreateResult {
             wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
         }
     }
-    /**
-     * @returns {any}
-     */
-    get json() {
-        const ret = wasm.createresult_json(this.__wbg_ptr);
-        return ret;
-    }
 }
 
-const PubkyAppSpecsFinalization = (typeof FinalizationRegistry === 'undefined')
+const PubkyAppBuilderFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_pubkyappspecs_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_pubkyappbuilder_free(ptr >>> 0, 1));
 /**
  * Represents a user's single link with a title and URL.
  */
-export class PubkyAppSpecs {
+export class PubkyAppBuilder {
 
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
         this.__wbg_ptr = 0;
-        PubkyAppSpecsFinalization.unregister(this);
+        PubkyAppBuilderFinalization.unregister(this);
         return ptr;
     }
 
     free() {
         const ptr = this.__destroy_into_raw();
-        wasm.__wbg_pubkyappspecs_free(ptr, 0);
+        wasm.__wbg_pubkyappbuilder_free(ptr, 0);
     }
     /**
-     * Creates a new `PubkyAppSpecs` instance.
+     * Creates a new `PubkyAppBuilder` instance.
      * @param {string} pubky_id
      */
     constructor(pubky_id) {
         const ptr0 = passStringToWasm0(pubky_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        const ret = wasm.pubkyappspecs_new(ptr0, len0);
+        const ret = wasm.pubkyappbuilder_new(ptr0, len0);
         this.__wbg_ptr = ret >>> 0;
-        PubkyAppSpecsFinalization.register(this, this.__wbg_ptr, this);
+        PubkyAppBuilderFinalization.register(this, this.__wbg_ptr, this);
         return this;
     }
     /**
      * @param {string} followee_id
-     * @returns {CreateResult}
+     * @returns {FollowResult}
      */
     createFollow(followee_id) {
         const ptr0 = passStringToWasm0(followee_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        const ret = wasm.pubkyappspecs_createFollow(this.__wbg_ptr, ptr0, len0);
+        const ret = wasm.pubkyappbuilder_createFollow(this.__wbg_ptr, ptr0, len0);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
-        return CreateResult.__wrap(ret[0]);
+        return FollowResult.__wrap(ret[0]);
+    }
+    /**
+     * @param {string} name
+     * @param {string | null | undefined} bio
+     * @param {string | null | undefined} image
+     * @param {any} links
+     * @param {string | null} [status]
+     * @returns {UserResult}
+     */
+    createUser(name, bio, image, links, status) {
+        const ptr0 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        var ptr1 = isLikeNone(bio) ? 0 : passStringToWasm0(bio, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        var ptr2 = isLikeNone(image) ? 0 : passStringToWasm0(image, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len2 = WASM_VECTOR_LEN;
+        var ptr3 = isLikeNone(status) ? 0 : passStringToWasm0(status, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len3 = WASM_VECTOR_LEN;
+        const ret = wasm.pubkyappbuilder_createUser(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, links, ptr3, len3);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return UserResult.__wrap(ret[0]);
+    }
+}
+
+const PubkyAppFollowFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_pubkyappfollow_free(ptr >>> 0, 1));
+/**
+ * Represents raw homeserver follow object with timestamp
+ *
+ * On follow objects, the main data is encoded in the path
+ *
+ * URI: /pub/pubky.app/follows/:user_id
+ *
+ * Example URI:
+ *
+ * `/pub/pubky.app/follows/pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy`
+ */
+export class PubkyAppFollow {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(PubkyAppFollow.prototype);
+        obj.__wbg_ptr = ptr;
+        PubkyAppFollowFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        PubkyAppFollowFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_pubkyappfollow_free(ptr, 0);
+    }
+    /**
+     * @returns {bigint}
+     */
+    get created_at() {
+        const ret = wasm.__wbg_get_pubkyappfollow_created_at(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @param {bigint} arg0
+     */
+    set created_at(arg0) {
+        wasm.__wbg_set_pubkyappfollow_created_at(this.__wbg_ptr, arg0);
+    }
+    /**
+     * @returns {any}
+     */
+    toJson() {
+        const ret = wasm.pubkyappfollow_toJson(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
 }
 
@@ -258,6 +451,14 @@ const PubkyAppUserFinalization = (typeof FinalizationRegistry === 'undefined')
  */
 export class PubkyAppUser {
 
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(PubkyAppUser.prototype);
+        obj.__wbg_ptr = ptr;
+        PubkyAppUserFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
         this.__wbg_ptr = 0;
@@ -268,6 +469,79 @@ export class PubkyAppUser {
     free() {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_pubkyappuser_free(ptr, 0);
+    }
+    /**
+     * @returns {string}
+     */
+    get name() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.pubkyappuser_name(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
+     * @returns {string | undefined}
+     */
+    get bio() {
+        const ret = wasm.pubkyappuser_bio(this.__wbg_ptr);
+        let v1;
+        if (ret[0] !== 0) {
+            v1 = getStringFromWasm0(ret[0], ret[1]).slice();
+            wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+        }
+        return v1;
+    }
+    /**
+     * @returns {string | undefined}
+     */
+    get image() {
+        const ret = wasm.pubkyappuser_image(this.__wbg_ptr);
+        let v1;
+        if (ret[0] !== 0) {
+            v1 = getStringFromWasm0(ret[0], ret[1]).slice();
+            wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+        }
+        return v1;
+    }
+    /**
+     * @returns {PubkyAppUserLink[] | undefined}
+     */
+    get links() {
+        const ret = wasm.pubkyappuser_links(this.__wbg_ptr);
+        let v1;
+        if (ret[0] !== 0) {
+            v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
+            wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+        }
+        return v1;
+    }
+    /**
+     * @returns {string | undefined}
+     */
+    get status() {
+        const ret = wasm.pubkyappuser_status(this.__wbg_ptr);
+        let v1;
+        if (ret[0] !== 0) {
+            v1 = getStringFromWasm0(ret[0], ret[1]).slice();
+            wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+        }
+        return v1;
+    }
+    /**
+     * @returns {any}
+     */
+    toJson() {
+        const ret = wasm.pubkyappuser_toJson(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * Creates a new `PubkyAppUser` instance and sanitizes it.
@@ -293,16 +567,6 @@ export class PubkyAppUser {
         PubkyAppUserFinalization.register(this, this.__wbg_ptr, this);
         return this;
     }
-    /**
-     * @returns {any}
-     */
-    get_data() {
-        const ret = wasm.pubkyappuser_get_data(this.__wbg_ptr);
-        if (ret[2]) {
-            throw takeFromExternrefTable0(ret[1]);
-        }
-        return takeFromExternrefTable0(ret[0]);
-    }
 }
 
 const PubkyAppUserLinkFinalization = (typeof FinalizationRegistry === 'undefined')
@@ -312,6 +576,14 @@ const PubkyAppUserLinkFinalization = (typeof FinalizationRegistry === 'undefined
  * Represents a user's single link with a title and URL.
  */
 export class PubkyAppUserLink {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(PubkyAppUserLink.prototype);
+        obj.__wbg_ptr = ptr;
+        PubkyAppUserLinkFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
 
     static __unwrap(jsValue) {
         if (!(jsValue instanceof PubkyAppUserLink)) {
@@ -345,6 +617,47 @@ export class PubkyAppUserLink {
         this.__wbg_ptr = ret >>> 0;
         PubkyAppUserLinkFinalization.register(this, this.__wbg_ptr, this);
         return this;
+    }
+}
+
+const UserResultFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_userresult_free(ptr >>> 0, 1));
+
+export class UserResult {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(UserResult.prototype);
+        obj.__wbg_ptr = ptr;
+        UserResultFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        UserResultFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_userresult_free(ptr, 0);
+    }
+    /**
+     * @returns {PubkyAppUser}
+     */
+    get user() {
+        const ret = wasm.userresult_user(this.__wbg_ptr);
+        return PubkyAppUser.__wrap(ret);
+    }
+    /**
+     * @returns {Meta}
+     */
+    get meta() {
+        const ret = wasm.userresult_meta(this.__wbg_ptr);
+        return Meta.__wrap(ret);
     }
 }
 
@@ -389,6 +702,66 @@ function __wbg_get_imports() {
         getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
         getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
     };
+    imports.wbg.__wbg_buffer_609cc3eee51ed158 = function(arg0) {
+        const ret = arg0.buffer;
+        return ret;
+    };
+    imports.wbg.__wbg_call_672a4d21634d4a24 = function() { return handleError(function (arg0, arg1) {
+        const ret = arg0.call(arg1);
+        return ret;
+    }, arguments) };
+    imports.wbg.__wbg_done_769e5ede4b31c67b = function(arg0) {
+        const ret = arg0.done;
+        return ret;
+    };
+    imports.wbg.__wbg_get_67b2ba62fc30de12 = function() { return handleError(function (arg0, arg1) {
+        const ret = Reflect.get(arg0, arg1);
+        return ret;
+    }, arguments) };
+    imports.wbg.__wbg_get_b9b93047fe3cf45b = function(arg0, arg1) {
+        const ret = arg0[arg1 >>> 0];
+        return ret;
+    };
+    imports.wbg.__wbg_getwithrefkey_1dc361bd10053bfe = function(arg0, arg1) {
+        const ret = arg0[arg1];
+        return ret;
+    };
+    imports.wbg.__wbg_instanceof_ArrayBuffer_e14585432e3737fc = function(arg0) {
+        let result;
+        try {
+            result = arg0 instanceof ArrayBuffer;
+        } catch (_) {
+            result = false;
+        }
+        const ret = result;
+        return ret;
+    };
+    imports.wbg.__wbg_instanceof_Uint8Array_17156bcf118086a9 = function(arg0) {
+        let result;
+        try {
+            result = arg0 instanceof Uint8Array;
+        } catch (_) {
+            result = false;
+        }
+        const ret = result;
+        return ret;
+    };
+    imports.wbg.__wbg_isArray_a1eab7e0d067391b = function(arg0) {
+        const ret = Array.isArray(arg0);
+        return ret;
+    };
+    imports.wbg.__wbg_iterator_9a24c88df860dc65 = function() {
+        const ret = Symbol.iterator;
+        return ret;
+    };
+    imports.wbg.__wbg_length_a446193dc22c12f8 = function(arg0) {
+        const ret = arg0.length;
+        return ret;
+    };
+    imports.wbg.__wbg_length_e2d2a49132c1b256 = function(arg0) {
+        const ret = arg0.length;
+        return ret;
+    };
     imports.wbg.__wbg_new_405e22f390576ce2 = function() {
         const ret = new Object();
         return ret;
@@ -397,8 +770,24 @@ function __wbg_get_imports() {
         const ret = new Array();
         return ret;
     };
+    imports.wbg.__wbg_new_a12002a7f91c75be = function(arg0) {
+        const ret = new Uint8Array(arg0);
+        return ret;
+    };
+    imports.wbg.__wbg_next_25feadfc0913fea9 = function(arg0) {
+        const ret = arg0.next;
+        return ret;
+    };
+    imports.wbg.__wbg_next_6574e1a8a62d1055 = function() { return handleError(function (arg0) {
+        const ret = arg0.next();
+        return ret;
+    }, arguments) };
     imports.wbg.__wbg_now_807e54c39636c349 = function() {
         const ret = Date.now();
+        return ret;
+    };
+    imports.wbg.__wbg_pubkyappuserlink_new = function(arg0) {
+        const ret = PubkyAppUserLink.__wrap(arg0);
         return ret;
     };
     imports.wbg.__wbg_pubkyappuserlink_unwrap = function(arg0) {
@@ -411,16 +800,35 @@ function __wbg_get_imports() {
     imports.wbg.__wbg_set_3f1d0b984ed272ed = function(arg0, arg1, arg2) {
         arg0[arg1] = arg2;
     };
-    imports.wbg.__wbg_set_bb8cecf6a62b9f46 = function() { return handleError(function (arg0, arg1, arg2) {
-        const ret = Reflect.set(arg0, arg1, arg2);
+    imports.wbg.__wbg_set_65595bdd868b3009 = function(arg0, arg1, arg2) {
+        arg0.set(arg1, arg2 >>> 0);
+    };
+    imports.wbg.__wbg_value_cd1ffa7b1ab794f1 = function(arg0) {
+        const ret = arg0.value;
         return ret;
-    }, arguments) };
+    };
     imports.wbg.__wbindgen_bigint_from_i64 = function(arg0) {
         const ret = arg0;
         return ret;
     };
+    imports.wbg.__wbindgen_boolean_get = function(arg0) {
+        const v = arg0;
+        const ret = typeof(v) === 'boolean' ? (v ? 1 : 0) : 2;
+        return ret;
+    };
+    imports.wbg.__wbindgen_debug_string = function(arg0, arg1) {
+        const ret = debugString(arg1);
+        const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
+        getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
+    };
     imports.wbg.__wbindgen_error_new = function(arg0, arg1) {
         const ret = new Error(getStringFromWasm0(arg0, arg1));
+        return ret;
+    };
+    imports.wbg.__wbindgen_in = function(arg0, arg1) {
+        const ret = arg0 in arg1;
         return ret;
     };
     imports.wbg.__wbindgen_init_externref_table = function() {
@@ -433,9 +841,48 @@ function __wbg_get_imports() {
         table.set(offset + 3, false);
         ;
     };
+    imports.wbg.__wbindgen_is_function = function(arg0) {
+        const ret = typeof(arg0) === 'function';
+        return ret;
+    };
+    imports.wbg.__wbindgen_is_null = function(arg0) {
+        const ret = arg0 === null;
+        return ret;
+    };
+    imports.wbg.__wbindgen_is_object = function(arg0) {
+        const val = arg0;
+        const ret = typeof(val) === 'object' && val !== null;
+        return ret;
+    };
+    imports.wbg.__wbindgen_is_undefined = function(arg0) {
+        const ret = arg0 === undefined;
+        return ret;
+    };
+    imports.wbg.__wbindgen_jsval_loose_eq = function(arg0, arg1) {
+        const ret = arg0 == arg1;
+        return ret;
+    };
+    imports.wbg.__wbindgen_memory = function() {
+        const ret = wasm.memory;
+        return ret;
+    };
+    imports.wbg.__wbindgen_number_get = function(arg0, arg1) {
+        const obj = arg1;
+        const ret = typeof(obj) === 'number' ? obj : undefined;
+        getDataViewMemory0().setFloat64(arg0 + 8 * 1, isLikeNone(ret) ? 0 : ret, true);
+        getDataViewMemory0().setInt32(arg0 + 4 * 0, !isLikeNone(ret), true);
+    };
     imports.wbg.__wbindgen_number_new = function(arg0) {
         const ret = arg0;
         return ret;
+    };
+    imports.wbg.__wbindgen_string_get = function(arg0, arg1) {
+        const obj = arg1;
+        const ret = typeof(obj) === 'string' ? obj : undefined;
+        var ptr1 = isLikeNone(ret) ? 0 : passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
+        getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
     };
     imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
         const ret = getStringFromWasm0(arg0, arg1);

@@ -10,7 +10,7 @@ import {
   createRecoveryFile,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
-import { PostKind, PostView, PubkyAppPost, PubkyAppUser } from '@/types/Post';
+import { PostKind, PostView, PubkyAppPost } from '@/types/Post';
 import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
 import { UserDetails } from '@/types/User';
 import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
@@ -26,7 +26,7 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
   process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
   'https://demo.httprelay.io/link/';
 
-import init, { PubkyAppSpecs } from 'pubky-app-specs';
+import init, { PubkyAppBuilder, PubkyAppUser } from 'pubky-app-specs';
 
 let client: Client;
 if (TESTNET) {
@@ -170,7 +170,7 @@ export function PubkyClientWrapper({
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined,
   );
-  const [specs, setSpecs] = useState<PubkyAppSpecs | undefined>(undefined);
+  const [specs, setSpecs] = useState<PubkyAppBuilder | undefined>(undefined);
   const [newUser, setNewUser] = useState(false);
   const [seed, setSeed] = useState<string | undefined>(
     (Utils.storage.get('seed') as string | undefined) || undefined,
@@ -204,9 +204,9 @@ export function PubkyClientWrapper({
 
   useEffect(() => {
     if (specsWasmLoaded && pubky) {
-      // We instantiate a new PubkyAppSpecs when our user's pubky_id
+      // We instantiate a new PubkyAppBuilder when our user's pubky_id
       // changes so the URLs generated are always correct.
-      setSpecs(new PubkyAppSpecs(pubky));
+      setSpecs(new PubkyAppBuilder(pubky));
     }
   }, [specsWasmLoaded, pubky]);
 
@@ -401,8 +401,10 @@ export function PubkyClientWrapper({
       // Save pubky state
       const pk = session.pubky().z32();
 
+      let file;
       if (userProfile.image instanceof File) {
-        const file = userProfile.image;
+        console.log({ file });
+        file = userProfile.image;
         const fileContent = await file.arrayBuffer();
 
         const blobId = generateTimestampId().toUpperCase();
@@ -437,12 +439,10 @@ export function PubkyClientWrapper({
 
         // Store the file URI
 
-        userProfile.image = fileUrl;
+        file = fileUrl;
       }
 
-      // Transform the profile to the PubkyAppUser format
-      const pubkeyProfile: PubkyAppUser = toPubkeyProfile(userProfile);
-
+      console.log({ file });
       setNewUser(true);
 
       // Save info in storage
@@ -454,42 +454,51 @@ export function PubkyClientWrapper({
 
       Utils.storage.set('pubky_public_key', pk);
       setPubky(pk);
+      const specs = new PubkyAppBuilder(pk);
+      setSpecs(specs);
 
-      if (pubkeyProfile.name === '[DELETED]') {
-        pubkeyProfile.name = 'anonymous';
-      }
-      Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
-      setProfile(pubkeyProfile);
+      const result = specs.createUser(
+        userProfile.name,
+        userProfile.bio,
+        file,
+        userProfile.links,
+        userProfile.status,
+      );
 
-      // Profile URL (fixed address)
-      const profileUrl = `pubky://${pk}/pub/pubky.app/profile.json`;
+      Utils.storage.set('profile', JSON.stringify(result.user));
+      setProfile(result.user);
 
       // Send the profile to the homeserver
-      await client.fetch(profileUrl, {
+      const response = await client.fetch(result.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(pubkeyProfile),
+        body: JSON.stringify(result.user.toJson()),
         credentials: 'include',
       });
 
-      if (pubkeyProfile.name === 'anonymous') {
-        let userEdited = false;
-        while (!userEdited) {
-          try {
-            const newProfile = await getUserDetails(pk ?? '');
-
-            if (areProfilesEqual(newProfile, pubkeyProfile)) {
-              userEdited = true;
-              break;
-            }
-
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          } catch (error) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          }
-        }
+      if (!response.ok) {
+        const errorMessage = `Error ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
       }
 
-      return pubkeyProfile;
+      // if (result.user.name === 'anonymous') {
+      //   let userEdited = false;
+      //   while (!userEdited) {
+      //     try {
+      //       const newProfile = await getUserDetails(pk ?? '');
+
+      //       if (areProfilesEqual(newProfile, pubkeyProfile)) {
+      //         userEdited = true;
+      //         break;
+      //       }
+
+      //       await new Promise((resolve) => setTimeout(resolve, 1000));
+      //     } catch (error) {
+      //       await new Promise((resolve) => setTimeout(resolve, 1000));
+      //     }
+      //   }
+      // }
+
+      return result.user;
     } catch (error) {
       console.log(error);
       return false;
@@ -1340,11 +1349,11 @@ export function PubkyClientWrapper({
     try {
       await ensureReady(); // ensure is logged in and specs are initialized
 
-      const follow = specs.createFollow(user_id);
+      const result = specs.createFollow(user_id);
 
-      const response = await client.fetch(follow.url, {
+      const response = await client.fetch(result.meta.url, {
         method: 'PUT',
-        body: follow.json,
+        body: JSON.stringify(result.follow.toJson()),
         credentials: 'include',
       });
 
