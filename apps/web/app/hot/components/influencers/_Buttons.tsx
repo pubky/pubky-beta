@@ -2,7 +2,7 @@
 
 import { Button, Icon } from '@social/ui-shared';
 import { UserView } from '@/types/User';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { LoadingInfluencers } from './_MainContent';
 
 interface ButtonsProps {
@@ -29,6 +29,7 @@ export function Buttons({
   loadingInfluencers,
 }: ButtonsProps) {
   const { follow, unfollow } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -39,6 +40,11 @@ export function Buttons({
       }));
 
       const result = await follow(pubkyFollow);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed((prevState) => ({
         ...prevState,
         [pubkyFollow]: result,
@@ -61,6 +67,11 @@ export function Buttons({
       }));
 
       const result = await unfollow(pubkyUnfollow);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed((prevState) => ({
         ...prevState,
         [pubkyUnfollow]: !result,

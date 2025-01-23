@@ -1,5 +1,10 @@
 import { Button, Icon } from '@social/ui-shared';
-import { useJoin, usePubkyClientContext, useToastContext } from '@/contexts';
+import {
+  useAlertContext,
+  useJoin,
+  usePubkyClientContext,
+  useToastContext,
+} from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
@@ -40,6 +45,7 @@ export default function Buttons({
   const { openJoin } = useJoin();
   const isMobile = useIsMobile();
   const { addToast } = useToastContext();
+  const { addAlert } = useAlertContext();
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showSheetProfileMenu, setShowSheetProfileMenu] = useState(false);
@@ -50,6 +56,11 @@ export default function Buttons({
       setLoadingFollowed(true);
 
       const result = await follow(creatorPubky);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed(result);
       setLoadingFollowed(false);
     } catch (error) {
@@ -63,6 +74,11 @@ export default function Buttons({
       setLoadingFollowed(true);
 
       const result = await unfollow(creatorPubky);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed(!result);
       setLoadingFollowed(false);
     } catch (error) {

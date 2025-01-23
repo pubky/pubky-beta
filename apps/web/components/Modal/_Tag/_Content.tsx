@@ -11,7 +11,7 @@ import {
 } from '@social/ui-shared';
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostTag, PostView } from '@/types/Post';
 import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
@@ -41,6 +41,7 @@ export default function ContentTag({
   setSelectedTag,
   tagsError,
 }: TagProps) {
+  const { addAlert } = useAlertContext();
   const modalTagRef = useRef<HTMLDivElement>(null);
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
@@ -136,6 +137,10 @@ export default function ContentTag({
 
       const result = await follow(pubkyFollow);
 
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowedUser((prevState) => ({
         ...prevState,
         [pubkyFollow]: result,
@@ -160,6 +165,10 @@ export default function ContentTag({
       }));
 
       const result = await unfollow(pubkyUnfollow);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
 
       setFollowedUser((prevState) => ({
         ...prevState,

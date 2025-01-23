@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { Icon, Typography } from '@social/ui-shared';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import {
+  useAlertContext,
+  useFilterContext,
+  usePubkyClientContext,
+} from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
@@ -12,6 +16,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 export const Timeline = () => {
   const limit = 10;
   const { pubky, addBookmark, deleteBookmark } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile(1280);
@@ -70,6 +75,11 @@ export const Timeline = () => {
     try {
       setLoadingBookmarks(true);
       const result = await addBookmark(postId, authorId);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       if (result) setIsBookmarked(String(result));
       setLoadingBookmarks(false);
     } catch (error) {
@@ -86,6 +96,11 @@ export const Timeline = () => {
     try {
       setLoadingBookmarks(true);
       const result = await deleteBookmark(postId, authorId, bookmarkId);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       if (result) setIsBookmarked('');
       setLoadingBookmarks(false);
     } catch (error) {

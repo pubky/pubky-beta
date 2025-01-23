@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useUserProfile } from '@/hooks/useUser';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -14,6 +14,7 @@ interface TooltipMenuProps {
 
 export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const isMobile = useIsMobile();
   const { data: author } = useUserProfile(pk, pubky ?? '');
   const [followed, setFollowed] = useState(false);
@@ -40,6 +41,11 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
     setLoadingFollowed(true);
     try {
       const result = await follow(pk);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed(result);
       if (result) setShowMenu(false);
     } catch (error) {
@@ -55,6 +61,11 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
     setLoadingFollowed(true);
     try {
       const result = await unfollow(pk);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       setFollowed(!result);
       if (result) setShowMenu(false);
     } catch (error) {

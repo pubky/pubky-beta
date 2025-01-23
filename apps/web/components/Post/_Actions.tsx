@@ -2,7 +2,12 @@
 
 import { useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
-import { useJoin, usePubkyClientContext, useToastContext } from '@/contexts';
+import {
+  useAlertContext,
+  useJoin,
+  usePubkyClientContext,
+  useToastContext,
+} from '@/contexts';
 import Tooltip from '../Tooltip';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
@@ -120,6 +125,7 @@ export default function Actions({
   setShowSheetTag,
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const { openJoin } = useJoin();
   const isMobile = useIsMobile();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
@@ -144,6 +150,11 @@ export default function Actions({
     try {
       setLoadingBookmarks(true);
       const result = await addBookmark(postId, authorId);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       if (result) setIsBookmarked(String(result));
       setLoadingBookmarks(false);
     } catch (error) {
@@ -160,6 +171,11 @@ export default function Actions({
     try {
       setLoadingBookmarks(true);
       const result = await deleteBookmark(postId, authorId, bookmarkId);
+
+      if (!result) {
+        addAlert('Something went wrong!', 'warning');
+      }
+
       if (result) setIsBookmarked('');
       setLoadingBookmarks(false);
     } catch (error) {
