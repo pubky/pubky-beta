@@ -104,23 +104,6 @@ export default function ContentCreateArticle({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contentArticle]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-        //if (setTextArea) setTextArea(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRef, contentArticle]);
-
   {
     /**const searchProfiles = async (text: string) => {
         try {
@@ -137,7 +120,9 @@ export default function ContentCreateArticle({
     const handleClickOutside = (event: MouseEvent) => {
       if (
         wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
+        !wrapperRefEmojis.current.contains(event.target as Node) &&
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
       ) {
         setShowEmojis(false);
       }
@@ -147,7 +132,7 @@ export default function ContentCreateArticle({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [wrapperRefEmojis]);
+  }, [wrapperRefEmojis, wrapperRef]);
 
   const searchUsername = async (content: string) => {
     const pkMatches = content.match(/(pk:[^\s]+)/g);
@@ -437,19 +422,13 @@ export default function ContentCreateArticle({
                   icon={
                     <Icon.PaperPlaneRight
                       color={
-                        !isValidContent ||
-                        isError ||
-                        !contentTitle
+                        !isValidContent || isError || !contentTitle
                           ? 'gray'
                           : 'white'
                       }
                     />
                   }
-                  disabled={
-                    !isValidContent ||
-                    isError ||
-                    !contentTitle
-                  }
+                  disabled={!isValidContent || isError || !contentTitle}
                   loading={sendingArticle}
                   onClick={
                     isValidContent &&
