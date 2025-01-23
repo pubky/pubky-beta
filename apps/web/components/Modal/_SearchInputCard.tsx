@@ -21,7 +21,7 @@ export default function SearchInputCard({
 }: SearchInputCardProps) {
   const router = useRouter();
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
-  const { data: hotTags, isLoading } = useHotTags(0, 10);
+  const { data: hotTags, isLoading } = useHotTags(pubky, undefined, 0, 10);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null,
