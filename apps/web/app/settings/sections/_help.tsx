@@ -2,40 +2,130 @@
 
 import DropDown from '@/components/DropDown';
 import { Button, Icon, Typography } from '@social/ui-shared';
+import Link from 'next/link';
 import { useState } from 'react';
 
 type QuestionsType = {
   [key: number]: {
     question: string;
-    answer: string;
+    answer: React.ReactNode;
   };
 };
 
 const questions: QuestionsType = {
   1: {
     question: 'How can I update my profile information?',
-    answer:
-      'Click on your profile picture to open your profile. Then click the [edit] button to update your bio, name, links, or profile picture.',
+    answer: (
+      <Typography.Body
+        className="text-opacity-80 text-[16px] mr-2 leading-snug"
+        variant="medium"
+      >
+        If you wish to update your profile, go to your avatar icon at the top
+        right corner of your screen, click on that and you will be presented
+        with a screen where you can click the{' '}
+        <Link href="/settings/edit">
+          <strong>"Edit"</strong>
+        </Link>{' '}
+        button to update your profile information.
+      </Typography.Body>
+    ),
   },
   2: {
     question: 'How can I delete my post?',
-    answer:
-      'Click on your profile picture to open your profile. Then click the [edit] button to update your bio, name, links, or profile picture.',
+    answer: (
+      <Typography.Body
+        className="text-opacity-80 text-[16px] mr-2 leading-snug"
+        variant="medium"
+      >
+        If you wish to delete a post, simply go to the content piece you wish to
+        remove, hover over the three dots on the bottom right corner of your
+        screen, click on that and you will be presented with a few options. At
+        the very bottom you can see an option to “Delete Post”.
+      </Typography.Body>
+    ),
   },
   3: {
     question: 'How do I mute someone?',
-    answer:
-      'Click on your profile picture to open your profile. Then click the [edit] button to update your bio, name, links, or profile picture.',
+    answer: (
+      <Typography.Body
+        className="text-opacity-80 text-[16px] mr-2 leading-snug"
+        variant="medium"
+      >
+        If you wish to mute someone, go to the user&apos;s profile and click on
+        the three dots on their profile. You will be presented with multiple
+        options one of which is “Mute user”.
+      </Typography.Body>
+    ),
   },
   4: {
     question: 'How can I restore my account?',
-    answer:
-      'Click on your profile picture to open your profile. Then click the [edit] button to update your bio, name, links, or profile picture.',
+    answer: (
+      <Typography.Body
+        className="text-opacity-80 text-[16px] mr-2 leading-snug"
+        variant="medium"
+      >
+        When you first signed up to Pubky, the app would have prompted you to
+        create a back up. There are several ways to generate a backup:
+        <ul>
+          <li>1. Via QR</li>
+          <li>2. Code Recovery </li>
+          <li>3. File Recovery Phrase </li>
+        </ul>
+        <br />
+        Whichever way you choose to backup your account will be entirely up to
+        you and your preferences.
+        <br />
+        <br />
+        To restore via recovery file, first you will need to select the recovery
+        file, which you would have downloaded and saved upon signing up to Pubky
+        app.
+        <br />
+        <br />
+        Then you will need to type in the password associated to the recovery
+        file and your account.
+        <br />
+        <br />
+        After you are done, simply click on “Sign In” and you should have access
+        to your profile. This is one of the ways you can recover your account.
+      </Typography.Body>
+    ),
   },
   5: {
     question: 'How is Pubky different from other social platforms?',
-    answer:
-      'Click on your profile picture to open your profile. Then click the [edit] button to update your bio, name, links, or profile picture.',
+    answer: (
+      <Typography.Body
+        className="text-opacity-80 text-[16px] mr-2 leading-snug"
+        variant="medium"
+      >
+        With Pubky app, you are no longer a passive participant; you are the
+        algorithm. You determine and personalize what you see - content feeds,
+        social tagging, and web-of-trust-based curation.
+        <br />
+        <br />
+        Here are some other aspects that make Pubky stand out from the sea of
+        social media platforms:
+        <ul>
+          <li>
+            - The Pubky App is a Progressive Web App (PWA) browser-based or
+            locally installed tool that allows users to interact with the Pubky
+            ecosystem. It offers publishing, social tagging, and curation
+            features, letting users control every aspect of their web
+            experience.
+          </li>
+          <li>
+            - Keys. Users represent themselves as public keys, removing the need
+            for email or phone numbers and creating a self-sovereign identity
+            that is consistent across the entire network.{' '}
+          </li>
+          <li>
+            - Pubky&apos;s Semantic Social Graph (SSG) enables a personalized
+            online experience by using decentralized, context-rich tags and
+            user-defined relationships to tailor content discovery and
+            interaction to individual interests and values.
+          </li>
+        </ul>
+      </Typography.Body>
+    ),
   },
 };
 
@@ -82,7 +172,7 @@ export default function Help() {
           className="w-auto"
           onClick={() =>
             window.open(
-              'https://support.synonym.to/hc/pubky-app-help-center/en'
+              'https://support.synonym.to/hc/pubky-app-help-center/en',
             )
           }
           icon={<Icon.FileText width="16" height="16" />}
