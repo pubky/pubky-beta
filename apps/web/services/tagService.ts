@@ -5,12 +5,19 @@ const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 
 // Get global hot tags
 export async function getHotTags(
+  userId?: string,
+  reach?: string,
   skip?: number,
   limit?: number,
   maxTaggers?: number,
+  timeframe?: string,
 ): Promise<HotTag[]> {
   const queryParams = new URLSearchParams();
 
+  if (userId && reach && reach !== 'all') {
+    queryParams.append('user_id', String(userId));
+    queryParams.append('reach', String(reach));
+  }
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
   }
@@ -19,6 +26,9 @@ export async function getHotTags(
   }
   if (maxTaggers) {
     queryParams.append('max_taggers', String(maxTaggers));
+  }
+  if (timeframe) {
+    queryParams.append('timeframe', String(timeframe));
   }
   const response = await fetch(`${BASE_URL}/tags/hot?${queryParams}`);
   if (!response.ok) throw new Error('Failed to fetch hot tags');

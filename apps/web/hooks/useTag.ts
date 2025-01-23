@@ -7,10 +7,17 @@ import {
   getTagTaggers,
 } from '../services/tagService';
 
-export function useHotTags(skip?: number, limit?: number, maxTaggers?: number) {
+export function useHotTags(
+  userId?: string,
+  reach?: string,
+  skip?: number,
+  limit?: number,
+  maxTaggers?: number,
+  timeframe?: string,
+) {
   return useQuery({
-    queryKey: ['hotTags', skip, limit, maxTaggers],
-    queryFn: () => getHotTags(skip, limit, maxTaggers),
+    queryKey: ['hotTags', userId, reach, skip, limit, maxTaggers, timeframe],
+    queryFn: () => getHotTags(userId, reach, skip, limit, maxTaggers, timeframe),
     retry: false,
   });
 }

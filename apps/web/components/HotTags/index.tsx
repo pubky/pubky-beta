@@ -9,7 +9,7 @@ import { usePubkyClientContext } from '@/contexts';
 
 export default function HotTags() {
   const { pubky } = usePubkyClientContext();
-  const { data, isLoading, isError } = useHotTags(0, 8);
+  const { data, isLoading, isError } = useHotTags(pubky, undefined, 0, 8);
   const hotTags = data;
   if (isError) console.error(isError);
 
