@@ -6,6 +6,7 @@ import { Utils } from '@social/utils-shared';
 import { HotTag } from '@/types/Tag';
 import { Hot } from '.';
 import Link from 'next/link';
+import { useFilterContext } from '@/contexts';
 
 interface RenderTagsProps {
   hotTags: HotTag[];
@@ -13,6 +14,14 @@ interface RenderTagsProps {
 }
 
 const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
+  const { timeframe } = useFilterContext();
+  const timeframeLabel =
+          timeframe === 'all_time'
+            ? 'all time'
+            : timeframe === 'this_month'
+              ? 'this month'
+              : 'today';
+
   if (loadingReachTags) {
     return <Skeletons.Simple />;
   }
@@ -51,7 +60,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                     </Link>
                   </div>
                   <Typography.Body className="text-opacity-80" variant="medium">
-                    {tag?.tagged_count} posts all time
+                    {tag?.tagged_count} posts {timeframeLabel}
                   </Typography.Body>
                 </div>
                 <div className="flex">

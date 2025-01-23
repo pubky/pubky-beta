@@ -65,32 +65,32 @@ export default function TagsTimeframe({
         <DropDownUI.Item
           label="This month"
           value="month"
-          selected={timeframe === 'month'}
+          selected={timeframe === 'this_month'}
           icon={<Icon.Calendar size="24" />}
           onClick={() => {
             setDropdownValue({
-              value: 'month',
+              value: 'this_month',
               ...(type === 'icon'
                 ? { iconOption: <Icon.Calendar /> }
                 : { textOption: 'This month' }),
             });
-            setTimeframe('month');
+            setTimeframe('this_month');
             setOpenDropdown(false);
           }}
         />
         <DropDownUI.Item
           label="All time"
           value="all-time"
-          selected={timeframe === 'all'}
+          selected={timeframe === 'all_time'}
           icon={<Icon.Clock size="24" />}
           onClick={() => {
             setDropdownValue({
-              value: 'all',
+              value: 'all_time',
               ...(type === 'icon'
                 ? { iconOption: <Icon.Clock /> }
                 : { textOption: 'All time' }),
             });
-            setTimeframe('all');
+            setTimeframe('all_time');
             setOpenDropdown(false);
           }}
         />
