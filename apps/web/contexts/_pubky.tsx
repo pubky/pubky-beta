@@ -26,7 +26,15 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
   process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
   'https://demo.httprelay.io/link/';
 
-import init, { PubkySpecsBuilder, PubkyAppUser } from 'pubky-app-specs';
+import init, {
+  PubkySpecsBuilder,
+  PubkyAppUser,
+  PubkyAppTag,
+  postUriBuilder,
+  userUriBuilder,
+  PubkyAppLastRead,
+  baseUriBuilder,
+} from 'pubky-app-specs';
 
 let client: Client;
 if (TESTNET) {
@@ -98,7 +106,7 @@ type PubkyClientContextType = {
   createTag: (
     authorId: string,
     postId: string,
-    tagContent: string,
+    label: string,
   ) => Promise<boolean>;
   deleteTag: (
     author_id: string,
@@ -108,8 +116,8 @@ type PubkyClientContextType = {
   saveFeed: (feed: ICustomFeed, name: string) => Promise<boolean>;
   deleteFeed: (feed: ICustomFeed) => Promise<boolean>;
   loadFeeds: () => Promise<{ feed: ICustomFeed; name: string }[]>;
-  createTagProfile: (profileId: string, tagContent: string) => Promise<boolean>;
-  deleteTagProfile: (profileId: string, tagLabel: string) => Promise<boolean>;
+  createTagProfile: (userId: string, label: string) => Promise<boolean>;
+  deleteTagProfile: (userId: string, label: string) => Promise<boolean>;
   getRecoveryFile: (password: string) => Promise<any | null>;
   storeProfile: (userProfile: UserDetails) => Promise<boolean>;
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
@@ -579,7 +587,7 @@ export function PubkyClientWrapper({
       setProfile(pubkeyProfile);
 
       // Profile URL (fixed address)
-      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
+      const profileUrl = userUriBuilder(pubky!);
 
       // Send the profile to the homeserver
       await client.fetch(profileUrl, {
@@ -642,7 +650,7 @@ export function PubkyClientWrapper({
       setProfile(pubkeyProfile);
 
       // Profile URL (fixed address)
-      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
+      const profileUrl = userUriBuilder(pubky!);
 
       // Send the profile to the homeserver
       await client.fetch(profileUrl, {
@@ -729,7 +737,7 @@ export function PubkyClientWrapper({
       }
 
       // Post URL
-      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
+      const postUrl = postUriBuilder(pubky!, postId);
 
       // Send the post to the homeserver
       await client.fetch(postUrl, {
@@ -830,7 +838,7 @@ export function PubkyClientWrapper({
       }
 
       // Post URL
-      const articleUrl = `pubky://${pubky}/pub/pubky.app/posts/${articleId}`;
+      const articleUrl = postUriBuilder(pubky!, articleId);
 
       // Send the post to the homeserver
       await client.fetch(articleUrl, {
@@ -857,7 +865,7 @@ export function PubkyClientWrapper({
         relationships: post?.relationships,
       };
       // Post URL
-      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${post?.details?.id}`;
+      const postUrl = postUriBuilder(pubky!, post?.details?.id);
 
       // Send the post to the homeserver
       await client.fetch(postUrl, {
@@ -877,7 +885,7 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const baseDirectory = `pubky://${pubky}/pub/pubky.app/`;
+      const baseDirectory = baseUriBuilder(pubky!);
       const dataList = await client.list(baseDirectory);
 
       // Separate profile.json and other files
@@ -917,7 +925,7 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const userDataUrl = `pubky://${pubky}/pub/pubky.app`;
+      const baseDirectory = baseUriBuilder(pubky!);
       let cursor: string | undefined = undefined;
       const dataList: string[] = [];
       const limit = 500;
@@ -925,7 +933,7 @@ export function PubkyClientWrapper({
 
       // 1) Gather the list of files from pubky
       do {
-        const batch = await client.list(userDataUrl, cursor, false, limit);
+        const batch = await client.list(baseDirectory, cursor, false, limit);
         if (batch.length === 0) {
           hasMore = false;
         } else {
@@ -1078,11 +1086,13 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
-      const response = await client.fetch(lastReadUrl);
-      const lastRead = await response.json();
-      const timestamp = Number(lastRead.timestamp);
-      return timestamp;
+      // create a new last_read only to craft the url
+      const result = specsBuilder!.createLastRead();
+
+      const response = await client.fetch(result.meta.url);
+      const lastRead = (await response.json()) as PubkyAppLastRead;
+
+      return lastRead.timestamp;
     } catch (error) {
       // console.error('Error get timestamp:', error);
       return false;
@@ -1093,12 +1103,11 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const lastRead = { timestamp: timestamp };
+      const result = specsBuilder!.createLastRead();
 
-      const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
-      await client.fetch(lastReadUrl, {
+      await client.fetch(result.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(lastRead),
+        body: JSON.stringify(result.last_read.toJson()),
         credentials: 'include',
       });
 
@@ -1117,6 +1126,7 @@ export function PubkyClientWrapper({
 
       await ensureReady();
 
+      // pubky.app/settings is not covered by the specs!
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
       const response = await client.fetch(settingsUrl);
       const settings = await response.json();
@@ -1158,7 +1168,7 @@ export function PubkyClientWrapper({
       await ensureReady();
 
       // Post URL
-      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
+      const postUrl = postUriBuilder(pubky!, postId);
 
       // Send the post to the homeserver
       await client.fetch(postUrl, {
@@ -1207,7 +1217,7 @@ export function PubkyClientWrapper({
         content: repostContent,
         embed: {
           kind: 'short',
-          uri: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`,
+          uri: postUriBuilder(originalauthorId, originalPostId),
         },
         kind,
       };
@@ -1259,7 +1269,7 @@ export function PubkyClientWrapper({
       }
 
       // Repost URL
-      const repostUrl = `pubky://${pubky}/pub/pubky.app/posts/${repostId}`;
+      const repostUrl = postUriBuilder(pubky!, repostId);
 
       // Send the post to the homeserver
       await client.fetch(repostUrl, {
@@ -1337,7 +1347,7 @@ export function PubkyClientWrapper({
         replyPost.attachments = uploadedFileUris;
       }
 
-      const replyUrl = `pubky://${pubky}/pub/pubky.app/posts/${replyId}`;
+      const replyUrl = postUriBuilder(pubky!, replyId);
 
       await client.fetch(replyUrl, {
         method: 'PUT',
@@ -1397,9 +1407,9 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
+      const result = specsBuilder!.createFollow(user_id);
 
-      const response = await client.fetch(followUrl, {
+      const response = await client.fetch(result.meta.url, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -1411,20 +1421,20 @@ export function PubkyClientWrapper({
 
       // get user relationships and check if it is unfollowed
       // keep in a while loop until it is unfollowed
-      let userUnfollow = false;
+      // let userUnfollow = false;
 
-      while (!userUnfollow) {
-        try {
-          const post = await getUserRelationship(user_id, pubky ?? '');
-          if (post.following === false) {
-            userUnfollow = true;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
+      // while (!userUnfollow) {
+      //   try {
+      //     const post = await getUserRelationship(user_id, pubky ?? '');
+      //     if (post.following === false) {
+      //       userUnfollow = true;
+      //       break;
+      //     }
+      //     await new Promise((resolve) => setTimeout(resolve, 1000));
+      //   } catch (error) {
+      //     await new Promise((resolve) => setTimeout(resolve, 1000));
+      //   }
+      // }
 
       return true;
     } catch (error) {
@@ -1453,15 +1463,11 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const muteData = {
-        created_at: Date.now(),
-      };
+      const result = specsBuilder!.createMute(user_id);
 
-      const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
-
-      await client.fetch(muteUrl, {
+      await client.fetch(result.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(muteData),
+        body: JSON.stringify(result.mute.toJson()),
         credentials: 'include',
       });
 
@@ -1476,9 +1482,9 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
+      const result = specsBuilder!.createMute(user_id);
 
-      await client.fetch(muteUrl, {
+      await client.fetch(result.meta.url, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -1497,17 +1503,12 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const bookmarkData = {
-        uri: `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
-        created_at: Date.now(),
-      };
+      const uriPost = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createBookmark(uriPost);
 
-      const bookmarkId = (await generateHashId(bookmarkData.uri)).toUpperCase();
-      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
-
-      const response = await client.fetch(bookmarkUrl, {
+      const response = await client.fetch(result.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(bookmarkData),
+        body: JSON.stringify(result.bookmark.toJson()),
         credentials: 'include',
       });
 
@@ -1516,24 +1517,24 @@ export function PubkyClientWrapper({
         throw new Error(errorMessage);
       }
 
-      // get post and check if it is bookmarked
-      // keep in a while loop until it is bookmarked
-      let bookmarked = false;
+      // // get post and check if it is bookmarked
+      // // keep in a while loop until it is bookmarked
+      // let bookmarked = false;
 
-      while (!bookmarked) {
-        try {
-          const post = await getPost(authorId, postId, pubky);
-          if (post?.bookmark) {
-            bookmarked = true;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
+      // while (!bookmarked) {
+      //   try {
+      //     const post = await getPost(authorId, postId, pubky);
+      //     if (post?.bookmark) {
+      //       bookmarked = true;
+      //       break;
+      //     }
+      //     await new Promise((resolve) => setTimeout(resolve, 1000));
+      //   } catch (error) {
+      //     await new Promise((resolve) => setTimeout(resolve, 1000));
+      //   }
+      // }
 
-      return bookmarkId;
+      return result.meta.id;
     } catch (error) {
       console.error('Error while bookmarking the post:', error);
       return false;
@@ -1548,9 +1549,10 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
+      const uriPost = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createBookmark(uriPost);
 
-      const response = await client.fetch(bookmarkUrl, {
+      const response = await client.fetch(result.meta.url, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -1562,20 +1564,20 @@ export function PubkyClientWrapper({
 
       // get post and check if it is bookmarked
       // keep in a while loop until it is bookmarked
-      let bookmarked = true;
+      // let bookmarked = true;
 
-      while (bookmarked) {
-        try {
-          const post = await getPost(authorId, postId, pubky);
-          if (!post?.bookmark) {
-            bookmarked = false;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
+      // while (bookmarked) {
+      //   try {
+      //     const post = await getPost(authorId, postId, pubky);
+      //     if (!post?.bookmark) {
+      //       bookmarked = false;
+      //       break;
+      //     }
+      //     await new Promise((resolve) => setTimeout(resolve, 1000));
+      //   } catch (error) {
+      //     await new Promise((resolve) => setTimeout(resolve, 1000));
+      //   }
+      // }
 
       return true;
     } catch (error) {
@@ -1587,13 +1589,13 @@ export function PubkyClientWrapper({
   const createTag = async (
     authorId: string,
     postId: string,
-    tagContent: string,
+    label: string,
   ): Promise<boolean> => {
     try {
       await ensureReady();
 
-      const uri = `pubky://${authorId}/pub/pubky.app/posts/${postId}`;
-      const result = specsBuilder!.createTag(uri, tagContent);
+      const postUri = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createTag(postUri, label);
 
       await client.fetch(result.meta.url, {
         method: 'PUT',
@@ -1707,14 +1709,14 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const uriPost = `pubky://${authorId}/pub/pubky.app/posts/${postId}`;
+      // Compute tag URL and ID based on tag object content using the builder
+      const uriPost = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createTag(uriPost, tagLabel);
 
-      const tagId = (
-        await generateHashId(`${uriPost}:${tagLabel}`)
-      ).toUpperCase();
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
-
-      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include' });
+      await client.fetch(result.meta.url, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
@@ -1724,31 +1726,18 @@ export function PubkyClientWrapper({
   };
 
   const createTagProfile = async (
-    profileId: string,
-    tagContent: string,
+    userId: string,
+    label: string,
   ): Promise<boolean> => {
     try {
       await ensureReady();
 
-      if (!tagContent || tagContent.trim() === '') {
-        throw new Error('Tag content cannot be empty');
-      }
+      const uriProfile = userUriBuilder(userId);
+      const result = specsBuilder!.createTag(uriProfile, label);
 
-      const tagData = {
-        uri: `pubky://${profileId}/pub/pubky.app/profile.json`,
-        label: tagContent,
-        created_at: Date.now(),
-      };
-
-      const tagId = (
-        await generateHashId(`${tagData.uri}:${tagData.label}`)
-      ).toUpperCase();
-
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
-
-      await client.fetch(tagUrl, {
+      await client.fetch(result.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(tagData),
+        body: JSON.stringify(result.tag.toJson()),
         credentials: 'include',
       });
 
@@ -1760,19 +1749,21 @@ export function PubkyClientWrapper({
   };
 
   const deleteTagProfile = async (
-    profileId: string,
-    tagLabel: string,
+    userId: string,
+    label: string,
   ): Promise<boolean> => {
     try {
       await ensureReady();
 
-      const profileUri = `pubky://${profileId}/pub/pubky.app/profile.json`;
-      const tagId = (
-        await generateHashId(`${profileUri}:${tagLabel}`)
-      ).toUpperCase();
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
+      const uriProfile = userUriBuilder(userId);
 
-      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include' });
+      // Compute ID and URL for a from its content (unique)
+      const result = specsBuilder!.createTag(uriProfile, label);
+
+      await client.fetch(result.meta.url, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       return true;
     } catch (error) {
