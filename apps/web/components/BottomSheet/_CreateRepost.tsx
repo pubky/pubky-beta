@@ -1,8 +1,10 @@
 'use client';
 
-import { BottomSheet } from '@social/ui-shared';
+import { BottomSheet as BottomSheetUI } from '@social/ui-shared';
 import ContentCreateRepost from '../Modal/_CreateRepost/_Content';
 import { PostView } from '@/types/Post';
+import { useState } from 'react';
+import { BottomSheet } from '.';
 
 interface CreateRepostProps {
   show: boolean;
@@ -19,18 +21,33 @@ export default function CreateRepost({
   title,
   className,
 }: CreateRepostProps) {
+  const [draft, setDraft] = useState(false);
+  const [content, setContent] = useState(false);
+
+  const closeModal = () => {
+    if (content) {
+      setDraft(true);
+    } else {
+      setShow(false);
+    }
+  };
+
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
-      <ContentCreateRepost
-        className="p-0 border-none"
-        setShowModalRepost={setShow}
-        post={post}
-      />
-    </BottomSheet.Root>
+    <>
+      <BottomSheetUI.Root
+        show={show}
+        setShow={closeModal}
+        title={title}
+        className={className}
+      >
+        <ContentCreateRepost
+          className="p-0 border-none"
+          setShowModalRepost={setShow}
+          setContent={setContent}
+          post={post}
+        />
+      </BottomSheetUI.Root>
+      <BottomSheet.Draft show={draft} setShow={setDraft} setClose={setShow} />
+    </>
   );
 }

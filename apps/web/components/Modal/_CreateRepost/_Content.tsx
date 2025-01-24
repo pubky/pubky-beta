@@ -1,5 +1,5 @@
 import { Button, Icon } from '@social/ui-shared';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 
@@ -10,12 +10,14 @@ import Post from '@/components/Post';
 interface CreateRepostProps {
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  setContent?: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
 export default function ContentCreateRepost({
   setShowModalRepost,
   post,
+  setContent,
   className,
 }: CreateRepostProps) {
   const { pubky, createRepost, createTag } = usePubkyClientContext();
@@ -27,6 +29,20 @@ export default function ContentCreateRepost({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const regex =
     /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
+  useEffect(() => {
+    if (setContent) {
+      if (
+        contentRepost.trim() !== '' ||
+        arrayTags.length !== 0 ||
+        selectedFiles.length !== 0
+      ) {
+        setContent(true);
+      } else {
+        setContent(false);
+      }
+    }
+  }, [contentRepost, arrayTags, selectedFiles]);
 
   const handleSubmitRepost = async (content: string) => {
     if (sendingRepost) {

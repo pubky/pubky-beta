@@ -1,7 +1,8 @@
-import { Modal } from '@social/ui-shared';
-import { useEffect, useRef } from 'react';
+import { Modal as ModalUI } from '@social/ui-shared';
+import { useEffect, useRef, useState } from 'react';
 import { PostView } from '@/types/Post';
 import ContentCreateRepost from './_Content';
+import Modal from '..';
 
 interface CreateRepostProps {
   showModalRepost: boolean;
@@ -14,7 +15,17 @@ export default function CreateRepost({
   setShowModalRepost,
   post,
 }: CreateRepostProps) {
+  const [draft, setDraft] = useState(false);
+  const [content, setContent] = useState(false);
   const modalRepostRef = useRef<HTMLDivElement>(null);
+
+  const closeModal = () => {
+    if (content) {
+      setDraft(true);
+    } else {
+      setShowModalRepost(false);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutsideModals = (event: MouseEvent) => {
@@ -22,7 +33,7 @@ export default function CreateRepost({
         modalRepostRef.current &&
         !modalRepostRef.current.contains(event.target as Node)
       ) {
-        setShowModalRepost(false);
+        closeModal();
       }
     };
 
@@ -31,32 +42,31 @@ export default function CreateRepost({
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideModals);
     };
-  }, [modalRepostRef, setShowModalRepost]);
+  }, [modalRepostRef, content]);
 
   return (
-    <Modal.Root
-      modalRef={modalRepostRef}
-      show={showModalRepost}
-      closeModal={() => {
-        setShowModalRepost(false);
-        //setArrayTags([]);
-      }}
-      className="md:w-[792px] max-w-[1200px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
-    >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalRepost(false);
-          //setArrayTags([]);
-          //setContentRepost('');
-        }}
+    <>
+      <ModalUI.Root
+        modalRef={modalRepostRef}
+        show={showModalRepost}
+        closeModal={closeModal}
+        className="md:w-[792px] max-w-[1200px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
+      >
+        <ModalUI.CloseAction onClick={closeModal} />
+        <div className="mb-6">
+          <ModalUI.Header title="Repost" />
+        </div>
+        <ContentCreateRepost
+          setShowModalRepost={setShowModalRepost}
+          post={post}
+          setContent={setContent}
+        />
+      </ModalUI.Root>
+      <Modal.Draft
+        showModal={draft}
+        setShowModal={setDraft}
+        setClose={setShowModalRepost}
       />
-      <div className="mb-6">
-        <Modal.Header title="Repost" />
-      </div>
-      <ContentCreateRepost
-        setShowModalRepost={setShowModalRepost}
-        post={post}
-      />
-    </Modal.Root>
+    </>
   );
 }
