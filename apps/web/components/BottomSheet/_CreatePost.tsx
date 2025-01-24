@@ -1,7 +1,9 @@
 'use client';
 
-import { BottomSheet } from '@social/ui-shared';
+import { BottomSheet as BottomSheetUI } from '@social/ui-shared';
 import ContentCreatePost from '../Modal/_CreatePost/_Content';
+import { BottomSheet } from '.';
+import { useState } from 'react';
 
 interface CreatePostProps {
   show: boolean;
@@ -16,17 +18,32 @@ export default function CreatePost({
   title,
   className,
 }: CreatePostProps) {
+  const [draft, setDraft] = useState(false);
+  const [content, setContent] = useState(false);
+
+  const closeModal = () => {
+    if (content) {
+      setDraft(true);
+    } else {
+      setShow(false);
+    }
+  };
+
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
-      <ContentCreatePost
-        className="p-0 border-none"
-        setShowModalPost={setShow}
-      />
-    </BottomSheet.Root>
+    <>
+      <BottomSheetUI.Root
+        show={show}
+        setShow={closeModal}
+        title={title}
+        className={className}
+      >
+        <ContentCreatePost
+          className="p-0 border-none"
+          setShowModalPost={setShow}
+          setContent={setContent}
+        />
+      </BottomSheetUI.Root>
+      <BottomSheet.Draft show={draft} setShow={setDraft} setClose={setShow} />
+    </>
   );
 }

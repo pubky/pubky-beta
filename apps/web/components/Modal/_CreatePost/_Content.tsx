@@ -7,11 +7,13 @@ import CreateContent from '@/components/CreateContent';
 
 interface CreatePostProps {
   setShowModalPost: React.Dispatch<React.SetStateAction<boolean>>;
+  setContent?: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
 export default function ContentCreatePost({
   setShowModalPost,
+  setContent,
   className,
 }: CreatePostProps) {
   const { pubky, createPost, createTag } = usePubkyClientContext();
@@ -29,6 +31,20 @@ export default function ContentCreatePost({
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('post'));
   }, []);
+
+  useEffect(() => {
+    if (setContent) {
+      if (
+        contentPost.trim() !== '' ||
+        arrayTags.length !== 0 ||
+        selectedFiles.length !== 0
+      ) {
+        setContent(true);
+      } else {
+        setContent(false);
+      }
+    }
+  }, [contentPost, arrayTags, selectedFiles]);
 
   const handleSubmit = async (content: string) => {
     if (sendingPost) {

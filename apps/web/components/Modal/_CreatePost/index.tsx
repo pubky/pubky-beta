@@ -1,5 +1,7 @@
-import { Modal } from '@social/ui-shared';
+import { Modal as ModalUI } from '@social/ui-shared';
 import ContentCreatePost from './_Content';
+import { useEffect, useState } from 'react';
+import Modal from '..';
 
 interface CreatePostProps {
   showModalPost: boolean;
@@ -12,29 +14,58 @@ export default function CreatePost({
   setShowModalPost,
   modalPostRef,
 }: CreatePostProps) {
+  const [draft, setDraft] = useState(false);
+  const [content, setContent] = useState(false);
+
+  const closeModal = () => {
+    if (content) {
+      setDraft(true);
+    } else {
+      setShowModalPost(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutsideModals = (event: MouseEvent) => {
+      if (
+        modalPostRef.current &&
+        !modalPostRef.current.contains(event.target as Node)
+      ) {
+        closeModal();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideModals);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideModals);
+    };
+  }, [modalPostRef, content]);
+
   return (
-    <Modal.Root
-      modalRef={modalPostRef}
-      show={showModalPost}
-      closeModal={() => {
-        setShowModalPost(false);
-        //setArrayTags([]);
-      }}
-      className="md:w-[792px] max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
-    >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalPost(false);
-          //setArrayTags([]);
-          //setContent('');
-        }}
-      />
-      <div className="flex flex-col gap-4">
-        <Modal.Header title="New Post" />
-        <div className="flex items-center relative">
-          <ContentCreatePost setShowModalPost={setShowModalPost} />
+    <>
+      <ModalUI.Root
+        modalRef={modalPostRef}
+        show={showModalPost}
+        closeModal={closeModal}
+        className="md:w-[792px] max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
+      >
+        <ModalUI.CloseAction onClick={closeModal} />
+        <div className="flex flex-col gap-4">
+          <ModalUI.Header title="New Post" />
+          <div className="flex items-center relative">
+            <ContentCreatePost
+              setShowModalPost={setShowModalPost}
+              setContent={setContent}
+            />
+          </div>
         </div>
-      </div>
-    </Modal.Root>
+      </ModalUI.Root>
+      <Modal.Draft
+        showModal={draft}
+        setShowModal={setDraft}
+        setClose={setShowModalPost}
+      />
+    </>
   );
 }

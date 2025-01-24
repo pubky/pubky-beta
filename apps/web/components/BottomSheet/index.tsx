@@ -8,6 +8,7 @@ import CreateRepost from './_CreateRepost';
 import CroppedImage from './_CroppedImage';
 import DeleteAccount from './_DeleteAccount';
 import DeletePost from './_DeletePost';
+import Draft from './_Draft';
 import EditArticle from './_EditArticle';
 import EditPost from './_EditPost';
 import Feedback from './_Feedback';
@@ -38,6 +39,7 @@ export const BottomSheet = {
   CroppedImage,
   DeleteAccount,
   DeletePost,
+  Draft,
   EditArticle,
   EditPost,
   Feedback,

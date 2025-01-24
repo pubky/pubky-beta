@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@social/ui-shared';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Modal } from '../Modal';
 import { usePubkyClientContext, useJoin } from '@/contexts';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -16,23 +16,6 @@ export default function CreatePost() {
   const [showSheetPost, setShowSheetPost] = useState(false);
   const isVisible = useIsScrollup();
   const modalPostRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutsideModals = (event: MouseEvent) => {
-      if (
-        modalPostRef.current &&
-        !modalPostRef.current.contains(event.target as Node)
-      ) {
-        setShowModalPost(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideModals);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModals);
-    };
-  }, [modalPostRef]);
 
   return (
     <>
