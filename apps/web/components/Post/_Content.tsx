@@ -411,15 +411,13 @@ export default function Content({
                     setShowModal={setShowModal}
                   />
                 )}
-                {showSheet && (
-                  <BottomSheet.FilesCarousel
-                    show={showSheet}
-                    setShow={setShowSheet}
-                    fileContents={fileContents}
-                    currentFileIndex={currentFileIndex}
-                    setCurrentFileIndex={setCurrentFileIndex}
-                  />
-                )}
+                <BottomSheet.FilesCarousel
+                  show={showSheet}
+                  setShow={setShowSheet}
+                  fileContents={fileContents}
+                  currentFileIndex={currentFileIndex}
+                  setCurrentFileIndex={setCurrentFileIndex}
+                />
               </div>
             </>
           )}
