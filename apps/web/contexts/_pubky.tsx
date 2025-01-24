@@ -26,7 +26,7 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
   process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
   'https://demo.httprelay.io/link/';
 
-import init, { PubkyAppBuilder, PubkyAppUser } from 'pubky-app-specs';
+import init, { PubkySpecsBuilder, PubkyAppUser } from 'pubky-app-specs';
 
 let client: Client;
 if (TESTNET) {
@@ -170,7 +170,9 @@ export function PubkyClientWrapper({
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined,
   );
-  const [specs, setSpecs] = useState<PubkyAppBuilder | undefined>(undefined);
+  const [specsBuilder, setSpecsBuilder] = useState<
+    PubkySpecsBuilder | undefined
+  >(undefined);
   const [newUser, setNewUser] = useState(false);
   const [seed, setSeed] = useState<string | undefined>(
     (Utils.storage.get('seed') as string | undefined) || undefined,
@@ -204,9 +206,9 @@ export function PubkyClientWrapper({
 
   useEffect(() => {
     if (specsWasmLoaded && pubky) {
-      // We instantiate a new PubkyAppBuilder when our user's pubky_id
+      // We instantiate a new PubkySpecsBuilder when our user's pubky_id
       // changes so the URLs generated are always correct.
-      setSpecs(new PubkyAppBuilder(pubky));
+      setSpecsBuilder(new PubkySpecsBuilder(pubky));
     }
   }, [specsWasmLoaded, pubky]);
 
@@ -281,8 +283,8 @@ export function PubkyClientWrapper({
     if (!loggedIn) {
       throw new Error('User is not logged in');
     }
-    if (!specs) {
-      throw new Error('Pubky app specs not ready');
+    if (!specsBuilder) {
+      throw new Error('Pubky App Specs Builder not yet ready');
     }
   };
 
@@ -454,10 +456,12 @@ export function PubkyClientWrapper({
 
       Utils.storage.set('pubky_public_key', pk);
       setPubky(pk);
-      const specs = new PubkyAppBuilder(pk);
-      setSpecs(specs);
 
-      const result = specs.createUser(
+      // pubky id just changed, let's create a new SpecsBuilder
+      const specsBuilder = new PubkySpecsBuilder(pk);
+      setSpecsBuilder(specsBuilder);
+
+      const result = specsBuilder.createUser(
         userProfile.name,
         userProfile.bio,
         file,
@@ -465,13 +469,16 @@ export function PubkyClientWrapper({
         userProfile.status,
       );
 
-      Utils.storage.set('profile', JSON.stringify(result.user));
-      setProfile(result.user);
+      // Let's bring the full wasm object into JS and assign correct type.
+      const user = result.user.toJson() as PubkyAppUser;
+
+      Utils.storage.set('profile', JSON.stringify(user));
+      setProfile(user);
 
       // Send the profile to the homeserver
       const response = await client.fetch(result.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(result.user.toJson()),
+        body: JSON.stringify(user),
         credentials: 'include',
       });
 
@@ -480,7 +487,7 @@ export function PubkyClientWrapper({
         throw new Error(errorMessage);
       }
 
-      // if (result.user.name === 'anonymous') {
+      // if (user.name === 'anonymous') {
       //   let userEdited = false;
       //   while (!userEdited) {
       //     try {
@@ -498,7 +505,7 @@ export function PubkyClientWrapper({
       //   }
       // }
 
-      return result.user;
+      return user;
     } catch (error) {
       console.log(error);
       return false;
@@ -1349,7 +1356,7 @@ export function PubkyClientWrapper({
     try {
       await ensureReady(); // ensure is logged in and specs are initialized
 
-      const result = specs.createFollow(user_id);
+      const result = specsBuilder!.createFollow(user_id);
 
       const response = await client.fetch(result.meta.url, {
         method: 'PUT',
@@ -1585,25 +1592,12 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      if (!tagContent || tagContent.trim() === '') {
-        throw new Error('Tag content cannot be empty');
-      }
+      const uri = `pubky://${authorId}/pub/pubky.app/posts/${postId}`;
+      const result = specsBuilder!.createTag(uri, tagContent);
 
-      const tagData = {
-        uri: `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
-        label: tagContent,
-        created_at: Date.now(),
-      };
-
-      const tagId = (
-        await generateHashId(`${tagData.uri}:${tagData.label}`)
-      ).toUpperCase();
-
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
-
-      await client.fetch(tagUrl, {
+      await client.fetch(result.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(tagData),
+        body: JSON.stringify(result.tag.toJson()),
         credentials: 'include',
       });
 
