@@ -46,18 +46,34 @@ export default function SearchInputCard({
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex((prevIndex) =>
-        prevIndex === null || prevIndex === searchedUsers.length - 1
-          ? 0
-          : prevIndex + 1,
-      );
+      setSelectedIndex((prevIndex) => {
+        const nextIndex =
+          prevIndex === null || prevIndex === searchedUsers.length - 1
+            ? 0
+            : prevIndex + 1;
+
+        document.getElementById(`user-${nextIndex}`)?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+
+        return nextIndex;
+      });
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex((prevIndex) =>
-        prevIndex === null || prevIndex === 0
-          ? searchedUsers.length - 1
-          : prevIndex - 1,
-      );
+      setSelectedIndex((prevIndex) => {
+        const nextIndex =
+          prevIndex === null || prevIndex === 0
+            ? searchedUsers.length - 1
+            : prevIndex - 1;
+
+        document.getElementById(`user-${nextIndex}`)?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+
+        return nextIndex;
+      });
     } else if (e.key === 'Enter' && selectedIndex !== null) {
       const selectedUser = searchedUsers[selectedIndex];
       if (selectedUser) {
@@ -116,6 +132,7 @@ export default function SearchInputCard({
           {searchedUsers.map((user, index) => (
             <SideCard.User
               key={user.details.id}
+              id={`user-${index}`}
               uri={user.details.id}
               uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
               username={Utils.minifyText(user?.details?.name, 20)}
