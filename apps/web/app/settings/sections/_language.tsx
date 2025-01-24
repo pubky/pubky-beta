@@ -18,7 +18,7 @@ export default function Language() {
         <Typography.Body variant="medium" className="text-opacity-80">
           Choose your preferred language for the Pubky interface.
         </Typography.Body>
-        <div className="w-full p-6 bg-white bg-opacity-5 rounded-2xl flex-col justify-start items-start gap-2 inline-flex">
+        <div className="w-full p-6 bg-white bg-opacity-5 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] rounded-2xl flex-col justify-start items-start gap-2 inline-flex">
           <Typography.Caption
             className="uppercase text-opacity-30"
             variant="bold"
