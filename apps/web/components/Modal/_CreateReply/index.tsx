@@ -1,7 +1,8 @@
-import { Modal } from '@social/ui-shared';
-import { useEffect, useRef } from 'react';
+import { Modal as ModalUI } from '@social/ui-shared';
+import { useEffect, useRef, useState } from 'react';
 import { PostView } from '@/types/Post';
 import ContentCreateReply from './_Content';
+import Modal from '..';
 
 interface CreateReplyProps {
   showModalReply: boolean;
@@ -14,7 +15,17 @@ export default function CreateReply({
   setShowModalReply,
   post,
 }: CreateReplyProps) {
+  const [draft, setDraft] = useState(false);
+  const [content, setContent] = useState(false);
   const modalReplyRef = useRef<HTMLDivElement>(null);
+
+  const closeModal = () => {
+    if (content) {
+      setDraft(true);
+    } else {
+      setShowModalReply(false);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutsideModals = (event: MouseEvent) => {
@@ -22,7 +33,7 @@ export default function CreateReply({
         modalReplyRef.current &&
         !modalReplyRef.current.contains(event.target as Node)
       ) {
-        setShowModalReply(false);
+        closeModal();
       }
     };
 
@@ -31,29 +42,24 @@ export default function CreateReply({
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideModals);
     };
-  }, [modalReplyRef, setShowModalReply]);
-
+  }, [modalReplyRef, content]);
   return (
-    <Modal.Root
+    <>
+    <ModalUI.Root
       modalRef={modalReplyRef}
       show={showModalReply}
-      closeModal={() => {
-        setShowModalReply(false);
-        //setArrayTags([]);
-      }}
+      closeModal={closeModal}
       className="md:w-[792px] max-w-[1200px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalReply(false);
-          //setArrayTags([]);
-          //setContentReply('');
-        }}
+      <ModalUI.CloseAction
+        onClick={closeModal}
       />
       <div className="mb-4">
-        <Modal.Header title="Reply" />
+        <ModalUI.Header title="Reply" />
       </div>
-      <ContentCreateReply setShowModalReply={setShowModalReply} post={post} />
-    </Modal.Root>
+      <ContentCreateReply setContent={setContent} setShowModalReply={setShowModalReply} post={post} />
+    </ModalUI.Root>
+    <Modal.Draft showModal={draft} setShowModal={setDraft} setClose={setShowModalReply}/>
+    </>
   );
 }

@@ -10,12 +10,14 @@ import CreateContent from '@/components/CreateContent';
 interface CreateReplyProps {
   setShowModalReply: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  setContent?: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
 export default function ContentCreateReply({
   setShowModalReply,
   post,
+  setContent,
   className,
 }: CreateReplyProps) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
@@ -38,6 +40,20 @@ export default function ContentCreateReply({
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('reply'));
   }, []);
+
+  useEffect(() => {
+    if (setContent) {
+      if (
+        contentReply.trim() !== '' ||
+        arrayTags.length !== 0 ||
+        selectedFiles.length !== 0
+      ) {
+        setContent(true);
+      } else {
+        setContent(false);
+      }
+    }
+  }, [contentReply, arrayTags, selectedFiles]);
 
   const handleSubmit = async (content: string) => {
     if (sendingReply) {
