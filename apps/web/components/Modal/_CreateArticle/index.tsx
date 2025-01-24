@@ -1,6 +1,7 @@
-import { Modal } from '@social/ui-shared';
-import { useEffect, useRef } from 'react';
+import { Modal as ModalUI } from '@social/ui-shared';
+import { useEffect, useRef, useState } from 'react';
 import ContentCreateArticle from './_Content';
+import Modal from '..';
 
 interface CreateArticleProps {
   showModalArticle: boolean;
@@ -14,6 +15,16 @@ export default function CreateArticle({
   setShowModalPost,
 }: CreateArticleProps) {
   const modalArticleRef = useRef<HTMLDivElement>(null);
+  const [draft, setDraft] = useState(false);
+  const [content, setContent] = useState(false);
+
+  const closeModal = () => {
+    if (content) {
+      setDraft(true);
+    } else {
+      setShowModalArticle(false);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutsideModals = (event: MouseEvent) => {
@@ -21,41 +32,38 @@ export default function CreateArticle({
         modalArticleRef.current &&
         !modalArticleRef.current.contains(event.target as Node)
       ) {
-        setShowModalArticle(false);
+        closeModal();
       }
     };
-
     document.addEventListener('mousedown', handleClickOutsideModals);
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideModals);
     };
-  }, [modalArticleRef, setShowModalArticle]);
+  }, [modalArticleRef, content]);
 
   return (
-    <Modal.Root
-      modalRef={modalArticleRef}
-      show={showModalArticle}
-      closeModal={() => {
-        setShowModalArticle(false);
-        //setArrayTags([]);
-      }}
-      className="max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
-    >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalArticle(false);
-          //setArrayTags([]);
-          //setContent('');
-        }}
+    <>
+      <ModalUI.Root
+        modalRef={modalArticleRef}
+        show={showModalArticle}
+        closeModal={closeModal}
+        className="max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
+      >
+        <ModalUI.CloseAction onClick={closeModal} />
+        <div className="flex flex-col gap-4">
+          <ModalUI.Header title="New Article" />
+          <ContentCreateArticle
+            setShowModalArticle={setShowModalArticle}
+            setShowModalPost={setShowModalPost}
+            setContent={setContent}
+          />
+        </div>
+      </ModalUI.Root>
+      <Modal.Draft
+        showModal={draft}
+        setShowModal={setDraft}
+        setClose={setShowModalArticle}
       />
-      <div className="flex flex-col gap-4">
-        <Modal.Header title="New Article" />
-        <ContentCreateArticle
-          setShowModalArticle={setShowModalArticle}
-          setShowModalPost={setShowModalPost}
-        />
-      </div>
-    </Modal.Root>
+    </>
   );
 }

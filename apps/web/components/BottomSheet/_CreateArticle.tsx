@@ -1,7 +1,9 @@
 'use client';
 
-import { BottomSheet } from '@social/ui-shared';
+import { BottomSheet as BottomSheetUI } from '@social/ui-shared';
 import ContentCreateArticle from '../Modal/_CreateArticle/_Content';
+import { useState } from 'react';
+import { BottomSheet } from '.';
 
 interface CreateArticleProps {
   show: boolean;
@@ -16,14 +18,31 @@ export default function CreateArticle({
   title,
   className,
 }: CreateArticleProps) {
+  const [draft, setDraft] = useState(false);
+  const [content, setContent] = useState(false);
+
+  const closeModal = () => {
+    if (content) {
+      setDraft(true);
+    } else {
+      setShow(false);
+    }
+  };
+
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'New Article'}
-      className={className}
-    >
-      <ContentCreateArticle setShowModalArticle={setShow} />
-    </BottomSheet.Root>
+    <>
+      <BottomSheetUI.Root
+        show={show}
+        setShow={closeModal}
+        title={title ?? 'New Article'}
+        className={className}
+      >
+        <ContentCreateArticle
+          setContent={setContent}
+          setShowModalArticle={setShow}
+        />
+      </BottomSheetUI.Root>
+      <BottomSheet.Draft show={draft} setShow={setDraft} setClose={setShow} />
+    </>
   );
 }

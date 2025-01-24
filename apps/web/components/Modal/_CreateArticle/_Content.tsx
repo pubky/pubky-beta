@@ -13,11 +13,13 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 interface CreateArticleProps {
   setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
+  setContent?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ContentCreateArticle({
   setShowModalArticle,
   setShowModalPost,
+  setContent,
 }: CreateArticleProps) {
   const { pubky, createArticle, createTag, profile } = usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
@@ -48,6 +50,21 @@ export default function ContentCreateArticle({
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('article'));
   }, []);
+
+  useEffect(() => {
+    if (setContent) {
+      if (
+        contentTitle.trim() !== '' ||
+        contentArticle.trim() !== '' ||
+        arrayTags.length !== 0 ||
+        selectedFile.length !== 0
+      ) {
+        setContent(true);
+      } else {
+        setContent(false);
+      }
+    }
+  }, [contentTitle, contentArticle, arrayTags, selectedFile]);
 
   const handleSubmit = async (content: string) => {
     if (sendingArticle) {
