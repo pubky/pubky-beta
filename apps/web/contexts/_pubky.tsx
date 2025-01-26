@@ -15,13 +15,6 @@ import { UserDetails } from '@/types/User';
 import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
-
-const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
-const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
-const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
-  process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
-  'https://demo.httprelay.io/link/';
-
 import init, {
   PubkySpecsBuilder,
   PubkyAppUser,
@@ -31,16 +24,18 @@ import init, {
   baseUriBuilder,
   PubkyAppPostKind,
   PubkyAppPostEmbed,
+  PubkyAppUserLink,
 } from 'pubky-app-specs';
+import { UnaryExpression } from 'typescript';
 
-let client: Client;
-if (TESTNET) {
-  client = Client.testnet();
-} else {
-  client = new Client();
-}
+const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
+const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
+const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
+  process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
+  'https://demo.httprelay.io/link/';
 
-const homeserver = PublicKey.from(HOMESERVER_PUBLIC_KEY);
+const client = TESTNET ? Client.testnet() : new Client();
+const hs = PublicKey.from(HOMESERVER_PUBLIC_KEY);
 
 type PubkyClientContextType = {
   pubky: string | undefined;
@@ -60,7 +55,12 @@ type PubkyClientContextType = {
   isLoggedIn: () => Promise<boolean>;
   isSessionActive: () => Promise<boolean>;
   logout: () => boolean;
-  signUp: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
+  signUp: (
+    name: String,
+    bio: String | undefined,
+    links: PubkyAppUserLink[],
+    image: File | undefined,
+  ) => Promise<PubkyAppUser | false>;
   saveProfile: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
   createPost: (
     postContent: string,
@@ -201,19 +201,13 @@ export function PubkyClientWrapper({
   const [timeline, setTimeline] = useState<PostView[]>([]);
 
   useEffect(() => {
-    if (!specsWasmLoaded) {
-      init()
-        .then(() => setSpecsWasmLoaded(true))
-        .catch(console.error);
-    }
+    init()
+      .then(() => setSpecsWasmLoaded(true))
+      .catch(console.error);
   }, []);
 
   useEffect(() => {
-    if (specsWasmLoaded && pubky) {
-      // We instantiate a new PubkySpecsBuilder when our user's pubky_id
-      // changes so the URLs generated are always correct.
-      setSpecsBuilder(new PubkySpecsBuilder(pubky));
-    }
+    specsWasmLoaded && pubky && setSpecsBuilder(new PubkySpecsBuilder(pubky));
   }, [specsWasmLoaded, pubky]);
 
   if (!specsWasmLoaded) {
@@ -242,34 +236,34 @@ export function PubkyClientWrapper({
     if (!specsBuilder) throw new Error('Pubky App Specs Builder not ready');
   };
 
-  const getFromHomeserver = async (url: string) => client.fetch(url);
+  const setPubkyAndStorage = (pk: string) => {
+    Utils.storage.set('pubky_public_key', pk);
+    setPubky(pk);
+  };
 
-  const putToHomeserver = async (url: string, body: any) =>
-    client.fetch(url, {
-      method: 'PUT',
-      body,
-      credentials: 'include',
-    });
-
-  const deleteFromHomeserver = async (url: string) =>
-    client.fetch(url, { method: 'DELETE', credentials: 'include' });
+  const homeserver = {
+    get: (url: string) => client.fetch(url),
+    put: (url: string, body: any) =>
+      client.fetch(url, { method: 'PUT', body, credentials: 'include' }),
+    del: (url: string) =>
+      client.fetch(url, { method: 'DELETE', credentials: 'include' }),
+  };
 
   const logout = () => {
     try {
-      if (pubky) {
-        // Logout client
-        client.signout(PublicKey.from(pubky));
-      }
+      pubky && client.signout(PublicKey.from(pubky));
 
       // Clear storage and states
-      Utils.storage.remove('pubky_public_key');
-      Utils.storage.remove('seed');
-      Utils.storage.remove('mnemonic');
-      Utils.storage.remove('profile');
-      Utils.storage.remove('timerRemind');
-      Utils.storage.remove('backup');
-      Utils.storage.remove('feed');
-      Utils.storage.remove('unread');
+      [
+        'pubky_public_key',
+        'seed',
+        'mnemonic',
+        'profile',
+        'timerRemind',
+        'backup',
+        'feed',
+        'unread',
+      ].forEach(Utils.storage.remove);
 
       setTimeout(() => {
         setProfile(undefined);
@@ -282,10 +276,8 @@ export function PubkyClientWrapper({
         setSearchTags([]);
         setPubky(undefined);
       });
-
       return true;
     } catch (error) {
-      console.log(error);
       return false;
     }
   };
@@ -336,8 +328,7 @@ export function PubkyClientWrapper({
       // Save pubky state
       const pk = publickey;
 
-      Utils.storage.set('pubky_public_key', pk);
-      setPubky(pk);
+      setPubkyAndStorage(pk);
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
@@ -355,7 +346,7 @@ export function PubkyClientWrapper({
       }
 
       // Sign up
-      await client.signup(keypair, homeserver);
+      await client.signup(keypair, hs);
 
       // Get session
       const session = await client.session(keypair.publicKey());
@@ -367,8 +358,7 @@ export function PubkyClientWrapper({
       // Save pubky state
       const pk = session.pubky().z32();
 
-      Utils.storage.set('pubky_public_key', pk);
-      setPubky(pk);
+      setPubkyAndStorage(pk);
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
@@ -387,7 +377,7 @@ export function PubkyClientWrapper({
       const keypair = Keypair.fromSecretKey(secretKey);
 
       // Sign up
-      await client.signup(keypair, homeserver);
+      await client.signup(keypair, hs);
 
       // Get session
       const session = await client.session(keypair.publicKey());
@@ -399,8 +389,7 @@ export function PubkyClientWrapper({
       // Save pubky state
       const pk = session.pubky().z32();
 
-      Utils.storage.set('pubky_public_key', pk);
-      setPubky(pk);
+      setPubkyAndStorage(pk);
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
@@ -414,8 +403,8 @@ export function PubkyClientWrapper({
     const fileContent = await file.arrayBuffer();
     const blobData = new Uint8Array(fileContent);
     const blobResult = specsBuilder!.createBlob(blobData);
-
-    await putToHomeserver(blobResult.meta.url, blobResult.blob.data);
+    console.log({ blobResult });
+    await homeserver.put(blobResult.meta.url, blobResult.blob.data);
 
     // 2. Create File Record
     const fileResult = specsBuilder!.createFile(
@@ -425,7 +414,7 @@ export function PubkyClientWrapper({
       BigInt(file.size),
     );
 
-    await putToHomeserver(
+    await homeserver.put(
       fileResult.meta.url,
       JSON.stringify(fileResult.file.toJson()),
     );
@@ -437,7 +426,12 @@ export function PubkyClientWrapper({
     return Promise.all(files.map((file) => uploadFile(file)));
   };
 
-  const signUp = async (userProfile: PubkyAppUser): Promise<any | false> => {
+  const signUp = async (
+    name: string,
+    bio: string | undefined,
+    links: PubkyAppUserLink[],
+    image: File | undefined,
+  ): Promise<any | false> => {
     try {
       const mnemonic = bip39.generateMnemonic(128);
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
@@ -447,7 +441,7 @@ export function PubkyClientWrapper({
       const seed = Utils.uint8ArrayToBase64(newKeypair.secretKey());
 
       // Sign up
-      await client.signup(newKeypair, homeserver);
+      await client.signup(newKeypair, hs);
 
       // Get session
       const session = await client.session(newKeypair.publicKey());
@@ -459,11 +453,6 @@ export function PubkyClientWrapper({
       // Save pubky state
       const pk = session.pubky().z32();
 
-      let file;
-      if (userProfile.image instanceof File) {
-        file = await uploadFile(userProfile.image);
-      }
-
       setNewUser(true);
 
       // Save info in storage
@@ -473,19 +462,21 @@ export function PubkyClientWrapper({
       Utils.storage.set('mnemonic', mnemonic);
       setMnemonic(mnemonic);
 
-      Utils.storage.set('pubky_public_key', pk);
-      setPubky(pk);
+      setPubkyAndStorage(pk);
 
       // pubky id just changed, let's create a new SpecsBuilder
       const specsBuilder = new PubkySpecsBuilder(pk);
       setSpecsBuilder(specsBuilder);
 
+      // Upload avatar
+      let uploadResult = image ? await uploadFile(image) : null;
+      let file = uploadResult ? uploadResult : null;
+
       const result = specsBuilder.createUser(
-        userProfile.name,
-        userProfile.bio,
+        name || 'anonymous',
+        bio,
         file,
-        userProfile.links,
-        userProfile.status,
+        links,
       );
 
       // Let's bring the full wasm object into JS and assign correct type.
@@ -495,7 +486,7 @@ export function PubkyClientWrapper({
       setProfile(user);
 
       // Send the profile to the homeserver
-      const response = await putToHomeserver(
+      const response = await homeserver.put(
         result.meta.url,
         JSON.stringify(user),
       );
@@ -542,7 +533,7 @@ export function PubkyClientWrapper({
       setProfile(user);
 
       // Send the profile to the homeserver
-      await putToHomeserver(userResult.meta.url, JSON.stringify(user));
+      await homeserver.put(userResult.meta.url, JSON.stringify(user));
 
       return user;
     },
@@ -566,7 +557,7 @@ export function PubkyClientWrapper({
     setProfile(user);
 
     // Send the profile to the homeserver
-    await putToHomeserver(userResult.meta.url, JSON.stringify(user));
+    await homeserver.put(userResult.meta.url, JSON.stringify(user));
 
     return user;
   });
@@ -596,7 +587,7 @@ export function PubkyClientWrapper({
       );
 
       const post = postResult.post.toJson() as PubkyAppPost;
-      await putToHomeserver(postResult.meta.url, JSON.stringify(post));
+      await homeserver.put(postResult.meta.url, JSON.stringify(post));
 
       return {
         uri: postResult.meta.url,
@@ -722,7 +713,7 @@ export function PubkyClientWrapper({
     );
 
     // Send the post to the homeserver
-    await putToHomeserver(
+    await homeserver.put(
       postResult.meta.url,
       JSON.stringify(postResult.post.toJson()),
     );
@@ -746,12 +737,12 @@ export function PubkyClientWrapper({
 
     // Delete each file (excluding profile.json) and update progress
     for (let index = 0; index < filesToDelete.length; index++) {
-      await deleteFromHomeserver(filesToDelete[index]);
+      await homeserver.del(filesToDelete[index]);
       setProgress(Math.round(((index + 1) / totalFiles) * 100));
     }
 
     // Finally, delete profile.json and update progress to 100%
-    await deleteFromHomeserver(profileUrl);
+    await homeserver.del(profileUrl);
     setProgress(100);
 
     return true;
@@ -788,7 +779,7 @@ export function PubkyClientWrapper({
     await Promise.all(
       dataList.map(async (dataUrl, index) => {
         // Get the Response object
-        const response = await getFromHomeserver(dataUrl);
+        const response = await homeserver.get(dataUrl);
 
         // Convert to ArrayBuffer
         const arrayBuffer = await response.arrayBuffer();
@@ -889,7 +880,7 @@ export function PubkyClientWrapper({
         const dataUrl = `pubky://${pubky}/${filename.replace('data/', '')}`;
 
         // Upload the file
-        await putToHomeserver(dataUrl, new Uint8Array(content));
+        await homeserver.put(dataUrl, new Uint8Array(content));
 
         // Update progress
         setProgress(Math.round(((index + 1) / totalFiles) * 100));
@@ -906,7 +897,7 @@ export function PubkyClientWrapper({
     // create a new last_read only to craft the url
     const result = specsBuilder!.createLastRead();
 
-    const response = await getFromHomeserver(result.meta.url);
+    const response = await homeserver.get(result.meta.url);
     const lastRead = (await response.json()) as PubkyAppLastRead;
 
     return Number(lastRead.timestamp);
@@ -915,7 +906,7 @@ export function PubkyClientWrapper({
   const putTimestampNotification = withAuth(async (timestamp: number) => {
     const result = specsBuilder!.createLastRead();
 
-    await putToHomeserver(
+    await homeserver.put(
       result.meta.url,
       JSON.stringify(result.last_read.toJson()),
     );
@@ -930,7 +921,7 @@ export function PubkyClientWrapper({
 
     // pubky.app/settings is not covered by the specs!
     const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
-    const response = await getFromHomeserver(settingsUrl);
+    const response = await homeserver.get(settingsUrl);
     const settings = await response.json();
 
     return settings;
@@ -946,7 +937,7 @@ export function PubkyClientWrapper({
 
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
 
-      await putToHomeserver(settingsUrl, JSON.stringify(settings));
+      await homeserver.put(settingsUrl, JSON.stringify(settings));
 
       return true;
     },
@@ -957,7 +948,7 @@ export function PubkyClientWrapper({
     const postUrl = postUriBuilder(pubky!, postId);
 
     // Send the post to the homeserver
-    await deleteFromHomeserver(postUrl);
+    await homeserver.del(postUrl);
 
     return true;
   });
@@ -981,7 +972,7 @@ export function PubkyClientWrapper({
   const follow = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createFollow(user_id);
 
-    const response = await putToHomeserver(
+    const response = await homeserver.put(
       result.meta.url,
       JSON.stringify(result.follow.toJson()),
     );
@@ -997,7 +988,7 @@ export function PubkyClientWrapper({
   const unfollow = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createFollow(user_id);
 
-    const response = await deleteFromHomeserver(result.meta.url);
+    const response = await homeserver.del(result.meta.url);
 
     if (!response.ok) {
       const errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -1010,7 +1001,7 @@ export function PubkyClientWrapper({
   const deleteFile = withAuth(async (file_uri: string): Promise<boolean> => {
     // TODO: we are not deleting the `/blob`
 
-    await deleteFromHomeserver(file_uri);
+    await homeserver.del(file_uri);
 
     return true;
   });
@@ -1018,10 +1009,7 @@ export function PubkyClientWrapper({
   const mute = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createMute(user_id);
 
-    await putToHomeserver(
-      result.meta.url,
-      JSON.stringify(result.mute.toJson()),
-    );
+    await homeserver.put(result.meta.url, JSON.stringify(result.mute.toJson()));
 
     return true;
   });
@@ -1029,7 +1017,7 @@ export function PubkyClientWrapper({
   const unmute = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createMute(user_id);
 
-    await deleteFromHomeserver(result.meta.url);
+    await homeserver.del(result.meta.url);
 
     return true;
   });
@@ -1039,7 +1027,7 @@ export function PubkyClientWrapper({
       const uriPost = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createBookmark(uriPost);
 
-      const response = await putToHomeserver(
+      const response = await homeserver.put(
         result.meta.url,
         JSON.stringify(result.bookmark.toJson()),
       );
@@ -1062,7 +1050,7 @@ export function PubkyClientWrapper({
       const uriPost = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createBookmark(uriPost);
 
-      const response = await deleteFromHomeserver(result.meta.url);
+      const response = await homeserver.del(result.meta.url);
 
       if (!response.ok) {
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -1082,7 +1070,7 @@ export function PubkyClientWrapper({
       const postUri = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createTag(postUri, label);
 
-      await putToHomeserver(
+      await homeserver.put(
         result.meta.url,
         JSON.stringify(result.tag.toJson()),
       );
@@ -1111,7 +1099,7 @@ export function PubkyClientWrapper({
       );
 
       const feedObj = result.feed.toJson();
-      await putToHomeserver(result.meta.url, JSON.stringify(feedObj));
+      await homeserver.put(result.meta.url, JSON.stringify(feedObj));
 
       return true;
     },
@@ -1127,7 +1115,7 @@ export function PubkyClientWrapper({
       const feedsData = await Promise.all(
         feedUris.map(async (uri) => {
           try {
-            const response = await getFromHomeserver(uri);
+            const response = await homeserver.get(uri);
             const feed = await response.json();
             return feed;
           } catch (error) {
@@ -1164,7 +1152,7 @@ export function PubkyClientWrapper({
     );
 
     // Delete the feed from the homeserver
-    await deleteFromHomeserver(result.meta.url);
+    await homeserver.del(result.meta.url);
 
     return true;
   });
@@ -1179,7 +1167,7 @@ export function PubkyClientWrapper({
       const uriPost = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createTag(uriPost, tagLabel);
 
-      await deleteFromHomeserver(result.meta.url);
+      await homeserver.del(result.meta.url);
 
       return true;
     },
@@ -1190,7 +1178,7 @@ export function PubkyClientWrapper({
       const uriProfile = userUriBuilder(userId);
       const result = specsBuilder!.createTag(uriProfile, label);
 
-      await putToHomeserver(
+      await homeserver.put(
         result.meta.url,
         JSON.stringify(result.tag.toJson()),
       );
@@ -1206,7 +1194,7 @@ export function PubkyClientWrapper({
       // Compute ID and URL for a from its content (unique)
       const result = specsBuilder!.createTag(uriProfile, label);
 
-      await deleteFromHomeserver(result.meta.url);
+      await homeserver.del(result.meta.url);
 
       return true;
     },

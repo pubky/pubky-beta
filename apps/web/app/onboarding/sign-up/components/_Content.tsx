@@ -14,10 +14,29 @@ import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
 import { BottomSheet } from '@/components';
+import { PubkyAppUserLink } from 'pubky-app-specs';
 
 interface FormErrors {
   [fieldName: string]: string[];
 }
+
+const genJdenticon = async (): Promise<File | undefined> => {
+  const id = Math.random().toString(36).substring(2, 15);
+  const size = 200;
+  const svgCode = jdenticon.toSvg(id, size);
+
+  try {
+    const pngBlob = await Utils.svgToPng(svgCode, size);
+    const pngFile = new File([pngBlob], `${id}.png`, {
+      type: 'image/png',
+    });
+
+    return pngFile;
+  } catch (error) {
+    console.error('Error converting SVG to PNG:', error);
+    return undefined;
+  }
+};
 
 const profileSchema = z.object({
   name: z
@@ -36,7 +55,7 @@ export default function Index() {
 
   const [name, setName] = useState(profile?.name || '');
   const [bio, setBio] = useState(profile?.bio || '');
-  const [image, setImage] = useState<File | string | undefined>('');
+  const [image, setImage] = useState<File | undefined>();
   const [generatedImage, setGeneratedImage] = useState<File>();
   const [showModalLink, setShowModalLink] = useState(false);
   const [showSheetLink, setShowSheetLink] = useState(false);
@@ -52,27 +71,15 @@ export default function Index() {
   });
 
   useEffect(() => {
-    if (!profile?.image && !image) {
-      const fetchJdenticon = async () => {
-        const id = Math.random().toString(36).substring(2, 15);
-        const size = 200;
-        const svgCode = jdenticon.toSvg(id, size);
+    const generateAndSetImage = async () => {
+      if (!profile?.image && !image) {
+        const generatedImage = await genJdenticon();
+        setGeneratedImage(generatedImage);
+        setImage(generatedImage);
+      }
+    };
 
-        try {
-          const pngBlob = await Utils.svgToPng(svgCode, size);
-          const pngFile = new File([pngBlob], `${id}.png`, {
-            type: 'image/png',
-          });
-
-          setGeneratedImage(pngFile);
-          setImage(pngFile);
-        } catch (error) {
-          console.error('Error converting SVG to PNG:', error);
-        }
-      };
-
-      fetchJdenticon();
-    }
+    generateAndSetImage();
   }, [profile?.image, image]);
 
   useEffect(() => {
@@ -130,7 +137,7 @@ export default function Index() {
       }
 
       try {
-        const linksObject: Links[] = [];
+        const userLinks: PubkyAppUserLink[] = [];
         const invalidLinkIndexes: number[] = [];
 
         links.forEach((link, index) => {
@@ -145,10 +152,9 @@ export default function Index() {
                 .safeParse(cleanUrl);
 
               if (validationResult.success) {
-                linksObject.push({
-                  title: link.title,
-                  url: `mailto:${cleanUrl}`,
-                });
+                userLinks.push(
+                  new PubkyAppUserLink(link.title, `mailto:${cleanUrl}`),
+                );
               } else {
                 invalidLinkIndexes.push(index);
               }
@@ -173,10 +179,9 @@ export default function Index() {
                     .safeParse(completedUrl);
 
                   if (validationResult.success) {
-                    linksObject.push({
-                      title: link.title,
-                      url: completedUrl,
-                    });
+                    userLinks.push(
+                      new PubkyAppUserLink(link.title, completedUrl),
+                    );
                   } else {
                     invalidLinkIndexes.push(index);
                   }
@@ -184,10 +189,7 @@ export default function Index() {
                   invalidLinkIndexes.push(index);
                 }
               } else {
-                linksObject.push({
-                  title: link.title,
-                  url: link.url,
-                });
+                userLinks.push(new PubkyAppUserLink(link.title, link.url));
               }
             }
           }
@@ -210,12 +212,7 @@ export default function Index() {
           return;
         }
 
-        const signUpResponse = await signUp({
-          name,
-          bio,
-          image: image instanceof File ? image : undefined,
-          links: linksObject ? linksObject : undefined,
-        });
+        const signUpResponse = await signUp(name, bio, userLinks, image);
 
         if (!signUpResponse) {
           throw new Error('Something went wrong');
