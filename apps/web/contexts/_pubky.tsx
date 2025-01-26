@@ -1196,6 +1196,40 @@ export function PubkyClientWrapper({
         kind,
       };
 
+      const repostedPost = timeline.find(
+        (post) => post.details.id === originalPostId,
+      );
+
+      // remove from newPosts if it is there
+      setNewPosts((prevNewPosts) =>
+        prevNewPosts.filter((p) => p.details.id !== originalPostId),
+      );
+
+      // Add the repost to the timeline
+      setTimeline([
+        {
+          details: {
+            id: repostId,
+            author: repostedPost?.details.author ?? '',
+            content: repostContent,
+            kind,
+            uri: repostedPost?.details.uri ?? '',
+            indexed_at: repostedPost?.details.indexed_at ?? Date.now(),
+          },
+          counts: {
+            reposts: 0,
+            replies: 0,
+            tags: 0,
+          },
+          tags: [],
+          cached: 'local',
+          relationships: {
+            reposted: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`,
+          },
+        },
+        ...timeline,
+      ]);
+
       // List to store URIs of uploaded files
       const uploadedFileUris: string[] = [];
 
