@@ -1140,6 +1140,16 @@ export function PubkyClientWrapper({
         credentials: 'include',
       });
 
+      // delete the post from the timeline
+      setTimeline((prevTimeline) =>
+        prevTimeline.filter((p) => p.details.id !== postId),
+      );
+
+      // delete the post from the new posts
+      setNewPosts((prevNewPosts) =>
+        prevNewPosts.filter((p) => p.details.id !== postId),
+      );
+
       return true;
     } catch (error) {
       console.error('Error creating post:', error);
