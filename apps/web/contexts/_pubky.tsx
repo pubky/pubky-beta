@@ -226,6 +226,17 @@ export function PubkyClientWrapper({
   if (!specsWasmLoaded) {
     return <div>Loading...</div>;
   }
+  const getFromHomeserver = async (url: string) => client.fetch(url);
+
+  const putToHomeserver = async (url: string, body: any) =>
+    client.fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+      credentials: 'include',
+    });
+
+  const deleteFromHomeserver = async (url: string) =>
+    client.fetch(url, { method: 'DELETE', credentials: 'include' });
 
   const logout = () => {
     try {
@@ -401,11 +412,7 @@ export function PubkyClientWrapper({
       const blobData = new Uint8Array(fileContent);
       const blobResult = specsBuilder!.createBlob(blobData);
 
-      await client.fetch(blobResult.meta.url, {
-        method: 'PUT',
-        body: blobResult.blob.data,
-        credentials: 'include',
-      });
+      await putToHomeserver(blobResult.meta.url, blobResult.blob.data);
 
       // 2. Create File Record
       const fileResult = specsBuilder!.createFile(
@@ -415,11 +422,10 @@ export function PubkyClientWrapper({
         BigInt(file.size),
       );
 
-      await client.fetch(fileResult.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(fileResult.file.toJson()),
-        credentials: 'include',
-      });
+      await putToHomeserver(
+        fileResult.meta.url,
+        JSON.stringify(fileResult.file.toJson()),
+      );
 
       return fileResult.meta.url;
     } catch (error) {
@@ -490,11 +496,10 @@ export function PubkyClientWrapper({
       setProfile(user);
 
       // Send the profile to the homeserver
-      const response = await client.fetch(result.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(user),
-        credentials: 'include',
-      });
+      const response = await putToHomeserver(
+        result.meta.url,
+        JSON.stringify(user),
+      );
 
       if (!response.ok) {
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -542,11 +547,7 @@ export function PubkyClientWrapper({
       setProfile(user);
 
       // Send the profile to the homeserver
-      await client.fetch(userResult.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(user),
-        credentials: 'include',
-      });
+      await putToHomeserver(userResult.meta.url, JSON.stringify(user));
 
       return user;
     } catch (error) {
@@ -576,11 +577,7 @@ export function PubkyClientWrapper({
       setProfile(user);
 
       // Send the profile to the homeserver
-      await client.fetch(userResult.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(user),
-        credentials: 'include',
-      });
+      await putToHomeserver(userResult.meta.url, JSON.stringify(user));
 
       return user;
     } catch (error) {
@@ -609,11 +606,7 @@ export function PubkyClientWrapper({
       const post = postResult.post.toJson() as PubkyAppPost;
 
       // Upload post
-      await client.fetch(postResult.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(post),
-        credentials: 'include',
-      });
+      await putToHomeserver(postResult.meta.url, JSON.stringify(post));
 
       // Mock up an instantaneous PostView to update UI
       const newPostDetails: PostDetails = {
@@ -670,11 +663,7 @@ export function PubkyClientWrapper({
       const post = postResult.post.toJson() as PubkyAppPost;
 
       // Send the post to the homeserver
-      await client.fetch(postResult.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(post),
-        credentials: 'include',
-      });
+      await putToHomeserver(postResult.meta.url, JSON.stringify(post));
 
       return { uri: postResult.meta.url, details: post };
     } catch (error) {
@@ -698,11 +687,10 @@ export function PubkyClientWrapper({
       );
 
       // Send the post to the homeserver
-      await client.fetch(postResult.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(postResult.post.toJson()),
-        credentials: 'include',
-      });
+      await putToHomeserver(
+        postResult.meta.url,
+        JSON.stringify(postResult.post.toJson()),
+      );
 
       return postResult.meta.url;
     } catch (error) {
@@ -730,18 +718,12 @@ export function PubkyClientWrapper({
 
       // Delete each file (excluding profile.json) and update progress
       for (let index = 0; index < filesToDelete.length; index++) {
-        await client.fetch(filesToDelete[index], {
-          method: 'DELETE',
-          credentials: 'include',
-        });
+        await deleteFromHomeserver(filesToDelete[index]);
         setProgress(Math.round(((index + 1) / totalFiles) * 100));
       }
 
       // Finally, delete profile.json and update progress to 100%
-      await client.fetch(profileUrl, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      await deleteFromHomeserver(profileUrl);
       setProgress(100);
 
       return true;
@@ -785,7 +767,7 @@ export function PubkyClientWrapper({
       await Promise.all(
         dataList.map(async (dataUrl, index) => {
           // Get the Response object
-          const response = await client.fetch(dataUrl);
+          const response = await getFromHomeserver(dataUrl);
 
           // Convert to ArrayBuffer
           const arrayBuffer = await response.arrayBuffer();
@@ -892,11 +874,7 @@ export function PubkyClientWrapper({
         const dataUrl = `pubky://${pubky}/${filename.replace('data/', '')}`;
 
         // Upload the file
-        await client.fetch(dataUrl, {
-          method: 'PUT',
-          body: new Uint8Array(content),
-          credentials: 'include',
-        });
+        await putToHomeserver(dataUrl, new Uint8Array(content));
 
         // Update progress
         setProgress(Math.round(((index + 1) / totalFiles) * 100));
@@ -919,7 +897,7 @@ export function PubkyClientWrapper({
       // create a new last_read only to craft the url
       const result = specsBuilder!.createLastRead();
 
-      const response = await client.fetch(result.meta.url);
+      const response = await getFromHomeserver(result.meta.url);
       const lastRead = (await response.json()) as PubkyAppLastRead;
 
       return Number(lastRead.timestamp);
@@ -935,11 +913,10 @@ export function PubkyClientWrapper({
 
       const result = specsBuilder!.createLastRead();
 
-      await client.fetch(result.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(result.last_read.toJson()),
-        credentials: 'include',
-      });
+      await putToHomeserver(
+        result.meta.url,
+        JSON.stringify(result.last_read.toJson()),
+      );
 
       setTimestamp(timestamp);
 
@@ -958,7 +935,7 @@ export function PubkyClientWrapper({
 
       // pubky.app/settings is not covered by the specs!
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
-      const response = await client.fetch(settingsUrl);
+      const response = await getFromHomeserver(settingsUrl);
       const settings = await response.json();
 
       return settings;
@@ -980,11 +957,7 @@ export function PubkyClientWrapper({
 
       const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
 
-      await client.fetch(settingsUrl, {
-        method: 'PUT',
-        body: JSON.stringify(settings),
-        credentials: 'include',
-      });
+      await putToHomeserver(settingsUrl, JSON.stringify(settings));
 
       return true;
     } catch (error) {
@@ -1001,10 +974,7 @@ export function PubkyClientWrapper({
       const postUrl = postUriBuilder(pubky!, postId);
 
       // Send the post to the homeserver
-      await client.fetch(postUrl, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      await deleteFromHomeserver(postUrl);
 
       return true;
     } catch (error) {
@@ -1054,11 +1024,7 @@ export function PubkyClientWrapper({
 
       const post = postResult.post.toJson() as PubkyAppPost;
 
-      await client.fetch(postResult.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(post),
-        credentials: 'include',
-      });
+      await putToHomeserver(postResult.meta.url, JSON.stringify(post));
 
       return postResult.meta.url;
     } catch (error) {
@@ -1090,11 +1056,7 @@ export function PubkyClientWrapper({
 
       const post = postResult.post.toJson() as PubkyAppPost;
 
-      await client.fetch(postResult.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(post),
-        credentials: 'include',
-      });
+      await client.fetch(postResult.meta.url, JSON.stringify(post));
 
       return postResult.meta.url;
     } catch (error) {
@@ -1109,32 +1071,14 @@ export function PubkyClientWrapper({
 
       const result = specsBuilder!.createFollow(user_id);
 
-      const response = await client.fetch(result.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(result.follow.toJson()),
-        credentials: 'include',
-      });
+      const response = await putToHomeserver(
+        result.meta.url,
+        JSON.stringify(result.follow.toJson()),
+      );
 
       if (!response.ok) {
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
         throw new Error(errorMessage);
-      }
-
-      // get user relationships and check if it is followed
-      // keep in a while loop until it is followed
-      let userFollow = false;
-
-      while (!userFollow) {
-        try {
-          const post = await getUserRelationship(user_id, pubky ?? '');
-          if (post.following === true) {
-            userFollow = true;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
       }
 
       return true;
@@ -1150,10 +1094,7 @@ export function PubkyClientWrapper({
 
       const result = specsBuilder!.createFollow(user_id);
 
-      const response = await client.fetch(result.meta.url, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      const response = await deleteFromHomeserver(result.meta.url);
 
       if (!response.ok) {
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -1171,10 +1112,9 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      await client.fetch(file_uri, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      // TODO: we are not deleting the `/blob`
+
+      await deleteFromHomeserver(file_uri);
 
       return true;
     } catch (error) {
@@ -1189,11 +1129,10 @@ export function PubkyClientWrapper({
 
       const result = specsBuilder!.createMute(user_id);
 
-      await client.fetch(result.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(result.mute.toJson()),
-        credentials: 'include',
-      });
+      await putToHomeserver(
+        result.meta.url,
+        JSON.stringify(result.mute.toJson()),
+      );
 
       return true;
     } catch (error) {
@@ -1208,10 +1147,7 @@ export function PubkyClientWrapper({
 
       const result = specsBuilder!.createMute(user_id);
 
-      await client.fetch(result.meta.url, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      await deleteFromHomeserver(result.meta.url);
 
       return true;
     } catch (error) {
@@ -1230,11 +1166,10 @@ export function PubkyClientWrapper({
       const uriPost = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createBookmark(uriPost);
 
-      const response = await client.fetch(result.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(result.bookmark.toJson()),
-        credentials: 'include',
-      });
+      const response = await putToHomeserver(
+        result.meta.url,
+        JSON.stringify(result.bookmark.toJson()),
+      );
 
       if (!response.ok) {
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -1259,10 +1194,7 @@ export function PubkyClientWrapper({
       const uriPost = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createBookmark(uriPost);
 
-      const response = await client.fetch(result.meta.url, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      const response = await deleteFromHomeserver(result.meta.url);
 
       if (!response.ok) {
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -1287,11 +1219,10 @@ export function PubkyClientWrapper({
       const postUri = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createTag(postUri, label);
 
-      await client.fetch(result.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(result.tag.toJson()),
-        credentials: 'include',
-      });
+      await putToHomeserver(
+        result.meta.url,
+        JSON.stringify(result.tag.toJson()),
+      );
 
       return true;
     } catch (error) {
@@ -1325,11 +1256,7 @@ export function PubkyClientWrapper({
       );
 
       const feedObj = result.feed.toJson();
-      await client.fetch(result.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(feedObj),
-        credentials: 'include',
-      });
+      await putToHomeserver(result.meta.url, JSON.stringify(feedObj));
 
       return true;
     } catch (error) {
@@ -1352,7 +1279,7 @@ export function PubkyClientWrapper({
       const feedsData = await Promise.all(
         feedUris.map(async (uri) => {
           try {
-            const response = await client.fetch(uri);
+            const response = await getFromHomeserver(uri);
             const feed = await response.json();
             return feed;
           } catch (error) {
@@ -1395,10 +1322,7 @@ export function PubkyClientWrapper({
       );
 
       // Delete the feed from the homeserver
-      await client.fetch(result.meta.url, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      await deleteFromHomeserver(result.meta.url);
 
       return true;
     } catch (error) {
@@ -1419,10 +1343,7 @@ export function PubkyClientWrapper({
       const uriPost = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createTag(uriPost, tagLabel);
 
-      await client.fetch(result.meta.url, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      await deleteFromHomeserver(result.meta.url);
 
       return true;
     } catch (error) {
@@ -1441,11 +1362,10 @@ export function PubkyClientWrapper({
       const uriProfile = userUriBuilder(userId);
       const result = specsBuilder!.createTag(uriProfile, label);
 
-      await client.fetch(result.meta.url, {
-        method: 'PUT',
-        body: JSON.stringify(result.tag.toJson()),
-        credentials: 'include',
-      });
+      await putToHomeserver(
+        result.meta.url,
+        JSON.stringify(result.tag.toJson()),
+      );
 
       return true;
     } catch (error) {
@@ -1466,10 +1386,7 @@ export function PubkyClientWrapper({
       // Compute ID and URL for a from its content (unique)
       const result = specsBuilder!.createTag(uriProfile, label);
 
-      await client.fetch(result.meta.url, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      await deleteFromHomeserver(result.meta.url);
 
       return true;
     } catch (error) {
