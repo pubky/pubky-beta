@@ -1,3 +1,5 @@
+import { PubkyAppFeed } from "pubky-app-specs";
+
 export type TLayouts = 'columns' | 'wide' | 'visual' | 'focus';
 export type TStatus =
   | 'available'

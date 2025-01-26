@@ -21,13 +21,9 @@ import statusHelper from './lib/Helper/statusHelper';
 import { supportedImageTypes } from './lib/Helper/FileType/_image';
 import { supportedVideoTypes } from './lib/Helper/FileType/_video';
 import { supportedAudioTypes } from './lib/Helper/FileType/_audio';
-import { generateHashId } from './lib/Crypto/generateHashId';
-import { generateTimestampId } from './lib/Crypto/generateTimestampId';
 import truncateText from './lib/Text/truncateText';
 
 export const Utils = {
-  generateTimestampId,
-  generateHashId,
   base64ToUint8Array,
   svgToPng,
   cleanText,

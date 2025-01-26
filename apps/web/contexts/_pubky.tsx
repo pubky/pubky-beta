@@ -10,15 +10,18 @@ import {
   createRecoveryFile,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
-import { PostKind, PostView, PubkyAppPost } from '@/types/Post';
-import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
+import {
+  PostCounts,
+  PostDetails,
+  PostKind,
+  PostView,
+  PubkyAppPost,
+} from '@/types/Post';
 import { UserDetails } from '@/types/User';
-import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
 import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
-import { getPost } from '@/services/postService';
-import { getUserDetails, getUserRelationship } from '@/services/userService';
+import { getUserRelationship } from '@/services/userService';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
@@ -29,11 +32,11 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
 import init, {
   PubkySpecsBuilder,
   PubkyAppUser,
-  PubkyAppTag,
   postUriBuilder,
   userUriBuilder,
   PubkyAppLastRead,
   baseUriBuilder,
+  PubkyAppPostEmbed,
 } from 'pubky-app-specs';
 
 let client: Client;
@@ -389,6 +392,46 @@ export function PubkyClientWrapper({
     }
   };
 
+  const uploadFile = async (file: File): Promise<string> => {
+    try {
+      await ensureReady();
+
+      // 1. Upload Blob
+      const fileContent = await file.arrayBuffer();
+      const blobData = new Uint8Array(fileContent);
+      const blobResult = specsBuilder!.createBlob(blobData);
+
+      await client.fetch(blobResult.meta.url, {
+        method: 'PUT',
+        body: blobResult.blob.data,
+        credentials: 'include',
+      });
+
+      // 2. Create File Record
+      const fileResult = specsBuilder!.createFile(
+        file.name,
+        blobResult.meta.url,
+        file.type,
+        BigInt(file.size),
+      );
+
+      await client.fetch(fileResult.meta.url, {
+        method: 'PUT',
+        body: JSON.stringify(fileResult.file.toJson()),
+        credentials: 'include',
+      });
+
+      return fileResult.meta.url;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      throw error; // Re-throw to let caller handle
+    }
+  };
+
+  const uploadFiles = async (files: File[]): Promise<string[]> => {
+    return Promise.all(files.map((file) => uploadFile(file)));
+  };
+
   const signUp = async (userProfile: PubkyAppUser): Promise<any | false> => {
     try {
       const mnemonic = bip39.generateMnemonic(128);
@@ -413,46 +456,9 @@ export function PubkyClientWrapper({
 
       let file;
       if (userProfile.image instanceof File) {
-        console.log({ file });
-        file = userProfile.image;
-        const fileContent = await file.arrayBuffer();
-
-        const blobId = generateTimestampId().toUpperCase();
-        const blobUrl = `pubky://${pk}/pub/pubky.app/blobs/${blobId}`;
-        const blobBody = Buffer.from(fileContent);
-
-        await client.fetch(blobUrl, {
-          method: 'PUT',
-          body: blobBody,
-          credentials: 'include',
-        });
-
-        // Create the PubkyAppFile object
-        const fileId = generateTimestampId().toUpperCase();
-        const newFile = {
-          name: file.name,
-          created_at: Date.now(),
-          src: blobUrl,
-          content_type: file.type,
-          size: file.size,
-        };
-
-        // File URL
-        const fileUrl = `pubky://${pk}/pub/pubky.app/files/${fileId}`;
-
-        // Send the file to the homeserver
-        await client.fetch(fileUrl, {
-          method: 'PUT',
-          body: JSON.stringify(newFile),
-          credentials: 'include',
-        });
-
-        // Store the file URI
-
-        file = fileUrl;
+        file = await uploadFile(userProfile.image);
       }
 
-      console.log({ file });
       setNewUser(true);
 
       // Save info in storage
@@ -495,24 +501,6 @@ export function PubkyClientWrapper({
         throw new Error(errorMessage);
       }
 
-      // if (user.name === 'anonymous') {
-      //   let userEdited = false;
-      //   while (!userEdited) {
-      //     try {
-      //       const newProfile = await getUserDetails(pk ?? '');
-
-      //       if (areProfilesEqual(newProfile, pubkeyProfile)) {
-      //         userEdited = true;
-      //         break;
-      //       }
-
-      //       await new Promise((resolve) => setTimeout(resolve, 1000));
-      //     } catch (error) {
-      //       await new Promise((resolve) => setTimeout(resolve, 1000));
-      //     }
-      //   }
-      // }
-
       return user;
     } catch (error) {
       console.log(error);
@@ -521,9 +509,6 @@ export function PubkyClientWrapper({
   };
 
   const storeProfile = async (userProfile: UserDetails): Promise<boolean> => {
-    if (userProfile.name === '[DELETED]') {
-      userProfile.name = 'anonymous';
-    }
     // Save the profile in storage
     Utils.storage.set('profile', JSON.stringify(userProfile));
     setProfile(userProfile);
@@ -537,129 +522,67 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
+      let file;
       if (userProfile.image instanceof File) {
-        const file = userProfile.image;
-        const fileContent = await file.arrayBuffer();
-
-        const blobId = generateTimestampId().toUpperCase();
-        const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-        const blobBody = Buffer.from(fileContent);
-
-        await client.fetch(blobUrl, {
-          method: 'PUT',
-          body: blobBody,
-          credentials: 'include',
-        });
-
-        // Create the PubkyAppFile object
-        const fileId = generateTimestampId().toUpperCase();
-        const newFile = {
-          name: file.name,
-          created_at: Date.now(),
-          src: blobUrl,
-          content_type: file.type,
-          size: file.size,
-        };
-
-        // File URL
-        const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-        // Send the file to the homeserver
-        await client.fetch(fileUrl, {
-          method: 'PUT',
-          body: JSON.stringify(newFile),
-          credentials: 'include',
-        });
-
-        // Store the file URI
-        userProfile.image = fileUrl;
+        file = await uploadFile(userProfile.image);
       }
 
-      // Transform the profile to the PubkyAppUser format
-      const pubkeyProfile: PubkyAppUser = toPubkeyProfile(userProfile);
+      const userResult = specsBuilder!.createUser(
+        userProfile.name,
+        userProfile.bio,
+        file,
+        userProfile.links,
+        userProfile.status,
+      );
 
-      if (pubkeyProfile.name === '[DELETED]') {
-        pubkeyProfile.name = 'anonymous';
-      }
+      const user = userResult.user.toJson() as PubkyAppUser;
 
       // Save the profile in storage
-      Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
-      setProfile(pubkeyProfile);
-
-      // Profile URL (fixed address)
-      const profileUrl = userUriBuilder(pubky!);
+      Utils.storage.set('profile', JSON.stringify(user));
+      setProfile(user);
 
       // Send the profile to the homeserver
-      await client.fetch(profileUrl, {
+      await client.fetch(userResult.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(pubkeyProfile),
+        body: JSON.stringify(user),
         credentials: 'include',
       });
 
-      let userEdited = false;
-      while (!userEdited) {
-        try {
-          const newProfile = await getUserDetails(pubky ?? '');
-
-          if (areProfilesEqual(newProfile, pubkeyProfile)) {
-            userEdited = true;
-            break;
-          }
-
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-
-      return pubkeyProfile;
+      return user;
     } catch (error) {
       console.error(error);
       return false;
     }
   };
 
-  const areProfilesEqual = (
-    profile1: PubkyAppUser,
-    profile2: PubkyAppUser,
-  ): boolean => {
-    return (
-      profile1.name === profile2.name &&
-      profile1.bio === profile2.bio &&
-      profile1.image === profile2.image &&
-      //No links check
-      profile1.status === profile2.status
-    );
-  };
-
-  const updateStatus = async (value: TStatus | string) => {
+  const updateStatus = async (newStatus: TStatus | string) => {
     try {
-      if (!pubky) throw new Error('Pubky required');
       if (!profile) throw new Error('Profile required');
 
-      const updatedProfile = {
-        ...profile,
-        status: value,
-      };
+      await ensureReady();
 
-      // Transform the profile to the PubkyAppUser format
-      const pubkeyProfile: PubkyAppUser = toPubkeyProfile(updatedProfile);
+      const userResult = specsBuilder!.createUser(
+        profile.name,
+        profile.bio,
+        profile.image,
+        profile.links,
+        newStatus,
+      );
+
+      const user = userResult.user.toJson() as PubkyAppUser;
 
       // Save the profile in storage
-      Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
-      setProfile(pubkeyProfile);
-
-      // Profile URL (fixed address)
-      const profileUrl = userUriBuilder(pubky!);
+      Utils.storage.set('profile', JSON.stringify(user));
+      setProfile(user);
 
       // Send the profile to the homeserver
-      await client.fetch(profileUrl, {
+      await client.fetch(userResult.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(pubkeyProfile),
+        body: JSON.stringify(user),
         credentials: 'include',
       });
 
-      return pubkeyProfile;
+      return user;
     } catch (error) {
       console.log(error);
     }
@@ -672,97 +595,47 @@ export function PubkyClientWrapper({
     quote?: string,
   ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
     try {
-      await ensureReady();
+      const attachments = files ? await uploadFiles(files) : [];
 
-      // Generate a timestamp ID for the post
-      const postId = generateTimestampId().toUpperCase();
-
-      // Initialize the post object
-      const newPost: PubkyAppPost = {
-        content: postContent,
+      // Create post
+      const postResult = specsBuilder!.createPost(
+        postContent,
         kind,
-        ...(quote && {
-          embed: {
-            uri: quote,
-            kind: 'short',
-          },
-        }),
-      };
+        undefined, // parent
+        quote ? { uri: quote, kind: 'short' } : undefined,
+        attachments.length > 0 ? attachments : undefined,
+      );
 
-      // List to store URIs of uploaded files
-      const uploadedFileUris: string[] = [];
+      const post = postResult.post.toJson() as PubkyAppPost;
 
-      // File upload, if any
-      if (files && files.length > 0) {
-        for (const file of files) {
-          // Read the file content
-          const fileContent = await file.arrayBuffer();
-
-          const blobId = generateTimestampId().toUpperCase();
-          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-          const blobBody = Buffer.from(fileContent);
-
-          await client.fetch(blobUrl, {
-            method: 'PUT',
-            body: blobBody,
-            credentials: 'include',
-          });
-
-          // Create the PubkyAppFile object
-          const fileId = generateTimestampId().toUpperCase();
-          const newFile = {
-            name: file.name,
-            created_at: Date.now(),
-            src: blobUrl,
-            content_type: file.type,
-            size: file.size,
-          };
-
-          // File URL
-          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-          // Send the file to the homeserver
-          await client.fetch(fileUrl, {
-            method: 'PUT',
-            body: JSON.stringify(newFile),
-            credentials: 'include',
-          });
-
-          // Store the file URI
-          uploadedFileUris.push(fileUrl);
-        }
-
-        // If there are files, add to the post attachments
-        newPost.attachments = uploadedFileUris;
-      }
-
-      // Post URL
-      const postUrl = postUriBuilder(pubky!, postId);
-
-      // Send the post to the homeserver
-      await client.fetch(postUrl, {
+      // Upload post
+      await client.fetch(postResult.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(newPost),
+        body: JSON.stringify(post),
         credentials: 'include',
       });
 
+      // Mock up an instantaneous PostView to update UI
+      const newPostDetails: PostDetails = {
+        author: pubky!,
+        id: postResult.meta.id,
+        indexed_at: Date.now(),
+        uri: postResult.meta.url,
+        content: post.content,
+        kind: post.kind,
+      };
+
       const newPostView: PostView = {
-        uri: postUrl,
-        details: {
-          ...newPost,
-          author: pubky,
-          id: postId,
-          indexed_at: Date.now(),
-          uri: postUrl,
-        },
-        counts: { replies: 0, reposts: 0, likes: 0, bookmarks: 0 },
+        uri: postResult.meta.url,
+        details: newPostDetails,
+        counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
         tags: [],
         cached: 'homeserver',
-      } as unknown as PostView;
+      } as PostView;
 
-      setNewPosts((prev: PostView[]) => [newPostView, ...prev]);
+      setNewPosts((prev) => [newPostView, ...prev]);
 
-      return { uri: postUrl, details: newPost };
+      return { uri: postResult.meta.url, details: newPostDetails };
     } catch (error) {
       console.error('Error creating post:', error);
       return false;
@@ -778,76 +651,32 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      // Generate a timestamp ID for the article
-      const articleId = generateTimestampId().toUpperCase();
+      const attachments = files ? await uploadFiles(files) : [];
 
-      // Initialize the post object
-      const newArticle: PubkyAppPost = {
-        content: JSON.stringify({
-          title: title,
-          body: articleContent,
-        }),
+      const content = JSON.stringify({
+        title: title,
+        body: articleContent,
+      });
+
+      // Create post
+      const postResult = specsBuilder!.createPost(
+        content,
         kind,
-      };
+        undefined, // parent
+        undefined, // embed
+        attachments.length > 0 ? attachments : undefined,
+      );
 
-      // List to store URIs of uploaded files
-      const uploadedFileUris: string[] = [];
-
-      // File upload, if any
-      if (files && files.length > 0) {
-        for (const file of files) {
-          // Read the file content
-          const fileContent = await file.arrayBuffer();
-
-          const blobId = generateTimestampId().toUpperCase();
-          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-          const blobBody = Buffer.from(fileContent);
-
-          await client.fetch(blobUrl, {
-            method: 'PUT',
-            body: blobBody,
-            credentials: 'include',
-          });
-
-          // Create the PubkyAppFile object
-          const fileId = generateTimestampId().toUpperCase();
-          const newFile = {
-            name: file.name,
-            created_at: Date.now(),
-            src: blobUrl,
-            content_type: file.type,
-            size: file.size,
-          };
-
-          // File URL
-          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-          // Send the file to the homeserver
-          await client.fetch(fileUrl, {
-            method: 'PUT',
-            body: JSON.stringify(newFile),
-            credentials: 'include',
-          });
-
-          // Store the file URI
-          uploadedFileUris.push(fileUrl);
-        }
-
-        // If there are files, add to the post attachments
-        newArticle.attachments = uploadedFileUris;
-      }
-
-      // Post URL
-      const articleUrl = postUriBuilder(pubky!, articleId);
+      const post = postResult.post.toJson() as PubkyAppPost;
 
       // Send the post to the homeserver
-      await client.fetch(articleUrl, {
+      await client.fetch(postResult.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(newArticle),
+        body: JSON.stringify(post),
         credentials: 'include',
       });
 
-      return { uri: articleUrl, details: newArticle };
+      return { uri: postResult.meta.url, details: post };
     } catch (error) {
       console.error('Error creating article:', error);
       return false;
@@ -858,23 +687,24 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const editPost: PubkyAppPost = {
-        content: postContent,
-        kind: post?.details?.kind,
-        attachments: post?.details?.attachments,
-        relationships: post?.relationships,
-      };
-      // Post URL
-      const postUrl = postUriBuilder(pubky!, post?.details?.id);
+      const postResult = specsBuilder!.createPost(
+        postContent,
+        post?.details?.kind,
+        post?.relationships?.replied,
+        post?.relationships?.reposted
+          ? { uri: post?.relationships?.reposted, kind: 'short' }
+          : undefined,
+        post?.details?.attachments,
+      );
 
       // Send the post to the homeserver
-      await client.fetch(postUrl, {
+      await client.fetch(postResult.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(editPost),
+        body: JSON.stringify(postResult.post.toJson()),
         credentials: 'include',
       });
 
-      return postUrl;
+      return postResult.meta.url;
     } catch (error) {
       console.error('Error editing post:', error);
       return false;
@@ -1092,7 +922,7 @@ export function PubkyClientWrapper({
       const response = await client.fetch(result.meta.url);
       const lastRead = (await response.json()) as PubkyAppLastRead;
 
-      return lastRead.timestamp;
+      return Number(lastRead.timestamp);
     } catch (error) {
       // console.error('Error get timestamp:', error);
       return false;
@@ -1209,76 +1039,28 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      // Generate a timestamp ID for the repost
-      const repostId = generateTimestampId().toUpperCase();
+      const attachments = files ? await uploadFiles(files) : [];
 
-      // Initialize the post object
-      const newRepost: PubkyAppPost = {
-        content: repostContent,
-        embed: {
-          kind: 'short',
-          uri: postUriBuilder(originalauthorId, originalPostId),
-        },
+      const repostedUri = postUriBuilder(originalauthorId, originalPostId);
+
+      // Create post
+      const postResult = specsBuilder!.createPost(
+        repostContent,
         kind,
-      };
+        undefined, // parent
+        { uri: repostedUri, kind: 'short' },
+        attachments.length > 0 ? attachments : undefined,
+      );
 
-      // List to store URIs of uploaded files
-      const uploadedFileUris: string[] = [];
+      const post = postResult.post.toJson() as PubkyAppPost;
 
-      // File upload, if any
-      if (files && files.length > 0) {
-        for (const file of files) {
-          // Read the file content
-          const fileContent = await file.arrayBuffer();
-          const blobId = generateTimestampId().toUpperCase();
-          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-          const blobBody = Buffer.from(fileContent);
-
-          await client.fetch(blobUrl, {
-            method: 'PUT',
-            body: blobBody,
-            credentials: 'include',
-          });
-
-          // Create the PubkyAppFile object
-          const fileId = generateTimestampId().toUpperCase();
-          const newFile = {
-            name: file.name,
-            created_at: Date.now(),
-            src: blobUrl,
-            content_type: file.type,
-            size: file.size,
-          };
-
-          // File URL
-          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-          // Send the file to the homeserver
-          await client.fetch(fileUrl, {
-            method: 'PUT',
-            body: JSON.stringify(newFile),
-            credentials: 'include',
-          });
-
-          // Store the file URI
-          uploadedFileUris.push(fileUrl);
-        }
-
-        // If there are files, add to the repost attachments
-        newRepost.attachments = uploadedFileUris;
-      }
-
-      // Repost URL
-      const repostUrl = postUriBuilder(pubky!, repostId);
-
-      // Send the post to the homeserver
-      await client.fetch(repostUrl, {
+      await client.fetch(postResult.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(newRepost),
+        body: JSON.stringify(post),
         credentials: 'include',
       });
 
-      return repostUrl;
+      return postResult.meta.url;
     } catch (error) {
       console.error('Error creating post:', error);
       return false;
@@ -1295,67 +1077,26 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const replyId = generateTimestampId().toUpperCase();
-      const replyPost: PubkyAppPost = {
-        content: replyContent,
+      const attachments = files ? await uploadFiles(files) : [];
+
+      // Create post
+      const postResult = specsBuilder!.createPost(
+        replyContent,
         kind,
-        parent: originalPostUri,
-        ...(quote && {
-          embed: {
-            uri: quote,
-            kind: 'short',
-          },
-        }),
-      };
+        originalPostUri, // parent
+        quote ? { uri: quote, kind: 'short' } : undefined,
+        attachments.length > 0 ? attachments : undefined,
+      );
 
-      const uploadedFileUris: string[] = [];
+      const post = postResult.post.toJson() as PubkyAppPost;
 
-      if (files && files.length > 0) {
-        for (const file of files) {
-          const fileContent = await file.arrayBuffer();
-          const blobId = generateTimestampId().toUpperCase();
-          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-          const blobBody = Buffer.from(fileContent);
-
-          await client.fetch(blobUrl, {
-            method: 'PUT',
-            body: blobBody,
-            credentials: 'include',
-          });
-
-          const fileId = generateTimestampId().toUpperCase();
-          const newFile = {
-            name: file.name,
-            created_at: Date.now(),
-            src: blobUrl,
-            content_type: file.type,
-            size: file.size,
-          };
-
-          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-          await client.fetch(fileUrl, {
-            method: 'PUT',
-            body: JSON.stringify(newFile),
-            credentials: 'include',
-          });
-
-          uploadedFileUris.push(fileUrl);
-        }
-
-        // If there are files, add to the reply attachments
-        replyPost.attachments = uploadedFileUris;
-      }
-
-      const replyUrl = postUriBuilder(pubky!, replyId);
-
-      await client.fetch(replyUrl, {
+      await client.fetch(postResult.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(replyPost),
+        body: JSON.stringify(post),
         credentials: 'include',
       });
 
-      return replyUrl;
+      return postResult.meta.url;
     } catch (error) {
       console.error('Error while replying to post:', error);
       return false;
@@ -1418,23 +1159,6 @@ export function PubkyClientWrapper({
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
         throw new Error(errorMessage);
       }
-
-      // get user relationships and check if it is unfollowed
-      // keep in a while loop until it is unfollowed
-      // let userUnfollow = false;
-
-      // while (!userUnfollow) {
-      //   try {
-      //     const post = await getUserRelationship(user_id, pubky ?? '');
-      //     if (post.following === false) {
-      //       userUnfollow = true;
-      //       break;
-      //     }
-      //     await new Promise((resolve) => setTimeout(resolve, 1000));
-      //   } catch (error) {
-      //     await new Promise((resolve) => setTimeout(resolve, 1000));
-      //   }
-      // }
 
       return true;
     } catch (error) {
@@ -1517,23 +1241,6 @@ export function PubkyClientWrapper({
         throw new Error(errorMessage);
       }
 
-      // // get post and check if it is bookmarked
-      // // keep in a while loop until it is bookmarked
-      // let bookmarked = false;
-
-      // while (!bookmarked) {
-      //   try {
-      //     const post = await getPost(authorId, postId, pubky);
-      //     if (post?.bookmark) {
-      //       bookmarked = true;
-      //       break;
-      //     }
-      //     await new Promise((resolve) => setTimeout(resolve, 1000));
-      //   } catch (error) {
-      //     await new Promise((resolve) => setTimeout(resolve, 1000));
-      //   }
-      // }
-
       return result.meta.id;
     } catch (error) {
       console.error('Error while bookmarking the post:', error);
@@ -1561,23 +1268,6 @@ export function PubkyClientWrapper({
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
         throw new Error(errorMessage);
       }
-
-      // get post and check if it is bookmarked
-      // keep in a while loop until it is bookmarked
-      // let bookmarked = true;
-
-      // while (bookmarked) {
-      //   try {
-      //     const post = await getPost(authorId, postId, pubky);
-      //     if (!post?.bookmark) {
-      //       bookmarked = false;
-      //       break;
-      //     }
-      //     await new Promise((resolve) => setTimeout(resolve, 1000));
-      //   } catch (error) {
-      //     await new Promise((resolve) => setTimeout(resolve, 1000));
-      //   }
-      // }
 
       return true;
     } catch (error) {
@@ -1617,27 +1307,33 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      const feedData = {
-        feed,
+      // Map the ICustomFeed to the arguments for `createFeed`:
+      // feed might have e.g. tags, reach, layout, etc.
+      const { tags, reach, layout, sort, content } = feed;
+
+      // If feed.tags is null, pass null. Otherwise pass as is.
+      const tagsValue = tags && tags.length > 0 ? tags : null;
+      const contentVal = content == 'all' ? null : content;
+
+      const result = specsBuilder!.createFeed(
+        tagsValue,
+        reach,
+        layout,
+        sort,
+        contentVal || null,
         name,
-        created_at: Date.now(),
-      };
+      );
 
-      const feedId = (
-        await generateHashId(JSON.stringify(feed).toLowerCase())
-      ).toUpperCase();
-
-      const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
-
-      await client.fetch(feedUrl, {
+      const feedObj = result.feed.toJson();
+      await client.fetch(result.meta.url, {
         method: 'PUT',
-        body: JSON.stringify(feedData),
+        body: JSON.stringify(feedObj),
         credentials: 'include',
       });
 
       return true;
     } catch (error) {
-      console.error('Error creating tag:', error);
+      console.error('Error creating feed:', error);
       return false;
     }
   };
@@ -1680,16 +1376,26 @@ export function PubkyClientWrapper({
     try {
       await ensureReady();
 
-      // Compute the hash ID for the feed based on the feed options
-      const feedId = (
-        await generateHashId(JSON.stringify(feed).toLowerCase())
-      ).toUpperCase();
+      // Map the ICustomFeed to the arguments for `createFeed`:
+      // feed might have e.g. tags, reach, layout, etc.
+      const { tags, reach, layout, sort, content } = feed;
 
-      // Construct the feed URL
-      const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
+      // If feed.tags is null, pass null. Otherwise pass as is.
+      const tagsValue = tags && tags.length > 0 ? tags : null;
+      const contentVal = content == 'all' ? null : content;
+
+      // create feed according to specs to compute ID and URL
+      const result = specsBuilder!.createFeed(
+        tagsValue,
+        reach,
+        layout,
+        sort,
+        contentVal || null,
+        'placeholder',
+      );
 
       // Delete the feed from the homeserver
-      await client.fetch(feedUrl, {
+      await client.fetch(result.meta.url, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -1770,21 +1476,6 @@ export function PubkyClientWrapper({
       console.error('Error creating tag:', error);
       return false;
     }
-  };
-
-  const toPubkeyProfile = (profile: PubkyAppUser): PubkyAppUser => {
-    if (!profile) throw new Error('Profile is required');
-
-    return {
-      name: profile.name || 'anonymous',
-      bio: profile.bio || '',
-      image: profile.image,
-      links:
-        profile?.links && profile?.links?.length > 0
-          ? profile?.links
-          : undefined,
-      status: profile.status || 'noStatus',
-    };
   };
 
   return (
