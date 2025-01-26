@@ -9,6 +9,7 @@ import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
 import { PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 export default function PostRoot({ post }: { uri: string; post: PostView }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
@@ -36,7 +37,7 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
     const sendReply = await createReply(
       post?.details?.uri,
       content,
-      'short',
+      PubkyAppPostKind.Short,
       selectedFiles,
       quote,
     );

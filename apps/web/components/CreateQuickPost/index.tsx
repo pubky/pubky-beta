@@ -6,6 +6,7 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -43,7 +44,12 @@ export default function CreateQuickPost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, 'short', selectedFiles, quote);
+      const newPost = await createPost(
+        content,
+        PubkyAppPostKind.Short,
+        selectedFiles,
+        quote,
+      );
       const match = newPost && newPost?.uri.match(regex);
 
       if (newPost && match) {

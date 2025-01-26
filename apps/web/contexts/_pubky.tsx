@@ -10,13 +10,7 @@ import {
   createRecoveryFile,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
-import {
-  PostCounts,
-  PostDetails,
-  PostKind,
-  PostView,
-  PubkyAppPost,
-} from '@/types/Post';
+import { PostCounts, PostDetails, PostView, PubkyAppPost } from '@/types/Post';
 import { UserDetails } from '@/types/User';
 import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
@@ -35,6 +29,8 @@ import init, {
   userUriBuilder,
   PubkyAppLastRead,
   baseUriBuilder,
+  PubkyAppPostKind,
+  PubkyAppPostEmbed,
 } from 'pubky-app-specs';
 
 let client: Client;
@@ -68,7 +64,7 @@ type PubkyClientContextType = {
   saveProfile: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
   createPost: (
     postContent: string,
-    kind: PostKind,
+    kind: PubkyAppPostKind,
     files?: File[],
     quote?: string,
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
@@ -76,20 +72,19 @@ type PubkyClientContextType = {
   createArticle: (
     title: string,
     articleContent: string,
-    kind: PostKind,
     files?: File[],
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
   createRepost: (
     originalPostId: string,
     originalauthorId: string,
     repostContent: string,
-    kind: PostKind,
+    kind: PubkyAppPostKind,
     files?: File[],
   ) => Promise<string | false>;
   createReply: (
     originalPostUri: string,
     replyContent: string,
-    kind: PostKind,
+    kind: PubkyAppPostKind,
     files?: File[],
     quote?: string,
   ) => Promise<string | false>;
@@ -576,41 +571,73 @@ export function PubkyClientWrapper({
     return user;
   });
 
-  const createPost = withAuth(
-    async (
-      postContent: string,
-      kind: PostKind,
-      files?: File[],
-      quote?: string,
-    ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
-      const attachments = files ? await uploadFiles(files) : [];
+  const createBasePost = async (
+    content: string,
+    kind: PubkyAppPostKind,
+    parentUri?: string,
+    embedUri?: string,
+    files?: File[],
+  ): Promise<{ uri: string; id: string; details: PubkyAppPost } | false> => {
+    try {
+      const attachments =
+        files?.length > 0 ? await uploadFiles(files) : undefined;
 
-      // Create post
+      let embed;
+      if (embedUri) {
+        embed = new PubkyAppPostEmbed(embedUri, PubkyAppPostKind.Short);
+      }
+
       const postResult = specsBuilder!.createPost(
-        postContent,
+        content,
         kind,
-        undefined, // parent
-        quote ? { uri: quote, kind: 'short' } : undefined,
-        attachments.length > 0 ? attachments : undefined,
+        parentUri,
+        embed,
+        attachments,
       );
 
       const post = postResult.post.toJson() as PubkyAppPost;
-
-      // Upload post
       await putToHomeserver(postResult.meta.url, JSON.stringify(post));
 
-      // Mock up an instantaneous PostView to update UI
+      return {
+        uri: postResult.meta.url,
+        id: postResult.meta.id,
+        details: post,
+      };
+    } catch (error) {
+      handleError(error, 'createBasePost');
+      return false;
+    }
+  };
+
+  // Refactored functions using createBasePost
+  const createPost = withAuth(
+    async (
+      postContent: string,
+      kind: PubkyAppPostKind,
+      files?: File[],
+      quote?: string,
+    ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
+      const result = await createBasePost(
+        postContent,
+        kind,
+        undefined, // parentUri
+        quote,
+        files,
+      );
+
+      if (!result) return false;
+
       const newPostDetails: PostDetails = {
         author: pubky!,
-        id: postResult.meta.id,
+        id: result.id,
         indexed_at: Date.now(),
-        uri: postResult.meta.url,
-        content: post.content,
-        kind: post.kind,
+        uri: result.uri,
+        content: result.details.content,
+        kind: result.details.kind,
       };
 
       const newPostView: PostView = {
-        uri: postResult.meta.url,
+        uri: result.uri,
         details: newPostDetails,
         counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
         tags: [],
@@ -619,7 +646,7 @@ export function PubkyClientWrapper({
 
       setNewPosts((prev) => [newPostView, ...prev]);
 
-      return { uri: postResult.meta.url, details: newPostDetails };
+      return { uri: result.uri, details: newPostDetails };
     },
   );
 
@@ -627,31 +654,59 @@ export function PubkyClientWrapper({
     async (
       title: string,
       articleContent: string,
-      kind: PostKind,
       files?: File[],
     ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
-      const attachments = files ? await uploadFiles(files) : [];
-
-      const content = JSON.stringify({
-        title: title,
-        body: articleContent,
-      });
-
-      // Create post
-      const postResult = specsBuilder!.createPost(
+      const content = JSON.stringify({ title, body: articleContent });
+      const result = await createBasePost(
         content,
-        kind,
-        undefined, // parent
-        undefined, // embed
-        attachments.length > 0 ? attachments : undefined,
+        PubkyAppPostKind.Long,
+        undefined,
+        undefined,
+        files,
       );
 
-      const post = postResult.post.toJson() as PubkyAppPost;
+      return result ? { uri: result.uri, details: result.details } : false;
+    },
+  );
 
-      // Send the post to the homeserver
-      await putToHomeserver(postResult.meta.url, JSON.stringify(post));
+  const createRepost = withAuth(
+    async (
+      originalPostId: string,
+      originalauthorId: string,
+      repostContent: string,
+      kind: PubkyAppPostKind,
+      files?: File[],
+    ): Promise<string | false> => {
+      const repostedUri = postUriBuilder(originalauthorId, originalPostId);
+      const result = await createBasePost(
+        repostContent,
+        kind,
+        undefined,
+        repostedUri,
+        files,
+      );
 
-      return { uri: postResult.meta.url, details: post };
+      return result ? result.uri : false;
+    },
+  );
+
+  const createReply = withAuth(
+    async (
+      originalPostUri: string,
+      replyContent: string,
+      kind: PubkyAppPostKind,
+      files?: File[],
+      quote?: string,
+    ): Promise<string | false> => {
+      const result = await createBasePost(
+        replyContent,
+        kind,
+        originalPostUri,
+        quote,
+        files,
+      );
+
+      return result ? result.uri : false;
     },
   );
 
@@ -922,62 +977,6 @@ export function PubkyClientWrapper({
       return null;
     }
   };
-
-  const createRepost = withAuth(
-    async (
-      originalPostId: string,
-      originalauthorId: string,
-      repostContent: string,
-      kind: PostKind,
-      files?: File[],
-    ): Promise<string | false> => {
-      const attachments = files ? await uploadFiles(files) : [];
-
-      const repostedUri = postUriBuilder(originalauthorId, originalPostId);
-
-      // Create post
-      const postResult = specsBuilder!.createPost(
-        repostContent,
-        kind,
-        undefined, // parent
-        { uri: repostedUri, kind: 'short' },
-        attachments.length > 0 ? attachments : undefined,
-      );
-
-      const post = postResult.post.toJson() as PubkyAppPost;
-
-      await putToHomeserver(postResult.meta.url, JSON.stringify(post));
-
-      return postResult.meta.url;
-    },
-  );
-
-  const createReply = withAuth(
-    async (
-      originalPostUri: string,
-      replyContent: string,
-      kind: PostKind,
-      files?: File[],
-      quote?: string,
-    ): Promise<string | false> => {
-      const attachments = files ? await uploadFiles(files) : [];
-
-      // Create post
-      const postResult = specsBuilder!.createPost(
-        replyContent,
-        kind,
-        originalPostUri, // parent
-        quote ? { uri: quote, kind: 'short' } : undefined,
-        attachments.length > 0 ? attachments : undefined,
-      );
-
-      const post = postResult.post.toJson() as PubkyAppPost;
-
-      await putToHomeserver(postResult.meta.url, JSON.stringify(post));
-
-      return postResult.meta.url;
-    },
-  );
 
   const follow = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createFollow(user_id);

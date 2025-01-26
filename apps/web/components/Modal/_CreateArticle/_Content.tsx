@@ -9,6 +9,7 @@ import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 import { Section } from '@/components/CreateContent/Section';
 import LinkPreviewer from '@/components/LinkPreview';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateArticleProps {
   setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
@@ -62,7 +63,7 @@ export default function ContentCreateArticle({
       const newArticle = await createArticle(
         contentTitle,
         content,
-        'long',
+        PubkyAppPostKind.Long,
         selectedFile,
       );
       const match = newArticle && newArticle?.uri.match(regex);
@@ -437,19 +438,13 @@ export default function ContentCreateArticle({
                   icon={
                     <Icon.PaperPlaneRight
                       color={
-                        !isValidContent ||
-                        isError ||
-                        !contentTitle
+                        !isValidContent || isError || !contentTitle
                           ? 'gray'
                           : 'white'
                       }
                     />
                   }
-                  disabled={
-                    !isValidContent ||
-                    isError ||
-                    !contentTitle
-                  }
+                  disabled={!isValidContent || isError || !contentTitle}
                   loading={sendingArticle}
                   onClick={
                     isValidContent &&
