@@ -61,7 +61,13 @@ type PubkyClientContextType = {
     links: PubkyAppUserLink[],
     image: File | undefined,
   ) => Promise<PubkyAppUser | false>;
-  saveProfile: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
+  saveProfile: (
+    name: string,
+    bio?: string,
+    image?: File | string | undefined,
+    links?: PubkyAppUserLink[],
+    status?: string,
+  ) => Promise<PubkyAppUser | false>;
   createPost: (
     postContent: string,
     kind: PubkyAppPostKind,
@@ -115,7 +121,7 @@ type PubkyClientContextType = {
   createTagProfile: (userId: string, label: string) => Promise<boolean>;
   deleteTagProfile: (userId: string, label: string) => Promise<boolean>;
   getRecoveryFile: (password: string) => Promise<any | null>;
-  storeProfile: (userProfile: UserDetails) => Promise<boolean>;
+  storeProfile: (userProfile: PubkyAppUser) => Promise<boolean>;
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
   timeline: PostView[];
   setTimeline: React.Dispatch<React.SetStateAction<PostView[]>>;
@@ -304,7 +310,6 @@ export function PubkyClientWrapper({
 
       return false;
     }
-
     return true;
   };
 
@@ -398,16 +403,21 @@ export function PubkyClientWrapper({
     }
   };
 
-  const uploadFile = withAuth(async (file: File): Promise<string> => {
+  const uploadFile = async (
+    file: File,
+    specsB?: PubkySpecsBuilder,
+  ): Promise<string> => {
+    let specs = specsB ? specsB : specsBuilder;
+
     // 1. Upload Blob
     const fileContent = await file.arrayBuffer();
     const blobData = new Uint8Array(fileContent);
-    const blobResult = specsBuilder!.createBlob(blobData);
-    console.log({ blobResult });
+    const blobResult = specs!.createBlob(blobData);
+
     await homeserver.put(blobResult.meta.url, blobResult.blob.data);
 
     // 2. Create File Record
-    const fileResult = specsBuilder!.createFile(
+    const fileResult = specs!.createFile(
       file.name,
       blobResult.meta.url,
       file.type,
@@ -420,10 +430,16 @@ export function PubkyClientWrapper({
     );
 
     return fileResult.meta.url;
-  });
+  };
+
+  const uploadFileWithAuth = withAuth(
+    async (file: File, specsB?: PubkySpecsBuilder): Promise<string> => {
+      return await uploadFile(file, specsB);
+    },
+  );
 
   const uploadFiles = async (files: File[]): Promise<(string | false)[]> => {
-    return Promise.all(files.map((file) => uploadFile(file)));
+    return Promise.all(files.map((file) => uploadFileWithAuth(file)));
   };
 
   const signUp = async (
@@ -437,7 +453,6 @@ export function PubkyClientWrapper({
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
       const secretKey = seedMnemonic.slice(0, 32);
       const newKeypair = Keypair.fromSecretKey(secretKey);
-
       const seed = Utils.uint8ArrayToBase64(newKeypair.secretKey());
 
       // Sign up
@@ -452,24 +467,21 @@ export function PubkyClientWrapper({
 
       // Save pubky state
       const pk = session.pubky().z32();
-
+      setPubkyAndStorage(pk);
       setNewUser(true);
 
       // Save info in storage
       Utils.storage.set('seed', seed);
       setSeed(seed);
-
       Utils.storage.set('mnemonic', mnemonic);
       setMnemonic(mnemonic);
-
-      setPubkyAndStorage(pk);
 
       // pubky id just changed, let's create a new SpecsBuilder
       const specsBuilder = new PubkySpecsBuilder(pk);
       setSpecsBuilder(specsBuilder);
 
-      // Upload avatar
-      let uploadResult = image ? await uploadFile(image) : null;
+      // Upload avatar without ensuring auth (because state has not yet updated)
+      let uploadResult = image ? await uploadFile(image, specsBuilder) : null;
       let file = uploadResult ? uploadResult : null;
 
       const result = specsBuilder.createUser(
@@ -482,8 +494,7 @@ export function PubkyClientWrapper({
       // Let's bring the full wasm object into JS and assign correct type.
       const user = result.user.toJson() as PubkyAppUser;
 
-      Utils.storage.set('profile', JSON.stringify(user));
-      setProfile(user);
+      await storeProfile(user);
 
       // Send the profile to the homeserver
       const response = await homeserver.put(
@@ -503,34 +514,43 @@ export function PubkyClientWrapper({
     }
   };
 
-  const storeProfile = async (userProfile: UserDetails): Promise<boolean> => {
+  const storeProfile = async (user: PubkyAppUser): Promise<boolean> => {
     // Save the profile in storage
-    Utils.storage.set('profile', JSON.stringify(userProfile));
-    setProfile(userProfile);
+    Utils.storage.set('profile', JSON.stringify(user));
+    setProfile(user);
 
     return true;
   };
 
   const saveProfile = withAuth(
-    async (userProfile: PubkyAppUser): Promise<any | false> => {
-      let file;
-      if (userProfile.image instanceof File) {
-        file = await uploadFile(userProfile.image);
+    async (
+      name: string,
+      bio?: string,
+      image?: File | string,
+      links?: PubkyAppUserLink[],
+      status?: string,
+    ): Promise<any | false> => {
+      let file: string | undefined;
+      if (image instanceof File) {
+        // Upload avatar
+        const uploadResult = await uploadFileWithAuth(image);
+        file = uploadResult ? uploadResult : undefined;
+      } else {
+        file = image;
       }
 
       const userResult = specsBuilder!.createUser(
-        userProfile.name,
-        userProfile.bio,
-        file,
-        userProfile.links,
-        userProfile.status,
+        name || 'anonymous',
+        bio || profile?.bio,
+        file || profile?.image,
+        links || profile?.links,
+        status || profile?.status,
       );
 
       const user = userResult.user.toJson() as PubkyAppUser;
 
       // Save the profile in storage
-      Utils.storage.set('profile', JSON.stringify(user));
-      setProfile(user);
+      await storeProfile(user);
 
       // Send the profile to the homeserver
       await homeserver.put(userResult.meta.url, JSON.stringify(user));
@@ -553,8 +573,7 @@ export function PubkyClientWrapper({
     const user = userResult.user.toJson() as PubkyAppUser;
 
     // Save the profile in storage
-    Utils.storage.set('profile', JSON.stringify(user));
-    setProfile(user);
+    await storeProfile(user);
 
     // Send the profile to the homeserver
     await homeserver.put(userResult.meta.url, JSON.stringify(user));
@@ -701,24 +720,34 @@ export function PubkyClientWrapper({
     },
   );
 
-  const editPost = withAuth(async (post: PostView, postContent: string) => {
+  const editPost = withAuth(async (post: PostView, newContent: string) => {
+    // TODO: ideally we must fetch the PubkyAppPost from
+    // the homeserver instead of using PostView from Nexus!
+    const postEmbed = post?.relationships?.reposted
+      ? new PubkyAppPostEmbed(
+          post?.relationships?.reposted,
+          PubkyAppPostKind.Short,
+        )
+      : undefined;
+
     const postResult = specsBuilder!.createPost(
-      postContent,
+      newContent,
       post?.details?.kind,
       post?.relationships?.replied,
-      post?.relationships?.reposted
-        ? { uri: post?.relationships?.reposted, kind: 'short' }
-        : undefined,
+      postEmbed,
       post?.details?.attachments,
     );
 
-    // Send the post to the homeserver
-    await homeserver.put(
-      postResult.meta.url,
-      JSON.stringify(postResult.post.toJson()),
-    );
+    // We are faking a post edit, therefore, we should keep
+    // the original posting time and post url.
+    let editedPost = postResult.post.toJson();
+    editedPost.created_at = post.details.indexed_at;
+    let editedUrl = postUriBuilder(post.details.author, post.details.id);
 
-    return postResult.meta.url;
+    // Send the post to the homeserver
+    await homeserver.put(editedUrl, JSON.stringify(editedPost));
+
+    return editedUrl;
   });
 
   const deleteAccount = withAuth(async (setProgress) => {

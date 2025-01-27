@@ -8,6 +8,7 @@ import { getFile } from '@/services/fileService';
 import { Links } from '@/types/Post';
 import { usePubkyClientContext } from '@/contexts';
 import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
+import { PubkyAppUserLink } from 'pubky-app-specs';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -30,7 +31,7 @@ interface ButtonsProps {
   bio: string;
   links: Links[];
   name: string;
-  image: File | string | undefined;
+  image: File | undefined;
   prevImage: File | string;
   status: string | undefined;
 }
@@ -81,7 +82,7 @@ export default function Buttons({
         return;
       }
 
-      const linksObject: { title: string; url: string }[] = [];
+      const linksObject: PubkyAppUserLink[] = [];
       const invalidLinkIndexes: number[] = [];
 
       links.forEach((link, index) => {
@@ -99,10 +100,9 @@ export default function Buttons({
               .safeParse(cleanUrl);
 
             if (validationResult.success) {
-              linksObject.push({
-                title: link.title,
-                url: `mailto:${cleanUrl}`,
-              });
+              linksObject.push(
+                new PubkyAppUserLink(link.title, `mailto:${cleanUrl}`),
+              );
             } else {
               invalidLinkIndexes.push(index);
             }
@@ -127,10 +127,9 @@ export default function Buttons({
                   .safeParse(completedUrl);
 
                 if (validationResult.success) {
-                  linksObject.push({
-                    title: link.title,
-                    url: completedUrl,
-                  });
+                  linksObject.push(
+                    new PubkyAppUserLink(link.title, completedUrl),
+                  );
                 } else {
                   invalidLinkIndexes.push(index);
                 }
@@ -138,10 +137,7 @@ export default function Buttons({
                 invalidLinkIndexes.push(index);
               }
             } else {
-              linksObject.push({
-                title: link.title,
-                url: link.url,
-              });
+              linksObject.push(new PubkyAppUserLink(link.title, link.url));
             }
           }
         }
@@ -164,13 +160,7 @@ export default function Buttons({
         return;
       }
 
-      await saveProfile({
-        name,
-        bio,
-        image,
-        links: linksObject,
-        status: status,
-      });
+      await saveProfile(name, bio, image, linksObject, status);
 
       if (
         prevImage &&

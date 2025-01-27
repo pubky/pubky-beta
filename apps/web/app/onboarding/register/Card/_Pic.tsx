@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 interface PicProps {
   image: File | string | undefined;
-  setImage: React.Dispatch<React.SetStateAction<File | string | undefined>>;
+  setImage: React.Dispatch<React.SetStateAction<File | undefined>>;
   defaultImage: File | undefined;
 }
 

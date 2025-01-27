@@ -6,37 +6,18 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
-import * as jdenticon from 'jdenticon';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../../components';
 import { Card } from '../Card';
 import { Links } from '@/types/Post';
-import { Utils } from '@social/utils-shared';
 import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
 import { BottomSheet } from '@/components';
 import { PubkyAppUserLink } from 'pubky-app-specs';
+import genJdenticon from 'libs/utils-shared/src/lib/Helper/genJdenticon';
 
 interface FormErrors {
   [fieldName: string]: string[];
 }
-
-const genJdenticon = async (): Promise<File | undefined> => {
-  const id = Math.random().toString(36).substring(2, 15);
-  const size = 200;
-  const svgCode = jdenticon.toSvg(id, size);
-
-  try {
-    const pngBlob = await Utils.svgToPng(svgCode, size);
-    const pngFile = new File([pngBlob], `${id}.png`, {
-      type: 'image/png',
-    });
-
-    return pngFile;
-  } catch (error) {
-    console.error('Error converting SVG to PNG:', error);
-    return undefined;
-  }
-};
 
 const profileSchema = z.object({
   name: z
@@ -73,7 +54,8 @@ export default function Index() {
   useEffect(() => {
     const generateAndSetImage = async () => {
       if (!profile?.image && !image) {
-        const generatedImage = await genJdenticon();
+        const id = Math.random().toString(36).substring(2, 15);
+        const generatedImage = await genJdenticon(id);
         setGeneratedImage(generatedImage);
         setImage(generatedImage);
       }

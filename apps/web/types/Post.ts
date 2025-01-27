@@ -1,3 +1,4 @@
+import { PubkyAppPostKind } from 'pubky-app-specs';
 import { TStatus } from '.';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -26,7 +27,7 @@ export interface PostDetails {
   content: string;
   id: string;
   indexed_at: number;
-  kind: 'short' | 'long' | 'image' | 'video' | 'link' | 'file';
+  kind: PubkyAppPostKind;
   uri: string;
 }
 
