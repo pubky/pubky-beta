@@ -45,6 +45,32 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     limit,
   );
 
+  useEffect(() => {
+    if (!initNotifications) return;
+
+    setLoading(true);
+
+    const filtered = filterNotifications(initNotifications);
+    updateNotifications(filtered);
+
+    // Calculate unread
+    const unreadCount = filtered.reduce(
+      (count, notification) =>
+        timestamp && notification.timestamp > timestamp ? count + 1 : count,
+      0,
+    );
+    setUnReadNotification(unreadCount);
+
+    // Check if there’s more
+    if (filtered.length < limit) {
+      setHasMore(false);
+    } else {
+      setHasMore(true);
+    }
+
+    setLoading(false);
+  }, [initNotifications]);
+
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
       const merged = [...prev, ...newNotifications].filter(
@@ -146,8 +172,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
     if (notificationPreferences && pubky) {
       fetchNotifications();
-      const interval = setInterval(fetchNotifications, 60000);
-      return () => clearInterval(interval);
     }
   }, [pubky, notificationPreferences]);
 
