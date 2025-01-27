@@ -104,7 +104,7 @@ export default function ContentCreateArticle({
               uri: newArticle?.uri,
               ...newPost.details,
             },
-            relationships: newArticle.details.relationships,
+            relationships: undefined,
             counts: newPost.counts,
             tags: tags,
             cached: 'local',
