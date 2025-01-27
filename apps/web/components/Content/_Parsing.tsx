@@ -31,10 +31,23 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
       part.startsWith('`') && part.endsWith('`') && part.length > 2 ? (
         <span
           key={index}
-          className="border border-white/10 px-2 py-1 rounded bg-[#818b981f] text-[#C01343]"
+          className="border border-white/10 px-1.5 py-0.5 rounded bg-[#818b981f] text-[#C01343]"
         >
           {part.slice(1, -1)}
         </span>
+      ) : (
+        <span key={index}>{part}</span>
+      ),
+    );
+  };
+
+  const highlightBoldText = (text: string): JSX.Element[] => {
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((part, index) =>
+      part.startsWith('**') && part.endsWith('**') && part.length > 4 ? (
+        <strong key={index} className="font-bold">
+          {part.slice(2, -2)}
+        </strong>
       ) : (
         <span key={index}>{part}</span>
       ),
@@ -190,7 +203,9 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
       } else {
         elements.push(
           <span key={index}>
-            {line.includes('`') ? (
+            {line.includes('**') ? (
+              highlightBoldText(line)
+            ) : line.includes('`') ? (
               highlightInlineCode(line)
             ) : (
               <LinkParser watchers={watchers as []}>{line}</LinkParser>
