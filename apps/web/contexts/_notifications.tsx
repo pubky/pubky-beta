@@ -107,6 +107,10 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       );
     });
 
+  // TODO: guys there were 2 loops here, the second one not using the new data
+  // from reactQuery. I bypassed it all on the useEffect above with dependencies
+  // on [initNotifications]. I don't think much of this logic is needed.
+
   const fetchNotifications = async () => {
     if (!pubky || !notificationPreferences || !hasMore) return;
 
