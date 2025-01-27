@@ -209,10 +209,9 @@ export function PubkyClientWrapper({
   }, []);
 
   useEffect(() => {
-    // On first time new user we save `/settings and `/last_read
+    // On first time new user we save `/settings
     if (newUser) {
       saveSettings(defaultPreferences);
-      putTimestampNotification();
     }
   }, [newUser]);
 
