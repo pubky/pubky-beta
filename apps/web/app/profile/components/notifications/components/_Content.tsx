@@ -19,11 +19,10 @@ export default function Index() {
   const { putTimestampNotification } = usePubkyClientContext();
   const { notifications, loading } = useNotificationsContext();
   const [loadingNotifications, setLoadingNotifications] = useState(true);
-  const timestamp = Date.now();
 
   useEffect(() => {
     const PutTimestamp = async () => {
-      await putTimestampNotification(timestamp);
+      await putTimestampNotification();
     };
     PutTimestamp();
   }, []);

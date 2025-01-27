@@ -71,7 +71,7 @@ export default function ProtectedRoutes({
 
     try {
       const result = await loadSettings();
-      if (result) {
+      if (result?.notifications) {
         setNotificationPreferences(result.notifications);
       } else {
         setNotificationPreferences(defaultPreferences);

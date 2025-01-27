@@ -26,6 +26,7 @@ import init, {
   PubkyAppPostEmbed,
   PubkyAppUserLink,
 } from 'pubky-app-specs';
+import { defaultPreferences } from './_filters';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
@@ -137,8 +138,8 @@ type PubkyClientContextType = {
     zipFile: File,
     setProgress: React.Dispatch<React.SetStateAction<number>>,
   ) => Promise<boolean>;
-  getTimestampNotification: () => Promise<number | boolean>;
-  putTimestampNotification: (timestamp: number) => Promise<boolean>;
+  getTimestampNotification: () => Promise<number>;
+  putTimestampNotification: () => Promise<boolean>;
   loadSettings: () => Promise<{
     notifications: NotificationPreferences;
     privacysafety?: any;
@@ -197,7 +198,7 @@ export function PubkyClientWrapper({
   );
   const [timestamp, setTimestamp] = useState<number>(0);
   const [notificationPreferences, setNotificationPreferences] =
-    useState<NotificationPreferences>({} as NotificationPreferences);
+    useState<NotificationPreferences>(defaultPreferences);
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
 
@@ -206,6 +207,14 @@ export function PubkyClientWrapper({
       .then(() => setSpecsWasmLoaded(true))
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    // On first time new user we save `/settings and `/last_read
+    if (newUser) {
+      saveSettings(defaultPreferences);
+      putTimestampNotification();
+    }
+  }, [newUser]);
 
   useEffect(() => {
     specsWasmLoaded && pubky && setSpecsBuilder(new PubkySpecsBuilder(pubky));
@@ -434,7 +443,7 @@ export function PubkyClientWrapper({
     },
   );
 
-  const uploadFiles = async (files: File[]): Promise<(string | false)[]> => {
+  const uploadFiles = async (files: File[]): Promise<string[]> => {
     return Promise.all(files.map((file) => uploadFileWithAuth(file)));
   };
 
@@ -592,9 +601,7 @@ export function PubkyClientWrapper({
   ): Promise<{ uri: string; id: string; details: PubkyAppPost } | false> => {
     try {
       const attachments =
-        (files?.length || 0) > 0
-          ? ((await uploadFiles(files!)) as string[])
-          : undefined;
+        (files?.length || 0) > 0 ? await uploadFiles(files!) : undefined;
 
       let embed;
       if (embedUri) {
@@ -936,15 +943,13 @@ export function PubkyClientWrapper({
     return Number(lastRead.timestamp);
   });
 
-  const putTimestampNotification = withAuth(async (timestamp: number) => {
+  const putTimestampNotification = withAuth(async () => {
     const result = specsBuilder!.createLastRead();
+    const lastRead = result.last_read.toJson() as PubkyAppLastRead;
 
-    await homeserver.put(
-      result.meta.url,
-      JSON.stringify(result.last_read.toJson()),
-    );
+    await homeserver.put(result.meta.url, JSON.stringify(lastRead));
 
-    setTimestamp(timestamp);
+    setTimestamp(Number(lastRead.timestamp));
 
     return true;
   });
@@ -953,10 +958,15 @@ export function PubkyClientWrapper({
     if (!pubky) return null;
 
     // pubky.app/settings is not covered by the specs!
-    const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
-    const response = await homeserver.get(settingsUrl);
-    const settings = await response.json();
+    const settingsUrl = `${baseUriBuilder(pubky)}settings`;
 
+    const response = await homeserver.get(settingsUrl);
+
+    if (!response.ok) {
+      return { notifications: defaultPreferences };
+    }
+
+    const settings = await response.json();
     return settings;
   });
 
@@ -968,7 +978,7 @@ export function PubkyClientWrapper({
     ) => {
       const settings = { notifications, privacysafety, language };
 
-      const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
+      const settingsUrl = `${baseUriBuilder(pubky!)}settings`;
 
       await homeserver.put(settingsUrl, JSON.stringify(settings));
 
