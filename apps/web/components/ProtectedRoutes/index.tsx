@@ -102,7 +102,7 @@ export default function ProtectedRoutes({
     if (emptyProfile) {
       try {
         const user = await getUserProfile(pubky, pubky);
-        storeProfile(user.details);
+        storeProfile(user.details as any);
         emptyProfile = false;
         return true;
       } catch (error) {

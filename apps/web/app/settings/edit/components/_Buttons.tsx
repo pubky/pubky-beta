@@ -31,7 +31,7 @@ interface ButtonsProps {
   bio: string;
   links: Links[];
   name: string;
-  image: File | undefined;
+  image: File | string | undefined;
   prevImage: File | string;
   status: string | undefined;
 }

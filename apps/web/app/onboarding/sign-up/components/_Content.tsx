@@ -36,7 +36,7 @@ export default function Index() {
 
   const [name, setName] = useState(profile?.name || '');
   const [bio, setBio] = useState(profile?.bio || '');
-  const [image, setImage] = useState<File | undefined>();
+  const [image, setImage] = useState<File | string | undefined>();
   const [generatedImage, setGeneratedImage] = useState<File>();
   const [showModalLink, setShowModalLink] = useState(false);
   const [showSheetLink, setShowSheetLink] = useState(false);

@@ -2,6 +2,7 @@ import { Icon, Tooltip } from '@social/ui-shared';
 import { useToastContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CopyTextPostProps {
   post: PostView;
@@ -13,7 +14,7 @@ export default function CopyTextPost({ post, setShowMenu }: CopyTextPostProps) {
 
   return (
     <>
-      {post?.details?.kind !== 'long' && (
+      {post?.details?.kind !== PubkyAppPostKind.Long && (
         <Tooltip.Item
           id="copy-post-text"
           onClick={() => {

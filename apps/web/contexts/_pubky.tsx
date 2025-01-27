@@ -10,8 +10,7 @@ import {
   createRecoveryFile,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
-import { PostCounts, PostDetails, PostView, PubkyAppPost } from '@/types/Post';
-import { UserDetails } from '@/types/User';
+import { PostCounts, PostDetails, PostView } from '@/types/Post';
 import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
@@ -23,10 +22,10 @@ import init, {
   PubkyAppLastRead,
   baseUriBuilder,
   PubkyAppPostKind,
+  PubkyAppPost,
   PubkyAppPostEmbed,
   PubkyAppUserLink,
 } from 'pubky-app-specs';
-import { UnaryExpression } from 'typescript';
 
 const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
@@ -56,15 +55,15 @@ type PubkyClientContextType = {
   isSessionActive: () => Promise<boolean>;
   logout: () => boolean;
   signUp: (
-    name: String,
-    bio: String | undefined,
-    links: PubkyAppUserLink[],
-    image: File | undefined,
+    name: string,
+    bio?: string,
+    links?: PubkyAppUserLink[],
+    image?: File | string,
   ) => Promise<PubkyAppUser | false>;
   saveProfile: (
     name: string,
     bio?: string,
-    image?: File | string | undefined,
+    image?: File | string,
     links?: PubkyAppUserLink[],
     status?: string,
   ) => Promise<PubkyAppUser | false>;
@@ -100,11 +99,7 @@ type PubkyClientContextType = {
   mute: (user_id: string) => Promise<boolean>;
   unmute: (user_id: string) => Promise<boolean>;
   addBookmark: (postId: string, authorId: string) => Promise<boolean | string>;
-  deleteBookmark: (
-    postId: string,
-    authorId: string,
-    bookmarkId: string,
-  ) => Promise<boolean>;
+  deleteBookmark: (postId: string, authorId: string) => Promise<boolean>;
   createTag: (
     authorId: string,
     postId: string,
@@ -227,12 +222,13 @@ export function PubkyClientWrapper({
   };
 
   const withAuth = <T extends any[], R>(fn: (...args: T) => Promise<R>) => {
-    return async (...args: T): Promise<R | false> => {
+    return async (...args: T): Promise<R> => {
       try {
         await ensureReady();
         return await fn(...args);
       } catch (error) {
-        return handleError(error, fn.name) as false;
+        handleError(error, fn.name);
+        throw error;
       }
     };
   };
@@ -444,10 +440,10 @@ export function PubkyClientWrapper({
 
   const signUp = async (
     name: string,
-    bio: string | undefined,
-    links: PubkyAppUserLink[],
-    image: File | undefined,
-  ): Promise<any | false> => {
+    bio?: string,
+    links?: PubkyAppUserLink[],
+    image?: File | string,
+  ): Promise<PubkyAppUser | false> => {
     try {
       const mnemonic = bip39.generateMnemonic(128);
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
@@ -481,8 +477,14 @@ export function PubkyClientWrapper({
       setSpecsBuilder(specsBuilder);
 
       // Upload avatar without ensuring auth (because state has not yet updated)
-      let uploadResult = image ? await uploadFile(image, specsBuilder) : null;
-      let file = uploadResult ? uploadResult : null;
+      let file: string | undefined;
+      if (image instanceof File) {
+        // Upload avatar
+        const uploadResult = await uploadFile(image, specsBuilder);
+        file = uploadResult ? uploadResult : undefined;
+      } else {
+        file = image;
+      }
 
       const result = specsBuilder.createUser(
         name || 'anonymous',
@@ -590,7 +592,9 @@ export function PubkyClientWrapper({
   ): Promise<{ uri: string; id: string; details: PubkyAppPost } | false> => {
     try {
       const attachments =
-        files?.length > 0 ? await uploadFiles(files) : undefined;
+        (files?.length || 0) > 0
+          ? ((await uploadFiles(files!)) as string[])
+          : undefined;
 
       let embed;
       if (embedUri) {
@@ -656,7 +660,7 @@ export function PubkyClientWrapper({
 
       setNewPosts((prev) => [newPostView, ...prev]);
 
-      return { uri: result.uri, details: newPostDetails };
+      return { uri: result.uri, details: newPostDetails as any };
     },
   );
 
@@ -1071,11 +1075,7 @@ export function PubkyClientWrapper({
   );
 
   const deleteBookmark = withAuth(
-    async (
-      postId: string,
-      authorId: string,
-      bookmarkId: string,
-    ): Promise<boolean> => {
+    async (postId: string, authorId: string): Promise<boolean> => {
       const uriPost = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createBookmark(uriPost);
 

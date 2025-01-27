@@ -2,14 +2,12 @@ import { Button, Icon, Input, Typography } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-
 import { UserView } from '@/types/User';
 import Image from 'next/image';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 import { Section } from '@/components/CreateContent/Section';
 import LinkPreviewer from '@/components/LinkPreview';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateArticleProps {
   setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
@@ -63,7 +61,6 @@ export default function ContentCreateArticle({
       const newArticle = await createArticle(
         contentTitle,
         content,
-        PubkyAppPostKind.Long,
         selectedFile,
       );
       const match = newArticle && newArticle?.uri.match(regex);

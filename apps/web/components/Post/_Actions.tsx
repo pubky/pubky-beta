@@ -163,14 +163,10 @@ export default function Actions({
     }
   };
 
-  const handleDeleteBookmark = async (
-    postId: string,
-    authorId: string,
-    bookmarkId: string,
-  ) => {
+  const handleDeleteBookmark = async (postId: string, authorId: string) => {
     try {
       setLoadingBookmarks(true);
-      const result = await deleteBookmark(postId, authorId, bookmarkId);
+      const result = await deleteBookmark(postId, authorId);
 
       if (!result) {
         addAlert('Something went wrong!', 'warning');
@@ -187,21 +183,13 @@ export default function Actions({
   const handleBookmarks = async () => {
     if (repost) {
       if (isBookmarked) {
-        await handleDeleteBookmark(
-          repost.details.id,
-          repost.details.author,
-          repost?.bookmark?.id ?? isBookmarked,
-        );
+        await handleDeleteBookmark(repost.details.id, repost.details.author);
       } else {
         await handleAddBookmark(repost?.details?.id, repost?.details?.author);
       }
     } else {
       if (isBookmarked) {
-        await handleDeleteBookmark(
-          post.details.id,
-          post.details.author,
-          post?.bookmark?.id ?? isBookmarked,
-        );
+        await handleDeleteBookmark(post.details.id, post.details.author);
       } else {
         await handleAddBookmark(post?.details?.id, post?.details?.author);
       }
