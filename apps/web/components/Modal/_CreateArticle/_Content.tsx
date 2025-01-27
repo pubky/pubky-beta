@@ -18,7 +18,8 @@ export default function ContentCreateArticle({
   setShowModalArticle,
   setShowModalPost,
 }: CreateArticleProps) {
-  const { pubky, createArticle, createTag, profile } = usePubkyClientContext();
+  const { pubky, createArticle, createTag, profile, setTimeline, timeline } =
+    usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
   const isMobile = useIsMobile();
   const [isError, setIsError] = useState(false);
@@ -70,7 +71,46 @@ export default function ContentCreateArticle({
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', postId, tag);
         }
+        // transform tags to tag_id
+        const tags = updatedTags.map((tag) => {
+          return {
+            label: tag,
+            taggers: [pubky ?? ''],
+            taggers_count: 1,
+          };
+        });
 
+        const newPost = {
+          details: newArticle.details,
+          relationships: {
+            reposted: postId,
+          },
+          counts: {
+            replies: 0,
+            reposts: 0,
+            tags: 0,
+          },
+          tags: tags,
+          cached: {},
+        };
+
+        // set the article to the timeline
+        setTimeline([
+          {
+            details: {
+              author: pubky ?? '',
+              id: newPost.relationships.reposted,
+              indexed_at: Date.now(),
+              uri: newArticle?.uri,
+              ...newPost.details,
+            },
+            relationships: newArticle.details.relationships,
+            counts: newPost.counts,
+            tags: tags,
+            cached: 'local',
+          },
+          ...timeline,
+        ]);
         addAlert('Article created!');
       } else {
         addAlert('Something wrong. Try again', 'warning');
@@ -102,23 +142,6 @@ export default function ContentCreateArticle({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contentArticle]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-        //if (setTextArea) setTextArea(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRef, contentArticle]);
-
   {
     /**const searchProfiles = async (text: string) => {
         try {
@@ -135,7 +158,9 @@ export default function ContentCreateArticle({
     const handleClickOutside = (event: MouseEvent) => {
       if (
         wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
+        !wrapperRefEmojis.current.contains(event.target as Node) &&
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
       ) {
         setShowEmojis(false);
       }
@@ -145,7 +170,7 @@ export default function ContentCreateArticle({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [wrapperRefEmojis]);
+  }, [wrapperRefEmojis, wrapperRef]);
 
   const searchUsername = async (content: string) => {
     const pkMatches = content.match(/(pk:[^\s]+)/g);

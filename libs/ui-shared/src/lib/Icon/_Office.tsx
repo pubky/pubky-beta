@@ -377,3 +377,111 @@ export const Copy = ({ size = '32', color = 'white' }: IconProps) => (
     />
   </svg>
 );
+
+export const TextAlignLeft = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4 8.5C4 7.94772 4.44772 7.5 5 7.5H27C27.5523 7.5 28 7.94772 28 8.5C28 9.05228 27.5523 9.5 27 9.5H5C4.44772 9.5 4 9.05228 4 8.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4 13.5C4 12.9477 4.44772 12.5 5 12.5H21C21.5523 12.5 22 12.9477 22 13.5C22 14.0523 21.5523 14.5 21 14.5H5C4.44772 14.5 4 14.0523 4 13.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4.00073 18.5C4.00073 17.9477 4.44845 17.5 5.00073 17.5H27C27.5522 17.5 28 17.9477 28 18.5C28 19.0523 27.5522 19.5 27 19.5H5.00073C4.44845 19.5 4.00073 19.0523 4.00073 18.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4.00073 23.5C4.00073 22.9477 4.44845 22.5 5.00073 22.5H21C21.5522 22.5 22 22.9477 22 23.5C22 24.0523 21.5522 24.5 21 24.5H5.00073C4.44845 24.5 4.00073 24.0523 4.00073 23.5Z"
+      fill={color}
+    />
+  </svg>
+);
+
+export const TextAlignRight = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4 8.5C4 7.94772 4.44772 7.5 5 7.5H27C27.5523 7.5 28 7.94772 28 8.5C28 9.05228 27.5523 9.5 27 9.5H5C4.44772 9.5 4 9.05228 4 8.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M10 13.5C10 12.9477 10.4477 12.5 11 12.5H27C27.5523 12.5 28 12.9477 28 13.5C28 14.0523 27.5523 14.5 27 14.5H11C10.4477 14.5 10 14.0523 10 13.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4.00073 18.5C4.00073 17.9477 4.44845 17.5 5.00073 17.5H27C27.5522 17.5 28 17.9477 28 18.5C28 19.0523 27.5522 19.5 27 19.5H5.00073C4.44845 19.5 4.00073 19.0523 4.00073 18.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M10.0007 23.5C10.0007 22.9477 10.4484 22.5 11.0007 22.5H27C27.5522 22.5 28 22.9477 28 23.5C28 24.0523 27.5522 24.5 27 24.5H11.0007C10.4484 24.5 10.0007 24.0523 10.0007 23.5Z"
+      fill={color}
+    />
+  </svg>
+);
+
+export const TextAlignCenter = ({
+  size = '32',
+  color = 'white',
+}: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4 8.5C4 7.94772 4.44772 7.5 5 7.5H27C27.5523 7.5 28 7.94772 28 8.5C28 9.05228 27.5523 9.5 27 9.5H5C4.44772 9.5 4 9.05228 4 8.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M7 13.5C7 12.9477 7.44772 12.5 8 12.5H24C24.5523 12.5 25 12.9477 25 13.5C25 14.0523 24.5523 14.5 24 14.5H8C7.44772 14.5 7 14.0523 7 13.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4.00049 18.5C4.00049 17.9477 4.4482 17.5 5.00049 17.5H26.9997C27.552 17.5 27.9997 17.9477 27.9997 18.5C27.9997 19.0523 27.552 19.5 26.9997 19.5H5.00049C4.4482 19.5 4.00049 19.0523 4.00049 18.5Z"
+      fill={color}
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M7.00049 23.5C7.00049 22.9477 7.4482 22.5 8.00049 22.5H23.9997C24.552 22.5 24.9997 22.9477 24.9997 23.5C24.9997 24.0523 24.552 24.5 23.9997 24.5H8.00049C7.4482 24.5 7.00049 24.0523 7.00049 23.5Z"
+      fill={color}
+    />
+  </svg>
+);

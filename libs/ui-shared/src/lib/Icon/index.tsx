@@ -49,6 +49,9 @@ import {
   File,
   FileText,
   Copy,
+  TextAlignLeft,
+  TextAlignRight,
+  TextAlignCenter,
 } from './_Office';
 import {
   DotsNine,
@@ -235,6 +238,9 @@ export const Icon = {
   Stack,
   Tag,
   Telegram,
+  TextAlignLeft,
+  TextAlignRight,
+  TextAlignCenter,
   TikTok,
   ThreeColumns,
   Twitter,

@@ -41,7 +41,7 @@ export const Root = ({
   const translateClass =
     position === 'left' ? '-translate-x-full' : 'translate-x-full';
 
-  const baseCSS = `${positionDrawer} w-[80%] md:w-[385px] fixed top-0 z-50 h-screen transition-transform duration-300 p-12 bg-[#05050A] shadow border-r border-white border-opacity-20`;
+  const baseCSS = `${positionDrawer} w-[80%] md:w-[385px] h-full fixed top-0 z-50 transition-transform duration-300 p-12 bg-[#05050A] shadow border-r border-white border-opacity-20`;
 
   // Swipe handling
   const handleTouchStart = (e: React.TouchEvent) => {

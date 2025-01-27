@@ -52,6 +52,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
             post={nestedReply}
             size="full"
             line={Boolean(reply?.relationships?.replied)}
+            homeView
           />
         </div>
       ))}

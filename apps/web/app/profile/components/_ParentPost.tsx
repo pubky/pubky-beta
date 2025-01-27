@@ -61,5 +61,5 @@ export default function ParentPost({ parentURI }: { parentURI: string }) {
     );
   }
 
-  return <Post homeView post={parentPost.post} size="full" />;
+  return <Post post={parentPost.post} size="full" />;
 }

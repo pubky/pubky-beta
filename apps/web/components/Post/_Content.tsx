@@ -12,7 +12,6 @@ import { Button, Icon, Typography } from '@social/ui-shared';
 import { FileContent, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
-import MarkdownPreview from '@uiw/react-markdown-preview';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Link from 'next/link';
 import Modal from '../Modal';
@@ -216,9 +215,10 @@ export default function Content({
                       <Typography.Body className="mb-2" variant="large-bold">
                         {parsedContent.title}
                       </Typography.Body>
-                      <div className="opacity-70">
-                        <MarkdownPreview source={truncatedBody} />
-                      </div>
+                      <div
+                        className="opacity-70"
+                        dangerouslySetInnerHTML={{ __html: truncatedBody }}
+                      />
                     </div>
                     {fileContents.length > 0 && (
                       <div>
@@ -415,15 +415,13 @@ export default function Content({
                     setShowModal={setShowModal}
                   />
                 )}
-                {showSheet && (
-                  <BottomSheet.FilesCarousel
-                    show={showSheet}
-                    setShow={setShowSheet}
-                    fileContents={fileContents}
-                    currentFileIndex={currentFileIndex}
-                    setCurrentFileIndex={setCurrentFileIndex}
-                  />
-                )}
+                <BottomSheet.FilesCarousel
+                  show={showSheet}
+                  setShow={setShowSheet}
+                  fileContents={fileContents}
+                  currentFileIndex={currentFileIndex}
+                  setCurrentFileIndex={setCurrentFileIndex}
+                />
               </div>
             </>
           )}

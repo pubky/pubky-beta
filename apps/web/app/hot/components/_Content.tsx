@@ -8,16 +8,24 @@ import Filter from '@/components/Filter';
 import { useHotTags } from '@/hooks/useTag';
 import React, { useEffect, useState } from 'react';
 import { useStreamUsers } from '@/hooks/useStream';
-import { usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { Hot } from '.';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { usePathname } from 'next/navigation';
 
 export default function Index() {
   const { pubky } = usePubkyClientContext();
+  const { hotTagsReach, timeframe } = useFilterContext();
   const isMobile = useIsMobile(1024);
   const pathname = usePathname();
-  const { data, isLoading, isError } = useHotTags();
+  const { data, isLoading, isError } = useHotTags(
+    pubky,
+    hotTagsReach,
+    undefined,
+    undefined,
+    undefined,
+    timeframe,
+  );
   const {
     data: influencers,
     isLoading: isLoadingInfluencers,
@@ -56,43 +64,51 @@ export default function Index() {
             setActiveTab={setActiveTab}
             loading={isLoading || isLoadingInfluencers}
           />
-          {isLoading || isLoadingInfluencers ? (
-            <div className="w-full">
-              <Skeletons.Simple />
-            </div>
-          ) : (
-            <div className="flex flex-col gap-6">
-              {isMobile ? (
-                <>
-                  {activeTab === 0 && (
+          <div className="flex flex-col gap-6">
+            {isMobile ? (
+              <>
+                {activeTab === 0 &&
+                  (isLoading ? (
+                    <Skeletons.Simple />
+                  ) : (
                     <Hot.RenderTags
                       hotTags={hotTags}
                       loadingReachTags={isLoading}
                     />
-                  )}
-                  {activeTab === 1 && (
+                  ))}
+                {activeTab === 1 &&
+                  (isLoadingInfluencers ? (
+                    <Skeletons.Simple />
+                  ) : (
                     <Hot.RenderInfluencers
                       influencers={influencers}
                       initLoadingInfluencers={isLoadingInfluencers}
                     />
-                  )}
-                  {activeTab === 2 && <Hot.RenderPosts />}
-                </>
-              ) : (
-                <>
+                  ))}
+                {activeTab === 2 && <Hot.RenderPosts />}
+              </>
+            ) : (
+              <>
+                {isLoading ? (
+                  <Skeletons.Simple />
+                ) : (
                   <Hot.RenderTags
                     hotTags={hotTags}
                     loadingReachTags={isLoading}
                   />
+                )}
+                {isLoadingInfluencers ? (
+                  <Skeletons.Simple />
+                ) : (
                   <Hot.RenderInfluencers
                     influencers={influencers}
                     initLoadingInfluencers={isLoadingInfluencers}
                   />
-                  <Hot.RenderPosts />
-                </>
-              )}
-            </div>
-          )}
+                )}
+                <Hot.RenderPosts />
+              </>
+            )}
+          </div>
         </div>
         <Sidebar className="w-[280px] hidden xl:block self-start sticky top-[100px]">
           <WhoFollow />

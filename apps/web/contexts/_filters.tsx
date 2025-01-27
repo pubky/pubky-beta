@@ -70,7 +70,7 @@ const FilterContext = createContext<FilterContextType>({
   setContactsLayout: () => {},
   content: 'all',
   setContent: () => {},
-  timeframe: 'today',
+  timeframe: 'all_time',
   setTimeframe: () => {},
   unReadNotification: 0,
   setUnReadNotification: () => {},
@@ -103,7 +103,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     (Utils.storage.get('content') as TContent) || 'all',
   );
   const [timeframe, setTimeframe] = useState<TTimeframe>(
-    (Utils.storage.get('timeframe') as TTimeframe) || 'today',
+    (Utils.storage.get('timeframe') as TTimeframe) || 'all_time',
   );
   const [unReadNotification, setUnReadNotification] = useState<number>(
     (Utils.storage.get('unread') as number) || 0,
@@ -119,7 +119,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
       setContacts('following');
       setContactsLayout('list');
       setContent('all');
-      setTimeframe('today');
+      setTimeframe('all_time');
       setUnReadNotification(0);
     });
   };

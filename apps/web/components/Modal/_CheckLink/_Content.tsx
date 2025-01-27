@@ -23,9 +23,9 @@ export default function ContentCheckLink({
 
   return (
     <>
-      <Typography.Body className="text-opacity-60" variant="medium">
+      <Typography.Body className="text-opacity-60 mt-4" variant="medium">
         The link is taking you to another site:
-        <div className="mt-4 mb-4">
+        <div className="my-4">
           <span className="text-white text-opacity-100 font-bold">
             {Utils.minifyText(clickedLink, 50)}
           </span>

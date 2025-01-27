@@ -285,11 +285,24 @@ export default function Post({
                 </>
               )
             ) : post?.details?.content === '[DELETED]' ? (
-              <DeletedPostMessage
-                className={`${
-                  post?.relationships?.replied && homeView && 'ml-6'
-                } cursor-default`}
-              />
+              <div
+                className="relative cursor-default"
+                onClick={(event) => event.stopPropagation()}
+              >
+                {line && (
+                  <>
+                    <div className={twMerge(lineBaseCSS, lineStyle)} />
+                    <div className="absolute ml-[10px]">
+                      <Icon.LineHorizontal size="14" color="#262626" />
+                    </div>
+                  </>
+                )}
+                <DeletedPostMessage
+                  className={`${
+                    post?.relationships?.replied && homeView && 'ml-6'
+                  } cursor-default`}
+                />
+              </div>
             ) : (
               <MainPostContent
                 post={post}

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import LinkParser from 'react-link-parser';
 import ProfileLink from '../Post/_ProfileLink';
-import { Icon } from '@social/ui-shared';
+import { Icon, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 interface ParsingProps {
   children: string;
@@ -21,6 +23,37 @@ const tagsIcons: { [key: string]: JSX.Element } = {
 };
 
 const Parsing = ({ children, fullContent = false }: ParsingProps) => {
+  const [copy, setCopy] = useState(false);
+
+  const highlightInlineCode = (text: string): JSX.Element[] => {
+    const parts = text.split(/(`[^`]*`)/g);
+    return parts.map((part, index) =>
+      part.startsWith('`') && part.endsWith('`') && part.length > 2 ? (
+        <span
+          key={index}
+          className="border border-white/10 px-1.5 py-0.5 rounded bg-[#818b981f] text-[#C01343]"
+        >
+          {part.slice(1, -1)}
+        </span>
+      ) : (
+        <span key={index}>{part}</span>
+      ),
+    );
+  };
+
+  const highlightBoldText = (text: string): JSX.Element[] => {
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((part, index) =>
+      part.startsWith('**') && part.endsWith('**') && part.length > 4 ? (
+        <strong key={index} className="font-bold">
+          {part.slice(2, -2)}
+        </strong>
+      ) : (
+        <span key={index}>{part}</span>
+      ),
+    );
+  };
+
   const watchers = [
     {
       type: 'startsWith',
@@ -48,8 +81,8 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
     },
     {
       watchFor: 'link',
-      render: (url) => {
-        const isValidUrl = (value) => {
+      render: (url: string) => {
+        const isValidUrl = (value: string) => {
           try {
             const parsedUrl = new URL(value);
             return (
@@ -97,25 +130,106 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
     },
   ];
 
-  const cleanText = (text: string) => {
-    return text.replace(/\n{3,}/g, '\n\n');
-  };
-
+  const cleanText = (text: string) => text.replace(/\n{3,}/g, '\n\n');
   const cleanedText = cleanText(children.toString());
-  const minifiedContent = Utils.minifyContent(cleanedText, 10);
-  const contentText = fullContent ? cleanedText : minifiedContent;
+  const contentText = fullContent
+    ? cleanedText
+    : Utils.minifyContent(cleanedText, 10);
   const lines = contentText.split('\n');
 
-  return (
-    <>
-      {lines.map((line, index) => (
-        <span key={index}>
-          <LinkParser watchers={watchers as []}>{line}</LinkParser>
-          {index < lines.length - 1 && <br />}
-        </span>
-      ))}
-    </>
-  );
+  const renderCodeBlock = (codeContent: string, key: string) => {
+    if (!codeContent.trim()) return null;
+    return (
+      <div key={key} className="w-full max-w-[740px]">
+        <div
+          onClick={(event) => event.stopPropagation()}
+          className="bg-[#3a404d] flex justify-between px-4 py-1 items-center rounded-t-md"
+        >
+          <Typography.Body variant="small-bold" className="text-opacity-80">
+            code
+          </Typography.Body>
+          <div
+            className="flex gap-1 items-center opacity-80 hover:opacity-100"
+            onClick={async () => {
+              if (!copy) {
+                try {
+                  await navigator.clipboard.writeText(codeContent);
+                  setCopy(true);
+                  setTimeout(() => setCopy(false), 1000);
+                } catch (error) {
+                  console.error('Failed to copy text to clipboard:', error);
+                }
+              }
+            }}
+          >
+            {copy ? <Icon.Check size="16" /> : <Icon.Clipboard size="16" />}
+            <Typography.Body variant="small-bold">
+              {copy ? 'Copied!' : 'Copy'}
+            </Typography.Body>
+          </div>
+        </div>
+        <SyntaxHighlighter
+          language="typescript"
+          style={dracula}
+          wrapLongLines
+          className="scrollbar-thin scrollbar-webkit"
+          customStyle={{
+            margin: '0px',
+            borderRadius: '0px',
+          }}
+        >
+          {codeContent}
+        </SyntaxHighlighter>
+      </div>
+    );
+  };
+
+  const renderContent = () => {
+    const elements: JSX.Element[] = [];
+    let isCodeBlock = false;
+    let codeLines: string[] = [];
+
+    lines.forEach((line, index) => {
+      if (line.trim() === '```') {
+        if (isCodeBlock) {
+          elements.push(
+            renderCodeBlock(codeLines.join('\n'), `code-${index}`) || <></>,
+          );
+          codeLines = [];
+          isCodeBlock = false;
+        } else {
+          isCodeBlock = true;
+        }
+      } else if (isCodeBlock) {
+        codeLines.push(line);
+      } else {
+        elements.push(
+          <span key={index}>
+            {line.includes('**') ? (
+              highlightBoldText(line)
+            ) : line.includes('`') ? (
+              highlightInlineCode(line)
+            ) : (
+              <LinkParser watchers={watchers as []}>{line}</LinkParser>
+            )}
+            {index < lines.length - 1 && <br />}
+          </span>,
+        );
+      }
+    });
+
+    if (isCodeBlock) {
+      const renderedBlock = renderCodeBlock(
+        codeLines.join('\n'),
+        'code-unclosed',
+      );
+      if (renderedBlock) elements.push(renderedBlock);
+    }
+
+    return elements;
+  };
+
+  return <>{renderContent()}</>;
 };
 
 export default Parsing;
