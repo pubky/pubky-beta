@@ -1,8 +1,10 @@
 'use client';
 
-import { BottomSheet } from '@social/ui-shared';
+import { BottomSheet as BottomSheetUI } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import ContentEditArticle from '../Modal/_EditArticle/_Content';
+import { useState } from 'react';
+import { BottomSheet } from '.';
 
 interface EditArticleProps {
   show: boolean;
@@ -19,18 +21,33 @@ export default function EditArticle({
   title,
   className,
 }: EditArticleProps) {
+  const [draft, setDraft] = useState(false);
+  const [content, setContent] = useState(false);
+
+  const closeModal = () => {
+    if (content) {
+      setDraft(true);
+    } else {
+      setShow(false);
+    }
+  };
+
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
-      <ContentEditArticle
-        className="p-0 border-none"
-        setShowModalEditArticle={setShow}
-        article={article}
-      />
-    </BottomSheet.Root>
+    <>
+      <BottomSheetUI.Root
+        show={show}
+        setShow={closeModal}
+        title={title}
+        className={className}
+      >
+        <ContentEditArticle
+          className="p-0 border-none"
+          setShowModalEditArticle={setShow}
+          article={article}
+          setContent={setContent}
+        />
+      </BottomSheetUI.Root>
+      <BottomSheet.Draft show={draft} setShow={setDraft} setClose={setShow} />
+    </>
   );
 }

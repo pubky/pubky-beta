@@ -9,12 +9,14 @@ interface CreateEditArticleProps {
   setShowModalEditArticle: React.Dispatch<React.SetStateAction<boolean>>;
   article: PostView;
   className?: string;
+  setContent?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ContentEditArticle({
   setShowModalEditArticle,
   article,
   className,
+  setContent,
 }: CreateEditArticleProps) {
   const { editPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -23,6 +25,16 @@ export default function ContentEditArticle({
   const [contentEditArticle, setContentEditArticle] = useState('');
   const [sendingEditArticle, setSendingEditArticle] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);
+
+  useEffect(() => {
+    if (setContent) {
+      if (contentEditArticle.trim() !== '') {
+        setContent(true);
+      } else {
+        setContent(false);
+      }
+    }
+  }, [contentEditArticle]);
 
   useEffect(() => {
     setContentEditArticle(

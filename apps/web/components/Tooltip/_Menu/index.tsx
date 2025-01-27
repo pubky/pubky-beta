@@ -24,8 +24,6 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
   const tooltipMenuRef = useRef<HTMLDivElement>(null);
   const modalDeletePostRef = useRef<HTMLDivElement>(null);
   const modalReportPostRef = useRef<HTMLDivElement>(null);
-  const modalEditPostRef = useRef<HTMLDivElement>(null);
-  const modalEditArticleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
@@ -42,20 +40,6 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
         }
         return;
       }
-      if (modalEditPostRef.current) {
-        if (!modalEditPostRef.current.contains(event.target as Node)) {
-          setShowModalEditPost(false);
-        }
-        return;
-      }
-
-      if (modalEditArticleRef.current) {
-        if (!modalEditArticleRef.current.contains(event.target as Node)) {
-          setShowModalEditArticle(false);
-        }
-        return;
-      }
-
       if (
         tooltipMenuRef.current &&
         !tooltipMenuRef.current.contains(event.target as Node)
@@ -69,18 +53,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideTooltip);
     };
-  }, [
-    tooltipMenuRef,
-    setShowMenu,
-    modalDeletePostRef,
-    setShowModalDeletePost,
-    modalReportPostRef,
-    setShowModalReportPost,
-    modalEditPostRef,
-    setShowModalEditPost,
-    modalEditArticleRef,
-    setShowModalEditArticle,
-  ]);
+  }, [tooltipMenuRef, modalDeletePostRef, modalReportPostRef]);
 
   const handleDeletePost = async () => {
     try {
@@ -130,40 +103,38 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
             setShowModalEditArticle={setShowModalEditArticle}
           />
         </Tooltip.Main>
+        {showModalDeletePost && (
+          <Modal.DeletePost
+            showModalDeletePost={showModalDeletePost}
+            setShowModalDeletePost={setShowModalDeletePost}
+            handleDeletePost={handleDeletePost}
+            modalDeletePostRef={modalDeletePostRef}
+          />
+        )}
+        {showModalReportPost && (
+          <Modal.ReportPost
+            showModal={showModalReportPost}
+            setShowModal={setShowModalReportPost}
+            modalReportPostRef={modalReportPostRef}
+            post={post}
+          />
+        )}
+        {showModalEditPost && (
+          <Modal.EditPost
+            showModalEditPost={showModalEditPost}
+            setShowModalEditPost={setShowModalEditPost}
+            handleCloseModal={() => setShowMenu(false)}
+            post={post}
+          />
+        )}
+        {showModalEditArticle && (
+          <Modal.EditArticle
+            showModalEditArticle={showModalEditArticle}
+            setShowModalEditArticle={setShowModalEditArticle}
+            article={post}
+          />
+        )}
       </div>
-      {showModalDeletePost && (
-        <Modal.DeletePost
-          showModalDeletePost={showModalDeletePost}
-          setShowModalDeletePost={setShowModalDeletePost}
-          handleDeletePost={handleDeletePost}
-          modalDeletePostRef={modalDeletePostRef}
-        />
-      )}
-      {showModalReportPost && (
-        <Modal.ReportPost
-          showModal={showModalReportPost}
-          setShowModal={setShowModalReportPost}
-          modalReportPostRef={modalReportPostRef}
-          post={post}
-        />
-      )}
-      {showModalEditPost && (
-        <Modal.EditPost
-          showModalEditPost={showModalEditPost}
-          setShowModalEditPost={setShowModalEditPost}
-          handleCloseModal={() => setShowMenu(false)}
-          modalEditPostRef={modalEditPostRef}
-          post={post}
-        />
-      )}
-      {showModalEditArticle && (
-        <Modal.EditArticle
-          showModalEditArticle={showModalEditArticle}
-          setShowModalEditArticle={setShowModalEditArticle}
-          modalEditArticleRef={modalEditArticleRef}
-          article={post}
-        />
-      )}
     </>
   );
 }

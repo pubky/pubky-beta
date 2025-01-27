@@ -1,8 +1,10 @@
 'use client';
 
-import { BottomSheet } from '@social/ui-shared';
+import { BottomSheet as BottomSheetUI } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import ContentEditPost from '../Modal/_EditPost/_Content';
+import { useState } from 'react';
+import { BottomSheet } from '.';
 
 interface EditPostProps {
   show: boolean;
@@ -19,19 +21,34 @@ export default function EditPost({
   title,
   className,
 }: EditPostProps) {
+  const [draft, setDraft] = useState(false);
+  const [content, setContent] = useState(false);
+
+  const closeModal = () => {
+    if (content) {
+      setDraft(true);
+    } else {
+      setShow(false);
+    }
+  };
+
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
-      <ContentEditPost
-        setShowModalEditPost={setShow}
-        className="p-0 border-none"
-        post={post}
-        handleCloseModal={() => setShow(false)}
-      />
-    </BottomSheet.Root>
+    <>
+      <BottomSheetUI.Root
+        show={show}
+        setShow={closeModal}
+        title={title}
+        className={className}
+      >
+        <ContentEditPost
+          setShowModalEditPost={setShow}
+          className="p-0 border-none"
+          post={post}
+          handleCloseModal={() => setShow(false)}
+          setContent={setContent}
+        />
+      </BottomSheetUI.Root>
+      <BottomSheet.Draft show={draft} setShow={setDraft} setClose={setShow} />
+    </>
   );
 }

@@ -8,6 +8,7 @@ interface CreateEditPostProps {
   setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
   handleCloseModal: () => void;
+  setContent?: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
@@ -15,6 +16,7 @@ export default function ContentEditPost({
   setShowModalEditPost,
   post,
   handleCloseModal,
+  setContent,
   className,
 }: CreateEditPostProps) {
   const { editPost, timeline, setTimeline } = usePubkyClientContext();
@@ -22,6 +24,16 @@ export default function ContentEditPost({
   const [contentEditPost, setContentEditPost] = useState('');
   const [sendingEditPost, setSendingEditPost] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);
+
+  useEffect(() => {
+    if (setContent) {
+      if (contentEditPost.trim() !== '') {
+        setContent(true);
+      } else {
+        setContent(false);
+      }
+    }
+  }, [contentEditPost]);
 
   useEffect(() => {
     setContentEditPost(post?.details?.content);
