@@ -145,9 +145,11 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
           onClick={(event) => event.stopPropagation()}
           className="bg-[#3a404d] flex justify-between px-4 py-1 items-center rounded-t-md"
         >
-          <Typography.Body variant="small-bold">Example Code</Typography.Body>
+          <Typography.Body variant="small-bold" className="text-opacity-80">
+            code
+          </Typography.Body>
           <div
-            className="flex gap-1 items-center"
+            className="flex gap-1 items-center opacity-80 hover:opacity-100"
             onClick={async () => {
               if (!copy) {
                 try {
@@ -162,7 +164,7 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
           >
             {copy ? <Icon.Check size="16" /> : <Icon.Clipboard size="16" />}
             <Typography.Body variant="small-bold">
-              {copy ? 'Copied!' : 'Copy code'}
+              {copy ? 'Copied!' : 'Copy'}
             </Typography.Body>
           </div>
         </div>
