@@ -51,6 +51,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
   const clearTimeline = () => {
     setTimeline([]);
+    setNewPosts([]);
     setStart(undefined);
   };
 
