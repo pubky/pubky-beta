@@ -461,16 +461,8 @@ export function PubkyClientWrapper({
         throw new Error('Failed to get session');
       }
 
-      // Save pubky state
+      // New pubky id
       const pk = session.pubky().z32();
-      setPubkyAndStorage(pk);
-      setNewUser(true);
-
-      // Save info in storage
-      Utils.storage.set('seed', seed);
-      setSeed(seed);
-      Utils.storage.set('mnemonic', mnemonic);
-      setMnemonic(mnemonic);
 
       // pubky id just changed, let's create a new SpecsBuilder
       const specsBuilder = new PubkySpecsBuilder(pk);
@@ -496,8 +488,6 @@ export function PubkyClientWrapper({
       // Let's bring the full wasm object into JS and assign correct type.
       const user = result.user.toJson() as PubkyAppUser;
 
-      await storeProfile(user);
-
       // Send the profile to the homeserver
       const response = await homeserver.put(
         result.meta.url,
@@ -508,6 +498,16 @@ export function PubkyClientWrapper({
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
         throw new Error(errorMessage);
       }
+
+      // Save new state
+      setPubkyAndStorage(pk);
+      setNewUser(true);
+      // Save info in storage
+      Utils.storage.set('seed', seed);
+      setSeed(seed);
+      Utils.storage.set('mnemonic', mnemonic);
+      setMnemonic(mnemonic);
+      await storeProfile(user);
 
       return user;
     } catch (error) {
