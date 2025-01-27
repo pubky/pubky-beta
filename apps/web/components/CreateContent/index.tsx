@@ -151,22 +151,6 @@ export default function CreateContent({
   }, [wrapperRef, content, setTextArea]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
-
-  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
         (event.ctrlKey || event.metaKey) &&
