@@ -249,7 +249,7 @@ export default function Content({
           } catch (error) {
             console.error(error);
           }
-          return <Parsing fullContent={fullContent}>{contentText}</Parsing>;
+          return <div className='opacity-80'><Parsing fullContent={fullContent}>{contentText}</Parsing></div>;
         })()}
 
         {showMore && (
