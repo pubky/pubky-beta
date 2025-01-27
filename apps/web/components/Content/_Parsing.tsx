@@ -26,9 +26,9 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
   const [copy, setCopy] = useState(false);
 
   const highlightInlineCode = (text: string): JSX.Element[] => {
-    const parts = text.split(/(`[^`]+`)/g);
+    const parts = text.split(/(`[^`]*`)/g);
     return parts.map((part, index) =>
-      part.startsWith('`') && part.endsWith('`') ? (
+      part.startsWith('`') && part.endsWith('`') && part.length > 2 ? (
         <span
           key={index}
           className="border border-white/10 px-2 py-1 rounded bg-[#818b981f] text-[#C01343]"
@@ -124,47 +124,50 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
     : Utils.minifyContent(cleanedText, 10);
   const lines = contentText.split('\n');
 
-  const renderCodeBlock = (codeContent: string, key: string) => (
-    <div key={key}>
-      <div
-        onClick={(event) => event.stopPropagation()}
-        className="bg-[#3a404d] flex justify-between px-4 py-1 items-center rounded-t-md"
-      >
-        <Typography.Body variant="small-bold">Example Code</Typography.Body>
+  const renderCodeBlock = (codeContent: string, key: string) => {
+    if (!codeContent.trim()) return null;
+    return (
+      <div key={key} className="w-full max-w-[740px]">
         <div
-          className="flex gap-1 items-center"
-          onClick={async () => {
-            if (!copy) {
-              try {
-                await navigator.clipboard.writeText(codeContent);
-                setCopy(true);
-                setTimeout(() => setCopy(false), 1000);
-              } catch (error) {
-                console.error('Failed to copy text to clipboard:', error);
+          onClick={(event) => event.stopPropagation()}
+          className="bg-[#3a404d] flex justify-between px-4 py-1 items-center rounded-t-md"
+        >
+          <Typography.Body variant="small-bold">Example Code</Typography.Body>
+          <div
+            className="flex gap-1 items-center"
+            onClick={async () => {
+              if (!copy) {
+                try {
+                  await navigator.clipboard.writeText(codeContent);
+                  setCopy(true);
+                  setTimeout(() => setCopy(false), 1000);
+                } catch (error) {
+                  console.error('Failed to copy text to clipboard:', error);
+                }
               }
-            }
+            }}
+          >
+            {copy ? <Icon.Check size="16" /> : <Icon.Clipboard size="16" />}
+            <Typography.Body variant="small-bold">
+              {copy ? 'Copied!' : 'Copy code'}
+            </Typography.Body>
+          </div>
+        </div>
+        <SyntaxHighlighter
+          language="typescript"
+          style={dracula}
+          wrapLongLines
+          className="scrollbar-thin scrollbar-webkit"
+          customStyle={{
+            margin: '0px',
+            borderRadius: '0px',
           }}
         >
-          {copy ? <Icon.Check size="16" /> : <Icon.Clipboard size="16" />}
-          <Typography.Body variant="small-bold">
-            {copy ? 'Copied!' : 'Copy code'}
-          </Typography.Body>
-        </div>
+          {codeContent}
+        </SyntaxHighlighter>
       </div>
-      <SyntaxHighlighter
-        language="typescript"
-        style={dracula}
-        wrapLongLines
-        className="w-full max-w-[740px] scrollbar-thin scrollbar-webkit"
-        customStyle={{
-          margin: '0px',
-          borderRadius: '0px',
-        }}
-      >
-        {codeContent}
-      </SyntaxHighlighter>
-    </div>
-  );
+    );
+  };
 
   const renderContent = () => {
     const elements: JSX.Element[] = [];
@@ -174,7 +177,9 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
     lines.forEach((line, index) => {
       if (line.trim() === '```') {
         if (isCodeBlock) {
-          elements.push(renderCodeBlock(codeLines.join('\n'), `code-${index}`));
+          elements.push(
+            renderCodeBlock(codeLines.join('\n'), `code-${index}`) || <></>,
+          );
           codeLines = [];
           isCodeBlock = false;
         } else {
@@ -197,7 +202,11 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
     });
 
     if (isCodeBlock) {
-      elements.push(renderCodeBlock(codeLines.join('\n'), 'code-unclosed'));
+      const renderedBlock = renderCodeBlock(
+        codeLines.join('\n'),
+        'code-unclosed',
+      );
+      if (renderedBlock) elements.push(renderedBlock);
     }
 
     return elements;
