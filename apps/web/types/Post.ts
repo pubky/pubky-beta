@@ -62,22 +62,7 @@ export interface Tag {
   tagger_id: string;
 }
 
-export interface PostEmbed {
-  kind: PostKind;
-  uri: string;
-  postId?: string;
-}
-
-export interface PubkyAppPost {
-  content: string;
-  kind: PostKind;
-  parent?: string;
-  embed?: PostEmbed | null;
-  relationships?: PostRelationships;
-  attachments?: string[];
-}
-
-export interface PubkyAppFile {
+export interface FileView {
   name: string;
   created_at: number;
   src: string;
@@ -89,12 +74,9 @@ export interface PubkyAppFile {
   uri: string;
   urls: string;
 }
+
 export interface Links {
   title: string;
   url: string;
   placeHolder?: string;
 }
-
-export type PostStreamReach = 'Following' | 'Followers' | 'Friends';
-export type PostStreamSorting = 'Timeline' | 'TotalEngagement';
-export type PostKind = 'short' | 'long' | 'image' | 'video' | 'link' | 'file';

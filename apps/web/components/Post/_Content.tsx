@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import { FileContent, PostView } from '@/types/Post';
+import { FileView, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -39,7 +39,7 @@ export default function Content({
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
-  const [fileContents, setFileContents] = useState<FileContent[]>([]);
+  const [fileContents, setFileContents] = useState<FileView[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showSheet, setShowSheet] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
@@ -108,7 +108,7 @@ export default function Content({
     const fetchFile = async (
       fileUri: string,
       retryCount = 0,
-    ): Promise<FileContent | null> => {
+    ): Promise<FileView | null> => {
       try {
         const fetchedFile = await getFile(fileUri);
         return fetchedFile;
@@ -156,7 +156,7 @@ export default function Content({
 
         setFileContents(
           fetchedFiles
-            .filter((file): file is FileContent => file !== null)
+            .filter((file): file is FileView => file !== null)
             .map((file) => ({
               ...file,
               urls: file.urls,

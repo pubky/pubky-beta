@@ -3,13 +3,13 @@
 
 import { useEffect, useRef } from 'react';
 import { Modal } from '@social/ui-shared';
-import { FileContent } from '@/types/Post';
+import { FileView } from '@/types/Post';
 import ContentFilesCarousel from './_Content';
 
 interface FilesCarouselProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  fileContents: FileContent[];
+  fileContents: FileView[];
   currentFileIndex: number;
   setCurrentFileIndex: React.Dispatch<React.SetStateAction<number>>;
 }
