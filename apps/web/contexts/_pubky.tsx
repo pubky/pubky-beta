@@ -1210,7 +1210,7 @@ export function PubkyClientWrapper({
         {
           details: {
             id: repostId,
-            author: repostedPost?.details.author ?? '',
+            author: pubky ?? '',
             content: repostContent,
             kind,
             uri: repostedPost?.details.uri ?? '',
