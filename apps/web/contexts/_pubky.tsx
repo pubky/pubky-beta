@@ -286,6 +286,7 @@ export function PubkyClientWrapper({
         setReplies([]);
         setSearchTags([]);
         setPubky(undefined);
+        setSpecsBuilder(undefined);
       });
       return true;
     } catch (error) {
