@@ -28,14 +28,15 @@ import init, {
 } from 'pubky-app-specs';
 import { defaultPreferences } from './_filters';
 
-const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
 const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
   process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
   'https://demo.httprelay.io/link/';
 
 const client = TESTNET ? Client.testnet() : new Client();
-const hs = PublicKey.from(HOMESERVER_PUBLIC_KEY);
+const NEXT_PUBLIC_HOMESERVER = PublicKey.from(
+  process.env.NEXT_PUBLIC_HOMESERVER,
+);
 
 type PubkyClientContextType = {
   pubky: string | undefined;
@@ -346,6 +347,27 @@ export function PubkyClientWrapper({
     }
   };
 
+  // Helper used on the different login methods
+  async function authenticateKeypair(keypair: Keypair): Promise<string> {
+    // 1) Sign up with the Keypair
+    await client.signin(keypair);
+
+    // 2) Retrieve the session
+    const session = await client.session(keypair.publicKey());
+    if (!session) {
+      throw new Error('Failed to get session');
+    }
+
+    // 3) Derive the public key in z32 form
+    const pk = session.pubky().z32();
+
+    // 4) Persist the pk to state and storage
+    setPubkyAndStorage(pk);
+    setSpecsBuilder(new PubkySpecsBuilder(pk));
+
+    return pk;
+  }
+
   const loginWithFile = async (password: string, recoveryFile: Buffer) => {
     try {
       const keypair = decryptRecoveryFile(recoveryFile, password);
@@ -354,24 +376,9 @@ export function PubkyClientWrapper({
         throw new Error('Invalid recovery file');
       }
 
-      // Sign up
-      await client.signup(keypair, hs);
-
-      // Get session
-      const session = await client.session(keypair.publicKey());
-
-      if (!session) {
-        throw new Error('Failed to get session');
-      }
-
-      // Save pubky state
-      const pk = session.pubky().z32();
-
-      setPubkyAndStorage(pk);
-      return pk;
+      return await authenticateKeypair(keypair);
     } catch (error: any) {
-      // Get error message and return as a string
-      console.log(error);
+      console.error(error);
       throw new Error(error.message);
     }
   };
@@ -381,28 +388,14 @@ export function PubkyClientWrapper({
       if (!bip39.validateMnemonic(mnemonic)) {
         throw new Error('Invalid recovery phrase');
       }
+
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
       const secretKey = seedMnemonic.slice(0, 32);
       const keypair = Keypair.fromSecretKey(secretKey);
 
-      // Sign up
-      await client.signup(keypair, hs);
-
-      // Get session
-      const session = await client.session(keypair.publicKey());
-
-      if (!session) {
-        throw new Error('Failed to get session');
-      }
-
-      // Save pubky state
-      const pk = session.pubky().z32();
-
-      setPubkyAndStorage(pk);
-      return pk;
+      return await authenticateKeypair(keypair);
     } catch (error: any) {
-      // Get error message and return as a string
-      console.log(error);
+      console.error(error);
       throw new Error(error.message);
     }
   };
@@ -460,7 +453,7 @@ export function PubkyClientWrapper({
       const seed = Utils.uint8ArrayToBase64(newKeypair.secretKey());
 
       // Sign up
-      await client.signup(newKeypair, hs);
+      await client.signup(newKeypair, NEXT_PUBLIC_HOMESERVER);
 
       // Get session
       const session = await client.session(newKeypair.publicKey());
