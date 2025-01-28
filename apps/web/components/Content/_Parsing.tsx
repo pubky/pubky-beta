@@ -204,7 +204,7 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
         codeLines.push(line);
       } else {
         elements.push(
-          <span key={index}>
+          <span key={index} className="opacity-90 text-[17px] font-normal leading-snug tracking-wide">
             {line.includes('**') ? (
               highlightBoldText(line)
             ) : line.includes('`') ? (
