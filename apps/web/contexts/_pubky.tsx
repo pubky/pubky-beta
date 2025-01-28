@@ -332,7 +332,7 @@ export function PubkyClientWrapper({
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
-      console.error("Error", error);
+      console.error(error);
       throw new Error(error);
     }
   };
