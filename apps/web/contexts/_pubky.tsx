@@ -338,6 +338,8 @@ export function PubkyClientWrapper({
       const pk = publickey;
 
       setPubkyAndStorage(pk);
+      const specsBuilder = new PubkySpecsBuilder(pk);
+      setSpecsBuilder(specsBuilder);
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
@@ -368,6 +370,8 @@ export function PubkyClientWrapper({
       const pk = session.pubky().z32();
 
       setPubkyAndStorage(pk);
+      const specsBuilder = new PubkySpecsBuilder(pk);
+      setSpecsBuilder(specsBuilder);
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
@@ -399,6 +403,8 @@ export function PubkyClientWrapper({
       const pk = session.pubky().z32();
 
       setPubkyAndStorage(pk);
+      const specsBuilder = new PubkySpecsBuilder(pk);
+      setSpecsBuilder(specsBuilder);
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
