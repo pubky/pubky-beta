@@ -7,8 +7,7 @@ import { useRouter } from 'next/navigation';
 import { getFile } from '@/services/fileService';
 import { Links } from '@/types/Post';
 import { usePubkyClientContext } from '@/contexts';
-import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
-import { PubkyAppUserLink } from 'pubky-app-specs';
+import { processUserLinks } from '@/app/onboarding/register/components/processUserLinks';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -82,78 +81,13 @@ export default function Buttons({
         return;
       }
 
-      const linksObject: PubkyAppUserLink[] = [];
-      const invalidLinkIndexes: number[] = [];
+      const { userLinks: linksObject, errors: linkErrors } =
+        processUserLinks(links);
 
-      links.forEach((link, index) => {
-        if (link.url) {
-          let validationResult;
-          const cleanUrl = link.url.replace('mailto:', '');
-
-          if (
-            link.title.toLowerCase() === 'email' ||
-            link.title.toLowerCase() === 'mail'
-          ) {
-            validationResult = z
-              .string()
-              .email({ message: 'Invalid email address' })
-              .safeParse(cleanUrl);
-
-            if (validationResult.success) {
-              linksObject.push(
-                new PubkyAppUserLink(link.title, `mailto:${cleanUrl}`),
-              );
-            } else {
-              invalidLinkIndexes.push(index);
-            }
-          } else {
-            validationResult = z
-              .string()
-              .url({ message: 'Invalid website URL' })
-              .optional()
-              .safeParse(link.url);
-
-            if (!validationResult.success) {
-              const socialLink = socialLinks.find(
-                (social) =>
-                  social.name.toLowerCase() === link.title.toLowerCase(),
-              );
-
-              if (socialLink) {
-                const completedUrl = `${socialLink.url}${link.url}`;
-                validationResult = z
-                  .string()
-                  .url({ message: 'Invalid website URL' })
-                  .safeParse(completedUrl);
-
-                if (validationResult.success) {
-                  linksObject.push(
-                    new PubkyAppUserLink(link.title, completedUrl),
-                  );
-                } else {
-                  invalidLinkIndexes.push(index);
-                }
-              } else {
-                invalidLinkIndexes.push(index);
-              }
-            } else {
-              linksObject.push(new PubkyAppUserLink(link.title, link.url));
-            }
-          }
-        }
-      });
-
-      if (invalidLinkIndexes.length > 0) {
+      if (linkErrors.length > 0) {
         const newErrors: FormErrors = {};
-        invalidLinkIndexes.forEach((index) => {
-          if (
-            links[index].title.toLowerCase() === 'email' ||
-            links[index].title.toLowerCase() === 'mail'
-          ) {
-            newErrors[`link${index}`] = ['Invalid email address'];
-          } else {
-            newErrors[`link${index}`] = ['Invalid website URL'];
-          }
+        linkErrors.forEach(({ index, message }) => {
+          newErrors[`link${index}`] = [message];
         });
         setErrors((prev) => ({ ...prev, ...newErrors }));
         setLoading(false);
