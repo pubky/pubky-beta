@@ -666,7 +666,7 @@ export function PubkyClientWrapper({
 
       setNewPosts((prev) => [newPostView, ...prev]);
 
-      return { uri: result.uri, details: newPostDetails as any };
+      return { uri: result.uri, details: result.details };
     },
   );
 

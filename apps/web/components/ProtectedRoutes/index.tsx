@@ -8,6 +8,7 @@ import Modal from '../Modal';
 import { getUserMuted, getUserProfile } from '@/services/userService';
 import { defaultPreferences } from '@/contexts/_filters';
 import { Utils } from '@social/utils-shared';
+import { PubkyAppUser } from 'pubky-app-specs';
 
 export default function ProtectedRoutes({
   children,
@@ -101,8 +102,15 @@ export default function ProtectedRoutes({
 
     if (emptyProfile) {
       try {
-        const user = await getUserProfile(pubky, pubky);
-        storeProfile(user.details as any);
+        const userDetails = (await getUserProfile(pubky, pubky)).details;
+        const user = {
+          name: userDetails.name,
+          bio: userDetails.bio,
+          image: userDetails.image,
+          links: userDetails.links,
+          status: userDetails.status,
+        } as PubkyAppUser;
+        storeProfile(user);
         emptyProfile = false;
         return true;
       } catch (error) {
