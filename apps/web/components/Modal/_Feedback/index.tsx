@@ -2,7 +2,7 @@
 
 import { Modal } from '@social/ui-shared';
 import { useEffect, useRef } from 'react';
-import { PubkyAppUser } from '@/types/Post';
+import { PubkyAppUser } from 'pubky-app-specs';
 import ContentFeedback from './_Content';
 
 interface FeedbackProps {

@@ -4,7 +4,7 @@ import { Button, Icon, Input, Modal, Typography } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts/_pubky';
-import { PubkyAppUser } from '@/types/Post';
+import { PubkyAppUser } from 'pubky-app-specs';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 

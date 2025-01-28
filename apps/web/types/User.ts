@@ -1,3 +1,4 @@
+import { PubkyAppUserLink } from 'pubky-app-specs';
 import { TStatus } from '.';
 
 export interface UserCounts {
@@ -15,16 +16,12 @@ export interface UserDetails {
   bio?: string;
   id: string;
   indexed_at: number;
-  links?: UserLink[];
+  links?: PubkyAppUserLink[];
   name: string;
   image?: string;
   status?: TStatus;
 }
 
-export interface UserLink {
-  title: string;
-  url: string;
-}
 
 export interface UserTags {
   label: string;
