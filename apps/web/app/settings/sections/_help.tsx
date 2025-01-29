@@ -37,10 +37,10 @@ const questions: QuestionsType = {
         className="text-opacity-80 text-[16px] mr-2 leading-snug"
         variant="medium"
       >
-        If you wish to delete a post, simply go to the content piece you wish to
-        remove, hover over the three dots on the bottom right corner of your
-        screen, click on that and you will be presented with a few options. At
-        the very bottom you can see an option to “Delete Post”.
+        If you wish to delete a post, simply go to the content piece you wish
+        to remove and click on the three dots on the bottom right corner to be
+        presented with a few options. At the very bottom you can see an option
+        to “Delete Post”.
       </Typography.Body>
     ),
   },
@@ -64,17 +64,21 @@ const questions: QuestionsType = {
         className="text-opacity-80 text-[16px] mr-2 leading-snug"
         variant="medium"
       >
-        When you first signed up to Pubky, the app would have prompted you to
-        create a back up. There are several ways to generate a backup:
+        When signing up for Pubky, you can either scan a QR code with the
+        Pubky Ring mobile app or create a new Pubky.
+        <br />
+        <br />
+        If you use Pubky Ring, it will handle your backup and you'll only
+        need to scan the QR code to sign in again.
+        <br />
+        <br />
+        If you create a new Pubky, it's essential to back it up. There are
+        two ways to do this, whichever way you choose to backup your account
+        will be entirely up to you and your preferences.
+        <br />
+        <br />
         <ul>
-          <li>1. Via QR</li>
-          <li>2. Code Recovery </li>
-          <li>3. File Recovery Phrase </li>
-        </ul>
-        <br />
-        Whichever way you choose to backup your account will be entirely up to
-        you and your preferences.
-        <br />
+          <li><strong>1. Recovery File</strong></li>
         <br />
         To restore via recovery file, first you will need to select the recovery
         file, which you would have downloaded and saved upon signing up to Pubky
@@ -86,7 +90,19 @@ const questions: QuestionsType = {
         <br />
         <br />
         After you are done, simply click on “Sign In” and you should have access
-        to your profile. This is one of the ways you can recover your account.
+        to your profile.
+        <br />
+        <br />
+          <li><strong>2. Recovery Phrase</strong></li>
+        </ul>
+        <br />
+        To restore via recovery phase, you will need to type or paste the 12
+        word phrase, which you would have taken note of when signing up to Pubky
+        app.
+        <br />
+        <br />
+        After you are done, simply click on “Sign In” and you should have access
+        to your profile.
       </Typography.Body>
     ),
   },
