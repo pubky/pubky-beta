@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import CreateContent from '@/components/CreateContent';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreatePostProps {
   setShowModalPost: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,7 +41,12 @@ export default function ContentCreatePost({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newPost = await createPost(content, 'short', selectedFiles, quote);
+      const newPost = await createPost(
+        content,
+        PubkyAppPostKind.Short,
+        selectedFiles,
+        quote,
+      );
       const match = newPost && newPost?.uri.match(regex);
 
       if (newPost && match) {

@@ -1,8 +1,8 @@
 'use client';
 
 import { BottomSheet } from '@social/ui-shared';
-import { PubkyAppUser } from '@/types/Post';
 import ContentFeedback from '../Modal/_Feedback/_Content';
+import { PubkyAppUser } from 'pubky-app-specs';
 
 interface FeedbackProps {
   show: boolean;

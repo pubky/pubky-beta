@@ -1,10 +1,10 @@
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { UserLink } from '@/types/User';
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import Link from 'next/link';
+import { PubkyAppUserLink } from 'pubky-app-specs';
 
 interface LinksSectionProps {
-  links: UserLink[] | { title: string; url: string }[];
+  links: PubkyAppUserLink[];
   checkLink: boolean;
   setShowModalCheckLink: (show: boolean) => void;
   setShowSheetCheckLink: (show: boolean) => void;

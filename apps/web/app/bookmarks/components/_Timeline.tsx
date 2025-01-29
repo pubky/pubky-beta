@@ -88,14 +88,10 @@ export const Timeline = () => {
     }
   };
 
-  const handleDeleteBookmark = async (
-    postId: string,
-    authorId: string,
-    bookmarkId: string,
-  ) => {
+  const handleDeleteBookmark = async (postId: string, authorId: string) => {
     try {
       setLoadingBookmarks(true);
-      const result = await deleteBookmark(postId, authorId, bookmarkId);
+      const result = await deleteBookmark(postId, authorId);
 
       if (!result) {
         addAlert('Something went wrong!', 'warning');
@@ -138,7 +134,6 @@ export const Timeline = () => {
                         ? handleDeleteBookmark(
                             post?.details?.id,
                             post?.details?.author,
-                            post?.bookmark?.id,
                           )
                         : handleAddBookmark(
                             post?.details?.id,

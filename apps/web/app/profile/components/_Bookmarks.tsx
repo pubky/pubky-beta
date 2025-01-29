@@ -54,12 +54,8 @@ export default function Bookmarks() {
     };
   }, [setTimeline]);
 
-  const handleDeleteBookmark = async (
-    postId: string,
-    authorId: string,
-    bookmarkId: string,
-  ) => {
-    await deleteBookmark(postId, authorId, bookmarkId);
+  const handleDeleteBookmark = async (postId: string, authorId: string) => {
+    await deleteBookmark(postId, authorId);
   };
 
   return (
@@ -76,7 +72,6 @@ export default function Bookmarks() {
                       ? handleDeleteBookmark(
                           post.details.id,
                           post.details.author,
-                          post?.bookmark?.id,
                         )
                       : undefined
                   }

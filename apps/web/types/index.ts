@@ -36,83 +36,6 @@ export type TContactsLayout = 'ranking' | 'list';
 export type TContent = 'all' | 'posts' | 'images' | 'videos' | 'links';
 export type TTimeframe = 'today' | 'this_month' | 'all_time';
 
-export interface TClientContext {
-  hotTags: ITaggedPost[] | null;
-  mostFollowed: IMostFollowed[] | null;
-  recommendedProfiles: IRecommendedProfiles[] | null;
-  profile: IProfile | null;
-  pubky: string | null;
-  seed: Seed | null;
-  posts: INewPost;
-  signUp: (profile: IProfilePubkyProps) => Promise<ISignUpResponse | false>;
-  getRecoveryFile: (password: string) => Promise<IRecoveryFileResponse | null>;
-  logout: () => Promise<boolean>;
-  getProfile: () => Promise<IProfile | null>;
-  saveProfile: (profile: IProfilePubkyProps) => Promise<ISaveProfile | null>;
-  getUserIndexed: (userId: string) => Promise<IUserProfile | null>;
-  createPost: (content: string, files?: File[]) => Promise<IPost | null>;
-  createRepost: (
-    uri: string,
-    content?: string,
-    file?: File[],
-  ) => Promise<IPost | null>;
-  createReply: (
-    content: string,
-    uriPost: string,
-    rootUri: string,
-    file?: File[],
-  ) => Promise<ICreateReplyResponse | null>;
-  getFile: (uri: string) => Promise<IFileContent | null>;
-  deleteFile: (id: string) => Promise<boolean>;
-  getReplies: (uri: string) => Promise<IReply | null>;
-  deletePost: (postId: string) => Promise<IDeletePost | null>;
-  createBookmark: (id: string, uri: string) => Promise<IBookmark | null>;
-  deleteBookmark: (
-    id: string,
-    uri: string,
-    bookmarkId: string,
-  ) => Promise<IBookmark | null>;
-  createTag: (uri: string, tag: string) => Promise<ICreateTagResponse | null>;
-  deleteTag: (uri: string, tag: string) => Promise<IDeleteTagResponse | null>;
-  getHotTags: () => Promise<ITaggedPost[] | null>;
-  isLoggedIn: () => Promise<string | false>;
-  session: () => Promise<string | false>;
-  listUserFeed: (
-    pubky: string,
-    cursor: string,
-    limit?: number,
-  ) => Promise<IFeed | null>;
-  listBookmarkedPosts: (cursor: string, sort: TSort) => Promise<IFeed | null>;
-  listFollowers: (pk: string) => Promise<IFollowersResponse | null>;
-  listFollowing: (pk: string) => Promise<IFollowingResponse | null>;
-  getMostFollowed: () => Promise<IMostFollowed[] | null>;
-  getNotifications: () => Promise<NotificationsResponse | null>;
-  getRecommendedProfiles: (
-    pk: string,
-  ) => Promise<IRecommendedProfiles[] | null>;
-  listGlobalPosts: (
-    cursor: string,
-    reach: TReach,
-    sort: TSort,
-    tags?: string[],
-  ) => Promise<IFeed | null>;
-  getPost: (uri: string) => Promise<IPost | null>;
-  getUser: (pk: string) => Promise<IUserProfile | null>;
-  decryptRecoveryFile: (
-    password: string,
-    recoveryFile: Buffer,
-  ) => Promise<IProfile | undefined>;
-  searchTags: string[];
-  updateStatus: (value: TStatus | string) => Promise<void>;
-  setSeed: (seed: Seed | null) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setPosts: any;
-  setSearchTags: (value: string[]) => Promise<IPost | null>;
-  searchUsers: (text: string) => Promise<IUserProfile[] | null>;
-  follow: (pk: string) => Promise<boolean>;
-  unfollow: (pk: string) => Promise<boolean>;
-}
-
 export interface IFileContent {
   contentType: string;
   createdAt: number;
@@ -171,11 +94,6 @@ export interface INotification {
   id: string;
   timestamp: number;
   type: string;
-}
-
-interface Seed {
-  type: string;
-  data: number[];
 }
 
 export interface ILink {

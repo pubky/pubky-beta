@@ -1,5 +1,5 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, deletePost, editPost, fastTagPost, replyToPost, repostPost, tagPostInFeed } from '../support/posts';
+import { createQuickPost, deletePost, editPost, fastTagPost, replyToPost, repostPost, waitForFeedToLoad } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands'
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
@@ -203,7 +203,7 @@ describe('notifications', () => {
     // * profile 1 checks for absence of notifications
   });
 
-  it('can be notified for your post being reposed', () => {
+  it('can be notified for your post being reposted', () => {
     // * profile 1 creates a post (1)
     createQuickPost(`I will be notified when this post is reposted! ${Date.now()}`);
 
@@ -234,13 +234,15 @@ describe('notifications', () => {
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(true);
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
+    cy.reload();
     cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
     replyToPost({replyContent: "I replied to your post!"});
 
     // * profile 1 deletes own post (1)
     cy.signOut(true);
     cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
-    deletePost();
+    deletePost(0);
 
     // * profile 2 checks for notification for post (1) being deleted
     cy.signOut(true);
@@ -270,8 +272,10 @@ describe('notifications', () => {
 
     // * profile 1 deletes own post (1)
     cy.signOut(true);
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
+    cy.reload();
     cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
-    deletePost();
+    deletePost(1);
 
     // * profile 2 checks for notification for post being deleted
     cy.signOut(true);
@@ -290,20 +294,21 @@ describe('notifications', () => {
     // * profile 2 checks for absence of notifications
   });
 
-  // failing due to wrong notification "edited a post you replied", see https://github.com/pubky/pubky-app/issues/823
-  it('can be notified for a post being edited that you replied', () => {
+  it('can be notified for a post being edited that you replied to', () => {
     // * profile 1 creates a post (1) that will be replied to and then edited
     createQuickPost(`The one who replies to this post will be notified when it is edited! ${Date.now()}`);
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(true);
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
+    cy.reload();
     cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
     replyToPost({replyContent: "I replied to your post!"});
 
     // * profile 1 edits own post (1)
     cy.signOut(true);
     cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
-    editPost("I edited my post!");
+    editPost("I edited my post!", 0);
 
     // * profile 2 checks for notification for post (1) being edited
     cy.signOut(true);
@@ -334,8 +339,10 @@ describe('notifications', () => {
 
     // * profile 1 edits own post (1)
     cy.signOut(true);
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
+    cy.reload();
     cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
-    editPost("I edited my post!");
+    editPost("I edited my post!", 1);
 
     // * profile 2 checks for notification for post (1) being edited
     cy.signOut(true);

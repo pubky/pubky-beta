@@ -1,4 +1,4 @@
-import { TStatus } from '.';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PostCounts {
@@ -26,7 +26,7 @@ export interface PostDetails {
   content: string;
   id: string;
   indexed_at: number;
-  kind: 'short' | 'long' | 'image' | 'video' | 'link' | 'file';
+  kind: PubkyAppPostKind;
   uri: string;
 }
 
@@ -62,22 +62,7 @@ export interface Tag {
   tagger_id: string;
 }
 
-export interface PostEmbed {
-  kind: PostKind;
-  uri: string;
-  postId?: string;
-}
-
-export interface PubkyAppPost {
-  content: string;
-  kind: PostKind;
-  parent?: string;
-  embed?: PostEmbed | null;
-  relationships?: PostRelationships;
-  attachments?: string[];
-}
-
-export interface PubkyAppFile {
+export interface FileView {
   name: string;
   created_at: number;
   src: string;
@@ -89,20 +74,9 @@ export interface PubkyAppFile {
   uri: string;
   urls: string;
 }
+
 export interface Links {
   title: string;
   url: string;
   placeHolder?: string;
 }
-
-export interface PubkyAppUser {
-  name: string;
-  bio?: string;
-  image?: string | File;
-  links?: Links[];
-  status?: TStatus | string;
-}
-
-export type PostStreamReach = 'Following' | 'Followers' | 'Friends';
-export type PostStreamSorting = 'Timeline' | 'TotalEngagement';
-export type PostKind = 'short' | 'long' | 'image' | 'video' | 'link' | 'file';

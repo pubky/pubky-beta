@@ -22,19 +22,24 @@ Create a `.env` file at the root of the project and include the following enviro
 
 ### :test_tube: Testnet Configuration
 
-```
-NEXT_PUBLIC_HOMESERVER=z6damwc3jzj1jmtac3kmsiyrgdfxaw8awndaedfnns3obyg9tzxo
+For that build, you will need to have running the following pieces:
+- [nexus service](https://github.com/pubky/pubky-core/tree/dev/pubky-homeserver), the REST API server that provides access to indexed data
+- [nexus watcher](), the event aggregator that listens for homeserver events
+- [testnet homeserver](https://github.com/pubky/pubky-core/tree/dev/pubky-homeserver), the core data availability provider responsible for storing and serving user-generated content, ensuring distributed data persistence
+
+```.env
+NEXT_PUBLIC_HOMESERVER=8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
 NEXT_PUBLIC_NEXUS=http://localhost:8080
-NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://demo.httprelay.io/link/
+NEXT_PUBLIC_DEFAULT_HTTP_RELAY=http://localhost:15412/link/
 NEXT_PUBLIC_TESTNET=true
 ```
 
 ### :earth_americas: Mainnet Configuration
 
-```
+```.env
 NEXT_PUBLIC_HOMESERVER=ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy
 NEXT_PUBLIC_NEXUS=https://nexus.staging.pubky.app
-NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://demo.httprelay.io/link/
+NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://httprelay.staging.pubky.app/link
 ```
 
 ## :running: Running Scripts

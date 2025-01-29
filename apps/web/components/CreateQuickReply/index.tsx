@@ -7,6 +7,7 @@ import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
 import { useRouter } from 'next/navigation';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -40,7 +41,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
     const sendReply = await createReply(
       post?.details?.uri,
       content,
-      'short',
+      PubkyAppPostKind.Short,
       selectedFiles,
       quote,
     );
@@ -68,7 +69,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
   return (
     <div className="ml-6">
       <CreateContent
-        id="quick-post-create-content"
+        id="quick-reply-create-content"
         className="p-4"
         handleSubmit={handleReply}
         content={contentReply}

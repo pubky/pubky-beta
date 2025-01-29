@@ -9,6 +9,7 @@ import * as Components from '@/components';
 
 import { getFile } from '@/services/fileService';
 import { getUserDetails } from '@/services/userService';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     // title with just 20 characters
     const postTitle =
-      post?.details?.kind === 'long'
+      post?.details?.kind === PubkyAppPostKind.Long
         ? Utils.truncateText(JSON.parse(post?.details?.content).title, 50)
         : Utils.truncateText(post.details.content, 50);
     const profile = await getUserDetails(post?.details.author);
