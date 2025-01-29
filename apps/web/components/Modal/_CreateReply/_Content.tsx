@@ -6,6 +6,7 @@ import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
 import Post from '@/components/Post';
 import CreateContent from '@/components/CreateContent';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateReplyProps {
   setShowModalReply: React.Dispatch<React.SetStateAction<boolean>>;
@@ -53,7 +54,7 @@ export default function ContentCreateReply({
       const newReply = await createReply(
         post?.details?.uri,
         content,
-        'short',
+        PubkyAppPostKind.Short,
         selectedFiles,
         quote,
       );

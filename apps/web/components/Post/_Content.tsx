@@ -9,13 +9,14 @@ import { useEffect, useState } from 'react';
 import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import { FileContent, PostView } from '@/types/Post';
+import { FileView, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Link from 'next/link';
 import Modal from '../Modal';
 import { BottomSheet } from '../BottomSheet';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -38,7 +39,7 @@ export default function Content({
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
-  const [fileContents, setFileContents] = useState<FileContent[]>([]);
+  const [fileContents, setFileContents] = useState<FileView[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showSheet, setShowSheet] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
@@ -107,7 +108,7 @@ export default function Content({
     const fetchFile = async (
       fileUri: string,
       retryCount = 0,
-    ): Promise<FileContent | null> => {
+    ): Promise<FileView | null> => {
       try {
         const fetchedFile = await getFile(fileUri);
         return fetchedFile;
@@ -155,7 +156,7 @@ export default function Content({
 
         setFileContents(
           fetchedFiles
-            .filter((file): file is FileContent => file !== null)
+            .filter((file): file is FileView => file !== null)
             .map((file) => ({
               ...file,
               urls: file.urls,
@@ -200,7 +201,7 @@ export default function Content({
       >
         {(() => {
           try {
-            if (post?.details?.kind === 'long') {
+            if (post?.details?.kind === PubkyAppPostKind.Long) {
               const parsedContent = JSON.parse(contentText);
               if (parsedContent.title && parsedContent.body) {
                 const truncatedBody =
@@ -299,105 +300,108 @@ export default function Content({
               <Spotify link={spotifyUrl} />
             </div>
           )}
-          {fileContents.length > 0 && post?.details?.kind !== 'long' && (
-            <div
-              className={`mt-4 flex flex-col md:grid gap-4 ${
-                fileContents.length === 1
-                  ? 'grid-cols-1'
-                  : fileContents.length === 2
-                    ? 'grid-cols-2'
-                    : 'grid-cols-2'
-              }`}
-            >
-              {loading
-                ? renderSkeleton()
-                : fileContents.map((file, index) => {
-                    const isVideo = file?.content_type.startsWith('video');
-                    const isImage = file?.content_type.startsWith('image');
-                    const isPDF = file?.content_type === 'application/pdf';
-                    const isAudio = file?.content_type.startsWith('audio');
-                    const isSkeleton = file?.content_type === 'skeleton';
+          {fileContents.length > 0 &&
+            post?.details?.kind !== PubkyAppPostKind.Long && (
+              <div
+                className={`mt-4 flex flex-col md:grid gap-4 ${
+                  fileContents.length === 1
+                    ? 'grid-cols-1'
+                    : fileContents.length === 2
+                      ? 'grid-cols-2'
+                      : 'grid-cols-2'
+                }`}
+              >
+                {loading
+                  ? renderSkeleton()
+                  : fileContents.map((file, index) => {
+                      const isVideo = file?.content_type.startsWith('video');
+                      const isImage = file?.content_type.startsWith('image');
+                      const isPDF = file?.content_type === 'application/pdf';
+                      const isAudio = file?.content_type.startsWith('audio');
+                      const isSkeleton = file?.content_type === 'skeleton';
 
-                    return (
-                      <div
-                        key={index}
-                        className={`relative cursor-pointer ${
-                          fileContents.length === 3 && index === 0
-                            ? 'col-span-2'
-                            : ''
-                        }`}
-                      >
-                        {isSkeleton ? (
-                          renderSkeleton()
-                        ) : isVideo ? (
-                          <video
-                            src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                            controls
-                            onClick={(event) => event.stopPropagation()}
-                            className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
-                          />
-                        ) : isImage ? (
-                          <img
-                            src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              isImage ? openModal(index) : undefined;
-                            }}
-                            alt={`Fetched file ${index}`}
-                            width={800}
-                            height={418}
-                            className="w-auto min-w-[200px] h-auto max-h-[744px] object-cover rounded-[10px] overflow-hidden"
-                          />
-                        ) : isPDF ? (
-                          <div
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              window.open(
-                                `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                                '_blank',
-                              );
-                            }}
-                            className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
-                          >
-                            <div className="flex gap-2 items-center">
-                              <Icon.FileText size="20" />
-                              <Typography.Body
-                                className="text-opacity-80"
-                                variant="small-bold"
-                              >
-                                {Utils.minifyText(
-                                  file?.name ??
-                                    `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                                  isMobile ? 20 : 60,
-                                )}
-                              </Typography.Body>
-                            </div>
-                            <Button.Medium
-                              className="w-auto h-8 px-3 py-2"
-                              icon={<Icon.DownloadSimple size="16" />}
-                            >
-                              Download
-                            </Button.Medium>
-                          </div>
-                        ) : isAudio ? (
-                          <audio
-                            onClick={(event) => event.stopPropagation()}
-                            controls
-                          >
-                            <source
+                      return (
+                        <div
+                          key={index}
+                          className={`relative cursor-pointer ${
+                            fileContents.length === 3 && index === 0
+                              ? 'col-span-2'
+                              : ''
+                          }`}
+                        >
+                          {isSkeleton ? (
+                            renderSkeleton()
+                          ) : isVideo ? (
+                            <video
                               src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                              type="audio/mpeg"
+                              controls
+                              onClick={(event) => event.stopPropagation()}
+                              className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
                             />
-                            Browser do not support audio.
-                          </audio>
-                        ) : (
-                          <p className="text-gray-500">Unsupported file type</p>
-                        )}
-                      </div>
-                    );
-                  })}
-            </div>
-          )}
+                          ) : isImage ? (
+                            <img
+                              src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                isImage ? openModal(index) : undefined;
+                              }}
+                              alt={`Fetched file ${index}`}
+                              width={800}
+                              height={418}
+                              className="w-auto min-w-[200px] h-auto max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                            />
+                          ) : isPDF ? (
+                            <div
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                window.open(
+                                  `${BASE_URL}/${JSON.parse(file?.urls).main}`,
+                                  '_blank',
+                                );
+                              }}
+                              className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
+                            >
+                              <div className="flex gap-2 items-center">
+                                <Icon.FileText size="20" />
+                                <Typography.Body
+                                  className="text-opacity-80"
+                                  variant="small-bold"
+                                >
+                                  {Utils.minifyText(
+                                    file?.name ??
+                                      `${BASE_URL}/${JSON.parse(file?.urls).main}`,
+                                    isMobile ? 20 : 60,
+                                  )}
+                                </Typography.Body>
+                              </div>
+                              <Button.Medium
+                                className="w-auto h-8 px-3 py-2"
+                                icon={<Icon.DownloadSimple size="16" />}
+                              >
+                                Download
+                              </Button.Medium>
+                            </div>
+                          ) : isAudio ? (
+                            <audio
+                              onClick={(event) => event.stopPropagation()}
+                              controls
+                            >
+                              <source
+                                src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                type="audio/mpeg"
+                              />
+                              Browser do not support audio.
+                            </audio>
+                          ) : (
+                            <p className="text-gray-500">
+                              Unsupported file type
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+              </div>
+            )}
           <div onClick={(event) => event.stopPropagation()}>{children}</div>
           {fileContents.length > 0 && (
             <>

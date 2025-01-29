@@ -45,6 +45,34 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     limit,
   );
 
+  useEffect(() => {
+    // Don't process if we don't have notifications or timestamp is invalid (0)
+    // or if specs builder isn't ready yet
+    if (!initNotifications || timestamp <= 0) return;
+
+    setLoading(true);
+
+    const filtered = filterNotifications(initNotifications);
+    updateNotifications(filtered);
+
+    // Calculate unread count only after we have a valid timestamp
+    const unreadCount = filtered.reduce(
+      (count, notification) =>
+        timestamp && notification.timestamp > timestamp ? count + 1 : count,
+      0,
+    );
+    setUnReadNotification(unreadCount);
+
+    // Check if there's more
+    if (filtered.length < limit) {
+      setHasMore(false);
+    } else {
+      setHasMore(true);
+    }
+
+    setLoading(false);
+  }, [initNotifications, timestamp]);
+
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
       const merged = [...prev, ...newNotifications].filter(
@@ -80,6 +108,10 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         ]
       );
     });
+
+  // TODO: guys there were 2 loops here, the second one not using the new data
+  // from reactQuery. I bypassed it all on the useEffect above with dependencies
+  // on [initNotifications]. I don't think much of this logic is needed.
 
   const fetchNotifications = async () => {
     if (!pubky || !notificationPreferences || !hasMore) return;
@@ -146,8 +178,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
     if (notificationPreferences && pubky) {
       fetchNotifications();
-      const interval = setInterval(fetchNotifications, 60000);
-      return () => clearInterval(interval);
     }
   }, [pubky, notificationPreferences]);
 

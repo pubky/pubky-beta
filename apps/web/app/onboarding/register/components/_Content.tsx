@@ -6,14 +6,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { Modal } from '@/components/Modal';
 import { Onboarding } from '../../components';
-import * as jdenticon from 'jdenticon';
 import { Card } from '../Card';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
-import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
 import Link from 'next/link';
 import { BottomSheet } from '@/components';
+import genJdenticon from 'libs/utils-shared/src/lib/Helper/genJdenticon';
+import { processUserLinks } from './processUserLinks';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -38,7 +38,7 @@ export default function Index() {
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState<File | string | undefined>('');
+  const [image, setImage] = useState<File | string | undefined>();
   const [generatedImage, setGeneratedImage] = useState<File>();
   const [showModalLink, setShowModalLink] = useState(false);
   const [showSheetLink, setShowSheetLink] = useState(false);
@@ -55,25 +55,16 @@ export default function Index() {
 
   useEffect(() => {
     if (!profile?.image && !image) {
-      const fetchJdenticon = async () => {
-        const id = pubky ?? Math.random().toString(36).substring(2, 15);
-        const size = 200;
-        const svgCode = jdenticon.toSvg(id, size);
-
-        try {
-          const pngBlob = await Utils.svgToPng(svgCode, size);
-          const pngFile = new File([pngBlob], `${id}.png`, {
-            type: 'image/png',
-          });
-
-          setGeneratedImage(pngFile);
-          setImage(pngFile);
-        } catch (error) {
-          console.error('Error converting SVG to PNG:', error);
+      const generateAndSetImage = async () => {
+        if (!profile?.image && !image) {
+          const id = pubky ?? Math.random().toString(36).substring(2, 15);
+          const generatedImage = await genJdenticon(id);
+          setGeneratedImage(generatedImage);
+          setImage(generatedImage);
         }
       };
 
-      fetchJdenticon();
+      generateAndSetImage();
     }
   }, [profile?.image, image]);
 
@@ -135,92 +126,20 @@ export default function Index() {
       }
 
       try {
-        const linksObject: Links[] = [];
-        const invalidLinkIndexes: number[] = [];
+        const { userLinks: linksObject, errors: linkErrors } =
+          processUserLinks(links);
 
-        links.forEach((link, index) => {
-          if (link.url) {
-            let validationResult;
-            const cleanUrl = link.url.replace('mailto:', '');
-
-            if (link.title === 'email') {
-              validationResult = z
-                .string()
-                .email({ message: 'Invalid email address' })
-                .safeParse(cleanUrl);
-
-              if (validationResult.success) {
-                linksObject.push({
-                  title: link.title,
-                  url: `mailto:${cleanUrl}`,
-                });
-              } else {
-                invalidLinkIndexes.push(index);
-              }
-            } else {
-              validationResult = z
-                .string()
-                .url({ message: 'Invalid website URL' })
-                .optional()
-                .safeParse(link.url);
-
-              if (!validationResult.success) {
-                const socialLink = socialLinks.find(
-                  (social) =>
-                    social.name.toLowerCase() === link.title.toLowerCase(),
-                );
-
-                if (socialLink) {
-                  const completedUrl = `${socialLink.url}${link.url}`;
-                  validationResult = z
-                    .string()
-                    .url({ message: 'Invalid website URL' })
-                    .safeParse(completedUrl);
-
-                  if (validationResult.success) {
-                    linksObject.push({
-                      title: link.title,
-                      url: completedUrl,
-                    });
-                  } else {
-                    invalidLinkIndexes.push(index);
-                  }
-                } else {
-                  invalidLinkIndexes.push(index);
-                }
-              } else {
-                linksObject.push({
-                  title: link.title,
-                  url: link.url,
-                });
-              }
-            }
-          }
-        });
-
-        if (invalidLinkIndexes.length > 0) {
+        if (linkErrors.length > 0) {
           const newErrors: FormErrors = {};
-          invalidLinkIndexes.forEach((index) => {
-            if (
-              links[index].title.toLowerCase() === 'email' ||
-              links[index].title.toLowerCase() === 'mail'
-            ) {
-              newErrors[`link${index}`] = ['Invalid email address'];
-            } else {
-              newErrors[`link${index}`] = ['Invalid website URL'];
-            }
+          linkErrors.forEach(({ index, message }) => {
+            newErrors[`link${index}`] = [message];
           });
           setErrors((prev) => ({ ...prev, ...newErrors }));
           setLoading(false);
           return;
         }
 
-        const response = await saveProfile({
-          name,
-          bio,
-          image,
-          links: linksObject,
-        });
+        const response = await saveProfile(name, bio, image, linksObject);
         if (response) router.push('/home');
       } catch (error) {
         console.log(error);

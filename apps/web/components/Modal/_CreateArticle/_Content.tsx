@@ -2,7 +2,6 @@ import { Button, Icon, Input, Typography } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-
 import { UserView } from '@/types/User';
 import Image from 'next/image';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
@@ -63,7 +62,6 @@ export default function ContentCreateArticle({
       const newArticle = await createArticle(
         contentTitle,
         content,
-        'long',
         selectedFile,
       );
       const match = newArticle && newArticle?.uri.match(regex);
@@ -106,7 +104,7 @@ export default function ContentCreateArticle({
               uri: newArticle?.uri,
               ...newPost.details,
             },
-            relationships: newArticle.details.relationships,
+            relationships: undefined,
             counts: newPost.counts,
             tags: tags,
             cached: 'local',

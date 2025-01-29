@@ -29,12 +29,8 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
     if (result) setShowMenu(false);
   };
 
-  const handleDeleteBookmark = async (
-    postId: string,
-    authorId: string,
-    bookmarkId: string,
-  ) => {
-    const result = await deleteBookmark(postId, authorId, bookmarkId);
+  const handleDeleteBookmark = async (postId: string, authorId: string) => {
+    const result = await deleteBookmark(postId, authorId);
 
     if (!result) {
       addAlert('Something went wrong!', 'warning');
@@ -47,11 +43,7 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
     repost: PostView | undefined,
     post: PostView,
     handleAddBookmark: (postId: string, authorId: string) => Promise<void>,
-    handleDeleteBookmark: (
-      postId: string,
-      authorId: string,
-      bookmarkId: string,
-    ) => Promise<void>,
+    handleDeleteBookmark: (postId: string, authorId: string) => Promise<void>,
     addToast: (
       content: React.ReactNode,
       variant?: 'bookmark' | 'pubky' | 'link',
@@ -61,21 +53,13 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
 
     if (repost) {
       if (isBookmarked) {
-        handleDeleteBookmark(
-          repost.details?.id,
-          repost.details.author,
-          repost?.bookmark?.id ?? '',
-        );
+        handleDeleteBookmark(repost.details?.id, repost.details.author);
       } else {
         handleAddBookmark(repost?.details?.id, repost?.details?.author);
       }
     } else if (post) {
       if (isBookmarked) {
-        handleDeleteBookmark(
-          post.details?.id,
-          post.details.author,
-          post?.bookmark?.id ?? '',
-        );
+        handleDeleteBookmark(post.details?.id, post.details.author);
       } else {
         handleAddBookmark(post?.details?.id, post?.details?.author);
       }

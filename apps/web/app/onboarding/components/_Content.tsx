@@ -34,47 +34,6 @@ export default function Index() {
     fetchData();
   }, [pubky, isLoggedIn]);
 
-  {
-    /** 
-  const handleSubmit = async () => {
-    if (loading) return;
-    setLoading(true);
-
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const nextValue = Math.min(prev + Math.random() * 15, 100);
-        if (nextValue >= 100) clearInterval(interval);
-        return nextValue;
-      });
-    }, 1000);
-
-    try {
-      const id = Math.random().toString(36).substring(2, 15);
-      const size = 200;
-      const svgCode = jdenticon.toSvg(id, size);
-      const pngBlob = await Utils.svgToPng(svgCode, size);
-      const pngFile = new File([pngBlob], `${id}.png`, { type: 'image/png' });
-
-      const signUpResponse = await signUp({
-        name: '',
-        bio: '',
-        image: pngFile instanceof File ? pngFile : undefined,
-        links: links,
-      });
-
-      if (!signUpResponse) {
-        throw new Error('Something went wrong');
-      }
-
-      clearInterval(interval);
-      router.push('/home');
-    } catch (error) {
-      console.log(error);
-      clearInterval(interval);
-    }
-  };*/
-  }
-
   return (
     <Content.Main shadowBottom>
       <Header.Root className="backdrop-blur-[0px]">

@@ -2,10 +2,10 @@
 'use client';
 
 import { Icon, Typography } from '@social/ui-shared';
-import { FileContent } from '@/types/Post';
+import { FileView } from '@/types/Post';
 
 interface FilesCarouselProps {
-  fileContents: FileContent[];
+  fileContents: FileView[];
   currentFileIndex: number;
   setCurrentFileIndex: React.Dispatch<React.SetStateAction<number>>;
 }

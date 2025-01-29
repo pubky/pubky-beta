@@ -300,7 +300,7 @@ Cypress.Commands.add('waitReload', (time = 2000) => {
   cy.wait(time).reload();
 });
 
-// wait 3 minutes for element to appear by default
+// wait for element to appear by default
 Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts = 30) => {
   const go = (attempts: number) => {
     if (attempts <= 0) assert(false, `waitReloadWhileElementDoesNotExist: ${selector} not found`);

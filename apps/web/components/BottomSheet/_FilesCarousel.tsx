@@ -1,13 +1,13 @@
 'use client';
 
-import { FileContent } from '@/types/Post';
+import { FileView } from '@/types/Post';
 import { BottomSheet } from '@social/ui-shared';
 import ContentFilesCarousel from '../Modal/_FilesCarousel/_Content';
 
 interface FilesCarouselProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  fileContents: FileContent[];
+  fileContents: FileView[];
   currentFileIndex: number;
   setCurrentFileIndex: React.Dispatch<React.SetStateAction<number>>;
   title?: string;

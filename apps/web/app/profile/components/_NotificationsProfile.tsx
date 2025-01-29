@@ -19,7 +19,6 @@ export default function NotificationsProfile() {
   } = useNotificationsContext();
   const { unReadNotification } = useFilterContext();
   const { putTimestampNotification } = usePubkyClientContext();
-  const timestamp = Date.now();
 
   const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
 
@@ -27,7 +26,7 @@ export default function NotificationsProfile() {
 
   useEffect(() => {
     const putTimestamp = async () => {
-      await putTimestampNotification(timestamp);
+      await putTimestampNotification();
     };
     putTimestamp();
   }, []);

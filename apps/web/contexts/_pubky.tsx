@@ -10,30 +10,33 @@ import {
   createRecoveryFile,
 } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
-import { PostKind, PostView, PubkyAppPost, PubkyAppUser } from '@/types/Post';
-import { generateTimestampId } from 'libs/utils-shared/src/lib/Crypto/generateTimestampId';
-import { UserDetails } from '@/types/User';
-import { generateHashId } from 'libs/utils-shared/src/lib/Crypto/generateHashId';
+import { PostCounts, PostDetails, PostView } from '@/types/Post';
 import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
-import { getPost } from '@/services/postService';
-import { getUserDetails, getUserRelationship } from '@/services/userService';
+import init, {
+  PubkySpecsBuilder,
+  PubkyAppUser,
+  postUriBuilder,
+  userUriBuilder,
+  PubkyAppLastRead,
+  baseUriBuilder,
+  PubkyAppPostKind,
+  PubkyAppPost,
+  PubkyAppPostEmbed,
+  PubkyAppUserLink,
+} from 'pubky-app-specs';
+import { defaultPreferences } from './_filters';
 
-const HOMESERVER_PUBLIC_KEY = process.env.NEXT_PUBLIC_HOMESERVER;
-const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLocaleLowerCase() === 'true';
+const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
 const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
   process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
   'https://demo.httprelay.io/link/';
 
-let client: Client;
-if (TESTNET) {
-  client = Client.testnet();
-} else {
-  client = new Client();
-}
-
-const homeserver = PublicKey.from(HOMESERVER_PUBLIC_KEY);
+const client = TESTNET ? Client.testnet() : new Client();
+const NEXT_PUBLIC_HOMESERVER = PublicKey.from(
+  process.env.NEXT_PUBLIC_HOMESERVER,
+);
 
 type PubkyClientContextType = {
   pubky: string | undefined;
@@ -53,11 +56,22 @@ type PubkyClientContextType = {
   isLoggedIn: () => Promise<boolean>;
   isSessionActive: () => Promise<boolean>;
   logout: () => boolean;
-  signUp: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
-  saveProfile: (userProfile: PubkyAppUser) => Promise<PubkyAppUser | false>;
+  signUp: (
+    name: string,
+    bio?: string,
+    links?: PubkyAppUserLink[],
+    image?: File | string,
+  ) => Promise<PubkyAppUser | false>;
+  saveProfile: (
+    name: string,
+    bio?: string,
+    image?: File | string,
+    links?: PubkyAppUserLink[],
+    status?: string,
+  ) => Promise<PubkyAppUser | false>;
   createPost: (
     postContent: string,
-    kind: PostKind,
+    kind: PubkyAppPostKind,
     files?: File[],
     quote?: string,
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
@@ -65,20 +79,19 @@ type PubkyClientContextType = {
   createArticle: (
     title: string,
     articleContent: string,
-    kind: PostKind,
     files?: File[],
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
   createRepost: (
     originalPostId: string,
     originalauthorId: string,
     repostContent: string,
-    kind: PostKind,
+    kind: PubkyAppPostKind,
     files?: File[],
   ) => Promise<string | false>;
   createReply: (
     originalPostUri: string,
     replyContent: string,
-    kind: PostKind,
+    kind: PubkyAppPostKind,
     files?: File[],
     quote?: string,
   ) => Promise<string | false>;
@@ -88,15 +101,11 @@ type PubkyClientContextType = {
   mute: (user_id: string) => Promise<boolean>;
   unmute: (user_id: string) => Promise<boolean>;
   addBookmark: (postId: string, authorId: string) => Promise<boolean | string>;
-  deleteBookmark: (
-    postId: string,
-    authorId: string,
-    bookmarkId: string,
-  ) => Promise<boolean>;
+  deleteBookmark: (postId: string, authorId: string) => Promise<boolean>;
   createTag: (
     authorId: string,
     postId: string,
-    tagContent: string,
+    label: string,
   ) => Promise<boolean>;
   deleteTag: (
     author_id: string,
@@ -106,10 +115,10 @@ type PubkyClientContextType = {
   saveFeed: (feed: ICustomFeed, name: string) => Promise<boolean>;
   deleteFeed: (feed: ICustomFeed) => Promise<boolean>;
   loadFeeds: () => Promise<{ feed: ICustomFeed; name: string }[]>;
-  createTagProfile: (profileId: string, tagContent: string) => Promise<boolean>;
-  deleteTagProfile: (profileId: string, tagLabel: string) => Promise<boolean>;
+  createTagProfile: (userId: string, label: string) => Promise<boolean>;
+  deleteTagProfile: (userId: string, label: string) => Promise<boolean>;
   getRecoveryFile: (password: string) => Promise<any | null>;
-  storeProfile: (userProfile: UserDetails) => Promise<boolean>;
+  storeProfile: (userProfile: PubkyAppUser) => Promise<boolean>;
   updateStatus: (value: TStatus | string) => Promise<PubkyAppUser | undefined>;
   timeline: PostView[];
   setTimeline: React.Dispatch<React.SetStateAction<PostView[]>>;
@@ -130,8 +139,8 @@ type PubkyClientContextType = {
     zipFile: File,
     setProgress: React.Dispatch<React.SetStateAction<number>>,
   ) => Promise<boolean>;
-  getTimestampNotification: () => Promise<number | boolean>;
-  putTimestampNotification: (timestamp: number) => Promise<boolean>;
+  getTimestampNotification: () => Promise<number>;
+  putTimestampNotification: () => Promise<boolean>;
   loadSettings: () => Promise<{
     notifications: NotificationPreferences;
     privacysafety?: any;
@@ -164,10 +173,13 @@ export function PubkyClientWrapper({
   children: React.ReactNode;
 }) {
   const [queryClient] = useState(() => new QueryClient());
-  const [wasmLoaded, setWasmLoaded] = useState(false);
+  const [specsWasmLoaded, setSpecsWasmLoaded] = useState(false);
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined,
   );
+  const [specsBuilder, setSpecsBuilder] = useState<
+    PubkySpecsBuilder | undefined
+  >(undefined);
   const [newUser, setNewUser] = useState(false);
   const [seed, setSeed] = useState<string | undefined>(
     (Utils.storage.get('seed') as string | undefined) || undefined,
@@ -187,42 +199,82 @@ export function PubkyClientWrapper({
   );
   const [timestamp, setTimestamp] = useState<number>(0);
   const [notificationPreferences, setNotificationPreferences] =
-    useState<NotificationPreferences>({} as NotificationPreferences);
+    useState<NotificationPreferences>(defaultPreferences);
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      import('base32.js')
-        .then(() => {
-          setWasmLoaded(true);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+    init()
+      .then(() => setSpecsWasmLoaded(true))
+      .catch(console.error);
   }, []);
 
-  if (!wasmLoaded) {
+  useEffect(() => {
+    // On first time new user we save `/settings
+    if (newUser) {
+      saveSettings(defaultPreferences);
+    }
+  }, [newUser]);
+
+  useEffect(() => {
+    specsWasmLoaded && pubky && setSpecsBuilder(new PubkySpecsBuilder(pubky));
+  }, [specsWasmLoaded, pubky]);
+
+  if (!specsWasmLoaded) {
     return <div>Loading...</div>;
   }
 
+  const handleError = (error: unknown, context: string) => {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`[${context}] ${message}`);
+    return false;
+  };
+
+  const withAuth = <T extends any[], R>(fn: (...args: T) => Promise<R>) => {
+    return async (...args: T): Promise<R> => {
+      try {
+        await ensureReady();
+        return await fn(...args);
+      } catch (error) {
+        handleError(error, fn.name);
+        throw error;
+      }
+    };
+  };
+
+  const ensureReady = async (): Promise<void> => {
+    if (!(await isLoggedIn())) throw new Error('User not logged in');
+    if (!specsBuilder) throw new Error('Pubky App Specs Builder not ready');
+  };
+
+  const setPubkyAndStorage = (pk: string) => {
+    Utils.storage.set('pubky_public_key', pk);
+    setPubky(pk);
+  };
+
+  const homeserver = {
+    get: (url: string) => client.fetch(url),
+    put: (url: string, body: any) =>
+      client.fetch(url, { method: 'PUT', body, credentials: 'include' }),
+    del: (url: string) =>
+      client.fetch(url, { method: 'DELETE', credentials: 'include' }),
+  };
+
   const logout = () => {
     try {
-      if (pubky) {
-        // Logout client
-        client.signout(PublicKey.from(pubky));
-      }
+      pubky && client.signout(PublicKey.from(pubky));
 
       // Clear storage and states
-      Utils.storage.remove('pubky_public_key');
-      Utils.storage.remove('seed');
-      Utils.storage.remove('mnemonic');
-      Utils.storage.remove('profile');
-      Utils.storage.remove('timerRemind');
-      Utils.storage.remove('backup');
-      Utils.storage.remove('feed');
-      Utils.storage.remove('unread');
+      [
+        'pubky_public_key',
+        'seed',
+        'mnemonic',
+        'profile',
+        'timerRemind',
+        'backup',
+        'feed',
+        'unread',
+      ].forEach(Utils.storage.remove);
 
       setTimeout(() => {
         setProfile(undefined);
@@ -234,11 +286,10 @@ export function PubkyClientWrapper({
         setReplies([]);
         setSearchTags([]);
         setPubky(undefined);
+        setSpecsBuilder(undefined);
       });
-
       return true;
     } catch (error) {
-      console.log(error);
       return false;
     }
   };
@@ -265,15 +316,7 @@ export function PubkyClientWrapper({
 
       return false;
     }
-
     return true;
-  };
-
-  const ensureLoggedIn = async (): Promise<void> => {
-    const loggedIn = await isLoggedIn();
-    if (!loggedIn) {
-      throw new Error('User is not logged in');
-    }
   };
 
   const getRecoveryFile = async (password: string): Promise<any | null> => {
@@ -296,8 +339,7 @@ export function PubkyClientWrapper({
       // Save pubky state
       const pk = publickey;
 
-      Utils.storage.set('pubky_public_key', pk);
-      setPubky(pk);
+      setPubkyAndStorage(pk);
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
@@ -305,6 +347,27 @@ export function PubkyClientWrapper({
       throw new Error(error.message);
     }
   };
+
+  // Helper used on the different login methods
+  async function authenticateKeypair(keypair: Keypair): Promise<string> {
+    // 1) Sign up with the Keypair
+    await client.signin(keypair);
+
+    // 2) Retrieve the session
+    const session = await client.session(keypair.publicKey());
+    if (!session) {
+      throw new Error('Failed to get session');
+    }
+
+    // 3) Derive the public key in z32 form
+    const pk = session.pubky().z32();
+
+    // 4) Persist the pk to state and storage
+    setPubkyAndStorage(pk);
+    setSpecsBuilder(new PubkySpecsBuilder(pk));
+
+    return pk;
+  }
 
   const loginWithFile = async (password: string, recoveryFile: Buffer) => {
     try {
@@ -314,25 +377,9 @@ export function PubkyClientWrapper({
         throw new Error('Invalid recovery file');
       }
 
-      // Sign up
-      await client.signup(keypair, homeserver);
-
-      // Get session
-      const session = await client.session(keypair.publicKey());
-
-      if (!session) {
-        throw new Error('Failed to get session');
-      }
-
-      // Save pubky state
-      const pk = session.pubky().z32();
-
-      Utils.storage.set('pubky_public_key', pk);
-      setPubky(pk);
-      return pk;
+      return await authenticateKeypair(keypair);
     } catch (error: any) {
-      // Get error message and return as a string
-      console.log(error);
+      console.error(error);
       throw new Error(error.message);
     }
   };
@@ -342,44 +389,72 @@ export function PubkyClientWrapper({
       if (!bip39.validateMnemonic(mnemonic)) {
         throw new Error('Invalid recovery phrase');
       }
+
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
       const secretKey = seedMnemonic.slice(0, 32);
       const keypair = Keypair.fromSecretKey(secretKey);
 
-      // Sign up
-      await client.signup(keypair, homeserver);
-
-      // Get session
-      const session = await client.session(keypair.publicKey());
-
-      if (!session) {
-        throw new Error('Failed to get session');
-      }
-
-      // Save pubky state
-      const pk = session.pubky().z32();
-
-      Utils.storage.set('pubky_public_key', pk);
-      setPubky(pk);
-      return pk;
+      return await authenticateKeypair(keypair);
     } catch (error: any) {
-      // Get error message and return as a string
-      console.log(error);
+      console.error(error);
       throw new Error(error.message);
     }
   };
 
-  const signUp = async (userProfile: PubkyAppUser): Promise<any | false> => {
+  const uploadFile = async (
+    file: File,
+    specsB?: PubkySpecsBuilder,
+  ): Promise<string> => {
+    let specs = specsB ? specsB : specsBuilder;
+
+    // 1. Upload Blob
+    const fileContent = await file.arrayBuffer();
+    const blobData = new Uint8Array(fileContent);
+    const blobResult = specs!.createBlob(blobData);
+
+    await homeserver.put(blobResult.meta.url, blobResult.blob.data);
+
+    // 2. Create File Record
+    const fileResult = specs!.createFile(
+      file.name,
+      blobResult.meta.url,
+      file.type,
+      BigInt(file.size),
+    );
+
+    await homeserver.put(
+      fileResult.meta.url,
+      JSON.stringify(fileResult.file.toJson()),
+    );
+
+    return fileResult.meta.url;
+  };
+
+  const uploadFileWithAuth = withAuth(
+    async (file: File, specsB?: PubkySpecsBuilder): Promise<string> => {
+      return await uploadFile(file, specsB);
+    },
+  );
+
+  const uploadFiles = async (files: File[]): Promise<string[]> => {
+    return Promise.all(files.map((file) => uploadFileWithAuth(file)));
+  };
+
+  const signUp = async (
+    name: string,
+    bio?: string,
+    links?: PubkyAppUserLink[],
+    image?: File | string,
+  ): Promise<PubkyAppUser | false> => {
     try {
       const mnemonic = bip39.generateMnemonic(128);
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
       const secretKey = seedMnemonic.slice(0, 32);
       const newKeypair = Keypair.fromSecretKey(secretKey);
-
       const seed = Utils.uint8ArrayToBase64(newKeypair.secretKey());
 
       // Sign up
-      await client.signup(newKeypair, homeserver);
+      await client.signup(newKeypair, NEXT_PUBLIC_HOMESERVER);
 
       // Get session
       const session = await client.session(newKeypair.publicKey());
@@ -388,598 +463,408 @@ export function PubkyClientWrapper({
         throw new Error('Failed to get session');
       }
 
-      // Save pubky state
+      // New pubky id
       const pk = session.pubky().z32();
 
-      if (userProfile.image instanceof File) {
-        const file = userProfile.image;
-        const fileContent = await file.arrayBuffer();
+      // pubky id just changed, let's create a new SpecsBuilder
+      const specsBuilder = new PubkySpecsBuilder(pk);
+      setSpecsBuilder(specsBuilder);
 
-        const blobId = generateTimestampId().toUpperCase();
-        const blobUrl = `pubky://${pk}/pub/pubky.app/blobs/${blobId}`;
-        const blobBody = Buffer.from(fileContent);
-
-        await client.fetch(blobUrl, {
-          method: 'PUT',
-          body: blobBody,
-          credentials: 'include',
-        });
-
-        // Create the PubkyAppFile object
-        const fileId = generateTimestampId().toUpperCase();
-        const newFile = {
-          name: file.name,
-          created_at: Date.now(),
-          src: blobUrl,
-          content_type: file.type,
-          size: file.size,
-        };
-
-        // File URL
-        const fileUrl = `pubky://${pk}/pub/pubky.app/files/${fileId}`;
-
-        // Send the file to the homeserver
-        await client.fetch(fileUrl, {
-          method: 'PUT',
-          body: JSON.stringify(newFile),
-          credentials: 'include',
-        });
-
-        // Store the file URI
-
-        userProfile.image = fileUrl;
+      // Upload avatar without ensuring auth (because state has not yet updated)
+      let file: string | undefined;
+      if (image instanceof File) {
+        // Upload avatar
+        const uploadResult = await uploadFile(image, specsBuilder);
+        file = uploadResult ? uploadResult : undefined;
+      } else {
+        file = image;
       }
 
-      // Transform the profile to the PubkyAppUser format
-      const pubkeyProfile: PubkyAppUser = toPubkeyProfile(userProfile);
+      const result = specsBuilder.createUser(
+        name || 'anonymous',
+        bio,
+        file,
+        links,
+      );
 
+      // Let's bring the full wasm object into JS and assign correct type.
+      const user = result.user.toJson() as PubkyAppUser;
+
+      // Send the profile to the homeserver
+      const response = await homeserver.put(
+        result.meta.url,
+        JSON.stringify(user),
+      );
+
+      if (!response.ok) {
+        const errorMessage = `Error ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
+      }
+
+      // Save new state
+      setPubkyAndStorage(pk);
       setNewUser(true);
-
       // Save info in storage
       Utils.storage.set('seed', seed);
       setSeed(seed);
-
       Utils.storage.set('mnemonic', mnemonic);
       setMnemonic(mnemonic);
+      await storeProfile(user);
 
-      Utils.storage.set('pubky_public_key', pk);
-      setPubky(pk);
-
-      if (pubkeyProfile.name === '[DELETED]') {
-        pubkeyProfile.name = 'anonymous';
-      }
-      Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
-      setProfile(pubkeyProfile);
-
-      // Profile URL (fixed address)
-      const profileUrl = `pubky://${pk}/pub/pubky.app/profile.json`;
-
-      // Send the profile to the homeserver
-      await client.fetch(profileUrl, {
-        method: 'PUT',
-        body: JSON.stringify(pubkeyProfile),
-        credentials: 'include',
-      });
-
-      if (pubkeyProfile.name === 'anonymous') {
-        let userEdited = false;
-        while (!userEdited) {
-          try {
-            const newProfile = await getUserDetails(pk ?? '');
-
-            if (areProfilesEqual(newProfile, pubkeyProfile)) {
-              userEdited = true;
-              break;
-            }
-
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          } catch (error) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          }
-        }
-      }
-
-      return pubkeyProfile;
+      return user;
     } catch (error) {
       console.log(error);
       return false;
     }
   };
 
-  const storeProfile = async (userProfile: UserDetails): Promise<boolean> => {
-    if (userProfile.name === '[DELETED]') {
-      userProfile.name = 'anonymous';
-    }
+  const storeProfile = async (user: PubkyAppUser): Promise<boolean> => {
     // Save the profile in storage
-    Utils.storage.set('profile', JSON.stringify(userProfile));
-    setProfile(userProfile);
+    Utils.storage.set('profile', JSON.stringify(user));
+    setProfile(user);
 
     return true;
   };
 
-  const saveProfile = async (
-    userProfile: PubkyAppUser,
-  ): Promise<any | false> => {
-    try {
-      await ensureLoggedIn();
-
-      if (userProfile.image instanceof File) {
-        const file = userProfile.image;
-        const fileContent = await file.arrayBuffer();
-
-        const blobId = generateTimestampId().toUpperCase();
-        const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-        const blobBody = Buffer.from(fileContent);
-
-        await client.fetch(blobUrl, {
-          method: 'PUT',
-          body: blobBody,
-          credentials: 'include',
-        });
-
-        // Create the PubkyAppFile object
-        const fileId = generateTimestampId().toUpperCase();
-        const newFile = {
-          name: file.name,
-          created_at: Date.now(),
-          src: blobUrl,
-          content_type: file.type,
-          size: file.size,
-        };
-
-        // File URL
-        const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-        // Send the file to the homeserver
-        await client.fetch(fileUrl, {
-          method: 'PUT',
-          body: JSON.stringify(newFile),
-          credentials: 'include',
-        });
-
-        // Store the file URI
-        userProfile.image = fileUrl;
+  const saveProfile = withAuth(
+    async (
+      name: string,
+      bio?: string,
+      image?: File | string,
+      links?: PubkyAppUserLink[],
+      status?: string,
+    ): Promise<any | false> => {
+      let file: string | undefined;
+      if (image instanceof File) {
+        // Upload avatar
+        const uploadResult = await uploadFileWithAuth(image);
+        file = uploadResult ? uploadResult : undefined;
+      } else {
+        file = image;
       }
 
-      // Transform the profile to the PubkyAppUser format
-      const pubkeyProfile: PubkyAppUser = toPubkeyProfile(userProfile);
-
-      if (pubkeyProfile.name === '[DELETED]') {
-        pubkeyProfile.name = 'anonymous';
-      }
-
-      // Save the profile in storage
-      Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
-      setProfile(pubkeyProfile);
-
-      // Profile URL (fixed address)
-      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
-
-      // Send the profile to the homeserver
-      await client.fetch(profileUrl, {
-        method: 'PUT',
-        body: JSON.stringify(pubkeyProfile),
-        credentials: 'include',
-      });
-
-      let userEdited = false;
-      while (!userEdited) {
-        try {
-          const newProfile = await getUserDetails(pubky ?? '');
-
-          if (areProfilesEqual(newProfile, pubkeyProfile)) {
-            userEdited = true;
-            break;
-          }
-
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-
-      return pubkeyProfile;
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-  };
-
-  const areProfilesEqual = (
-    profile1: PubkyAppUser,
-    profile2: PubkyAppUser,
-  ): boolean => {
-    return (
-      profile1.name === profile2.name &&
-      profile1.bio === profile2.bio &&
-      profile1.image === profile2.image &&
-      //No links check
-      profile1.status === profile2.status
-    );
-  };
-
-  const updateStatus = async (value: TStatus | string) => {
-    try {
-      if (!pubky) throw new Error('Pubky required');
-      if (!profile) throw new Error('Profile required');
-
-      const updatedProfile = {
-        ...profile,
-        status: value,
-      };
-
-      // Transform the profile to the PubkyAppUser format
-      const pubkeyProfile: PubkyAppUser = toPubkeyProfile(updatedProfile);
-
-      // Save the profile in storage
-      Utils.storage.set('profile', JSON.stringify(pubkeyProfile));
-      setProfile(pubkeyProfile);
-
-      // Profile URL (fixed address)
-      const profileUrl = `pubky://${pubky}/pub/pubky.app/profile.json`;
-
-      // Send the profile to the homeserver
-      await client.fetch(profileUrl, {
-        method: 'PUT',
-        body: JSON.stringify(pubkeyProfile),
-        credentials: 'include',
-      });
-
-      return pubkeyProfile;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const createPost = async (
-    postContent: string,
-    kind: PostKind,
-    files?: File[],
-    quote?: string,
-  ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
-    try {
-      await ensureLoggedIn();
-
-      // Generate a timestamp ID for the post
-      const postId = generateTimestampId().toUpperCase();
-
-      // Initialize the post object
-      const newPost: PubkyAppPost = {
-        content: postContent,
-        kind,
-        ...(quote && {
-          embed: {
-            uri: quote,
-            kind: 'short',
-          },
-        }),
-      };
-
-      // List to store URIs of uploaded files
-      const uploadedFileUris: string[] = [];
-
-      // File upload, if any
-      if (files && files.length > 0) {
-        for (const file of files) {
-          // Read the file content
-          const fileContent = await file.arrayBuffer();
-
-          const blobId = generateTimestampId().toUpperCase();
-          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-          const blobBody = Buffer.from(fileContent);
-
-          await client.fetch(blobUrl, {
-            method: 'PUT',
-            body: blobBody,
-            credentials: 'include',
-          });
-
-          // Create the PubkyAppFile object
-          const fileId = generateTimestampId().toUpperCase();
-          const newFile = {
-            name: file.name,
-            created_at: Date.now(),
-            src: blobUrl,
-            content_type: file.type,
-            size: file.size,
-          };
-
-          // File URL
-          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-          // Send the file to the homeserver
-          await client.fetch(fileUrl, {
-            method: 'PUT',
-            body: JSON.stringify(newFile),
-            credentials: 'include',
-          });
-
-          // Store the file URI
-          uploadedFileUris.push(fileUrl);
-        }
-
-        // If there are files, add to the post attachments
-        newPost.attachments = uploadedFileUris;
-      }
-
-      // Post URL
-      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
-
-      // Send the post to the homeserver
-      await client.fetch(postUrl, {
-        method: 'PUT',
-        body: JSON.stringify(newPost),
-        credentials: 'include',
-      });
-
-      const newPostView: PostView = {
-        uri: postUrl,
-        details: {
-          ...newPost,
-          author: pubky,
-          id: postId,
-          indexed_at: Date.now(),
-          uri: postUrl,
-        },
-        counts: { replies: 0, reposts: 0, likes: 0, bookmarks: 0 },
-        tags: [],
-        cached: 'homeserver',
-      } as unknown as PostView;
-
-      setNewPosts((prev: PostView[]) => [newPostView, ...prev]);
-
-      return { uri: postUrl, details: newPost };
-    } catch (error) {
-      console.error('Error creating post:', error);
-      return false;
-    }
-  };
-
-  const createArticle = async (
-    title: string,
-    articleContent: string,
-    kind: PostKind,
-    files?: File[],
-  ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
-    try {
-      await ensureLoggedIn();
-
-      // Generate a timestamp ID for the article
-      const articleId = generateTimestampId().toUpperCase();
-
-      // Initialize the post object
-      const newArticle: PubkyAppPost = {
-        content: JSON.stringify({
-          title: title,
-          body: articleContent,
-        }),
-        kind,
-      };
-
-      // List to store URIs of uploaded files
-      const uploadedFileUris: string[] = [];
-
-      // File upload, if any
-      if (files && files.length > 0) {
-        for (const file of files) {
-          // Read the file content
-          const fileContent = await file.arrayBuffer();
-
-          const blobId = generateTimestampId().toUpperCase();
-          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-          const blobBody = Buffer.from(fileContent);
-
-          await client.fetch(blobUrl, {
-            method: 'PUT',
-            body: blobBody,
-            credentials: 'include',
-          });
-
-          // Create the PubkyAppFile object
-          const fileId = generateTimestampId().toUpperCase();
-          const newFile = {
-            name: file.name,
-            created_at: Date.now(),
-            src: blobUrl,
-            content_type: file.type,
-            size: file.size,
-          };
-
-          // File URL
-          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-          // Send the file to the homeserver
-          await client.fetch(fileUrl, {
-            method: 'PUT',
-            body: JSON.stringify(newFile),
-            credentials: 'include',
-          });
-
-          // Store the file URI
-          uploadedFileUris.push(fileUrl);
-        }
-
-        // If there are files, add to the post attachments
-        newArticle.attachments = uploadedFileUris;
-      }
-
-      // Post URL
-      const articleUrl = `pubky://${pubky}/pub/pubky.app/posts/${articleId}`;
-
-      // Send the post to the homeserver
-      await client.fetch(articleUrl, {
-        method: 'PUT',
-        body: JSON.stringify(newArticle),
-        credentials: 'include',
-      });
-
-      return { uri: articleUrl, details: newArticle };
-    } catch (error) {
-      console.error('Error creating article:', error);
-      return false;
-    }
-  };
-
-  const editPost = async (post: PostView, postContent: string) => {
-    try {
-      await ensureLoggedIn();
-
-      const editPost: PubkyAppPost = {
-        content: postContent,
-        kind: post?.details?.kind,
-        attachments: post?.details?.attachments,
-        relationships: post?.relationships,
-      };
-      // Post URL
-      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${post?.details?.id}`;
-
-      // Send the post to the homeserver
-      await client.fetch(postUrl, {
-        method: 'PUT',
-        body: JSON.stringify(editPost),
-        credentials: 'include',
-      });
-
-      return postUrl;
-    } catch (error) {
-      console.error('Error editing post:', error);
-      return false;
-    }
-  };
-
-  const deleteAccount = async (setProgress) => {
-    try {
-      await ensureLoggedIn();
-
-      const baseDirectory = `pubky://${pubky}/pub/pubky.app/`;
-      const dataList = await client.list(baseDirectory);
-
-      // Separate profile.json and other files
-      const profileUrl = `${baseDirectory}profile.json`;
-      const filesToDelete = dataList.filter((file) => file !== profileUrl);
-
-      // Sort remaining files alphanumerically (ascending order)
-      filesToDelete.sort().reverse();
-
-      // Total files including profile.json for progress calculation
-      const totalFiles = filesToDelete.length + 1;
-
-      // Delete each file (excluding profile.json) and update progress
-      for (let index = 0; index < filesToDelete.length; index++) {
-        await client.fetch(filesToDelete[index], {
-          method: 'DELETE',
-          credentials: 'include',
-        });
-        setProgress(Math.round(((index + 1) / totalFiles) * 100));
-      }
-
-      // Finally, delete profile.json and update progress to 100%
-      await client.fetch(profileUrl, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-      setProgress(100);
-
-      return true;
-    } catch (error) {
-      console.error('Error deleting account:', error);
-      return false;
-    }
-  };
-
-  const downloadData = async (setProgress: (val: number) => void) => {
-    try {
-      await ensureLoggedIn();
-
-      const userDataUrl = `pubky://${pubky}/pub/pubky.app`;
-      let cursor: string | undefined = undefined;
-      const dataList: string[] = [];
-      const limit = 500;
-      let hasMore = true;
-
-      // 1) Gather the list of files from pubky
-      do {
-        const batch = await client.list(userDataUrl, cursor, false, limit);
-        if (batch.length === 0) {
-          hasMore = false;
-        } else {
-          dataList.push(...batch);
-          cursor = batch[batch.length - 1];
-        }
-      } while (hasMore);
-
-      // 2) Prepare a JSZip instance and create the 'data' folder
-      const zip = new JSZip();
-      const dataFolder = zip.folder('data');
-      if (!dataFolder) {
-        throw new Error("Error creating 'data' folder in zip.");
-      }
-
-      const totalFiles = dataList.length;
-
-      // 3) Fetch each file as a Response, convert to ArrayBuffer, then decide if JSON or binary
-      await Promise.all(
-        dataList.map(async (dataUrl, index) => {
-          // Get the Response object
-          const response = await client.fetch(dataUrl);
-
-          // Convert to ArrayBuffer
-          const arrayBuffer = await response.arrayBuffer();
-
-          // Derive a file name from the pubky URL
-          const fileName = dataUrl.split(`pubky://${pubky}/`)[1];
-
-          // Try to decode as JSON (text) — if it fails, store binary
-          try {
-            const decoder = new TextDecoder('utf-8');
-            const decodedString = decoder.decode(arrayBuffer);
-            const parsedData = JSON.parse(decodedString);
-            dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
-          } catch (err) {
-            dataFolder.file(fileName, new Uint8Array(arrayBuffer), {
-              binary: true,
-            });
-          }
-
-          // Update progress
-          setProgress(Math.round(((index + 1) / totalFiles) * 100));
-        }),
+      const userResult = specsBuilder!.createUser(
+        name || 'anonymous',
+        bio || profile?.bio,
+        file || profile?.image,
+        links || profile?.links,
+        status || profile?.status,
       );
 
-      const now = new Date();
-      const formattedDateTime = `${now.getFullYear()}-${String(
-        now.getMonth() + 1,
-      ).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(
-        now.getHours(),
-      ).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(
-        now.getSeconds(),
-      ).padStart(2, '0')}`;
+      const user = userResult.user.toJson() as PubkyAppUser;
 
-      const content = await zip.generateAsync({ type: 'blob' });
-      const url = URL.createObjectURL(content);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${pubky}_${formattedDateTime}_pubky.app.zip`;
-      document.body.appendChild(a);
-      a.click();
+      // Save the profile in storage
+      await storeProfile(user);
 
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Send the profile to the homeserver
+      await homeserver.put(userResult.meta.url, JSON.stringify(user));
 
-      return true;
+      return user;
+    },
+  );
+
+  const updateStatus = withAuth(async (newStatus: TStatus | string) => {
+    if (!profile) throw new Error('Profile required');
+
+    const userResult = specsBuilder!.createUser(
+      profile.name,
+      profile.bio,
+      profile.image,
+      profile.links,
+      newStatus,
+    );
+
+    const user = userResult.user.toJson() as PubkyAppUser;
+
+    // Save the profile in storage
+    await storeProfile(user);
+
+    // Send the profile to the homeserver
+    await homeserver.put(userResult.meta.url, JSON.stringify(user));
+
+    return user;
+  });
+
+  const createBasePost = async (
+    content: string,
+    kind: PubkyAppPostKind,
+    parentUri?: string,
+    embedUri?: string,
+    files?: File[],
+  ): Promise<{ uri: string; id: string; details: PubkyAppPost } | false> => {
+    try {
+      const attachments =
+        (files?.length || 0) > 0 ? await uploadFiles(files!) : undefined;
+
+      let embed;
+      if (embedUri) {
+        embed = new PubkyAppPostEmbed(embedUri, PubkyAppPostKind.Short);
+      }
+
+      const postResult = specsBuilder!.createPost(
+        content,
+        kind,
+        parentUri,
+        embed,
+        attachments,
+      );
+
+      const post = postResult.post.toJson() as PubkyAppPost;
+      await homeserver.put(postResult.meta.url, JSON.stringify(post));
+
+      return {
+        uri: postResult.meta.url,
+        id: postResult.meta.id,
+        details: post,
+      };
     } catch (error) {
-      console.error('Error downloading data:', error);
+      handleError(error, 'createBasePost');
       return false;
     }
   };
 
-  const importData = async (
-    zipFile: File,
-    setProgress: React.Dispatch<React.SetStateAction<number>>,
-  ) => {
-    try {
-      await ensureLoggedIn();
+  // Refactored functions using createBasePost
+  const createPost = withAuth(
+    async (
+      postContent: string,
+      kind: PubkyAppPostKind,
+      files?: File[],
+      quote?: string,
+    ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
+      const result = await createBasePost(
+        postContent,
+        kind,
+        undefined, // parentUri
+        quote,
+        files,
+      );
 
+      if (!result) return false;
+
+      const newPostDetails: PostDetails = {
+        author: pubky!,
+        id: result.id,
+        indexed_at: Date.now(),
+        uri: result.uri,
+        content: result.details.content,
+        kind: result.details.kind,
+      };
+
+      const newPostView: PostView = {
+        uri: result.uri,
+        details: newPostDetails,
+        counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
+        tags: [],
+        cached: 'homeserver',
+      } as PostView;
+
+      setNewPosts((prev) => [newPostView, ...prev]);
+
+      return { uri: result.uri, details: result.details };
+    },
+  );
+
+  const createArticle = withAuth(
+    async (
+      title: string,
+      articleContent: string,
+      files?: File[],
+    ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
+      const content = JSON.stringify({ title, body: articleContent });
+      const result = await createBasePost(
+        content,
+        PubkyAppPostKind.Long,
+        undefined,
+        undefined,
+        files,
+      );
+
+      return result ? { uri: result.uri, details: result.details } : false;
+    },
+  );
+
+  const createRepost = withAuth(
+    async (
+      originalPostId: string,
+      originalauthorId: string,
+      repostContent: string,
+      kind: PubkyAppPostKind,
+      files?: File[],
+    ): Promise<string | false> => {
+      const repostedUri = postUriBuilder(originalauthorId, originalPostId);
+      const result = await createBasePost(
+        repostContent,
+        kind,
+        undefined,
+        repostedUri,
+        files,
+      );
+
+      return result ? result.uri : false;
+    },
+  );
+
+  const createReply = withAuth(
+    async (
+      originalPostUri: string,
+      replyContent: string,
+      kind: PubkyAppPostKind,
+      files?: File[],
+      quote?: string,
+    ): Promise<string | false> => {
+      const result = await createBasePost(
+        replyContent,
+        kind,
+        originalPostUri,
+        quote,
+        files,
+      );
+
+      return result ? result.uri : false;
+    },
+  );
+
+  const editPost = withAuth(async (post: PostView, newContent: string) => {
+    // TODO: ideally we must fetch the PubkyAppPost from
+    // the homeserver instead of using PostView from Nexus!
+    const postEmbed = post?.relationships?.reposted
+      ? new PubkyAppPostEmbed(
+          post?.relationships?.reposted,
+          PubkyAppPostKind.Short,
+        )
+      : undefined;
+
+    const postResult = specsBuilder!.createPost(
+      newContent,
+      post?.details?.kind,
+      post?.relationships?.replied,
+      postEmbed,
+      post?.details?.attachments,
+    );
+
+    // We are faking a post edit, therefore, we should keep
+    // the original posting time and post url.
+    let editedPost = postResult.post.toJson();
+    editedPost.created_at = post.details.indexed_at;
+    let editedUrl = postUriBuilder(post.details.author, post.details.id);
+
+    // Send the post to the homeserver
+    await homeserver.put(editedUrl, JSON.stringify(editedPost));
+
+    return editedUrl;
+  });
+
+  const deleteAccount = withAuth(async (setProgress) => {
+    const baseDirectory = baseUriBuilder(pubky!);
+    const dataList = await client.list(baseDirectory);
+
+    // Separate profile.json and other files
+    const profileUrl = `${baseDirectory}profile.json`;
+    const filesToDelete = dataList.filter((file) => file !== profileUrl);
+
+    // Sort remaining files alphanumerically (ascending order)
+    filesToDelete.sort().reverse();
+
+    // Total files including profile.json for progress calculation
+    const totalFiles = filesToDelete.length + 1;
+
+    // Delete each file (excluding profile.json) and update progress
+    for (let index = 0; index < filesToDelete.length; index++) {
+      await homeserver.del(filesToDelete[index]);
+      setProgress(Math.round(((index + 1) / totalFiles) * 100));
+    }
+
+    // Finally, delete profile.json and update progress to 100%
+    await homeserver.del(profileUrl);
+    setProgress(100);
+
+    return true;
+  });
+
+  const downloadData = withAuth(async (setProgress: (val: number) => void) => {
+    const baseDirectory = baseUriBuilder(pubky!);
+    let cursor: string | undefined = undefined;
+    const dataList: string[] = [];
+    const limit = 500;
+    let hasMore = true;
+
+    // 1) Gather the list of files from pubky
+    do {
+      const batch = await client.list(baseDirectory, cursor, false, limit);
+      if (batch.length === 0) {
+        hasMore = false;
+      } else {
+        dataList.push(...batch);
+        cursor = batch[batch.length - 1];
+      }
+    } while (hasMore);
+
+    // 2) Prepare a JSZip instance and create the 'data' folder
+    const zip = new JSZip();
+    const dataFolder = zip.folder('data');
+    if (!dataFolder) {
+      throw new Error("Error creating 'data' folder in zip.");
+    }
+
+    const totalFiles = dataList.length;
+
+    // 3) Fetch each file as a Response, convert to ArrayBuffer, then decide if JSON or binary
+    await Promise.all(
+      dataList.map(async (dataUrl, index) => {
+        // Get the Response object
+        const response = await homeserver.get(dataUrl);
+
+        // Convert to ArrayBuffer
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Derive a file name from the pubky URL
+        const fileName = dataUrl.split(`pubky://${pubky}/`)[1];
+
+        // Try to decode as JSON (text) — if it fails, store binary
+        try {
+          const decoder = new TextDecoder('utf-8');
+          const decodedString = decoder.decode(arrayBuffer);
+          const parsedData = JSON.parse(decodedString);
+          dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
+        } catch (err) {
+          dataFolder.file(fileName, new Uint8Array(arrayBuffer), {
+            binary: true,
+          });
+        }
+
+        // Update progress
+        setProgress(Math.round(((index + 1) / totalFiles) * 100));
+      }),
+    );
+
+    const now = new Date();
+    const formattedDateTime = `${now.getFullYear()}-${String(
+      now.getMonth() + 1,
+    ).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(
+      now.getHours(),
+    ).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(
+      now.getSeconds(),
+    ).padStart(2, '0')}`;
+
+    const content = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(content);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${pubky}_${formattedDateTime}_pubky.app.zip`;
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    return true;
+  });
+
+  const importData = withAuth(
+    async (
+      zipFile: File,
+      setProgress: React.Dispatch<React.SetStateAction<number>>,
+    ) => {
       // Load the zip file using JSZip
       const zip = await JSZip.loadAsync(zipFile);
 
@@ -1028,11 +913,7 @@ export function PubkyClientWrapper({
         const dataUrl = `pubky://${pubky}/${filename.replace('data/', '')}`;
 
         // Upload the file
-        await client.fetch(dataUrl, {
-          method: 'PUT',
-          body: new Uint8Array(content),
-          credentials: 'include',
-        });
+        await homeserver.put(dataUrl, new Uint8Array(content));
 
         // Update progress
         setProgress(Math.round(((index + 1) / totalFiles) * 100));
@@ -1042,120 +923,81 @@ export function PubkyClientWrapper({
       Utils.storage.remove('profile');
       setProfile(undefined);
       return true;
-    } catch (error) {
-      console.error('Error importing data:', error);
-      return false;
+    },
+  );
+
+  const getTimestampNotification = withAuth(async () => {
+    // create a new last_read only to craft the url
+    const result = specsBuilder!.createLastRead();
+
+    const response = await homeserver.get(result.meta.url);
+    const lastRead = (await response.json()) as PubkyAppLastRead;
+
+    return Number(lastRead.timestamp);
+  });
+
+  const putTimestampNotification = withAuth(async () => {
+    const result = specsBuilder!.createLastRead();
+    const lastRead = result.last_read.toJson() as PubkyAppLastRead;
+
+    await homeserver.put(result.meta.url, JSON.stringify(lastRead));
+
+    setTimestamp(Number(lastRead.timestamp));
+
+    return true;
+  });
+
+  const loadSettings = withAuth(async () => {
+    if (!pubky) return null;
+
+    // pubky.app/settings is not covered by the specs!
+    const settingsUrl = `${baseUriBuilder(pubky)}settings`;
+
+    const response = await homeserver.get(settingsUrl);
+
+    if (!response.ok) {
+      return { notifications: defaultPreferences };
     }
-  };
 
-  const getTimestampNotification = async () => {
-    try {
-      await ensureLoggedIn();
+    const settings = await response.json();
+    return settings;
+  });
 
-      const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
-      const response = await client.fetch(lastReadUrl);
-      const lastRead = await response.json();
-      const timestamp = Number(lastRead.timestamp);
-      return timestamp;
-    } catch (error) {
-      // console.error('Error get timestamp:', error);
-      return false;
-    }
-  };
-
-  const putTimestampNotification = async (timestamp: number) => {
-    try {
-      await ensureLoggedIn();
-
-      const lastRead = { timestamp: timestamp };
-
-      const lastReadUrl = `pubky://${pubky}/pub/pubky.app/last_read`;
-      await client.fetch(lastReadUrl, {
-        method: 'PUT',
-        body: JSON.stringify(lastRead),
-        credentials: 'include',
-      });
-
-      setTimestamp(timestamp);
-
-      return true;
-    } catch (error) {
-      console.error('Error put timestamp:', error);
-      return false;
-    }
-  };
-
-  const loadSettings = async () => {
-    try {
-      if (!pubky) return null;
-
-      await ensureLoggedIn();
-
-      const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
-      const response = await client.fetch(settingsUrl);
-      const settings = await response.json();
-
-      return settings;
-    } catch (error) {
-      console.error('Error load settings:', error);
-      return null;
-    }
-  };
-
-  const saveSettings = async (
-    notifications: NotificationPreferences,
-    privacysafety?: any,
-    language?: string,
-  ) => {
-    try {
-      await ensureLoggedIn();
-
+  const saveSettings = withAuth(
+    async (
+      notifications: NotificationPreferences,
+      privacysafety?: any,
+      language?: string,
+    ) => {
       const settings = { notifications, privacysafety, language };
 
-      const settingsUrl = `pubky://${pubky}/pub/pubky.app/settings`;
+      const settingsUrl = `${baseUriBuilder(pubky!)}settings`;
 
-      await client.fetch(settingsUrl, {
-        method: 'PUT',
-        body: JSON.stringify(settings),
-        credentials: 'include',
-      });
+      await homeserver.put(settingsUrl, JSON.stringify(settings));
 
       return true;
-    } catch (error) {
-      console.error('Error put settings:', error);
-      return false;
-    }
-  };
+    },
+  );
 
-  const deletePost = async (postId: string): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
+  const deletePost = withAuth(async (postId: string): Promise<boolean> => {
+    // Post URL
+    const postUrl = postUriBuilder(pubky!, postId);
 
-      // Post URL
-      const postUrl = `pubky://${pubky}/pub/pubky.app/posts/${postId}`;
+    // Send the post to the homeserver
+    await homeserver.del(postUrl);
 
-      // Send the post to the homeserver
-      await client.fetch(postUrl, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+    // delete the post from the timeline
+    setTimeline((prevTimeline) =>
+      prevTimeline.filter((p) => p.details.id !== postId),
+    );
 
-      // delete the post from the timeline
-      setTimeline((prevTimeline) =>
-        prevTimeline.filter((p) => p.details.id !== postId),
-      );
+    // delete the post from the new posts
+    setNewPosts((prevNewPosts) =>
+      prevNewPosts.filter((p) => p.details.id !== postId),
+    );
 
-      // delete the post from the new posts
-      setNewPosts((prevNewPosts) =>
-        prevNewPosts.filter((p) => p.details.id !== postId),
-      );
-
-      return true;
-    } catch (error) {
-      console.error('Error creating post:', error);
-      return false;
-    }
-  };
+    return true;
+  });
 
   const generateAuthUrl = async (caps?: string) => {
     const capabilities =
@@ -1168,519 +1010,145 @@ export function PubkyClientWrapper({
       );
       return { url: String(url), promise };
     } catch (error) {
-      console.error('Error generating auth URL:', error);
+      handleError(error, 'generateAuthUrl');
       return null;
     }
   };
 
-  const createRepost = async (
-    originalPostId: string,
-    originalauthorId: string,
-    repostContent: string,
-    kind: PostKind,
-    files?: File[],
-  ): Promise<string | false> => {
-    try {
-      await ensureLoggedIn();
+  const follow = withAuth(async (user_id: string): Promise<boolean> => {
+    const result = specsBuilder!.createFollow(user_id);
 
-      // Generate a timestamp ID for the repost
-      const repostId = generateTimestampId().toUpperCase();
+    const response = await homeserver.put(
+      result.meta.url,
+      JSON.stringify(result.follow.toJson()),
+    );
 
-      // Initialize the post object
-      const newRepost: PubkyAppPost = {
-        content: repostContent,
-        embed: {
-          kind: 'short',
-          uri: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`,
-        },
-        kind,
-      };
+    if (!response.ok) {
+      const errorMessage = `Error ${response.status}: ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
 
-      const repostedPost = timeline.find(
-        (post) => post.details.id === originalPostId,
+    return true;
+  });
+
+  const unfollow = withAuth(async (user_id: string): Promise<boolean> => {
+    const result = specsBuilder!.createFollow(user_id);
+
+    const response = await homeserver.del(result.meta.url);
+
+    if (!response.ok) {
+      const errorMessage = `Error ${response.status}: ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
+
+    return true;
+  });
+
+  const deleteFile = withAuth(async (file_uri: string): Promise<boolean> => {
+    // TODO: we are not deleting the `/blob`
+
+    await homeserver.del(file_uri);
+
+    return true;
+  });
+
+  const mute = withAuth(async (user_id: string): Promise<boolean> => {
+    const result = specsBuilder!.createMute(user_id);
+
+    await homeserver.put(result.meta.url, JSON.stringify(result.mute.toJson()));
+
+    return true;
+  });
+
+  const unmute = withAuth(async (user_id: string): Promise<boolean> => {
+    const result = specsBuilder!.createMute(user_id);
+
+    await homeserver.del(result.meta.url);
+
+    return true;
+  });
+
+  const addBookmark = withAuth(
+    async (postId: string, authorId: string): Promise<boolean | string> => {
+      const uriPost = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createBookmark(uriPost);
+
+      const response = await homeserver.put(
+        result.meta.url,
+        JSON.stringify(result.bookmark.toJson()),
       );
 
-      // remove from newPosts if it is there
-      setNewPosts((prevNewPosts) =>
-        prevNewPosts.filter((p) => p.details.id !== originalPostId),
+      if (!response.ok) {
+        const errorMessage = `Error ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
+      }
+
+      return result.meta.id;
+    },
+  );
+
+  const deleteBookmark = withAuth(
+    async (postId: string, authorId: string): Promise<boolean> => {
+      const uriPost = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createBookmark(uriPost);
+
+      const response = await homeserver.del(result.meta.url);
+
+      if (!response.ok) {
+        const errorMessage = `Error ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
+      }
+
+      return true;
+    },
+  );
+
+  const createTag = withAuth(
+    async (
+      authorId: string,
+      postId: string,
+      label: string,
+    ): Promise<boolean> => {
+      const postUri = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createTag(postUri, label);
+
+      await homeserver.put(
+        result.meta.url,
+        JSON.stringify(result.tag.toJson()),
       );
 
-      // Add the repost to the timeline
-      setTimeline([
-        {
-          details: {
-            id: repostId,
-            author: repostedPost?.details.author ?? '',
-            content: repostContent,
-            kind,
-            uri: repostedPost?.details.uri ?? '',
-            indexed_at: repostedPost?.details.indexed_at ?? Date.now(),
-          },
-          counts: {
-            reposts: 0,
-            replies: 0,
-            tags: 0,
-          },
-          tags: [],
-          cached: 'local',
-          relationships: {
-            reposted: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`,
-          },
-        },
-        ...timeline,
-      ]);
-
-      // List to store URIs of uploaded files
-      const uploadedFileUris: string[] = [];
-
-      // File upload, if any
-      if (files && files.length > 0) {
-        for (const file of files) {
-          // Read the file content
-          const fileContent = await file.arrayBuffer();
-          const blobId = generateTimestampId().toUpperCase();
-          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-          const blobBody = Buffer.from(fileContent);
-
-          await client.fetch(blobUrl, {
-            method: 'PUT',
-            body: blobBody,
-            credentials: 'include',
-          });
-
-          // Create the PubkyAppFile object
-          const fileId = generateTimestampId().toUpperCase();
-          const newFile = {
-            name: file.name,
-            created_at: Date.now(),
-            src: blobUrl,
-            content_type: file.type,
-            size: file.size,
-          };
-
-          // File URL
-          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-          // Send the file to the homeserver
-          await client.fetch(fileUrl, {
-            method: 'PUT',
-            body: JSON.stringify(newFile),
-            credentials: 'include',
-          });
-
-          // Store the file URI
-          uploadedFileUris.push(fileUrl);
-        }
-
-        // If there are files, add to the repost attachments
-        newRepost.attachments = uploadedFileUris;
-      }
-
-      // Repost URL
-      const repostUrl = `pubky://${pubky}/pub/pubky.app/posts/${repostId}`;
-
-      // Send the post to the homeserver
-      await client.fetch(repostUrl, {
-        method: 'PUT',
-        body: JSON.stringify(newRepost),
-        credentials: 'include',
-      });
-
-      return repostUrl;
-    } catch (error) {
-      console.error('Error creating post:', error);
-      return false;
-    }
-  };
-
-  const createReply = async (
-    originalPostUri: string,
-    replyContent: string,
-    kind: PostKind,
-    files?: File[],
-    quote?: string,
-  ): Promise<string | false> => {
-    try {
-      await ensureLoggedIn();
-
-      const replyId = generateTimestampId().toUpperCase();
-      const replyPost: PubkyAppPost = {
-        content: replyContent,
-        kind,
-        parent: originalPostUri,
-        ...(quote && {
-          embed: {
-            uri: quote,
-            kind: 'short',
-          },
-        }),
-      };
-
-      const uploadedFileUris: string[] = [];
-
-      if (files && files.length > 0) {
-        for (const file of files) {
-          const fileContent = await file.arrayBuffer();
-          const blobId = generateTimestampId().toUpperCase();
-          const blobUrl = `pubky://${pubky}/pub/pubky.app/blobs/${blobId}`;
-          const blobBody = Buffer.from(fileContent);
-
-          await client.fetch(blobUrl, {
-            method: 'PUT',
-            body: blobBody,
-            credentials: 'include',
-          });
-
-          const fileId = generateTimestampId().toUpperCase();
-          const newFile = {
-            name: file.name,
-            created_at: Date.now(),
-            src: blobUrl,
-            content_type: file.type,
-            size: file.size,
-          };
-
-          const fileUrl = `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
-
-          await client.fetch(fileUrl, {
-            method: 'PUT',
-            body: JSON.stringify(newFile),
-            credentials: 'include',
-          });
-
-          uploadedFileUris.push(fileUrl);
-        }
-
-        // If there are files, add to the reply attachments
-        replyPost.attachments = uploadedFileUris;
-      }
-
-      const replyUrl = `pubky://${pubky}/pub/pubky.app/posts/${replyId}`;
-
-      await client.fetch(replyUrl, {
-        method: 'PUT',
-        body: JSON.stringify(replyPost),
-        credentials: 'include',
-      });
-
-      return replyUrl;
-    } catch (error) {
-      console.error('Error while replying to post:', error);
-      return false;
-    }
-  };
-
-  const follow = async (user_id: string): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
-
-      const followData = {
-        created_at: Date.now(),
-      };
-
-      const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
-
-      const response = await client.fetch(followUrl, {
-        method: 'PUT',
-        body: JSON.stringify(followData),
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errorMessage = `Error ${response.status}: ${response.statusText}`;
-        throw new Error(errorMessage);
-      }
-
-      // get user relationships and check if it is followed
-      // keep in a while loop until it is followed
-      let userFollow = false;
-
-      while (!userFollow) {
-        try {
-          const post = await getUserRelationship(user_id, pubky ?? '');
-          if (post.following === true) {
-            userFollow = true;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-
       return true;
-    } catch (error) {
-      console.error('Error while following the user:', error);
-      return false;
-    }
-  };
+    },
+  );
 
-  const unfollow = async (user_id: string): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
+  const saveFeed = withAuth(
+    async (feed: ICustomFeed, name: string): Promise<boolean> => {
+      // Map the ICustomFeed to the arguments for `createFeed`:
+      // feed might have e.g. tags, reach, layout, etc.
+      const { tags, reach, layout, sort, content } = feed;
 
-      const followUrl = `pubky://${pubky}/pub/pubky.app/follows/${user_id}`;
+      // If feed.tags is null, pass null. Otherwise pass as is.
+      const tagsValue = tags && tags.length > 0 ? tags : null;
+      const contentVal = content == 'all' ? null : content;
 
-      const response = await client.fetch(followUrl, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errorMessage = `Error ${response.status}: ${response.statusText}`;
-        throw new Error(errorMessage);
-      }
-
-      // get user relationships and check if it is unfollowed
-      // keep in a while loop until it is unfollowed
-      let userUnfollow = false;
-
-      while (!userUnfollow) {
-        try {
-          const post = await getUserRelationship(user_id, pubky ?? '');
-          if (post.following === false) {
-            userUnfollow = true;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error while unfollowing the user:', error);
-      return false;
-    }
-  };
-
-  const deleteFile = async (file_uri: string): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
-
-      await client.fetch(file_uri, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      return true;
-    } catch (error) {
-      console.error('Error while unfollowing the user:', error);
-      return false;
-    }
-  };
-
-  const mute = async (user_id: string): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
-
-      const muteData = {
-        created_at: Date.now(),
-      };
-
-      const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
-
-      await client.fetch(muteUrl, {
-        method: 'PUT',
-        body: JSON.stringify(muteData),
-        credentials: 'include',
-      });
-
-      return true;
-    } catch (error) {
-      console.error('Error while muting the user:', error);
-      return false;
-    }
-  };
-
-  const unmute = async (user_id: string): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
-
-      const muteUrl = `pubky://${pubky}/pub/pubky.app/mutes/${user_id}`;
-
-      await client.fetch(muteUrl, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      return true;
-    } catch (error) {
-      console.error('Error while unmuting the user:', error);
-      return false;
-    }
-  };
-
-  const addBookmark = async (
-    postId: string,
-    authorId: string,
-  ): Promise<boolean | string> => {
-    try {
-      await ensureLoggedIn();
-
-      const bookmarkData = {
-        uri: `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
-        created_at: Date.now(),
-      };
-
-      const bookmarkId = (await generateHashId(bookmarkData.uri)).toUpperCase();
-      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
-
-      const response = await client.fetch(bookmarkUrl, {
-        method: 'PUT',
-        body: JSON.stringify(bookmarkData),
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errorMessage = `Error ${response.status}: ${response.statusText}`;
-        throw new Error(errorMessage);
-      }
-
-      // get post and check if it is bookmarked
-      // keep in a while loop until it is bookmarked
-      let bookmarked = false;
-
-      while (!bookmarked) {
-        try {
-          const post = await getPost(authorId, postId, pubky);
-          if (post?.bookmark) {
-            bookmarked = true;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-
-      return bookmarkId;
-    } catch (error) {
-      console.error('Error while bookmarking the post:', error);
-      return false;
-    }
-  };
-
-  const deleteBookmark = async (
-    postId: string,
-    authorId: string,
-    bookmarkId: string,
-  ): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
-
-      const bookmarkUrl = `pubky://${pubky}/pub/pubky.app/bookmarks/${bookmarkId}`;
-
-      const response = await client.fetch(bookmarkUrl, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errorMessage = `Error ${response.status}: ${response.statusText}`;
-        throw new Error(errorMessage);
-      }
-
-      // get post and check if it is bookmarked
-      // keep in a while loop until it is bookmarked
-      let bookmarked = true;
-
-      while (bookmarked) {
-        try {
-          const post = await getPost(authorId, postId, pubky);
-          if (!post?.bookmark) {
-            bookmarked = false;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error while undo bookmark the post:', error);
-      return false;
-    }
-  };
-
-  const createTag = async (
-    authorId: string,
-    postId: string,
-    tagContent: string,
-  ): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
-
-      if (!tagContent || tagContent.trim() === '') {
-        throw new Error('Tag content cannot be empty');
-      }
-
-      const tagData = {
-        uri: `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
-        label: tagContent,
-        created_at: Date.now(),
-      };
-
-      const tagId = (
-        await generateHashId(`${tagData.uri}:${tagData.label}`)
-      ).toUpperCase();
-
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
-
-      await client.fetch(tagUrl, {
-        method: 'PUT',
-        body: JSON.stringify(tagData),
-        credentials: 'include',
-      });
-
-      return true;
-    } catch (error) {
-      console.error('Error creating tag:', error);
-      return false;
-    }
-  };
-
-  const saveFeed = async (
-    feed: ICustomFeed,
-    name: string,
-  ): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
-
-      const feedData = {
-        feed,
+      const result = specsBuilder!.createFeed(
+        tagsValue,
+        reach,
+        layout,
+        sort,
+        contentVal || null,
         name,
-        created_at: Date.now(),
-      };
+      );
 
-      const feedId = (
-        await generateHashId(JSON.stringify(feed).toLowerCase())
-      ).toUpperCase();
-
-      const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
-
-      await client.fetch(feedUrl, {
-        method: 'PUT',
-        body: JSON.stringify(feedData),
-        credentials: 'include',
-      });
+      const feedObj = result.feed.toJson();
+      await homeserver.put(result.meta.url, JSON.stringify(feedObj));
 
       return true;
-    } catch (error) {
-      console.error('Error creating tag:', error);
-      return false;
-    }
-  };
+    },
+  );
 
-  const loadFeeds = async (): Promise<
-    { feed: ICustomFeed; name: string }[]
-  > => {
-    try {
-      await ensureLoggedIn();
-
+  const loadFeeds = withAuth(
+    async (): Promise<{ feed: ICustomFeed; name: string }[]> => {
       // Define the feeds directory path
       const feedsDirUrl = `pubky://${pubky}/pub/pubky.app/feeds/`;
       const feedUris = await client.list(feedsDirUrl);
@@ -1689,7 +1157,7 @@ export function PubkyClientWrapper({
       const feedsData = await Promise.all(
         feedUris.map(async (uri) => {
           try {
-            const response = await client.fetch(uri);
+            const response = await homeserver.get(uri);
             const feed = await response.json();
             return feed;
           } catch (error) {
@@ -1703,133 +1171,76 @@ export function PubkyClientWrapper({
       return feedsData.filter(
         (feed): feed is { feed: ICustomFeed; name: string } => feed !== null,
       );
-    } catch (error) {
-      console.error('Error loading feeds:', error);
-      return [];
-    }
-  };
+    },
+  );
 
-  const deleteFeed = async (feed: ICustomFeed): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
+  const deleteFeed = withAuth(async (feed: ICustomFeed): Promise<boolean> => {
+    // Map the ICustomFeed to the arguments for `createFeed`:
+    // feed might have e.g. tags, reach, layout, etc.
+    const { tags, reach, layout, sort, content } = feed;
 
-      // Compute the hash ID for the feed based on the feed options
-      const feedId = (
-        await generateHashId(JSON.stringify(feed).toLowerCase())
-      ).toUpperCase();
+    // If feed.tags is null, pass null. Otherwise pass as is.
+    const tagsValue = tags && tags.length > 0 ? tags : null;
+    const contentVal = content == 'all' ? null : content;
 
-      // Construct the feed URL
-      const feedUrl = `pubky://${pubky}/pub/pubky.app/feeds/${feedId}`;
+    // create feed according to specs to compute ID and URL
+    const result = specsBuilder!.createFeed(
+      tagsValue,
+      reach,
+      layout,
+      sort,
+      contentVal || null,
+      'placeholder',
+    );
 
-      // Delete the feed from the homeserver
-      await client.fetch(feedUrl, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+    // Delete the feed from the homeserver
+    await homeserver.del(result.meta.url);
 
-      return true;
-    } catch (error) {
-      console.error('Error deleting feed:', error);
-      return false;
-    }
-  };
+    return true;
+  });
 
-  const deleteTag = async (
-    authorId: string,
-    postId: string,
-    tagLabel: string,
-  ): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
+  const deleteTag = withAuth(
+    async (
+      authorId: string,
+      postId: string,
+      tagLabel: string,
+    ): Promise<boolean> => {
+      // Compute tag URL and ID based on tag object content using the builder
+      const uriPost = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createTag(uriPost, tagLabel);
 
-      const uriPost = `pubky://${authorId}/pub/pubky.app/posts/${postId}`;
-
-      const tagId = (
-        await generateHashId(`${uriPost}:${tagLabel}`)
-      ).toUpperCase();
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
-
-      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include' });
+      await homeserver.del(result.meta.url);
 
       return true;
-    } catch (error) {
-      console.error('Error deleting tag:', error);
-      return false;
-    }
-  };
+    },
+  );
 
-  const createTagProfile = async (
-    profileId: string,
-    tagContent: string,
-  ): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
+  const createTagProfile = withAuth(
+    async (userId: string, label: string): Promise<boolean> => {
+      const uriProfile = userUriBuilder(userId);
+      const result = specsBuilder!.createTag(uriProfile, label);
 
-      if (!tagContent || tagContent.trim() === '') {
-        throw new Error('Tag content cannot be empty');
-      }
-
-      const tagData = {
-        uri: `pubky://${profileId}/pub/pubky.app/profile.json`,
-        label: tagContent,
-        created_at: Date.now(),
-      };
-
-      const tagId = (
-        await generateHashId(`${tagData.uri}:${tagData.label}`)
-      ).toUpperCase();
-
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
-
-      await client.fetch(tagUrl, {
-        method: 'PUT',
-        body: JSON.stringify(tagData),
-        credentials: 'include',
-      });
+      await homeserver.put(
+        result.meta.url,
+        JSON.stringify(result.tag.toJson()),
+      );
 
       return true;
-    } catch (error) {
-      console.error('Error creating tag:', error);
-      return false;
-    }
-  };
+    },
+  );
 
-  const deleteTagProfile = async (
-    profileId: string,
-    tagLabel: string,
-  ): Promise<boolean> => {
-    try {
-      await ensureLoggedIn();
+  const deleteTagProfile = withAuth(
+    async (userId: string, label: string): Promise<boolean> => {
+      const uriProfile = userUriBuilder(userId);
 
-      const profileUri = `pubky://${profileId}/pub/pubky.app/profile.json`;
-      const tagId = (
-        await generateHashId(`${profileUri}:${tagLabel}`)
-      ).toUpperCase();
-      const tagUrl = `pubky://${pubky}/pub/pubky.app/tags/${tagId}`;
+      // Compute ID and URL for a from its content (unique)
+      const result = specsBuilder!.createTag(uriProfile, label);
 
-      await client.fetch(tagUrl, { method: 'DELETE', credentials: 'include' });
+      await homeserver.del(result.meta.url);
 
       return true;
-    } catch (error) {
-      console.error('Error creating tag:', error);
-      return false;
-    }
-  };
-
-  const toPubkeyProfile = (profile: PubkyAppUser): PubkyAppUser => {
-    if (!profile) throw new Error('Profile is required');
-
-    return {
-      name: profile.name || 'anonymous',
-      bio: profile.bio || '',
-      image: profile.image,
-      links:
-        profile?.links && profile?.links?.length > 0
-          ? profile?.links
-          : undefined,
-      status: profile.status || 'noStatus',
-    };
-  };
+    },
+  );
 
   return (
     <PubkyClientContext.Provider

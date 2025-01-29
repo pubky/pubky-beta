@@ -6,6 +6,7 @@ import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
 import CreateContent from '@/components/CreateContent';
 import Post from '@/components/Post';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateRepostProps {
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
@@ -39,7 +40,7 @@ export default function ContentCreateRepost({
         post?.details?.id,
         post?.details?.author,
         content,
-        'short',
+        PubkyAppPostKind.Short,
         selectedFiles,
       );
 
@@ -78,7 +79,7 @@ export default function ContentCreateRepost({
         post?.details?.id,
         post?.details?.author,
         '',
-        'short',
+        PubkyAppPostKind.Short,
       );
 
       if (newRepost) {

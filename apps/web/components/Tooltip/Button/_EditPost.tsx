@@ -1,6 +1,7 @@
 import { Icon, Tooltip } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface EditPostProps {
   post: PostView;
@@ -19,7 +20,7 @@ export default function EditPost({
     <>
       {post?.details?.author === pubky && (
         <>
-          {post?.details?.kind === 'long' ? (
+          {post?.details?.kind === PubkyAppPostKind.Long ? (
             <Tooltip.Item
               id="edit-article"
               onClick={() => setShowModalEditArticle(true)}
