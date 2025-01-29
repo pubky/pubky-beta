@@ -4,6 +4,7 @@ import HotTagsReach from './_HotTagsReach';
 import Layout from './_Layout';
 import Reach from './_Reach';
 import Sort from './_Sort';
+import SortWhoToFollow from './_SortWhoToFollow';
 import TagsTimeFrame from './_TagsTimeFrame';
 
 export const Filter = {
@@ -13,6 +14,7 @@ export const Filter = {
   Layout,
   Reach,
   Sort,
+  SortWhoToFollow,
   TagsTimeFrame,
 };
 
