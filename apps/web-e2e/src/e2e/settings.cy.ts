@@ -3,7 +3,7 @@ import { latestPostInFeedContentEq, createQuickPost, checkPostIsNotAtTopOfFeed }
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands'
 import path = require('path');
-import { defaultMs } from '../support/slow-down';
+import { interceptNetworkRequest, NetworkRequest, saveNetworkRequestLog } from '../support/common';
 
 describe('settings', () => {
   before(() => {
@@ -12,6 +12,15 @@ describe('settings', () => {
 
   beforeEach(() => {
     cy.deleteDownloadsFolder();
+  });
+
+  // intercept network requests for /api/invite-code and log them to debug failures in CI
+  let interceptedRequests: NetworkRequest[] = [];
+  beforeEach(() => {
+    interceptNetworkRequest(interceptedRequests);
+   });
+  afterEach(() => {
+    saveNetworkRequestLog(interceptedRequests, 'settings');
   });
 
   it('Account settings function correctly', () => {

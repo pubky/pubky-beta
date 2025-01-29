@@ -4,7 +4,7 @@ import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands'
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
 import { clickFollowButton } from '../support/profile';
-import { addTagsWithModal } from '../support/common';
+import { addTagsWithModal, interceptNetworkRequest, NetworkRequest, saveNetworkRequestLog } from '../support/common';
 import { checkLatestNotification } from '../support/profile';
 
 const profile1 = { username: "Notif #1", pubkyAlias: "pubky_1" };
@@ -41,6 +41,15 @@ describe('notifications', () => {
         cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
       };
     });
+  });
+
+  // intercept network requests for /api/invite-code and log them to debug failures in CI
+  let interceptedRequests: NetworkRequest[] = [];
+  beforeEach(() => {
+    interceptNetworkRequest(interceptedRequests);
+   });
+  afterEach(() => {
+    saveNetworkRequestLog(interceptedRequests, 'notifications');
   });
 
   it('can be notified for new follower, friend, lost friend', () => {
