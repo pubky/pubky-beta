@@ -68,7 +68,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
   return (
     <div className="ml-6">
       <CreateContent
-        id="quick-post-create-content"
+        id="quick-reply-create-content"
         className="p-4"
         handleSubmit={handleReply}
         content={contentReply}

@@ -88,10 +88,6 @@ describe('feed and filters', () => {
     cy.findFirstPostInFeed(profile3.postText).should('be.visible');
     cy.findFirstPostInFeed(profile4.postText).should('be.visible');
 
-    // TODO: remove refrest hen bug is fixed, see https://github.com/pubky/pubky-app/issues/882
-    cy.reload();
-    waitForFeedToLoad();
-
     // check posts are in the correct order
     checkPostIsAtIndexInFeed(profile4.postText, 0);
     checkPostIsAtIndexInFeed(profile3.postText, 1);
@@ -105,6 +101,10 @@ describe('feed and filters', () => {
     // * sign in as profile 4 and view Reach All posts, all can be seen
     cy.signIn(backupDownloadFilePath(`${profile4.username}.pkarr`));
     // Reach All is the default view so no need to click
+
+    // TODO: remove refresh hen bug is fixed, see https://github.com/pubky/pubky-app/issues/924
+    cy.reload();
+    waitForFeedToLoad();
 
     // check all posts are visible
     cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
