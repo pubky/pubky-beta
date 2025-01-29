@@ -4,6 +4,7 @@ import { Button, Card, Icon, Typography } from '@social/ui-shared';
 import { useState } from 'react';
 import File from './_File';
 import Phrase from './_Phrase';
+import Success from './_Success';
 
 interface BackupProps {
   loading: boolean;
@@ -16,6 +17,8 @@ interface BackupProps {
   setConfirmPhrase: React.Dispatch<React.SetStateAction<boolean>>;
   showWords: boolean;
   setShowWords: React.Dispatch<React.SetStateAction<boolean>>;
+  success: boolean;
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ContentBackup({
@@ -29,21 +32,25 @@ export default function ContentBackup({
   setConfirmPhrase,
   showWords,
   setShowWords,
+  success,
+  setSuccess,
 }: BackupProps) {
   const [phrase, setPhrase] = useState(false);
   const [file, setFile] = useState(false);
 
   return (
     <>
-      {phrase ? (
+      {success ? (
+        <Success setShow={setShow} />
+      ) : phrase ? (
         <Phrase
-          setShowModalBackup={setShow}
           setShowBackupSuccess={setShowBackupSuccess}
           setPhrase={setPhrase}
           confirmPhrase={confirmPhrase}
           setConfirmPhrase={setConfirmPhrase}
           showWords={showWords}
           setShowWords={setShowWords}
+          setSuccess={setSuccess}
         />
       ) : file ? (
         <File

@@ -20,6 +20,7 @@ export default function RemindBackup() {
   const { seed, setSeed, profile, mnemonic, setMnemonic, getRecoveryFile } =
     usePubkyClientContext();
   const isMobile = useIsMobile();
+  const [success, setSuccess] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
   const [remindMeLater, setRemindMeLater] = useState(false);
@@ -122,9 +123,7 @@ export default function RemindBackup() {
 
       Utils.storage.remove('seed');
       Utils.storage.remove('mnemonic');
-
-      setShowModalBackup(false);
-      setShowSheetBackup(false);
+      setSuccess(true);
     } catch (error) {
       console.log(error);
     } finally {
@@ -213,7 +212,7 @@ export default function RemindBackup() {
       ) : (
         showBackupSuccess && (
           <div
-            className={`mb-6 w-full p-4 bg-white rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
+            className={`mb-2 lg:mb-6 w-full p-4 bg-white rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
           >
             <div className="w-full flex justify-between">
               <div className="flex gap-2">
@@ -244,6 +243,8 @@ export default function RemindBackup() {
         modalBackupRef={modalBackupRef}
         errors={errorPassword}
         setShowBackupSuccess={setShowBackupSuccess}
+        success={success}
+        setSuccess={setSuccess}
       />
       <BottomSheet.Backup
         loading={loadingRecoveryFile}
@@ -253,6 +254,8 @@ export default function RemindBackup() {
         setShow={setShowSheetBackup}
         errors={errorPassword}
         setShowBackupSuccess={setShowBackupSuccess}
+        success={success}
+        setSuccess={setSuccess}
       />
     </div>
   );

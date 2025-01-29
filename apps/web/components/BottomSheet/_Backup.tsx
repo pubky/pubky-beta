@@ -12,6 +12,8 @@ interface BackupProps {
   loading: boolean;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
   handleSubmit: () => Promise<void>;
+  success: boolean;
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   title?: string;
   className?: string;
 }
@@ -24,6 +26,8 @@ export default function Backup({
   loading,
   setPassword,
   handleSubmit,
+  success,
+  setSuccess,
   title,
   className,
 }: BackupProps) {
@@ -37,7 +41,9 @@ export default function Backup({
       title={
         (title ?? confirmPhrase)
           ? 'Confirm Recovery Phrase'
-          : 'Back up your account'
+          : success
+            ? 'Backup successful'
+            : 'Back up your account'
       }
       className={className}
     >
@@ -52,6 +58,8 @@ export default function Backup({
         setConfirmPhrase={setConfirmPhrase}
         showWords={showWords}
         setShowWords={setShowWords}
+        success={success}
+        setSuccess={setSuccess}
       />
     </BottomSheet.Root>
   );

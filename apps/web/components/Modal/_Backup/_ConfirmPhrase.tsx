@@ -6,7 +6,6 @@ import { Utils } from '@social/utils-shared';
 import { useEffect, useState } from 'react';
 
 interface ConfirmPhraseProps {
-  setShowModalBackup: React.Dispatch<React.SetStateAction<boolean>>;
   setShowBackupSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
   setConfirmPhrase: React.Dispatch<React.SetStateAction<boolean>>;
   randomizedWords: string[];
@@ -15,10 +14,10 @@ interface ConfirmPhraseProps {
   setIsCorrectOrder: React.Dispatch<React.SetStateAction<boolean>>;
   selectedWords: string[];
   setSelectedWords: React.Dispatch<React.SetStateAction<string[]>>;
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ConfirmPhrase({
-  setShowModalBackup,
   setShowBackupSuccess,
   setConfirmPhrase,
   randomizedWords,
@@ -27,6 +26,7 @@ export default function ConfirmPhrase({
   setIsCorrectOrder,
   selectedWords,
   setSelectedWords,
+  setSuccess,
 }: ConfirmPhraseProps) {
   const { setSeed, setMnemonic, mnemonic } = usePubkyClientContext();
   const [copyMnemonic, setCopyMnemonic] = useState(false);
@@ -53,7 +53,8 @@ export default function ConfirmPhrase({
     // if (selectedWords.includes(word)) return;
 
     const firstEmptyOrIncorrectIndex = selectedWords.findIndex(
-      (selectedWord, idx) => !selectedWord || selectedWord !== correctOrder[idx]
+      (selectedWord, idx) =>
+        !selectedWord || selectedWord !== correctOrder[idx],
     );
 
     if (firstEmptyOrIncorrectIndex !== -1) {
@@ -68,7 +69,7 @@ export default function ConfirmPhrase({
     setMnemonic(undefined);
     Utils.storage.remove('mnemonic');
     Utils.storage.remove('seed');
-    setShowModalBackup(false);
+    setSuccess(true);
     setShowBackupSuccess && setShowBackupSuccess(true);
   };
 
@@ -105,7 +106,7 @@ export default function ConfirmPhrase({
 
   return (
     <>
-      <Typography.Body className="text-opacity-80 mt-2" variant="medium-light">
+      <Typography.Body className="text-opacity-80 mt-4" variant="medium-light">
         Tap the 12 words in the correct order.
       </Typography.Body>
       <div className="my-4">
@@ -116,7 +117,7 @@ export default function ConfirmPhrase({
               onClick={() => handleSelectWord(word)}
               className={`py-2 px-4 rounded-full cursor-pointer ${
                 selectedWords.includes(word)
-                  ? 'bg-white bg-opacity-10'
+                  ? 'bg-white bg-opacity-10 text-opacity-30'
                   : 'bg-white bg-opacity-20 hover:bg-opacity-30'
               }`}
               variant="small-bold"
@@ -194,17 +195,16 @@ export default function ConfirmPhrase({
       </div>
       <div>
         {isCorrectOrder && (
-          <div className="flex w-full justify-between items-center px-4 py-2 mb-4 rounded-lg border-2 border-yellow-500 bg-yellow-600 bg-opacity-10">
-            <Typography.Body
-              className="break-words text-yellow-500"
-              variant="small-bold"
-            >
-              After confirmation, your recovery phrase will be deleted. No way
-              to recover or revise it later.
-            </Typography.Body>
+          <div className="flex w-full gap-2 items-center px-4 py-3 mb-4 rounded-2xl border-2 border-[#ffd200] bg-yellow-600 bg-opacity-10">
             <div>
-              <Icon.Warning color="#EAB308" />
+              <Icon.Warning color="#ffd200" size="20" />
             </div>
+            <Typography.Body
+              className="break-words text-[#ffd200] leading-6"
+              variant="medium-bold"
+            >
+              After confirmation, your recovery phrase will be deleted (!)
+            </Typography.Body>
           </div>
         )}
       </div>
@@ -226,7 +226,7 @@ export default function ConfirmPhrase({
           onClick={() => (isCorrectOrder ? handleRecoveryPhrase() : undefined)}
           className="w-auto"
         >
-          Done
+          Confirm
         </Button.Large>
       </div>
     </>
