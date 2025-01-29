@@ -1,11 +1,11 @@
 import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 import { Card, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useHotTags } from '@/hooks/useTag';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 import { UserView } from '@/types/User';
 import { searchUsersByUsername } from '@/services/streamService';
 
@@ -23,83 +23,77 @@ export default function SearchInputCard({
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
   const { data: hotTags, isLoading } = useHotTags(pubky, undefined, 0, 10);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null,
-  );
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isMouseInside, setIsMouseInside] = useState(false);
 
-  const handleTagSearch = (tag: string) => {
-    if (searchTags.includes(tag)) return;
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const requestIdRef = useRef(0);
 
-    if (searchTags.length < 3) {
-      setSearchTags([...searchTags, tag]);
-    } else {
-      const newSearchTags = [...searchTags.slice(1), tag];
-      setSearchTags(newSearchTags);
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (!inputValue?.trim()) {
+      setSearchedUsers([]);
+      return;
     }
-    router.push('/search');
-  };
+
+    const currentRequestId = ++requestIdRef.current;
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const response = await searchUsersByUsername(inputValue.trim(), pubky);
+        if (currentRequestId === requestIdRef.current) {
+          setSearchedUsers(response || []);
+        }
+      } catch (error) {
+        if (currentRequestId === requestIdRef.current) {
+          setSearchedUsers([]);
+        }
+        console.error('Error searching users:', error);
+      }
+    }, 500);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [inputValue, pubky]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (!isMouseInside || searchedUsers.length === 0) return;
 
-    if (e.key === 'ArrowDown') {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
       setSelectedIndex((prevIndex) => {
         const nextIndex =
-          prevIndex === null || prevIndex === searchedUsers.length - 1
-            ? 0
-            : prevIndex + 1;
+          e.key === 'ArrowDown'
+            ? prevIndex === null || prevIndex === searchedUsers.length - 1
+              ? 0
+              : prevIndex + 1
+            : prevIndex === null || prevIndex === 0
+              ? searchedUsers.length - 1
+              : prevIndex - 1;
 
-        document.getElementById(`user-${nextIndex}`)?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-        });
-
-        return nextIndex;
-      });
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSelectedIndex((prevIndex) => {
-        const nextIndex =
-          prevIndex === null || prevIndex === 0
-            ? searchedUsers.length - 1
-            : prevIndex - 1;
-
-        document.getElementById(`user-${nextIndex}`)?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-        });
-
+        document
+          .getElementById(`user-${nextIndex}`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         return nextIndex;
       });
     } else if (e.key === 'Enter' && selectedIndex !== null) {
       const selectedUser = searchedUsers[selectedIndex];
-      if (selectedUser) {
-        router.push(`/profile/${selectedUser.details.id}`);
-      }
+      if (selectedUser) router.push(`/profile/${selectedUser.details.id}`);
     }
   };
 
-  useEffect(() => {
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
+  const handleTagSearch = (tag: string) => {
+    if (!searchTags.includes(tag)) {
+      setSearchTags(
+        searchTags.length < 3
+          ? [...searchTags, tag]
+          : [...searchTags.slice(1), tag],
+      );
+      router.push('/search');
     }
-
-    const timeout = setTimeout(async () => {
-      if (inputValue && inputValue.trim() !== '') {
-        const response = await searchUsersByUsername(inputValue.trim(), pubky);
-        setSearchedUsers(response || []);
-      } else {
-        setSearchedUsers([]);
-      }
-    }, 500);
-
-    setDebounceTimeout(timeout);
-
-    return () => clearTimeout(timeout);
-  }, [inputValue, pubky]);
+  };
 
   return (
     <Card.Primary
@@ -112,13 +106,10 @@ export default function SearchInputCard({
       background="bg-[#05050A] border border-t-0 border-white border-opacity-20 z-10"
       onKeyDown={handleKeyDown}
       tabIndex={0}
-      onMouseEnter={() => {
-        setIsMouseInside(true);
-        refCard?.current?.focus();
-      }}
+      onMouseEnter={() => setIsMouseInside(true)}
       onMouseLeave={() => setIsMouseInside(false)}
     >
-      {inputValue !== '' && searchedUsers && searchedUsers.length > 0 ? (
+      {inputValue && searchedUsers.length > 0 ? (
         <div className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col">
           <Link
             href={`/search?tags=${inputValue}`}
@@ -134,49 +125,45 @@ export default function SearchInputCard({
               key={user.details.id}
               id={`user-${index}`}
               uri={user.details.id}
-              uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
-              username={Utils.minifyText(user?.details?.name, 20)}
-              label={Utils.minifyPubky(user?.details?.id)}
-              className={`p-2 rounded-2xl ${
-                selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'
-              }`}
+              uriImage={user.details.image || '/images/webp/Userpic.webp'}
+              username={Utils.minifyText(user.details.name, 20)}
+              label={Utils.minifyPubky(user.details.id)}
+              className={`p-2 rounded-2xl ${selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'}`}
               onMouseEnter={() => setSelectedIndex(index)}
             />
           ))}
         </div>
       ) : (
-        <div className="flex-col gap-6 inline-flex">
-          <div>
-            {isLoading ? (
-              <Typography.Body variant="small" className="text-opacity-30">
-                Loading...
-              </Typography.Body>
-            ) : hotTags && hotTags.length > 0 ? (
-              <>
-                <Typography.Label className="text-opacity-30">
-                  Hot tags
-                </Typography.Label>
-                <div className="mt-2 justify-start items-start">
-                  {hotTags.slice(0, 10).map((tag, index) => (
-                    <PostUtil.Tag
-                      key={index}
-                      clicked={false}
-                      onClick={() => handleTagSearch(tag.label)}
-                      color={tag.label && Utils.generateRandomColor(tag.label)}
-                      className="mr-2 my-1"
-                      boxShadow={false}
-                    >
-                      {tag.label}
-                    </PostUtil.Tag>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <Typography.Body variant="small" className="text-opacity-30">
-                No tags yet
-              </Typography.Body>
-            )}
-          </div>
+        <div className="flex-col inline-flex">
+          {isLoading ? (
+            <Typography.Body variant="small" className="text-opacity-30">
+              Loading...
+            </Typography.Body>
+          ) : hotTags?.length ? (
+            <>
+              <Typography.Label className="text-opacity-30">
+                Hot tags
+              </Typography.Label>
+              <div className="mt-2 justify-start items-start">
+                {hotTags.slice(0, 10).map((tag, index) => (
+                  <PostUtil.Tag
+                    key={index}
+                    clicked={false}
+                    onClick={() => handleTagSearch(tag.label)}
+                    color={Utils.generateRandomColor(tag.label)}
+                    className="mr-2 my-1"
+                    boxShadow={false}
+                  >
+                    {tag.label}
+                  </PostUtil.Tag>
+                ))}
+              </div>
+            </>
+          ) : (
+            <Typography.Body variant="small" className="text-opacity-30">
+              No tags yet
+            </Typography.Body>
+          )}
         </div>
       )}
     </Card.Primary>
