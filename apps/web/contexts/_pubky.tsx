@@ -704,7 +704,30 @@ export function PubkyClientWrapper({
         files,
       );
 
-      return result ? result.uri : false;
+      if (!result) return false;
+
+      const newRepostDetails: PostDetails = {
+        author: pubky!,
+        id: result.id,
+        indexed_at: Date.now(),
+        uri: result.uri,
+        content: repostContent,
+        kind: result.details.kind,
+      };
+
+      const newRepostView: PostView = {
+        details: newRepostDetails,
+        counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
+        tags: [],
+        cached: 'homeserver',
+        relationships: {
+          reposted: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`, // Colleghiamo il repost al post originale
+        },
+      };
+
+      setNewPosts((prev) => [newRepostView, ...prev]);
+
+      return result.uri;
     },
   );
 
