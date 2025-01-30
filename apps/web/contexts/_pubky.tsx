@@ -75,7 +75,11 @@ type PubkyClientContextType = {
     files?: File[],
     quote?: string,
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
-  editPost: (post: PostView, postContent: string) => Promise<string | false>;
+  editPost: (
+    post: PostView,
+    postContent: string,
+    kind?: PubkyAppPostKind,
+  ) => Promise<string | false>;
   createArticle: (
     title: string,
     articleContent: string,
@@ -702,7 +706,30 @@ export function PubkyClientWrapper({
         files,
       );
 
-      return result ? result.uri : false;
+      if (!result) return false;
+
+      const newRepostDetails: PostDetails = {
+        author: pubky!,
+        id: result.id,
+        indexed_at: Date.now(),
+        uri: result.uri,
+        content: repostContent,
+        kind: result.details.kind,
+      };
+
+      const newRepostView: PostView = {
+        details: newRepostDetails,
+        counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
+        tags: [],
+        cached: 'homeserver',
+        relationships: {
+          reposted: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`, // Colleghiamo il repost al post originale
+        },
+      };
+
+      setNewPosts((prev) => [newRepostView, ...prev]);
+
+      return result.uri;
     },
   );
 
@@ -726,35 +753,37 @@ export function PubkyClientWrapper({
     },
   );
 
-  const editPost = withAuth(async (post: PostView, newContent: string) => {
-    // TODO: ideally we must fetch the PubkyAppPost from
-    // the homeserver instead of using PostView from Nexus!
-    const postEmbed = post?.relationships?.reposted
-      ? new PubkyAppPostEmbed(
-          post?.relationships?.reposted,
-          PubkyAppPostKind.Short,
-        )
-      : undefined;
+  const editPost = withAuth(
+    async (post: PostView, newContent: string, kind?: PubkyAppPostKind) => {
+      // TODO: ideally we must fetch the PubkyAppPost from
+      // the homeserver instead of using PostView from Nexus!
+      const postEmbed = post?.relationships?.reposted
+        ? new PubkyAppPostEmbed(
+            post?.relationships?.reposted,
+            PubkyAppPostKind.Short,
+          )
+        : undefined;
 
-    const postResult = specsBuilder!.createPost(
-      newContent,
-      post?.details?.kind,
-      post?.relationships?.replied,
-      postEmbed,
-      post?.details?.attachments,
-    );
+      const postResult = specsBuilder!.createPost(
+        newContent,
+        kind ?? PubkyAppPostKind.Short,
+        post?.relationships?.replied,
+        postEmbed,
+        post?.details?.attachments,
+      );
 
-    // We are faking a post edit, therefore, we should keep
-    // the original posting time and post url.
-    let editedPost = postResult.post.toJson();
-    editedPost.created_at = post.details.indexed_at;
-    let editedUrl = postUriBuilder(post.details.author, post.details.id);
+      // We are faking a post edit, therefore, we should keep
+      // the original posting time and post url.
+      let editedPost = postResult.post.toJson();
+      editedPost.created_at = post.details.indexed_at;
+      let editedUrl = postUriBuilder(post.details.author, post.details.id);
 
-    // Send the post to the homeserver
-    await homeserver.put(editedUrl, JSON.stringify(editedPost));
+      // Send the post to the homeserver
+      await homeserver.put(editedUrl, JSON.stringify(editedPost));
 
-    return editedUrl;
-  });
+      return editedUrl;
+    },
+  );
 
   const deleteAccount = withAuth(async (setProgress) => {
     const baseDirectory = baseUriBuilder(pubky!);

@@ -64,7 +64,7 @@ export default function CreateQuickPost({
             id: postId,
             indexed_at: Date.now(),
             author: pubky ?? '',
-            kind: newPost.details.kind || PubkyAppPostKind.Short,
+            kind: PubkyAppPostKind.Short,
             uri: newPost.uri || '',
           },
           counts: {

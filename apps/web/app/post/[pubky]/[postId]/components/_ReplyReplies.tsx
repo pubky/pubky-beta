@@ -63,7 +63,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
           <Link href={Utils.encodePostUri(reply?.details?.uri)}>
             <Typography.Body
               variant="small-bold"
-              className="mt-3 cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
+              className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
             >
               <Icon.PlusCircle />
               {repliesLeft === 1

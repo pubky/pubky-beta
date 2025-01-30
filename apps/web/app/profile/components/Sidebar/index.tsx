@@ -49,7 +49,7 @@ export default function Sidebar({
   useEffect(() => {
     async function fetchData() {
       try {
-        if (profile) {
+        if (profileUser) {
           if (profileUser?.relationship?.following) setFollowed(true);
         }
       } catch (error) {
@@ -58,7 +58,7 @@ export default function Sidebar({
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile, creatorPubky]);
+  }, [profileUser, creatorPubky]);
 
   const handleAddProfileTag = async (tag: string) => {
     // loading tag

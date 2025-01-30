@@ -6,7 +6,6 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
-import { useRouter } from 'next/navigation';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,7 +13,6 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function CreateQuickReply({ post }: CreateQuickPostProps) {
-  const router = useRouter();
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
@@ -61,8 +59,6 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
       setSelectedFiles([]);
       setTextArea(false);
       addAlert('Reply created!');
-
-      router.push(`/post/${post.details.author}/${post.details.id}`);
     }
   };
 

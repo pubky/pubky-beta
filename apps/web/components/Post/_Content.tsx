@@ -49,41 +49,30 @@ export default function Content({
   const uri = post?.details?.uri;
 
   async function checkForLink(text: string) {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const urls = text.match(urlRegex);
+    const urlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
+    let urls = text.match(urlRegex);
+
     if (urls) {
-      const url = urls[0];
+      let url = urls[0];
+      url = url.replace(/[^a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+$/, '');
 
       const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
-      const postMatch = url.match(postRegex);
-
-      if (postMatch) return;
-
+      if (postRegex.test(url)) return;
       setPreview(url);
 
       const youtubeId = getYouTubeID(url);
-      if (youtubeId) {
-        setVideoId(youtubeId);
-      }
+      if (youtubeId) setVideoId(youtubeId);
 
       const twitterRegex =
         /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
       const twitterMatch = url.match(twitterRegex);
-      if (twitterMatch) {
-        const tweetId = twitterMatch[3];
-        setTweetId(tweetId);
-      }
+      if (twitterMatch) setTweetId(twitterMatch[3]);
 
       const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+(?:\/.*)?/;
-      const githubMatch = url.match(githubRegex);
-      if (githubMatch) {
-        setGithubUrl(githubMatch[0]);
-      }
+      if (githubRegex.test(url)) setGithubUrl(url);
 
       const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
-      if (spotifyRegex.test(url)) {
-        setSpotifyUrl(url);
-      }
+      if (spotifyRegex.test(url)) setSpotifyUrl(url);
     }
   }
 
@@ -93,12 +82,8 @@ export default function Content({
 
   useEffect(() => {
     const cleanedText = cleanText(text.toString());
-    const splitInLines = cleanedText.split(' ');
-    if (splitInLines.length >= 1) {
-      splitInLines.forEach((line: string) => {
-        checkForLink(line.trim());
-      });
-    }
+    const words = cleanedText.split(/\s+/);
+    words.forEach((word: string) => checkForLink(word.trim()));
   }, [text]);
 
   useEffect(() => {
@@ -201,7 +186,10 @@ export default function Content({
       >
         {(() => {
           try {
-            if (post?.details?.kind === PubkyAppPostKind.Long) {
+            if (
+              String(post?.details?.kind) ===
+              PubkyAppPostKind[1].toLocaleLowerCase()
+            ) {
               const parsedContent = JSON.parse(contentText);
               if (parsedContent.title && parsedContent.body) {
                 const truncatedBody =
@@ -301,7 +289,8 @@ export default function Content({
             </div>
           )}
           {fileContents.length > 0 &&
-            post?.details?.kind !== PubkyAppPostKind.Long && (
+            String(post?.details?.kind) !==
+              PubkyAppPostKind[1].toLocaleLowerCase() && (
               <div
                 className={`mt-4 flex flex-col md:grid gap-4 ${
                   fileContents.length === 1
