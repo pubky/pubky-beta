@@ -9,7 +9,7 @@ import {
 } from '@/contexts';
 import { Typography } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function NotificationsProfile() {
   const {
@@ -17,14 +17,20 @@ export default function NotificationsProfile() {
     loading: loadingNotifications,
     loadMoreNotifications,
   } = useNotificationsContext();
-  const { unReadNotification } = useFilterContext();
+  const { unReadNotification, setUnReadNotification } = useFilterContext();
+  const [tempUnReadNotication, setTempUnReadNotification] = useState(0);
   const { putTimestampNotification } = usePubkyClientContext();
 
   const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
 
-  const displayedNotifications = notifications.slice(unReadNotification);
+  const displayedNotifications = notifications.slice(tempUnReadNotication);
 
   useEffect(() => {
+    if (unReadNotification) {
+      setTempUnReadNotification(unReadNotification);
+      setTimeout(() => setTempUnReadNotification(0), 3000);
+    }
+    setUnReadNotification(0);
     const putTimestamp = async () => {
       await putTimestampNotification();
     };
@@ -41,10 +47,10 @@ export default function NotificationsProfile() {
         </Typography.H2>
       ) : (
         <div>
-          {unReadNotification > 0 && (
+          {tempUnReadNotication > 0 && (
             <div className="px-2">
               {notifications
-                .slice(0, unReadNotification)
+                .slice(0, tempUnReadNotication)
                 .map((notification, index) => (
                   <Notifications.Notification
                     key={index}

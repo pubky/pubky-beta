@@ -179,7 +179,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     if (notificationPreferences && pubky) {
       fetchNotifications();
     }
-  }, [pubky, notificationPreferences]);
+  }, [pubky, notificationPreferences, timestamp]);
 
   return (
     <NotificationsContext.Provider
