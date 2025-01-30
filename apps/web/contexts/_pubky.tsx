@@ -78,7 +78,7 @@ type PubkyClientContextType = {
   editPost: (
     post: PostView,
     postContent: string,
-    kind: PubkyAppPostKind,
+    kind?: PubkyAppPostKind,
   ) => Promise<string | false>;
   createArticle: (
     title: string,
