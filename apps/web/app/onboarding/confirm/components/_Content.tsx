@@ -24,6 +24,7 @@ export default function Index() {
   const isMobile = useIsMobile();
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [showSheetBackup, setShowSheetBackup] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const modalBackupRef = useRef<HTMLDivElement>(null);
   const [password, setPassword] = useState('');
@@ -109,8 +110,7 @@ export default function Index() {
 
       Utils.storage.remove('seed');
       Utils.storage.remove('mnemonic');
-      setShowModalBackup(false);
-      setShowSheetBackup(false);
+      setSuccess(true);
     } catch (error) {
       console.log(error);
     } finally {
@@ -218,6 +218,8 @@ export default function Index() {
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
         errors={errors}
+        success={success}
+        setSuccess={setSuccess}
       />
       <BottomSheet.Backup
         loading={loading}
@@ -226,6 +228,8 @@ export default function Index() {
         show={showSheetBackup}
         setShow={setShowSheetBackup}
         errors={errors}
+        success={success}
+        setSuccess={setSuccess}
       />
     </>
   );

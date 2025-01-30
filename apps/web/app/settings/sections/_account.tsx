@@ -38,6 +38,7 @@ export default function Account() {
   const [progressDownload, setProgressDownload] = useState(0);
   const [importProgress, setImportProgress] = useState(0);
   const [importingData, setImportingData] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalBackup, setShowModalBackup] = useState(false);
   const [showSheetBackup, setShowSheetBackup] = useState(false);
@@ -172,8 +173,7 @@ export default function Account() {
 
       Utils.storage.remove('seed');
       Utils.storage.remove('mnemonic');
-      setShowModalBackup(false);
-      setShowSheetBackup(false);
+      setSuccess(true);
     } catch (error) {
       console.log(error);
     } finally {
@@ -344,6 +344,8 @@ export default function Account() {
         setShowModalBackup={setShowModalBackup}
         modalBackupRef={modalBackupRef}
         errors={errorPassword}
+        success={success}
+        setSuccess={setSuccess}
       />
       <Modal.DeleteAccount
         deletingAccount={deletingAccount}
@@ -359,6 +361,8 @@ export default function Account() {
         show={showSheetBackup}
         setShow={setShowSheetBackup}
         errors={errorPassword}
+        success={success}
+        setSuccess={setSuccess}
       />
       <BottomSheet.DeleteAccount
         deletingAccount={deletingAccount}

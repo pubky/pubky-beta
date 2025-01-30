@@ -13,6 +13,8 @@ interface BackupProps {
   modalBackupRef: React.RefObject<HTMLDivElement>;
   errors: string;
   setShowBackupSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
+  success: boolean;
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Backup({
@@ -24,6 +26,8 @@ export default function Backup({
   modalBackupRef,
   setShowBackupSuccess,
   errors,
+  success,
+  setSuccess,
 }: BackupProps) {
   const [confirmPhrase, setConfirmPhrase] = useState(false);
   const [showWords, setShowWords] = useState(false);
@@ -36,7 +40,7 @@ export default function Backup({
         setShowWords(false);
       }}
       modalRef={modalBackupRef}
-      className="md:max-w-[792px] max-h-[90vh] md:max-h-full overflow-y-auto scrollbar-thin scrollbar-webkit"
+      className="md:max-w-[792px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction
         id="backup-close-btn"
@@ -47,7 +51,11 @@ export default function Backup({
       />
       <Modal.Header
         title={
-          confirmPhrase ? 'Confirm Recovery Phrase' : 'Back up your account'
+          confirmPhrase
+            ? 'Confirm Recovery Phrase'
+            : success
+              ? 'Backup successful'
+              : 'Back up your account'
         }
       />
       <ContentBackup
@@ -61,6 +69,8 @@ export default function Backup({
         setConfirmPhrase={setConfirmPhrase}
         showWords={showWords}
         setShowWords={setShowWords}
+        success={success}
+        setSuccess={setSuccess}
       />
     </Modal.Root>
   );

@@ -6,30 +6,30 @@ import { useEffect, useState } from 'react';
 import ConfirmPhrase from './_ConfirmPhrase';
 
 interface PhraseProps {
-  setShowModalBackup: React.Dispatch<React.SetStateAction<boolean>>;
   setShowBackupSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
   setPhrase: React.Dispatch<React.SetStateAction<boolean>>;
   confirmPhrase: boolean;
   setConfirmPhrase: React.Dispatch<React.SetStateAction<boolean>>;
   showWords: boolean;
   setShowWords: React.Dispatch<React.SetStateAction<boolean>>;
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Phrase({
-  setShowModalBackup,
   setShowBackupSuccess,
   setPhrase,
   confirmPhrase,
   setConfirmPhrase,
   showWords,
   setShowWords,
+  setSuccess,
 }: PhraseProps) {
   const { mnemonic } = usePubkyClientContext();
   const [copyMnemonic, setCopyMnemonic] = useState(false);
   const [randomizedWords, setRandomizedWords] = useState<string[]>([]);
   const [isCorrectOrder, setIsCorrectOrder] = useState(false);
   const [selectedWords, setSelectedWords] = useState<string[]>(
-    Array(12).fill('')
+    Array(12).fill(''),
   );
   const correctOrder = mnemonic?.split(' ') || [];
 
@@ -85,7 +85,6 @@ export default function Phrase({
     <>
       {confirmPhrase ? (
         <ConfirmPhrase
-          setShowModalBackup={setShowModalBackup}
           setShowBackupSuccess={setShowBackupSuccess}
           setConfirmPhrase={setConfirmPhrase}
           randomizedWords={randomizedWords}
@@ -94,11 +93,12 @@ export default function Phrase({
           setIsCorrectOrder={setIsCorrectOrder}
           selectedWords={selectedWords}
           setSelectedWords={setSelectedWords}
+          setSuccess={setSuccess}
         />
       ) : (
         <>
           <Typography.Body
-            className="text-opacity-80 mt-2"
+            className="text-opacity-80 mt-4"
             variant="medium-light"
           >
             Use the 12 words below to recover your account at a later date.
@@ -152,7 +152,10 @@ export default function Phrase({
                     ) : (
                       <Icon.Clipboard size="12" />
                     )}
-                    <Typography.Body id="backup-copy-recovery-phrase" variant="small-bold">
+                    <Typography.Body
+                      id="backup-copy-recovery-phrase"
+                      variant="small-bold"
+                    >
                       Copy to clipboard
                     </Typography.Body>
                   </div>

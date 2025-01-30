@@ -17,7 +17,7 @@ export default function File({
 }: FileProps) {
   return (
     <>
-      <Typography.Body className="text-opacity-80 mt-2" variant="medium-light">
+      <Typography.Body className="text-opacity-80 mt-4" variant="medium-light">
         Encrypt your recovery file below with a secure password, download it,
         and save it to your computer or your cloud provider. Never share this
         file and password with anyone.
@@ -36,7 +36,18 @@ export default function File({
           }
         />
       </div>
-      <div className="w-full max-w-[796px] mt-4 justify-between items-center inline-flex gap-6">
+      <div className="flex w-full gap-2 items-center px-4 py-3 mb-4 rounded-2xl border-2 border-[#ffd200] bg-yellow-600 bg-opacity-10">
+        <div>
+          <Icon.Warning color="#ffd200" size="20" />
+        </div>
+        <Typography.Body
+          className="break-words text-[#ffd200] leading-6"
+          variant="medium-bold"
+        >
+          After confirmation, your recovery phrase will be deleted (!)
+        </Typography.Body>
+      </div>
+      <div className="w-full max-w-[796px] mt-2 justify-between items-center inline-flex gap-6">
         <Button.Large
           icon={<Icon.ArrowLeft />}
           className="w-auto"
@@ -48,7 +59,9 @@ export default function File({
         <Button.Large
           id="backup-download-recovery-file-btn"
           icon={<Icon.DownloadSimple />}
-          onClick={!loading ? () => handleSubmit() : undefined}
+          onClick={() => {
+            if (!loading) handleSubmit();
+          }}
           loading={loading}
           className="w-auto"
         >
