@@ -145,6 +145,7 @@ export default function Header({ title }: HeaderProps) {
               }`}
               onClick={() => setSearchInputCard(true)}
               readOnly={!!searchTags.length}
+              autoComplete="off"
             />
             <Modal.SearchInputCard
               className={searchInputCard ? 'block' : 'hidden'}

@@ -201,7 +201,10 @@ export default function Content({
       >
         {(() => {
           try {
-            if (post?.details?.kind === PubkyAppPostKind.Long) {
+            if (
+              String(post?.details?.kind) ===
+              PubkyAppPostKind[1].toLocaleLowerCase()
+            ) {
               const parsedContent = JSON.parse(contentText);
               if (parsedContent.title && parsedContent.body) {
                 const truncatedBody =
@@ -301,7 +304,8 @@ export default function Content({
             </div>
           )}
           {fileContents.length > 0 &&
-            post?.details?.kind !== PubkyAppPostKind.Long && (
+            String(post?.details?.kind) !==
+              PubkyAppPostKind[1].toLocaleLowerCase() && (
               <div
                 className={`mt-4 flex flex-col md:grid gap-4 ${
                   fileContents.length === 1

@@ -152,6 +152,7 @@ export function MainContent() {
             placeholder={!searchTags.length ? 'Search' : ''}
             onClick={() => setSearchInputCard(true)}
             readOnly={!!searchTags.length}
+            autoComplete="off"
           />
           <Modal.SearchInputCard
             className={searchInputCard ? 'block lg:hidden' : 'hidden'}

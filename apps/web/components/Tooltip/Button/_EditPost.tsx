@@ -20,7 +20,8 @@ export default function EditPost({
     <>
       {post?.details?.author === pubky && (
         <>
-          {post?.details?.kind === PubkyAppPostKind.Long ? (
+          {String(post?.details?.kind) ===
+          PubkyAppPostKind[1].toLocaleLowerCase() ? (
             <Tooltip.Item
               id="edit-article"
               onClick={() => setShowModalEditArticle(true)}
