@@ -4,7 +4,6 @@ import { slowCypressDown } from 'cypress-slow-down'
 import 'cypress-slow-down/commands'
 import { cannotFindPostInFeed, checkPostIsAtIndexInFeed, countPostsInFeed, createQuickPost, fastTagPostInFeed, repostPost, waitForFeedToLoad } from '../support/posts';
 import { searchAndFollowProfile } from '../support/contacts';
-import { interceptNetworkRequest, NetworkRequest, saveNetworkRequestLog } from '../support/common';
 
 // Profile 1 follows Profile 2 and is friends with Profile 2. Profile 1 also follows Profile 3 and Profile 4.
 const profile1 = {username: "Profile #1", bio: "Follows Profile #2", pubkyAlias: "pubky_1", postText1: `Profile 1's post ${Date.now()}`, postText2: `Profile 1's post to be reposted ${Date.now()}`};
@@ -73,13 +72,8 @@ describe('feed and filters', () => {
     cy.signOut(true);
   });
 
-  // intercept network requests for /api/invite-code and log them to debug failures in CI
-  let interceptedRequests: NetworkRequest[] = [];
   beforeEach(() => {
-    interceptNetworkRequest(interceptedRequests);
-   });
-  afterEach(() => {
-    saveNetworkRequestLog(interceptedRequests, 'feed');
+    cy.mockInviteCodeApi();
   });
 
   it('can filter to view all posts in the recent sorting order (default view)', () => {

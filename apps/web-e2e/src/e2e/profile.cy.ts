@@ -1,6 +1,5 @@
 import { editProfileAndVerify, addLinks } from '../support/profile';
 import { slowCypressDown } from 'cypress-slow-down';
-import { interceptNetworkRequest, NetworkRequest, saveNetworkRequestLog } from '../support/common';
 
 describe('profile', () => {
   before(() => {
@@ -11,13 +10,8 @@ describe('profile', () => {
     cy.onboardAsNewUser('Edit Me', 'This bio is editable');
   });
 
-  // intercept network requests for /api/invite-code and log them to debug failures in CI
-  let interceptedRequests: NetworkRequest[] = [];
   beforeEach(() => {
-    interceptNetworkRequest(interceptedRequests);
-   });
-  afterEach(() => {
-    saveNetworkRequestLog(interceptedRequests, 'profile');
+    cy.mockInviteCodeApi();
   });
 
   it('editing should retain any changes made to own profile', () => {

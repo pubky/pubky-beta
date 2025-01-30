@@ -12,7 +12,6 @@ import { latestPostInFeedContentEq,
         waitForFeedToLoad,
         selectEmojis} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
-import { interceptNetworkRequest, NetworkRequest, saveNetworkRequestLog } from '../support/common';
 
 const username = 'Poster';
 
@@ -39,13 +38,8 @@ describe('posts', () => {
     });
   });
 
-  // intercept network requests for /api/invite-code and log them to debug failures in CI
-  let interceptedRequests: NetworkRequest[] = [];
   beforeEach(() => {
-    interceptNetworkRequest(interceptedRequests);
-   });
-  afterEach(() => {
-    saveNetworkRequestLog(interceptedRequests, 'posts');
+    cy.mockInviteCodeApi();
   });
 
   it('can post from quick post box', () => {

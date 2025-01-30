@@ -1,7 +1,6 @@
 import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 import { searchAndFollowProfile } from '../support/contacts';
-import { interceptNetworkRequest, NetworkRequest, saveNetworkRequestLog } from '../support/common';
 
 describe('contacts', () => {
   before(() => {
@@ -10,13 +9,8 @@ describe('contacts', () => {
     cy.deleteDownloadsFolder();
   });
 
-  // intercept network requests for /api/invite-code and log them to debug failures in CI
-  let interceptedRequests: NetworkRequest[] = [];
   beforeEach(() => {
-    interceptNetworkRequest(interceptedRequests);
-   });
-  afterEach(() => {
-    saveNetworkRequestLog(interceptedRequests, 'contacts');
+    cy.mockInviteCodeApi();
   });
 
   it('follow, be followed, and make a friend', () => {

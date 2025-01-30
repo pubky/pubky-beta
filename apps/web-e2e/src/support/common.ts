@@ -53,6 +53,7 @@ export const addTagsWithModal = (tags: string[], profileName?: string) => {
 
 // input invite code and proceed
 export const passInviteCode = () => {
+  // TODO: improve detection of page finished loading and redirecting
   cy.wait(1000);
   cy.location('pathname').then((path) => {
     if (path === '/invite-code') {

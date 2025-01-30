@@ -166,14 +166,6 @@ jobs:
           name: videos-${{ matrix.browser }}
           path: pubky-app/dist/cypress/apps/web-e2e/videos
 
-
-      - name: Upload invite code network logs
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: invite-code-network-logs
-          path: pubky-app/apps/web-e2e/dist/cypress/apps/web-e2e/invite-code-network-logs
-
       - name: Dump docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v2

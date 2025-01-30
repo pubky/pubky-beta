@@ -1,7 +1,6 @@
 import path = require('path');
 import { backupFilename } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
-import { interceptNetworkRequest, NetworkRequest, saveNetworkRequestLog } from '../support/common';
 
 describe('onboarding', () => {
   before(() => {
@@ -12,13 +11,8 @@ describe('onboarding', () => {
     cy.deleteDownloadsFolder();
   });
 
-  // intercept network requests for /api/invite-code and log them to debug failures in CI
-  let interceptedRequests: NetworkRequest[] = [];
   beforeEach(() => {
-    interceptNetworkRequest(interceptedRequests);
-   });
-  afterEach(() => {
-    saveNetworkRequestLog(interceptedRequests, 'onboard');
+    cy.mockInviteCodeApi();
   });
 
   it.only('can onboard as a new user, viewing onboarding slides, go to home and logout', () => {
