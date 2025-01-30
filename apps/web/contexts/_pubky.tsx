@@ -343,8 +343,8 @@ export function PubkyClientWrapper({
       return pk;
     } catch (error: any) {
       // Get error message and return as a string
-      console.log(error);
-      throw new Error(error.message);
+      console.error(error);
+      throw new Error(error);
     }
   };
 
@@ -379,8 +379,9 @@ export function PubkyClientWrapper({
 
       return await authenticateKeypair(keypair);
     } catch (error: any) {
+      // Get error message and return as a string
       console.error(error);
-      throw new Error(error.message);
+      throw new Error(error);
     }
   };
 
@@ -396,8 +397,9 @@ export function PubkyClientWrapper({
 
       return await authenticateKeypair(keypair);
     } catch (error: any) {
+      // Get error message and return as a string
       console.error(error);
-      throw new Error(error.message);
+      throw new Error(error);
     }
   };
 
