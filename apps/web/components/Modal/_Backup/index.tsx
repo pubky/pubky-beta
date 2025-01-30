@@ -51,10 +51,10 @@ export default function Backup({
       />
       <Modal.Header
         title={
-          confirmPhrase
-            ? 'Confirm Recovery Phrase'
-            : success
-              ? 'Backup successful'
+          success
+            ? 'Backup successful'
+            : confirmPhrase
+              ? 'Confirm Recovery Phrase'
               : 'Back up your account'
         }
       />
