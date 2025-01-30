@@ -116,7 +116,7 @@ export default function ContentFeedback({
       {(sent || error) && (
         <>
           <Modal.Header title={error ? 'Sent Failed' : 'Feedback Received'} />
-          <Typography.Body className="text-opacity-60" variant="medium">
+          <Typography.Body className="text-opacity-60 mt-2" variant="medium">
             {error
               ? 'Feedback not sent correctly, please try again.'
               : 'Thank you for helping us improve Pubky.'}
