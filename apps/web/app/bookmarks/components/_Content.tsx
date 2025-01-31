@@ -19,8 +19,8 @@ export default function ContentBookmarks() {
   useEffect(() => {
     addToast(
       `Please be aware your bookmarks are stored in a public file connected to your pubky.`,
-      'Your bookmarks are (semi) public',
       'warning',
+      'Your bookmarks are (semi) public',
     );
   }, []);
 
