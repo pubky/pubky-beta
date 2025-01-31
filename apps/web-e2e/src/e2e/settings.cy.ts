@@ -3,7 +3,6 @@ import { latestPostInFeedContentEq, createQuickPost, checkPostIsNotAtTopOfFeed }
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands'
 import path = require('path');
-import { defaultMs } from '../support/slow-down';
 
 describe('settings', () => {
   before(() => {
@@ -12,6 +11,10 @@ describe('settings', () => {
 
   beforeEach(() => {
     cy.deleteDownloadsFolder();
+  });
+
+  beforeEach(() => {
+    cy.mockInviteCodeApi();
   });
 
   it('Account settings function correctly', () => {

@@ -363,6 +363,14 @@ Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?) => {
   findPostInFeed(postIdx, filterText);
 });
 
+// workaround for intermittent error seen in CI
+Cypress.Commands.add('mockInviteCodeApi', () => {
+  cy.intercept('POST', '/api/invite-code', {
+    statusCode: 200,
+    body: { valid: true }, // Mock response body
+  }).as('mockInviteCode');
+});
+
 // To prevent Cypress from failing the test when running pubky-app with dev build:
 // `Uncaught SyntaxError: Invalid or unexpected token` on Chrome, and
 // `Uncaught SyntaxError: "" literal not terminated before end of script` on firefox.
@@ -370,3 +378,4 @@ Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?) => {
 Cypress.on('uncaught:exception', (_err, _runnable) => {
   return false
 })
+

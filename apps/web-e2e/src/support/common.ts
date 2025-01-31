@@ -1,3 +1,30 @@
+export interface NetworkRequest {
+  timestamp: string;
+  method: string;
+  url: string;
+  requestBody: any;
+ }
+
+export const interceptNetworkRequest = (interceptedRequests: NetworkRequest[]) => {
+  cy.intercept('**/api/invite-code', (req) => {
+    const requestData: NetworkRequest = {
+      timestamp: new Date().toISOString(),
+      method: req.method,
+      url: req.url,
+      requestBody: req.body,
+    };
+    interceptedRequests.push(requestData);
+  });
+};
+
+export const saveNetworkRequestLog = (interceptedRequests: NetworkRequest[], testSuite: string) => {
+  const logFilePath = `dist/cypress/apps/web-e2e/invite-code-network-logs/${testSuite}.json`;
+  cy.writeFile(logFilePath, JSON.stringify(interceptedRequests, null, 2), { flag: 'w' })
+  .then(() => {
+    console.log('Network log saved to', logFilePath);
+  });
+};
+
 // tag a post or profile using modal with any number of tags
 // use once modal is visible
 // profileName is optional, it can be used to check header is `Tag {profileName}`

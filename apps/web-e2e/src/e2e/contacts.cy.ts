@@ -9,6 +9,10 @@ describe('contacts', () => {
     cy.deleteDownloadsFolder();
   });
 
+  beforeEach(() => {
+    cy.mockInviteCodeApi();
+  });
+
   it('follow, be followed, and make a friend', () => {
     cy.on('uncaught:exception', (_err, _runnable) => {
       // returning false here prevents Cypress from failing the test on uncaught exception

@@ -10,6 +10,10 @@ describe('profile', () => {
     cy.onboardAsNewUser('Edit Me', 'This bio is editable');
   });
 
+  beforeEach(() => {
+    cy.mockInviteCodeApi();
+  });
+
   it('editing should retain any changes made to own profile', () => {
     // todo: add test profile picture upload
 

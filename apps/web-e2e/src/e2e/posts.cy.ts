@@ -38,6 +38,10 @@ describe('posts', () => {
     });
   });
 
+  beforeEach(() => {
+    cy.mockInviteCodeApi();
+  });
+
   it('can post from quick post box', () => {
     const postContent = `I can post using the quick post box! ${Date.now()}`;
     createQuickPost(postContent);
