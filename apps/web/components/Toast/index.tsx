@@ -1,12 +1,14 @@
+'use client';
+
 import { Typography } from '@social/ui-shared';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
   title?: string;
   children: React.ReactNode;
-  variant?: 'bookmark' | 'pubky' | 'link' | 'text';
+  variant?: 'bookmark' | 'pubky' | 'warning' | 'link' | 'text';
 }
 
 export const Toast = ({
@@ -16,10 +18,24 @@ export const Toast = ({
   variant = 'link',
   ...rest
 }: MessageProps) => {
-  const baseCSS = `z-50 w-[400px] md:w-[792px] fixed bottom-0 left-1/2 transform -translate-x-1/2 p-6 bg-[#05050a] bg-opacity-60 rounded-tl-2xl rounded-tr-2xl shadow border-l border-r border-t border-white border-opacity-30 backdrop-blur-[50px] justify-start items-center gap-3 inline-flex`;
+  const [animateIn, setAnimateIn] = useState(false);
+  const baseCSS = `z-50 w-full md:w-[792px] fixed bottom-0 left-1/2 transform -translate-x-1/2 p-6 bg-[#05050a] bg-opacity-60 rounded-tl-2xl rounded-tr-2xl shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] border-l border-r border-t border-white backdrop-blur-[50px] justify-start items-center gap-3 inline-flex transition-transform duration-300`;
+
+  useEffect(() => {
+    setTimeout(() => setAnimateIn(true), 10);
+    setAnimateIn(false);
+  }, []);
 
   return (
-    <div id="toast" {...rest} className={twMerge(baseCSS, rest.className)}>
+    <div
+      id="toast"
+      {...rest}
+      className={twMerge(
+        baseCSS,
+        animateIn ? 'translate-y-none' : 'translate-y-full',
+        rest.className,
+      )}
+    >
       <div className="grow shrink basis-0 flex-col justify-start items-start gap-3 inline-flex">
         <div className="justify-start items-center gap-2 inline-flex">
           {icon}

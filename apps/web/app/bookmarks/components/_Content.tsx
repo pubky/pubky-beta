@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Content, Menu } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
-import { useFilterContext } from '@/contexts';
+import { useFilterContext, useToastContext } from '@/contexts';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { LeftSidebar } from './_LeftSidebar';
 import { RightSidebar } from './_RightSidebar';
@@ -12,8 +12,17 @@ import { BookmarksPage } from '.';
 
 export default function ContentBookmarks() {
   const { layout } = useFilterContext();
+  const { addToast } = useToastContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const drawerFilterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    addToast(
+      `Please be aware your bookmarks are stored in a public file connected to your pubky.`,
+      'Your bookmarks are (semi) public',
+      'warning',
+    );
+  }, []);
 
   useDrawerClickOutside(drawerFilterRef, () => setDrawerFilterOpen(false));
 
