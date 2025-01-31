@@ -354,8 +354,19 @@ export function PubkyClientWrapper({
 
   // Helper used on the different login methods
   async function authenticateKeypair(keypair: Keypair): Promise<string> {
-    // 1) Sign up with the Keypair
-    await client.signin(keypair);
+    try {
+      // 1) Sign in with the Keypair
+      await client.signin(keypair);
+    } catch (error) {
+      console.warn("Sign in failed:", error);
+      try {
+        // 1.1) Sign up with the Keypair
+        await client.signup(keypair, NEXT_PUBLIC_HOMESERVER);
+      } catch (error) {
+        console.error(error);
+        throw new Error('Authentication failed: unable to sign in or sign up.');
+      }
+    }
 
     // 2) Retrieve the session
     const session = await client.session(keypair.publicKey());
