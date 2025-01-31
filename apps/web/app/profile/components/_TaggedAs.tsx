@@ -96,8 +96,6 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             return t;
           });
 
-          console.log('newProfileTags', newProfileTags);
-
           // update tag in UI
           setProfileTags(newProfileTags);
         }

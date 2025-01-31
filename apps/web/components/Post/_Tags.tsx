@@ -183,11 +183,7 @@ export default function Tags({
       ) : (
         <div
           id="tags"
-          className={`${
-            tags && tags.filter((tagObj) => tagObj.taggers_count > 0).length > 0
-              ? 'gap-2'
-              : ''
-          } flex-row inline-flex items-center flex-wrap mt-2 lg:mt-0`}
+          className="gap-2 flex-row inline-flex items-center flex-wrap mt-2 lg:mt-0"
         >
           {!largeView &&
             tags.slice(0, 3).map((tagObj, index) => {
@@ -204,7 +200,7 @@ export default function Tags({
                     {showTooltipTag === tagObj?.label && (
                       <Tooltip.Tag2 tags={tagObj} />
                     )}
-                    {tagObj.taggers_count > 0 && (
+                    {tagObj && (
                       <PostUtil.Tag
                         id={`tag-${index}`}
                         clicked={isTagFound}
