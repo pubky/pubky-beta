@@ -43,6 +43,7 @@ const ImageByUri = ({
     const fetchImageUrl = async () => {
       try {
         if (uri instanceof File) {
+          // Handle the case where uri is a File object
           objectUrl = URL.createObjectURL(uri);
           setImageUrl(objectUrl);
         } else if (
