@@ -31,7 +31,7 @@
     "jdenticon": "^3.3.0",
     "jszip": "^3.10.1",
     "markdown-it": "^14.1.0",
-    "next": "^15.0.3",
+    "next": "^15.1.6",
     "nextjs-toploader": "^3.7.15",
     "pubky-app-specs": "^0.3.0-rc.0",
     "qrcode.react": "^4.1.0",
