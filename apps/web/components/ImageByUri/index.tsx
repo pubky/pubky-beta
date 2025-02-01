@@ -35,10 +35,14 @@ const ImageByUri = ({
   useEffect(() => {
     let objectUrl: string | null = null;
 
+    const extractKeysFromUri = (uri: string): [string, string] | null => {
+      const match = uri.match(/pubky:\/\/(.*?)\/pub\/pubky\.app\/files\/(.*)/);
+      return match ? [match[1], match[2]] : null;
+    };
+
     const fetchImageUrl = async () => {
       try {
         if (uri instanceof File) {
-          // Handle the case where uri is a File object
           objectUrl = URL.createObjectURL(uri);
           setImageUrl(objectUrl);
         } else if (
@@ -49,9 +53,14 @@ const ImageByUri = ({
         ) {
           setImageUrl(uri);
         } else if (typeof uri === 'string') {
-          const fetchedFile = await getFile(uri);
-          if (fetchedFile?.urls) {
-            setImageUrl(`${BASE_URL}/${JSON.parse(fetchedFile?.urls).main}`);
+          const extractedKeys = extractKeysFromUri(uri);
+          if (extractedKeys) {
+            setImageUrl(`${BASE_URL}/${extractedKeys[0]}/${extractedKeys[1]}`);
+          } else {
+            const fetchedFile = await getFile(uri);
+            if (fetchedFile?.urls) {
+              setImageUrl(`${BASE_URL}/${JSON.parse(fetchedFile?.urls).main}`);
+            }
           }
         }
       } catch (error) {
