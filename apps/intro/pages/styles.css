@@ -1,4 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+@font-face {
+  font-family: 'Inter Tight';
+  src:
+    url('/Inter_Tight/InterTight-VariableFont_wght.woff2') format('woff2'),
+    url('/Inter_Tight/InterTight-VariableFont_wght.woff') format('woff'),
+    url('/Inter_Tight/InterTight-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Tight';
+  src:
+    url('/Inter_Tight/InterTight-Italic-VariableFont_wght.woff2')
+      format('woff2'),
+    url('/Inter_Tight/InterTight-Italic-VariableFont_wght.woff') format('woff'),
+    url('/Inter_Tight/InterTight-Italic-VariableFont_wght.ttf')
+      format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -9,4 +31,5 @@ body {
   text-rendering: optimizeLegibility !important;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
+  font-family: 'Inter Tight' !important;
 }
