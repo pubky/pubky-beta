@@ -4,17 +4,19 @@ import { Toast } from '@/components';
 import { Icon } from '@social/ui-shared';
 import { ReactNode, createContext, useContext, useState } from 'react';
 
+type ToastVariant = 'bookmark' | 'pubky' | 'warning' | 'link' | 'text';
+
 type ToastMessage = {
   id: number;
   content: ReactNode;
-  variant?: 'bookmark' | 'pubky' | 'warning' | 'link' | 'text';
+  variant?: ToastVariant;
   title?: string;
 };
 
 type ToastContextType = {
   addToast: (
     content: React.ReactNode,
-    variant?: 'bookmark' | 'pubky' | 'warning' | 'link' | 'text',
+    variant?: ToastVariant,
     title?: string,
   ) => void;
 };
@@ -28,7 +30,7 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
 
   const addToast = (
     content: React.ReactNode,
-    variant: 'bookmark' | 'pubky' | 'warning' | 'link' | 'text' = 'link',
+    variant: ToastVariant = 'link',
     title?: string,
   ) => {
     const id = Date.now();
@@ -39,9 +41,7 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
     }, 2000);
   };
 
-  const iconToShow = (
-    variant: 'bookmark' | 'pubky' | 'warning' | 'link' | 'text',
-  ) => {
+  const iconToShow = (variant: ToastVariant) => {
     switch (variant) {
       case 'bookmark':
         return <Icon.BookmarkSimple size="24" opacity={1} color="white" />;
@@ -57,9 +57,7 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const titleToShow = (
-    variant: 'bookmark' | 'pubky' | 'warning' | 'link' | 'text',
-  ) => {
+  const titleToShow = (variant: ToastVariant) => {
     switch (variant) {
       case 'bookmark':
         return 'Save as bookmark';

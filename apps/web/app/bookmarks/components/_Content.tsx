@@ -20,7 +20,7 @@ export default function ContentBookmarks() {
     addToast(
       `Please be aware your bookmarks are stored in a public file connected to your pubky.`,
       'warning',
-      'Your bookmarks are (semi) public',
+      'Your bookmarks are public',
     );
   }, []);
 
