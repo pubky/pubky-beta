@@ -2,6 +2,7 @@
 
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
+import FontFaceObserver from 'fontfaceobserver';
 
 export default function NextTopLoaderComponent({
   children,
@@ -11,9 +12,11 @@ export default function NextTopLoaderComponent({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.fonts.ready.then(() => {
-      setLoading(false);
-    });
+    const font = new FontFaceObserver('Inter Tight');
+
+    font.load(null, 5000)
+      .then(() => setLoading(false))
+      .catch(() => setLoading(false));
   }, []);
 
   return (
