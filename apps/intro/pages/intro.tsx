@@ -303,8 +303,8 @@ export default function Intro() {
           largeScreen && !smallScreen
             ? '-200px'
             : smallScreen && !isMobile
-            ? '-220px'
-            : '',
+              ? '-220px'
+              : '',
         backgroundImage: isMobile
           ? "url('/images/webp/intro-6-mobile.webp')"
           : "url('/images/webp/intro-6.webp')",
@@ -358,9 +358,12 @@ export default function Intro() {
       <Header.Root className="backdrop-blur-[0px]">
         <div className="flex gap-3 lg:gap-6 items-center lg:items-start">
           <Header.Logo link="/" />
-          <Header.Title className="mt-[1px]" titleHeader="Sneak&#160;Peek" />
+          <Header.Title
+            className="md:mt-[1px] bottom-[10px] sm:bottom-[6px]"
+            titleHeader="Sneak&#160;Peek"
+          />
         </div>
-        <div className="h-6 justify-start items-start gap-6 inline-flex">
+        <div className="h-6 justify-start items-start gap-6 hidden md:inline-flex">
           <Link
             target="_blank"
             href="https://github.com/pubky"

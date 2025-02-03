@@ -22,7 +22,7 @@ export const Title = ({ titleHeader, className, ...rest }: HeaderProps) => {
   return (
     <div
       {...rest}
-      className={twMerge('grow', className, 'self-end bottom-[6px] relative')}
+      className={twMerge('grow', 'self-end bottom-[6px] relative', className)}
     >
       {title && (
         <Typography.PageTitle className="text-opacity-50">
