@@ -10,6 +10,7 @@ import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 interface ParsingProps {
   children: string;
   fullContent?: boolean;
+  largeView?: boolean;
 }
 
 const tagsIcons: { [key: string]: JSX.Element } = {
@@ -22,7 +23,11 @@ const tagsIcons: { [key: string]: JSX.Element } = {
   '#pubky': <Icon.PubkyIcon size="22" />,
 };
 
-const Parsing = ({ children, fullContent = false }: ParsingProps) => {
+const Parsing = ({
+  children,
+  fullContent = false,
+  largeView,
+}: ParsingProps) => {
   const [copy, setCopy] = useState(false);
 
   const highlightInlineCode = (text: string): JSX.Element[] => {
@@ -185,6 +190,9 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
   };
 
   const renderContent = () => {
+    const cssText = largeView
+      ? 'text-2xl leading-[30px]'
+      : 'text-[17px] leading-snug';
     const elements: JSX.Element[] = [];
     let isCodeBlock = false;
     let codeLines: string[] = [];
@@ -204,7 +212,10 @@ const Parsing = ({ children, fullContent = false }: ParsingProps) => {
         codeLines.push(line);
       } else {
         elements.push(
-          <span key={index} className="opacity-90 text-[17px] font-normal leading-snug tracking-wide">
+          <span
+            key={index}
+            className={`${cssText} opacity-90 font-normal tracking-wide`}
+          >
             {line.includes('**') ? (
               highlightBoldText(line)
             ) : line.includes('`') ? (
