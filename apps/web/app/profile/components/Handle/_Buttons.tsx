@@ -172,7 +172,7 @@ export default function Buttons({
         <>
           <Button.Medium
             id="profile-sign-out-btn"
-            className="px-3 w-21 h-8"
+            className="px-3 w-21 h-8 hidden lg:flex"
             onClick={handleLogoutClick}
             icon={<Icon.SignOut />}
           >
@@ -181,7 +181,7 @@ export default function Buttons({
           <Link href="/settings/edit">
             <Button.Medium
               id="profile-edit-btn"
-              className="px-3 w-auto h-8"
+              className="px-3 w-auto h-8 hidden lg:flex"
               icon={<Icon.Pencil size="16" />}
             >
               Edit

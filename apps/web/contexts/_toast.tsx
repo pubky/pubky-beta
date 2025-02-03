@@ -4,16 +4,20 @@ import { Toast } from '@/components';
 import { Icon } from '@social/ui-shared';
 import { ReactNode, createContext, useContext, useState } from 'react';
 
+export type ToastVariant = 'bookmark' | 'pubky' | 'warning' | 'link' | 'text';
+
 type ToastMessage = {
   id: number;
   content: ReactNode;
-  variant?: 'bookmark' | 'pubky' | 'link' | 'text';
+  variant?: ToastVariant;
+  title?: string;
 };
 
 type ToastContextType = {
   addToast: (
     content: React.ReactNode,
-    variant?: 'bookmark' | 'pubky' | 'link' | 'text',
+    variant?: ToastVariant,
+    title?: string,
   ) => void;
 };
 
@@ -26,22 +30,25 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
 
   const addToast = (
     content: React.ReactNode,
-    variant: 'bookmark' | 'pubky' | 'link' | 'text' = 'link',
+    variant: ToastVariant = 'link',
+    title?: string,
   ) => {
     const id = Date.now();
-    setToasts((prev) => [...prev, { id, content, variant }]);
+    setToasts((prev) => [...prev, { id, content, variant, title }]);
 
     setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, 2000);
   };
 
-  const iconToShow = (variant: 'bookmark' | 'pubky' | 'link' | 'text') => {
+  const iconToShow = (variant: ToastVariant) => {
     switch (variant) {
       case 'bookmark':
         return <Icon.BookmarkSimple size="24" opacity={1} color="white" />;
       case 'pubky':
         return <Icon.Key size="24" />;
+      case 'warning':
+        return <Icon.Warning size="24" />;
       case 'text':
         return <Icon.FileText size="24" />;
       case 'link':
@@ -50,12 +57,14 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const titleToShow = (variant: 'bookmark' | 'pubky' | 'link' | 'text') => {
+  const titleToShow = (variant: ToastVariant) => {
     switch (variant) {
       case 'bookmark':
         return 'Save as bookmark';
       case 'pubky':
         return 'Pubky copied to clipboard';
+      case 'warning':
+        return 'Warning!';
       case 'text':
         return 'Text copied to clipboard';
       case 'link':
@@ -67,11 +76,11 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
-      {toasts.map(({ id, content, variant = 'link' }) => (
+      {toasts.map(({ id, content, variant = 'link', title }) => (
         <Toast
           key={id}
           icon={iconToShow(variant)}
-          title={titleToShow(variant)}
+          title={title || titleToShow(variant)}
           variant={variant}
         >
           {content}
