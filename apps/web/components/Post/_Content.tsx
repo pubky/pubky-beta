@@ -238,7 +238,11 @@ export default function Content({
           } catch (error) {
             console.error(error);
           }
-          return <Parsing fullContent={fullContent}>{contentText}</Parsing>;
+          return (
+            <Parsing largeView={largeView} fullContent={fullContent}>
+              {contentText}
+            </Parsing>
+          );
         })()}
 
         {showMore && (
