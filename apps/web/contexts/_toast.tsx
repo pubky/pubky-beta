@@ -4,7 +4,7 @@ import { Toast } from '@/components';
 import { Icon } from '@social/ui-shared';
 import { ReactNode, createContext, useContext, useState } from 'react';
 
-type ToastVariant = 'bookmark' | 'pubky' | 'warning' | 'link' | 'text';
+export type ToastVariant = 'bookmark' | 'pubky' | 'warning' | 'link' | 'text';
 
 type ToastMessage = {
   id: number;

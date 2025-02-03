@@ -1,5 +1,6 @@
 'use client';
 
+import { ToastVariant } from '@/contexts/_toast';
 import { Typography } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -8,7 +9,7 @@ interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
   title?: string;
   children: React.ReactNode;
-  variant?: 'bookmark' | 'pubky' | 'warning' | 'link' | 'text';
+  variant?: ToastVariant;
 }
 
 export const Toast = ({
