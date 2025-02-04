@@ -307,9 +307,12 @@ export function PubkyClientWrapper({
       }
 
       return false;
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      return false;
+      if (error.response && error.response.status === 404) {
+        return false;
+      }
+      return true;
     }
   };
 
