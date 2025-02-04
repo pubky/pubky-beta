@@ -21,6 +21,7 @@ import MenuProfile from './_MenuProfile';
 import Reach from './_Reach';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
+import SessionExpired from './_SessionExpired';
 import SortPosts from './_SortPosts';
 import Status from './_Status';
 import Tag from './_Tag';
@@ -51,6 +52,7 @@ export const BottomSheet = {
   Reach,
   ReportPost,
   ReportProfile,
+  SessionExpired,
   SortPosts,
   Status,
   Tag,

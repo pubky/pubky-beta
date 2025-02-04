@@ -9,6 +9,7 @@ import { getUserMuted, getUserProfile } from '@/services/userService';
 import { defaultPreferences } from '@/contexts/_filters';
 import { Utils } from '@social/utils-shared';
 import { PubkyAppUser } from 'pubky-app-specs';
+import { BottomSheet } from '../BottomSheet';
 
 export default function ProtectedRoutes({
   children,
@@ -32,6 +33,7 @@ export default function ProtectedRoutes({
     logout,
   } = usePubkyClientContext();
   const [showModal, setShowModal] = useState(false);
+  const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const publicRoutes = [
@@ -168,6 +170,8 @@ export default function ProtectedRoutes({
 
     // Check if the not logged user is trying to access a public route
     if (!publicRoutes.includes(pathname) && !isDynamicPublicRoute(pathname)) {
+      setShowModal(true);
+      setShowBottomSheet(true);
       router.push('/onboarding');
       return;
     }
@@ -239,6 +243,12 @@ export default function ProtectedRoutes({
         <Modal.SessionExpired
           setShowModal={setShowModal}
           showModal={showModal}
+        />
+      )}
+      {showBottomSheet && (
+        <BottomSheet.SessionExpired
+          setShow={setShowBottomSheet}
+          show={showBottomSheet}
         />
       )}
     </>

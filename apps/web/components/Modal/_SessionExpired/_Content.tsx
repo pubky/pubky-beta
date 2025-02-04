@@ -2,30 +2,29 @@
 
 import { Icon, Modal, Typography } from '@social/ui-shared';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface SessionExpiredProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SessionExpired({
-  showModal,
-  setShowModal,
+export default function ContentSessionExpired({
+  show,
+  setShow,
 }: SessionExpiredProps) {
   const router = useRouter();
-  const modalSessionExpiredRef = useRef<HTMLDivElement>(null);
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
-    if (showModal) {
+    if (show) {
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
       }, 1000);
 
       const timeout = setTimeout(() => {
         router.push('/logout');
-        setShowModal(false);
+        setShow(false);
       }, 10000);
 
       return () => {
@@ -33,15 +32,10 @@ export default function SessionExpired({
         clearTimeout(timeout);
       };
     }
-  }, [showModal, router, setShowModal]);
+  }, [show, router, setShow]);
 
   return (
-    <Modal.Root
-      show={showModal}
-      modalRef={modalSessionExpiredRef}
-      className="max-w-[1200px] md:min-w-[588px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
-    >
-      <Modal.Header title="Session expired" />
+    <>
       <Typography.Body className="text-opacity-60" variant="medium">
         Your session has expired, please log in again
       </Typography.Body>
@@ -49,12 +43,12 @@ export default function SessionExpired({
         icon={<Icon.SignOut size="16" />}
         onClick={() => {
           router.push('/logout');
-          setShowModal(false);
+          setShow(false);
         }}
         className="mt-8"
       >
         Logout ({countdown})
       </Modal.SubmitAction>
-    </Modal.Root>
+    </>
   );
 }
