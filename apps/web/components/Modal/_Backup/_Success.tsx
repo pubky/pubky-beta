@@ -39,6 +39,7 @@ export default function Success({ setShow }: SuccessProps) {
       </div>
       <div className="w-full justify-end items-right inline-flex gap-6">
         <Button.Large
+          id="backup-successful-ok-btn"
           icon={<Icon.Check />}
           className="w-auto"
           onClick={() => setShow(false)}

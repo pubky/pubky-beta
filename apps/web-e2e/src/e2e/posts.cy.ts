@@ -351,10 +351,13 @@ describe('posts', () => {
     // TODO: check children length once bug fixed, see https://github.com/pubky/pubky-app/issues/543
     //cy.get('#tags').children().should('have.length', oldLength - 1);
 
-    cy.get('#tags').innerTextShouldNotContain(tag2);
     cy.get('#tags').within(() => {
-      cy.get('#tag-0').should('exist').contains(tag3);
-      cy.get('#tag-2').should('exist').contains(tag1);
+      cy.get('#tag-0').should('exist').contains(tag3)
+      cy.get('#tag-0-count').should('exist').contains('1');
+      cy.get('#tag-1').should('exist').contains(tag2)
+      cy.get('#tag-1-count').should('exist').contains('0');
+      cy.get('#tag-2').should('exist').contains(tag1)
+      cy.get('#tag-2-count').should('exist').contains('1');
     });
 
     // refresh page before checking tag is still removed

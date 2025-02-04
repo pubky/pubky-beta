@@ -183,6 +183,7 @@ Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
   cy.get('#backup-recovery-file-btn').click();
   cy.get('#backup-recovery-file-password-input').type(passcode);
   cy.get('#backup-download-recovery-file-btn').click();
+  cy.get('#backup-successful-ok-btn').click();
 });
 
 Cypress.Commands.add('deleteDownloadsFolder', () => {
