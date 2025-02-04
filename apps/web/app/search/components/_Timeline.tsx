@@ -56,14 +56,6 @@ export const Timeline = () => {
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   useEffect(() => {
-    setTimeline([]);
-
-    return () => {
-      setTimeline([]);
-    };
-  }, [setTimeline]);
-
-  useEffect(() => {
     setStart(undefined);
     setTimeline([]);
     fetchPosts();

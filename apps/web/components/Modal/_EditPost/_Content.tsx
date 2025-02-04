@@ -17,7 +17,7 @@ export default function ContentEditPost({
   handleCloseModal,
   className,
 }: CreateEditPostProps) {
-  const { editPost, timeline, setTimeline } = usePubkyClientContext();
+  const { editPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentEditPost, setContentEditPost] = useState('');
   const [sendingEditPost, setSendingEditPost] = useState(false);
@@ -37,15 +37,6 @@ export default function ContentEditPost({
       const editPostUser = await editPost(post.details.id, content);
 
       if (editPostUser) {
-        // change the content of the post in the timeline
-        const newTimeline = timeline.map((p) => {
-          if (p.details.id === post.details.id) {
-            return { ...p, details: { ...p.details, content } };
-          }
-          return p;
-        });
-        setTimeline(newTimeline);
-
         setContentEditPost('');
         addAlert('Post edited!');
       } else {

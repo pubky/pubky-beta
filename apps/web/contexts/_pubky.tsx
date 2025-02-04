@@ -281,6 +281,7 @@ export function PubkyClientWrapper({
         setSeed(undefined);
         setMnemonic(undefined);
         setTimeline([]);
+        setNewPosts([]);
         setMutedUsers([]);
         setTimelineProfile([]);
         setReplies([]);
@@ -761,6 +762,15 @@ export function PubkyClientWrapper({
   );
 
   const editPost = withAuth(async (postId: string, newContent: string) => {
+    // optimistic edit post in the timeline
+    setTimeline((prevTimeline) =>
+      prevTimeline.map((p) =>
+        p.details.id === postId
+          ? { ...p, details: { ...p.details, content: newContent } }
+          : p,
+      ),
+    );
+
     // Fetch the existing post from the homeserver
     let postUri = postUriBuilder(pubky!, postId);
     const response = await homeserver.get(postUri);
@@ -999,12 +1009,6 @@ export function PubkyClientWrapper({
   );
 
   const deletePost = withAuth(async (postId: string): Promise<boolean> => {
-    // Post URL
-    const postUrl = postUriBuilder(pubky!, postId);
-
-    // Send the post to the homeserver
-    await homeserver.del(postUrl);
-
     // delete the post from the timeline
     setTimeline((prevTimeline) =>
       prevTimeline.filter((p) => p.details.id !== postId),
@@ -1014,6 +1018,12 @@ export function PubkyClientWrapper({
     setNewPosts((prevNewPosts) =>
       prevNewPosts.filter((p) => p.details.id !== postId),
     );
+
+    // Post URL
+    const postUrl = postUriBuilder(pubky!, postId);
+
+    // Send the post to the homeserver
+    await homeserver.del(postUrl);
 
     return true;
   });

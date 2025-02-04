@@ -123,17 +123,13 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
         if (!nexusData) return;
 
-        setNewPosts((prev) => {
-          return prev.map((post) => {
-            if (post.details.id === nexusData.details.id) {
-              return {
-                ...post,
-                ...nexusData,
-                cached: 'nexus',
-              };
-            }
-            return post;
-          });
+        // Remove post from newPosts
+        setNewPosts((prev) =>
+          prev.filter((post) => post.details.id !== nexusData.details.id),
+        );
+
+        setTimeline((prev) => {
+          return [nexusData, ...prev];
         });
       } catch (error) {
         console.log('Error fetching Nexus data:', error);
@@ -150,7 +146,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       {!isLoading && <NewPostsNotifier />}
 
       {newPosts.map((post) => (
-        <div key={post.details.id} className="flex flex-col">
+        <div key={`new-${post.details.id}`} className="flex flex-col">
           <Post post={post} largeView={!isMobile && layout === 'wide'} />
         </div>
       ))}
@@ -158,12 +154,8 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       {timeline.map(
         (post) =>
           post?.details?.content !== '[DELETED]' && (
-            <div key={post.details.id} className="flex flex-col">
-              <Post
-                largeView={!isMobile && layout === 'wide'}
-                key={`post-${post.details.id}`}
-                post={post}
-              />
+            <div key={`timeline-${post.details.id}`} className="flex flex-col">
+              <Post largeView={!isMobile && layout === 'wide'} post={post} />
               {post?.counts?.replies > 0 && (
                 <PostReplies
                   isMobile={isMobile}
