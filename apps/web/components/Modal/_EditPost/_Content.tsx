@@ -34,7 +34,7 @@ export default function ContentEditPost({
     }
     try {
       setSendingEditPost(true);
-      const editPostUser = await editPost(post, content);
+      const editPostUser = await editPost(post.details.id, content);
 
       if (editPostUser) {
         // change the content of the post in the timeline
