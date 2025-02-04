@@ -358,7 +358,7 @@ export function PubkyClientWrapper({
       // 1) Sign in with the Keypair
       await client.signin(keypair);
     } catch (error) {
-      console.warn("Sign in failed:", error);
+      console.warn('Sign in failed:', error);
       try {
         // 1.1) Sign up with the Keypair
         await client.signup(keypair, NEXT_PUBLIC_HOMESERVER);
@@ -1042,8 +1042,7 @@ export function PubkyClientWrapper({
   });
 
   const generateAuthUrl = async (caps?: string) => {
-    const capabilities =
-      caps || '/pub/pubky.app/:rw,/pub/example.com/nested:rw';
+    const capabilities = caps || '/pub/pubky.app/:rw';
 
     try {
       const [url, promise] = await client.authRequest(
