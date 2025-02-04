@@ -216,7 +216,10 @@ export default function Tags({
                             : openJoin()
                         }
                       >
-                        <div className="flex gap-2 items-center">
+                        <div
+                          id={`tag-${index}-count`}
+                          className="flex gap-2 items-center"
+                        >
                           {Utils.minifyText(tagObj?.label, 20)}
                           {loadingTags === tagObj?.label ? (
                             <Icon.LoadingSpin size="12" />
