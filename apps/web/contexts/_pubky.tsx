@@ -163,6 +163,7 @@ type PubkyClientContextType = {
   >;
   newPosts: PostView[];
   setNewPosts: React.Dispatch<React.SetStateAction<PostView[]>>;
+  deletedPosts: string[];
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -202,6 +203,7 @@ export function PubkyClientWrapper({
     useState<NotificationPreferences>(defaultPreferences);
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
+  const [deletedPosts, setDeletedPosts] = useState<string[]>([]);
 
   useEffect(() => {
     init()
@@ -1019,6 +1021,9 @@ export function PubkyClientWrapper({
       prevNewPosts.filter((p) => p.details.id !== postId),
     );
 
+    // delete the post from the deleted posts
+    setDeletedPosts((prevDeletedPosts) => [...prevDeletedPosts, postId]);
+
     // Post URL
     const postUrl = postUriBuilder(pubky!, postId);
 
@@ -1273,6 +1278,7 @@ export function PubkyClientWrapper({
   return (
     <PubkyClientContext.Provider
       value={{
+        deletedPosts,
         newPosts,
         setNewPosts,
         replies,
