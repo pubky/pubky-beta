@@ -10,6 +10,7 @@ import { defaultPreferences } from '@/contexts/_filters';
 import { Utils } from '@social/utils-shared';
 import { PubkyAppUser } from 'pubky-app-specs';
 import { BottomSheet } from '../BottomSheet';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function ProtectedRoutes({
   children,
@@ -32,6 +33,7 @@ export default function ProtectedRoutes({
     isSessionActive,
     logout,
   } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const [showModal, setShowModal] = useState(false);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -173,6 +175,10 @@ export default function ProtectedRoutes({
       setShowModal(true);
       setShowBottomSheet(true);
       router.push('/onboarding');
+      setTimeout(() => {
+        setShowModal(false);
+        setShowBottomSheet(false);
+      }, 2000);
       return;
     }
 
@@ -239,18 +245,19 @@ export default function ProtectedRoutes({
       ) : (
         children
       )}
-      {showModal && (
-        <Modal.SessionExpired
-          setShowModal={setShowModal}
-          showModal={showModal}
-        />
-      )}
-      {showBottomSheet && (
-        <BottomSheet.SessionExpired
-          setShow={setShowBottomSheet}
-          show={showBottomSheet}
-        />
-      )}
+      {isMobile
+        ? showBottomSheet && (
+            <BottomSheet.SessionExpired
+              setShow={setShowBottomSheet}
+              show={showBottomSheet}
+            />
+          )
+        : showModal && (
+            <Modal.SessionExpired
+              setShowModal={setShowModal}
+              showModal={showModal}
+            />
+          )}
     </>
   );
 }

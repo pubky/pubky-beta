@@ -9,10 +9,7 @@ interface SessionExpiredProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SessionExpired({
-  showModal,
-  setShowModal,
-}: SessionExpiredProps) {
+export default function SessionExpired({ showModal }: SessionExpiredProps) {
   const modalSessionExpiredRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -21,8 +18,10 @@ export default function SessionExpired({
       modalRef={modalSessionExpiredRef}
       className="max-w-[1200px] md:min-w-[588px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
-      <Modal.Header title="Session expired" />
-      <ContentSessionExpired show={showModal} setShow={setShowModal} />
+      <div className="mb-4">
+        <Modal.Header title="Session expired" />
+      </div>
+      <ContentSessionExpired />
     </Modal.Root>
   );
 }

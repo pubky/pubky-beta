@@ -21,7 +21,7 @@ export default function SessionExpired({
       title={title ?? 'Session expired'}
       className={className}
     >
-      <ContentSessionExpired show={show} setShow={setShow} />
+      <ContentSessionExpired />
     </BottomSheet.Root>
   );
 }
