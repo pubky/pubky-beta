@@ -82,16 +82,18 @@ export default function Tags({
     const existingTag = tags.find((tagObj) => tagObj.label === tag);
 
     if (existingTag) {
-      newTags = tags.map((tagObj) => {
-        if (tagObj.label === tag) {
-          return {
-            ...tagObj,
-            taggers_count: tagObj.taggers_count + 1,
-            taggers: [...tagObj.taggers, pubky ?? ''],
-          };
-        }
-        return tagObj;
-      });
+      if (!existingTag.taggers.includes(pubky ?? '')) {
+        newTags = tags.map((tagObj) => {
+          if (tagObj.label === tag) {
+            return {
+              ...tagObj,
+              taggers_count: tagObj.taggers_count + 1,
+              taggers: [...tagObj.taggers, pubky ?? ''],
+            };
+          }
+          return tagObj;
+        });
+      }
     } else {
       newTags = [
         ...tags,
