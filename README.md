@@ -23,8 +23,9 @@ Create a `.env` file at the root of the project and include the following enviro
 ### :test_tube: Testnet Configuration
 
 For that build, you will need to have running the following pieces:
-- [nexus service](https://github.com/pubky/pubky-core/tree/dev/pubky-homeserver), the REST API server that provides access to indexed data
-- [nexus watcher](), the event aggregator that listens for homeserver events
+
+- [nexus service](https://github.com/pubky/pubky-nexus?tab=readme-ov-file#%EF%B8%8F-setting-up-the-development-environment), the REST API server that provides access to indexed data
+- [nexus watcher](https://github.com/pubky/pubky-nexus?tab=readme-ov-file#%EF%B8%8F-setting-up-the-development-environment), the event aggregator that listens for homeserver events
 - [testnet homeserver](https://github.com/pubky/pubky-core/tree/dev/pubky-homeserver), the core data availability provider responsible for storing and serving user-generated content, ensuring distributed data persistence
 
 ```.env
