@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import CreateContent from '@/components/CreateContent';
-import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateEditArticleProps {
   setShowModalEditArticle: React.Dispatch<React.SetStateAction<boolean>>;
@@ -45,11 +44,7 @@ export default function ContentEditArticle({
     try {
       setSendingEditArticle(true);
 
-      const editPostUser = await editPost(
-        article,
-        content,
-        PubkyAppPostKind.Long,
-      );
+      const editPostUser = await editPost(article.details.id, content);
 
       if (editPostUser) {
         addAlert('Article edited!');

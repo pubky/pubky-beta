@@ -75,11 +75,7 @@ type PubkyClientContextType = {
     files?: File[],
     quote?: string,
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
-  editPost: (
-    post: PostView,
-    postContent: string,
-    kind?: PubkyAppPostKind,
-  ) => Promise<string | false>;
+  editPost: (postId: string, newContent: string) => Promise<string | false>;
   createArticle: (
     title: string,
     articleContent: string,
@@ -764,37 +760,18 @@ export function PubkyClientWrapper({
     },
   );
 
-  const editPost = withAuth(
-    async (post: PostView, newContent: string, kind?: PubkyAppPostKind) => {
-      // TODO: ideally we must fetch the PubkyAppPost from
-      // the homeserver instead of using PostView from Nexus!
-      const postEmbed = post?.relationships?.reposted
-        ? new PubkyAppPostEmbed(
-            post?.relationships?.reposted,
-            PubkyAppPostKind.Short,
-          )
-        : undefined;
+  const editPost = withAuth(async (postId: string, newContent: string) => {
+    // Fetch the existing post from the homeserver
+    let postUri = postUriBuilder(pubky!, postId);
+    const response = await homeserver.get(postUri);
+    const originalPost = PubkyAppPost.fromJson(await response.json());
 
-      const postResult = specsBuilder!.createPost(
-        newContent,
-        kind ?? PubkyAppPostKind.Short,
-        post?.relationships?.replied,
-        postEmbed,
-        post?.details?.attachments,
-      );
+    // Use specs to edit the existing post and store in homeserver
+    const result = specsBuilder!.editPost(originalPost, postId, newContent);
+    await homeserver.put(result.meta.url, JSON.stringify(result.post.toJson()));
 
-      // We are faking a post edit, therefore, we should keep
-      // the original posting time and post url.
-      let editedPost = postResult.post.toJson();
-      editedPost.created_at = post.details.indexed_at;
-      let editedUrl = postUriBuilder(post.details.author, post.details.id);
-
-      // Send the post to the homeserver
-      await homeserver.put(editedUrl, JSON.stringify(editedPost));
-
-      return editedUrl;
-    },
-  );
+    return result.meta.url;
+  });
 
   const deleteAccount = withAuth(async (setProgress) => {
     const baseDirectory = baseUriBuilder(pubky!);
