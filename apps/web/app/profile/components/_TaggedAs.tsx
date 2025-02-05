@@ -19,6 +19,8 @@ import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import LinksSection from './Sidebar/_LinksSection';
+import { useTagsUser } from '@/hooks/useTag';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 type TaggedAsProps = {
   creatorPubky?: string | undefined;
@@ -46,6 +48,33 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     [],
   );
   const [loadingTags, setLoadingTags] = useState('');
+  const limit = 5;
+  const [skip, setSkip] = useState(limit);
+  const [hasMore, setHasMore] = useState(user && user?.counts?.tags > limit);
+
+  const { data: moreTags, isLoading } = useTagsUser(
+    user?.details.id ?? '',
+    skip,
+    limit,
+  );
+
+  useEffect(() => {
+    if (!isLoading && moreTags && moreTags.length) {
+      setProfileTags((prev) => {
+        const newTags = moreTags.filter(
+          (tag) => !prev.some((t) => t.label === tag.label),
+        );
+        setHasMore(newTags.length > 0);
+        return [...prev, ...newTags];
+      });
+    }
+  }, [moreTags, isLoading]);
+
+  const loader = useInfiniteScroll(() => {
+    if (hasMore && !isLoading) {
+      setSkip((prev) => prev + limit);
+    }
+  }, isLoading);
 
   useEffect(() => {
     setProfileTags(user?.tags ?? []);
@@ -255,6 +284,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                     </div>
                   );
                 })}
+                {hasMore && (
+                  <div ref={loader}>
+                    <Icon.LoadingSpin />
+                  </div>
+                )}
               </>
             ) : (
               <Typography.Body variant="small" className="text-opacity-50">
