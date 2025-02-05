@@ -82,3 +82,29 @@ export async function getTagsPost(
   if (!response.ok) throw new Error('Failed to tags post');
   return response.json();
 }
+
+// Get tags user
+export async function getTagsUser(
+  userId: string,
+  skip?: number,
+  limit?: number,
+  maxTaggers?: number,
+): Promise<PostTag[]> {
+  const queryParams = new URLSearchParams();
+
+  if (skip !== undefined) {
+    queryParams.append('skip_tags', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit_tags', String(limit));
+  }
+  if (maxTaggers) {
+    queryParams.append('limit_taggers', String(maxTaggers));
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/user/${userId}/tags?${queryParams}`,
+  );
+  if (!response.ok) throw new Error('Failed to tags user');
+  return response.json();
+}

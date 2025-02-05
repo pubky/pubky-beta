@@ -237,7 +237,7 @@ export async function getUserNotifications(
   return fileData;
 }
 
-// User label post tags
+// Post tags taggers
 export async function getPostTagTaggers(
   userId: string,
   postId: string,
@@ -257,7 +257,31 @@ export async function getPostTagTaggers(
     `${BASE_URL}/post/${userId}/${postId}/taggers/${tagName}?${queryParams}`,
   );
 
-  if (!response.ok) throw new Error('Failed to fetch user tags');
+  if (!response.ok) throw new Error('Failed to fetch post tags taggers');
+
+  return response.json();
+}
+
+// User tags taggers
+export async function getUserTagTaggers(
+  userId: string,
+  tagName: string,
+  skip?: number,
+  limit?: number,
+): Promise<string[]> {
+  const queryParams = new URLSearchParams();
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+  const response = await fetch(
+    `${BASE_URL}/user/${userId}/taggers/${tagName}?${queryParams}`,
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch user tags taggers');
 
   return response.json();
 }

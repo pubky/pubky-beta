@@ -31,11 +31,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const isMobile = useIsMobile();
   const usePubky = creatorPubky || pubky || '';
-  const { data } = useUserProfile(usePubky, pubky ?? '');
-  const name = data?.details?.name;
-  const image = data?.details?.image;
-  const [profileTags, setProfileTags] = useState<UserTags[]>(data?.tags ?? []);
-  const links = data?.details?.links ?? [];
+  const { data: user } = useUserProfile(usePubky, pubky ?? '');
+  const name = user?.details?.name;
+  const [profileTags, setProfileTags] = useState<UserTags[]>(user?.tags ?? []);
+  const links = user?.details?.links ?? [];
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   const [showSheetProfileTag, setShowSheetProfileTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
@@ -49,8 +48,8 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [loadingTags, setLoadingTags] = useState('');
 
   useEffect(() => {
-    setProfileTags(data?.tags ?? []);
-  }, [data?.tags]);
+    setProfileTags(user?.tags ?? []);
+  }, [user?.tags]);
 
   useEffect(() => {
     const fetchTaggedImages = async () => {
@@ -184,14 +183,13 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                   );
 
                   const images = taggedImages[index] || [];
-                  const displayedImages = images?.slice(0, 15);
+                  const displayedImages = images?.slice(0, 5);
                   const extraImagesCount =
-                    images?.length - displayedImages?.length;
+                    tag.taggers_count - displayedImages?.length;
 
                   return (
                     <div className="flex gap-2" key={index}>
                       <PostUtil.Tag
-                        key={index}
                         clicked={isTagFound}
                         onClick={(event) => {
                           event.stopPropagation();
@@ -227,7 +225,15 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                           className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                         />
                       </Link>
-                      <div className="cursor-pointer flex items-center">
+                      <div
+                        onClick={() => {
+                          setSelectedTag(tag);
+                          isMobile
+                            ? setShowSheetProfileTag(true)
+                            : setShowModalProfileTag(true);
+                        }}
+                        className="cursor-pointer flex items-center"
+                      >
                         {displayedImages?.map((image, imageIndex) => (
                           <ImageByUri
                             width={32}
@@ -290,8 +296,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
         pubkyUser={creatorPubky}
-        name={name}
-        uriImage={image}
+        user={user}
       />
       <BottomSheet.TagProfile
         profileTags={profileTags ?? []}
@@ -302,8 +307,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
         pubkyUser={creatorPubky}
-        name={name}
-        uriImage={image}
+        user={user}
       />
       <Modal.CheckLink
         showModalCheckLink={showModalCheckLink}

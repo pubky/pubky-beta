@@ -5,6 +5,7 @@ import {
   getHotTags,
   getTagsByReach,
   getTagsPost,
+  getTagsUser,
   getTagTaggers,
 } from '../services/tagService';
 
@@ -50,6 +51,19 @@ export function useTagsPost(
   return useQuery({
     queryKey: ['tagsPost', userId, postId, skip, limit, maxTaggers],
     queryFn: () => getTagsPost(userId, postId, skip, limit, maxTaggers),
+    retry: false,
+  });
+}
+
+export function useTagsUser(
+  userId: string,
+  skip?: number,
+  limit?: number,
+  maxTaggers?: number,
+) {
+  return useQuery({
+    queryKey: ['tagsUser', userId, skip, limit, maxTaggers],
+    queryFn: () => getTagsUser(userId, skip, limit, maxTaggers),
     retry: false,
   });
 }

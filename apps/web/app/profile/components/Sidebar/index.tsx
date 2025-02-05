@@ -21,8 +21,10 @@ export default function Sidebar({
   const { pubky, profile, createTagProfile, deleteTagProfile } =
     usePubkyClientContext();
   const userPubky = creatorPubky ?? pubky;
-  const { data, isLoading } = useUserProfile(userPubky ?? '', pubky ?? '');
-  const profileUser = data;
+  const { data: profileUser, isLoading } = useUserProfile(
+    userPubky ?? '',
+    pubky ?? '',
+  );
   const name = profileUser?.details?.name ?? '';
   const bio = profileUser?.details.bio || 'No bio.';
   const links = creatorPubky ? profileUser?.details?.links : profile?.links;
@@ -198,8 +200,7 @@ export default function Sidebar({
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
         pubkyUser={userPubky}
-        name={name}
-        uriImage={image}
+        user={profileUser}
       />
       <BottomSheet.CheckLink
         show={showSheetCheckLink}
