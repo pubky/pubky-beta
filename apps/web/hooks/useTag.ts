@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   getHotTags,
   getTagsByReach,
+  getTagsPost,
   getTagTaggers,
 } from '../services/tagService';
 
@@ -17,7 +18,8 @@ export function useHotTags(
 ) {
   return useQuery({
     queryKey: ['hotTags', userId, reach, skip, limit, maxTaggers, timeframe],
-    queryFn: () => getHotTags(userId, reach, skip, limit, maxTaggers, timeframe),
+    queryFn: () =>
+      getHotTags(userId, reach, skip, limit, maxTaggers, timeframe),
     retry: false,
   });
 }
@@ -34,6 +36,20 @@ export function useTagTaggers(label: string, reach: string) {
   return useQuery({
     queryKey: ['tagTaggers', label, reach],
     queryFn: () => getTagTaggers(label, reach),
+    retry: false,
+  });
+}
+
+export function useTagsPost(
+  userId: string,
+  postId: string,
+  skip?: number,
+  limit?: number,
+  maxTaggers?: number,
+) {
+  return useQuery({
+    queryKey: ['tagsPost', userId, postId, skip, limit, maxTaggers],
+    queryFn: () => getTagsPost(userId, postId, skip, limit, maxTaggers),
     retry: false,
   });
 }

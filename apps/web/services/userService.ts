@@ -236,3 +236,28 @@ export async function getUserNotifications(
   const fileData = await response.json();
   return fileData;
 }
+
+// User label post tags
+export async function getPostTagTaggers(
+  userId: string,
+  postId: string,
+  tagName: string,
+  skip?: number,
+  limit?: number,
+): Promise<string[]> {
+  const queryParams = new URLSearchParams();
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+  const response = await fetch(
+    `${BASE_URL}/post/${userId}/${postId}taggers/${tagName}?${queryParams}`,
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch user tags');
+
+  return response.json();
+}

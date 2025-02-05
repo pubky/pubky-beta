@@ -234,7 +234,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             .filter(Boolean);
 
           const extraImagesCount =
-            tagObj?.taggers.length - displayedImages.length;
+            tagObj?.taggers_count - displayedImages.length;
 
           return (
             <React.Fragment key={`${index}-${tagObj?.label}`}>
