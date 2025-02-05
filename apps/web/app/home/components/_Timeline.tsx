@@ -43,8 +43,15 @@ const useTimelineFilters = (selectedFeed) => {
 };
 
 export const Timeline = ({ selectedFeed }: TimelineProps) => {
-  const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline } =
-    usePubkyClientContext();
+  const {
+    pubky,
+    mutedUsers,
+    newPosts,
+    setNewPosts,
+    timeline,
+    setTimeline,
+    deletedPosts,
+  } = usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const isMobile = useIsMobile(1280);
   const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
@@ -78,11 +85,13 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
       setTimeline((prev) => {
         // Filter out muted users and duplicate posts in one pass
+
         const posts = data.filter(
           (post) =>
             post?.details?.author && // Ensure post has required data
             !mutedUsers?.includes(post.details.author) &&
-            !prev.some((p) => p.details.id === post.details.id),
+            !prev.some((p) => p.details.id === post.details.id) &&
+            !deletedPosts.includes(post.details.id),
         );
 
         return posts.length > 0 ? [...prev, ...posts] : prev;
@@ -100,8 +109,8 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   }, [reach, sort, tagsFeed, mutedUsers]);
 
   useEffect(() => {
-    return clearTimeline;
-  }, [setTimeline, setStart]);
+    clearTimeline();
+  }, []);
 
   useEffect(() => {
     const fetchNexusData = async () => {
@@ -123,17 +132,13 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
         if (!nexusData) return;
 
-        setNewPosts((prev) => {
-          return prev.map((post) => {
-            if (post.details.id === nexusData.details.id) {
-              return {
-                ...post,
-                ...nexusData,
-                cached: 'nexus',
-              };
-            }
-            return post;
-          });
+        // Remove post from newPosts
+        setNewPosts((prev) =>
+          prev.filter((post) => post.details.id !== nexusData.details.id),
+        );
+
+        setTimeline((prev) => {
+          return [nexusData, ...prev];
         });
       } catch (error) {
         console.log('Error fetching Nexus data:', error);
@@ -159,11 +164,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <div key={post.details.id} className="flex flex-col">
-              <Post
-                largeView={!isMobile && layout === 'wide'}
-                key={`post-${post.details.id}`}
-                post={post}
-              />
+              <Post largeView={!isMobile && layout === 'wide'} post={post} />
               {post?.counts?.replies > 0 && (
                 <PostReplies
                   isMobile={isMobile}

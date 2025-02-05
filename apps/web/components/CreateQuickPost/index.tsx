@@ -5,7 +5,6 @@ import CreateContent from '../CreateContent';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { PostView } from '@/types/Post';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -17,7 +16,7 @@ export default function CreateQuickPost({
   largeView = false,
   loadingFeed,
 }: CreateQuickPostProps) {
-  const { pubky, createPost, createTag, setTimeline } = usePubkyClientContext();
+  const { pubky, createPost, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -57,37 +56,6 @@ export default function CreateQuickPost({
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', postId, tag);
         }
-
-        const postWithFullDetails: PostView = {
-          details: {
-            content: newPost.details.content || '',
-            id: postId,
-            indexed_at: Date.now(),
-            author: pubky ?? '',
-            kind: PubkyAppPostKind.Short,
-            uri: newPost.uri || '',
-          },
-          counts: {
-            tags: 0,
-            replies: 0,
-            reposts: 0,
-          },
-          tags: updatedTags.map((tag) => ({
-            name: tag,
-            label: tag,
-            taggers: [],
-            taggers_count: 0,
-          })),
-          relationships: {
-            replied: undefined,
-            reposted: undefined,
-            mentioned: [],
-          },
-          bookmark: undefined,
-          cached: 'local',
-        };
-
-        setTimeline((prevTimeline) => [...prevTimeline, postWithFullDetails]);
         addAlert('Post created!');
       } else {
         addAlert('Something wrong. Try again', 'warning');

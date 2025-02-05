@@ -9,7 +9,8 @@ import { UseQueryOptions } from '@tanstack/react-query';
 
 export function NewPostsNotifier() {
   const { reach, sort } = useFilterContext();
-  const { timeline, setTimeline, pubky } = usePubkyClientContext();
+  const { timeline, setTimeline, pubky, deletedPosts } =
+    usePubkyClientContext();
 
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [newPostsCount, setNewPostsCount] = useState(0);
@@ -85,7 +86,8 @@ export function NewPostsNotifier() {
       const filtered = newPostsData.filter(
         (post: PostView) =>
           !timeline.some((p) => p.details.id === post.details.id) &&
-          !newPosts.some((p) => p.details.id === post.details.id),
+          !newPosts.some((p) => p.details.id === post.details.id) &&
+          !deletedPosts.includes(post.details.id),
       );
 
       if (filtered.length > 0) {

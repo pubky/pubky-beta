@@ -163,6 +163,7 @@ type PubkyClientContextType = {
   >;
   newPosts: PostView[];
   setNewPosts: React.Dispatch<React.SetStateAction<PostView[]>>;
+  deletedPosts: string[];
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -202,6 +203,7 @@ export function PubkyClientWrapper({
     useState<NotificationPreferences>(defaultPreferences);
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
+  const [deletedPosts, setDeletedPosts] = useState<string[]>([]);
 
   useEffect(() => {
     init()
@@ -281,6 +283,7 @@ export function PubkyClientWrapper({
         setSeed(undefined);
         setMnemonic(undefined);
         setTimeline([]);
+        setNewPosts([]);
         setMutedUsers([]);
         setTimelineProfile([]);
         setReplies([]);
@@ -692,6 +695,27 @@ export function PubkyClientWrapper({
         files,
       );
 
+      if (!result) return false;
+
+      const newPostDetails: PostDetails = {
+        author: pubky!,
+        id: result.id,
+        indexed_at: Date.now(),
+        uri: result.uri,
+        content: result.details.content,
+        kind: result.details.kind,
+      };
+
+      const newPostView: PostView = {
+        uri: result.uri,
+        details: newPostDetails,
+        counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
+        tags: [],
+        cached: 'homeserver',
+      } as PostView;
+
+      setNewPosts((prev) => [newPostView, ...prev]);
+
       return result ? { uri: result.uri, details: result.details } : false;
     },
   );
@@ -761,6 +785,15 @@ export function PubkyClientWrapper({
   );
 
   const editPost = withAuth(async (postId: string, newContent: string) => {
+    // optimistic edit post in the timeline
+    setTimeline((prevTimeline) =>
+      prevTimeline.map((p) =>
+        p.details.id === postId
+          ? { ...p, details: { ...p.details, content: newContent } }
+          : p,
+      ),
+    );
+
     // Fetch the existing post from the homeserver
     let postUri = postUriBuilder(pubky!, postId);
     const response = await homeserver.get(postUri);
@@ -999,12 +1032,6 @@ export function PubkyClientWrapper({
   );
 
   const deletePost = withAuth(async (postId: string): Promise<boolean> => {
-    // Post URL
-    const postUrl = postUriBuilder(pubky!, postId);
-
-    // Send the post to the homeserver
-    await homeserver.del(postUrl);
-
     // delete the post from the timeline
     setTimeline((prevTimeline) =>
       prevTimeline.filter((p) => p.details.id !== postId),
@@ -1014,6 +1041,15 @@ export function PubkyClientWrapper({
     setNewPosts((prevNewPosts) =>
       prevNewPosts.filter((p) => p.details.id !== postId),
     );
+
+    // delete the post from the deleted posts
+    setDeletedPosts((prevDeletedPosts) => [...prevDeletedPosts, postId]);
+
+    // Post URL
+    const postUrl = postUriBuilder(pubky!, postId);
+
+    // Send the post to the homeserver
+    await homeserver.del(postUrl);
 
     return true;
   });
@@ -1263,6 +1299,7 @@ export function PubkyClientWrapper({
   return (
     <PubkyClientContext.Provider
       value={{
+        deletedPosts,
         newPosts,
         setNewPosts,
         replies,
