@@ -87,7 +87,7 @@ export const fastTagPost = (tags: string[]) => {
 
 // tag a post in feed with any number of tags
 export const fastTagPostInFeed = (tags: string[], postContent?: string) => {
-  cy.findFirstPostInFeed(postContent).within(() => {
+  cy.findFirstPostInFeedFiltered(postContent).within(() => {
     fastTagPost(tags);
   });
 };

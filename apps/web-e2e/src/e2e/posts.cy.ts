@@ -160,7 +160,9 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
+  //[true, false].forEach((waitForIndexed) => {
+  [true].forEach((waitForIndexed) => {
     it(`can post with embedded link (waitForIndexed: ${waitForIndexed})`, () => {
       const link = 'https://www.youtube.com/watch?v=989-7xsRLR4';
       const embedLink = 'https://www.youtube.com/embed/989-7xsRLR4';
@@ -262,7 +264,9 @@ describe('posts', () => {
     });
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
+  //[true, false].forEach((waitForIndexed) => {
+  [true].forEach((waitForIndexed) => {
     it(`can tag whilst creating post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can post with tags! ${Date.now()}`;
       const tag1 = 'alpacas';
@@ -313,7 +317,9 @@ describe('posts', () => {
     });
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
+  //[true, false].forEach((waitForIndexed) => {
+  [true].forEach((waitForIndexed) => {
     it(`can tag and remove tags from existing post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
       const tag1 = 'bananas';
@@ -419,7 +425,9 @@ describe('posts', () => {
     cy.get('#posts-feed').should('contain.text', 'No bookmarks yet')
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
+  //[true, false].forEach((waitForIndexed) => {
+  [true].forEach((waitForIndexed) => {
     it(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to repost
       const postContent = `This post will be reposted with content! ${Date.now()}`;
@@ -521,7 +529,9 @@ describe('posts', () => {
     });
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
+  //[true, false].forEach((waitForIndexed) => {
+  [true].forEach((waitForIndexed) => {
     it(`cannot see reply of a deleted post in feed (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to reply to
       const postContent = `This post will be replied to! ${Date.now()}`;

@@ -351,11 +351,16 @@ const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = true) => {
     if (t === 0) assert(false, `findPostInFeed: Post not indexed`);
     cy.log(`findPostInFeed: Checking if post ${postIdx} is indexed`);
     cy.get('#posts-feed').find('#timeline').children().eq(postIdx).then($post => {
-      if ($post.find('#post-status-indexed').length === 0) {
-        cy.log('findPostInFeed: Post not indexed; waiting 200ms and checking again');
-        cy.wait(200);
-        checkPostIsIndexed(t - 1);
-      }
+      // if post has the status checkmarks then wait for it to have two green ticks
+      if ($post.find('#post-status').length > 0) {
+        if ($post.find('#post-status-indexed').length === 0) {
+          cy.log('findPostInFeed: Post not indexed; waiting 200ms and checking again');
+          cy.wait(200);
+          checkPostIsIndexed(t - 1);
+        }
+      } else {
+        cy.log(`findPostInFeed: Post ${postIdx} was already indexed`);
+      };
     });
     cy.log(`findPostInFeed: Post ${postIdx} is indexed`);
   };
@@ -382,7 +387,7 @@ Cypress.Commands.add('findFirstPostInFeed', (checkIndexed = true) => {
 });
 
 // useful for finding a specific post by text
-Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = false) => {
+Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = true) => {
   findPostInFeed(0, filterText, checkIndexed);
 });
 
