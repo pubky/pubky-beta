@@ -9,7 +9,7 @@ import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
 import { PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
-import { PubkyAppPostKind } from 'pubky-app-specs';
+import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
 export default function PostRoot({ post }: { uri: string; post: PostView }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
@@ -24,8 +24,6 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
   const [sendingReply, setSendingReply] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [placeholder, setPlaceholder] = useState('');
-  const regex =
-    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('reply'));
@@ -44,12 +42,11 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
-    const match = sendReply && sendReply.match(regex);
 
-    if (sendReply && match) {
-      const replyId = match[2];
+    if (sendReply) {
+      const postId = parse_uri(sendReply).resource_id!;
       for (const tag of updatedTags) {
-        await createTag(pubky ?? '', replyId, tag);
+        await createTag(pubky ?? '', postId, tag);
       }
       setSendingReply(false);
       setContentReply('');

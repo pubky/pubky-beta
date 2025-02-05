@@ -8,6 +8,7 @@ import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 import { Section } from '@/components/CreateContent/Section';
 import LinkPreviewer from '@/components/LinkPreview';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { parse_uri } from 'pubky-app-specs';
 
 interface CreateArticleProps {
   setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
@@ -41,8 +42,6 @@ export default function ContentCreateArticle({
   );
   //const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
-  const regex =
-    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('article'));
@@ -63,10 +62,9 @@ export default function ContentCreateArticle({
         content,
         selectedFile,
       );
-      const match = newArticle && newArticle?.uri.match(regex);
 
-      if (newArticle && match) {
-        const postId = match[2];
+      if (newArticle) {
+        const postId = parse_uri(newArticle.uri).resource_id!;
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', postId, tag);
         }

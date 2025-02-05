@@ -6,7 +6,7 @@ import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
 import Post from '@/components/Post';
 import CreateContent from '@/components/CreateContent';
-import { PubkyAppPostKind } from 'pubky-app-specs';
+import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateReplyProps {
   setShowModalReply: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,8 +28,7 @@ export default function ContentCreateReply({
   const [quote, setQuote] = useState<string>();
   const [placeholder, setPlaceholder] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const regex =
-    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
+
   const lineHorizontalCSS = (
     <div className="hidden lg:flex absolute ml-[9px]">
       <Icon.LineHorizontal size="14" color="#262626" />
@@ -61,10 +60,9 @@ export default function ContentCreateReply({
 
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
-      const match = newReply && newReply.match(regex);
 
-      if (newReply && match) {
-        const replyId = match[2];
+      if (newReply) {
+        const replyId = parse_uri(newReply).resource_id!;
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', replyId, tag);
         }

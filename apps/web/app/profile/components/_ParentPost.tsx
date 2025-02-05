@@ -6,6 +6,7 @@ import { Typography } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import { getPost } from '@/services/postService';
 import { usePubkyClientContext } from '@/contexts';
+import { parse_uri } from 'pubky-app-specs';
 
 interface ParentPostState {
   post: PostView | null;
@@ -18,17 +19,14 @@ export default function ParentPost({ parentURI }: { parentURI: string }) {
     post: null,
     loading: true,
   });
-  const regex =
-    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
-
   useEffect(() => {
     const fetchPost = async () => {
       try {
         if (parentURI) {
-          const match = parentURI.match(regex);
-          if (match) {
-            const authorId = match[1];
-            const postId = match[2];
+          const parsed = parse_uri(parentURI);
+          if (parsed.resource == 'posts') {
+            const authorId = parsed.user_id;
+            const postId = parsed.resource_id!;
             const post = await getPost(authorId, postId, pubky ?? '');
             setParentPost({ post: post || null, loading: false });
           } else {

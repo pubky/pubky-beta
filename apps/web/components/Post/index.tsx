@@ -30,6 +30,7 @@ import MainPostContent from './_MainPostContent';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { parse_uri } from 'pubky-app-specs';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -80,15 +81,11 @@ export default function Post({
   const fetchRepostedPost = async () => {
     if (post?.relationships?.reposted) {
       const url = post.relationships.reposted;
+      const parsed = parse_uri(url);
 
-      const regex =
-        /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
-      const match = url.match(regex);
-
-      if (match) {
-        const authorId = match[1];
-        const postId = match[2];
-
+      if (parsed.resource == 'posts') {
+        const authorId = parsed.user_id;
+        const postId = parsed.resource_id!;
         const result = await getPost(authorId, postId, pubky ?? '');
         setRepostedPost(result);
         setLoadingRepostedPost(false);
