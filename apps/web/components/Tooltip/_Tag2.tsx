@@ -39,7 +39,7 @@ export default function Tag2({ tags }: TagProps) {
 
   const displayedImages = images?.slice(0, 4);
   const extraImagesCount =
-    images && displayedImages && images?.length - displayedImages?.length;
+    tags && tags?.taggers_count - displayedImages?.length;
 
   useEffect(() => {
     if (tags?.taggers_count) {

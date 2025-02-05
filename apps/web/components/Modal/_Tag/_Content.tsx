@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { useTagsPost } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { usePostTagTaggers } from '@/hooks/useUser';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
@@ -66,6 +67,10 @@ export default function ContentTag({
   const [allTags, setAllTags] = useState<PostTag[]>(tags.slice(0, limit));
   const [skip, setSkip] = useState(limit);
   const [hasMore, setHasMore] = useState(post.counts?.tags > limit);
+  const limitTaggers = 5;
+  const [skipTaggers, setSkipTaggers] = useState(limitTaggers);
+  const [taggers, setTaggers] = useState<string[]>([]);
+  const [hasMoreTaggers, setHasMoreTaggers] = useState(false);
 
   const { data: moreTags, isLoading } = useTagsPost(
     post.details.author,
@@ -73,6 +78,34 @@ export default function ContentTag({
     skip,
     limit,
   );
+
+  const { data: moreTaggers, isLoading: isLoadingTaggers } = usePostTagTaggers(
+    post.details.author,
+    post.details.id,
+    selectedTag?.label ?? '',
+    skipTaggers,
+    limitTaggers,
+  );
+
+  useEffect(() => {
+    if (selectedTag) {
+      const initialTaggers = selectedTag.taggers.slice(0, limitTaggers);
+      setTaggers(initialTaggers);
+      setSkipTaggers(limitTaggers);
+      setHasMoreTaggers(selectedTag.taggers_count > limitTaggers);
+    } else {
+      setTaggers([]);
+      setSkipTaggers(limitTaggers);
+      setHasMoreTaggers(false);
+    }
+  }, [selectedTag]);
+
+  useEffect(() => {
+    if (moreTaggers && moreTaggers.length) {
+      setTaggers((prev) => [...new Set([...prev, ...moreTaggers])]);
+      setHasMoreTaggers(moreTaggers.length === limitTaggers);
+    }
+  }, [moreTaggers]);
 
   useEffect(() => {
     if (!isLoading && moreTags && moreTags.length) {
@@ -92,33 +125,40 @@ export default function ContentTag({
     }
   }, isLoading);
 
+  const loaderTaggers = useInfiniteScroll(() => {
+    if (hasMoreTaggers && !isLoadingTaggers) {
+      setSkipTaggers((prev) => prev + limitTaggers);
+    }
+  }, isLoadingTaggers);
+
   useEffect(() => {
+    if (taggers.length === 0) return;
+
     const fetchProfiles = async () => {
       setInitLoadingFollowers(true);
-
       const profilesMap: { [key: string]: UserView } = {};
       const followedMap: { [key: string]: boolean } = {};
-      const taggers = selectedTag?.taggers || [];
 
       await Promise.all(
-        taggers.map(async (user) => {
+        taggers.map(async (userId) => {
+          if (userProfiles[userId]) return;
           try {
-            const profile = await getUserProfile(user, pubky ?? '');
-            profilesMap[user] = profile;
-            followedMap[user] = profile.relationship?.following ?? false;
+            const profile = await getUserProfile(userId, pubky ?? '');
+            profilesMap[userId] = profile;
+            followedMap[userId] = profile.relationship?.following ?? false;
           } catch (error) {
-            console.error(`Error fetching profile for user ${user}`, error);
+            console.error(`Error fetching profile for user ${userId}`, error);
           }
         }),
       );
 
-      setUserProfiles(profilesMap);
-      setFollowedUser((prevState) => ({ ...prevState, ...followedMap }));
+      setUserProfiles((prev) => ({ ...prev, ...profilesMap }));
+      setFollowedUser((prev) => ({ ...prev, ...followedMap }));
       setInitLoadingFollowers(false);
     };
 
     fetchProfiles();
-  }, [selectedTag, pubky]);
+  }, [taggers, pubky]);
 
   const fetchProfileImages = async (tag: PostTag) => {
     const images = await Promise.all(
@@ -482,7 +522,7 @@ export default function ContentTag({
                     />
                   </Link>
                 </div>
-                {selectedTag?.taggers.map((user, userIndex) => {
+                {taggers.map((user, userIndex) => {
                   const profile = userProfiles[user];
                   const pubkeyUser = pubky && user.includes(pubky);
                   const isFollowed = followedUser[user];
@@ -545,6 +585,11 @@ export default function ContentTag({
                     </div>
                   );
                 })}
+                {hasMoreTaggers && (
+                  <div ref={loaderTaggers}>
+                    <Icon.LoadingSpin />
+                  </div>
+                )}
               </>
             )}
           </>

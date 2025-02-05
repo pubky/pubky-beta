@@ -254,7 +254,7 @@ export async function getPostTagTaggers(
     queryParams.append('limit', String(limit));
   }
   const response = await fetch(
-    `${BASE_URL}/post/${userId}/${postId}taggers/${tagName}?${queryParams}`,
+    `${BASE_URL}/post/${userId}/${postId}/taggers/${tagName}?${queryParams}`,
   );
 
   if (!response.ok) throw new Error('Failed to fetch user tags');
