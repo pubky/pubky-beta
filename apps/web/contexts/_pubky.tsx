@@ -695,6 +695,27 @@ export function PubkyClientWrapper({
         files,
       );
 
+      if (!result) return false;
+
+      const newPostDetails: PostDetails = {
+        author: pubky!,
+        id: result.id,
+        indexed_at: Date.now(),
+        uri: result.uri,
+        content: result.details.content,
+        kind: result.details.kind,
+      };
+
+      const newPostView: PostView = {
+        uri: result.uri,
+        details: newPostDetails,
+        counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
+        tags: [],
+        cached: 'homeserver',
+      } as PostView;
+
+      setNewPosts((prev) => [newPostView, ...prev]);
+
       return result ? { uri: result.uri, details: result.details } : false;
     },
   );
