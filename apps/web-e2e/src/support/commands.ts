@@ -325,7 +325,7 @@ Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts =
   go(attempts);
 });
 
-const findPostInFeed = (postIdx = 0, filterText?) => {
+const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = true) => {
   // A function to check if timeline contains 'No post yet'.
   // If it does then wait 1 second and check again.
   // This is a wait for the timeline to load after the page loads.
@@ -346,6 +346,31 @@ const findPostInFeed = (postIdx = 0, filterText?) => {
   // check timeline 5 times to be ready for a post to be found
   checkTimelineReady(5);
 
+  // A function to check if the post is indexed
+  const checkPostIsIndexed = (t = 50) => {
+    if (t === 0) assert(false, `findPostInFeed: Post not indexed`);
+    cy.log(`findPostInFeed: Checking if post ${postIdx} is indexed`);
+    cy.get('#posts-feed').find('#timeline').children().eq(postIdx).then($post => {
+      // if post has the status checkmarks then wait for it to have two green ticks
+      if ($post.find('#post-status').length > 0) {
+        if ($post.find('#post-status-indexed').length === 0) {
+          cy.log('findPostInFeed: Post not indexed; waiting 200ms and checking again');
+          cy.wait(200);
+          checkPostIsIndexed(t - 1);
+        }
+      } else {
+        cy.log(`findPostInFeed: Post ${postIdx} was already indexed`);
+      };
+    });
+    cy.log(`findPostInFeed: Post ${postIdx} is indexed`);
+  };
+
+  // if 'checkIndexed' then wait for the post to have two green ticks, indicating it is indexed
+  // this is needed because the container element is rerendered when the post is indexed
+  cy.wrap(checkIndexed).then(($checkIndexed) => {
+    if ($checkIndexed) checkPostIsIndexed();
+  });
+
   // find the post in the timeline
   cy.get('#posts-feed').find('#timeline').children().should('have.length.gte', 1).then($posts => {
     // optionally filter posts by contained text
@@ -356,12 +381,19 @@ const findPostInFeed = (postIdx = 0, filterText?) => {
   }).eq(postIdx);
 };
 
-Cypress.Commands.add('findFirstPostInFeed', (filterText?) => {
-  findPostInFeed(0, filterText);
+// useful to find your latest new post
+Cypress.Commands.add('findFirstPostInFeed', (checkIndexed = true) => {
+  findPostInFeed(0, "", checkIndexed);
 });
 
-Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?) => {
-  findPostInFeed(postIdx, filterText);
+// useful for finding a specific post by text
+Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = true) => {
+  findPostInFeed(0, filterText, checkIndexed);
+});
+
+// useful for finding a specific post by index with optional filter text
+Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed = true) => {
+  findPostInFeed(postIdx, filterText, checkIndexed);
 });
 
 // workaround for intermittent error seen in CI

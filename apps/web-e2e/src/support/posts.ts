@@ -60,8 +60,8 @@ export const replyToPost = ({replyContent, postContent, filterText, postIdx}: {r
 // repost any post in the feed that contains the filterText by index
 // if no arguments or just repostContent is provided then it reposts the latest post in the feed
 // TODO: default filterText value to filter out the quick post area then can change default index to 0
-export const repostPost = ({repostContent, postContent, filterText, postIdx}: {repostContent?: string, postContent?: string, filterText?: string, postIdx?: number}) => {
-  cy.findPostInFeed(postIdx, filterText).within(() => {
+export const repostPost = ({repostContent, waitForIndexed, postContent, filterText, postIdx}: {repostContent?: string, waitForIndexed?: boolean, postContent?: string, filterText?: string, postIdx?: number}) => {
+  cy.findPostInFeed(postIdx, filterText, waitForIndexed).within(() => {
     cy.get('#repost-btn').click();
   });
   cy.get('#modal-root').should('be.visible').within(($modal) => {
@@ -87,7 +87,7 @@ export const fastTagPost = (tags: string[]) => {
 
 // tag a post in feed with any number of tags
 export const fastTagPostInFeed = (tags: string[], postContent?: string) => {
-  cy.findFirstPostInFeed(postContent).within(() => {
+  cy.findFirstPostInFeedFiltered(postContent).within(() => {
     fastTagPost(tags);
   });
 };
