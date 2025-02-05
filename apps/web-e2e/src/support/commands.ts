@@ -376,10 +376,17 @@ const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = true) => {
   }).eq(postIdx);
 };
 
-Cypress.Commands.add('findFirstPostInFeed', (filterText?, checkIndexed = true) => {
+// useful to find your latest new post
+Cypress.Commands.add('findFirstPostInFeed', (checkIndexed = true) => {
+  findPostInFeed(0, "", checkIndexed);
+});
+
+// useful for finding a specific post by text
+Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = false) => {
   findPostInFeed(0, filterText, checkIndexed);
 });
 
+// useful for finding a specific post by index with optional filter text
 Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed = true) => {
   findPostInFeed(postIdx, filterText, checkIndexed);
 });

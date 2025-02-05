@@ -83,12 +83,12 @@ describe('feed and filters', () => {
     // Recent is the default sort so no need to click
 
     // check all posts are visible
-    cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
-    cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
-    cy.findFirstPostInFeed(profile2.postText).should('be.visible');
-    cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
-    cy.findFirstPostInFeed(profile3.postText).should('be.visible');
-    cy.findFirstPostInFeed(profile4.postText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile1.postText1).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile1.postText2).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile2.postText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile2.repostText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile3.postText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile4.postText).should('be.visible');
 
     // check posts are in the correct order
     checkPostIsAtIndexInFeed(profile4.postText, 0);
@@ -109,12 +109,12 @@ describe('feed and filters', () => {
     waitForFeedToLoad();
 
     // check all posts are visible
-    cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
-    cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
-    cy.findFirstPostInFeed(profile2.postText).should('be.visible');
-    cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
-    cy.findFirstPostInFeed(profile3.postText).should('be.visible');
-    cy.findFirstPostInFeed(profile4.postText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile1.postText1).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile1.postText2).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile2.postText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile2.repostText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile3.postText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile4.postText).should('be.visible');
 
     // * check some Hot tags are visible
     cy.get('#right-sidebar').find('#hot-tags').should('be.visible').within(() => {
@@ -133,8 +133,8 @@ describe('feed and filters', () => {
     cy.get('#left-sidebar').find('#reach-following-btn').click();
     waitForFeedToLoad();
 
-    cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
-    cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile1.postText1).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile1.postText2).should('be.visible');
     cannotFindPostInFeed(profile2.postText);
     cannotFindPostInFeed(profile2.repostText);
     cannotFindPostInFeed(profile3.postText);
@@ -147,8 +147,8 @@ describe('feed and filters', () => {
     cy.get('#left-sidebar').find('#reach-following-btn').click();
     waitForFeedToLoad();
 
-    cy.findFirstPostInFeed(profile2.postText).should('be.visible');
-    cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile2.postText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile2.repostText).should('be.visible');
     countPostsInFeed(profile1.postText2, 1); // 1 occurrence due to profile 2 reposting profile 1's post
     cannotFindPostInFeed(profile1.postText1);
     cannotFindPostInFeed(profile3.postText);
@@ -175,8 +175,8 @@ describe('feed and filters', () => {
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
     waitForFeedToLoad();
 
-    cy.findFirstPostInFeed(profile2.postText).should('be.visible');
-    cy.findFirstPostInFeed(profile2.repostText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile2.postText).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile2.repostText).should('be.visible');
     countPostsInFeed(profile1.postText2, 1); // just 1 occurrence due to profile 2 reposting profile 1's post
     cannotFindPostInFeed(profile1.postText1);
     cannotFindPostInFeed(profile3.postText);
@@ -188,8 +188,8 @@ describe('feed and filters', () => {
     cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
     waitForFeedToLoad();
-    cy.findFirstPostInFeed(profile1.postText1).should('be.visible');
-    cy.findFirstPostInFeed(profile1.postText2).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile1.postText1).should('be.visible');
+    cy.findFirstPostInFeedFiltered(profile1.postText2).should('be.visible');
     cannotFindPostInFeed(profile2.postText);
     cannotFindPostInFeed(profile2.repostText);
     cannotFindPostInFeed(profile3.postText);
