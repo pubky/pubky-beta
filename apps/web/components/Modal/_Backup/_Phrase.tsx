@@ -146,7 +146,7 @@ export default function Phrase({
                     ))}
                 </div>
               </div>
-              <div className="flex flex-col mt-4 gap-2 md:mt-0 md:gap-6">
+              <div className="flex md:flex-col mt-4 gap-2 md:mt-0 md:gap-6">
                 <div
                   onClick={handleDownloadRecoveryPhraseTXT}
                   className="w-auto flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
@@ -167,10 +167,10 @@ export default function Phrase({
                   )}
                   <Typography.Body
                     id="backup-copy-recovery-phrase"
-                    className="text-[13px]"
+                    className="text-[13px] flex gap-1"
                     variant="small-bold"
                   >
-                    Copy to clipboard
+                    Copy <span className="hidden md:flex"> to clipboard</span>
                   </Typography.Body>
                 </div>
               </div>
@@ -178,7 +178,6 @@ export default function Phrase({
           </div>
           <div className="w-full max-w-[796px] justify-between items-center inline-flex gap-6">
             <Button.Large
-              icon={<Icon.ArrowLeft />}
               className="w-auto"
               variant="secondary"
               onClick={() => {
@@ -186,7 +185,10 @@ export default function Phrase({
                 setShowWords(false);
               }}
             >
-              Back
+              <span className="flex gap-2 items-center">
+                <Icon.ArrowLeft />
+                <span className="hidden sm:flex">Back</span>
+              </span>
             </Button.Large>
             <Button.Large
               id="backup-reveal-confirm-recovery-phrase-btn"
