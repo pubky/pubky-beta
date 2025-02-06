@@ -161,7 +161,7 @@ export default function RemindBackup() {
         <div
           className={`${
             remindMeLater && 'hidden'
-          } relative w-full px-6 py-3 sm:px-12 sm:py-9 bg-white rounded-lg shadow border border-white flex-col justify-start items-start gap-2 inline-flex mb-3`}
+          } relative w-full px-6 py-3 sm:px-12 sm:py-9 bg-[#c8ff00]/10 rounded-lg shadow flex-col justify-start items-start gap-2 inline-flex mb-2 lg:mb-4`}
         >
           {/**<div
             onClick={RemindMe}
@@ -171,13 +171,13 @@ export default function RemindBackup() {
           </div>*/}
           <Typography.Body
             variant="large-bold"
-            className="text-[#05050a] text-2xl"
+            className="text-[#c8ff00] text-2xl"
           >
             Back up your account
           </Typography.Body>
           <div className="w-full md:flex justify-between gap-4">
             <Typography.Body
-              className="w-full text-[#05050a] mb-4 md:mb-0"
+              className="w-full text-[#c8ff00] mb-4 md:mb-0"
               variant="medium"
             >
               Time to back up your account.
@@ -188,21 +188,21 @@ export default function RemindBackup() {
               <Button.Large
                 onClick={RemindMe}
                 variant="secondary"
-                className="w-auto shadow-none bg-black bg-opacity-10 hover:bg-opacity-20 border border-transparent"
-                colorText="text-[#05050a]"
-                icon={<Icon.Clock size="16" color="#05050a" />}
+                className="w-auto shadow-none bg-[#c8ff00] bg-opacity-10 hover:bg-opacity-20 border border-transparent"
+                colorText="text-[#c8ff00]"
+                icon={<Icon.Clock size="16" color="#c8ff00" />}
               >
                 <span className="hidden sm:block">Remind me later</span>
                 <span className="block sm:hidden">Later</span>
               </Button.Large>
               <Button.Large
                 id="remind-backup-now-btn"
-                className="w-auto shadow-none bg-black bg-opacity-10 hover:bg-opacity-20 border border-[#05050a]"
-                colorText="text-[#05050a]"
+                className="w-auto shadow-none bg-[#c8ff00] bg-opacity-10 hover:bg-opacity-20 border border-[#c8ff00]"
+                colorText="text-[#c8ff00]"
                 onClick={() =>
                   isMobile ? setShowSheetBackup(true) : setShowModalBackup(true)
                 }
-                icon={<Icon.Lock size="16" color="#05050a" />}
+                icon={<Icon.Lock size="16" color="#c8ff00" />}
               >
                 Backup now
               </Button.Large>
@@ -212,23 +212,24 @@ export default function RemindBackup() {
       ) : (
         showBackupSuccess && (
           <div
-            className={`mb-2 lg:mb-6 w-full p-4 bg-white rounded-lg shadow border border-white flex-col justify-start items-start gap-6 inline-flex`}
+            className={`mb-2 lg:mb-6 w-full p-4 bg-[#c8ff00]/10 rounded-lg shadow flex-col justify-start items-start gap-6 inline-flex`}
           >
             <div className="w-full flex justify-between">
               <div className="flex gap-2">
                 <div className="relative">
-                  <Icon.CheckCircle size="20" color="#05050a" />
+                  <Icon.CheckCircle size="20" color="#c8ff00" />
                 </div>
                 <Typography.Body
-                  className="text-[#05050a] text-opacity-80"
-                  variant="small-bold"
+                  className="text-[#c8ff00] text-opacity-80"
+                  variant="small"
                 >
-                  Backup successful! Your recovery file/phrase has been deleted
-                  and now you can make login via the chosen recovery method.
+                  <span className="font-bold">Backup successful!</span> Your
+                  recovery file/phrase has been deleted and now you can make
+                  login via the chosen recovery method.
                 </Typography.Body>
               </div>
               <div className="cursor-pointer" onClick={Closed}>
-                <Icon.X size="20" color="#05050a" />
+                <Icon.X size="20" color="#c8ff00" />
               </div>
             </div>
           </div>

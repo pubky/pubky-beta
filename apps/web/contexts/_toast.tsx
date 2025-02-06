@@ -44,16 +44,16 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
   const iconToShow = (variant: ToastVariant) => {
     switch (variant) {
       case 'bookmark':
-        return <Icon.BookmarkSimple size="24" opacity={1} color="white" />;
+        return <Icon.BookmarkSimple size="24" opacity={1} color="#c8ff00" />;
       case 'pubky':
-        return <Icon.Key size="24" />;
+        return <Icon.Key size="24" color="#c8ff00" />;
       case 'warning':
-        return <Icon.Warning size="24" />;
+        return <Icon.Warning size="24" color="#c8ff00" />;
       case 'text':
-        return <Icon.FileText size="24" />;
+        return <Icon.FileText size="24" color="#c8ff00" />;
       case 'link':
       default:
-        return <Icon.Link size="24" />;
+        return <Icon.Link size="24" color="#c8ff00" />;
     }
   };
 
