@@ -49,12 +49,14 @@ export default function File({
       </div>
       <div className="w-full max-w-[796px] mt-2 justify-between items-center inline-flex gap-6">
         <Button.Large
-          icon={<Icon.ArrowLeft />}
           className="w-auto"
           variant="secondary"
           onClick={() => setFile(false)}
         >
-          Back
+          <span className="flex gap-2 items-center">
+            <Icon.ArrowLeft />
+            <span className="hidden sm:flex">Back</span>
+          </span>
         </Button.Large>
         <Button.Large
           id="backup-download-recovery-file-btn"

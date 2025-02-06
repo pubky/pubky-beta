@@ -72,16 +72,17 @@ export default function ContentBackup({
               will be deleted once you complete the backup.
             </strong>
           </Typography.Body>
-          <div className="flex flex-col sm:flex-row gap-6">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-6">
             <Card.Primary
               title="Recovery Phrase"
               text="Write down 12 words to recover your account at a later date."
             >
-              <div className="flex justify-center items-center my-10">
+              <div className="hidden md:flex justify-center items-center my-10">
                 <Icon.FileText size="128" />
               </div>
               <Button.Large
                 id="backup-recovery-phrase-btn"
+                className="mt-4 md:mt-0"
                 icon={<Icon.FileText />}
                 onClick={() => setPhrase(true)}
               >
@@ -92,12 +93,13 @@ export default function ContentBackup({
               title="Recovery File"
               text="Download a password encrypted, digital file to your computer."
             >
-              <div className="flex justify-center items-center my-10">
+              <div className="hidden md:flex justify-center items-center my-10">
                 <Icon.DownloadSimple size="128" />
               </div>
               <Button.Large
                 id="backup-recovery-file-btn"
                 icon={<Icon.DownloadSimple />}
+                className="mt-4 md:mt-0"
                 onClick={() => setFile(true)}
               >
                 Recovery File

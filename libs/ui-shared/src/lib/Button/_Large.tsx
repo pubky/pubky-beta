@@ -45,12 +45,14 @@ export const Large = ({
       className={twMerge(cssButton, cssColorButton, rest.className)}
     >
       {loading ? <Icon.LoadingSpin size="20" /> : icon && <div>{icon}</div>}
-      <Typography.Body
-        className={`tracking-normal ${colorText}`}
-        variant="small-bold"
-      >
-        {children}
-      </Typography.Body>
+      {children && (
+        <Typography.Body
+          className={`tracking-normal ${colorText}`}
+          variant="small-bold"
+        >
+          {children}
+        </Typography.Body>
+      )}
     </button>
   );
 };

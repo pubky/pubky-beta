@@ -127,50 +127,50 @@ export default function ConfirmPhrase({
           ))}
         </div>
         <div className="relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start flex flex-col md:flex-row">
-        <div className="w-full flex">
-          <div className="flex-grow flex-col justify-start items-start gap-2 flex">
-            {selectedWords.slice(0, 6).map((word, index) => (
-              <Typography.Body key={index} variant="medium-bold">
-                <span className="text-white text-opacity-50">
-                  {index + 1}.{' '}
-                </span>
-                <span
-                  className={
-                    word
-                      ? correctOrder[index] === word
-                        ? 'text-[#c8ff00]'
-                        : 'text-[#FF003C]'
-                      : 'text-white text-opacity-50'
-                  }
-                >
-                  {word || ''}
-                </span>
-              </Typography.Body>
-            ))}
-          </div>
-          <div className="flex-grow flex-col justify-start items-start gap-2 flex">
-            {selectedWords.slice(6, 12).map((word, index) => (
-              <Typography.Body key={index + 6} variant="medium-bold">
-                <span className="text-white text-opacity-50">
-                  {index + 7}.{' '}
-                </span>
-                <span
-                  className={
-                    word
-                      ? correctOrder[index + 6] === word
-                        ? 'text-[#c8ff00]'
-                        : 'text-[#FF003C]'
-                      : 'text-white text-opacity-50'
-                  }
-                >
-                  {word || ''}
-                </span>
-              </Typography.Body>
-            ))}
-          </div>
+          <div className="w-full flex">
+            <div className="flex-grow flex-col justify-start items-start gap-2 flex">
+              {selectedWords.slice(0, 6).map((word, index) => (
+                <Typography.Body key={index} variant="medium-bold">
+                  <span className="text-white text-opacity-50">
+                    {index + 1}.{' '}
+                  </span>
+                  <span
+                    className={
+                      word
+                        ? correctOrder[index] === word
+                          ? 'text-[#c8ff00]'
+                          : 'text-[#FF003C]'
+                        : 'text-white text-opacity-50'
+                    }
+                  >
+                    {word || ''}
+                  </span>
+                </Typography.Body>
+              ))}
+            </div>
+            <div className="flex-grow flex-col justify-start items-start gap-2 flex">
+              {selectedWords.slice(6, 12).map((word, index) => (
+                <Typography.Body key={index + 6} variant="medium-bold">
+                  <span className="text-white text-opacity-50">
+                    {index + 7}.{' '}
+                  </span>
+                  <span
+                    className={
+                      word
+                        ? correctOrder[index + 6] === word
+                          ? 'text-[#c8ff00]'
+                          : 'text-[#FF003C]'
+                        : 'text-white text-opacity-50'
+                    }
+                  >
+                    {word || ''}
+                  </span>
+                </Typography.Body>
+              ))}
+            </div>
           </div>
           {isCorrectOrder && (
-            <div className="flex flex-col mt-4 gap-2 md:mt-0 md:gap-6">
+            <div className="flex md:flex-col mt-4 gap-2 md:mt-0 md:gap-6">
               <div
                 onClick={handleDownloadRecoveryPhraseTXT}
                 className="w-auto flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
@@ -189,8 +189,11 @@ export default function ConfirmPhrase({
                 ) : (
                   <Icon.Clipboard size="16" />
                 )}
-                <Typography.Body className="text-[13px]" variant="small-bold">
-                  Copy to clipboard
+                <Typography.Body
+                  className="text-[13px] flex gap-1"
+                  variant="small-bold"
+                >
+                  Copy <span className="hidden md:flex"> to clipboard</span>
                 </Typography.Body>
               </div>
             </div>
