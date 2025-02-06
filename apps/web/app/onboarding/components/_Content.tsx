@@ -108,10 +108,7 @@ export default function Index() {
           </Button.Large>
           */}
           <Link href="https://pubky.org" target="_blank">
-            <Button.Large
-              variant="secondary"
-              className="w-auto lg:w-[156px] hidden sm:flex"
-            >
+            <Button.Large variant="secondary" className="w-auto lg:w-[156px]">
               Pubky Core
             </Button.Large>
           </Link>

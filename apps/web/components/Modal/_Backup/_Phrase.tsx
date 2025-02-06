@@ -116,38 +116,40 @@ export default function Phrase({
             <div
               className={`${
                 !showWords && 'blur-[10px]'
-              } relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start inline-flex`}
+              } relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start flex flex-col md:flex-row`}
             >
-              <div className="grow-[0.6] shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
-                {mnemonic
-                  ?.split(' ')
-                  .slice(0, 6)
-                  .map((word, index) => (
-                    <Typography.Body key={index} variant="medium-bold">
-                      <span className="text-white text-opacity-50">
-                        {index + 1}.{' '}
-                      </span>{' '}
-                      {word}
-                    </Typography.Body>
-                  ))}
+              <div className="w-full flex">
+                <div className="grow-[0.6] shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
+                  {mnemonic
+                    ?.split(' ')
+                    .slice(0, 6)
+                    .map((word, index) => (
+                      <Typography.Body key={index} variant="medium-bold">
+                        <span className="text-white text-opacity-50">
+                          {index + 1}.{' '}
+                        </span>{' '}
+                        {word}
+                      </Typography.Body>
+                    ))}
+                </div>
+                <div className="grow-[0.6] shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
+                  {mnemonic
+                    ?.split(' ')
+                    .slice(6, 12)
+                    .map((word, index) => (
+                      <Typography.Body key={index} variant="medium-bold">
+                        <span className="text-white text-opacity-50">
+                          {index + 7}.{' '}
+                        </span>{' '}
+                        {word}
+                      </Typography.Body>
+                    ))}
+                </div>
               </div>
-              <div className="grow-[0.6] shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
-                {mnemonic
-                  ?.split(' ')
-                  .slice(6, 12)
-                  .map((word, index) => (
-                    <Typography.Body key={index} variant="medium-bold">
-                      <span className="text-white text-opacity-50">
-                        {index + 7}.{' '}
-                      </span>{' '}
-                      {word}
-                    </Typography.Body>
-                  ))}
-              </div>
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col mt-4 gap-2 md:mt-0 md:gap-6">
                 <div
                   onClick={handleDownloadRecoveryPhraseTXT}
-                  className="flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
+                  className="w-auto flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
                 >
                   <Icon.DownloadSimple size="16" />
                   <Typography.Body className="text-[13px]" variant="small-bold">
@@ -156,7 +158,7 @@ export default function Phrase({
                 </div>
                 <div
                   onClick={handleCopyMnemonicToClipboard}
-                  className="flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
+                  className="w-max flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
                 >
                   {copyMnemonic ? (
                     <Icon.Check size="16" />
