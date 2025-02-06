@@ -13,6 +13,8 @@ import {
   getUserDetails,
   getUserTaggers,
   getUserNotifications,
+  getPostTagTaggers,
+  getUserTagTaggers,
 } from '../services/userService';
 
 export function useUserProfile(userId: string, viewerId: string) {
@@ -125,5 +127,32 @@ export function useUserNotifications(
     queryFn: () => getUserNotifications(userId, start, end, skip, limit),
     retry: false,
     refetchInterval: 30000,
+  });
+}
+
+export function usePostTagTaggers(
+  userId: string,
+  postId: string,
+  tagName: string,
+  skip?: number,
+  limit?: number,
+) {
+  return useQuery({
+    queryKey: ['postTagTaggers', userId, postId, tagName, skip, limit],
+    queryFn: () => getPostTagTaggers(userId, postId, tagName, skip, limit),
+    retry: false,
+  });
+}
+
+export function useUserTagTaggers(
+  userId: string,
+  tagName: string,
+  skip?: number,
+  limit?: number,
+) {
+  return useQuery({
+    queryKey: ['userTagTaggers', userId, tagName, skip, limit],
+    queryFn: () => getUserTagTaggers(userId, tagName, skip, limit),
+    retry: false,
   });
 }

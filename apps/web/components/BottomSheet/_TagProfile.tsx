@@ -1,7 +1,7 @@
 'use client';
 
 import { BottomSheet } from '@social/ui-shared';
-import { UserTags } from '@/types/User';
+import { UserTags, UserView } from '@/types/User';
 import ContentProfileTag from '../Modal/_TagProfile/_Content';
 
 interface TagProfileProps {
@@ -13,8 +13,7 @@ interface TagProfileProps {
   selectedTag?: UserTags | null;
   setSelectedTag?: React.Dispatch<React.SetStateAction<UserTags | null>>;
   pubkyUser?: string;
-  name?: string;
-  uriImage?: string;
+  user?: UserView | null;
   title?: string;
   className?: string;
 }
@@ -28,8 +27,7 @@ export default function TagProfile({
   selectedTag,
   setSelectedTag,
   pubkyUser,
-  name,
-  uriImage,
+  user,
   title,
   className,
 }: TagProfileProps) {
@@ -47,8 +45,7 @@ export default function TagProfile({
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
         pubkyUser={pubkyUser}
-        name={name}
-        uriImage={uriImage}
+        user={user}
       />
     </BottomSheet.Root>
   );
