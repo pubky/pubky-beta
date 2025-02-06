@@ -19,6 +19,8 @@ import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import LinksSection from './Sidebar/_LinksSection';
+import { useTagsUser } from '@/hooks/useTag';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 type TaggedAsProps = {
   creatorPubky?: string | undefined;
@@ -31,11 +33,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const isMobile = useIsMobile();
   const usePubky = creatorPubky || pubky || '';
-  const { data } = useUserProfile(usePubky, pubky ?? '');
-  const name = data?.details?.name;
-  const image = data?.details?.image;
-  const [profileTags, setProfileTags] = useState<UserTags[]>(data?.tags ?? []);
-  const links = data?.details?.links ?? [];
+  const { data: user } = useUserProfile(usePubky, pubky ?? '');
+  const name = user?.details?.name;
+  const [profileTags, setProfileTags] = useState<UserTags[]>(user?.tags ?? []);
+  const links = user?.details?.links ?? [];
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   const [showSheetProfileTag, setShowSheetProfileTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
@@ -47,10 +48,37 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     [],
   );
   const [loadingTags, setLoadingTags] = useState('');
+  const limit = 5;
+  const [skip, setSkip] = useState(limit);
+  const [hasMore, setHasMore] = useState(user && user?.counts?.tags > limit);
+
+  const { data: moreTags, isLoading } = useTagsUser(
+    user?.details.id ?? '',
+    skip,
+    limit,
+  );
 
   useEffect(() => {
-    setProfileTags(data?.tags ?? []);
-  }, [data?.tags]);
+    if (!isLoading && moreTags && moreTags.length) {
+      setProfileTags((prev) => {
+        const newTags = moreTags.filter(
+          (tag) => !prev.some((t) => t.label === tag.label),
+        );
+        setHasMore(newTags.length > 0);
+        return [...prev, ...newTags];
+      });
+    }
+  }, [moreTags, isLoading]);
+
+  const loader = useInfiniteScroll(() => {
+    if (hasMore && !isLoading) {
+      setSkip((prev) => prev + limit);
+    }
+  }, isLoading);
+
+  useEffect(() => {
+    setProfileTags(user?.tags ?? []);
+  }, [user?.tags]);
 
   useEffect(() => {
     const fetchTaggedImages = async () => {
@@ -184,14 +212,13 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                   );
 
                   const images = taggedImages[index] || [];
-                  const displayedImages = images?.slice(0, 15);
+                  const displayedImages = images?.slice(0, 5);
                   const extraImagesCount =
-                    images?.length - displayedImages?.length;
+                    tag.taggers_count - displayedImages?.length;
 
                   return (
                     <div className="flex gap-2" key={index}>
                       <PostUtil.Tag
-                        key={index}
                         clicked={isTagFound}
                         onClick={(event) => {
                           event.stopPropagation();
@@ -227,7 +254,15 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                           className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                         />
                       </Link>
-                      <div className="cursor-pointer flex items-center">
+                      <div
+                        onClick={() => {
+                          setSelectedTag(tag);
+                          isMobile
+                            ? setShowSheetProfileTag(true)
+                            : setShowModalProfileTag(true);
+                        }}
+                        className="cursor-pointer flex items-center"
+                      >
                         {displayedImages?.map((image, imageIndex) => (
                           <ImageByUri
                             width={32}
@@ -249,6 +284,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                     </div>
                   );
                 })}
+                {hasMore && (
+                  <div ref={loader}>
+                    <Icon.LoadingSpin />
+                  </div>
+                )}
               </>
             ) : (
               <Typography.Body variant="small" className="text-opacity-50">
@@ -290,8 +330,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
         pubkyUser={creatorPubky}
-        name={name}
-        uriImage={image}
+        user={user}
       />
       <BottomSheet.TagProfile
         profileTags={profileTags ?? []}
@@ -302,8 +341,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
         pubkyUser={creatorPubky}
-        name={name}
-        uriImage={image}
+        user={user}
       />
       <Modal.CheckLink
         showModalCheckLink={showModalCheckLink}

@@ -225,7 +225,7 @@ export default function Actions({
               <Icon.Tag size="16" />
             </div>
           }
-          counter={post?.tags?.length}
+          counter={post?.counts?.tags}
         />
         <Button.Action
           id="reply-btn"

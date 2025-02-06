@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { Modal } from '@social/ui-shared';
-import { UserTags } from '@/types/User';
+import { UserTags, UserView } from '@/types/User';
 import ContentProfileTag from './_Content';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,8 +14,7 @@ interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedTag?: UserTags | null;
   setSelectedTag?: React.Dispatch<React.SetStateAction<UserTags | null>>;
   pubkyUser?: string;
-  name?: string;
-  uriImage?: string;
+  user?: UserView | null;
 }
 
 export default function ProfileTag({
@@ -27,8 +26,7 @@ export default function ProfileTag({
   selectedTag,
   setSelectedTag,
   pubkyUser,
-  name,
-  uriImage,
+  user,
 }: ProfileTagProps) {
   const modalProfileTagRef = useRef<HTMLDivElement>(null);
 
@@ -73,8 +71,7 @@ export default function ProfileTag({
             selectedTag={selectedTag}
             setSelectedTag={setSelectedTag}
             pubkyUser={pubkyUser}
-            name={name}
-            uriImage={uriImage}
+            user={user}
           />
         </Modal.Content>
       </div>

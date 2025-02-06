@@ -17,6 +17,9 @@ import { getUserProfile } from '@/services/userService';
 import { PostTag } from '@/types/Post';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
+import { useTagsUser } from '@/hooks/useTag';
+import { useUserTagTaggers } from '@/hooks/useUser';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   profileTags: UserTags[];
@@ -25,8 +28,7 @@ interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedTag?: UserTags | null;
   setSelectedTag?: React.Dispatch<React.SetStateAction<UserTags | null>>;
   pubkyUser?: string;
-  name?: string;
-  uriImage?: string;
+  user?: UserView | null;
 }
 
 export default function ContentProfileTag({
@@ -36,8 +38,7 @@ export default function ContentProfileTag({
   selectedTag,
   setSelectedTag,
   pubkyUser,
-  name,
-  uriImage,
+  user,
 }: ProfileTagProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -55,45 +56,116 @@ export default function ContentProfileTag({
     {},
   );
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  const limit = 5;
+  const [allTags, setAllTags] = useState<PostTag[]>(
+    profileTags.slice(0, limit),
+  );
+  const [skip, setSkip] = useState(limit);
+  const [hasMore, setHasMore] = useState(user && user?.counts?.tags > limit);
+  const limitTaggers = 5;
+  const [skipTaggers, setSkipTaggers] = useState(limitTaggers);
+  const [taggers, setTaggers] = useState<string[]>([]);
+  const [hasMoreTaggers, setHasMoreTaggers] = useState(false);
+
+  const { data: moreTags, isLoading } = useTagsUser(
+    user?.details.id ?? '',
+    skip,
+    limit,
+  );
+
+  const { data: moreTaggers, isLoading: isLoadingTaggers } = useUserTagTaggers(
+    user?.details.id ?? '',
+    selectedTag?.label ?? '',
+    skipTaggers,
+    limitTaggers,
+  );
 
   useEffect(() => {
+    if (selectedTag) {
+      const initialTaggers = selectedTag.taggers.slice(0, limitTaggers);
+      setTaggers(initialTaggers);
+      setSkipTaggers(limitTaggers);
+      setHasMoreTaggers(selectedTag.taggers_count > limitTaggers);
+    } else {
+      setTaggers([]);
+      setSkipTaggers(limitTaggers);
+      setHasMoreTaggers(false);
+    }
+  }, [selectedTag]);
+
+  useEffect(() => {
+    if (moreTaggers) {
+      setTaggers((prev) => [...new Set([...prev, ...moreTaggers])]);
+      setHasMoreTaggers(
+        moreTaggers.length > 0 && moreTaggers.length === limitTaggers,
+      );
+    } else {
+      setHasMoreTaggers(false);
+    }
+  }, [moreTaggers]);
+
+  useEffect(() => {
+    if (!isLoading && moreTags && moreTags.length) {
+      setAllTags((prev) => {
+        const newTags = moreTags.filter(
+          (tag) => !prev.some((t) => t.label === tag.label),
+        );
+        setHasMore(newTags.length > 0);
+        return [...prev, ...newTags];
+      });
+    }
+  }, [moreTags, isLoading]);
+
+  const loader = useInfiniteScroll(() => {
+    if (hasMore && !isLoading) {
+      setSkip((prev) => prev + limit);
+    }
+  }, isLoading);
+
+  const loaderTaggers = useInfiniteScroll(() => {
+    if (hasMoreTaggers && !isLoadingTaggers) {
+      setSkipTaggers((prev) => prev + limitTaggers);
+    }
+  }, isLoadingTaggers);
+
+  useEffect(() => {
+    if (taggers.length === 0) return;
+
     const fetchProfiles = async () => {
       setInitLoadingFollowers(true);
-
       const profilesMap: { [key: string]: UserView } = {};
       const followedMap: { [key: string]: boolean } = {};
-      const taggers = selectedTag?.taggers || [];
 
       await Promise.all(
-        taggers.map(async (user) => {
+        taggers.map(async (userId) => {
+          if (userProfiles[userId]) return;
           try {
-            const profile = await getUserProfile(user, pubky ?? '');
-            profilesMap[user] = profile;
-
-            if (profile.relationship?.following) {
-              followedMap[user] = true;
-            } else {
-              followedMap[user] = false;
-            }
+            const profile = await getUserProfile(userId, pubky ?? '');
+            profilesMap[userId] = profile;
+            followedMap[userId] = profile.relationship?.following ?? false;
           } catch (error) {
-            console.error(`Error fetching profile for user ${user}`, error);
+            console.error(`Error fetching profile for user ${userId}`, error);
           }
         }),
       );
 
-      setUserProfiles(profilesMap);
-      setFollowedUser((prevState) => ({ ...prevState, ...followedMap }));
+      setUserProfiles((prev) => ({ ...prev, ...profilesMap }));
+      setFollowedUser((prev) => ({ ...prev, ...followedMap }));
       setInitLoadingFollowers(false);
     };
 
     fetchProfiles();
-  }, [selectedTag, pubky]);
+  }, [taggers, pubky]);
 
   const fetchProfileImages = async (tag: PostTag) => {
     const images = await Promise.all(
       tag.taggers.map(async (fromItem) => {
-        const profile = await getUserProfile(fromItem, pubky ?? '');
-        return profile?.details?.image || '/images/webp/Userpic.webp';
+        try {
+          const profile = await getUserProfile(fromItem, pubky ?? '');
+          return profile?.details?.image || '/images/webp/Userpic.webp';
+        } catch (error) {
+          return '/images/webp/Userpic.webp';
+        }
       }),
     );
     return images;
@@ -104,18 +176,17 @@ export default function ContentProfileTag({
     const fetchAllImages = async () => {
       const imagesMap: { [label: string]: string[] } = {};
       await Promise.all(
-        profileTags.map(async (tag) => {
+        allTags.map(async (tag) => {
           const images = await fetchProfileImages(tag);
           imagesMap[tag.label] = images.slice(0, 4);
         }),
       );
       setTagImages(imagesMap);
     };
-
-    if (profileTags.length > 0) {
+    if (allTags.length > 0) {
       fetchAllImages();
     }
-  }, [profileTags]);
+  }, [allTags]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -268,97 +339,104 @@ export default function ContentProfileTag({
             </div>
           }
         />
-        {name && uriImage && pubkyUser && (
+        {user && pubkyUser && (
           <SideCard.User
             uri={pubkyUser}
             className="mt-6"
-            uriImage={uriImage || '/images/webp/Userpic.webp'}
-            username={Utils.minifyText(name, 16)}
+            uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
+            username={Utils.minifyText(user?.details?.name, 16)}
             label={Utils.minifyPubky(pubkyUser)}
           />
         )}
       </div>
-      <div className="justify-start items-start gap-2 flex flex-col overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-webkit">
+      <div className="justify-start items-start gap-2 flex flex-col overflow-y-auto min-w-[200px] max-h-[200px] scrollbar-thin scrollbar-webkit">
         <Input.Label value={selectedTag ? 'Tagged' : 'Current tags'} />
-        {profileTags.length > 0 ? (
+        {allTags.length > 0 ? (
           <>
-            {!selectedTag &&
-              profileTags.map((tag, index) => {
-                const isTagFound = tag?.taggers?.some(
-                  (fromItem) => fromItem === pubky,
-                );
+            {!selectedTag && (
+              <>
+                {allTags.map((tag, index) => {
+                  const isTagFound = tag?.taggers?.some(
+                    (fromItem) => fromItem === pubky,
+                  );
 
-                const displayedImages = tagImages[tag.label] || [];
-                const extraImagesCount =
-                  displayedImages.length > 4 ? displayedImages.length - 4 : 0;
+                  const displayedImages = tagImages[tag.label] || [];
+                  const extraImagesCount =
+                    tag?.taggers_count - displayedImages.length;
 
-                return (
-                  <div className="flex gap-2" key={index}>
-                    <PostUtil.Tag
-                      key={index}
-                      clicked={isTagFound}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        isTagFound
-                          ? handleDeleteProfileTag(tag?.label)
-                          : handleAddProfileTag(tag?.label);
-                      }}
-                      color={
-                        tag?.label && Utils.generateRandomColor(tag?.label)
-                      }
-                    >
-                      <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tag?.label, 21)}
-                        <Typography.Caption
-                          variant="bold"
-                          className="text-opacity-60"
-                        >
-                          {tag?.taggers_count}
-                        </Typography.Caption>
-                      </div>
-                    </PostUtil.Tag>
+                  return (
+                    <div className="flex gap-2" key={index}>
+                      <PostUtil.Tag
+                        clicked={isTagFound}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          isTagFound
+                            ? handleDeleteProfileTag(tag?.label)
+                            : handleAddProfileTag(tag?.label);
+                        }}
+                        color={
+                          tag?.label && Utils.generateRandomColor(tag?.label)
+                        }
+                      >
+                        <div className="flex gap-2 items-center">
+                          {Utils.minifyText(tag?.label, 21)}
+                          <Typography.Caption
+                            variant="bold"
+                            className="text-opacity-60"
+                          >
+                            {tag?.taggers_count}
+                          </Typography.Caption>
+                        </div>
+                      </PostUtil.Tag>
 
-                    <Link href={`/search?tags=${tag?.label}`}>
-                      <Button.Action
-                        variant="custom"
-                        size="small"
-                        icon={<Icon.MagnifyingGlassLeft size="14" />}
-                        className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                      />
-                    </Link>
-                    <div
-                      onClick={() => setSelectedTag && setSelectedTag(tag)}
-                      className="cursor-pointer flex items-center"
-                    >
-                      {displayedImages.map((image, imageIndex) => (
-                        <ImageByUri
-                          width={32}
-                          height={32}
-                          key={imageIndex}
-                          className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                            imageIndex > 0 && '-ml-2'
-                          }`}
-                          alt={`tag-${imageIndex + 1}`}
-                          uri={image}
+                      <Link href={`/search?tags=${tag?.label}`}>
+                        <Button.Action
+                          variant="custom"
+                          size="small"
+                          icon={<Icon.MagnifyingGlassLeft size="14" />}
+                          className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                         />
-                      ))}
-                      {extraImagesCount > 0 && (
-                        <>
-                          <PostUtil.Counter className="-ml-2">
-                            +{extraImagesCount}
-                          </PostUtil.Counter>
-                        </>
-                      )}
-                      <Button.Action
-                        variant="custom"
-                        icon={<Icon.CaretRight size="16" />}
-                        className="-ml-2"
-                        size="small"
-                      />
+                      </Link>
+                      <div
+                        onClick={() => setSelectedTag && setSelectedTag(tag)}
+                        className="cursor-pointer flex items-center"
+                      >
+                        {displayedImages.map((image, imageIndex) => (
+                          <ImageByUri
+                            width={32}
+                            height={32}
+                            key={imageIndex}
+                            className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                              imageIndex > 0 && '-ml-2'
+                            }`}
+                            alt={`tag-${imageIndex + 1}`}
+                            uri={image}
+                          />
+                        ))}
+                        {extraImagesCount > 0 && (
+                          <>
+                            <PostUtil.Counter className="-ml-2">
+                              +{extraImagesCount}
+                            </PostUtil.Counter>
+                          </>
+                        )}
+                        <Button.Action
+                          variant="custom"
+                          icon={<Icon.CaretRight size="16" />}
+                          className="-ml-2"
+                          size="small"
+                        />
+                      </div>
                     </div>
+                  );
+                })}
+                {hasMore && (
+                  <div ref={loader}>
+                    <Icon.LoadingSpin />
                   </div>
-                );
-              })}
+                )}
+              </>
+            )}
             {selectedTag && (
               <>
                 <div className="flex gap-2 items-center mb-2">
@@ -413,7 +491,7 @@ export default function ContentProfileTag({
                     />
                   </Link>
                 </div>
-                {selectedTag?.taggers?.map((user, userIndex) => {
+                {taggers?.map((user, userIndex) => {
                   const profile = userProfiles[user];
                   const pubkeyUser = pubky && user.includes(pubky);
                   const isFollowed = followedUser[user];
@@ -476,6 +554,11 @@ export default function ContentProfileTag({
                     </div>
                   );
                 })}
+                {hasMoreTaggers && (
+                  <div ref={loaderTaggers}>
+                    <Icon.LoadingSpin />
+                  </div>
+                )}
               </>
             )}
           </>

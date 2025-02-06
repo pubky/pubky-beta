@@ -1,3 +1,4 @@
+import { PostTag } from '@/types/Post';
 import { HotTag, TagsByReach, Taggers } from '../types/Tag';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
@@ -52,5 +53,58 @@ export async function getTagTaggers(
 ): Promise<Taggers> {
   const response = await fetch(`${BASE_URL}/tag/taggers/${label}/${reach}`);
   if (!response.ok) throw new Error('Failed to fetch tag taggers');
+  return response.json();
+}
+
+// Get tags post
+export async function getTagsPost(
+  userId: string,
+  postId: string,
+  skip?: number,
+  limit?: number,
+  maxTaggers?: number,
+): Promise<PostTag[]> {
+  const queryParams = new URLSearchParams();
+
+  if (skip !== undefined) {
+    queryParams.append('skip_tags', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit_tags', String(limit));
+  }
+  if (maxTaggers) {
+    queryParams.append('limit_taggers', String(maxTaggers));
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/post/${userId}/${postId}/tags?${queryParams}`,
+  );
+  if (!response.ok) throw new Error('Failed to tags post');
+  return response.json();
+}
+
+// Get tags user
+export async function getTagsUser(
+  userId: string,
+  skip?: number,
+  limit?: number,
+  maxTaggers?: number,
+): Promise<PostTag[]> {
+  const queryParams = new URLSearchParams();
+
+  if (skip !== undefined) {
+    queryParams.append('skip_tags', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit_tags', String(limit));
+  }
+  if (maxTaggers) {
+    queryParams.append('limit_taggers', String(maxTaggers));
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/user/${userId}/tags?${queryParams}`,
+  );
+  if (!response.ok) throw new Error('Failed to tags user');
   return response.json();
 }
