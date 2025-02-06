@@ -71,7 +71,6 @@ export default function FilterTabs({
   activeTab,
   setActiveTab,
   userCounts,
-  userTags,
   loading,
   setLoading,
   creatorPubky,
@@ -80,7 +79,6 @@ export default function FilterTabs({
   activeTab: number;
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;
   userCounts: UserCounts | undefined;
-  userTags: number | undefined;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   creatorPubky?: string;
@@ -117,7 +115,7 @@ export default function FilterTabs({
       case 'friends':
         return userCounts?.friends || 0;
       case 'tagged':
-        return userTags || 0;
+        return userCounts?.tags || 0;
       default:
         return null;
     }

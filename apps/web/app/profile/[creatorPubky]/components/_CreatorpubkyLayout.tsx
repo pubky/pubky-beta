@@ -82,7 +82,6 @@ export default function CreatorpubkyLayout({
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               userCounts={profile?.counts}
-              userTags={profile?.tags.length}
               loading={loading}
               setLoading={setLoading}
               creatorPubky={creatorPubky}
@@ -113,7 +112,6 @@ export default function CreatorpubkyLayout({
               loading={loading}
               setLoading={setLoading}
               userCounts={profile?.counts}
-              userTags={profile?.tags.length}
               creatorPubky={creatorPubky}
             >
               {children}

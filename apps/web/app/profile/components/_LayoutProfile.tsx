@@ -42,7 +42,6 @@ export default function LayoutProfile({
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             userCounts={userData?.counts}
-            userTags={userData?.tags.length}
             loading={loading}
             setLoading={setLoading}
           />
@@ -64,7 +63,6 @@ export default function LayoutProfile({
             loading={loading}
             setLoading={setLoading}
             userCounts={userData?.counts}
-            userTags={userData?.tags.length}
           >
             {children}
           </Profile.FilterTabs>

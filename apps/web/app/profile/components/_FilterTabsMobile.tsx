@@ -70,7 +70,6 @@ export default function FilterTabsMobile({
   activeTab,
   setActiveTab,
   userCounts,
-  //userTags,
   loading,
   setLoading,
   creatorPubky,
@@ -78,7 +77,6 @@ export default function FilterTabsMobile({
   activeTab: number;
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;
   userCounts: UserCounts | undefined;
-  userTags: number | undefined;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   creatorPubky?: string;
@@ -114,7 +112,7 @@ export default function FilterTabsMobile({
       case 'friends':
         return userCounts?.friends || 0;
       case 'tagged':
-        return null;
+        return null; // userCounts?.tags || 0;
       default:
         return null;
     }
