@@ -88,6 +88,12 @@ export default function ContentTag({
   );
 
   useEffect(() => {
+    if (JSON.stringify(tags) !== JSON.stringify(allTags)) {
+      setAllTags(tags);
+    }
+  }, [tags]);
+
+  useEffect(() => {
     if (selectedTag) {
       const initialTaggers = selectedTag.taggers.slice(0, limitTaggers);
       setTaggers(initialTaggers);

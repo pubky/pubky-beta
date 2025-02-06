@@ -81,6 +81,12 @@ export default function ContentProfileTag({
   );
 
   useEffect(() => {
+    if (JSON.stringify(profileTags) !== JSON.stringify(allTags)) {
+      setAllTags(profileTags);
+    }
+  }, [profileTags]);
+
+  useEffect(() => {
     if (selectedTag) {
       const initialTaggers = selectedTag.taggers.slice(0, limitTaggers);
       setTaggers(initialTaggers);
