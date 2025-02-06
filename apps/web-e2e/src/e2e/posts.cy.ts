@@ -443,8 +443,6 @@ describe('posts', () => {
       cy.slowDown(defaultMs);
 
       // verify the repost with content is displayed correctly in feed
-      // TODO: remove manual refresh refresh, see https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
-      cy.waitReload();
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
         // check that both the repost text and original post text are displayed
         const expectedContent = [repostContent, postContent];
@@ -477,9 +475,6 @@ describe('posts', () => {
     repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed
-    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466 & https://github.com/pubky/pubky-app/issues/523
-    cy.waitReload();
-
     cy.findFirstPostInFeed().within(($post) => {
       // check that only original post text is displayed and not additional content text
       cy.get('#post-content-text').its('length').should('eq', 1);
@@ -488,10 +483,6 @@ describe('posts', () => {
       // undo the repost
       cy.wrap($post).contains('Undo repost').click();
     });
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
-    if (Cypress.env('ci')) cy.wait(3000);
 
     // verify the repost is deleted
     cy.findFirstPostInFeed().within(($post) => {
@@ -506,24 +497,23 @@ describe('posts', () => {
     const repostContent = `Reposted with this content! ${Date.now()}`;
     createQuickPost(postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/546
-    cy.waitReload();
-
     // repost
     repostPost({ repostContent, postContent });
-
-    // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
-    cy.waitReload();
 
     // delete the original post (index 1 as the repost is at index 0)
     deletePost(1);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-    cy.waitReload();
-
-    // verify the repost is still displayed in feed
+    // verify the repost is displayed in feed with deleted post content
     cy.findFirstPostInFeed().within(($post) => {
-      // check that only the repost text is displayed and not the original content text
+      cy.wrap($post).innerTextShouldContain(postContent)
+      cy.get('#post-content-text').innerTextShouldEq(repostContent);
+    });
+
+    cy.reload();
+    waitForFeedToLoad();
+
+    // verify the repost is displayed in feed without deleted post content
+    cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldContain("This post has been deleted")
       cy.get('#post-content-text').innerTextShouldEq(repostContent);
     });
@@ -548,14 +538,8 @@ describe('posts', () => {
         cy.get('#reply-btn').click();
       });
 
-      // refresh to workaround for https://github.com/pubky/pubky-app/issues/466
-      cy.waitReload();
-
       // delete the original post
       deletePost();
-
-      // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/493
-      cy.waitReload();
 
       // verify the reply and original post are no longer displayed in feed
       cy.findFirstPostInFeed(waitForIndexed).within(() => {

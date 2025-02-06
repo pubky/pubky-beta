@@ -66,7 +66,7 @@ export default function RepostedPost({
     >
       <PostUI.MainCard className={restClassName}>
         <div>
-          <Header post={repostedPost} largeView={largeView} />
+          <Header post={repostedPost} largeView={largeView} repostView={repostView} />
           {line && <div className={twMerge(lineBaseCSS, lineStyle)} />}
           <div>
             <Content
