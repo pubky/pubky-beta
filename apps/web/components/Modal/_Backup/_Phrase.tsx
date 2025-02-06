@@ -103,19 +103,22 @@ export default function Phrase({
           >
             Use the 12 words below to recover your account at a later date.
             Write down these words in the right order and store them in a safe
-            place. Never share this recovery phrase with anyone as this may
-            result in the loss of your account.
+            place.{' '}
+            <span className="text-white text-opacity-100 font-bold">
+              Never share this recovery phrase with anyone as
+            </span>{' '}
+            this may result in the loss of your account.
           </Typography.Body>
-          <div className="my-4">
-            <Typography.H2 className="mb-4">
+          <div className="my-8">
+            {/**<Typography.H2 className="mb-4">
               Write down Recovery Phrase
-            </Typography.H2>
+            </Typography.H2>*/}
             <div
               className={`${
                 !showWords && 'blur-[10px]'
-              } relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start gap-12 inline-flex`}
+              } relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start inline-flex`}
             >
-              <div className="grow shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
+              <div className="grow-[0.6] shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
                 {mnemonic
                   ?.split(' ')
                   .slice(0, 6)
@@ -128,7 +131,7 @@ export default function Phrase({
                     </Typography.Body>
                   ))}
               </div>
-              <div className="grow shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
+              <div className="grow-[0.6] shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
                 {mnemonic
                   ?.split(' ')
                   .slice(6, 12)
@@ -141,38 +144,37 @@ export default function Phrase({
                     </Typography.Body>
                   ))}
               </div>
-              {showWords && (
-                <div className="absolute bottom-3 right-5 flex gap-4">
-                  <div
-                    onClick={handleCopyMnemonicToClipboard}
-                    className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
-                  >
-                    {copyMnemonic ? (
-                      <Icon.Check size="12" />
-                    ) : (
-                      <Icon.Clipboard size="12" />
-                    )}
-                    <Typography.Body
-                      id="backup-copy-recovery-phrase"
-                      variant="small-bold"
-                    >
-                      Copy to clipboard
-                    </Typography.Body>
-                  </div>
-                  <div
-                    onClick={handleDownloadRecoveryPhraseTXT}
-                    className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
-                  >
-                    <Icon.DownloadSimple size="12" />
-                    <Typography.Body variant="small-bold">
-                      Download
-                    </Typography.Body>
-                  </div>
+              <div className="flex flex-col gap-6">
+                <div
+                  onClick={handleDownloadRecoveryPhraseTXT}
+                  className="flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
+                >
+                  <Icon.DownloadSimple size="16" />
+                  <Typography.Body className="text-[13px]" variant="small-bold">
+                    Download
+                  </Typography.Body>
                 </div>
-              )}
+                <div
+                  onClick={handleCopyMnemonicToClipboard}
+                  className="flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
+                >
+                  {copyMnemonic ? (
+                    <Icon.Check size="16" />
+                  ) : (
+                    <Icon.Clipboard size="16" />
+                  )}
+                  <Typography.Body
+                    id="backup-copy-recovery-phrase"
+                    className="text-[13px]"
+                    variant="small-bold"
+                  >
+                    Copy to clipboard
+                  </Typography.Body>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="w-full max-w-[796px] mt-4 justify-between items-center inline-flex gap-6">
+          <div className="w-full max-w-[796px] justify-between items-center inline-flex gap-6">
             <Button.Large
               icon={<Icon.ArrowLeft />}
               className="w-auto"

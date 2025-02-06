@@ -126,7 +126,7 @@ export default function ConfirmPhrase({
             </Typography.Body>
           ))}
         </div>
-        <div className="relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start gap-12 inline-flex">
+        <div className="relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start inline-flex">
           <div className="flex-grow flex-col justify-start items-start gap-2 flex">
             {selectedWords.slice(0, 6).map((word, index) => (
               <Typography.Body key={index} variant="medium-bold">
@@ -137,8 +137,8 @@ export default function ConfirmPhrase({
                   className={
                     word
                       ? correctOrder[index] === word
-                        ? 'text-green-500'
-                        : 'text-red-500'
+                        ? 'text-[#c8ff00]'
+                        : 'text-[#FF003C]'
                       : 'text-white text-opacity-50'
                   }
                 >
@@ -157,8 +157,8 @@ export default function ConfirmPhrase({
                   className={
                     word
                       ? correctOrder[index + 6] === word
-                        ? 'text-green-500'
-                        : 'text-red-500'
+                        ? 'text-[#c8ff00]'
+                        : 'text-[#FF003C]'
                       : 'text-white text-opacity-50'
                   }
                 >
@@ -168,26 +168,28 @@ export default function ConfirmPhrase({
             ))}
           </div>
           {isCorrectOrder && (
-            <div className="absolute bottom-3 right-5 flex gap-4">
+            <div className="flex flex-col gap-6">
               <div
-                onClick={handleCopyMnemonicToClipboard}
-                className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
+                onClick={handleDownloadRecoveryPhraseTXT}
+                className="flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
               >
-                {copyMnemonic ? (
-                  <Icon.Check size="12" />
-                ) : (
-                  <Icon.Clipboard size="12" />
-                )}
-                <Typography.Body variant="small-bold">
-                  Copy to clipboard
+                <Icon.DownloadSimple size="16" />
+                <Typography.Body className="text-[13px]" variant="small-bold">
+                  Download
                 </Typography.Body>
               </div>
               <div
-                onClick={handleDownloadRecoveryPhraseTXT}
-                className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
+                onClick={handleCopyMnemonicToClipboard}
+                className="flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
               >
-                <Icon.DownloadSimple size="12" />
-                <Typography.Body variant="small-bold">Download</Typography.Body>
+                {copyMnemonic ? (
+                  <Icon.Check size="16" />
+                ) : (
+                  <Icon.Clipboard size="16" />
+                )}
+                <Typography.Body className="text-[13px]" variant="small-bold">
+                  Copy to clipboard
+                </Typography.Body>
               </div>
             </div>
           )}

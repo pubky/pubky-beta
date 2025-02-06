@@ -29,7 +29,7 @@ export default function Success({ setShow }: SuccessProps) {
         deleted. Going forward, you can sign back in using your chosen recovery
         method.
       </Typography.Body>
-      <div className="relative my-4 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
+      <div className="relative my-4 w-full bg-white bg-opacity-10 rounded-2xl flex-col justify-center items-center inline-flex">
         <div className="p-12 flex-col justify-center items-center flex">
           <div className="p-7">
             <Icon.CheckCircle size="130" color="#C8FF00" />
