@@ -66,9 +66,9 @@ export default function Handle({
           <div className="text-center lg:text-left flex flex-col gap-2 mb-4 md:mb-7">
             <Typography.Display
               id="profile-username-header"
-              className="text-2xl sm:text-2xl"
+              className="text-2xl sm:text-2xl sm:leading-[3.2rem] xl:leading-7"
             >
-              {Utils.minifyText(username.toString(), 15)}
+              {Utils.minifyText(username.toString(), 25)}
             </Typography.Display>
             {bio && (
               <Typography.Body
@@ -79,7 +79,7 @@ export default function Handle({
               </Typography.Body>
             )}
           </div>
-          <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+          <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
             <Buttons
               creatorPubky={creatorPubky}
               pubkey={pubkey}
