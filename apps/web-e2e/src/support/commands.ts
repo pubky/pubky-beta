@@ -353,7 +353,7 @@ const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = true) => {
     cy.get('#posts-feed').find('#timeline').children().eq(postIdx).then($post => {
       // if post has the status checkmarks then wait for it to have two green ticks
       if ($post.find('#post-status').length > 0) {
-        if ($post.find('#post-status-indexed').length === 0) {
+        if ($post.find('#post-status #post-status-indexed').length === 0) {
           cy.log('findPostInFeed: Post not indexed; waiting 200ms and checking again');
           cy.wait(200);
           checkPostIsIndexed(t - 1);

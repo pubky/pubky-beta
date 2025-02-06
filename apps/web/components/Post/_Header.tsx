@@ -93,7 +93,7 @@ export default function Header({
             tagId="1"
             setShowTooltip={setShowTooltipPostChecked}
           >
-            <div id="post-status" className="inline-flex items-center ml-2 top-[7px] relative">
+            <div id={repostView ? 'repost-status' : 'post-status'} className="inline-flex items-center ml-2 top-[7px] relative">
               <Icon.Check size="20" color="#00BA7C" />
               <div id={ post?.cached === 'nexus' || post?.cached === undefined
                           ? 'post-status-indexed'

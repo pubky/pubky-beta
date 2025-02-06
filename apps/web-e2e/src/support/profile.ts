@@ -50,10 +50,6 @@ export const editProfileAndVerify = (profileData: Partial<Record<keyof typeof pr
   // Verify redirection to the profile page
   cy.location('pathname').should('eq', '/profile');
 
-  // TODO: remove workaround for slow profile edit and required manual refresh https://github.com/pubky/pubky-app/issues/493
-  // Wait and reload the page to ensure changes are persisted
-  cy.waitReload(Cypress.env('ci') ? 5000 : 2000);
-
   // Verify the changes for each field in profileData
   Object.entries(profileData).forEach(([field, value]) => {
     const { verifySelector } = profileFields[field];
