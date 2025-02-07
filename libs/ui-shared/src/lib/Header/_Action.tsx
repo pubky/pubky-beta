@@ -17,7 +17,7 @@ export const Action = ({
     <Link href={link}>
       <Button.Large
         icon={icon}
-        className="h-[48px]"
+        className="h-8 px-3 py-2 sm:h-[48px] sm:px-6 sm:py-5"
         {...rest}
         variant="secondary"
       >
