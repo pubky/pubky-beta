@@ -675,6 +675,7 @@ export function PubkyClientWrapper({
       } as PostView;
 
       setNewPosts((prev) => [newPostView, ...prev]);
+      setTimeline((prev) => [newPostView, ...prev]);
 
       return { uri: result.uri, details: result.details };
     },
@@ -715,6 +716,7 @@ export function PubkyClientWrapper({
       } as PostView;
 
       setNewPosts((prev) => [newPostView, ...prev]);
+      setTimeline((prev) => [newPostView, ...prev]);
 
       return result ? { uri: result.uri, details: result.details } : false;
     },
@@ -759,7 +761,7 @@ export function PubkyClientWrapper({
       };
 
       setNewPosts((prev) => [newRepostView, ...prev]);
-
+      setTimeline((prev) => [newRepostView, ...prev]);
       return result.uri;
     },
   );

@@ -153,7 +153,18 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           prev.filter((post) => post.details.id !== nexusData.details.id),
         );
 
+        // set new post to timeline but update if the post is already in the timeline
         setTimeline((prev) => {
+          const existingPost = prev.find(
+            (p) => p.details.id === nexusData.details.id,
+          );
+
+          if (existingPost) {
+            return prev.map((p) =>
+              p.details.id === nexusData.details.id ? nexusData : p,
+            );
+          }
+
           return [nexusData, ...prev];
         });
       } catch (error) {
@@ -169,12 +180,6 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   return (
     <div id="timeline" className="flex flex-col gap-3">
       {!isLoading && <NewPostsNotifier />}
-
-      {newPosts.map((post) => (
-        <div key={post.details.id} className="flex flex-col">
-          <Post post={post} largeView={!isMobile && layout === 'wide'} />
-        </div>
-      ))}
 
       {timeline.map(
         (post) =>
