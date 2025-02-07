@@ -1,17 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Typography } from '@social/ui-shared';
+import { Button, Icon } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
-import { Post, Skeleton } from '@/components';
+import { ContentNotFound, Post, Skeleton } from '@/components';
 import { PostReplies } from './_PostReplies';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { NewPostsNotifier } from './_NewPostsNotifier';
 import { ICustomFeed, TLayouts, TSort, TSource } from '@/types';
 import { getPost } from '@/services/postService';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface TimelineProps {
   selectedFeed: ICustomFeed | undefined;
@@ -182,11 +184,37 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         </div>
       )}
       {timeline.length === 0 && !isLoading && (
-        <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-          <Typography.H2 className="font-normal text-opacity-50">
-            No posts yet.
-          </Typography.H2>
-        </div>
+        <ContentNotFound
+          icon={<Icon.Smiley size="48" color="#C8FF00" />}
+          title="Welcome to your feed!"
+          description="It's a blank slate for now, but not for long. Start to create posts,
+       follow interesting people, or explore tags that catch your attention.
+       This feed will be full of personalized content, just for you."
+        >
+          <div className="flex gap-3 z-10 justify-center flex-wrap">
+            <Link href="/hot#influencers">
+              <Button.Medium
+                icon={<Icon.UserPlus size="16" />}
+                className="whitespace-nowrap"
+              >
+                Follow Influencers
+              </Button.Medium>
+            </Link>
+            <Link href="hot">
+              <Button.Medium icon={<Icon.Tag size="16" />}>
+                Explore Tags
+              </Button.Medium>
+            </Link>
+          </div>
+          <div className="absolute top-64 z-0">
+            <Image
+              alt="not-found-feed"
+              width={434}
+              height={434}
+              src="/images/webp/not-found/feed.webp"
+            />
+          </div>
+        </ContentNotFound>
       )}
       <div ref={loader} />
     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { BottomSheet, Skeleton } from '@/components';
+import { BottomSheet, ContentNotFound, Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
 import { useAlertContext, useJoin, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
@@ -21,6 +21,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import LinksSection from './Sidebar/_LinksSection';
 import { useTagsUser } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import Image from 'next/image';
 
 type TaggedAsProps = {
   creatorPubky?: string | undefined;
@@ -192,10 +193,12 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
   return (
     <div className="w-full mx-2 lg:mx-0">
-      <SideCard.Header
-        className="hidden lg:flex"
-        title={`${name} was tagged as:`}
-      />
+      {name && profileTags.length > 0 && (
+        <SideCard.Header
+          className="hidden lg:flex"
+          title={`${name} was tagged as:`}
+        />
+      )}
       <Typography.Body variant="large-bold" className="flex lg:hidden">
         Tagged
       </Typography.Body>
@@ -291,9 +294,20 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                 )}
               </>
             ) : (
-              <Typography.Body variant="small" className="text-opacity-50">
-                No tags yet
-              </Typography.Body>
+              <ContentNotFound
+                icon={<Icon.Tag size="48" color="#C8FF00" />}
+                title="Discover who tagged you"
+                description="Find out which posts, photos, or content include tags mentioning you and stay connected to what others are sharing about you."
+              >
+                <div className="absolute top-12 z-0">
+                  <Image
+                    alt="not-found-taggedAs"
+                    width={461}
+                    height={303}
+                    src="/images/webp/not-found/taggedAs.webp"
+                  />
+                </div>
+              </ContentNotFound>
             )}
             <Button.Medium
               className="mt-2 w-auto h-8 inline-flex lg:hidden items-center"

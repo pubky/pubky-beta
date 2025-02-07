@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Icon, Typography } from '@social/ui-shared';
+import { Button, Icon } from '@social/ui-shared';
 import {
   useAlertContext,
   useFilterContext,
@@ -10,8 +10,10 @@ import {
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
-import { Post, Skeleton } from '@/components';
+import { ContentNotFound, Post, Skeleton } from '@/components';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export const Timeline = () => {
   const limit = 10;
@@ -158,11 +160,43 @@ export const Timeline = () => {
         </div>
       )}
       {timeline.length === 0 && !isLoading && (
-        <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-          <Typography.H2 className="font-normal text-opacity-50">
-            No bookmarks yet.
-          </Typography.H2>
-        </div>
+        <ContentNotFound
+          icon={<Icon.Bookmarks size="48" color="#C8FF00" />}
+          title="Save posts for later"
+          description="Bookmark post to easily find them again in the future."
+        >
+          <div className="flex gap-3 z-10 justify-center flex-wrap">
+            <Link href="/home">
+              <Button.Medium
+                icon={<Icon.NoteBlank size="16" />}
+                className="whitespace-nowrap"
+              >
+                Discover Posts
+              </Button.Medium>
+            </Link>
+            <Link href="/hot#influencers">
+              <Button.Medium
+                icon={<Icon.UserPlus size="16" />}
+                className="whitespace-nowrap"
+              >
+                Follow Influencers
+              </Button.Medium>
+            </Link>
+            <Link href="hot">
+              <Button.Medium icon={<Icon.Tag size="16" />}>
+                Explore Tags
+              </Button.Medium>
+            </Link>
+          </div>
+          <div className="absolute top-32 z-0">
+            <Image
+              alt="not-found-bookmarks"
+              width={588}
+              height={392}
+              src="/images/webp/not-found/bookmarks.webp"
+            />
+          </div>
+        </ContentNotFound>
       )}
       <div ref={loader} />
     </div>

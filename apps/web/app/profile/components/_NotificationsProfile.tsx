@@ -1,15 +1,16 @@
 'use client';
 
 import { Notifications } from '@/app/profile/components/notifications/components';
-import { Skeleton } from '@/components';
+import { ContentNotFound, Skeleton } from '@/components';
 import {
   useFilterContext,
   useNotificationsContext,
   usePubkyClientContext,
 } from '@/contexts';
-import { Typography } from '@social/ui-shared';
+import { Icon } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export default function NotificationsProfile() {
   const {
@@ -42,9 +43,20 @@ export default function NotificationsProfile() {
       {loadingNotifications && notifications.length === 0 ? (
         <Skeleton.Simple />
       ) : notifications?.length === 0 ? (
-        <Typography.H2 className="mt-[100px] font-normal text-opacity-50 text-center">
-          No notification yet
-        </Typography.H2>
+        <ContentNotFound
+          icon={<Icon.SmileySad size="48" color="#C8FF00" />}
+          title="Nothing to see here yet"
+          description="Tags, follows, reposts, and account information will be displayed here."
+        >
+          <div className="absolute top-32 z-0">
+            <Image
+              alt="not-found-notification"
+              width={477}
+              height={271}
+              src="/images/webp/not-found/search.webp"
+            />
+          </div>
+        </ContentNotFound>
       ) : (
         <div>
           {tempUnReadNotication > 0 && (
