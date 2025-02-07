@@ -105,8 +105,11 @@ export default function SearchInputCard({
       )}
       background="bg-[#05050A] border border-t-0 border-white border-opacity-20 z-10"
       onKeyDown={handleKeyDown}
-      tabIndex={0}
-      onMouseEnter={() => setIsMouseInside(true)}
+      tabIndex={-1}
+      onMouseEnter={(e) => {
+        setIsMouseInside(true);
+        e.currentTarget.focus();
+      }}
       onMouseLeave={() => setIsMouseInside(false)}
     >
       {inputValue && searchedUsers.length > 0 ? (
