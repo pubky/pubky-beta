@@ -109,7 +109,7 @@ describe('notifications', () => {
     // add one tag to profile
     cy.get('#profile-tag-btn').click();
     const profileTag = 'nice';
-    addTagsWithModal([profileTag], profile2.username);
+    addTagsWithModal([profileTag]);
 
     // * profile 2 checks for notification for tagged profile
     cy.signOut(true);
