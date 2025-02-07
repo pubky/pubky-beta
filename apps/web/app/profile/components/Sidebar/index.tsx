@@ -26,11 +26,11 @@ export default function Sidebar({
     pubky ?? '',
   );
   const name = creatorPubky
-    ? (profileUser?.details?.name ?? '')
-    : (profile?.name ?? '');
+    ? profileUser?.details?.name || ''
+    : profile?.name || '';
   const bio = creatorPubky
-    ? (profileUser?.details?.bio ?? '')
-    : (profile?.bio ?? 'No bio.');
+    ? profileUser?.details?.bio || 'No bio.'
+    : profile?.bio || 'No bio.';
   const links = creatorPubky ? profileUser?.details?.links : profile?.links;
   const image = profileUser?.details?.image ?? '/images/webp/Userpic.webp';
   const [profileTags, setProfileTags] = useState<UserTags[]>(
