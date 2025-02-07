@@ -25,8 +25,12 @@ export default function Sidebar({
     userPubky ?? '',
     pubky ?? '',
   );
-  const name = profileUser?.details?.name ?? '';
-  const bio = profileUser?.details.bio || 'No bio.';
+  const name = creatorPubky
+    ? (profileUser?.details?.name ?? '')
+    : (profile?.name ?? '');
+  const bio = creatorPubky
+    ? (profileUser?.details?.bio ?? '')
+    : (profile?.bio ?? 'No bio.');
   const links = creatorPubky ? profileUser?.details?.links : profile?.links;
   const image = profileUser?.details?.image ?? '/images/webp/Userpic.webp';
   const [profileTags, setProfileTags] = useState<UserTags[]>(
