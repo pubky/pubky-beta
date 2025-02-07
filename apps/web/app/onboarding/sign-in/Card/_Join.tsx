@@ -25,10 +25,17 @@ export default function Join() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    handleGenerateAuthUrl();
+    const abortController = new AbortController();
+    handleGenerateAuthUrl(abortController.signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
-  const handleGenerateAuthUrl = async () => {
+  const handleGenerateAuthUrl = async (signal: AbortSignal) => {
+    if (signal.aborted) return;
+
     setLoginError('');
     const result = await generateAuthUrl();
 
@@ -54,7 +61,7 @@ export default function Join() {
           if (errorMessage) {
             setLoginError(errorMessage);
           }
-          handleGenerateAuthUrl();
+          handleGenerateAuthUrl(signal);
         } catch (error) {
           console.error('Unexpected error occurred:', error);
         }
