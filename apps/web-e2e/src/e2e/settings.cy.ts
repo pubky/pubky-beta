@@ -11,9 +11,6 @@ describe('settings', () => {
 
   beforeEach(() => {
     cy.deleteDownloadsFolder();
-  });
-
-  beforeEach(() => {
     cy.mockInviteCodeApi();
   });
 

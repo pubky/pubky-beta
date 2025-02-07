@@ -43,8 +43,8 @@ export const createQuickPost = (postContent: string, expectedPostLength? : numbe
 };
 
 // reply to any post in the feed that contains the filterText by index
-export const replyToPost = ({replyContent, postContent, filterText, postIdx}: {replyContent: string, postContent?: string, filterText?: string, postIdx?: number}) => {
-  cy.findPostInFeed(postIdx, filterText).within(() => {
+export const replyToPost = ({replyContent, postContent, filterText = '', postIdx = 0, waitForIndexed = true}: {replyContent: string, postContent?: string, filterText?: string, postIdx?: number, waitForIndexed?: boolean}) => {
+  cy.findPostInFeed(postIdx, filterText, waitForIndexed).within(() => {
     cy.get('#reply-btn').click();
   });
   cy.get('#modal-root').should('be.visible').within(($modal) => {
@@ -76,19 +76,36 @@ export const repostPost = ({repostContent, waitForIndexed, postContent, filterTe
 
 // find a post first and use within it. Useful for fast tagging posts not in the feed.
 export const fastTagPost = (tags: string[]) => {
-  cy.get('#tags').within(() => {
-    tags.forEach((tag) => {
+  tags.forEach((tag) => {
       cy.get('#show-add-tag-input-btn').click();
       cy.get('input').type(tag);
       cy.get('#add-tag-btn').click();
-    });
+  });
+};
+
+// tag whilst creating post
+export const fastTagWhilstCreatingPost = (tags: string[]) => {
+  // add the tags
+  cy.get('#add-tag-container').within(() => {
+    cy.get('#show-add-tag-input-btn').click();
+    tags.forEach((tag) => {
+      cy.get('input').type(tag);
+      cy.get('#add-tag-btn').click();
+  });
+  });
+  // verify the tags are displayed in the quick post area
+  cy.get('#tags').children().should('have.length', tags.length);
+  tags.forEach((tag, idx) => {
+    cy.get('#tags').children().eq(idx).contains(tag);
   });
 };
 
 // tag a post in feed with any number of tags
 export const fastTagPostInFeed = (tags: string[], postContent?: string) => {
   cy.findFirstPostInFeedFiltered(postContent).within(() => {
-    fastTagPost(tags);
+    cy.get('#tags').within(() => {
+      fastTagPost(tags);
+    });
   });
 };
 

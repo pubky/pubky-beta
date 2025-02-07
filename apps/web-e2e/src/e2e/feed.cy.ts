@@ -17,6 +17,7 @@ const profile4 = {username: "Profile #4", bio: "Follows no-one", pubkyAlias: "pu
 describe('feed and filters', () => {
   before(() => {
     slowCypressDown();
+    cy.mockInviteCodeApi();
     cy.deleteDownloadsFolder();
 
     // * create profile 1 of 4 and post

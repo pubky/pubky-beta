@@ -9,13 +9,10 @@ describe('onboarding', () => {
 
   beforeEach(() => {
     cy.deleteDownloadsFolder();
-  });
-
-  beforeEach(() => {
     cy.mockInviteCodeApi();
   });
 
-  it.only('can onboard as a new user, viewing onboarding slides, go to home and logout', () => {
+  it('can onboard as a new user, viewing onboarding slides, go to home and logout', () => {
     // onboard as new user without skipping onboarding slides
     cy.onboardAsNewUser('Satoshi Nakamoto', 'I am cypherpunk', false);
     cy.signOut(false);
