@@ -6,7 +6,7 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
-import { PubkyAppPostKind } from 'pubky-app-specs';
+import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -23,8 +23,6 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
   const [isValidContent, setIsValidContent] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [placeholder, setPlaceholder] = useState('');
-  const regex =
-    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('reply'));
@@ -46,12 +44,11 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
-    const match = sendReply && sendReply.match(regex);
 
-    if (sendReply && match) {
-      const replyId = match[2];
+    if (sendReply) {
+      const postId = parse_uri(sendReply).resource_id!;
       for (const tag of updatedTags) {
-        await createTag(pubky ?? '', replyId, tag);
+        await createTag(pubky ?? '', postId, tag);
       }
       setSendingReply(false);
       setContentReply('');

@@ -7,6 +7,7 @@ import Skeletons from '@/components/Skeletons';
 import { getPost } from '@/services/postService';
 import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
+import { parse_uri } from 'pubky-app-specs';
 
 interface NavigatorParentProps {
   [uri: string]: {
@@ -21,28 +22,27 @@ export default function NavigatorParent({
   parentPost: string;
 }) {
   const { pubky } = usePubkyClientContext();
-  const regex =
-    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
   const [parentURIs, setParentURIs] = useState<string[]>([]);
   const [parentPosts, setParentPosts] = useState<NavigatorParentProps>({});
 
   useEffect(() => {
     const fetchParentURIs = async (
       parentURI: string,
-      collectedURIs: string[]
+      collectedURIs: string[],
     ): Promise<string[]> => {
       if (!parentURI) return collectedURIs;
       collectedURIs.push(parentURI);
       try {
-        const match = parentURI.match(regex);
-        if (match) {
-          const authorId = match && match[1];
-          const postId = match && match[2];
+        const parsed = parse_uri(parentURI);
+
+        if (parsed.resource == 'posts') {
+          const authorId = parsed.user_id;
+          const postId = parsed.resource_id!;
           const parentPost = await getPost(authorId, postId, pubky ?? '');
           if (parentPost?.relationships?.replied) {
             return await fetchParentURIs(
               parentPost?.relationships?.replied,
-              collectedURIs
+              collectedURIs,
             );
           }
         }
@@ -76,10 +76,11 @@ export default function NavigatorParent({
           ...prevState,
           [parentURI]: { post: null, loading: true },
         }));
-        const match = parentURI.match(regex);
-        if (match) {
-          const authorId = match && match[1];
-          const postId = match && match[2];
+        const parsed = parse_uri(parentURI);
+
+        if (parsed.resource == 'posts') {
+          const authorId = parsed.user_id;
+          const postId = parsed.resource_id!;
           const post = await getPost(authorId, postId, pubky ?? '');
           setParentPosts((prevState) => ({
             ...prevState,
@@ -104,7 +105,7 @@ export default function NavigatorParent({
   }, [parentURIs, parentPosts]);
 
   const allParentPostsLoaded = parentURIs.every(
-    (uri) => parentPosts[uri]?.loading === false
+    (uri) => parentPosts[uri]?.loading === false,
   );
 
   if (!allParentPostsLoaded) {

@@ -6,7 +6,7 @@ import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
 import CreateContent from '@/components/CreateContent';
 import Post from '@/components/Post';
-import { PubkyAppPostKind } from 'pubky-app-specs';
+import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateRepostProps {
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,8 +26,6 @@ export default function ContentCreateRepost({
   const [sendingRepost, setSendingRepost] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const regex =
-    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   const handleSubmitRepost = async (content: string) => {
     if (sendingRepost) {
@@ -46,10 +44,9 @@ export default function ContentCreateRepost({
 
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
-      const match = newRepost && newRepost.match(regex);
 
-      if (newRepost && match) {
-        const repostId = match[2];
+      if (newRepost) {
+        const repostId = parse_uri(newRepost).resource_id!;
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', repostId, tag);
         }

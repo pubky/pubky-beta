@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import CreateContent from '@/components/CreateContent';
-import { PubkyAppPostKind } from 'pubky-app-specs';
+import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreatePostProps {
   setShowModalPost: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,8 +24,6 @@ export default function ContentCreatePost({
   const [quote, setQuote] = useState<string>();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [placeholder, setPlaceholder] = useState('');
-  const regex =
-    /pubky:\/\/([a-zA-Z0-9]+)\/pub\/pubky\.app\/posts\/([a-zA-Z0-9]+)/;
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('post'));
@@ -47,10 +45,9 @@ export default function ContentCreatePost({
         selectedFiles,
         quote,
       );
-      const match = newPost && newPost?.uri.match(regex);
 
-      if (newPost && match) {
-        const postId = match[2];
+      if (newPost) {
+        const postId = parse_uri(newPost.uri).resource_id!;
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', postId, tag);
         }
