@@ -41,7 +41,7 @@ export default function RepostedPost({
   restClassName,
 }: RepostedPostProps) {
   const router = useRouter();
-  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#ffffff40] after:content-[' * '] after:bg-[#ffffff40] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
+  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
 
   if (loadingRepostedPost) {
     return <Skeleton.Simple />;

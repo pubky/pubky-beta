@@ -143,7 +143,7 @@ export default function RootParent({
           <Typography.Body variant="small" className="text-opacity-50">
             This post has been deleted by its author.
           </Typography.Body>
-          <div className="absolute -ml-[1px] mt-1.5 border-l-[1px] border-[#ffffff40] h-[50px]" />
+          <div className="absolute -ml-[1px] mt-1.5 border-l-[1px] border-[#444447] h-[50px]" />
         </div>
       );
 

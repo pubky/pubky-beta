@@ -34,7 +34,7 @@ export default function MainPostContent({
   setShowSheetTag,
   restClassName,
 }: MainPostContentProps) {
-  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#ffffff40] after:content-[' * '] after:bg-[#ffffff40] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
+  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
 
   return (
     <div className="flex items-center relative">
@@ -42,7 +42,7 @@ export default function MainPostContent({
         <>
           <div className={twMerge(lineBaseCSS, lineStyle)} />
           <div className="absolute ml-[10px]">
-            <Icon.LineHorizontal size="14" color="#ffffff40" />
+            <Icon.LineHorizontal size="14" color="#444447" />
           </div>
         </>
       )}

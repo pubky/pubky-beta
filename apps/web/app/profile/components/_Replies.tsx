@@ -17,7 +17,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [start, setStart] = useState<number | undefined>(undefined);
   const lineHorizontalCSS = (
     <div className="absolute ml-[9px]">
-      <Icon.LineHorizontal size="14" color="#ffffff40" />
+      <Icon.LineHorizontal size="14" color="#444447" />
     </div>
   );
 
@@ -74,7 +74,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
               )}
               <div className="flex items-center relative">
                 <div
-                  className={`ml-[9px] absolute border-l-[1px] h-[53%] -top-3 border-[#ffffff40]`}
+                  className={`ml-[9px] absolute border-l-[1px] h-[53%] -top-3 border-[#444447]`}
                 />
                 {lineHorizontalCSS}
                 <Post className="ml-[23px]" post={post} />

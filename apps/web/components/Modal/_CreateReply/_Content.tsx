@@ -31,7 +31,7 @@ export default function ContentCreateReply({
 
   const lineHorizontalCSS = (
     <div className="hidden lg:flex absolute ml-[9px]">
-      <Icon.LineHorizontal size="14" color="#ffffff40" />
+      <Icon.LineHorizontal size="14" color="#444447" />
     </div>
   );
 
@@ -90,7 +90,7 @@ export default function ContentCreateReply({
       />
       <div className="flex items-center relative">
         <div
-          className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[47%] top-0 border-[#ffffff40]`}
+          className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[47%] top-0 border-[#444447]`}
         />
         {lineHorizontalCSS}
         <div className="w-full lg:ml-[23px] mt-6">
