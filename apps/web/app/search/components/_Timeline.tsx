@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Typography } from '@social/ui-shared';
+import { Icon } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
-import { Post, Skeleton } from '@/components';
+import { ContentNotFound, Post, Skeleton } from '@/components';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import Image from 'next/image';
 
 export const Timeline = () => {
   const limit = 10;
@@ -78,11 +79,20 @@ export const Timeline = () => {
         </div>
       )}
       {timeline.length === 0 && !isLoading && (
-        <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-          <Typography.H2 className="font-normal text-opacity-50">
-            No posts yet.
-          </Typography.H2>
-        </div>
+        <ContentNotFound
+          icon={<Icon.Tag size="48" color="#C8FF00" />}
+          title={`No results ${searchTags.length > 0 ? `with the tag: ${searchTags}` : ''}`}
+          description="Try searching for something else."
+        >
+          <div className="absolute top-32 z-0">
+            <Image
+              alt="not-found-search"
+              width={477}
+              height={271}
+              src="/images/webp/not-found/search.webp"
+            />
+          </div>
+        </ContentNotFound>
       )}
       <div ref={loader} />
     </div>
