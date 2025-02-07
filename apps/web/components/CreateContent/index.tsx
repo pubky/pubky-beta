@@ -38,6 +38,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   isError?: boolean;
   setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
   setQuote?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  styleSearchedUsers?: string;
 }
 
 export default function CreateContent({
@@ -69,6 +70,7 @@ export default function CreateContent({
   setIsError,
   setShowModalPost,
   setQuote,
+  styleSearchedUsers,
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -272,6 +274,7 @@ export default function CreateContent({
             setIsError={setIsError}
             isError={isError}
             handlePaste={handlePaste}
+            styleSearchedUsers={styleSearchedUsers}
           />
         </div>
         <LinkPreviewer setQuote={setQuote} content={content} />

@@ -5,21 +5,26 @@ import { ImageByUri } from '../ImageByUri';
 import { UserView } from '@/types/User';
 import { usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
+import { twMerge } from 'tailwind-merge';
 
 interface SearchedUsersCardProps {
   searchedUsers: UserView[];
   handleUserClick: (userId: string) => void;
+  className?: string;
 }
 
 export default function SearchedUsersCard({
   searchedUsers,
   handleUserClick,
+  className,
 }: SearchedUsersCardProps) {
   const { pubky } = usePubkyClientContext();
   const [userProfiles, setUserProfiles] = useState<UserView[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<HTMLDivElement[]>([]);
+  const baseCSS =
+    'outline-none md:w-[300px] max-w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 flex flex-col fixed bg-gradient-to-t p-2 from-[#07040a] to-[#1b1820]';
 
   useEffect(() => {
     async function fetchProfiles() {
@@ -86,7 +91,7 @@ export default function SearchedUsersCard({
     <div
       id="searched-users-card"
       ref={cardRef}
-      className="outline-none md:w-[300px] max-w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 flex flex-col fixed bg-gradient-to-t p-2 from-[#07040a] to-[#1b1820]"
+      className={twMerge(baseCSS, className)}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => cardRef?.current?.focus()}
