@@ -32,7 +32,7 @@ export default function ContentDeleteAccount({
           id="delete-account-btn"
           icon={<Icon.Trash size="16" color="#dc2626" />}
           className="bg-[#dc2626] border-[#dc2626]"
-          colorText="text-[#dc2626]"
+          colorText="text-[#dc2626] whitespace-nowrap"
           loading={deletingAccount}
           onClick={() => (deletingAccount ? undefined : handleDeleteAccount())}
         >

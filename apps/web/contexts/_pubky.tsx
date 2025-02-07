@@ -561,10 +561,10 @@ export function PubkyClientWrapper({
 
       const userResult = specsBuilder!.createUser(
         name || 'anonymous',
-        bio || profile?.bio,
-        file || profile?.image,
-        links || profile?.links,
-        status || profile?.status,
+        bio,
+        file,
+        links,
+        status,
       );
 
       const user = userResult.user.toJson() as PubkyAppUser;
