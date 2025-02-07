@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Icon, Typography } from '@social/ui-shared';
-import { Post, Skeleton } from '@/components';
+import { Icon } from '@social/ui-shared';
+import { ContentNotFound, Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
 import { useStreamPost } from '@/hooks/useStream';
 import { Profile } from '.';
+import Image from 'next/image';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
@@ -88,11 +89,20 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         </div>
       )}
       {timeline.length === 0 && !isLoading && (
-        <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-          <Typography.H2 className="font-normal text-opacity-50">
-            No posts yet.
-          </Typography.H2>
-        </div>
+        <ContentNotFound
+          icon={<Icon.NoteBlank size="48" color="#C8FF00" />}
+          title="No replies yet?"
+          description="It's a blank slate for now, but not for long. Start to create replies, follow interesting people, or explore tags that catch your attention. This feed will be full of personalized content, just for you."
+        >
+          <div className="absolute top-12 z-0">
+            <Image
+              alt="not-found-replies"
+              width={656}
+              height={438}
+              src="/images/webp/not-found/posts.webp"
+            />
+          </div>
+        </ContentNotFound>
       )}
       <div ref={loader} />
     </div>

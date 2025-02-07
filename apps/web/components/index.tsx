@@ -3,6 +3,7 @@ import { BottomSheet } from './BottomSheet';
 import CreatePost from './CreatePost';
 import CustomFeeds from './CustomFeeds';
 import CreateQuickPost from './CreateQuickPost';
+import ContentNotFound from './ContentNotFound';
 import ButtonFilters from './ButtonFiltersDrawer/Index';
 import DropDown from './DropDown/_DropDown';
 import Feedback from './Feedback';
@@ -27,6 +28,7 @@ export {
   CreatePost,
   CustomFeeds,
   CreateQuickPost,
+  ContentNotFound,
   ButtonFilters,
   DropDown,
   Feedback,
