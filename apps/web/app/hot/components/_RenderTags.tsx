@@ -7,6 +7,7 @@ import { HotTag } from '@/types/Tag';
 import { Hot } from '.';
 import Link from 'next/link';
 import { useFilterContext } from '@/contexts';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface RenderTagsProps {
   hotTags: HotTag[];
@@ -15,6 +16,8 @@ interface RenderTagsProps {
 
 const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
   const { timeframe } = useFilterContext();
+  const isMobile = useIsMobile(640);
+  const numberImagesUser = isMobile ? 3 : 5;
   const timeframeLabel =
     timeframe === 'all_time'
       ? 'all time'
@@ -69,17 +72,19 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                   </Typography.Body>
                 </div>
                 <div className="flex">
-                  {tag?.taggers_id.slice(0, 5).map((fromItem, fromIndex) => (
-                    <div
-                      key={fromIndex}
-                      className={fromIndex !== 0 ? '-ml-2' : ''}
-                    >
-                      <Hot.UserProfileForTag userId={fromItem} />
-                    </div>
-                  ))}
+                  {tag?.taggers_id
+                    .slice(0, numberImagesUser)
+                    .map((fromItem, fromIndex) => (
+                      <div
+                        key={fromIndex}
+                        className={fromIndex !== 0 ? '-ml-2' : ''}
+                      >
+                        <Hot.UserProfileForTag userId={fromItem} />
+                      </div>
+                    ))}
                   {tag?.taggers_id.length > 5 && (
                     <PostUtil.Counter className="-ml-2">
-                      +{tag?.taggers_id.length - 5}
+                      +{tag?.taggers_id.length - numberImagesUser}
                     </PostUtil.Counter>
                   )}
                 </div>

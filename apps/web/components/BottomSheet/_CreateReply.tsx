@@ -23,7 +23,7 @@ export default function CreateReply({
     <BottomSheet.Root
       show={show}
       setShow={setShow}
-      title={title}
+      title={title ?? 'Reply'}
       className={className}
     >
       <ContentCreateReply

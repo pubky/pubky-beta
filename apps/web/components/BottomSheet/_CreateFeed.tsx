@@ -31,7 +31,7 @@ export default function CreateFeed({
     <BottomSheet.Root
       show={show}
       setShow={setShow}
-      title={title ?? 'Save Feed'}
+      title={title ?? 'Create Feed'}
       className={className}
     >
       <ContentCreateFeed

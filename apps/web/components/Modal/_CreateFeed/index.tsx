@@ -57,7 +57,7 @@ export default function CreateFeed({
           setTagsFeed([]);
         }}
       />
-      <Modal.Header title="Save Feed" />
+      <Modal.Header title="Create Feed" />
       <ContentCreateFeed
         setShowModalCreateFeed={setShowModalCreateFeed}
         setTagsFeed={setTagsFeed}
