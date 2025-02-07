@@ -5,10 +5,16 @@ import { Card } from '../Card';
 export default function Index() {
   return (
     <Onboarding.Layout currentStep={1}>
-      <Typography.Display>Let&apos;s get started</Typography.Display>
+      <Typography.Display>
+        Let&apos;s{' '}
+        <span className="sm:hidden">
+          <br />
+        </span>{' '}
+        get started
+      </Typography.Display>
       <Typography.Body
         variant="large"
-        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0"
+        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-4 sm:mt-0"
       >
         Join by scanning a QR with Bitkit, or by creating a new pubky.
       </Typography.Body>
