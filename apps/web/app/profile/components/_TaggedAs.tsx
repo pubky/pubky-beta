@@ -48,7 +48,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     [],
   );
   const [loadingTags, setLoadingTags] = useState('');
-  const limit = 5;
+  const limit = 20;
   const [skip, setSkip] = useState(limit);
   const [hasMore, setHasMore] = useState(user && user?.counts?.tags > limit);
 

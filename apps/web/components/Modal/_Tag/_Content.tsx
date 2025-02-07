@@ -88,6 +88,15 @@ export default function ContentTag({
   );
 
   useEffect(() => {
+    const uniqueTags = tags.filter(
+      (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
+    );
+    if (JSON.stringify(uniqueTags) !== JSON.stringify(allTags)) {
+      setAllTags(uniqueTags);
+    }
+  }, [tags]);
+
+  useEffect(() => {
     if (selectedTag) {
       const initialTaggers = selectedTag.taggers.slice(0, limitTaggers);
       setTaggers(initialTaggers);
@@ -110,11 +119,13 @@ export default function ContentTag({
   useEffect(() => {
     if (!isLoading && moreTags && moreTags.length) {
       setAllTags((prev) => {
-        const newTags = moreTags.filter(
-          (tag) => !prev.some((t) => t.label === tag.label),
+        const updatedTags = [...prev, ...moreTags];
+        const uniqueTags = updatedTags.filter(
+          (tag, index, self) =>
+            index === self.findIndex((t) => t.label === tag.label),
         );
-        setHasMore(newTags.length > 0);
-        return [...prev, ...newTags];
+        setHasMore(uniqueTags.length > prev.length);
+        return uniqueTags;
       });
     }
   }, [moreTags, isLoading]);
