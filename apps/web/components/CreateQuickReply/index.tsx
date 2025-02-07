@@ -80,6 +80,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
         setArrayTags={setArrayTags}
         setIsValidContent={setIsValidContent}
         loading={sendingReply}
+        styleSearchedUsers="absolute"
         variant="small"
         button={
           <Button.Medium

@@ -177,7 +177,7 @@ export default function Tags({
 
   return (
     <div
-      className="lg:mt-6 cursor-default"
+      className="lg:mt-3 cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
       {isMobile && tags.length === 0 ? (

@@ -51,11 +51,11 @@ export const UserSmall = ({
         <div className="flex-col justify-start items-start inline-flex">
           <Typography.Body variant="small-bold">{username}</Typography.Body>
           {label ? (
-            <Typography.Label className="text-[11px] text-opacity-30 leading-none">
+            <Typography.Label className="text-[11px] text-opacity-50 leading-none">
               {label}
             </Typography.Label>
           ) : (
-            <div className="flex gap-2 opacity-30 -mt-1">
+            <div className="flex gap-2 opacity-50 -mt-1">
               <div className="gap-1 flex items-center">
                 <Icon.Tag size="12" />
                 <Typography.Label className="text-[11px]">

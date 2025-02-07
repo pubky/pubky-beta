@@ -29,16 +29,16 @@ export const PostReplies = ({
     pubky,
   );
 
-  const lineBaseCSS = `ml-[12px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
+  const lineBaseCSS = `ml-[12px] absolute border-[#ffffff40] after:content-[' * '] after:bg-[#ffffff40] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
     <div className="absolute ml-[10px]">
-      <Icon.LineHorizontal size="14" color="#262626" />
+      <Icon.LineHorizontal size="14" color="#ffffff40" />
     </div>
   );
-  const lineBaseCSS2 = `ml-[11px] absolute border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[62px] after:block after:-mt-[38px] after:-ml-[1px]`;
+  const lineBaseCSS2 = `ml-[11px] absolute border-[#ffffff40] after:content-[' * '] after:bg-[#ffffff40] after:w-[1px] after:h-[62px] after:block after:mt-[-38px] after:-ml-[1px]`;
   const lineHorizontalCSS2 = (
     <div className="absolute ml-[10px] mt-[22px]">
-      <Icon.LineHorizontal size="14" color="#262626" />
+      <Icon.LineHorizontal size="14" color="#ffffff40" />
     </div>
   );
 

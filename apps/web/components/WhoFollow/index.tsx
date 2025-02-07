@@ -100,7 +100,7 @@ export default function WhoFollow() {
   if (recommendedProfiles === undefined) return <></>;
 
   return (
-    <div className="mb-6">
+    <div className="mb-8">
       <SideCard.Header title="Who to Follow" />
       <SideCard.Content className="flex flex-col gap-2">
         {isLoading ? (

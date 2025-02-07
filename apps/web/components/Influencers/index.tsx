@@ -23,7 +23,7 @@ export default function Influencers({ style }: InfluencersProps) {
   if (isError) console.error(isError);
 
   return (
-    <div className={twMerge('mb-6', style)}>
+    <div className={twMerge('mb-8', style)}>
       <SideCard.Header title="Influencers" />
       <SideCard.Content className="flex flex-col gap-2">
         {isLoading ? (

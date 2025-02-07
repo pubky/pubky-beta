@@ -28,7 +28,7 @@ export default function Sort({ disabled = false }: SortProps) {
   };
 
   return (
-    <div className="mb-8">
+    <div className="mb-6">
       <SideCard.Header title="Sort" className="mb-2" />
       {Object.entries(icons).map(([key, icon]) => (
         <SideCard.Item

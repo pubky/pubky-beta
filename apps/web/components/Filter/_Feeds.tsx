@@ -71,7 +71,7 @@ export default function Feeds() {
   };
 
   return (
-    <div className="mb-8">
+    <div className="7">
       <SideCard.Header title="Feeds" className="mb-2" />
       <div>
         <SideCard.Item

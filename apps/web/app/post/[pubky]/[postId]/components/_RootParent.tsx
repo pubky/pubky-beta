@@ -42,7 +42,7 @@ export default function RootParent({
   useEffect(() => {
     const fetchParentURIs = async (
       parentURI: string,
-      collectedURIs: string[]
+      collectedURIs: string[],
     ): Promise<string[]> => {
       if (!parentURI) return collectedURIs;
       collectedURIs.push(parentURI);
@@ -55,7 +55,7 @@ export default function RootParent({
           if (parentPost?.relationships?.replied) {
             return await fetchParentURIs(
               parentPost?.relationships?.replied,
-              collectedURIs
+              collectedURIs,
             );
           }
         }
@@ -117,7 +117,7 @@ export default function RootParent({
   }, [parentURIs, parentPosts]);
 
   const allParentPostsLoaded = parentURIs.every(
-    (uri) => parentPosts[uri]?.loading === false
+    (uri) => parentPosts[uri]?.loading === false,
   );
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function RootParent({
           <Typography.Body variant="small" className="text-opacity-50">
             This post has been deleted by its author.
           </Typography.Body>
-          <div className="absolute -ml-[1px] mt-1.5 border-l-[1px] border-neutral-800 h-[50px]" />
+          <div className="absolute -ml-[1px] mt-1.5 border-l-[1px] border-[#ffffff40] h-[50px]" />
         </div>
       );
 
