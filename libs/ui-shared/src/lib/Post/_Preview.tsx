@@ -107,7 +107,7 @@ function LinkPreview({ url }: { url: string }) {
         {previewData.image && (
           <img
             alt="preview-link"
-            className="w-auto max-h-[200px] lg:w-40 lg:h-[90px] rounded-lg"
+            className="w-auto max-h-[200px] lg:max-w-40 lg:max-h-[90px] rounded-lg"
             src={previewData.image}
           />
         )}
