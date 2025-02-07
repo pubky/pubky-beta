@@ -73,6 +73,8 @@ export default function Root({
           rest.className,
         )}
         onClick={(e) => e.stopPropagation()}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
       >
         <div
           onClick={() => setShow(false)}
@@ -80,8 +82,6 @@ export default function Root({
             'flex items-center mt-2 mb-4 justify-center cursor-pointer z-50',
             homeIndicatorCSS,
           )}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
         >
           <Icon.HomeIndicator color="gray" />
         </div>
