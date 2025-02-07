@@ -42,7 +42,7 @@ export default function OnboardingLayout({
           <Header.Logo link={logoLink} />
           <Header.Title
             titleHeader="Onboarding"
-            className="flex justify-end sm:justify-start"
+            className="flex justify-end sm:justify-start self-center sm:self-end mt-1 sm:mt-0"
           />
         </div>
         <Content.Stepper

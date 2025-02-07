@@ -11,7 +11,7 @@ const faqQuestions = [
 
 export default function Faq() {
   return (
-    <div className="w-full flex-col justify-start items-start gap-2 inline-flex mb-8">
+    <div className="w-full flex-col justify-start items-start gap-2 inline-flex mb-6">
       <SideCard.Header title="FAQ" />
       {faqQuestions.map((question, index) => (
         <Link

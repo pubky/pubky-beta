@@ -7,7 +7,6 @@ import { Content, Typography, Header, Icon } from '@social/ui-shared';
 import { Card } from '../Card';
 import { useRouter } from 'next/navigation';
 
-
 interface FormErrors {
   [fieldName: string]: string[];
 }
@@ -108,7 +107,13 @@ export default function Index() {
         </Header.Action>
       </Header.Root>
       <Content.Grid>
-        <Typography.Display>Sign in to Pubky.</Typography.Display>
+        <Typography.Display className="leading-[3rem]">
+          Sign in to{' '}
+          <span className="sm:hidden">
+            <br />
+          </span>{' '}
+          Pubky.
+        </Typography.Display>
         <Typography.Body
           variant="large"
           className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0"

@@ -30,7 +30,7 @@ export default function PrivacySafety() {
         <div className="w-full p-6 bg-white bg-opacity-5 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] rounded-2xl flex-col justify-start items-start gap-6 inline-flex">
           <div className="w-full h-8 justify-between items-center inline-flex">
             <Typography.Body variant="small-bold">
-              Show CheckLink before redirecting
+              Show confirmation before redirecting
             </Typography.Body>
             <Input.Switch checked={isChecked} onChange={handleCheckboxChange} />
           </div>

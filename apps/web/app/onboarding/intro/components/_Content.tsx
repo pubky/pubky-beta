@@ -67,7 +67,7 @@ export default function Intro() {
           <Typography.Display>
             It&apos;s your web. Take it back.
           </Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
             <div className="flex flex-col gap-4">
               <Typography.Body
                 variant="medium"
@@ -127,7 +127,7 @@ export default function Intro() {
             <br />
             Pubky.
           </Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
             <div className="flex flex-col gap-4 mt-2">
               <Typography.Body
                 variant="medium"
@@ -166,8 +166,14 @@ export default function Intro() {
     {
       content: (
         <>
-          <Typography.Display>Your Digital Key.</Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+          <Typography.Display>
+            Your{' '}
+            <span className="sm:hidden">
+              <br />
+            </span>{' '}
+            Digital Key.
+          </Typography.Display>
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
             <div className="flex flex-col gap-4">
               <Typography.Body
                 variant="medium"
@@ -202,8 +208,14 @@ export default function Intro() {
     {
       content: (
         <>
-          <Typography.Display>Social Tagging.</Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+          <Typography.Display>
+            Social{' '}
+            <span className="sm:hidden">
+              <br />
+            </span>{' '}
+            Tagging.
+          </Typography.Display>
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
             <div className="flex flex-col gap-4">
               <Typography.Body
                 variant="medium"
@@ -250,7 +262,7 @@ export default function Intro() {
       content: (
         <>
           <Typography.Display>Customized Feeds.</Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
             <div className="flex flex-col gap-4">
               <Typography.Body
                 variant="medium"
@@ -290,7 +302,7 @@ export default function Intro() {
           <Typography.Display>
             Posts, Articles, Photos, Links...
           </Typography.Display>
-          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+          <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
             <div className="flex flex-col gap-4">
               <Typography.Body
                 variant="medium"
@@ -319,13 +331,13 @@ export default function Intro() {
   ];
 
   return (
-    <Content.Main className="pb-0 md:pt-[125px] pt-[120px]" shadowBottom>
+    <Content.Main className="pb-0 pt-[100px] md:pt-[125px]" shadowBottom>
       <Header.Root className="backdrop-blur-[0px]">
         <div className="flex gap-3 lg:gap-6 w-full justify-between sm:justify-start items-start">
           <Header.Logo link={logoLink} />
           <Header.Title
             titleHeader="Intro"
-            className="flex justify-end sm:justify-start"
+            className="flex justify-end sm:justify-start self-center sm:self-end mt-1 sm:mt-0"
           />
         </div>
       </Header.Root>

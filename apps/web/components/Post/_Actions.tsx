@@ -206,7 +206,7 @@ export default function Actions({
   };
 
   return (
-    <div className="mt-3 lg:mt-6">
+    <div className="mt-3">
       <PostUI.Actions>
         <Button.Action
           id="mobile-tag-btn"

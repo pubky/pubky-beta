@@ -25,7 +25,7 @@ export default function Root({
   const [startY, setStartY] = useState<number | null>(null);
 
   const baseCSS =
-    'max-h-[90vh] overflow-y-auto min-h-[420px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-24 border border-white border-opacity-20 z-50 transition-transform duration-300 touch-action-none';
+    'max-h-[90vh] overflow-y-auto min-h-[320px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-24 border border-white border-dashed border-opacity-30 z-50 transition-transform duration-300 touch-action-none';
 
   useEffect(() => {
     if (show) {
@@ -73,6 +73,8 @@ export default function Root({
           rest.className,
         )}
         onClick={(e) => e.stopPropagation()}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
       >
         <div
           onClick={() => setShow(false)}
@@ -80,8 +82,6 @@ export default function Root({
             'flex items-center mt-2 mb-4 justify-center cursor-pointer z-50',
             homeIndicatorCSS,
           )}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
         >
           <Icon.HomeIndicator color="gray" />
         </div>

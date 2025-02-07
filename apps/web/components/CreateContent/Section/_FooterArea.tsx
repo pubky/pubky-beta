@@ -1,6 +1,13 @@
 'use client';
 
-import { Button, Icon, Post, PostUtil } from '@social/ui-shared';
+import {
+  Button,
+  Icon,
+  Input,
+  Post,
+  PostUtil,
+  Typography,
+} from '@social/ui-shared';
 import EmojiPicker, {
   EmojiClickData,
   EmojiStyle,
@@ -8,7 +15,7 @@ import EmojiPicker, {
 } from 'emoji-picker-react';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext } from '@/contexts';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/Modal';
 import { BottomSheet } from '@/components/BottomSheet';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -70,6 +77,11 @@ export default function FooterArea({
   const [showSheetTag, setShowSheetTag] = useState(false);
   const [showSheetArticle, setShowSheetArticle] = useState(false);
   const [openModalArticle, setOpenModalArticle] = useState(false);
+  const [addTagInput, setAddTagInput] = useState<boolean>(false);
+  const [tagInput, setTagInput] = useState('');
+  const [errorTag, setErrorTag] = useState(false);
+  const [showEmojisFastTag, setShowEmojisFastTag] = useState(false);
+  const wrapperRefEmojisFastTag = useRef<HTMLDivElement>(null);
 
   const handleEmojiClick = (emojiObject: EmojiClickData) => {
     const textBeforeCursor = content.slice(0, cursorPosition);
@@ -134,6 +146,50 @@ export default function FooterArea({
     }
   };
 
+  const handleAddTag = () => {
+    if (!tagInput.trim() || !setArrayTags) return;
+
+    setArrayTags((prevTags) => {
+      if (prevTags.length >= 4) {
+        setErrorTag(true);
+        return prevTags;
+      } else {
+        setTagInput('');
+        return [...prevTags, tagInput.trim()];
+      }
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleAddTag();
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valueWithoutSpaces = e.target.value
+      .toLowerCase()
+      .replace(/\s/g, '')
+      .replace(/!/g, '');
+    setTagInput(valueWithoutSpaces);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRefEmojisFastTag.current &&
+        !wrapperRefEmojisFastTag.current.contains(event.target as Node)
+      ) {
+        setShowEmojisFastTag(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [wrapperRefEmojisFastTag]);
+
   return (
     <>
       {(visibleTextArea ||
@@ -143,7 +199,7 @@ export default function FooterArea({
         (arrayTags && arrayTags.length > 0)) && (
         <>
           {arrayTags && arrayTags.length > 0 && (
-            <div id="tags" className="gap-2 flex items-center">
+            <div id="tags" className="flex-wrap gap-2 flex items-center">
               {arrayTags.map((tag, index) => (
                 <PostUtil.Tag
                   key={index}
@@ -152,19 +208,22 @@ export default function FooterArea({
                   action={
                     <div
                       className="flex items-center"
-                      onClick={() =>
+                      onClick={() => {
                         !loading &&
-                        setArrayTags &&
-                        setArrayTags((prev) =>
-                          prev.filter((item) => item !== tag),
-                        )
-                      }
+                          setArrayTags &&
+                          setArrayTags((prev) =>
+                            prev.filter((item) => item !== tag),
+                          );
+                        if (arrayTags.length <= 4) {
+                          setErrorTag(false);
+                        }
+                      }}
                     >
                       <Icon.X size="16" />
                     </div>
                   }
                 >
-                  {Utils.minifyText(tag.replace(' ', ''))}
+                  {Utils.minifyText(tag.replace(' ', ''), 20)}
                 </PostUtil.Tag>
               ))}
             </div>
@@ -189,8 +248,88 @@ export default function FooterArea({
                 </div>
               </>
             )}
+            <div className="w-auto hidden lg:flex md:flex-col xl:flex-row xl:gap-2 xl:items-center self-center">
+              {addTagInput ? (
+                <>
+                  {showEmojisFastTag && (
+                    <div
+                      className="absolute translate-y-[10%] translate-x-[30%] z-10"
+                      ref={wrapperRefEmojisFastTag}
+                    >
+                      <EmojiPicker
+                        theme={Theme.DARK}
+                        emojiStyle={EmojiStyle.TWITTER}
+                        onEmojiClick={(emojiObject) => {
+                          const emojiLength =
+                            new Blob([emojiObject.emoji]).size / 2;
+
+                          if (tagInput.length + emojiLength <= 20) {
+                            setTagInput(tagInput + emojiObject.emoji);
+                          }
+                          setShowEmojisFastTag(false);
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  <Input.Text
+                    placeholder="tag"
+                    className="min-w-[200px] h-[32px] p-3 pr-8 text-[14px] rounded-lg"
+                    value={tagInput}
+                    maxLength={20}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    action={
+                      <div className="flex gap-1 -mr-2">
+                        <div
+                          id="add-tag-btn"
+                          onClick={tagInput ? handleAddTag : undefined}
+                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
+                        >
+                          <Icon.Plus size="12" />
+                        </div>
+                        <div className="flex">
+                          <div
+                            onClick={() => setShowEmojisFastTag(true)}
+                            className="hidden mr-1 lg:flex cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                          >
+                            <Icon.Smiley size="12" />
+                          </div>
+                          <div
+                            id="close-add-tag-input-btn"
+                            onClick={() => setAddTagInput(false)}
+                            className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
+                          >
+                            <Icon.X size="12" />
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  />
+                </>
+              ) : (
+                <div
+                  id="show-add-tag-input-btn"
+                  onClick={() => setAddTagInput(true)}
+                  className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
+                >
+                  <div>
+                    <Icon.Plus size="16" />
+                  </div>
+                </div>
+              )}
+              {errorTag && addTagInput && (
+                <Typography.Body
+                  className="whitespace-nowrap text-[#e95164]"
+                  variant="small"
+                >
+                  Max 4 tags
+                </Typography.Body>
+              )}
+            </div>
             <div className="grow" />
-            <div className="w-full justify-end flex gap-2">
+            <div className="w-full justify-between sm:justify-end flex gap-2">
               <div
                 id="content-length"
                 className="text-opacity-30 text-white text-sm mt-4 mr-2"
@@ -201,6 +340,7 @@ export default function FooterArea({
                 <Button.Action
                   id="tag-btn"
                   variant="custom"
+                  className="flex lg:hidden"
                   icon={
                     <Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />
                   }
@@ -213,7 +353,7 @@ export default function FooterArea({
                   }}
                   disabled={!arrayTags || loading}
                 />
-                <div className="hidden sm:flex">
+                <div className="hidden lg:flex">
                   <Button.Action
                     id="emoji-btn"
                     variant="custom"
@@ -226,7 +366,7 @@ export default function FooterArea({
                   />
                 </div>
                 {article && (
-                  <div className="hidden sm:flex">
+                  <div className="hidden lg:flex">
                     <Button.Action
                       variant="custom"
                       icon={<Icon.Newspaper size="32" />}
@@ -267,8 +407,9 @@ export default function FooterArea({
                     />
                   </Button.Action>
                 )}
+
+                {button}
               </div>
-              {button}
             </div>
           </Post.Actions>
           {openModalArticle && (

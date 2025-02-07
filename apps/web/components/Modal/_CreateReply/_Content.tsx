@@ -31,7 +31,7 @@ export default function ContentCreateReply({
 
   const lineHorizontalCSS = (
     <div className="hidden lg:flex absolute ml-[9px]">
-      <Icon.LineHorizontal size="14" color="#262626" />
+      <Icon.LineHorizontal size="14" color="#444447" />
     </div>
   );
 
@@ -86,14 +86,14 @@ export default function ContentCreateReply({
       <Post
         post={post}
         repostView
-        className="mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
+        className="lg:mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
       />
       <div className="flex items-center relative">
         <div
-          className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[49%] top-0 border-neutral-800`}
+          className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[47%] top-0 border-[#444447]`}
         />
         {lineHorizontalCSS}
-        <div className="w-full lg:ml-6 mt-6">
+        <div className="w-full lg:ml-[23px] mt-6">
           <CreateContent
             id="create-reply-create-content"
             handleSubmit={handleSubmit}

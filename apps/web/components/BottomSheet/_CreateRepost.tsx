@@ -23,7 +23,7 @@ export default function CreateRepost({
     <BottomSheet.Root
       show={show}
       setShow={setShow}
-      title={title}
+      title={title ?? 'Repost'}
       className={className}
     >
       <ContentCreateRepost

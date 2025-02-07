@@ -126,68 +126,75 @@ export default function ConfirmPhrase({
             </Typography.Body>
           ))}
         </div>
-        <div className="relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start gap-12 inline-flex">
-          <div className="flex-grow flex-col justify-start items-start gap-2 flex">
-            {selectedWords.slice(0, 6).map((word, index) => (
-              <Typography.Body key={index} variant="medium-bold">
-                <span className="text-white text-opacity-50">
-                  {index + 1}.{' '}
-                </span>
-                <span
-                  className={
-                    word
-                      ? correctOrder[index] === word
-                        ? 'text-green-500'
-                        : 'text-red-500'
-                      : 'text-white text-opacity-50'
-                  }
-                >
-                  {word || ''}
-                </span>
-              </Typography.Body>
-            ))}
-          </div>
-          <div className="flex-grow flex-col justify-start items-start gap-2 flex">
-            {selectedWords.slice(6, 12).map((word, index) => (
-              <Typography.Body key={index + 6} variant="medium-bold">
-                <span className="text-white text-opacity-50">
-                  {index + 7}.{' '}
-                </span>
-                <span
-                  className={
-                    word
-                      ? correctOrder[index + 6] === word
-                        ? 'text-green-500'
-                        : 'text-red-500'
-                      : 'text-white text-opacity-50'
-                  }
-                >
-                  {word || ''}
-                </span>
-              </Typography.Body>
-            ))}
+        <div className="relative w-full p-12 bg-white bg-opacity-10 rounded-2xl justify-start items-start flex flex-col md:flex-row">
+          <div className="w-full flex">
+            <div className="flex-grow flex-col justify-start items-start gap-2 flex">
+              {selectedWords.slice(0, 6).map((word, index) => (
+                <Typography.Body key={index} variant="medium-bold">
+                  <span className="text-white text-opacity-50">
+                    {index + 1}.{' '}
+                  </span>
+                  <span
+                    className={
+                      word
+                        ? correctOrder[index] === word
+                          ? 'text-[#c8ff00]'
+                          : 'text-[#FF003C]'
+                        : 'text-white text-opacity-50'
+                    }
+                  >
+                    {word || ''}
+                  </span>
+                </Typography.Body>
+              ))}
+            </div>
+            <div className="flex-grow flex-col justify-start items-start gap-2 flex">
+              {selectedWords.slice(6, 12).map((word, index) => (
+                <Typography.Body key={index + 6} variant="medium-bold">
+                  <span className="text-white text-opacity-50">
+                    {index + 7}.{' '}
+                  </span>
+                  <span
+                    className={
+                      word
+                        ? correctOrder[index + 6] === word
+                          ? 'text-[#c8ff00]'
+                          : 'text-[#FF003C]'
+                        : 'text-white text-opacity-50'
+                    }
+                  >
+                    {word || ''}
+                  </span>
+                </Typography.Body>
+              ))}
+            </div>
           </div>
           {isCorrectOrder && (
-            <div className="absolute bottom-3 right-5 flex gap-4">
+            <div className="flex md:flex-col mt-4 gap-2 md:mt-0 md:gap-6">
               <div
-                onClick={handleCopyMnemonicToClipboard}
-                className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
+                onClick={handleDownloadRecoveryPhraseTXT}
+                className="w-auto flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
               >
-                {copyMnemonic ? (
-                  <Icon.Check size="12" />
-                ) : (
-                  <Icon.Clipboard size="12" />
-                )}
-                <Typography.Body variant="small-bold">
-                  Copy to clipboard
+                <Icon.DownloadSimple size="16" />
+                <Typography.Body className="text-[13px]" variant="small-bold">
+                  Download
                 </Typography.Body>
               </div>
               <div
-                onClick={handleDownloadRecoveryPhraseTXT}
-                className="flex gap-1 items-center cursor-pointer opacity-50 hover:opacity-80"
+                onClick={handleCopyMnemonicToClipboard}
+                className="w-max flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
               >
-                <Icon.DownloadSimple size="12" />
-                <Typography.Body variant="small-bold">Download</Typography.Body>
+                {copyMnemonic ? (
+                  <Icon.Check size="16" />
+                ) : (
+                  <Icon.Clipboard size="16" />
+                )}
+                <Typography.Body
+                  className="text-[13px] flex gap-1"
+                  variant="small-bold"
+                >
+                  Copy <span className="hidden md:flex"> to clipboard</span>
+                </Typography.Body>
               </div>
             </div>
           )}

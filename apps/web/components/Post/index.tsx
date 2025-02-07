@@ -67,7 +67,7 @@ export default function Post({
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
-  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-neutral-800 after:content-[' * '] after:bg-neutral-800 after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
+  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
 
   const handleDeletePost = async () => {
     const result = await deletePost(post?.details?.id);
@@ -123,7 +123,7 @@ export default function Post({
                     <>
                       <div className={twMerge(lineBaseCSS, lineStyle)} />
                       <div className="absolute ml-[10px]">
-                        <Icon.LineHorizontal size="14" color="#262626" />
+                        <Icon.LineHorizontal size="14" color="#444447" />
                       </div>
                     </>
                   )}
@@ -190,7 +190,7 @@ export default function Post({
                       <>
                         <div className={twMerge(lineBaseCSS, lineStyle)} />
                         <div className="absolute ml-[10px]">
-                          <Icon.LineHorizontal size="14" color="#262626" />
+                          <Icon.LineHorizontal size="14" color="#444447" />
                         </div>
                       </>
                     )}
@@ -283,7 +283,7 @@ export default function Post({
                   <>
                     <div className={twMerge(lineBaseCSS, lineStyle)} />
                     <div className="absolute ml-[10px]">
-                      <Icon.LineHorizontal size="14" color="#262626" />
+                      <Icon.LineHorizontal size="14" color="#444447" />
                     </div>
                   </>
                 )}

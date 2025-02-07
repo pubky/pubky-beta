@@ -2,7 +2,7 @@ import { Icon, SideCard } from '@social/ui-shared';
 
 export default function Content() {
   return (
-    <div className="mb-8">
+    <div className="mb-6">
       <SideCard.Header title="Content" />
       <SideCard.Item
         label="All"

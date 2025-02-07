@@ -82,11 +82,11 @@ export default function Index() {
   return (
     <Content.Main className="sm:pt-[125px]">
       <Header.Root>
-        <div className="flex gap-3 lg:gap-6 w-auto">
+        <div className="flex gap-3 lg:gap-6 w-full justify-between sm:justify-start items-start">
           <Header.Logo link={logoLink} />
           <Header.Title
             titleHeader="Early Access"
-            className="hidden sm:flex justify-end sm:justify-start"
+            className="flex justify-end sm:justify-start self-center sm:self-end mt-1 sm:mt-0"
           />
         </div>
       </Header.Root>

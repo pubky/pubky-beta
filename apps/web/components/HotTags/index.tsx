@@ -29,7 +29,7 @@ export default function HotTags() {
   }
 
   return (
-    <div id="hot-tags" className="col-span-1 mb-6">
+    <div id="hot-tags" className="col-span-1 mb-8">
       <SideCard.Header title="Hot tags">
         {/**<DropDown.TagsTimeframe type="text" />*/}
       </SideCard.Header>

@@ -20,7 +20,7 @@ export default function CreatePost({
     <BottomSheet.Root
       show={show}
       setShow={setShow}
-      title={title}
+      title={title ?? 'New Post'}
       className={className}
     >
       <ContentCreatePost

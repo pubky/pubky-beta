@@ -48,10 +48,10 @@ const NormalPost = ({ data }) => {
       {data?.relationships?.replied && (
         <>
           <div
-            className={`ml-[9px] absolute border-l-2 h-[52%] -top-3 border-neutral-800`}
+            className={`ml-[9px] absolute border-l-2 h-[52%] -top-3 border-[#444447]`}
           />
           <div className="absolute ml-[9px]">
-            <Icon.LineHorizontal size="14" color="#262626" />
+            <Icon.LineHorizontal size="14" color="#444447" />
           </div>
         </>
       )}

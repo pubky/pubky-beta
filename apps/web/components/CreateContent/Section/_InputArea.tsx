@@ -29,6 +29,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   isError?: boolean;
   setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
   handlePaste?: any;
+  styleSearchedUsers?: string;
 }
 
 export default function InputArea({
@@ -52,6 +53,7 @@ export default function InputArea({
   isError,
   setIsError,
   handlePaste,
+  styleSearchedUsers,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { addAlert } = useAlertContext();
@@ -208,6 +210,7 @@ export default function InputArea({
         <Modal.SearchedUsersCard
           handleUserClick={handleUserClick}
           searchedUsers={searchedUsers}
+          className={styleSearchedUsers}
         />
       )}
     </div>
