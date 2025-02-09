@@ -10,7 +10,8 @@ import { latestPostInFeedContentEq,
         fastTagPostInFeed,
         replyToPost,
         waitForFeedToLoad,
-        selectEmojis} from '../support/posts';
+        selectEmojis,
+        fastTagWhilstCreatingPost} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -18,6 +19,7 @@ const username = 'Poster';
 describe('posts', () => {
   before(() => {
     slowCypressDown();
+    cy.mockInviteCodeApi();
     cy.deleteDownloadsFolder();
 
     // create profile to post from
@@ -29,6 +31,7 @@ describe('posts', () => {
   beforeEach(() => {
     // in case it gets changed by a test and not reset
     cy.slowDown(defaultMs);
+    cy.mockInviteCodeApi();
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
@@ -36,10 +39,6 @@ describe('posts', () => {
         cy.signIn(backupDownloadFilePath(username + '.pkarr'));
       };
     });
-  });
-
-  beforeEach(() => {
-    cy.mockInviteCodeApi();
   });
 
   it('can post from quick post box', () => {
@@ -279,23 +278,7 @@ describe('posts', () => {
         cy.get('textarea').type(postContent);
 
         // add tags to the post
-        cy.get('#tag-btn').click();
-        cy.get('#modal-root').should('be.visible').within(() => {
-          cy.get('h1').contains('Tag');
-          cy.get('input').type(tag1);
-          cy.get('#add-btn').should('be.visible').click();
-          cy.get('input').type(tag2);
-          cy.get('#add-btn').should('be.visible').click();
-          cy.get('input').type(tag3);
-          cy.get('#add-btn').should('be.visible').click();
-          cy.get('#close-btn').click();
-        });
-
-        // verify the tags are displayed in the quick post area
-        cy.get('#tags').children().should('have.length', 3);
-        cy.get('#tags').children().eq(0).contains(tag1);
-        cy.get('#tags').children().eq(1).contains(tag2);
-        cy.get('#tags').children().eq(2).contains(tag3);
+        fastTagWhilstCreatingPost([tag1, tag2, tag3]);
 
         // check displayed content length
         cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
@@ -304,16 +287,29 @@ describe('posts', () => {
         cy.get('#post-btn').click();
       });
 
-      // verify the post text and tags are displayed correctly in feed
-      cy.findFirstPostInFeed(waitForIndexed).within(() => {
-        // check text
-        cy.get('#post-content-text').innerTextShouldEq(postContent);
+      // function to verify tags are displayed in the post
+      const verifyPost = () => {
+        // verify the post text and tags are displayed correctly in feed
+        cy.findFirstPostInFeed(waitForIndexed).within(() => {
+          // check text
+          cy.get('#post-content-text').innerTextShouldEq(postContent);
 
-        // check tags (currently ordered reverse alphabetical)
-        cy.get('#tags').find('#tag-0').contains(tag3);
-        cy.get('#tags').find('#tag-1').contains(tag2);
-        cy.get('#tags').find('#tag-2').contains(tag1);
-      });
+          // check tags (currently ordered reverse alphabetical)
+          cy.get('#tags').find('#tag-0').contains(tag3);
+          cy.get('#tags').find('#tag-1').contains(tag2);
+          cy.get('#tags').find('#tag-2').contains(tag1);
+        });
+      };
+
+      // check tags are displayed in the post
+      verifyPost();
+
+      // refresh page before checking tags are still displayed
+      cy.reload();
+      waitForFeedToLoad();
+
+      // check tags are still displayed in the post
+      verifyPost
     });
   });
 
@@ -529,22 +525,24 @@ describe('posts', () => {
       createQuickPost(postContent);
 
       // reply to the post
-      cy.findFirstPostInFeed(waitForIndexed).within(() => {
-        cy.get('#post-content-text').innerTextShouldEq(postContent);
-        cy.get('#reply-btn').click();
-      });
-      cy.get('#modal-root').should('be.visible').within(() => {
-        cy.get('textarea').type(replyContent);
-        cy.get('#reply-btn').click();
+      replyToPost({ replyContent, postContent, waitForIndexed });
+
+      // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/#887
+      cy.waitReload();
+      waitForFeedToLoad();
+
+      // check reply is displayed in feed
+      cy.findFirstPostInFeed(waitForIndexed).within(($post) => {
+        cy.wrap($post).find('#replies-container').innerTextShouldContain(replyContent);
       });
 
       // delete the original post
       deletePost();
 
       // verify the reply and original post are no longer displayed in feed
-      cy.findFirstPostInFeed(waitForIndexed).within(() => {
-        cy.get('#post-content-text').innerTextShouldNotContain(replyContent);
-        cy.get('#post-content-text').innerTextShouldNotContain(postContent);
+      cy.get('#timeline').within(($timeline) => {
+        cy.wrap($timeline).innerTextShouldNotContain(replyContent);
+        cy.wrap($timeline).innerTextShouldNotContain(postContent);
       });
 
       // todo: check that reply still shown in own profile page

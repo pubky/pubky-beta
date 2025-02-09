@@ -62,10 +62,11 @@ export const PostReplies = ({
   return (
     <>
       {showQuickReply && (
-        <div className="mt-3 flex flex-col gap-3">
+        <div id="replies-container" className="mt-3 flex flex-col gap-3">
           {displayedReplies.map((reply) => (
             <Components.Post
               key={reply.details.id}
+
               post={reply}
               largeView={!isMobile && layout === 'wide'}
               line={Boolean(reply?.relationships?.replied)}

@@ -248,7 +248,7 @@ export default function FooterArea({
                 </div>
               </>
             )}
-            <div className="w-auto hidden lg:flex md:flex-col xl:flex-row xl:gap-2 xl:items-center self-center">
+            <div id="add-tag-container" className="w-auto hidden lg:flex md:flex-col xl:flex-row xl:gap-2 xl:items-center self-center">
               {addTagInput ? (
                 <>
                   {showEmojisFastTag && (

@@ -377,7 +377,7 @@ const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = true) => {
     return filterText
       // cannot use :contains due to additional space inserted between each word in the post content
       ? $posts.filter((_idx, element) => element.innerText.includes(filterText))
-      : $posts
+      : $posts;
   }).eq(postIdx);
 };
 

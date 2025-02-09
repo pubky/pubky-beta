@@ -7,11 +7,8 @@ describe('profile', () => {
   });
 
   beforeEach(() => {
-    cy.onboardAsNewUser('Edit Me', 'This bio is editable');
-  });
-
-  beforeEach(() => {
     cy.mockInviteCodeApi();
+    cy.onboardAsNewUser('Edit Me', 'This bio is editable');
   });
 
   // TODO: enable test once bug is fixed, see https://github.com/pubky/pubky-app/issues/1005
