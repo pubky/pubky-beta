@@ -55,6 +55,8 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     deletedPosts,
   } = usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
+  const [fetching, setFetching] = useState<boolean>(false);
+  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
   const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
 
@@ -62,9 +64,10 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     setTimeline([]);
     setNewPosts([]);
     setStart(undefined);
+    setFetchAttempts(0);
   };
 
-  const { data, isLoading } = useStreamPost(
+  const { data, isFetching } = useStreamPost(
     pubky ?? '',
     reach,
     'all',
@@ -77,8 +80,16 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   );
 
   const fetchPosts = async () => {
+    setFetching(true);
+
     try {
-      if (!data || !Array.isArray(data) || data.length === 0) return;
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        setFetchAttempts((prev) => prev + 1);
+        if (fetchAttempts >= 3) {
+          setFetching(false);
+        }
+        return;
+      }
 
       const lastPost = data[data.length - 1] as PostView;
       if (!lastPost?.details?.indexed_at) return;
@@ -98,12 +109,15 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
         return posts.length > 0 ? [...prev, ...posts] : prev;
       });
+      setFetchAttempts(0);
+      setFetching(false);
     } catch (error) {
       console.log('Error fetching posts:', error);
+      setFetching(false);
     }
   };
 
-  const loader = useInfiniteScroll(fetchPosts, isLoading);
+  const loader = useInfiniteScroll(fetchPosts, isFetching);
 
   useEffect(() => {
     clearTimeline();
@@ -154,7 +168,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
   return (
     <div id="timeline" className="flex flex-col gap-3">
-      {!isLoading && <NewPostsNotifier />}
+      {!isFetching && <NewPostsNotifier />}
 
       {newPosts.map((post) => (
         <div key={post.details.id} className="flex flex-col">
@@ -178,18 +192,16 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
             </div>
           ),
       )}
-      {isLoading && (
+      {fetching && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      {timeline.length === 0 && !isLoading && (
+      {!fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Smiley size="48" color="#C8FF00" />}
           title="Welcome to your feed!"
-          description="It's a blank slate for now, but not for long. Start to create posts,
-       follow interesting people, or explore tags that catch your attention.
-       This feed will be full of personalized content, just for you."
+          description="It's a blank slate for now, but not for long. Start to create posts, follow interesting people, or explore tags that catch your attention. This feed will be full of personalized content, just for you."
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
             <Link href="/hot#influencers">
