@@ -20,7 +20,7 @@ export const Timeline = () => {
   const isMobile = useIsMobile(1280);
   const { reach, layout, sort } = useFilterContext();
 
-  const { data, isFetching } = useStreamPost(
+  const { data, isLoading } = useStreamPost(
     pubky ?? '',
     reach,
     'all',
@@ -62,7 +62,7 @@ export const Timeline = () => {
     }
   };
 
-  const loader = useInfiniteScroll(fetchPosts, isFetching);
+  const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   useEffect(() => {
     setStart(undefined);
@@ -82,12 +82,12 @@ export const Timeline = () => {
           />
         </div>
       ))}
-      {fetching && (
+      {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      {!fetching && timeline.length === 0 && (
+      {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Tag size="48" color="#C8FF00" />}
           title={`No results ${searchTags.length > 0 ? `with the tag: ${searchTags}` : ''}`}

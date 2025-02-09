@@ -25,7 +25,7 @@ export const Timeline = () => {
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
   const { sort, layout } = useFilterContext();
-  const { data, isFetching } = useStreamPost(
+  const { data, isLoading } = useStreamPost(
     pubky ?? '',
     'bookmarks',
     undefined,
@@ -65,7 +65,7 @@ export const Timeline = () => {
     }
   };
 
-  const loader = useInfiniteScroll(fetchPosts, isFetching);
+  const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   useEffect(() => {
     setStart(undefined);
@@ -155,12 +155,12 @@ export const Timeline = () => {
           </div>
         </div>
       ))}
-      {fetching && (
+      {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      {!fetching && timeline.length === 0 && (
+      {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Bookmarks size="48" color="#C8FF00" />}
           title="Save posts for later"

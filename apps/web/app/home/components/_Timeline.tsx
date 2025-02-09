@@ -67,7 +67,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     setFetchAttempts(0);
   };
 
-  const { data, isFetching } = useStreamPost(
+  const { data, isLoading } = useStreamPost(
     pubky ?? '',
     reach,
     'all',
@@ -117,7 +117,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     }
   };
 
-  const loader = useInfiniteScroll(fetchPosts, isFetching);
+  const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   useEffect(() => {
     clearTimeline();
@@ -168,7 +168,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
   return (
     <div id="timeline" className="flex flex-col gap-3">
-      {!isFetching && <NewPostsNotifier />}
+      {!isLoading && <NewPostsNotifier />}
 
       {newPosts.map((post) => (
         <div key={post.details.id} className="flex flex-col">
@@ -192,12 +192,12 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
             </div>
           ),
       )}
-      {fetching && (
+      {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      {!fetching && timeline.length === 0 && (
+      {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Smiley size="48" color="#C8FF00" />}
           title="Welcome to your feed!"
