@@ -58,9 +58,9 @@ export default function NotificationsProfile() {
           </div>
         </ContentNotFound>
       ) : (
-        <div>
+        <div className="px-6 py-[18px] bg-white/10 rounded-lg">
           {tempUnReadNotication > 0 && (
-            <div className="px-2">
+            <div>
               {notifications
                 .slice(0, tempUnReadNotication)
                 .map((notification, index) => (
@@ -76,11 +76,7 @@ export default function NotificationsProfile() {
             const isLastElement = index === displayedNotifications.length - 1;
 
             return (
-              <div
-                className="px-2"
-                key={index}
-                ref={isLastElement ? loader : null}
-              >
+              <div key={index} ref={isLastElement ? loader : null}>
                 <Notifications.Notification notification={notification} />
               </div>
             );
