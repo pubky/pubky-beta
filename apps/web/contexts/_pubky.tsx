@@ -74,12 +74,14 @@ type PubkyClientContextType = {
     kind: PubkyAppPostKind,
     files?: File[],
     quote?: string,
+    tags?: string[],
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
   editPost: (postId: string, newContent: string) => Promise<string | false>;
   createArticle: (
     title: string,
     articleContent: string,
     files?: File[],
+    tags?: string[],
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
   createRepost: (
     originalPostId: string,
@@ -94,6 +96,7 @@ type PubkyClientContextType = {
     kind: PubkyAppPostKind,
     files?: File[],
     quote?: string,
+    tags?: string[],
   ) => Promise<string | false>;
   follow: (user_id: string) => Promise<boolean>;
   unfollow: (user_id: string) => Promise<boolean>;
@@ -607,6 +610,7 @@ export function PubkyClientWrapper({
     parentUri?: string,
     embedUri?: string,
     files?: File[],
+    tags?: string[],
   ): Promise<{ uri: string; id: string; details: PubkyAppPost } | false> => {
     try {
       const attachments =
@@ -628,6 +632,12 @@ export function PubkyClientWrapper({
       const post = postResult.post.toJson() as PubkyAppPost;
       await homeserver.put(postResult.meta.url, JSON.stringify(post));
 
+      if (tags) {
+        for (const tag of tags) {
+          await createTag(pubky!, postResult.meta.id, tag);
+        }
+      }
+
       return {
         uri: postResult.meta.url,
         id: postResult.meta.id,
@@ -646,6 +656,7 @@ export function PubkyClientWrapper({
       kind: PubkyAppPostKind,
       files?: File[],
       quote?: string,
+      tags?: string[],
     ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
       const result = await createBasePost(
         postContent,
@@ -653,6 +664,7 @@ export function PubkyClientWrapper({
         undefined, // parentUri
         quote,
         files,
+        tags,
       );
 
       if (!result) return false;
@@ -674,8 +686,18 @@ export function PubkyClientWrapper({
       const newPostView: PostView = {
         uri: result.uri,
         details: newPostDetails,
-        counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
-        tags: [],
+        counts: {
+          replies: 0,
+          reposts: 0,
+          tags: tags?.length || 0,
+        } as PostCounts,
+        tags: tags
+          ? tags.map((tag) => ({
+              label: tag,
+              taggers: [pubky],
+              taggers_count: 1,
+            }))
+          : [],
         cached: 'homeserver',
       } as PostView;
 
@@ -691,6 +713,7 @@ export function PubkyClientWrapper({
       title: string,
       articleContent: string,
       files?: File[],
+      tags?: string[],
     ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
       const content = JSON.stringify({ title, body: articleContent });
       const result = await createBasePost(
@@ -699,9 +722,14 @@ export function PubkyClientWrapper({
         undefined,
         undefined,
         files,
+        tags,
       );
 
       if (!result) return false;
+
+      const skeletonAttachments = files?.map((file) =>
+        file.type.startsWith('image/') ? 'skeleton' : '',
+      );
 
       const newPostDetails: PostDetails = {
         author: pubky!,
@@ -710,13 +738,24 @@ export function PubkyClientWrapper({
         uri: result.uri,
         content: result.details.content,
         kind: result.details.kind,
+        attachments: skeletonAttachments,
       };
 
       const newPostView: PostView = {
         uri: result.uri,
         details: newPostDetails,
-        counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
-        tags: [],
+        counts: {
+          replies: 0,
+          reposts: 0,
+          tags: tags?.length || 0,
+        } as PostCounts,
+        tags: tags
+          ? tags.map((tag) => ({
+              label: tag,
+              taggers: [pubky],
+              taggers_count: 1,
+            }))
+          : [],
         cached: 'homeserver',
       } as PostView;
 
@@ -734,6 +773,7 @@ export function PubkyClientWrapper({
       repostContent: string,
       kind: PubkyAppPostKind,
       files?: File[],
+      tags?: string[],
     ): Promise<string | false> => {
       const repostedUri = postUriBuilder(originalauthorId, originalPostId);
       const result = await createBasePost(
@@ -742,6 +782,7 @@ export function PubkyClientWrapper({
         undefined,
         repostedUri,
         files,
+        tags,
       );
 
       if (!result) return false;
@@ -778,6 +819,7 @@ export function PubkyClientWrapper({
       kind: PubkyAppPostKind,
       files?: File[],
       quote?: string,
+      tags?: string[],
     ): Promise<string | false> => {
       const result = await createBasePost(
         replyContent,
@@ -785,6 +827,7 @@ export function PubkyClientWrapper({
         originalPostUri,
         quote,
         files,
+        tags,
       );
 
       return result ? result.uri : false;
