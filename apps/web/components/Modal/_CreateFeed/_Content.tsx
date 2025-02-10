@@ -57,6 +57,11 @@ export default function ContentCreateFeed({
   };
 
   const handleAddTag = () => {
+    // check if the tag is already in the array
+    if (tagsFeed?.includes(tag.trim())) {
+      return;
+    }
+
     if (tagsFeed.length >= 4) {
       setTagsError(true);
     } else {
@@ -134,17 +139,18 @@ export default function ContentCreateFeed({
                   ref={wrapperRefEmojis}
                 >
                   <EmojiPicker
-                  theme={Theme.DARK}
-                  emojiStyle={EmojiStyle.TWITTER}
-                  onEmojiClick={(emojiObject) => {
-                    const emojiLength = new Blob([emojiObject.emoji]).size / 2;
+                    theme={Theme.DARK}
+                    emojiStyle={EmojiStyle.TWITTER}
+                    onEmojiClick={(emojiObject) => {
+                      const emojiLength =
+                        new Blob([emojiObject.emoji]).size / 2;
 
-                    if (tag.length + emojiLength <= 20) {
-                      setTag(tag + emojiObject.emoji);
-                    }
-                    setShowEmojis(false);
-                  }}
-                />
+                      if (tag.length + emojiLength <= 20) {
+                        setTag(tag + emojiObject.emoji);
+                      }
+                      setShowEmojis(false);
+                    }}
+                  />
                 </div>
               </>
             )}

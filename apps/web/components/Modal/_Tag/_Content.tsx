@@ -89,7 +89,8 @@ export default function ContentTag({
 
   useEffect(() => {
     const uniqueTags = tags.filter(
-      (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
+      (tag, index, self) =>
+        index === self.findIndex((t) => t.label === tag.label),
     );
     if (JSON.stringify(uniqueTags) !== JSON.stringify(allTags)) {
       setAllTags(uniqueTags);
@@ -286,6 +287,11 @@ export default function ContentTag({
 
   const handleAddTagAndUpdatePost = async (tag: string) => {
     try {
+      // check if the tag is already in the array
+      if (post.tags?.some((t) => t.label === tag)) {
+        return;
+      }
+
       setLoading(true);
       await handleAddTag(tag);
       const updatedTags = [
