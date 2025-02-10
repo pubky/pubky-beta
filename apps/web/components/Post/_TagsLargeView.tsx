@@ -8,6 +8,7 @@ import {
   Input,
   Post as PostUI,
   PostUtil,
+  Tooltip as TooltipUI,
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
@@ -18,6 +19,8 @@ import { PostTag, PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext, useJoin } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import Tooltip from '../Tooltip';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -26,6 +29,7 @@ interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const { pubky, timeline, setTimeline, createTag, deleteTag } =
     usePubkyClientContext();
+  const isMobile = useIsMobile(1024);
   const { openJoin } = useJoin();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
@@ -33,6 +37,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const [tagInput, setTagInput] = useState('');
   const { addAlert } = useAlertContext();
   const [addTagInput, setAddTagInput] = useState<boolean>(false);
+  const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
     {},
@@ -205,23 +210,53 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
 
   return (
     <div
-      className="mt-2 cursor-default"
+      className="w-full lg:max-w-[250px] xl:max-w-[350px] mt-1.5 cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
       <div className={`flex-col inline-flex gap-2`}>
-        <div className="w-96 mb-4 flex gap-2 items-center mt-[5px]">
-          <Icon.Tag size="14" color="gray" />
-          <Typography.Label className="text-opacity-30">
-            {tags.length > 0 ? 'Tags' : 'Tag Post'}
-          </Typography.Label>
-          {/**tags.length > 0 && (
-            <Button.Medium
-              onClick={() => setShowModalTag(true)}
-              className="w-auto h-8 px-3 py-2"
+        <div className="relative flex items-center gap-0 mb-4">
+          <PostUI.Time className="justify-start">
+            {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
+          </PostUI.Time>
+          {post?.details?.author === pubky && (
+            <TooltipUI.Root
+              delay={50}
+              tagId="1"
+              setShowTooltip={setShowTooltipPostChecked}
             >
-              See all
-            </Button.Medium>
-          )*/}
+              <div
+                id="post-status"
+                className="inline-flex items-center ml-2 top-[7px] relative"
+              >
+                <Icon.Check size="20" color="#00BA7C" />
+                <div
+                  id={
+                    post?.cached === 'nexus' || post?.cached === undefined
+                      ? 'post-status-indexed'
+                      : 'post-status-unindexed'
+                  }
+                  className="relative right-[10px]"
+                >
+                  <Icon.Check
+                    size="20"
+                    color={
+                      post?.cached === 'nexus' || post?.cached === undefined
+                        ? '#00BA7C'
+                        : '#A3A3A3'
+                    }
+                    opacity={
+                      post?.cached === 'nexus' || post?.cached === undefined
+                        ? 1
+                        : 0.2
+                    }
+                  />
+                </div>
+              </div>
+              {showTooltipPostChecked && !isMobile && (
+                <Tooltip.CheckedPost cached={post?.cached} />
+              )}
+            </TooltipUI.Root>
+          )}
         </div>
         {tags.map((tagObj, index) => {
           const isTagFound = tagObj?.taggers.some(

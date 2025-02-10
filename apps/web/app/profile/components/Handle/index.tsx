@@ -25,16 +25,16 @@ export default function Handle({
   creatorPubky,
   ...rest
 }: HandleProps) {
-  const { seed } = usePubkyClientContext();
+  const { seed, profile } = usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [showModalLogout, setShowModalLogout] = useState(false);
   const [showSheetLogout, setShowSheetLogout] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
-  const username = profileUser?.details?.name || Utils.minifyPubky(pubkey);
-  const bio = profileUser?.details?.bio || 'No bio.';
-  const status = profileUser?.details?.status || 'noStatus';
+  const username = profile?.name || Utils.minifyPubky(pubkey);
+  const bio = profile?.bio || 'No bio.';
+  const status = profile?.status || 'noStatus';
 
   useEffect(() => {
     async function fetchData() {

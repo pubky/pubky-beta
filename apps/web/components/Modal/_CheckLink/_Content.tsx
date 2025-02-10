@@ -18,7 +18,11 @@ export default function ContentCheckLink({
 
   const handleCheckboxChange = (newCheckedState: boolean) => {
     setIsChecked(newCheckedState);
-    Utils.storage.set('checkLink', !newCheckedState);
+  };
+
+  const handleContinueClick = () => {
+    Utils.storage.set('checkLink', !isChecked);
+    setShow(false);
   };
 
   return (
@@ -38,7 +42,7 @@ export default function ContentCheckLink({
         </Button.Large>
         <Link className="w-full" href={clickedLink} target="_blank">
           <Modal.SubmitAction
-            onClick={() => setShow(false)}
+            onClick={handleContinueClick}
             icon={<Icon.ArrowRight size="16" />}
           >
             Continue

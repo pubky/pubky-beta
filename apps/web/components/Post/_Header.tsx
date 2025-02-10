@@ -83,22 +83,27 @@ export default function Header({
           )}
         </TooltipUI.Root>
       </div>
-      <div className="relative flex items-center gap-0">
-        <PostUI.Time className={largeView ? 'justify-start ml-4 mt-3.5' : ''}>
-          {Utils.timeAgo(indexed_at, isMobile)}
-        </PostUI.Time>
+      <div
+        className={`relative flex items-center gap-0 ${largeView ? 'hidden' : ''}`}
+      >
+        <PostUI.Time>{Utils.timeAgo(indexed_at, isMobile)}</PostUI.Time>
         {post?.details?.author === pubky && (
           <TooltipUI.Root
             delay={50}
             tagId="1"
             setShowTooltip={setShowTooltipPostChecked}
           >
-            <div id={repostView ? 'repost-status' : 'post-status'} className="inline-flex items-center ml-2 top-[7px] relative">
+            <div
+              id={repostView ? 'repost-status' : 'post-status'}
+              className="inline-flex items-center ml-2 top-[7px] relative"
+            >
               <Icon.Check size="20" color="#00BA7C" />
-              <div id={ post?.cached === 'nexus' || post?.cached === undefined
-                          ? 'post-status-indexed'
-                          : 'post-status-unindexed'
-                    }
+              <div
+                id={
+                  post?.cached === 'nexus' || post?.cached === undefined
+                    ? 'post-status-indexed'
+                    : 'post-status-unindexed'
+                }
                 className="relative right-[10px]"
               >
                 <Icon.Check

@@ -248,7 +248,10 @@ export default function FooterArea({
                 </div>
               </>
             )}
-            <div id="add-tag-container" className="w-auto hidden lg:flex md:flex-col xl:flex-row xl:gap-2 xl:items-center self-center">
+            <div
+              id="add-tag-container"
+              className="w-auto hidden lg:flex flex-col self-center"
+            >
               {addTagInput ? (
                 <>
                   {showEmojisFastTag && (
@@ -274,7 +277,7 @@ export default function FooterArea({
 
                   <Input.Text
                     placeholder="tag"
-                    className="min-w-[200px] h-[32px] p-3 pr-8 text-[14px] rounded-lg"
+                    className="w-max h-[32px] p-3 pr-8 text-[14px] rounded-lg"
                     value={tagInput}
                     maxLength={20}
                     onChange={handleChange}

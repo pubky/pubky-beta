@@ -21,6 +21,8 @@ export const Timeline = () => {
   const { addAlert } = useAlertContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
+  const [fetching, setFetching] = useState<boolean>(false);
+  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
   const { sort, layout } = useFilterContext();
   const { data, isLoading } = useStreamPost(
@@ -37,9 +39,13 @@ export const Timeline = () => {
   const [isBookmarked, setIsBookmarked] = useState('');
 
   const fetchPosts = async () => {
+    setFetching(true);
     try {
-      if (!data) return;
-      if (!Array.isArray(data)) return;
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        setFetchAttempts((prev) => prev + 1);
+        if (fetchAttempts >= 3) setFetching(false);
+        return;
+      }
 
       const lastPost = data[data.length - 1] as PostView;
       if (lastPost.bookmark?.indexed_at) {
@@ -52,24 +58,19 @@ export const Timeline = () => {
           return [...prev, ...newPosts];
         });
       }
+      setFetching(false);
     } catch (error) {
       console.error(error);
+      setFetching(false);
     }
   };
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   useEffect(() => {
-    setTimeline([]);
-
-    return () => {
-      setTimeline([]);
-    };
-  }, [setTimeline]);
-
-  useEffect(() => {
     setStart(undefined);
     setTimeline([]);
+    setFetchAttempts(0);
     fetchPosts();
   }, [sort]);
 
@@ -154,12 +155,12 @@ export const Timeline = () => {
           </div>
         </div>
       ))}
-      {isLoading && (
+      {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      {timeline.length === 0 && !isLoading && (
+      {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Bookmarks size="48" color="#C8FF00" />}
           title="Save posts for later"

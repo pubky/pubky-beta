@@ -64,7 +64,15 @@ export default function Root({
     <div
       {...rest}
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end"
-      onClick={() => setShow(false)}
+      onClick={(e) => {
+        e.stopPropagation();
+        setShow(false);
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={(e) => {
+        e.stopPropagation();
+        handleTouchMove(e);
+      }}
     >
       <div
         className={twMerge(
@@ -72,9 +80,6 @@ export default function Root({
           animateIn ? 'translate-y-none' : 'translate-y-full',
           rest.className,
         )}
-        onClick={(e) => e.stopPropagation()}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
       >
         <div
           onClick={() => setShow(false)}

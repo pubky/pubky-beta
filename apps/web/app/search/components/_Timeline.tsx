@@ -15,6 +15,8 @@ export const Timeline = () => {
   const { pubky, searchTags, mutedUsers } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
+  const [fetching, setFetching] = useState<boolean>(false);
+  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
   const { reach, layout, sort } = useFilterContext();
 
@@ -31,9 +33,13 @@ export const Timeline = () => {
   );
 
   const fetchPosts = async () => {
+    setFetching(true);
     try {
-      if (!data) return;
-      if (!Array.isArray(data)) return;
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        setFetchAttempts((prev) => prev + 1);
+        if (fetchAttempts >= 3) setFetching(false);
+        return;
+      }
 
       const lastPost = data[data.length - 1] as PostView;
       if (lastPost.details?.indexed_at) {
@@ -49,8 +55,10 @@ export const Timeline = () => {
           return [...prev, ...newPosts];
         });
       }
+      setFetching(false);
     } catch (error) {
       console.error(error);
+      setFetching(false);
     }
   };
 
@@ -59,6 +67,7 @@ export const Timeline = () => {
   useEffect(() => {
     setStart(undefined);
     setTimeline([]);
+    setFetchAttempts(0);
     fetchPosts();
   }, [searchTags, reach, sort, mutedUsers]);
 
@@ -73,12 +82,12 @@ export const Timeline = () => {
           />
         </div>
       ))}
-      {isLoading && (
+      {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      {timeline.length === 0 && !isLoading && (
+      {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Tag size="48" color="#C8FF00" />}
           title={`No results ${searchTags.length > 0 ? `with the tag: ${searchTags}` : ''}`}
