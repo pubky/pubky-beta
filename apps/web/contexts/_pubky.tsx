@@ -128,7 +128,7 @@ type PubkyClientContextType = {
   setRepliesArray: (repliesArray: PostView[]) => void;
   timelineProfile: PostView[];
   setTimelineProfile: React.Dispatch<React.SetStateAction<PostView[]>>;
-  deletePost: (post_id: string) => Promise<boolean>;
+  deletePost: (post: PostView) => Promise<boolean>;
   deleteAccount: (
     setProgress: React.Dispatch<React.SetStateAction<number>>,
   ) => Promise<boolean>;
@@ -1033,22 +1033,35 @@ export function PubkyClientWrapper({
     },
   );
 
-  const deletePost = withAuth(async (postId: string): Promise<boolean> => {
+  const deletePost = withAuth(async (post: PostView): Promise<boolean> => {
     // delete the post from the timeline
     setTimeline((prevTimeline) =>
-      prevTimeline.filter((p) => p.details.id !== postId),
+      prevTimeline.filter((p) => p.details.id !== post.details.id),
     );
 
     // delete the post from the new posts
     setNewPosts((prevNewPosts) =>
-      prevNewPosts.filter((p) => p.details.id !== postId),
+      prevNewPosts.filter((p) => p.details.id !== post.details.id),
     );
 
     // delete the post from the deleted posts
-    setDeletedPosts((prevDeletedPosts) => [...prevDeletedPosts, postId]);
+    setDeletedPosts((prevDeletedPosts) => [
+      ...prevDeletedPosts,
+      post.details.id,
+    ]);
+
+    // delete the files
+    if (post?.details?.attachments) {
+      const fileDeletions = Object.values(post?.details?.attachments).map(
+        async (file) => {
+          await deleteFile(file);
+        },
+      );
+      await Promise.all(fileDeletions);
+    }
 
     // Post URL
-    const postUrl = postUriBuilder(pubky!, postId);
+    const postUrl = postUriBuilder(pubky!, post.details.id);
 
     // Send the post to the homeserver
     await homeserver.del(postUrl);

@@ -86,16 +86,7 @@ export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
       // Close the menu optimistically before deleting the post
       setShowMenu(false);
 
-      if (post?.details?.attachments) {
-        const fileDeletions = Object.values(post?.details?.attachments).map(
-          async (file) => {
-            await deleteFile(file);
-          },
-        );
-        await Promise.all(fileDeletions);
-      }
-
-      const result = await deletePost(post?.details?.id);
+      const result = await deletePost(post);
 
       if (result) {
         addAlert('Post deleted');
