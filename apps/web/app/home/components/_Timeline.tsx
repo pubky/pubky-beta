@@ -57,7 +57,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
-  const isMobile = useIsMobile(1280);
+  const isMobile = useIsMobile(1024);
   const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
 
   const clearTimeline = () => {

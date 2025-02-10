@@ -205,11 +205,11 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
 
   return (
     <div
-      className="mt-2 cursor-default"
+      className="w-full lg:max-w-[250px] xl:max-w-[350px] mt-2 cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
       <div className={`flex-col inline-flex gap-2`}>
-        <div className="w-96 mb-4 flex gap-2 items-center mt-[5px]">
+        <div className="mb-4 flex gap-2 items-center mt-[5px]">
           <Icon.Tag size="14" color="gray" />
           <Typography.Label className="text-opacity-30">
             {tags.length > 0 ? 'Tags' : 'Tag Post'}
