@@ -131,6 +131,17 @@ export default function ContentProfileTag({
     }
   }, [moreTags, isLoading]);
 
+  useEffect(() => {
+    if (selectedTag) {
+      const updatedTag = profileTags.find(
+        (tag) => tag.label === selectedTag.label,
+      );
+      if (updatedTag && setSelectedTag) {
+        setSelectedTag(updatedTag);
+      }
+    }
+  }, [profileTags]);
+
   const loader = useInfiniteScroll(() => {
     if (hasMore && !isLoading) {
       setSkip((prev) => prev + limit);

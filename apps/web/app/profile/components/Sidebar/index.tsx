@@ -84,6 +84,7 @@ export default function Sidebar({
                   ...t,
                   taggers: [...t.taggers, pubky || ''],
                   taggers_count: t.taggers_count + 1,
+                  relationship: true,
                 }
               : t,
           );
@@ -94,6 +95,7 @@ export default function Sidebar({
           label: tag,
           taggers: [pubky || ''],
           taggers_count: 1,
+          relationship: true,
         };
         // update tag optimistic in the UI
         setProfileTags([...profileTags, newTag]);
@@ -119,6 +121,7 @@ export default function Sidebar({
                 ...t,
                 taggers: t.taggers.filter((tagger) => tagger !== pubky),
                 taggers_count: Math.max(t.taggers_count - 1, 0),
+                relationship: false,
               }
             : t,
         )

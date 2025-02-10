@@ -121,7 +121,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
           // update profileTags with new taggers
           const newProfileTags = profileTags.map((t) => {
             if (t.label === tag) {
-              return { ...t, taggers: [...t.taggers, pubky || ''] };
+              return {
+                ...t,
+                taggers: [...t.taggers, pubky || ''],
+                relationship: true,
+              };
             }
             return t;
           });
@@ -137,6 +141,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             label: tag,
             taggers: [pubky || ''],
             taggers_count: 1,
+            relationship: true,
           },
         ]);
       }
@@ -168,7 +173,9 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             (t) => t !== pubky || '',
           );
           setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
+            profileTags.map((t) =>
+              t.label === tag ? { ...tagExists, relationship: false } : t,
+            ),
           );
         } else {
           // remove tag from taggers
@@ -179,7 +186,9 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             (t) => t !== pubky || '',
           );
           setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
+            profileTags.map((t) =>
+              t.label === tag ? { ...tagExists, relationship: false } : t,
+            ),
           );
         }
       }

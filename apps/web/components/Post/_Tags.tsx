@@ -69,6 +69,7 @@ export default function Tags({
           ...tagObj,
           taggers_count: tagObj.taggers_count - 1,
           taggers: tagObj.taggers.filter((fromItem) => fromItem !== pubky),
+          relationship: false,
         };
       }
       return tagObj;
@@ -89,6 +90,7 @@ export default function Tags({
               ...tagObj,
               taggers_count: tagObj.taggers_count + 1,
               taggers: [...tagObj.taggers, pubky ?? ''],
+              relationship: true,
             };
           }
           return tagObj;
@@ -101,6 +103,7 @@ export default function Tags({
           label: tag,
           taggers_count: 1,
           taggers: [pubky ?? ''],
+          relationship: true,
         },
       ];
     }

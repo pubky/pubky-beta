@@ -295,7 +295,12 @@ export default function ContentTag({
       await handleAddTag(tag);
       const updatedTags = [
         ...post.tags,
-        { label: tag, taggers: [pubky ?? ''], taggers_count: 1 },
+        {
+          label: tag,
+          taggers: [pubky ?? ''],
+          taggers_count: 1,
+          relationship: true,
+        },
       ];
       const updatedPost = { ...post, tags: updatedTags };
       updatePostInTimeline(updatedPost);
@@ -308,6 +313,15 @@ export default function ContentTag({
       console.error('Error adding tag and updating post', error);
     }
   };
+
+  useEffect(() => {
+    if (selectedTag) {
+      const updatedTag = tags.find((tag) => tag.label === selectedTag.label);
+      if (updatedTag && setSelectedTag) {
+        setSelectedTag(updatedTag);
+      }
+    }
+  }, [tags]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
