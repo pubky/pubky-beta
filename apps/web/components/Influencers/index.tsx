@@ -24,7 +24,7 @@ export default function Influencers({ style }: InfluencersProps) {
 
   return (
     <div className={twMerge('mb-8', style)}>
-      <SideCard.Header title="Influencers" />
+      <SideCard.Header title="Popular" />
       <SideCard.Content className="flex flex-col gap-2">
         {isLoading ? (
           <Skeletons.Simple />
@@ -50,7 +50,7 @@ export default function Influencers({ style }: InfluencersProps) {
               );
             })}
             {pubky && (
-              <Link href="/hot#influencers" className="mt-2">
+              <Link href="/hot#popular" className="mt-2">
                 <SideCard.Action
                   icon={<Icon.UsersLeft size="16" />}
                   textCSS="text-[13px]"
@@ -61,7 +61,7 @@ export default function Influencers({ style }: InfluencersProps) {
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">
-            No influencers to show
+            No popular users to show
           </Typography.Body>
         )}
       </SideCard.Content>

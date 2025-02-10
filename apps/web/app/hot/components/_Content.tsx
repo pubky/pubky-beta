@@ -39,7 +39,7 @@ export default function Index() {
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     switch (hash) {
-      case 'influencers':
+      case 'popular':
         setActiveTab(1);
         break;
       case 'posts':

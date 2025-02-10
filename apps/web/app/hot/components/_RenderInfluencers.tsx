@@ -42,7 +42,7 @@ const RenderInfluencers = ({
   return (
     <div className="flex flex-col gap-3">
       <Typography.H2 className="hidden lg:block text-opacity-50 font-light">
-        Influencers
+        Popular Users
       </Typography.H2>
       {influencers &&
         influencers.map((influencer) => {

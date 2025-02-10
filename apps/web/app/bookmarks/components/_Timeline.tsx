@@ -175,12 +175,12 @@ export const Timeline = () => {
                 Discover Posts
               </Button.Medium>
             </Link>
-            <Link href="/hot#influencers">
+            <Link href="/hot#popular">
               <Button.Medium
                 icon={<Icon.UserPlus size="16" />}
                 className="whitespace-nowrap"
               >
-                Follow Influencers
+                Follow Popular
               </Button.Medium>
             </Link>
             <Link href="hot">
