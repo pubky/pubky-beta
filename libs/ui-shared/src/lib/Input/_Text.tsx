@@ -11,6 +11,7 @@ interface TextProps extends React.HTMLAttributes<HTMLInputElement> {
   disabled?: boolean;
   placeholder?: string;
   readonly?: boolean;
+  ref?: any;
   type?:
     | 'button'
     | 'checkbox'
@@ -48,6 +49,7 @@ export const Text = ({
   value,
   placeholder = '',
   readonly,
+  ref,
   ...rest
 }: TextProps) => {
   const baseCSS = `w-full h-[70px] p-6 rounded-2xl bg-transparent border border-white border-opacity-30 border-dashed flex-col justify-start items-start inline-flex outline-none text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-30 text-[17px] font-normal font-InterTight leading-snug tracking-wide`;
@@ -60,6 +62,7 @@ export const Text = ({
         <input
           {...rest}
           type={type}
+          ref={ref}
           value={value}
           disabled={disabled}
           maxLength={maxLength}

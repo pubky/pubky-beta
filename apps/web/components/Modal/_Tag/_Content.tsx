@@ -48,6 +48,7 @@ export default function ContentTag({
   const modalTagRef = useRef<HTMLDivElement>(null);
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
@@ -89,7 +90,8 @@ export default function ContentTag({
 
   useEffect(() => {
     const uniqueTags = tags.filter(
-      (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
+      (tag, index, self) =>
+        index === self.findIndex((t) => t.label === tag.label),
     );
     if (JSON.stringify(uniqueTags) !== JSON.stringify(allTags)) {
       setAllTags(uniqueTags);
@@ -296,7 +298,9 @@ export default function ContentTag({
       updatePostInTimeline(updatedPost);
       setTag('');
       setLoading(false);
-      //setShowModalTag(false);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
     } catch (error) {
       console.error('Error adding tag and updating post', error);
     }
@@ -349,6 +353,7 @@ export default function ContentTag({
         )}
         <Input.Label value="New tag" />
         <Input.Text
+          ref={inputRef}
           placeholder="tag"
           value={tag}
           className="w-full md:w-96 mt-2 flex items-center"
@@ -356,7 +361,7 @@ export default function ContentTag({
           autoFocus
           disabled={loading}
           onChange={handleChange}
-          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
               handleAddTagAndUpdatePost(tag);
             }

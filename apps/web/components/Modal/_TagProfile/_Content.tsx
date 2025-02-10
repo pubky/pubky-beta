@@ -43,6 +43,8 @@ export default function ContentProfileTag({
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [tag, setTag] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [showEmojis, setShowEmojis] = useState(false);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
@@ -315,6 +317,7 @@ export default function ContentProfileTag({
         <Input.Text
           placeholder="tag"
           value={tag}
+          ref={inputRef}
           className="w-full lg:w-96 mt-2 flex items-center"
           maxLength={20}
           autoFocus
@@ -323,6 +326,9 @@ export default function ContentProfileTag({
             if (e.key === 'Enter') {
               handleAddProfileTag(tag);
               setTag('');
+              setTimeout(() => {
+                inputRef.current?.focus();
+              }, 0);
             }
           }}
           action={
@@ -336,6 +342,9 @@ export default function ContentProfileTag({
                 onClick={() => {
                   handleAddProfileTag(tag);
                   setTag('');
+                  setTimeout(() => {
+                    inputRef.current?.focus();
+                  }, 0);
                 }}
               />
               <Button.Action
