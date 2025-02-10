@@ -8,7 +8,6 @@ import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 import { Section } from '@/components/CreateContent/Section';
 import LinkPreviewer from '@/components/LinkPreview';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { parse_uri } from 'pubky-app-specs';
 
 interface CreateArticleProps {
   setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,7 +18,7 @@ export default function ContentCreateArticle({
   setShowModalArticle,
   setShowModalPost,
 }: CreateArticleProps) {
-  const { pubky, createArticle, createTag, profile } = usePubkyClientContext();
+  const { pubky, createArticle, profile } = usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
   const isMobile = useIsMobile();
   const [isError, setIsError] = useState(false);
@@ -61,13 +60,10 @@ export default function ContentCreateArticle({
         contentTitle,
         content,
         selectedFile,
+        updatedTags,
       );
 
       if (newArticle) {
-        const postId = parse_uri(newArticle.uri).resource_id!;
-        for (const tag of updatedTags) {
-          await createTag(pubky ?? '', postId, tag);
-        }
         addAlert('Article created!');
       } else {
         addAlert('Something wrong. Try again', 'warning');

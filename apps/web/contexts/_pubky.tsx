@@ -669,9 +669,12 @@ export function PubkyClientWrapper({
 
       if (!result) return false;
 
-      const skeletonAttachments = files?.map((file) =>
-        file.type.startsWith('image/') ? 'skeleton' : '',
-      );
+      const skeletonAttachments = files?.map((file) => {
+        if (file.type.startsWith('image/')) {
+          return '/images/skeleton-image.svg';
+        }
+        return '';
+      });
 
       const newPostDetails: PostDetails = {
         author: pubky!,
@@ -727,9 +730,12 @@ export function PubkyClientWrapper({
 
       if (!result) return false;
 
-      const skeletonAttachments = files?.map((file) =>
-        file.type.startsWith('image/') ? 'skeleton' : '',
-      );
+      const skeletonAttachments = files?.map((file) => {
+        if (file.type.startsWith('image/')) {
+          return '/images/skeleton-image.svg';
+        }
+        return '';
+      });
 
       const newPostDetails: PostDetails = {
         author: pubky!,

@@ -14,7 +14,7 @@ interface TooltipMenuProps {
 }
 
 export default function Menu({ post, setShowMenu }: TooltipMenuProps) {
-  const { deleteFile, deletePost } = usePubkyClientContext();
+  const { deletePost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [showModalDeletePost, setShowModalDeletePost] = useState(false);
   const [showModalReportPost, setShowModalReportPost] = useState(false);
