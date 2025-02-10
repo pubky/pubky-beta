@@ -23,7 +23,7 @@ export default function Menu({
   title,
   className,
 }: MenuProps) {
-  const { deleteFile, deletePost } = usePubkyClientContext();
+  const { deletePost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [showSheetDeletePost, setShowSheetDeletePost] = useState(false);
   const [showSheetReportPost, setShowSheetReportPost] = useState(false);
@@ -32,16 +32,7 @@ export default function Menu({
 
   const handleDeletePost = async () => {
     try {
-      if (post?.details?.attachments) {
-        const fileDeletions = Object.values(post?.details?.attachments).map(
-          async (file) => {
-            await deleteFile(file);
-          },
-        );
-        await Promise.all(fileDeletions);
-      }
-
-      const result = await deletePost(post?.details?.id);
+      const result = await deletePost(post);
 
       if (result) {
         addAlert('Post deleted');

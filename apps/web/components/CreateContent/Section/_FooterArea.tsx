@@ -149,6 +149,11 @@ export default function FooterArea({
   const handleAddTag = () => {
     if (!tagInput.trim() || !setArrayTags) return;
 
+    // check if the tag is already in the array
+    if (arrayTags?.includes(tagInput.trim())) {
+      return;
+    }
+
     setArrayTags((prevTags) => {
       if (prevTags.length >= 4) {
         setErrorTag(true);

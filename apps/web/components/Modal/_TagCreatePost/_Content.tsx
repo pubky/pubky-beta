@@ -31,6 +31,11 @@ export default function ContentTagCreatePost({
   };
 
   const handleAddTag = () => {
+    // check if the tag is already in the array
+    if (arrayTags.includes(tag.trim())) {
+      return;
+    }
+
     if (arrayTags.length >= 4) {
       setTagsError(true);
     } else {

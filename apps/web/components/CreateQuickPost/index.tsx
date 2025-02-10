@@ -5,7 +5,7 @@ import CreateContent from '../CreateContent';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -16,7 +16,7 @@ export default function CreateQuickPost({
   largeView = false,
   loadingFeed,
 }: CreateQuickPostProps) {
-  const { pubky, createPost, createTag } = usePubkyClientContext();
+  const { createPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -46,13 +46,10 @@ export default function CreateQuickPost({
         PubkyAppPostKind.Short,
         selectedFiles,
         quote,
+        updatedTags,
       );
 
       if (newPost) {
-        const postId = parse_uri(newPost.uri).resource_id!;
-        for (const tag of updatedTags) {
-          await createTag(pubky ?? '', postId, tag);
-        }
         addAlert('Post created!');
       } else {
         addAlert('Something wrong. Try again', 'warning');

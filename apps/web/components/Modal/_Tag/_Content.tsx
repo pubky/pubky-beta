@@ -291,6 +291,11 @@ export default function ContentTag({
 
   const handleAddTagAndUpdatePost = async (tag: string) => {
     try {
+      // check if the tag is already in the array
+      if (post.tags?.some((t) => t.label === tag)) {
+        return;
+      }
+
       setLoading(true);
       await handleAddTag(tag);
       const updatedTags = [

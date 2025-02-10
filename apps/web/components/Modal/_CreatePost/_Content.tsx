@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import CreateContent from '@/components/CreateContent';
-import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreatePostProps {
   setShowModalPost: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,7 +15,7 @@ export default function ContentCreatePost({
   setShowModalPost,
   className,
 }: CreatePostProps) {
-  const { pubky, createPost, createTag } = usePubkyClientContext();
+  const { createPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
@@ -44,14 +44,10 @@ export default function ContentCreatePost({
         PubkyAppPostKind.Short,
         selectedFiles,
         quote,
+        updatedTags,
       );
 
       if (newPost) {
-        const postId = parse_uri(newPost.uri).resource_id!;
-        for (const tag of updatedTags) {
-          await createTag(pubky ?? '', postId, tag);
-        }
-
         addAlert('Post created!');
       } else {
         addAlert('Something wrong. Try again', 'warning');
