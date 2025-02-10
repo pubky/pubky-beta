@@ -657,6 +657,10 @@ export function PubkyClientWrapper({
 
       if (!result) return false;
 
+      const skeletonAttachments = files?.map((file) =>
+        file.type.startsWith('image/') ? 'skeleton' : '',
+      );
+
       const newPostDetails: PostDetails = {
         author: pubky!,
         id: result.id,
@@ -664,6 +668,7 @@ export function PubkyClientWrapper({
         uri: result.uri,
         content: result.details.content,
         kind: result.details.kind,
+        attachments: skeletonAttachments,
       };
 
       const newPostView: PostView = {
