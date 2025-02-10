@@ -64,6 +64,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           ...tagObj,
           taggers_count: tagObj.taggers_count - 1,
           taggers: tagObj.taggers.filter((fromItem) => fromItem !== pubky),
+          relationship: false,
         };
       }
       return tagObj;
@@ -82,6 +83,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           ...tagObj,
           taggers_count: tagObj.taggers_count + 1,
           taggers: [...tagObj.taggers, pubky ?? ''],
+          relationship: true,
         };
       }
       return tagObj;
@@ -149,6 +151,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               ...tagObj,
               taggers_count: tagObj.taggers_count + 1,
               taggers: [...tagObj.taggers, pubky ?? ''],
+              relationship: true,
             };
           }
           return tagObj;
@@ -161,6 +164,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           label: tag,
           taggers_count: 1,
           taggers: [pubky ?? ''],
+          relationship: true,
         },
       ];
     }
@@ -259,9 +263,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           )}
         </div>
         {tags.map((tagObj, index) => {
-          const isTagFound = tagObj?.taggers.some(
-            (fromItem) => fromItem === pubky,
-          );
+          const isTagFound = tagObj?.relationship || false;
 
           const displayedImages = tagObj?.taggers
             .slice(0, 4)

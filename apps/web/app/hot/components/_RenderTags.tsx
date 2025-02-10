@@ -35,7 +35,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
   return (
     <div className="flex flex-col gap-3">
       <Typography.H2 className="hidden lg:block text-opacity-50 font-light">
-        Popular Tags
+        Hot Tags
       </Typography.H2>
       {hotTags.length === 0 && (
         <Typography.Body className="text-center mt-6 text-opacity-50 lg:text-left lg:mt-0 lg:text-[15px]">

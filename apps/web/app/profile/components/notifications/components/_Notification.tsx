@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Utils } from '@social/utils-shared';
-import { Icon, Typography, Button, PostUtil } from '@social/ui-shared';
+import { Icon, Typography, PostUtil } from '@social/ui-shared';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { getUserProfile } from '@/services/userService';
@@ -13,52 +13,52 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 const notificationType = {
   follow: {
     type: 'follow',
-    icon: <Icon.UserPlus size="16" />,
+    icon: <Icon.UserPlus size="24" />,
     text: 'followed you',
   },
   new_friend: {
     type: 'new_friend',
-    icon: <Icon.UsersLeft size="16" />,
+    icon: <Icon.UsersLeft size="24" />,
     text: 'is your friend now',
   },
   lost_friend: {
     type: 'lost_friend',
-    icon: <Icon.UserMinus size="16" />,
+    icon: <Icon.UserMinus size="24" />,
     text: 'is not your friend anymore',
   },
   tag_post: {
     type: 'tag_post',
-    icon: <Icon.Tag size="16" />,
+    icon: <Icon.Tag size="24" />,
     text: 'tagged your post as',
   },
   tag_profile: {
     type: 'tag_profile',
-    icon: <Icon.Tag size="16" />,
+    icon: <Icon.Tag size="24" />,
     text: 'tagged your profile as',
   },
   reply: {
     type: 'reply',
-    icon: <Icon.ChatCircleText size="16" />,
+    icon: <Icon.ChatCircleText size="24" />,
     text: 'replied to your post',
   },
   repost: {
     type: 'repost',
-    icon: <Icon.Repost size="16" />,
+    icon: <Icon.Repost size="24" />,
     text: 'reposted your post',
   },
   mention: {
     type: 'mention',
-    icon: <Icon.Note size="16" />,
+    icon: <Icon.Note size="24" />,
     text: 'mentioned you in a post',
   },
   post_deleted: {
     type: 'post_deleted',
-    icon: <Icon.Trash size="16" />,
+    icon: <Icon.Trash size="24" />,
     text: 'deleted',
   },
   post_edited: {
     type: 'post_edited',
-    icon: <Icon.PencilLine size="16" />,
+    icon: <Icon.PencilLine size="24" />,
     text: 'edited',
   },
 };
@@ -193,7 +193,7 @@ export default function Notification({
 
   return (
     <div className="py-2 justify-between items-start flex flex-row border-b md:border-0 border-white border-opacity-10">
-      <div className="flex gap-2 flex-col sm:flex-row">
+      <div className="flex gap-3 flex-col sm:flex-row">
         <div className="flex gap-2">
           {user && (
             <ImageByUri
@@ -204,13 +204,14 @@ export default function Notification({
               uri={user?.details?.image || '/images/webp/Userpic.webp'}
             />
           )}
-          <Button.Action
-            size="small"
-            variant="custom"
-            icon={currentNotificationType.icon}
-            className={`bg-gradient-none border backdrop-blur-[20px] ${unread ? 'border-[#c8ff00]' : 'border-white border-opacity-30'}`}
-            disabled
-          />
+          <div className="relative">
+            <div className="mt-1.5">{currentNotificationType.icon}</div>
+            {unread && (
+              <div className="absolute bottom-0.5 right-0">
+                <div className="w-3 h-3 bg-[#C8FF00] rounded-full" />
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex gap-2 items-center flex-wrap">
           {userId && (

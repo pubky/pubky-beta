@@ -43,6 +43,8 @@ export default function ContentProfileTag({
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [tag, setTag] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [showEmojis, setShowEmojis] = useState(false);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
@@ -69,6 +71,7 @@ export default function ContentProfileTag({
 
   const { data: moreTags, isLoading } = useTagsUser(
     user?.details.id ?? '',
+    pubky,
     skip,
     limit,
   );
@@ -76,6 +79,7 @@ export default function ContentProfileTag({
   const { data: moreTaggers, isLoading: isLoadingTaggers } = useUserTagTaggers(
     user?.details.id ?? '',
     selectedTag?.label ?? '',
+    pubky,
     skipTaggers,
     limitTaggers,
   );
@@ -104,11 +108,10 @@ export default function ContentProfileTag({
   }, [selectedTag]);
 
   useEffect(() => {
-    if (moreTaggers) {
-      setTaggers((prev) => [...new Set([...prev, ...moreTaggers])]);
-      setHasMoreTaggers(
-        moreTaggers.length > 0 && moreTaggers.length === limitTaggers,
-      );
+    if (moreTaggers && moreTaggers.users) {
+      const { users } = moreTaggers;
+      setTaggers((prev) => [...new Set([...prev, ...users])]);
+      setHasMoreTaggers(users.length === limitTaggers);
     } else {
       setHasMoreTaggers(false);
     }
@@ -127,6 +130,17 @@ export default function ContentProfileTag({
       });
     }
   }, [moreTags, isLoading]);
+
+  useEffect(() => {
+    if (selectedTag) {
+      const updatedTag = profileTags.find(
+        (tag) => tag.label === selectedTag.label,
+      );
+      if (updatedTag && setSelectedTag) {
+        setSelectedTag(updatedTag);
+      }
+    }
+  }, [profileTags]);
 
   const loader = useInfiniteScroll(() => {
     if (hasMore && !isLoading) {
@@ -315,6 +329,7 @@ export default function ContentProfileTag({
         <Input.Text
           placeholder="tag"
           value={tag}
+          ref={inputRef}
           className="w-full lg:w-96 mt-2 flex items-center"
           maxLength={20}
           autoFocus
@@ -323,6 +338,9 @@ export default function ContentProfileTag({
             if (e.key === 'Enter') {
               handleAddProfileTag(tag);
               setTag('');
+              setTimeout(() => {
+                inputRef.current?.focus();
+              }, 0);
             }
           }}
           action={
@@ -336,6 +354,9 @@ export default function ContentProfileTag({
                 onClick={() => {
                   handleAddProfileTag(tag);
                   setTag('');
+                  setTimeout(() => {
+                    inputRef.current?.focus();
+                  }, 0);
                 }}
               />
               <Button.Action
@@ -368,9 +389,7 @@ export default function ContentProfileTag({
             {!selectedTag && (
               <>
                 {allTags.map((tag, index) => {
-                  const isTagFound = tag?.taggers?.some(
-                    (fromItem) => fromItem === pubky,
-                  );
+                  const isTagFound = tag?.relationship || false;
 
                   const displayedImages = tagImages[tag.label] || [];
                   const extraImagesCount =
@@ -464,9 +483,7 @@ export default function ContentProfileTag({
                   </div>
                   {selectedTag && (
                     <PostUtil.Tag
-                      clicked={selectedTag.taggers.some(
-                        (fromItem) => fromItem === pubky,
-                      )}
+                      clicked={selectedTag.relationship || false}
                       onClick={(event) => {
                         event.stopPropagation();
                         selectedTag?.taggers.some(
@@ -505,7 +522,7 @@ export default function ContentProfileTag({
                 </div>
                 {taggers?.map((user, userIndex) => {
                   const profile = userProfiles[user];
-                  const pubkeyUser = pubky && user.includes(pubky);
+                  const pubkeyUser = moreTaggers?.relationship;
                   const isFollowed = followedUser[user];
 
                   return (

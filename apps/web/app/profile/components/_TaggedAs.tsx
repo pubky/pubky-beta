@@ -55,6 +55,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
   const { data: moreTags, isLoading } = useTagsUser(
     user?.details.id ?? '',
+    pubky,
     skip,
     limit,
   );
@@ -120,7 +121,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
           // update profileTags with new taggers
           const newProfileTags = profileTags.map((t) => {
             if (t.label === tag) {
-              return { ...t, taggers: [...t.taggers, pubky || ''] };
+              return {
+                ...t,
+                taggers: [...t.taggers, pubky || ''],
+                relationship: true,
+              };
             }
             return t;
           });
@@ -136,6 +141,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             label: tag,
             taggers: [pubky || ''],
             taggers_count: 1,
+            relationship: true,
           },
         ]);
       }
@@ -167,7 +173,9 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             (t) => t !== pubky || '',
           );
           setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
+            profileTags.map((t) =>
+              t.label === tag ? { ...tagExists, relationship: false } : t,
+            ),
           );
         } else {
           // remove tag from taggers
@@ -178,7 +186,9 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             (t) => t !== pubky || '',
           );
           setProfileTags(
-            profileTags.map((t) => (t.label === tag ? tagExists : t)),
+            profileTags.map((t) =>
+              t.label === tag ? { ...tagExists, relationship: false } : t,
+            ),
           );
         }
       }
@@ -210,9 +220,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             {profileTags && profileTags.length > 0 ? (
               <>
                 {profileTags.map((tag, index) => {
-                  const isTagFound = tag?.taggers?.some(
-                    (fromItem) => fromItem === pubky,
-                  );
+                  const isTagFound = tag?.relationship || false;
 
                   const images = taggedImages[index] || [];
                   const displayedImages = images?.slice(0, 5);

@@ -60,6 +60,7 @@ export default function Contact({
         setLoadingTags('');
         tagExists.taggers_count++;
         tagExists.taggers.push(pubky || '');
+        tagExists.relationship = true;
         setProfileTags((prev) => ({
           ...prev,
           [creatorPubky]: [...currentTags],
@@ -69,7 +70,12 @@ export default function Contact({
           ...prev,
           [creatorPubky]: [
             ...currentTags,
-            { label: tag, taggers: [pubky || ''], taggers_count: 1 },
+            {
+              label: tag,
+              taggers: [pubky || ''],
+              taggers_count: 1,
+              relationship: true,
+            },
           ],
         }));
       }
@@ -103,7 +109,9 @@ export default function Contact({
           ...prev,
           [creatorPubky]:
             tagExists.taggers_count > 0
-              ? [...currentTags]
+              ? currentTags.map((t) =>
+                  t.label === tag ? { ...t, relationship: false } : t,
+                )
               : currentTags.filter((t) => t.label !== tag),
         }));
       }
@@ -232,9 +240,7 @@ export default function Contact({
                   </div>
                   <div className="flex lg:justify-end gap-2 items-center lg:w-full">
                     {contactTags.slice(0, 3).map((tag, index) => {
-                      const isTagFound = tag?.taggers?.some(
-                        (fromItem) => fromItem === pubky,
-                      );
+                      const isTagFound = tag?.relationship || false;
 
                       return (
                         <PostUtil.Tag

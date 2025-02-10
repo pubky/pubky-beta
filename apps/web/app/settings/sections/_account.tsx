@@ -201,6 +201,26 @@ export default function Account() {
     <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start inline-flex">
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
+          <Icon.SignOut size="24" />
+          <Typography.H2>Sign out from Pubky</Typography.H2>
+        </div>
+        <Typography.Body variant="medium" className="text-opacity-80">
+          Sign out to protect your account from unauthorized access.
+        </Typography.Body>
+        <Link href="/logout">
+          <Button.Large
+            id="backup-account-btn"
+            icon={<Icon.SignOut size="18" />}
+            variant="secondary"
+            className="w-auto"
+          >
+            Sign out
+          </Button.Large>
+        </Link>
+      </div>
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
+      <div className="flex-col justify-start items-start gap-6 flex">
+        <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Lock size="24" />
           <Typography.H2>Back up your account</Typography.H2>
         </div>

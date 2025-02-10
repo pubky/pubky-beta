@@ -48,6 +48,7 @@ export default function ContentTag({
   const modalTagRef = useRef<HTMLDivElement>(null);
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
@@ -75,6 +76,7 @@ export default function ContentTag({
   const { data: moreTags, isLoading } = useTagsPost(
     post.details.author,
     post.details.id,
+    pubky,
     skip,
     limit,
   );
@@ -83,13 +85,15 @@ export default function ContentTag({
     post.details.author,
     post.details.id,
     selectedTag?.label ?? '',
+    pubky,
     skipTaggers,
     limitTaggers,
   );
 
   useEffect(() => {
     const uniqueTags = tags.filter(
-      (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
+      (tag, index, self) =>
+        index === self.findIndex((t) => t.label === tag.label),
     );
     if (JSON.stringify(uniqueTags) !== JSON.stringify(allTags)) {
       setAllTags(uniqueTags);
@@ -110,9 +114,10 @@ export default function ContentTag({
   }, [selectedTag]);
 
   useEffect(() => {
-    if (moreTaggers && moreTaggers.length) {
-      setTaggers((prev) => [...new Set([...prev, ...moreTaggers])]);
-      setHasMoreTaggers(moreTaggers.length === limitTaggers);
+    if (moreTaggers && moreTaggers.users) {
+      const { users } = moreTaggers;
+      setTaggers((prev) => [...new Set([...prev, ...users])]);
+      setHasMoreTaggers(users.length === limitTaggers);
     }
   }, [moreTaggers]);
 
@@ -290,17 +295,33 @@ export default function ContentTag({
       await handleAddTag(tag);
       const updatedTags = [
         ...post.tags,
-        { label: tag, taggers: [pubky ?? ''], taggers_count: 1 },
+        {
+          label: tag,
+          taggers: [pubky ?? ''],
+          taggers_count: 1,
+          relationship: true,
+        },
       ];
       const updatedPost = { ...post, tags: updatedTags };
       updatePostInTimeline(updatedPost);
       setTag('');
       setLoading(false);
-      //setShowModalTag(false);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
     } catch (error) {
       console.error('Error adding tag and updating post', error);
     }
   };
+
+  useEffect(() => {
+    if (selectedTag) {
+      const updatedTag = tags.find((tag) => tag.label === selectedTag.label);
+      if (updatedTag && setSelectedTag) {
+        setSelectedTag(updatedTag);
+      }
+    }
+  }, [tags]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -349,6 +370,7 @@ export default function ContentTag({
         )}
         <Input.Label value="New tag" />
         <Input.Text
+          ref={inputRef}
           placeholder="tag"
           value={tag}
           className="w-full md:w-96 mt-2 flex items-center"
@@ -356,7 +378,7 @@ export default function ContentTag({
           autoFocus
           disabled={loading}
           onChange={handleChange}
-          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
               handleAddTagAndUpdatePost(tag);
             }
@@ -404,9 +426,7 @@ export default function ContentTag({
             {!selectedTag && (
               <>
                 {allTags.map((tag, index) => {
-                  const isTagFound = tag?.taggers.some(
-                    (fromItem) => fromItem === pubky,
-                  );
+                  const isTagFound = tag.relationship || false;
 
                   const displayedImages = tagImages[tag.label] || [];
                   const extraImagesCount =
@@ -497,9 +517,7 @@ export default function ContentTag({
                   </div>
                   {selectedTag && (
                     <PostUtil.Tag
-                      clicked={selectedTag?.taggers.some(
-                        (fromItem) => fromItem === pubky,
-                      )}
+                      clicked={selectedTag?.relationship || false}
                       onClick={(event) => {
                         event.stopPropagation();
                         selectedTag?.taggers.some(
@@ -535,7 +553,7 @@ export default function ContentTag({
                 </div>
                 {taggers.map((user, userIndex) => {
                   const profile = userProfiles[user];
-                  const pubkeyUser = pubky && user.includes(pubky);
+                  const pubkeyUser = moreTaggers?.relationship;
                   const isFollowed = followedUser[user];
 
                   return (

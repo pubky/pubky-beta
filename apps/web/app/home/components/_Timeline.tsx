@@ -204,12 +204,12 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           description="It's a blank slate for now, but not for long. Start to create posts, follow interesting people, or explore tags that catch your attention. This feed will be full of personalized content, just for you."
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
-            <Link href="/hot#influencers">
+            <Link href="/hot#popular">
               <Button.Medium
                 icon={<Icon.UserPlus size="16" />}
                 className="whitespace-nowrap"
               >
-                Follow Influencers
+                Follow Popular
               </Button.Medium>
             </Link>
             <Link href="hot">
