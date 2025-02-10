@@ -93,7 +93,7 @@ export function Tags({ influencer }: TagsProps) {
   return (
     <div className="flex lg:justify-end gap-2 items-center lg:w-full">
       {profileTags.slice(0, 3).map((tag, index) => {
-        const isTagFound = tag.taggers.includes(pubky || '');
+        const isTagFound = tag.relationship || false;
 
         return (
           <PostUtil.Tag

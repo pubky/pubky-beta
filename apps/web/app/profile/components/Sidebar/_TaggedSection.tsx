@@ -45,9 +45,7 @@ export default function TaggedSection({
           {profileTags.length > 0 ? (
             <>
               {profileTags.map((tag, index) => {
-                const isTagFound = tag?.taggers?.some(
-                  (fromItem) => fromItem === pubky,
-                );
+                const isTagFound = tag?.relationship || false;
 
                 return (
                   <div className="flex gap-2" key={index}>

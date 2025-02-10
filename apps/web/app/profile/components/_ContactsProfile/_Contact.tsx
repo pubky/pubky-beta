@@ -232,9 +232,7 @@ export default function Contact({
                   </div>
                   <div className="flex lg:justify-end gap-2 items-center lg:w-full">
                     {contactTags.slice(0, 3).map((tag, index) => {
-                      const isTagFound = tag?.taggers?.some(
-                        (fromItem) => fromItem === pubky,
-                      );
+                      const isTagFound = tag?.relationship || false;
 
                       return (
                         <PostUtil.Tag

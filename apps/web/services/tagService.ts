@@ -60,12 +60,16 @@ export async function getTagTaggers(
 export async function getTagsPost(
   userId: string,
   postId: string,
+  viewerId?: string,
   skip?: number,
   limit?: number,
   maxTaggers?: number,
 ): Promise<PostTag[]> {
   const queryParams = new URLSearchParams();
 
+  if (viewerId) {
+    queryParams.append('viewer_id', String(viewerId));
+  }
   if (skip !== undefined) {
     queryParams.append('skip_tags', String(skip));
   }
@@ -86,12 +90,16 @@ export async function getTagsPost(
 // Get tags user
 export async function getTagsUser(
   userId: string,
+  viewerId?: string,
   skip?: number,
   limit?: number,
   maxTaggers?: number,
 ): Promise<PostTag[]> {
   const queryParams = new URLSearchParams();
 
+  if (viewerId) {
+    queryParams.append('viewer_id', String(viewerId));
+  }
   if (skip !== undefined) {
     queryParams.append('skip_tags', String(skip));
   }

@@ -76,6 +76,7 @@ export default function ContentTag({
   const { data: moreTags, isLoading } = useTagsPost(
     post.details.author,
     post.details.id,
+    pubky,
     skip,
     limit,
   );
@@ -84,6 +85,7 @@ export default function ContentTag({
     post.details.author,
     post.details.id,
     selectedTag?.label ?? '',
+    pubky,
     skipTaggers,
     limitTaggers,
   );
@@ -112,9 +114,10 @@ export default function ContentTag({
   }, [selectedTag]);
 
   useEffect(() => {
-    if (moreTaggers && moreTaggers.length) {
-      setTaggers((prev) => [...new Set([...prev, ...moreTaggers])]);
-      setHasMoreTaggers(moreTaggers.length === limitTaggers);
+    if (moreTaggers && moreTaggers.users) {
+      const { users } = moreTaggers;
+      setTaggers((prev) => [...new Set([...prev, ...users])]);
+      setHasMoreTaggers(users.length === limitTaggers);
     }
   }, [moreTaggers]);
 
@@ -409,9 +412,7 @@ export default function ContentTag({
             {!selectedTag && (
               <>
                 {allTags.map((tag, index) => {
-                  const isTagFound = tag?.taggers.some(
-                    (fromItem) => fromItem === pubky,
-                  );
+                  const isTagFound = tag.relationship || false;
 
                   const displayedImages = tagImages[tag.label] || [];
                   const extraImagesCount =
@@ -502,9 +503,7 @@ export default function ContentTag({
                   </div>
                   {selectedTag && (
                     <PostUtil.Tag
-                      clicked={selectedTag?.taggers.some(
-                        (fromItem) => fromItem === pubky,
-                      )}
+                      clicked={selectedTag?.relationship || false}
                       onClick={(event) => {
                         event.stopPropagation();
                         selectedTag?.taggers.some(
@@ -540,7 +539,7 @@ export default function ContentTag({
                 </div>
                 {taggers.map((user, userIndex) => {
                   const profile = userProfiles[user];
-                  const pubkeyUser = pubky && user.includes(pubky);
+                  const pubkeyUser = moreTaggers?.relationship;
                   const isFollowed = followedUser[user];
 
                   return (

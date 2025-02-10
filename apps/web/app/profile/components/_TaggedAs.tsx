@@ -55,6 +55,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
   const { data: moreTags, isLoading } = useTagsUser(
     user?.details.id ?? '',
+    pubky,
     skip,
     limit,
   );
@@ -210,9 +211,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             {profileTags && profileTags.length > 0 ? (
               <>
                 {profileTags.map((tag, index) => {
-                  const isTagFound = tag?.taggers?.some(
-                    (fromItem) => fromItem === pubky,
-                  );
+                  const isTagFound = tag?.relationship || false;
 
                   const images = taggedImages[index] || [];
                   const displayedImages = images?.slice(0, 5);

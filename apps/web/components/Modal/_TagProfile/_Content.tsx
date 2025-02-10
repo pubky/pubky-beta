@@ -71,6 +71,7 @@ export default function ContentProfileTag({
 
   const { data: moreTags, isLoading } = useTagsUser(
     user?.details.id ?? '',
+    pubky,
     skip,
     limit,
   );
@@ -78,6 +79,7 @@ export default function ContentProfileTag({
   const { data: moreTaggers, isLoading: isLoadingTaggers } = useUserTagTaggers(
     user?.details.id ?? '',
     selectedTag?.label ?? '',
+    pubky,
     skipTaggers,
     limitTaggers,
   );
@@ -106,11 +108,10 @@ export default function ContentProfileTag({
   }, [selectedTag]);
 
   useEffect(() => {
-    if (moreTaggers) {
-      setTaggers((prev) => [...new Set([...prev, ...moreTaggers])]);
-      setHasMoreTaggers(
-        moreTaggers.length > 0 && moreTaggers.length === limitTaggers,
-      );
+    if (moreTaggers && moreTaggers.users) {
+      const { users } = moreTaggers;
+      setTaggers((prev) => [...new Set([...prev, ...users])]);
+      setHasMoreTaggers(users.length === limitTaggers);
     } else {
       setHasMoreTaggers(false);
     }
@@ -377,9 +378,7 @@ export default function ContentProfileTag({
             {!selectedTag && (
               <>
                 {allTags.map((tag, index) => {
-                  const isTagFound = tag?.taggers?.some(
-                    (fromItem) => fromItem === pubky,
-                  );
+                  const isTagFound = tag?.relationship || false;
 
                   const displayedImages = tagImages[tag.label] || [];
                   const extraImagesCount =
@@ -473,9 +472,7 @@ export default function ContentProfileTag({
                   </div>
                   {selectedTag && (
                     <PostUtil.Tag
-                      clicked={selectedTag.taggers.some(
-                        (fromItem) => fromItem === pubky,
-                      )}
+                      clicked={selectedTag.relationship || false}
                       onClick={(event) => {
                         event.stopPropagation();
                         selectedTag?.taggers.some(
@@ -514,7 +511,7 @@ export default function ContentProfileTag({
                 </div>
                 {taggers?.map((user, userIndex) => {
                   const profile = userProfiles[user];
-                  const pubkeyUser = pubky && user.includes(pubky);
+                  const pubkeyUser = moreTaggers?.relationship;
                   const isFollowed = followedUser[user];
 
                   return (

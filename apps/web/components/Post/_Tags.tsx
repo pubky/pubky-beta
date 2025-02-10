@@ -189,9 +189,8 @@ export default function Tags({
         >
           {!largeView &&
             tags.slice(0, 3).map((tagObj, index) => {
-              const isTagFound = tagObj?.taggers?.some(
-                (fromItem) => fromItem === pubky,
-              );
+              const isTagFound = tagObj?.relationship || false;
+
               return (
                 <PostUI.Footer key={index}>
                   <TooltipUI.Root

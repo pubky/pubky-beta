@@ -22,11 +22,16 @@ export interface UserDetails {
   status?: TStatus;
 }
 
-
 export interface UserTags {
   label: string;
   taggers: string[];
   taggers_count: number;
+  relationship?: boolean;
+}
+
+export interface Taggers {
+  users: string[];
+  relationship: boolean;
 }
 
 export interface UserView {

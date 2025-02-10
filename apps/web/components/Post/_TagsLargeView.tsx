@@ -259,9 +259,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           )}
         </div>
         {tags.map((tagObj, index) => {
-          const isTagFound = tagObj?.taggers.some(
-            (fromItem) => fromItem === pubky,
-          );
+          const isTagFound = tagObj?.relationship || false;
 
           const displayedImages = tagObj?.taggers
             .slice(0, 4)

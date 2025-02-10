@@ -54,6 +54,7 @@ export interface PostTag {
   label: string;
   taggers: string[];
   taggers_count: number;
+  relationship?: boolean;
 }
 
 export interface Tag {

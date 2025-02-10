@@ -134,12 +134,22 @@ export function usePostTagTaggers(
   userId: string,
   postId: string,
   tagName: string,
+  viewerId?: string,
   skip?: number,
   limit?: number,
 ) {
   return useQuery({
-    queryKey: ['postTagTaggers', userId, postId, tagName, skip, limit],
-    queryFn: () => getPostTagTaggers(userId, postId, tagName, skip, limit),
+    queryKey: [
+      'postTagTaggers',
+      userId,
+      postId,
+      tagName,
+      viewerId,
+      skip,
+      limit,
+    ],
+    queryFn: () =>
+      getPostTagTaggers(userId, postId, tagName, viewerId, skip, limit),
     retry: false,
   });
 }
@@ -147,12 +157,13 @@ export function usePostTagTaggers(
 export function useUserTagTaggers(
   userId: string,
   tagName: string,
+  viewerId?: string,
   skip?: number,
   limit?: number,
 ) {
   return useQuery({
-    queryKey: ['userTagTaggers', userId, tagName, skip, limit],
-    queryFn: () => getUserTagTaggers(userId, tagName, skip, limit),
+    queryKey: ['userTagTaggers', userId, tagName, viewerId, skip, limit],
+    queryFn: () => getUserTagTaggers(userId, tagName, viewerId, skip, limit),
     retry: false,
   });
 }

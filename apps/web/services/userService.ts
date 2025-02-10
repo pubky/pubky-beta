@@ -4,6 +4,7 @@ import {
   UserDetails,
   Relationship,
   UserTag,
+  Taggers,
 } from '../types/User';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
@@ -242,11 +243,13 @@ export async function getPostTagTaggers(
   userId: string,
   postId: string,
   tagName: string,
+  viewerId?: string,
   skip?: number,
   limit?: number,
-): Promise<string[]> {
+): Promise<Taggers> {
   const queryParams = new URLSearchParams();
 
+  if (viewerId) queryParams.append('viewer_id', viewerId);
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
   }
@@ -266,11 +269,13 @@ export async function getPostTagTaggers(
 export async function getUserTagTaggers(
   userId: string,
   tagName: string,
+  viewerId?: string,
   skip?: number,
   limit?: number,
-): Promise<string[]> {
+): Promise<Taggers> {
   const queryParams = new URLSearchParams();
 
+  if (viewerId) queryParams.append('viewer_id', viewerId);
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
   }
