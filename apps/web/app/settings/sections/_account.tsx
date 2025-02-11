@@ -209,7 +209,7 @@ export default function Account() {
         </Typography.Body>
         <Link href="/logout">
           <Button.Large
-            id="backup-account-btn"
+            id="settings-sign-out-btn"
             icon={<Icon.SignOut size="18" />}
             variant="secondary"
             className="w-auto"

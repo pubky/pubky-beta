@@ -94,13 +94,13 @@ describe('contacts', () => {
     cy.get('#profile-tab-following').find('#counter').should('have.text', 0);
     cy.get('#profile-tab-following').click();
     // check message is displayed indicating no following
-    cy.get('#profile-tab-content').should('have.text', 'No following yet');
+    cy.get('#profile-tab-content').should('contain.text', 'Looking for following?');
 
     // check number of listed friends is 0
     cy.get('#profile-tab-friends').find('#counter').should('have.text', 0);
     cy.get('#profile-tab-friends').click();
     // check message is displayed indicating no friends
-    cy.get('#profile-tab-content').should('have.text', 'No friends yet');
+    cy.get('#profile-tab-content').should('contain.text', 'Looking for friends?');
 
     ///
     /// check own profile shows new following
@@ -130,13 +130,13 @@ describe('contacts', () => {
     cy.get('#profile-tab-followers').find('#counter').should('have.text', 0);
     cy.get('#profile-tab-followers').click();
     // check message is displayed indicating no followers
-    cy.get('#profile-tab-content').should('have.text', 'No followers yet');
+    cy.get('#profile-tab-content').should('contain.text', 'Looking for followers?');
 
     // check number of listed friends is 0
     cy.get('#profile-tab-friends').find('#counter').should('have.text', 0);
     cy.get('#profile-tab-friends').click();
     // check message is displayed indicating no friends
-    cy.get('#profile-tab-content').should('have.text', 'No friends yet');
+    cy.get('#profile-tab-content').should('contain.text', 'Looking for friends?');
 
     // Sign out
     cy.signOut(true);

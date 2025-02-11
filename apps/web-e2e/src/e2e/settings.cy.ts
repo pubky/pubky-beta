@@ -32,6 +32,22 @@ describe('settings', () => {
       cy.get('#backup-close-btn').click();
     });
 
+    // check sign out button
+    cy.get('#settings-sign-out-btn').click();
+    cy.location('pathname').should('eq', '/logout');
+
+    // sign in with recovery phrase saved earlier
+    cy.get('#sign-back-in-btn').should('be.visible').click();
+    cy.get('@recoveryPhrase').then((rp) => {
+      const words = `${rp}`.split(' ');
+      words.forEach((word, idx) => {
+        cy.get(`#recovery-phrase-input-${idx}`).type(`${word}`);
+      });
+    });
+    cy.get('#sign-in-recovery-phrase-btn').click();
+    cy.location('pathname').should('eq', '/home');
+    cy.get('#header-settings-btn').click();
+
     // check edit profile button shows edit page
     cy.get('#edit-profile-btn').click();
     cy.get('#edit-profile-name-input').should('be.visible');
@@ -68,9 +84,6 @@ describe('settings', () => {
       });
     });
     cy.get('#sign-in-recovery-phrase-btn').click();
-
-    // TODO: remove workaround for indefinite loading issue on sign in button, https://github.com/pubky/pubky-app/issues/719
-    cy.waitReload(5000);
 
     cy.location('pathname').should('eq', '/onboarding/register');
     cy.get('#message-alert').should('be.visible').should('contain', 'your profile is empty');

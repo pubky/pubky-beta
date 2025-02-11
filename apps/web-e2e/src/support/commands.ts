@@ -147,7 +147,7 @@ Cypress.Commands.add('signOut', (hasBackedUp: boolean) => {
 
   cy.location('pathname').should('eq', '/logout');
 
-  cy.get('#logout-link').click();
+  cy.get('#sign-back-in-btn').click();
   cy.location('pathname').should('eq', '/sign-in');
 });
 
