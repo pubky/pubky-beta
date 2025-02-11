@@ -15,7 +15,7 @@ export default function Index() {
       <Components.RemindBackup />
       <HomePage.Content />
       <Components.CreatePost />
-      <Components.FooterMobile title="Feed" />
+      <Components.FooterMobile title="Home" />
     </Content.Main>
   );
 }

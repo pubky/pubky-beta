@@ -87,15 +87,18 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
 
   return (
     <>
-      {isLoading && usersList.length === 0 ? (
-        <div className="mt-12">
-          <Skeletons.Simple />
-        </div>
-      ) : usersList.length > 0 ? (
+      {usersList.length > 0 && (
         <Root>
           <Contact contacts={usersList} isLoading={isLoading} />
         </Root>
-      ) : (
+      )}
+      {isLoading && (
+        <div className="mt-12">
+          <Skeletons.Simple />
+        </div>
+      )}
+      {hasMore && <div ref={loader} />}
+      {!isLoading && usersList.length === 0 && (
         <ContentNotFound
           icon={currentContact.icon}
           title={currentContact.title}
@@ -111,7 +114,6 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
           </div>
         </ContentNotFound>
       )}
-      {hasMore && <div ref={loader} />}
     </>
   );
 };

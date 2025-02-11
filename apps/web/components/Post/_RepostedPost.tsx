@@ -49,7 +49,7 @@ export default function RepostedPost({
 
   if (!repostedPost || repostedPost.details.content === '[DELETED]') {
     return (
-      <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl mt-2">
+      <div className="px-6 py-2 bg-white bg-opacity-10 rounded-lg mt-2">
         <Typography.Body variant="small" className="text-opacity-50">
           This post has been deleted by its author.
         </Typography.Body>
@@ -66,7 +66,11 @@ export default function RepostedPost({
     >
       <PostUI.MainCard className={restClassName}>
         <div>
-          <Header post={repostedPost} largeView={largeView} repostView={repostView} />
+          <Header
+            post={repostedPost}
+            largeView={largeView}
+            repostView={repostView}
+          />
           {line && <div className={twMerge(lineBaseCSS, lineStyle)} />}
           <div>
             <Content

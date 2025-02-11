@@ -51,7 +51,7 @@ export default function ParentPost({ parentURI }: { parentURI: string }) {
 
   if (!parentPost.post) {
     return (
-      <div className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-2xl w-[300px]">
+      <div className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-lg w-[300px]">
         <Typography.Body variant="small" className="text-opacity-50">
           This post has been deleted by its author.
         </Typography.Body>

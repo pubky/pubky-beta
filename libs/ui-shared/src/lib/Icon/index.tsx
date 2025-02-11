@@ -96,7 +96,7 @@ import {
   Discord,
 } from './_Social';
 import { Clock, Calendar } from './_Time';
-import { Globe, GlobeSimple, Crosshair } from './_Maps';
+import { House, Globe, GlobeSimple, Crosshair } from './_Maps';
 import {
   User,
   UserPlus,
@@ -190,6 +190,7 @@ export const Icon = {
   Germany,
   Github,
   Instagram,
+  House,
   Iphone,
   Italy,
   HomeIndicator,

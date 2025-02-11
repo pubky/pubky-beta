@@ -11,7 +11,7 @@ export default function CheckedPost({ cached }: CheckedPostProps) {
         <Icon.Check size="16" color="#00BA7C" opacity={1} className="mt-0.5" />
         <div>
           <p className="leading-tight text-neutral-50">Saved in Homeserver</p>
-          <p className="text-xs text-neutral-400">Stored in server</p>
+          <p className="text-xs text-neutral-400">Available in your storage</p>
         </div>
       </div>
 
@@ -27,7 +27,7 @@ export default function CheckedPost({ cached }: CheckedPostProps) {
         <div>
           <p className="leading-tight text-neutral-50">
             {cached === 'nexus' || cached === undefined
-              ? 'Indexed by Nexus'
+              ? 'Indexed in Nexus'
               : 'Indexing in Nexus'}
           </p>
           <p className="text-xs text-neutral-400">Available for searches</p>

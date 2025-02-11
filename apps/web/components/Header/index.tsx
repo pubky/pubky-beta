@@ -166,10 +166,10 @@ export default function Header({ title }: HeaderProps) {
               <Button.Action
                 id="header-home-btn"
                 variant="menu"
-                label="Feed"
-                active={title === 'Feed'}
-                className={title === 'Feed' ? 'border-t border-white' : ''}
-                icon={<Icon.Activity size="24" />}
+                label="Home"
+                active={title === 'Home'}
+                className={title === 'Home' ? 'border-t border-white' : ''}
+                icon={<Icon.House size="24" />}
               />
             </Link>
             <Link href="/hot">

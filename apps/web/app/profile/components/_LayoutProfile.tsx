@@ -55,7 +55,7 @@ export default function LayoutProfile({
           </div>
         </Content.Grid>
       </div>
-      <Content.Grid className="flex gap-2">
+      <Content.Grid className="flex xl:gap-2">
         <PostsLayout className="flex flex-col w-full gap-3 mt-[10px]">
           <Profile.FilterTabs
             activeTab={activeTab}

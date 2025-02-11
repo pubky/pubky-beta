@@ -204,16 +204,6 @@ export default function Notification({
               uri={user?.details?.image || '/images/webp/Userpic.webp'}
             />
           )}
-          <div className="relative">
-            <div className="mt-1.5">{currentNotificationType.icon}</div>
-            {unread && (
-              <div className="absolute bottom-0.5 right-0">
-                <div className="w-3 h-3 bg-[#C8FF00] rounded-full" />
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="flex gap-2 items-center flex-wrap">
           {userId && (
             <Link
               href={`/profile/${userId}`}
@@ -240,6 +230,8 @@ export default function Notification({
               </Typography.Body>
             </Link>
           )}
+        </div>
+        <div className="flex gap-2 items-center flex-wrap">
           <Typography.Body variant="medium-bold" className="text-opacity-50">
             {currentNotificationType.text}
             {notification.body.type === notificationType?.post_deleted?.type &&
@@ -338,7 +330,7 @@ export default function Notification({
             deletedPostLink && (
               <Link href={deletedPostLink}>
                 <Typography.Body
-                  variant="small"
+                  variant="small-bold"
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   {notification.body.delete_source === 'reply' ||
@@ -355,7 +347,7 @@ export default function Notification({
             editedPostLink && (
               <Link href={editedPostLink}>
                 <Typography.Body
-                  variant="small"
+                  variant="small-bold"
                   className="text-white text-opacity-80 hover:text-opacity-100"
                 >
                   {notification.body.edit_source === 'reply'
@@ -368,11 +360,20 @@ export default function Notification({
             )}
         </div>
       </div>
-      <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex opacity-30">
-        <Typography.Caption className="uppercase font-bold items-center flex gap-1 md:gap-2 text-white">
-          <Icon.Clock size="16" />
-          {Utils.timeAgo(notification.timestamp, isMobile)}
-        </Typography.Caption>
+      <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex">
+        <div className="flex gap-2 md:gap-4 items-center">
+          <Typography.Caption className="uppercase font-bold items-center flex gap-1 md:gap-2 text-white/30">
+            {Utils.timeAgo(notification.timestamp, isMobile)}
+          </Typography.Caption>
+          <div className="relative">
+            <div>{currentNotificationType.icon}</div>
+            {unread && (
+              <div className="absolute bottom-0.5 right-0">
+                <div className="w-3 h-3 bg-[#C8FF00] rounded-full" />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

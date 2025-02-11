@@ -34,9 +34,9 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
       <div className="max-w-[380px] sm:max-w-[600px] md:max-w-[720px] w-full p-6 bg-gradient-to-t from-[#05050a] via-[#05050a] via-40% to-transparent flex gap-2 w-full justify-between justify-center fixed bottom-0 z-40">
         <Link
           href="/home"
-          className={twMerge(buttonCSS, title === 'Feed' && activeCSS)}
+          className={twMerge(buttonCSS, title === 'Home' && activeCSS)}
         >
-          <Icon.Activity size="24" />
+          <Icon.House size="24" />
         </Link>
         <Link
           href="/search"
