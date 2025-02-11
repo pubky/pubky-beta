@@ -6,7 +6,7 @@ interface LinksStoreAppProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
   const baseCSS =
-    'relative sm:-ml-2 mt-4 self-stretch items-center justify-center sm:justify-start flex lg:flex-col xl:flex-row';
+    'relative sm:-ml-2 mt-4 self-stretch items-center justify-center sm:justify-start flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
       <img

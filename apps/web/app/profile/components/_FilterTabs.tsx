@@ -115,7 +115,7 @@ export default function FilterTabs({
       case 'friends':
         return userCounts?.friends || 0;
       case 'tagged':
-        return userCounts?.tags || 0;
+        return userCounts?.tagged || 0;
       default:
         return null;
     }

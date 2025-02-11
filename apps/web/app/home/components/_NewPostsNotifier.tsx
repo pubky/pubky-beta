@@ -8,7 +8,7 @@ import { useStreamPost } from '@/hooks/useStream';
 import { UseQueryOptions } from '@tanstack/react-query';
 
 export function NewPostsNotifier() {
-  const { reach, sort } = useFilterContext();
+  const { reach, sort, content } = useFilterContext();
   const { timeline, setTimeline, pubky, deletedPosts } =
     usePubkyClientContext();
 
@@ -72,6 +72,7 @@ export function NewPostsNotifier() {
     undefined,
     sort,
     undefined,
+    content,
     {
       enabled: shouldFetch && latestTimestamp !== null,
       queryKey: ['new-posts', latestTimestamp],

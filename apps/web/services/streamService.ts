@@ -1,4 +1,4 @@
-import { TSort, TSource, TSourceUser } from '@/types';
+import { TContent, TSort, TSource, TSourceUser } from '@/types';
 import { PostView } from '@/types/Post';
 import { UserView } from '@/types/User';
 
@@ -15,6 +15,7 @@ export async function getStreamPosts(
   skip?: number,
   sort?: TSort,
   tags?: string[],
+  kind?: TContent,
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
 
@@ -51,6 +52,27 @@ export async function getStreamPosts(
 
   if (tags) {
     queryParams.append('tags', String(tags));
+  }
+
+  if (kind !== undefined && kind !== 'all') {
+    let kindType = kind as any;
+
+    kindType =
+      kind === 'posts'
+        ? 'short'
+        : kind === 'articles'
+          ? 'long'
+          : kind === 'images'
+            ? 'image'
+            : kind === 'videos'
+              ? 'video'
+              : kind === 'links'
+                ? 'link'
+                : kind === 'files'
+                  ? 'file'
+                  : kind;
+
+    queryParams.append('kind', String(kindType));
   }
 
   if (start !== undefined) {
@@ -156,7 +178,6 @@ export async function searchUsersByUsername(
     if (skip !== undefined) queryParams.append('skip', String(skip));
     if (limit !== undefined) queryParams.append('limit', String(limit));
 
-    console.log("response", `${BASE_URL}/stream/users/username?${queryParams.toString()}`);
     const response = await fetch(
       `${BASE_URL}/stream/users/username?${queryParams.toString()}`,
     );

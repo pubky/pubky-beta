@@ -87,7 +87,7 @@ export default function ContentFeedback({
                 const target = e.target as HTMLTextAreaElement;
                 setMessage(target.value);
               }}
-              placeholder="What do you think about Pubky? Any suggestions?"
+              placeholder="What do you think about Pubky?"
               className="w-full max-h-[300px] h-auto mt-4"
             />
             <div className="w-full flex gap-3 mt-3 justify-end">
