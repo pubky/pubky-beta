@@ -17,25 +17,32 @@ export default function ContentFilesCarousel({
 }: FilesCarouselProps) {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
+  const mediaFiles = fileContents.filter(
+    (file) =>
+      file?.content_type.startsWith('image') ||
+      file?.content_type.startsWith('video'),
+  );
+
+  if (mediaFiles.length === 0) return null;
 
   const showPreviousFile = () => {
     setCurrentFileIndex((prevIndex) =>
-      prevIndex === 0 ? fileContents.length - 1 : prevIndex - 1,
+      prevIndex === 0 ? mediaFiles.length - 1 : prevIndex - 1,
     );
   };
 
   const showNextFile = () => {
     setCurrentFileIndex((prevIndex) =>
-      prevIndex === fileContents.length - 1 ? 0 : prevIndex + 1,
+      prevIndex === mediaFiles.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
-  const currentFile = fileContents[currentFileIndex];
-  const isVideo = currentFile.content_type.startsWith('video');
+  const currentFile = mediaFiles[currentFileIndex];
+  const isVideo = currentFile?.content_type.startsWith('video');
 
   return (
     <div className="relative sm:w-[50vw] sm:h-[65vh] flex items-center justify-center">
-      {fileContents.length > 1 && (
+      {mediaFiles.length > 1 && (
         <div
           className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
           onClick={showPreviousFile}
@@ -61,9 +68,9 @@ export default function ContentFilesCarousel({
       <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
         <Typography.Body className="text-opacity-80" variant="small">{`${
           currentFileIndex + 1
-        } / ${fileContents.length}`}</Typography.Body>
+        } / ${mediaFiles.length}`}</Typography.Body>
       </div>
-      {fileContents.length > 1 && (
+      {mediaFiles.length > 1 && (
         <div
           className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"
           onClick={showNextFile}

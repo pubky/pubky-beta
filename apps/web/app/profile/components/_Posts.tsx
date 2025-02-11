@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Icon } from '@social/ui-shared';
 import { ContentNotFound, Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
@@ -15,6 +15,8 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const limit = 10;
   const [start, setStart] = useState<number | undefined>(undefined);
+  const [fetching, setFetching] = useState<boolean>(false);
+  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
 
   const { data, isLoading } = useStreamPost(
     creatorPubky ?? pubky ?? '',
@@ -25,9 +27,13 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   );
 
   const fetchPosts = async () => {
+    setFetching(true);
     try {
-      if (!data) return;
-      if (!Array.isArray(data)) return;
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        setFetchAttempts((prev) => prev + 1);
+        if (fetchAttempts >= 3) setFetching(false);
+        return;
+      }
 
       const lastPost = data[data.length - 1] as PostView;
       if (lastPost.details?.indexed_at) {
@@ -40,20 +46,14 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
           return [...prev, ...newPosts];
         });
       }
+      setFetching(false);
     } catch (error) {
       console.error(error);
+      setFetching(false);
     }
   };
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
-
-  useEffect(() => {
-    setTimeline([]);
-
-    return () => {
-      setTimeline([]);
-    };
-  }, [setTimeline]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -63,12 +63,13 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
             <Post key={`post-${post.details.id}`} post={post} />
           ),
       )}
-      {isLoading && (
+      {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      {timeline.length === 0 && !isLoading && (
+      <div ref={loader} />
+      {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Note size="48" color="#C8FF00" />}
           title="No posts yet?"
@@ -84,7 +85,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
           </div>
         </ContentNotFound>
       )}
-      <div ref={loader} />
     </div>
   );
 }

@@ -295,33 +295,64 @@ export default function Content({
           {fileContents.length > 0 &&
             String(post?.details?.kind) !==
               PubkyAppPostKind[1].toLocaleLowerCase() && (
-              <div
-                className={`mt-4 flex flex-col md:grid gap-4 ${
-                  fileContents.length === 1
-                    ? 'grid-cols-1'
-                    : fileContents.length === 2
-                      ? 'grid-cols-2'
-                      : 'grid-cols-2'
-                }`}
-              >
-                {loading
-                  ? renderSkeleton()
-                  : fileContents.map((file, index) => {
+              <div className="mt-4 flex flex-col gap-4">
+                {fileContents.some((file) =>
+                  file?.content_type.startsWith('image'),
+                ) && (
+                  <div className="grid gap-1 overflow-hidden grid">
+                    {(() => {
+                      const imageFiles = fileContents.filter((file) =>
+                        file?.content_type.startsWith('image'),
+                      );
+
+                      const layoutClass =
+                        imageFiles.length === 1
+                          ? 'grid-cols-1'
+                          : imageFiles.length === 2
+                            ? 'grid-cols-2'
+                            : imageFiles.length === 3
+                              ? 'grid-cols-2 grid-rows-2'
+                              : 'grid-cols-2 grid-rows-2';
+
+                      return (
+                        <div className={`grid ${layoutClass} gap-1`}>
+                          {imageFiles.map((file, index) => (
+                            <div
+                              key={index}
+                              className={`relative cursor-pointer ${
+                                imageFiles.length === 3 && index === 2
+                                  ? 'col-span-2'
+                                  : ''
+                              }`}
+                            >
+                              <img
+                                src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  openModal(index);
+                                }}
+                                alt={`Fetched file ${index}`}
+                                className="w-full h-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-4">
+                  {fileContents
+                    .filter((file) => !file?.content_type.startsWith('image'))
+                    .map((file, index) => {
                       const isVideo = file?.content_type.startsWith('video');
-                      const isImage = file?.content_type.startsWith('image');
                       const isPDF = file?.content_type === 'application/pdf';
                       const isAudio = file?.content_type.startsWith('audio');
                       const isSkeleton = file?.content_type === 'skeleton';
 
                       return (
-                        <div
-                          key={index}
-                          className={`relative cursor-pointer ${
-                            fileContents.length === 3 && index === 0
-                              ? 'col-span-2'
-                              : ''
-                          }`}
-                        >
+                        <div key={index}>
                           {isSkeleton ? (
                             renderSkeleton()
                           ) : isVideo ? (
@@ -330,18 +361,6 @@ export default function Content({
                               controls
                               onClick={(event) => event.stopPropagation()}
                               className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
-                            />
-                          ) : isImage ? (
-                            <img
-                              src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                isImage ? openModal(index) : undefined;
-                              }}
-                              alt={`Fetched file ${index}`}
-                              width={800}
-                              height={418}
-                              className="w-auto min-w-[200px] h-auto max-h-[744px] object-cover rounded-[10px] overflow-hidden"
                             />
                           ) : isPDF ? (
                             <div
@@ -383,7 +402,7 @@ export default function Content({
                                 src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                                 type="audio/mpeg"
                               />
-                              Browser do not support audio.
+                              Browser does not support audio.
                             </audio>
                           ) : (
                             <p className="text-gray-500">
@@ -393,8 +412,10 @@ export default function Content({
                         </div>
                       );
                     })}
+                </div>
               </div>
             )}
+
           <div onClick={(event) => event.stopPropagation()}>{children}</div>
           {fileContents.length > 0 && (
             <>

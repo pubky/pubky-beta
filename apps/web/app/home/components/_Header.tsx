@@ -37,7 +37,7 @@ export function Header() {
 
   return (
     <>
-      <Components.Header title="Feed" />
+      <Components.Header title="Home" />
       <Components.HeaderMobile
         leftIcon={
           <div
