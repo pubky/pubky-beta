@@ -32,9 +32,9 @@ export default function Handle({
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
-  const username = profile?.name || Utils.minifyPubky(pubkey);
-  const bio = profile?.bio || 'No bio.';
-  const status = profile?.status || 'noStatus';
+  const username = creatorPubky ? profileUser?.details?.name : profile?.name;
+  const bio = creatorPubky ? profileUser?.details?.bio : profile?.bio;
+  const status = creatorPubky ? profileUser?.details?.status : profile?.status;
 
   useEffect(() => {
     async function fetchData() {
@@ -68,16 +68,17 @@ export default function Handle({
               id="profile-username-header"
               className="text-2xl sm:text-2xl sm:leading-[3.2rem] xl:leading-7"
             >
-              {Utils.minifyText(username.toString(), 25)}
+              {Utils.minifyText(
+                username?.toString() || Utils.minifyPubky(pubkey),
+                25,
+              )}
             </Typography.Display>
-            {bio && (
-              <Typography.Body
-                variant="medium"
-                className="text-opacity-80 md:hidden"
-              >
-                <Parsing>{bio}</Parsing>
-              </Typography.Body>
-            )}
+            <Typography.Body
+              variant="medium"
+              className="text-opacity-80 md:hidden"
+            >
+              <Parsing>{bio || 'No bio.'}</Parsing>
+            </Typography.Body>
           </div>
           <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
             <Buttons
@@ -93,7 +94,10 @@ export default function Handle({
               setFollowed={setFollowed}
               profile={profileUser}
             />
-            <Status creatorPubky={creatorPubky} status={status as TStatus} />
+            <Status
+              creatorPubky={creatorPubky}
+              status={(status || 'noStatus') as TStatus}
+            />
           </div>
         </>
       ) : (
