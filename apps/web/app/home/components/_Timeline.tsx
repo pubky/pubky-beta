@@ -70,22 +70,16 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const isMobile = useIsMobile(1024);
   const { reach, layout, sort, content, tagsFeed } =
     useTimelineFilters(selectedFeed);
-
-  const clearTimeline = () => {
-    setTimeline([]);
-    setNewPosts([]);
-    setStart(undefined);
-    setFetchAttempts(0);
-  };
+  const [skip, setSkip] = useState<number>(0);
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
     reach,
     'all',
     10,
-    start,
+    sort === 'recent' ? start : undefined,
     undefined,
-    undefined,
+    sort === 'popularity' ? skip : undefined,
     sort,
     tagsFeed,
     content,
@@ -103,19 +97,23 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         return;
       }
 
-      const lastPost = data[data.length - 1] as PostView;
-      if (!lastPost?.details?.indexed_at) return;
+      if (sort === 'recent') {
+        const lastPost = data[data.length - 1] as PostView;
+        if (!lastPost?.details?.indexed_at) return;
 
-      if (start !== undefined) {
-        setStart(lastPost.details.indexed_at - 1);
+        if (start !== undefined) {
+          setStart(lastPost.details.indexed_at - 1);
+        }
+      } else {
+        // For popularity sorting, increment skip
+        setSkip((prev) => prev + data.length);
       }
 
       setTimeline((prev) => {
         // Filter out muted users and duplicate posts in one pass
-
         const posts = data.filter(
           (post) =>
-            post?.details?.author && // Ensure post has required data
+            post?.details?.author &&
             !mutedUsers?.includes(post.details.author) &&
             !prev.some((p) => p.details.id === post.details.id) &&
             !deletedPosts.includes(post.details.id),
@@ -123,12 +121,21 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
         return posts.length > 0 ? [...prev, ...posts] : prev;
       });
+
       setFetchAttempts(0);
       setFetching(false);
     } catch (error) {
       console.log('Error fetching posts:', error);
       setFetching(false);
     }
+  };
+
+  const clearTimeline = () => {
+    setTimeline([]);
+    setNewPosts([]);
+    setStart(undefined);
+    setSkip(0);
+    setFetchAttempts(0);
   };
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
@@ -139,10 +146,6 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       fetchPosts();
     }, 0);
   }, [reach, sort, tagsFeed, content, mutedUsers]);
-
-  useEffect(() => {
-    clearTimeline();
-  }, []);
 
   useEffect(() => {
     const fetchNexusData = async () => {

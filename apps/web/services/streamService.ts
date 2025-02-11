@@ -19,10 +19,6 @@ export async function getStreamPosts(
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
 
-  if (limit) {
-    queryParams.append('limit', String(limit));
-  }
-
   if (authorId) {
     queryParams.append('author_id', authorId);
   }
@@ -45,9 +41,36 @@ export async function getStreamPosts(
   }
 
   if (sort) {
-    if (sort === 'recent') queryParams.append('sorting', String('timeline'));
-    else if (sort === 'popularity')
-      queryParams.append('sorting', String('total_engagement'));
+    if (sort === 'recent') {
+      queryParams.append('sorting', 'timeline');
+      if (start !== undefined) {
+        queryParams.append('start', String(start));
+      }
+      if (end !== undefined) {
+        queryParams.append('end', String(end));
+      }
+      if (limit !== undefined) {
+        queryParams.append('limit', String(limit));
+      }
+    } else if (sort === 'popularity') {
+      queryParams.append('sorting', 'total_engagement');
+      if (skip !== undefined) {
+        queryParams.append('skip', String(skip));
+      }
+      if (limit !== undefined) {
+        queryParams.append('limit', String(limit));
+      }
+    }
+  } else {
+    if (start !== undefined) {
+      queryParams.append('start', String(start));
+    }
+    if (end !== undefined) {
+      queryParams.append('end', String(end));
+    }
+    if (limit !== undefined) {
+      queryParams.append('limit', String(limit));
+    }
   }
 
   if (tags) {
@@ -55,36 +78,18 @@ export async function getStreamPosts(
   }
 
   if (kind !== undefined && kind !== 'all') {
-    let kindType = kind as any;
+    const kindTypeMap = {
+      posts: 'short',
+      articles: 'long',
+      images: 'image',
+      videos: 'video',
+      links: 'link',
+      files: 'file',
+    };
 
-    kindType =
-      kind === 'posts'
-        ? 'short'
-        : kind === 'articles'
-          ? 'long'
-          : kind === 'images'
-            ? 'image'
-            : kind === 'videos'
-              ? 'video'
-              : kind === 'links'
-                ? 'link'
-                : kind === 'files'
-                  ? 'file'
-                  : kind;
+    const kindType = kindTypeMap[kind] || kind;
 
     queryParams.append('kind', String(kindType));
-  }
-
-  if (start !== undefined) {
-    queryParams.append('start', String(start));
-  }
-
-  if (end !== undefined) {
-    queryParams.append('end', String(end));
-  }
-
-  if (skip !== undefined) {
-    queryParams.append('skip', String(skip));
   }
 
   const response = await fetch(
