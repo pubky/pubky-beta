@@ -8,6 +8,7 @@ import { useHotTags } from '@/hooks/useTag';
 import Link from 'next/link';
 import { UserView } from '@/types/User';
 import { searchUsersByUsername } from '@/services/streamService';
+import { getUserProfile } from '@/services/userService';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
@@ -22,7 +23,14 @@ export default function SearchInputCard({
   const router = useRouter();
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
   const { data: hotTags, isLoading } = useHotTags(pubky, undefined, 0, 10);
+  const [searchHistory, setSearchHistory] = useState<any[]>(() => {
+    const storedHistory = Utils.storage.get('searchHistory') as any;
+    return storedHistory ? storedHistory : [];
+  });
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
+  const [userProfiles, setUserProfiles] = useState<Record<string, UserView>>(
+    {},
+  );
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isMouseInside, setIsMouseInside] = useState(false);
 
@@ -91,8 +99,60 @@ export default function SearchInputCard({
           ? [...searchTags, tag]
           : [...searchTags.slice(1), tag],
       );
-      router.push('/search');
     }
+
+    const updatedHistory = [
+      { type: 'tag', value: tag },
+      ...searchHistory.filter((item: any) => item.value !== tag),
+    ].slice(0, 5);
+
+    Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
+
+    router.push('/search');
+  };
+
+  const handleUserClick = (user: UserView) => {
+    const userEntry = {
+      type: 'user',
+      value: user.details.id,
+    };
+
+    const updatedHistory = [
+      userEntry,
+      ...searchHistory.filter((item: any) => item.id !== user.details.id),
+    ].slice(0, 5);
+
+    Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
+
+    router.push(`/profile/${user.details.id}`);
+  };
+
+  useEffect(() => {
+    const userIds = searchHistory
+      .filter((item: any) => item.type === 'user')
+      .map((item: any) => item.value);
+
+    if (userIds.length > 0) {
+      const fetchProfiles = async () => {
+        const profilesData: Record<string, UserView> = {};
+        for (const userId of userIds) {
+          try {
+            const profileUser = await getUserProfile(userId, pubky ?? ''); // Chiamata asincrona per ottenere il profilo
+            profilesData[userId] = profileUser;
+          } catch (error) {
+            console.error(`Failed to fetch profile for ${userId}`, error);
+          }
+        }
+        setUserProfiles(profilesData);
+      };
+
+      fetchProfiles();
+    }
+  }, [searchHistory]);
+
+  const clearHistory = () => {
+    Utils.storage.remove('searchHistory');
+    setSearchHistory([]);
   };
 
   return (
@@ -133,16 +193,78 @@ export default function SearchInputCard({
               label={Utils.minifyPubky(user.details.id)}
               className={`p-2 rounded-2xl ${selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'}`}
               onMouseEnter={() => setSelectedIndex(index)}
+              onClick={() => handleUserClick(user)}
             />
           ))}
         </div>
       ) : (
         <div className="flex-col inline-flex">
+          {searchHistory && searchHistory.length > 0 && (
+            <div className="mb-2">
+              <Typography.Label className="flex gap-2 items-center text-opacity-30">
+                Recent Searches{' '}
+                <span
+                  onClick={clearHistory}
+                  className="cursor-pointer opacity-30 hover:opacity-80"
+                >
+                  <Icon.X gap-12 />
+                </span>
+              </Typography.Label>
+              <div className="mt-2 flex flex-col">
+                <div className="flex flex-wrap gap-4 justify-start items-start">
+                  {searchHistory.slice(0, 5).map((item: any, index: number) => {
+                    if (item.type === 'user') {
+                      const profileUser = userProfiles[item.value];
+
+                      return (
+                        <div key={index}>
+                          <SideCard.UserSmall
+                            id={`user-${index}`}
+                            uri={profileUser?.details?.id}
+                            uriImage={
+                              profileUser?.details?.image ||
+                              '/images/webp/Userpic.webp'
+                            }
+                            username={Utils.minifyText(
+                              profileUser?.details?.name,
+                              20,
+                            )}
+                            label={Utils.minifyPubky(profileUser?.details?.id)}
+                            onClick={() => handleUserClick(profileUser)}
+                          />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+                <div className="flex flex-wrap gap-2 justify-start items-start">
+                  {searchHistory.slice(0, 5).map((item: any, index: number) => {
+                    if (item.type === 'tag') {
+                      return (
+                        <PostUtil.Tag
+                          key={index}
+                          clicked={false}
+                          onClick={() => handleTagSearch(item.value)}
+                          color={Utils.generateRandomColor(item.value)}
+                          className="my-1"
+                          boxShadow={false}
+                        >
+                          {item.value}
+                        </PostUtil.Tag>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
           {isLoading ? (
             <Typography.Body variant="small" className="text-opacity-30">
               Loading...
             </Typography.Body>
-          ) : hotTags?.length ? (
+          ) : hotTags && hotTags?.length > 0 ? (
             <>
               <Typography.Label className="text-opacity-30">
                 Hot tags

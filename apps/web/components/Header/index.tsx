@@ -13,6 +13,7 @@ import { useFilterContext, usePubkyClientContext, useJoin } from '@/contexts';
 import { ImageByUri } from '../ImageByUri';
 import { usePathname, useRouter } from 'next/navigation';
 import Modal from '../Modal';
+import { Utils } from '@social/utils-shared';
 
 interface HeaderProps {
   title?: React.ReactNode;
@@ -75,11 +76,19 @@ export default function Header({ title }: HeaderProps) {
   };
 
   const handleSearchTag = () => {
+    const searchHistory = Utils.storage.get('searchHistory') || ([] as any);
     if (
       (inputValue.startsWith('pk:') && inputValue.length === 55) ||
       inputValue.length === 52
     ) {
       const profileId = inputValue.replace(/^pk:/, '');
+      if (profileId) {
+        const updatedHistory = [
+          { type: 'user', value: profileId },
+          ...searchHistory.filter((item: any) => item.value !== profileId),
+        ].slice(0, 5);
+        Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
+      }
       router.push(`/profile/${profileId}`);
     } else {
       const trimmedValue = inputValue.trim();
@@ -91,6 +100,23 @@ export default function Header({ title }: HeaderProps) {
         const updatedTags = [...searchTags, ...newTags].slice(0, 3);
         setSearchTags(updatedTags);
       }
+
+      if (trimmedValue) {
+        let updatedHistory = [...searchHistory];
+
+        if (tags.length > 0) {
+          tags.forEach((tag) => {
+            updatedHistory = [
+              { type: 'tag', value: tag },
+              ...updatedHistory.filter((item: any) => item.value !== tag),
+            ];
+          });
+        }
+
+        updatedHistory = updatedHistory.slice(0, 5);
+        Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
+      }
+
       setInputValue('');
       router.push('/search');
     }

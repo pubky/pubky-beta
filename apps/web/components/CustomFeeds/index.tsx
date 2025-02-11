@@ -1,6 +1,6 @@
 'use client';
 
-import { usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { ICustomFeed } from '@/types';
 import { Icon, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
@@ -28,6 +28,7 @@ export default function CustomFeeds({
     'cursor-pointer hover:bg-opacity-20 py-3 px-5 justify-center items-center gap-2 hidden lg:inline-flex bg-white bg-opacity-10 rounded-tl-lg rounded-tr-lg';
   const activeCSS =
     'bg-white bg-opacity-20 rounded-tr-lg border-t border-white';
+  const { reach } = useFilterContext();
   const [showModalCreateFeed, setShowModalCreateFeed] = useState(false);
   const [tagsFeed, setTagsFeed] = useState<string[]>([]);
   const [nameFeed, setNameFeed] = useState<string>('');
@@ -108,7 +109,7 @@ export default function CustomFeeds({
               className="text-[13px] leading-[13px]"
               variant="small-bold"
             >
-              For You
+              {reach.charAt(0).toUpperCase() + reach.slice(1)}
             </Typography.Body>
           </div>
           {feeds?.map((feed, index) => {
@@ -144,7 +145,11 @@ export default function CustomFeeds({
               onClick={() =>
                 loading ? undefined : setShowModalCreateFeed(true)
               }
-              className={twMerge(baseCSS, rest.className)}
+              className={twMerge(
+                baseCSS,
+                'bg-transparent border border-white border-opacity-30 hover:border-opacity-50 border-dashed',
+                rest.className,
+              )}
             >
               {loading ? (
                 <Icon.LoadingSpin size="24" />
