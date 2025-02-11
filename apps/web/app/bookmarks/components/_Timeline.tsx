@@ -24,7 +24,7 @@ export const Timeline = () => {
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
-  const { sort, layout } = useFilterContext();
+  const { sort, layout, content } = useFilterContext();
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
     'bookmarks',
@@ -34,6 +34,8 @@ export const Timeline = () => {
     undefined,
     undefined,
     sort,
+    undefined,
+    content,
   );
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState('');
@@ -72,7 +74,7 @@ export const Timeline = () => {
     setTimeline([]);
     setFetchAttempts(0);
     fetchPosts();
-  }, [sort]);
+  }, [sort, content]);
 
   const handleAddBookmark = async (postId: string, authorId: string) => {
     try {

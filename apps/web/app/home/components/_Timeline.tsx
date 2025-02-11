@@ -10,7 +10,7 @@ import { ContentNotFound, Post, Skeleton } from '@/components';
 import { PostReplies } from './_PostReplies';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { NewPostsNotifier } from './_NewPostsNotifier';
-import { ICustomFeed, TLayouts, TSort, TSource } from '@/types';
+import { ICustomFeed, TContent, TLayouts, TSort, TSource } from '@/types';
 import { getPost } from '@/services/postService';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -21,8 +21,16 @@ interface TimelineProps {
 
 // Custom hook to manage filters
 const useTimelineFilters = (selectedFeed) => {
-  const { reach, layout, sort, setReach, setLayout, setSort } =
-    useFilterContext();
+  const {
+    reach,
+    layout,
+    sort,
+    content,
+    setReach,
+    setLayout,
+    setSort,
+    setContent,
+  } = useFilterContext();
   const [tagsFeed, setTagsFeed] = useState<string[]>();
 
   useEffect(() => {
@@ -33,15 +41,17 @@ const useTimelineFilters = (selectedFeed) => {
       if (selectedFeed?.tags?.length > 0) {
         setTagsFeed(selectedFeed.tags);
       }
+      setContent(selectedFeed.content);
     } else {
       setReach((localStorage.getItem('reach') || 'all') as TSource);
       setLayout((localStorage.getItem('layout') || 'columns') as TLayouts);
       setSort((localStorage.getItem('sort') || 'recent') as TSort);
       setTagsFeed(undefined);
+      setContent((localStorage.getItem('content') || 'all') as TContent);
     }
   }, [selectedFeed]);
 
-  return { reach, layout, sort, tagsFeed };
+  return { reach, layout, sort, tagsFeed, content };
 };
 
 export const Timeline = ({ selectedFeed }: TimelineProps) => {
@@ -58,7 +68,8 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1024);
-  const { reach, layout, sort, tagsFeed } = useTimelineFilters(selectedFeed);
+  const { reach, layout, sort, content, tagsFeed } =
+    useTimelineFilters(selectedFeed);
 
   const clearTimeline = () => {
     setTimeline([]);
@@ -77,6 +88,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     undefined,
     sort,
     tagsFeed,
+    content,
   );
 
   const fetchPosts = async () => {
@@ -122,7 +134,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   useEffect(() => {
     clearTimeline();
     fetchPosts();
-  }, [reach, sort, tagsFeed, mutedUsers]);
+  }, [reach, sort, tagsFeed, content, mutedUsers]);
 
   useEffect(() => {
     clearTimeline();

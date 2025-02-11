@@ -18,7 +18,7 @@ export const Timeline = () => {
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
-  const { reach, layout, sort } = useFilterContext();
+  const { reach, layout, sort, content } = useFilterContext();
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
@@ -30,6 +30,7 @@ export const Timeline = () => {
     undefined,
     undefined,
     searchTags,
+    content,
   );
 
   const fetchPosts = async () => {
@@ -69,7 +70,7 @@ export const Timeline = () => {
     setTimeline([]);
     setFetchAttempts(0);
     fetchPosts();
-  }, [searchTags, reach, sort, mutedUsers]);
+  }, [searchTags, reach, sort, content, mutedUsers]);
 
   return (
     <div className="flex flex-col gap-3">

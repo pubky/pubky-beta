@@ -50,10 +50,24 @@ export default function ContentCreateReply({
       //  ? post.relationships?.replied
       //  : post.details.uri;
 
+      let postKind = PubkyAppPostKind.Short;
+      if (content.includes('http')) {
+        postKind = PubkyAppPostKind.Link;
+      } else if (selectedFiles.length > 0) {
+        const firstFile = selectedFiles[0];
+        if (firstFile.type.startsWith('image/')) {
+          postKind = PubkyAppPostKind.Image;
+        } else if (firstFile.type.startsWith('video/')) {
+          postKind = PubkyAppPostKind.Video;
+        } else {
+          postKind = PubkyAppPostKind.File;
+        }
+      }
+
       const newReply = await createReply(
         post?.details?.uri,
         content,
-        PubkyAppPostKind.Short,
+        postKind,
         selectedFiles,
         quote,
       );

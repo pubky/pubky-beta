@@ -77,7 +77,7 @@ export default function Feedback() {
                   className="text-opacity-30 leading-snug tracking-wide"
                   variant="medium"
                 >
-                  What do you think about Pubky? Any suggestions?
+                  What do you think about Pubky?
                 </Typography.Body>
               </div>
             </div>

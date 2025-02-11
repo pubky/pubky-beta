@@ -6,7 +6,7 @@ import {
   getUserStream,
   searchUsersByUsername,
 } from '@/services/streamService';
-import { TSort, TSource, TSourceUser } from '@/types';
+import { TContent, TSort, TSource, TSourceUser } from '@/types';
 
 export function useStreamPost(
   viewerId: string,
@@ -18,6 +18,7 @@ export function useStreamPost(
   skip?: number,
   sort?: TSort,
   tags?: string[],
+  kind?: TContent,
   options?: UseQueryOptions,
 ) {
   return useQuery({
@@ -32,6 +33,7 @@ export function useStreamPost(
       skip,
       sort,
       tags,
+      kind,
     ],
     queryFn: () =>
       getStreamPosts(
@@ -44,6 +46,7 @@ export function useStreamPost(
         skip,
         sort,
         tags,
+        kind,
       ),
     retry: false,
     ...options,
