@@ -106,7 +106,9 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       const lastPost = data[data.length - 1] as PostView;
       if (!lastPost?.details?.indexed_at) return;
 
-      setStart(lastPost.details.indexed_at - 1);
+      if (start !== undefined) {
+        setStart(lastPost.details.indexed_at - 1);
+      }
 
       setTimeline((prev) => {
         // Filter out muted users and duplicate posts in one pass
@@ -133,7 +135,9 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
   useEffect(() => {
     clearTimeline();
-    fetchPosts();
+    setTimeout(() => {
+      fetchPosts();
+    }, 0);
   }, [reach, sort, tagsFeed, content, mutedUsers]);
 
   useEffect(() => {
