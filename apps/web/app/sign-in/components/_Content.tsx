@@ -120,7 +120,7 @@ export default function Index() {
         >
           Choose to sign in with a QR, recovery file, or recovery phrase.
         </Typography.Body>
-        <div className="w-full flex-col inline-flex lg:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
+        <div className="w-full flex-col inline-flex xl:grid sm:grid-cols-2 xl:grid-cols-8 gap-6 mt-6">
           <Card.SignIn />
           <Card.RecoveryFile
             errors={errors}
