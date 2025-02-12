@@ -73,7 +73,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const [skip, setSkip] = useState<number>(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  const { data, isLoading } = useStreamPost(
+  const { data, isLoading, failureCount } = useStreamPost(
     pubky ?? '',
     reach,
     'all',
@@ -104,10 +104,13 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       if (!Array.isArray(data) || data.length === 0) {
         setFetchAttempts((prev) => prev + 1);
         if (fetchAttempts >= 3) {
-          setFetching(false);
+          setTimeline([]);
         }
+        setFetching(false);
         return;
       }
+
+      setFetchAttempts(0);
 
       if (sort === 'recent') {
         const lastPost = data[data.length - 1] as PostView;
@@ -148,10 +151,9 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
         return [...prev, ...posts];
       });
-
-      setFetchAttempts(0);
     } catch (error) {
       console.log('Error fetching posts:', error);
+      setFetchAttempts((prev) => prev + 1);
     } finally {
       setFetching(false);
     }
@@ -240,7 +242,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       )}
       {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
-          <Skeleton.Simple />
+          <Skeleton.Simple retryCount={failureCount} maxRetries={3} />
         </div>
       )}
       {!isLoading && !fetching && timeline.length === 0 && (
