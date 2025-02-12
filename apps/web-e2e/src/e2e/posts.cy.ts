@@ -292,7 +292,7 @@ describe('posts', () => {
           // check text
           cy.get('#post-content-text').innerTextShouldEq(postContent);
 
-          // check tags (currently ordered reverse alphabetical)
+          // check tags (ordered reverse alphanumeric)
           cy.get('#tags').find('#tag-0').contains(tag3);
           cy.get('#tags').find('#tag-1').contains(tag2);
           cy.get('#tags').find('#tag-2').contains(tag1);
@@ -319,48 +319,66 @@ describe('posts', () => {
       const tag2 = 'pjammas';
       const tag3 = 'rastas';
 
+      const clickMiddleTag = () => {
+        cy.get('#tags').within(() => {
+          cy.get(`#tag-1`).click();
+        });
+      };
+
+      enum ExpectedTags {
+        AllThree,
+        WithMiddleRemoved
+      }
+
+      const checkTagsAreDisplayed = (expectedTags: ExpectedTags) => {
+        // length is 4 because of the '+' button
+        cy.get('#tags').children().its('length').should('eq', expectedTags === ExpectedTags.WithMiddleRemoved ? 3 : 4);
+        cy.get('#tags').innerTextShouldContain(tag1);
+        expectedTags === ExpectedTags.WithMiddleRemoved
+          ? cy.get('#tags').innerTextShouldNotContain(tag2)
+          : cy.get('#tags').innerTextShouldContain(tag2);
+        cy.get('#tags').innerTextShouldContain(tag3);
+      };
+
+      const checkTagCounters = (expectedTags: ExpectedTags) => {
+        cy.get('#tags').within(() => {
+          // ordered reverse alphanumeric
+          cy.get('#tag-0').should('exist').contains(tag3)
+          cy.get('#tag-0-count').should('exist').contains('1');
+          cy.get('#tag-1').should('exist').contains(tag2)
+          cy.get('#tag-1-count').should('exist').contains(expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1');
+          cy.get('#tag-2').should('exist').contains(tag1)
+          cy.get('#tag-2-count').should('exist').contains('1');
+        });
+      };
+
       createQuickPost(postContent);
 
       // add tags to the post
       fastTagPostInFeed([tag1, tag2, tag3], postContent);
 
-      // check tags are displayed within the latest post in the feed
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
-        // length is 4 because of the '+' button
-        cy.get('#tags').children().its('length').should('eq', 4);
-        cy.get('#tags').innerTextShouldContain(tag1);
-        cy.get('#tags').innerTextShouldContain(tag2);
-        cy.get('#tags').innerTextShouldContain(tag3);
+        // check tags are displayed within the latest post in the feed
+        checkTagsAreDisplayed(ExpectedTags.AllThree);
+
+        // verify tag can be removed and added back
+        clickMiddleTag();
+        checkTagCounters(ExpectedTags.WithMiddleRemoved);
+        clickMiddleTag();
+        checkTagCounters(ExpectedTags.AllThree);
       });
 
       // refresh page before checking tags are still displayed
       cy.reload();
       waitForFeedToLoad();
 
-      // check tags are still displayed
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
-        // length is 4 because of the '+' button
-        cy.get('#tags').children().its('length').should('eq', 4);
-        cy.get('#tags').innerTextShouldContain(tag1);
-        cy.get('#tags').innerTextShouldContain(tag2);
-        cy.get('#tags').innerTextShouldContain(tag3);
+        // check tags are still displayed
+        checkTagsAreDisplayed(ExpectedTags.AllThree);
+
         // remove a tag from the post
-        cy.get('#tags').within(() => {
-          cy.get('#tag-1').click();
-        });
-      });
-
-      // verify the tag is removed from the post and other tags remain
-      // TODO: check children length once bug fixed, see https://github.com/pubky/pubky-app/issues/543
-      //cy.get('#tags').children().should('have.length', oldLength - 1);
-
-      cy.get('#tags').within(() => {
-        cy.get('#tag-0').should('exist').contains(tag3)
-        cy.get('#tag-0-count').should('exist').contains('1');
-        cy.get('#tag-1').should('exist').contains(tag2)
-        cy.get('#tag-1-count').should('exist').contains('0');
-        cy.get('#tag-2').should('exist').contains(tag1)
-        cy.get('#tag-2-count').should('exist').contains('1');
+        clickMiddleTag();
+        checkTagCounters(ExpectedTags.WithMiddleRemoved);
       });
 
       // refresh page before checking tag is still removed
@@ -369,21 +387,19 @@ describe('posts', () => {
 
       // check tag is still removed
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
-        cy.get('#tags').innerTextShouldNotContain(tag2);
+        checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved);
       });
     });
+
+    // todo: also check tags on post page
   });
 
   // todo: consider creating user to create the post to bookmark
-  // TODO: reenable once bug fixed: https://github.com/pubky/pubky-app/issues/751
-  it.skip('can bookmark post then remove bookmark', () => {
+  it('can bookmark post then remove bookmark', () => {
     const postContent = `This post will be bookmarked! ${Date.now()}`;
 
     // create a post to bookmark
     createQuickPost(postContent);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/545
-    cy.waitReload();
 
     // bookmark the post
     cy.slowDown(fastMs);
@@ -399,9 +415,9 @@ describe('posts', () => {
     cy.location('pathname').should('eq', '/bookmarks');
 
     // if posts-feed area contains "No bookmarks yet", reload the page
-    cy.get('#posts-feed').innerTextContains('No bookmarks yet').then((noBookmarksYet) => {
-      if (noBookmarksYet) cy.reload();
-    });
+    // cy.get('#posts-feed').innerTextContains('No bookmarks yet').then((noBookmarksYet) => {
+    //   if (noBookmarksYet) cy.reload();
+    // });
 
     cy.get('#posts-feed').children().eq(0).should('have.length', 1).children().eq(0).within(() => {
       // verify the post has been bookmarked
@@ -415,7 +431,7 @@ describe('posts', () => {
     cy.waitReload();
 
     //verify the post is no longer bookmarked
-    cy.get('#posts-feed').should('contain.text', 'No bookmarks yet')
+    cy.get('#posts-feed').should('contain.text', 'Save posts for later')
   });
 
   [true, false].forEach((waitForIndexed) => {
