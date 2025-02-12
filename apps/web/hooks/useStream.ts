@@ -19,14 +19,14 @@ export function useStreamPost(
   sort?: TSort,
   tags?: string[],
   kind?: TContent,
-  options?: UseQueryOptions,
+  options?: UseQueryOptions<unknown, Error>,
 ) {
   return useQuery({
     queryKey: [
       source ? `${source}-streamPost` : 'streamPost',
       viewerId,
-      authorId,
       source,
+      authorId,
       limit,
       start,
       end,
@@ -41,15 +41,19 @@ export function useStreamPost(
         source,
         authorId,
         limit,
-        start,
+        sort === 'recent' ? start : undefined,
         end,
-        skip,
+        sort === 'popularity' ? skip : undefined,
         sort,
         tags,
         kind,
       ),
-    retry: false,
     ...options,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 }
 

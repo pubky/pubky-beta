@@ -21,6 +21,13 @@ export function NewPostsNotifier() {
   const lastScrollY = useRef(0);
   const throttleTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  useEffect(() => {
+    setNewPosts([]);
+    setNewPostsCount(0);
+    setLatestTimestamp(null);
+    setShouldFetch(false);
+  }, [sort, reach, content]);
+
   // Update latestTimestamp whenever the timeline changes
   useEffect(() => {
     if (timeline.length > 0) {
