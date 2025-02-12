@@ -23,7 +23,7 @@ export function useStreamPost(
 ) {
   return useQuery({
     queryKey: [
-      'streamPost',
+      source ? `${source}-streamPost` : 'streamPost',
       viewerId,
       source,
       authorId,
@@ -41,15 +41,17 @@ export function useStreamPost(
         source,
         authorId,
         limit,
-        sort === 'recent' ? start : undefined, // start
+        sort === 'recent' ? start : undefined,
         end,
-        sort === 'popularity' ? skip : undefined, // skip
+        sort === 'popularity' ? skip : undefined,
         sort,
         tags,
         kind,
       ),
     ...options,
     staleTime: 0,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 }
 

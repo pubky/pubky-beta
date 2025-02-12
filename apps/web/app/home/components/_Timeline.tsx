@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Button, Icon } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
@@ -71,6 +71,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const { reach, layout, sort, content, tagsFeed } =
     useTimelineFilters(selectedFeed);
   const [skip, setSkip] = useState<number>(0);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
@@ -85,11 +86,22 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     content,
   );
 
+  const clearTimeline = useCallback(() => {
+    setTimeline([]);
+    setNewPosts([]);
+    setStart(undefined);
+    setSkip(0);
+    setFetchAttempts(0);
+    setFetching(false);
+    setIsInitialLoad(true);
+  }, [setNewPosts]);
+
   const fetchPosts = async () => {
+    if (fetching || !data) return;
     setFetching(true);
 
     try {
-      if (!data || !Array.isArray(data) || data.length === 0) {
+      if (!Array.isArray(data) || data.length === 0) {
         setFetchAttempts((prev) => prev + 1);
         if (fetchAttempts >= 3) {
           setFetching(false);
@@ -100,17 +112,32 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       if (sort === 'recent') {
         const lastPost = data[data.length - 1] as PostView;
         if (!lastPost?.details?.indexed_at) return;
-
-        if (start !== undefined) {
-          setStart(lastPost.details.indexed_at - 1);
-        }
+        setStart(lastPost.details.indexed_at - 1);
       } else {
-        // For popularity sorting, increment skip
-        setSkip((prev) => prev + data.length);
+        const newPosts = data.filter(
+          (post) =>
+            post?.details?.author &&
+            !mutedUsers?.includes(post.details.author) &&
+            !timeline.some((p) => p.details.id === post.details.id) &&
+            !deletedPosts.includes(post.details.id),
+        );
+
+        if (newPosts.length > 0) {
+          setSkip((prev) => prev + 10);
+        }
       }
 
       setTimeline((prev) => {
-        // Filter out muted users and duplicate posts in one pass
+        if (isInitialLoad) {
+          setIsInitialLoad(false);
+          return data.filter(
+            (post) =>
+              post?.details?.author &&
+              !mutedUsers?.includes(post.details.author) &&
+              !deletedPosts.includes(post.details.id),
+          );
+        }
+
         const posts = data.filter(
           (post) =>
             post?.details?.author &&
@@ -119,33 +146,28 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
             !deletedPosts.includes(post.details.id),
         );
 
-        return posts.length > 0 ? [...prev, ...posts] : prev;
+        return [...prev, ...posts];
       });
 
       setFetchAttempts(0);
-      setFetching(false);
     } catch (error) {
       console.log('Error fetching posts:', error);
+    } finally {
       setFetching(false);
     }
-  };
-
-  const clearTimeline = () => {
-    setTimeline([]);
-    setNewPosts([]);
-    setStart(undefined);
-    setSkip(0);
-    setFetchAttempts(0);
   };
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   useEffect(() => {
-    clearTimeline();
-    setTimeout(() => {
+    const initializeTimeline = async () => {
+      clearTimeline();
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Increased delay
       fetchPosts();
-    }, 0);
-  }, [reach, sort, tagsFeed, content, mutedUsers]);
+    };
+
+    initializeTimeline();
+  }, [reach, sort, tagsFeed, content, mutedUsers, clearTimeline]);
 
   useEffect(() => {
     const fetchNexusData = async () => {
