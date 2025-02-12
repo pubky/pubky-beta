@@ -699,6 +699,7 @@ export function PubkyClientWrapper({
               label: tag,
               taggers: [pubky],
               taggers_count: 1,
+              relationship: true,
             }))
           : [],
         cached: 'homeserver',
