@@ -88,6 +88,7 @@ export const Timeline = () => {
           <Skeleton.Simple />
         </div>
       )}
+      <div ref={loader} />
       {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Tag size="48" color="#C8FF00" />}
@@ -104,7 +105,6 @@ export const Timeline = () => {
           </div>
         </ContentNotFound>
       )}
-      <div ref={loader} />
     </div>
   );
 };

@@ -245,6 +245,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           <Skeleton.Simple retryCount={failureCount} maxRetries={3} />
         </div>
       )}
+      <div ref={loader} />
       {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Smiley size="48" color="#C8FF00" />}
@@ -276,7 +277,6 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           </div>
         </ContentNotFound>
       )}
-      <div ref={loader} />
     </div>
   );
 };
