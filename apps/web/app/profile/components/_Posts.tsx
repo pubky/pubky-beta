@@ -68,6 +68,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
           <Skeleton.Simple />
         </div>
       )}
+      <div ref={loader} />
       {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Note size="48" color="#C8FF00" />}
@@ -84,7 +85,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
           </div>
         </ContentNotFound>
       )}
-           <div ref={loader} />
     </div>
   );
 }
