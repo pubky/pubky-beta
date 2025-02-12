@@ -263,9 +263,7 @@ describe('posts', () => {
     });
   });
 
-  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
-  //[true, false].forEach((waitForIndexed) => {
-  [true].forEach((waitForIndexed) => {
+  [true, false].forEach((waitForIndexed) => {
     it(`can tag whilst creating post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can post with tags! ${Date.now()}`;
       const tag1 = 'alpacas';
@@ -313,10 +311,9 @@ describe('posts', () => {
     });
   });
 
-  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
-  //[true, false].forEach((waitForIndexed) => {
-  [true].forEach((waitForIndexed) => {
-    it(`can tag and remove tags from existing post (waitForIndexed: ${waitForIndexed})`, () => {
+  // TODO: enable once tag bug fixed, see https://github.com/pubky/pubky-app/issues/1026
+  [true, false].forEach((waitForIndexed) => {
+    it.skip(`can tag and remove tags from existing post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
       const tag1 = 'bananas';
       const tag2 = 'pjammas';
@@ -421,9 +418,7 @@ describe('posts', () => {
     cy.get('#posts-feed').should('contain.text', 'No bookmarks yet')
   });
 
-  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
-  //[true, false].forEach((waitForIndexed) => {
-  [true].forEach((waitForIndexed) => {
+  [true, false].forEach((waitForIndexed) => {
     it(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to repost
       const postContent = `This post will be reposted with content! ${Date.now()}`;
@@ -515,9 +510,7 @@ describe('posts', () => {
     });
   });
 
-  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
-  //[true, false].forEach((waitForIndexed) => {
-  [true].forEach((waitForIndexed) => {
+  [true, false].forEach((waitForIndexed) => {
     it(`cannot see reply of a deleted post in feed (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to reply to
       const postContent = `This post will be replied to! ${Date.now()}`;

@@ -167,7 +167,7 @@ describe('feed and filters', () => {
     cannotFindPostInFeed(profile2.repostText);
     cannotFindPostInFeed(profile3.postText);
     cannotFindPostInFeed(profile4.postText);
-    cy.get('#posts-feed').find('#timeline').should('contain.text', 'No posts yet');
+    cy.get('#posts-feed').find('#timeline').should('contain.text', 'Welcome to your feed!');
   });
 
   it('can filter view only posts and reposts of friends', () => {
