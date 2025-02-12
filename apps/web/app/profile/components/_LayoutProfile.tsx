@@ -9,6 +9,7 @@ import { Profile } from '.';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
+import { ImageByUri } from '@/components/ImageByUri';
 
 export default function LayoutProfile({
   children,
@@ -21,6 +22,7 @@ export default function LayoutProfile({
   const { data: userData } = useUserProfile(pubky ?? '', pubky ?? '');
   const loader = useRef(null);
   const pathname = usePathname();
+  const [isAvatarOpen, setIsAvatarOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -47,9 +49,10 @@ export default function LayoutProfile({
           />
           <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
             <Profile.Avatar
-              className="lg:pl-12"
+              className="lg:pl-12 cursor-pointer"
               username={profile?.name || Utils.minifyPubky(pubky ?? '')}
               uriImage={profile?.image as string}
+              onClick={() => setIsAvatarOpen(true)}
             />
             <Profile.Handle profileUser={userData} pubkey={pubky ?? ''} />
           </div>
@@ -72,6 +75,26 @@ export default function LayoutProfile({
       <CreatePost />
       <Components.FooterMobile title="Profile" />
       <div ref={loader} />
+
+      {isAvatarOpen && (
+        <div
+          onClick={() => setIsAvatarOpen(false)}
+          className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50"
+        >
+          <div
+            onClick={(event) => event?.stopPropagation()}
+            className="relative p-4 bg-transparent rounded-full"
+          >
+            <ImageByUri
+              alt={profile?.name || Utils.minifyPubky(pubky ?? '')}
+              width={262}
+              height={262}
+              className="rounded-full shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
+              uri={profile?.image as string}
+            />
+          </div>
+        </div>
+      )}
     </Content.Main>
   );
 }

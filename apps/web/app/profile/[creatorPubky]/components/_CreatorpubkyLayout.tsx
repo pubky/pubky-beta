@@ -12,6 +12,7 @@ import Skeletons from '@/components/Skeletons';
 import { Utils } from '@social/utils-shared';
 import { usePathname } from 'next/navigation';
 import { Header } from './_Header';
+import { ImageByUri } from '@/components/ImageByUri';
 
 export default function CreatorpubkyLayout({
   params,
@@ -24,6 +25,7 @@ export default function CreatorpubkyLayout({
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isAvatarOpen, setIsAvatarOpen] = useState(false);
   const [resolvedParams, setResolvedParams] = useState<{
     creatorPubky: string;
   } | null>(null);
@@ -88,13 +90,14 @@ export default function CreatorpubkyLayout({
             />
             <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
               <Profile.Avatar
-                className="lg:pl-12"
+                className="lg:pl-12 cursor-pointer"
                 username={
                   profile?.details?.name || Utils.minifyPubky(creatorPubky)
                 }
                 uriImage={
                   profile?.details?.image || '/images/webp/Userpic.webp'
                 }
+                onClick={() => setIsAvatarOpen(true)}
               />
               <Profile.Handle
                 profileUser={profile}
@@ -122,6 +125,25 @@ export default function CreatorpubkyLayout({
         <CreatePost />
         <Components.FooterMobile />
         <div ref={loader} />
+        {isAvatarOpen && (
+          <div
+            onClick={() => setIsAvatarOpen(false)}
+            className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50"
+          >
+            <div
+              onClick={(event) => event?.stopPropagation()}
+              className="relative p-4 bg-transparent rounded-full"
+            >
+              <ImageByUri
+                alt={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
+                width={262}
+                height={262}
+                className="rounded-full shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
+                uri={profile?.details?.image as string}
+              />
+            </div>
+          </div>
+        )}
       </>
     );
   }
