@@ -8,7 +8,7 @@ import { Utils } from '@social/utils-shared';
 import { BottomSheet } from '../BottomSheet';
 
 export default function Feeds() {
-  const { selectedFeed, setSelectedFeed } = useFilterContext();
+  const { reach, selectedFeed, setSelectedFeed } = useFilterContext();
   const [showSheetCreateFeed, setShowSheetCreateFeed] = useState(false);
   const [tagsFeed, setTagsFeed] = useState<string[]>([]);
   const [nameFeed, setNameFeed] = useState<string>('');
@@ -75,8 +75,8 @@ export default function Feeds() {
       <SideCard.Header title="Feeds" className="mb-2" />
       <div>
         <SideCard.Item
-          label="For you"
-          value="for you"
+          label={reach.charAt(0).toUpperCase() + reach.slice(1)}
+          value={reach}
           selected={!selectedFeed}
           onClick={handleForYouClick}
           icon={<Icon.Activity size="24" />}

@@ -145,7 +145,10 @@ const Parsing = ({
   const renderCodeBlock = (codeContent: string, key: string) => {
     if (!codeContent.trim()) return null;
     return (
-      <div key={key} className="w-full max-w-[740px]">
+      <div
+        key={key}
+        className="w-auto max-w-[300px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[600px] xl:max-w-[730px]"
+      >
         <div
           onClick={(event) => event.stopPropagation()}
           className="bg-[#3a404d] flex justify-between px-4 py-1 items-center rounded-t-md"

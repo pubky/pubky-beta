@@ -64,10 +64,7 @@ export default function Root({
     <div
       {...rest}
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end"
-      onClick={(e) => {
-        e.stopPropagation();
-        setShow(false);
-      }}
+      onClick={() => setShow(false)}
       onTouchStart={handleTouchStart}
       onTouchMove={(e) => {
         e.stopPropagation();
@@ -80,6 +77,7 @@ export default function Root({
           animateIn ? 'translate-y-none' : 'translate-y-full',
           rest.className,
         )}
+        onClick={(e) => e.stopPropagation()}
       >
         <div
           onClick={() => setShow(false)}

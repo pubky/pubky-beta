@@ -558,7 +558,7 @@ export default function ContentTag({
                 </div>
                 {taggers.map((user, userIndex) => {
                   const profile = userProfiles[user];
-                  const pubkeyUser = moreTaggers?.relationship;
+                  const pubkeyUser = pubky && user.includes(pubky);
                   const isFollowed = followedUser[user];
 
                   return (

@@ -20,7 +20,7 @@ export default function ContentNotFound({
     'w-full p-12 relative flex-col justify-center items-center gap-6 inline-flex';
   return (
     <div className={twMerge(baseCSS, className)}>
-      <div className="z-10 inline-flex flex-col gap-6 items-center">
+      <div className="inline-flex flex-col gap-6 items-center">
         {icon && (
           <div className="p-4 bg-[#c8ff00]/10 rounded-full justify-center items-center gap-2.5 inline-flex">
             {icon}

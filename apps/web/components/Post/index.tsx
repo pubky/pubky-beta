@@ -72,7 +72,7 @@ export default function Post({
   const handleDeletePost = async () => {
     const result = await deletePost(post);
     if (result) {
-      addAlert('Post deleted');
+      addAlert('Post deleted!');
     } else {
       addAlert('Something wrong. Try again', 'warning');
     }
