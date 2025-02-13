@@ -42,6 +42,25 @@ export const createQuickPost = (postContent: string, expectedPostLength? : numbe
   });
 };
 
+export const createQuickPostWithTags = (postContent: string, tags: string[], expectedPostLength?: number) => {
+  cy.get('#quick-post-create-content').within(() => {
+    cy.get('textarea').should('have.value', '');
+    // type the post
+    cy.get('textarea').type(postContent);
+
+    // add tags to the post
+    fastTagWhilstCreatingPost(tags);
+
+    // check displayed content length
+    expectedPostLength
+      ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 1000`)
+      : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
+
+    // submit the post
+    cy.get('#post-btn').click();
+  });
+};
+
 // reply to any post in the feed that contains the filterText by index
 export const replyToPost = ({replyContent, postContent, filterText = '', postIdx = 0, waitForIndexed = true}: {replyContent: string, postContent?: string, filterText?: string, postIdx?: number, waitForIndexed?: boolean}) => {
   cy.findPostInFeed(postIdx, filterText, waitForIndexed).within(() => {

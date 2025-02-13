@@ -18,6 +18,7 @@ const hexToRgba = (hex: string, alpha: number) => {
 };
 
 export const Tag = ({
+  id,
   clicked = false,
   color = 'fuchsia',
   children,
@@ -66,6 +67,7 @@ export const Tag = ({
 
   return (
     <div
+      id={id}
       {...rest}
       className={twMerge(
         `inline-flex border h-8 px-3 py-1 rounded-lg cursor-pointer text-center transition-all duration-300`,

@@ -11,7 +11,8 @@ import { latestPostInFeedContentEq,
         replyToPost,
         waitForFeedToLoad,
         selectEmojis,
-        fastTagWhilstCreatingPost} from '../support/posts';
+        fastTagWhilstCreatingPost,
+        createQuickPostWithTags} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -270,20 +271,7 @@ describe('posts', () => {
       const tag2 = 'llamas';
       const tag3 = 'vicuñas';
 
-      cy.get('#quick-post-create-content').within(() => {
-        cy.get('textarea').should('have.value', '');
-        // type the post
-        cy.get('textarea').type(postContent);
-
-        // add tags to the post
-        fastTagWhilstCreatingPost([tag1, tag2, tag3]);
-
-        // check displayed content length
-        cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
-
-        // submit the post
-        cy.get('#post-btn').click();
-      });
+      createQuickPostWithTags(postContent, [tag1, tag2, tag3]);
 
       // function to verify tags are displayed in the post
       const verifyPost = () => {
@@ -312,7 +300,7 @@ describe('posts', () => {
   });
 
   [true, false].forEach((waitForIndexed) => {
-    it(`can tag and remove tags from existing post (waitForIndexed: ${waitForIndexed})`, () => {
+    it(`can tag and remove tags from existing post on feed page (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
       const tag1 = 'bananas';
       const tag2 = 'pjammas';
@@ -397,8 +385,103 @@ describe('posts', () => {
         checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
       });
     });
+  });
 
-    // todo: also check tags on post page
+  // TODO: enable when bug fixed, see https://github.com/pubky/pubky-app/issues/1044
+  it.skip(`can tag and remove tags from existing post on post page`, () => {
+    const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
+    const tag1 = 'açorda';
+    const tag2 = 'cassava';
+    const tag3 = 'feijoada';
+
+    // add one tag now and the rest later
+    createQuickPostWithTags(postContent, [tag1]);
+
+    // navigate to post page
+    cy.findFirstPostInFeed().within(() => {
+      cy.get('#post-content-text').click();
+    });
+
+    // location should be /post/:id
+    cy.location('pathname').should('contain', '/post/');
+
+    // add two more tags to the post
+    cy.get('#post-container').within(() => {
+      cy.get('#show-add-tag-input-btn').click();
+      cy.get('#add-tag-input').type(tag2);
+      cy.get('#add-tag-btn  ').click();
+      cy.get('#show-add-tag-input-btn').click();
+      cy.get('#add-tag-input').type(tag3);
+      cy.get('#add-tag-btn').click();
+    });
+
+    enum ExpectedTags {
+      AllThree,
+      WithMiddleRemoved
+    }
+
+    enum ExpectedOrder {
+      Alphanumeric,
+      ReverseAlphanumeric
+    }
+
+    // note: tags are displayed in reverse alphanumeric order
+    const checkTagsAreDisplayed = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
+      cy.get('#post-container').within(($post) => {
+        cy.get('#tag-0').should('be.visible').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1)
+        expectedTags === ExpectedTags.WithMiddleRemoved
+          ? cy.wrap($post).innerTextShouldNotContain(tag2)
+          : cy.get('#tag-1').should('be.visible').contains(tag2);
+          cy.get(expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2')
+          .should('be.visible').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
+        });
+      };
+
+    const checkTagCounters = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
+      cy.get('#post-container').within(() => {
+        cy.get('#tag-0').should('exist').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1)
+        cy.get('#tag-0-count').should('exist').contains('1');
+        cy.get('#tag-1').should('exist').contains(tag2)
+        cy.get('#tag-1-count').should('exist').contains(expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1');
+        cy.get('#tag-2').should('exist').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3)
+        cy.get('#tag-2-count').should('exist').contains('1');
+      });
+    };
+
+    const clickMiddleTag = () => {
+      cy.get('#tag-1').click();
+    };
+
+    // check tags are displayed for post
+    checkTagsAreDisplayed(ExpectedTags.AllThree);
+    checkTagCounters(ExpectedTags.AllThree);
+
+    // remove a tag from the post
+    clickMiddleTag();
+    checkTagsAreDisplayed(ExpectedTags.AllThree);
+    checkTagCounters(ExpectedTags.WithMiddleRemoved);
+
+    // add the tag back
+    clickMiddleTag();
+    checkTagsAreDisplayed(ExpectedTags.AllThree);
+    checkTagCounters(ExpectedTags.AllThree);
+
+    // refresh page before checking tags are still displayed
+    cy.reload();
+
+    // check tags are still displayed
+    checkTagsAreDisplayed(ExpectedTags.AllThree);
+    checkTagCounters(ExpectedTags.AllThree);
+
+    // remove the tag from the post
+    clickMiddleTag();
+
+    // refresh page before checking the tag is removed
+    cy.reload();
+
+    // check the tag is removed
+    checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved);
+    checkTagCounters(ExpectedTags.WithMiddleRemoved);
   });
 
   // todo: consider creating user to create the post to bookmark

@@ -297,6 +297,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               <PostUI.Footer>
                 <div className="flex gap-2">
                   <PostUtil.Tag
+                      id={`tag-${index}`}
                     clicked={isTagFound}
                     color={
                       tagObj?.label && Utils.generateRandomColor(tagObj?.label)
@@ -315,6 +316,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                         <Icon.LoadingSpin size="12" />
                       ) : (
                         <Typography.Caption
+                            id={`tag-${index}-count`}
                           variant="bold"
                           className="text-opacity-60"
                         >
@@ -380,6 +382,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               )}
               <div className="w-fit">
                 <Input.Text
+                  id="add-tag-input"
                   placeholder="tag"
                   className="h-[32px] p-3 text-[14px] rounded-lg"
                   value={tagInput}
@@ -391,6 +394,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   action={
                     <div className="flex gap-1 -mr-2">
                       <div
+                        id="add-tag-btn"
                         onClick={!loadingTags ? handleFastAddTag : undefined}
                         className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
                       >
@@ -421,6 +425,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             </>
           ) : (
             <div
+              id="show-add-tag-input-btn"
               onClick={() => (pubky ? setAddTagInput(true) : openJoin())}
               className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
             >
