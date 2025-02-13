@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 interface ContentNotFoundProps {
   icon?: React.ReactElement;
   title?: string;
-  description?: string;
+  description?: any;
   className?: string;
   children?: any;
 }

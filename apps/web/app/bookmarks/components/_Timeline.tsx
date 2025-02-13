@@ -191,7 +191,7 @@ export const Timeline = () => {
                 icon={<Icon.UserPlus size="16" />}
                 className="whitespace-nowrap"
               >
-                Follow Popular
+                Follow Popular Users
               </Button.Medium>
             </Link>
             <Link href="hot">

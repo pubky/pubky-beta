@@ -245,7 +245,13 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         <ContentNotFound
           icon={<Icon.Smiley size="48" color="#C8FF00" />}
           title="Welcome to your feed!"
-          description="It's a blank slate for now, but not for long. Start to create posts, follow interesting people, or explore tags that catch your attention. This feed will be full of personalized content, just for you."
+          description={
+            <>
+              It's a blank slate for now, but not for long.
+              <br />
+              Start to create posts, follow interesting people, or explore tags.
+            </>
+          }
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
             <Link href="/hot#popular">
@@ -253,7 +259,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
                 icon={<Icon.UserPlus size="16" />}
                 className="whitespace-nowrap"
               >
-                Follow Popular
+                Follow Popular Users
               </Button.Medium>
             </Link>
             <Link href="hot">

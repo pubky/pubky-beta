@@ -77,12 +77,12 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
           <Skeleton.Simple />
         </div>
       )}
-      <div ref={loader} className="h-20" />
+      <div ref={loader} />
       {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Note size="48" color="#C8FF00" />}
-          title="No posts yet?"
-          description="It's a blank slate for now, but not for long. Start to create posts, follow interesting people, or explore tags that catch your attention. This feed will be full of personalized content, just for you."
+          title="No posts yet"
+          description="Start writing your first post."
         >
           <div className="absolute top-12 z-0">
             <Image
