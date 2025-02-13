@@ -1035,14 +1035,22 @@ export function PubkyClientWrapper({
     },
   );
 
-  const getTimestampNotification = withAuth(async () => {
-    // create a new last_read only to craft the url
-    const result = specsBuilder!.createLastRead();
+  const getTimestampNotification = withAuth(async (): Promise<number> => {
+    try {
+      const result = await homeserver.get(
+        specsBuilder!.createLastRead().meta.url,
+      );
+      // If response is empty or invalid, return 0 as default timestamp
+      if (!result || result.status === 404) {
+        return 0;
+      }
 
-    const response = await homeserver.get(result.meta.url);
-    const lastRead = (await response.json()) as PubkyAppLastRead;
-
-    return Number(lastRead.timestamp);
+      const data = await result.json();
+      return data?.timestamp || 0;
+    } catch (error) {
+      // Silently return 0 for new users without last_read
+      return 0;
+    }
   });
 
   const putTimestampNotification = withAuth(async () => {
