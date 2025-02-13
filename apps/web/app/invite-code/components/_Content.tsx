@@ -62,6 +62,13 @@ export default function Index() {
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log('KeyDown event:', event.key);
+    if (event.key === 'Enter') {
+      handleInviteCode();
+    }
+  };
+
   useEffect(() => {
     async function fetchData() {
       const loggedIn = await isLoggedIn();
@@ -100,6 +107,7 @@ export default function Index() {
           autoFocus
           id="onboarding-name-input"
           autoCorrect="off"
+          onKeyDown={handleKeyDown}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setInviteCode(e.target.value.toUpperCase());
             setError('');

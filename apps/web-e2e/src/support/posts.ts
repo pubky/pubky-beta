@@ -176,7 +176,7 @@ export const waitForFeedToLoad = (seconds: number = 6) => {
     if (attempts <= 0) assert(false, "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds");
 
     cy.get('#posts-feed').find('#timeline').invoke('text').then((text) => {
-      if (text.includes('No posts yet') || text.includes('Loading')) {
+      if (text.includes('Welcome to your feed!') || text.includes('Loading') || text.includes('Checking for new content')) {
         firstCheck ? cy.wait(200) : cy.wait(1000);
         checkTimelineRecursively(attempts - 1, false);
       }
