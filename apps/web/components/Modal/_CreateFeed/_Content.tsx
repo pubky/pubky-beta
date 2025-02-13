@@ -237,12 +237,7 @@ export default function ContentCreateFeed({
             <Typography.Label className="text-opacity-30">
               Content
             </Typography.Label>
-            <div className="flex gap-2">
-              <div>
-                <Icon.Stack size="24" />
-              </div>
-              <Typography.Body variant="medium-bold">All</Typography.Body>
-            </div>
+            {isMobile ? <BottomSheet.Content /> : <DropDown.Content />}
           </div>
           {!isMobile && (
             <div>

@@ -12,11 +12,11 @@ export default function ButtonFilters({
   ...rest
 }: ButtonFiltersProps) {
   const baseCSS =
-    '2xl:-ml-4 hidden lg:inline-flex cursor-pointer absolute p-5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-tr-[48px] rounded-br-[48px] justify-center items-center gap-2';
+    '2xl:-ml-4 hidden lg:inline-flex cursor-pointer absolute px-4 py-3 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-tr-[48px] rounded-br-[48px] justify-center items-center gap-2';
   return (
     <div className={rootCSS}>
       <button {...rest} className={twMerge(baseCSS, rest.className)}>
-        <Icon.SlidersHorizontal />
+        <Icon.SlidersHorizontal size="24" />
       </button>
     </div>
   );

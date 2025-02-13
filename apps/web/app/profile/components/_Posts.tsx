@@ -15,8 +15,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
-  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
-
   const currentPubky = creatorPubky ?? pubky ?? '';
 
   const { data, isLoading } = useStreamPost(
@@ -36,21 +34,16 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
 
     try {
       if (!Array.isArray(data) || data.length === 0) {
-        setFetchAttempts((prev) => prev + 1);
-        if (fetchAttempts >= 3) {
-          setTimeline([]);
-        }
+        setTimeline([]);
+
         return;
       }
 
-      setFetchAttempts(0);
       const lastPost = data[data.length - 1] as PostView;
 
       setTimeline((prev) => {
         const newPosts = data.filter(
-          (post) =>
-            !prev.some((p) => p.details.id === post.details.id) &&
-            post?.details?.content !== '[DELETED]',
+          (post) => !prev.some((p) => p.details.id === post.details.id),
         );
         return [...prev, ...newPosts];
       });
@@ -60,7 +53,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
       }
     } catch (error) {
       console.error(error);
-      setFetchAttempts((prev) => prev + 1);
     } finally {
       setFetching(false);
     }
@@ -69,7 +61,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   useEffect(() => {
     setStart(undefined);
     setTimeline([]);
-    setFetchAttempts(0);
     setFetching(false);
     fetchPosts();
   }, [currentPubky]);

@@ -66,7 +66,6 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   } = usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
-  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1024);
   const { reach, layout, sort, content, tagsFeed } =
     useTimelineFilters(selectedFeed);
@@ -91,7 +90,6 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     setNewPosts([]);
     setStart(undefined);
     setSkip(0);
-    setFetchAttempts(0);
     setFetching(false);
     setIsInitialLoad(true);
   }, [setNewPosts]);
@@ -102,15 +100,10 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
     try {
       if (!Array.isArray(data) || data.length === 0) {
-        setFetchAttempts((prev) => prev + 1);
-        if (fetchAttempts >= 3) {
-          setTimeline([]);
-        }
+        setTimeline([]);
         setFetching(false);
         return;
       }
-
-      setFetchAttempts(0);
 
       if (sort === 'recent') {
         const lastPost = data[data.length - 1] as PostView;
@@ -156,7 +149,6 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       }
     } catch (error) {
       console.log('Error fetching posts:', error);
-      setFetchAttempts((prev) => prev + 1);
     } finally {
       setFetching(false);
     }

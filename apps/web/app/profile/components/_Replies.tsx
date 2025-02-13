@@ -16,9 +16,8 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
-  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const lineHorizontalCSS = (
-    <div className="absolute ml-[9px]">
+    <div className="absolute ml-[9px] -mt-2">
       <Icon.LineHorizontal size="14" color="#444447" />
     </div>
   );
@@ -42,21 +41,16 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
 
     try {
       if (!Array.isArray(data) || data.length === 0) {
-        setFetchAttempts((prev) => prev + 1);
-        if (fetchAttempts >= 3) {
-          setTimeline([]);
-        }
+        setTimeline([]);
+
         return;
       }
 
-      setFetchAttempts(0);
       const lastPost = data[data.length - 1] as PostView;
 
       setTimeline((prev) => {
         const newPosts = data.filter(
-          (post) =>
-            !prev.some((p) => p.details.id === post.details.id) &&
-            post?.details?.content !== '[DELETED]',
+          (post) => !prev.some((p) => p.details.id === post.details.id),
         );
         return [...prev, ...newPosts];
       });
@@ -66,7 +60,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
       }
     } catch (error) {
       console.error(error);
-      setFetchAttempts((prev) => prev + 1);
     } finally {
       setFetching(false);
     }
@@ -75,7 +68,6 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   useEffect(() => {
     setStart(undefined);
     setTimeline([]);
-    setFetchAttempts(0);
     setFetching(false);
     fetchPosts();
   }, [currentPubky]);
@@ -84,26 +76,22 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
 
   return (
     <div className="flex flex-col gap-3">
-      {timeline.map(
-        (post) =>
-          post?.details?.content !== '[DELETED]' && (
+      {timeline.map((post) => (
+        <div key={`reply-${post.details.id}`} className="flex flex-col gap-3">
+          {post?.relationships?.replied && (
+            <Profile.ParentPost parentURI={post?.relationships?.replied} />
+          )}
+          <div className="flex items-center relative">
             <div
-              key={`reply-${post.details.id}`}
-              className="flex flex-col gap-3"
-            >
-              {post?.relationships?.replied && (
-                <Profile.ParentPost parentURI={post?.relationships?.replied} />
-              )}
-              <div className="flex items-center relative">
-                <div
-                  className={`ml-[9px] absolute border-l-[1px] h-[53%] -top-3 border-[#444447]`}
-                />
-                {lineHorizontalCSS}
-                <Post className="ml-[23px]" post={post} />
-              </div>
+              className={`ml-[9px] absolute border-l-[1px] h-[53%] -top-3 border-[#444447]`}
+            />
+            {lineHorizontalCSS}
+            <div className="ml-[23px] w-full">
+              <Post post={post} />
             </div>
-          ),
-      )}
+          </div>
+        </div>
+      ))}
       {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />

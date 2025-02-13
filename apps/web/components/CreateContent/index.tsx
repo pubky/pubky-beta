@@ -185,8 +185,7 @@ export default function CreateContent({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isValidContent, content]);
+  }, [isValidContent, content, arrayTags]);
 
   const removeFile = (index: number) => {
     setSelectedFiles &&
