@@ -11,43 +11,61 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 
 const RenderPosts = () => {
   const limit = 10;
-  const { pubky, searchTags, mutedUsers } = usePubkyClientContext();
+  const { pubky, mutedUsers } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
-  const [start, setStart] = useState<number | undefined>(undefined);
-  const { reach, layout, sort } = useFilterContext();
+  const [skip, setSkip] = useState<number>(0);
+  const [fetching, setFetching] = useState<boolean>(false);
+  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
+  const { hotTagsReach, timeframe, layout } = useFilterContext();
   const isMobile = useIsMobile();
+
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
-    'all',
+    hotTagsReach,
     undefined,
     limit,
-    start,
     undefined,
     undefined,
-    'recent',
+    skip,
+    'popularity',
+    undefined,
+    undefined,
   );
 
   const fetchPosts = async () => {
-    try {
-      if (!data) return;
-      if (!Array.isArray(data)) return;
+    if (fetching || !data) return;
+    setFetching(true);
 
-      const lastPost = data[data.length - 1] as PostView;
-      if (lastPost.details?.indexed_at) {
-        setStart(lastPost.details.indexed_at - 1);
-        setTimeline((prev) => {
-          const newPosts = data.filter((post) => {
-            const isMuted = mutedUsers?.includes(post?.details?.author);
-            const isAlreadyInTimeline = prev.some(
-              (p) => p.details.id === post.details.id,
-            );
-            return !isMuted && !isAlreadyInTimeline;
-          });
-          return [...prev, ...newPosts];
-        });
+    try {
+      if (!Array.isArray(data) || data.length === 0) {
+        setFetchAttempts((prev) => prev + 1);
+        if (fetchAttempts >= 3) {
+          setFetching(false);
+        }
+        return;
       }
+
+      setFetchAttempts(0);
+
+      if (data.length > 0) {
+        setSkip((prev) => prev + limit);
+      }
+
+      setTimeline((prev) => {
+        const newPosts = data.filter((post) => {
+          const isMuted = mutedUsers?.includes(post?.details?.author);
+          const isAlreadyInTimeline = prev.some(
+            (p) => p.details.id === post.details.id,
+          );
+          return !isMuted && !isAlreadyInTimeline;
+        });
+        return [...prev, ...newPosts];
+      });
     } catch (error) {
       console.error(error);
+      setFetchAttempts((prev) => prev + 1);
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -55,18 +73,14 @@ const RenderPosts = () => {
 
   useEffect(() => {
     setTimeline([]);
+    setSkip(0);
+    setFetchAttempts(0);
+    setFetching(false);
 
     return () => {
       setTimeline([]);
     };
-  }, [setTimeline]);
-
-  useEffect(() => {
-    setStart(undefined);
-    setTimeline([]);
-    fetchPosts();
-  }, [searchTags, reach, sort]);
-
+  }, [hotTagsReach, timeframe]);
 
   return (
     <div className="flex flex-col gap-3" id="hot-posts">
@@ -85,12 +99,12 @@ const RenderPosts = () => {
             </div>
           ),
       )}
-       {isLoading && (
+      {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-         <div ref={loader} />
+      <div ref={loader} />
     </div>
   );
 };

@@ -15,6 +15,7 @@ export const Timeline = () => {
   const { pubky, searchTags, mutedUsers } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
+  const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
@@ -25,40 +26,54 @@ export const Timeline = () => {
     reach,
     'all',
     limit,
-    start,
+    sort === 'recent' ? start : undefined,
     undefined,
-    undefined,
-    undefined,
+    sort === 'popularity' ? skip : undefined,
+    sort,
     searchTags,
     content,
   );
 
   const fetchPosts = async () => {
+    if (fetching || !data) return;
     setFetching(true);
+
     try {
-      if (!data || !Array.isArray(data) || data.length === 0) {
+      if (!Array.isArray(data) || data.length === 0) {
         setFetchAttempts((prev) => prev + 1);
-        if (fetchAttempts >= 3) setFetching(false);
+        if (fetchAttempts >= 3) {
+          setTimeline([]);
+        }
+        setFetching(false);
         return;
       }
 
+      setFetchAttempts(0);
+
       const lastPost = data[data.length - 1] as PostView;
-      if (lastPost.details?.indexed_at) {
-        setStart(lastPost.details.indexed_at - 1);
-        setTimeline((prev) => {
-          const newPosts = data.filter((post) => {
-            const isMuted = mutedUsers?.includes(post?.details?.author);
-            const isAlreadyInTimeline = prev.some(
-              (p) => p.details.id === post.details.id,
-            );
-            return !isMuted && !isAlreadyInTimeline;
-          });
-          return [...prev, ...newPosts];
-        });
+
+      if (sort === 'recent') {
+        if (lastPost.details?.indexed_at) {
+          setStart(lastPost.details.indexed_at - 1);
+        }
+      } else if (sort === 'popularity') {
+        setSkip((prev) => prev + limit);
       }
-      setFetching(false);
+
+      setTimeline((prev) => {
+        const newPosts = data.filter((post) => {
+          const isMuted = mutedUsers?.includes(post?.details?.author);
+          const isAlreadyInTimeline = prev.some(
+            (p) => p.details.id === post.details.id,
+          );
+          return !isMuted && !isAlreadyInTimeline;
+        });
+        return [...prev, ...newPosts];
+      });
     } catch (error) {
       console.error(error);
+      setFetchAttempts((prev) => prev + 1);
+    } finally {
       setFetching(false);
     }
   };
@@ -67,8 +82,10 @@ export const Timeline = () => {
 
   useEffect(() => {
     setStart(undefined);
+    setSkip(0);
     setTimeline([]);
     setFetchAttempts(0);
+    setFetching(false);
     fetchPosts();
   }, [searchTags, reach, sort, content, mutedUsers]);
 

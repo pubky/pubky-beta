@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon } from '@social/ui-shared';
 import { ContentNotFound, Post, Skeleton } from '@/components';
 import { usePubkyClientContext } from '@/contexts';
@@ -10,65 +10,83 @@ import { useStreamPost } from '@/hooks/useStream';
 import Image from 'next/image';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
-  const { pubky } = usePubkyClientContext();
-
-  const [timeline, setTimeline] = useState<PostView[]>([]);
   const limit = 10;
+  const { pubky } = usePubkyClientContext();
+  const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
 
+  const currentPubky = creatorPubky ?? pubky ?? '';
+
   const { data, isLoading } = useStreamPost(
-    creatorPubky ?? pubky ?? '',
+    currentPubky,
     'author',
-    creatorPubky ?? pubky ?? '',
+    currentPubky,
     limit,
     start,
+    undefined,
+    undefined,
+    'recent',
   );
 
   const fetchPosts = async () => {
+    if (fetching || !data) return;
     setFetching(true);
+
     try {
-      if (!data || !Array.isArray(data) || data.length === 0) {
+      if (!Array.isArray(data) || data.length === 0) {
         setFetchAttempts((prev) => prev + 1);
-        if (fetchAttempts >= 3) setFetching(false);
+        if (fetchAttempts >= 3) {
+          setTimeline([]);
+        }
         return;
       }
 
+      setFetchAttempts(0);
       const lastPost = data[data.length - 1] as PostView;
-      if (lastPost.details?.indexed_at) {
+
+      setTimeline((prev) => {
+        const newPosts = data.filter(
+          (post) =>
+            !prev.some((p) => p.details.id === post.details.id) &&
+            post?.details?.content !== '[DELETED]',
+        );
+        return [...prev, ...newPosts];
+      });
+
+      if (lastPost?.details?.indexed_at) {
         setStart(lastPost.details.indexed_at - 1);
-        setTimeline((prev) => {
-          const newPosts = data.filter(
-            (post: PostView) =>
-              !prev.some((p) => p.details.id === post.details.id),
-          );
-          return [...prev, ...newPosts];
-        });
       }
-      setFetching(false);
     } catch (error) {
       console.error(error);
+      setFetchAttempts((prev) => prev + 1);
+    } finally {
       setFetching(false);
     }
   };
+
+  useEffect(() => {
+    setStart(undefined);
+    setTimeline([]);
+    setFetchAttempts(0);
+    setFetching(false);
+    fetchPosts();
+  }, [currentPubky]);
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   return (
     <div className="flex flex-col gap-3">
-      {timeline.map(
-        (post) =>
-          post?.details?.content !== '[DELETED]' && (
-            <Post key={`post-${post.details.id}`} post={post} />
-          ),
-      )}
+      {timeline.map((post) => (
+        <Post key={`post-${post.details.id}`} post={post} />
+      ))}
       {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      <div ref={loader} />
+      <div ref={loader} className="h-20" />
       {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Note size="48" color="#C8FF00" />}
