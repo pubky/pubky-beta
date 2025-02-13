@@ -44,7 +44,7 @@ export default function Version() {
       </div>
       {showBadge && (
         <span
-          title={`Você está no ambiente ${environmentLabel}`}
+          title={`You are in the ${environmentLabel} environment`}
           className={`px-2 py-1 text-xs font-medium rounded-full cursor-default ${badgeStyle}`}
         >
           {environmentLabel}
