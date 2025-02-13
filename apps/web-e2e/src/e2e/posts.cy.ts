@@ -311,9 +311,8 @@ describe('posts', () => {
     });
   });
 
-  // TODO: enable once tag bug fixed, see https://github.com/pubky/pubky-app/issues/1026
   [true, false].forEach((waitForIndexed) => {
-    it.skip(`can tag and remove tags from existing post (waitForIndexed: ${waitForIndexed})`, () => {
+    it(`can tag and remove tags from existing post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
       const tag1 = 'bananas';
       const tag2 = 'pjammas';
@@ -330,24 +329,32 @@ describe('posts', () => {
         WithMiddleRemoved
       }
 
-      const checkTagsAreDisplayed = (expectedTags: ExpectedTags) => {
+      enum ExpectedOrder {
+        Alphanumeric,
+        ReverseAlphanumeric
+      }
+
+      const checkTagsAreDisplayed = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
         // length is 4 because of the '+' button
         cy.get('#tags').children().its('length').should('eq', expectedTags === ExpectedTags.WithMiddleRemoved ? 3 : 4);
-        cy.get('#tags').innerTextShouldContain(tag1);
-        expectedTags === ExpectedTags.WithMiddleRemoved
-          ? cy.get('#tags').innerTextShouldNotContain(tag2)
-          : cy.get('#tags').innerTextShouldContain(tag2);
-        cy.get('#tags').innerTextShouldContain(tag3);
+        cy.get('#tags').within(($tags) => {
+          cy.get('#tag-0').innerTextShouldContain(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1)
+          expectedTags === ExpectedTags.WithMiddleRemoved
+            ? cy.wrap($tags).innerTextShouldNotContain(tag2)
+            : cy.get('#tag-1').innerTextShouldContain(tag2);
+          cy.get(expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2')
+            .innerTextShouldContain(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
+        })
       };
 
-      const checkTagCounters = (expectedTags: ExpectedTags) => {
+      const checkTagCounters = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
         cy.get('#tags').within(() => {
           // ordered reverse alphanumeric
-          cy.get('#tag-0').should('exist').contains(tag3)
+          cy.get('#tag-0').should('exist').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1)
           cy.get('#tag-0-count').should('exist').contains('1');
           cy.get('#tag-1').should('exist').contains(tag2)
           cy.get('#tag-1-count').should('exist').contains(expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1');
-          cy.get('#tag-2').should('exist').contains(tag1)
+          cy.get('#tag-2').should('exist').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3)
           cy.get('#tag-2-count').should('exist').contains('1');
         });
       };
@@ -359,13 +366,13 @@ describe('posts', () => {
 
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
         // check tags are displayed within the latest post in the feed
-        checkTagsAreDisplayed(ExpectedTags.AllThree);
+        checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
 
         // verify tag can be removed and added back
         clickMiddleTag();
-        checkTagCounters(ExpectedTags.WithMiddleRemoved);
+        checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.Alphanumeric);
         clickMiddleTag();
-        checkTagCounters(ExpectedTags.AllThree);
+        checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
       });
 
       // refresh page before checking tags are still displayed
@@ -374,11 +381,11 @@ describe('posts', () => {
 
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
         // check tags are still displayed
-        checkTagsAreDisplayed(ExpectedTags.AllThree);
+        checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
 
         // remove a tag from the post
         clickMiddleTag();
-        checkTagCounters(ExpectedTags.WithMiddleRemoved);
+        checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
       });
 
       // refresh page before checking tag is still removed
@@ -387,7 +394,7 @@ describe('posts', () => {
 
       // check tag is still removed
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
-        checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved);
+        checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
       });
     });
 
