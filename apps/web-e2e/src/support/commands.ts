@@ -1,4 +1,4 @@
-/// <reference types="cypress" />
+// <reference types="cypress" />
 
 import { passInviteCode } from "./common";
 
@@ -12,77 +12,7 @@ import { passInviteCode } from "./common";
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace Cypress {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    signOut(hasBackup: boolean): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    signIn(backupFilepath: string, passcode?: string): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    onboardAsNewUser(profileName: string, profileBio?: string, skipOnboardingSlides?: boolean, pubkyAlias?: string): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    backupRecoveryFile(passcode?: string): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    deleteDownloadsFolder(): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    waitForFileExistsWithSuffix(folder: string, suffix: string): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    deleteFile(filePath: string): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    renameFile(fromPath: string, toPath: string): void;
-  }
-  interface Chainable<Subject> {
-    innerTextShouldEq(text: string): Chainable<Subject>;
-  }
-  interface Chainable<Subject> {
-    innerTextShouldContain(text: string): Chainable<Subject>;
-  }
-  interface Chainable<Subject> {
-    innerTextContains(text: string): Chainable<Subject>;
-  }
-  interface Chainable<Subject> {
-    innerTextShouldNotContain(text: string): Chainable<Subject>;
-  }
-  interface Chainable<Subject> {
-    innerTextShouldNotEq(text: string): Chainable<Subject>;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    saveCopiedPubkyToAlias(alias: string): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    saveCopiedTextToAlias(alias: string): void;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    waitReload(time?: number): void;
-  }
-  interface Chainable<Subject> {
-    waitReloadWhileElementDoesNotExist(selector: string, attempts?: number): void;
-  }
-  interface Chainable<Subject> {
-    findFirstPostInFeed(filterText?: string): Chainable<Subject>;
-  }
-  interface Chainable<Subject> {
-    findPostInFeed(postIdx?: number, filterText?: string): Chainable<Subject>;
-  }
-}
+
 
 Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', skipOnboardingSlides: boolean = true, pubkyAlias?: string) => {
   cy.visit('/');
