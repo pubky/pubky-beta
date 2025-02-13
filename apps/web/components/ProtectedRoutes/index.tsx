@@ -65,9 +65,11 @@ export default function ProtectedRoutes({
 
     try {
       const result = await getTimestampNotification();
-      setTimestamp(Number(result));
+      if (result > 0) {
+        setTimestamp(Number(result));
+      }
     } catch (error) {
-      console.log(error);
+      console.debug('No last_read data available for new user');
     }
   };
 
