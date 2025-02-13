@@ -72,7 +72,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const [skip, setSkip] = useState<number>(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  const { data, isLoading, failureCount } = useStreamPost(
+  const { data, isLoading } = useStreamPost(
     pubky ?? '',
     reach,
     'all',
@@ -237,7 +237,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       )}
       {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
-          <Skeleton.Simple retryCount={failureCount} maxRetries={3} />
+          <Skeleton.Simple />
         </div>
       )}
       <div ref={loader} />
