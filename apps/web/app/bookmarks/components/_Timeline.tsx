@@ -21,6 +21,7 @@ export const Timeline = () => {
   const { addAlert } = useAlertContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
+  const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
@@ -30,9 +31,9 @@ export const Timeline = () => {
     'bookmarks',
     undefined,
     limit,
-    start,
+    sort === 'recent' ? start : undefined,
     undefined,
-    undefined,
+    sort === 'popularity' ? skip : undefined,
     sort,
     undefined,
     content,
@@ -41,28 +42,36 @@ export const Timeline = () => {
   const [isBookmarked, setIsBookmarked] = useState('');
 
   const fetchPosts = async () => {
+    if (fetching || !data) return;
     setFetching(true);
+
     try {
-      if (!data || !Array.isArray(data) || data.length === 0) {
+      if (!Array.isArray(data) || data.length === 0) {
         setFetchAttempts((prev) => prev + 1);
         if (fetchAttempts >= 3) setFetching(false);
         return;
       }
 
       const lastPost = data[data.length - 1] as PostView;
-      if (lastPost.bookmark?.indexed_at) {
-        setStart(lastPost.bookmark?.indexed_at - 1);
-        setTimeline((prev) => {
-          const newPosts = data.filter(
-            (post: PostView) =>
-              !prev.some((p) => p.bookmark?.id === post.bookmark?.id),
-          );
-          return [...prev, ...newPosts];
-        });
+
+      if (sort === 'recent') {
+        if (lastPost.bookmark?.indexed_at) {
+          setStart(lastPost.bookmark.indexed_at - 1);
+        }
+      } else if (sort === 'popularity') {
+        setSkip((prev) => prev + limit);
       }
-      setFetching(false);
+
+      setTimeline((prev) => {
+        const newPosts = data.filter(
+          (post: PostView) =>
+            !prev.some((p) => p.bookmark?.id === post.bookmark?.id),
+        );
+        return [...prev, ...newPosts];
+      });
     } catch (error) {
       console.error(error);
+    } finally {
       setFetching(false);
     }
   };
@@ -71,8 +80,10 @@ export const Timeline = () => {
 
   useEffect(() => {
     setStart(undefined);
+    setSkip(0);
     setTimeline([]);
     setFetchAttempts(0);
+    setFetching(false);
     fetchPosts();
   }, [sort, content]);
 
