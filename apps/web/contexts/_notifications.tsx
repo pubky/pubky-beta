@@ -63,13 +63,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     );
     setUnReadNotification(unreadCount);
 
-    // Check if there's more
-    if (filtered.length < limit) {
-      setHasMore(false);
-    } else {
-      setHasMore(true);
-    }
-
     setLoading(false);
   }, [initNotifications, timestamp]);
 
@@ -109,10 +102,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       );
     });
 
-  // TODO: guys there were 2 loops here, the second one not using the new data
-  // from reactQuery. I bypassed it all on the useEffect above with dependencies
-  // on [initNotifications]. I don't think much of this logic is needed.
-
   const fetchNotifications = async () => {
     if (!pubky || !notificationPreferences || !hasMore) return;
 
@@ -131,10 +120,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         );
 
         setUnReadNotification(unreadCount);
-
-        if (filteredNotifications.length < limit) {
-          setHasMore(false);
-        }
       }
     } catch (err) {
       console.error(err);
@@ -151,14 +136,13 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
       if (initNotifications) {
         const filteredNotifications = filterNotifications(initNotifications);
-
+        if (filteredNotifications.length === 0) {
+          setHasMore(false);
+          return;
+        }
         updateNotifications(filteredNotifications);
 
-        if (filteredNotifications.length < limit) {
-          setHasMore(false);
-        } else {
-          setSkip((prev) => prev + limit);
-        }
+        setSkip((prev) => prev + limit);
       }
     } catch (err) {
       console.error(err);
