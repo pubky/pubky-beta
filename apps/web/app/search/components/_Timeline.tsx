@@ -17,7 +17,6 @@ export const Timeline = () => {
   const [start, setStart] = useState<number | undefined>(undefined);
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
-  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
   const { reach, layout, sort, content } = useFilterContext();
 
@@ -40,15 +39,11 @@ export const Timeline = () => {
 
     try {
       if (!Array.isArray(data) || data.length === 0) {
-        setFetchAttempts((prev) => prev + 1);
-        if (fetchAttempts >= 3) {
-          setTimeline([]);
-        }
+        setTimeline([]);
+
         setFetching(false);
         return;
       }
-
-      setFetchAttempts(0);
 
       const lastPost = data[data.length - 1] as PostView;
 
@@ -72,7 +67,6 @@ export const Timeline = () => {
       });
     } catch (error) {
       console.error(error);
-      setFetchAttempts((prev) => prev + 1);
     } finally {
       setFetching(false);
     }
@@ -84,7 +78,6 @@ export const Timeline = () => {
     setStart(undefined);
     setSkip(0);
     setTimeline([]);
-    setFetchAttempts(0);
     setFetching(false);
     fetchPosts();
   }, [searchTags, reach, sort, content, mutedUsers]);

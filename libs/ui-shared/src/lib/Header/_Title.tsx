@@ -7,7 +7,7 @@ interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const getTitle = (titleHeader: React.ReactNode) => {
-  if (titleHeader === 'Feed') {
+  if (titleHeader === 'Home') {
     return null;
   }
   if (titleHeader === 'WhoToFollow') {

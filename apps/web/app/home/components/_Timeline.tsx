@@ -66,14 +66,13 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   } = usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
-  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1024);
   const { reach, layout, sort, content, tagsFeed } =
     useTimelineFilters(selectedFeed);
   const [skip, setSkip] = useState<number>(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  const { data, isLoading, failureCount } = useStreamPost(
+  const { data, isLoading } = useStreamPost(
     pubky ?? '',
     reach,
     'all',
@@ -91,7 +90,6 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     setNewPosts([]);
     setStart(undefined);
     setSkip(0);
-    setFetchAttempts(0);
     setFetching(false);
     setIsInitialLoad(true);
   }, [setNewPosts]);
@@ -102,15 +100,10 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
     try {
       if (!Array.isArray(data) || data.length === 0) {
-        setFetchAttempts((prev) => prev + 1);
-        if (fetchAttempts >= 3) {
-          setTimeline([]);
-        }
+        setTimeline([]);
         setFetching(false);
         return;
       }
-
-      setFetchAttempts(0);
 
       if (sort === 'recent') {
         const lastPost = data[data.length - 1] as PostView;
@@ -156,7 +149,6 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       }
     } catch (error) {
       console.log('Error fetching posts:', error);
-      setFetchAttempts((prev) => prev + 1);
     } finally {
       setFetching(false);
     }
@@ -245,7 +237,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       )}
       {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
-          <Skeleton.Simple retryCount={failureCount} maxRetries={3} />
+          <Skeleton.Simple />
         </div>
       )}
       <div ref={loader} />
@@ -253,7 +245,13 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         <ContentNotFound
           icon={<Icon.Smiley size="48" color="#C8FF00" />}
           title="Welcome to your feed!"
-          description="It's a blank slate for now, but not for long. Start to create posts, follow interesting people, or explore tags that catch your attention. This feed will be full of personalized content, just for you."
+          description={
+            <>
+              It's a blank slate for now, but not for long.
+              <br />
+              Start to create posts, follow interesting people, or explore tags.
+            </>
+          }
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
             <Link href="/hot#popular">
@@ -261,7 +259,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
                 icon={<Icon.UserPlus size="16" />}
                 className="whitespace-nowrap"
               >
-                Follow Popular
+                Follow Popular Users
               </Button.Medium>
             </Link>
             <Link href="hot">

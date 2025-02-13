@@ -1,12 +1,13 @@
 import { Typography } from '@social/ui-shared';
+import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface ContentNotFoundProps {
   icon?: React.ReactElement;
   title?: string;
-  description?: string;
+  description?: React.ReactNode | string;
   className?: string;
-  children?: any;
+  children?: React.ReactNode;
 }
 
 export default function ContentNotFound({

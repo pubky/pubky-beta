@@ -15,7 +15,6 @@ const RenderPosts = () => {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
-  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const { hotTagsReach, timeframe, layout } = useFilterContext();
   const isMobile = useIsMobile();
 
@@ -38,14 +37,10 @@ const RenderPosts = () => {
 
     try {
       if (!Array.isArray(data) || data.length === 0) {
-        setFetchAttempts((prev) => prev + 1);
-        if (fetchAttempts >= 3) {
-          setFetching(false);
-        }
+        setFetching(false);
+
         return;
       }
-
-      setFetchAttempts(0);
 
       if (data.length > 0) {
         setSkip((prev) => prev + limit);
@@ -63,7 +58,6 @@ const RenderPosts = () => {
       });
     } catch (error) {
       console.error(error);
-      setFetchAttempts((prev) => prev + 1);
     } finally {
       setFetching(false);
     }
@@ -74,7 +68,6 @@ const RenderPosts = () => {
   useEffect(() => {
     setTimeline([]);
     setSkip(0);
-    setFetchAttempts(0);
     setFetching(false);
 
     return () => {

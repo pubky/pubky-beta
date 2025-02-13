@@ -99,6 +99,7 @@ export default function CreateQuickPost({
           setArrayTags={setArrayTags}
           setIsValidContent={setIsValidContent}
           loading={sendingPost}
+          textArea={textArea}
           article
           button={
             <Button.Medium
@@ -127,7 +128,6 @@ export default function CreateQuickPost({
               Post
             </Button.Medium>
           }
-          textArea={textArea}
         />
       )}
     </>

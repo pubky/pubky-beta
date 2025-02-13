@@ -22,24 +22,39 @@ const caseNotFoundMessages = {
   followers: {
     icon: <Icon.UsersLeft size="48" color="#C8FF00" />,
     title: 'Looking for followers?',
-    description:
-      'When someone follows this account, their profile will appear here. Start posting and engaging with others to grow your followers!',
+    description: (
+      <>
+        When someone follows this account, their profile will appear here.
+        <br />
+        Start posting and engaging with others to grow your followers.
+      </>
+    ),
   },
   following: {
     icon: <Icon.UsersRight size="48" color="#C8FF00" />,
     title: 'Looking for following?',
-    description:
-      'Following accounts is a simple way to curate your timeline and stay updated on the topics and people that interest you.',
+    description: (
+      <>
+        Following accounts is a simple way to curate your timeline.
+        <br />
+        Stay updated on the topics and people that interest you.
+      </>
+    ),
   },
   friends: {
     icon: <Icon.Smiley size="48" color="#C8FF00" />,
     title: 'Looking for friends?',
-    description:
-      'When you and another user follow each other, their profile will appear here. Start posting and engaging with others to grow your friends!',
+    description: (
+      <>
+        Connect with your friends and follow each other
+        <br />
+        Start posting and engaging with others to grow your friends.
+      </>
+    ),
   },
   default: {
     icon: <Icon.User size="48" color="#C8FF00" />,
-    title: 'Looking for friends?',
+    title: 'Looking for contacts?',
     description: 'No contacts to show.',
   },
 };

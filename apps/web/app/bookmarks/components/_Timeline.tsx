@@ -23,7 +23,6 @@ export const Timeline = () => {
   const [start, setStart] = useState<number | undefined>(undefined);
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
-  const [fetchAttempts, setFetchAttempts] = useState<number>(0);
   const isMobile = useIsMobile(1280);
   const { sort, layout, content } = useFilterContext();
   const { data, isLoading } = useStreamPost(
@@ -47,8 +46,7 @@ export const Timeline = () => {
 
     try {
       if (!Array.isArray(data) || data.length === 0) {
-        setFetchAttempts((prev) => prev + 1);
-        if (fetchAttempts >= 3) setFetching(false);
+        setFetching(false);
         return;
       }
 
@@ -82,7 +80,6 @@ export const Timeline = () => {
     setStart(undefined);
     setSkip(0);
     setTimeline([]);
-    setFetchAttempts(0);
     setFetching(false);
     fetchPosts();
   }, [sort, content]);
@@ -194,7 +191,7 @@ export const Timeline = () => {
                 icon={<Icon.UserPlus size="16" />}
                 className="whitespace-nowrap"
               >
-                Follow Popular
+                Follow Popular Users
               </Button.Medium>
             </Link>
             <Link href="hot">

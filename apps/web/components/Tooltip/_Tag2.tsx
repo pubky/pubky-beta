@@ -30,8 +30,8 @@ export default function Tag2({ tags }: TagProps) {
           }),
         );
         setImages(fetchedImages);
-        setLoadingFollowers(false);
       }
+      setLoadingFollowers(false);
     };
 
     fetchUserProfiles();
@@ -41,28 +41,13 @@ export default function Tag2({ tags }: TagProps) {
   const extraImagesCount =
     tags && tags?.taggers_count - displayedImages?.length;
 
-  useEffect(() => {
-    if (tags?.taggers_count) {
-      setLoadingFollowers(false);
-    }
-  }, [tags]);
-
   return (
     <TooltipUI.Main className="z-40 w-auto left-auto shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-0 translate-y-[70px]">
       <div className="flex gap-6 justify-start w-full">
         {loadingFollowers ? (
           <></>
         ) : (
-          // <div className="flex w-full justify-center min-h-[64px] items-center">
-          //   <Icon.LoadingSpin className="animate-spin text-2xl text-center mx-auto" />
-          // </div>
-          <div
-            //onClick={() => {
-            //  setShowModalTags(true);
-            //  setSelectedTag && setSelectedTag(tags);
-            //}}
-            className="cursor-pointer flex items-center"
-          >
+          <div className="cursor-pointer flex items-center">
             {displayedImages?.map((image, imageIndex) => (
               <div key={imageIndex}>
                 <ImageByUri
@@ -82,7 +67,7 @@ export default function Tag2({ tags }: TagProps) {
                 )}
               </div>
             ))}
-            {Number(extraImagesCount) > 0 && (
+            {!loadingFollowers && Number(extraImagesCount) > 0 && (
               <PostUtil.Counter className="-ml-2">
                 +{extraImagesCount}
               </PostUtil.Counter>

@@ -305,7 +305,14 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
               <ContentNotFound
                 icon={<Icon.Tag size="48" color="#C8FF00" />}
                 title="Discover who tagged you"
-                description="Find out which posts, photos, or content include tags mentioning you and stay connected to what others are sharing about you."
+                description={
+                  <>
+                    Find out which posts, photos, or content include tags
+                    mentioning you.
+                    <br />
+                    Stay connected to what others are sharing about you.
+                  </>
+                }
               >
                 <div className="absolute top-12 z-0">
                   <Image
