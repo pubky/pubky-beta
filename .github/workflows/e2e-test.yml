@@ -11,7 +11,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      PUBKY_DOCKER_REF: 9cabcb733495ad2e81c619696902b0a31d956957
+      PUBKY_DOCKER_REF: 9e7deed761ae565af01a83a6119949efda254e56
     strategy:
       matrix:
         browser: [chrome] # [chrome, firefox]
