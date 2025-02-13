@@ -11,17 +11,17 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 
 const RenderPosts = () => {
   const limit = 10;
-  const { pubky, searchTags, mutedUsers } = usePubkyClientContext();
+  const { pubky, mutedUsers } = usePubkyClientContext();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
-  const { reach, layout } = useFilterContext();
+  const { hotTagsReach, timeframe, layout } = useFilterContext();
   const isMobile = useIsMobile();
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
-    'all',
+    hotTagsReach,
     undefined,
     limit,
     undefined,
@@ -80,7 +80,7 @@ const RenderPosts = () => {
     return () => {
       setTimeline([]);
     };
-  }, [searchTags, reach]);
+  }, [hotTagsReach, timeframe]);
 
   return (
     <div className="flex flex-col gap-3" id="hot-posts">
