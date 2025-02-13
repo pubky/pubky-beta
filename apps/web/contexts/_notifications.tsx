@@ -37,7 +37,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const [hasMore, setHasMore] = useState(true);
   const [prevPubky, setPrevPubky] = useState<string | null>(null);
 
-  const { data: initNotifications } = useUserNotifications(
+  const { data: initNotifications, isLoading } = useUserNotifications(
     pubky ?? '',
     undefined,
     undefined,
@@ -46,11 +46,13 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
+
+  useEffect(() => {
     // Don't process if we don't have notifications or timestamp is invalid (0)
     // or if specs builder isn't ready yet
     if (!initNotifications || timestamp <= 0) return;
-
-    setLoading(true);
 
     const filtered = filterNotifications(initNotifications);
     updateNotifications(filtered);
@@ -62,15 +64,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       0,
     );
     setUnReadNotification(unreadCount);
-
-    // Check if there's more
-    if (filtered.length < limit) {
-      setHasMore(false);
-    } else {
-      setHasMore(true);
-    }
-
-    setLoading(false);
   }, [initNotifications, timestamp]);
 
   const updateNotifications = (newNotifications: NotificationView[]) => {
@@ -109,16 +102,10 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       );
     });
 
-  // TODO: guys there were 2 loops here, the second one not using the new data
-  // from reactQuery. I bypassed it all on the useEffect above with dependencies
-  // on [initNotifications]. I don't think much of this logic is needed.
-
   const fetchNotifications = async () => {
     if (!pubky || !notificationPreferences || !hasMore) return;
 
     try {
-      setLoading(true);
-
       if (initNotifications) {
         const filteredNotifications = filterNotifications(initNotifications);
 
@@ -131,15 +118,9 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         );
 
         setUnReadNotification(unreadCount);
-
-        if (filteredNotifications.length < limit) {
-          setHasMore(false);
-        }
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -147,23 +128,18 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     if (!pubky || !notificationPreferences || !hasMore || loading) return;
 
     try {
-      setLoading(true);
-
       if (initNotifications) {
         const filteredNotifications = filterNotifications(initNotifications);
-
+        if (filteredNotifications.length === 0) {
+          setHasMore(false);
+          return;
+        }
         updateNotifications(filteredNotifications);
 
-        if (filteredNotifications.length < limit) {
-          setHasMore(false);
-        } else {
-          setSkip((prev) => prev + limit);
-        }
+        setSkip((prev) => prev + limit);
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 

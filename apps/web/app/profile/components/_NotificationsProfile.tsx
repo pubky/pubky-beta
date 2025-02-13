@@ -81,11 +81,11 @@ export default function NotificationsProfile() {
               </div>
             );
           })}
-          {loadingNotifications && (
-            <div className="flex justify-center mt-4 mb-8">
-              <Skeleton.Simple />
-            </div>
-          )}
+        </div>
+      )}
+      {loadingNotifications && (
+        <div className="flex justify-center mt-4 mb-8">
+          <Skeleton.Simple />
         </div>
       )}
     </>
