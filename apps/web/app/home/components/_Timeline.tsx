@@ -130,27 +130,30 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         }
       }
 
-      setTimeline((prev) => {
-        if (isInitialLoad) {
-          setIsInitialLoad(false);
-          return data.filter(
+      // Filter posts before setting timeline
+      const filteredPosts = data.filter(
+        (post) =>
+          post?.details?.author &&
+          !mutedUsers?.includes(post.details.author) &&
+          !deletedPosts.includes(post.details.id),
+      );
+
+      // Set timeline without conditional logic
+      if (isInitialLoad) {
+        setTimeline(filteredPosts);
+        setIsInitialLoad(false);
+      } else {
+        setTimeline((prev) => {
+          const posts = data.filter(
             (post) =>
               post?.details?.author &&
               !mutedUsers?.includes(post.details.author) &&
+              !prev.some((p) => p.details.id === post.details.id) &&
               !deletedPosts.includes(post.details.id),
           );
-        }
-
-        const posts = data.filter(
-          (post) =>
-            post?.details?.author &&
-            !mutedUsers?.includes(post.details.author) &&
-            !prev.some((p) => p.details.id === post.details.id) &&
-            !deletedPosts.includes(post.details.id),
-        );
-
-        return [...prev, ...posts];
-      });
+          return [...prev, ...posts];
+        });
+      }
     } catch (error) {
       console.log('Error fetching posts:', error);
       setFetchAttempts((prev) => prev + 1);
