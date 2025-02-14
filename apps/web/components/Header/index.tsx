@@ -194,7 +194,7 @@ export default function Header({ title }: HeaderProps) {
                 variant="menu"
                 label="Home"
                 active={title === 'Home'}
-                className={title === 'Home' ? 'border-t border-white' : ''}
+                //className={title === 'Home' ? 'border-t border-white' : ''}
                 icon={<Icon.House size="24" />}
               />
             </Link>
@@ -204,7 +204,7 @@ export default function Header({ title }: HeaderProps) {
                 variant="menu"
                 label="Hot"
                 active={title === `Hot`}
-                className={title === 'Hot' ? 'border-t border-white' : ''}
+                //className={title === 'Hot' ? 'border-t border-white' : ''}
                 icon={<Icon.Fire size="24" />}
               />
             </Link>
@@ -215,7 +215,7 @@ export default function Header({ title }: HeaderProps) {
                 variant="menu"
                 label="Bookmarks"
                 active={title === `Bookmarks`}
-                className={title === 'Bookmarks' ? 'border-t border-white' : ''}
+                //className={title === 'Bookmarks' ? 'border-t border-white' : ''}
                 icon={<Icon.BookmarkSimple size="24" />}
               />
             </Link>
@@ -225,7 +225,7 @@ export default function Header({ title }: HeaderProps) {
                 variant="menu"
                 label="Settings"
                 active={title === 'Settings'}
-                className={title === 'Settings' ? 'border-t border-white' : ''}
+                //className={title === 'Settings' ? 'border-t border-white' : ''}
                 icon={<Icon.GearSix size="24" />}
               />
             </Link>
@@ -243,9 +243,7 @@ export default function Header({ title }: HeaderProps) {
                 id="header-profile-pic"
                 width={48}
                 height={48}
-                className={`${
-                  title === 'Profile' && 'border-t-2 border-white'
-                } rounded-full w-[48px] h-[48px]`}
+                className={`rounded-full w-[48px] h-[48px]`}
                 alt="user-pic"
                 uri={String(profile?.image)}
               />

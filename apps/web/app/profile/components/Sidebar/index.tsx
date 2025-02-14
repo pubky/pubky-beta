@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
 import { Modal } from '@/components/Modal';
 import UserInfo from './_UserInfo';
-import BioSection from './_BioSection';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
 import { useUserProfile } from '@/hooks/useUser';
@@ -114,18 +113,16 @@ export default function Sidebar({
     // loading tag
     setLoadingTags(tag);
     if (userPubky) {
-      const updatedTags = profileTags
-        .map((t) =>
-          t.label === tag
-            ? {
-                ...t,
-                taggers: t.taggers.filter((tagger) => tagger !== pubky),
-                taggers_count: Math.max(t.taggers_count - 1, 0),
-                relationship: false,
-              }
-            : t,
-        )
-        .filter((t) => t.taggers_count > 0);
+      const updatedTags = profileTags.map((t) =>
+        t.label === tag
+          ? {
+              ...t,
+              taggers: t.taggers.filter((tagger) => tagger !== pubky),
+              taggers_count: Math.max(t.taggers_count - 1, 0),
+              relationship: false,
+            }
+          : t,
+      );
       setProfileTags(updatedTags);
 
       const response = await deleteTagProfile(userPubky, tag);
@@ -172,7 +169,7 @@ export default function Sidebar({
           setLoadingFollowed={setLoadingFollowed}
         />
         <div className="w-full flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
-          <BioSection id="profile-bio-content" loading={isLoading} bio={bio} />
+          {/**<BioSection id="profile-bio-content" loading={isLoading} bio={bio} />*/}
           <TaggedSection
             profileTags={profileTags}
             loadingProfileTags={isLoading}

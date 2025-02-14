@@ -5,9 +5,8 @@ import { PostView } from '@/types/Post';
 import { Post, Skeleton } from '@/components';
 import { useStreamPost } from '@/hooks/useStream';
 import { useEffect, useState } from 'react';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { useIsMobile } from '@/hooks/useIsMobile';
 
 const RenderPosts = () => {
   const limit = 10;
@@ -15,12 +14,10 @@ const RenderPosts = () => {
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
-  const { hotTagsReach, timeframe, layout } = useFilterContext();
-  const isMobile = useIsMobile();
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
-    hotTagsReach,
+    undefined,
     undefined,
     limit,
     undefined,
@@ -73,7 +70,7 @@ const RenderPosts = () => {
     return () => {
       setTimeline([]);
     };
-  }, [hotTagsReach, timeframe]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-3" id="hot-posts">
@@ -84,11 +81,7 @@ const RenderPosts = () => {
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <div key={post.details.id} className="flex gap-2 items-center">
-              <Post
-                largeView={!isMobile && layout === 'wide'}
-                key={`post-${post.details.id}`}
-                post={post}
-              />
+              <Post key={`post-${post.details.id}`} post={post} />
             </div>
           ),
       )}

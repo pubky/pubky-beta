@@ -204,14 +204,16 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   return (
     <div className="w-full mx-2 lg:mx-0">
       {name && profileTags.length > 0 && (
-        <SideCard.Header
-          className="hidden lg:flex"
-          title={`${name} was tagged as:`}
-        />
+        <>
+          <SideCard.Header
+            className="hidden lg:flex"
+            title={`${name} was tagged as:`}
+          />
+          <Typography.Body variant="large-bold" className="flex lg:hidden">
+            Tagged
+          </Typography.Body>
+        </>
       )}
-      <Typography.Body variant="large-bold" className="flex lg:hidden">
-        Tagged
-      </Typography.Body>
       {loading ? (
         <Skeleton.Simple />
       ) : (
@@ -325,7 +327,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
               </ContentNotFound>
             )}
             <Button.Medium
-              className="mt-2 w-auto h-8 inline-flex lg:hidden items-center"
+              className={`mt-2 w-auto h-8 inline-flex lg:hidden items-center ${profileTags.length > 0 && 'self-center'}`}
               onClick={() =>
                 isMobile
                   ? setShowSheetProfileTag(true)

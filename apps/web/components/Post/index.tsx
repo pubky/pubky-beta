@@ -201,7 +201,7 @@ export default function Post({
                         rest.className,
                       )}
                     >
-                      <PostUI.RepostCard className="relative z-10 hover:z-50">
+                      <PostUI.RepostCard className="relative">
                         <div className="flex gap-2 items-center">
                           <Button.Action
                             className="bg-black bg-opacity-100 hover:bg-opacity-100 cursor-default"

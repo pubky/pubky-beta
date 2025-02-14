@@ -25,9 +25,8 @@ export default function CustomFeeds({
   ...rest
 }: CustomFeedsProps) {
   const baseCSS =
-    'cursor-pointer hover:bg-opacity-20 py-3 px-5 justify-center items-center gap-2 hidden lg:inline-flex bg-white bg-opacity-10 rounded-tl-lg rounded-tr-lg';
-  const activeCSS =
-    'bg-white bg-opacity-20 rounded-tr-lg border-t border-white';
+    'cursor-pointer hover:bg-opacity-10 py-3 px-5 justify-center items-center gap-2 hidden lg:inline-flex bg-white bg-opacity-5 rounded-tl-lg rounded-tr-lg';
+  const activeCSS = 'bg-white bg-opacity-10 rounded-tr-lg';
   const { reach } = useFilterContext();
   const [showModalCreateFeed, setShowModalCreateFeed] = useState(false);
   const [tagsFeed, setTagsFeed] = useState<string[]>([]);
@@ -147,7 +146,7 @@ export default function CustomFeeds({
               }
               className={twMerge(
                 baseCSS,
-                'bg-transparent border border-white border-opacity-30 hover:border-opacity-50 border-dashed',
+                'bg-transparent border border-white border-opacity-30 hover:bg-white/10 border-dashed',
                 rest.className,
               )}
             >

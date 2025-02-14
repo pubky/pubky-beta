@@ -21,7 +21,7 @@ export default function Link({
       show={showModalLink}
       closeModal={() => setShowModalLink(false)}
       modalRef={modalLinkRef}
-      className="sm:w-[592px] max-h-[90vh] justify-start"
+      className="sm:w-[592px] max-h-[90vh] min-h-[465px] justify-start"
     >
       <Modal.CloseAction onClick={() => setShowModalLink(false)} />
       <Modal.Header id="add-profile-link-header" title="Add Profile Link" />

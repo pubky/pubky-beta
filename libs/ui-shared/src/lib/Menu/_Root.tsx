@@ -76,7 +76,7 @@ export const Root = ({
 
     return (
       <div
-        className={`cursor-pointer fixed bottom-0 ${swipeZoneCSS} w-4 md:w-16 2xl:w-24 h-[90vh] z-40 `} // Narrow zone for swipe detection
+        className={`cursor-pointer fixed bottom-0 ${swipeZoneCSS} w-4 md:w-16 2xl:w-24 h-[90vh]`} // Narrow zone for swipe detection
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onClick={() => setDrawerOpen(true)}

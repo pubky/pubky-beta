@@ -107,7 +107,7 @@ export default function CreatorpubkyLayout({
             </div>
           </Content.Grid>
         </div>
-        <Content.Grid className="grid grid-cols-6 gap-2">
+        <Content.Grid className="grid grid-cols-6 gap-2 lg:mt-6">
           <PostsLayout className="flex flex-col col-span-6 xl:col-span-5 gap-3 mt-[10px]">
             <Profile.FilterTabs
               activeTab={activeTab}
@@ -136,8 +136,8 @@ export default function CreatorpubkyLayout({
             >
               <ImageByUri
                 alt={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
-                width={262}
-                height={262}
+                width={362}
+                height={362}
                 className="rounded-full shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
                 uri={profile?.details?.image as string}
               />

@@ -27,13 +27,13 @@ const tabs = [
   {
     id: 1,
     key: 'posts',
-    icon: <Icon.FileText size="24" color="white" />,
+    icon: <Icon.Note size="24" color="white" />,
     label: 'Posts',
   },
   {
     id: 2,
     key: 'replies',
-    icon: <Icon.File size="24" color="white" />,
+    icon: <Icon.ChatCircleText size="24" color="white" />,
     label: 'Replies',
   },
   {

@@ -392,7 +392,13 @@ export default function ContentTag({
             <div className="flex">
               <Button.Action
                 id="add-btn"
-                icon={<Icon.Plus size="18" />}
+                icon={
+                  loading ? (
+                    <Icon.LoadingSpin size="18" />
+                  ) : (
+                    <Icon.Plus size="18" />
+                  )
+                }
                 className={tag ? 'flex' : 'hidden'}
                 variant="custom"
                 size="medium"
