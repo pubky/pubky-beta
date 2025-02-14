@@ -50,6 +50,7 @@ const BtnClearContent = ({ onClear }: { onClear: () => void }) => (
 );
 
 interface MarkdownEditorProps {
+  id?: string;
   placeHolder?: string;
   onChange: (value: string) => void;
   autoFocus?: boolean;
@@ -59,6 +60,7 @@ interface MarkdownEditorProps {
 }
 
 export const MarkdownEditorComponent = ({
+  id,
   onChange,
   value,
   placeHolder,
@@ -77,6 +79,7 @@ export const MarkdownEditorComponent = ({
     <div className="w-full relative">
       <EditorProvider>
         <Editor
+          id={id}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeHolder}

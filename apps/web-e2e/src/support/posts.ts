@@ -1,4 +1,4 @@
-// select an emoji using the emoji picket by its data-full-name attribute
+// select an emoji using the emoji picker by its data-full-name attribute
 export const selectEmojis = (emojiName: string[]) => {
   // open emoji picker
   cy.get('#emoji-btn').click();

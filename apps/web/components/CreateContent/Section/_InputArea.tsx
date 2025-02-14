@@ -33,6 +33,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function InputArea({
+  id,
   selectedFiles,
   setSelectedFiles,
   content,
@@ -178,6 +179,7 @@ export default function InputArea({
     >
       {markdown ? (
         <Input.MarkdownEditorComponent
+          id={id}
           onChange={handleEditorChange}
           placeHolder={placeHolder}
           autoFocus={autoFocus}

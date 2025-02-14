@@ -299,6 +299,7 @@ export default function ContentCreateArticle({
           >
             <div className="w-full">
               <Input.Cursor
+                id="article-title-input"
                 placeholder="Title"
                 autoFocus
                 className="h-auto text-[40px] font-bold sm:text-[64px]"
@@ -375,6 +376,7 @@ export default function ContentCreateArticle({
                 )}
               </div>
               <Section.InputArea
+                id="article-content-input"
                 //selectedFiles={selectedFiles}
                 //setSelectedFiles={setSelectedFiles}
                 content={contentArticle}
