@@ -2,14 +2,26 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
-  titleHeader?: React.ReactNode;
+  titleHeader?: any;
   className?: string;
 }
 
-const getTitle = (titleHeader: React.ReactNode) => {
-  if (titleHeader) {
+const titleHidden = [
+  'Home',
+  'Search',
+  'Hot',
+  'Bookmarks',
+  'Settings',
+  'Profile',
+  'Post',
+  'WhoToFollow',
+];
+
+const getTitle = (titleHeader: any) => {
+  if (titleHidden.includes(titleHeader)) {
     return null;
   }
+  return titleHeader;
 };
 
 export const Title = ({ titleHeader, className, ...rest }: HeaderProps) => {
