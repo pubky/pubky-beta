@@ -52,6 +52,30 @@ export default function LinkPreviewer({
               const post = await getPost(creatorPubky, postId, pubky);
 
               if (post) {
+                if (
+                  post?.details?.content === '' &&
+                  post?.relationships?.reposted
+                ) {
+                  const repostRegex =
+                    /pubky:\/\/([^/]+)\/pub\/pubky\.app\/posts\/([^/]+)/;
+                  const repostMatch =
+                    post.relationships.reposted.match(repostRegex);
+
+                  if (repostMatch) {
+                    const [__, creatorPubkyRepost, repostId] = repostMatch;
+                    const repost = await getPost(
+                      creatorPubkyRepost,
+                      repostId,
+                      pubky,
+                    );
+
+                    setPostPreview(repost);
+                    setQuote(
+                      `pubky://${creatorPubkyRepost}/pub/pubky.app/posts/${repostId}`,
+                    );
+                    return;
+                  }
+                }
                 setPostPreview(post);
                 setQuote(
                   `pubky://${creatorPubky}/pub/pubky.app/posts/${postId}`,

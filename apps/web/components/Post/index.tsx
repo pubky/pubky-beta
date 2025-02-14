@@ -269,6 +269,7 @@ export default function Post({
                           'rounded-tl-none rounded-tr-none',
                           largeView && 'p-12 inline-flex flex-row gap-12',
                         )}
+                        notFoundClassName="rounded-t-none rounded-b-lg mt-0"
                       />
                     </div>
                   </div>
