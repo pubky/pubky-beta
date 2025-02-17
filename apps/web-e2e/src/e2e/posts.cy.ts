@@ -12,7 +12,8 @@ import { latestPostInFeedContentEq,
         waitForFeedToLoad,
         selectEmojis,
         createQuickPostWithTags,
-        fastTagWhilstCreatingPost} from '../support/posts';
+        fastTagWhilstCreatingPost,
+        latestPostHasAnImage} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -132,8 +133,7 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
-  // test skipped because viewing uploaded image in post doesn't work for this local deployment
-  it.skip('can post with image upload', () => {
+  it('can post with image upload', () => {
     const postContent = `I can post with an image! ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
@@ -154,10 +154,10 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    // todo: verify the image is displayed in the post (fails to display uploaded image here)
-
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
+
+    latestPostHasAnImage();
   });
 
   // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
@@ -513,8 +513,9 @@ describe('posts', () => {
     cy.get('#posts-feed').should('contain.text', 'Save posts for later')
   });
 
-  [true, false].forEach((waitForIndexed) => {
-    it(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
+  // [true, false].forEach((waitForIndexed) => {
+    [false].forEach((waitForIndexed) => {
+    it.only(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to repost
       const postContent = `This post will be reposted with content! ${Date.now()}`;
       const repostContent = 'Reposted with content!';

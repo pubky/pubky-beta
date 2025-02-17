@@ -1,0 +1,28 @@
+import { backupDownloadFilePath } from '../support/auth';
+import { slowCypressDown } from 'cypress-slow-down'
+// registers the cy.slowDown and cy.slowDownEnd commands
+import 'cypress-slow-down/commands'
+import { latestPostInFeedContentEq, createQuickPost } from '../support/posts';
+import { defaultMs } from '../support/slow-down';
+
+const username = 'Sign me up 🫡';
+
+describe('multi-sign-in-out', () => {
+  before(() => {
+    slowCypressDown();
+    cy.deleteDownloadsFolder();
+
+    // create profile to post from
+    cy.onboardAsNewUser(username, "Big on posting.");
+    cy.backupRecoveryFile();
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(username + '.pkarr'));
+  });
+
+  it('sign up then sign out then in then out then in then..', () => {
+    const t = 10_000;
+    for (let i = 0; i < t; i++) {
+      cy.signOut(true);
+      cy.signIn(backupDownloadFilePath(username + '.pkarr'));
+    };
+  });
+});
