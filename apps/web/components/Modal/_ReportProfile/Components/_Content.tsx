@@ -95,7 +95,7 @@ export default function ContentReportProfile({
             {items.map((item, index) => (
               <div
                 key={index}
-                className="cursor-pointer w-full py-2 gap-4 justify-between flex items-center border-b border-transparent hover:border-white/30 hover:bg-gradient-to-t from-white/10 to-transparent"
+                className={`cursor-pointer w-full py-3 gap-4 justify-between flex items-center ${selectedItem === item.title ? 'opacity-100' : 'opacity-50 hover:opacity-80'}`}
                 onClick={() => setSelectedItem(item.title)}
               >
                 <div className="flex gap-2">

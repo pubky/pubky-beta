@@ -28,7 +28,9 @@ export default function ContentNotFound({
           </div>
         )}
         {title && (
-          <Typography.Body variant="large-bold">{title}</Typography.Body>
+          <Typography.Body className="text-center" variant="large-bold">
+            {title}
+          </Typography.Body>
         )}
         {description && (
           <Typography.Body

@@ -8,7 +8,7 @@ interface ButtonFiltersProps extends React.HTMLAttributes<HTMLButtonElement> {
 }
 
 export default function ButtonFilters({
-  rootCSS = 'sticky top-[160px]',
+  rootCSS = 'z-10 sticky top-[160px]',
   ...rest
 }: ButtonFiltersProps) {
   const baseCSS =

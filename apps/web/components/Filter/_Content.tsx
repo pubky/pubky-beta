@@ -20,7 +20,7 @@ export default function Content({ disabled = false }: ReachProps) {
     images: <Icon.ImageSquare />,
     videos: <Icon.Play />,
     links: <Icon.LinkSimple />,
-    files: <Icon.DownloadSimple />,
+    files: <Icon.DownloadSimple size="24" />,
   };
 
   useEffect(() => {

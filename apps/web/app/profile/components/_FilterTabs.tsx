@@ -22,13 +22,13 @@ const tabs = [
   {
     id: 1,
     key: 'posts',
-    icon: <Icon.FileText size="24" color="white" />,
+    icon: <Icon.Note size="24" color="white" />,
     label: 'Posts',
   },
   {
     id: 2,
     key: 'replies',
-    icon: <Icon.File size="24" color="white" />,
+    icon: <Icon.ChatCircleText size="24" color="white" />,
     label: 'Replies',
   },
   {
@@ -141,22 +141,16 @@ export default function FilterTabs({
                 pubky ? handleTabClick(tab.id, tab.key) : openJoin()
               }
               className={`w-full py-2 px-3 items-center flex justify-between cursor-pointer ${
-                !isActive &&
-                'border-b border-transparent hover:border-white/30 hover:bg-gradient-to-t from-white/10 to-transparent'
+                isActive && !loading
+                  ? 'opacity-100'
+                  : 'opacity-50 hover:opacity-80'
               }`}
             >
-              <div
-                id="label"
-                className={`flex gap-2 items-center ${
-                  isActive && !loading
-                    ? 'opacity-100'
-                    : 'opacity-50 hover:opacity-80'
-                }`}
-              >
+              <div id="label" className="flex gap-2 items-center">
                 {tab.icon}
                 <Typography.Body
                   className="tracking-normal"
-                  variant="small-bold"
+                  variant="medium-bold"
                 >
                   {tab.label}
                 </Typography.Body>

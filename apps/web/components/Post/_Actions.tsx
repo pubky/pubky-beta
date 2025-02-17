@@ -43,12 +43,12 @@ const BookmarkButton = ({
       icon={
         loadingBookmarks ? (
           <div>
-            <Icon.LoadingSpin size="16" />
+            <Icon.LoadingSpin size="19" />
           </div>
         ) : (
           <div>
             <Icon.BookmarkSimple
-              size="16"
+              size="19"
               opacity={isBookmarked ? 1 : 0.2}
               color={'white'}
             />
@@ -95,7 +95,7 @@ const MenuButton = ({
         variant="custom"
         icon={
           <div>
-            <Icon.DotsThreeOutline size="16" color="white" />
+            <Icon.DotsThreeOutline size="19" color="white" />
           </div>
         }
         onClick={(event) => {
@@ -222,7 +222,7 @@ export default function Actions({
           }}
           icon={
             <div>
-              <Icon.Tag size="16" />
+              <Icon.Tag size="19" />
             </div>
           }
           counter={post?.counts?.tags}
@@ -233,7 +233,7 @@ export default function Actions({
           variant="custom"
           icon={
             <div>
-              <Icon.ChatCircleText size="16" />
+              <Icon.ChatCircleText size="19" />
             </div>
           }
           counter={post?.counts?.replies}
@@ -254,7 +254,7 @@ export default function Actions({
             icon={
               <div>
                 <Icon.Repost
-                  size="16"
+                  size="19"
                   color={deleteRepost ? '#00BA7C' : 'white'}
                 />
               </div>

@@ -18,7 +18,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
 
   const buttonCSS =
     'cursor-pointer p-3 bg-white/20 rounded-[48px] backdrop-blur-[32px] justify-center items-center inline-flex';
-  const activeCSS = 'border-t border-white';
+  const activeCSS = 'bg-white/30';
 
   const { profile } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
@@ -66,7 +66,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
           {unReadNotification !== 0 && (
             <PostUtil.Counter
               textCSS="tracking-tight text-black font-semibold text-[13px]"
-              className="p-0 w-6 h-6 absolute text-center bottom-0 text-black right-0 bg-[#C8FF00] border-white"
+              className="p-0 w-6 h-6 absolute text-center bottom-0 text-black right-0"
             >
               {unReadNotification > 21 ? '+21' : unReadNotification}
             </PostUtil.Counter>
@@ -75,9 +75,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
             id="header-profile-pic"
             width={48}
             height={48}
-            className={`${
-              title === 'Profile' && 'border-2 border-white'
-            } rounded-full w-[48px] h-[48px]`}
+            className={`rounded-full w-[48px] h-[48px]`}
             alt="user-pic"
             uri={String(profile?.image)}
           />

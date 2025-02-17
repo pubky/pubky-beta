@@ -24,6 +24,7 @@ interface RepostedPostProps {
   showSheetTag: boolean;
   setShowSheetTag: any;
   restClassName?: string;
+  notFoundClassName?: string;
 }
 
 export default function RepostedPost({
@@ -39,6 +40,7 @@ export default function RepostedPost({
   showSheetTag,
   setShowSheetTag,
   restClassName,
+  notFoundClassName,
 }: RepostedPostProps) {
   const router = useRouter();
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
@@ -49,7 +51,12 @@ export default function RepostedPost({
 
   if (!repostedPost || repostedPost.details.content === '[DELETED]') {
     return (
-      <div className="px-6 py-2 bg-white bg-opacity-10 rounded-lg mt-2">
+      <div
+        className={twMerge(
+          'px-6 py-2 bg-white bg-opacity-10 rounded-lg mt-2',
+          notFoundClassName,
+        )}
+      >
         <Typography.Body variant="small" className="text-opacity-50">
           This post has been deleted by its author.
         </Typography.Body>

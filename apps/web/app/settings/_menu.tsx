@@ -54,10 +54,10 @@ export default function Menu({ setSelectedItem }: MenuProps) {
         const item = menuItems[key];
         const isSelected = pathname === item.path;
         const itemClass = item.disabled
-          ? 'opacity-20 border-b border-transparent'
+          ? 'opacity-20'
           : isSelected
-            ? 'cursor-pointer opacity-100 border-b border-transparent'
-            : 'cursor-pointer border-b border-transparent hover:bg-gradient-to-t from-white/10 to-transparent hover:border-b hover:border-white hover:border-opacity-20 hover:opacity-70 opacity-50';
+            ? 'cursor-pointer opacity-100'
+            : 'cursor-pointer hover:opacity-80 opacity-50';
 
         return (
           <div
@@ -73,7 +73,7 @@ export default function Menu({ setSelectedItem }: MenuProps) {
           >
             <div className="justify-start items-center gap-2 flex">
               {item.icon}
-              <Typography.Body variant="small-bold">
+              <Typography.Body variant="medium-bold">
                 {item.label}
               </Typography.Body>
             </div>

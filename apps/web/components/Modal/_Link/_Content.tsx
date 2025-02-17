@@ -66,7 +66,7 @@ export default function ContentLink({
   return (
     <>
       {showHints ? (
-        <div className="flex flex-wrap gap-1.5 mt-2">
+        <div className="flex flex-wrap gap-1.5 my-6">
           <div
             onClick={() => setShowHints(false)}
             className="pr-2 py-2 flex items-center cursor-pointer rounded-full"

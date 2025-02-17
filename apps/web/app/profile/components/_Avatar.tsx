@@ -17,9 +17,9 @@ export default function Avatar({
     <div {...rest} className={rest.className}>
       <ImageByUri
         alt={username}
-        width={132}
-        height={132}
-        className={'rounded-full w-16 h-16 md:w-[132px] md:h-[132px]'}
+        width={136}
+        height={136}
+        className={'rounded-full w-16 h-16 md:w-[136px] md:h-[136px]'}
         uri={uriImage}
       />
       <div className="absolute right-0 top-36 text-[110px]">{status}</div>

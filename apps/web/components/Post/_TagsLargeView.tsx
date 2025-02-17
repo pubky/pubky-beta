@@ -214,10 +214,10 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
 
   return (
     <div
-      className="w-full lg:max-w-[250px] xl:max-w-[350px] mt-1.5 cursor-default"
+      className="mt-1.5 w-auto cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
-      <div className={`flex-col inline-flex gap-2`}>
+      <div className={`min-w-[300px] flex-col inline-flex gap-2`}>
         <div className="relative flex items-center gap-0 mb-4">
           <PostUI.Time className="justify-start">
             {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
@@ -275,67 +275,64 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
 
           return (
             <React.Fragment key={`${index}-${tagObj?.label}`}>
-              {tagObj.taggers_count > 0 && (
-                <PostUI.Footer>
-                  <div className="flex gap-2">
-                    <PostUtil.Tag
-                      clicked={isTagFound}
-                      color={
-                        tagObj?.label &&
-                        Utils.generateRandomColor(tagObj?.label)
-                      }
-                      onClick={() =>
-                        pubky
-                          ? isTagFound
-                            ? handleDeleteTag(tagObj?.label)
-                            : handleAddTag(tagObj?.label)
-                          : openJoin()
-                      }
-                    >
-                      <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tagObj?.label, 20)}
-                        {loadingTags === tagObj?.label ? (
-                          <Icon.LoadingSpin size="12" />
-                        ) : (
-                          <Typography.Caption
-                            variant="bold"
-                            className="text-opacity-60"
-                          >
-                            {tagObj?.taggers_count}
-                          </Typography.Caption>
-                        )}
-                      </div>
-                    </PostUtil.Tag>
-                    <Link href={pubky ? `/search?tags=${tagObj?.label}` : ''}>
-                      <Button.Action
-                        variant="custom"
-                        size="small"
-                        icon={<Icon.MagnifyingGlassLeft size="14" />}
-                        className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                      />
-                    </Link>
-                  </div>
-                  <div className="flex">
-                    {displayedImages.map((image, imageIndex) => (
-                      <ImageByUri
-                        width={32}
-                        height={32}
-                        key={imageIndex}
-                        className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                          imageIndex > 0 && '-ml-2'
-                        }`}
-                        alt={`tag-${imageIndex + 1}`}
-                        uri={image}
-                      />
-                    ))}
-                    {extraImagesCount > 0 && (
-                      <PostUtil.Counter className="-ml-2">
-                        +{extraImagesCount}
-                      </PostUtil.Counter>
-                    )}
-                  </div>
-                </PostUI.Footer>
-              )}
+              <PostUI.Footer>
+                <div className="flex gap-2">
+                  <PostUtil.Tag
+                    clicked={isTagFound}
+                    color={
+                      tagObj?.label && Utils.generateRandomColor(tagObj?.label)
+                    }
+                    onClick={() =>
+                      pubky
+                        ? isTagFound
+                          ? handleDeleteTag(tagObj?.label)
+                          : handleAddTag(tagObj?.label)
+                        : openJoin()
+                    }
+                  >
+                    <div className="flex gap-2 items-center">
+                      {Utils.minifyText(tagObj?.label, 20)}
+                      {loadingTags === tagObj?.label ? (
+                        <Icon.LoadingSpin size="12" />
+                      ) : (
+                        <Typography.Caption
+                          variant="bold"
+                          className="text-opacity-60"
+                        >
+                          {tagObj?.taggers_count}
+                        </Typography.Caption>
+                      )}
+                    </div>
+                  </PostUtil.Tag>
+                  <Link href={pubky ? `/search?tags=${tagObj?.label}` : ''}>
+                    <Button.Action
+                      variant="custom"
+                      size="small"
+                      icon={<Icon.MagnifyingGlassLeft size="14" />}
+                      className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                    />
+                  </Link>
+                </div>
+                <div className="flex">
+                  {displayedImages.map((image, imageIndex) => (
+                    <ImageByUri
+                      width={32}
+                      height={32}
+                      key={imageIndex}
+                      className={`min-w-[32px] max-w-[32px] min-h-[32px] max-h-[32px] rounded-full shadow justify-center items-center flex ${
+                        imageIndex > 0 && '-ml-2'
+                      }`}
+                      alt={`tag-${imageIndex + 1}`}
+                      uri={image}
+                    />
+                  ))}
+                  {extraImagesCount > 0 && (
+                    <PostUtil.Counter className="-ml-2">
+                      +{extraImagesCount}
+                    </PostUtil.Counter>
+                  )}
+                </div>
+              </PostUI.Footer>
             </React.Fragment>
           );
         })}

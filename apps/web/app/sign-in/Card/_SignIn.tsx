@@ -21,24 +21,22 @@ export default function SignIn() {
   const router = useRouter();
   const { addToast } = useToastContext();
   const { addAlert } = useAlertContext();
-  // const appLink = 'pubkyring://';
-  // const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  // const fallbackUrl = isIOS
-  //  ? 'https://apps.apple.com/app'
-  //  : 'https://play.google.com/store/apps';
+  const appLink = 'pubkyring://';
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const fallbackUrl = isIOS
+    ? 'https://apps.apple.com/app'
+    : 'https://play.google.com/store/apps';
   const [loginError, setLoginError] = useState('');
   const [authUrl, setAuthUrl] = useState('');
   const [qrSize, setQrSize] = useState(210);
   const canvasRef = useRef(null);
 
-  {
-    /** const openApp = () => {
+  const openApp = () => {
     const newTab = window.open(appLink, '_blank');
     setTimeout(() => {
       if (newTab) newTab.location.href = fallbackUrl;
     }, 2000);
-  };*/
-  }
+  };
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -191,7 +189,7 @@ export default function SignIn() {
         <Button.Medium
           onClick={() => {
             copyToClipboard();
-            //openApp();
+            openApp();
           }}
           icon={<Icon.Key size="16" />}
           className="mt-2"

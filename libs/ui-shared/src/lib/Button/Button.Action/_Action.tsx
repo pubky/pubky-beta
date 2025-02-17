@@ -127,11 +127,11 @@ export const Action = ({
   const generateButtonProps = (
     variant: string,
     active: boolean,
-    disabled: boolean
+    disabled: boolean,
   ): { icon: React.ReactNode; background?: string; state?: string } => {
     const baseButton = buttonIcons[variant];
     const background = active
-      ? `bg-${buttonColors[variant]} bg-opacity-[0.16] border-t border-${buttonColors[variant]}`
+      ? `bg-${buttonColors[variant]} bg-opacity-[0.16]`
       : defaultBg;
     const state = disabled
       ? stateButtonDisabled
@@ -171,7 +171,7 @@ export const Action = ({
             className={twMerge(
               'text-white text-opacity-100 font-normal tracking-normal',
               labelSize,
-              color
+              color,
             )}
           >
             {label}

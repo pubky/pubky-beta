@@ -70,6 +70,7 @@ export default function CreateQuickPost({
       }
       setArrayTags([]);
       setContentPost('');
+      setIsValidContent(false);
       setTextArea(false);
       setSelectedFiles([]);
     } catch (error) {

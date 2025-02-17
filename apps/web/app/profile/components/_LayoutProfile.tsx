@@ -58,7 +58,7 @@ export default function LayoutProfile({
           </div>
         </Content.Grid>
       </div>
-      <Content.Grid className="flex xl:gap-2">
+      <Content.Grid className="flex xl:gap-2 lg:mt-6">
         <PostsLayout className="flex flex-col w-full gap-3 mt-[10px]">
           <Profile.FilterTabs
             activeTab={activeTab}
@@ -87,8 +87,8 @@ export default function LayoutProfile({
           >
             <ImageByUri
               alt={profile?.name || Utils.minifyPubky(pubky ?? '')}
-              width={262}
-              height={262}
+              width={362}
+              height={362}
               className="rounded-full shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
               uri={profile?.image as string}
             />

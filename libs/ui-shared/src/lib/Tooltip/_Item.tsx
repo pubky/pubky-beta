@@ -18,10 +18,10 @@ export const Item = ({
   ...rest
 }: ItemProps) => {
   const baseCSS =
-    'border-b border-transparent hover:border-white/30 hover:bg-gradient-to-t from-white/10 to-transparent w-full h-10 items-center justify-between inline-flex';
+    'opacity-50 hover:opacity-80 w-full h-10 items-center justify-between inline-flex';
   return (
     <button {...rest} className={twMerge(baseCSS, rest.className)}>
-      <div className="opacity-50 hover:opacity-80 w-full p-2 flex gap-2 items-center">
+      <div className="w-full p-2 flex gap-2 items-center">
         {loading ? <Icon.LoadingSpin size="24" /> : icon}
         <Typography.Body
           className={twMerge('text-[15px]', cssText)}

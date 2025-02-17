@@ -62,8 +62,8 @@ export default function Handle({
   return (
     <div {...rest} className={twMerge(rest.className)}>
       {pubkey ? (
-        <>
-          <div className="text-center lg:text-left flex flex-col gap-2 mb-4 md:mb-7">
+        <div className={`flex flex-col ${bio ? 'gap-3' : 'gap-4 xl:gap-8'}`}>
+          <div className="text-center lg:text-left flex flex-col gap-3 xl:gap-6">
             <Typography.Display
               id="profile-username-header"
               className="text-2xl sm:text-2xl sm:leading-[3.2rem] xl:leading-7"
@@ -73,12 +73,11 @@ export default function Handle({
                 25,
               )}
             </Typography.Display>
-            <Typography.Body
-              variant="medium"
-              className="text-opacity-80 md:hidden"
-            >
-              <Parsing>{bio || 'No bio.'}</Parsing>
-            </Typography.Body>
+            {bio && (
+              <Typography.Body variant="medium" className="text-opacity-80">
+                <Parsing>{bio}</Parsing>
+              </Typography.Body>
+            )}
           </div>
           <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
             <Buttons
@@ -99,7 +98,7 @@ export default function Handle({
               status={(status || 'noStatus') as TStatus}
             />
           </div>
-        </>
+        </div>
       ) : (
         <Typography.Display className="text-left">
           Loading...
