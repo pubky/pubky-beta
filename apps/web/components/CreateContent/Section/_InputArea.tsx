@@ -154,9 +154,17 @@ export default function InputArea({
     } else {
       setIsError && setIsError(false);
     }
-    setContent(text);
-    setCursorPosition(text.length);
-    setIsValidContent(Utils.isValidContent(text));
+
+    let textFiltered = text.replace(/&nbsp;/g, ' ');
+
+    // Remove <br> tags e &nbsp;
+    if (textFiltered.trim() === '<br>') {
+      textFiltered = '';
+    }
+
+    setContent(textFiltered);
+    setCursorPosition(textFiltered.length);
+    setIsValidContent(Utils.isValidContent(textFiltered));
   };
 
   return (
