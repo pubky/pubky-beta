@@ -214,10 +214,10 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
 
   return (
     <div
-      className="w-full lg:max-w-[250px] xl:max-w-[350px] mt-1.5 cursor-default"
+      className="mt-1.5 w-auto cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
-      <div className={`flex-col inline-flex gap-2`}>
+      <div className={`min-w-[300px] flex-col inline-flex gap-2`}>
         <div className="relative flex items-center gap-0 mb-4">
           <PostUI.Time className="justify-start">
             {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
@@ -319,7 +319,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                       width={32}
                       height={32}
                       key={imageIndex}
-                      className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                      className={`min-w-[32px] max-w-[32px] min-h-[32px] max-h-[32px] rounded-full shadow justify-center items-center flex ${
                         imageIndex > 0 && '-ml-2'
                       }`}
                       alt={`tag-${imageIndex + 1}`}
