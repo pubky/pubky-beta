@@ -327,7 +327,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
               </ContentNotFound>
             )}
             <Button.Medium
-              className={`mt-2 w-auto h-8 inline-flex lg:hidden items-center ${profileTags.length > 0 && 'self-center'}`}
+              className={`mt-2 w-auto h-8 inline-flex lg:hidden items-center ${profileTags.length === 0 && 'self-center'}`}
               onClick={() =>
                 isMobile
                   ? setShowSheetProfileTag(true)

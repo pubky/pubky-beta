@@ -382,7 +382,7 @@ export default function ContentProfileTag({
           />
         )}
       </div>
-      <div className="justify-start items-start gap-2 flex flex-col overflow-y-auto min-w-[200px] max-h-[200px] scrollbar-thin scrollbar-webkit">
+      <div className="justify-start items-start gap-2 flex flex-col overflow-y-auto min-w-[200px] max-h-[300px] scrollbar-thin scrollbar-webkit">
         <Input.Label value={selectedTag ? 'Tagged' : 'Current tags'} />
         {allTags.length > 0 ? (
           <>
@@ -437,7 +437,7 @@ export default function ContentProfileTag({
                             width={32}
                             height={32}
                             key={imageIndex}
-                            className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                            className={`min-w-[32px] max-w-[32px] min-h-[32px] max-h-[32px] rounded-full shadow justify-center items-center flex ${
                               imageIndex > 0 && '-ml-2'
                             }`}
                             alt={`tag-${imageIndex + 1}`}

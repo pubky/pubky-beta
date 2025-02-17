@@ -20,6 +20,7 @@ import { ImageByUri } from '@/components/ImageByUri';
 import { useTagsPost } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { usePostTagTaggers } from '@/hooks/useUser';
+import Post from '@/components/Post';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
@@ -421,6 +422,9 @@ export default function ContentTag({
             </div>
           }
         />
+        <div className="mt-4 w-full md:w-96 hidden md:flex">
+          <Post post={post} repostView />
+        </div>
         {tagsError && (
           <Typography.Body variant="small" className="text-[#e95164] mt-4">
             Max 4 tags
@@ -429,7 +433,7 @@ export default function ContentTag({
       </div>
       <div
         id="current-tags"
-        className="justify-start items-start gap-2 flex flex-col overflow-y-auto min-w-[200px] max-h-[200px] scrollbar-thin scrollbar-webkit"
+        className="justify-start items-start gap-2 flex flex-col overflow-y-auto min-w-[200px] max-h-[300px] scrollbar-thin scrollbar-webkit"
       >
         <Input.Label value={selectedTag ? 'Tagged' : 'Current tags'} />
         {allTags.length > 0 ? (
@@ -484,7 +488,7 @@ export default function ContentTag({
                             width={32}
                             height={32}
                             key={imageIndex}
-                            className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                            className={`min-w-[32px] max-w-[32px] min-h-[32px] max-h-[32px] rounded-full shadow justify-center items-center flex ${
                               imageIndex > 0 && '-ml-2'
                             }`}
                             alt={`tag-${imageIndex + 1}`}

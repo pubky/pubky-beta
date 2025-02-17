@@ -1,7 +1,6 @@
 'use client';
 
 import { BottomSheet } from '@social/ui-shared';
-import Post from '../Post';
 import { PostTag, PostView } from '@/types/Post';
 import ContentTag from '../Modal/_Tag/_Content';
 
@@ -50,11 +49,6 @@ export default function Tag({
           selectedTag={selectedTag}
           setSelectedTag={setSelectedTag}
         />
-        {post && (
-          <div>
-            <Post post={post} repostView />
-          </div>
-        )}
       </div>
     </BottomSheet.Root>
   );

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from '@social/ui-shared';
 import { PostTag, PostView } from '@/types/Post';
-import Post from '@/components/Post';
 import ContentTag from './_Content';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -82,11 +81,6 @@ export default function Tag({
             tagsError={tagsError}
           />
         </Modal.Content>
-        {post && (
-          <div>
-            <Post post={post} repostView />
-          </div>
-        )}
       </div>
     </Modal.Root>
   );
