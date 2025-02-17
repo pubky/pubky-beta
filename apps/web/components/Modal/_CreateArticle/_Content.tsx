@@ -340,6 +340,7 @@ export default function ContentCreateArticle({
                   </div>
                 ) : (
                   <div
+                    id="media-upload-btn"
                     onClick={handleFileClick}
                     onDragEnter={handleDragEnter}
                     onDragOver={handleDragOver}
@@ -348,6 +349,7 @@ export default function ContentCreateArticle({
                     className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-white bg-opacity-10 rounded-lg p-4 cursor-pointer"
                   >
                     <input
+                      id="fileInput"
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"

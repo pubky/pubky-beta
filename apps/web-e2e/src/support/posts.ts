@@ -253,3 +253,15 @@ export const cannotFindPostInFeed = (filterText: string) => {
 export const countPostsInFeed = (filterText: string, expectedCount: number) => {
   findAndCountPostsInFeed(filterText, expectedCount);
 };
+
+// can be used in post or article creation
+export const addImage = () => {
+  // upload image
+  cy.get('#media-upload-btn').within(() => {
+    const imagePath = Cypress.config('fixturesFolder') + '/mustache-you.png';
+    cy.get('#fileInput').selectFile(
+      imagePath,
+      { force: true } // force to bypass visibility check of hidden input field
+    );
+  });
+};

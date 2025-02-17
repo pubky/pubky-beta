@@ -13,7 +13,8 @@ import { latestPostInFeedContentEq,
         selectEmojis,
         createQuickPostWithTags,
         fastTagWhilstCreatingPost,
-        latestPostHasAnImage} from '../support/posts';
+        latestPostHasAnImage,
+        addImage} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -141,13 +142,7 @@ describe('posts', () => {
       cy.get('textarea').click();
 
       // upload image
-      cy.get('#media-upload-btn').within(() => {
-        const imagePath = Cypress.config('fixturesFolder') + '/mustache-you.png';
-        cy.get('#fileInput').selectFile(
-          imagePath,
-          { force: true } // force to bypass visibility check of hidden input field
-        );
-      });
+      addImage();
 
       // type the rest of the post and submit
       cy.get('textarea').type(postContent);
@@ -514,8 +509,8 @@ describe('posts', () => {
   });
 
   // [true, false].forEach((waitForIndexed) => {
-    [false].forEach((waitForIndexed) => {
-    it.only(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
+  [true, false].forEach((waitForIndexed) => {
+    it(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to repost
       const postContent = `This post will be reposted with content! ${Date.now()}`;
       const repostContent = 'Reposted with content!';
@@ -637,10 +632,12 @@ describe('posts', () => {
     });
   });
 
-  const createArticle = (articleTitle: string, articleContent: string, tags?: string[]) => {
+
+  const createArticle = (articleTitle: string, articleContent: string, imageFilename?: string, tags?: string[]) => {
     cy.get('#article-modal').should('be.visible').within(() => {
       cy.get('h1').contains('New Article');
       cy.get('#article-title-input').type(articleTitle);
+      if (imageFilename) addImage();
       cy.get('#article-content-input').click().invoke('text', articleContent);
       // todo: check counter
       // need to click away from input to enable publish button (either by adding tags or clicking footer)
@@ -649,9 +646,15 @@ describe('posts', () => {
     });
   };
 
-  const checkArticleInFeed = (articleTitle: string, articleContent: string, tags?: string[]) => {
+  enum ImageExpected {
+    Yes = 1,
+    No = 0
+  };
+
+  const checkArticleInFeed = (articleTitle: string, articleContent: string, expectImage: ImageExpected, tags?: string[]) => {
     cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldContain(articleTitle);
+      if (expectImage) cy.wrap($post).find('img').should('be.visible');
       cy.wrap($post).innerTextShouldContain(articleContent);
       if (tags) tags.forEach(tag => cy.wrap($post).innerTextShouldContain(tag));
     });
@@ -668,8 +671,8 @@ describe('posts', () => {
       cy.get('#article-btn').click();
     });
 
-    createArticle(articleTitle, articleContent, [tag1, tag2]);
-    checkArticleInFeed(articleTitle, articleContent, [tag1, tag2]);
+    createArticle(articleTitle, articleContent, 'mustache-you.png', [tag1, tag2]);
+    checkArticleInFeed(articleTitle, articleContent, ImageExpected.Yes, [tag1, tag2]);
   });
 
   it('can create an article from new post', () => {
@@ -687,9 +690,9 @@ describe('posts', () => {
     });
 
     createArticle(articleTitle, articleContent);
-    checkArticleInFeed(articleTitle, articleContent);
+    checkArticleInFeed(articleTitle, articleContent, ImageExpected.No);
   });
 
   // todo: check that reply still shown in own profile page
-  // todo: test 'Show n new posts' button
+  // todo: test 'Show n new posts' button 
 });
