@@ -16,7 +16,7 @@ export default function Content() {
     images: <Icon.ImageSquare />,
     videos: <Icon.Play />,
     links: <Icon.LinkSimple />,
-    files: <Icon.DownloadSimple />,
+    files: <Icon.DownloadSimple size="24" />,
     loading: <Icon.LoadingSpin className="animate-spin" />,
   };
 

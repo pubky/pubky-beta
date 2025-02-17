@@ -62,7 +62,10 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                       {index + 1}
                     </PostUtil.Counter>
                     <Link href={`/search?tags=${tag?.label}`}>
-                      <Typography.Body variant="large-bold">
+                      <Typography.Body
+                        className="break-all"
+                        variant="large-bold"
+                      >
                         {Utils.minifyText(tag?.label, 21)}
                       </Typography.Body>
                     </Link>
