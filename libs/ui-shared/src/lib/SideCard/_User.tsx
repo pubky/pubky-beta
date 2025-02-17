@@ -51,7 +51,7 @@ export const User = ({
         <div className="flex-col justify-start items-start inline-flex">
           <Typography.Body variant="medium-bold">{username}</Typography.Body>
           {label ? (
-            <Typography.Label className="text-opacity-30 -mt-1">
+            <Typography.Label className="text-opacity-50 -mt-1">
               {label}
             </Typography.Label>
           ) : (
