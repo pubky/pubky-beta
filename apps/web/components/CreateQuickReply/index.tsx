@@ -53,6 +53,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
       setSendingReply(false);
       setContentReply('');
       setArrayTags([]);
+      setIsValidContent(false);
       setSelectedFiles([]);
       setTextArea(false);
       addAlert('Reply created!');
