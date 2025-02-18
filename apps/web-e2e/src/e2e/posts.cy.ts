@@ -149,10 +149,12 @@ describe('posts', () => {
       cy.get('#post-btn').click();
     });
 
-    // verify the post is displayed correctly in feed
-    latestPostInFeedContentEq(postContent);
+    // wait for post to be indexed then verify the post has expected content and 1 image
+    cy.findFirstPostInFeed(true).within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+      cy.get('#post-content-text').find('img').should('have.length', 1);
+    });
 
-    latestPostHasAnImage();
   });
 
   // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992

@@ -74,7 +74,7 @@ export default function Handle({
               )}
             </Typography.Display>
             {bio && (
-              <Typography.Body variant="medium" className="text-opacity-80">
+              <Typography.Body id="profile-bio-content" variant="medium" className="text-opacity-80">
                 <Parsing>{bio}</Parsing>
               </Typography.Body>
             )}

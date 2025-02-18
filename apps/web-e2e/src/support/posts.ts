@@ -30,7 +30,7 @@ export const latestPostInFeedContentEq = (postContent: string) => {
 // check how many images are in a post
 export const checkNumberOfImagesInPost = (expectedNumberOfImages: number, idx: number) => {
   cy.get('#posts-feed').find('#timeline').children().should('have.length.gte', 1).eq(idx).within(() => {
-    cy.get('img').should('have.length', expectedNumberOfImages);
+    cy.get('#post-content-text').find('img').should('have.length', expectedNumberOfImages);
   });
 };
 
