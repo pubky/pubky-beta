@@ -62,6 +62,8 @@ export default function ContentProfileTag({
   const [allTags, setAllTags] = useState<PostTag[]>(
     profileTags.slice(0, limit),
   );
+  const [loadingTags, setLoadingTags] = useState('');
+  const [loading, setLoading] = useState(false);
   const [skip, setSkip] = useState(limit);
   const [hasMore, setHasMore] = useState(user && user?.counts?.tags > limit);
   const limitTaggers = 5;
@@ -296,6 +298,35 @@ export default function ContentProfileTag({
     };
   }, [wrapperRefEmojis]);
 
+  const addProfileTag = (tag: string) => {
+    try {
+      setLoadingTags(tag);
+      setLoading(true);
+      handleAddProfileTag(tag);
+      setTag('');
+      setLoading(false);
+      setLoadingTags('');
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    } catch (error) {
+      console.error('Error adding profile tag', error);
+    }
+  };
+
+  const deleteProfileTag = (tag: string) => {
+    try {
+      setLoadingTags(tag);
+      handleDeleteProfileTag(tag);
+      setLoadingTags('');
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    } catch (error) {
+      console.error('Error deleting profile tag', error);
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div>
@@ -333,36 +364,37 @@ export default function ContentProfileTag({
           className="w-full lg:w-96 mt-2 flex items-center"
           maxLength={20}
           autoFocus
+          disabled={loading}
           onChange={handleChange}
-          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              handleAddProfileTag(tag);
-              setTag('');
-              setTimeout(() => {
-                inputRef.current?.focus();
-              }, 0);
+              addProfileTag(tag);
             }
           }}
           action={
             <div className="flex">
               <Button.Action
                 id="add-btn"
-                icon={<Icon.Plus size="18" />}
+                icon={
+                  loading ? (
+                    <Icon.LoadingSpin size="18" />
+                  ) : (
+                    <Icon.Plus size="18" />
+                  )
+                }
                 variant="custom"
                 size="medium"
+                disabled={loading}
                 className={tag ? 'flex' : 'hidden'}
                 onClick={() => {
-                  handleAddProfileTag(tag);
-                  setTag('');
-                  setTimeout(() => {
-                    inputRef.current?.focus();
-                  }, 0);
+                  addProfileTag(tag);
                 }}
               />
               <Button.Action
                 variant="custom"
                 icon={<Icon.Smiley size="32" />}
                 className="hidden ml-2 lg:flex"
+                disabled={loading}
                 size="medium"
                 onClick={(event) => {
                   event.stopPropagation();
@@ -402,8 +434,8 @@ export default function ContentProfileTag({
                         onClick={(event) => {
                           event.stopPropagation();
                           isTagFound
-                            ? handleDeleteProfileTag(tag?.label)
-                            : handleAddProfileTag(tag?.label);
+                            ? deleteProfileTag(tag?.label)
+                            : addProfileTag(tag?.label);
                         }}
                         color={
                           tag?.label && Utils.generateRandomColor(tag?.label)
@@ -411,12 +443,16 @@ export default function ContentProfileTag({
                       >
                         <div className="flex gap-2 items-center">
                           {Utils.minifyText(tag?.label, 21)}
-                          <Typography.Caption
-                            variant="bold"
-                            className="text-opacity-60"
-                          >
-                            {tag?.taggers_count}
-                          </Typography.Caption>
+                          {loadingTags === tag?.label ? (
+                            <Icon.LoadingSpin size="12" />
+                          ) : (
+                            <Typography.Caption
+                              variant="bold"
+                              className="text-opacity-60"
+                            >
+                              {tag?.taggers_count}
+                            </Typography.Caption>
+                          )}
                         </div>
                       </PostUtil.Tag>
 
@@ -489,8 +525,8 @@ export default function ContentProfileTag({
                         selectedTag?.taggers.some(
                           (fromItem) => fromItem === pubky,
                         )
-                          ? handleDeleteProfileTag(selectedTag.label)
-                          : handleAddProfileTag(selectedTag.label);
+                          ? deleteProfileTag(selectedTag.label)
+                          : addProfileTag(selectedTag.label);
                       }}
                       color={
                         selectedTag.label &&
@@ -502,12 +538,16 @@ export default function ContentProfileTag({
                           selectedTag.label.replace(' ', ''),
                           20,
                         )}
-                        <Typography.Caption
-                          variant="bold"
-                          className="text-opacity-60"
-                        >
-                          {selectedTag?.taggers_count}
-                        </Typography.Caption>
+                        {loadingTags === selectedTag?.label ? (
+                          <Icon.LoadingSpin size="12" />
+                        ) : (
+                          <Typography.Caption
+                            variant="bold"
+                            className="text-opacity-60"
+                          >
+                            {selectedTag?.taggers_count}
+                          </Typography.Caption>
+                        )}
                       </div>
                     </PostUtil.Tag>
                   )}

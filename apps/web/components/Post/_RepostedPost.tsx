@@ -84,6 +84,7 @@ export default function RepostedPost({
               post={repostedPost}
               fullContent={fullContent}
               largeView={largeView}
+              repostView={repostView}
             />
           </div>
 

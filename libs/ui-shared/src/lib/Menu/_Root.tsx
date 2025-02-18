@@ -8,6 +8,7 @@ interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
   drawerOpen: boolean;
   position?: 'left' | 'right';
   setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  clickableArea?: boolean;
 }
 
 export const Root = ({
@@ -16,6 +17,7 @@ export const Root = ({
   setDrawerOpen,
   children,
   position = 'right',
+  clickableArea = true,
   ...rest
 }: RootProps) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -70,7 +72,7 @@ export const Root = ({
     }
   };
 
-  if (!isVisible && !drawerOpen) {
+  if (!isVisible && !drawerOpen && clickableArea) {
     // Render swipe zone for opening the drawer
     const swipeZoneCSS = position === 'left' ? 'left-0' : 'right-0';
 

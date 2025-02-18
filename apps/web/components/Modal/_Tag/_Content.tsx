@@ -21,6 +21,7 @@ import { useTagsPost } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { usePostTagTaggers } from '@/hooks/useUser';
 import Post from '@/components/Post';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,7 +29,6 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   handleAddTag: (tag: string) => Promise<void>;
   handleDeleteTag: (tag: string) => Promise<void>;
-  updatePostInTimeline: (updatedPost: PostView) => void;
   selectedTag?: PostTag | null;
   setSelectedTag?: React.Dispatch<React.SetStateAction<PostTag | null>>;
   tagsError?: boolean;
@@ -40,7 +40,6 @@ export default function ContentTag({
   post,
   handleAddTag,
   handleDeleteTag,
-  updatePostInTimeline,
   selectedTag,
   setSelectedTag,
   tagsError,
@@ -50,6 +49,8 @@ export default function ContentTag({
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const isArticle =
+    String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
 
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
@@ -67,6 +68,7 @@ export default function ContentTag({
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const limit = 5;
   const [allTags, setAllTags] = useState<PostTag[]>(tags.slice(0, limit));
+  const [loadingTags, setLoadingTags] = useState('');
   const [skip, setSkip] = useState(limit);
   const [hasMore, setHasMore] = useState(post.counts?.tags > limit);
   const limitTaggers = 5;
@@ -290,33 +292,32 @@ export default function ContentTag({
     setTag(valueWithoutSpaces);
   };
 
-  const handleAddTagAndUpdatePost = async (tag: string) => {
+  const addTag = async (tag: string) => {
     try {
-      // check if the tag is already in the array
-      if (post.tags?.some((t) => t.label === tag)) {
-        return;
-      }
-
+      setLoadingTags(tag);
       setLoading(true);
       await handleAddTag(tag);
-      const updatedTags = [
-        ...post.tags,
-        {
-          label: tag,
-          taggers: [pubky ?? ''],
-          taggers_count: 1,
-          relationship: true,
-        },
-      ];
-      const updatedPost = { ...post, tags: updatedTags };
-      updatePostInTimeline(updatedPost);
       setTag('');
       setLoading(false);
+      setLoadingTags('');
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0);
     } catch (error) {
-      console.error('Error adding tag and updating post', error);
+      console.error('Error adding tag', error);
+    }
+  };
+
+  const deleteTag = async (tag: string) => {
+    try {
+      setLoadingTags(tag);
+      await handleDeleteTag(tag);
+      setLoadingTags('');
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    } catch (error) {
+      console.error('Error deleting tag', error);
     }
   };
 
@@ -379,14 +380,16 @@ export default function ContentTag({
           ref={inputRef}
           placeholder="tag"
           value={tag}
-          className="w-full md:w-96 mt-2 flex items-center"
+          className={`w-full ${
+            isArticle ? 'md:w-[500px]' : 'md:w-96'
+          } mt-2 flex items-center`}
           maxLength={20}
           autoFocus
           disabled={loading}
           onChange={handleChange}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              handleAddTagAndUpdatePost(tag);
+              addTag(tag);
             }
           }}
           action={
@@ -405,7 +408,7 @@ export default function ContentTag({
                 size="medium"
                 disabled={loading}
                 onClick={() => {
-                  handleAddTagAndUpdatePost(tag);
+                  addTag(tag);
                 }}
               />
               <Button.Action
@@ -422,7 +425,11 @@ export default function ContentTag({
             </div>
           }
         />
-        <div className="mt-4 w-full md:w-96 hidden md:flex">
+        <div
+          className={`mt-4 w-full ${
+            isArticle ? 'md:w-[500px]' : 'md:w-96'
+          } hidden md:flex`}
+        >
           <Post post={post} repostView />
         </div>
         {tagsError && (
@@ -455,19 +462,23 @@ export default function ContentTag({
                         onClick={(event) => {
                           event.stopPropagation();
                           isTagFound
-                            ? handleDeleteTag(tag?.label)
-                            : handleAddTagAndUpdatePost(tag?.label);
+                            ? deleteTag(tag?.label)
+                            : addTag(tag?.label);
                         }}
                         color={Utils.generateRandomColor(tag?.label)}
                       >
                         <div className="flex gap-2 items-center">
                           {Utils.minifyText(tag?.label, 21)}
-                          <Typography.Caption
-                            variant="bold"
-                            className="text-opacity-60"
-                          >
-                            {tag?.taggers_count}
-                          </Typography.Caption>
+                          {loadingTags === tag?.label ? (
+                            <Icon.LoadingSpin size="12" />
+                          ) : (
+                            <Typography.Caption
+                              variant="bold"
+                              className="text-opacity-60"
+                            >
+                              {tag?.taggers_count}
+                            </Typography.Caption>
+                          )}
                         </div>
                       </PostUtil.Tag>
 
@@ -538,8 +549,8 @@ export default function ContentTag({
                         selectedTag?.taggers.some(
                           (fromItem) => fromItem === pubky,
                         )
-                          ? handleDeleteTag(selectedTag?.label)
-                          : handleAddTagAndUpdatePost(selectedTag?.label);
+                          ? deleteTag(selectedTag?.label)
+                          : addTag(selectedTag?.label);
                       }}
                       color={
                         selectedTag?.label &&
@@ -548,12 +559,16 @@ export default function ContentTag({
                     >
                       <div className="flex gap-2 items-center">
                         {Utils.minifyText(selectedTag?.label, 21)}
-                        <Typography.Caption
-                          variant="bold"
-                          className="text-opacity-60"
-                        >
-                          {selectedTag?.taggers_count}
-                        </Typography.Caption>
+                        {loadingTags === selectedTag?.label ? (
+                          <Icon.LoadingSpin size="12" />
+                        ) : (
+                          <Typography.Caption
+                            variant="bold"
+                            className="text-opacity-60"
+                          >
+                            {selectedTag?.taggers_count}
+                          </Typography.Caption>
+                        )}
                       </div>
                     </PostUtil.Tag>
                   )}
