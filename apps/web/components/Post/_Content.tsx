@@ -23,6 +23,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   fullContent?: boolean;
   largeView?: boolean;
   children?: React.ReactNode;
+  repostView?: boolean;
 }
 
 export default function Content({
@@ -30,6 +31,7 @@ export default function Content({
   fullContent = false,
   largeView = false,
   children,
+  repostView,
 }: PostProps) {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
@@ -239,7 +241,11 @@ export default function Content({
             console.error(error);
           }
           return (
-            <Parsing largeView={largeView} fullContent={fullContent}>
+            <Parsing
+              largeView={largeView}
+              fullContent={fullContent}
+              repostView={repostView}
+            >
               {contentText}
             </Parsing>
           );
@@ -299,20 +305,22 @@ export default function Content({
                 {fileContents.some((file) =>
                   file?.content_type.startsWith('image'),
                 ) && (
-                  <div className="grid gap-1 overflow-hidden grid">
+                  <div className="grid gap-1 overflow-hidden">
                     {(() => {
                       const imageFiles = fileContents.filter((file) =>
                         file?.content_type.startsWith('image'),
                       );
 
-                      const layoutClass =
-                        imageFiles.length === 1
-                          ? 'grid-cols-1'
-                          : imageFiles.length === 2
-                            ? 'grid-cols-2'
-                            : imageFiles.length === 3
-                              ? 'grid-cols-2 grid-rows-2'
-                              : 'grid-cols-2 grid-rows-2';
+                      let layoutClass = '';
+                      if (imageFiles.length === 1) {
+                        layoutClass = 'grid-cols-1';
+                      } else if (imageFiles.length === 2) {
+                        layoutClass = 'grid-cols-2';
+                      } else if (imageFiles.length === 3) {
+                        layoutClass = 'grid-cols-2 grid-rows-2';
+                      } else {
+                        layoutClass = 'grid-cols-2 grid-rows-2';
+                      }
 
                       return (
                         <div className={`grid ${layoutClass} gap-1`}>
@@ -320,8 +328,8 @@ export default function Content({
                             <div
                               key={index}
                               className={`relative cursor-pointer ${
-                                imageFiles.length === 3 && index === 2
-                                  ? 'col-span-2'
+                                imageFiles.length === 3 && index === 0
+                                  ? 'row-span-2'
                                   : ''
                               }`}
                             >

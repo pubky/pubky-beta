@@ -48,6 +48,7 @@ export default function ContentBookmarks() {
         drawerRef={drawerFilterRef}
         drawerOpen={drawerFilterOpen}
         setDrawerOpen={setDrawerFilterOpen}
+        clickableArea={layout === 'wide'}
       >
         <div className="overflow-y-auto max-h-full no-scrollbar">
           <Filter.Sort />

@@ -11,6 +11,7 @@ interface ParsingProps {
   children: string;
   fullContent?: boolean;
   largeView?: boolean;
+  repostView?: boolean;
 }
 
 const tagsIcons: { [key: string]: JSX.Element } = {
@@ -27,6 +28,7 @@ const Parsing = ({
   children,
   fullContent = false,
   largeView,
+  repostView,
 }: ParsingProps) => {
   const [copy, setCopy] = useState(false);
 
@@ -147,7 +149,7 @@ const Parsing = ({
     return (
       <div
         key={key}
-        className="w-auto max-w-[300px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[600px] xl:max-w-[730px]"
+        className={`w-auto max-w-[300px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[600px] ${repostView ? 'xl:max-w-[690px]' : 'xl:max-w-[730px]'}`}
       >
         <div
           onClick={(event) => event.stopPropagation()}

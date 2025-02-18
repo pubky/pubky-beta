@@ -30,6 +30,7 @@ export default function ContentSearch() {
         drawerRef={drawerFilterRef}
         drawerOpen={drawerFilterOpen}
         setDrawerOpen={setDrawerFilterOpen}
+        clickableArea={layout === 'wide'}
       >
         <div className="overflow-y-auto max-h-full no-scrollbar">
           <Filter.Reach />
