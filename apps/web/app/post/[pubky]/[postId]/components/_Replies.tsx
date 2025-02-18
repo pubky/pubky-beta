@@ -19,7 +19,8 @@ export default function Replies({
   pubkyAuthor: string;
   postId: string;
 }) {
-  const { pubky, setReplies, mutedUsers, replies } = usePubkyClientContext();
+  const { pubky, setReplies, mutedUsers, replies, deletedPosts } =
+    usePubkyClientContext();
   const limit = 5;
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +70,9 @@ export default function Replies({
     if (isLoading || !repliesData) return;
 
     const filteredReplies = repliesData.filter(
-      (reply) => !mutedUsers?.includes(reply.details.author),
+      (reply) =>
+        !mutedUsers?.includes(reply.details.author) &&
+        !deletedPosts.includes(reply.details.id),
     );
 
     if (filteredReplies.length > 0) {
@@ -94,7 +97,7 @@ export default function Replies({
     }
 
     setIsInitialLoad(false);
-  }, [isLoading, repliesData, mutedUsers, initialLoadComplete]);
+  }, [isLoading, repliesData, mutedUsers, initialLoadComplete, deletedPosts]);
 
   const handleNewReplies = () => {
     setRepliesLocal((prev) => mergeReplies(newReplies, prev));
@@ -106,7 +109,10 @@ export default function Replies({
   useEffect(() => {
     if (newRepliesData) {
       const filteredNewReplies = newRepliesData.filter(
-        (reply) => !repliesLocal.some((r) => r.details.id === reply.details.id),
+        (reply) =>
+          !repliesLocal.some((r) => r.details.id === reply.details.id) &&
+          !replies.some((r) => r.details.id === reply.details.id) &&
+          !deletedPosts.includes(reply.details.id),
       );
 
       if (filteredNewReplies.length > 0) {
@@ -114,7 +120,7 @@ export default function Replies({
         setNewRepliesCount((prev) => prev + filteredNewReplies.length);
       }
     }
-  }, [newRepliesData]);
+  }, [newRepliesData, replies]);
 
   useEffect(() => {
     if (!isLoading && repliesData && isInitialLoad) {
