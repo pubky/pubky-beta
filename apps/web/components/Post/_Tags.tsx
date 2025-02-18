@@ -336,11 +336,6 @@ export default function Tags({
       <BottomSheet.Tag
         post={post}
         tags={tags}
-        updatePostInTimeline={(newTag: PostView) => {
-          setLoadingTags(newTag?.details.content);
-          setTags(newTag.tags);
-          setLoadingTags('');
-        }}
         handleAddTag={handleAddTag}
         handleDeleteTag={handleDeleteTag}
         show={showSheetTag}

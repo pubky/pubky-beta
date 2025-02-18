@@ -13,7 +13,6 @@ interface TagProps {
   post: PostView;
   handleAddTag: (tag: string) => Promise<void>;
   handleDeleteTag: (tag: string) => Promise<void>;
-  updatePostInTimeline: (updatedPost: PostView) => void;
   selectedTag?: PostTag | null;
   setSelectedTag?: React.Dispatch<React.SetStateAction<PostTag | null>>;
 }
@@ -27,7 +26,6 @@ export default function Tag({
   post,
   handleAddTag,
   handleDeleteTag,
-  updatePostInTimeline,
   selectedTag,
   setSelectedTag,
 }: TagProps) {
@@ -45,7 +43,6 @@ export default function Tag({
           post={post}
           handleAddTag={handleAddTag}
           handleDeleteTag={handleDeleteTag}
-          updatePostInTimeline={updatePostInTimeline}
           selectedTag={selectedTag}
           setSelectedTag={setSelectedTag}
         />
