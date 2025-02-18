@@ -21,6 +21,7 @@ import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Tooltip from '../Tooltip';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -219,9 +220,27 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
     >
       <div className={`min-w-[300px] flex-col inline-flex gap-2`}>
         <div className="relative flex items-center gap-0 mb-4">
-          <PostUI.Time className="justify-start">
-            {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
-          </PostUI.Time>
+          {String(post?.details?.kind) ===
+            PubkyAppPostKind[1].toLocaleLowerCase() ? (
+              <div className="flex gap-3 items-center">
+              <Icon.Tag size="14" color="gray" />
+              <Typography.Label className="text-opacity-30">
+                {tags.length > 0 ? 'Tags' : 'Tag Post'}
+              </Typography.Label>
+              {tags.length > 0 && (
+                <Button.Medium
+                  onClick={() => setShowModalTag(true)}
+                  className="w-auto h-[29px] px-3 py-2"
+                >
+                  See all
+                </Button.Medium>
+              )}
+            </div>
+            ) : (
+            <PostUI.Time className="justify-start">
+              {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
+            </PostUI.Time>
+          )}
           {post?.details?.author === pubky && (
             <TooltipUI.Root
               delay={50}
