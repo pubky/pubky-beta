@@ -879,6 +879,15 @@ export function PubkyClientWrapper({
       ),
     );
 
+    // optimistic edit post in the replies
+    setReplies((prevReplies) =>
+      prevReplies.map((p) =>
+        p.details.id === postId
+          ? { ...p, details: { ...p.details, content: newContent } }
+          : p,
+      ),
+    );
+
     // Fetch the existing post from the homeserver
     let postUri = postUriBuilder(pubky!, postId);
     const response = await homeserver.get(postUri);
