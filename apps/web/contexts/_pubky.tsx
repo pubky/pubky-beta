@@ -1141,6 +1141,11 @@ export function PubkyClientWrapper({
       post.details.id,
     ]);
 
+    // delete the post from the replies
+    setReplies((prevReplies) =>
+      prevReplies.filter((p) => p.details.id !== post.details.id),
+    );
+
     // delete the files
     if (post?.details?.attachments) {
       const fileDeletions = Object.values(post?.details?.attachments).map(
