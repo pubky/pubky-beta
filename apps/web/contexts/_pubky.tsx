@@ -837,6 +837,34 @@ export function PubkyClientWrapper({
         tags,
       );
 
+      if (!result) return false;
+
+      const skeletonAttachments = files?.map((file) => {
+        if (file.type.startsWith('image/')) {
+          return '/images/skeleton-image.svg';
+        }
+        return '';
+      });
+
+      const newReplyDetails: PostDetails = {
+        author: pubky!,
+        id: result.id,
+        indexed_at: Date.now(),
+        uri: result.uri,
+        content: replyContent,
+        kind: result.details.kind,
+        attachments: skeletonAttachments,
+      };
+
+      const newReplyView: PostView = {
+        details: newReplyDetails,
+        counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
+        tags: [],
+        cached: 'homeserver',
+      } as PostView;
+
+      setReplies((prev) => [newReplyView, ...prev]);
+
       return result ? result.uri : false;
     },
   );
@@ -845,6 +873,15 @@ export function PubkyClientWrapper({
     // optimistic edit post in the timeline
     setTimeline((prevTimeline) =>
       prevTimeline.map((p) =>
+        p.details.id === postId
+          ? { ...p, details: { ...p.details, content: newContent } }
+          : p,
+      ),
+    );
+
+    // optimistic edit post in the replies
+    setReplies((prevReplies) =>
+      prevReplies.map((p) =>
         p.details.id === postId
           ? { ...p, details: { ...p.details, content: newContent } }
           : p,
@@ -1112,6 +1149,11 @@ export function PubkyClientWrapper({
       ...prevDeletedPosts,
       post.details.id,
     ]);
+
+    // delete the post from the replies
+    setReplies((prevReplies) =>
+      prevReplies.filter((p) => p.details.id !== post.details.id),
+    );
 
     // delete the files
     if (post?.details?.attachments) {

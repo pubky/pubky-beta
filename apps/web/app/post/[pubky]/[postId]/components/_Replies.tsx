@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 
 import { Typography, Button } from '@social/ui-shared';
 import { Post } from '@/components';
@@ -10,6 +10,7 @@ import { usePubkyClientContext } from '@/contexts';
 import { usePostReplies } from '@/hooks/usePost';
 import { ReplyReplies } from './_ReplyReplies';
 import { PostView } from '@/types/Post';
+import { getPost } from '@/services/postService';
 
 export default function Replies({
   pubkyAuthor,
@@ -18,15 +19,18 @@ export default function Replies({
   pubkyAuthor: string;
   postId: string;
 }) {
-  const { pubky, setReplies, mutedUsers } = usePubkyClientContext();
+  const { pubky, setReplies, mutedUsers, replies, deletedPosts } =
+    usePubkyClientContext();
   const limit = 5;
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const [start, setStart] = useState<number | undefined>(undefined);
   const [repliesLocal, setRepliesLocal] = useState<PostView[]>([]);
   const [newReplies, setNewReplies] = useState<PostView[]>([]);
   const [newRepliesCount, setNewRepliesCount] = useState(0);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  const lastReplyElementRef = useRef<HTMLDivElement | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const { data: repliesData, isLoading } = usePostReplies(
     pubkyAuthor,
@@ -44,9 +48,7 @@ export default function Replies({
     undefined,
     10,
     undefined,
-    repliesLocal.length > 0
-      ? repliesLocal[0]?.details?.indexed_at + 1
-      : undefined,
+    replies.length > 0 ? replies[0]?.details?.indexed_at + 1 : undefined,
     {
       enabled: true,
       // refetchInterval: 3000,
@@ -64,11 +66,13 @@ export default function Replies({
     ];
   };
 
-  const fetchReplies = () => {
+  const fetchReplies = useCallback(() => {
     if (isLoading || !repliesData) return;
 
     const filteredReplies = repliesData.filter(
-      (reply) => !mutedUsers?.includes(reply.details.author),
+      (reply) =>
+        !mutedUsers?.includes(reply.details.author) &&
+        !deletedPosts.includes(reply.details.id),
     );
 
     if (filteredReplies.length > 0) {
@@ -82,12 +86,18 @@ export default function Replies({
       );
     }
 
+    if (filteredReplies.length < limit) {
+      setHasMore(false);
+    }
+
     if (!initialLoadComplete) {
       setInitialLoadComplete(true);
       setNewReplies([]);
       setNewRepliesCount(0);
     }
-  };
+
+    setIsInitialLoad(false);
+  }, [isLoading, repliesData, mutedUsers, initialLoadComplete, deletedPosts]);
 
   const handleNewReplies = () => {
     setRepliesLocal((prev) => mergeReplies(newReplies, prev));
@@ -99,7 +109,10 @@ export default function Replies({
   useEffect(() => {
     if (newRepliesData) {
       const filteredNewReplies = newRepliesData.filter(
-        (reply) => !repliesLocal.some((r) => r.details.id === reply.details.id),
+        (reply) =>
+          !repliesLocal.some((r) => r.details.id === reply.details.id) &&
+          !replies.some((r) => r.details.id === reply.details.id) &&
+          !deletedPosts.includes(reply.details.id),
       );
 
       if (filteredNewReplies.length > 0) {
@@ -107,31 +120,105 @@ export default function Replies({
         setNewRepliesCount((prev) => prev + filteredNewReplies.length);
       }
     }
-  }, [newRepliesData]);
+  }, [newRepliesData, replies]);
 
   useEffect(() => {
-    if (!isLoading && repliesData) {
+    if (!isLoading && repliesData && isInitialLoad) {
       fetchReplies();
     }
-  }, [isLoading, repliesData, initialLoadComplete]);
+  }, [isLoading, repliesData]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        fetchReplies();
-      }
-    });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          entries[0].isIntersecting &&
+          hasMore &&
+          !isLoading &&
+          !isInitialLoad
+        ) {
+          fetchReplies();
+        }
+      },
+      { threshold: 0.1 },
+    );
 
-    if (lastReplyElementRef.current) {
-      observer.observe(lastReplyElementRef.current);
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
     }
 
     return () => observer.disconnect();
-  }, [lastReplyElementRef.current]);
+  }, [
+    loaderRef.current,
+    hasMore,
+    isLoading,
+    isInitialLoad,
+    start,
+    fetchReplies,
+  ]);
 
   useEffect(() => {
     return () => setReplies([]);
   }, []);
+
+  useEffect(() => {
+    const fetchNexusData = async () => {
+      if (!replies.length) return;
+
+      const homeserverReplies = replies.filter(
+        (reply) => reply.cached === 'homeserver' || reply.cached === undefined,
+      );
+      if (!homeserverReplies.length) return;
+
+      try {
+        const nexusData = await getPost(
+          homeserverReplies[0].details.author,
+          homeserverReplies[0].details.id,
+          pubky ?? '',
+          undefined,
+          undefined,
+        );
+
+        if (!nexusData) return;
+
+        // Update replies with nexus data
+        setReplies((prev) => {
+          const existingReply = prev.find(
+            (p) => p.details.id === nexusData.details.id,
+          );
+
+          if (existingReply) {
+            return prev.map((p) =>
+              p.details.id === nexusData.details.id ? nexusData : p,
+            );
+          }
+
+          return prev;
+        });
+
+        // Update local replies as well
+        setRepliesLocal((prev) => {
+          const existingReply = prev.find(
+            (p) => p.details.id === nexusData.details.id,
+          );
+
+          if (existingReply) {
+            return prev.map((p) =>
+              p.details.id === nexusData.details.id ? nexusData : p,
+            );
+          }
+
+          return prev;
+        });
+      } catch (error) {
+        console.log('Error fetching Nexus data:', error);
+      }
+    };
+
+    const interval = setInterval(fetchNexusData, 2000); // Poll every 2 seconds
+
+    return () => clearInterval(interval);
+  }, [replies, pubky]);
 
   return (
     <>
@@ -144,25 +231,29 @@ export default function Replies({
           Show {newRepliesCount} new {newRepliesCount > 1 ? 'replies' : 'reply'}
         </Button.Medium>
       )}
-      {repliesLocal.length === 0 && newRepliesCount === 0 && !isLoading ? (
+      {replies.length === 0 && newRepliesCount === 0 && !isLoading ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">
           No replies yet.
         </Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full mt-3">
-          {repliesLocal.map((reply, index) => (
+          {replies.map((reply) => (
             <div
               key={`reply-${reply.details.id}`}
-              ref={
-                index === repliesLocal.length - 1 ? lastReplyElementRef : null
-              }
               className="flex flex-col gap-3"
             >
               <Post post={reply} />
               {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
             </div>
           ))}
-          {isLoading && <Skeletons.Simple />}
+          {hasMore && (
+            <div
+              ref={loaderRef}
+              className="h-20 flex items-center justify-center"
+            >
+              {isLoading && <Skeletons.Simple />}
+            </div>
+          )}
         </div>
       )}
     </>
