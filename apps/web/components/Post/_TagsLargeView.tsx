@@ -221,8 +221,8 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
       <div className={`min-w-[300px] flex-col inline-flex gap-2`}>
         <div className="relative flex items-center gap-0 mb-4">
           {String(post?.details?.kind) ===
-            PubkyAppPostKind[1].toLocaleLowerCase() ? (
-              <div className="flex gap-3 items-center">
+          PubkyAppPostKind[1].toLocaleLowerCase() ? (
+            <div className="flex gap-3 items-center">
               <Icon.Tag size="14" color="gray" />
               <Typography.Label className="text-opacity-30">
                 {tags.length > 0 ? 'Tags' : 'Tag Post'}
@@ -236,7 +236,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                 </Button.Medium>
               )}
             </div>
-            ) : (
+          ) : (
             <PostUI.Time className="justify-start">
               {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
             </PostUI.Time>
@@ -434,11 +434,6 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
       <Modal.Tag
         post={post}
         tags={tags}
-        updatePostInTimeline={(newTag: PostView) => {
-          setLoadingTags(newTag?.details.content);
-          setTags(newTag.tags);
-          setLoadingTags('');
-        }}
         handleAddTag={handleAddTag}
         handleDeleteTag={handleDeleteTag}
         showModalTag={showModalTag}
