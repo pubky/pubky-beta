@@ -10,6 +10,7 @@ export interface UserCounts {
   replies: number;
   tagged: number;
   bookmarks: number;
+  unique_tags: number;
 }
 
 export interface UserDetails {
