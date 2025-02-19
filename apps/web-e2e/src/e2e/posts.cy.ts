@@ -110,7 +110,7 @@ describe('posts', () => {
 
   it('can post with emojis', () => {
     const suffix = Date.now();
-    const postContent = `🇦🇺😎🦎 I can post with emojis! ${suffix}`;
+    const postContent = `🥋🗾⛩️ I can post with emojis! ${suffix}`;
     const postContentWithoutEmoji = ` I can post with emojis! ${suffix}`;
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
@@ -118,7 +118,7 @@ describe('posts', () => {
       cy.get('textarea').click();
 
       // add 3 emojis using emoji picker
-      selectEmojis(['australia flag', 'smiling face with sunglasses', 'lizard']);
+      selectEmojis(['Activity', '🥋', 'Travel & Places', '🗾', '⛩️']);
 
       // type the rest of the post
       cy.get('textarea').type(postContentWithoutEmoji);
