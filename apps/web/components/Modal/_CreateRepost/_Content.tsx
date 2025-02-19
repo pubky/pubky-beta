@@ -64,7 +64,17 @@ export default function ContentCreateRepost({
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', repostId, tag);
         }
-        addAlert('Repost created!');
+        addAlert(
+          <>
+            Repost created!{' '}
+            <a
+              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
+              href={Utils.encodePostUri(newRepost)}
+            >
+              View
+            </a>
+          </>,
+        );
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
@@ -94,7 +104,17 @@ export default function ContentCreateRepost({
       );
 
       if (newRepost) {
-        addAlert('Repost created!');
+        addAlert(
+          <>
+            Repost created!{' '}
+            <a
+              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
+              href={Utils.encodePostUri(newRepost)}
+            >
+              View
+            </a>
+          </>,
+        );
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }

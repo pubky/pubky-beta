@@ -80,7 +80,17 @@ export default function ContentCreateReply({
         for (const tag of updatedTags) {
           await createTag(pubky ?? '', replyId, tag);
         }
-        addAlert('Reply created!');
+        addAlert(
+          <>
+            Reply created!{' '}
+            <a
+              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
+              href={Utils.encodePostUri(newReply)}
+            >
+              View
+            </a>
+          </>,
+        );
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
@@ -104,7 +114,7 @@ export default function ContentCreateReply({
       />
       <div className="flex items-center relative">
         <div
-          className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[47%] top-0 border-[#444447]`}
+          className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[49%] top-0 border-[#444447]`}
         />
         {lineHorizontalCSS}
         <div className="w-full lg:ml-[23px] mt-6">
