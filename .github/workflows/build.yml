@@ -37,15 +37,14 @@ jobs:
           echo "SUPPORT_API_ACCESS_TOKEN=$SUPPORT_API_ACCESS_TOKEN" >> .env
           echo "SUPPORT_ACCOUNT_ID=$SUPPORT_ACCOUNT_ID" >> .env
 
-      - name: Clean cache & reset NX
+      - name: Clean cache & reset
         run: |
           rm -rf ./node_modules/ ./dist/
           npm cache clean --force
-          npm install -g @nrwl/cli
-          npx nx reset
+          rm -rf ./.nx/cache
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build prod
         env:
