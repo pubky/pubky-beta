@@ -1,105 +1,83 @@
 'use client';
 
-import {
-  Editor,
-  EditorProvider,
-  Toolbar,
-  BtnBold,
-  BtnItalic,
-  BtnUnderline,
-  BtnStrikeThrough,
-  BtnUndo,
-  BtnRedo,
-  createButton,
-} from 'react-simple-wysiwyg';
-import { Icon } from '../Icon';
+import { useEffect, useState } from 'react';
+import { useQuill } from 'react-quilljs';
+import 'quill/dist/quill.snow.css';
 
-const BtnAlignLeft = createButton(
-  'Align left',
-  <div>
-    <Icon.TextAlignLeft size="20" />
-  </div>,
-  'justifyLeft',
-);
-const BtnAlignCenter = createButton(
-  'Align center',
-  <div>
-    <Icon.TextAlignCenter size="20" />
-  </div>,
-  'justifyCenter',
-);
-const BtnAlignRight = createButton(
-  'Align right',
-  <div>
-    <Icon.TextAlignRight size="20" />
-  </div>,
-  'justifyRight',
-);
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ align: [] }],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['blockquote', 'code-block'],
+    ['link', 'image'],
+  ],
+};
 
-const BtnClearContent = ({ onClear }: { onClear: () => void }) => (
-  <button
-    type="button"
-    onClick={onClear}
-    className="custom-btn"
-    title="Clear content"
-  >
-    <div className="h-[2em] w-[2em] ml-1 -mt-[1px] hover:bg-[#ffffff29] flex items-center">
-      <Icon.X size="16" />
-    </div>
-  </button>
-);
+const formats = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'align',
+  'list',
+  'blockquote',
+  'code-block',
+  'link',
+  'image',
+];
 
-interface MarkdownEditorProps {
-  placeHolder?: string;
-  onChange: (value: string) => void;
-  autoFocus?: boolean;
-  value: string;
-  isError?: boolean;
-  maxLength?: number;
-}
-
-export const MarkdownEditorComponent = ({
-  onChange,
-  value,
+const MarkdownEditorComponent = ({
   placeHolder,
   autoFocus,
+  onChange,
+  setCharCount,
+  value,
   isError,
   maxLength,
-  ...rest
-}: MarkdownEditorProps) => {
-  const errorCSS = 'text-red-500 text-sm mt-2';
+}) => {
+  const { quill, quillRef } = useQuill({
+    modules,
+    formats,
+    placeholder: placeHolder,
+  });
 
-  const handleClearContent = () => {
-    onChange('');
-  };
+  useEffect(() => {
+    if (quill) {
+      quill.on('text-change', () => {
+        const text = quill.getText().trim();
+        if (text.length <= maxLength) {
+          setCharCount(text.length);
+          onChange(quill.root.innerHTML);
+        } else {
+          quill.deleteText(maxLength, quill.getLength());
+        }
+      });
+    }
+  }, [quill, onChange, maxLength]);
+
+  useEffect(() => {
+    if (quill && autoFocus) quill.focus();
+  }, []);
+
+  useEffect(() => {
+    if (quill && value !== quill.root.innerHTML) {
+      quill.root.innerHTML = value;
+    }
+  }, [value, quill]);
+
+  const errorCSS = 'text-red-500 text-sm mt-2';
 
   return (
     <div className="w-full relative">
-      <EditorProvider>
-        <Editor
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          placeholder={placeHolder}
-          autoFocus={autoFocus}
-          {...rest}
-        >
-          <Toolbar>
-            <BtnBold />
-            <BtnItalic />
-            <BtnUnderline />
-            <BtnStrikeThrough />
-            <div className="ml-2 flex items-center">
-              <BtnAlignLeft />
-              <BtnAlignCenter />
-              <BtnAlignRight />
-            </div>
-            <BtnUndo />
-            <BtnRedo />
-            <BtnClearContent onClear={handleClearContent} />
-          </Toolbar>
-        </Editor>
-      </EditorProvider>
-      {isError && <div className={errorCSS}>Max length {maxLength}</div>}
+      <div ref={quillRef} className="min-h-[200px]" />
+      {isError && (
+        <div className={errorCSS}>Max length {maxLength} reached</div>
+      )}
     </div>
   );
 };
+
+export default MarkdownEditorComponent;
