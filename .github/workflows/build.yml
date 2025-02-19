@@ -22,7 +22,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-          cache: 'npm'
 
       - name: Create .env
         env:
@@ -37,11 +36,9 @@ jobs:
           echo "SUPPORT_API_ACCESS_TOKEN=$SUPPORT_API_ACCESS_TOKEN" >> .env
           echo "SUPPORT_ACCOUNT_ID=$SUPPORT_ACCOUNT_ID" >> .env
 
-      - name: Clean cache & reset
-        run: |
-          rm -rf ./node_modules/ ./dist/
-          npm cache clean --force
-          rm -rf ./.nx/cache
+#      - name: Clean cache & reset
+#        run: |
+#          npm cache clean --force
 
       - name: Install dependencies
         run: npm ci
