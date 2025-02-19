@@ -37,6 +37,9 @@ jobs:
           echo "SUPPORT_API_ACCESS_TOKEN=$SUPPORT_API_ACCESS_TOKEN" >> .env
           echo "SUPPORT_ACCOUNT_ID=$SUPPORT_ACCOUNT_ID" >> .env
 
+      - name: Install NX
+        run: npm install -g nx
+
       - name: Clean cache & reset NX
         run: npm run clean
 
