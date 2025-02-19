@@ -1178,11 +1178,15 @@ export function PubkyClientWrapper({
     const capabilities = caps || '/pub/pubky.app/:rw';
 
     try {
-      const [url, promise] = await client.authRequest(
+      const authRequest = client.authRequest(
         NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
         capabilities,
       );
-      return { url: String(url), promise };
+
+      return {
+        url: String(authRequest.url),
+        promise: authRequest,
+      };
     } catch (error) {
       handleError(error, 'generateAuthUrl');
       return null;
