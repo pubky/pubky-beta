@@ -11,7 +11,10 @@ import { latestPostInFeedContentEq,
         replyToPost,
         waitForFeedToLoad,
         selectEmojis,
-        fastTagWhilstCreatingPost} from '../support/posts';
+        createQuickPostWithTags,
+        fastTagWhilstCreatingPost,
+        latestPostHasAnImage,
+        addImage} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -131,8 +134,7 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
-  // test skipped because viewing uploaded image in post doesn't work for this local deployment
-  it.skip('can post with image upload', () => {
+  it('can post with image upload', () => {
     const postContent = `I can post with an image! ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
@@ -140,23 +142,19 @@ describe('posts', () => {
       cy.get('textarea').click();
 
       // upload image
-      cy.get('#media-upload-btn').within(() => {
-        const imagePath = Cypress.config('fixturesFolder') + '/mustache-you.png';
-        cy.get('#fileInput').selectFile(
-          imagePath,
-          { force: true } // force to bypass visibility check of hidden input field
-        );
-      });
+      addImage();
 
       // type the rest of the post and submit
       cy.get('textarea').type(postContent);
       cy.get('#post-btn').click();
     });
 
-    // todo: verify the image is displayed in the post (fails to display uploaded image here)
+    // wait for post to be indexed then verify the post has expected content and 1 image
+    cy.findFirstPostInFeed(true).within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent);
+      cy.get('#post-content-text').find('img').should('have.length', 1);
+    });
 
-    // verify the post is displayed correctly in feed
-    latestPostInFeedContentEq(postContent);
   });
 
   // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
@@ -270,20 +268,7 @@ describe('posts', () => {
       const tag2 = 'llamas';
       const tag3 = 'vicuñas';
 
-      cy.get('#quick-post-create-content').within(() => {
-        cy.get('textarea').should('have.value', '');
-        // type the post
-        cy.get('textarea').type(postContent);
-
-        // add tags to the post
-        fastTagWhilstCreatingPost([tag1, tag2, tag3]);
-
-        // check displayed content length
-        cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
-
-        // submit the post
-        cy.get('#post-btn').click();
-      });
+      createQuickPostWithTags(postContent, [tag1, tag2, tag3]);
 
       // function to verify tags are displayed in the post
       const verifyPost = () => {
@@ -311,8 +296,18 @@ describe('posts', () => {
     });
   });
 
+  enum ExpectedTags {
+    AllThree,
+    WithMiddleRemoved
+  }
+
+  enum ExpectedOrder {
+    Alphanumeric,
+    ReverseAlphanumeric
+  }
+
   [true, false].forEach((waitForIndexed) => {
-    it(`can tag and remove tags from existing post (waitForIndexed: ${waitForIndexed})`, () => {
+    it(`can tag and remove tags from existing post on feed page (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
       const tag1 = 'bananas';
       const tag2 = 'pjammas';
@@ -323,16 +318,6 @@ describe('posts', () => {
           cy.get(`#tag-1`).click();
         });
       };
-
-      enum ExpectedTags {
-        AllThree,
-        WithMiddleRemoved
-      }
-
-      enum ExpectedOrder {
-        Alphanumeric,
-        ReverseAlphanumeric
-      }
 
       const checkTagsAreDisplayed = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
         // length is 4 because of the '+' button
@@ -397,8 +382,90 @@ describe('posts', () => {
         checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
       });
     });
+  });
 
-    // todo: also check tags on post page
+  it(`can tag and remove tags from existing post on post page`, () => {
+    const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
+    const tag1 = 'açorda';
+    const tag2 = 'cassava';
+    const tag3 = 'feijoada';
+
+    const checkTagsAreDisplayed = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
+      cy.get('#post-container').within(($post) => {
+        cy.get('#tag-0').should('be.visible').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1)
+        expectedTags === ExpectedTags.WithMiddleRemoved
+          ? cy.wrap($post).innerTextShouldNotContain(tag2)
+          : cy.get('#tag-1').should('be.visible').contains(tag2);
+        cy.get(expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2')
+          .should('be.visible').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
+      });
+    };
+
+    const checkTagCounters = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
+      cy.get('#post-container').within(() => {
+        cy.get('#tag-0').should('exist').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1)
+        cy.get('#tag-0-count').should('exist').contains('1');
+        cy.get('#tag-1').should('exist').contains(tag2)
+        cy.get('#tag-1-count').should('exist').contains(expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1');
+        cy.get('#tag-2').should('exist').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3)
+        cy.get('#tag-2-count').should('exist').contains('1');
+      });
+    };
+
+    const clickMiddleTag = () => {
+      cy.get('#tag-1').click();
+    };
+
+    // add one tag now and the rest later
+    createQuickPostWithTags(postContent, [tag1]);
+
+    // navigate to post page
+    cy.findFirstPostInFeed().within(() => {
+      cy.get('#post-content-text').click();
+    });
+
+    // location should be /post/:id
+    cy.location('pathname').should('contain', '/post/');
+
+    // add two more tags to the post
+    cy.get('#post-container').within(() => {
+      cy.get('#show-add-tag-input-btn').click();
+      cy.get('#add-tag-input').type(tag2);
+      cy.get('#add-tag-btn  ').click();
+      cy.get('#show-add-tag-input-btn').click();
+      cy.get('#add-tag-input').type(tag3);
+      cy.get('#add-tag-btn').click();
+    });
+
+    // check tags are displayed for post
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+    checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+
+    // remove a tag from the post
+    clickMiddleTag();
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+    checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.Alphanumeric);
+
+    // add the tag back
+    clickMiddleTag();
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+    checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+
+    // refresh page before checking tags are still displayed
+    cy.reload();
+
+    // check tags are still displayed
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
+    checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
+
+    // remove the tag from the post
+    clickMiddleTag();
+
+    // refresh page before checking the tag is removed
+    cy.reload();
+
+    // check the tag is removed
+    checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
   });
 
   // todo: consider creating user to create the post to bookmark
@@ -441,6 +508,7 @@ describe('posts', () => {
     cy.get('#posts-feed').should('contain.text', 'Save posts for later')
   });
 
+  // [true, false].forEach((waitForIndexed) => {
   [true, false].forEach((waitForIndexed) => {
     it(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to repost
@@ -561,9 +629,70 @@ describe('posts', () => {
         cy.wrap($timeline).innerTextShouldNotContain(postContent);
       });
 
-      // todo: check that reply still shown in own profile page
-      // todo: test article
-      // todo: test 'Show n new posts' button
     });
   });
+
+
+  const createArticle = (articleTitle: string, articleContent: string, imageFilename?: string, tags?: string[]) => {
+    cy.get('#article-modal').should('be.visible').within(() => {
+      cy.get('h1').contains('New Article');
+      cy.get('#article-title-input').type(articleTitle);
+      if (imageFilename) addImage();
+      cy.get('#article-content-input').click().invoke('text', articleContent);
+      // todo: check counter
+      // need to click away from input to enable publish button (either by adding tags or clicking footer)
+      tags ? fastTagWhilstCreatingPost(tags) : cy.get('#footer-actions').click();
+      cy.get('#post-btn').should('be.enabled').click();
+    });
+  };
+
+  enum ImageExpected {
+    Yes = 1,
+    No = 0
+  };
+
+  const checkArticleInFeed = (articleTitle: string, articleContent: string, expectImage: ImageExpected, tags?: string[]) => {
+    cy.findFirstPostInFeed().within(($post) => {
+      cy.wrap($post).innerTextShouldContain(articleTitle);
+      if (expectImage) cy.wrap($post).find('img').should('be.visible');
+      cy.wrap($post).innerTextShouldContain(articleContent);
+      if (tags) tags.forEach(tag => cy.wrap($post).innerTextShouldContain(tag));
+    });
+  };
+
+  it('can create an article from quick post box', () => {
+    const articleTitle = `A nice article! ${Date.now()}`;
+    const articleContent = `Let me convince you that this is indeed a nice article! ${Date.now()}`;
+    const tag1 = 'artitag1';
+    const tag2 = 'artitag2';
+
+    cy.get('#quick-post-create-content').should('be.visible').within(() => {
+      cy.get('textarea').click();
+      cy.get('#article-btn').click();
+    });
+
+    createArticle(articleTitle, articleContent, 'mustache-you.png', [tag1, tag2]);
+    checkArticleInFeed(articleTitle, articleContent, ImageExpected.Yes, [tag1, tag2]);
+  });
+
+  it('can create an article from new post', () => {
+    const articleTitle = `Another nice article! ${Date.now()}`;
+    const articleContent = `Let me convince you that this is indeed another nice article! ${Date.now()}`;
+
+    cy.get('#new-post-btn').click();
+
+    // input post content and submit
+    cy.get('#modal-root').should('be.visible').within(() => {
+      cy.get('h1').contains('New Post').should('be.visible');
+      cy.get('#new-post-create-content').should('be.visible').within(() => {
+        cy.get('#article-btn').click();
+      });
+    });
+
+    createArticle(articleTitle, articleContent);
+    checkArticleInFeed(articleTitle, articleContent, ImageExpected.No);
+  });
+
+  // todo: check that reply still shown in own profile page
+  // todo: test 'Show n new posts' button 
 });

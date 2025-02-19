@@ -11,8 +11,7 @@ describe('profile', () => {
     cy.onboardAsNewUser('Edit Me', 'This bio is editable');
   });
 
-  // TODO: enable test once bug is fixed, see https://github.com/pubky/pubky-app/issues/1005
-  it.skip('editing should retain any changes made to own profile', () => {
+  it('editing should retain any changes made to own profile', () => {
     // todo: add test profile picture upload
 
     // navigate to edit profile page

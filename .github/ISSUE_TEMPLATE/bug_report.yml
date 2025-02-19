@@ -42,7 +42,7 @@ body:
       description: What web browser and version are you using?
       placeholder: e.g. Chrome Version 127.0.6533.120 (Official Build) (arm64)
     validations:
-      required: true
+      required: false
   - type: input
     id: version
     attributes:

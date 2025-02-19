@@ -1,4 +1,4 @@
-// select an emoji using the emoji picket by its data-full-name attribute
+// select an emoji using the emoji picker by its data-full-name attribute
 export const selectEmojis = (emojiName: string[]) => {
   // open emoji picker
   cy.get('#emoji-btn').click();
@@ -27,6 +27,21 @@ export const latestPostInFeedContentEq = (postContent: string) => {
   postInFeedContentEq(postContent, 0);
 };
 
+// check how many images are in a post
+export const checkNumberOfImagesInPost = (expectedNumberOfImages: number, idx: number) => {
+  cy.get('#posts-feed').find('#timeline').children().should('have.length.gte', 1).eq(idx).within(() => {
+    cy.get('#post-content-text').find('img').should('have.length', expectedNumberOfImages);
+  });
+};
+
+export const latestPostHasAnImage = () => {
+  checkNumberOfImagesInPost(1, 0);
+};
+
+export const latestPostHasImages = (expectedNumberOfImages: number) => {
+  checkNumberOfImagesInPost(expectedNumberOfImages, 0);
+};
+
 export const createQuickPost = (postContent: string, expectedPostLength? : number) => {
   cy.get('#quick-post-create-content').should('be.visible').within(() => {
     // input post content within quick post area
@@ -38,6 +53,25 @@ export const createQuickPost = (postContent: string, expectedPostLength? : numbe
       ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 1000`)
       : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
     // submit
+    cy.get('#post-btn').click();
+  });
+};
+
+export const createQuickPostWithTags = (postContent: string, tags: string[], expectedPostLength?: number) => {
+  cy.get('#quick-post-create-content').within(() => {
+    cy.get('textarea').should('have.value', '');
+    // type the post
+    cy.get('textarea').type(postContent);
+
+    // add tags to the post
+    fastTagWhilstCreatingPost(tags);
+
+    // check displayed content length
+    expectedPostLength
+      ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 1000`)
+      : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
+
+    // submit the post
     cy.get('#post-btn').click();
   });
 };
@@ -218,4 +252,16 @@ export const cannotFindPostInFeed = (filterText: string) => {
 
 export const countPostsInFeed = (filterText: string, expectedCount: number) => {
   findAndCountPostsInFeed(filterText, expectedCount);
+};
+
+// can be used in post or article creation
+export const addImage = () => {
+  // upload image
+  cy.get('#media-upload-btn').within(() => {
+    const imagePath = Cypress.config('fixturesFolder') + '/mustache-you.png';
+    cy.get('#fileInput').selectFile(
+      imagePath,
+      { force: true } // force to bypass visibility check of hidden input field
+    );
+  });
 };

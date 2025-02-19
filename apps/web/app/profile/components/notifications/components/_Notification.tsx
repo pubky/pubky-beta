@@ -368,7 +368,7 @@ export default function Notification({
           <div className="relative">
             <div>{currentNotificationType.icon}</div>
             {unread && (
-              <div className="absolute bottom-0.5 right-0">
+              <div id="notification-unread-dot" className="absolute bottom-0.5 right-0">
                 <div className="w-3 h-3 bg-[#C8FF00] rounded-full" />
               </div>
             )}

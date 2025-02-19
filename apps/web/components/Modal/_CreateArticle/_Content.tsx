@@ -299,6 +299,7 @@ export default function ContentCreateArticle({
           >
             <div className="w-full">
               <Input.Cursor
+                id="article-title-input"
                 placeholder="Title"
                 autoFocus
                 className="h-auto text-[40px] font-bold sm:text-[64px]"
@@ -339,6 +340,7 @@ export default function ContentCreateArticle({
                   </div>
                 ) : (
                   <div
+                    id="media-upload-btn"
                     onClick={handleFileClick}
                     onDragEnter={handleDragEnter}
                     onDragOver={handleDragOver}
@@ -347,6 +349,7 @@ export default function ContentCreateArticle({
                     className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-white bg-opacity-10 rounded-lg p-4 cursor-pointer"
                   >
                     <input
+                      id="fileInput"
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
@@ -375,6 +378,7 @@ export default function ContentCreateArticle({
                 )}
               </div>
               <Section.InputArea
+                id="article-content-input"
                 //selectedFiles={selectedFiles}
                 //setSelectedFiles={setSelectedFiles}
                 content={contentArticle}

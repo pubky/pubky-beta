@@ -49,7 +49,7 @@ export default function CreateArticle({
           //setContent('');
         }}
       />
-      <div className="flex flex-col gap-4">
+      <div id="article-modal" className="flex flex-col gap-4">
         <Modal.Header title="New Article" />
         <ContentCreateArticle
           setShowModalArticle={setShowModalArticle}

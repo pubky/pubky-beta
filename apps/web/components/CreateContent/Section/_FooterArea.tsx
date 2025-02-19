@@ -230,7 +230,7 @@ export default function FooterArea({
               ))}
             </div>
           )}
-          <Post.Actions className="w-full flex-col sm:flex-row">
+          <Post.Actions id="footer-actions" className="w-full flex-col sm:flex-row">
             {showEmojis && (
               <>
                 <div
@@ -373,6 +373,7 @@ export default function FooterArea({
                 {article && (
                   <div className="hidden lg:flex">
                     <Button.Action
+                      id="article-btn"
                       variant="custom"
                       icon={<Icon.Newspaper size="32" />}
                       onClick={(event) => {
