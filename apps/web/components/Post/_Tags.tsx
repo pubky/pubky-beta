@@ -17,7 +17,8 @@ import { PostTag, PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext, useJoin } from '@/contexts';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { BottomSheet } from '../BottomSheet';
-import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -251,15 +252,15 @@ export default function Tags({
                       className="absolute translate-y-[10%] translate-x-[30%] z-10"
                       ref={wrapperRefEmojis}
                     >
-                      <EmojiPicker
-                        theme={Theme.DARK}
-                        emojiStyle={EmojiStyle.TWITTER}
-                        onEmojiClick={(emojiObject) => {
+                      <Picker
+                        theme="dark"
+                        data={data}
+                        onEmojiSelect={(emojiObject) => {
                           const emojiLength =
-                            new Blob([emojiObject.emoji]).size / 2;
+                            new Blob([emojiObject.native]).size / 2;
 
                           if (tagInput.length + emojiLength <= 20) {
-                            setTagInput(tagInput + emojiObject.emoji);
+                            setTagInput(tagInput + emojiObject.native);
                           }
                           setShowEmojis(false);
                         }}

@@ -13,7 +13,8 @@ import {
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
-import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag, PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext, useJoin } from '@/contexts';
@@ -363,15 +364,15 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   className="absolute translate-y-[10%] translate-x-[0%] z-10"
                   ref={wrapperRefEmojis}
                 >
-                  <EmojiPicker
-                    theme={Theme.DARK}
-                    emojiStyle={EmojiStyle.TWITTER}
-                    onEmojiClick={(emojiObject) => {
+                  <Picker
+                    theme="dark"
+                    data={data}
+                    onEmojiSelect={(emojiObject) => {
                       const emojiLength =
-                        new Blob([emojiObject.emoji]).size / 2;
+                        new Blob([emojiObject.native]).size / 2;
 
                       if (tagInput.length + emojiLength <= 20) {
-                        setTagInput(tagInput + emojiObject.emoji);
+                        setTagInput(tagInput + emojiObject.native);
                       }
                       setShowEmojis(false);
                     }}

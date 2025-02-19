@@ -5,7 +5,8 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { ICustomFeed } from '@/types';
 import { Button, Icon, Input, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 import { useEffect, useRef, useState } from 'react';
 
 interface CreateFeedProps {
@@ -138,15 +139,15 @@ export default function ContentCreateFeed({
                   className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
                   ref={wrapperRefEmojis}
                 >
-                  <EmojiPicker
-                    theme={Theme.DARK}
-                    emojiStyle={EmojiStyle.TWITTER}
-                    onEmojiClick={(emojiObject) => {
+                  <Picker
+                    theme="dark"
+                    data={data}
+                    onEmojiSelect={(emojiObject) => {
                       const emojiLength =
-                        new Blob([emojiObject.emoji]).size / 2;
+                        new Blob([emojiObject.native]).size / 2;
 
                       if (tag.length + emojiLength <= 20) {
-                        setTag(tag + emojiObject.emoji);
+                        setTag(tag + emojiObject.native);
                       }
                       setShowEmojis(false);
                     }}
