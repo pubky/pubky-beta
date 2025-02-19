@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button, DropDown as DropDownUI, Icon, Input } from '@social/ui-shared';
-import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 import { usePubkyClientContext } from '@/contexts';
 
 interface StatusProps {
@@ -208,11 +209,11 @@ export default function ContentStatus({
             className="absolute translate-y-[20%] translate-x-[0%] lg:translate-x-[30%] z-10"
             ref={wrapperRefEmojis}
           >
-            <EmojiPicker
-              theme={Theme.DARK}
-              emojiStyle={EmojiStyle.TWITTER}
-              onEmojiClick={(emojiObject) => {
-                setSelectedEmoji(emojiObject.emoji);
+            <Picker
+              theme="dark"
+              data={data}
+              onEmojiSelect={(emojiObject) => {
+                setSelectedEmoji(emojiObject.native);
                 setShowEmojis(false);
               }}
             />

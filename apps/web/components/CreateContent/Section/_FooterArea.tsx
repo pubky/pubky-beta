@@ -8,11 +8,8 @@ import {
   PostUtil,
   Typography,
 } from '@social/ui-shared';
-import EmojiPicker, {
-  EmojiClickData,
-  EmojiStyle,
-  Theme,
-} from 'emoji-picker-react';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext } from '@/contexts';
 import { useEffect, useRef, useState } from 'react';
@@ -83,14 +80,14 @@ export default function FooterArea({
   const [showEmojisFastTag, setShowEmojisFastTag] = useState(false);
   const wrapperRefEmojisFastTag = useRef<HTMLDivElement>(null);
 
-  const handleEmojiClick = (emojiObject: EmojiClickData) => {
+  const handleEmojiClick = (emoji: any) => {
     const textBeforeCursor = content.slice(0, cursorPosition);
     const textAfterCursor = content.slice(cursorPosition);
-    const newText = textBeforeCursor + emojiObject.emoji + textAfterCursor;
+    const newText = textBeforeCursor + emoji.native + textAfterCursor;
 
     if (newText.length <= maxLength) {
       setContent(newText);
-      setCursorPosition(cursorPosition + emojiObject.emoji.length);
+      setCursorPosition(cursorPosition + emoji.native.length);
       setIsValidContent(Utils.isValidContent(newText));
     }
   };
@@ -245,10 +242,10 @@ export default function FooterArea({
                   className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
                   ref={wrapperRefEmojis}
                 >
-                  <EmojiPicker
-                    theme={Theme.DARK}
-                    emojiStyle={EmojiStyle.TWITTER}
-                    onEmojiClick={handleEmojiClick}
+                  <Picker
+                    theme="dark"
+                    data={data}
+                    onEmojiSelect={handleEmojiClick}
                   />
                 </div>
               </>
@@ -264,15 +261,15 @@ export default function FooterArea({
                       className="absolute translate-y-[10%] translate-x-[30%] z-10"
                       ref={wrapperRefEmojisFastTag}
                     >
-                      <EmojiPicker
-                        theme={Theme.DARK}
-                        emojiStyle={EmojiStyle.TWITTER}
-                        onEmojiClick={(emojiObject) => {
+                      <Picker
+                        theme="dark"
+                        data={data}
+                        onEmojiSelect={(emojiObject) => {
                           const emojiLength =
-                            new Blob([emojiObject.emoji]).size / 2;
+                            new Blob([emojiObject.native]).size / 2;
 
                           if (tagInput.length + emojiLength <= 20) {
-                            setTagInput(tagInput + emojiObject.emoji);
+                            setTagInput(tagInput + emojiObject.native);
                           }
                           setShowEmojisFastTag(false);
                         }}
