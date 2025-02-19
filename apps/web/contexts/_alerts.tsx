@@ -1,16 +1,16 @@
 'use client';
 
 import { Alert, Icon } from '@social/ui-shared';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 
 type AlertMessage = {
   id: number;
-  content: string;
+  content: ReactNode;
   variant?: 'default' | 'warning';
 };
 
 type AlertContextType = {
-  addAlert: (content: string, variant?: 'default' | 'warning') => void;
+  addAlert: (content: ReactNode, variant?: 'default' | 'warning') => void;
 };
 
 const AlertContext = createContext<AlertContextType>({
@@ -21,7 +21,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   const [alerts, setAlerts] = useState<AlertMessage[]>([]);
 
   const addAlert = (
-    content: string,
+    content: ReactNode,
     variant: 'default' | 'warning' = 'default',
   ) => {
     const id = Date.now();
@@ -38,7 +38,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         return <Icon.Warning size="20" />;
       case 'default':
       default:
-        return <Icon.CheckCircle size="20" />;
+        return <Icon.CheckCircle size="20" color="#c8ff00" />;
     }
   };
 

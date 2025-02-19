@@ -237,7 +237,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               )}
             </div>
           ) : (
-            <PostUI.Time className="justify-start">
+            <PostUI.Time className="grow-0 justify-start">
               {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
             </PostUI.Time>
           )}

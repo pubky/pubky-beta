@@ -64,7 +64,17 @@ export default function CreateQuickPost({
       );
 
       if (newPost) {
-        addAlert('Post created!');
+        addAlert(
+          <>
+            Post created!{' '}
+            <a
+              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
+              href={Utils.encodePostUri(newPost?.uri)}
+            >
+              View
+            </a>
+          </>,
+        );
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }

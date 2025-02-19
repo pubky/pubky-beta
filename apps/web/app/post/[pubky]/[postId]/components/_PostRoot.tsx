@@ -54,7 +54,17 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
       setIsValidContent(false);
       setSelectedFiles([]);
       setTextArea(false);
-      addAlert('Reply created!');
+      addAlert(
+        <>
+          Reply created!{' '}
+          <a
+            className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
+            href={Utils.encodePostUri(sendReply)}
+          >
+            View
+          </a>
+        </>,
+      );
     }
   };
 

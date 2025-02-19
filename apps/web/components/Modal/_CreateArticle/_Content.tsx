@@ -64,7 +64,17 @@ export default function ContentCreateArticle({
       );
 
       if (newArticle) {
-        addAlert('Article created!');
+        addAlert(
+          <>
+            Article created!{' '}
+            <a
+              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
+              href={Utils.encodePostUri(newArticle?.uri)}
+            >
+              View
+            </a>
+          </>,
+        );
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }

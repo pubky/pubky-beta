@@ -83,7 +83,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
           )}
           <div className="flex items-center relative">
             <div
-              className={`ml-[9px] absolute border-l-[1px] h-[53%] -top-3 border-[#444447]`}
+              className={`ml-[9px] absolute border-l-[1px] h-[51%] -top-3 border-[#444447]`}
             />
             {lineHorizontalCSS}
             <div className="ml-[23px] w-full">

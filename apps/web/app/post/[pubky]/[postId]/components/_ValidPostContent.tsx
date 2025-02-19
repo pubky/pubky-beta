@@ -42,15 +42,14 @@ export function ValidPostContent({ postRef, data }) {
 
 const NormalPost = ({ data }) => {
   const isMobile = useIsMobile();
+  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-[52%] -top-3 border-[#444447]`;
 
   return (
     <div className="flex items-center relative">
       {data?.relationships?.replied && (
         <>
-          <div
-            className={`ml-[9px] absolute border-l-2 h-[52%] -top-3 border-[#444447]`}
-          />
-          <div className="absolute ml-[9px]">
+          <div className={lineBaseCSS} />
+          <div className="absolute ml-[10px]">
             <Icon.LineHorizontal size="14" color="#444447" />
           </div>
         </>
