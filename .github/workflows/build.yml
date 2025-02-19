@@ -40,11 +40,12 @@ jobs:
       - name: Clean cache & reset NX
         run: |
           rm -rf ./node_modules/ ./dist/
-          npm install -g nx
-          nx reset
+          npm cache clean --force
+          npm install -g @nrwl/cli
+          npx nx reset
 
       - name: Install dependencies
-        run: npm install --omit=dev
+        run: npm install
 
       - name: Build prod
         env:
