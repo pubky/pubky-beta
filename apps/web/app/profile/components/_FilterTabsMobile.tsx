@@ -112,7 +112,7 @@ export default function FilterTabsMobile({
       case 'friends':
         return userCounts?.friends || 0;
       case 'tagged':
-        return null; // userCounts?.tags || 0;
+        return null; // userCounts?.unique_tags || 0;
       default:
         return null;
     }

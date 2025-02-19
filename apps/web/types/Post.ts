@@ -5,6 +5,7 @@ export interface PostCounts {
   replies: number;
   reposts: number;
   tags: number;
+  unique_tags: number;
 }
 
 export interface FileContent {
