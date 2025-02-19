@@ -22,7 +22,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-          cache: 'npm'
 
       - name: Create .env
         env:
@@ -38,7 +37,7 @@ jobs:
           echo "SUPPORT_ACCOUNT_ID=$SUPPORT_ACCOUNT_ID" >> .env
 
       - name: Install dependencies
-        run: npm install --omit=dev
+        run: npm ci
 
       - name: Build prod
         env:
