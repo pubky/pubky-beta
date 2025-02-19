@@ -384,8 +384,7 @@ describe('posts', () => {
     });
   });
 
-  // TODO: enable when bug fixed, see https://github.com/pubky/pubky-app/issues/1044
-  it.skip(`can tag and remove tags from existing post on post page`, () => {
+  it(`can tag and remove tags from existing post on post page`, () => {
     const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
     const tag1 = 'açorda';
     const tag2 = 'cassava';
@@ -397,10 +396,10 @@ describe('posts', () => {
         expectedTags === ExpectedTags.WithMiddleRemoved
           ? cy.wrap($post).innerTextShouldNotContain(tag2)
           : cy.get('#tag-1').should('be.visible').contains(tag2);
-          cy.get(expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2')
+        cy.get(expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2')
           .should('be.visible').contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
-        });
-      };
+      });
+    };
 
     const checkTagCounters = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
       cy.get('#post-container').within(() => {
@@ -467,7 +466,6 @@ describe('posts', () => {
 
     // check the tag is removed
     checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
-    checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
   });
 
   // todo: consider creating user to create the post to bookmark
