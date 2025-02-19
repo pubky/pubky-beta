@@ -6,7 +6,6 @@ import { UserView } from '@/types/User';
 import Image from 'next/image';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 import { Section } from '@/components/CreateContent/Section';
-import LinkPreviewer from '@/components/LinkPreview';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface CreateArticleProps {
@@ -26,6 +25,7 @@ export default function ContentCreateArticle({
   const [errorFile, setErrorFile] = useState('');
   const [contentTitle, setContentTitle] = useState('');
   const [contentArticle, setContentArticle] = useState('');
+  const [charCountArticle, setCharCountArticle] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [sendingArticle, setSendingArticle] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -379,8 +379,6 @@ export default function ContentCreateArticle({
               </div>
               <Section.InputArea
                 id="article-content-input"
-                //selectedFiles={selectedFiles}
-                //setSelectedFiles={setSelectedFiles}
                 content={contentArticle}
                 className="mt-[6px]"
                 setContent={setContentArticle}
@@ -388,23 +386,21 @@ export default function ContentCreateArticle({
                 setSearchedUsers={setSearchedUsers}
                 setCursorPosition={setCursorPosition}
                 maxLength={50000}
-                isError={isError}
                 setIsError={setIsError}
-                //setTextArea={setTextArea}
                 largeView={!isMobile}
                 setIsValidContent={setIsValidContent}
                 placeHolder={placeholder}
-                //setFilePreviews={setFilePreviews}
                 loading={sendingArticle}
+                setCharCountArticle={setCharCountArticle}
                 markdown
               />
             </div>
-            <LinkPreviewer content={contentArticle} />
             <Section.FooterArea
               loading={sendingArticle}
               visibleTextArea
               textArea
               content={contentArticle}
+              charCountArticle={charCountArticle}
               setContent={setContentArticle}
               cursorPosition={cursorPosition}
               setCursorPosition={setCursorPosition}
@@ -427,15 +423,24 @@ export default function ContentCreateArticle({
                   icon={
                     <Icon.PaperPlaneRight
                       color={
-                        !isValidContent || isError || !contentTitle
+                        !charCountArticle ||
+                        !isValidContent ||
+                        isError ||
+                        !contentTitle
                           ? 'gray'
                           : 'white'
                       }
                     />
                   }
-                  disabled={!isValidContent || isError || !contentTitle}
+                  disabled={
+                    !charCountArticle ||
+                    !isValidContent ||
+                    isError ||
+                    !contentTitle
+                  }
                   loading={sendingArticle}
                   onClick={
+                    charCountArticle &&
                     isValidContent &&
                     contentTitle &&
                     !isError &&
