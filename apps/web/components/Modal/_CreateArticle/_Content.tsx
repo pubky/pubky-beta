@@ -6,7 +6,6 @@ import { UserView } from '@/types/User';
 import Image from 'next/image';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 import { Section } from '@/components/CreateContent/Section';
-import LinkPreviewer from '@/components/LinkPreview';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface CreateArticleProps {
@@ -393,7 +392,6 @@ export default function ContentCreateArticle({
                 markdown
               />
             </div>
-            <LinkPreviewer content={contentArticle} />
             <Section.FooterArea
               loading={sendingArticle}
               visibleTextArea
