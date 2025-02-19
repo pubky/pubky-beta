@@ -30,6 +30,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
   handlePaste?: any;
   styleSearchedUsers?: string;
+  setCharCountArticle?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function InputArea({
@@ -54,6 +55,7 @@ export default function InputArea({
   setIsError,
   handlePaste,
   styleSearchedUsers,
+  setCharCountArticle,
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { addAlert } = useAlertContext();
@@ -184,6 +186,7 @@ export default function InputArea({
           value={content}
           isError={isError}
           maxLength={maxLength}
+          setCharCount={setCharCountArticle}
         />
       ) : (
         <Input.CursorArea

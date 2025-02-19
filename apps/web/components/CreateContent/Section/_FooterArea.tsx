@@ -41,6 +41,7 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   maxLength?: number;
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
+  charCountArticle?: number;
 }
 
 export default function FooterArea({
@@ -67,6 +68,7 @@ export default function FooterArea({
   maxLength = 1000,
   setShowModalPost,
   loading,
+  charCountArticle,
 }: FooterAreaProps) {
   const { addAlert } = useAlertContext();
   const isMobile = useIsMobile();
@@ -339,7 +341,7 @@ export default function FooterArea({
                 id="content-length"
                 className="text-opacity-30 text-white text-sm mt-4 mr-2"
               >
-                {content.length} / {maxLength}
+                {noFile ? charCountArticle : content.length} / {maxLength}
               </div>
               <div className="flex gap-2">
                 <Button.Action

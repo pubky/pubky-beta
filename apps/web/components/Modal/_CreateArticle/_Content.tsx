@@ -26,6 +26,7 @@ export default function ContentCreateArticle({
   const [errorFile, setErrorFile] = useState('');
   const [contentTitle, setContentTitle] = useState('');
   const [contentArticle, setContentArticle] = useState('');
+  const [charCountArticle, setCharCountArticle] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [sendingArticle, setSendingArticle] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -375,8 +376,6 @@ export default function ContentCreateArticle({
                 )}
               </div>
               <Section.InputArea
-                //selectedFiles={selectedFiles}
-                //setSelectedFiles={setSelectedFiles}
                 content={contentArticle}
                 className="mt-[6px]"
                 setContent={setContentArticle}
@@ -386,12 +385,11 @@ export default function ContentCreateArticle({
                 maxLength={50000}
                 isError={isError}
                 setIsError={setIsError}
-                //setTextArea={setTextArea}
                 largeView={!isMobile}
                 setIsValidContent={setIsValidContent}
                 placeHolder={placeholder}
-                //setFilePreviews={setFilePreviews}
                 loading={sendingArticle}
+                setCharCountArticle={setCharCountArticle}
                 markdown
               />
             </div>
@@ -402,6 +400,7 @@ export default function ContentCreateArticle({
               textArea
               content={contentArticle}
               setContent={setContentArticle}
+              charCountArticle={charCountArticle}
               cursorPosition={cursorPosition}
               setCursorPosition={setCursorPosition}
               setIsValidContent={setIsValidContent}
@@ -423,15 +422,24 @@ export default function ContentCreateArticle({
                   icon={
                     <Icon.PaperPlaneRight
                       color={
-                        !isValidContent || isError || !contentTitle
+                        !charCountArticle ||
+                        !isValidContent ||
+                        isError ||
+                        !contentTitle
                           ? 'gray'
                           : 'white'
                       }
                     />
                   }
-                  disabled={!isValidContent || isError || !contentTitle}
+                  disabled={
+                    !charCountArticle ||
+                    !isValidContent ||
+                    isError ||
+                    !contentTitle
+                  }
                   loading={sendingArticle}
                   onClick={
+                    charCountArticle &&
                     isValidContent &&
                     contentTitle &&
                     !isError &&
