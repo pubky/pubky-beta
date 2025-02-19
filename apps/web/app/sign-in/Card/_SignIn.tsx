@@ -75,7 +75,7 @@ export default function SignIn() {
           if (errorMessage) {
             setLoginError(errorMessage);
           }
-          // handleGenerateAuthUrl(signal);
+          handleGenerateAuthUrl(signal);
         } catch (error) {
           console.error('Unexpected error occurred:', error);
         }

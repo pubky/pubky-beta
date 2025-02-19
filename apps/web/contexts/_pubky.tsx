@@ -1184,8 +1184,8 @@ export function PubkyClientWrapper({
       );
 
       return {
-        url: String(authRequest.url),
-        promise: authRequest,
+        url: String(authRequest.url()),
+        promise: authRequest.response(),
       };
     } catch (error) {
       handleError(error, 'generateAuthUrl');
