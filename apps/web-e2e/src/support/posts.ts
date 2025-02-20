@@ -2,13 +2,13 @@
 export const selectEmojis = (emojiName: string[]) => {
   // open emoji picker
   cy.get('#emoji-btn').click();
-
   // select each emoji
   emojiName.forEach((emoji) => {
-    cy.get('#emoji-picker').should('be.visible');
-    cy.get('#emoji-picker').within(() => {
-      cy.get(`button[data-full-name*="${emoji}"]`).click();
-    });
+    cy.get('em-emoji-picker')
+      .shadow()
+      .find(`button[aria-label*="${emoji}"]`)
+      .should('be.visible')
+      .click({ force: true });
   });
 
   // close emoji picker by clicking outside of it
