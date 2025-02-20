@@ -343,10 +343,7 @@ export default function ContentProfileTag({
             >
               <EmojiPicker
                 onEmojiSelect={(emojiObject) => {
-                  const emojiLength = new Blob([emojiObject.native]).size / 2;
-                  if (tag.length + emojiLength <= 20) {
-                    setTag(tag + emojiObject.native);
-                  }
+                  setTag(tag + emojiObject.native);
                   setShowEmojis(false);
                 }}
                 maxLength={20}
