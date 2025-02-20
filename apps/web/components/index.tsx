@@ -18,6 +18,7 @@ import Repost from './Repost';
 import Sidebar from './Sidebar';
 import WhoFollow from './WhoFollow';
 import Skeleton from './Skeletons';
+import SocialLinks from './SocialLinks';
 import Toast from './Toast';
 import ProtectedRoutes from './ProtectedRoutes';
 import RemindBackup from './RemindBackup';
@@ -43,6 +44,7 @@ export {
   Sidebar,
   WhoFollow,
   Skeleton,
+  SocialLinks,
   Toast,
   ProtectedRoutes,
   RemindBackup,

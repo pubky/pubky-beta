@@ -356,11 +356,11 @@ export default function Intro() {
   return (
     <Content.Main className="pb-0 md:pt-[150px] pt-[120px]" shadowBottom>
       <Header.Root className="backdrop-blur-[0px]">
-        <div className="flex gap-3 lg:gap-6 items-center lg:items-start">
+        <div className="flex gap-3 lg:gap-6 w-full justify-between sm:justify-start items-start">
           <Header.Logo link="/" />
           <Header.Title
-            className="md:mt-[1px] bottom-[10px] sm:bottom-[6px]"
             titleHeader="Sneak&#160;Peek"
+            className="flex justify-end sm:justify-start self-center sm:self-end mt-2 sm:mt-0"
           />
         </div>
         <div className="h-6 justify-start items-start gap-6 hidden md:inline-flex">
@@ -384,6 +384,13 @@ export default function Intro() {
             className="cursor-pointer opacity-30 hover:opacity-100"
           >
             <Icon.Youtube width="24" height="24" />
+          </Link>
+          <Link
+            target="_blank"
+            href="https://medium.com/pubky"
+            className="cursor-pointer opacity-30 hover:opacity-100"
+          >
+            <Icon.Medium size="24" />
           </Link>
         </div>
       </Header.Root>
