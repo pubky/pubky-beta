@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Button, PostUtil, Input, Typography } from '@social/ui-shared';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
 import { Utils } from '@social/utils-shared';
+import EmojiPicker from '@/components/EmojiPicker';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   arrayTags: string[];
@@ -125,12 +124,9 @@ export default function ContentTagCreatePost({
               className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
               ref={wrapperRefEmojis}
             >
-              <Picker
-                theme="dark"
-                data={data}
+              <EmojiPicker
                 onEmojiSelect={(emojiObject) => {
                   const emojiLength = new Blob([emojiObject.native]).size / 2;
-
                   if (tag.length + emojiLength <= 20) {
                     setTag(tag + emojiObject.native);
                   }

@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button, DropDown as DropDownUI, Icon, Input } from '@social/ui-shared';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
 import { usePubkyClientContext } from '@/contexts';
+import EmojiPicker from '@/components/EmojiPicker';
 
 interface StatusProps {
   setOpenDropdown: any;
@@ -209,9 +208,7 @@ export default function ContentStatus({
             className="absolute translate-y-[20%] translate-x-[0%] lg:translate-x-[30%] z-10"
             ref={wrapperRefEmojis}
           >
-            <Picker
-              theme="dark"
-              data={data}
+            <EmojiPicker
               onEmojiSelect={(emojiObject) => {
                 setSelectedEmoji(emojiObject.native);
                 setShowEmojis(false);
