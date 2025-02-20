@@ -32,6 +32,8 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const { pubky, timeline, setTimeline, createTag, deleteTag } =
     usePubkyClientContext();
   const isMobile = useIsMobile(1024);
+  const isArticle =
+    String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
   const { openJoin } = useJoin();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
@@ -219,10 +221,9 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
       className="mt-1.5 w-auto cursor-default"
       onClick={(event) => event.stopPropagation()}
     >
-      <div className={`min-w-[300px] flex-col inline-flex gap-2`}>
+      <div className={`min-w-[380px] flex-col inline-flex gap-2`}>
         <div className="relative flex items-center gap-0 mb-4">
-          {String(post?.details?.kind) ===
-          PubkyAppPostKind[1].toLocaleLowerCase() ? (
+          {isArticle ? (
             <div className="flex gap-3 items-center">
               <Icon.Tag size="14" color="gray" />
               <Typography.Label className="text-opacity-30">
@@ -242,7 +243,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
             </PostUI.Time>
           )}
-          {post?.details?.author === pubky && (
+          {post?.details?.author === pubky && !isArticle && (
             <TooltipUI.Root
               delay={50}
               tagId="1"
@@ -298,7 +299,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
               <PostUI.Footer>
                 <div className="flex gap-2">
                   <PostUtil.Tag
-                      id={`tag-${index}`}
+                    id={`tag-${index}`}
                     clicked={isTagFound}
                     color={
                       tagObj?.label && Utils.generateRandomColor(tagObj?.label)
@@ -317,7 +318,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                         <Icon.LoadingSpin size="12" />
                       ) : (
                         <Typography.Caption
-                            id={`tag-${index}-count`}
+                          id={`tag-${index}-count`}
                           variant="bold"
                           className="text-opacity-60"
                         >

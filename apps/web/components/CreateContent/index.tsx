@@ -271,7 +271,6 @@ export default function CreateContent({
             markdown={markdown}
             maxLength={maxLength}
             setIsError={setIsError}
-            isError={isError}
             handlePaste={handlePaste}
             styleSearchedUsers={styleSearchedUsers}
           />
