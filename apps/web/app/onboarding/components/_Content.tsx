@@ -9,6 +9,7 @@ import { usePubkyClientContext } from '@/contexts';
 //import { Utils } from '@social/utils-shared';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { Utils } from '@social/utils-shared';
+import { SocialLinks } from '@/components';
 //import { useRouter } from 'next/navigation';
 
 export default function Index() {
@@ -39,36 +40,7 @@ export default function Index() {
       <Header.Root className="backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
         <div className="flex gap-6 items-center">
-          <div className="h-6 justify-start items-start gap-6 sm:inline-flex hidden">
-            <Link
-              target="_blank"
-              href="https://github.com/pubky"
-              className="cursor-pointer opacity-30 hover:opacity-100"
-            >
-              <Icon.Github size="24" />
-            </Link>
-            <Link
-              target="_blank"
-              href="https://x.com/getpubky"
-              className="cursor-pointer opacity-30 hover:opacity-100"
-            >
-              <Icon.Twitter size="24" />
-            </Link>
-            <Link
-              target="_blank"
-              href="https://www.youtube.com/channel/UCyNruUjynpzvQXNTxbJBLmg"
-              className="cursor-pointer opacity-30 hover:opacity-100"
-            >
-              <Icon.Youtube width="24" height="24" />
-            </Link>
-            <Link
-              target="_blank"
-              href="https://medium.com/pubky"
-              className="cursor-pointer opacity-30 hover:opacity-100"
-            >
-              <Icon.Medium size="24" />
-            </Link>
-          </div>
+          <SocialLinks className="hidden sm:inline-flex" />
           <Header.Action
             icon={<Icon.SignIn size="16" />}
             link={inviteCode ? '/sign-in' : '/invite-code'}
@@ -121,36 +93,7 @@ export default function Index() {
           </Link>
         </div>
         <div className="fixed bottom-12">
-          <div className="mb-2 h-6 justify-start items-start gap-6 inline-flex sm:hidden">
-            <Link
-              target="_blank"
-              href="https://github.com/pubky"
-              className="cursor-pointer opacity-30 hover:opacity-100"
-            >
-              <Icon.Github size="24" />
-            </Link>
-            <Link
-              target="_blank"
-              href="https://x.com/getpubky"
-              className="cursor-pointer opacity-30 hover:opacity-100"
-            >
-              <Icon.Twitter size="24" />
-            </Link>
-            <Link
-              target="_blank"
-              href="https://www.youtube.com/channel/UCyNruUjynpzvQXNTxbJBLmg"
-              className="cursor-pointer opacity-30 hover:opacity-100"
-            >
-              <Icon.Youtube width="24" height="24" />
-            </Link>
-            <Link
-              target="_blank"
-              href="https://medium.com/pubky"
-              className="cursor-pointer opacity-30 hover:opacity-100"
-            >
-              <Icon.Medium size="24" />
-            </Link>
-          </div>
+          <SocialLinks className="sm:hidden inline-flex" />
           <Typography.Body
             variant="small"
             className="text-[13.5px] text-opacity-30 font-normal"
