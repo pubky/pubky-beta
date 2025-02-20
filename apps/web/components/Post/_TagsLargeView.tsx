@@ -13,8 +13,6 @@ import {
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag, PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext, useJoin } from '@/contexts';
@@ -23,6 +21,7 @@ import Link from 'next/link';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Tooltip from '../Tooltip';
 import { PubkyAppPostKind } from 'pubky-app-specs';
+import EmojiPicker from '@/components/EmojiPicker';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -374,18 +373,13 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   className="absolute translate-y-[10%] translate-x-[0%] z-10"
                   ref={wrapperRefEmojis}
                 >
-                  <Picker
-                    theme="dark"
-                    data={data}
+                  <EmojiPicker
                     onEmojiSelect={(emojiObject) => {
-                      const emojiLength =
-                        new Blob([emojiObject.native]).size / 2;
-
-                      if (tagInput.length + emojiLength <= 20) {
-                        setTagInput(tagInput + emojiObject.native);
-                      }
+                      setTagInput(tagInput + emojiObject.native);
                       setShowEmojis(false);
                     }}
+                    maxLength={20}
+                    currentInput={tagInput}
                   />
                 </div>
               )}

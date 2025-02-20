@@ -8,14 +8,13 @@ import {
   PostUtil,
   Typography,
 } from '@social/ui-shared';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext } from '@/contexts';
 import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/Modal';
 import { BottomSheet } from '@/components/BottomSheet';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import EmojiPicker from '@/components/EmojiPicker';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   visibleTextArea: boolean;
@@ -248,10 +247,10 @@ export default function FooterArea({
                   className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
                   ref={wrapperRefEmojis}
                 >
-                  <Picker
-                    theme="dark"
-                    data={data}
+                  <EmojiPicker
                     onEmojiSelect={handleEmojiClick}
+                    maxLength={maxLength}
+                    currentInput={content}
                   />
                 </div>
               </>
@@ -267,18 +266,13 @@ export default function FooterArea({
                       className="absolute translate-y-[10%] translate-x-[30%] z-10"
                       ref={wrapperRefEmojisFastTag}
                     >
-                      <Picker
-                        theme="dark"
-                        data={data}
+                      <EmojiPicker
                         onEmojiSelect={(emojiObject) => {
-                          const emojiLength =
-                            new Blob([emojiObject.native]).size / 2;
-
-                          if (tagInput.length + emojiLength <= 20) {
-                            setTagInput(tagInput + emojiObject.native);
-                          }
+                          setTagInput(tagInput + emojiObject.native);
                           setShowEmojisFastTag(false);
                         }}
+                        maxLength={20}
+                        currentInput={tagInput}
                       />
                     </div>
                   )}

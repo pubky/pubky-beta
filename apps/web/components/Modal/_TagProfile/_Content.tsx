@@ -9,8 +9,6 @@ import {
   Typography,
   SideCard,
 } from '@social/ui-shared';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
 import { Utils } from '@social/utils-shared';
 import { UserTags, UserView } from '@/types/User';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
@@ -21,6 +19,7 @@ import { ImageByUri } from '@/components/ImageByUri';
 import { useTagsUser } from '@/hooks/useTag';
 import { useUserTagTaggers } from '@/hooks/useUser';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import EmojiPicker from '@/components/EmojiPicker';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   profileTags: UserTags[];
@@ -342,17 +341,13 @@ export default function ContentProfileTag({
               className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
               ref={wrapperRefEmojis}
             >
-              <Picker
-                theme="dark"
-                data={data}
+              <EmojiPicker
                 onEmojiSelect={(emojiObject) => {
-                  const emojiLength = new Blob([emojiObject.native]).size / 2;
-
-                  if (tag.length + emojiLength <= 20) {
-                    setTag(tag + emojiObject.native);
-                  }
+                  setTag(tag + emojiObject.native);
                   setShowEmojis(false);
                 }}
+                maxLength={20}
+                currentInput={tag}
               />
             </div>
           </>
