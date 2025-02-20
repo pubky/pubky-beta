@@ -246,7 +246,11 @@ export default function FooterArea({
                   className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
                   ref={wrapperRefEmojis}
                 >
-                  <EmojiPicker onEmojiSelect={handleEmojiClick} />
+                  <EmojiPicker
+                    onEmojiSelect={handleEmojiClick}
+                    maxLength={maxLength}
+                    currentInput={content}
+                  />
                 </div>
               </>
             )}
@@ -270,6 +274,8 @@ export default function FooterArea({
                           }
                           setShowEmojisFastTag(false);
                         }}
+                        maxLength={20}
+                        currentInput={tagInput}
                       />
                     </div>
                   )}

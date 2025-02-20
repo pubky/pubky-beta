@@ -375,6 +375,8 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                       }
                       setShowEmojis(false);
                     }}
+                    maxLength={20}
+                    currentInput={tagInput}
                   />
                 </div>
               )}

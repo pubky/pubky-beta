@@ -213,6 +213,8 @@ export default function ContentStatus({
                 setSelectedEmoji(emojiObject.native);
                 setShowEmojis(false);
               }}
+              maxLength={20}
+              currentInput={customStatus}
             />
           </div>
         )}

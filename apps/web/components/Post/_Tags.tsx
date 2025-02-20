@@ -260,6 +260,8 @@ export default function Tags({
                           }
                           setShowEmojis(false);
                         }}
+                        maxLength={20}
+                        currentInput={tagInput}
                       />
                     </div>
                   )}

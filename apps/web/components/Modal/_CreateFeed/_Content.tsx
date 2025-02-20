@@ -147,6 +147,8 @@ export default function ContentCreateFeed({
                       }
                       setShowEmojis(false);
                     }}
+                    maxLength={20}
+                    currentInput={tag}
                   />
                 </div>
               </>

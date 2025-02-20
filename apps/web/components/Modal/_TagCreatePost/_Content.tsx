@@ -132,6 +132,8 @@ export default function ContentTagCreatePost({
                   }
                   setShowEmojis(false);
                 }}
+                maxLength={20}
+                currentInput={tag}
               />
             </div>
           </>
