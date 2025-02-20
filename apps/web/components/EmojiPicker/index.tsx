@@ -13,22 +13,18 @@ const EmojiPicker = ({
   maxLength,
   currentInput,
 }: EmojiPickerProps) => {
-  return (
-    <Picker
-      theme="dark"
-      data={data}
-      onEmojiSelect={(emojiObject: any) => {
-        if (maxLength && currentInput) {
-          const emojiLength = new Blob([emojiObject.native]).size / 2;
-          if (currentInput.length + emojiLength <= maxLength) {
-            onEmojiSelect(emojiObject);
-          }
-        } else {
-          onEmojiSelect(emojiObject);
-        }
-      }}
-    />
-  );
+  const handleEmojiSelect = (emojiObject: any) => {
+    if (maxLength && currentInput) {
+      const emojiLength = new Blob([emojiObject.native]).size / 2;
+      if (currentInput.length + emojiLength <= maxLength) {
+        onEmojiSelect(emojiObject);
+      }
+    } else {
+      onEmojiSelect(emojiObject);
+    }
+  };
+
+  return <Picker theme="dark" data={data} onEmojiSelect={handleEmojiSelect} />;
 };
 
 export default EmojiPicker;

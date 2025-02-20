@@ -267,11 +267,7 @@ export default function FooterArea({
                     >
                       <EmojiPicker
                         onEmojiSelect={(emojiObject) => {
-                          const emojiLength =
-                            new Blob([emojiObject.native]).size / 2;
-                          if (tagInput.length + emojiLength <= 20) {
-                            setTagInput(tagInput + emojiObject.native);
-                          }
+                          setTagInput(tagInput + emojiObject.native);
                           setShowEmojisFastTag(false);
                         }}
                         maxLength={20}

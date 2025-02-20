@@ -7,7 +7,6 @@ import Image from 'next/image';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 import { Section } from '@/components/CreateContent/Section';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import EmojiPicker from '@/components/EmojiPicker';
 
 interface CreateArticleProps {
   setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
@@ -458,29 +457,6 @@ export default function ContentCreateArticle({
           </div>
         </div>
       </div>
-      {showEmojis && (
-        <>
-          <div
-            className="fixed inset-0 bg-black bg-opacity-30 z-[9998]"
-            onClick={() => setShowEmojis(false)}
-          />
-          <div
-            id="emoji-picker"
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
-            ref={wrapperRefEmojis}
-          >
-            <EmojiPicker
-              onEmojiSelect={(emojiObject) => {
-                const emojiLength = new Blob([emojiObject.native]).size / 2;
-                if (contentArticle.length + emojiLength <= 50000) {
-                  setContentArticle(contentArticle + emojiObject.native);
-                }
-                setShowEmojis(false);
-              }}
-            />
-          </div>
-        </>
-      )}
     </div>
   );
 }
