@@ -38,8 +38,7 @@ export default function Tags({
   setShowSheetTag,
 }: PostProps) {
   const [showTooltipTag, setShowTooltipTag] = useState('');
-  const { pubky, timeline, setTimeline, createTag, deleteTag } =
-    usePubkyClientContext();
+  const { pubky, setTimeline, createTag, deleteTag } = usePubkyClientContext();
   const isMobile = useIsMobile(768);
   const { openJoin } = useJoin();
   const [tags, setTags] = useState<PostTag[]>([]);
@@ -53,82 +52,99 @@ export default function Tags({
 
   useEffect(() => {
     if (post?.tags) {
-      const sortedTags = post?.tags
-        .slice()
-        .sort((a, b) => b.taggers_count - a.taggers_count);
-      setTags(sortedTags);
+      setTags(post.tags);
     }
   }, [post?.tags]);
 
   const handleDeleteTag = async (tag: string) => {
     setLoadingTags(tag);
-    await deleteTag(post?.details?.author, post?.details?.id, tag);
-    // delete my user from tag from post.tags
-    const newTags = tags.map((tagObj) => {
-      if (tagObj.label === tag) {
-        return {
-          ...tagObj,
-          taggers_count: tagObj.taggers_count - 1,
-          taggers: tagObj.taggers.filter((fromItem) => fromItem !== pubky),
-          relationship: false,
-        };
-      }
-      return tagObj;
-    });
-    setTags(newTags);
+    await deleteTag(post.details.author, post.details.id, tag);
+    updateTagsAndTimeline(tag, false);
     setLoadingTags('');
   };
 
-  const updateTagsAndTimeline = (tag: string) => {
+  const updateTagsAndTimeline = (tag: string, isAdding: boolean) => {
     let newTags: PostTag[] = tags;
     const existingTag = tags.find((tagObj) => tagObj.label === tag);
+    let uniqueTagsChange = 0;
 
-    if (existingTag) {
-      if (!existingTag.taggers.includes(pubky ?? '')) {
-        newTags = tags.map((tagObj) => {
-          if (tagObj.label === tag) {
-            return {
-              ...tagObj,
-              taggers_count: tagObj.taggers_count + 1,
-              taggers: [...tagObj.taggers, pubky ?? ''],
-              relationship: true,
-            };
-          }
-          return tagObj;
-        });
+    if (isAdding) {
+      if (!existingTag) {
+        newTags = [
+          ...tags,
+          {
+            label: tag,
+            taggers_count: 1,
+            taggers: [pubky ?? ''],
+            relationship: true,
+          },
+        ];
+        uniqueTagsChange = 1;
+      } else if (!existingTag.taggers.includes(pubky ?? '')) {
+        newTags = tags.map((tagObj) =>
+          tagObj.label === tag
+            ? {
+                ...tagObj,
+                taggers_count: tagObj.taggers_count + 1,
+                taggers: [...tagObj.taggers, pubky ?? ''],
+                relationship: true,
+              }
+            : tagObj,
+        );
+
+        if (existingTag.taggers_count === 0) {
+          uniqueTagsChange = 1;
+        }
       }
     } else {
-      newTags = [
-        ...tags,
-        {
-          label: tag,
-          taggers_count: 1,
-          taggers: [pubky ?? ''],
-          relationship: true,
-        },
-      ];
+      newTags = tags.map((tagObj) => {
+        if (tagObj.label === tag) {
+          if (tagObj.taggers_count === 1) {
+            uniqueTagsChange = -1;
+            return {
+              ...tagObj,
+              taggers_count: 0,
+              taggers: [],
+              relationship: false,
+            };
+          }
+          return {
+            ...tagObj,
+            taggers_count: tagObj.taggers_count - 1,
+            taggers: tagObj.taggers.filter((t) => t !== pubky),
+            relationship: false,
+          };
+        }
+        return tagObj;
+      });
     }
 
     setTags(newTags);
 
-    const newTimeline = timeline.map((timelinePost) => {
-      if (timelinePost?.details?.id === post?.details?.id) {
-        return { ...timelinePost, tags: newTags };
-      }
-      return timelinePost;
-    });
-
-    setTimeline(newTimeline);
+    setTimeline((prevTimeline) =>
+      prevTimeline.map((timelinePost) => {
+        if (timelinePost.details.id === post.details.id) {
+          return {
+            ...timelinePost,
+            tags: newTags,
+            counts: {
+              ...timelinePost.counts,
+              unique_tags: Math.max(
+                0,
+                timelinePost.counts.unique_tags + uniqueTagsChange,
+              ),
+            },
+          };
+        }
+        return timelinePost;
+      }),
+    );
   };
 
   const handleAddTag = async (tag: string) => {
-    // loading tag
     setLoadingTags(tag);
-
-    // create tag
-    await createTag(post?.details?.author, post?.details?.id, tag);
-
-    updateTagsAndTimeline(tag);
+    await createTag(post.details.author, post.details.id, tag);
+    updateTagsAndTimeline(tag, true);
     setLoadingTags('');
   };
 
@@ -140,7 +156,7 @@ export default function Tags({
       tagInput,
     );
     if (response) {
-      updateTagsAndTimeline(tagInput);
+      updateTagsAndTimeline(tagInput, true);
       setAddTagInput(false);
       setTagInput('');
       setLoadingTags('');

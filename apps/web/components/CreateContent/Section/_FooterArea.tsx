@@ -143,6 +143,7 @@ export default function FooterArea({
           [...prevPreviews, ...newFilePreviews].slice(0, 3),
         );
     }
+    event.target.value = '';
   };
 
   const handleAddTag = () => {
