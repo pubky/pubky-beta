@@ -45,6 +45,13 @@ export default function Index() {
           >
             <Icon.Youtube width="24" height="24" />
           </Link>
+          <Link
+            target="_blank"
+            href="https://medium.com/pubky"
+            className="cursor-pointer opacity-30 hover:opacity-100"
+          >
+            <Icon.Medium size="24" />
+          </Link>
         </div>
       </Header.Root>
       <Content.Grid className="relative z-20 xl:mt-14">

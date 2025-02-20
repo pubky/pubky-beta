@@ -61,6 +61,13 @@ export default function Index() {
             >
               <Icon.Youtube width="24" height="24" />
             </Link>
+            <Link
+              target="_blank"
+              href="https://medium.com/pubky"
+              className="cursor-pointer opacity-30 hover:opacity-100"
+            >
+              <Icon.Medium size="24" />
+            </Link>
           </div>
           <Header.Action
             icon={<Icon.SignIn size="16" />}
@@ -135,6 +142,13 @@ export default function Index() {
               className="cursor-pointer opacity-30 hover:opacity-100"
             >
               <Icon.Youtube width="24" height="24" />
+            </Link>
+            <Link
+              target="_blank"
+              href="https://medium.com/pubky"
+              className="cursor-pointer opacity-30 hover:opacity-100"
+            >
+              <Icon.Medium size="24" />
             </Link>
           </div>
           <Typography.Body
