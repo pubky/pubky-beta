@@ -1,12 +1,9 @@
 import { ImageByUri } from '@/components/ImageByUri';
-import Modal from '@/components/Modal';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { Button, Card, Icon } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import * as jdenticon from 'jdenticon';
 import { Utils } from '@social/utils-shared';
-import { BottomSheet } from '@/components';
-import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface PicProps {
   image: File | string | undefined;
@@ -17,11 +14,8 @@ interface PicProps {
 export default function Pic({ image, setImage, loading }: PicProps) {
   const { pubky, profile } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const isMobile = useIsMobile();
+  const { openModal } = useModal();
   const [defaultImage, setDefaultImage] = useState<File | string>();
-  const [showModalCroppedImage, setShowModalCroppedImage] = useState(false);
-  const [showSheetCroppedImage, setShowSheetCroppedImage] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!image) {
@@ -58,7 +52,6 @@ export default function Pic({ image, setImage, loading }: PicProps) {
       }
     } else {
       defaultImage && setImage(defaultImage);
-      setSelectedImage(null);
     }
   };
 
@@ -78,12 +71,7 @@ export default function Pic({ image, setImage, loading }: PicProps) {
       img.src = newImageUrl;
 
       img.onload = () => {
-        setSelectedImage(newImageUrl);
-        if (isMobile) {
-          setShowSheetCroppedImage(true);
-        } else {
-          setShowModalCroppedImage(true);
-        }
+        openModal('croppedImage', { image: newImageUrl, setImage });
       };
       event.target.value = '';
     }
@@ -111,54 +99,36 @@ export default function Pic({ image, setImage, loading }: PicProps) {
       : 'w-[38px] h-[38px]';
   };
   return (
-    <>
-      <Card.Primary
-        className="justify-start z-10 w-full col-span-2"
-        title="Picture"
-      >
-        {image && (
-          <div className="relative flex items-center justify-center">
-            <ImageByUri
-              width={100}
-              height={100}
-              className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
-              alt="user"
-              uri={image}
-            />
-            <Button.Transparent
-              icon={getButtonIconImage()}
-              onClick={handleUploadImage}
-              className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
-            >
-              {getButtonLabelImage()}
-            </Button.Transparent>
-          </div>
-        )}
-        <input
-          id="fileInput"
-          type="file"
-          accept="image/*"
-          onChange={UploadPic}
-          className="hidden"
-          disabled={loading}
-        />
-      </Card.Primary>
-      {selectedImage && (
-        <>
-          <Modal.CroppedImage
-            showModalCroppedImage={showModalCroppedImage}
-            setShowModalCroppedImage={setShowModalCroppedImage}
-            image={selectedImage}
-            setImage={setImage}
+    <Card.Primary
+      className="justify-start z-10 w-full col-span-2"
+      title="Picture"
+    >
+      {image && (
+        <div className="relative flex items-center justify-center">
+          <ImageByUri
+            width={100}
+            height={100}
+            className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
+            alt="user"
+            uri={image}
           />
-          <BottomSheet.CroppedImage
-            show={showSheetCroppedImage}
-            setShow={setShowSheetCroppedImage}
-            image={selectedImage}
-            setImage={setImage}
-          />
-        </>
+          <Button.Transparent
+            icon={getButtonIconImage()}
+            onClick={handleUploadImage}
+            className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+          >
+            {getButtonLabelImage()}
+          </Button.Transparent>
+        </div>
       )}
-    </>
+      <input
+        id="fileInput"
+        type="file"
+        accept="image/*"
+        onChange={UploadPic}
+        className="hidden"
+        disabled={loading}
+      />
+    </Card.Primary>
   );
 }

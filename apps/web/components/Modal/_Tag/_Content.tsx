@@ -21,9 +21,9 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { usePostTagTaggers } from '@/hooks/useUser';
 import Post from '@/components/Post';
 import EmojiPicker from '@/components/EmojiPicker';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
-  setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
   tags: PostTag[];
   post: PostView;
   handleAddTag: (tag: string) => Promise<void>;
@@ -34,7 +34,6 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function ContentTag({
-  setShowModalTag,
   tags,
   post,
   handleAddTag,
@@ -44,9 +43,10 @@ export default function ContentTag({
   tagsError,
 }: TagProps) {
   const { addAlert } = useAlertContext();
-  const modalTagRef = useRef<HTMLDivElement>(null);
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -62,7 +62,6 @@ export default function ContentTag({
     {},
   );
   const [loading, setLoading] = useState(false);
-  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const limit = 5;
   const [allTags, setAllTags] = useState<PostTag[]>(tags.slice(0, limit));
   const [loadingTags, setLoadingTags] = useState('');
@@ -265,22 +264,6 @@ export default function ContentTag({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutsideModalTag = (event: MouseEvent) => {
-      if (
-        modalTagRef.current &&
-        !modalTagRef.current.contains(event.target as Node)
-      ) {
-        setShowModalTag(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModalTag);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModalTag);
-    };
-  }, [modalTagRef, setShowModalTag]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const valueWithoutSpaces = e.target.value
       .toLowerCase()
@@ -326,22 +309,6 @@ export default function ContentTag({
       }
     }
   }, [tags]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
 
   return (
     <div className="flex flex-col md:flex-row gap-6">

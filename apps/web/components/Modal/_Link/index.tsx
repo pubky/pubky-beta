@@ -2,30 +2,34 @@
 
 import { Modal } from '@social/ui-shared';
 import ContentLink from './_Content';
+import { Links } from '@/types/Post';
 
 interface LinkProps {
-  showModalLink: boolean;
-  setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
-  modalLinkRef: React.RefObject<HTMLDivElement>;
-  onAddLink: (title: string, url: string) => void;
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setLinks: any;
+  links: Links[];
 }
 
 export default function Link({
-  showModalLink,
-  setShowModalLink,
-  modalLinkRef,
-  onAddLink,
+  showModal,
+  setShowModal,
+  setLinks,
+  links,
 }: LinkProps) {
   return (
     <Modal.Root
-      show={showModalLink}
-      closeModal={() => setShowModalLink(false)}
-      modalRef={modalLinkRef}
+      show={showModal}
+      closeModal={() => setShowModal(false)}
       className="sm:w-[592px] max-h-[90vh] min-h-[465px] justify-start"
     >
-      <Modal.CloseAction onClick={() => setShowModalLink(false)} />
+      <Modal.CloseAction onClick={() => setShowModal(false)} />
       <Modal.Header id="add-profile-link-header" title="Add Profile Link" />
-      <ContentLink setShowModalLink={setShowModalLink} onAddLink={onAddLink} />
+      <ContentLink
+        setShowModalLink={setShowModal}
+        links={links}
+        setLinks={setLinks}
+      />
     </Modal.Root>
   );
 }

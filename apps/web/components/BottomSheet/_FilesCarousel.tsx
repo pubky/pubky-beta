@@ -9,7 +9,6 @@ interface FilesCarouselProps {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   fileContents: FileView[];
   currentFileIndex: number;
-  setCurrentFileIndex: React.Dispatch<React.SetStateAction<number>>;
   title?: string;
   className?: string;
 }
@@ -19,7 +18,6 @@ export default function FilesCarousel({
   setShow,
   fileContents,
   currentFileIndex,
-  setCurrentFileIndex,
   title,
   className,
 }: FilesCarouselProps) {
@@ -33,7 +31,6 @@ export default function FilesCarousel({
       <ContentFilesCarousel
         fileContents={fileContents}
         currentFileIndex={currentFileIndex}
-        setCurrentFileIndex={setCurrentFileIndex}
       />
     </BottomSheet.Root>
   );

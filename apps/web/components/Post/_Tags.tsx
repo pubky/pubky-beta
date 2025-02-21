@@ -14,7 +14,7 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '../Tooltip';
 import Modal from '../Modal';
 import { PostTag, PostView } from '@/types/Post';
-import { useAlertContext, usePubkyClientContext, useJoin } from '@/contexts';
+import { useAlertContext, usePubkyClientContext, useModal } from '@/contexts';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { BottomSheet } from '../BottomSheet';
 import EmojiPicker from '@/components/EmojiPicker';
@@ -39,7 +39,7 @@ export default function Tags({
   const [showTooltipTag, setShowTooltipTag] = useState('');
   const { pubky, setTimeline, createTag, deleteTag } = usePubkyClientContext();
   const isMobile = useIsMobile(768);
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showEmojis, setShowEmojis] = useState(false);
   const [tagInput, setTagInput] = useState('');
@@ -233,7 +233,7 @@ export default function Tags({
                             ? isTagFound
                               ? handleDeleteTag(tagObj?.label)
                               : handleAddTag(tagObj?.label)
-                            : openJoin()
+                            : openModal('join')
                         }
                       >
                         <div
@@ -322,7 +322,9 @@ export default function Tags({
               ) : (
                 <div
                   id="show-add-tag-input-btn"
-                  onClick={() => (pubky ? setAddTagInput(true) : openJoin())}
+                  onClick={() =>
+                    pubky ? setAddTagInput(true) : openModal('join')
+                  }
                   className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
                 >
                   <div>

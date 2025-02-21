@@ -51,7 +51,7 @@ export const UploadFile = ({
             id="import-select-file"
             className="flex gap-1 cursor-pointer normal-case"
           >
-            <span className="flex lg:hidden xl:flex">Select</span> file
+            Select file
           </Typography.Label>
         </div>
       </div>

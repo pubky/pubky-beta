@@ -2,11 +2,13 @@
 
 import { BottomSheet } from '@social/ui-shared';
 import ContentLink from '../Modal/_Link/_Content';
+import { Links } from '@/types/Post';
 
 interface LinkProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  onAddLink: (title: string, url: string) => void;
+  setLinks: any;
+  links: Links[];
   title?: string;
   className?: string;
 }
@@ -14,7 +16,8 @@ interface LinkProps {
 export default function Link({
   show,
   setShow,
-  onAddLink,
+  links,
+  setLinks,
   title,
   className,
 }: LinkProps) {
@@ -25,7 +28,11 @@ export default function Link({
       title={title ?? 'Add Profile Link'}
       className={className}
     >
-      <ContentLink setShowModalLink={setShow} onAddLink={onAddLink} />
+      <ContentLink
+        setShowModalLink={setShow}
+        links={links}
+        setLinks={setLinks}
+      />
     </BottomSheet.Root>
   );
 }

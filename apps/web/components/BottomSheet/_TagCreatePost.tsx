@@ -1,28 +1,23 @@
-'use client';
-
 import { BottomSheet } from '@social/ui-shared';
-import { useState } from 'react';
 import ContentTagCreatePost from '../Modal/_TagCreatePost/_Content';
 
 interface TagCreatePostProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  title?: string;
-  className?: string;
   arrayTags: string[];
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
+  title?: string;
+  className?: string;
 }
 
 export default function TagCreatePost({
   show,
   setShow,
-  title,
-  className,
   arrayTags,
   setArrayTags,
+  title,
+  className,
 }: TagCreatePostProps) {
-  const [tagsError, setTagsError] = useState(false);
-
   return (
     <BottomSheet.Root
       show={show}
@@ -34,8 +29,6 @@ export default function TagCreatePost({
         <ContentTagCreatePost
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}
-          tagsError={tagsError}
-          setTagsError={setTagsError}
         />
       </div>
     </BottomSheet.Root>

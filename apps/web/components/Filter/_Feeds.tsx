@@ -1,19 +1,16 @@
 'use client';
 
 import { Button, Icon, SideCard } from '@social/ui-shared';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { useFilterContext, useModal, usePubkyClientContext } from '@/contexts';
 import { ICustomFeed } from '@/types';
 import { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
-import { BottomSheet } from '../BottomSheet';
 
 export default function Feeds() {
   const { reach, selectedFeed, setSelectedFeed } = useFilterContext();
-  const [showSheetCreateFeed, setShowSheetCreateFeed] = useState(false);
-  const [tagsFeed, setTagsFeed] = useState<string[]>([]);
-  const [nameFeed, setNameFeed] = useState<string>('');
+  const { openModal } = useModal();
   const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
-  const { saveFeed, loadFeeds, deleteFeed } = usePubkyClientContext();
+  const { loadFeeds, deleteFeed } = usePubkyClientContext();
 
   useEffect(() => {
     handleLoadFeeds();
@@ -47,11 +44,6 @@ export default function Feeds() {
       Utils.storage.set('feed', selectedFeed);
     }
   }, [selectedFeed]);
-
-  const handleAddFeed = async (feedToAdd: ICustomFeed, name: string) => {
-    await saveFeed(feedToAdd, name);
-    handleLoadFeeds();
-  };
 
   const handleFeedSelect = (feed: ICustomFeed) => {
     setSelectedFeed(feed);
@@ -106,22 +98,13 @@ export default function Feeds() {
           );
         })}
         <Button.Medium
-          onClick={() => setShowSheetCreateFeed(true)}
+          onClick={() => openModal('createFeed', { handleLoadFeeds })}
           className="mt-4"
           icon={<Icon.Plus size="16" />}
         >
           New feed
         </Button.Medium>
       </div>
-      <BottomSheet.CreateFeed
-        setNameFeed={setNameFeed}
-        nameFeed={nameFeed}
-        handleAddFeed={handleAddFeed}
-        setShow={setShowSheetCreateFeed}
-        show={showSheetCreateFeed}
-        setTagsFeed={setTagsFeed}
-        tagsFeed={tagsFeed}
-      />
     </div>
   );
 }

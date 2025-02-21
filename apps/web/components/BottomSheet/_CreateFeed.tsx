@@ -7,11 +7,7 @@ import ContentCreateFeed from '../Modal/_CreateFeed/_Content';
 interface CreateFeedProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  setTagsFeed: React.Dispatch<React.SetStateAction<string[]>>;
-  tagsFeed: string[];
-  setNameFeed: React.Dispatch<React.SetStateAction<string>>;
-  nameFeed: string;
-  handleAddFeed: (feedToAdd: ICustomFeed, name: string) => void;
+  handleLoadFeeds: (feedToAdd: ICustomFeed, name: string) => void;
   title?: string;
   className?: string;
 }
@@ -19,11 +15,7 @@ interface CreateFeedProps {
 export default function CreateFeed({
   show,
   setShow,
-  setTagsFeed,
-  tagsFeed,
-  setNameFeed,
-  nameFeed,
-  handleAddFeed,
+  handleLoadFeeds,
   title,
   className,
 }: CreateFeedProps) {
@@ -36,11 +28,7 @@ export default function CreateFeed({
     >
       <ContentCreateFeed
         setShowModalCreateFeed={setShow}
-        setTagsFeed={setTagsFeed}
-        tagsFeed={tagsFeed}
-        setNameFeed={setNameFeed}
-        nameFeed={nameFeed}
-        handleAddFeed={handleAddFeed}
+        handleLoadFeeds={handleLoadFeeds}
       />
     </BottomSheet.Root>
   );

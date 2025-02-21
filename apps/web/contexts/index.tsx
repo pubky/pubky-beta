@@ -6,7 +6,7 @@ import {
   NotificationsWrapper,
 } from './_notifications';
 import { useToastContext, ToastWrapper } from './_toast';
-import { useJoin, JoinProvider } from './_joinAlert';
+import { useModal, ModalProvider } from './_modals';
 
 export {
   useAlertContext,
@@ -19,6 +19,6 @@ export {
   ToastWrapper,
   usePubkyClientContext,
   PubkyClientWrapper,
-  useJoin,
-  JoinProvider,
+  useModal,
+  ModalProvider,
 };

@@ -49,7 +49,9 @@ const MarkdownEditorComponent = ({
       quill.on('text-change', () => {
         const text = quill.getText().trim();
         if (text.length <= maxLength) {
-          setCharCount(text.length);
+          if (setCharCount && typeof setCharCount === 'function') {
+            setCharCount(text.length);
+          }
           onChange(quill.root.innerHTML);
         } else {
           quill.deleteText(maxLength, quill.getLength());

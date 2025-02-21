@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { Utils } from '@social/utils-shared';
@@ -14,9 +13,8 @@ import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Link from 'next/link';
-import Modal from '../Modal';
-import { BottomSheet } from '../BottomSheet';
 import { PubkyAppPostKind } from 'pubky-app-specs';
+import { useModal } from '@/contexts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -36,15 +34,13 @@ export default function Content({
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const isMobile = useIsMobile();
+  const { openModal } = useModal();
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [fileContents, setFileContents] = useState<FileView[]>([]);
-  const [showModal, setShowModal] = useState(false);
-  const [showSheet, setShowSheet] = useState(false);
-  const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const text = post?.details?.content;
   const files = post?.details?.attachments;
@@ -161,13 +157,11 @@ export default function Content({
     };
   }, [files]);
 
-  const openModal = (index: number) => {
-    setCurrentFileIndex(index);
-    if (isMobile) {
-      setShowSheet(true);
-    } else {
-      setShowModal(true);
-    }
+  const handleOpenModal = (index: number) => {
+    openModal('filesCarousel', {
+      fileContents: fileContents,
+      currentFileIndex: index
+    });
   };
 
   const cleanedText = cleanText(text.toString());
@@ -337,7 +331,7 @@ export default function Content({
                                 src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                                 onClick={(event) => {
                                   event.stopPropagation();
-                                  openModal(index);
+                                  handleOpenModal(index);
                                 }}
                                 alt={`Fetched file ${index}`}
                                 className="w-full h-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
@@ -425,28 +419,6 @@ export default function Content({
             )}
 
           <div onClick={(event) => event.stopPropagation()}>{children}</div>
-          {fileContents.length > 0 && (
-            <>
-              <div onClick={(event) => event.stopPropagation()}>
-                {showModal && (
-                  <Modal.FilesCarousel
-                    fileContents={fileContents}
-                    currentFileIndex={currentFileIndex}
-                    setCurrentFileIndex={setCurrentFileIndex}
-                    showModal={showModal}
-                    setShowModal={setShowModal}
-                  />
-                )}
-                <BottomSheet.FilesCarousel
-                  show={showSheet}
-                  setShow={setShowSheet}
-                  fileContents={fileContents}
-                  currentFileIndex={currentFileIndex}
-                  setCurrentFileIndex={setCurrentFileIndex}
-                />
-              </div>
-            </>
-          )}
         </div>
       </div>
     </div>

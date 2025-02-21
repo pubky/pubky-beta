@@ -5,14 +5,14 @@ import { ButtonTooltip } from '../Button';
 
 interface TooltipProfileMenuProps {
   setShowProfileMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowModalReportProfile: React.Dispatch<React.SetStateAction<boolean>>;
   creatorPubky: string;
+  name: string;
 }
 
 export default function ContentProfileMenu({
   setShowProfileMenu,
-  setShowModalReportProfile,
   creatorPubky,
+  name,
 }: TooltipProfileMenuProps) {
   const { pubky } = usePubkyClientContext();
 
@@ -34,7 +34,7 @@ export default function ContentProfileMenu({
       <ButtonTooltip.CopyLinkProfile creatorPubky={creatorPubky} />
       {pubky !== creatorPubky && <ButtonTooltip.Mute pk={creatorPubky} />}
       {pubky !== creatorPubky && (
-        <ButtonTooltip.ReportProfile setShowModal={setShowModalReportProfile} />
+        <ButtonTooltip.ReportProfile creatorPubky={creatorPubky} name={name} />
       )}
     </>
   );

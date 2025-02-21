@@ -9,11 +9,8 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useAlertContext } from '@/contexts';
+import { useAlertContext, useModal } from '@/contexts';
 import { useEffect, useRef, useState } from 'react';
-import Modal from '@/components/Modal';
-import { BottomSheet } from '@/components/BottomSheet';
-import { useIsMobile } from '@/hooks/useIsMobile';
 import EmojiPicker from '@/components/EmojiPicker';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -70,11 +67,7 @@ export default function FooterArea({
   charCountArticle,
 }: FooterAreaProps) {
   const { addAlert } = useAlertContext();
-  const isMobile = useIsMobile();
-  const [showModalTag, setShowModalTag] = useState(false);
-  const [showSheetTag, setShowSheetTag] = useState(false);
-  const [showSheetArticle, setShowSheetArticle] = useState(false);
-  const [openModalArticle, setOpenModalArticle] = useState(false);
+  const { openModal } = useModal();
   const [addTagInput, setAddTagInput] = useState<boolean>(false);
   const [tagInput, setTagInput] = useState('');
   const [errorTag, setErrorTag] = useState(false);
@@ -199,7 +192,6 @@ export default function FooterArea({
       {(visibleTextArea ||
         textArea ||
         content ||
-        showModalTag ||
         (arrayTags && arrayTags.length > 0)) && (
         <>
           {arrayTags && arrayTags.length > 0 && (
@@ -352,8 +344,10 @@ export default function FooterArea({
                   onClick={(event) => {
                     event.stopPropagation();
                     if (!loading) {
-                      if (isMobile) setShowSheetTag(true);
-                      else setShowModalTag(true);
+                      openModal('tagCreatePost', {
+                        arrayTags: arrayTags,
+                        setArrayTags: setArrayTags,
+                      });
                     }
                   }}
                   disabled={!arrayTags || loading}
@@ -378,10 +372,8 @@ export default function FooterArea({
                       icon={<Icon.Newspaper size="32" />}
                       onClick={(event) => {
                         event.stopPropagation();
-                        if (!loading) {
-                          if (isMobile) setShowSheetArticle(true);
-                          else setOpenModalArticle(true);
-                        }
+                        if (!loading)
+                          openModal('createArticle', { setShowModalPost });
                       }}
                       disabled={loading}
                     />
@@ -418,39 +410,6 @@ export default function FooterArea({
               </div>
             </div>
           </Post.Actions>
-          {openModalArticle && (
-            <Modal.CreateArticle
-              showModalArticle={openModalArticle}
-              setShowModalArticle={setOpenModalArticle}
-              setShowModalPost={setShowModalPost}
-            />
-          )}
-          {showSheetArticle && (
-            <BottomSheet.CreateArticle
-              show={showSheetArticle}
-              setShow={setShowSheetArticle}
-            />
-          )}
-          {arrayTags && setArrayTags && (
-            <>
-              {showModalTag && (
-                <Modal.TagCreatePost
-                  arrayTags={arrayTags}
-                  setArrayTags={setArrayTags}
-                  showModalTag={showModalTag}
-                  setShowModalTag={setShowModalTag}
-                />
-              )}
-              {showSheetTag && (
-                <BottomSheet.TagCreatePost
-                  arrayTags={arrayTags}
-                  setArrayTags={setArrayTags}
-                  show={showSheetTag}
-                  setShow={setShowSheetTag}
-                />
-              )}
-            </>
-          )}
         </>
       )}
     </>

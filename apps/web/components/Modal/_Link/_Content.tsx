@@ -1,5 +1,6 @@
 'use client';
 
+import { Links } from '@/types/Post';
 import { Icon, Input, Modal, Typography, Button } from '@social/ui-shared';
 import { useState } from 'react';
 
@@ -21,12 +22,14 @@ const socialLinks = [
 
 interface LinkProps {
   setShowModalLink: React.Dispatch<React.SetStateAction<boolean>>;
-  onAddLink: (title: string, url: string) => void;
+  setLinks: any;
+  links: Links[];
 }
 
 export default function ContentLink({
   setShowModalLink,
-  onAddLink,
+  setLinks,
+  links,
 }: LinkProps) {
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
@@ -34,10 +37,10 @@ export default function ContentLink({
   const disabled = !url || !title;
 
   const handleAddLink = () => {
-    onAddLink(title, url);
-    setShowModalLink(false);
+    setLinks([...links, { title, url }]);
     setTitle('');
     setUrl('');
+    setShowModalLink(false);
   };
 
   const handleSocialClick = (socialData: { name: string; url: string }) => {

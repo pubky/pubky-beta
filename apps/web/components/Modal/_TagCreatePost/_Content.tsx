@@ -4,23 +4,27 @@ import { useEffect, useRef, useState } from 'react';
 import { Icon, Button, PostUtil, Input, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import EmojiPicker from '@/components/EmojiPicker';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   arrayTags: string[];
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
-  tagsError: boolean;
-  setTagsError: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ContentTagCreatePost({
   arrayTags,
   setArrayTags,
-  tagsError,
-  setTagsError,
 }: TagProps) {
   const [tag, setTag] = useState('');
+  const [tagsError, setTagsError] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
+  const [localTags, setLocalTags] = useState<string[]>(arrayTags); // Stato locale dei tag
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
+
+  useEffect(() => {
+    setLocalTags(arrayTags);
+  }, [arrayTags]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const valueWithoutSpaces = e.target.value
@@ -31,31 +35,25 @@ export default function ContentTagCreatePost({
   };
 
   const handleAddTag = () => {
-    // check if the tag is already in the array
-    if (arrayTags.includes(tag.trim())) {
+    const trimmedTag = tag.trim();
+    if (!trimmedTag || localTags.includes(trimmedTag)) return;
+
+    if (localTags.length >= 4) {
+      setTagsError(true);
       return;
     }
 
-    if (arrayTags.length >= 4) {
-      setTagsError(true);
-    } else {
-      const trimmedTag = tag.trim();
-      if (trimmedTag !== '') {
-        if (!arrayTags.includes(trimmedTag)) {
-          setTag('');
-          setArrayTags([...arrayTags, trimmedTag]);
-        } else {
-          setTag('');
-        }
-      }
-    }
+    const updatedTags = [...localTags, trimmedTag];
+    setLocalTags(updatedTags);
+    setArrayTags(updatedTags);
+    setTag('');
   };
 
   const handleRemoveTag = (indexToRemove: number) => {
-    setArrayTags(arrayTags.filter((_, index) => index !== indexToRemove));
-    if (arrayTags.length <= 4) {
-      setTagsError(false);
-    }
+    const updatedTags = localTags.filter((_, index) => index !== indexToRemove);
+    setLocalTags(updatedTags);
+    setArrayTags(updatedTags);
+    if (updatedTags.length <= 4) setTagsError(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -64,29 +62,13 @@ export default function ContentTagCreatePost({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
-
   return (
     <div className="w-full flex-col inline-flex">
       <div>
         <div className="mt-2 justify-start items-start">
-          {arrayTags.length > 0 ? (
+          {localTags.length > 0 ? (
             <div className="justify-start items-start">
-              {arrayTags.map((tag, index) => (
+              {localTags.map((tag, index) => (
                 <PostUtil.Tag
                   key={index}
                   action={
@@ -135,7 +117,6 @@ export default function ContentTagCreatePost({
             </div>
           </>
         )}
-        {/* <Input.Label value="Add tag" /> */}
         <Input.Text
           placeholder="tag"
           value={tag}

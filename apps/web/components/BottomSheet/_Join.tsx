@@ -1,7 +1,7 @@
 'use client';
 
 import { BottomSheet } from '@social/ui-shared';
-import ContentJoin from './_Content';
+import ContentJoin from '../Modal/_Join/_Content';
 
 interface BottomSheetJoinProps {
   show: boolean;
@@ -10,7 +10,7 @@ interface BottomSheetJoinProps {
   className?: string;
 }
 
-export default function BottomSheetJoin({
+export default function Join({
   show,
   setShow,
   title,

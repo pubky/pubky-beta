@@ -1,20 +1,40 @@
 'use client';
 
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface DeleteAccountProps {
   setShowModalDeleteAccount: React.Dispatch<React.SetStateAction<boolean>>;
-  handleDeleteAccount: () => void;
-  deletingAccount: boolean;
-  deleteProgress: number;
 }
 
 export default function ContentDeleteAccount({
   setShowModalDeleteAccount,
-  handleDeleteAccount,
-  deletingAccount,
-  deleteProgress,
 }: DeleteAccountProps) {
+  const { deleteAccount } = usePubkyClientContext();
+  const router = useRouter();
+  const { addAlert } = useAlertContext();
+  const [deleteProgress, setDeleteProgress] = useState(0);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeletingAccount(true);
+    setDeleteProgress(0); // Reset progress
+
+    const result = await deleteAccount(setDeleteProgress);
+
+    if (result) {
+      addAlert('Account deleted successfully!');
+    } else {
+      addAlert('Error deleting account', 'warning');
+    }
+
+    setDeletingAccount(false);
+    setShowModalDeleteAccount(false);
+    router.push('/logout');
+  };
+
   return (
     <>
       <Typography.Body className="text-opacity-60 my-4" variant="medium">

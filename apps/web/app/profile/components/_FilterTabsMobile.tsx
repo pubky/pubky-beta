@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, Typography } from '@social/ui-shared';
-import { useFilterContext, useJoin, usePubkyClientContext } from '@/contexts';
+import { useFilterContext, useModal, usePubkyClientContext } from '@/contexts';
 import { UserCounts } from '@/types/User';
 import { useRouter } from 'next/navigation';
 
@@ -82,7 +82,7 @@ export default function FilterTabsMobile({
   creatorPubky?: string;
 }) {
   const { pubky } = usePubkyClientContext();
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
   const { unReadNotification } = useFilterContext();
   const router = useRouter();
 
@@ -135,7 +135,7 @@ export default function FilterTabsMobile({
               id={`mobile-profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() =>
-                pubky ? handleTabClick(tab.id, tab.key) : openJoin()
+                pubky ? handleTabClick(tab.id, tab.key) : openModal('join')
               }
               className={`w-full pb-3 items-center gap-1 flex justify-between cursor-pointer border-b border-white ${
                 isActive && !loading

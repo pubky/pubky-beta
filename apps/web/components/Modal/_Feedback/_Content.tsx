@@ -4,36 +4,40 @@ import { Button, Icon, Input, Modal, Typography } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts/_pubky';
-import { PubkyAppUser } from 'pubky-app-specs';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
+import { useState } from 'react';
+import axios from 'axios';
 
 interface FeedbackProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  error: boolean;
-  setError: React.Dispatch<React.SetStateAction<boolean>>;
-  sent: boolean;
-  setSent: React.Dispatch<React.SetStateAction<boolean>>;
-  profile: PubkyAppUser | undefined;
-  message: string;
-  setMessage: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: () => void;
-  loading: boolean;
 }
 
-export default function ContentFeedback({
-  setShowModal,
-  error,
-  setError,
-  sent,
-  setSent,
-  profile,
-  message,
-  setMessage,
-  handleSubmit,
-  loading,
-}: FeedbackProps) {
-  const { pubky } = usePubkyClientContext();
+export default function ContentFeedback({ setShowModal }: FeedbackProps) {
+  const { pubky, profile } = usePubkyClientContext();
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      await axios.post('/api/chatwoot', {
+        message,
+        name: profile?.name,
+        email: `${pubky}@pubky.app`,
+        source: 'Feedback',
+      });
+      setSent(true);
+      setLoading(false);
+      setMessage('');
+    } catch (error) {
+      console.error(error);
+      setError(true);
+      setLoading(false);
+    }
+  };
 
   return (
     <>

@@ -9,7 +9,7 @@ import {
   Button,
   PostUtil,
 } from '@social/ui-shared';
-import { useFilterContext, usePubkyClientContext, useJoin } from '@/contexts';
+import { useFilterContext, usePubkyClientContext, useModal } from '@/contexts';
 import { ImageByUri } from '../ImageByUri';
 import { usePathname, useRouter } from 'next/navigation';
 import Modal from '../Modal';
@@ -25,7 +25,7 @@ export default function Header({ title }: HeaderProps) {
   const { pubky, isLoggedIn, setSearchTags, searchTags, profile } =
     usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
 
   const [searchInputCard, setSearchInputCard] = useState(false);
   const [logoLink, setLogoLink] = useState('/onboarding');
@@ -254,7 +254,7 @@ export default function Header({ title }: HeaderProps) {
         <Button.Action
           variant="menu"
           label="Join"
-          onClick={openJoin}
+          onClick={() => openModal('join')}
           active={title === 'Join'}
           className={title === 'Join' ? 'border-t border-white' : ''}
           icon={<Icon.User size="24" />}

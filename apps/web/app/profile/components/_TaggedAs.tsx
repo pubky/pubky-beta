@@ -2,7 +2,7 @@
 
 import { BottomSheet, ContentNotFound, Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
-import { useAlertContext, useJoin, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 import {
   Button,
@@ -29,7 +29,7 @@ type TaggedAsProps = {
 };
 
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
   const { addAlert } = useAlertContext();
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const isMobile = useIsMobile();
@@ -41,10 +41,6 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   const [showSheetProfileTag, setShowSheetProfileTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
-  const [showModalCheckLink, setShowModalCheckLink] = useState(false);
-  const [showSheetCheckLink, setShowSheetCheckLink] = useState(false);
-  const [clickedLink, setClickedLink] = useState('');
-  const checkLink = Utils.storage.get('checkLink') as boolean;
   const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>(
     [],
   );
@@ -239,7 +235,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                             ? isTagFound
                               ? handleDeleteProfileTag(tag?.label)
                               : handleAddProfileTag(tag?.label)
-                            : openJoin();
+                            : openModal('join');
                         }}
                         color={
                           tag?.label && Utils.generateRandomColor(tag?.label)
@@ -342,13 +338,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             </Button.Medium>
           </div>
           <div className="flex lg:hidden mt-6">
-            <LinksSection
-              links={links}
-              checkLink={checkLink}
-              setShowModalCheckLink={setShowModalCheckLink}
-              setShowSheetCheckLink={setShowSheetCheckLink}
-              setClickedLink={setClickedLink}
-            />
+            <LinksSection links={links} />
           </div>
         </>
       )}
@@ -373,16 +363,6 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         setSelectedTag={setSelectedTag}
         pubkyUser={creatorPubky}
         user={user}
-      />
-      <Modal.CheckLink
-        showModalCheckLink={showModalCheckLink}
-        setShowModalCheckLink={setShowModalCheckLink}
-        clickedLink={clickedLink}
-      />
-      <BottomSheet.CheckLink
-        show={showSheetCheckLink}
-        setShow={setShowSheetCheckLink}
-        clickedLink={clickedLink}
       />
     </div>
   );

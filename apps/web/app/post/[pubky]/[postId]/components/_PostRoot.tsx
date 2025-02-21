@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Icon, Button, Post } from '@social/ui-shared';
-import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import Participants from './_Participants';
 import Replies from './_Replies';
@@ -15,7 +14,6 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
-  const [showModalTag, setShowModalTag] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isValidContent, setIsValidContent] = useState(false);
   const [textArea, setTextArea] = useState(false);
@@ -116,12 +114,6 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
           textArea={textArea}
         />
         <Replies postId={post.details.id} pubkyAuthor={post.details.author} />
-        <Modal.TagCreatePost
-          arrayTags={arrayTags}
-          setArrayTags={setArrayTags}
-          showModalTag={showModalTag}
-          setShowModalTag={setShowModalTag}
-        />
       </Post.Root>
       <Participants author={post.details.author} />
     </div>

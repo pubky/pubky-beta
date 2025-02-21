@@ -5,13 +5,12 @@ import { useState } from 'react';
 import File from './_File';
 import Phrase from './_Phrase';
 import Success from './_Success';
+import { z } from 'zod';
+import { usePubkyClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
 
 interface BackupProps {
-  loading: boolean;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: () => Promise<void>;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  errors: string;
   setShowBackupSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
   confirmPhrase: boolean;
   setConfirmPhrase: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,13 +20,15 @@ interface BackupProps {
   setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const passwordSchema = z.object({
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters long' }),
+});
+
 export default function ContentBackup({
-  loading,
-  setPassword,
-  handleSubmit,
   setShow,
   setShowBackupSuccess,
-  errors,
   confirmPhrase,
   setConfirmPhrase,
   showWords,
@@ -35,8 +36,75 @@ export default function ContentBackup({
   success,
   setSuccess,
 }: BackupProps) {
+  const { getRecoveryFile, setSeed, setMnemonic } = usePubkyClientContext();
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<string>('');
   const [phrase, setPhrase] = useState(false);
   const [file, setFile] = useState(false);
+
+  const handleDownloadRecoveryFile = async ({
+    recoveryFile,
+    filename,
+  }: {
+    recoveryFile: Buffer;
+    filename: string;
+  }) => {
+    try {
+      const element = document.createElement('a');
+
+      const fileBlob = new Blob([recoveryFile]);
+
+      element.href = URL.createObjectURL(fileBlob);
+      element.download = filename;
+      document.body.appendChild(element); // Required for this to work in FireFox
+      element.click();
+
+      setSeed(undefined);
+      setMnemonic(undefined);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
+    try {
+      setLoading(true);
+      setErrors('');
+
+      const result = passwordSchema.safeParse({
+        password,
+      });
+
+      if (!result.success) {
+        setErrors(result.error.errors.map((err) => err.message).join(', '));
+        setLoading(false);
+        return;
+      }
+      const recoveryFileResponse = await getRecoveryFile(password);
+
+      if (!recoveryFileResponse) {
+        throw new Error('Something went wrong');
+      }
+
+      await handleDownloadRecoveryFile({
+        recoveryFile: recoveryFileResponse,
+        filename: 'recovery_key.pkarr',
+      });
+
+      Utils.storage.remove('seed');
+      Utils.storage.remove('mnemonic');
+      setSuccess(true);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      setShowBackupSuccess && setShowBackupSuccess(true);
+    }
+  };
 
   return (
     <>

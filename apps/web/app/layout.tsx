@@ -7,7 +7,7 @@ import {
   NotificationsWrapper,
   ToastWrapper,
   PubkyClientWrapper,
-  JoinProvider,
+  ModalProvider,
 } from '@/contexts';
 import { ProtectedRoutes } from '@/components';
 
@@ -27,9 +27,9 @@ export default function RootLayout({
             <AlertWrapper>
               <NotificationsWrapper>
                 <ToastWrapper>
-                  <JoinProvider>
+                  <ModalProvider>
                     <ProtectedRoutes>{children}</ProtectedRoutes>
-                  </JoinProvider>
+                  </ModalProvider>
                 </ToastWrapper>
               </NotificationsWrapper>
             </AlertWrapper>

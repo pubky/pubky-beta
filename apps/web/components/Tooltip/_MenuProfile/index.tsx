@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Tooltip } from '@social/ui-shared';
 import { UserView } from '@/types/User';
-import Modal from '@/components/Modal';
 import ContentProfileMenu from './_Content';
 
 interface TooltipProfileMenuProps {
@@ -17,19 +16,10 @@ export default function ProfileMenu({
   creatorPubky,
   profile,
 }: TooltipProfileMenuProps) {
-  const [showModalReportProfile, setShowModalReportProfile] = useState(false);
   const tooltipProfileMenuRef = useRef<HTMLDivElement>(null);
-  const modalReportProfileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
-      if (modalReportProfileRef.current) {
-        if (!modalReportProfileRef.current.contains(event.target as Node)) {
-          setShowModalReportProfile(false);
-        }
-        return;
-      }
-
       if (
         tooltipProfileMenuRef.current &&
         !tooltipProfileMenuRef.current.contains(event.target as Node)
@@ -42,33 +32,17 @@ export default function ProfileMenu({
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideTooltip);
     };
-  }, [
-    tooltipProfileMenuRef,
-    setShowProfileMenu,
-    modalReportProfileRef,
-    setShowModalReportProfile,
-  ]);
+  }, [tooltipProfileMenuRef, setShowProfileMenu]);
 
   return (
-    <>
-      <div ref={tooltipProfileMenuRef}>
-        <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px]">
-          <ContentProfileMenu
-            setShowProfileMenu={setShowProfileMenu}
-            setShowModalReportProfile={setShowModalReportProfile}
-            creatorPubky={creatorPubky}
-          />
-        </Tooltip.Main>
-      </div>
-      {showModalReportProfile && (
-        <Modal.ReportProfile
-          showModal={showModalReportProfile}
-          setShowModal={setShowModalReportProfile}
-          modalReportPostRef={modalReportProfileRef}
-          pk={creatorPubky}
-          name={profile?.details?.name}
+    <div ref={tooltipProfileMenuRef}>
+      <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px]">
+        <ContentProfileMenu
+          setShowProfileMenu={setShowProfileMenu}
+          creatorPubky={creatorPubky}
+          name={profile?.details?.name ?? ''}
         />
-      )}
-    </>
+      </Tooltip.Main>
+    </div>
   );
 }

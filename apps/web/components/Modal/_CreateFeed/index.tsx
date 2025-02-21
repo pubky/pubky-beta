@@ -1,70 +1,28 @@
-import { useEffect, useRef } from 'react';
-import { ICustomFeed } from '@/types';
 import { Modal } from '@social/ui-shared';
 import ContentCreateFeed from './_Content';
 
 interface CreateFeedProps {
-  showModalCreateFeed: boolean;
-  setShowModalCreateFeed: React.Dispatch<React.SetStateAction<boolean>>;
-  setTagsFeed: React.Dispatch<React.SetStateAction<string[]>>;
-  tagsFeed: string[];
-  setNameFeed: React.Dispatch<React.SetStateAction<string>>;
-  nameFeed: string;
-  handleAddFeed: (feedToAdd: ICustomFeed, name: string) => void;
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  handleLoadFeeds: any;
 }
 
 export default function CreateFeed({
-  showModalCreateFeed,
-  setShowModalCreateFeed,
-  setTagsFeed,
-  tagsFeed,
-  setNameFeed,
-  nameFeed,
-  handleAddFeed,
+  showModal,
+  setShowModal,
+  handleLoadFeeds,
 }: CreateFeedProps) {
-  const modalCreateFeedRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutsideModals = (event: MouseEvent) => {
-      if (
-        modalCreateFeedRef.current &&
-        !modalCreateFeedRef.current.contains(event.target as Node)
-      ) {
-        setShowModalCreateFeed(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideModals);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModals);
-    };
-  }, [modalCreateFeedRef, setShowModalCreateFeed]);
-
   return (
     <Modal.Root
-      modalRef={modalCreateFeedRef}
-      show={showModalCreateFeed}
-      closeModal={() => {
-        setShowModalCreateFeed(false);
-        setTagsFeed([]);
-      }}
+      show={showModal}
+      closeModal={() => setShowModal(false)}
       className="md:w-[620px] max-h-[90vh] overflow-y-auto justify-start scrollbar-thin scrollbar-webkit"
     >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalCreateFeed(false);
-          setTagsFeed([]);
-        }}
-      />
+      <Modal.CloseAction onClick={() => setShowModal(false)} />
       <Modal.Header title="Create Feed" />
       <ContentCreateFeed
-        setShowModalCreateFeed={setShowModalCreateFeed}
-        setTagsFeed={setTagsFeed}
-        tagsFeed={tagsFeed}
-        setNameFeed={setNameFeed}
-        nameFeed={nameFeed}
-        handleAddFeed={handleAddFeed}
+        handleLoadFeeds={handleLoadFeeds}
+        setShowModalCreateFeed={setShowModal}
       />
     </Modal.Root>
   );

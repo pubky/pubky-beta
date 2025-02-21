@@ -1,6 +1,3 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
 import { Modal } from '@social/ui-shared';
 import { UserTags, UserView } from '@/types/User';
 import ContentProfileTag from './_Content';
@@ -28,27 +25,8 @@ export default function ProfileTag({
   pubkyUser,
   user,
 }: ProfileTagProps) {
-  const modalProfileTagRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutsideModalTag = (event: MouseEvent) => {
-      if (
-        modalProfileTagRef.current &&
-        !modalProfileTagRef.current.contains(event.target as Node)
-      ) {
-        setShowModalProfileTag(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModalTag);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModalTag);
-    };
-  }, [modalProfileTagRef, setShowModalProfileTag]);
-
   return (
     <Modal.Root
-      modalRef={modalProfileTagRef}
       show={showModalProfileTag}
       closeModal={() => {
         setShowModalProfileTag(false);

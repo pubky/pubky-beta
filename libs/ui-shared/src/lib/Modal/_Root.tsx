@@ -3,23 +3,24 @@ import { twMerge } from 'tailwind-merge';
 
 interface RootModalProps extends React.HTMLAttributes<HTMLDivElement> {
   show: boolean;
-  closeModal?: () => void;
-  modalRef: React.RefObject<HTMLDivElement>;
+  closeModal: () => void;
   children?: React.ReactNode;
 }
 
 export const Root = ({
   show = false,
   closeModal,
-  modalRef,
   children,
   ...rest
 }: RootModalProps) => {
   return (
     <div className="flex justify-center items-center">
       {show && (
-        <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-          <div id="modal-root" ref={modalRef}>
+        <div
+          onClick={closeModal}
+          className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 flex justify-center items-center"
+        >
+          <div id="modal-root" onClick={(e) => e.stopPropagation()}>
             <Card.Primary
               background="bg-[#05050A] opacity-100"
               className={twMerge(

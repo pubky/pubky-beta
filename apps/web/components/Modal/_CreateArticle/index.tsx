@@ -1,58 +1,28 @@
 import { Modal } from '@social/ui-shared';
-import { useEffect, useRef } from 'react';
 import ContentCreateArticle from './_Content';
 
 interface CreateArticleProps {
-  showModalArticle: boolean;
-  setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateArticle({
-  showModalArticle,
-  setShowModalArticle,
+  showModal,
+  setShowModal,
   setShowModalPost,
 }: CreateArticleProps) {
-  const modalArticleRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutsideModals = (event: MouseEvent) => {
-      if (
-        modalArticleRef.current &&
-        !modalArticleRef.current.contains(event.target as Node)
-      ) {
-        setShowModalArticle(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideModals);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModals);
-    };
-  }, [modalArticleRef, setShowModalArticle]);
-
   return (
     <Modal.Root
-      modalRef={modalArticleRef}
-      show={showModalArticle}
-      closeModal={() => {
-        setShowModalArticle(false);
-        //setArrayTags([]);
-      }}
+      show={showModal}
+      closeModal={() => setShowModal(false)}
       className="max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
     >
-      <Modal.CloseAction
-        onClick={() => {
-          setShowModalArticle(false);
-          //setArrayTags([]);
-          //setContent('');
-        }}
-      />
+      <Modal.CloseAction onClick={() => setShowModal(false)} />
       <div id="article-modal" className="flex flex-col gap-4">
         <Modal.Header title="New Article" />
         <ContentCreateArticle
-          setShowModalArticle={setShowModalArticle}
+          setShowModalArticle={setShowModal}
           setShowModalPost={setShowModalPost}
         />
       </div>

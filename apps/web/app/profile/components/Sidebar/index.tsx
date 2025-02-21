@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Utils } from '@social/utils-shared';
 import { Modal } from '@/components/Modal';
 import UserInfo from './_UserInfo';
 import TaggedSection from './_TaggedSection';
@@ -9,7 +8,6 @@ import LinksSection from './_LinksSection';
 import { useUserProfile } from '@/hooks/useUser';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
-import { BottomSheet } from '@/components';
 
 export default function Sidebar({
   creatorPubky,
@@ -39,11 +37,7 @@ export default function Sidebar({
   const [followed, setFollowed] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
-  const [showModalCheckLink, setShowModalCheckLink] = useState(false);
-  const [showSheetCheckLink, setShowSheetCheckLink] = useState(false);
-  const [clickedLink, setClickedLink] = useState('');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const checkLink = Utils.storage.get('checkLink') as boolean;
   const [scrolled, setScrolled] = useState(false);
   const [loadingTags, setLoadingTags] = useState('');
 
@@ -181,20 +175,9 @@ export default function Sidebar({
             loadingTags={loadingTags}
           />
 
-          <LinksSection
-            links={links || []}
-            checkLink={checkLink}
-            setShowModalCheckLink={setShowModalCheckLink}
-            setShowSheetCheckLink={setShowSheetCheckLink}
-            setClickedLink={setClickedLink}
-          />
+          <LinksSection links={links || []} />
         </div>
       </div>
-      <Modal.CheckLink
-        showModalCheckLink={showModalCheckLink}
-        setShowModalCheckLink={setShowModalCheckLink}
-        clickedLink={clickedLink}
-      />
       <Modal.ProfileTag
         profileTags={profileTags}
         showModalProfileTag={showModalProfileTag}
@@ -205,11 +188,6 @@ export default function Sidebar({
         setSelectedTag={setSelectedTag}
         pubkyUser={userPubky}
         user={profileUser}
-      />
-      <BottomSheet.CheckLink
-        show={showSheetCheckLink}
-        setShow={setShowSheetCheckLink}
-        clickedLink={clickedLink}
       />
     </>
   );

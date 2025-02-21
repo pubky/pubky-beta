@@ -1,9 +1,12 @@
 'use client';
 
+import { useModal } from '@/contexts';
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
 import Link from 'next/link';
 
 export default function ContentLogout() {
+  const { openModal, closeModal } = useModal();
+
   return (
     <>
       <Typography.Body
@@ -17,19 +20,20 @@ export default function ContentLogout() {
           <Button.Large
             id="logout-modal-sign-out-btn"
             variant="secondary"
+            className="whitespace-nowrap"
+            onClick={() => closeModal('logout')}
             icon={<Icon.SignOut size="16" />}
           >
             Yes, sign out
           </Button.Large>
         </Link>
-        <Link className="w-full" href="/settings">
-          <Modal.SubmitAction
-            id="logout-modal-backup-btn"
-            icon={<Icon.Lock size="16" />}
-          >
-            Backup
-          </Modal.SubmitAction>
-        </Link>
+        <Modal.SubmitAction
+          id="logout-modal-backup-btn"
+          onClick={() => openModal('backup')}
+          icon={<Icon.Lock size="16" />}
+        >
+          Backup
+        </Modal.SubmitAction>
       </div>
     </>
   );

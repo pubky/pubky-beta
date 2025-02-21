@@ -15,7 +15,7 @@ import { Utils } from '@social/utils-shared';
 import Modal from '../Modal';
 import { ImageByUri } from '../ImageByUri';
 import { PostTag, PostView } from '@/types/Post';
-import { useAlertContext, usePubkyClientContext, useJoin } from '@/contexts';
+import { useAlertContext, usePubkyClientContext, useModal } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -32,7 +32,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
   const isMobile = useIsMobile(1024);
   const isArticle =
     String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
   const [tags, setTags] = useState<PostTag[]>([]);
   const [showModalTag, setShowModalTag] = useState(false);
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
@@ -315,7 +315,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                         ? isTagFound
                           ? handleDeleteTag(tagObj?.label)
                           : handleAddTag(tagObj?.label)
-                        : openJoin()
+                        : openModal('join')
                     }
                   >
                     <div className="flex gap-2 items-center">
@@ -429,7 +429,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           ) : (
             <div
               id="show-add-tag-input-btn"
-              onClick={() => (pubky ? setAddTagInput(true) : openJoin())}
+              onClick={() => (pubky ? setAddTagInput(true) : openModal('join'))}
               className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
             >
               <div>

@@ -38,9 +38,18 @@ export default function Root({
         setIsVisible(false);
         document.body.classList.remove('overflow-hidden');
       }, 300);
-      return () => clearTimeout(timeout);
+      return () => {
+        clearTimeout(timeout);
+        document.body.classList.remove('overflow-hidden');
+      };
     }
   }, [show]);
+
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartY(e.touches[0].clientY);

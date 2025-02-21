@@ -1,16 +1,18 @@
+import { useModal } from '@/contexts';
+import { PostView } from '@/types/Post';
 import { Icon, Tooltip } from '@social/ui-shared';
 
 interface ReportPostProps {
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  post: PostView;
 }
 
-export default function ReportPost({ setShowModal }: ReportPostProps) {
+export default function ReportPost({ post }: ReportPostProps) {
+  const { openModal } = useModal();
+
   return (
     <Tooltip.Item
       id="report-post"
-      onClick={() => {
-        setShowModal(true);
-      }}
+      onClick={() => openModal('reportPost', { post })}
       icon={<Icon.Flag size="24" />}
     >
       Report post

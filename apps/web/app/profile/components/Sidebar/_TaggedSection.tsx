@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components';
-import { useJoin, usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 import {
   Button,
@@ -33,7 +33,7 @@ export default function TaggedSection({
   loadingTags,
 }: TaggedSectionProps) {
   const { pubky } = usePubkyClientContext();
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
 
   return (
     <div className="w-full">
@@ -70,7 +70,7 @@ export default function TaggedSection({
                           ? isTagFound
                             ? handleDeleteProfileTag(tag?.label)
                             : handleAddProfileTag(tag?.label)
-                          : openJoin();
+                          : openModal('join');
                       }}
                       color={
                         tag?.label && Utils.generateRandomColor(tag?.label)
@@ -108,7 +108,9 @@ export default function TaggedSection({
           <Button.Medium
             id="profile-tag-btn"
             className="mt-2 w-auto h-8 inline-flex items-center"
-            onClick={() => (pubky ? setShowModalProfileTag(true) : openJoin())}
+            onClick={() =>
+              pubky ? setShowModalProfileTag(true) : openModal('join')
+            }
             icon={<Icon.Tag size="16" />}
           >
             Tag{' '}

@@ -38,7 +38,6 @@ export default function Tag({
     >
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <ContentTag
-          setShowModalTag={setShow}
           tags={tags}
           post={post}
           handleAddTag={handleAddTag}

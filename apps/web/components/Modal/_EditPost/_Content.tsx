@@ -7,14 +7,12 @@ import CreateContent from '@/components/CreateContent';
 interface CreateEditPostProps {
   setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
-  handleCloseModal: () => void;
   className?: string;
 }
 
 export default function ContentEditPost({
   setShowModalEditPost,
   post,
-  handleCloseModal,
   className,
 }: CreateEditPostProps) {
   const { editPost } = usePubkyClientContext();
@@ -28,7 +26,6 @@ export default function ContentEditPost({
   }, [post]);
 
   const handleSubmit = async (content: string) => {
-    handleCloseModal();
     if (sendingEditPost) {
       return;
     }
@@ -47,6 +44,7 @@ export default function ContentEditPost({
       addAlert('Error editing post', 'warning');
     } finally {
       setSendingEditPost(false);
+      setShowModalEditPost(false);
     }
   };
 

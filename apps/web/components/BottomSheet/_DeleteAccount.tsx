@@ -6,9 +6,6 @@ import ContentDeleteAccount from '../Modal/_DeleteAccount/_Content';
 interface DeleteAccountProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  handleDeleteAccount: () => void;
-  deletingAccount: boolean;
-  deleteProgress: number;
   title?: string;
   className?: string;
 }
@@ -16,9 +13,6 @@ interface DeleteAccountProps {
 export default function DeleteAccount({
   show,
   setShow,
-  handleDeleteAccount,
-  deletingAccount,
-  deleteProgress,
   title,
   className,
 }: DeleteAccountProps) {
@@ -29,12 +23,7 @@ export default function DeleteAccount({
       title={title ?? 'Delete Account'}
       className={className}
     >
-      <ContentDeleteAccount
-        setShowModalDeleteAccount={setShow}
-        handleDeleteAccount={handleDeleteAccount}
-        deletingAccount={deletingAccount}
-        deleteProgress={deleteProgress}
-      />
+      <ContentDeleteAccount setShowModalDeleteAccount={setShow} />
     </BottomSheet.Root>
   );
 }
