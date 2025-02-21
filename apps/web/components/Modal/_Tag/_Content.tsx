@@ -20,7 +20,6 @@ import { useTagsPost } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { usePostTagTaggers } from '@/hooks/useUser';
 import Post from '@/components/Post';
-import { PubkyAppPostKind } from 'pubky-app-specs';
 import EmojiPicker from '@/components/EmojiPicker';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -49,8 +48,6 @@ export default function ContentTag({
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const isArticle =
-    String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
 
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
@@ -376,9 +373,7 @@ export default function ContentTag({
           ref={inputRef}
           placeholder="tag"
           value={tag}
-          className={`w-full ${
-            isArticle ? 'md:w-[500px]' : 'md:w-96'
-          } mt-2 flex items-center`}
+          className="w-full md:w-[500px] mt-2 flex items-center"
           maxLength={20}
           autoFocus
           disabled={loading}
@@ -421,11 +416,7 @@ export default function ContentTag({
             </div>
           }
         />
-        <div
-          className={`mt-4 w-full ${
-            isArticle ? 'md:w-[500px]' : 'md:w-96'
-          } hidden md:flex`}
-        >
+        <div className="mt-4 w-full md:w-[500px] hidden md:flex">
           <Post post={post} repostView />
         </div>
         {tagsError && (
