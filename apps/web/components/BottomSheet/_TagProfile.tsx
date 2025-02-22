@@ -10,8 +10,6 @@ interface TagProfileProps {
   profileTags: UserTags[];
   handleAddProfileTag: (tag: string) => void;
   handleDeleteProfileTag: (tag: string) => void;
-  selectedTag?: UserTags | null;
-  setSelectedTag?: React.Dispatch<React.SetStateAction<UserTags | null>>;
   pubkyUser?: string;
   user?: UserView | null;
   title?: string;
@@ -24,8 +22,6 @@ export default function TagProfile({
   profileTags,
   handleAddProfileTag,
   handleDeleteProfileTag,
-  selectedTag,
-  setSelectedTag,
   pubkyUser,
   user,
   title,
@@ -35,15 +31,13 @@ export default function TagProfile({
     <BottomSheet.Root
       show={show}
       setShow={setShow}
-      title={title ?? `Tag ${name}`}
+      title={title ?? `Tag ${user?.details?.name}`}
       className={className}
     >
       <ContentProfileTag
         profileTags={profileTags}
         handleAddProfileTag={handleAddProfileTag}
         handleDeleteProfileTag={handleDeleteProfileTag}
-        selectedTag={selectedTag}
-        setSelectedTag={setSelectedTag}
         pubkyUser={pubkyUser}
         user={user}
       />

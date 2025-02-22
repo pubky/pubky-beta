@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Modal } from '@/components/Modal';
 import UserInfo from './_UserInfo';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
@@ -33,9 +32,7 @@ export default function Sidebar({
   const [profileTags, setProfileTags] = useState<UserTags[]>(
     profileUser?.tags ?? [],
   );
-  const [showModalProfileTag, setShowModalProfileTag] = useState(false);
   const [followed, setFollowed] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -144,51 +141,39 @@ export default function Sidebar({
   }, []);
 
   return (
-    <>
-      <div className="w-[180px] hidden flex-col justify-start items-start gap-8 xl:inline-flex">
-        <UserInfo
-          scrolled={scrolled}
-          uriImage={image}
-          name={name}
-          profile={profileUser}
-          creatorPubky={creatorPubky}
-          pubkyUser={userPubky ?? ''}
-          showProfileMenu={showProfileMenu}
-          setShowProfileMenu={setShowProfileMenu}
-          bio={bio}
-          initLoadingFollowed={isLoading}
-          followed={followed}
-          setFollowed={setFollowed}
-          loadingFollowed={loadingFollowed}
-          setLoadingFollowed={setLoadingFollowed}
-        />
-        <div className="w-full flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
-          {/**<BioSection id="profile-bio-content" loading={isLoading} bio={bio} />*/}
-          <TaggedSection
-            profileTags={profileTags}
-            loadingProfileTags={isLoading}
-            handleAddProfileTag={handleAddProfileTag}
-            handleDeleteProfileTag={handleDeleteProfileTag}
-            setShowModalProfileTag={setShowModalProfileTag}
-            creatorPubky={creatorPubky}
-            name={name}
-            loadingTags={loadingTags}
-          />
-
-          <LinksSection links={links || []} />
-        </div>
-      </div>
-      <Modal.ProfileTag
-        profileTags={profileTags}
-        showModalProfileTag={showModalProfileTag}
-        setShowModalProfileTag={setShowModalProfileTag}
-        handleAddProfileTag={handleAddProfileTag}
-        handleDeleteProfileTag={handleDeleteProfileTag}
-        selectedTag={selectedTag}
-        setSelectedTag={setSelectedTag}
-        pubkyUser={userPubky}
-        user={profileUser}
+    <div className="w-[180px] hidden flex-col justify-start items-start gap-8 xl:inline-flex">
+      <UserInfo
+        scrolled={scrolled}
+        uriImage={image}
+        name={name}
+        profile={profileUser}
+        creatorPubky={creatorPubky}
+        pubkyUser={userPubky ?? ''}
+        showProfileMenu={showProfileMenu}
+        setShowProfileMenu={setShowProfileMenu}
+        bio={bio}
+        initLoadingFollowed={isLoading}
+        followed={followed}
+        setFollowed={setFollowed}
+        loadingFollowed={loadingFollowed}
+        setLoadingFollowed={setLoadingFollowed}
       />
-    </>
+      <div className="w-full flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
+        {/**<BioSection id="profile-bio-content" loading={isLoading} bio={bio} />*/}
+        <TaggedSection
+          profileTags={profileTags}
+          loadingProfileTags={isLoading}
+          handleAddProfileTag={handleAddProfileTag}
+          handleDeleteProfileTag={handleDeleteProfileTag}
+          creatorPubky={creatorPubky}
+          name={name}
+          loadingTags={loadingTags}
+          userPubky={userPubky ?? ''}
+          user={profileUser}
+        />
+
+        <LinksSection links={links || []} />
+      </div>
+    </div>
   );
 }

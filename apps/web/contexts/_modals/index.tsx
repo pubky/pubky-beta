@@ -355,6 +355,20 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           {...props}
         />
       ),
+    profileTags: (props) =>
+      isMobile ? (
+        <BottomSheet.TagProfile
+          show={openModals['profileTags']}
+          setShow={() => closeModal('profileTags')}
+          {...props}
+        />
+      ) : (
+        <Modal.ProfileTag
+          showModal={openModals['profileTags']}
+          setShowModal={() => closeModal('profileTags')}
+          {...props}
+        />
+      ),
   };
 
   return (

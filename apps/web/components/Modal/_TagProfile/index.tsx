@@ -3,51 +3,45 @@ import { UserTags, UserView } from '@/types/User';
 import ContentProfileTag from './_Content';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
-  showModalProfileTag: boolean;
-  setShowModalProfileTag: React.Dispatch<React.SetStateAction<boolean>>;
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   profileTags: UserTags[];
   handleAddProfileTag: (tag: string) => void;
   handleDeleteProfileTag: (tag: string) => void;
-  selectedTag?: UserTags | null;
-  setSelectedTag?: React.Dispatch<React.SetStateAction<UserTags | null>>;
   pubkyUser?: string;
   user?: UserView | null;
 }
 
 export default function ProfileTag({
-  showModalProfileTag,
-  setShowModalProfileTag,
+  showModal,
+  setShowModal,
   profileTags,
   handleAddProfileTag,
   handleDeleteProfileTag,
-  selectedTag,
-  setSelectedTag,
   pubkyUser,
   user,
 }: ProfileTagProps) {
   return (
     <Modal.Root
-      show={showModalProfileTag}
+      show={showModal}
       closeModal={() => {
-        setShowModalProfileTag(false);
+        setShowModal(false);
       }}
       className="md:w-[792px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction
         id="close-btn"
         onClick={() => {
-          setShowModalProfileTag(false);
+          setShowModal(false);
         }}
       />
       <div className="w-full items-stretch flex-col inline-flex gap-6">
-        <Modal.Header title={`Tag ${name}`} />
+        <Modal.Header title={`Tag ${user?.details?.name}`} />
         <Modal.Content className="w-full flex flex-row">
           <ContentProfileTag
             profileTags={profileTags}
             handleAddProfileTag={handleAddProfileTag}
             handleDeleteProfileTag={handleDeleteProfileTag}
-            selectedTag={selectedTag}
-            setSelectedTag={setSelectedTag}
             pubkyUser={pubkyUser}
             user={user}
           />

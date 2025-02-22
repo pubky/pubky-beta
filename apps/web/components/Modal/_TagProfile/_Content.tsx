@@ -20,13 +20,12 @@ import { useTagsUser } from '@/hooks/useTag';
 import { useUserTagTaggers } from '@/hooks/useUser';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import EmojiPicker from '@/components/EmojiPicker';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   profileTags: UserTags[];
   handleAddProfileTag: (tag: string) => void;
   handleDeleteProfileTag: (tag: string) => void;
-  selectedTag?: UserTags | null;
-  setSelectedTag?: React.Dispatch<React.SetStateAction<UserTags | null>>;
   pubkyUser?: string;
   user?: UserView | null;
 }
@@ -35,8 +34,6 @@ export default function ContentProfileTag({
   profileTags,
   handleAddProfileTag,
   handleDeleteProfileTag,
-  selectedTag,
-  setSelectedTag,
   pubkyUser,
   user,
 }: ProfileTagProps) {
@@ -46,6 +43,7 @@ export default function ContentProfileTag({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [showEmojis, setShowEmojis] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
   const [loadingFollowers, setLoadingFollowers] = useState<{
@@ -58,6 +56,7 @@ export default function ContentProfileTag({
     {},
   );
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
   const limit = 5;
   const [allTags, setAllTags] = useState<PostTag[]>(
     profileTags.slice(0, limit),
@@ -281,22 +280,6 @@ export default function ContentProfileTag({
       .replace(/!/g, '');
     setTag(valueWithoutSpaces);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
 
   const addProfileTag = (tag: string) => {
     try {
