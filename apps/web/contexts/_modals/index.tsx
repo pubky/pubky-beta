@@ -8,11 +8,13 @@ import { BottomSheet } from '@/components';
 interface ModalContextType {
   openModal: (modalId: string, props?: Record<string, any>) => void;
   closeModal: (modalId: string) => void;
+  isOpen: (modalId: string) => boolean;
 }
 
 const ModalContext = createContext<ModalContextType>({
   openModal: () => {},
   closeModal: () => {},
+  isOpen: () => false,
 });
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
@@ -33,6 +35,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       return newProps;
     });
   };
+
+  const isOpen = (modalId: string) => !!openModals[modalId];
 
   const modalComponents: Record<string, (props: any) => JSX.Element> = {
     backup: (props) =>
@@ -337,10 +341,24 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       ) : (
         <></>
       ),
+    tags: (props) =>
+      isMobile ? (
+        <BottomSheet.Tag
+          show={openModals['tags']}
+          setShow={() => closeModal('tags')}
+          {...props}
+        />
+      ) : (
+        <Modal.Tag
+          showModal={openModals['tags']}
+          setShowModal={() => closeModal('tags')}
+          {...props}
+        />
+      ),
   };
 
   return (
-    <ModalContext.Provider value={{ openModal, closeModal }}>
+    <ModalContext.Provider value={{ openModal, closeModal, isOpen }}>
       {children}
       {Object.keys(openModals).map(
         (modalId) =>

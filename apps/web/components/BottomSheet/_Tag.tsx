@@ -1,33 +1,23 @@
 'use client';
 
 import { BottomSheet } from '@social/ui-shared';
-import { PostTag, PostView } from '@/types/Post';
+import { PostView } from '@/types/Post';
 import ContentTag from '../Modal/_Tag/_Content';
 
 interface TagProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  post: PostView;
   title?: string;
   className?: string;
-  tags: PostTag[];
-  post: PostView;
-  handleAddTag: (tag: string) => Promise<void>;
-  handleDeleteTag: (tag: string) => Promise<void>;
-  selectedTag?: PostTag | null;
-  setSelectedTag?: React.Dispatch<React.SetStateAction<PostTag | null>>;
 }
 
 export default function Tag({
   show,
   setShow,
+  post,
   title,
   className,
-  tags,
-  post,
-  handleAddTag,
-  handleDeleteTag,
-  selectedTag,
-  setSelectedTag,
 }: TagProps) {
   return (
     <BottomSheet.Root
@@ -37,14 +27,7 @@ export default function Tag({
       className={className}
     >
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
-        <ContentTag
-          tags={tags}
-          post={post}
-          handleAddTag={handleAddTag}
-          handleDeleteTag={handleDeleteTag}
-          selectedTag={selectedTag}
-          setSelectedTag={setSelectedTag}
-        />
+        <ContentTag post={post} />
       </div>
     </BottomSheet.Root>
   );

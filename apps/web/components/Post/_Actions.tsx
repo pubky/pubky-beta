@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 import {
   useAlertContext,
@@ -17,8 +17,6 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   repost?: PostView;
   deleteRepost?: boolean;
-  setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowSheetTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const BookmarkButton = ({
@@ -112,13 +110,10 @@ export default function Actions({
   post,
   repost,
   deleteRepost = false,
-  setShowModalTag,
-  setShowSheetTag,
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const { openModal } = useModal();
-  const isMobile = useIsMobile();
+  const { openModal, isOpen } = useModal();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   const { data: authorRepost } = useUserProfile(
     repost?.details?.author ?? '',
@@ -190,6 +185,17 @@ export default function Actions({
     }
   };
 
+  const handleOpenModal = () => {
+    openModal('tags', { post });
+  };
+
+  // Update post in Modal when post.tags changes
+  useEffect(() => {
+    if (isOpen('tags')) {
+      handleOpenModal();
+    }
+  }, [post?.tags]);
+
   return (
     <div className="mt-3">
       <PostUI.Actions>
@@ -199,11 +205,7 @@ export default function Actions({
           variant="custom"
           onClick={(event) => {
             event.stopPropagation();
-            pubky
-              ? isMobile
-                ? setShowSheetTag(true)
-                : setShowModalTag(true)
-              : openModal('join');
+            pubky ? handleOpenModal() : openModal('join');
           }}
           icon={
             <div>

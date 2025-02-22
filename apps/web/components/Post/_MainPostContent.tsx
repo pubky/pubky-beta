@@ -3,9 +3,8 @@ import { Icon, Post as PostUI } from '@social/ui-shared';
 import Header from './_Header';
 import Content from './_Content';
 import Actions from './_Actions';
-import Tags from './_Tags';
-import TagsLargeView from './_TagsLargeView';
 import { PostView } from '@/types/Post';
+import Tags from './Tags';
 
 interface MainPostContentProps {
   post: PostView;
@@ -14,10 +13,6 @@ interface MainPostContentProps {
   line?: boolean;
   lineStyle?: string;
   repostView: boolean;
-  showModalTag: boolean;
-  showSheetTag: boolean;
-  setShowModalTag: any;
-  setShowSheetTag: any;
   restClassName?: string;
 }
 
@@ -28,10 +23,6 @@ export default function MainPostContent({
   line,
   lineStyle,
   repostView,
-  showModalTag,
-  setShowModalTag,
-  showSheetTag,
-  setShowSheetTag,
   restClassName,
 }: MainPostContentProps) {
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
@@ -69,26 +60,13 @@ export default function MainPostContent({
               }`}
             >
               {!repostView && (
-                <Tags
-                  showModalTag={showModalTag}
-                  setShowModalTag={setShowModalTag}
-                  showSheetTag={showSheetTag}
-                  setShowSheetTag={setShowSheetTag}
-                  largeView={largeView}
-                  post={post}
-                />
+                <Tags.Standard largeView={largeView} post={post} />
               )}
-              {!repostView && (
-                <Actions
-                  setShowSheetTag={setShowSheetTag}
-                  setShowModalTag={setShowModalTag}
-                  post={post}
-                />
-              )}
+              {!repostView && <Actions post={post} />}
             </div>
           </div>
         </div>
-        {largeView && <TagsLargeView post={post} />}
+        {largeView && <Tags.LargeView post={post} />}
       </PostUI.MainCard>
     </div>
   );

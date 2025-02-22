@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-
+import React, { useState } from 'react';
 import {
   Button,
   Icon,
@@ -12,215 +11,42 @@ import {
   Typography,
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import Modal from '../Modal';
-import { ImageByUri } from '../ImageByUri';
-import { PostTag, PostView } from '@/types/Post';
-import { useAlertContext, usePubkyClientContext, useModal } from '@/contexts';
-import { getUserProfile } from '@/services/userService';
+import { ImageByUri } from '@/components/ImageByUri';
+import { PostView } from '@/types/Post';
 import Link from 'next/link';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import Tooltip from '../Tooltip';
-import { PubkyAppPostKind } from 'pubky-app-specs';
 import EmojiPicker from '@/components/EmojiPicker';
+import { useTagsLogic } from './components/TagsUtils';
+import { PubkyAppPostKind } from 'pubky-app-specs';
+import { usePubkyClientContext } from '@/contexts';
+import Tooltip from '@/components/Tooltip';
 
 interface TagsLargeViewProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
 }
 
-export default function TagsLargeView({ post }: TagsLargeViewProps) {
-  const { pubky, setTimeline, createTag, deleteTag } = usePubkyClientContext();
-  const isMobile = useIsMobile(1024);
+export default function LargeView({ post }: TagsLargeViewProps) {
+  const {
+    tags,
+    tagInput,
+    setTagInput,
+    showEmojis,
+    profileImages,
+    setShowEmojis,
+    loadingTags,
+    handleAddTag,
+    handleDeleteTag,
+    handleInputChange,
+    handleKeyDown,
+    wrapperRefEmojis,
+    openModal,
+    isMobile,
+    addTagInput,
+    setAddTagInput,
+  } = useTagsLogic(post);
+  const { pubky } = usePubkyClientContext();
+  const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
   const isArticle =
     String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
-  const { openModal } = useModal();
-  const [tags, setTags] = useState<PostTag[]>([]);
-  const [showModalTag, setShowModalTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
-  const [tagInput, setTagInput] = useState('');
-  const { addAlert } = useAlertContext();
-  const [addTagInput, setAddTagInput] = useState<boolean>(false);
-  const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
-  const [showEmojis, setShowEmojis] = useState(false);
-  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
-    {},
-  );
-  const [loadingTags, setLoadingTags] = useState('');
-  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (post?.tags) {
-      setTags(post.tags);
-    }
-  }, [post?.tags]);
-
-  const handleDeleteTag = async (tag: string) => {
-    setLoadingTags(tag);
-    await deleteTag(post.details.author, post.details.id, tag);
-    updateTagsAndTimeline(tag, false);
-    setLoadingTags('');
-  };
-
-  const handleAddTag = async (tag: string) => {
-    setLoadingTags(tag);
-    await createTag(post.details.author, post.details.id, tag);
-    updateTagsAndTimeline(tag, true);
-    setLoadingTags('');
-  };
-  useEffect(() => {
-    const fetchProfileImages = async () => {
-      const images: { [key: string]: string } = {};
-
-      const taggerPromises = tags.flatMap((tagObj) =>
-        tagObj?.taggers
-          ?.map((fromItem) => {
-            if (fromItem && !images[fromItem]) {
-              return getUserProfile(fromItem, pubky ?? '')
-                .then((profile) => {
-                  images[fromItem] =
-                    profile?.details?.image || '/images/webp/Userpic.webp';
-                })
-                .catch(() => {
-                  images[fromItem] = '/images/webp/Userpic.webp';
-                });
-            }
-            return null;
-          })
-          .filter(Boolean),
-      );
-
-      await Promise.all(taggerPromises);
-      setProfileImages(images);
-    };
-
-    if (tags.length > 0) {
-      fetchProfileImages();
-    }
-  }, [tags, pubky]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
-
-  const updateTagsAndTimeline = (tag: string, isAdding: boolean) => {
-    let newTags: PostTag[] = tags;
-    const existingTag = tags.find((tagObj) => tagObj.label === tag);
-    let uniqueTagsChange = 0;
-
-    if (isAdding) {
-      if (!existingTag) {
-        newTags = [
-          ...tags,
-          {
-            label: tag,
-            taggers_count: 1,
-            taggers: [pubky ?? ''],
-            relationship: true,
-          },
-        ];
-        uniqueTagsChange = 1;
-      } else if (!existingTag.taggers.includes(pubky ?? '')) {
-        newTags = tags.map((tagObj) =>
-          tagObj.label === tag
-            ? {
-                ...tagObj,
-                taggers_count: tagObj.taggers_count + 1,
-                taggers: [...tagObj.taggers, pubky ?? ''],
-                relationship: true,
-              }
-            : tagObj,
-        );
-
-        if (existingTag.taggers_count === 0) {
-          uniqueTagsChange = 1;
-        }
-      }
-    } else {
-      newTags = tags.map((tagObj) => {
-        if (tagObj.label === tag) {
-          if (tagObj.taggers_count === 1) {
-            uniqueTagsChange = -1;
-            return {
-              ...tagObj,
-              taggers_count: 0,
-              taggers: [],
-              relationship: false,
-            };
-          }
-          return {
-            ...tagObj,
-            taggers_count: tagObj.taggers_count - 1,
-            taggers: tagObj.taggers.filter((t) => t !== pubky),
-            relationship: false,
-          };
-        }
-        return tagObj;
-      });
-    }
-
-    setTags(newTags);
-
-    setTimeline((prevTimeline) =>
-      prevTimeline.map((timelinePost) => {
-        if (timelinePost.details.id === post.details.id) {
-          return {
-            ...timelinePost,
-            tags: newTags,
-            counts: {
-              ...timelinePost.counts,
-              unique_tags: Math.max(
-                0,
-                timelinePost.counts.unique_tags + uniqueTagsChange,
-              ),
-            },
-          };
-        }
-        return timelinePost;
-      }),
-    );
-  };
-
-  const handleFastAddTag = async () => {
-    setLoadingTags(tagInput);
-    const response = await createTag(
-      post?.details?.author,
-      post?.details?.id,
-      tagInput,
-    );
-    if (response) {
-      updateTagsAndTimeline(tagInput, true);
-      setAddTagInput(false);
-      setTagInput('');
-      setLoadingTags('');
-    } else {
-      addAlert('Something went wrong', 'warning');
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleFastAddTag();
-    }
-  };
-
-  const handleChangeTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value
-      .toLowerCase()
-      .replace(/\s/g, '')
-      .replace(/!/g, '');
-    setTagInput(valueWithoutSpaces);
-  };
 
   return (
     <div
@@ -233,16 +59,8 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
             <div className="flex gap-3 items-center">
               <Icon.Tag size="14" color="gray" />
               <Typography.Label className="text-opacity-30">
-                {tags.length > 0 ? 'Tags' : 'Tag Post'}
+                Tags Article
               </Typography.Label>
-              {tags.length > 0 && (
-                <Button.Medium
-                  onClick={() => setShowModalTag(true)}
-                  className="w-auto h-[29px] px-3 py-2"
-                >
-                  See all
-                </Button.Medium>
-              )}
             </div>
           ) : (
             <PostUI.Time className="grow-0 justify-start">
@@ -390,7 +208,7 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                   className="h-[32px] p-3 text-[14px] rounded-lg"
                   value={tagInput}
                   maxLength={20}
-                  onChange={handleChangeTagInput}
+                  onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
                   disabled={loadingTags !== ''}
                   autoFocus
@@ -398,7 +216,11 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
                     <div className="flex gap-1 -mr-2">
                       <div
                         id="add-tag-btn"
-                        onClick={!loadingTags ? handleFastAddTag : undefined}
+                        onClick={
+                          !loadingTags
+                            ? () => handleAddTag(tagInput)
+                            : undefined
+                        }
                         className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
                       >
                         {loadingTags ? (
@@ -439,16 +261,6 @@ export default function TagsLargeView({ post }: TagsLargeViewProps) {
           )}
         </div>
       </div>
-      <Modal.Tag
-        post={post}
-        tags={tags}
-        handleAddTag={handleAddTag}
-        handleDeleteTag={handleDeleteTag}
-        showModalTag={showModalTag}
-        setShowModalTag={setShowModalTag}
-        selectedTag={selectedTag}
-        setSelectedTag={setSelectedTag}
-      />
     </div>
   );
 }

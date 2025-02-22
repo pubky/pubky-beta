@@ -20,8 +20,7 @@ import { getPost } from '@/services/postService';
 import Header from './_Header';
 import Content from './_Content';
 import Actions from './_Actions';
-import Tags from './_Tags';
-import TagsLargeView from './_TagsLargeView';
+import Tags from './Tags';
 import Tooltip from '../Tooltip';
 
 import RepostedPost from './_RepostedPost';
@@ -162,25 +161,12 @@ export default function Post({
                         }`}
                       >
                         {!repostView && (
-                          <Tags
-                            showModalTag={showModalTag}
-                            setShowModalTag={setShowModalTag}
-                            showSheetTag={showSheetTag}
-                            setShowSheetTag={setShowSheetTag}
-                            largeView={largeView}
-                            post={post}
-                          />
+                          <Tags.Standard largeView={largeView} post={post} />
                         )}
-                        {!repostView && (
-                          <Actions
-                            setShowModalTag={setShowModalTag}
-                            setShowSheetTag={setShowSheetTag}
-                            post={post}
-                          />
-                        )}
+                        {!repostView && <Actions post={post} />}
                       </div>
                     </div>
-                    {largeView && <TagsLargeView post={post} />}
+                    {largeView && <Tags.LargeView post={post} />}
                   </PostUI.MainCard>
                 </div>
               ) : (
@@ -302,10 +288,6 @@ export default function Post({
                 line={line}
                 lineStyle={lineStyle}
                 repostView={repostView}
-                showModalTag={showModalTag}
-                setShowModalTag={setShowModalTag}
-                showSheetTag={showSheetTag}
-                setShowSheetTag={setShowSheetTag}
                 restClassName={rest.className}
               />
             )}
