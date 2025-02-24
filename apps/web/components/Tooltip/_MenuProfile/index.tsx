@@ -1,6 +1,3 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
 import { Tooltip } from '@social/ui-shared';
 import { UserView } from '@/types/User';
 import ContentProfileMenu from './_Content';
@@ -16,33 +13,22 @@ export default function ProfileMenu({
   creatorPubky,
   profile,
 }: TooltipProfileMenuProps) {
-  const tooltipProfileMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutsideTooltip = (event: MouseEvent) => {
-      if (
-        tooltipProfileMenuRef.current &&
-        !tooltipProfileMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowProfileMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideTooltip);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideTooltip);
-    };
-  }, [tooltipProfileMenuRef, setShowProfileMenu]);
-
   return (
-    <div ref={tooltipProfileMenuRef}>
-      <Tooltip.Main className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px]">
+    <>
+      <div
+        onClick={() => setShowProfileMenu(false)}
+        className="fixed inset-0"
+      />
+      <Tooltip.Main
+        onClick={(e) => e.stopPropagation()}
+        className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px]"
+      >
         <ContentProfileMenu
           setShowProfileMenu={setShowProfileMenu}
           creatorPubky={creatorPubky}
           name={profile?.details?.name ?? ''}
         />
       </Tooltip.Main>
-    </div>
+    </>
   );
 }
