@@ -55,7 +55,7 @@ export default function Root({
     setStartY(e.touches[0].clientY);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = (e: TouchEvent) => {
     if (startY === null) return;
 
     const currentY = e.touches[0].clientY;
@@ -67,18 +67,26 @@ export default function Root({
     }
   };
 
+  useEffect(() => {
+    const sheet = document.getElementById('bottom-sheet');
+    if (!sheet) return;
+
+    sheet.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      sheet.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [startY]);
+
   if (!isVisible) return null;
 
   return (
     <div
+      id="bottom-sheet"
       {...rest}
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end"
       onClick={() => setShow(false)}
       onTouchStart={handleTouchStart}
-      onTouchMove={(e) => {
-        e.stopPropagation();
-        handleTouchMove(e);
-      }}
     >
       <div
         className={twMerge(
