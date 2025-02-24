@@ -1,26 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 import {
   useAlertContext,
-  useJoin,
+  useModal,
   usePubkyClientContext,
   useToastContext,
 } from '@/contexts';
-import Tooltip from '../Tooltip';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
-import Modal from '../Modal';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { BottomSheet } from '../BottomSheet';
+import Tooltip from '../Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   repost?: PostView;
   deleteRepost?: boolean;
-  setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowSheetTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const BookmarkButton = ({
@@ -33,7 +29,8 @@ const BookmarkButton = ({
   handleBookmarks: () => void;
 }) => {
   const { pubky } = usePubkyClientContext();
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
+
   return (
     <Button.Action
       id="bookmark-btn"
@@ -57,30 +54,28 @@ const BookmarkButton = ({
       }
       onClick={(event) => {
         event.stopPropagation();
-        loadingBookmarks ? undefined : pubky ? handleBookmarks() : openJoin();
+        loadingBookmarks
+          ? undefined
+          : pubky
+            ? handleBookmarks()
+            : openModal('join');
       }}
     />
   );
 };
 
 const MenuButton = ({
-  showMenu,
-  setShowMenu,
-  showSheetMenu,
-  setShowSheetMenu,
   post,
   repost,
 }: {
-  showMenu: boolean;
-  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  showSheetMenu: boolean;
-  setShowSheetMenu: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
   repost?: PostView;
 }) => {
   const { pubky } = usePubkyClientContext();
+  const { openModal } = useModal();
   const isMobile = useIsMobile();
-  const { openJoin } = useJoin();
+  const [showMenu, setShowMenu] = useState(false);
+
   return (
     <div
       className="relative cursor-default"
@@ -102,16 +97,10 @@ const MenuButton = ({
           event.stopPropagation();
           pubky
             ? isMobile
-              ? setShowSheetMenu(true)
+              ? openModal('menuPost', { post: post, repost: repost })
               : setShowMenu(!showMenu)
-            : openJoin();
+            : openModal('join');
         }}
-      />
-      <BottomSheet.Menu
-        post={post}
-        repost={repost}
-        show={showSheetMenu}
-        setShow={setShowSheetMenu}
       />
     </div>
   );
@@ -121,13 +110,10 @@ export default function Actions({
   post,
   repost,
   deleteRepost = false,
-  setShowModalTag,
-  setShowSheetTag,
 }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const { openJoin } = useJoin();
-  const isMobile = useIsMobile();
+  const { openModal, isOpen } = useModal();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   const { data: authorRepost } = useUserProfile(
     repost?.details?.author ?? '',
@@ -135,12 +121,6 @@ export default function Actions({
   );
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
   const { addToast } = useToastContext();
-  const [showMenu, setShowMenu] = useState(false);
-  const [showSheetMenu, setShowSheetMenu] = useState(false);
-  const [showModalRepost, setShowModalRepost] = useState(false);
-  const [showSheetRepost, setShowSheetRepost] = useState(false);
-  const [showModalReply, setShowModalReply] = useState(false);
-  const [showSheetReply, setShowSheetReply] = useState(false);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(
     repost?.bookmark?.id ? repost?.bookmark?.id : (post?.bookmark?.id ?? ''),
@@ -205,6 +185,17 @@ export default function Actions({
     }
   };
 
+  const handleOpenModal = () => {
+    openModal('tags', { post });
+  };
+
+  // Update post in Modal when post.tags changes
+  useEffect(() => {
+    if (isOpen('tags')) {
+      handleOpenModal();
+    }
+  }, [post?.tags]);
+
   return (
     <div className="mt-3">
       <PostUI.Actions>
@@ -214,11 +205,7 @@ export default function Actions({
           variant="custom"
           onClick={(event) => {
             event.stopPropagation();
-            pubky
-              ? isMobile
-                ? setShowSheetTag(true)
-                : setShowModalTag(true)
-              : openJoin();
+            pubky ? handleOpenModal() : openModal('join');
           }}
           icon={
             <div>
@@ -239,11 +226,7 @@ export default function Actions({
           counter={post?.counts?.replies}
           onClick={(event) => {
             event.stopPropagation();
-            pubky
-              ? isMobile
-                ? setShowSheetReply(true)
-                : setShowModalReply(true)
-              : openJoin();
+            pubky ? openModal('createReply', { post }) : openModal('join');
           }}
         />
         <div className="relative">
@@ -262,11 +245,7 @@ export default function Actions({
             counter={post?.counts?.reposts}
             onClick={(event) => {
               event.stopPropagation();
-              pubky
-                ? isMobile
-                  ? setShowSheetRepost(true)
-                  : setShowModalRepost(true)
-                : openJoin();
+              pubky ? openModal('createRepost', { post }) : openModal('join');
             }}
           />
         </div>
@@ -275,40 +254,8 @@ export default function Actions({
           loadingBookmarks={loadingBookmarks}
           handleBookmarks={handleBookmarks}
         />
-        <MenuButton
-          showMenu={showMenu}
-          setShowMenu={setShowMenu}
-          showSheetMenu={showSheetMenu}
-          setShowSheetMenu={setShowSheetMenu}
-          post={post}
-          repost={repost}
-        />
+        <MenuButton post={post} repost={repost} />
       </PostUI.Actions>
-      <div
-        className="cursor-default"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <Modal.CreateRepost
-          post={post}
-          showModalRepost={showModalRepost}
-          setShowModalRepost={setShowModalRepost}
-        />
-        <BottomSheet.CreateRepost
-          post={post}
-          show={showSheetRepost}
-          setShow={setShowSheetRepost}
-        />
-        <Modal.CreateReply
-          post={post}
-          showModalReply={showModalReply}
-          setShowModalReply={setShowModalReply}
-        />
-        <BottomSheet.CreateReply
-          post={post}
-          show={showSheetReply}
-          setShow={setShowSheetReply}
-        />
-      </div>
     </div>
   );
 }

@@ -10,25 +10,19 @@ import EmojiPicker from '@/components/EmojiPicker';
 
 interface CreateFeedProps {
   setShowModalCreateFeed: React.Dispatch<React.SetStateAction<boolean>>;
-  setTagsFeed: React.Dispatch<React.SetStateAction<string[]>>;
-  tagsFeed: string[];
-  setNameFeed: React.Dispatch<React.SetStateAction<string>>;
-  nameFeed: string;
-  handleAddFeed: (feedToAdd: ICustomFeed, name: string) => void;
+  handleLoadFeeds: any;
 }
 
 export default function ContentCreateFeed({
   setShowModalCreateFeed,
-  setTagsFeed,
-  tagsFeed,
-  setNameFeed,
-  nameFeed,
-  handleAddFeed,
+  handleLoadFeeds,
 }: CreateFeedProps) {
-  const { searchTags } = usePubkyClientContext();
+  const { saveFeed, searchTags } = usePubkyClientContext();
   const { reach, layout, sort } = useFilterContext();
   const isMobile = useIsMobile();
   const [tag, setTag] = useState('');
+  const [tagsFeed, setTagsFeed] = useState<string[]>([]);
+  const [nameFeed, setNameFeed] = useState<string>('');
   const [tagsError, setTagsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
@@ -37,6 +31,11 @@ export default function ContentCreateFeed({
   useEffect(() => {
     setTagsFeed(searchTags);
   }, [searchTags]);
+
+  const handleAddFeed = async (feedToAdd: ICustomFeed, name: string) => {
+    await saveFeed(feedToAdd, name);
+    handleLoadFeeds();
+  };
 
   const handleSubmit = async () => {
     setLoading(true);

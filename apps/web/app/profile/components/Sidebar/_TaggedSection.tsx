@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components';
-import { useJoin, usePubkyClientContext } from '@/contexts';
-import { UserTags } from '@/types/User';
+import { useModal, usePubkyClientContext } from '@/contexts';
+import { UserTags, UserView } from '@/types/User';
 import {
   Button,
   Icon,
@@ -10,16 +10,18 @@ import {
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 interface TaggedSectionProps {
   profileTags: UserTags[];
   loadingProfileTags: boolean;
   handleAddProfileTag: (tag: string) => void;
   handleDeleteProfileTag: (tag: string) => void;
-  setShowModalProfileTag: (show: boolean) => void;
   creatorPubky: string | null | undefined;
   name: string;
   loadingTags: string;
+  userPubky: string;
+  user: UserView | null;
 }
 
 export default function TaggedSection({
@@ -27,13 +29,31 @@ export default function TaggedSection({
   loadingProfileTags,
   handleAddProfileTag,
   handleDeleteProfileTag,
-  setShowModalProfileTag,
   creatorPubky,
   name,
   loadingTags,
+  userPubky,
+  user,
 }: TaggedSectionProps) {
   const { pubky } = usePubkyClientContext();
-  const { openJoin } = useJoin();
+  const { openModal, isOpen } = useModal();
+
+  const handleOpenModal = () => {
+    openModal('profileTags', {
+      profileTags: profileTags,
+      handleAddProfileTag: handleAddProfileTag,
+      handleDeleteProfileTag: handleDeleteProfileTag,
+      pubkyUser: userPubky,
+      user: user,
+    });
+  };
+
+  // Update post in Modal when profileTags changes
+  useEffect(() => {
+    if (isOpen('profileTags')) {
+      handleOpenModal();
+    }
+  }, [profileTags]);
 
   return (
     <div className="w-full">
@@ -49,18 +69,6 @@ export default function TaggedSection({
 
                 return (
                   <div className="flex gap-2" key={index}>
-                    {/**<TooltipUI.Root
-                    delay={500}
-                    setShowTooltip={setShowTooltipProfile}
-                    tagId={tag.tag}
-                  >
-                    {showTooltipProfile === tag.tag && (
-                      <Tooltip.Tag
-                        setShowModalTags={setShowModalProfileTag}
-                        setSelectedTag={setSelectedTag}
-                        tags={tag}
-                      />
-                    )}*/}
                     <PostUtil.Tag
                       key={index}
                       clicked={isTagFound}
@@ -70,7 +78,7 @@ export default function TaggedSection({
                           ? isTagFound
                             ? handleDeleteProfileTag(tag?.label)
                             : handleAddProfileTag(tag?.label)
-                          : openJoin();
+                          : openModal('join');
                       }}
                       color={
                         tag?.label && Utils.generateRandomColor(tag?.label)
@@ -108,7 +116,7 @@ export default function TaggedSection({
           <Button.Medium
             id="profile-tag-btn"
             className="mt-2 w-auto h-8 inline-flex items-center"
-            onClick={() => (pubky ? setShowModalProfileTag(true) : openJoin())}
+            onClick={() => (pubky ? handleOpenModal() : openModal('join'))}
             icon={<Icon.Tag size="16" />}
           >
             Tag{' '}

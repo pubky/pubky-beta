@@ -7,13 +7,7 @@ import ContentBackup from '../Modal/_Backup/_Content';
 interface BackupProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  errors: string;
   setShowBackupSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
-  loading: boolean;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: () => Promise<void>;
-  success: boolean;
-  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   title?: string;
   className?: string;
 }
@@ -21,16 +15,11 @@ interface BackupProps {
 export default function Backup({
   show,
   setShow,
-  errors,
   setShowBackupSuccess,
-  loading,
-  setPassword,
-  handleSubmit,
-  success,
-  setSuccess,
   title,
   className,
 }: BackupProps) {
+  const [success, setSuccess] = useState(false);
   const [confirmPhrase, setConfirmPhrase] = useState(false);
   const [showWords, setShowWords] = useState(false);
 
@@ -48,12 +37,8 @@ export default function Backup({
       className={className}
     >
       <ContentBackup
-        loading={loading}
-        setPassword={setPassword}
-        handleSubmit={handleSubmit}
         setShow={setShow}
         setShowBackupSuccess={setShowBackupSuccess}
-        errors={errors}
         confirmPhrase={confirmPhrase}
         setConfirmPhrase={setConfirmPhrase}
         showWords={showWords}

@@ -2,11 +2,13 @@
 
 import { BottomSheet } from '@social/ui-shared';
 import ContentDeletePost from '../Modal/_DeletePost/_Content';
+import { PostView } from '@/types/Post';
 
 interface DeletePostProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  handleDeletePost: () => void;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  post: PostView;
   title?: string;
   className?: string;
 }
@@ -14,7 +16,8 @@ interface DeletePostProps {
 export default function DeletePost({
   show,
   setShow,
-  handleDeletePost,
+  setShowMenu,
+  post,
   title,
   className,
 }: DeletePostProps) {
@@ -27,7 +30,8 @@ export default function DeletePost({
     >
       <ContentDeletePost
         setShowModalDeletePost={setShow}
-        handleDeletePost={handleDeletePost}
+        setShowMenu={setShowMenu}
+        post={post}
       />
     </BottomSheet.Root>
   );

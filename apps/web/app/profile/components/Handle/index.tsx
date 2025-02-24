@@ -3,7 +3,6 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
-import Modal from '@/components/Modal';
 import { Utils } from '@social/utils-shared';
 import Buttons from './_Buttons';
 import Status from './_Status';
@@ -11,7 +10,6 @@ import { usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
 import { TStatus } from '@/types';
 import Parsing from '@/components/Content/_Parsing';
-import { BottomSheet } from '@/components';
 
 interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   pubkey: string;
@@ -27,8 +25,6 @@ export default function Handle({
 }: HandleProps) {
   const { seed, profile } = usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
-  const [showModalLogout, setShowModalLogout] = useState(false);
-  const [showSheetLogout, setShowSheetLogout] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
@@ -74,7 +70,11 @@ export default function Handle({
               )}
             </Typography.Display>
             {bio && (
-              <Typography.Body id="profile-bio-content" variant="medium" className="text-opacity-80">
+              <Typography.Body
+                id="profile-bio-content"
+                variant="medium"
+                className="text-opacity-80"
+              >
                 <Parsing>{bio}</Parsing>
               </Typography.Body>
             )}
@@ -87,8 +87,6 @@ export default function Handle({
               followed={followed}
               loadingFollowed={loadingFollowed}
               disposableAccount={disposableAccount}
-              setShowModalLogout={setShowModalLogout}
-              setShowSheetLogout={setShowSheetLogout}
               setLoadingFollowed={setLoadingFollowed}
               setFollowed={setFollowed}
               profile={profileUser}
@@ -104,11 +102,6 @@ export default function Handle({
           Loading...
         </Typography.Display>
       )}
-      <Modal.Logout
-        showModalLogout={showModalLogout}
-        setShowModalLogout={setShowModalLogout}
-      />
-      <BottomSheet.Logout show={showSheetLogout} setShow={setShowSheetLogout} />
     </div>
   );
 }

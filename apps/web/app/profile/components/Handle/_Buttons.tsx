@@ -1,7 +1,7 @@
 import { Button, Icon } from '@social/ui-shared';
 import {
   useAlertContext,
-  useJoin,
+  useModal,
   usePubkyClientContext,
   useToastContext,
 } from '@/contexts';
@@ -12,7 +12,6 @@ import { UserView } from '@/types/User';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { BottomSheet } from '@/components';
 
 interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky: string | null | undefined;
@@ -21,8 +20,6 @@ interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   followed: boolean;
   loadingFollowed: boolean;
   disposableAccount: boolean;
-  setShowModalLogout: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowSheetLogout: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   setFollowed: React.Dispatch<React.SetStateAction<boolean>>;
   profile: UserView | null;
@@ -35,20 +32,17 @@ export default function Buttons({
   followed,
   loadingFollowed,
   disposableAccount,
-  setShowModalLogout,
-  setShowSheetLogout,
   setLoadingFollowed,
   setFollowed,
   profile,
 }: ButtonsProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
   const isMobile = useIsMobile();
   const { addToast } = useToastContext();
   const { addAlert } = useAlertContext();
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [showSheetProfileMenu, setShowSheetProfileMenu] = useState(false);
 
   const followUser = async () => {
     try {
@@ -106,11 +100,7 @@ export default function Buttons({
 
   const handleLogoutClick = () => {
     if (disposableAccount) {
-      if (isMobile) {
-        setShowSheetLogout(true);
-      } else {
-        setShowModalLogout(true);
-      }
+      openModal('logout');
     } else {
       router.push('/logout');
     }
@@ -152,7 +142,7 @@ export default function Buttons({
               onClick={
                 loadingFollowed
                   ? undefined
-                  : () => (pubky ? followUser() : openJoin())
+                  : () => (pubky ? followUser() : openModal('join'))
               }
               disabled={loadingFollowed}
               loading={loadingFollowed}
@@ -228,19 +218,16 @@ export default function Buttons({
             onClick={() =>
               pubky
                 ? isMobile
-                  ? setShowSheetProfileMenu(true)
-                  : setShowProfileMenu(true)
-                : openJoin()
+                  ? openModal('menuProfile', {
+                      creatorPubky: creatorPubky,
+                      name: profile?.details?.name,
+                    })
+                  : setShowProfileMenu(!showProfileMenu)
+                : openModal('join')
             }
           />
         </div>
       )}
-      <BottomSheet.MenuProfile
-        show={showSheetProfileMenu}
-        setShow={setShowSheetProfileMenu}
-        creatorPubky={creatorPubky ?? pubkey}
-        profile={profile}
-      />
     </>
   );
 }

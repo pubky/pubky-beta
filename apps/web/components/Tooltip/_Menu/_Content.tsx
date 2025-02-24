@@ -7,21 +7,10 @@ import { ButtonTooltip } from '../Button';
 interface TooltipMenuProps {
   post: PostView;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowModalDeletePost: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowModalReportPost: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowModalEditArticle: React.Dispatch<React.SetStateAction<boolean>>;
   repost?: PostView;
 }
 
-export default function ContentMenu({
-  post,
-  setShowMenu,
-  setShowModalDeletePost,
-  setShowModalReportPost,
-  setShowModalEditPost,
-  setShowModalEditArticle,
-}: TooltipMenuProps) {
+export default function ContentMenu({ post, setShowMenu }: TooltipMenuProps) {
   const { pubky } = usePubkyClientContext();
 
   return (
@@ -32,30 +21,19 @@ export default function ContentMenu({
           setShowMenu={setShowMenu}
         />
       )}
-      {/**post?.details?.author === pubky && (
-            <ButtonTooltip.EditProfile setShowMenu={setShowMenu}/>
-          )*/}
-      <ButtonTooltip.EditPost
-        post={post}
-        setShowModalEditArticle={setShowModalEditArticle}
-        setShowModalEditPost={setShowModalEditPost}
-      />
+      <ButtonTooltip.EditPost post={post} />
       <ButtonTooltip.CopyUserPubky
         pk={post?.details?.author}
         setShowMenu={setShowMenu}
       />
       <ButtonTooltip.CopyLinkPost post={post} setShowMenu={setShowMenu} />
       <ButtonTooltip.CopyTextPost post={post} setShowMenu={setShowMenu} />
-      {/**<ButtonTooltip.Bookmark post={post} repost={repost} setShowMenu={setShowMenu} />*/}
       {post?.details?.author !== pubky && (
         <ButtonTooltip.Mute pk={post?.details?.author} />
       )}
-      <ButtonTooltip.DeletePost
-        post={post}
-        setShowModalDeletePost={setShowModalDeletePost}
-      />
+      <ButtonTooltip.DeletePost post={post} setShowMenu={setShowMenu} />
       {post?.details?.author !== pubky && (
-        <ButtonTooltip.ReportPost setShowModal={setShowModalReportPost} />
+        <ButtonTooltip.ReportPost post={post} />
       )}
     </>
   );

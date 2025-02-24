@@ -1,20 +1,15 @@
 import { Icon, Tooltip } from '@social/ui-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface EditPostProps {
   post: PostView;
-  setShowModalEditArticle: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function EditPost({
-  post,
-  setShowModalEditArticle,
-  setShowModalEditPost,
-}: EditPostProps) {
+export default function EditPost({ post }: EditPostProps) {
   const { pubky } = usePubkyClientContext();
+  const { openModal } = useModal();
 
   return (
     <>
@@ -24,7 +19,7 @@ export default function EditPost({
           PubkyAppPostKind[1].toLocaleLowerCase() ? (
             <Tooltip.Item
               id="edit-article"
-              onClick={() => setShowModalEditArticle(true)}
+              onClick={() => openModal('editArticle', { article: post })}
               icon={<Icon.Pencil size="24" />}
             >
               Edit article
@@ -32,7 +27,7 @@ export default function EditPost({
           ) : (
             <Tooltip.Item
               id="edit-post"
-              onClick={() => setShowModalEditPost(true)}
+              onClick={() => openModal('editPost', { post })}
               icon={<Icon.Pencil size="24" />}
             >
               Edit post

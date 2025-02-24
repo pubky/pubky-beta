@@ -6,7 +6,6 @@ import ContentReportProfile from './Components/_Content';
 interface ReportProfileProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  modalReportPostRef: React.RefObject<HTMLDivElement>;
   pk: string;
   name: string | undefined;
 }
@@ -14,7 +13,6 @@ interface ReportProfileProps {
 export default function ReportProfile({
   showModal,
   setShowModal,
-  modalReportPostRef,
   pk,
   name,
 }: ReportProfileProps) {
@@ -22,7 +20,6 @@ export default function ReportProfile({
     <Modal.Root
       show={showModal}
       closeModal={() => setShowModal(false)}
-      modalRef={modalReportPostRef}
       className="lg:w-[588px] max-w-[1200px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />

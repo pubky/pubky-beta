@@ -21,34 +21,24 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { usePostTagTaggers } from '@/hooks/useUser';
 import Post from '@/components/Post';
 import EmojiPicker from '@/components/EmojiPicker';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { useTagsLogic } from '@/components/Post/Tags/components/TagsUtils';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
-  setShowModalTag: React.Dispatch<React.SetStateAction<boolean>>;
-  tags: PostTag[];
   post: PostView;
-  handleAddTag: (tag: string) => Promise<void>;
-  handleDeleteTag: (tag: string) => Promise<void>;
-  selectedTag?: PostTag | null;
-  setSelectedTag?: React.Dispatch<React.SetStateAction<PostTag | null>>;
   tagsError?: boolean;
 }
 
-export default function ContentTag({
-  setShowModalTag,
-  tags,
-  post,
-  handleAddTag,
-  handleDeleteTag,
-  selectedTag,
-  setSelectedTag,
-  tagsError,
-}: TagProps) {
+export default function ContentTag({ post, tagsError }: TagProps) {
   const { addAlert } = useAlertContext();
-  const modalTagRef = useRef<HTMLDivElement>(null);
   const { pubky, follow, unfollow } = usePubkyClientContext();
+  const { handleAddTag, handleDeleteTag } = useTagsLogic(post);
   const [tag, setTag] = useState('');
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
@@ -62,9 +52,8 @@ export default function ContentTag({
     {},
   );
   const [loading, setLoading] = useState(false);
-  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const limit = 5;
-  const [allTags, setAllTags] = useState<PostTag[]>(tags.slice(0, limit));
+  const [allTags, setAllTags] = useState<PostTag[]>(post?.tags);
   const [loadingTags, setLoadingTags] = useState('');
   const [skip, setSkip] = useState(limit);
   const [hasMore, setHasMore] = useState(post.counts?.tags > limit);
@@ -91,15 +80,8 @@ export default function ContentTag({
   );
 
   useEffect(() => {
-    const uniqueTags = tags.filter(
-      (tag, index, self) =>
-        index === self.findIndex((t) => t.label === tag.label),
-    );
-    if (JSON.stringify(uniqueTags) !== JSON.stringify(allTags)) {
-      setAllTags(uniqueTags);
-    }
-  }, [tags]);
-
+    setAllTags(post?.tags);
+  }, [post?.tags]);
   useEffect(() => {
     if (selectedTag) {
       const initialTaggers = selectedTag.taggers.slice(0, limitTaggers);
@@ -265,22 +247,6 @@ export default function ContentTag({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutsideModalTag = (event: MouseEvent) => {
-      if (
-        modalTagRef.current &&
-        !modalTagRef.current.contains(event.target as Node)
-      ) {
-        setShowModalTag(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModalTag);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModalTag);
-    };
-  }, [modalTagRef, setShowModalTag]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const valueWithoutSpaces = e.target.value
       .toLowerCase()
@@ -320,28 +286,12 @@ export default function ContentTag({
 
   useEffect(() => {
     if (selectedTag) {
-      const updatedTag = tags.find((tag) => tag.label === selectedTag.label);
+      const updatedTag = allTags.find((tag) => tag.label === selectedTag.label);
       if (updatedTag && setSelectedTag) {
         setSelectedTag(updatedTag);
       }
     }
-  }, [tags]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
+  }, [allTags]);
 
   return (
     <div className="flex flex-col md:flex-row gap-6">

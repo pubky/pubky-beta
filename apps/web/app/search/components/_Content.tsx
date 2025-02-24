@@ -1,19 +1,15 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Content, Menu } from '@social/ui-shared';
 import { ButtonFilters } from '@/components';
 import { useFilterContext } from '@/contexts';
 import { Filter } from '@/components/Filter';
 import { SearchPage } from '.';
-import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 export default function ContentSearch() {
   const { layout } = useFilterContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
-  const drawerFilterRef = useRef<HTMLDivElement>(null);
-
-  useDrawerClickOutside(drawerFilterRef, () => setDrawerFilterOpen(false));
 
   return (
     <>
@@ -27,7 +23,6 @@ export default function ContentSearch() {
       </Content.Grid>
       <Menu.Root
         position="left"
-        drawerRef={drawerFilterRef}
         drawerOpen={drawerFilterOpen}
         setDrawerOpen={setDrawerFilterOpen}
         clickableArea={layout === 'wide'}

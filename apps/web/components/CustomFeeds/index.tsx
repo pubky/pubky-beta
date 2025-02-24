@@ -1,11 +1,10 @@
 'use client';
 
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { useFilterContext, useModal, usePubkyClientContext } from '@/contexts';
 import { ICustomFeed } from '@/types';
 import { Icon, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import Modal from '../Modal';
 import { Utils } from '@social/utils-shared';
 
 interface CustomFeedsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -27,12 +26,10 @@ export default function CustomFeeds({
   const baseCSS =
     'cursor-pointer hover:bg-opacity-10 py-3 px-5 justify-center items-center gap-2 hidden lg:inline-flex bg-white bg-opacity-5 rounded-tl-lg rounded-tr-lg';
   const activeCSS = 'bg-white bg-opacity-10 rounded-tr-lg';
+  const { openModal } = useModal();
   const { reach } = useFilterContext();
-  const [showModalCreateFeed, setShowModalCreateFeed] = useState(false);
-  const [tagsFeed, setTagsFeed] = useState<string[]>([]);
-  const [nameFeed, setNameFeed] = useState<string>('');
   const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
-  const { saveFeed, loadFeeds, deleteFeed } = usePubkyClientContext();
+  const { loadFeeds, deleteFeed } = usePubkyClientContext();
 
   useEffect(() => {
     handleLoadFeeds();
@@ -69,11 +66,6 @@ export default function CustomFeeds({
       Utils.storage.set('feed', selectedFeed);
     }
   }, [selectedFeed]);
-
-  const handleAddFeed = async (feedToAdd: ICustomFeed, name: string) => {
-    await saveFeed(feedToAdd, name);
-    handleLoadFeeds();
-  };
 
   const handleFeedSelect = (feed: ICustomFeed) => {
     setSelectedFeed(feed);
@@ -142,7 +134,9 @@ export default function CustomFeeds({
           {feeds && feeds?.length < 4 && (
             <div
               onClick={() =>
-                loading ? undefined : setShowModalCreateFeed(true)
+                loading
+                  ? undefined
+                  : openModal('createFeed', { handleLoadFeeds })
               }
               className={twMerge(
                 baseCSS,
@@ -157,15 +151,6 @@ export default function CustomFeeds({
               )}
             </div>
           )}
-          <Modal.CreateFeed
-            setNameFeed={setNameFeed}
-            nameFeed={nameFeed}
-            handleAddFeed={handleAddFeed}
-            setShowModalCreateFeed={setShowModalCreateFeed}
-            showModalCreateFeed={showModalCreateFeed}
-            setTagsFeed={setTagsFeed}
-            tagsFeed={tagsFeed}
-          />
         </div>
       )}
     </>

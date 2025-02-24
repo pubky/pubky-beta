@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Icon, Typography } from '@social/ui-shared';
 import { Skeleton } from '@/components';
-import { useFilterContext, useJoin, usePubkyClientContext } from '@/contexts';
+import { useFilterContext, useModal, usePubkyClientContext } from '@/contexts';
 import { UserCounts } from '@/types/User';
 
 const tabs = [
@@ -85,7 +85,7 @@ export default function FilterTabs({
   children: React.ReactNode;
 }) {
   const { pubky } = usePubkyClientContext();
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
   const { unReadNotification } = useFilterContext();
   const router = useRouter();
 
@@ -138,7 +138,7 @@ export default function FilterTabs({
               id={`profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() =>
-                pubky ? handleTabClick(tab.id, tab.key) : openJoin()
+                pubky ? handleTabClick(tab.id, tab.key) : openModal('join')
               }
               className={`w-full py-2 px-3 items-center flex justify-between cursor-pointer ${
                 isActive && !loading

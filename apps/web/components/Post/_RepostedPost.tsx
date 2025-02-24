@@ -3,8 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import Header from './_Header';
 import Content from './_Content';
 import Actions from './_Actions';
-import Tags from './_Tags';
-import TagsLargeView from './_TagsLargeView';
+import Tags from './Tags';
 
 import { PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
@@ -35,10 +34,6 @@ export default function RepostedPost({
   line,
   lineStyle,
   repostView,
-  showModalTag,
-  setShowModalTag,
-  showSheetTag,
-  setShowSheetTag,
   restClassName,
   notFoundClassName,
 }: RepostedPostProps) {
@@ -94,25 +89,12 @@ export default function RepostedPost({
             }`}
           >
             {!repostView && (
-              <Tags
-                showModalTag={showModalTag}
-                setShowModalTag={setShowModalTag}
-                showSheetTag={showSheetTag}
-                setShowSheetTag={setShowSheetTag}
-                largeView={largeView}
-                post={repostedPost}
-              />
+              <Tags.Standard largeView={largeView} post={repostedPost} />
             )}
-            {!repostView && (
-              <Actions
-                setShowModalTag={setShowModalTag}
-                setShowSheetTag={setShowSheetTag}
-                post={repostedPost}
-              />
-            )}
+            {!repostView && <Actions post={repostedPost} />}
           </div>
         </div>
-        {largeView && <TagsLargeView post={repostedPost} />}
+        {largeView && <Tags.LargeView post={repostedPost} />}
       </PostUI.MainCard>
     </div>
   );

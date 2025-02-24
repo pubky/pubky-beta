@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
-  drawerRef: React.RefObject<HTMLDivElement>;
   drawerOpen: boolean;
   position?: 'left' | 'right';
   setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,7 +11,6 @@ interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Root = ({
-  drawerRef,
   drawerOpen,
   setDrawerOpen,
   children,
@@ -100,7 +98,6 @@ export const Root = ({
       {/* Drawer */}
       <div
         {...rest}
-        ref={drawerRef}
         id="drawer-example"
         className={twMerge(
           baseCSS,

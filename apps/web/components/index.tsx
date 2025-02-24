@@ -14,7 +14,6 @@ import HotTags from './HotTags';
 import LinkPreviewer from './LinkPreview';
 import Post from './Post';
 import PostsLayout from './PostsLayout';
-import Repost from './Repost';
 import Sidebar from './Sidebar';
 import WhoFollow from './WhoFollow';
 import Skeleton from './Skeletons';
@@ -40,7 +39,6 @@ export {
   LinkPreviewer,
   Post,
   PostsLayout,
-  Repost,
   Sidebar,
   WhoFollow,
   Skeleton,

@@ -3,35 +3,26 @@ import { PostView } from '@/types/Post';
 import ContentEditPost from './_Content';
 
 interface CreateEditPostProps {
-  showModalEditPost: boolean;
-  setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
-  modalEditPostRef: React.RefObject<HTMLDivElement>;
-  handleCloseModal: () => void;
 }
 
 export default function EditPost({
-  showModalEditPost,
-  setShowModalEditPost,
-  modalEditPostRef,
+  showModal,
+  setShowModal,
   post,
-  handleCloseModal,
 }: CreateEditPostProps) {
   return (
     <Modal.Root
-      modalRef={modalEditPostRef}
-      show={showModalEditPost}
-      closeModal={() => setShowModalEditPost(false)}
+      show={showModal}
+      closeModal={() => setShowModal(false)}
       className="md:w-[792px] max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
     >
-      <Modal.CloseAction onClick={() => setShowModalEditPost(false)} />
+      <Modal.CloseAction onClick={() => setShowModal(false)} />
       <div className="flex flex-col gap-4">
         <Modal.Header title="Edit Post" />
-        <ContentEditPost
-          setShowModalEditPost={setShowModalEditPost}
-          post={post}
-          handleCloseModal={handleCloseModal}
-        />
+        <ContentEditPost setShowModalEditPost={setShowModal} post={post} />
       </div>
     </Modal.Root>
   );

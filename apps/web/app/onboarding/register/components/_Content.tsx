@@ -2,16 +2,14 @@
 
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
-import { Modal } from '@/components/Modal';
 import { Onboarding } from '../../components';
 import { Card } from '../Card';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
-import { BottomSheet } from '@/components';
 import genJdenticon from 'libs/utils-shared/src/lib/Helper/genJdenticon';
 import { processUserLinks } from './processUserLinks';
 
@@ -40,9 +38,6 @@ export default function Index() {
   const [bio, setBio] = useState('');
   const [image, setImage] = useState<File | string | undefined>();
   const [generatedImage, setGeneratedImage] = useState<File>();
-  const [showModalLink, setShowModalLink] = useState(false);
-  const [showSheetLink, setShowSheetLink] = useState(false);
-  const modalLinkRef = useRef<HTMLDivElement>(null);
   const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
     { url: '', title: 'x (twitter)', placeHolder: '@user' },
@@ -69,30 +64,8 @@ export default function Index() {
   }, [profile?.image, image]);
 
   useEffect(() => {
-    const handleClickOutsideModal = (event: MouseEvent) => {
-      if (
-        modalLinkRef.current &&
-        !modalLinkRef.current.contains(event.target as Node)
-      ) {
-        setShowModalLink(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModal);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModal);
-    };
-  }, [modalLinkRef, setShowModalLink]);
-
-  useEffect(() => {
     addAlert('Add info, your profile is empty.', 'warning');
   }, [pubky]);
-
-  const handleAddLink = (title: string, url: string) => {
-    setLinks([...links, { title, url }]);
-    setShowModalLink(false);
-    setShowSheetLink(false);
-  };
 
   const handleSubmit = async () => {
     if (loading) {
@@ -179,9 +152,8 @@ export default function Index() {
         <Card.Links
           links={links}
           setLinks={setLinks}
-          setShowModalLink={setShowModalLink}
-          setShowSheetLink={setShowSheetLink}
           errors={errors}
+          loading={loading}
         />
         <Card.Pic
           image={image}
@@ -210,17 +182,6 @@ export default function Index() {
           Finish
         </Button.Large>
       </div>
-      <Modal.Link
-        showModalLink={showModalLink}
-        setShowModalLink={setShowModalLink}
-        modalLinkRef={modalLinkRef}
-        onAddLink={handleAddLink}
-      />
-      <BottomSheet.Link
-        show={showSheetLink}
-        setShow={setShowSheetLink}
-        onAddLink={handleAddLink}
-      />
     </Onboarding.Layout>
   );
 }

@@ -12,6 +12,7 @@ import EditArticle from './_EditArticle';
 import EditPost from './_EditPost';
 import Feedback from './_Feedback';
 import FilesCarousel from './_FilesCarousel';
+import Join from './_Join';
 import Link from './_Link';
 import Logout from './_Logout';
 import ProfileTag from './_TagProfile';
@@ -38,6 +39,7 @@ export const Modal = {
   EditPost,
   Feedback,
   FilesCarousel,
+  Join,
   Link,
   Logout,
   ProfileTag,

@@ -4,7 +4,6 @@ import { Typography, Post as PostUI, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { Post as PostComponent } from '@/components';
 import { ImageByUri } from '@/components/ImageByUri';
-import TagsLargeView from '@/components/Post/_TagsLargeView';
 import { Post } from '.';
 
 import { useUserProfile } from '@/hooks/useUser';
@@ -12,6 +11,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 
 import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
+import Tags from '@/components/Post/Tags';
 
 export function ValidPostContent({ postRef, data }) {
   const { pubky } = usePubkyClientContext();
@@ -125,7 +125,7 @@ const LongPost = ({ data, user }) => {
           }}
         ></div>
       </div>
-      <TagsLargeView post={data} />
+      <Tags.LargeView post={data} />
     </div>
   );
 };

@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Content, Menu } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
 import { useFilterContext } from '@/contexts';
-import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { LeftSidebar } from './_LeftSidebar';
 import { RightSidebar } from './_RightSidebar';
 import { MainContent } from './_MainContent';
@@ -14,9 +13,6 @@ export default function ContentHome() {
   const { layout, selectedFeed, setSelectedFeed } = useFilterContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [loadingFeed, setLoadingFeed] = useState(true);
-  const drawerFilterRef = useRef<HTMLDivElement>(null);
-
-  useDrawerClickOutside(drawerFilterRef, () => setDrawerFilterOpen(false));
 
   return (
     <>
@@ -36,7 +32,6 @@ export default function ContentHome() {
       </Content.Grid>
       <Menu.Root
         position="left"
-        drawerRef={drawerFilterRef}
         drawerOpen={drawerFilterOpen}
         setDrawerOpen={setDrawerFilterOpen}
         clickableArea={layout === 'wide'}

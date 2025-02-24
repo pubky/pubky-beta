@@ -1,8 +1,8 @@
 'use client';
 
-import { BottomSheet, ContentNotFound, Skeleton } from '@/components';
+import { ContentNotFound, Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
-import { useAlertContext, useJoin, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 import {
   Button,
@@ -13,11 +13,9 @@ import {
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '@/components/ImageByUri';
-import Modal from '@/components/Modal';
 import { useEffect, useState } from 'react';
 import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
-import { useIsMobile } from '@/hooks/useIsMobile';
 import LinksSection from './Sidebar/_LinksSection';
 import { useTagsUser } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
@@ -29,22 +27,14 @@ type TaggedAsProps = {
 };
 
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
-  const { openJoin } = useJoin();
+  const { openModal, isOpen } = useModal();
   const { addAlert } = useAlertContext();
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
-  const isMobile = useIsMobile();
   const usePubky = creatorPubky || pubky || '';
   const { data: user } = useUserProfile(usePubky, pubky ?? '');
   const name = user?.details?.name;
   const [profileTags, setProfileTags] = useState<UserTags[]>(user?.tags ?? []);
   const links = user?.details?.links ?? [];
-  const [showModalProfileTag, setShowModalProfileTag] = useState(false);
-  const [showSheetProfileTag, setShowSheetProfileTag] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
-  const [showModalCheckLink, setShowModalCheckLink] = useState(false);
-  const [showSheetCheckLink, setShowSheetCheckLink] = useState(false);
-  const [clickedLink, setClickedLink] = useState('');
-  const checkLink = Utils.storage.get('checkLink') as boolean;
   const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>(
     [],
   );
@@ -201,6 +191,23 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     }
   };
 
+  const handleOpenModal = () => {
+    openModal('profileTags', {
+      profileTags: profileTags,
+      handleAddProfileTag: handleAddProfileTag,
+      handleDeleteProfileTag: handleDeleteProfileTag,
+      pubkyUser: usePubky,
+      user: user,
+    });
+  };
+
+  // Update post in Modal when profileTags changes
+  useEffect(() => {
+    if (isOpen('profileTags')) {
+      handleOpenModal();
+    }
+  }, [profileTags]);
+
   return (
     <div className="w-full mx-2 lg:mx-0">
       {name && profileTags.length > 0 && (
@@ -239,7 +246,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                             ? isTagFound
                               ? handleDeleteProfileTag(tag?.label)
                               : handleAddProfileTag(tag?.label)
-                            : openJoin();
+                            : openModal('join');
                         }}
                         color={
                           tag?.label && Utils.generateRandomColor(tag?.label)
@@ -268,12 +275,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                         />
                       </Link>
                       <div
-                        onClick={() => {
-                          setSelectedTag(tag);
-                          isMobile
-                            ? setShowSheetProfileTag(true)
-                            : setShowModalProfileTag(true);
-                        }}
+                        onClick={handleOpenModal}
                         className="cursor-pointer flex items-center"
                       >
                         {displayedImages?.map((image, imageIndex) => (
@@ -328,11 +330,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             )}
             <Button.Medium
               className={`mt-2 w-auto h-8 inline-flex lg:hidden items-center ${profileTags.length === 0 && 'self-center'}`}
-              onClick={() =>
-                isMobile
-                  ? setShowSheetProfileTag(true)
-                  : setShowModalProfileTag(true)
-              }
+              onClick={handleOpenModal}
               icon={<Icon.Tag size="16" />}
             >
               Tag{' '}
@@ -342,48 +340,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             </Button.Medium>
           </div>
           <div className="flex lg:hidden mt-6">
-            <LinksSection
-              links={links}
-              checkLink={checkLink}
-              setShowModalCheckLink={setShowModalCheckLink}
-              setShowSheetCheckLink={setShowSheetCheckLink}
-              setClickedLink={setClickedLink}
-            />
+            <LinksSection links={links} />
           </div>
         </>
       )}
-      <Modal.ProfileTag
-        profileTags={profileTags ?? []}
-        showModalProfileTag={showModalProfileTag}
-        setShowModalProfileTag={setShowModalProfileTag}
-        handleAddProfileTag={handleAddProfileTag}
-        handleDeleteProfileTag={handleDeleteProfileTag}
-        selectedTag={selectedTag}
-        setSelectedTag={setSelectedTag}
-        pubkyUser={creatorPubky}
-        user={user}
-      />
-      <BottomSheet.TagProfile
-        profileTags={profileTags ?? []}
-        show={showSheetProfileTag}
-        setShow={setShowSheetProfileTag}
-        handleAddProfileTag={handleAddProfileTag}
-        handleDeleteProfileTag={handleDeleteProfileTag}
-        selectedTag={selectedTag}
-        setSelectedTag={setSelectedTag}
-        pubkyUser={creatorPubky}
-        user={user}
-      />
-      <Modal.CheckLink
-        showModalCheckLink={showModalCheckLink}
-        setShowModalCheckLink={setShowModalCheckLink}
-        clickedLink={clickedLink}
-      />
-      <BottomSheet.CheckLink
-        show={showSheetCheckLink}
-        setShow={setShowSheetCheckLink}
-        clickedLink={clickedLink}
-      />
     </div>
   );
 }

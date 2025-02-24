@@ -30,7 +30,6 @@ export default function EditPost({
         setShowModalEditPost={setShow}
         className="p-0 border-none"
         post={post}
-        handleCloseModal={() => setShow(false)}
       />
     </BottomSheet.Root>
   );

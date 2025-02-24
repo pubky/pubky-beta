@@ -1,72 +1,23 @@
 'use client';
 
-import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import Modal from '@/components/Modal';
+import { useEffect, useState } from 'react';
 import { Button, Icon, Input, Tooltip, Typography } from '@social/ui-shared';
-import { Utils } from '@social/utils-shared';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { BottomSheet } from '@/components';
-
-const passwordSchema = z.object({
-  password: z
-    .string()
-    .min(6, { message: 'Password must be at least 6 characters long' }),
-});
 
 export default function Account() {
   const router = useRouter();
-  const {
-    seed,
-    setSeed,
-    mnemonic,
-    setMnemonic,
-    getRecoveryFile,
-    deleteAccount,
-    downloadData,
-    importData,
-  } = usePubkyClientContext();
+  const { seed, mnemonic, downloadData, importData } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const isMobile = useIsMobile();
+  const { openModal } = useModal();
   const [fileName, setFileName] = useState('file.zip');
-  const [deleteProgress, setDeleteProgress] = useState(0);
-  const [deletingAccount, setDeletingAccount] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
   const [importProgress, setImportProgress] = useState(0);
   const [importingData, setImportingData] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [disposableAccount, setDisposableAccount] = useState(false);
-  const [showModalBackup, setShowModalBackup] = useState(false);
-  const [showSheetBackup, setShowSheetBackup] = useState(false);
-  const [showModalDeleteAccount, setShowModalDeleteAccount] = useState(false);
-  const [showSheetDeleteAccount, setShowSheetDeleteAccount] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [loadingRecoveryFile, setLoadingRecoveryFile] = useState(false);
-  const [password, setPassword] = useState('');
-  const [errorPassword, setErrorPassword] = useState<string>('');
-  const modalBackupRef = useRef<HTMLDivElement>(null);
-
-  const handleDeleteAccount = async () => {
-    setDeletingAccount(true);
-    setDeleteProgress(0); // Reset progress
-
-    const result = await deleteAccount(setDeleteProgress);
-
-    if (result) {
-      addAlert('Account deleted successfully!');
-    } else {
-      addAlert('Error deleting account', 'warning');
-    }
-
-    setDeletingAccount(false);
-    setShowModalDeleteAccount(false);
-    setShowSheetDeleteAccount(false);
-    router.push('/logout');
-  };
 
   const handleDownloadData = async () => {
     setLoadingDownload(true);
@@ -117,86 +68,6 @@ export default function Account() {
     }
   }, [seed]);
 
-  const handleDownloadRecoveryFile = async ({
-    recoveryFile,
-    filename,
-  }: {
-    recoveryFile: Buffer;
-    filename: string;
-  }) => {
-    try {
-      const element = document.createElement('a');
-
-      const fileBlob = new Blob([recoveryFile]);
-
-      element.href = URL.createObjectURL(fileBlob);
-      element.download = filename;
-      document.body.appendChild(element); // Required for this to work in FireFox
-      element.click();
-
-      setSeed(undefined);
-      setMnemonic(undefined);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleRecoveryFile = async () => {
-    if (loadingRecoveryFile) {
-      return;
-    }
-    try {
-      setLoadingRecoveryFile(true);
-      setErrorPassword('');
-
-      const result = passwordSchema.safeParse({
-        password,
-      });
-
-      if (!result.success) {
-        setErrorPassword(
-          result.error.errors.map((err) => err.message).join(', '),
-        );
-        setLoadingRecoveryFile(false);
-        return;
-      }
-      const recoveryFileResponse = await getRecoveryFile(password);
-
-      if (!recoveryFileResponse) {
-        throw new Error('Something went wrong');
-      }
-
-      await handleDownloadRecoveryFile({
-        recoveryFile: recoveryFileResponse,
-        filename: 'recovery_key.pkarr',
-      });
-
-      Utils.storage.remove('seed');
-      Utils.storage.remove('mnemonic');
-      setSuccess(true);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingRecoveryFile(false);
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutsideModal = (event: MouseEvent) => {
-      if (
-        modalBackupRef.current &&
-        !modalBackupRef.current.contains(event.target as Node)
-      ) {
-        setShowModalBackup(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutsideModal);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModal);
-    };
-  }, [modalBackupRef, setShowModalBackup]);
-
   return (
     <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-lg flex-col justify-start items-start inline-flex">
       <div className="flex-col justify-start items-start gap-6 flex">
@@ -239,14 +110,7 @@ export default function Account() {
             variant="secondary"
             className="w-auto"
             disabled={!disposableAccount}
-            onClick={
-              disposableAccount
-                ? () =>
-                    isMobile
-                      ? setShowSheetBackup(true)
-                      : setShowModalBackup(true)
-                : undefined
-            }
+            onClick={disposableAccount ? () => openModal('backup') : undefined}
           >
             Back up account
           </Button.Large>
@@ -278,16 +142,9 @@ export default function Account() {
           icon={<Icon.Trash size="16" />}
           variant="secondary"
           className="w-auto"
-          onClick={() =>
-            isMobile
-              ? setShowSheetDeleteAccount(true)
-              : setShowModalDeleteAccount(true)
-          }
-          loading={deletingAccount}
+          onClick={() => openModal('deleteAccount')}
         >
-          {deletingAccount
-            ? `Deleting... ${deleteProgress}%`
-            : 'Delete Account'}
+          Delete Account
         </Button.Large>
       </div>
       <div className="w-full h-px bg-white bg-opacity-10 my-12" />
@@ -356,41 +213,6 @@ export default function Account() {
           disabled={importingData}
         />
       </div>
-      <Modal.Backup
-        loading={loadingRecoveryFile}
-        setPassword={setPassword}
-        handleSubmit={handleRecoveryFile}
-        showModalBackup={showModalBackup}
-        setShowModalBackup={setShowModalBackup}
-        modalBackupRef={modalBackupRef}
-        errors={errorPassword}
-        success={success}
-        setSuccess={setSuccess}
-      />
-      <Modal.DeleteAccount
-        deletingAccount={deletingAccount}
-        deleteProgress={deleteProgress}
-        showModalDeleteAccount={showModalDeleteAccount}
-        setShowModalDeleteAccount={setShowModalDeleteAccount}
-        handleDeleteAccount={handleDeleteAccount}
-      />
-      <BottomSheet.Backup
-        loading={loadingRecoveryFile}
-        setPassword={setPassword}
-        handleSubmit={handleRecoveryFile}
-        show={showSheetBackup}
-        setShow={setShowSheetBackup}
-        errors={errorPassword}
-        success={success}
-        setSuccess={setSuccess}
-      />
-      <BottomSheet.DeleteAccount
-        deletingAccount={deletingAccount}
-        deleteProgress={deleteProgress}
-        show={showSheetDeleteAccount}
-        setShow={setShowSheetDeleteAccount}
-        handleDeleteAccount={handleDeleteAccount}
-      />
     </div>
   );
 }

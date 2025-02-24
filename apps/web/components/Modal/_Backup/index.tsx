@@ -5,47 +5,33 @@ import { useState } from 'react';
 import ContentBackup from './_Content';
 
 interface BackupProps {
-  loading: boolean;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: () => Promise<void>;
-  showModalBackup: boolean;
-  setShowModalBackup: React.Dispatch<React.SetStateAction<boolean>>;
-  modalBackupRef: React.RefObject<HTMLDivElement>;
-  errors: string;
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowBackupSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
-  success: boolean;
-  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Backup({
-  loading,
-  setPassword,
-  handleSubmit,
-  showModalBackup,
-  setShowModalBackup,
-  modalBackupRef,
+  showModal,
+  setShowModal,
   setShowBackupSuccess,
-  errors,
-  success,
-  setSuccess,
 }: BackupProps) {
   const [confirmPhrase, setConfirmPhrase] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [showWords, setShowWords] = useState(false);
 
   return (
     <Modal.Root
-      show={showModalBackup}
+      show={showModal}
       closeModal={() => {
-        setShowModalBackup(false);
+        setShowModal(false);
         setShowWords(false);
       }}
-      modalRef={modalBackupRef}
       className="md:max-w-[792px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction
         id="backup-close-btn"
         onClick={() => {
-          setShowModalBackup(false);
+          setShowModal(false);
           setShowWords(false);
         }}
       />
@@ -59,12 +45,8 @@ export default function Backup({
         }
       />
       <ContentBackup
-        loading={loading}
-        setPassword={setPassword}
-        handleSubmit={handleSubmit}
-        setShow={setShowModalBackup}
+        setShow={setShowModal}
         setShowBackupSuccess={setShowBackupSuccess}
-        errors={errors}
         confirmPhrase={confirmPhrase}
         setConfirmPhrase={setConfirmPhrase}
         showWords={showWords}

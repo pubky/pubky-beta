@@ -1,14 +1,12 @@
-import { useIsMobile } from '@/hooks/useIsMobile';
+import { useModal } from '@/contexts';
 import { Icon, SideCard, Typography } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
 import { PubkyAppUserLink } from 'pubky-app-specs';
+import { useState } from 'react';
 
 interface LinksSectionProps {
   links: PubkyAppUserLink[];
-  checkLink: boolean;
-  setShowModalCheckLink: (show: boolean) => void;
-  setShowSheetCheckLink: (show: boolean) => void;
-  setClickedLink: (link: string) => void;
 }
 
 export const socialLinks = [
@@ -144,14 +142,10 @@ const linkTitleToIconMap: { [key: string]: JSX.Element } = {
   ),
 };
 
-export default function LinksSection({
-  links,
-  checkLink,
-  setShowModalCheckLink,
-  setShowSheetCheckLink,
-  setClickedLink,
-}: LinksSectionProps) {
-  const isMobile = useIsMobile();
+export default function LinksSection({ links }: LinksSectionProps) {
+  const { openModal } = useModal();
+  const checkLink = Utils.storage.get('checkLink') as boolean;
+  const [clickedLink, setClickedLink] = useState('');
 
   const renderSocialUsername = (linkUrl: string) => {
     const cleanedUrl = linkUrl.endsWith('/') ? linkUrl.slice(0, -1) : linkUrl;
@@ -217,9 +211,7 @@ export default function LinksSection({
                             checkLink === false
                               ? () => window.open(link.url, '_blank')
                               : () => {
-                                  isMobile
-                                    ? setShowSheetCheckLink(true)
-                                    : setShowModalCheckLink(true);
+                                  openModal('checkLink', { clickedLink });
                                   setClickedLink(link.url);
                                 }
                           }

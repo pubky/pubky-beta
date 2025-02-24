@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Header as HeaderUI, Icon } from '@social/ui-shared';
-import { useJoin, usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
 import { usePathname } from 'next/navigation';
 import useIsScrollup from '@/hooks/useIsScrollUp';
 
@@ -18,7 +18,7 @@ export default function HeaderMobile({
   children,
 }: HeaderMobileProps) {
   const pathname = usePathname();
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
   const { pubky, isLoggedIn, setSearchTags } = usePubkyClientContext();
   const isVisible = useIsScrollup();
   const [logoLink, setLogoLink] = useState('/onboarding');
@@ -59,7 +59,7 @@ export default function HeaderMobile({
           <div className="absolute right-0">{rightIcon}</div>
         ) : (
           <div
-            onClick={openJoin}
+            onClick={() => openModal('join')}
             className="absolute right-0 mr-2 p-2 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full cursor-pointer"
           >
             <Icon.User size="20" />

@@ -2,32 +2,33 @@
 
 import { Modal } from '@social/ui-shared';
 import ContentDeletePost from './_Content';
+import { PostView } from '@/types/Post';
 
 interface DeletePostProps {
-  showModalDeletePost: boolean;
-  setShowModalDeletePost: React.Dispatch<React.SetStateAction<boolean>>;
-  handleDeletePost: () => void;
-  modalDeletePostRef: React.RefObject<HTMLDivElement>;
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  post: PostView;
 }
 
 export default function DeletePost({
-  showModalDeletePost,
-  setShowModalDeletePost,
-  handleDeletePost,
-  modalDeletePostRef,
+  showModal,
+  setShowModal,
+  setShowMenu,
+  post,
 }: DeletePostProps) {
   return (
     <Modal.Root
-      show={showModalDeletePost}
-      closeModal={() => setShowModalDeletePost(false)}
-      modalRef={modalDeletePostRef}
+      show={showModal}
+      closeModal={() => setShowModal(false)}
       className="max-w-[1200px] md:min-w-[588px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
-      <Modal.CloseAction onClick={() => setShowModalDeletePost(false)} />
+      <Modal.CloseAction onClick={() => setShowModal(false)} />
       <Modal.Header title="Delete Post" />
       <ContentDeletePost
-        setShowModalDeletePost={setShowModalDeletePost}
-        handleDeletePost={handleDeletePost}
+        setShowModalDeletePost={setShowModal}
+        setShowMenu={setShowMenu}
+        post={post}
       />
     </Modal.Root>
   );

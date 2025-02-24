@@ -3,7 +3,7 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import Parsing from '@/components/Content/_Parsing';
 import { ImageByUri } from '@/components/ImageByUri';
-import { useAlertContext, useJoin, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
 
 interface UserInfoProps {
@@ -41,7 +41,7 @@ export default function UserInfo({
 }: UserInfoProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const { openJoin } = useJoin();
+  const { openModal } = useModal();
 
   const followUser = async () => {
     try {
@@ -119,7 +119,7 @@ export default function UserInfo({
                   <div
                     className="cursor-pointer rounded-full"
                     onClick={() =>
-                      pubky ? setShowProfileMenu(true) : openJoin()
+                      pubky ? setShowProfileMenu(true) : openModal('join')
                     }
                   >
                     <Icon.DotsThreeOutline size="12" />
@@ -166,7 +166,7 @@ export default function UserInfo({
             onClick={
               loadingFollowed
                 ? undefined
-                : () => (pubky ? followUser() : openJoin)
+                : () => (pubky ? followUser() : openModal('join'))
             }
             disabled={loadingFollowed}
             loading={loadingFollowed}

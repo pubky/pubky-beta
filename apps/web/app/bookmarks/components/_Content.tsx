@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Content, Menu } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
 import { useFilterContext, useToastContext } from '@/contexts';
-import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { LeftSidebar } from './_LeftSidebar';
 import { RightSidebar } from './_RightSidebar';
 import { BookmarksPage } from '.';
@@ -14,7 +13,6 @@ export default function ContentBookmarks() {
   const { layout } = useFilterContext();
   const { addToast } = useToastContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
-  const drawerFilterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     addToast(
@@ -23,8 +21,6 @@ export default function ContentBookmarks() {
       'Your bookmarks are public',
     );
   }, []);
-
-  useDrawerClickOutside(drawerFilterRef, () => setDrawerFilterOpen(false));
 
   return (
     <>
@@ -45,7 +41,6 @@ export default function ContentBookmarks() {
       </Content.Grid>
       <Menu.Root
         position="left"
-        drawerRef={drawerFilterRef}
         drawerOpen={drawerFilterOpen}
         setDrawerOpen={setDrawerFilterOpen}
         clickableArea={layout === 'wide'}
