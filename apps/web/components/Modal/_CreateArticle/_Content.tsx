@@ -39,7 +39,7 @@ export default function ContentCreateArticle({
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null,
   );
-  //const [filePreviews, setFilePreviews] = useState<string[]>([]);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
 
   useEffect(() => {
@@ -212,11 +212,17 @@ export default function ContentCreateArticle({
         return;
       }
       setSelectedFile([file]);
+      const previewUrl = URL.createObjectURL(file);
+      setFilePreview(previewUrl);
     }
   };
 
   const removeFile = () => {
+    if (filePreview) {
+      URL.revokeObjectURL(filePreview);
+    }
     setSelectedFile([]);
+    setFilePreview(null);
   };
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
@@ -330,7 +336,7 @@ export default function ContentCreateArticle({
                     </div>
                     <div className="max-h-[500px] overflow-y-auto no-scrollbar">
                       <Image
-                        src={URL.createObjectURL(selectedFile[0])}
+                        src={filePreview || ''}
                         alt="Uploaded Preview"
                         className="w-[1200px] rounded-lg"
                         width={1000}
