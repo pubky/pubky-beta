@@ -181,19 +181,21 @@ export default function Replies({
 
         if (!nexusData) return;
 
-        // Update replies with nexus data
+         // Update replies with nexus data
         setReplies((prev) => {
           const existingReply = prev.find(
             (p) => p.details.id === nexusData.details.id,
           );
 
-          if (existingReply) {
-            return prev.map((p) =>
-              p.details.id === nexusData.details.id ? nexusData : p,
-            );
+          if (
+            existingReply &&
+            JSON.stringify(existingReply) === JSON.stringify(nexusData)
+          ) {
+            return prev;
           }
-
-          return prev;
+          return prev.map((p) =>
+            p.details.id === nexusData.details.id ? nexusData : p,
+          );
         });
 
         // Update local replies as well
@@ -202,13 +204,16 @@ export default function Replies({
             (p) => p.details.id === nexusData.details.id,
           );
 
-          if (existingReply) {
-            return prev.map((p) =>
-              p.details.id === nexusData.details.id ? nexusData : p,
-            );
+          if (
+            existingReply &&
+            JSON.stringify(existingReply) === JSON.stringify(nexusData)
+          ) {
+            return prev;
           }
 
-          return prev;
+          return prev.map((p) =>
+            p.details.id === nexusData.details.id ? nexusData : p,
+          );
         });
       } catch (error) {
         console.log('Error fetching Nexus data:', error);
