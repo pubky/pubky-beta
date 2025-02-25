@@ -4,16 +4,19 @@ import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import CreateContent from '@/components/CreateContent';
+import { Utils } from '@social/utils-shared';
 
 interface CreateEditArticleProps {
   setShowModalEditArticle: React.Dispatch<React.SetStateAction<boolean>>;
   article: PostView;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
 export default function ContentEditArticle({
   setShowModalEditArticle,
   article,
+  setShowMenu,
   className,
 }: CreateEditArticleProps) {
   const { editPost } = usePubkyClientContext();
@@ -44,10 +47,20 @@ export default function ContentEditArticle({
     try {
       setSendingEditArticle(true);
 
-      const editPostUser = await editPost(article.details.id, content);
+      const editArticleUri = await editPost(article.details.id, content);
 
-      if (editPostUser) {
-        addAlert('Article edited!');
+      if (editArticleUri) {
+        addAlert(
+          <>
+            Article edited!{' '}
+            <a
+              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
+              href={Utils.encodePostUri(editArticleUri)}
+            >
+              View
+            </a>
+          </>,
+        );
       } else {
         addAlert('Something went wrong. Try again', 'warning');
       }
@@ -57,6 +70,7 @@ export default function ContentEditArticle({
       console.log(error);
     } finally {
       setSendingEditArticle(false);
+      setShowMenu(false);
     }
   };
 

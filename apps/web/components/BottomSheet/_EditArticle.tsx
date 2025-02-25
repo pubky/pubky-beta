@@ -8,6 +8,7 @@ interface EditArticleProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   article: PostView;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   title?: string;
   className?: string;
 }
@@ -16,6 +17,7 @@ export default function EditArticle({
   show,
   setShow,
   article,
+  setShowMenu,
   title,
   className,
 }: EditArticleProps) {
@@ -30,6 +32,7 @@ export default function EditArticle({
         className="p-0 border-none"
         setShowModalEditArticle={setShow}
         article={article}
+        setShowMenu={setShowMenu}
       />
     </BottomSheet.Root>
   );

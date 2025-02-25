@@ -8,6 +8,7 @@ interface ReportProfileProps {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   pk: string;
   name: string | undefined;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   title?: string;
   className?: string;
 }
@@ -17,6 +18,7 @@ export default function ReportProfile({
   setShow,
   pk,
   name,
+  setShowMenu,
   title,
   className,
 }: ReportProfileProps) {
@@ -27,7 +29,12 @@ export default function ReportProfile({
       title={title}
       className={className}
     >
-      <ContentReportProfile setShowModal={setShow} pk={pk} name={name} />
+      <ContentReportProfile
+        setShowModal={setShow}
+        pk={pk}
+        name={name}
+        setShowMenu={setShowMenu}
+      />
     </BottomSheet.Root>
   );
 }

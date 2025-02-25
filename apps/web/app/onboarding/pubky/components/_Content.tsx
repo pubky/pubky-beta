@@ -60,13 +60,13 @@ export default function Index() {
         Copy pubky to clipboard
       </Button.Large>
       <div className="w-full max-w-[1200px] justify-between items-center inline-flex">
-        <Link href="/onboarding/sign-up">
+        <Link href="/logout">
           <Button.Large
-            icon={<Icon.ArrowLeft />}
+            icon={<Icon.SignOut size="16" />}
             className="w-[140px]"
             variant="secondary"
           >
-            Back
+            Sign out
           </Button.Large>
         </Link>
         <Button.Large

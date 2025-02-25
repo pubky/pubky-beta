@@ -8,6 +8,7 @@ interface EditPostProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   title?: string;
   className?: string;
 }
@@ -16,6 +17,7 @@ export default function EditPost({
   show,
   setShow,
   post,
+  setShowMenu,
   title,
   className,
 }: EditPostProps) {
@@ -30,6 +32,7 @@ export default function EditPost({
         setShowModalEditPost={setShow}
         className="p-0 border-none"
         post={post}
+        setShowMenu={setShowMenu}
       />
     </BottomSheet.Root>
   );

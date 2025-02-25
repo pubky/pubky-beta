@@ -21,7 +21,7 @@ export default function ContentMenu({ post, setShowMenu }: TooltipMenuProps) {
           setShowMenu={setShowMenu}
         />
       )}
-      <ButtonTooltip.EditPost post={post} />
+      <ButtonTooltip.EditPost post={post} setShowMenu={setShowMenu} />
       <ButtonTooltip.CopyUserPubky
         pk={post?.details?.author}
         setShowMenu={setShowMenu}
@@ -33,7 +33,7 @@ export default function ContentMenu({ post, setShowMenu }: TooltipMenuProps) {
       )}
       <ButtonTooltip.DeletePost post={post} setShowMenu={setShowMenu} />
       {post?.details?.author !== pubky && (
-        <ButtonTooltip.ReportPost post={post} />
+        <ButtonTooltip.ReportPost post={post} setShowMenu={setShowMenu}/>
       )}
     </>
   );

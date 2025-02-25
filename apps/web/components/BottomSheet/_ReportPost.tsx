@@ -8,6 +8,7 @@ interface ReportPostProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   title?: string;
   className?: string;
 }
@@ -16,6 +17,7 @@ export default function ReportPost({
   show,
   setShow,
   post,
+  setShowMenu,
   title,
   className,
 }: ReportPostProps) {
@@ -26,7 +28,11 @@ export default function ReportPost({
       title={title}
       className={className}
     >
-      <ContentReportPost setShowModal={setShow} post={post} />
+      <ContentReportPost
+        setShowModal={setShow}
+        post={post}
+        setShowMenu={setShowMenu}
+      />
     </BottomSheet.Root>
   );
 }
