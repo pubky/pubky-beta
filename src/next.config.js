@@ -2,9 +2,11 @@
 
 // Removed NX integration since it's no longer needed
 
-// Keep path require
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
+require('dotenv').config({
+  path: path.resolve(process.cwd(), '../.env')
+});
 
 const nextConfig = {
   reactStrictMode: false,

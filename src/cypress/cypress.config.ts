@@ -6,12 +6,12 @@ import { defaultMs } from './support/slow-down';
 export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:4200',
-    specPattern: 'src/cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
-    supportFile: 'src/cypress/support/e2e.ts',
-    videosFolder: 'src/cypress/videos',
-    screenshotsFolder: 'src/cypress/screenshots',
-    downloadsFolder: 'src/cypress/download',
-    fixturesFolder: 'src/cypress/src/fixtures',
+    specPattern: 'e2e/**/*.cy.{js,jsx,ts,tsx}',
+    supportFile: 'support/e2e.ts',
+    videosFolder: 'videos',
+    screenshotsFolder: 'screenshots',
+    downloadsFolder: 'download',
+    fixturesFolder: 'fixtures',
     defaultCommandTimeout: process.env['CI'] ? 60_000 : 15_000,
     video: true,
     viewportWidth: 1920,
