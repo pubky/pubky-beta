@@ -136,19 +136,22 @@ jobs:
           SUPPORT_ACCOUNT_ID=1" > .env
           npm ci
 
+      - name: Run pubky-app frontend
+        working-directory: pubky-app
+        run: npm run start:prod &
+
       - name: Run e2e tests (${{ matrix.browser }})
         uses: cypress-io/github-action@v6
         env:
           DEBUG: '@cypress/github-action'
         with:
-          working-directory: pubky-app
-          config-file: src/cypress/cypress.config.ts
-          spec: src/cypress/e2e/**/*.cy.ts
+          working-directory: pubky-app/src/cypress
+          config-file: cypress.config.ts
+          spec: e2e/**/*.cy.ts
           browser: ${{ matrix.browser }}
           headed: false
           summary-title: ${{ matrix.browser }}
           install: false
-          start: npm run start:prod
           wait-on: 'http://localhost:4200'
           wait-on-timeout: 180
 
