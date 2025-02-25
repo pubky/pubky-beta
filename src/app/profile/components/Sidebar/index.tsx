@@ -5,7 +5,7 @@ import UserInfo from './_UserInfo';
 import TaggedSection from './_TaggedSection';
 import LinksSection from './_LinksSection';
 import { useUserProfile } from '@/hooks/useUser';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 
 export default function Sidebar({
@@ -13,9 +13,7 @@ export default function Sidebar({
 }: {
   creatorPubky?: string | null;
 }) {
-  const { addAlert } = useAlertContext();
-  const { pubky, profile, createTagProfile, deleteTagProfile } =
-    usePubkyClientContext();
+  const { pubky, profile } = usePubkyClientContext();
   const userPubky = creatorPubky ?? pubky;
   const { data: profileUser, isLoading } = useUserProfile(
     userPubky ?? '',
@@ -36,7 +34,6 @@ export default function Sidebar({
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [loadingTags, setLoadingTags] = useState('');
 
   useEffect(() => {
     setProfileTags(profileUser?.tags ?? []);
@@ -55,74 +52,6 @@ export default function Sidebar({
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileUser, creatorPubky]);
-
-  const handleAddProfileTag = async (tag: string) => {
-    // loading tag
-    setLoadingTags(tag);
-    if (userPubky) {
-      // before adding tag, check if tag already exists and is not the same pubky
-      const tagExists = profileTags.find((t) => t.label === tag);
-
-      if (tagExists) {
-        // check if tag is the same pubky
-        if (!tagExists.taggers.includes(pubky || '')) {
-          setLoadingTags('');
-          // update profileTags with new taggers
-          const updatedTags = profileTags.map((t) =>
-            t.label === tag
-              ? {
-                  ...t,
-                  taggers: [...t.taggers, pubky || ''],
-                  taggers_count: t.taggers_count + 1,
-                  relationship: true,
-                }
-              : t,
-          );
-          setProfileTags(updatedTags);
-        }
-      } else {
-        const newTag = {
-          label: tag,
-          taggers: [pubky || ''],
-          taggers_count: 1,
-          relationship: true,
-        };
-        // update tag optimistic in the UI
-        setProfileTags([...profileTags, newTag]);
-      }
-
-      const response = await createTagProfile(userPubky, tag);
-      if (!response) {
-        // show error message
-        addAlert('Error adding tag', 'warning');
-      }
-      setLoadingTags('');
-    }
-  };
-
-  const handleDeleteProfileTag = async (tag: string) => {
-    // loading tag
-    setLoadingTags(tag);
-    if (userPubky) {
-      const updatedTags = profileTags.map((t) =>
-        t.label === tag
-          ? {
-              ...t,
-              taggers: t.taggers.filter((tagger) => tagger !== pubky),
-              taggers_count: Math.max(t.taggers_count - 1, 0),
-              relationship: false,
-            }
-          : t,
-      );
-      setProfileTags(updatedTags);
-
-      const response = await deleteTagProfile(userPubky, tag);
-      if (!response) {
-        addAlert('Error deleting tag', 'warning');
-      }
-      setLoadingTags('');
-    }
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -162,12 +91,10 @@ export default function Sidebar({
         {/**<BioSection id="profile-bio-content" loading={isLoading} bio={bio} />*/}
         <TaggedSection
           profileTags={profileTags}
+          setProfileTags={setProfileTags}
           loadingProfileTags={isLoading}
-          handleAddProfileTag={handleAddProfileTag}
-          handleDeleteProfileTag={handleDeleteProfileTag}
           creatorPubky={creatorPubky}
           name={name}
-          loadingTags={loadingTags}
           userPubky={userPubky ?? ''}
           user={profileUser}
         />

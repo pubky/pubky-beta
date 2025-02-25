@@ -8,8 +8,7 @@ interface ProfileTagProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   profileTags: UserTags[];
-  handleAddProfileTag: (tag: string) => void;
-  handleDeleteProfileTag: (tag: string) => void;
+  setProfileTags: React.Dispatch<React.SetStateAction<UserTags[]>>;
   pubkyUser?: string;
   user?: UserView | null;
   title?: string;
@@ -20,8 +19,7 @@ export default function ProfileTag({
   show,
   setShow,
   profileTags,
-  handleAddProfileTag,
-  handleDeleteProfileTag,
+  setProfileTags,
   pubkyUser,
   user,
   title,
@@ -36,8 +34,7 @@ export default function ProfileTag({
     >
       <ContentProfileTag
         profileTags={profileTags}
-        handleAddProfileTag={handleAddProfileTag}
-        handleDeleteProfileTag={handleDeleteProfileTag}
+        setProfileTags={setProfileTags}
         pubkyUser={pubkyUser}
         user={user}
       />
