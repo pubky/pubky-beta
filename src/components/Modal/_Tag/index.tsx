@@ -1,7 +1,6 @@
 import { Modal } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import ContentTag from './_Content';
-import { useEffect } from 'react';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModal: boolean;
@@ -10,9 +9,6 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Tag({ showModal, setShowModal, post }: TagProps) {
-  useEffect(() => {
-    console.log('TAGS', post?.tags);
-  }, [post]);
   return (
     <Modal.Root
       show={showModal}
