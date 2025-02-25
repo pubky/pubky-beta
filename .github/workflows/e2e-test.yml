@@ -141,9 +141,9 @@ jobs:
         env:
           DEBUG: '@cypress/github-action'
         with:
-          working-directory: pubky-app/src/cypress
-          config-file: cypress.config.ts
-          spec: e2e/**/*.cy.ts
+          working-directory: pubky-app
+          config-file: src/cypress/cypress.config.ts
+          spec: src/cypress/e2e/**/*.cy.ts
           browser: ${{ matrix.browser }}
           headed: false
           summary-title: ${{ matrix.browser }}
