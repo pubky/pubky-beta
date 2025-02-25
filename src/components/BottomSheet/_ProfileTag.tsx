@@ -4,7 +4,7 @@ import { BottomSheet } from '@social/ui-shared';
 import { UserTags, UserView } from '@/types/User';
 import ContentProfileTag from '../Modal/_TagProfile/_Content';
 
-interface TagProfileProps {
+interface ProfileTagProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   profileTags: UserTags[];
@@ -16,7 +16,7 @@ interface TagProfileProps {
   className?: string;
 }
 
-export default function TagProfile({
+export default function ProfileTag({
   show,
   setShow,
   profileTags,
@@ -26,7 +26,7 @@ export default function TagProfile({
   user,
   title,
   className,
-}: TagProfileProps) {
+}: ProfileTagProps) {
   return (
     <BottomSheet.Root
       show={show}
