@@ -5,7 +5,8 @@
   "scripts": {
     "start:prod": "nx build web && nx serve web --prod",
     "start:dev": "nx serve web",
-    "start:e2e": "nx e2e web-e2e --watch",
+    "start:e2e": "cypress open --config-file apps/web/cypress/cypress.config.ts",
+    "test:e2e": "cypress run --config-file apps/web/cypress/cypress.config.ts",
     "build": "nx build web",
     "serve:prod": "nx serve web --prod",
     "reset": "nx reset",
