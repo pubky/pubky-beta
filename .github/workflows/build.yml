@@ -44,4 +44,4 @@ jobs:
           BASE_URL_SUPPORT: ${{ secrets.BASE_URL_SUPPORT }}
           SUPPORT_API_ACCESS_TOKEN: ${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
           SUPPORT_ACCOUNT_ID: ${{ secrets.SUPPORT_ACCOUNT_ID }}
-        run: npm run build
+        run: npm --prefix src run build
