@@ -17,6 +17,8 @@ declare namespace Cypress {
     saveCopiedTextToAlias(alias: string): Chainable<void>;
     waitReload(time?: number): Chainable<void>;
     waitReloadWhileElementDoesNotExist(selector: string, attempts?: number): Chainable<void>;
+    findPostInBookmarks(postIdx: number, expectedCount?: number): Chainable<JQuery<HTMLElement>>;
+    countPostsInBookmarks(expectedCount: number): Chainable<void>;
     findFirstPostInFeed(checkIndexed?: boolean): Chainable<JQuery<HTMLElement>>;
     findFirstPostInFeedFiltered(filterText: string, checkIndexed?: boolean): Chainable<JQuery<HTMLElement>>;
     findPostInFeed(postIdx?: number, filterText?: string, checkIndexed?: boolean): Chainable<JQuery<HTMLElement>>;

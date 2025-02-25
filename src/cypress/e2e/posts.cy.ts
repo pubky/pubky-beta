@@ -1,21 +1,20 @@
 import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 // registers the cy.slowDown and cy.slowDownEnd commands
-import 'cypress-slow-down/commands';
-import {
-  latestPostInFeedContentEq,
-  deletePost,
-  createQuickPost,
-  checkPostIsNotAtTopOfFeed,
-  repostPost,
-  fastTagPostInFeed,
-  replyToPost,
-  waitForFeedToLoad,
-  selectEmojis,
-  createQuickPostWithTags,
-  fastTagWhilstCreatingPost,
-  addImage,
-} from '../support/posts';
+import 'cypress-slow-down/commands'
+import { latestPostInFeedContentEq,
+        deletePost,
+        createQuickPost,
+        checkPostIsNotAtTopOfFeed,
+        repostPost,
+        fastTagPostInFeed,
+        replyToPost,
+        waitForFeedToLoad,
+        selectEmojis,
+        createQuickPostWithTags,
+        fastTagWhilstCreatingPost,
+        addImage,
+        waitForBookmarksToLoad} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 
 const username = 'Poster';
@@ -564,12 +563,12 @@ describe('posts', () => {
     );
   });
 
-  // todo: consider creating user to create the post to bookmark
-  it('can bookmark post then remove bookmark', () => {
-    const postContent = `This post will be bookmarked! ${Date.now()}`;
+  it('can bookmark multiple posts then remove bookmarks', () => {
+    const postContent1 = `This post will be bookmarked! ${Date.now()}`;
+    const postContent2 = `This post will also be bookmarked! ${Date.now()}`;
 
     // create a post to bookmark
-    createQuickPost(postContent);
+    createQuickPost(postContent1);
 
     // bookmark the post
     cy.slowDown(fastMs);
@@ -584,30 +583,62 @@ describe('posts', () => {
     cy.get('#header-bookmarks-btn').click();
     cy.location('pathname').should('eq', '/bookmarks');
 
-    // if posts-feed area contains "No bookmarks yet", reload the page
-    // cy.get('#posts-feed').innerTextContains('No bookmarks yet').then((noBookmarksYet) => {
-    //   if (noBookmarksYet) cy.reload();
-    // });
+    cy.countPostsInBookmarks(1).findPostInBookmarks(0).within(() => {
+      // verify the post has been bookmarked
+      cy.get('#post-content-text').innerTextShouldEq(postContent1);
+    });
 
-    cy.get('#posts-feed')
-      .children()
-      .eq(0)
-      .should('have.length', 1)
-      .children()
-      .eq(0)
-      .within(() => {
-        // verify the post has been bookmarked
-        cy.get('#post-content-text').innerTextShouldEq(postContent);
+    // navigate back to feed page
+    cy.get('#header-logo').click();
+    cy.location('pathname').should('eq', '/home');
 
-        // remove the bookmark
-        cy.get('#bookmark-btn').click();
-      });
+    // create a second post to bookmark
+    createQuickPost(postContent2);
 
-    // refresh to update the bookmarks page
-    cy.waitReload();
+    // bookmark the second post
+    cy.findFirstPostInFeed().within(() => {
+      cy.get('#bookmark-btn').click();
+    });
+
+    // navigate to bookmarks page
+    cy.get('#header-bookmarks-btn').click();
+    cy.location('pathname').should('eq', '/bookmarks');
+
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/1083
+    cy.reload();
+    waitForBookmarksToLoad();
+
+    // verify both posts are now bookmarked (note the most recently bookmarked is at the top)
+    cy.countPostsInBookmarks(2).findPostInBookmarks(0).within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent2);
+    });
+    cy.findPostInBookmarks(1, 2).within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent1);
+    });
+
+    // remove bookmark from both posts
+    cy.countPostsInBookmarks(2).findPostInBookmarks(0).within(() => {
+      cy.get('#bookmark-btn').click();
+    });
+    cy.countPostsInBookmarks(2).findPostInBookmarks(1).within(() => {
+      cy.get('#bookmark-btn').click();
+    });
+
+    // check both posts are still listed
+    cy.countPostsInBookmarks(2);
+
+    // navigate to feed page and back to bookmarks page
+    cy.get('#header-logo').click();
+    cy.location('pathname').should('eq', '/home');
+    cy.get('#header-bookmarks-btn').click();
+    cy.location('pathname').should('eq', '/bookmarks');
+
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/1083
+    cy.reload();
+    cy.wait(500);
 
     //verify the post is no longer bookmarked
-    cy.get('#posts-feed').should('contain.text', 'Save posts for later');
+    cy.get('#bookmarked-posts').should('contain.text', 'Save posts for later')
   });
 
   // [true, false].forEach((waitForIndexed) => {
@@ -737,26 +768,23 @@ describe('posts', () => {
     });
   });
 
+
   const createArticle = (
     articleTitle: string,
     articleContent: string,
     imageFilename?: string,
     tags?: string[],
   ) => {
-    cy.get('#article-modal')
-      .should('be.visible')
-      .within(() => {
-        cy.get('h1').contains('New Article');
-        cy.get('#article-title-input').type(articleTitle);
-        if (imageFilename) addImage();
-        cy.get('#article-content-input').click().invoke('text', articleContent);
-        // todo: check counter
-        // need to click away from input to enable publish button (either by adding tags or clicking footer)
-        tags
-          ? fastTagWhilstCreatingPost(tags)
-          : cy.get('#footer-actions').click();
-        cy.get('#post-btn').should('be.enabled').click();
-      });
+    cy.get('#article-modal').should('be.visible').within(() => {
+      cy.get('h1').contains('New Article');
+      cy.get('#article-title-input').type(articleTitle);
+      if (imageFilename) addImage();
+      cy.get('#article-content-input').find('.ql-editor').click().invoke('text', articleContent);
+      // todo: check counter
+      // need to click away from input to enable publish button (either by adding tags or clicking footer)
+      tags ? fastTagWhilstCreatingPost(tags) : cy.get('#footer-actions').click();
+      cy.get('#post-btn').should('be.enabled').click();
+    });
   };
 
   enum ImageExpected {

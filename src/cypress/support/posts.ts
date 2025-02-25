@@ -327,6 +327,21 @@ export const waitForFeedToLoad = (seconds: number = 6) => {
   checkTimelineRecursively(seconds);
 };
 
+// wait for bookmarks to not show "Save posts for later" or "Loading"
+export const waitForBookmarksToLoad = (seconds: number = 6) => {
+  const checkBookmarksRecursively = (attempts: number, firstCheck: boolean = true) => {
+    if (attempts <= 0) assert(false, "Bookmarks still show 'Save posts for later' or 'Loading' after 5 seconds");
+
+    cy.get('#bookmarked-posts').invoke('text').then((text) => {
+      if (text.includes('Save posts for later') || text.includes('Loading')) {
+        firstCheck ? cy.wait(200) : cy.wait(1000);
+        checkBookmarksRecursively(attempts - 1, false);
+      }
+    });
+  };
+  checkBookmarksRecursively(seconds);
+};
+
 // wait for 'show n new posts' button to be visible
 // check its counter displayes the correct number of new posts and click it
 export const clickShowNewPostsBtn = () => {

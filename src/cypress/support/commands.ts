@@ -255,6 +255,14 @@ Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts =
   go(attempts);
 });
 
+Cypress.Commands.add('countPostsInBookmarks', (expectedCount : number) => {
+  cy.get('#bookmarked-posts').find('[id="post-container"]').should('have.length', expectedCount);
+});
+
+Cypress.Commands.add('findPostInBookmarks', (postIdx : number) => {
+  return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
+});
+
 const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = true) => {
   // A function to check if timeline contains 'No post yet'.
   // If it does then wait 1 second and check again.
