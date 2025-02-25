@@ -20,6 +20,7 @@ import Link from './_Link';
 import Logout from './_Logout';
 import Menu from './_Menu';
 import MenuProfile from './_MenuProfile';
+import ProfileTag from './_ProfileTag';
 import Reach from './_Reach';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
@@ -28,7 +29,6 @@ import SortPosts from './_SortPosts';
 import Status from './_Status';
 import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
-import TagProfile from './_TagProfile';
 
 export const BottomSheet = {
   Backup,
@@ -53,6 +53,7 @@ export const BottomSheet = {
   Logout,
   Menu,
   MenuProfile,
+  ProfileTag,
   Reach,
   ReportPost,
   ReportProfile,
@@ -61,5 +62,4 @@ export const BottomSheet = {
   Status,
   Tag,
   TagCreatePost,
-  TagProfile,
 };

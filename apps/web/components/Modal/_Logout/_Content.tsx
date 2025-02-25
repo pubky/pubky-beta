@@ -5,7 +5,7 @@ import { Button, Icon, Modal, Typography } from '@social/ui-shared';
 import Link from 'next/link';
 
 export default function ContentLogout() {
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
 
   return (
     <>
@@ -21,7 +21,6 @@ export default function ContentLogout() {
             id="logout-modal-sign-out-btn"
             variant="secondary"
             className="whitespace-nowrap"
-            onClick={() => closeModal('logout')}
             icon={<Icon.SignOut size="16" />}
           >
             Yes, sign out
