@@ -1,19 +1,13 @@
 //@ts-check
 
+// Removed NX integration since it's no longer needed
+
+// Keep path require
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { composePlugins, withNx } = require('@nx/next');
 const path = require('path');
 
-/**
- * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
- **/
 const nextConfig = {
   reactStrictMode: false,
-  nx: {
-    // Set this to true if you would like to use SVGR
-    // See: https://github.com/gregberge/svgr
-    svgr: false,
-  },
   images: {
     remotePatterns: [
       {
@@ -39,6 +33,10 @@ const nextConfig = {
     ],
   },
   cleanDistDir: false,
+  env: {
+    NEXT_PUBLIC_HOMESERVER:
+      process.env.NEXT_PUBLIC_HOMESERVER || '11111111111111111111111111111111',
+  },
   transpilePackages: ['pubky-app-specs'],
   webpack: (config, { isServer }) => {
     if (isServer) {
@@ -53,10 +51,17 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.wasm$/,
       type: 'webassembly/async',
-      include: [
-        path.resolve(__dirname, 'pubky-app-specs'), 
-      ],
+      include: [path.resolve(__dirname, 'pubky-app-specs')],
     });
+
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@nx/react/tailwind': path.resolve(
+        __dirname,
+        'stubs/nx-react-tailwind.js',
+      ),
+    };
 
     return config;
   },
@@ -71,9 +76,4 @@ const nextConfig = {
   },
 };
 
-const plugins = [
-  // Add more Next.js plugins to this list if needed.
-  withNx,
-];
-
-module.exports = composePlugins(...plugins)(nextConfig);
+module.exports = nextConfig;

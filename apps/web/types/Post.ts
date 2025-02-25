@@ -1,6 +1,5 @@
 import { PubkyAppPostKind } from 'pubky-app-specs';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PostCounts {
   replies: number;
   reposts: number;

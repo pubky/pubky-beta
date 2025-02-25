@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const uint8ArrayToBase64 = (uint8Array: any) => {
   let binaryString = '';
   uint8Array.forEach((byte: any) => {

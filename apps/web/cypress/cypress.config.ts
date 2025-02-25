@@ -1,26 +1,25 @@
 import { defineConfig } from 'cypress';
-import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 
 import { readdirSync, rmdir, unlink, rename } from 'fs';
 import { defaultMs } from './support/slow-down';
 
 export default defineConfig({
   e2e: {
-    ...nxE2EPreset(__dirname),
     baseUrl: 'http://localhost:4200',
     specPattern: 'apps/web/cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'apps/web/cypress/support/e2e.ts',
     videosFolder: 'apps/web/cypress/videos',
     screenshotsFolder: 'apps/web/cypress/screenshots',
+    downloadsFolder: 'apps/web/cypress/download',
     fixturesFolder: 'apps/web/cypress/src/fixtures',
-    defaultCommandTimeout: process.env.CI ? 60_000 : 15_000,
+    defaultCommandTimeout: process.env['CI'] ? 60_000 : 15_000,
     video: true,
     viewportWidth: 1920,
     viewportHeight: 1080,
     env: {
       // slow down execution more in CI to avoid flaky tests
       commandDelay: defaultMs,
-      ci: process.env.CI,
+      ci: process.env['CI'],
     },
 
     // Plugins

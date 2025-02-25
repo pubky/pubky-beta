@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const base64ToUint8Array = (base64: any) => {
   const binaryString = window.atob(base64);
   const len = binaryString.length;

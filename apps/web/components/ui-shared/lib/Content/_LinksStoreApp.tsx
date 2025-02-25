@@ -12,10 +12,12 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
       <img
         className="w-full h-[65px] sm:w-[112px] sm:h-[45px]"
         src="/images/webp/apple-store.webp"
+        alt="Apple Store"
       />
       <img
         className="w-full h-[65px] sm:w-[112px] sm:h-[45px]"
         src="/images/webp/google-play.webp"
+        alt="Google Play"
       />
     </div>
   );
