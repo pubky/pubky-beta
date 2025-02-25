@@ -16,15 +16,15 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["apps/web/*"],
-      "@social/ui-shared": ["apps/web/components/ui-shared/"],
-      "@social/utils-shared": ["apps/web/components/utils-shared/"],
-      "@app/*": ["apps/web/app/*"],
-      "@components/*": ["apps/web/components/*"],
-      "@hooks/*": ["apps/web/app/hooks/*"]
+      "@/*": ["src/*"],
+      "@social/ui-shared": ["src/components/ui-shared/"],
+      "@social/utils-shared": ["src/components/utils-shared/"],
+      "@app/*": ["src/app/*"],
+      "@components/*": ["src/components/*"],
+      "@hooks/*": ["src/app/hooks/*"]
     },
     "noImplicitAny": false
   },
-  "include": ["apps/web/components/utils-shared/types"],
+  "include": ["src/components/utils-shared/types"],
   "exclude": ["node_modules", "tmp"]
 }

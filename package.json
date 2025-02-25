@@ -3,14 +3,14 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start:prod": "npm --prefix apps/web run build && npm --prefix apps/web run start",
-    "start:dev": "npm --prefix apps/web run dev",
-    "start:e2e": "cypress open --config-file apps/web/cypress/cypress.config.ts",
-    "test:e2e": "cypress run --config-file apps/web/cypress/cypress.config.ts",
-    "build": "npm --prefix apps/web run build",
-    "serve:prod": "npm --prefix apps/web run start",
+    "start:prod": "npm --prefix src run build && npm --prefix src run start",
+    "start:dev": "npm --prefix src run dev",
+    "start:e2e": "cypress open --config-file src/cypress/cypress.config.ts",
+    "test:e2e": "cypress run --config-file src/cypress/cypress.config.ts",
+    "build": "npm --prefix src run build",
+    "serve:prod": "npm --prefix src run start",
     "clean": "rm -rf ./node_modules/ ./dist/",
-    "format": "prettier --write apps/web/**/*.{js,ts,tsx}  '!apps/web/.next/**' "
+    "format": "prettier --write src/**/*.{js,ts,tsx} '!src/.next/**'"
   },
   "private": true,
   "dependencies": {
