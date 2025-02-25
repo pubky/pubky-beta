@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
 import Link from 'next/link';
 import { Icon } from '../Icon';
-import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
+import { ImageByUri } from '@components/ImageByUri/index';
 
 interface UserSmallProps extends React.HTMLAttributes<HTMLDivElement> {
   uriImage: string;

@@ -1,4 +1,4 @@
-import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
+import { ImageByUri } from '@/components/ImageByUri/index';
 import Image from 'next/image';
 
 import { twMerge } from 'tailwind-merge';

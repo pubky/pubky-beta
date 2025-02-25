@@ -1,6 +1,6 @@
 import { Typography } from '../Typography';
 import { Content } from '../Content';
-import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
+import { ImageByUri } from '@/components/ImageByUri/index';
 
 interface Contact extends React.HTMLAttributes<HTMLDivElement> {
   alt: string;

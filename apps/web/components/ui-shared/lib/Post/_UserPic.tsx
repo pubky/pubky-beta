@@ -1,4 +1,4 @@
-import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
+import { ImageByUri } from '@components/ImageByUri/index';
 import { twMerge } from 'tailwind-merge';
 
 interface UserPicProps extends React.HTMLAttributes<HTMLDivElement> {

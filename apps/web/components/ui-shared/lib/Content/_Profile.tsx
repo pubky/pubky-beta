@@ -1,6 +1,6 @@
 import { Typography } from '../Typography';
 import { Content } from '.';
-import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
+import { ImageByUri } from '@/components/ImageByUri/index';
 
 interface ProfileProps extends React.HTMLAttributes<HTMLDivElement> {
   profile: {

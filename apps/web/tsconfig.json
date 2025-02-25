@@ -29,7 +29,7 @@
     "../../dist/apps/web/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "../../libs/utils-shared/src/index.ts"
+    "../../@/components/utils-shared/index.ts"
   ],
   "exclude": [
     "node_modules",

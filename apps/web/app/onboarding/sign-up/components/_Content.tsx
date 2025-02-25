@@ -9,7 +9,7 @@ import { usePubkyClientContext } from '@/contexts';
 import { Onboarding } from '../../components';
 import { Card } from '../Card';
 import { Links } from '@/types/Post';
-import genJdenticon from 'libs/utils-shared/src/lib/Helper/genJdenticon';
+import genJdenticon from '@/components/utils-shared/lib/Helper/genJdenticon';
 import { processUserLinks } from '../../register/components/processUserLinks';
 
 interface FormErrors {

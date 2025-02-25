@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../Typography';
-import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
+import { ImageByUri } from '@/components/ImageByUri/index';
 import Link from 'next/link';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLAnchorElement> {

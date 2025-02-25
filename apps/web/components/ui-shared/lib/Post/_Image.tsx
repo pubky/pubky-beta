@@ -1,5 +1,5 @@
 import { twMerge } from 'tailwind-merge';
-import { ImageByUri } from '../../../../../apps/web/components/ImageByUri/index';
+import { ImageByUri } from '@components/ImageByUri/index';
 
 type ImageProps = {
   width?: number;

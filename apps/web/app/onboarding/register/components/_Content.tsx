@@ -10,7 +10,7 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
-import genJdenticon from 'libs/utils-shared/src/lib/Helper/genJdenticon';
+import genJdenticon from '@/components/utils-shared/lib/Helper/genJdenticon';
 import { processUserLinks } from './processUserLinks';
 
 interface FormErrors {

@@ -2,8 +2,8 @@
 
 import { Utils } from '@social/utils-shared';
 import getYouTubeID from 'get-youtube-id';
-import LinkPreview from 'libs/ui-shared/src/lib/Post/_Preview';
-import { GitHub } from 'libs/ui-shared/src/lib/Preview/Github';
+import LinkPreview from '@/components/ui-shared/lib/Post/_Preview';
+import { GitHub } from '@/components/ui-shared/lib/Preview/Github';
 import { useEffect, useState } from 'react';
 import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
@@ -160,7 +160,7 @@ export default function Content({
   const handleOpenModal = (index: number) => {
     openModal('filesCarousel', {
       fileContents: fileContents,
-      currentFileIndex: index
+      currentFileIndex: index,
     });
   };
 
