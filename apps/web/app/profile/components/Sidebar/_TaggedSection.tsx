@@ -1,4 +1,5 @@
 import { Skeleton } from '@/components';
+import { useUtilsTag } from '@/components/Modal/_TagProfile/components/_Utils';
 import { useModal, usePubkyClientContext } from '@/contexts';
 import { UserTags, UserView } from '@/types/User';
 import {
@@ -14,35 +15,36 @@ import { useEffect } from 'react';
 
 interface TaggedSectionProps {
   profileTags: UserTags[];
+  setProfileTags: React.Dispatch<React.SetStateAction<UserTags[]>>;
   loadingProfileTags: boolean;
-  handleAddProfileTag: (tag: string) => void;
-  handleDeleteProfileTag: (tag: string) => void;
   creatorPubky: string | null | undefined;
   name: string;
-  loadingTags: string;
   userPubky: string;
   user: UserView | null;
 }
 
 export default function TaggedSection({
   profileTags,
+  setProfileTags,
   loadingProfileTags,
-  handleAddProfileTag,
-  handleDeleteProfileTag,
   creatorPubky,
   name,
-  loadingTags,
   userPubky,
   user,
 }: TaggedSectionProps) {
   const { pubky } = usePubkyClientContext();
   const { openModal, isOpen } = useModal();
+  const { addProfileTag, deleteProfileTag, loadingTags } = useUtilsTag({
+    profileTags,
+    setProfileTags,
+    pubkyUser: userPubky,
+    user,
+  });
 
   const handleOpenModal = () => {
     openModal('profileTags', {
       profileTags: profileTags,
-      handleAddProfileTag: handleAddProfileTag,
-      handleDeleteProfileTag: handleDeleteProfileTag,
+      setProfileTags: setProfileTags,
       pubkyUser: userPubky,
       user: user,
     });
@@ -76,8 +78,8 @@ export default function TaggedSection({
                         event.stopPropagation();
                         pubky
                           ? isTagFound
-                            ? handleDeleteProfileTag(tag?.label)
-                            : handleAddProfileTag(tag?.label)
+                            ? deleteProfileTag(tag?.label)
+                            : addProfileTag(tag?.label)
                           : openModal('join');
                       }}
                       color={
