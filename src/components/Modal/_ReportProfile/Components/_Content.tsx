@@ -12,12 +12,14 @@ interface ReportProfileProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   pk: string;
   name: string | undefined;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ContentReportProfile({
   setShowModal,
   pk,
   name,
+  setShowMenu,
 }: ReportProfileProps) {
   const { profile, pubky } = usePubkyClientContext();
   const [selectedItem, setSelectedItem] = useState<string>('Privacy');
@@ -50,6 +52,7 @@ export default function ContentReportProfile({
       setSent(true);
       setLoading(false);
       setMessage('');
+      setShowMenu(false);
     } catch (error) {
       console.error(error);
       setError(true);

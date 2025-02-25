@@ -6,12 +6,14 @@ interface CreateEditArticleProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   article: PostView;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function EditArticle({
   showModal,
   setShowModal,
   article,
+  setShowMenu,
 }: CreateEditArticleProps) {
   return (
     <Modal.Root
@@ -25,6 +27,7 @@ export default function EditArticle({
         <ContentEditArticle
           setShowModalEditArticle={setShowModal}
           article={article}
+          setShowMenu={setShowMenu}
         />
       </div>
     </Modal.Root>

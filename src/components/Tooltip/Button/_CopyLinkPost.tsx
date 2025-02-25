@@ -27,7 +27,7 @@ export default function CopyLinkPost({ post, setShowMenu }: CopyLinkPostProps) {
         );
         setShowMenu(false);
       }}
-      icon={<Icon.Link size="20" />}
+      icon={<Icon.Link size="24" />}
     >
       Copy link to post
     </Tooltip.Item>

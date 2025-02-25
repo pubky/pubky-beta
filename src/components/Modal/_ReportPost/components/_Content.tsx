@@ -10,11 +10,13 @@ import InputReport from './InputReport';
 interface ReportPostProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ContentReportPost({
   setShowModal,
   post,
+  setShowMenu,
 }: ReportPostProps) {
   const { profile, pubky } = usePubkyClientContext();
   const [selectedItem, setSelectedItem] = useState<string>('Privacy');
@@ -47,6 +49,7 @@ export default function ContentReportPost({
       setSent(true);
       setLoading(false);
       setMessage('');
+      setShowMenu(false);
     } catch (error) {
       console.error(error);
       setError(true);
