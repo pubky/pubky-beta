@@ -39,13 +39,13 @@ testem.log
 .DS_Store
 Thumbs.db
 
-.nx
-
 # Next.js
 .next
 
 # Env
 .env
 
-# Cypress downloaded files
-apps/web-e2e/cypress/downloads/*
+# Cypress files
+src/cypress/download
+src/cypress/screenshots
+src/cypress/videos
