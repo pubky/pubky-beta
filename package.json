@@ -5,8 +5,8 @@
   "scripts": {
     "start:prod": "npm --prefix src run build && npm --prefix src run start",
     "start:dev": "npm --prefix src run dev",
-    "start:e2e": "cypress open --config-file src/cypress/cypress.config.ts",
-    "test:e2e": "cypress run --config-file src/cypress/cypress.config.ts",
+    "start:e2e": "cypress open -P src/cypress",
+    "test:e2e": "cypress run -P src/cypress",
     "build": "npm --prefix src run build",
     "serve:prod": "npm --prefix src run start",
     "clean": "rm -rf ./node_modules/ ./dist/",

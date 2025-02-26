@@ -641,7 +641,6 @@ describe('posts', () => {
     cy.get('#bookmarked-posts').should('contain.text', 'Save posts for later')
   });
 
-  // [true, false].forEach((waitForIndexed) => {
   [true, false].forEach((waitForIndexed) => {
     it(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to repost
