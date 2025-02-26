@@ -6,6 +6,7 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { useUserProfile } from '@/hooks/useUser';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { UserView } from '@/types/User';
 
 interface TooltipMenuProps {
   pk: string;
@@ -17,39 +18,50 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
   const { addAlert } = useAlertContext();
   const isMobile = useIsMobile();
   const { data: author } = useUserProfile(pk, pubky ?? '');
-  const [followed, setFollowed] = useState(false);
+  const [localAuthor, setLocalAuthor] = useState<UserView | null>(author);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [initLoadingFollowed, setInitLoadingFollowed] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        if (author) {
-          setInitLoadingFollowed(false);
-          if (author?.relationship?.following) setFollowed(true);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    if (author) {
+      setLocalAuthor(author);
+      setInitLoadingFollowed(false);
     }
-    fetchData();
   }, [author]);
+
+  const updateFollowingStatus = (isFollowing: boolean) => {
+    setLocalAuthor((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        relationship: {
+          ...prev.relationship,
+          following: isFollowing,
+        },
+      };
+    });
+  };
 
   const followUser = async () => {
     if (!pk) return;
 
     setLoadingFollowed(true);
+    updateFollowingStatus(true);
+
     try {
       const result = await follow(pk);
 
       if (!result) {
+        updateFollowingStatus(false);
         addAlert('Something went wrong!', 'warning');
+      } else {
+        setShowMenu(false);
       }
-
-      setFollowed(result);
-      if (result) setShowMenu(false);
     } catch (error) {
       console.log(error);
+      updateFollowingStatus(false);
+      addAlert('Error while following!', 'warning');
     } finally {
       setLoadingFollowed(false);
     }
@@ -59,17 +71,21 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
     if (!pk) return;
 
     setLoadingFollowed(true);
+    updateFollowingStatus(false);
+
     try {
       const result = await unfollow(pk);
 
       if (!result) {
+        updateFollowingStatus(true);
         addAlert('Something went wrong!', 'warning');
+      } else {
+        setShowMenu(false);
       }
-
-      setFollowed(!result);
-      if (result) setShowMenu(false);
     } catch (error) {
       console.log(error);
+      updateFollowingStatus(true);
+      addAlert('Error while unfollowing!', 'warning');
     } finally {
       setLoadingFollowed(false);
     }
@@ -77,14 +93,14 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
 
   return initLoadingFollowed ? (
     <Tooltip.Item icon={<Icon.LoadingSpin size="24" />}>Loading</Tooltip.Item>
-  ) : followed ? (
+  ) : localAuthor?.relationship?.following ? (
     <Tooltip.Item
       onClick={loadingFollowed ? undefined : unfollowUser}
       loading={loadingFollowed}
       icon={<Icon.UserMinus size="24" />}
     >
       Unfollow{' '}
-      {Utils.minifyText(author?.details?.name ?? '', isMobile ? 30 : 10)}
+      {Utils.minifyText(localAuthor?.details?.name ?? '', isMobile ? 30 : 10)}
     </Tooltip.Item>
   ) : (
     <Tooltip.Item
@@ -92,7 +108,8 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
       loading={loadingFollowed}
       icon={<Icon.UserPlus size="24" />}
     >
-      Follow {Utils.minifyText(author?.details?.name ?? '', isMobile ? 30 : 10)}
+      Follow{' '}
+      {Utils.minifyText(localAuthor?.details?.name ?? '', isMobile ? 30 : 10)}
     </Tooltip.Item>
   );
 }

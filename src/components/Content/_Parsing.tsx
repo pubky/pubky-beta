@@ -149,7 +149,7 @@ const Parsing = ({
     return (
       <div
         key={key}
-        className={`w-auto max-w-[300px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[600px] ${repostView ? 'xl:max-w-[690px]' : 'xl:max-w-[730px]'}`}
+        className={`w-auto max-w-[300px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[600px] ${repostView ? 'xl:max-w-[690px]' : 'xl:max-w-[720px]'}`}
       >
         <div
           onClick={(event) => event.stopPropagation()}

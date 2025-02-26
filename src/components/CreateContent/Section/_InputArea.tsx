@@ -114,25 +114,25 @@ export default function InputArea({
         return true;
       });
 
-      if (selectedFiles && selectedFiles.length + validFiles.length > 3) {
-        addAlert('Max 3 files only.', 'warning');
+      if (selectedFiles && selectedFiles.length + validFiles.length > 4) {
+        addAlert('Max 4 files only.', 'warning');
         return;
       }
 
       const newFiles =
-        selectedFiles && validFiles.slice(0, 3 - selectedFiles.length);
+        selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
       const newPreviews =
         newFiles && newFiles.map((file) => URL.createObjectURL(file));
 
       setSelectedFiles &&
         newFiles &&
         setSelectedFiles((prevFiles) =>
-          [...prevFiles, ...newFiles].slice(0, 3),
+          [...prevFiles, ...newFiles].slice(0, 4),
         );
       newPreviews &&
         setFilePreviews &&
         setFilePreviews((prevPreviews) =>
-          [...prevPreviews, ...newPreviews].slice(0, 3),
+          [...prevPreviews, ...newPreviews].slice(0, 4),
         );
 
       if (newFiles && newFiles?.length > 0 && setTextArea) {

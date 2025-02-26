@@ -6,12 +6,14 @@ interface CreateEditPostProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function EditPost({
   showModal,
   setShowModal,
   post,
+  setShowMenu,
 }: CreateEditPostProps) {
   return (
     <Modal.Root
@@ -22,7 +24,11 @@ export default function EditPost({
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       <div className="flex flex-col gap-4">
         <Modal.Header title="Edit Post" />
-        <ContentEditPost setShowModalEditPost={setShowModal} post={post} />
+        <ContentEditPost
+          setShowModalEditPost={setShowModal}
+          post={post}
+          setShowMenu={setShowMenu}
+        />
       </div>
     </Modal.Root>
   );

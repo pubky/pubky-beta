@@ -4,29 +4,27 @@ import { BottomSheet } from '@social/ui-shared';
 import { UserTags, UserView } from '@/types/User';
 import ContentProfileTag from '../Modal/_TagProfile/_Content';
 
-interface TagProfileProps {
+interface ProfileTagProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   profileTags: UserTags[];
-  handleAddProfileTag: (tag: string) => void;
-  handleDeleteProfileTag: (tag: string) => void;
+  setProfileTags: React.Dispatch<React.SetStateAction<UserTags[]>>;
   pubkyUser?: string;
   user?: UserView | null;
   title?: string;
   className?: string;
 }
 
-export default function TagProfile({
+export default function ProfileTag({
   show,
   setShow,
   profileTags,
-  handleAddProfileTag,
-  handleDeleteProfileTag,
+  setProfileTags,
   pubkyUser,
   user,
   title,
   className,
-}: TagProfileProps) {
+}: ProfileTagProps) {
   return (
     <BottomSheet.Root
       show={show}
@@ -36,8 +34,7 @@ export default function TagProfile({
     >
       <ContentProfileTag
         profileTags={profileTags}
-        handleAddProfileTag={handleAddProfileTag}
-        handleDeleteProfileTag={handleDeleteProfileTag}
+        setProfileTags={setProfileTags}
         pubkyUser={pubkyUser}
         user={user}
       />

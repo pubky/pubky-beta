@@ -71,7 +71,7 @@ const MarkdownEditorComponent = ({
   }, [value, quill]);
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative mt-4">
       <div id={id} ref={quillRef} className="min-h-[200px]" />
     </div>
   );

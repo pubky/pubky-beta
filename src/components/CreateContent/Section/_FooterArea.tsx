@@ -10,8 +10,9 @@ import {
 } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, useModal } from '@/contexts';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   visibleTextArea: boolean;
@@ -73,6 +74,7 @@ export default function FooterArea({
   const [errorTag, setErrorTag] = useState(false);
   const [showEmojisFastTag, setShowEmojisFastTag] = useState(false);
   const wrapperRefEmojisFastTag = useRef<HTMLDivElement>(null);
+  useDrawerClickOutside(wrapperRefEmojisFastTag, () => setShowEmojis(false));
 
   const handleEmojiClick = (emoji: any) => {
     const textBeforeCursor = content.slice(0, cursorPosition);
@@ -114,17 +116,17 @@ export default function FooterArea({
         return true;
       });
 
-      if (selectedFiles && selectedFiles.length + validFiles.length > 3) {
-        addAlert('Max 3 files only.', 'warning');
+      if (selectedFiles && selectedFiles.length + validFiles.length > 4) {
+        addAlert('Max 4 files only.', 'warning');
         return;
       }
 
       const newFiles =
-        selectedFiles && validFiles.slice(0, 3 - selectedFiles.length);
+        selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
       setSelectedFiles &&
         newFiles &&
         setSelectedFiles((prevFiles) =>
-          [...prevFiles, ...newFiles].slice(0, 3),
+          [...prevFiles, ...newFiles].slice(0, 4),
         );
 
       const newFilePreviews =
@@ -132,7 +134,7 @@ export default function FooterArea({
       newFilePreviews &&
         setFilePreviews &&
         setFilePreviews((prevPreviews) =>
-          [...prevPreviews, ...newFilePreviews].slice(0, 3),
+          [...prevPreviews, ...newFilePreviews].slice(0, 4),
         );
     }
     event.target.value = '';
@@ -147,7 +149,7 @@ export default function FooterArea({
     }
 
     setArrayTags((prevTags) => {
-      if (prevTags.length >= 4) {
+      if (prevTags.length >= 5) {
         setErrorTag(true);
         return prevTags;
       } else {
@@ -170,22 +172,6 @@ export default function FooterArea({
       .replace(/!/g, '');
     setTagInput(valueWithoutSpaces);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojisFastTag.current &&
-        !wrapperRefEmojisFastTag.current.contains(event.target as Node)
-      ) {
-        setShowEmojisFastTag(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojisFastTag]);
 
   return (
     <>

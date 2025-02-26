@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button, DropDown as DropDownUI, Icon, Input } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
 import EmojiPicker from '@/components/EmojiPicker';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface StatusProps {
   setOpenDropdown: any;
@@ -27,22 +28,7 @@ export default function ContentStatus({
   const { updateStatus } = usePubkyClientContext();
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
   return (
     <>

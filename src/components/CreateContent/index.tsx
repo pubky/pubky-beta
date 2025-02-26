@@ -9,6 +9,7 @@ import { UserView } from '@/types/User';
 import { twMerge } from 'tailwind-merge';
 import { Utils } from '@social/utils-shared';
 import { searchUsersByUsername } from '@/services/streamService';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
@@ -77,6 +78,7 @@ export default function CreateContent({
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
@@ -153,22 +155,6 @@ export default function CreateContent({
   }, [wrapperRef, content, setTextArea]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
-
-  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
         (event.ctrlKey || event.metaKey) &&
@@ -214,14 +200,14 @@ export default function CreateContent({
             file &&
             (file.type.startsWith('image/') || file.type.startsWith('video/'))
           ) {
-            if (selectedFiles && selectedFiles.length < 3) {
+            if (selectedFiles && selectedFiles.length < 4) {
               const filePreview = URL.createObjectURL(file);
 
               setSelectedFiles &&
                 setSelectedFiles((prevFiles) => [...prevFiles, file]);
               setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
             } else {
-              addAlert('Maximum of 3 files can be uploaded', 'warning');
+              addAlert('Maximum of 4 files can be uploaded', 'warning');
             }
           } else {
             addAlert('File not supported', 'warning');

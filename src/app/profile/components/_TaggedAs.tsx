@@ -2,7 +2,7 @@
 
 import { ContentNotFound, Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
-import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 import {
   Button,
@@ -20,6 +20,7 @@ import LinksSection from './Sidebar/_LinksSection';
 import { useTagsUser } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import Image from 'next/image';
+import { useUtilsTag } from '@/components/Modal/_TagProfile/components/_Utils';
 
 type TaggedAsProps = {
   creatorPubky?: string | undefined;
@@ -28,8 +29,7 @@ type TaggedAsProps = {
 
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const { openModal, isOpen } = useModal();
-  const { addAlert } = useAlertContext();
-  const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
+  const { pubky } = usePubkyClientContext();
   const usePubky = creatorPubky || pubky || '';
   const { data: user } = useUserProfile(usePubky, pubky ?? '');
   const name = user?.details?.name;
@@ -38,10 +38,15 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>(
     [],
   );
-  const [loadingTags, setLoadingTags] = useState('');
   const limit = 20;
   const [skip, setSkip] = useState(limit);
   const [hasMore, setHasMore] = useState(user && user?.counts?.tags > limit);
+  const { addProfileTag, deleteProfileTag, loadingTags } = useUtilsTag({
+    profileTags,
+    setProfileTags,
+    pubkyUser: usePubky,
+    user,
+  });
 
   const { data: moreTags, isLoading } = useTagsUser(
     user?.details.id ?? '',
@@ -93,109 +98,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     fetchTaggedImages();
   }, [profileTags, pubky]);
 
-  const handleAddProfileTag = async (tag: string) => {
-    // loading tag
-    setLoadingTags(tag);
-    if (usePubky) {
-      // before adding tag, check if tag already exists and is not the same pubky
-      const tagExists = profileTags.find((t) => t.label === tag);
-
-      if (tagExists) {
-        // check if tag is the same pubky
-        if (tagExists.taggers.includes(pubky || '')) {
-          setLoadingTags('');
-        } else {
-          // add tag to taggers
-          tagExists.taggers_count++;
-
-          // update profileTags with new taggers
-          const newProfileTags = profileTags.map((t) => {
-            if (t.label === tag) {
-              return {
-                ...t,
-                taggers: [...t.taggers, pubky || ''],
-                relationship: true,
-              };
-            }
-            return t;
-          });
-
-          // update tag in UI
-          setProfileTags(newProfileTags);
-        }
-      } else {
-        // update tag optimistic in the UI
-        setProfileTags([
-          ...profileTags,
-          {
-            label: tag,
-            taggers: [pubky || ''],
-            taggers_count: 1,
-            relationship: true,
-          },
-        ]);
-      }
-      const response = await createTagProfile(usePubky, tag);
-      if (!response) {
-        // show error message
-        addAlert('Error adding tag', 'warning');
-      }
-      setLoadingTags('');
-    }
-  };
-
-  const handleDeleteProfileTag = async (tag: string) => {
-    // loading tag
-    setLoadingTags(tag);
-
-    if (usePubky) {
-      // check if tag exists in profileTags
-      const tagExists = profileTags.find((t) => t.label === tag);
-
-      if (tagExists) {
-        // check if usePubky is in taggers
-        if (tagExists.taggers.includes(pubky || '')) {
-          // remove tagger from tag but keep the tag but update the taggers_count
-          if (tagExists.taggers_count >= 1) {
-            tagExists.taggers_count--;
-          }
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubky || '',
-          );
-          setProfileTags(
-            profileTags.map((t) =>
-              t.label === tag ? { ...tagExists, relationship: false } : t,
-            ),
-          );
-        } else {
-          // remove tag from taggers
-          if (tagExists.taggers_count >= 1) {
-            tagExists.taggers_count--;
-          }
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubky || '',
-          );
-          setProfileTags(
-            profileTags.map((t) =>
-              t.label === tag ? { ...tagExists, relationship: false } : t,
-            ),
-          );
-        }
-      }
-
-      const response = await deleteTagProfile(usePubky, tag);
-      if (!response) {
-        addAlert('Error deleting tag', 'warning');
-      }
-      setLoadingTags('');
-    }
-  };
-
   const handleOpenModal = () => {
     openModal('profileTags', {
       profileTags: profileTags,
-      handleAddProfileTag: handleAddProfileTag,
-      handleDeleteProfileTag: handleDeleteProfileTag,
+      setProfileTags: setProfileTags,
       pubkyUser: usePubky,
       user: user,
     });
@@ -244,8 +150,8 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                           event.stopPropagation();
                           pubky
                             ? isTagFound
-                              ? handleDeleteProfileTag(tag?.label)
-                              : handleAddProfileTag(tag?.label)
+                              ? deleteProfileTag(tag?.label)
+                              : addProfileTag(tag?.label)
                             : openModal('join');
                         }}
                         color={

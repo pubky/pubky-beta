@@ -3,16 +3,19 @@ import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import CreateContent from '@/components/CreateContent';
+import { Utils } from '@/components/utils-shared';
 
 interface CreateEditPostProps {
   setShowModalEditPost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
 export default function ContentEditPost({
   setShowModalEditPost,
   post,
+  setShowMenu,
   className,
 }: CreateEditPostProps) {
   const { editPost } = usePubkyClientContext();
@@ -31,11 +34,21 @@ export default function ContentEditPost({
     }
     try {
       setSendingEditPost(true);
-      const editPostUser = await editPost(post.details.id, content);
+      const editPostUri = await editPost(post.details.id, content);
 
-      if (editPostUser) {
+      if (editPostUri) {
         setContentEditPost('');
-        addAlert('Post edited!');
+        addAlert(
+          <>
+            Post edited!{' '}
+            <a
+              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
+              href={Utils.encodePostUri(editPostUri)}
+            >
+              View
+            </a>
+          </>,
+        );
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
@@ -44,6 +57,7 @@ export default function ContentEditPost({
       addAlert('Error editing post', 'warning');
     } finally {
       setSendingEditPost(false);
+      setShowMenu(false);
       setShowModalEditPost(false);
     }
   };

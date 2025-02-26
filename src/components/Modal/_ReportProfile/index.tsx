@@ -8,6 +8,7 @@ interface ReportProfileProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   pk: string;
   name: string | undefined;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ReportProfile({
@@ -15,6 +16,7 @@ export default function ReportProfile({
   setShowModal,
   pk,
   name,
+  setShowMenu,
 }: ReportProfileProps) {
   return (
     <Modal.Root
@@ -23,7 +25,12 @@ export default function ReportProfile({
       className="lg:w-[588px] max-w-[1200px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
-      <ContentReportProfile setShowModal={setShowModal} pk={pk} name={name} />
+      <ContentReportProfile
+        setShowModal={setShowModal}
+        pk={pk}
+        name={name}
+        setShowMenu={setShowMenu}
+      />
     </Modal.Root>
   );
 }

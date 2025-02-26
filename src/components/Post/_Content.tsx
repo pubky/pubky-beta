@@ -306,6 +306,8 @@ export default function Content({
                       );
 
                       let layoutClass = '';
+                      const widthImg =
+                        imageFiles.length === 1 && 'min-w-[400px]';
                       if (imageFiles.length === 1) {
                         layoutClass = 'grid-cols-1';
                       } else if (imageFiles.length === 2) {
@@ -334,7 +336,7 @@ export default function Content({
                                   handleOpenModal(index);
                                 }}
                                 alt={`Fetched file ${index}`}
-                                className="w-full h-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                                className={`${widthImg} h-full max-h-[744px] object-cover rounded-[10px] overflow-hidden`}
                               />
                             </div>
                           ))}
@@ -362,7 +364,7 @@ export default function Content({
                               src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                               controls
                               onClick={(event) => event.stopPropagation()}
-                              className="w-full min-w-[200px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                              className="w-full min-w-[400px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
                             />
                           ) : isPDF ? (
                             <div

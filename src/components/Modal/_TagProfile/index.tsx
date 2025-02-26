@@ -6,8 +6,7 @@ interface ProfileTagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   profileTags: UserTags[];
-  handleAddProfileTag: (tag: string) => void;
-  handleDeleteProfileTag: (tag: string) => void;
+  setProfileTags: React.Dispatch<React.SetStateAction<UserTags[]>>;
   pubkyUser?: string;
   user?: UserView | null;
 }
@@ -16,8 +15,7 @@ export default function ProfileTag({
   showModal,
   setShowModal,
   profileTags,
-  handleAddProfileTag,
-  handleDeleteProfileTag,
+  setProfileTags,
   pubkyUser,
   user,
 }: ProfileTagProps) {
@@ -40,8 +38,7 @@ export default function ProfileTag({
         <Modal.Content className="w-full flex flex-row">
           <ContentProfileTag
             profileTags={profileTags}
-            handleAddProfileTag={handleAddProfileTag}
-            handleDeleteProfileTag={handleDeleteProfileTag}
+            setProfileTags={setProfileTags}
             pubkyUser={pubkyUser}
             user={user}
           />
