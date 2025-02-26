@@ -1,6 +1,7 @@
 'use client';
 
 import { Alert, Icon } from '@social/ui-shared';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 type AlertMessage = {
@@ -18,6 +19,7 @@ const AlertContext = createContext<AlertContextType>({
 });
 
 export function AlertWrapper({ children }: { children: React.ReactNode }) {
+  const isMobile = useIsMobile();
   const [alerts, setAlerts] = useState<AlertMessage[]>([]);
 
   const addAlert = (
@@ -45,7 +47,10 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   return (
     <AlertContext.Provider value={{ addAlert }}>
       {children}
-      <div className="fixed z-max bottom-24 lg:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col gap-2">
+      <div
+        style={{ bottom: isMobile ? '96px' : '24px' }}
+        className="fixed z-max left-1/2 transform -translate-x-1/2 flex flex-col gap-2"
+      >
         {alerts.map(({ id, content, variant = 'default' }) => (
           <Alert.Message key={id} icon={iconToShow(variant)} variant={variant}>
             {content}
