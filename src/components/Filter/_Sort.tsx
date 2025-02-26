@@ -15,7 +15,7 @@ export default function Sort({ disabled = false }: SortProps) {
 
   const icons = {
     recent: <Icon.Asterisk />,
-    popularity: <Icon.Fire />,
+    popularity: <Icon.Fire />
   };
 
   useEffect(() => {

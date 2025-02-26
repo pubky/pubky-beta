@@ -12,13 +12,7 @@ interface BackupProps {
   className?: string;
 }
 
-export default function Backup({
-  show,
-  setShow,
-  setShowBackupSuccess,
-  title,
-  className,
-}: BackupProps) {
+export default function Backup({ show, setShow, setShowBackupSuccess, title, className }: BackupProps) {
   const [success, setSuccess] = useState(false);
   const [confirmPhrase, setConfirmPhrase] = useState(false);
   const [showWords, setShowWords] = useState(false);
@@ -28,11 +22,7 @@ export default function Backup({
       show={show}
       setShow={setShow}
       title={
-        (title ?? confirmPhrase)
-          ? 'Confirm Recovery Phrase'
-          : success
-            ? 'Backup successful'
-            : 'Back up your account'
+        (title ?? confirmPhrase) ? 'Confirm Recovery Phrase' : success ? 'Backup successful' : 'Back up your account'
       }
       className={className}
     >

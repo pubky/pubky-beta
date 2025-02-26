@@ -1,21 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  Icon,
-  Tooltip,
-  Post as PostUI,
-  Button,
-  Typography,
-} from '@social/ui-shared';
+import { Icon, Tooltip, Post as PostUI, Button, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
-import {
-  UseUserFollowers,
-  UseUserFollowing,
-  useUserProfile,
-} from '@/hooks/useUser';
+import { UseUserFollowers, UseUserFollowing, useUserProfile } from '@/hooks/useUser';
 import { getUserDetails } from '@/services/userService';
 import Link from 'next/link';
 import Parsing from '../Content/_Parsing';
@@ -28,12 +18,8 @@ interface ProfileProps {
 export default function Profile({ post, profileId }: ProfileProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const [followingImages, setFollowingImages] = useState<
-    { alt: string; src: string }[]
-  >([]);
-  const [followersImages, setFollowersImages] = useState<
-    { alt: string; src: string }[]
-  >([]);
+  const [followingImages, setFollowingImages] = useState<{ alt: string; src: string }[]>([]);
+  const [followersImages, setFollowersImages] = useState<{ alt: string; src: string }[]>([]);
   const idAuthor = post?.details?.author || profileId || '';
 
   const { data: author } = useUserProfile(idAuthor, pubky ?? '');
@@ -41,14 +27,14 @@ export default function Profile({ post, profileId }: ProfileProps) {
   const {
     data: followers,
     isLoading: isLoadingFollowers,
-    isError: isErrorFollowers,
+    isError: isErrorFollowers
   } = UseUserFollowers(idAuthor ?? '');
   if (isErrorFollowers) console.error(isErrorFollowers);
 
   const {
     data: following,
     isLoading: isLoadingFollowing,
-    isError: isErrorFollowing,
+    isError: isErrorFollowing
   } = UseUserFollowing(idAuthor ?? '');
   if (isErrorFollowing) console.error(isErrorFollowing);
 
@@ -118,9 +104,9 @@ export default function Profile({ post, profileId }: ProfileProps) {
               const userDetails = await getUserDetails(user);
               return {
                 alt: `userPic-${index + 1}`,
-                src: userDetails?.image || '/images/webp/Userpic.webp',
+                src: userDetails?.image || '/images/webp/Userpic.webp'
               };
-            }),
+            })
           );
 
           setFollowersImages(images);
@@ -144,9 +130,9 @@ export default function Profile({ post, profileId }: ProfileProps) {
               const userDetails = await getUserDetails(user);
               return {
                 alt: `userPic-${index + 1}`,
-                src: userDetails?.image || '/images/webp/Userpic.webp',
+                src: userDetails?.image || '/images/webp/Userpic.webp'
               };
-            }),
+            })
           );
 
           setFollowingImages(images);
@@ -161,29 +147,15 @@ export default function Profile({ post, profileId }: ProfileProps) {
   }, [following]);
 
   return (
-    <Tooltip.Main
-      onClick={(event) => event.stopPropagation()}
-      className="cursor-default w-[300px]"
-    >
+    <Tooltip.Main onClick={(event) => event.stopPropagation()} className="cursor-default w-[300px]">
       <div className="w-full flex flex-col justify-between">
-        <Link
-          href={`/profile/${idAuthor}`}
-          className="justify-start items-center gap-2 flex cursor-pointer"
-        >
-          <PostUI.ImageUser
-            uriImage={author?.details?.image || '/images/webp/Userpic.webp'}
-            alt="user"
-          />
+        <Link href={`/profile/${idAuthor}`} className="justify-start items-center gap-2 flex cursor-pointer">
+          <PostUI.ImageUser uriImage={author?.details?.image || '/images/webp/Userpic.webp'} alt="user" />
           <div className={`flex flex-col justify-start`}>
-            <PostUI.Username
-              className={`hover:underline hover:decoration-solid`}
-            >
-              {author?.details?.name &&
-                Utils.minifyText(author?.details?.name, 18)}
+            <PostUI.Username className={`hover:underline hover:decoration-solid`}>
+              {author?.details?.name && Utils.minifyText(author?.details?.name, 18)}
             </PostUI.Username>
-            <Typography.Label className="text-opacity-30 -mt-1">
-              {Utils.minifyPubky(idAuthor)}
-            </Typography.Label>
+            <Typography.Label className="text-opacity-30 -mt-1">{Utils.minifyPubky(idAuthor)}</Typography.Label>
           </div>
         </Link>
       </div>
@@ -192,11 +164,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
         className="scrollbar-thin scrollbar-webkit my-3 text-opacity-80 break-words max-h-[150px] overflow-y-auto"
         onClick={(event) => event.stopPropagation()}
       >
-        <Parsing>
-          {author?.details?.bio
-            ? Utils.truncateText(author?.details?.bio, 80)
-            : 'No bio.'}
-        </Parsing>
+        <Parsing>{author?.details?.bio ? Utils.truncateText(author?.details?.bio, 80) : 'No bio.'}</Parsing>
       </Typography.Body>
       <div className="grid grid-cols-2 gap-6 justify-start">
         {isLoadingFollowing || !following ? (
@@ -210,20 +178,14 @@ export default function Profile({ post, profileId }: ProfileProps) {
             }}
             href={
               (followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0
-                ? `/profile/${
-                    idAuthor ? `${idAuthor}/following` : '/following'
-                  }`
+                ? `/profile/${idAuthor ? `${idAuthor}/following` : '/following'}`
                 : ''
             }
-            className={`flex-col gap-3 inline-flex ${
-              (following?.length ?? 0) > 0 && 'cursor-pointer'
-            }`}
+            className={`flex-col gap-3 inline-flex ${(following?.length ?? 0) > 0 && 'cursor-pointer'}`}
           >
             <div className="inline-flex gap-2">
               <Typography.Label>{following?.length}</Typography.Label>
-              <Typography.Label className="text-opacity-50">
-                Following
-              </Typography.Label>
+              <Typography.Label className="text-opacity-50">Following</Typography.Label>
             </div>
             {followingImages && <PostUI.UserPic images={followingImages} />}
           </Link>
@@ -239,20 +201,14 @@ export default function Profile({ post, profileId }: ProfileProps) {
             }}
             href={
               (followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0
-                ? `/profile/${
-                    idAuthor ? `${idAuthor}/followers` : '/followers'
-                  }`
+                ? `/profile/${idAuthor ? `${idAuthor}/followers` : '/followers'}`
                 : ''
             }
-            className={`flex-col gap-3 inline-flex ${
-              (followers?.length ?? 0) > 0 && 'cursor-pointer'
-            }`}
+            className={`flex-col gap-3 inline-flex ${(followers?.length ?? 0) > 0 && 'cursor-pointer'}`}
           >
             <div className="inline-flex gap-2">
               <Typography.Label>{followers?.length}</Typography.Label>
-              <Typography.Label className="text-opacity-50">
-                Followers
-              </Typography.Label>
+              <Typography.Label className="text-opacity-50">Followers</Typography.Label>
             </div>
             {followersImages && <PostUI.UserPic images={followersImages} />}
           </Link>
@@ -266,10 +222,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
             }}
             href="/settings/edit"
           >
-            <Button.Transparent
-              icon={<Icon.Pencil size="16" />}
-              className="mt-3"
-            >
+            <Button.Transparent icon={<Icon.Pencil size="16" />} className="mt-3">
               Edit profile
             </Button.Transparent>
           </Link>

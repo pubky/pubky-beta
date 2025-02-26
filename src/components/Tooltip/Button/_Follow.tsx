@@ -37,8 +37,8 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
         ...prev,
         relationship: {
           ...prev.relationship,
-          following: isFollowing,
-        },
+          following: isFollowing
+        }
       };
     });
   };
@@ -99,8 +99,7 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
       loading={loadingFollowed}
       icon={<Icon.UserMinus size="24" />}
     >
-      Unfollow{' '}
-      {Utils.minifyText(localAuthor?.details?.name ?? '', isMobile ? 30 : 10)}
+      Unfollow {Utils.minifyText(localAuthor?.details?.name ?? '', isMobile ? 30 : 10)}
     </Tooltip.Item>
   ) : (
     <Tooltip.Item
@@ -108,8 +107,7 @@ export default function Follow({ pk, setShowMenu }: TooltipMenuProps) {
       loading={loadingFollowed}
       icon={<Icon.UserPlus size="24" />}
     >
-      Follow{' '}
-      {Utils.minifyText(localAuthor?.details?.name ?? '', isMobile ? 30 : 10)}
+      Follow {Utils.minifyText(localAuthor?.details?.name ?? '', isMobile ? 30 : 10)}
     </Tooltip.Item>
   );
 }

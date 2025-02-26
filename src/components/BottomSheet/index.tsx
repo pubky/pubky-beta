@@ -61,5 +61,5 @@ export const BottomSheet = {
   SortPosts,
   Status,
   Tag,
-  TagCreatePost,
+  TagCreatePost
 };

@@ -8,12 +8,7 @@ interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'warning';
 }
 
-export const Message = ({
-  icon,
-  children,
-  variant = 'default',
-  ...rest
-}: MessageProps) => {
+export const Message = ({ icon, children, variant = 'default', ...rest }: MessageProps) => {
   const baseCSS = `relative py-2 px-4 rounded-md shadow border w-full`;
 
   let variantCSS = '';
@@ -21,8 +16,7 @@ export const Message = ({
 
   switch (variant) {
     case 'warning':
-      variantCSS =
-        'bg-yellow-600 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-yellow-500';
+      variantCSS = 'bg-yellow-600 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-yellow-500';
       colorTextCSS = 'text-white';
       break;
     case 'default':
@@ -34,17 +28,10 @@ export const Message = ({
   }
 
   return (
-    <div
-      id="message-alert"
-      {...rest}
-      className={twMerge(baseCSS, variantCSS, rest.className)}
-    >
+    <div id="message-alert" {...rest} className={twMerge(baseCSS, variantCSS, rest.className)}>
       <div className="flex gap-1 items-center">
         {icon && <div className="relative">{icon}</div>}
-        <Typography.Body
-          className={twMerge(colorTextCSS, 'text-opacity-80')}
-          variant="small"
-        >
+        <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
           {children}
         </Typography.Body>
       </div>

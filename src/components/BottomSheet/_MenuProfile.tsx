@@ -12,26 +12,10 @@ interface MenuProfileProps {
   className?: string;
 }
 
-export default function MenuProfile({
-  show,
-  setShow,
-  creatorPubky,
-  name,
-  title,
-  className,
-}: MenuProfileProps) {
+export default function MenuProfile({ show, setShow, creatorPubky, name, title, className }: MenuProfileProps) {
   return (
-    <BottomSheetUI.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
-      <ContentProfileMenu
-        setShowProfileMenu={setShow}
-        creatorPubky={creatorPubky}
-        name={name}
-      />
+    <BottomSheetUI.Root show={show} setShow={setShow} title={title} className={className}>
+      <ContentProfileMenu setShowProfileMenu={setShow} creatorPubky={creatorPubky} name={name} />
     </BottomSheetUI.Root>
   );
 }

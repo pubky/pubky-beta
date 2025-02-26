@@ -11,12 +11,7 @@ interface ReportPostProps {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ReportPost({
-  showModal,
-  setShowModal,
-  post,
-  setShowMenu,
-}: ReportPostProps) {
+export default function ReportPost({ showModal, setShowModal, post, setShowMenu }: ReportPostProps) {
   return (
     <Modal.Root
       show={showModal}
@@ -24,11 +19,7 @@ export default function ReportPost({
       className="lg:w-[588px] max-w-[1200px] max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
-      <ContentReportPost
-        setShowModal={setShowModal}
-        post={post}
-        setShowMenu={setShowMenu}
-      />
+      <ContentReportPost setShowModal={setShowModal} post={post} setShowMenu={setShowMenu} />
     </Modal.Root>
   );
 }

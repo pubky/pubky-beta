@@ -15,13 +15,7 @@ export default function Bookmarks() {
   const limit = 10;
   const [start, setStart] = useState<number | undefined>(undefined);
 
-  const { data, isLoading } = useStreamPost(
-    pubky ?? '',
-    'bookmarks',
-    undefined,
-    limit,
-    start,
-  );
+  const { data, isLoading } = useStreamPost(pubky ?? '', 'bookmarks', undefined, limit, start);
 
   const fetchPosts = async () => {
     try {
@@ -32,10 +26,7 @@ export default function Bookmarks() {
       if (lastPost.details?.indexed_at) {
         setStart(lastPost.details.indexed_at - 1);
         setTimeline((prev) => {
-          const newPosts = data.filter(
-            (post: PostView) =>
-              !prev.some((p) => p.details.id === post.details.id),
-          );
+          const newPosts = data.filter((post: PostView) => !prev.some((p) => p.details.id === post.details.id));
           return [...prev, ...newPosts];
         });
       }
@@ -68,12 +59,7 @@ export default function Bookmarks() {
               {post?.details?.content === '[DELETED]' && post?.bookmark?.id && (
                 <div
                   onClick={() =>
-                    post?.bookmark?.id
-                      ? handleDeleteBookmark(
-                          post.details.id,
-                          post.details.author,
-                        )
-                      : undefined
+                    post?.bookmark?.id ? handleDeleteBookmark(post.details.id, post.details.author) : undefined
                   }
                   className="cursor-pointer"
                 >
@@ -81,7 +67,7 @@ export default function Bookmarks() {
                 </div>
               )}
             </div>
-          ),
+          )
       )}
       {isLoading && (
         <div className="flex flex-col gap-3">
@@ -90,9 +76,7 @@ export default function Bookmarks() {
       )}
       {timeline.length === 0 && !isLoading && (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-          <Typography.H2 className="font-normal text-opacity-50">
-            No posts yet.
-          </Typography.H2>
+          <Typography.H2 className="font-normal text-opacity-50">No posts yet.</Typography.H2>
         </div>
       )}
       <div ref={loader} />

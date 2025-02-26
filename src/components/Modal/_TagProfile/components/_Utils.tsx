@@ -17,14 +17,8 @@ interface UtilsProps extends React.HTMLAttributes<HTMLDivElement> {
   user?: UserView | null;
 }
 
-export const useUtilsTag = ({
-  profileTags,
-  setProfileTags,
-  pubkyUser,
-  user,
-}: UtilsProps) => {
-  const { pubky, follow, unfollow, createTagProfile, deleteTagProfile } =
-    usePubkyClientContext();
+export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: UtilsProps) => {
+  const { pubky, follow, unfollow, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [tag, setTag] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -39,15 +33,11 @@ export const useUtilsTag = ({
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
-  const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>(
-    {},
-  );
+  const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>({});
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
   const limit = 5;
-  const [allTags, setAllTags] = useState<PostTag[]>(
-    profileTags.slice(0, limit),
-  );
+  const [allTags, setAllTags] = useState<PostTag[]>(profileTags.slice(0, limit));
   const [loadingTags, setLoadingTags] = useState('');
   const [loading, setLoading] = useState(false);
   const [skip, setSkip] = useState(limit);
@@ -57,26 +47,18 @@ export const useUtilsTag = ({
   const [taggers, setTaggers] = useState<string[]>([]);
   const [hasMoreTaggers, setHasMoreTaggers] = useState(false);
 
-  const { data: moreTags, isLoading } = useTagsUser(
-    user?.details.id ?? '',
-    pubky,
-    skip,
-    limit,
-  );
+  const { data: moreTags, isLoading } = useTagsUser(user?.details.id ?? '', pubky, skip, limit);
 
   const { data: moreTaggers, isLoading: isLoadingTaggers } = useUserTagTaggers(
     user?.details.id ?? '',
     selectedTag?.label ?? '',
     pubky,
     skipTaggers,
-    limitTaggers,
+    limitTaggers
   );
 
   useEffect(() => {
-    const uniqueTags = profileTags.filter(
-      (tag, index, self) =>
-        index === self.findIndex((t) => t.label === tag.label),
-    );
+    const uniqueTags = profileTags.filter((tag, index, self) => index === self.findIndex((t) => t.label === tag.label));
     if (JSON.stringify(uniqueTags) !== JSON.stringify(allTags)) {
       setAllTags(uniqueTags);
     }
@@ -110,8 +92,7 @@ export const useUtilsTag = ({
       setAllTags((prev) => {
         const updatedTags = [...prev, ...moreTags];
         const uniqueTags = updatedTags.filter(
-          (tag, index, self) =>
-            index === self.findIndex((t) => t.label === tag.label),
+          (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
         );
         setHasMore(uniqueTags.length > prev.length);
         return uniqueTags;
@@ -121,9 +102,7 @@ export const useUtilsTag = ({
 
   useEffect(() => {
     if (selectedTag) {
-      const updatedTag = profileTags.find(
-        (tag) => tag.label === selectedTag.label,
-      );
+      const updatedTag = profileTags.find((tag) => tag.label === selectedTag.label);
       if (updatedTag && setSelectedTag) {
         setSelectedTag(updatedTag);
       }
@@ -160,7 +139,7 @@ export const useUtilsTag = ({
           } catch (error) {
             console.error(`Error fetching profile for user ${userId}`, error);
           }
-        }),
+        })
       );
 
       setUserProfiles((prev) => ({ ...prev, ...profilesMap }));
@@ -192,7 +171,7 @@ export const useUtilsTag = ({
               return {
                 ...t,
                 taggers: [...t.taggers, pubky || ''],
-                relationship: true,
+                relationship: true
               };
             }
             return t;
@@ -209,8 +188,8 @@ export const useUtilsTag = ({
             label: tag,
             taggers: [pubky || ''],
             taggers_count: 1,
-            relationship: true,
-          },
+            relationship: true
+          }
         ]);
       }
       const response = await createTagProfile(pubkyUser, tag);
@@ -237,27 +216,15 @@ export const useUtilsTag = ({
           if (tagExists.taggers_count >= 1) {
             tagExists.taggers_count--;
           }
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubky || '',
-          );
-          setProfileTags(
-            profileTags.map((t) =>
-              t.label === tag ? { ...tagExists, relationship: false } : t,
-            ),
-          );
+          tagExists.taggers = tagExists.taggers.filter((t) => t !== pubky || '');
+          setProfileTags(profileTags.map((t) => (t.label === tag ? { ...tagExists, relationship: false } : t)));
         } else {
           // remove tag from taggers
           if (tagExists.taggers_count >= 1) {
             tagExists.taggers_count--;
           }
-          tagExists.taggers = tagExists.taggers.filter(
-            (t) => t !== pubky || '',
-          );
-          setProfileTags(
-            profileTags.map((t) =>
-              t.label === tag ? { ...tagExists, relationship: false } : t,
-            ),
-          );
+          tagExists.taggers = tagExists.taggers.filter((t) => t !== pubky || '');
+          setProfileTags(profileTags.map((t) => (t.label === tag ? { ...tagExists, relationship: false } : t)));
         }
       }
 
@@ -278,7 +245,7 @@ export const useUtilsTag = ({
         } catch (error) {
           return '/images/webp/Userpic.webp';
         }
-      }),
+      })
     );
     return images;
   };
@@ -291,7 +258,7 @@ export const useUtilsTag = ({
         allTags.map(async (tag) => {
           const images = await fetchProfileImages(tag);
           imagesMap[tag.label] = images.slice(0, 4);
-        }),
+        })
       );
       setTagImages(imagesMap);
     };
@@ -306,7 +273,7 @@ export const useUtilsTag = ({
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: true,
+        [pubkyFollow]: true
       }));
 
       const result = await follow(pubkyFollow);
@@ -317,12 +284,12 @@ export const useUtilsTag = ({
 
       setFollowedUser((prevState) => ({
         ...prevState,
-        [pubkyFollow]: result,
+        [pubkyFollow]: result
       }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: false,
+        [pubkyFollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -335,7 +302,7 @@ export const useUtilsTag = ({
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: true,
+        [pubkyUnfollow]: true
       }));
 
       const result = await unfollow(pubkyUnfollow);
@@ -346,12 +313,12 @@ export const useUtilsTag = ({
 
       setFollowedUser((prevState) => ({
         ...prevState,
-        [pubkyUnfollow]: !result,
+        [pubkyUnfollow]: !result
       }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: false,
+        [pubkyUnfollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -359,10 +326,7 @@ export const useUtilsTag = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value
-      .toLowerCase()
-      .replace(/\s/g, '')
-      .replace(/!/g, '');
+    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
     setTag(valueWithoutSpaces);
   };
 
@@ -422,6 +386,6 @@ export const useUtilsTag = ({
     unfollowUser,
     followUser,
     hasMoreTaggers,
-    loaderTaggers,
+    loaderTaggers
   };
 };

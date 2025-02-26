@@ -10,19 +10,9 @@ interface BottomSheetJoinProps {
   className?: string;
 }
 
-export default function Join({
-  show,
-  setShow,
-  title,
-  className,
-}: BottomSheetJoinProps) {
+export default function Join({ show, setShow, title, className }: BottomSheetJoinProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Join Pubky'}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Join Pubky'} className={className}>
       <ContentJoin closeJoin={() => setShow(false)} />
     </BottomSheet.Root>
   );

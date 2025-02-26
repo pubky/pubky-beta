@@ -11,26 +11,18 @@ interface SeoMetadataParams {
 export function getSeoMetadata({
   title = 'Pubky.app | Unlock the web',
   description = 'Unlock the web. Your keys, your content, your rules.',
-  keywords = [
-    'key',
-    'public key',
-    'pubkey',
-    'pubky',
-    'pkarr',
-    'pubky core',
-    'web',
-  ],
+  keywords = ['key', 'public key', 'pubkey', 'pubky', 'pkarr', 'pubky core', 'web'],
   icon = '/images/pubky-logo.svg',
   image = '/images/webp/pubky-seo.webp',
   url = 'https://pubky.app',
-  twitterHandle = '@getpubky',
+  twitterHandle = '@getpubky'
 }: SeoMetadataParams) {
   return {
     title,
     description,
     keywords,
     icons: {
-      icon,
+      icon
     },
     openGraph: {
       title,
@@ -41,15 +33,15 @@ export function getSeoMetadata({
           url: image,
           width: 1200,
           height: 630,
-          alt: title,
-        },
+          alt: title
+        }
       ],
-      site_name: 'Pubky.app',
+      site_name: 'Pubky.app'
     },
     twitter: {
       handle: twitterHandle,
       site: twitterHandle,
-      cardType: 'summary_large_image',
-    },
+      cardType: 'summary_large_image'
+    }
   };
 }

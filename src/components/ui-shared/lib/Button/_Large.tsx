@@ -40,16 +40,10 @@ export const Large = ({
   const cssButton = `${stateButton} w-full h-[58px] px-6 py-5 rounded-[64px] shadow backdrop-blur-[10px] justify-center items-center gap-2 inline-flex`;
 
   return (
-    <button
-      {...rest}
-      className={twMerge(cssButton, cssColorButton, rest.className)}
-    >
+    <button {...rest} className={twMerge(cssButton, cssColorButton, rest.className)}>
       {loading ? <Icon.LoadingSpin size="20" /> : icon && <div>{icon}</div>}
       {children && (
-        <Typography.Body
-          className={`tracking-normal ${colorText}`}
-          variant="small-bold"
-        >
+        <Typography.Body className={`tracking-normal ${colorText}`} variant="small-bold">
           {children}
         </Typography.Body>
       )}

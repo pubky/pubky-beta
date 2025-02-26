@@ -15,7 +15,7 @@ interface ModalContextType {
 const ModalContext = createContext<ModalContextType>({
   openModal: () => {},
   closeModal: () => {},
-  isOpen: () => false,
+  isOpen: () => false
 });
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
@@ -70,20 +70,16 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     menuPost: 'Menu',
     menuProfile: 'MenuProfile',
     tags: 'Tag',
-    profileTags: 'ProfileTag',
+    profileTags: 'ProfileTag'
   };
 
-  const renderModal = (
-    modalType: string,
-    modalId: string,
-    props?: Record<string, any>,
-  ) => {
+  const renderModal = (modalType: string, modalId: string, props?: Record<string, any>) => {
     const Component = isMobile ? BottomSheet[modalType] : Modal[modalType];
     const componentProps = isMobile
       ? { show: openModals[modalId], setShow: () => closeModal(modalId) }
       : {
           showModal: openModals[modalId],
-          setShowModal: () => closeModal(modalId),
+          setShowModal: () => closeModal(modalId)
         };
 
     return Component ? <Component {...componentProps} {...props} /> : null;
@@ -95,14 +91,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       {Object.keys(openModals).map(
         (modalId) =>
           openModals[modalId] && (
-            <div key={modalId}>
-              {renderModal(
-                modalComponents[modalId],
-                modalId,
-                modalProps[modalId],
-              )}
-            </div>
-          ),
+            <div key={modalId}>{renderModal(modalComponents[modalId], modalId, modalProps[modalId])}</div>
+          )
       )}
     </ModalContext.Provider>
   );

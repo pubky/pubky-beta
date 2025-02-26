@@ -3,12 +3,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const UnitedStates = ({ size = '32' }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 32 32">
     <rect x="1" y="4" width="30" height="24" rx="4" ry="4" fill="#fff"></rect>
     <path
       d="M1.638,5.846H30.362c-.711-1.108-1.947-1.846-3.362-1.846H5c-1.414,0-2.65,.738-3.362,1.846Z"
@@ -115,17 +110,9 @@ export const UnitedStates = ({ size = '32' }: IconProps) => (
 );
 
 export const Spain = ({ size = '32' }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 32 32">
     <path fill="#f1c142" d="M1 10H31V22H1z"></path>
-    <path
-      d="M5,4H27c2.208,0,4,1.792,4,4v3H1v-3c0-2.208,1.792-4,4-4Z"
-      fill="#a0251e"
-    ></path>
+    <path d="M5,4H27c2.208,0,4,1.792,4,4v3H1v-3c0-2.208,1.792-4,4-4Z" fill="#a0251e"></path>
     <path
       d="M5,21H27c2.208,0,4,1.792,4,4v3H1v-3c0-2.208,1.792-4,4-4Z"
       transform="rotate(180 16 24.5)"
@@ -160,12 +147,7 @@ export const Spain = ({ size = '32' }: IconProps) => (
 );
 
 export const Germany = ({ size = '32' }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 32 32">
     <path fill="#cc2b1d" d="M1 11H31V21H1z"></path>
     <path d="M5,4H27c2.208,0,4,1.792,4,4v4H1v-4c0-2.208,1.792-4,4-4Z"></path>
     <path
@@ -186,17 +168,9 @@ export const Germany = ({ size = '32' }: IconProps) => (
 );
 
 export const France = ({ size = '32' }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 32 32">
     <path fill="#fff" d="M10 4H22V28H10z"></path>
-    <path
-      d="M5,4h6V28H5c-2.208,0-4-1.792-4-4V8c0-2.208,1.792-4,4-4Z"
-      fill="#092050"
-    ></path>
+    <path d="M5,4h6V28H5c-2.208,0-4-1.792-4-4V8c0-2.208,1.792-4,4-4Z" fill="#092050"></path>
     <path
       d="M25,4h6V28h-6c-2.208,0-4-1.792-4-4V8c0-2.208,1.792-4,4-4Z"
       transform="rotate(180 26 16)"
@@ -215,17 +189,9 @@ export const France = ({ size = '32' }: IconProps) => (
 );
 
 export const Italy = ({ size = '32' }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 32 32">
     <path fill="#fff" d="M10 4H22V28H10z"></path>
-    <path
-      d="M5,4h6V28H5c-2.208,0-4-1.792-4-4V8c0-2.208,1.792-4,4-4Z"
-      fill="#41914d"
-    ></path>
+    <path d="M5,4h6V28H5c-2.208,0-4-1.792-4-4V8c0-2.208,1.792-4,4-4Z" fill="#41914d"></path>
     <path
       d="M25,4h6V28h-6c-2.208,0-4-1.792-4-4V8c0-2.208,1.792-4,4-4Z"
       transform="rotate(180 26 16)"

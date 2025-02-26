@@ -17,7 +17,7 @@ export const socialLinks = [
       <div>
         <Icon.Twitter size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Telegram',
@@ -26,7 +26,7 @@ export const socialLinks = [
       <div>
         <Icon.Telegram width="16" height="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Discord',
@@ -35,7 +35,7 @@ export const socialLinks = [
       <div>
         <Icon.Discord size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Instagram',
@@ -44,7 +44,7 @@ export const socialLinks = [
       <div>
         <Icon.Instagram size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Facebook',
@@ -53,7 +53,7 @@ export const socialLinks = [
       <div>
         <Icon.Facebook size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'LinkedIn',
@@ -62,7 +62,7 @@ export const socialLinks = [
       <div>
         <Icon.LinkedIn size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Github',
@@ -71,7 +71,7 @@ export const socialLinks = [
       <div>
         <Icon.Github size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Calendly',
@@ -80,7 +80,7 @@ export const socialLinks = [
       <div>
         <Icon.Calendly size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Medium',
@@ -89,7 +89,7 @@ export const socialLinks = [
       <div>
         <Icon.Medium size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Youtube',
@@ -98,7 +98,7 @@ export const socialLinks = [
       <div>
         <Icon.Youtube width="16" height="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Twitch',
@@ -107,7 +107,7 @@ export const socialLinks = [
       <div>
         <Icon.Twitch size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'TikTok',
@@ -116,7 +116,7 @@ export const socialLinks = [
       <div>
         <Icon.TikTok size="16" />
       </div>
-    ),
+    )
   },
   {
     name: 'Spotify',
@@ -125,8 +125,8 @@ export const socialLinks = [
       <div>
         <Icon.Spotify size="16" />
       </div>
-    ),
-  },
+    )
+  }
 ];
 
 const linkTitleToIconMap: { [key: string]: JSX.Element } = {
@@ -139,7 +139,7 @@ const linkTitleToIconMap: { [key: string]: JSX.Element } = {
     <div>
       <Icon.Envelope size="16" />
     </div>
-  ),
+  )
 };
 
 export default function LinksSection({ links }: LinksSectionProps) {
@@ -150,9 +150,7 @@ export default function LinksSection({ links }: LinksSectionProps) {
   const renderSocialUsername = (linkUrl: string) => {
     const cleanedUrl = linkUrl.endsWith('/') ? linkUrl.slice(0, -1) : linkUrl;
 
-    const matchingSocialLink = socialLinks.find((socialLink) =>
-      cleanedUrl.includes(socialLink.url),
-    );
+    const matchingSocialLink = socialLinks.find((socialLink) => cleanedUrl.includes(socialLink.url));
 
     if (matchingSocialLink) {
       const usernameStartIndex = cleanedUrl.lastIndexOf('/') + 1;
@@ -163,8 +161,7 @@ export default function LinksSection({ links }: LinksSectionProps) {
     return removeUrlPrefix(cleanedUrl) || '';
   };
 
-  const removeUrlPrefix = (url: string) =>
-    url.replace(/^(https?:\/\/(www\.)?|www\.)/, '');
+  const removeUrlPrefix = (url: string) => url.replace(/^(https?:\/\/(www\.)?|www\.)/, '');
 
   return (
     <>
@@ -176,9 +173,7 @@ export default function LinksSection({ links }: LinksSectionProps) {
           </Typography.Body>
           <div className="flex-col inline-flex gap-2">
             {links.map((link, index) => {
-              const icon = socialLinks.find((socialLink) =>
-                link.url.includes(socialLink.url),
-              )?.icon;
+              const icon = socialLinks.find((socialLink) => link.url.includes(socialLink.url))?.icon;
               const customIcon = linkTitleToIconMap[link.title.toLowerCase()];
 
               return (
@@ -194,8 +189,7 @@ export default function LinksSection({ links }: LinksSectionProps) {
                           <Icon.Link size="16" />
                         </div>
                       )}
-                      {link.title.toLocaleLowerCase() === 'email' ||
-                      link.title.toLocaleLowerCase() === 'mail' ? (
+                      {link.title.toLocaleLowerCase() === 'email' || link.title.toLocaleLowerCase() === 'mail' ? (
                         <Link href={`${link.url}`} target="_blank">
                           <Typography.Body
                             className="text-opacity-80 hover:text-opacity-100 break-all leading-none"

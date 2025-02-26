@@ -16,133 +16,105 @@ const questions: QuestionsType = {
   1: {
     question: 'How can I update my profile information?',
     answer: (
-      <Typography.Body
-        className="text-opacity-80 text-[16px] mr-2 leading-snug"
-        variant="medium"
-      >
-        If you wish to update your profile, go to your avatar icon at the top
-        right corner of your screen, click on that and you will be presented
-        with a screen where you can click the{' '}
+      <Typography.Body className="text-opacity-80 text-[16px] mr-2 leading-snug" variant="medium">
+        If you wish to update your profile, go to your avatar icon at the top right corner of your screen, click on that
+        and you will be presented with a screen where you can click the{' '}
         <Link href="/settings/edit">
           <strong>"Edit"</strong>
         </Link>{' '}
         button to update your profile information.
       </Typography.Body>
-    ),
+    )
   },
   2: {
     question: 'How can I delete my post?',
     answer: (
-      <Typography.Body
-        className="text-opacity-80 text-[16px] mr-2 leading-snug"
-        variant="medium"
-      >
-        If you wish to delete a post, simply go to the content piece you wish
-        to remove and click on the three dots on the bottom right corner to be
-        presented with a few options. At the very bottom you can see an option
-        to “Delete Post”.
+      <Typography.Body className="text-opacity-80 text-[16px] mr-2 leading-snug" variant="medium">
+        If you wish to delete a post, simply go to the content piece you wish to remove and click on the three dots on
+        the bottom right corner to be presented with a few options. At the very bottom you can see an option to “Delete
+        Post”.
       </Typography.Body>
-    ),
+    )
   },
   3: {
     question: 'How do I mute someone?',
     answer: (
-      <Typography.Body
-        className="text-opacity-80 text-[16px] mr-2 leading-snug"
-        variant="medium"
-      >
-        If you wish to mute someone, go to the user&apos;s profile and click on
-        the three dots on their profile. You will be presented with multiple
-        options one of which is “Mute user”.
+      <Typography.Body className="text-opacity-80 text-[16px] mr-2 leading-snug" variant="medium">
+        If you wish to mute someone, go to the user&apos;s profile and click on the three dots on their profile. You
+        will be presented with multiple options one of which is “Mute user”.
       </Typography.Body>
-    ),
+    )
   },
   4: {
     question: 'How can I restore my account?',
     answer: (
-      <Typography.Body
-        className="text-opacity-80 text-[16px] mr-2 leading-snug"
-        variant="medium"
-      >
-        When signing up for Pubky, you can either scan a QR code with the
-        Pubky Ring mobile app or create a new Pubky.
+      <Typography.Body className="text-opacity-80 text-[16px] mr-2 leading-snug" variant="medium">
+        When signing up for Pubky, you can either scan a QR code with the Pubky Ring mobile app or create a new Pubky.
         <br />
         <br />
-        If you use Pubky Ring, it will handle your backup and you'll only
-        need to scan the QR code to sign in again.
+        If you use Pubky Ring, it will handle your backup and you'll only need to scan the QR code to sign in again.
         <br />
         <br />
-        If you create a new Pubky, it's essential to back it up. There are
-        two ways to do this, whichever way you choose to backup your account
-        will be entirely up to you and your preferences.
+        If you create a new Pubky, it's essential to back it up. There are two ways to do this, whichever way you choose
+        to backup your account will be entirely up to you and your preferences.
         <br />
         <br />
         <ul>
-          <li><strong>1. Recovery File</strong></li>
-        <br />
-        To restore via recovery file, first you will need to select the recovery
-        file, which you would have downloaded and saved upon signing up to Pubky
-        app.
-        <br />
-        <br />
-        Then you will need to type in the password associated to the recovery
-        file and your account.
-        <br />
-        <br />
-        After you are done, simply click on “Sign In” and you should have access
-        to your profile.
-        <br />
-        <br />
-          <li><strong>2. Recovery Phrase</strong></li>
+          <li>
+            <strong>1. Recovery File</strong>
+          </li>
+          <br />
+          To restore via recovery file, first you will need to select the recovery file, which you would have downloaded
+          and saved upon signing up to Pubky app.
+          <br />
+          <br />
+          Then you will need to type in the password associated to the recovery file and your account.
+          <br />
+          <br />
+          After you are done, simply click on “Sign In” and you should have access to your profile.
+          <br />
+          <br />
+          <li>
+            <strong>2. Recovery Phrase</strong>
+          </li>
         </ul>
         <br />
-        To restore via recovery phase, you will need to type or paste the 12
-        word phrase, which you would have taken note of when signing up to Pubky
-        app.
+        To restore via recovery phase, you will need to type or paste the 12 word phrase, which you would have taken
+        note of when signing up to Pubky app.
         <br />
         <br />
-        After you are done, simply click on “Sign In” and you should have access
-        to your profile.
+        After you are done, simply click on “Sign In” and you should have access to your profile.
       </Typography.Body>
-    ),
+    )
   },
   5: {
     question: 'How is Pubky different from other social platforms?',
     answer: (
-      <Typography.Body
-        className="text-opacity-80 text-[16px] mr-2 leading-snug"
-        variant="medium"
-      >
-        With Pubky app, you are no longer a passive participant; you are the
-        algorithm. You determine and personalize what you see - content feeds,
-        social tagging, and web-of-trust-based curation.
+      <Typography.Body className="text-opacity-80 text-[16px] mr-2 leading-snug" variant="medium">
+        With Pubky app, you are no longer a passive participant; you are the algorithm. You determine and personalize
+        what you see - content feeds, social tagging, and web-of-trust-based curation.
         <br />
         <br />
-        Here are some other aspects that make Pubky stand out from the sea of
-        social media platforms:
+        Here are some other aspects that make Pubky stand out from the sea of social media platforms:
         <ul>
           <li>
-            - The Pubky App is a Progressive Web App (PWA) browser-based or
-            locally installed tool that allows users to interact with the Pubky
-            ecosystem. It offers publishing, social tagging, and curation
-            features, letting users control every aspect of their web
-            experience.
+            - The Pubky App is a Progressive Web App (PWA) browser-based or locally installed tool that allows users to
+            interact with the Pubky ecosystem. It offers publishing, social tagging, and curation features, letting
+            users control every aspect of their web experience.
           </li>
           <li>
-            - Keys. Users represent themselves as public keys, removing the need
-            for email or phone numbers and creating a self-sovereign identity
-            that is consistent across the entire network.{' '}
+            - Keys. Users represent themselves as public keys, removing the need for email or phone numbers and creating
+            a self-sovereign identity that is consistent across the entire network.{' '}
           </li>
           <li>
-            - Pubky&apos;s Semantic Social Graph (SSG) enables a personalized
-            online experience by using decentralized, context-rich tags and
-            user-defined relationships to tailor content discovery and
-            interaction to individual interests and values.
+            - Pubky&apos;s Semantic Social Graph (SSG) enables a personalized online experience by using decentralized,
+            context-rich tags and user-defined relationships to tailor content discovery and interaction to individual
+            interests and values.
           </li>
         </ul>
       </Typography.Body>
-    ),
-  },
+    )
+  }
 };
 
 export default function Help() {
@@ -180,17 +152,13 @@ export default function Help() {
           <Typography.H2>User Guide</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
-          The Pubky User Guide will help you navigate through the app, utilize
-          its key features, and get the most out of your Pubky experience.
+          The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of
+          your Pubky experience.
         </Typography.Body>
         <Button.Large
           variant="secondary"
           className="w-auto"
-          onClick={() =>
-            window.open(
-              'https://support.synonym.to/hc/pubky-app-help-center/en',
-            )
-          }
+          onClick={() => window.open('https://support.synonym.to/hc/pubky-app-help-center/en')}
           icon={<Icon.FileText width="16" height="16" />}
         >
           User Guide
@@ -201,8 +169,7 @@ export default function Help() {
           <Typography.H2>Support</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
-          Cannot find the answer you&apos;re looking for? Pubky support will
-          help you out in no time.
+          Cannot find the answer you&apos;re looking for? Pubky support will help you out in no time.
         </Typography.Body>
         <Button.Large
           variant="secondary"

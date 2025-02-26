@@ -56,9 +56,7 @@ export default function Mute({ pk }: MuteProps) {
       const result = await unmute(pk);
       if (result) {
         setMuted(!result);
-        setMutedUsers((prev) =>
-          prev ? prev.filter((user) => user !== pk) : [],
-        );
+        setMutedUsers((prev) => (prev ? prev.filter((user) => user !== pk) : []));
       }
       setLoadingMuted(false);
     } catch (error) {

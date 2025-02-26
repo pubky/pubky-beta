@@ -10,13 +10,13 @@ const tabs = [
     id: 6,
     key: 'tagged',
     icon: <Icon.UserRectangle size="24" color="white" />,
-    label: 'Tagged',
+    label: 'Tagged'
   },
   {
     id: 0,
     key: 'notifications',
     icon: <Icon.Bell size="24" color="white" />,
-    label: 'Notifications',
+    label: 'Notifications'
   },
   //{
   //  id: 1,
@@ -28,40 +28,38 @@ const tabs = [
     id: 1,
     key: 'posts',
     icon: <Icon.Note size="24" color="white" />,
-    label: 'Posts',
+    label: 'Posts'
   },
   {
     id: 2,
     key: 'replies',
     icon: <Icon.ChatCircleText size="24" color="white" />,
-    label: 'Replies',
+    label: 'Replies'
   },
   {
     id: 3,
     key: 'followers',
     icon: <Icon.UsersLeft size="24" color="white" />,
-    label: 'Followers',
+    label: 'Followers'
   },
   {
     id: 4,
     key: 'following',
     icon: <Icon.UsersRight size="24" color="white" />,
-    label: 'Following',
+    label: 'Following'
   },
   {
     id: 5,
     key: 'friends',
     icon: <Icon.Smiley size="24" color="white" />,
-    label: 'Friends',
-  },
+    label: 'Friends'
+  }
 ];
 
 const generateTabUrl = (key: string, creatorPubky?: string) => {
   if (creatorPubky) {
     if (key === 'notifications') return '/profile';
-    return key === 'posts'
-      ? `/profile/${creatorPubky}`
-      : `/profile/${creatorPubky}/${key}`;
+    return key === 'posts' ? `/profile/${creatorPubky}` : `/profile/${creatorPubky}/${key}`;
   }
   return key === 'notifications' ? '/profile' : `/profile/${key}`;
 };
@@ -72,7 +70,7 @@ export default function FilterTabsMobile({
   userCounts,
   loading,
   setLoading,
-  creatorPubky,
+  creatorPubky
 }: {
   activeTab: number;
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;
@@ -122,11 +120,7 @@ export default function FilterTabsMobile({
     <div className="lg:hidden">
       <div className="overflow-x-auto max-w-[380px] sm:max-w-[600px] md:max-w-[720px] flex w-full gap-4 justify-between">
         {tabs.map((tab) => {
-          if (
-            creatorPubky &&
-            creatorPubky !== pubky &&
-            (tab.key === 'notifications' || tab.key === 'bookmarks')
-          ) {
+          if (creatorPubky && creatorPubky !== pubky && (tab.key === 'notifications' || tab.key === 'bookmarks')) {
             return null;
           }
           const isActive = activeTab === tab.id;
@@ -134,13 +128,9 @@ export default function FilterTabsMobile({
             <div
               id={`mobile-profile-tab-${tab.key}`}
               key={tab.id}
-              onClick={() =>
-                pubky ? handleTabClick(tab.id, tab.key) : openModal('join')
-              }
+              onClick={() => (pubky ? handleTabClick(tab.id, tab.key) : openModal('join'))}
               className={`w-full pb-3 items-center gap-1 flex justify-between cursor-pointer border-b border-white ${
-                isActive && !loading
-                  ? 'opacity-100'
-                  : 'opacity-50 hover:opacity-100'
+                isActive && !loading ? 'opacity-100' : 'opacity-50 hover:opacity-100'
               }`}
             >
               {tab.icon}

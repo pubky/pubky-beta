@@ -36,9 +36,7 @@ export default function Account() {
     }
   };
 
-  const handleImportData = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleImportData = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setFileName(event.target.files[0].name);
     }
@@ -101,12 +99,7 @@ export default function Account() {
         <Tooltip.RootSmall setShowTooltip={setShowTooltip}>
           <Button.Large
             id="backup-account-btn"
-            icon={
-              <Icon.Lock
-                size="16"
-                color={disposableAccount ? ' white' : 'gray'}
-              />
-            }
+            icon={<Icon.Lock size="16" color={disposableAccount ? ' white' : 'gray'} />}
             variant="secondary"
             className="w-auto"
             disabled={!disposableAccount}
@@ -134,8 +127,8 @@ export default function Account() {
           <Typography.H2>Delete your account</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
-          Deleting your account will remove all of your posts, tags, profile
-          information, contacts, custom streams, and settings or preferences.
+          Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and
+          settings or preferences.
         </Typography.Body>
         <Button.Large
           id="delete-account-btn"
@@ -157,12 +150,7 @@ export default function Account() {
           Update your bio or user picture, so friends can find you easier.
         </Typography.Body>
         <Link href="/settings/edit">
-          <Button.Large
-            id="edit-profile-btn"
-            icon={<Icon.Pencil size="16" />}
-            variant="secondary"
-            className="w-auto"
-          >
+          <Button.Large id="edit-profile-btn" icon={<Icon.Pencil size="16" />} variant="secondary" className="w-auto">
             Edit profile
           </Button.Large>
         </Link>
@@ -174,9 +162,8 @@ export default function Account() {
           <Typography.H2>Download your data</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
-          Your data on Pubky is yours. Export your account data to use it
-          elsewhere. Note this is not a full pubky homeserver export, this
-          function will export data related to pubky.app.
+          Your data on Pubky is yours. Export your account data to use it elsewhere. Note this is not a full pubky
+          homeserver export, this function will export data related to pubky.app.
         </Typography.Body>
         <Button.Large
           id="download-data-btn"
@@ -186,9 +173,7 @@ export default function Account() {
           loading={loadingDownload}
           onClick={() => (loadingDownload ? undefined : handleDownloadData())}
         >
-          {loadingDownload
-            ? `Downloading... ${progressDownload}%`
-            : 'Download data'}
+          {loadingDownload ? `Downloading... ${progressDownload}%` : 'Download data'}
         </Button.Large>
       </div>
       <div className="w-full h-px bg-white bg-opacity-10 my-12" />
@@ -198,15 +183,12 @@ export default function Account() {
           <Typography.H2>Import your data</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
-          Import your account data from a backup ZIP file. Note this is not a
-          full pubky homeserver import, this function will import pubky.app
-          data.
+          Import your account data from a backup ZIP file. Note this is not a full pubky homeserver import, this
+          function will import pubky.app data.
         </Typography.Body>
         <Input.UploadFile
           accept=".zip"
-          fileName={
-            importingData ? `Importing... ${importProgress}%` : fileName
-          }
+          fileName={importingData ? `Importing... ${importProgress}%` : fileName}
           className="mb-4 w-full md:w-[350px]"
           id="file_input"
           onChange={handleImportData}

@@ -4,13 +4,7 @@ import { ContentNotFound, Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
 import { useModal, usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
-import {
-  Button,
-  Icon,
-  PostUtil,
-  SideCard,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '@/components/ImageByUri';
 import { useEffect, useState } from 'react';
@@ -35,9 +29,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const name = user?.details?.name;
   const [profileTags, setProfileTags] = useState<UserTags[]>(user?.tags ?? []);
   const links = user?.details?.links ?? [];
-  const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>(
-    [],
-  );
+  const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>([]);
   const limit = 20;
   const [skip, setSkip] = useState(limit);
   const [hasMore, setHasMore] = useState(user && user?.counts?.tags > limit);
@@ -45,22 +37,15 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     profileTags,
     setProfileTags,
     pubkyUser: usePubky,
-    user,
+    user
   });
 
-  const { data: moreTags, isLoading } = useTagsUser(
-    user?.details.id ?? '',
-    pubky,
-    skip,
-    limit,
-  );
+  const { data: moreTags, isLoading } = useTagsUser(user?.details.id ?? '', pubky, skip, limit);
 
   useEffect(() => {
     if (!isLoading && moreTags && moreTags.length) {
       setProfileTags((prev) => {
-        const newTags = moreTags.filter(
-          (tag) => !prev.some((t) => t.label === tag.label),
-        );
+        const newTags = moreTags.filter((tag) => !prev.some((t) => t.label === tag.label));
         setHasMore(newTags.length > 0);
         return [...prev, ...newTags];
       });
@@ -86,10 +71,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
               tag?.taggers?.map(async (fromItem) => {
                 const profile = await getUserProfile(fromItem, pubky ?? '');
                 return profile?.details?.image;
-              }) ?? [],
+              }) ?? []
             );
             return images;
-          }),
+          })
         );
         setTaggedImages(allImages);
       }
@@ -103,7 +88,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
       profileTags: profileTags,
       setProfileTags: setProfileTags,
       pubkyUser: usePubky,
-      user: user,
+      user: user
     });
   };
 
@@ -118,10 +103,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     <div className="w-full mx-2 lg:mx-0">
       {name && profileTags.length > 0 && (
         <>
-          <SideCard.Header
-            className="hidden lg:flex"
-            title={`${name} was tagged as:`}
-          />
+          <SideCard.Header className="hidden lg:flex" title={`${name} was tagged as:`} />
           <Typography.Body variant="large-bold" className="flex lg:hidden">
             Tagged
           </Typography.Body>
@@ -139,8 +121,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
                   const images = taggedImages[index] || [];
                   const displayedImages = images?.slice(0, 5);
-                  const extraImagesCount =
-                    tag.taggers_count - displayedImages?.length;
+                  const extraImagesCount = tag.taggers_count - displayedImages?.length;
 
                   return (
                     <div className="flex gap-2" key={index}>
@@ -154,19 +135,14 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                               : addProfileTag(tag?.label)
                             : openModal('join');
                         }}
-                        color={
-                          tag?.label && Utils.generateRandomColor(tag?.label)
-                        }
+                        color={tag?.label && Utils.generateRandomColor(tag?.label)}
                       >
                         <div className="flex gap-2 items-center">
                           {Utils.minifyText(tag?.label, 20)}
                           {loadingTags === tag?.label ? (
                             <Icon.LoadingSpin size="12" />
                           ) : (
-                            <Typography.Caption
-                              variant="bold"
-                              className="text-opacity-60"
-                            >
+                            <Typography.Caption variant="bold" className="text-opacity-60">
                               {tag.taggers_count}
                             </Typography.Caption>
                           )}
@@ -180,10 +156,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                           className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
                         />
                       </Link>
-                      <div
-                        onClick={handleOpenModal}
-                        className="cursor-pointer flex items-center"
-                      >
+                      <div onClick={handleOpenModal} className="cursor-pointer flex items-center">
                         {displayedImages?.map((image, imageIndex) => (
                           <ImageByUri
                             width={32}
@@ -197,9 +170,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                           />
                         ))}
                         {extraImagesCount > 0 && (
-                          <PostUtil.Counter className="-ml-2">
-                            +{extraImagesCount}
-                          </PostUtil.Counter>
+                          <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>
                         )}
                       </div>
                     </div>
@@ -217,20 +188,14 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                 title="Discover who tagged you"
                 description={
                   <>
-                    Find out which posts, photos, or content include tags
-                    mentioning you.
+                    Find out which posts, photos, or content include tags mentioning you.
                     <br />
                     Stay connected to what others are sharing about you.
                   </>
                 }
               >
                 <div className="absolute top-12 z-0">
-                  <Image
-                    alt="not-found-taggedAs"
-                    width={461}
-                    height={303}
-                    src="/images/webp/not-found/taggedAs.webp"
-                  />
+                  <Image alt="not-found-taggedAs" width={461} height={303} src="/images/webp/not-found/taggedAs.webp" />
                 </div>
               </ContentNotFound>
             )}
@@ -239,10 +204,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
               onClick={handleOpenModal}
               icon={<Icon.Tag size="16" />}
             >
-              Tag{' '}
-              {!creatorPubky || creatorPubky === pubky
-                ? 'yourself'
-                : name && Utils.minifyText(name, 22)}
+              Tag {!creatorPubky || creatorPubky === pubky ? 'yourself' : name && Utils.minifyText(name, 22)}
             </Button.Medium>
           </div>
           <div className="flex lg:hidden mt-6">

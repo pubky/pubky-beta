@@ -10,10 +10,7 @@ interface LayoutOnboardingProps {
   currentStep?: number;
 }
 
-export default function OnboardingLayout({
-  children,
-  currentStep = 1,
-}: LayoutOnboardingProps) {
+export default function OnboardingLayout({ children, currentStep = 1 }: LayoutOnboardingProps) {
   const pathname = usePathname();
   const { pubky, isLoggedIn, profile } = usePubkyClientContext();
   const [logoLink, setLogoLink] = useState('/onboarding');
@@ -45,10 +42,7 @@ export default function OnboardingLayout({
             className="flex justify-end sm:justify-start self-center sm:self-end mt-1 sm:mt-0"
           />
         </div>
-        <Content.Stepper
-          className="w-[50%] lg:w-[70%] xl:w-full ml-6 hidden sm:flex"
-          currentStep={currentStep}
-        />
+        <Content.Stepper className="w-[50%] lg:w-[70%] xl:w-full ml-6 hidden sm:flex" currentStep={currentStep} />
       </Header.Root>
       <Content.Grid>{children}</Content.Grid>
     </Content.Main>

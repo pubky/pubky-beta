@@ -17,7 +17,7 @@ export default function ParentPost({ parentURI }: { parentURI: string }) {
   const { pubky } = usePubkyClientContext();
   const [parentPost, setParentPost] = useState<ParentPostState>({
     post: null,
-    loading: true,
+    loading: true
   });
   useEffect(() => {
     const fetchPost = async () => {

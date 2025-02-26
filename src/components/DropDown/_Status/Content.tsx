@@ -23,7 +23,7 @@ export default function ContentStatus({
   setCustomStatus,
   setSelectedEmoji,
   customStatus,
-  selectedEmoji,
+  selectedEmoji
 }: StatusProps) {
   const { updateStatus } = usePubkyClientContext();
   const [showEmojis, setShowEmojis] = useState(false);
@@ -35,16 +35,13 @@ export default function ContentStatus({
       <DropDownUI.Item
         label="Available"
         value="available"
-        selected={
-          dropdownValue.value !== 'custom' &&
-          dropdownValue.value === 'available'
-        }
+        selected={dropdownValue.value !== 'custom' && dropdownValue.value === 'available'}
         icon={'👋'}
         onClick={async () => {
           setDropdownValue({
             value: 'available',
             textOption: 'Available',
-            iconText: '👋',
+            iconText: '👋'
           });
           await updateStatus('available');
           setOpenDropdown(false);
@@ -55,15 +52,13 @@ export default function ContentStatus({
       <DropDownUI.Item
         label="Away"
         value="away"
-        selected={
-          dropdownValue.value !== 'custom' && dropdownValue.value === 'away'
-        }
+        selected={dropdownValue.value !== 'custom' && dropdownValue.value === 'away'}
         icon={'🕓'}
         onClick={async () => {
           setDropdownValue({
             value: 'away',
             textOption: 'Away',
-            iconText: '🕓',
+            iconText: '🕓'
           });
           await updateStatus('away');
           setOpenDropdown(false);
@@ -74,16 +69,13 @@ export default function ContentStatus({
       <DropDownUI.Item
         label="Vacationing"
         value="vacationing"
-        selected={
-          dropdownValue.value !== 'custom' &&
-          dropdownValue.value === 'vacationing'
-        }
+        selected={dropdownValue.value !== 'custom' && dropdownValue.value === 'vacationing'}
         icon={'🌴'}
         onClick={async () => {
           setDropdownValue({
             value: 'vacationing',
             textOption: 'Vacationing',
-            iconText: '🌴',
+            iconText: '🌴'
           });
           await updateStatus('vacationing');
           setOpenDropdown(false);
@@ -94,15 +86,13 @@ export default function ContentStatus({
       <DropDownUI.Item
         label="Working"
         value="working"
-        selected={
-          dropdownValue.value !== 'custom' && dropdownValue.value === 'working'
-        }
+        selected={dropdownValue.value !== 'custom' && dropdownValue.value === 'working'}
         icon={'👨‍💻'}
         onClick={async () => {
           setDropdownValue({
             value: 'working',
             textOption: 'Working',
-            iconText: '👨‍💻',
+            iconText: '👨‍💻'
           });
           await updateStatus('working');
           setOpenDropdown(false);
@@ -113,16 +103,13 @@ export default function ContentStatus({
       <DropDownUI.Item
         label="Traveling"
         value="traveling"
-        selected={
-          dropdownValue.value !== 'custom' &&
-          dropdownValue.value === 'traveling'
-        }
+        selected={dropdownValue.value !== 'custom' && dropdownValue.value === 'traveling'}
         icon={'✈️'}
         onClick={async () => {
           setDropdownValue({
             value: 'traveling',
             textOption: 'Traveling',
-            iconText: '✈️',
+            iconText: '✈️'
           });
           await updateStatus('traveling');
           setOpenDropdown(false);
@@ -133,16 +120,13 @@ export default function ContentStatus({
       <DropDownUI.Item
         label="Celebrating"
         value="celebrating"
-        selected={
-          dropdownValue.value !== 'custom' &&
-          dropdownValue.value === 'celebrating'
-        }
+        selected={dropdownValue.value !== 'custom' && dropdownValue.value === 'celebrating'}
         icon={'🥂'}
         onClick={async () => {
           setDropdownValue({
             value: 'celebrating',
             textOption: 'Celebrating',
-            iconText: '🥂',
+            iconText: '🥂'
           });
           await updateStatus('celebrating');
           setOpenDropdown(false);
@@ -153,15 +137,13 @@ export default function ContentStatus({
       <DropDownUI.Item
         label="Sick"
         value="sick"
-        selected={
-          dropdownValue.value !== 'custom' && dropdownValue.value === 'sick'
-        }
+        selected={dropdownValue.value !== 'custom' && dropdownValue.value === 'sick'}
         icon={'🤒'}
         onClick={async () => {
           setDropdownValue({
             value: 'sick',
             textOption: 'Sick',
-            iconText: '🤒',
+            iconText: '🤒'
           });
           await updateStatus('sick');
           setOpenDropdown(false);
@@ -172,15 +154,13 @@ export default function ContentStatus({
       <DropDownUI.Item
         label="No Status"
         value="noStatus"
-        selected={
-          dropdownValue.value !== 'custom' && dropdownValue.value === 'noStatus'
-        }
+        selected={dropdownValue.value !== 'custom' && dropdownValue.value === 'noStatus'}
         icon={'💭'}
         onClick={async () => {
           setDropdownValue({
             value: 'noStatus',
             textOption: 'No Status',
-            iconText: '💭',
+            iconText: '💭'
           });
           await updateStatus('noStatus');
           setOpenDropdown(false);
@@ -190,10 +170,7 @@ export default function ContentStatus({
       />
       <div>
         {showEmojis && (
-          <div
-            className="absolute translate-y-[20%] translate-x-[0%] lg:translate-x-[30%] z-10"
-            ref={wrapperRefEmojis}
-          >
+          <div className="absolute translate-y-[20%] translate-x-[0%] lg:translate-x-[30%] z-10" ref={wrapperRefEmojis}>
             <EmojiPicker
               onEmojiSelect={(emojiObject) => {
                 setSelectedEmoji(emojiObject.native);
@@ -205,18 +182,13 @@ export default function ContentStatus({
           </div>
         )}
         <div>
-          <Input.Label
-            className="flex mt-4 text-left text-[11px]"
-            value="Custom Status"
-          />
+          <Input.Label className="flex mt-4 text-left text-[11px]" value="Custom Status" />
           <Input.Text
             className="h-[30px]"
             value={customStatus}
             placeholder="Add status"
             maxLength={12}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setCustomStatus(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomStatus(e.target.value)}
             action={
               <div className="flex gap-2">
                 {customStatus && selectedEmoji && (
@@ -226,7 +198,7 @@ export default function ContentStatus({
                       setDropdownValue({
                         value: 'custom',
                         textOption: customStatus,
-                        iconText: selectedEmoji,
+                        iconText: selectedEmoji
                       });
                       updateStatus(`${selectedEmoji}${customStatus}`);
                       setOpenDropdown(false);

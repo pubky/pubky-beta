@@ -2,13 +2,7 @@ import { Skeleton } from '@/components';
 import { useUtilsTag } from '@/components/Modal/_TagProfile/components/_Utils';
 import { useModal, usePubkyClientContext } from '@/contexts';
 import { UserTags, UserView } from '@/types/User';
-import {
-  Button,
-  Icon,
-  PostUtil,
-  SideCard,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -30,7 +24,7 @@ export default function TaggedSection({
   creatorPubky,
   name,
   userPubky,
-  user,
+  user
 }: TaggedSectionProps) {
   const { pubky } = usePubkyClientContext();
   const { openModal, isOpen } = useModal();
@@ -38,7 +32,7 @@ export default function TaggedSection({
     profileTags,
     setProfileTags,
     pubkyUser: userPubky,
-    user,
+    user
   });
 
   const handleOpenModal = () => {
@@ -46,7 +40,7 @@ export default function TaggedSection({
       profileTags: profileTags,
       setProfileTags: setProfileTags,
       pubkyUser: userPubky,
-      user: user,
+      user: user
     });
   };
 
@@ -82,13 +76,9 @@ export default function TaggedSection({
                             : addProfileTag(tag?.label)
                           : openModal('join');
                       }}
-                      color={
-                        tag?.label && Utils.generateRandomColor(tag?.label)
-                      }
+                      color={tag?.label && Utils.generateRandomColor(tag?.label)}
                     >
-                      <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tag?.label, 20)}
-                      </div>
+                      <div className="flex gap-2 items-center">{Utils.minifyText(tag?.label, 20)}</div>
                     </PostUtil.Tag>
                     {/**</TooltipUI.Root>*/}
                     <Link href={pubky ? `/search?tags=${tag?.label}` : ''}>
@@ -100,11 +90,7 @@ export default function TaggedSection({
                       />
                     </Link>
                     <PostUtil.Counter className="w-full">
-                      {loadingTags === tag?.label ? (
-                        <Icon.LoadingSpin size="12" />
-                      ) : (
-                        tag?.taggers_count
-                      )}
+                      {loadingTags === tag?.label ? <Icon.LoadingSpin size="12" /> : tag?.taggers_count}
                     </PostUtil.Counter>
                   </div>
                 );
@@ -121,10 +107,7 @@ export default function TaggedSection({
             onClick={() => (pubky ? handleOpenModal() : openModal('join'))}
             icon={<Icon.Tag size="16" />}
           >
-            Tag{' '}
-            {!creatorPubky || creatorPubky === pubky
-              ? 'yourself'
-              : Utils.minifyText(name, 9)}
+            Tag {!creatorPubky || creatorPubky === pubky ? 'yourself' : Utils.minifyText(name, 9)}
           </Button.Medium>
         </div>
       )}

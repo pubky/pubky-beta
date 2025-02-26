@@ -17,17 +17,7 @@ interface ImageByUriProps {
   loading?: boolean;
 }
 
-const ImageByUri = ({
-  id,
-  uri,
-  alt,
-  width,
-  height,
-  className,
-  style,
-  loading,
-  onClick,
-}: ImageByUriProps) => {
+const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, onClick }: ImageByUriProps) => {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -48,9 +38,7 @@ const ImageByUri = ({
           setImageUrl(objectUrl);
         } else if (
           typeof uri === 'string' &&
-          (uri.startsWith('http') ||
-            uri.startsWith('data:') ||
-            uri === '/images/webp/Userpic.webp')
+          (uri.startsWith('http') || uri.startsWith('data:') || uri === '/images/webp/Userpic.webp')
         ) {
           setImageUrl(uri);
         } else if (typeof uri === 'string') {

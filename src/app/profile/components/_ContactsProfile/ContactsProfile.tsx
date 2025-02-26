@@ -28,7 +28,7 @@ const caseNotFoundMessages = {
         <br />
         Start posting and engaging with others to grow your followers.
       </>
-    ),
+    )
   },
   following: {
     icon: <Icon.UsersRight size="48" color="#C8FF00" />,
@@ -39,7 +39,7 @@ const caseNotFoundMessages = {
         <br />
         Stay updated on the topics and people that interest you.
       </>
-    ),
+    )
   },
   friends: {
     icon: <Icon.Smiley size="48" color="#C8FF00" />,
@@ -50,41 +50,32 @@ const caseNotFoundMessages = {
         <br />
         Start posting and engaging with others to grow your friends.
       </>
-    ),
+    )
   },
   default: {
     icon: <Icon.User size="48" color="#C8FF00" />,
     title: 'Looking for contacts?',
-    description: 'No contacts to show.',
-  },
+    description: 'No contacts to show.'
+  }
 };
 
 const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   const { pubky } = usePubkyClientContext();
-  const currentContact =
-    caseNotFoundMessages[contacts] || caseNotFoundMessages.default;
+  const currentContact = caseNotFoundMessages[contacts] || caseNotFoundMessages.default;
   const limit = 10;
   const [usersList, setUsersList] = useState<UserView[]>([]);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const usePubky = creatorPubky ?? pubky;
 
-  const { data: contactUsers, isLoading } = useStreamUsers(
-    usePubky ?? '',
-    pubky ?? '',
-    contacts,
-    skip,
-    limit,
-  );
+  const { data: contactUsers, isLoading } = useStreamUsers(usePubky ?? '', pubky ?? '', contacts, skip, limit);
 
   const fetchUsers = () => {
     if (isLoading || !hasMore) return;
 
     if (contactUsers && Array.isArray(contactUsers)) {
       setUsersList((prev) => {
-        const newUsers = contactUsers.filter(
-          (user) => !prev.some((u) => u.details.id === user.details.id),
-        );
+        const newUsers = contactUsers.filter((user) => !prev.some((u) => u.details.id === user.details.id));
         setHasMore(newUsers.length >= limit);
         return [...prev, ...newUsers];
       });
@@ -120,12 +111,7 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
           description={currentContact.description}
         >
           <div className="absolute top-0 z-0">
-            <Image
-              alt="not-found-contacts"
-              width={400}
-              height={485}
-              src="/images/webp/not-found/contacts.webp"
-            />
+            <Image alt="not-found-contacts" width={400} height={485} src="/images/webp/not-found/contacts.webp" />
           </div>
         </ContentNotFound>
       )}
@@ -133,10 +119,7 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   );
 };
 
-export default function ContactsProfile({
-  contacts,
-  creatorPubky,
-}: ContactsContentProps) {
+export default function ContactsProfile({ contacts, creatorPubky }: ContactsContentProps) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <ContactsContent contacts={contacts} creatorPubky={creatorPubky} />

@@ -11,11 +11,7 @@ export default function NewAccount() {
       <div className="flex justify-center items-center p-12 sm:p-2">
         <Icon.Key size="128" />
       </div>
-      <Link
-        href="/onboarding/sign-up"
-        className="mt-4 lg:mt-0"
-        id="onboarding-sign-up-link"
-      >
+      <Link href="/onboarding/sign-up" className="mt-4 lg:mt-0" id="onboarding-sign-up-link">
         <Button.Large
           className="shadow backdrop-blur-[10px]"
           variant="secondary"

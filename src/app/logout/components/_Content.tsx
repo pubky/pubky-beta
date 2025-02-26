@@ -27,10 +27,7 @@ export default function Index() {
       </Header.Root>
       <Content.Grid>
         <Typography.Display>Bye bye!</Typography.Display>
-        <Typography.Body
-          variant="large"
-          className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0"
-        >
+        <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0">
           You have signed out from Pubky. See you soon!
         </Typography.Body>
         <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
@@ -42,16 +39,8 @@ export default function Index() {
           </div>
         </div>
         <div className="flex-col justify-center items-center flex">
-          <Link
-            href={inviteCode ? '/sign-in' : '/invite-code'}
-            className="w-full sm:w-[154px]"
-            id="logout-link"
-          >
-            <Button.Large
-              id="sign-back-in-btn"
-              variant="secondary"
-              icon={<Icon.Key size="16" />}
-            >
+          <Link href={inviteCode ? '/sign-in' : '/invite-code'} className="w-full sm:w-[154px]" id="logout-link">
+            <Button.Large id="sign-back-in-btn" variant="secondary" icon={<Icon.Key size="16" />}>
               Sign back in
             </Button.Large>
           </Link>

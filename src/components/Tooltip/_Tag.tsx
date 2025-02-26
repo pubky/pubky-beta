@@ -10,16 +10,10 @@ import Link from 'next/link';
 interface TagProps {
   tags: ITaggedPost;
   setShowModalTags: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedTag?: React.Dispatch<
-    React.SetStateAction<ITaggedPost | ITaggedProfile | null>
-  >;
+  setSelectedTag?: React.Dispatch<React.SetStateAction<ITaggedPost | ITaggedProfile | null>>;
 }
 
-export default function Tag({
-  tags,
-  setShowModalTags,
-  setSelectedTag,
-}: TagProps) {
+export default function Tag({ tags, setShowModalTags, setSelectedTag }: TagProps) {
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const images = tags.from.map((fromItem) => {
     if (fromItem.author?.profile?.image) {
@@ -47,9 +41,7 @@ export default function Tag({
           <div className={`w-full flex-col gap-3 inline-flex`}>
             <div className="inline-flex gap-2">
               <Typography.Label>{tags?.count}</Typography.Label>
-              <Typography.Label className="text-opacity-50 text-[10px]">
-                Tagged by
-              </Typography.Label>
+              <Typography.Label className="text-opacity-50 text-[10px]">Tagged by</Typography.Label>
             </div>
             <div
               onClick={() => {
@@ -70,11 +62,7 @@ export default function Tag({
                   uri={image}
                 />
               ))}
-              {extraImagesCount > 0 && (
-                <PostUtil.Counter className="-ml-2">
-                  +{extraImagesCount}
-                </PostUtil.Counter>
-              )}
+              {extraImagesCount > 0 && <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>}
             </div>
             <Link
               onClick={(event) => {
@@ -86,10 +74,7 @@ export default function Tag({
               <div>
                 <Icon.MagnifyingGlass size="16" />
               </div>
-              <Typography.Body
-                className="text-center text-opacity-80"
-                variant="small-bold"
-              >
+              <Typography.Body className="text-center text-opacity-80" variant="small-bold">
                 {Utils.minifyText(tags.tag, 20)}
               </Typography.Body>
             </Link>

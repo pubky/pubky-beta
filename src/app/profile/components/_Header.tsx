@@ -33,11 +33,7 @@ export function Header() {
         rightIcon={
           <div
             className="cursor-pointer"
-            onClick={
-              disposableAccount
-                ? () => openModal('logout')
-                : () => router.push('/logout')
-            }
+            onClick={disposableAccount ? () => openModal('logout') : () => router.push('/logout')}
           >
             <Icon.SignOut size="20" />
           </div>

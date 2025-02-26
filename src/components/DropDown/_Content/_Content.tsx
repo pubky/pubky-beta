@@ -9,7 +9,7 @@ const icons = {
   videos: <Icon.Play />,
   links: <Icon.LinkSimple />,
   files: <Icon.DownloadSimple size="24" />,
-  loading: <Icon.LoadingSpin className="animate-spin" />,
+  loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
 interface ContentProps {
@@ -17,10 +17,7 @@ interface ContentProps {
   setOpenDropdown: any;
 }
 
-export default function ContentType({
-  setDropdownValue,
-  setOpenDropdown,
-}: ContentProps) {
+export default function ContentType({ setDropdownValue, setOpenDropdown }: ContentProps) {
   const { content, setContent } = useFilterContext();
 
   return (
@@ -34,7 +31,7 @@ export default function ContentType({
           setDropdownValue({
             value: 'all',
             textOption: 'All',
-            iconOption: icons.all,
+            iconOption: icons.all
           });
           setContent('all');
           setOpenDropdown(false);
@@ -49,7 +46,7 @@ export default function ContentType({
           setDropdownValue({
             value: 'posts',
             textOption: 'Posts',
-            iconOption: icons.posts,
+            iconOption: icons.posts
           });
           setContent('posts');
           setOpenDropdown(false);
@@ -64,7 +61,7 @@ export default function ContentType({
           setDropdownValue({
             value: 'articles',
             textOption: 'Articles',
-            iconOption: icons.articles,
+            iconOption: icons.articles
           });
           setContent('articles');
           setOpenDropdown(false);
@@ -79,7 +76,7 @@ export default function ContentType({
           setDropdownValue({
             value: 'images',
             textOption: 'Images',
-            iconOption: icons.images,
+            iconOption: icons.images
           });
           setContent('images');
           setOpenDropdown(false);
@@ -94,7 +91,7 @@ export default function ContentType({
           setDropdownValue({
             value: 'videos',
             textOption: 'Videos',
-            iconOption: icons.videos,
+            iconOption: icons.videos
           });
           setContent('videos');
           setOpenDropdown(false);
@@ -110,7 +107,7 @@ export default function ContentType({
           setDropdownValue({
             value: 'links',
             textOption: 'Links',
-            iconOption: icons.links,
+            iconOption: icons.links
           });
           setContent('links');
           setOpenDropdown(false);
@@ -125,7 +122,7 @@ export default function ContentType({
           setDropdownValue({
             value: 'files',
             textOption: 'Files',
-            iconOption: icons.files,
+            iconOption: icons.files
           });
           setContent('files');
           setOpenDropdown(false);

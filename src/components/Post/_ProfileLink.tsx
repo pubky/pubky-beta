@@ -17,10 +17,7 @@ function ProfileLink({ pk }: { pk: string }) {
       if (pkMatch) {
         const pkFound = pkMatch[0];
         setPkFound(pkFound);
-        const result = await getUserProfile(
-          pkFound.replace('pk:', '').trim(),
-          pubky ?? '',
-        );
+        const result = await getUserProfile(pkFound.replace('pk:', '').trim(), pubky ?? '');
         if (result) setUserName(result?.details?.name);
       }
     };
@@ -37,9 +34,7 @@ function ProfileLink({ pk }: { pk: string }) {
         href={`/profile/${pkPart}`}
         onClick={(event) => event.stopPropagation()}
       >
-        {userName
-          ? `@${userName}`
-          : Utils.minifyPubky(pkFound.replace('pk:', ''))}
+        {userName ? `@${userName}` : Utils.minifyPubky(pkFound.replace('pk:', ''))}
       </Link>
       {remainingPart}
     </>

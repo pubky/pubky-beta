@@ -11,13 +11,7 @@ interface FilePreviewProps {
   loading: boolean;
 }
 
-const FilePreview: React.FC<FilePreviewProps> = ({
-  file,
-  filePreview,
-  index,
-  removeFile,
-  loading,
-}) => {
+const FilePreview: React.FC<FilePreviewProps> = ({ file, filePreview, index, removeFile, loading }) => {
   const isVideo = file.type.startsWith('video');
   const isImage = file.type.startsWith('image');
   const isPDF = file.type === 'application/pdf';
@@ -48,16 +42,12 @@ const FilePreview: React.FC<FilePreviewProps> = ({
       ) : isPDF ? (
         <div className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-gray-100 rounded-lg p-4">
           <Icon.FileText size="64" color="#05050a" />
-          <p className="mt-2 text-gray-700 text-sm text-center break-all">
-            {Utils.minifyText(file.name, 50)}
-          </p>
+          <p className="mt-2 text-gray-700 text-sm text-center break-all">{Utils.minifyText(file.name, 50)}</p>
         </div>
       ) : isAudio ? (
         <div className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-gray-100 rounded-lg p-4">
           <Icon.SpeakerHigh size="64" color="#05050a" />
-          <p className="mt-2 text-gray-700 text-sm text-center">
-            {Utils.minifyText(file.name, 50)}
-          </p>
+          <p className="mt-2 text-gray-700 text-sm text-center">{Utils.minifyText(file.name, 50)}</p>
         </div>
       ) : (
         <p className="text-gray-500">Unsupported file type</p>

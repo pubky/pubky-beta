@@ -11,5 +11,5 @@ export const Notifications = {
   NotificationTagGroup,
   NotificationTagPostGroup,
   Root,
-  Content,
+  Content
 };

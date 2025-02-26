@@ -5,7 +5,7 @@ import { Text } from './_Text';
 export const Error404 = {
   Content,
   Text,
-  Root,
+  Root
 };
 
 export default Error404;

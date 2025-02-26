@@ -9,14 +9,7 @@ interface TextAreaProps extends React.HTMLAttributes<HTMLTextAreaElement> {
   placeholder?: string;
 }
 
-export const TextArea = ({
-  error,
-  maxLength,
-  disabled = false,
-  value,
-  placeholder,
-  ...rest
-}: TextAreaProps) => {
+export const TextArea = ({ error, maxLength, disabled = false, value, placeholder, ...rest }: TextAreaProps) => {
   const baseCSS = `scrollbar-thin scrollbar-webkit w-full h-[70px] bg-transparent flex-col justify-start items-start inline-flex outline-none text-white text-opacity-80 placeholder:text-white placeholder:text-opacity-30 text-[17px] font-normal font-InterTight leading-snug tracking-wide resize-none`;
 
   const errorCSS = `text-red-500 text-sm mt-2`;
@@ -31,11 +24,7 @@ export const TextArea = ({
         placeholder={placeholder}
         disabled={disabled}
         value={value}
-        className={twMerge(
-          baseCSS,
-          rest.className,
-          error ? inputWithErrorStyle : ''
-        )}
+        className={twMerge(baseCSS, rest.className, error ? inputWithErrorStyle : '')}
       />
       {error && <div className={errorCSS}>{error}</div>}
     </div>

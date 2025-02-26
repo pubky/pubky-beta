@@ -18,22 +18,14 @@ export default function Index() {
   const { hotTagsReach, timeframe } = useFilterContext();
   const isMobile = useIsMobile(1024);
   const pathname = usePathname();
-  const { data, isLoading, isError } = useHotTags(
-    pubky,
-    hotTagsReach,
-    undefined,
-    undefined,
-    undefined,
-    timeframe,
-  );
+  const { data, isLoading, isError } = useHotTags(pubky, hotTagsReach, undefined, undefined, undefined, timeframe);
   const {
     data: influencers,
     isLoading: isLoadingInfluencers,
-    isError: isErrorInfluencers,
+    isError: isErrorInfluencers
   } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers', undefined, 5);
   const hotTags = data || [];
-  if (isError || isErrorInfluencers)
-    console.error(isError && isErrorInfluencers);
+  if (isError || isErrorInfluencers) console.error(isError && isErrorInfluencers);
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
@@ -71,39 +63,23 @@ export default function Index() {
                   (isLoading ? (
                     <Skeletons.Simple />
                   ) : (
-                    <Hot.RenderTags
-                      hotTags={hotTags}
-                      loadingReachTags={isLoading}
-                    />
+                    <Hot.RenderTags hotTags={hotTags} loadingReachTags={isLoading} />
                   ))}
                 {activeTab === 1 &&
                   (isLoadingInfluencers ? (
                     <Skeletons.Simple />
                   ) : (
-                    <Hot.RenderInfluencers
-                      influencers={influencers}
-                      initLoadingInfluencers={isLoadingInfluencers}
-                    />
+                    <Hot.RenderInfluencers influencers={influencers} initLoadingInfluencers={isLoadingInfluencers} />
                   ))}
                 {activeTab === 2 && <Hot.RenderPosts />}
               </>
             ) : (
               <>
-                {isLoading ? (
-                  <Skeletons.Simple />
-                ) : (
-                  <Hot.RenderTags
-                    hotTags={hotTags}
-                    loadingReachTags={isLoading}
-                  />
-                )}
+                {isLoading ? <Skeletons.Simple /> : <Hot.RenderTags hotTags={hotTags} loadingReachTags={isLoading} />}
                 {isLoadingInfluencers ? (
                   <Skeletons.Simple />
                 ) : (
-                  <Hot.RenderInfluencers
-                    influencers={influencers}
-                    initLoadingInfluencers={isLoadingInfluencers}
-                  />
+                  <Hot.RenderInfluencers influencers={influencers} initLoadingInfluencers={isLoadingInfluencers} />
                 )}
                 <Hot.RenderPosts />
               </>

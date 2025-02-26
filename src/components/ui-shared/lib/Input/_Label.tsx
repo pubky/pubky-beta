@@ -8,9 +8,5 @@ interface LabelProps extends React.HTMLAttributes<HTMLParagraphElement> {
 export const Label = ({ value, ...rest }: LabelProps) => {
   const baseCSS = 'text-opacity-30 mb-2';
 
-  return (
-    <Typography.Label className={twMerge(baseCSS, rest.className)}>
-      {value}
-    </Typography.Label>
-  );
+  return <Typography.Label className={twMerge(baseCSS, rest.className)}>{value}</Typography.Label>;
 };

@@ -17,8 +17,8 @@ describe('contacts', () => {
   it('follow, be followed, and make a friend', () => {
     cy.on('uncaught:exception', (_err, _runnable) => {
       // returning false here prevents Cypress from failing the test on uncaught exception
-      return false
-    })
+      return false;
+    });
 
     //
     // create two accounts
@@ -36,7 +36,9 @@ describe('contacts', () => {
     cy.get('#profile-copy-pubkey-btn').click();
     cy.saveCopiedPubkyToAlias('pubky1');
     // log pubky for account 1
-    cy.get('@pubky1').then((ss) => { cy.log(`pubky1: ${ss}`); });
+    cy.get('@pubky1').then((ss) => {
+      cy.log(`pubky1: ${ss}`);
+    });
 
     // Sign out of account 1
     cy.signOut(HasBackedUp.Yes);
@@ -53,7 +55,9 @@ describe('contacts', () => {
     cy.get('#profile-copy-pubkey-btn').click();
     cy.saveCopiedPubkyToAlias('pubky2');
     // log pubky for account 2
-    cy.get('@pubky2').then((ss) => { cy.log(`pubky2: ${ss}`); });
+    cy.get('@pubky2').then((ss) => {
+      cy.log(`pubky2: ${ss}`);
+    });
 
     //
     // search for profile and follow
@@ -80,16 +84,20 @@ describe('contacts', () => {
     });
 
     // check number of listed followers is 1
-    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
-      // check that account 2 is listed as a follower
-      cy.get('#list-profile-name').should('have.text', '#2 Friend');
-      // check 0 tags
-      cy.get('#list-tags-counter').should('have.text', 0);
-      // check 0 posts
-      cy.get('#list-posts-counter').should('have.text', 0);
-      // check follower is 'me'
-      cy.get('#list-me-label').should('be.visible');
-    });
+    cy.get('#profile-list-root')
+      .children('.w-full')
+      .should('have.length', 1)
+      .first()
+      .within(() => {
+        // check that account 2 is listed as a follower
+        cy.get('#list-profile-name').should('have.text', '#2 Friend');
+        // check 0 tags
+        cy.get('#list-tags-counter').should('have.text', 0);
+        // check 0 posts
+        cy.get('#list-posts-counter').should('have.text', 0);
+        // check follower is 'me'
+        cy.get('#list-me-label').should('be.visible');
+      });
 
     // check number of listed following is 0
     cy.get('#profile-tab-following').find('#counter').should('have.text', 0);
@@ -115,17 +123,21 @@ describe('contacts', () => {
     // check number of listed following is 1
     cy.get('#profile-tab-following').should('contain.text', 'Following');
     cy.get('#profile-tab-following').click();
-    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
-      // check that account 1 is listed as a following
-      // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
-      cy.get('#list-profile-name').should('contain.text', '#1 Frien');
-      // check 0 tags
-      cy.get('#list-tags-counter').should('have.text', 0);
-      // check 0 posts
-      cy.get('#list-posts-counter').should('have.text', 0);
-      // check option to unfollow account 1
-      cy.get('#list-unfollow-button').should('be.visible');
-    });
+    cy.get('#profile-list-root')
+      .children('.w-full')
+      .should('have.length', 1)
+      .first()
+      .within(() => {
+        // check that account 1 is listed as a following
+        // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
+        cy.get('#list-profile-name').should('contain.text', '#1 Frien');
+        // check 0 tags
+        cy.get('#list-tags-counter').should('have.text', 0);
+        // check 0 posts
+        cy.get('#list-posts-counter').should('have.text', 0);
+        // check option to unfollow account 1
+        cy.get('#list-unfollow-button').should('be.visible');
+      });
 
     // check number of listed followers is 0
     cy.get('#profile-tab-followers').find('#counter').should('have.text', 0);
@@ -153,19 +165,23 @@ describe('contacts', () => {
     // Check account 1 (own) profile for follower
     cy.get('#profile-tab-followers').find('#counter').should('have.text', 1);
     cy.get('#profile-tab-followers').click();
-    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
-      // check that account 2 is listed as a follower
-      // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
-      cy.get('#list-profile-name').should('contain.text', '#2 Frien');
-      // check 0 tags
-      cy.get('#list-tags-counter').should('have.text', 0);
-      // check 0 posts
-      cy.get('#list-posts-counter').should('have.text', 0);
-      // check follower is 'me'
-      cy.get('#list-follow-button').should('be.visible');
-      // click follow button to make account 2 a friend
-      cy.get('#list-follow-button').click();
-    });
+    cy.get('#profile-list-root')
+      .children('.w-full')
+      .should('have.length', 1)
+      .first()
+      .within(() => {
+        // check that account 2 is listed as a follower
+        // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
+        cy.get('#list-profile-name').should('contain.text', '#2 Frien');
+        // check 0 tags
+        cy.get('#list-tags-counter').should('have.text', 0);
+        // check 0 posts
+        cy.get('#list-posts-counter').should('have.text', 0);
+        // check follower is 'me'
+        cy.get('#list-follow-button').should('be.visible');
+        // click follow button to make account 2 a friend
+        cy.get('#list-follow-button').click();
+      });
 
     // workaround: reload page to get updated counter https://github.com/pubky/pubky-app/issues/395
     cy.waitReload();
@@ -178,16 +194,20 @@ describe('contacts', () => {
     // check number of listed friends is 1
     cy.get('#profile-tab-friends').should('contain.text', 'Friends');
     cy.get('#profile-tab-friends').click();
-    cy.get('#profile-list-root').children('.w-full').should('have.length', 1).first().within(() => {
-      // check that account 2 is listed as a friend
-      // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
-      cy.get('#list-profile-name').should('contain.text', '#2 Frien');
-      // check 0 tags
-      cy.get('#list-tags-counter').should('have.text', 0);
-      // check 0 posts
-      cy.get('#list-posts-counter').should('have.text', 0);
-      // check option to unfollow account 1
-      cy.get('#list-unfollow-button').should('be.visible');
-    });
+    cy.get('#profile-list-root')
+      .children('.w-full')
+      .should('have.length', 1)
+      .first()
+      .within(() => {
+        // check that account 2 is listed as a friend
+        // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
+        cy.get('#list-profile-name').should('contain.text', '#2 Frien');
+        // check 0 tags
+        cy.get('#list-tags-counter').should('have.text', 0);
+        // check 0 posts
+        cy.get('#list-posts-counter').should('have.text', 0);
+        // check option to unfollow account 1
+        cy.get('#list-unfollow-button').should('be.visible');
+      });
   });
 });

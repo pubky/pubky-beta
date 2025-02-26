@@ -7,11 +7,7 @@ interface CreateFeedProps {
   handleLoadFeeds: any;
 }
 
-export default function CreateFeed({
-  showModal,
-  setShowModal,
-  handleLoadFeeds,
-}: CreateFeedProps) {
+export default function CreateFeed({ showModal, setShowModal, handleLoadFeeds }: CreateFeedProps) {
   return (
     <Modal.Root
       show={showModal}
@@ -20,10 +16,7 @@ export default function CreateFeed({
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       <Modal.Header title="Create Feed" />
-      <ContentCreateFeed
-        handleLoadFeeds={handleLoadFeeds}
-        setShowModalCreateFeed={setShowModal}
-      />
+      <ContentCreateFeed handleLoadFeeds={handleLoadFeeds} setShowModalCreateFeed={setShowModal} />
     </Modal.Root>
   );
 }

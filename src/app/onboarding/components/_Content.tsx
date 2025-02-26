@@ -55,10 +55,7 @@ export default function Index() {
           Unlock <br />
           the web.
         </Typography.Display>
-        <Typography.Body
-          variant="large"
-          className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-4"
-        >
+        <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-4">
           Your keys, your content, your rules.
         </Typography.Body>
         <div className="relative flex gap-3 mt-6 sm:mt-12">
@@ -94,10 +91,7 @@ export default function Index() {
         </div>
         <div className="fixed bottom-12">
           <SocialLinks className="sm:hidden inline-flex" />
-          <Typography.Body
-            variant="small"
-            className="text-[13.5px] text-opacity-30 font-normal"
-          >
+          <Typography.Body variant="small" className="text-[13.5px] text-opacity-30 font-normal">
             Synonym Software Ltd. ©{currentYear}.
           </Typography.Body>
         </div>
@@ -105,10 +99,8 @@ export default function Index() {
       <div className="w-full">
         <div
           style={{
-            backgroundImage: isMobile
-              ? "url('/images/webp/home-mobile.webp')"
-              : "url('/images/webp/home.webp')",
-            marginTop: isMobile ? '150px' : '',
+            backgroundImage: isMobile ? "url('/images/webp/home-mobile.webp')" : "url('/images/webp/home.webp')",
+            marginTop: isMobile ? '150px' : ''
           }}
           className="fixed inset-0 bg-cover bg-center pointer-events-none"
         />

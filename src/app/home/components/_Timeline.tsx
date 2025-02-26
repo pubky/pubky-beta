@@ -21,16 +21,7 @@ interface TimelineProps {
 
 // Custom hook to manage filters
 const useTimelineFilters = (selectedFeed) => {
-  const {
-    reach,
-    layout,
-    sort,
-    content,
-    setReach,
-    setLayout,
-    setSort,
-    setContent,
-  } = useFilterContext();
+  const { reach, layout, sort, content, setReach, setLayout, setSort, setContent } = useFilterContext();
   const [tagsFeed, setTagsFeed] = useState<string[]>();
 
   useEffect(() => {
@@ -55,20 +46,11 @@ const useTimelineFilters = (selectedFeed) => {
 };
 
 export const Timeline = ({ selectedFeed }: TimelineProps) => {
-  const {
-    pubky,
-    mutedUsers,
-    newPosts,
-    setNewPosts,
-    timeline,
-    setTimeline,
-    deletedPosts,
-  } = usePubkyClientContext();
+  const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline, deletedPosts } = usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
   const isMobile = useIsMobile(1024);
-  const { reach, layout, sort, content, tagsFeed } =
-    useTimelineFilters(selectedFeed);
+  const { reach, layout, sort, content, tagsFeed } = useTimelineFilters(selectedFeed);
   const [skip, setSkip] = useState<number>(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
@@ -82,7 +64,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     sort === 'popularity' ? skip : undefined,
     sort,
     tagsFeed,
-    content,
+    content
   );
 
   const clearTimeline = useCallback(() => {
@@ -115,7 +97,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
             post?.details?.author &&
             !mutedUsers?.includes(post.details.author) &&
             !timeline.some((p) => p.details.id === post.details.id) &&
-            !deletedPosts.includes(post.details.id),
+            !deletedPosts.includes(post.details.id)
         );
 
         if (newPosts.length > 0) {
@@ -126,9 +108,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       // Filter posts before setting timeline
       const filteredPosts = data.filter(
         (post) =>
-          post?.details?.author &&
-          !mutedUsers?.includes(post.details.author) &&
-          !deletedPosts.includes(post.details.id),
+          post?.details?.author && !mutedUsers?.includes(post.details.author) && !deletedPosts.includes(post.details.id)
       );
 
       // Set timeline without conditional logic
@@ -142,7 +122,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
               post?.details?.author &&
               !mutedUsers?.includes(post.details.author) &&
               !prev.some((p) => p.details.id === post.details.id) &&
-              !deletedPosts.includes(post.details.id),
+              !deletedPosts.includes(post.details.id)
           );
           return [...prev, ...posts];
         });
@@ -170,9 +150,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     const fetchNexusData = async () => {
       if (!newPosts.length) return;
 
-      const homeserverPosts = newPosts.filter(
-        (post) => post.cached === 'homeserver' || post.cached === undefined,
-      );
+      const homeserverPosts = newPosts.filter((post) => post.cached === 'homeserver' || post.cached === undefined);
       if (!homeserverPosts.length) return;
 
       try {
@@ -181,26 +159,20 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           homeserverPosts[0].details.id,
           pubky ?? '',
           undefined,
-          undefined,
+          undefined
         );
 
         if (!nexusData) return;
 
         // Remove post from newPosts
-        setNewPosts((prev) =>
-          prev.filter((post) => post.details.id !== nexusData.details.id),
-        );
+        setNewPosts((prev) => prev.filter((post) => post.details.id !== nexusData.details.id));
 
         // set new post to timeline but update if the post is already in the timeline
         setTimeline((prev) => {
-          const existingPost = prev.find(
-            (p) => p.details.id === nexusData.details.id,
-          );
+          const existingPost = prev.find((p) => p.details.id === nexusData.details.id);
 
           if (existingPost) {
-            return prev.map((p) =>
-              p.details.id === nexusData.details.id ? nexusData : p,
-            );
+            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
           }
 
           return [nexusData, ...prev];
@@ -224,16 +196,9 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           post?.details?.content !== '[DELETED]' && (
             <div key={post.details.id} className="flex flex-col">
               <Post largeView={!isMobile && layout === 'wide'} post={post} />
-              {post?.counts?.replies > 0 && (
-                <PostReplies
-                  isMobile={isMobile}
-                  homeView
-                  post={post}
-                  layout={layout}
-                />
-              )}
+              {post?.counts?.replies > 0 && <PostReplies isMobile={isMobile} homeView post={post} layout={layout} />}
             </div>
-          ),
+          )
       )}
       {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">
@@ -255,26 +220,16 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
             <Link href="/hot#popular">
-              <Button.Medium
-                icon={<Icon.UserPlus size="16" />}
-                className="whitespace-nowrap"
-              >
+              <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
                 Follow Popular Users
               </Button.Medium>
             </Link>
             <Link href="hot">
-              <Button.Medium icon={<Icon.Tag size="16" />}>
-                Explore Tags
-              </Button.Medium>
+              <Button.Medium icon={<Icon.Tag size="16" />}>Explore Tags</Button.Medium>
             </Link>
           </div>
           <div className="absolute top-64 z-0">
-            <Image
-              alt="not-found-feed"
-              width={434}
-              height={434}
-              src="/images/webp/not-found/feed.webp"
-            />
+            <Image alt="not-found-feed" width={434} height={434} src="/images/webp/not-found/feed.webp" />
           </div>
         </ContentNotFound>
       )}

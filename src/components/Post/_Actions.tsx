@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
-import {
-  useAlertContext,
-  useModal,
-  usePubkyClientContext,
-  useToastContext,
-} from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext, useToastContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -22,7 +17,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 const BookmarkButton = ({
   isBookmarked,
   loadingBookmarks,
-  handleBookmarks,
+  handleBookmarks
 }: {
   isBookmarked: string;
   loadingBookmarks: boolean;
@@ -44,46 +39,27 @@ const BookmarkButton = ({
           </div>
         ) : (
           <div>
-            <Icon.BookmarkSimple
-              size="19"
-              opacity={isBookmarked ? 1 : 0.2}
-              color={'white'}
-            />
+            <Icon.BookmarkSimple size="19" opacity={isBookmarked ? 1 : 0.2} color={'white'} />
           </div>
         )
       }
       onClick={(event) => {
         event.stopPropagation();
-        loadingBookmarks
-          ? undefined
-          : pubky
-            ? handleBookmarks()
-            : openModal('join');
+        loadingBookmarks ? undefined : pubky ? handleBookmarks() : openModal('join');
       }}
     />
   );
 };
 
-const MenuButton = ({
-  post,
-  repost,
-}: {
-  post: PostView;
-  repost?: PostView;
-}) => {
+const MenuButton = ({ post, repost }: { post: PostView; repost?: PostView }) => {
   const { pubky } = usePubkyClientContext();
   const { openModal } = useModal();
   const isMobile = useIsMobile();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <div
-      className="relative cursor-default"
-      onClick={(event) => event.stopPropagation()}
-    >
-      {showMenu && (
-        <Tooltip.Menu post={post} repost={repost} setShowMenu={setShowMenu} />
-      )}
+    <div className="relative cursor-default" onClick={(event) => event.stopPropagation()}>
+      {showMenu && <Tooltip.Menu post={post} repost={repost} setShowMenu={setShowMenu} />}
       <Button.Action
         id="menu-btn"
         size="small"
@@ -106,24 +82,17 @@ const MenuButton = ({
   );
 };
 
-export default function Actions({
-  post,
-  repost,
-  deleteRepost = false,
-}: PostProps) {
+export default function Actions({ post, repost, deleteRepost = false }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { openModal, isOpen } = useModal();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
-  const { data: authorRepost } = useUserProfile(
-    repost?.details?.author ?? '',
-    pubky ?? '',
-  );
+  const { data: authorRepost } = useUserProfile(repost?.details?.author ?? '', pubky ?? '');
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
   const { addToast } = useToastContext();
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(
-    repost?.bookmark?.id ? repost?.bookmark?.id : (post?.bookmark?.id ?? ''),
+    repost?.bookmark?.id ? repost?.bookmark?.id : (post?.bookmark?.id ?? '')
   );
 
   const handleAddBookmark = async (postId: string, authorId: string) => {
@@ -177,10 +146,8 @@ export default function Actions({
 
     if (!isBookmarked) {
       addToast(
-        `This post by ${
-          repost ? authorRepost?.details?.name : author?.details?.name
-        } was saved to your bookmarks.`,
-        'bookmark',
+        `This post by ${repost ? authorRepost?.details?.name : author?.details?.name} was saved to your bookmarks.`,
+        'bookmark'
       );
     }
   };
@@ -236,10 +203,7 @@ export default function Actions({
             variant="custom"
             icon={
               <div>
-                <Icon.Repost
-                  size="19"
-                  color={deleteRepost ? '#00BA7C' : 'white'}
-                />
+                <Icon.Repost size="19" color={deleteRepost ? '#00BA7C' : 'white'} />
               </div>
             }
             counter={post?.counts?.reposts}

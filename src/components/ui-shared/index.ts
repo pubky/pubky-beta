@@ -37,5 +37,5 @@ export {
   DropDown,
   Post,
   Tooltip,
-  SideCard,
+  SideCard
 };

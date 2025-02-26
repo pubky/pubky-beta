@@ -18,9 +18,7 @@ export default function DeletePost({ post, setShowMenu }: DeletePostProps) {
       {post?.details.author === pubky && (
         <Tooltip.Item
           id="delete-post"
-          onClick={() =>
-            openModal('deletePost', { setShowMenu: setShowMenu, post: post })
-          }
+          onClick={() => openModal('deletePost', { setShowMenu: setShowMenu, post: post })}
           icon={<Icon.Trash size="24" color={'#EF4444'} />}
           cssText="text-red-500"
         >

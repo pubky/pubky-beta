@@ -7,5 +7,5 @@ export const RecommendedUsers = {
   Header,
   LeftSidebar,
   MainContent,
-  RightSidebar,
+  RightSidebar
 };

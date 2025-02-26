@@ -7,12 +7,8 @@ import { LoadingInfluencers } from './_MainContent';
 
 interface ButtonsProps {
   influencer: UserView | undefined;
-  setLoadingInfluencers: React.Dispatch<
-    React.SetStateAction<LoadingInfluencers>
-  >;
-  setFollowed: React.Dispatch<
-    React.SetStateAction<{ [pubky: string]: boolean }>
-  >;
+  setLoadingInfluencers: React.Dispatch<React.SetStateAction<LoadingInfluencers>>;
+  setFollowed: React.Dispatch<React.SetStateAction<{ [pubky: string]: boolean }>>;
   pubkeyUser: string | boolean | undefined;
   isLoading: boolean;
   isFollowed: boolean;
@@ -26,7 +22,7 @@ export function Buttons({
   pubkeyUser,
   isLoading,
   isFollowed,
-  loadingInfluencers,
+  loadingInfluencers
 }: ButtonsProps) {
   const { follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -36,7 +32,7 @@ export function Buttons({
       if (!pubkyFollow) return;
       setLoadingInfluencers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: true,
+        [pubkyFollow]: true
       }));
 
       const result = await follow(pubkyFollow);
@@ -47,11 +43,11 @@ export function Buttons({
 
       setFollowed((prevState) => ({
         ...prevState,
-        [pubkyFollow]: result,
+        [pubkyFollow]: result
       }));
       setLoadingInfluencers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: false,
+        [pubkyFollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -63,7 +59,7 @@ export function Buttons({
       if (!pubkyUnfollow) return;
       setLoadingInfluencers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: true,
+        [pubkyUnfollow]: true
       }));
 
       const result = await unfollow(pubkyUnfollow);
@@ -74,11 +70,11 @@ export function Buttons({
 
       setFollowed((prevState) => ({
         ...prevState,
-        [pubkyUnfollow]: !result,
+        [pubkyUnfollow]: !result
       }));
       setLoadingInfluencers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: false,
+        [pubkyUnfollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -89,10 +85,7 @@ export function Buttons({
       {influencer && (
         <>
           {pubkeyUser ? (
-            <Button.Medium
-              className="w-full lg:w-[104px] bg-transparent cursor-default"
-              icon={<Icon.User size="16" />}
-            >
+            <Button.Medium className="w-full lg:w-[104px] bg-transparent cursor-default" icon={<Icon.User size="16" />}>
               Me
             </Button.Medium>
           ) : isLoading ? (
@@ -102,9 +95,7 @@ export function Buttons({
           ) : isFollowed ? (
             <Button.Medium
               onClick={
-                loadingInfluencers[influencer?.details?.id]
-                  ? undefined
-                  : () => unfollowUser(influencer?.details?.id)
+                loadingInfluencers[influencer?.details?.id] ? undefined : () => unfollowUser(influencer?.details?.id)
               }
               disabled={loadingInfluencers[influencer?.details?.id]}
               loading={loadingInfluencers[influencer?.details?.id]}
@@ -116,9 +107,7 @@ export function Buttons({
           ) : (
             <Button.Medium
               onClick={
-                loadingInfluencers[influencer?.details?.id]
-                  ? undefined
-                  : () => followUser(influencer?.details?.id)
+                loadingInfluencers[influencer?.details?.id] ? undefined : () => followUser(influencer?.details?.id)
               }
               disabled={loadingInfluencers[influencer?.details?.id]}
               loading={loadingInfluencers[influencer?.details?.id]}

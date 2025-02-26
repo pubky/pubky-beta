@@ -8,27 +8,18 @@ const AccountId = `${process.env.SUPPORT_ACCOUNT_ID}`;
 const config = {
   headers: {
     api_access_token: ApiAccessToken,
-    'Content-Type': 'application/json; charset=utf-8',
-  },
+    'Content-Type': 'application/json; charset=utf-8'
+  }
 };
 
-async function createContactIfNotExists(
-  email: string,
-  name: string,
-  source: string,
-) {
+async function createContactIfNotExists(email: string, name: string, source: string) {
   try {
-    const contactResponse = await axios.get(
-      `${BaseUrl}/api/v1/accounts/${AccountId}/contacts/search`,
-      {
-        ...config,
-        params: { q: email },
-      },
-    );
+    const contactResponse = await axios.get(`${BaseUrl}/api/v1/accounts/${AccountId}/contacts/search`, {
+      ...config,
+      params: { q: email }
+    });
 
-    let contact = contactResponse.data.payload.find(
-      (c: any) => c.email === email.toLowerCase().trim(),
-    );
+    let contact = contactResponse.data.payload.find((c: any) => c.email === email.toLowerCase().trim());
 
     if (!contact) {
       const createContactResponse = await axios.post(
@@ -36,9 +27,9 @@ async function createContactIfNotExists(
         {
           inbox_id: source === 'Feedback' ? 26 : 27,
           name,
-          email,
+          email
         },
-        config,
+        config
       );
       contact = createContactResponse.data.payload.contact;
     }
@@ -50,12 +41,7 @@ async function createContactIfNotExists(
   }
 }
 
-async function createConversation(
-  sourceId: string,
-  contactId: number,
-  message: string,
-  source: string,
-) {
+async function createConversation(sourceId: string, contactId: number, message: string, source: string) {
   try {
     const content = `${source}\n\n${message}`;
     await axios.post(
@@ -64,9 +50,9 @@ async function createConversation(
         source_id: sourceId,
         inbox_id: source === 'Feedback' ? 26 : 27,
         contact_id: contactId,
-        message: { content, message_type: 'incoming' },
+        message: { content, message_type: 'incoming' }
       },
-      config,
+      config
     );
   } catch (error) {
     console.error('Error creating conversation:', error);
@@ -80,10 +66,7 @@ export async function POST(req: Request) {
     const { name, email, message, source } = body;
 
     if (!email || !message) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const contact = await createContactIfNotExists(email, name, source);
@@ -94,18 +77,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: 'Success' });
   } catch (error) {
     console.error('Error in API handler:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
 export async function GET() {
-  return NextResponse.json(
-    { error: 'Method not allowed. Use POST instead.' },
-    { status: 405 },
-  );
+  return NextResponse.json({ error: 'Method not allowed. Use POST instead.' }, { status: 405 });
 }
 
 export async function OPTIONS() {
@@ -113,7 +90,7 @@ export async function OPTIONS() {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
+      'Access-Control-Allow-Headers': 'Content-Type'
+    }
   });
 }

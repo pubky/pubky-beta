@@ -33,11 +33,7 @@ export const Main = ({ children, ...rest }: MainProps) => {
     <div
       ref={tooltipRef}
       {...rest}
-      className={twMerge(
-        baseCSS,
-        position === 'top' ? topPositionCSS : bottomPositionCSS,
-        rest.className
-      )}
+      className={twMerge(baseCSS, position === 'top' ? topPositionCSS : bottomPositionCSS, rest.className)}
     >
       {children}
     </div>

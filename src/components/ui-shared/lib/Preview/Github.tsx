@@ -35,9 +35,7 @@ export const GitHub = ({ url }: GitHubProps) => {
 
         const repoPath = url.split('github.com/')[1].split('/')[0] + '/' + url.split('github.com/')[1].split('/')[1];
 
-        const response = await fetch(
-          `https://api.github.com/repos/${repoPath}`,
-        );
+        const response = await fetch(`https://api.github.com/repos/${repoPath}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch repository data');
@@ -55,9 +53,7 @@ export const GitHub = ({ url }: GitHubProps) => {
         const avatarUrl = URL.createObjectURL(avatarBlob);
         setOwnerAvatar(avatarUrl);
 
-        const previewResponse = await fetch(
-          `/api/preview?url=${encodeURIComponent(url)}`,
-        );
+        const previewResponse = await fetch(`/api/preview?url=${encodeURIComponent(url)}`);
 
         if (!previewResponse.ok) {
           throw new Error('Failed to fetch preview image');
@@ -66,10 +62,7 @@ export const GitHub = ({ url }: GitHubProps) => {
         const previewData = await previewResponse.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(previewData, 'text/html');
-        const image =
-          doc
-            .querySelector('meta[property="og:image"]')
-            ?.getAttribute('content') || '';
+        const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
         setPreviewImage(image);
         setLoading(false);
       } catch (error) {
@@ -100,11 +93,7 @@ export const GitHub = ({ url }: GitHubProps) => {
     >
       <div className="flex flex-col md:flex-row gap-4 justify-between">
         <div className="flex items-center">
-          <img
-            src={ownerAvatar}
-            alt="Owner Avatar"
-            className="w-12 h-12 rounded-full mr-4"
-          />
+          <img src={ownerAvatar} alt="Owner Avatar" className="w-12 h-12 rounded-full mr-4" />
           <div>
             <Typography.Body variant="large-bold">
               {repoData.full_name && repoData.full_name.length > 40
@@ -121,25 +110,19 @@ export const GitHub = ({ url }: GitHubProps) => {
                 <span className="text-[15px]" role="img" aria-label="star">
                   ⭐
                 </span>
-                <Typography.Body variant="small">
-                  {repoData.stargazers_count}
-                </Typography.Body>
+                <Typography.Body variant="small">{repoData.stargazers_count}</Typography.Body>
               </div>
               <div className="flex gap-1">
                 <div className="flex items-center">
                   <Icon.GitFork size="15" />
                 </div>
-                <Typography.Body variant="small">
-                  {repoData.forks_count}
-                </Typography.Body>
+                <Typography.Body variant="small">{repoData.forks_count}</Typography.Body>
               </div>
               <div className="flex gap-1">
                 <div className="flex items-center">
                   <Icon.Eye size="15" />
                 </div>
-                <Typography.Body variant="small">
-                  {repoData.subscribers_count}
-                </Typography.Body>
+                <Typography.Body variant="small">{repoData.subscribers_count}</Typography.Body>
               </div>
             </div>
           </div>

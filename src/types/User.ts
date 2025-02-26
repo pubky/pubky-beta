@@ -102,12 +102,7 @@ export interface Tag {
   tagger_id: string;
 }
 
-export type UserStreamType =
-  | 'Followers'
-  | 'Following'
-  | 'Friends'
-  | 'MostFollowed'
-  | 'Influencers';
+export type UserStreamType = 'Followers' | 'Following' | 'Friends' | 'MostFollowed' | 'Influencers';
 
 export interface UserTag {
   label: string;

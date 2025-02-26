@@ -7,14 +7,7 @@ interface ActionsProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Actions = ({ children, id, ...rest }: ActionsProps) => {
   return (
-    <div
-      {...rest}
-      id={id}
-      className={twMerge(
-        `justify-start items-start gap-2 flex`,
-        rest.className
-      )}
-    >
+    <div {...rest} id={id} className={twMerge(`justify-start items-start gap-2 flex`, rest.className)}>
       {children}
     </div>
   );

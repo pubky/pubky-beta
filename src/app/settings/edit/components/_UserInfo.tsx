@@ -13,13 +13,7 @@ interface UserInfoProps {
   loading: boolean;
 }
 
-export default function UserInfo({
-  name,
-  setName,
-  handler,
-  errors,
-  loading,
-}: UserInfoProps) {
+export default function UserInfo({ name, setName, handler, errors, loading }: UserInfoProps) {
   return (
     <>
       <Input.Cursor
@@ -31,14 +25,9 @@ export default function UserInfo({
         maxLength={25}
         autoCorrect="off"
         error={errors.name}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setName(e.target.value)
-        }
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
       />
-      <Typography.H2
-        variant="light"
-        className="-mt-4 text-opacity-50 break-words"
-      >
+      <Typography.H2 variant="light" className="-mt-4 text-opacity-50 break-words">
         {handler}
       </Typography.H2>
     </>

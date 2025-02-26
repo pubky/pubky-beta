@@ -4,11 +4,7 @@ import Image from 'next/image';
 
 import { Content, Card, Typography, Icon, Button } from '@social/ui-shared';
 import Link from 'next/link';
-import {
-  useAlertContext,
-  usePubkyClientContext,
-  useToastContext,
-} from '@/contexts';
+import { useAlertContext, usePubkyClientContext, useToastContext } from '@/contexts';
 import { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Utils } from '@social/utils-shared';
@@ -23,9 +19,7 @@ export default function Join() {
   const { addAlert } = useAlertContext();
   const appLink = 'pubkyring://';
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const fallbackUrl = isIOS
-    ? 'https://apps.apple.com/app'
-    : 'https://play.google.com/store/apps';
+  const fallbackUrl = isIOS ? 'https://apps.apple.com/app' : 'https://play.google.com/store/apps';
   const [loginError, setLoginError] = useState('');
   const [authUrl, setAuthUrl] = useState('');
   const [qrSize, setQrSize] = useState(210);
@@ -59,9 +53,7 @@ export default function Join() {
       try {
         const pubkey = await result.promise;
         if (pubkey) {
-          const handleLoginResult = await loginWithAuthUrl(
-            String(pubkey.z32()),
-          );
+          const handleLoginResult = await loginWithAuthUrl(String(pubkey.z32()));
           if (handleLoginResult) {
             addAlert('Login successful!');
             router.push('/home');
@@ -69,8 +61,7 @@ export default function Join() {
         }
       } catch (error: unknown | { message: string }) {
         try {
-          const errorMessage =
-            error === 'aead::Error' ? 'Failed to login.' : null;
+          const errorMessage = error === 'aead::Error' ? 'Failed to login.' : null;
 
           if (errorMessage) {
             setLoginError(errorMessage);
@@ -115,12 +106,7 @@ export default function Join() {
       text={`${isMobile ? 'Use' : 'Scan the QR with'} Pubky Ring or any other Pubky Core powered wallet.`}
       imageTitle={
         <Link className="ml-2" href="https://github.com/pubky" target="_blank">
-          <Image
-            width={142}
-            height={30}
-            alt="bitkit"
-            src="/images/webp/pubky-ring.webp"
-          />
+          <Image width={142} height={30} alt="bitkit" src="/images/webp/pubky-ring.webp" />
         </Link>
       }
       className="w-full col-span-2"
@@ -140,11 +126,7 @@ export default function Join() {
               />
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-[41.63px] h-[41.63px] bg-black rounded-[50px] flex items-center justify-center">
-                  <img
-                    className="w-[15.72px] h-6"
-                    src="/images/webp/pubky-ring-mark.svg"
-                    alt="Logo"
-                  />
+                  <img className="w-[15.72px] h-6" src="/images/webp/pubky-ring-mark.svg" alt="Logo" />
                 </div>
               </div>
             </div>
@@ -160,7 +142,7 @@ export default function Join() {
               <div className="w-full inset-0 flex items-center justify-right left-8 absolute">
                 <Typography.H2
                   style={{
-                    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 5% 100%)',
+                    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 5% 100%)'
                   }}
                   className="text-[20px] mt-4 font-black text-center w-full px-4 py-2.5 bg-[#2a2a2f]"
                 >
@@ -173,10 +155,7 @@ export default function Join() {
       )}
       {loginError && (
         <div className="flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
-          <Typography.Body
-            className="break-words text-red-600"
-            variant="small-bold"
-          >
+          <Typography.Body className="break-words text-red-600" variant="small-bold">
             {Utils.minifyText(loginError, 50)}
           </Typography.Body>
           <div>

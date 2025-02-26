@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Button,
-  Icon,
-  Input,
-  Post,
-  PostUtil,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, Input, Post, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, useModal } from '@/contexts';
 import { useRef, useState } from 'react';
@@ -65,7 +58,7 @@ export default function FooterArea({
   maxLength = 1000,
   setShowModalPost,
   loading,
-  charCountArticle,
+  charCountArticle
 }: FooterAreaProps) {
   const { addAlert } = useAlertContext();
   const { openModal } = useModal();
@@ -121,21 +114,13 @@ export default function FooterArea({
         return;
       }
 
-      const newFiles =
-        selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
-      setSelectedFiles &&
-        newFiles &&
-        setSelectedFiles((prevFiles) =>
-          [...prevFiles, ...newFiles].slice(0, 4),
-        );
+      const newFiles = selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
+      setSelectedFiles && newFiles && setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 4));
 
-      const newFilePreviews =
-        newFiles && newFiles.map((file) => URL.createObjectURL(file));
+      const newFilePreviews = newFiles && newFiles.map((file) => URL.createObjectURL(file));
       newFilePreviews &&
         setFilePreviews &&
-        setFilePreviews((prevPreviews) =>
-          [...prevPreviews, ...newFilePreviews].slice(0, 4),
-        );
+        setFilePreviews((prevPreviews) => [...prevPreviews, ...newFilePreviews].slice(0, 4));
     }
     event.target.value = '';
   };
@@ -166,19 +151,13 @@ export default function FooterArea({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value
-      .toLowerCase()
-      .replace(/\s/g, '')
-      .replace(/!/g, '');
+    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
     setTagInput(valueWithoutSpaces);
   };
 
   return (
     <>
-      {(visibleTextArea ||
-        textArea ||
-        content ||
-        (arrayTags && arrayTags.length > 0)) && (
+      {(visibleTextArea || textArea || content || (arrayTags && arrayTags.length > 0)) && (
         <>
           {arrayTags && arrayTags.length > 0 && (
             <div id="tags" className="flex-wrap gap-2 flex items-center">
@@ -191,11 +170,7 @@ export default function FooterArea({
                     <div
                       className="flex items-center"
                       onClick={() => {
-                        !loading &&
-                          setArrayTags &&
-                          setArrayTags((prev) =>
-                            prev.filter((item) => item !== tag),
-                          );
+                        !loading && setArrayTags && setArrayTags((prev) => prev.filter((item) => item !== tag));
                         if (arrayTags.length <= 4) {
                           setErrorTag(false);
                         }
@@ -210,40 +185,24 @@ export default function FooterArea({
               ))}
             </div>
           )}
-          <Post.Actions
-            id="footer-actions"
-            className="w-full flex-col sm:flex-row"
-          >
+          <Post.Actions id="footer-actions" className="w-full flex-col sm:flex-row">
             {showEmojis && (
               <>
-                <div
-                  className="fixed inset-0 bg-black bg-opacity-30 z-[9998]"
-                  onClick={() => setShowEmojis(false)}
-                />
+                <div className="fixed inset-0 bg-black bg-opacity-30 z-[9998]" onClick={() => setShowEmojis(false)} />
                 <div
                   id="emoji-picker"
                   className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
                   ref={wrapperRefEmojis}
                 >
-                  <EmojiPicker
-                    onEmojiSelect={handleEmojiClick}
-                    maxLength={maxLength}
-                    currentInput={content}
-                  />
+                  <EmojiPicker onEmojiSelect={handleEmojiClick} maxLength={maxLength} currentInput={content} />
                 </div>
               </>
             )}
-            <div
-              id="add-tag-container"
-              className="w-auto hidden lg:flex flex-col self-center"
-            >
+            <div id="add-tag-container" className="w-auto hidden lg:flex flex-col self-center">
               {addTagInput ? (
                 <>
                   {showEmojisFastTag && (
-                    <div
-                      className="absolute translate-y-[10%] translate-x-[30%] z-10"
-                      ref={wrapperRefEmojisFastTag}
-                    >
+                    <div className="absolute translate-y-[10%] translate-x-[30%] z-10" ref={wrapperRefEmojisFastTag}>
                       <EmojiPicker
                         onEmojiSelect={(emojiObject) => {
                           setTagInput(tagInput + emojiObject.native);
@@ -303,20 +262,14 @@ export default function FooterArea({
                 </div>
               )}
               {errorTag && addTagInput && (
-                <Typography.Body
-                  className="whitespace-nowrap text-[#e95164]"
-                  variant="small"
-                >
+                <Typography.Body className="whitespace-nowrap text-[#e95164]" variant="small">
                   Max 4 tags
                 </Typography.Body>
               )}
             </div>
             <div className="grow" />
             <div className="w-full justify-between sm:justify-end flex gap-2">
-              <div
-                id="content-length"
-                className="text-opacity-30 text-white text-sm mt-4 mr-2"
-              >
+              <div id="content-length" className="text-opacity-30 text-white text-sm mt-4 mr-2">
                 {noFile ? charCountArticle : content.length} / {maxLength}
               </div>
               <div className="flex gap-2">
@@ -324,15 +277,13 @@ export default function FooterArea({
                   id="tag-btn"
                   variant="custom"
                   className="flex lg:hidden"
-                  icon={
-                    <Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />
-                  }
+                  icon={<Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />}
                   onClick={(event) => {
                     event.stopPropagation();
                     if (!loading) {
                       openModal('tagCreatePost', {
                         arrayTags: arrayTags,
-                        setArrayTags: setArrayTags,
+                        setArrayTags: setArrayTags
                       });
                     }
                   }}
@@ -358,8 +309,7 @@ export default function FooterArea({
                       icon={<Icon.Newspaper size="32" />}
                       onClick={(event) => {
                         event.stopPropagation();
-                        if (!loading)
-                          openModal('createArticle', { setShowModalPost });
+                        if (!loading) openModal('createArticle', { setShowModalPost });
                       }}
                       disabled={loading}
                     />
@@ -369,15 +319,8 @@ export default function FooterArea({
                   <Button.Action
                     id="media-upload-btn"
                     variant="custom"
-                    icon={
-                      <Icon.ImageSquare
-                        size="32"
-                        color={!selectedFiles ? 'gray' : 'white'}
-                      />
-                    }
-                    onClick={() =>
-                      !loading && document.getElementById('fileInput')?.click()
-                    }
+                    icon={<Icon.ImageSquare size="32" color={!selectedFiles ? 'gray' : 'white'} />}
+                    onClick={() => !loading && document.getElementById('fileInput')?.click()}
                     disabled={!selectedFiles || loading}
                   >
                     <input

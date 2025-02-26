@@ -44,9 +44,7 @@ export default function RecoveryPhrase() {
 
     if (missingIndexes.length > 0) {
       const missingWordText = missingIndexes.length === 1 ? 'Word' : 'Words';
-      setMissingWordsError(
-        `${missingWordText} ${missingIndexes.join(', ')} missing`
-      );
+      setMissingWordsError(`${missingWordText} ${missingIndexes.join(', ')} missing`);
       return;
     }
 
@@ -59,9 +57,7 @@ export default function RecoveryPhrase() {
       if (response) router.push('/home');
     } catch (error: unknown | { message: string }) {
       const errorMessage =
-        (error as Error)?.message === 'aead::Error'
-          ? 'Recovery phrase is incorrect.'
-          : (error as Error)?.message;
+        (error as Error)?.message === 'aead::Error' ? 'Recovery phrase is incorrect.' : (error as Error)?.message;
       setLoginError(errorMessage);
       setLoading(false);
       console.error('Login error:', error);
@@ -95,10 +91,7 @@ export default function RecoveryPhrase() {
       </div>
       {missingWordsError && (
         <div className="flex w-full justify-between items-center px-4 py-2 mb-4 rounded-lg border-2 border-yellow-500 bg-yellow-600 bg-opacity-10">
-          <Typography.Body
-            className="break-words text-yellow-500"
-            variant="small-bold"
-          >
+          <Typography.Body className="break-words text-yellow-500" variant="small-bold">
             {missingWordsError}
           </Typography.Body>
           <div>
@@ -108,10 +101,7 @@ export default function RecoveryPhrase() {
       )}
       {loginError && (
         <div className="flex w-full justify-between items-center px-4 py-2 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
-          <Typography.Body
-            className="break-words text-red-600"
-            variant="small-bold"
-          >
+          <Typography.Body className="break-words text-red-600" variant="small-bold">
             {loginError}
           </Typography.Body>
           <div>

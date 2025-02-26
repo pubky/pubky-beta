@@ -29,45 +29,31 @@ export default function PrivacySafety() {
         </Typography.Body>
         <div className="w-full p-6 bg-white bg-opacity-5 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] rounded-2xl flex-col justify-start items-start gap-6 inline-flex">
           <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Show confirmation before redirecting
-            </Typography.Body>
+            <Typography.Body variant="small-bold">Show confirmation before redirecting</Typography.Body>
             <Input.Switch checked={isChecked} onChange={handleCheckboxChange} />
           </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Sign me out when inactive for 5 minutes
-            </Typography.Body>
+            <Typography.Body variant="small-bold">Sign me out when inactive for 5 minutes</Typography.Body>
             <Input.Switch disabled />
           </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Require PIN when inactive for 5 minutes
-            </Typography.Body>
+            <Typography.Body variant="small-bold">Require PIN when inactive for 5 minutes</Typography.Body>
             <Input.Switch disabled />
           </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Hide your profile in &apos;Who to Follow&apos;
-            </Typography.Body>
+            <Typography.Body variant="small-bold">Hide your profile in &apos;Who to Follow&apos;</Typography.Body>
             <Input.Switch disabled />
           </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Hide your profile in &apos;Active Friends&apos;
-            </Typography.Body>
+            <Typography.Body variant="small-bold">Hide your profile in &apos;Active Friends&apos;</Typography.Body>
             <Input.Switch disabled />
           </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Hide your profile in search results
-            </Typography.Body>
+            <Typography.Body variant="small-bold">Hide your profile in search results</Typography.Body>
             <Input.Switch disabled />
           </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
-            <Typography.Body variant="small-bold">
-              Never show posts from people you don&apos;t follow
-            </Typography.Body>
+            <Typography.Body variant="small-bold">Never show posts from people you don&apos;t follow</Typography.Body>
             <Input.Switch disabled />
           </div>
         </div>

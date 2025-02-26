@@ -7,7 +7,7 @@ export const labels = {
   celebrating: 'Celebrating',
   sick: 'Sick',
   noStatus: 'No Status',
-  loading: 'loading',
+  loading: 'loading'
 };
 
 export const emojis = {
@@ -19,12 +19,12 @@ export const emojis = {
   celebrating: '🥂',
   sick: '🤒',
   noStatus: '💭',
-  loading: '⏳',
+  loading: '⏳'
 };
 
 export const statusHelper = {
   labels,
-  emojis,
+  emojis
 };
 
 export default statusHelper;

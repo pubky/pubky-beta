@@ -25,7 +25,7 @@ const RenderPosts = () => {
     skip,
     'popularity',
     undefined,
-    undefined,
+    undefined
   );
 
   const fetchPosts = async () => {
@@ -46,9 +46,7 @@ const RenderPosts = () => {
       setTimeline((prev) => {
         const newPosts = data.filter((post) => {
           const isMuted = mutedUsers?.includes(post?.details?.author);
-          const isAlreadyInTimeline = prev.some(
-            (p) => p.details.id === post.details.id,
-          );
+          const isAlreadyInTimeline = prev.some((p) => p.details.id === post.details.id);
           return !isMuted && !isAlreadyInTimeline;
         });
         return [...prev, ...newPosts];
@@ -74,16 +72,14 @@ const RenderPosts = () => {
 
   return (
     <div className="flex flex-col gap-3" id="hot-posts">
-      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">
-        Hot Posts
-      </Typography.H2>
+      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">Hot Posts</Typography.H2>
       {timeline.map(
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <div key={post.details.id} className="flex gap-2 items-center">
               <Post key={`post-${post.details.id}`} post={post} />
             </div>
-          ),
+          )
       )}
       {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">

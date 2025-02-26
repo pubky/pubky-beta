@@ -13,11 +13,7 @@ interface ReportPostProps {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ContentReportPost({
-  setShowModal,
-  post,
-  setShowMenu,
-}: ReportPostProps) {
+export default function ContentReportPost({ setShowModal, post, setShowMenu }: ReportPostProps) {
   const { profile, pubky } = usePubkyClientContext();
   const [selectedItem, setSelectedItem] = useState<string>('Privacy');
   const [showInput, setShowInput] = useState(false);
@@ -34,7 +30,7 @@ export default function ContentReportPost({
     { icon: <Icon.Copy size="24" />, title: 'Copyright Infringement' },
     { icon: <Icon.User size="24" />, title: 'Impersonation' },
     { icon: <Icon.Shield size="24" />, title: 'Child Safety' },
-    { icon: <Icon.WarningOctagon size="24" />, title: 'Suicide or Self-harm' },
+    { icon: <Icon.WarningOctagon size="24" />, title: 'Suicide or Self-harm' }
   ];
 
   const handleSubmit = async () => {
@@ -44,7 +40,7 @@ export default function ContentReportPost({
         message: `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id} \n\n ${message}`,
         name: profile?.name,
         email: `${pubky}@pubky.app`,
-        source: `Report Post - ${selectedItem}`,
+        source: `Report Post - ${selectedItem}`
       });
       setSent(true);
       setLoading(false);
@@ -89,9 +85,7 @@ export default function ContentReportPost({
               >
                 <div className="flex gap-2">
                   {item.icon}
-                  <Typography.Body variant="medium-bold">
-                    {item.title}
-                  </Typography.Body>
+                  <Typography.Body variant="medium-bold">{item.title}</Typography.Body>
                 </div>
                 {selectedItem === item.title && (
                   <div>
@@ -105,11 +99,7 @@ export default function ContentReportPost({
       )}
       {!showInput && (
         <div className="flex gap-4 mt-8">
-          <Button.Large
-            id="cancel-report"
-            onClick={() => setShowModal(false)}
-            variant="secondary"
-          >
+          <Button.Large id="cancel-report" onClick={() => setShowModal(false)} variant="secondary">
             Cancel
           </Button.Large>
           <Button.Large onClick={() => setShowInput(true)} id="next-report">

@@ -10,7 +10,7 @@ export async function searchPostsByTags(
   start?: number,
   end?: number,
   skip?: number,
-  limit?: number,
+  limit?: number
 ): Promise<UserSearch> {
   const queryParams = new URLSearchParams();
 
@@ -30,9 +30,7 @@ export async function searchPostsByTags(
     queryParams.append('limit', String(limit));
   }
 
-  const response = await fetch(
-    `${BASE_URL}/search/tags/${label}?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/search/tags/${label}?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to search users');
 
@@ -40,11 +38,7 @@ export async function searchPostsByTags(
 }
 
 // Search user id by username
-export async function searchUsers(
-  username: string,
-  skip?: number,
-  limit?: number,
-): Promise<UserSearch> {
+export async function searchUsers(username: string, skip?: number, limit?: number): Promise<UserSearch> {
   const queryParams = new URLSearchParams();
 
   queryParams.append('username', username);

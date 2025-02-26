@@ -26,24 +26,12 @@ export default function Feedback() {
                 height={32}
                 className="rounded-full w-8 h-8"
               />
-              <Typography.Body
-                variant="medium-bold"
-                className="hover:underline hover:decoration-solid"
-              >
-                {Utils.minifyText(
-                  profile?.name ?? Utils.minifyPubky(pubky ?? ''),
-                  10,
-                )}
+              <Typography.Body variant="medium-bold" className="hover:underline hover:decoration-solid">
+                {Utils.minifyText(profile?.name ?? Utils.minifyPubky(pubky ?? ''), 10)}
               </Typography.Body>
             </Link>
-            <div
-              className="cursor-pointer"
-              onClick={() => openModal('feedback')}
-            >
-              <Typography.Body
-                className="text-opacity-30 leading-snug tracking-wide"
-                variant="medium"
-              >
+            <div className="cursor-pointer" onClick={() => openModal('feedback')}>
+              <Typography.Body className="text-opacity-30 leading-snug tracking-wide" variant="medium">
                 What do you think about Pubky?
               </Typography.Body>
             </div>

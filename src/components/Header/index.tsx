@@ -2,13 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import {
-  Header as HeaderUI,
-  Input,
-  Icon,
-  Button,
-  PostUtil,
-} from '@social/ui-shared';
+import { Header as HeaderUI, Input, Icon, Button, PostUtil } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext, useModal } from '@/contexts';
 import { ImageByUri } from '../ImageByUri';
 import { usePathname, useRouter } from 'next/navigation';
@@ -22,8 +16,7 @@ interface HeaderProps {
 export default function Header({ title }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { pubky, isLoggedIn, setSearchTags, searchTags, profile } =
-    usePubkyClientContext();
+  const { pubky, isLoggedIn, setSearchTags, searchTags, profile } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
   const { openModal } = useModal();
 
@@ -49,10 +42,7 @@ export default function Header({ title }: HeaderProps) {
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
-      if (
-        refSearchInputCard.current &&
-        !refSearchInputCard.current.contains(event.target as Node)
-      ) {
+      if (refSearchInputCard.current && !refSearchInputCard.current.contains(event.target as Node)) {
         setSearchInputCard(false);
       }
     };
@@ -77,15 +67,12 @@ export default function Header({ title }: HeaderProps) {
 
   const handleSearchTag = () => {
     const searchHistory = Utils.storage.get('searchHistory') || ([] as any);
-    if (
-      (inputValue.startsWith('pk:') && inputValue.length === 55) ||
-      inputValue.length === 52
-    ) {
+    if ((inputValue.startsWith('pk:') && inputValue.length === 55) || inputValue.length === 52) {
       const profileId = inputValue.replace(/^pk:/, '');
       if (profileId) {
         const updatedHistory = [
           { type: 'user', value: profileId },
-          ...searchHistory.filter((item: any) => item.value !== profileId),
+          ...searchHistory.filter((item: any) => item.value !== profileId)
         ].slice(0, 5);
         Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
       }
@@ -106,10 +93,7 @@ export default function Header({ title }: HeaderProps) {
 
         if (tags.length > 0) {
           tags.forEach((tag) => {
-            updatedHistory = [
-              { type: 'tag', value: tag },
-              ...updatedHistory.filter((item: any) => item.value !== tag),
-            ];
+            updatedHistory = [{ type: 'tag', value: tag }, ...updatedHistory.filter((item: any) => item.value !== tag)];
           });
         }
 
@@ -159,15 +143,12 @@ export default function Header({ title }: HeaderProps) {
             <Input.SearchInput
               id="header-search-input"
               value={inputValue}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setInputValue(e.target.value)
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
               onKeyDown={inputValue.trim() === '' ? undefined : handleKeyDown}
               maxLength={55}
               placeholder={!searchTags.length ? 'Search' : ''}
               className={`${
-                searchInputCard &&
-                'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
+                searchInputCard && 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
               }`}
               onClick={() => setSearchInputCard(true)}
               readOnly={!!searchTags.length}
@@ -179,10 +160,7 @@ export default function Header({ title }: HeaderProps) {
               inputValue={inputValue}
             />
             <Input.SearchActions className="hidden lg:flex">
-              <div
-                className={inputValue && 'cursor-pointer'}
-                onClick={inputValue ? handleSearchTag : undefined}
-              >
+              <div className={inputValue && 'cursor-pointer'} onClick={inputValue ? handleSearchTag : undefined}>
                 <Icon.MagnifyingGlass />
               </div>
             </Input.SearchActions>

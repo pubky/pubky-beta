@@ -13,7 +13,7 @@ export const storage = {
   },
   remove: (key: string): void => {
     globalThis.localStorage?.removeItem(key);
-  },
+  }
 };
 
 export default storage;

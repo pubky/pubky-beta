@@ -14,11 +14,7 @@ interface CreateRepostProps {
   className?: string;
 }
 
-export default function ContentCreateRepost({
-  setShowModalRepost,
-  post,
-  className,
-}: CreateRepostProps) {
+export default function ContentCreateRepost({ setShowModalRepost, post, className }: CreateRepostProps) {
   const { pubky, createRepost, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentRepost, setContentRepost] = useState('');
@@ -48,13 +44,7 @@ export default function ContentCreateRepost({
         }
       }
 
-      const newRepost = await createRepost(
-        post?.details?.id,
-        post?.details?.author,
-        content,
-        postKind,
-        selectedFiles,
-      );
+      const newRepost = await createRepost(post?.details?.id, post?.details?.author, content, postKind, selectedFiles);
 
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
@@ -73,7 +63,7 @@ export default function ContentCreateRepost({
             >
               View
             </a>
-          </>,
+          </>
         );
       } else {
         addAlert('Something wrong. Try again', 'warning');
@@ -96,12 +86,7 @@ export default function ContentCreateRepost({
     try {
       setSendingRepost(true);
 
-      const newRepost = await createRepost(
-        post?.details?.id,
-        post?.details?.author,
-        '',
-        PubkyAppPostKind.Short,
-      );
+      const newRepost = await createRepost(post?.details?.id, post?.details?.author, '', PubkyAppPostKind.Short);
 
       if (newRepost) {
         addAlert(
@@ -113,7 +98,7 @@ export default function ContentCreateRepost({
             >
               View
             </a>
-          </>,
+          </>
         );
       } else {
         addAlert('Something wrong. Try again', 'warning');

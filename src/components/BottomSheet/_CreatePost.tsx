@@ -10,23 +10,10 @@ interface CreatePostProps {
   className?: string;
 }
 
-export default function CreatePost({
-  show,
-  setShow,
-  title,
-  className,
-}: CreatePostProps) {
+export default function CreatePost({ show, setShow, title, className }: CreatePostProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'New Post'}
-      className={className}
-    >
-      <ContentCreatePost
-        className="p-0 border-none"
-        setShowModalPost={setShow}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'New Post'} className={className}>
+      <ContentCreatePost className="p-0 border-none" setShowModalPost={setShow} />
     </BottomSheet.Root>
   );
 }

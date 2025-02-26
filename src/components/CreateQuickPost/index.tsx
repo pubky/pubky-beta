@@ -12,10 +12,7 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   loadingFeed?: boolean;
 }
 
-export default function CreateQuickPost({
-  largeView = false,
-  loadingFeed,
-}: CreateQuickPostProps) {
+export default function CreateQuickPost({ largeView = false, loadingFeed }: CreateQuickPostProps) {
   const { createPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
@@ -55,13 +52,7 @@ export default function CreateQuickPost({
         }
       }
 
-      const newPost = await createPost(
-        content,
-        postKind,
-        selectedFiles,
-        quote,
-        updatedTags,
-      );
+      const newPost = await createPost(content, postKind, selectedFiles, quote, updatedTags);
 
       if (newPost) {
         addAlert(
@@ -73,7 +64,7 @@ export default function CreateQuickPost({
             >
               View
             </a>
-          </>,
+          </>
         );
       } else {
         addAlert('Something wrong. Try again', 'warning');
@@ -117,18 +108,8 @@ export default function CreateQuickPost({
               id="post-btn"
               className="w-auto"
               variant="line"
-              icon={
-                <Icon.PaperPlaneRight
-                  color={
-                    !isValidContent && selectedFiles.length === 0
-                      ? 'gray'
-                      : 'white'
-                  }
-                />
-              }
-              disabled={
-                (!isValidContent && selectedFiles.length === 0) || sendingPost
-              }
+              icon={<Icon.PaperPlaneRight color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
+              disabled={(!isValidContent && selectedFiles.length === 0) || sendingPost}
               loading={sendingPost}
               onClick={
                 (isValidContent || selectedFiles.length > 0) && !sendingPost

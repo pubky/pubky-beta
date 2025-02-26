@@ -15,5 +15,5 @@ export const Content = {
   MainBg,
   Profile,
   Stepper,
-  StepperReplies,
+  StepperReplies
 };

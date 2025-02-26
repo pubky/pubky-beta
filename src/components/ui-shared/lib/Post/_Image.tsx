@@ -9,13 +9,7 @@ type ImageProps = {
   className?: string;
 };
 
-export const ImageUser = ({
-  width = 32,
-  height = 32,
-  alt = 'userpic',
-  uriImage,
-  ...rest
-}: ImageProps) => {
+export const ImageUser = ({ width = 32, height = 32, alt = 'userpic', uriImage, ...rest }: ImageProps) => {
   return (
     <ImageByUri
       {...rest}

@@ -15,11 +15,7 @@ interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   inputValue?: string;
 }
 
-export default function SearchInputCard({
-  refCard,
-  inputValue,
-  ...rest
-}: SearchInputCardProps) {
+export default function SearchInputCard({ refCard, inputValue, ...rest }: SearchInputCardProps) {
   const router = useRouter();
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
   const { data: hotTags, isLoading } = useHotTags(pubky, undefined, 0, 10);
@@ -28,9 +24,7 @@ export default function SearchInputCard({
     return storedHistory ? storedHistory : [];
   });
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
-  const [userProfiles, setUserProfiles] = useState<Record<string, UserView>>(
-    {},
-  );
+  const [userProfiles, setUserProfiles] = useState<Record<string, UserView>>({});
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isMouseInside, setIsMouseInside] = useState(false);
 
@@ -81,9 +75,7 @@ export default function SearchInputCard({
               ? searchedUsers.length - 1
               : prevIndex - 1;
 
-        document
-          .getElementById(`user-${nextIndex}`)
-          ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        document.getElementById(`user-${nextIndex}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         return nextIndex;
       });
     } else if (e.key === 'Enter' && selectedIndex !== null) {
@@ -94,16 +86,12 @@ export default function SearchInputCard({
 
   const handleTagSearch = (tag: string) => {
     if (!searchTags.includes(tag)) {
-      setSearchTags(
-        searchTags.length < 3
-          ? [...searchTags, tag]
-          : [...searchTags.slice(1), tag],
-      );
+      setSearchTags(searchTags.length < 3 ? [...searchTags, tag] : [...searchTags.slice(1), tag]);
     }
 
     const updatedHistory = [
       { type: 'tag', value: tag },
-      ...searchHistory.filter((item: any) => item.value !== tag),
+      ...searchHistory.filter((item: any) => item.value !== tag)
     ].slice(0, 5);
 
     Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
@@ -114,13 +102,10 @@ export default function SearchInputCard({
   const handleUserClick = (user: UserView) => {
     const userEntry = {
       type: 'user',
-      value: user.details.id,
+      value: user.details.id
     };
 
-    const updatedHistory = [
-      userEntry,
-      ...searchHistory.filter((item: any) => item.id !== user.details.id),
-    ].slice(0, 5);
+    const updatedHistory = [userEntry, ...searchHistory.filter((item: any) => item.id !== user.details.id)].slice(0, 5);
 
     Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
 
@@ -128,9 +113,7 @@ export default function SearchInputCard({
   };
 
   useEffect(() => {
-    const userIds = searchHistory
-      .filter((item: any) => item.type === 'user')
-      .map((item: any) => item.value);
+    const userIds = searchHistory.filter((item: any) => item.type === 'user').map((item: any) => item.value);
 
     if (userIds.length > 0) {
       const fetchProfiles = async () => {
@@ -159,10 +142,7 @@ export default function SearchInputCard({
     <Card.Primary
       {...rest}
       refCard={refCard}
-      className={twMerge(
-        'outline-none absolute top-12 rounded-b-2xl rounded-t-none p-6 pt-2',
-        rest.className,
-      )}
+      className={twMerge('outline-none absolute top-12 rounded-b-2xl rounded-t-none p-6 pt-2', rest.className)}
       background="bg-[#05050A] border border-t-0 border-white border-opacity-20 z-20"
       onKeyDown={handleKeyDown}
       tabIndex={-1}
@@ -179,9 +159,7 @@ export default function SearchInputCard({
             className="cursor-pointer opacity-80 hover:opacity-100 rounded flex items-center gap-2 mb-2"
           >
             <Icon.MagnifyingGlass size="20" />
-            <Typography.Body variant="medium">
-              Search &apos;{inputValue}&apos; as tag
-            </Typography.Body>
+            <Typography.Body variant="medium">Search &apos;{inputValue}&apos; as tag</Typography.Body>
           </Link>
           {searchedUsers.map((user, index) => (
             <SideCard.User
@@ -203,10 +181,7 @@ export default function SearchInputCard({
             <div className="mb-2">
               <Typography.Label className="flex gap-2 items-center text-opacity-30">
                 Recent Searches{' '}
-                <span
-                  onClick={clearHistory}
-                  className="cursor-pointer opacity-30 hover:opacity-80"
-                >
+                <span onClick={clearHistory} className="cursor-pointer opacity-30 hover:opacity-80">
                   <Icon.X gap-12 />
                 </span>
               </Typography.Label>
@@ -221,14 +196,8 @@ export default function SearchInputCard({
                           <SideCard.UserSmall
                             id={`user-${index}`}
                             uri={profileUser?.details?.id}
-                            uriImage={
-                              profileUser?.details?.image ||
-                              '/images/webp/Userpic.webp'
-                            }
-                            username={Utils.minifyText(
-                              profileUser?.details?.name,
-                              20,
-                            )}
+                            uriImage={profileUser?.details?.image || '/images/webp/Userpic.webp'}
+                            username={Utils.minifyText(profileUser?.details?.name, 20)}
                             label={Utils.minifyPubky(profileUser?.details?.id)}
                             onClick={() => handleUserClick(profileUser)}
                           />
@@ -266,9 +235,7 @@ export default function SearchInputCard({
             </Typography.Body>
           ) : hotTags && hotTags?.length > 0 ? (
             <>
-              <Typography.Label className="text-opacity-30">
-                Hot tags
-              </Typography.Label>
+              <Typography.Label className="text-opacity-30">Hot tags</Typography.Label>
               <div className="mt-2 justify-start items-start">
                 {hotTags.slice(0, 10).map((tag, index) => (
                   <PostUtil.Tag

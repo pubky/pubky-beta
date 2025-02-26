@@ -8,11 +8,7 @@ interface EmojiPickerProps {
   currentInput?: string;
 }
 
-const EmojiPicker = ({
-  onEmojiSelect,
-  maxLength,
-  currentInput,
-}: EmojiPickerProps) => {
+const EmojiPicker = ({ onEmojiSelect, maxLength, currentInput }: EmojiPickerProps) => {
   const handleEmojiSelect = (emojiObject: any) => {
     if (maxLength && currentInput) {
       const emojiLength = new Blob([emojiObject.native]).size / 2;

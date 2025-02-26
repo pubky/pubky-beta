@@ -14,10 +14,7 @@ interface CreateFeedProps {
   handleLoadFeeds: any;
 }
 
-export default function ContentCreateFeed({
-  setShowModalCreateFeed,
-  handleLoadFeeds,
-}: CreateFeedProps) {
+export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFeeds }: CreateFeedProps) {
   const { saveFeed, searchTags } = usePubkyClientContext();
   const { reach, layout, sort } = useFilterContext();
   const isMobile = useIsMobile();
@@ -46,7 +43,7 @@ export default function ContentCreateFeed({
       reach: reach,
       layout: layout,
       sort: sort,
-      content: 'all',
+      content: 'all'
     };
 
     await handleAddFeed(feed, nameFeed);
@@ -75,8 +72,7 @@ export default function ContentCreateFeed({
   };
 
   const handleRemoveTag = (indexToRemove: number) => {
-    tagsFeed &&
-      setTagsFeed(tagsFeed.filter((_, index) => index !== indexToRemove));
+    tagsFeed && setTagsFeed(tagsFeed.filter((_, index) => index !== indexToRemove));
     if (tagsFeed && tagsFeed.length <= 4) {
       setTagsError(false);
     }
@@ -89,10 +85,7 @@ export default function ContentCreateFeed({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value
-      .toLowerCase()
-      .replace(/\s/g, '')
-      .replace(/!/g, '');
+    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
     setTag(valueWithoutSpaces);
   };
 
@@ -105,19 +98,14 @@ export default function ContentCreateFeed({
               value={nameFeed}
               maxLength={20}
               autoFocus
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setNameFeed(e.target.value)
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameFeed(e.target.value)}
               placeholder="Add Feed name"
             />
           </div>
           <div className="flex flex-row w-full mt-4">
             {showEmojis && (
               <>
-                <div
-                  className="fixed inset-0 bg-black bg-opacity-30 z-[9998]"
-                  onClick={() => setShowEmojis(false)}
-                />
+                <div className="fixed inset-0 bg-black bg-opacity-30 z-[9998]" onClick={() => setShowEmojis(false)} />
                 <div
                   id="emoji-picker"
                   className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
@@ -173,10 +161,7 @@ export default function ContentCreateFeed({
                   <PostUtil.Tag
                     key={index}
                     action={
-                      <div
-                        className="flex items-center"
-                        onClick={() => handleRemoveTag(index)}
-                      >
+                      <div className="flex items-center" onClick={() => handleRemoveTag(index)}>
                         <Icon.X size="16" />
                       </div>
                     }
@@ -202,28 +187,20 @@ export default function ContentCreateFeed({
         </div>
         <div className="flex gap-4 sm:gap-2 order-1 sm:order-2 sm:flex-col w-[180px]">
           <div>
-            <Typography.Label className="text-opacity-30">
-              Reach
-            </Typography.Label>
+            <Typography.Label className="text-opacity-30">Reach</Typography.Label>
             {isMobile ? <BottomSheet.Reach /> : <DropDown.Reach />}
           </div>
           <div>
-            <Typography.Label className="text-opacity-30">
-              Sort
-            </Typography.Label>
+            <Typography.Label className="text-opacity-30">Sort</Typography.Label>
             {isMobile ? <BottomSheet.SortPosts /> : <DropDown.SortPosts />}{' '}
           </div>
           <div>
-            <Typography.Label className="text-opacity-30">
-              Content
-            </Typography.Label>
+            <Typography.Label className="text-opacity-30">Content</Typography.Label>
             {isMobile ? <BottomSheet.Content /> : <DropDown.Content />}
           </div>
           {!isMobile && (
             <div>
-              <Typography.Label className="text-opacity-30">
-                Layout
-              </Typography.Label>
+              <Typography.Label className="text-opacity-30">Layout</Typography.Label>
               <DropDown.Layout />
             </div>
           )}
@@ -232,17 +209,8 @@ export default function ContentCreateFeed({
       <Button.Medium
         loading={loading}
         disabled={!nameFeed || tagsFeed?.length === 0}
-        icon={
-          <Icon.Activity
-            size="16"
-            color={!nameFeed || tagsFeed?.length === 0 ? 'grey' : 'white'}
-          />
-        }
-        onClick={() =>
-          loading || !nameFeed || tagsFeed?.length === 0
-            ? undefined
-            : handleSubmit()
-        }
+        icon={<Icon.Activity size="16" color={!nameFeed || tagsFeed?.length === 0 ? 'grey' : 'white'} />}
+        onClick={() => (loading || !nameFeed || tagsFeed?.length === 0 ? undefined : handleSubmit())}
         className="mt-4"
       >
         Save Feed

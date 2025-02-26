@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const Key = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M8.73433 11.5154C8.15618 10.0733 8.09367 8.47581 8.55738 6.99295C9.02108 5.5101 9.98256 4.23282 11.2793 3.37703C12.576 2.52124 14.1285 2.13942 15.6742 2.29612C17.22 2.45281 18.6642 3.13841 19.7628 4.23702C20.8614 5.33563 21.547 6.77987 21.7037 8.32562C21.8604 9.87137 21.4786 11.4238 20.6228 12.7205C19.767 14.0173 18.4897 14.9787 17.0069 15.4424C15.524 15.9062 13.9265 15.8436 12.4844 15.2655L12.4845 15.2653L11.25 16.4998H9V18.7498H6.75V20.9998H3V17.2498L8.7345 11.5153L8.73433 11.5154Z"
@@ -30,13 +24,7 @@ export const Key = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const Warning = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M14.269 4.99809L3.27198 23.9971C3.09602 24.3011 3.00322 24.6461 3.00293 24.9974C3.00264 25.3486 3.09487 25.6938 3.27033 25.9981C3.44579 26.3024 3.6983 26.5551 4.00246 26.7308C4.30661 26.9065 4.65167 26.999 5.00294 26.999H26.997C27.3483 26.999 27.6933 26.9065 27.9975 26.7308C28.3016 26.5551 28.5541 26.3024 28.7296 25.9981C28.9051 25.6938 28.9973 25.3486 28.997 24.9974C28.9967 24.6461 28.9039 24.3011 28.7279 23.9971L17.7309 4.99809C17.5552 4.69457 17.3028 4.44258 16.999 4.2674C16.6952 4.09222 16.3507 4 16 4C15.6493 4 15.3047 4.09222 15.0009 4.2674C14.6971 4.44258 14.4447 4.69457 14.269 4.99809Z"
@@ -62,13 +50,7 @@ export const Warning = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const Lock = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M13 5.5H3C2.72386 5.5 2.5 5.72386 2.5 6V13C2.5 13.2761 2.72386 13.5 3 13.5H13C13.2761 13.5 13.5 13.2761 13.5 13V6C13.5 5.72386 13.2761 5.5 13 5.5Z"
@@ -94,13 +76,7 @@ export const Lock = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const LockKeyOpen = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M25.9993 11H5.99927C5.73405 11 5.4797 11.1054 5.29216 11.2929C5.10462 11.4804 4.99927 11.7348 4.99927 12V26C4.99927 26.2652 5.10462 26.5196 5.29216 26.7071C5.4797 26.8946 5.73405 27 5.99927 27H25.9993C26.2645 27 26.5188 26.8946 26.7064 26.7071C26.8939 26.5196 26.9993 26.2652 26.9993 26V12C26.9993 11.7348 26.8939 11.4804 26.7064 11.2929C26.5188 11.1054 26.2645 11 25.9993 11ZM15.9993 20C15.5048 20 15.0215 19.8534 14.6103 19.5787C14.1992 19.304 13.8788 18.9135 13.6896 18.4567C13.5003 17.9999 13.4508 17.4972 13.5473 17.0123C13.6438 16.5273 13.8819 16.0819 14.2315 15.7322C14.5811 15.3826 15.0266 15.1445 15.5115 15.048C15.9965 14.9516 16.4992 15.0011 16.956 15.1903C17.4128 15.3795 17.8032 15.7 18.0779 16.1111C18.3526 16.5222 18.4993 17.0055 18.4993 17.5C18.4993 18.163 18.2359 18.7989 17.767 19.2678C17.2982 19.7366 16.6623 20 15.9993 20Z"
@@ -134,13 +110,7 @@ export const LockKeyOpen = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const Shield = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M5 13.3333V6C5 5.73478 5.10536 5.48043 5.29289 5.29289C5.48043 5.10536 5.73478 5 6 5H26C26.2652 5 26.5196 5.10536 26.7071 5.29289C26.8946 5.48043 27 5.73478 27 6V13.3333C27 23.8353 18.0868 27.3146 16.307 27.9047C16.1081 27.9731 15.8919 27.9731 15.693 27.9047C13.9132 27.3146 5 23.8353 5 13.3333Z"
@@ -156,13 +126,7 @@ export const Shield = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const Question = ({ size = '26', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 26 26"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M13 25C19.6274 25 25 19.6274 25 13C25 6.37258 19.6274 1 13 1C6.37258 1 1 6.37258 1 13C1 19.6274 6.37258 25 13 25Z"
@@ -188,13 +152,7 @@ export const Question = ({ size = '26', color = 'white' }: IconProps) => (
 );
 
 export const Flag = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M5 21.0005C13 15.0005 19 27.0005 27 21.0005V6.00048C19 12.0005 13 0.000483513 5 6.00048V21.0005Z"
@@ -216,13 +174,7 @@ export const Flag = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const WarningOctagon = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M20.5563 4H11.4437C11.3123 4 11.1823 4.02587 11.061 4.07612C10.9396 4.12638 10.8294 4.20004 10.7365 4.29289L4.29289 10.7365C4.20004 10.8294 4.12638 10.9396 4.07612 11.061C4.02587 11.1823 4 11.3123 4 11.4437V20.5563C4 20.6877 4.02587 20.8177 4.07612 20.939C4.12638 21.0604 4.20004 21.1706 4.29289 21.2635L10.7365 27.7071C10.8294 27.8 10.9396 27.8736 11.061 27.9239C11.1823 27.9741 11.3123 28 11.4437 28H20.5563C20.6877 28 20.8177 27.9741 20.939 27.9239C21.0604 27.8736 21.1706 27.8 21.2635 27.7071L27.7071 21.2635C27.8 21.1706 27.8736 21.0604 27.9239 20.939C27.9741 20.8177 28 20.6877 28 20.5563V11.4437C28 11.3123 27.9741 11.1823 27.9239 11.061C27.8736 10.9396 27.8 10.8294 27.7071 10.7365L21.2635 4.29289C21.1706 4.20004 21.0604 4.12638 20.939 4.07612C20.8177 4.02587 20.6877 4 20.5563 4Z"

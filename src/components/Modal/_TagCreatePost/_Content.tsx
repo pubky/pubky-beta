@@ -11,10 +11,7 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function ContentTagCreatePost({
-  arrayTags,
-  setArrayTags,
-}: TagProps) {
+export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagProps) {
   const [tag, setTag] = useState('');
   const [tagsError, setTagsError] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
@@ -27,10 +24,7 @@ export default function ContentTagCreatePost({
   }, [arrayTags]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value
-      .toLowerCase()
-      .replace(/\s/g, '')
-      .replace(/!/g, '');
+    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
     setTag(valueWithoutSpaces);
   };
 
@@ -72,10 +66,7 @@ export default function ContentTagCreatePost({
                 <PostUtil.Tag
                   key={index}
                   action={
-                    <div
-                      className="flex items-center"
-                      onClick={() => handleRemoveTag(index)}
-                    >
+                    <div className="flex items-center" onClick={() => handleRemoveTag(index)}>
                       <Icon.X size="16" />
                     </div>
                   }
@@ -97,10 +88,7 @@ export default function ContentTagCreatePost({
       <div className="flex flex-row w-full mt-4">
         {showEmojis && (
           <>
-            <div
-              className="fixed inset-0 bg-black bg-opacity-30 z-[9998]"
-              onClick={() => setShowEmojis(false)}
-            />
+            <div className="fixed inset-0 bg-black bg-opacity-30 z-[9998]" onClick={() => setShowEmojis(false)} />
             <div
               id="emoji-picker"
               className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"

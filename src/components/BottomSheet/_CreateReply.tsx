@@ -12,25 +12,10 @@ interface CreateReplyProps {
   className?: string;
 }
 
-export default function CreateReply({
-  show,
-  setShow,
-  post,
-  title,
-  className,
-}: CreateReplyProps) {
+export default function CreateReply({ show, setShow, post, title, className }: CreateReplyProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Reply'}
-      className={className}
-    >
-      <ContentCreateReply
-        className="p-0 border-none"
-        setShowModalReply={setShow}
-        post={post}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Reply'} className={className}>
+      <ContentCreateReply className="p-0 border-none" setShowModalReply={setShow} post={post} />
     </BottomSheet.Root>
   );
 }

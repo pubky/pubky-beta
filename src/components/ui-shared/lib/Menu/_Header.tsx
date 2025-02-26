@@ -24,26 +24,12 @@ export const Header = ({
   ...rest
 }: HeaderProps) => {
   return (
-    <Link
-      href={href || ''}
-      {...rest}
-      className={twMerge('flex-col gap-4 flex', rest.className)}
-    >
-      <ImageByUri
-        width={width}
-        height={height}
-        alt={alt}
-        uri={uriImage}
-        className="rounded-full w-[96px] h-[96px]"
-      />
+    <Link href={href || ''} {...rest} className={twMerge('flex-col gap-4 flex', rest.className)}>
+      <ImageByUri width={width} height={height} alt={alt} uri={uriImage} className="rounded-full w-[96px] h-[96px]" />
       <div className="flex-col flex">
-        <Typography.PageTitle className="font-bold leading-[30px]">
-          {username}
-        </Typography.PageTitle>
+        <Typography.PageTitle className="font-bold leading-[30px]">{username}</Typography.PageTitle>
         <div className="items-center gap-1 inline-flex">
-          <Typography.Label className="text-opacity-50">
-            {handler}
-          </Typography.Label>
+          <Typography.Label className="text-opacity-50">{handler}</Typography.Label>
         </div>
       </div>
     </Link>

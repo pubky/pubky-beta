@@ -7,6 +7,6 @@ export function useFile(fileUri: string) {
   return useQuery({
     queryKey: ['file', fileUri],
     queryFn: () => getFile(fileUri),
-    retry: false,
+    retry: false
   });
 }

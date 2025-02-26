@@ -35,5 +35,5 @@ export const Input = {
   Text,
   TextArea,
   UploadFile,
-  Word,
+  Word
 };

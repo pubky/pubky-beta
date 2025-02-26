@@ -1,12 +1,5 @@
 import { backupDownloadFilePath } from '../support/auth';
-import {
-  createQuickPost,
-  deletePost,
-  editPost,
-  fastTagPost,
-  replyToPost,
-  repostPost,
-} from '../support/posts';
+import { createQuickPost, deletePost, editPost, fastTagPost, replyToPost, repostPost } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
@@ -27,19 +20,13 @@ describe('notifications', () => {
     // * create profile 1
     cy.onboardAsNewUser(profile1.username, '', SkipOnboardingSlides.Yes, profile1.pubkyAlias);
     cy.backupRecoveryFile();
-    cy.renameFile(
-      backupDownloadFilePath(),
-      backupDownloadFilePath(profile1.username),
-    );
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile1.username));
     cy.signOut(HasBackedUp.Yes);
 
     // * create profile 2
     cy.onboardAsNewUser(profile2.username, '', SkipOnboardingSlides.Yes, profile2.pubkyAlias);
     cy.backupRecoveryFile();
-    cy.renameFile(
-      backupDownloadFilePath(),
-      backupDownloadFilePath(profile2.username),
-    );
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile2.username));
     cy.signOut(HasBackedUp.Yes);
   });
 
@@ -76,10 +63,7 @@ describe('notifications', () => {
     // navigate to profile 2 profile page
     cy.get('#header-profile-pic').click();
     // check latest notification on profile page and navigate to profile 1 profile page
-    checkLatestNotification(
-      [profile1.username, 'followed you'],
-      profile1.username,
-    );
+    checkLatestNotification([profile1.username, 'followed you'], profile1.username);
 
     // * profile 2 follows profile 1
     clickFollowButton();
@@ -114,9 +98,7 @@ describe('notifications', () => {
 
   it('can be notified for tagged post and profile', () => {
     // * profile 1 creates a post
-    createQuickPost(
-      `I will be notified when this post is tagged! ${Date.now()}`,
-    );
+    createQuickPost(`I will be notified when this post is tagged! ${Date.now()}`);
 
     // * profile 1 tags profile 2's profile
     cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
@@ -139,11 +121,7 @@ describe('notifications', () => {
     // navigate to profile 2 profile page
     cy.get('#header-profile-pic').click();
     // check latest notification on profile page
-    checkLatestNotification([
-      profile1.username,
-      'tagged your profile',
-      profileTag,
-    ]);
+    checkLatestNotification([profile1.username, 'tagged your profile', profileTag]);
 
     // * profile 2 tags profile 1's post (from their profile page)
     cy.get(`@${profile1.pubkyAlias}`).then((pubky) => {
@@ -208,9 +186,7 @@ describe('notifications', () => {
 
   it('can be notified for your post being replied to', () => {
     // * profile 1 creates a post (1)
-    createQuickPost(
-      `I will be notified when this post is replied to! ${Date.now()}`,
-    );
+    createQuickPost(`I will be notified when this post is replied to! ${Date.now()}`);
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
@@ -236,9 +212,7 @@ describe('notifications', () => {
 
   it('can be notified for your post being reposted', () => {
     // * profile 1 creates a post (1)
-    createQuickPost(
-      `I will be notified when this post is reposted! ${Date.now()}`,
-    );
+    createQuickPost(`I will be notified when this post is reposted! ${Date.now()}`);
 
     // * profile 2 reposts profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
@@ -263,9 +237,7 @@ describe('notifications', () => {
 
   it('can be notified for a post being deleted that you replied to', () => {
     // * profile 1 creates a post (1) that will be replied to and then deleted
-    createQuickPost(
-      `The one who replies to this post will be notified when it is deleted! ${Date.now()}`,
-    );
+    createQuickPost(`The one who replies to this post will be notified when it is deleted! ${Date.now()}`);
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
@@ -286,10 +258,7 @@ describe('notifications', () => {
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
-    checkLatestNotification([
-      profile1.username,
-      'deleted a post you replied to',
-    ]);
+    checkLatestNotification([profile1.username, 'deleted a post you replied to']);
 
     // TODO: add checks for disabled notifications
     // * profile 2 disables notifications for being replied to
@@ -301,9 +270,7 @@ describe('notifications', () => {
 
   it('can be notified for a post being deleted that you reposted', () => {
     // * profile 1 creates a post (1) that will be reposted and then deleted
-    createQuickPost(
-      `The one who reposts this post will be notified when it is deleted! ${Date.now()}`,
-    );
+    createQuickPost(`The one who reposts this post will be notified when it is deleted! ${Date.now()}`);
 
     // * profile 2 reposts profile 1's post
     cy.signOut(HasBackedUp.Yes);
@@ -336,9 +303,7 @@ describe('notifications', () => {
 
   it('can be notified for a post being edited that you replied to', () => {
     // * profile 1 creates a post (1) that will be replied to and then edited
-    createQuickPost(
-      `The one who replies to this post will be notified when it is edited! ${Date.now()}`,
-    );
+    createQuickPost(`The one who replies to this post will be notified when it is edited! ${Date.now()}`);
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
@@ -359,10 +324,7 @@ describe('notifications', () => {
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
-    checkLatestNotification([
-      profile1.username,
-      'edited a post you replied to',
-    ]);
+    checkLatestNotification([profile1.username, 'edited a post you replied to']);
 
     // TODO: add checks for disabled notifications
     // * profile 2 disables notifications for being replied to
@@ -375,9 +337,7 @@ describe('notifications', () => {
   // failing due to wrong notification "edited a post you tagged", see https://github.com/pubky/pubky-app/issues/823
   it('can be notified for a post being edited that you reposted', () => {
     // * profile 1 creates a post (1) that will be reposted and then edited
-    createQuickPost(
-      `The one who reposts this post will be notified when it is edited! ${Date.now()}`,
-    );
+    createQuickPost(`The one who reposts this post will be notified when it is edited! ${Date.now()}`);
 
     // * profile 2 reposts profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);

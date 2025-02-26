@@ -54,7 +54,7 @@ export default function InputArea({
   setIsError,
   handlePaste,
   styleSearchedUsers,
-  setCharCountArticle,
+  setCharCountArticle
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { addAlert } = useAlertContext();
@@ -119,21 +119,13 @@ export default function InputArea({
         return;
       }
 
-      const newFiles =
-        selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
-      const newPreviews =
-        newFiles && newFiles.map((file) => URL.createObjectURL(file));
+      const newFiles = selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
+      const newPreviews = newFiles && newFiles.map((file) => URL.createObjectURL(file));
 
-      setSelectedFiles &&
-        newFiles &&
-        setSelectedFiles((prevFiles) =>
-          [...prevFiles, ...newFiles].slice(0, 4),
-        );
+      setSelectedFiles && newFiles && setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 4));
       newPreviews &&
         setFilePreviews &&
-        setFilePreviews((prevPreviews) =>
-          [...prevPreviews, ...newPreviews].slice(0, 4),
-        );
+        setFilePreviews((prevPreviews) => [...prevPreviews, ...newPreviews].slice(0, 4));
 
       if (newFiles && newFiles?.length > 0 && setTextArea) {
         setTextArea(true);
@@ -202,12 +194,7 @@ export default function InputArea({
           value={content}
           maxLength={maxLength}
           onClick={() => setTextArea && setTextArea(true)}
-          className={twMerge(
-            `w-full max-h-[300px] h-auto ${
-              largeView && 'text-2xl min-h-[50px]'
-            }`,
-            className,
-          )}
+          className={twMerge(`w-full max-h-[300px] h-auto ${largeView && 'text-2xl min-h-[50px]'}`, className)}
           placeholder={placeHolder}
         />
       )}

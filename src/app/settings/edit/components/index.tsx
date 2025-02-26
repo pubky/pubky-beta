@@ -7,5 +7,5 @@ export const Edit = {
   Buttons,
   Content,
   Header,
-  UserInfo,
+  UserInfo
 };

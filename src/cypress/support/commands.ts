@@ -1,6 +1,6 @@
 // <reference types="cypress" />
 
-import { passInviteCode } from "./common";
+import { passInviteCode } from './common';
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -12,74 +12,76 @@ import { passInviteCode } from "./common";
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-
 export enum SkipOnboardingSlides {
   No = 0,
   Yes = 1
-};
+}
 
-Cypress.Commands.add('onboardAsNewUser',
-  ( profileName: string,
+Cypress.Commands.add(
+  'onboardAsNewUser',
+  (
+    profileName: string,
     profileBio: string = '',
     skipOnboardingSlides: SkipOnboardingSlides = SkipOnboardingSlides.Yes,
     pubkyAlias?: string
   ) => {
-  cy.visit('/');
+    cy.visit('/');
 
-  cy.location('pathname').should('eq', '/onboarding');
+    cy.location('pathname').should('eq', '/onboarding');
 
-  cy.get('#onboarding-create-account-btn').click();
-  cy.location('pathname').should('eq', '/onboarding/intro');
+    cy.get('#onboarding-create-account-btn').click();
+    cy.location('pathname').should('eq', '/onboarding/intro');
 
-  if (skipOnboardingSlides === SkipOnboardingSlides.Yes) {
-    // click 'Skip Intro' button
-    cy.get('#onboarding-skip-intro-btn').click();
-  } else {
-    // click 'Continue' button 6 times to skip onboarding slides
-    for (let i = 0; i < 6; i++) {
-      cy.get('#onboarding-continue-btn').click();
-      if (i < 5) cy.location('pathname').should('eq', '/onboarding/intro');
-    };
-  };
+    if (skipOnboardingSlides === SkipOnboardingSlides.Yes) {
+      // click 'Skip Intro' button
+      cy.get('#onboarding-skip-intro-btn').click();
+    } else {
+      // click 'Continue' button 6 times to skip onboarding slides
+      for (let i = 0; i < 6; i++) {
+        cy.get('#onboarding-continue-btn').click();
+        if (i < 5) cy.location('pathname').should('eq', '/onboarding/intro');
+      }
+    }
 
-  passInviteCode();
+    passInviteCode();
 
-  cy.get('#onboarding-sign-up-link').click();
-  cy.location('pathname').should('eq', '/onboarding/sign-up');
+    cy.get('#onboarding-sign-up-link').click();
+    cy.location('pathname').should('eq', '/onboarding/sign-up');
 
-  cy.get('#onboarding-name-input').type(profileName);
-  profileBio ? cy.get('#onboarding-bio-input').type(profileBio) : null;
+    cy.get('#onboarding-name-input').type(profileName);
+    profileBio ? cy.get('#onboarding-bio-input').type(profileBio) : null;
 
-  cy.get('#onboarding-submit-button').click();
+    cy.get('#onboarding-submit-button').click();
 
-  cy.location('pathname').should('eq', '/onboarding/pubky');
+    cy.location('pathname').should('eq', '/onboarding/pubky');
 
-  // store pubky as an alias for future use
-  // will only work if called from before or beforeEach
-  if (pubkyAlias) {
-    cy.get('#onboarding-copy-pubky-btn').click();
-    cy.saveCopiedPubkyToAlias(pubkyAlias);
-  };
+    // store pubky as an alias for future use
+    // will only work if called from before or beforeEach
+    if (pubkyAlias) {
+      cy.get('#onboarding-copy-pubky-btn').click();
+      cy.saveCopiedPubkyToAlias(pubkyAlias);
+    }
 
-  cy.get('#onboarding-confirm-link').click();
+    cy.get('#onboarding-confirm-link').click();
 
-  cy.location('pathname').should('eq', '/onboarding/confirm');
+    cy.location('pathname').should('eq', '/onboarding/confirm');
 
-  cy.get('#onboarding-start-exploring-btn').click();
+    cy.get('#onboarding-start-exploring-btn').click();
 
-  cy.location('pathname').should('eq', '/home');
-});
+    cy.location('pathname').should('eq', '/home');
+  }
+);
 
 export enum HasBackedUp {
   No = 0,
   Yes = 1
-};
+}
 
 Cypress.Commands.add('signOut', (hasBackedUp: HasBackedUp) => {
   cy.location('pathname').then((currentPath) => {
     if (currentPath !== '/profile') {
       cy.get('#header-profile-pic').click();
-    };
+    }
   });
 
   cy.location('pathname').should('eq', '/profile');
@@ -100,13 +102,13 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
     if (currentPath !== '/sign-in') {
       cy.visit('/sign-in');
       passInviteCode();
-    };
+    }
   });
 
   cy.location('pathname').then((currentPath) => {
     if (currentPath === '/onboarding/sign-in') {
       cy.visit('/sign-in');
-    };
+    }
   });
 
   cy.location('pathname').should('eq', '/sign-in');
@@ -137,21 +139,21 @@ Cypress.Commands.add('deleteDownloadsFolder', () => {
 
 Cypress.Commands.add('waitForFileExistsWithSuffix', (folder: string, suffix: string) => {
   let attempts = 0;
-    const maxAttempts = 5;
-    const checkFile = () => {
-      cy.task('checkFileExistsWithSuffix', { folder, suffix }).then((exists) => {
-        if (exists) {
-          return;
-        }
-        attempts++;
-        if (attempts >= maxAttempts) {
-          throw new Error(`File with suffix ${suffix} not found after ${maxAttempts} attempts`);
-        }
-        cy.wait(1000);
-        checkFile();
-      });
-    };
-  });
+  const maxAttempts = 5;
+  const checkFile = () => {
+    cy.task('checkFileExistsWithSuffix', { folder, suffix }).then((exists) => {
+      if (exists) {
+        return;
+      }
+      attempts++;
+      if (attempts >= maxAttempts) {
+        throw new Error(`File with suffix ${suffix} not found after ${maxAttempts} attempts`);
+      }
+      cy.wait(1000);
+      checkFile();
+    });
+  };
+});
 
 Cypress.Commands.add('deleteFile', (filePath: string) => {
   cy.task('deleteFile', filePath).then(() => {
@@ -204,41 +206,45 @@ Cypress.Commands.add('innerTextShouldNotEq', { prevSubject: 'element' }, (subjec
 // see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
 // note: aliases work in the context of as test and only the first test after before
 Cypress.Commands.add('saveCopiedPubkyToAlias', (alias: string) => {
-  cy.window().then((win) => {
-    // ensure focus is on the window before attempting to read clipboard
-    win.focus();
-    // requires browser to be in focus
-    return win.navigator.clipboard.readText().then((text) => {
-      // assert that pubky was copied to clipboard in correct format
-      expect(text).to.match(/^pk:/);
-      return text;
+  cy.window()
+    .then((win) => {
+      // ensure focus is on the window before attempting to read clipboard
+      win.focus();
+      // requires browser to be in focus
+      return win.navigator.clipboard.readText().then((text) => {
+        // assert that pubky was copied to clipboard in correct format
+        expect(text).to.match(/^pk:/);
+        return text;
+      });
+      // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
+      // so an additional 'then' is needed to guarantee the alias is stored before the next test step
+    })
+    .then((text) => {
+      // store pubky as alias
+      cy.wrap(text).as(alias);
+      // also store pubky in Cypress env to be used in beforeEach to re-create aliases because they are cleared at end of each test
+      // e.g. cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
+      Cypress.env(alias, text);
     });
-    // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
-    // so an additional 'then' is needed to guarantee the alias is stored before the next test step
-  }).then((text) => {
-    // store pubky as alias
-    cy.wrap(text).as(alias);
-    // also store pubky in Cypress env to be used in beforeEach to re-create aliases because they are cleared at end of each test
-    // e.g. cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
-    Cypress.env(alias, text);
-  });
 });
 
 // Stores the clipboard contents to an alias for later use
 // see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
 // note: aliases work in the context of as test and only the first test after before
 Cypress.Commands.add('saveCopiedTextToAlias', (alias: string) => {
-  cy.window().then((win) => {
-    // ensure focus is on the window before attempting to read clipboard
-    win.focus();
-    // requires browser to be in focus
-    return win.navigator.clipboard.readText();
-    // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
-    // so an additional 'then' is needed to guarantee the alias is stored before the next test step
-  }).then((text) => {
-    // store pubky as alias
-    cy.wrap(text).as(alias);
-  });
+  cy.window()
+    .then((win) => {
+      // ensure focus is on the window before attempting to read clipboard
+      win.focus();
+      // requires browser to be in focus
+      return win.navigator.clipboard.readText();
+      // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
+      // so an additional 'then' is needed to guarantee the alias is stored before the next test step
+    })
+    .then((text) => {
+      // store pubky as alias
+      cy.wrap(text).as(alias);
+    });
 });
 
 Cypress.Commands.add('waitReload', (time = 2000) => {
@@ -269,11 +275,11 @@ Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts =
   go(attempts);
 });
 
-Cypress.Commands.add('countPostsInBookmarks', (expectedCount : number) => {
+Cypress.Commands.add('countPostsInBookmarks', (expectedCount: number) => {
   cy.get('#bookmarked-posts').find('[id="post-container"]').should('have.length', expectedCount);
 });
 
-Cypress.Commands.add('findPostInBookmarks', (postIdx : number) => {
+Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
   return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
 });
 
@@ -281,7 +287,7 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx : number) => {
 export enum CheckIndexed {
   No = 0,
   Yes = 1
-};
+}
 
 const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Yes) => {
   // A function to check if timeline contains 'No post yet'.
@@ -289,16 +295,20 @@ const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Ye
   // This is a wait for the timeline to load after the page loads.
   const checkTimelineReady = (t = 5) => {
     if (t === 0) assert(false, `findPostInFeed: Timeline not loaded`);
-    cy.get('#posts-feed').find('#timeline').then(($timeline) => {
-      // if contains 'No post yet' then wait 1 second and check again
-      cy.wrap($timeline).innerTextContains('No posts yet').then((hasNoPosts) => {
-        if (hasNoPosts) {
-          cy.log('findPostInFeed: Timeline not loaded; waiting 1 second and checking again');
-          cy.wait(1000);
-          checkTimelineReady(t - 1);
-        }
+    cy.get('#posts-feed')
+      .find('#timeline')
+      .then(($timeline) => {
+        // if contains 'No post yet' then wait 1 second and check again
+        cy.wrap($timeline)
+          .innerTextContains('No posts yet')
+          .then((hasNoPosts) => {
+            if (hasNoPosts) {
+              cy.log('findPostInFeed: Timeline not loaded; waiting 1 second and checking again');
+              cy.wait(1000);
+              checkTimelineReady(t - 1);
+            }
+          });
       });
-    });
   };
 
   // check timeline 5 times to be ready for a post to be found
@@ -308,18 +318,22 @@ const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Ye
   const checkPostIsIndexed = (t = 50) => {
     if (t === 0) assert(false, `findPostInFeed: Post not indexed`);
     cy.log(`findPostInFeed: Checking if post ${postIdx} is indexed`);
-    cy.get('#posts-feed').find('#timeline').children().eq(postIdx).then($post => {
-      // if post has the status checkmarks then wait for it to have two green ticks
-      if ($post.find('#post-status').length > 0) {
-        if ($post.find('#post-status #post-status-indexed').length === 0) {
-          cy.log('findPostInFeed: Post not indexed; waiting 200ms and checking again');
-          cy.wait(200);
-          checkPostIsIndexed(t - 1);
+    cy.get('#posts-feed')
+      .find('#timeline')
+      .children()
+      .eq(postIdx)
+      .then(($post) => {
+        // if post has the status checkmarks then wait for it to have two green ticks
+        if ($post.find('#post-status').length > 0) {
+          if ($post.find('#post-status #post-status-indexed').length === 0) {
+            cy.log('findPostInFeed: Post not indexed; waiting 200ms and checking again');
+            cy.wait(200);
+            checkPostIsIndexed(t - 1);
+          }
+        } else {
+          cy.log(`findPostInFeed: Post ${postIdx} was already indexed`);
         }
-      } else {
-        cy.log(`findPostInFeed: Post ${postIdx} was already indexed`);
-      };
-    });
+      });
     cy.log(`findPostInFeed: Post ${postIdx} is indexed`);
   };
 
@@ -330,18 +344,23 @@ const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Ye
   });
 
   // find the post in the timeline
-  cy.get('#posts-feed').find('#timeline').children().should('have.length.gte', 1).then($posts => {
-    // optionally filter posts by contained text
-    return filterText
-      // cannot use :contains due to additional space inserted between each word in the post content
-      ? $posts.filter((_idx, element) => element.innerText.includes(filterText))
-      : $posts;
-  }).eq(postIdx);
+  cy.get('#posts-feed')
+    .find('#timeline')
+    .children()
+    .should('have.length.gte', 1)
+    .then(($posts) => {
+      // optionally filter posts by contained text
+      return filterText
+        ? // cannot use :contains due to additional space inserted between each word in the post content
+          $posts.filter((_idx, element) => element.innerText.includes(filterText))
+        : $posts;
+    })
+    .eq(postIdx);
 };
 
 // useful to find your latest new post
 Cypress.Commands.add('findFirstPostInFeed', (checkIndexed = CheckIndexed.Yes) => {
-  findPostInFeed(0, "", checkIndexed);
+  findPostInFeed(0, '', checkIndexed);
 });
 
 // useful for finding a specific post by text
@@ -358,7 +377,7 @@ Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed =
 Cypress.Commands.add('mockInviteCodeApi', () => {
   cy.intercept('POST', '/api/invite-code', {
     statusCode: 200,
-    body: { valid: true }, // Mock response body
+    body: { valid: true } // Mock response body
   }).as('mockInviteCode');
 });
 
@@ -367,6 +386,5 @@ Cypress.Commands.add('mockInviteCodeApi', () => {
 // `Uncaught SyntaxError: "" literal not terminated before end of script` on firefox.
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 Cypress.on('uncaught:exception', (_err, _runnable) => {
-  return false
-})
-
+  return false;
+});

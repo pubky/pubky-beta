@@ -49,7 +49,7 @@ export const Modal = {
   SearchInputCard,
   SessionExpired,
   Tag,
-  TagCreatePost,
+  TagCreatePost
 };
 
 export default Modal;

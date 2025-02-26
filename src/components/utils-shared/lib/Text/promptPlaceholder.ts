@@ -2,7 +2,7 @@ const promptCreatePost = [
   "What's on your mind?",
   'What did you do today?',
   'Share your latest achievement!',
-  'Got something to say?',
+  'Got something to say?'
 ];
 
 const promptCreateReply = [
@@ -10,7 +10,7 @@ const promptCreateReply = [
   'What do you think?',
   'Do you agree?',
   'Any additional insights?',
-  'How would you respond?',
+  'How would you respond?'
 ];
 
 const promptCreateArticle = [
@@ -23,7 +23,7 @@ const promptCreateArticle = [
   'What questions do you want to leave your readers with?',
   'What kind of impact do you hope your article will have?',
   'What are your personal experiences with this topic?',
-  'How can this topic help others?',
+  'How can this topic help others?'
 ];
 
 type PromptType = 'post' | 'reply' | 'article';
@@ -32,7 +32,7 @@ const promptPlaceholder = (type: PromptType = 'post'): string => {
   const promptMap = {
     post: promptCreatePost,
     reply: promptCreateReply,
-    article: promptCreateArticle,
+    article: promptCreateArticle
   };
 
   const prompts = promptMap[type] || promptMap.post;

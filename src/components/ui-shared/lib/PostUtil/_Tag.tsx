@@ -38,11 +38,11 @@ export const Tag = ({
     style = clicked
       ? {
           backgroundColor: hexToRgba(color, 0.3),
-          borderColor: hexToRgba(color, 0.6),
+          borderColor: hexToRgba(color, 0.6)
         }
       : {
           backgroundColor: hexToRgba(color, 0.3),
-          borderColor: 'transparent',
+          borderColor: 'transparent'
         };
 
     if (!clicked && isHovered) {

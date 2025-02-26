@@ -3,5 +3,5 @@ import { Primary } from './_Primary';
 
 export const List = {
   Contacts,
-  Primary,
+  Primary
 };

@@ -8,11 +8,7 @@ interface CreateRepostProps {
   post: PostView;
 }
 
-export default function CreateRepost({
-  showModal,
-  setShowModal,
-  post,
-}: CreateRepostProps) {
+export default function CreateRepost({ showModal, setShowModal, post }: CreateRepostProps) {
   return (
     <Modal.Root
       show={showModal}

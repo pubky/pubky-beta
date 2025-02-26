@@ -5,11 +5,7 @@ interface HeaderTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
   variant?: 'light' | 'label';
   children: string;
 }
-export const HeaderTitle = ({
-  variant = 'light',
-  children,
-  ...rest
-}: HeaderTitleProps) => {
+export const HeaderTitle = ({ variant = 'light', children, ...rest }: HeaderTitleProps) => {
   return variant === 'light' ? (
     <Typography.H2
       {...rest}
@@ -22,8 +18,6 @@ export const HeaderTitle = ({
       {children}
     </Typography.H2>
   ) : (
-    <Typography.Label className={twMerge('text-opacity-50', rest.className)}>
-      {children}
-    </Typography.Label>
+    <Typography.Label className={twMerge('text-opacity-50', rest.className)}>{children}</Typography.Label>
   );
 };

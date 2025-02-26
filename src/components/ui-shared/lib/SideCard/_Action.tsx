@@ -9,13 +9,7 @@ interface Action extends React.HTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
 }
 
-export const Action = ({
-  text,
-  textCSS,
-  icon = <Icon.Tag size="16" />,
-  disabled,
-  ...rest
-}: Action) => {
+export const Action = ({ text, textCSS, icon = <Icon.Tag size="16" />, disabled, ...rest }: Action) => {
   return (
     <Button.Medium
       {...rest}

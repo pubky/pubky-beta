@@ -73,15 +73,11 @@ export const Text = ({
             baseCSS,
             inputPaddingRight,
             rest.className,
-            error ? 'border-red-600 border-opacity-100' : '',
+            error ? 'border-red-600 border-opacity-100' : ''
           )}
         />
         {action && (
-          <div
-            className={`${
-              error ? 'top-[40%]' : 'top-1/2'
-            } absolute right-4 transform -translate-y-1/2 text-white`}
-          >
+          <div className={`${error ? 'top-[40%]' : 'top-1/2'} absolute right-4 transform -translate-y-1/2 text-white`}>
             {action}
           </div>
         )}

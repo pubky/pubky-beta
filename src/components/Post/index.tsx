@@ -1,13 +1,7 @@
 'use client';
 
 import { twMerge } from 'tailwind-merge';
-import {
-  Post as PostUI,
-  Icon,
-  Button,
-  Tooltip as TooltipUI,
-  Typography,
-} from '@social/ui-shared';
+import { Post as PostUI, Icon, Button, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 
 import { TLayouts, TSize } from '@/types';
@@ -131,17 +125,13 @@ export default function Post({
                       line && 'ml-6',
                       largeView && 'p-12 inline-flex flex-row gap-6 xl:gap-12',
                       'relative',
-                      rest.className,
+                      rest.className
                     )}
                   >
                     <div className="w-full flex-col justify-between inline-flex">
                       <div>
                         <Header post={post} largeView={largeView} />
-                        <Content
-                          largeView={largeView}
-                          post={post}
-                          fullContent={fullContent}
-                        />
+                        <Content largeView={largeView} post={post} fullContent={fullContent} />
                       </div>
                       <RepostedPost
                         repostedPost={repostedPost}
@@ -155,14 +145,8 @@ export default function Post({
                         setShowSheetTag={setShowSheetTag}
                         restClassName="mt-4"
                       />
-                      <div
-                        className={`flex flex-col md:flex-row ${
-                          largeView ? 'gap-2' : 'justify-between'
-                        }`}
-                      >
-                        {!repostView && (
-                          <Tags.Standard largeView={largeView} post={post} />
-                        )}
+                      <div className={`flex flex-col md:flex-row ${largeView ? 'gap-2' : 'justify-between'}`}>
+                        {!repostView && <Tags.Standard largeView={largeView} post={post} />}
                         {!repostView && <Actions post={post} />}
                       </div>
                     </div>
@@ -181,12 +165,7 @@ export default function Post({
                       </>
                     )}
                     {/* Repost Card */}
-                    <div
-                      className={twMerge(
-                        `${line && 'ml-6'} w-full`,
-                        rest.className,
-                      )}
-                    >
+                    <div className={twMerge(`${line && 'ml-6'} w-full`, rest.className)}>
                       <PostUI.RepostCard className="relative">
                         <div className="flex gap-2 items-center">
                           <Button.Action
@@ -195,11 +174,7 @@ export default function Post({
                             variant="custom"
                             icon={<Icon.Repost size="16" />}
                           />
-                          <TooltipUI.Root
-                            delay={500}
-                            tagId="1"
-                            setShowTooltip={setShowTooltipProfile}
-                          >
+                          <TooltipUI.Root delay={500} tagId="1" setShowTooltip={setShowTooltipProfile}>
                             <Link
                               href={`/profile/${post?.details?.author}`}
                               onClick={(event) => {
@@ -208,21 +183,14 @@ export default function Post({
                             >
                               <PostUI.Username className="text-[13px] text-opacity-80">
                                 <span className="cursor-pointer hover:underline hover:decoration-solid">
-                                  {data?.details?.name &&
-                                    Utils.minifyText(
-                                      data?.details?.name,
-                                      14,
-                                    )}{' '}
+                                  {data?.details?.name && Utils.minifyText(data?.details?.name, 14)}{' '}
                                 </span>
                                 reposted{' '}
                               </PostUI.Username>
                             </Link>
-                            {showTooltipProfile !== '' && !isMobile && (
-                              <Tooltip.Profile post={post} />
-                            )}
+                            {showTooltipProfile !== '' && !isMobile && <Tooltip.Profile post={post} />}
                           </TooltipUI.Root>
-                          {(!post?.details?.content ||
-                            !post?.relationships?.reposted) &&
+                          {(!post?.details?.content || !post?.relationships?.reposted) &&
                             post?.details?.author === pubky && (
                               <Typography.Body
                                 variant="small-bold"
@@ -236,9 +204,7 @@ export default function Post({
                               </Typography.Body>
                             )}
                         </div>
-                        <PostUI.Time>
-                          {Utils.timeAgo(post?.details?.indexed_at, isMobile)}
-                        </PostUI.Time>
+                        <PostUI.Time>{Utils.timeAgo(post?.details?.indexed_at, isMobile)}</PostUI.Time>
                       </PostUI.RepostCard>
                       <RepostedPost
                         repostedPost={repostedPost}
@@ -253,7 +219,7 @@ export default function Post({
                         setShowSheetTag={setShowSheetTag}
                         restClassName={twMerge(
                           'rounded-tl-none rounded-tr-none',
-                          largeView && 'p-12 inline-flex flex-row gap-12',
+                          largeView && 'p-12 inline-flex flex-row gap-12'
                         )}
                         notFoundClassName="rounded-t-none rounded-b-lg mt-0"
                       />
@@ -262,10 +228,7 @@ export default function Post({
                 </>
               )
             ) : post?.details?.content === '[DELETED]' ? (
-              <div
-                className="relative cursor-default"
-                onClick={(event) => event.stopPropagation()}
-              >
+              <div className="relative cursor-default" onClick={(event) => event.stopPropagation()}>
                 {line && (
                   <>
                     <div className={twMerge(lineBaseCSS, lineStyle)} />
@@ -275,9 +238,7 @@ export default function Post({
                   </>
                 )}
                 <DeletedPostMessage
-                  className={`${
-                    post?.relationships?.replied && homeView && 'ml-6'
-                  } cursor-default`}
+                  className={`${post?.relationships?.replied && homeView && 'ml-6'} cursor-default`}
                 />
               </div>
             ) : (

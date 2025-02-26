@@ -12,14 +12,7 @@ interface RootBottomSheetProps extends React.HTMLAttributes<HTMLDivElement> {
   homeIndicatorCSS?: string;
 }
 
-export default function Root({
-  show,
-  setShow,
-  title,
-  children,
-  homeIndicatorCSS,
-  ...rest
-}: RootBottomSheetProps) {
+export default function Root({ show, setShow, title, children, homeIndicatorCSS, ...rest }: RootBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
   const [startY, setStartY] = useState<number | null>(null);
@@ -89,19 +82,12 @@ export default function Root({
       onTouchStart={handleTouchStart}
     >
       <div
-        className={twMerge(
-          baseCSS,
-          animateIn ? 'translate-y-none' : 'translate-y-full',
-          rest.className,
-        )}
+        className={twMerge(baseCSS, animateIn ? 'translate-y-none' : 'translate-y-full', rest.className)}
         onClick={(e) => e.stopPropagation()}
       >
         <div
           onClick={() => setShow(false)}
-          className={twMerge(
-            'flex items-center mt-2 mb-4 justify-center cursor-pointer z-50',
-            homeIndicatorCSS,
-          )}
+          className={twMerge('flex items-center mt-2 mb-4 justify-center cursor-pointer z-50', homeIndicatorCSS)}
         >
           <Icon.HomeIndicator color="gray" />
         </div>

@@ -18,21 +18,21 @@ export default function HotTagsReach({ type = 'icon', subtitle }: TagsReach) {
     followers: <Icon.UsersLeft />,
     friends: <Icon.Smiley />,
     all: <Icon.Broadcast />,
-    loading: <Icon.LoadingSpin className="animate-spin" />,
+    loading: <Icon.LoadingSpin className="animate-spin" />
   };
 
   const labels = {
     following: 'Following',
     followers: 'Followers',
     friends: 'Friends',
-    all: 'All',
+    all: 'All'
   };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: hotTagsReach ? hotTagsReach : 'all',
     ...(type === 'icon'
       ? { iconOption: icons.loading }
-      : { textOption: hotTagsReach ? labels[hotTagsReach] : labels.all }),
+      : { textOption: hotTagsReach ? labels[hotTagsReach] : labels.all })
   });
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function HotTagsReach({ type = 'icon', subtitle }: TagsReach) {
       value: hotTagsReach ? hotTagsReach : 'all',
       ...(type === 'icon'
         ? { iconOption: hotTagsReach ? icons[hotTagsReach] : icons.all }
-        : { textOption: hotTagsReach ? labels[hotTagsReach] : labels.all }),
+        : { textOption: hotTagsReach ? labels[hotTagsReach] : labels.all })
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -54,11 +54,7 @@ export default function HotTagsReach({ type = 'icon', subtitle }: TagsReach) {
       type={type}
       subtitle={subtitle}
     >
-      <DropDownUI.Content
-        title="Reach"
-        subtitle="Show hot tags from"
-        isOpen={openDropdown}
-      >
+      <DropDownUI.Content title="Reach" subtitle="Show hot tags from" isOpen={openDropdown}>
         <DropDownUI.Item
           label="Following"
           value="following"
@@ -67,9 +63,7 @@ export default function HotTagsReach({ type = 'icon', subtitle }: TagsReach) {
           onClick={() => {
             setDropdownValue({
               value: 'following',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.UsersRight /> }
-                : { textOption: 'Following' }),
+              ...(type === 'icon' ? { iconOption: <Icon.UsersRight /> } : { textOption: 'Following' })
             });
             setHotTagsReach('following');
             setOpenDropdown(false);
@@ -83,9 +77,7 @@ export default function HotTagsReach({ type = 'icon', subtitle }: TagsReach) {
           onClick={() => {
             setDropdownValue({
               value: 'followers',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.UsersLeft /> }
-                : { textOption: 'Followers' }),
+              ...(type === 'icon' ? { iconOption: <Icon.UsersLeft /> } : { textOption: 'Followers' })
             });
             setHotTagsReach('followers');
             setOpenDropdown(false);
@@ -99,9 +91,7 @@ export default function HotTagsReach({ type = 'icon', subtitle }: TagsReach) {
           onClick={() => {
             setDropdownValue({
               value: 'friends',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.Smiley /> }
-                : { textOption: 'Friends' }),
+              ...(type === 'icon' ? { iconOption: <Icon.Smiley /> } : { textOption: 'Friends' })
             });
             setHotTagsReach('friends');
             setOpenDropdown(false);
@@ -115,9 +105,7 @@ export default function HotTagsReach({ type = 'icon', subtitle }: TagsReach) {
           onClick={() => {
             setDropdownValue({
               value: 'all',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.Broadcast /> }
-                : { textOption: 'All' }),
+              ...(type === 'icon' ? { iconOption: <Icon.Broadcast /> } : { textOption: 'All' })
             });
             setHotTagsReach('all');
             setOpenDropdown(false);

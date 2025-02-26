@@ -10,10 +10,7 @@ interface CheckLinkProps {
   clickedLink: string;
 }
 
-export default function ContentCheckLink({
-  setShow,
-  clickedLink,
-}: CheckLinkProps) {
+export default function ContentCheckLink({ setShow, clickedLink }: CheckLinkProps) {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = (newCheckedState: boolean) => {
@@ -30,9 +27,7 @@ export default function ContentCheckLink({
       <Typography.Body className="text-opacity-60 mt-4" variant="medium">
         The link is taking you to another site:
         <div className="my-4">
-          <span className="text-white text-opacity-100 font-bold">
-            {Utils.minifyText(clickedLink, 50)}
-          </span>
+          <span className="text-white text-opacity-100 font-bold">{Utils.minifyText(clickedLink, 50)}</span>
         </div>
         Are you sure you want to continue?
       </Typography.Body>
@@ -41,19 +36,12 @@ export default function ContentCheckLink({
           Cancel
         </Button.Large>
         <Link className="w-full" href={clickedLink} target="_blank">
-          <Modal.SubmitAction
-            onClick={handleContinueClick}
-            icon={<Icon.ArrowRight size="16" />}
-          >
+          <Modal.SubmitAction onClick={handleContinueClick} icon={<Icon.ArrowRight size="16" />}>
             Continue
           </Modal.SubmitAction>
         </Link>
       </div>
-      <Input.Checkbox
-        checked={isChecked}
-        onCheckChange={handleCheckboxChange}
-        text="Don't show this again"
-      />
+      <Input.Checkbox checked={isChecked} onCheckChange={handleCheckboxChange} text="Don't show this again" />
     </>
   );
 }

@@ -11,7 +11,7 @@ const tabs = [
     id: 0,
     key: 'notifications',
     icon: <Icon.BellSimple size="24" color="white" />,
-    label: 'Notifications',
+    label: 'Notifications'
   },
   //{
   //  id: 1,
@@ -23,46 +23,44 @@ const tabs = [
     id: 1,
     key: 'posts',
     icon: <Icon.Note size="24" color="white" />,
-    label: 'Posts',
+    label: 'Posts'
   },
   {
     id: 2,
     key: 'replies',
     icon: <Icon.ChatCircleText size="24" color="white" />,
-    label: 'Replies',
+    label: 'Replies'
   },
   {
     id: 3,
     key: 'followers',
     icon: <Icon.UsersLeft size="24" color="white" />,
-    label: 'Followers',
+    label: 'Followers'
   },
   {
     id: 4,
     key: 'following',
     icon: <Icon.UsersRight size="24" color="white" />,
-    label: 'Following',
+    label: 'Following'
   },
   {
     id: 5,
     key: 'friends',
     icon: <Icon.Smiley size="24" color="white" />,
-    label: 'Friends',
+    label: 'Friends'
   },
   {
     id: 6,
     key: 'tagged',
     icon: <Icon.Tag size="24" color="white" />,
-    label: 'Tagged',
-  },
+    label: 'Tagged'
+  }
 ];
 
 const generateTabUrl = (key: string, creatorPubky?: string) => {
   if (creatorPubky) {
     if (key === 'notifications') return '/profile';
-    return key === 'posts'
-      ? `/profile/${creatorPubky}`
-      : `/profile/${creatorPubky}/${key}`;
+    return key === 'posts' ? `/profile/${creatorPubky}` : `/profile/${creatorPubky}/${key}`;
   }
   return key === 'notifications' ? '/profile' : `/profile/${key}`;
 };
@@ -74,7 +72,7 @@ export default function FilterTabs({
   loading,
   setLoading,
   creatorPubky,
-  children,
+  children
 }: {
   activeTab: number;
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;
@@ -125,11 +123,7 @@ export default function FilterTabs({
     <div className="flex gap-2">
       <div className="w-[280px] mt-1 self-start sticky top-[120px] hidden lg:block">
         {tabs.map((tab) => {
-          if (
-            creatorPubky &&
-            creatorPubky !== pubky &&
-            (tab.key === 'notifications' || tab.key === 'bookmarks')
-          ) {
+          if (creatorPubky && creatorPubky !== pubky && (tab.key === 'notifications' || tab.key === 'bookmarks')) {
             return null;
           }
           const isActive = activeTab === tab.id;
@@ -137,29 +131,19 @@ export default function FilterTabs({
             <div
               id={`profile-tab-${tab.key}`}
               key={tab.id}
-              onClick={() =>
-                pubky ? handleTabClick(tab.id, tab.key) : openModal('join')
-              }
+              onClick={() => (pubky ? handleTabClick(tab.id, tab.key) : openModal('join'))}
               className={`w-full py-2 px-3 items-center flex justify-between cursor-pointer ${
-                isActive && !loading
-                  ? 'opacity-100'
-                  : 'opacity-50 hover:opacity-80'
+                isActive && !loading ? 'opacity-100' : 'opacity-50 hover:opacity-80'
               }`}
             >
               <div id="label" className="flex gap-2 items-center">
                 {tab.icon}
-                <Typography.Body
-                  className="tracking-normal"
-                  variant="medium-bold"
-                >
+                <Typography.Body className="tracking-normal" variant="medium-bold">
                   {tab.label}
                 </Typography.Body>
               </div>
               {tab.key && (
-                <Typography.Body
-                  className="tracking-normal"
-                  variant="small-bold"
-                >
+                <Typography.Body className="tracking-normal" variant="small-bold">
                   <span id="counter" className="text-[13px] ml-2 text-white/30">
                     {getTabNumber(tab.key)}
                   </span>

@@ -13,11 +13,7 @@ interface SearchedUsersCardProps {
   className?: string;
 }
 
-export default function SearchedUsersCard({
-  searchedUsers,
-  handleUserClick,
-  className,
-}: SearchedUsersCardProps) {
+export default function SearchedUsersCard({ searchedUsers, handleUserClick, className }: SearchedUsersCardProps) {
   const { pubky } = usePubkyClientContext();
   const [userProfiles, setUserProfiles] = useState<UserView[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -29,11 +25,7 @@ export default function SearchedUsersCard({
   useEffect(() => {
     async function fetchProfiles() {
       if (searchedUsers.length > 0) {
-        const profiles = await Promise.all(
-          searchedUsers.map((user) =>
-            getUserProfile(user?.details?.id, pubky ?? ''),
-          ),
-        );
+        const profiles = await Promise.all(searchedUsers.map((user) => getUserProfile(user?.details?.id, pubky ?? '')));
         setUserProfiles(profiles);
       }
     }
@@ -47,20 +39,14 @@ export default function SearchedUsersCard({
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setSelectedIndex((prevIndex) => {
-        const newIndex =
-          prevIndex === null || prevIndex === userProfiles.length - 1
-            ? 0
-            : prevIndex + 1;
+        const newIndex = prevIndex === null || prevIndex === userProfiles.length - 1 ? 0 : prevIndex + 1;
         scrollToItem(newIndex);
         return newIndex;
       });
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setSelectedIndex((prevIndex) => {
-        const newIndex =
-          prevIndex === null || prevIndex === 0
-            ? userProfiles.length - 1
-            : prevIndex - 1;
+        const newIndex = prevIndex === null || prevIndex === 0 ? userProfiles.length - 1 : prevIndex - 1;
         scrollToItem(newIndex);
         return newIndex;
       });
@@ -109,9 +95,7 @@ export default function SearchedUsersCard({
             }}
             onClick={() => handleUserClick(user?.details?.id)}
             onMouseEnter={() => setSelectedIndex(index)}
-            className={`cursor-pointer flex gap-2 p-2 rounded-2xl ${
-              isSelected ? 'bg-white/10' : 'hover:bg-white/10'
-            }`}
+            className={`cursor-pointer flex gap-2 p-2 rounded-2xl ${isSelected ? 'bg-white/10' : 'hover:bg-white/10'}`}
             key={`${index}-${user?.details?.id}`}
           >
             <ImageByUri
@@ -124,8 +108,7 @@ export default function SearchedUsersCard({
             />
             <div className="flex-col justify-start items-start inline-flex">
               <Typography.Body variant="medium-bold">
-                {data?.details?.name &&
-                  Utils.minifyText(data?.details?.name, 20)}
+                {data?.details?.name && Utils.minifyText(data?.details?.name, 20)}
               </Typography.Body>
               <Typography.Label className="text-opacity-30 -mt-1">
                 {Utils.minifyPubky(user?.details?.id)}

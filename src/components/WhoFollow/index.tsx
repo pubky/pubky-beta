@@ -11,13 +11,7 @@ import Link from 'next/link';
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const { data: recommendedProfiles, isLoading } = useStreamUsers(
-    pubky ?? '',
-    pubky ?? '',
-    'recommended',
-    0,
-    3,
-  );
+  const { data: recommendedProfiles, isLoading } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended', 0, 3);
 
   const [loading, setLoading] = useState<{
     [pubky: string]: boolean;
@@ -33,7 +27,7 @@ export default function WhoFollow() {
           acc[profile.details.id] = profile.relationship?.following || false;
           return acc;
         },
-        {} as { [pubky: string]: boolean },
+        {} as { [pubky: string]: boolean }
       );
       setFollowedUser(initialFollowedState);
     }
@@ -45,7 +39,7 @@ export default function WhoFollow() {
 
       setLoading((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: true,
+        [pubkyFollow]: true
       }));
 
       const result = await follow(pubkyFollow);
@@ -56,12 +50,12 @@ export default function WhoFollow() {
 
       setFollowedUser((prevState) => ({
         ...prevState,
-        [pubkyFollow]: result,
+        [pubkyFollow]: result
       }));
 
       setLoading((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: false,
+        [pubkyFollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -74,7 +68,7 @@ export default function WhoFollow() {
 
       setLoading((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: true,
+        [pubkyUnfollow]: true
       }));
 
       const result = await unfollow(pubkyUnfollow);
@@ -85,12 +79,12 @@ export default function WhoFollow() {
 
       setFollowedUser((prevState) => ({
         ...prevState,
-        [pubkyUnfollow]: !result,
+        [pubkyUnfollow]: !result
       }));
 
       setLoading((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: false,
+        [pubkyUnfollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -107,76 +101,58 @@ export default function WhoFollow() {
           <Skeletons.Simple />
         ) : recommendedProfiles && recommendedProfiles.length > 0 ? (
           <>
-            {recommendedProfiles
-              .slice(0, 3)
-              .map((recommendedProfile, index: number) => {
-                const pubkeyUser =
-                  pubky && recommendedProfile?.details?.id.includes(pubky);
-                const isFollowed = followedUser[recommendedProfile.details.id];
+            {recommendedProfiles.slice(0, 3).map((recommendedProfile, index: number) => {
+              const pubkeyUser = pubky && recommendedProfile?.details?.id.includes(pubky);
+              const isFollowed = followedUser[recommendedProfile.details.id];
 
-                return (
-                  <div key={index}>
-                    <SideCard.UserSmall
-                      uri={recommendedProfile?.details?.id}
-                      uriImage={
-                        recommendedProfile?.details?.image ||
-                        '/images/webp/Userpic.webp'
-                      }
-                      username={Utils.minifyText(
-                        recommendedProfile?.details?.name,
-                        11,
-                      )}
-                      label={Utils.minifyPubky(recommendedProfile?.details?.id)}
-                    >
-                      {pubkeyUser ? (
-                        <SideCard.FollowAction
-                          text="Me"
-                          icon={<Icon.User size="16" />}
-                          className="bg-transparent cursor-default"
-                          variant="small"
-                        />
-                      ) : isLoading ? (
-                        <SideCard.FollowAction
-                          disabled
-                          icon={<Icon.LoadingSpin size="16" />}
-                          variant="small"
-                        />
-                      ) : isFollowed ? (
-                        <SideCard.FollowAction
-                          onClick={
-                            loading[recommendedProfile.details.id]
-                              ? undefined
-                              : () =>
-                                  unfollowUser(recommendedProfile.details.id)
-                          }
-                          disabled={loading[recommendedProfile.details.id]}
-                          loading={loading[recommendedProfile.details.id]}
-                          icon={<Icon.Minus size="16" />}
-                          variant="small"
-                        />
-                      ) : (
-                        <SideCard.FollowAction
-                          onClick={
-                            loading[recommendedProfile.details.id]
-                              ? undefined
-                              : () => followUser(recommendedProfile.details.id)
-                          }
-                          disabled={loading[recommendedProfile.details.id]}
-                          loading={loading[recommendedProfile.details.id]}
-                          icon={<Icon.Plus size="16" />}
-                          variant="small"
-                        />
-                      )}
-                    </SideCard.UserSmall>
-                  </div>
-                );
-              })}
+              return (
+                <div key={index}>
+                  <SideCard.UserSmall
+                    uri={recommendedProfile?.details?.id}
+                    uriImage={recommendedProfile?.details?.image || '/images/webp/Userpic.webp'}
+                    username={Utils.minifyText(recommendedProfile?.details?.name, 11)}
+                    label={Utils.minifyPubky(recommendedProfile?.details?.id)}
+                  >
+                    {pubkeyUser ? (
+                      <SideCard.FollowAction
+                        text="Me"
+                        icon={<Icon.User size="16" />}
+                        className="bg-transparent cursor-default"
+                        variant="small"
+                      />
+                    ) : isLoading ? (
+                      <SideCard.FollowAction disabled icon={<Icon.LoadingSpin size="16" />} variant="small" />
+                    ) : isFollowed ? (
+                      <SideCard.FollowAction
+                        onClick={
+                          loading[recommendedProfile.details.id]
+                            ? undefined
+                            : () => unfollowUser(recommendedProfile.details.id)
+                        }
+                        disabled={loading[recommendedProfile.details.id]}
+                        loading={loading[recommendedProfile.details.id]}
+                        icon={<Icon.Minus size="16" />}
+                        variant="small"
+                      />
+                    ) : (
+                      <SideCard.FollowAction
+                        onClick={
+                          loading[recommendedProfile.details.id]
+                            ? undefined
+                            : () => followUser(recommendedProfile.details.id)
+                        }
+                        disabled={loading[recommendedProfile.details.id]}
+                        loading={loading[recommendedProfile.details.id]}
+                        icon={<Icon.Plus size="16" />}
+                        variant="small"
+                      />
+                    )}
+                  </SideCard.UserSmall>
+                </div>
+              );
+            })}
             <Link href="/who-to-follow" className="mt-2">
-              <SideCard.Action
-                icon={<Icon.UsersLeft size="16" />}
-                textCSS="text-[13px]"
-                text="See All"
-              />
+              <SideCard.Action icon={<Icon.UsersLeft size="16" />} textCSS="text-[13px]" text="See All" />
             </Link>
           </>
         ) : (

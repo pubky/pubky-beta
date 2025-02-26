@@ -21,7 +21,7 @@ export default function InputTag({ post }: InputTagProps) {
     wrapperRefEmojis,
     openModal,
     addTagInput,
-    setAddTagInput,
+    setAddTagInput
   } = useTagsLogic(post);
   const { pubky } = usePubkyClientContext();
 
@@ -30,10 +30,7 @@ export default function InputTag({ post }: InputTagProps) {
       {addTagInput ? (
         <>
           {showEmojis && (
-            <div
-              className="absolute translate-y-[10%] translate-x-[30%] z-10"
-              ref={wrapperRefEmojis}
-            >
+            <div className="absolute translate-y-[10%] translate-x-[30%] z-10" ref={wrapperRefEmojis}>
               <EmojiPicker
                 onEmojiSelect={(emojiObject) => {
                   setTagInput(tagInput + emojiObject.native);
@@ -58,16 +55,10 @@ export default function InputTag({ post }: InputTagProps) {
                 <div className="flex gap-1 -mr-2">
                   <div
                     id="add-tag-btn"
-                    onClick={
-                      !loadingTags ? () => handleAddTag(tagInput) : undefined
-                    }
+                    onClick={!loadingTags ? () => handleAddTag(tagInput) : undefined}
                     className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 ${loadingTags ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
                   >
-                    {loadingTags ? (
-                      <Icon.LoadingSpin size="12" />
-                    ) : (
-                      <Icon.Plus size="12" />
-                    )}
+                    {loadingTags ? <Icon.LoadingSpin size="12" /> : <Icon.Plus size="12" />}
                   </div>
                   <div className="flex">
                     <div

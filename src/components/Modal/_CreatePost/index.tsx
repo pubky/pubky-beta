@@ -6,10 +6,7 @@ interface CreatePostProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function CreatePost({
-  showModal,
-  setShowModal,
-}: CreatePostProps) {
+export default function CreatePost({ showModal, setShowModal }: CreatePostProps) {
   return (
     <Modal.Root
       show={showModal}

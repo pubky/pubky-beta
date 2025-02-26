@@ -15,7 +15,7 @@ export const Filter = {
   Reach,
   Sort,
   SortWhoToFollow,
-  TagsTimeFrame,
+  TagsTimeFrame
 };
 
 export default Filter;

@@ -9,5 +9,5 @@ export const BookmarksPage = {
   Header,
   Timeline,
   LeftSidebar,
-  RightSidebar,
+  RightSidebar
 };

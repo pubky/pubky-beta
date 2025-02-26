@@ -12,12 +12,7 @@ interface CreateEditPostProps {
   className?: string;
 }
 
-export default function ContentEditPost({
-  setShowModalEditPost,
-  post,
-  setShowMenu,
-  className,
-}: CreateEditPostProps) {
+export default function ContentEditPost({ setShowModalEditPost, post, setShowMenu, className }: CreateEditPostProps) {
   const { editPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentEditPost, setContentEditPost] = useState('');
@@ -47,7 +42,7 @@ export default function ContentEditPost({
             >
               View
             </a>
-          </>,
+          </>
         );
       } else {
         addAlert('Something wrong. Try again', 'warning');
@@ -80,11 +75,7 @@ export default function ContentEditPost({
               id="post-btn"
               className="w-auto"
               variant="line"
-              icon={
-                <Icon.PaperPlaneRight
-                  color={!isValidContent ? 'gray' : 'white'}
-                />
-              }
+              icon={<Icon.PaperPlaneRight color={!isValidContent ? 'gray' : 'white'} />}
               disabled={!isValidContent}
               loading={sendingEditPost}
               onClick={

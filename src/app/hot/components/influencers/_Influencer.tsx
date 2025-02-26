@@ -12,10 +12,7 @@ interface InfluencerProps {
 
 export function Influencer({ influencer }: InfluencerProps) {
   return (
-    <Link
-      className="flex gap-2 w-full"
-      href={`/profile/${influencer?.details?.id}`}
-    >
+    <Link className="flex gap-2 w-full" href={`/profile/${influencer?.details?.id}`}>
       <ImageByUri
         width={48}
         height={48}
@@ -25,12 +22,10 @@ export function Influencer({ influencer }: InfluencerProps) {
       />
       <div className="flex-col justify-center items-start inline-flex">
         <Typography.Body variant="medium-bold">
-          {influencer?.details.name &&
-            Utils.minifyText(influencer?.details?.name, 20)}
+          {influencer?.details.name && Utils.minifyText(influencer?.details?.name, 20)}
         </Typography.Body>
         <Typography.Label className="text-opacity-30 -mt-1">
-          {influencer?.details?.id &&
-            Utils.minifyPubky(influencer?.details?.id)}
+          {influencer?.details?.id && Utils.minifyPubky(influencer?.details?.id)}
         </Typography.Label>
       </div>
     </Link>

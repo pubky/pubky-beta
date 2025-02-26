@@ -9,9 +9,7 @@ interface DeleteAccountProps {
   setShowModalDeleteAccount: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ContentDeleteAccount({
-  setShowModalDeleteAccount,
-}: DeleteAccountProps) {
+export default function ContentDeleteAccount({ setShowModalDeleteAccount }: DeleteAccountProps) {
   const { deleteAccount } = usePubkyClientContext();
   const router = useRouter();
   const { addAlert } = useAlertContext();
@@ -41,11 +39,7 @@ export default function ContentDeleteAccount({
         Are you sure? Your account information cannot be recovered.
       </Typography.Body>
       <div className="flex gap-4 mt-2">
-        <Button.Large
-          id="cancel-btn"
-          variant="secondary"
-          onClick={() => setShowModalDeleteAccount(false)}
-        >
+        <Button.Large id="cancel-btn" variant="secondary" onClick={() => setShowModalDeleteAccount(false)}>
           Cancel
         </Button.Large>
         <Modal.SubmitAction
@@ -56,9 +50,7 @@ export default function ContentDeleteAccount({
           loading={deletingAccount}
           onClick={() => (deletingAccount ? undefined : handleDeleteAccount())}
         >
-          {deletingAccount
-            ? `Deleting... ${deleteProgress}%`
-            : 'Delete Account'}
+          {deletingAccount ? `Deleting... ${deleteProgress}%` : 'Delete Account'}
         </Modal.SubmitAction>
       </div>
     </>

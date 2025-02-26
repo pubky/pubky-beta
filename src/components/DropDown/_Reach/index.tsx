@@ -14,31 +14,19 @@ export default function Reach() {
     followers: <Icon.UsersLeft />,
     friends: <Icon.Smiley />,
     all: <Icon.Broadcast />,
-    loading: <Icon.LoadingSpin className="animate-spin" />,
+    loading: <Icon.LoadingSpin className="animate-spin" />
   };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: reach || 'all',
     textOption: reach?.charAt(0).toUpperCase() + reach?.slice(1) || 'All',
-    iconOption: icons[reach] || icons.all,
+    iconOption: icons[reach] || icons.all
   });
 
   return (
-    <DropDown
-      open={openDropdown}
-      setOpen={setOpenDropdown}
-      value={dropdownValue}
-      labelIcon="Reach"
-      type="text"
-    >
-      <DropDownUI.Content
-        className="right-0 mt-0 px-4 py-2"
-        isOpen={openDropdown}
-      >
-        <ContentReach
-          setDropdownValue={setDropdownValue}
-          setOpenDropdown={setOpenDropdown}
-        />
+    <DropDown open={openDropdown} setOpen={setOpenDropdown} value={dropdownValue} labelIcon="Reach" type="text">
+      <DropDownUI.Content className="right-0 mt-0 px-4 py-2" isOpen={openDropdown}>
+        <ContentReach setDropdownValue={setDropdownValue} setOpenDropdown={setOpenDropdown} />
       </DropDownUI.Content>
     </DropDown>
   );

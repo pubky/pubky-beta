@@ -23,7 +23,7 @@ export const DropDown = {
   SortFriends,
   SortPosts,
   Status,
-  TagsTimeframe,
+  TagsTimeframe
 };
 
 export default DropDown;

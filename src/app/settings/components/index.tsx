@@ -5,5 +5,5 @@ import Layout from './_Layout';
 export const Settings = {
   Content,
   Header,
-  Layout,
+  Layout
 };

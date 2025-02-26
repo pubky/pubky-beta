@@ -15,16 +15,10 @@ export interface LoadingMutedUsers {
 
 export default function MutedUsers() {
   const { pubky, mute, unmute, setMutedUsers } = usePubkyClientContext();
-  const {
-    data: mutedUsers,
-    isLoading,
-    isError,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'muted');
+  const { data: mutedUsers, isLoading, isError } = useStreamUsers(pubky ?? '', pubky ?? '', 'muted');
   if (isError) console.log(isError);
 
-  const [loadingMutedUsers, setLoadingMutedUsers] = useState<LoadingMutedUsers>(
-    {},
-  );
+  const [loadingMutedUsers, setLoadingMutedUsers] = useState<LoadingMutedUsers>({});
   const [muted, setMuted] = useState<{ [pubky: string]: boolean }>({});
   const [isLoadingUnmuteAll, setIsLoadingUnmuteAll] = useState(false);
 
@@ -33,13 +27,13 @@ export default function MutedUsers() {
       if (!pubkyMute) return;
       setLoadingMutedUsers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyMute]: true,
+        [pubkyMute]: true
       }));
 
       const result = await mute(pubkyMute);
       setMuted((prevState) => ({
         ...prevState,
-        [pubkyMute]: result,
+        [pubkyMute]: result
       }));
 
       if (result) {
@@ -48,7 +42,7 @@ export default function MutedUsers() {
 
       setLoadingMutedUsers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyMute]: false,
+        [pubkyMute]: false
       }));
     } catch (error) {
       console.log(error);
@@ -60,13 +54,13 @@ export default function MutedUsers() {
       if (!pubkyUnmute) return;
       setLoadingMutedUsers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnmute]: true,
+        [pubkyUnmute]: true
       }));
 
       const result = await unmute(pubkyUnmute);
       setMuted((prevState) => ({
         ...prevState,
-        [pubkyUnmute]: !result,
+        [pubkyUnmute]: !result
       }));
 
       if (result) {
@@ -75,7 +69,7 @@ export default function MutedUsers() {
 
       setLoadingMutedUsers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnmute]: false,
+        [pubkyUnmute]: false
       }));
     } catch (error) {
       console.log(error);
@@ -86,16 +80,9 @@ export default function MutedUsers() {
     try {
       if (mutedUsers) {
         setIsLoadingUnmuteAll(true);
-        setLoadingMutedUsers(
-          mutedUsers.reduce(
-            (acc, user) => ({ ...acc, [user.details.id]: true }),
-            {},
-          ),
-        );
+        setLoadingMutedUsers(mutedUsers.reduce((acc, user) => ({ ...acc, [user.details.id]: true }), {}));
 
-        await Promise.all(
-          mutedUsers.map((user) => unmuteUser(user.details.id)),
-        );
+        await Promise.all(mutedUsers.map((user) => unmuteUser(user.details.id)));
 
         setMutedUsers([]);
         setLoadingMutedUsers({});
@@ -118,8 +105,7 @@ export default function MutedUsers() {
           <Typography.H2>Muted users</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
-          Here is an overview of all users you muted. You can choose to unmute
-          users if you want.
+          Here is an overview of all users you muted. You can choose to unmute users if you want.
         </Typography.Body>
         <div className="w-full flex-col inline-flex gap-3 col-span-5 xl:col-span-4 2xl:col-span-3">
           {isLoading ? (
@@ -129,36 +115,27 @@ export default function MutedUsers() {
           ) : mutedUsers && mutedUsers.length > 0 ? (
             <>
               {mutedUsers.map((mutedUser) => {
-                const pubkeyUser =
-                  pubky && mutedUser?.details?.id.includes(pubky);
+                const pubkeyUser = pubky && mutedUser?.details?.id.includes(pubky);
                 const isMuted = muted[mutedUser?.details?.id] ?? true;
 
                 return (
                   <div key={mutedUser?.details?.id} className="w-full">
                     <div className="w-full">
                       <div className="flex-col md:flex-row justify-start gap-4 inline-flex w-full">
-                        <Link
-                          className="flex gap-2 w-full"
-                          href={`/profile/${mutedUser?.details?.id}`}
-                        >
+                        <Link className="flex gap-2 w-full" href={`/profile/${mutedUser?.details?.id}`}>
                           <ImageByUri
                             width={48}
                             height={48}
-                            uri={
-                              mutedUser?.details?.image ||
-                              '/images/webp/Userpic.webp'
-                            }
+                            uri={mutedUser?.details?.image || '/images/webp/Userpic.webp'}
                             alt={`profile-pic-${mutedUser?.details?.id}`}
                             className="rounded-full w-[48px] h-[48px] max-w-none"
                           />
                           <div className="flex-col justify-center items-start inline-flex">
                             <Typography.Body variant="medium-bold">
-                              {mutedUser?.details.name &&
-                                Utils.minifyText(mutedUser?.details?.name, 20)}
+                              {mutedUser?.details.name && Utils.minifyText(mutedUser?.details?.name, 20)}
                             </Typography.Body>
                             <Typography.Label className="text-opacity-30 -mt-1">
-                              {mutedUser?.details?.id &&
-                                Utils.minifyPubky(mutedUser?.details?.id)}
+                              {mutedUser?.details?.id && Utils.minifyPubky(mutedUser?.details?.id)}
                             </Typography.Label>
                           </div>
                         </Link>
@@ -183,12 +160,8 @@ export default function MutedUsers() {
                                   ? undefined
                                   : () => unmuteUser(mutedUser?.details?.id)
                               }
-                              disabled={
-                                loadingMutedUsers[mutedUser?.details?.id]
-                              }
-                              loading={
-                                loadingMutedUsers[mutedUser?.details?.id]
-                              }
+                              disabled={loadingMutedUsers[mutedUser?.details?.id]}
+                              loading={loadingMutedUsers[mutedUser?.details?.id]}
                               icon={<Icon.SpeakerSimpleSlash size="16" />}
                               className="w-full md:w-[104px]"
                             >
@@ -202,9 +175,7 @@ export default function MutedUsers() {
                                   ? undefined
                                   : () => muteUser(mutedUser?.details?.id)
                               }
-                              disabled={
-                                loadingMutedUsers[mutedUser?.details?.id]
-                              }
+                              disabled={loadingMutedUsers[mutedUser?.details?.id]}
                               loading={loadingMutedUsers[mutedUser.details?.id]}
                               icon={<Icon.SpeakerHigh size="16" />}
                               className="w-full md:w-[104px]"
@@ -222,9 +193,7 @@ export default function MutedUsers() {
                 <>
                   <div className="w-full h-px bg-white bg-opacity-10 my-6" />
                   <Button.Medium
-                    onClick={() =>
-                      isLoadingUnmuteAll ? undefined : unmuteAllUsers()
-                    }
+                    onClick={() => (isLoadingUnmuteAll ? undefined : unmuteAllUsers())}
                     disabled={isLoadingUnmuteAll}
                     loading={isLoadingUnmuteAll}
                     icon={<Icon.SpeakerSimpleSlash size="16" />}

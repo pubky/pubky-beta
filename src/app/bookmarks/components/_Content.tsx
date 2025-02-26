@@ -18,22 +18,17 @@ export default function ContentBookmarks() {
     addToast(
       `Please be aware your bookmarks are stored in a public file connected to your pubky.`,
       'warning',
-      'Your bookmarks are public',
+      'Your bookmarks are public'
     );
   }, []);
 
   return (
     <>
-      {layout === 'wide' && (
-        <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
-      )}
+      {layout === 'wide' && <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />}
       <Content.Grid className="flex gap-6">
         {layout !== 'wide' && <LeftSidebar />}
         <Components.PostsLayout className="w-full flex-col inline-flex gap-3">
-          <Components.PostsLayout
-            id="bookmarked-posts"
-            className="w-full flex-col inline-flex gap-3"
-          >
+          <Components.PostsLayout id="bookmarked-posts" className="w-full flex-col inline-flex gap-3">
             <BookmarksPage.Timeline />
           </Components.PostsLayout>
         </Components.PostsLayout>

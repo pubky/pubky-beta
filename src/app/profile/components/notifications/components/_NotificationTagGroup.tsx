@@ -11,9 +11,7 @@ type NotificationTagGroupProps = {
   notifications: INotification[];
 };
 
-export default function NotificationTagGroup({
-  notifications,
-}: NotificationTagGroupProps) {
+export default function NotificationTagGroup({ notifications }: NotificationTagGroupProps) {
   const [user, setUser] = useState<IUserProfile | null>(null);
 
   useEffect(() => {
@@ -45,10 +43,7 @@ export default function NotificationTagGroup({
           {!user ? (
             <Typography.Body variant="medium-bold">Loading...</Typography.Body>
           ) : (
-            <Link
-              href={`/profile/${user.userId}`}
-              className="flex gap-2 items-center"
-            >
+            <Link href={`/profile/${user.userId}`} className="flex gap-2 items-center">
               <ImageByUri
                 width={32}
                 height={32}
@@ -56,10 +51,7 @@ export default function NotificationTagGroup({
                 alt="user-pic"
                 uri={user.profile.image || '/images/webp/Userpic.webp'}
               />
-              <Typography.Body
-                className="hover:underline hover:decoration-solid"
-                variant="medium-bold"
-              >
+              <Typography.Body className="hover:underline hover:decoration-solid" variant="medium-bold">
                 {Utils.minifyText(user.profile.name, 20)}
               </Typography.Body>
             </Link>
@@ -71,10 +63,7 @@ export default function NotificationTagGroup({
             <div key={index} className="flex gap-2 items-center flex-wrap">
               <Link href={`/search?tags=${notification.body.tag}`}>
                 <PostUtil.Tag
-                  color={
-                    notification.body.tag &&
-                    Utils.generateRandomColor(notification.body.tag)
-                  }
+                  color={notification.body.tag && Utils.generateRandomColor(notification.body.tag)}
                   clicked={false}
                   boxShadow={false}
                 >

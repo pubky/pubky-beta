@@ -14,25 +14,17 @@ type ToastMessage = {
 };
 
 type ToastContextType = {
-  addToast: (
-    content: React.ReactNode,
-    variant?: ToastVariant,
-    title?: string,
-  ) => void;
+  addToast: (content: React.ReactNode, variant?: ToastVariant, title?: string) => void;
 };
 
 const ToastContext = createContext<ToastContextType>({
-  addToast: () => {},
+  addToast: () => {}
 });
 
 export function ToastWrapper({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const addToast = (
-    content: React.ReactNode,
-    variant: ToastVariant = 'link',
-    title?: string,
-  ) => {
+  const addToast = (content: React.ReactNode, variant: ToastVariant = 'link', title?: string) => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, content, variant, title }]);
 
@@ -77,12 +69,7 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ addToast }}>
       {children}
       {toasts.map(({ id, content, variant = 'link', title }) => (
-        <Toast
-          key={id}
-          icon={iconToShow(variant)}
-          title={title || titleToShow(variant)}
-          variant={variant}
-        >
+        <Toast key={id} icon={iconToShow(variant)} title={title || titleToShow(variant)} variant={variant}>
           {content}
         </Toast>
       ))}

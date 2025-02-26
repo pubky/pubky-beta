@@ -1,10 +1,5 @@
 import { Button, Icon } from '@social/ui-shared';
-import {
-  useAlertContext,
-  useModal,
-  usePubkyClientContext,
-  useToastContext,
-} from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext, useToastContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
@@ -34,7 +29,7 @@ export default function Buttons({
   disposableAccount,
   setLoadingFollowed,
   setFollowed,
-  profile,
+  profile
 }: ButtonsProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { openModal } = useModal();
@@ -82,9 +77,7 @@ export default function Buttons({
 
   const copyProfileUrlToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/profile/${pubkey}`,
-      );
+      await navigator.clipboard.writeText(`${window.location.origin}/profile/${pubkey}`);
     } catch (error) {
       console.log('Failed to copy: ', error);
     }
@@ -113,11 +106,7 @@ export default function Buttons({
           {initLoadingFollowed ? (
             <Button.Large
               loading={initLoadingFollowed}
-              className={
-                !creatorPubky || creatorPubky === pubky
-                  ? 'hidden'
-                  : 'w-auto h-8 px-3 py-2'
-              }
+              className={!creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-auto h-8 px-3 py-2'}
             >
               Loading
             </Button.Large>
@@ -128,30 +117,18 @@ export default function Buttons({
               disabled={loadingFollowed}
               loading={loadingFollowed}
               icon={<Icon.UserMinus size="16" />}
-              className={
-                !creatorPubky || creatorPubky === pubky
-                  ? 'hidden'
-                  : 'w-auto h-8 px-3 py-2'
-              }
+              className={!creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-auto h-8 px-3 py-2'}
             >
               Unfollow
             </Button.Large>
           ) : (
             <Button.Large
               id="profile-follow-btn"
-              onClick={
-                loadingFollowed
-                  ? undefined
-                  : () => (pubky ? followUser() : openModal('join'))
-              }
+              onClick={loadingFollowed ? undefined : () => (pubky ? followUser() : openModal('join'))}
               disabled={loadingFollowed}
               loading={loadingFollowed}
               icon={<Icon.UserPlus size="16" />}
-              className={
-                !creatorPubky || creatorPubky === pubky
-                  ? 'hidden'
-                  : 'w-auto h-8 px-3 py-2'
-              }
+              className={!creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-auto h-8 px-3 py-2'}
             >
               Follow
             </Button.Large>
@@ -220,7 +197,7 @@ export default function Buttons({
                 ? isMobile
                   ? openModal('menuProfile', {
                       creatorPubky: creatorPubky,
-                      name: profile?.details?.name,
+                      name: profile?.details?.name
                     })
                   : setShowProfileMenu(!showProfileMenu)
                 : openModal('join')

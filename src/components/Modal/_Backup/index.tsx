@@ -10,11 +10,7 @@ interface BackupProps {
   setShowBackupSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Backup({
-  showModal,
-  setShowModal,
-  setShowBackupSuccess,
-}: BackupProps) {
+export default function Backup({ showModal, setShowModal, setShowBackupSuccess }: BackupProps) {
   const [confirmPhrase, setConfirmPhrase] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showWords, setShowWords] = useState(false);
@@ -36,13 +32,7 @@ export default function Backup({
         }}
       />
       <Modal.Header
-        title={
-          success
-            ? 'Backup successful'
-            : confirmPhrase
-              ? 'Confirm Recovery Phrase'
-              : 'Back up your account'
-        }
+        title={success ? 'Backup successful' : confirmPhrase ? 'Confirm Recovery Phrase' : 'Back up your account'}
       />
       <ContentBackup
         setShow={setShowModal}

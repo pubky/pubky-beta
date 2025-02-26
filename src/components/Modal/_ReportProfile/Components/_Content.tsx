@@ -15,12 +15,7 @@ interface ReportProfileProps {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ContentReportProfile({
-  setShowModal,
-  pk,
-  name,
-  setShowMenu,
-}: ReportProfileProps) {
+export default function ContentReportProfile({ setShowModal, pk, name, setShowMenu }: ReportProfileProps) {
   const { profile, pubky } = usePubkyClientContext();
   const [selectedItem, setSelectedItem] = useState<string>('Privacy');
   const [showInput, setShowInput] = useState(false);
@@ -37,7 +32,7 @@ export default function ContentReportProfile({
     { icon: <Icon.Copy size="24" />, title: 'Copyright Infringement' },
     { icon: <Icon.User size="24" />, title: 'Impersonation' },
     { icon: <Icon.Shield size="24" />, title: 'Child Safety' },
-    { icon: <Icon.WarningOctagon size="24" />, title: 'Suicide or Self-harm' },
+    { icon: <Icon.WarningOctagon size="24" />, title: 'Suicide or Self-harm' }
   ];
 
   const handleSubmit = async () => {
@@ -47,7 +42,7 @@ export default function ContentReportProfile({
         message: `${window.location.origin}/profile/${pk} \n\n ${message}`,
         name: profile?.name,
         email: `${pubky}@pubky.app`,
-        source: `Report User - ${selectedItem}`,
+        source: `Report User - ${selectedItem}`
       });
       setSent(true);
       setLoading(false);
@@ -84,15 +79,10 @@ export default function ContentReportProfile({
           <Modal.Header title="Report User" />
           <Typography.Body className="text-left my-6" variant="medium">
             <span className="opacity-80">Why are you reporting user </span>
-            <Link
-              href={`/profile/${pk}`}
-              className="font-bold hover:underline hover:decoration-solid"
-            >
+            <Link href={`/profile/${pk}`} className="font-bold hover:underline hover:decoration-solid">
               {Utils.minifyText(name ?? pk, 20)}
             </Link>{' '}
-            <span className="uppercase opacity-80">
-              ({Utils.minifyPubky(pk)})?
-            </span>
+            <span className="uppercase opacity-80">({Utils.minifyPubky(pk)})?</span>
           </Typography.Body>
           <div className="w-full">
             {items.map((item, index) => (
@@ -103,9 +93,7 @@ export default function ContentReportProfile({
               >
                 <div className="flex gap-2">
                   {item.icon}
-                  <Typography.Body variant="medium-bold">
-                    {item.title}
-                  </Typography.Body>
+                  <Typography.Body variant="medium-bold">{item.title}</Typography.Body>
                 </div>
                 {selectedItem === item.title && (
                   <div>
@@ -119,11 +107,7 @@ export default function ContentReportProfile({
       )}
       {!showInput && (
         <div className="flex gap-4 mt-8">
-          <Button.Large
-            id="cancel-report"
-            onClick={() => setShowModal(false)}
-            variant="secondary"
-          >
+          <Button.Large id="cancel-report" onClick={() => setShowModal(false)} variant="secondary">
             Cancel
           </Button.Large>
           <Button.Large onClick={() => setShowInput(true)} id="next-report">

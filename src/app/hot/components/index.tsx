@@ -15,5 +15,5 @@ export const Hot = {
   RenderInfluencers,
   RenderPosts,
   RenderTags,
-  TabsMobile,
+  TabsMobile
 };

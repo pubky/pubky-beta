@@ -15,15 +15,10 @@ export default function CopyLinkPost({ post, setShowMenu }: CopyLinkPostProps) {
     <Tooltip.Item
       id="copy-post-link"
       onClick={() => {
-        Utils.copyToClipboard(
-          `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`,
-        );
+        Utils.copyToClipboard(`${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`);
         addToast(
-          Utils.minifyText(
-            `${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`,
-            80,
-          ),
-          'link',
+          Utils.minifyText(`${window.location.origin}/post/${post?.details?.author}/${post?.details?.id}`, 80),
+          'link'
         );
         setShowMenu(false);
       }}

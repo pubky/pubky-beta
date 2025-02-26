@@ -8,32 +8,22 @@ import {
   getPostBookmark,
   getPostReplies,
   getPostByTaggers,
-  getPostByTags,
+  getPostByTags
 } from '../services/postService';
 
-export function usePost(
-  authorId: string,
-  postId: string,
-  viewerId?: string,
-  maxTags?: number,
-  maxTaggers?: number,
-) {
+export function usePost(authorId: string, postId: string, viewerId?: string, maxTags?: number, maxTaggers?: number) {
   return useQuery({
     queryKey: ['post', authorId, postId, viewerId, maxTags, maxTaggers],
     queryFn: () => getPost(authorId, postId, viewerId, maxTags, maxTaggers),
-    retry: false,
+    retry: false
   });
 }
 
-export function usePostBookmark(
-  authorId: string,
-  postId: string,
-  viewerId?: string,
-) {
+export function usePostBookmark(authorId: string, postId: string, viewerId?: string) {
   return useQuery({
     queryKey: ['postBookmark', authorId, postId, viewerId],
     queryFn: () => getPostBookmark(authorId, postId, viewerId),
-    retry: false,
+    retry: false
   });
 }
 
@@ -41,7 +31,7 @@ export function usePostCounts(authorId: string, postId: string) {
   return useQuery({
     queryKey: ['postCounts', authorId, postId],
     queryFn: () => getPostCounts(authorId, postId),
-    retry: false,
+    retry: false
   });
 }
 
@@ -49,7 +39,7 @@ export function usePostDetails(authorId: string, postId: string) {
   return useQuery({
     queryKey: ['postDetails', authorId, postId],
     queryFn: () => getPostDetails(authorId, postId),
-    retry: false,
+    retry: false
   });
 }
 
@@ -64,37 +54,21 @@ export function usePostReplies(
   options?: {
     enabled?: boolean;
     refetchInterval?: number;
-  },
+  }
 ) {
   return useQuery({
-    queryKey: [
-      'postReplies',
-      authorId,
-      postId,
-      viewerId,
-      limit,
-      start,
-      end,
-      skip,
-    ],
-    queryFn: () =>
-      getPostReplies(authorId, postId, viewerId, limit, start, end, skip),
+    queryKey: ['postReplies', authorId, postId, viewerId, limit, start, end, skip],
+    queryFn: () => getPostReplies(authorId, postId, viewerId, limit, start, end, skip),
     retry: false,
-    ...options,
+    ...options
   });
 }
 
-export function usePostTaggers(
-  authorId: string,
-  postId: string,
-  label: string,
-  skip?: number,
-  limit?: number,
-) {
+export function usePostTaggers(authorId: string, postId: string, label: string, skip?: number, limit?: number) {
   return useQuery({
     queryKey: ['postTaggers', authorId, postId, label, skip, limit],
     queryFn: () => getPostByTaggers(authorId, postId, label, skip, limit),
-    retry: false,
+    retry: false
   });
 }
 
@@ -102,6 +76,6 @@ export function usePostTags(authorId: string, postId: string) {
   return useQuery({
     queryKey: ['postTags', authorId, postId],
     queryFn: () => getPostByTags(authorId, postId),
-    retry: false,
+    retry: false
   });
 }

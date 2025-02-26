@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 
-import {
-  Post as PostUI,
-  Typography,
-  Tooltip as TooltipUI,
-  Icon,
-} from '@social/ui-shared';
+import { Post as PostUI, Typography, Tooltip as TooltipUI, Icon } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
 import Tooltip from '../Tooltip';
@@ -24,11 +19,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
 }
 
-export default function Header({
-  post,
-  largeView = false,
-  repostView = false,
-}: PostProps) {
+export default function Header({ post, largeView = false, repostView = false }: PostProps) {
   const router = useRouter();
   const { pubky } = usePubkyClientContext();
   const isMobile = useIsMobile();
@@ -38,7 +29,7 @@ export default function Header({
   const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
 
   const {
-    details: { author, indexed_at },
+    details: { author, indexed_at }
   } = post;
   const userDetails = data?.details || ({} as UserDetails);
 
@@ -51,11 +42,7 @@ export default function Header({
           router.push(`/profile/${author}`);
         }}
       >
-        <TooltipUI.Root
-          delay={500}
-          tagId="1"
-          setShowTooltip={setShowTooltipProfile}
-        >
+        <TooltipUI.Root delay={500} tagId="1" setShowTooltip={setShowTooltipProfile}>
           <div className="justify-start items-center gap-2 flex cursor-pointer">
             <PostUI.ImageUser
               uriImage={userDetails?.image || '/images/webp/Userpic.webp'}
@@ -64,11 +51,7 @@ export default function Header({
               height={largeView ? 48 : 32}
             />
             <div className="justify-start items-start lg:items-center flex lg:flex-row flex-col lg:gap-4">
-              <PostUI.Username
-                className={`${
-                  largeView ? 'text-2xl' : ''
-                } hover:underline hover:decoration-solid`}
-              >
+              <PostUI.Username className={`${largeView ? 'text-2xl' : ''} hover:underline hover:decoration-solid`}>
                 {userDetails.name && Utils.minifyText(userDetails.name, 24)}
               </PostUI.Username>
               {!repostView && (
@@ -78,21 +61,13 @@ export default function Header({
               )}
             </div>
           </div>
-          {showTooltipProfile && !isMobile && !repostView && (
-            <Tooltip.Profile post={post} />
-          )}
+          {showTooltipProfile && !isMobile && !repostView && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
-      <div
-        className={`relative flex items-center gap-0 ${largeView ? 'hidden' : ''}`}
-      >
+      <div className={`relative flex items-center gap-0 ${largeView ? 'hidden' : ''}`}>
         <PostUI.Time>{Utils.timeAgo(indexed_at, isMobile)}</PostUI.Time>
         {post?.details?.author === pubky && (
-          <TooltipUI.Root
-            delay={50}
-            tagId="1"
-            setShowTooltip={setShowTooltipPostChecked}
-          >
+          <TooltipUI.Root delay={50} tagId="1" setShowTooltip={setShowTooltipPostChecked}>
             <div
               id={repostView ? 'repost-status' : 'post-status'}
               className="inline-flex items-center ml-2 top-[7px] relative"
@@ -108,22 +83,12 @@ export default function Header({
               >
                 <Icon.Check
                   size="20"
-                  color={
-                    post?.cached === 'nexus' || post?.cached === undefined
-                      ? '#00BA7C'
-                      : '#A3A3A3'
-                  }
-                  opacity={
-                    post?.cached === 'nexus' || post?.cached === undefined
-                      ? 1
-                      : 0.2
-                  }
+                  color={post?.cached === 'nexus' || post?.cached === undefined ? '#00BA7C' : '#A3A3A3'}
+                  opacity={post?.cached === 'nexus' || post?.cached === undefined ? 1 : 0.2}
                 />
               </div>
             </div>
-            {showTooltipPostChecked && !isMobile && !repostView && (
-              <Tooltip.CheckedPost cached={post?.cached} />
-            )}
+            {showTooltipPostChecked && !isMobile && !repostView && <Tooltip.CheckedPost cached={post?.cached} />}
           </TooltipUI.Root>
         )}
       </div>

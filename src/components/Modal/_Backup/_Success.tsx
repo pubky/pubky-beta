@@ -25,9 +25,8 @@ export default function Success({ setShow }: SuccessProps) {
   return (
     <>
       <Typography.Body className="text-opacity-80 mt-4" variant="medium-light">
-        Backup successful! Your recovery file and recovery phrase have been
-        deleted. Going forward, you can sign back in using your chosen recovery
-        method.
+        Backup successful! Your recovery file and recovery phrase have been deleted. Going forward, you can sign back in
+        using your chosen recovery method.
       </Typography.Body>
       <div className="relative my-4 w-full bg-white bg-opacity-10 rounded-2xl flex-col justify-center items-center inline-flex">
         <div className="p-12 flex-col justify-center items-center flex">

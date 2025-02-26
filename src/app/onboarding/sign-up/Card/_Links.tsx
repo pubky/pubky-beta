@@ -19,19 +19,12 @@ interface LinksProps {
   loading?: boolean;
 }
 
-export default function Links({
-  links,
-  setLinks,
-  errors,
-  loading,
-}: LinksProps) {
+export default function Links({ links, setLinks, errors, loading }: LinksProps) {
   const { openModal } = useModal();
 
   const handleRemoveLink = (indexToRemove: number) => {
     setLinks((prevLinks) => {
-      const updatedLinks = prevLinks.filter(
-        (_, index) => index !== indexToRemove,
-      );
+      const updatedLinks = prevLinks.filter((_, index) => index !== indexToRemove);
       return updatedLinks;
     });
   };
@@ -51,10 +44,7 @@ export default function Links({
               error={errors[`link${index}` as keyof typeof errors]}
               action={
                 index > 1 && (
-                  <div
-                    className="mt-3 cursor-pointer"
-                    onClick={() => handleRemoveLink(index)}
-                  >
+                  <div className="mt-3 cursor-pointer" onClick={() => handleRemoveLink(index)}>
                     <Icon.Trash color="gray" />
                   </div>
                 )
@@ -69,17 +59,8 @@ export default function Links({
         ))}
         <Button.Transparent
           className="w-[100px] mt-2 px-3 py-2 h-8"
-          icon={
-            <Icon.LinkSimple
-              size="16"
-              color={links.length > 3 ? 'gray' : 'white'}
-            />
-          }
-          onClick={
-            links.length > 3
-              ? undefined
-              : () => openModal('link', { links: links, setLinks: setLinks })
-          }
+          icon={<Icon.LinkSimple size="16" color={links.length > 3 ? 'gray' : 'white'} />}
+          onClick={links.length > 3 ? undefined : () => openModal('link', { links: links, setLinks: setLinks })}
           disabled={links.length > 3}
         >
           Add link

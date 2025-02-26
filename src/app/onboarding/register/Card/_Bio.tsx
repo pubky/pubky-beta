@@ -20,9 +20,7 @@ interface BioProps {
 
 export default function Bio({ bio, setBio, errors }: BioProps) {
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null,
-  );
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const handleUserClick = (userId: string) => {
     const regex = /@\w+/;
@@ -85,16 +83,10 @@ export default function Bio({ bio, setBio, errors }: BioProps) {
   }, [bio]);
 
   return (
-    <Card.Primary
-      className="justify-start gap-4 w-full col-span-3"
-      title="Profile"
-    >
+    <Card.Primary className="justify-start gap-4 w-full col-span-3" title="Profile">
       <div>
         <Input.Label value="Short bio" />
-        <Card.Primary
-          background="bg-transparent"
-          className="border border-white border-opacity-30 border-dashed mt-2"
-        >
+        <Card.Primary background="bg-transparent" className="border border-white border-opacity-30 border-dashed mt-2">
           <Input.TextArea
             placeholder="Short bio. Tell a bit about yourself."
             className="h-[180px]"
@@ -112,10 +104,7 @@ export default function Bio({ bio, setBio, errors }: BioProps) {
             }}
           />
           {searchedUsers.length > 0 && (
-            <Modal.SearchedUsersCard
-              handleUserClick={handleUserClick}
-              searchedUsers={searchedUsers}
-            />
+            <Modal.SearchedUsersCard handleUserClick={handleUserClick} searchedUsers={searchedUsers} />
           )}
         </Card.Primary>
       </div>

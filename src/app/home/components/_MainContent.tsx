@@ -21,17 +21,13 @@ export function MainContent({
   setSelectedFeed,
   loadingFeed,
   setLoadingFeed,
-  ref,
+  ref
 }: MainContentProps) {
   const { pubky } = usePubkyClientContext();
   const isMobile = useIsMobile(1280);
 
   return (
-    <Components.PostsLayout
-      ref={ref}
-      id="posts-feed"
-      className="w-full flex-col inline-flex gap-3"
-    >
+    <Components.PostsLayout ref={ref} id="posts-feed" className="w-full flex-col inline-flex gap-3">
       {pubky && (
         <>
           <Components.CustomFeeds
@@ -46,10 +42,7 @@ export function MainContent({
             loading={loadingFeed}
             setLoading={setLoadingFeed}
           />
-          <Components.CreateQuickPost
-            loadingFeed={loadingFeed}
-            largeView={!isMobile && layout === 'wide'}
-          />
+          <Components.CreateQuickPost loadingFeed={loadingFeed} largeView={!isMobile && layout === 'wide'} />
         </>
       )}
       <Timeline selectedFeed={selectedFeed} />

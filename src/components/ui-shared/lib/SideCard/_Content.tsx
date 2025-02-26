@@ -7,12 +7,7 @@ interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
   background?: string;
 }
 
-export const Content = ({
-  id,
-  children,
-  background = 'bg-transparent',
-  ...rest
-}: ContentProps) => {
+export const Content = ({ id, children, background = 'bg-transparent', ...rest }: ContentProps) => {
   return (
     <Card.Primary
       {...rest}

@@ -4,7 +4,7 @@ import ContactsProfile from '../components/_ContactsProfile/ContactsProfile';
 
 export const metadata = getSeoMetadata({
   title: 'Followers | Pubky.app',
-  description: 'Pubky.app - Unlock the web.',
+  description: 'Pubky.app - Unlock the web.'
 });
 
 export default function Index() {

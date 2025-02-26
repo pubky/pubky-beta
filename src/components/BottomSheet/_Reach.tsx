@@ -15,7 +15,7 @@ const icons = {
   followers: <Icon.UsersLeft />,
   friends: <Icon.Smiley />,
   all: <Icon.Broadcast />,
-  loading: <Icon.LoadingSpin className="animate-spin" />,
+  loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
 export default function Reach({ title, className }: ReachProps) {
@@ -24,7 +24,7 @@ export default function Reach({ title, className }: ReachProps) {
   const [dropdownValue, setDropdownValue] = useState({
     value: reach || 'all',
     textOption: reach?.charAt(0).toUpperCase() + reach?.slice(1) || 'All',
-    iconOption: icons[reach] || icons.all,
+    iconOption: icons[reach] || icons.all
   });
 
   return (
@@ -34,24 +34,13 @@ export default function Reach({ title, className }: ReachProps) {
         variant="medium"
         onClick={() => setShow(true)}
       >
-        <span className="mr-1">{dropdownValue.iconOption}</span>{' '}
-        {dropdownValue.textOption}
-        <div
-          className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}
-        >
+        <span className="mr-1">{dropdownValue.iconOption}</span> {dropdownValue.textOption}
+        <div className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}>
           <Icon.DropdownIcon />
         </div>
       </Typography.Body>
-      <BottomSheet.Root
-        show={show}
-        setShow={setShow}
-        title={title}
-        className={className}
-      >
-        <ContentReach
-          setDropdownValue={setDropdownValue}
-          setOpenDropdown={setShow}
-        />
+      <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
+        <ContentReach setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
       </BottomSheet.Root>
     </>
   );

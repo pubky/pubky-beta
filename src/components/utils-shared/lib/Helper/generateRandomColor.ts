@@ -21,7 +21,7 @@ export const generateRandomColor = (str: string) => {
     `${randomHex}FF00`,
     `${randomHex}00FF`,
     `00${randomHex}FF`,
-    `00FF${randomHex}`,
+    `00FF${randomHex}`
   ];
 
   // Select pattern based on the hash

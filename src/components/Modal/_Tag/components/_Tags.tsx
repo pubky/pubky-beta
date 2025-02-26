@@ -1,11 +1,5 @@
 import { PostView } from '@/types/Post';
-import {
-  Button,
-  Icon,
-  PostUtil,
-  SideCard,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { useUtilsTag } from './_Utils';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
@@ -35,7 +29,7 @@ export default function Tags({ post }: TagsProps) {
     unfollowUser,
     loaderTaggers,
     loadingFollowers,
-    hasMoreTaggers,
+    hasMoreTaggers
   } = useUtilsTag(post);
 
   return (
@@ -48,8 +42,7 @@ export default function Tags({ post }: TagsProps) {
                 const isTagFound = tag.relationship || false;
 
                 const displayedImages = tagImages[tag.label] || [];
-                const extraImagesCount =
-                  displayedImages.length > 4 ? displayedImages.length - 4 : 0;
+                const extraImagesCount = displayedImages.length > 4 ? displayedImages.length - 4 : 0;
 
                 return (
                   <div className="flex gap-2" key={index}>
@@ -67,10 +60,7 @@ export default function Tags({ post }: TagsProps) {
                         {loadingTags === tag?.label ? (
                           <Icon.LoadingSpin size="12" />
                         ) : (
-                          <Typography.Caption
-                            variant="bold"
-                            className="text-opacity-60"
-                          >
+                          <Typography.Caption variant="bold" className="text-opacity-60">
                             {tag?.taggers_count}
                           </Typography.Caption>
                         )}
@@ -102,9 +92,7 @@ export default function Tags({ post }: TagsProps) {
                         />
                       ))}
                       {extraImagesCount > 0 && (
-                        <PostUtil.Counter className="-ml-2">
-                          +{extraImagesCount}
-                        </PostUtil.Counter>
+                        <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>
                       )}
                       <Button.Action
                         variant="custom"
@@ -126,41 +114,26 @@ export default function Tags({ post }: TagsProps) {
           {selectedTag && (
             <>
               <div className="flex gap-2 items-center mb-2">
-                <div
-                  onClick={() => setSelectedTag && setSelectedTag(null)}
-                  className="cursor-pointer"
-                >
-                  <Button.Action
-                    variant="custom"
-                    icon={<Icon.CaretLeft size="16" />}
-                    size="small"
-                  />
+                <div onClick={() => setSelectedTag && setSelectedTag(null)} className="cursor-pointer">
+                  <Button.Action variant="custom" icon={<Icon.CaretLeft size="16" />} size="small" />
                 </div>
                 {selectedTag && (
                   <PostUtil.Tag
                     clicked={selectedTag?.relationship || false}
                     onClick={(event) => {
                       event.stopPropagation();
-                      selectedTag?.taggers.some(
-                        (fromItem) => fromItem === pubky,
-                      )
+                      selectedTag?.taggers.some((fromItem) => fromItem === pubky)
                         ? deleteTag(selectedTag?.label)
                         : addTag(selectedTag?.label);
                     }}
-                    color={
-                      selectedTag?.label &&
-                      Utils.generateRandomColor(selectedTag?.label)
-                    }
+                    color={selectedTag?.label && Utils.generateRandomColor(selectedTag?.label)}
                   >
                     <div className="flex gap-2 items-center">
                       {Utils.minifyText(selectedTag?.label, 21)}
                       {loadingTags === selectedTag?.label ? (
                         <Icon.LoadingSpin size="12" />
                       ) : (
-                        <Typography.Caption
-                          variant="bold"
-                          className="text-opacity-60"
-                        >
+                        <Typography.Caption variant="bold" className="text-opacity-60">
                           {selectedTag?.taggers_count}
                         </Typography.Caption>
                       )}
@@ -182,22 +155,12 @@ export default function Tags({ post }: TagsProps) {
                 const isFollowed = followedUser[user];
 
                 return (
-                  <div
-                    key={userIndex}
-                    className="w-full flex justify-between gap-10"
-                  >
+                  <div key={userIndex} className="w-full flex justify-between gap-10">
                     <SideCard.User
                       uri={profile?.details?.id.replace('pubky:', '')}
-                      uriImage={
-                        profile?.details?.image || '/images/webp/Userpic.webp'
-                      }
-                      username={
-                        profile?.details?.name &&
-                        Utils.minifyText(profile?.details?.name)
-                      }
-                      label={Utils.minifyPubky(
-                        profile?.details?.id.replace('pubky:', ''),
-                      )}
+                      uriImage={profile?.details?.image || '/images/webp/Userpic.webp'}
+                      username={profile?.details?.name && Utils.minifyText(profile?.details?.name)}
+                      label={Utils.minifyPubky(profile?.details?.id.replace('pubky:', ''))}
                     />
                     {pubkeyUser ? (
                       <SideCard.FollowAction
@@ -206,18 +169,10 @@ export default function Tags({ post }: TagsProps) {
                         className="bg-transparent cursor-default"
                       />
                     ) : initLoadingFollowers ? (
-                      <SideCard.FollowAction
-                        disabled
-                        icon={<Icon.LoadingSpin size="16" />}
-                        variant="small"
-                      />
+                      <SideCard.FollowAction disabled icon={<Icon.LoadingSpin size="16" />} variant="small" />
                     ) : isFollowed ? (
                       <SideCard.FollowAction
-                        onClick={
-                          loadingFollowers[user]
-                            ? undefined
-                            : () => unfollowUser(user)
-                        }
+                        onClick={loadingFollowers[user] ? undefined : () => unfollowUser(user)}
                         disabled={loadingFollowers[user]}
                         loading={loadingFollowers[user]}
                         icon={<Icon.Minus size="16" />}
@@ -225,11 +180,7 @@ export default function Tags({ post }: TagsProps) {
                       />
                     ) : (
                       <SideCard.FollowAction
-                        onClick={
-                          loadingFollowers[user]
-                            ? undefined
-                            : () => followUser(user)
-                        }
+                        onClick={loadingFollowers[user] ? undefined : () => followUser(user)}
                         disabled={loadingFollowers[user]}
                         loading={loadingFollowers[user]}
                         icon={<Icon.Plus size="16" />}

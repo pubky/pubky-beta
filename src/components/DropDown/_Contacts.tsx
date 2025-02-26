@@ -12,35 +12,25 @@ export default function Contacts() {
     following: <Icon.UsersRight />,
     followers: <Icon.UsersLeft />,
     friends: <Icon.Smiley />,
-    loading: <Icon.LoadingSpin className="animate-spin" />,
+    loading: <Icon.LoadingSpin className="animate-spin" />
   };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: contacts ? contacts : 'following',
-    iconOption: icons.loading,
+    iconOption: icons.loading
   });
 
   useEffect(() => {
     setDropdownValue({
       value: contacts ? contacts : 'following',
-      iconOption: contacts ? icons[contacts] : icons.following,
+      iconOption: contacts ? icons[contacts] : icons.following
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <DropDown
-      open={openDropdown}
-      setOpen={setOpenDropdown}
-      value={dropdownValue}
-      labelIcon="Contacts"
-    >
-      <DropDownUI.Content
-        title="Contacts"
-        subtitle="Filter contacts by"
-        className="right-0"
-        isOpen={openDropdown}
-      >
+    <DropDown open={openDropdown} setOpen={setOpenDropdown} value={dropdownValue} labelIcon="Contacts">
+      <DropDownUI.Content title="Contacts" subtitle="Filter contacts by" className="right-0" isOpen={openDropdown}>
         <DropDownUI.Item
           label="Following"
           value="following"
@@ -49,7 +39,7 @@ export default function Contacts() {
           onClick={() => {
             setDropdownValue({
               value: 'following',
-              iconOption: <Icon.UsersRight />,
+              iconOption: <Icon.UsersRight />
             });
             setContacts('following');
             setOpenDropdown(false);
@@ -63,7 +53,7 @@ export default function Contacts() {
           onClick={() => {
             setDropdownValue({
               value: 'followers',
-              iconOption: <Icon.UsersLeft />,
+              iconOption: <Icon.UsersLeft />
             });
             setContacts('followers');
             setOpenDropdown(false);
@@ -77,7 +67,7 @@ export default function Contacts() {
           onClick={() => {
             setDropdownValue({
               value: 'friends',
-              iconOption: <Icon.Smiley />,
+              iconOption: <Icon.Smiley />
             });
             setContacts('friends');
             setOpenDropdown(false);

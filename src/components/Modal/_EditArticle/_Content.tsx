@@ -17,7 +17,7 @@ export default function ContentEditArticle({
   setShowModalEditArticle,
   article,
   setShowMenu,
-  className,
+  className
 }: CreateEditArticleProps) {
   const { editPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -28,16 +28,8 @@ export default function ContentEditArticle({
   const [isValidContent, setIsValidContent] = useState(false);
 
   useEffect(() => {
-    setContentEditArticle(
-      article?.details?.content
-        ? JSON.parse(article?.details?.content).body
-        : '',
-    );
-    setInitTitle(
-      article?.details?.content
-        ? JSON.parse(article?.details?.content).title
-        : '',
-    );
+    setContentEditArticle(article?.details?.content ? JSON.parse(article?.details?.content).body : '');
+    setInitTitle(article?.details?.content ? JSON.parse(article?.details?.content).title : '');
   }, [article]);
 
   const handleSubmit = async (content: string) => {
@@ -59,7 +51,7 @@ export default function ContentEditArticle({
             >
               View
             </a>
-          </>,
+          </>
         );
       } else {
         addAlert('Something went wrong. Try again', 'warning');
@@ -95,12 +87,7 @@ export default function ContentEditArticle({
               id="post-btn"
               className="w-auto"
               variant="line"
-              icon={
-                <Icon.PencilLine
-                  size="16"
-                  color={!isValidContent || isError ? 'gray' : 'white'}
-                />
-              }
+              icon={<Icon.PencilLine size="16" color={!isValidContent || isError ? 'gray' : 'white'} />}
               disabled={!isValidContent || isError}
               loading={sendingEditArticle}
               onClick={
@@ -109,8 +96,8 @@ export default function ContentEditArticle({
                       handleSubmit(
                         JSON.stringify({
                           title: initTitle,
-                          body: contentEditArticle,
-                        }),
+                          body: contentEditArticle
+                        })
                       )
                   : undefined
               }

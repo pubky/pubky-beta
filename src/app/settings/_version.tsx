@@ -35,10 +35,7 @@ export default function Version() {
       <SideCard.Header title="Version" />
 
       <div className="flex items-center gap-3">
-        <Typography.Body
-          variant="medium"
-          className="text-opacity-80 leading-snug"
-        >
+        <Typography.Body variant="medium" className="text-opacity-80 leading-snug">
           Pubky v{data?.version} © Synonym Software Ltd
         </Typography.Body>
       </div>

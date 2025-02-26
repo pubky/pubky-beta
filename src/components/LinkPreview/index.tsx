@@ -15,10 +15,7 @@ interface LinkPreviewerProps {
   setQuote?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export default function LinkPreviewer({
-  content,
-  setQuote,
-}: LinkPreviewerProps) {
+export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps) {
   const { pubky } = usePubkyClientContext();
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
@@ -26,9 +23,7 @@ export default function LinkPreviewer({
   const [githubUrl, setGithubUrl] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [postPreview, setPostPreview] = useState<PostView>();
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null,
-  );
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const checkForLink = (text: string) => {
     if (debounceTimeout) {
@@ -52,34 +47,21 @@ export default function LinkPreviewer({
               const post = await getPost(creatorPubky, postId, pubky);
 
               if (post) {
-                if (
-                  post?.details?.content === '' &&
-                  post?.relationships?.reposted
-                ) {
-                  const repostRegex =
-                    /pubky:\/\/([^/]+)\/pub\/pubky\.app\/posts\/([^/]+)/;
-                  const repostMatch =
-                    post.relationships.reposted.match(repostRegex);
+                if (post?.details?.content === '' && post?.relationships?.reposted) {
+                  const repostRegex = /pubky:\/\/([^/]+)\/pub\/pubky\.app\/posts\/([^/]+)/;
+                  const repostMatch = post.relationships.reposted.match(repostRegex);
 
                   if (repostMatch) {
                     const [__, creatorPubkyRepost, repostId] = repostMatch;
-                    const repost = await getPost(
-                      creatorPubkyRepost,
-                      repostId,
-                      pubky,
-                    );
+                    const repost = await getPost(creatorPubkyRepost, repostId, pubky);
 
                     setPostPreview(repost);
-                    setQuote(
-                      `pubky://${creatorPubkyRepost}/pub/pubky.app/posts/${repostId}`,
-                    );
+                    setQuote(`pubky://${creatorPubkyRepost}/pub/pubky.app/posts/${repostId}`);
                     return;
                   }
                 }
                 setPostPreview(post);
-                setQuote(
-                  `pubky://${creatorPubky}/pub/pubky.app/posts/${postId}`,
-                );
+                setQuote(`pubky://${creatorPubky}/pub/pubky.app/posts/${postId}`);
               } else {
                 setPostPreview(undefined);
               }
@@ -97,8 +79,7 @@ export default function LinkPreviewer({
           const youtubeId = getYouTubeID(url);
           setVideoId(youtubeId || '');
 
-          const twitterRegex =
-            /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
+          const twitterRegex = /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
           const twitterMatch = url.match(twitterRegex);
           setTweetId(twitterMatch ? twitterMatch[3] : '');
 

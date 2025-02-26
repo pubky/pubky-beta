@@ -11,12 +11,7 @@ interface DeletePostProps {
   post: PostView;
 }
 
-export default function DeletePost({
-  showModal,
-  setShowModal,
-  setShowMenu,
-  post,
-}: DeletePostProps) {
+export default function DeletePost({ showModal, setShowModal, setShowMenu, post }: DeletePostProps) {
   return (
     <Modal.Root
       show={showModal}
@@ -25,11 +20,7 @@ export default function DeletePost({
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       <Modal.Header title="Delete Post" />
-      <ContentDeletePost
-        setShowModalDeletePost={setShowModal}
-        setShowMenu={setShowMenu}
-        post={post}
-      />
+      <ContentDeletePost setShowModalDeletePost={setShowModal} setShowMenu={setShowMenu} post={post} />
     </Modal.Root>
   );
 }

@@ -25,28 +25,16 @@ export const Primary = ({
   const baseCSS = `w-full p-8 shadow flex-col justify-between inline-flex`;
 
   return (
-    <div
-      ref={refCard}
-      {...rest}
-      className={twMerge(baseCSS, background, borderRadius, rest.className)}
-    >
+    <div ref={refCard} {...rest} className={twMerge(baseCSS, background, borderRadius, rest.className)}>
       {(title || text) && (
-        <div
-          className={twMerge(
-            `flex-col justify-start inline-flex`,
-            text && 'gap-3',
-          )}
-        >
+        <div className={twMerge(`flex-col justify-start inline-flex`, text && 'gap-3')}>
           <div className="flex gap-1">
             <Typography.Body className="tracking-normal" variant="large-bold">
               {title}
             </Typography.Body>
             {imageTitle}
           </div>
-          <Typography.Body
-            className="text-opacity-80 leading-snug"
-            variant="medium-light"
-          >
+          <Typography.Body className="text-opacity-80 leading-snug" variant="medium-light">
             {text}
           </Typography.Body>
         </div>

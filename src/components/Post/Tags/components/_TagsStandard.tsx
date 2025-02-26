@@ -3,13 +3,7 @@
 import Tooltip from '@/components/Tooltip';
 import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
-import {
-  Icon,
-  Post,
-  PostUtil,
-  Tooltip as TooltipUI,
-  Typography,
-} from '@social/ui-shared';
+import { Icon, Post, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import { useTagsLogic } from './TagsUtils';
@@ -21,8 +15,7 @@ interface TagsProps {
 
 export default function TagsStandard({ post, largeView }: TagsProps) {
   const [showTooltipTag, setShowTooltipTag] = useState<string | null>(null);
-  const { tags, loadingTags, handleAddTag, handleDeleteTag, openModal } =
-    useTagsLogic(post);
+  const { tags, loadingTags, handleAddTag, handleDeleteTag, openModal } = useTagsLogic(post);
 
   const { pubky } = usePubkyClientContext();
 
@@ -34,21 +27,13 @@ export default function TagsStandard({ post, largeView }: TagsProps) {
 
           return (
             <Post.Footer key={index}>
-              <TooltipUI.Root
-                delay={0}
-                setShowTooltip={setShowTooltipTag}
-                tagId={tagObj?.label}
-              >
-                {showTooltipTag === tagObj?.label && (
-                  <Tooltip.Tag2 tags={tagObj} />
-                )}
+              <TooltipUI.Root delay={0} setShowTooltip={setShowTooltipTag} tagId={tagObj?.label}>
+                {showTooltipTag === tagObj?.label && <Tooltip.Tag2 tags={tagObj} />}
                 {tagObj && (
                   <PostUtil.Tag
                     id={`tag-${index}`}
                     clicked={isTagFound}
-                    color={
-                      tagObj?.label && Utils.generateRandomColor(tagObj?.label)
-                    }
+                    color={tagObj?.label && Utils.generateRandomColor(tagObj?.label)}
                     onClick={() =>
                       pubky
                         ? isTagFound
@@ -57,18 +42,12 @@ export default function TagsStandard({ post, largeView }: TagsProps) {
                         : openModal('join')
                     }
                   >
-                    <div
-                      id={`tag-${index}-count`}
-                      className="flex gap-2 items-center"
-                    >
+                    <div id={`tag-${index}-count`} className="flex gap-2 items-center">
                       {Utils.minifyText(tagObj?.label, 20)}
                       {loadingTags === tagObj?.label ? (
                         <Icon.LoadingSpin size="12" />
                       ) : (
-                        <Typography.Caption
-                          variant="bold"
-                          className="text-opacity-60"
-                        >
+                        <Typography.Caption variant="bold" className="text-opacity-60">
                           {tagObj?.taggers_count}
                         </Typography.Caption>
                       )}

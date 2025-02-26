@@ -5,5 +5,5 @@ import Pic from './_Pic';
 export const Card = {
   Bio,
   Links,
-  Pic,
+  Pic
 };

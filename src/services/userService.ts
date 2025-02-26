@@ -1,20 +1,10 @@
-import {
-  UserView,
-  UserCounts,
-  UserDetails,
-  Relationship,
-  UserTag,
-  Taggers,
-} from '../types/User';
+import { UserView, UserCounts, UserDetails, Relationship, UserTag, Taggers } from '../types/User';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 
 // User profile
-export async function getUserProfile(
-  userId: string,
-  viewerId: string,
-): Promise<UserView> {
+export async function getUserProfile(userId: string, viewerId: string): Promise<UserView> {
   if (!userId) throw new Error('User ID is required');
 
   const queryParams = new URLSearchParams();
@@ -50,11 +40,7 @@ export async function getUserDetails(userId: string): Promise<UserDetails> {
 }
 
 // User followers
-export async function getUserFollowers(
-  userId: string,
-  skip?: number,
-  limit?: number,
-): Promise<string[]> {
+export async function getUserFollowers(userId: string, skip?: number, limit?: number): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
   if (skip !== undefined) {
@@ -64,9 +50,7 @@ export async function getUserFollowers(
     queryParams.append('limit', String(limit));
   }
 
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/followers?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/user/${userId}/followers?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user followers');
 
@@ -74,11 +58,7 @@ export async function getUserFollowers(
 }
 
 // User following
-export async function getUserFollowing(
-  userId: string,
-  skip?: number,
-  limit?: number,
-): Promise<string[]> {
+export async function getUserFollowing(userId: string, skip?: number, limit?: number): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
   if (skip !== undefined) {
@@ -88,9 +68,7 @@ export async function getUserFollowing(
     queryParams.append('limit', String(limit));
   }
 
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/following?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/user/${userId}/following?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user following');
 
@@ -98,11 +76,7 @@ export async function getUserFollowing(
 }
 
 // User friends
-export async function getUserFriends(
-  userId: string,
-  skip?: number,
-  limit?: number,
-): Promise<string[]> {
+export async function getUserFriends(userId: string, skip?: number, limit?: number): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
   if (skip !== undefined) {
@@ -112,9 +86,7 @@ export async function getUserFriends(
     queryParams.append('limit', String(limit));
   }
 
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/friends?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/user/${userId}/friends?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user friends');
 
@@ -122,11 +94,7 @@ export async function getUserFriends(
 }
 
 // User muted
-export async function getUserMuted(
-  userId: string,
-  skip?: number,
-  limit?: number,
-): Promise<string[]> {
+export async function getUserMuted(userId: string, skip?: number, limit?: number): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
   if (skip !== undefined) {
@@ -136,9 +104,7 @@ export async function getUserMuted(
     queryParams.append('limit', String(limit));
   }
 
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/muted?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/user/${userId}/muted?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user muted');
 
@@ -146,13 +112,8 @@ export async function getUserMuted(
 }
 
 // User relationship
-export async function getUserRelationship(
-  userId: string,
-  viewerId: string,
-): Promise<Relationship> {
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/relationship/${viewerId}`,
-  );
+export async function getUserRelationship(userId: string, viewerId: string): Promise<Relationship> {
+  const response = await fetch(`${BASE_URL}/user/${userId}/relationship/${viewerId}`);
 
   if (!response.ok) throw new Error('Failed to fetch user relationship');
 
@@ -164,7 +125,7 @@ export async function getUserTaggers(
   userId: string,
   tagName: string,
   skip?: number,
-  limit?: number,
+  limit?: number
 ): Promise<string[]> {
   const queryParams = new URLSearchParams();
 
@@ -174,9 +135,7 @@ export async function getUserTaggers(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/taggers/${tagName}?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/user/${userId}/taggers/${tagName}?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user tags');
 
@@ -184,11 +143,7 @@ export async function getUserTaggers(
 }
 
 // User tags
-export async function getUserTags(
-  userId: string,
-  limitTags?: number,
-  limitTaggers?: number,
-): Promise<UserTag[]> {
+export async function getUserTags(userId: string, limitTags?: number, limitTaggers?: number): Promise<UserTag[]> {
   const queryParams = new URLSearchParams();
 
   if (limitTags !== undefined) {
@@ -197,9 +152,7 @@ export async function getUserTags(
   if (limitTaggers !== undefined) {
     queryParams.append('limit_taggers', String(limitTaggers));
   }
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/tags?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/user/${userId}/tags?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user tags');
 
@@ -212,7 +165,7 @@ export async function getUserNotifications(
   start?: number,
   end?: number,
   skip?: number,
-  limit?: number,
+  limit?: number
 ): Promise<any> {
   const queryParams = new URLSearchParams();
 
@@ -228,9 +181,7 @@ export async function getUserNotifications(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/notifications?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/user/${userId}/notifications?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch notifications');
 
@@ -245,7 +196,7 @@ export async function getPostTagTaggers(
   tagName: string,
   viewerId?: string,
   skip?: number,
-  limit?: number,
+  limit?: number
 ): Promise<Taggers> {
   const queryParams = new URLSearchParams();
 
@@ -256,9 +207,7 @@ export async function getPostTagTaggers(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
-  const response = await fetch(
-    `${BASE_URL}/post/${userId}/${postId}/taggers/${tagName}?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/post/${userId}/${postId}/taggers/${tagName}?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch post tags taggers');
 
@@ -271,7 +220,7 @@ export async function getUserTagTaggers(
   tagName: string,
   viewerId?: string,
   skip?: number,
-  limit?: number,
+  limit?: number
 ): Promise<Taggers> {
   const queryParams = new URLSearchParams();
 
@@ -282,9 +231,7 @@ export async function getUserTagTaggers(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/taggers/${tagName}?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/user/${userId}/taggers/${tagName}?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user tags taggers');
 

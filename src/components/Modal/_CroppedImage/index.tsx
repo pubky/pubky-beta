@@ -8,12 +8,7 @@ interface CroppedImageProps {
   setImage: React.Dispatch<React.SetStateAction<File | string | undefined>>;
 }
 
-export default function CroppedImage({
-  showModal,
-  setShowModal,
-  image,
-  setImage,
-}: CroppedImageProps) {
+export default function CroppedImage({ showModal, setShowModal, image, setImage }: CroppedImageProps) {
   return (
     <Modal.Root
       show={showModal}
@@ -22,11 +17,7 @@ export default function CroppedImage({
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       <Modal.Header title="Cropped Image" />
-      <ContentCroppedImage
-        setShowModalCroppedImage={setShowModal}
-        image={image}
-        setImage={setImage}
-      />
+      <ContentCroppedImage setShowModalCroppedImage={setShowModal} image={image} setImage={setImage} />
     </Modal.Root>
   );
 }

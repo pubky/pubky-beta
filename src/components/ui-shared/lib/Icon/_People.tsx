@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const UserPlus = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z"
@@ -44,13 +38,7 @@ export const UserPlus = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const UserMinus = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M16 20C20.4183 20 24 16.4183 24 12C24 7.58172 20.4183 4 16 4C11.5817 4 8 7.58172 8 12C8 16.4183 11.5817 20 16 20Z"
@@ -78,13 +66,7 @@ export const UserMinus = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const UserRectangle = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 17 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M14 3H3C2.86739 3 2.74021 3.05268 2.64645 3.14645C2.55268 3.24021 2.5 3.36739 2.5 3.5V12.5C2.5 12.6326 2.55268 12.7598 2.64645 12.8536C2.74021 12.9473 2.86739 13 3 13H4.25616V12.9997C4.5667 12.1224 5.14152 11.3628 5.90152 10.8256C6.66151 10.2885 7.56932 10 8.5 10C8.00555 10 7.5222 9.85338 7.11107 9.57867C6.69995 9.30397 6.37952 8.91352 6.1903 8.45671C6.00108 7.99989 5.95157 7.49723 6.04804 7.01227C6.1445 6.52732 6.3826 6.08186 6.73223 5.73223C7.08186 5.3826 7.52732 5.1445 8.01227 5.04804C8.49723 4.95157 8.99989 5.00108 9.45671 5.1903C9.91352 5.37952 10.304 5.69995 10.5787 6.11107C10.8534 6.5222 11 7.00555 11 7.5C11 8.16304 10.7366 8.79893 10.2678 9.26777C9.79893 9.73661 9.16304 10 8.5 10C9.43068 10 10.3385 10.2885 11.0985 10.8256C11.8585 11.3628 12.4333 12.1224 12.7438 12.9997V13H14C14.1326 13 14.2598 12.9473 14.3536 12.8536C14.4473 12.7598 14.5 12.6326 14.5 12.5V3.5C14.5 3.36739 14.4473 3.24021 14.3536 3.14645C14.2598 3.05268 14.1326 3 14 3Z"
@@ -112,13 +94,7 @@ export const UserRectangle = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const UsersLeft = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M8.25003 15C10.9424 15 13.125 12.8174 13.125 10.125C13.125 7.43261 10.9424 5.25 8.25003 5.25C5.55764 5.25 3.37503 7.43261 3.37503 10.125C3.37503 12.8174 5.55764 15 8.25003 15Z"
@@ -152,13 +128,7 @@ export const UsersLeft = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const UsersRight = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M15.75 15C13.0576 15 10.875 12.8174 10.875 10.125C10.875 7.43261 13.0576 5.25 15.75 5.25C18.4424 5.25 20.625 7.43261 20.625 10.125C20.625 12.8174 18.4424 15 15.75 15Z"
@@ -192,13 +162,7 @@ export const UsersRight = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const Smiley = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
@@ -228,13 +192,7 @@ export const Smiley = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const UserCircle = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M16 4C13.5726 4.00002 11.2022 4.73622 9.20189 6.11139C7.20156 7.48656 5.66531 9.43604 4.79597 11.7025C3.92662 13.9689 3.76506 16.4457 4.33261 18.8058C4.90015 21.166 6.17013 23.2985 7.97486 24.9219V24.9217C8.72778 23.4405 9.87609 22.1966 11.2926 21.3279C12.709 20.4592 14.3384 19.9996 16 20C15.0111 20 14.0444 19.7068 13.2222 19.1573C12.3999 18.6079 11.759 17.827 11.3806 16.9134C11.0022 15.9998 10.9031 14.9945 11.0961 14.0245C11.289 13.0546 11.7652 12.1637 12.4645 11.4645C13.1637 10.7652 14.0546 10.289 15.0246 10.0961C15.9945 9.90315 16.9998 10.0022 17.9134 10.3806C18.8271 10.759 19.6079 11.3999 20.1574 12.2221C20.7068 13.0444 21 14.0111 21 15C21 16.3261 20.4732 17.5978 19.5355 18.5355C18.5979 19.4732 17.3261 20 16 20C17.6616 19.9996 19.291 20.4592 20.7074 21.3279C22.1239 22.1966 23.2722 23.4405 24.0251 24.9217C25.8299 23.2984 27.0998 21.1658 27.6674 18.8057C28.2349 16.4456 28.0734 13.9688 27.204 11.7024C26.3347 9.43597 24.7984 7.4865 22.7981 6.11134C20.7978 4.73618 18.4274 4.00001 16 4Z"
@@ -262,13 +220,7 @@ export const UserCircle = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const User = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M16 20C20.4183 20 24 16.4183 24 12C24 7.58172 20.4183 4 16 4C11.5817 4 8 7.58172 8 12C8 16.4183 11.5817 20 16 20Z"
@@ -290,13 +242,7 @@ export const User = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const SmileySad = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z"

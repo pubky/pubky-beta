@@ -17,7 +17,7 @@ export default function Layout({ setDrawerFilterOpen }: LayoutProps) {
     columns: <Icon.ThreeColumns size="24" />,
     wide: <Icon.List size="24" />,
     focus: <Icon.Crosshair size="24" color="gray" />,
-    visual: <Icon.SquaresFour size="24" color="gray" />,
+    visual: <Icon.SquaresFour size="24" color="gray" />
   };
 
   useEffect(() => {
@@ -40,11 +40,7 @@ export default function Layout({ setDrawerFilterOpen }: LayoutProps) {
           value={key}
           selected={loading ? false : layout === key}
           icon={icon}
-          onClick={() =>
-            key !== 'visual' &&
-            key !== 'focus' &&
-            handleItemClick(key as TLayouts)
-          }
+          onClick={() => key !== 'visual' && key !== 'focus' && handleItemClick(key as TLayouts)}
           disabled={key === 'visual' || key === 'focus'}
         />
       ))}

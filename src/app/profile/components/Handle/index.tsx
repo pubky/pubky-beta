@@ -17,12 +17,7 @@ interface HandleProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky?: string | null;
 }
 
-export default function Handle({
-  pubkey,
-  profileUser,
-  creatorPubky,
-  ...rest
-}: HandleProps) {
+export default function Handle({ pubkey, profileUser, creatorPubky, ...rest }: HandleProps) {
   const { seed, profile } = usePubkyClientContext();
   const [disposableAccount, setDisposableAccount] = useState(false);
   const [followed, setFollowed] = useState(false);
@@ -64,17 +59,10 @@ export default function Handle({
               id="profile-username-header"
               className="text-2xl sm:text-2xl sm:leading-[3.2rem] xl:leading-7"
             >
-              {Utils.minifyText(
-                username?.toString() || Utils.minifyPubky(pubkey),
-                25,
-              )}
+              {Utils.minifyText(username?.toString() || Utils.minifyPubky(pubkey), 25)}
             </Typography.Display>
             {bio && (
-              <Typography.Body
-                id="profile-bio-content"
-                variant="medium"
-                className="text-opacity-80"
-              >
+              <Typography.Body id="profile-bio-content" variant="medium" className="text-opacity-80">
                 <Parsing>{bio}</Parsing>
               </Typography.Body>
             )}
@@ -91,16 +79,11 @@ export default function Handle({
               setFollowed={setFollowed}
               profile={profileUser}
             />
-            <Status
-              creatorPubky={creatorPubky}
-              status={(status || 'noStatus') as TStatus}
-            />
+            <Status creatorPubky={creatorPubky} status={(status || 'noStatus') as TStatus} />
           </div>
         </div>
       ) : (
-        <Typography.Display className="text-left">
-          Loading...
-        </Typography.Display>
+        <Typography.Display className="text-left">Loading...</Typography.Display>
       )}
     </div>
   );

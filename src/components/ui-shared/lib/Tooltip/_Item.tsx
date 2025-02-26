@@ -10,23 +10,13 @@ interface ItemProps extends React.HTMLAttributes<HTMLButtonElement> {
   cssText?: string;
 }
 
-export const Item = ({
-  children,
-  icon,
-  loading,
-  cssText,
-  ...rest
-}: ItemProps) => {
-  const baseCSS =
-    'opacity-50 hover:opacity-80 w-full h-10 items-center justify-between inline-flex';
+export const Item = ({ children, icon, loading, cssText, ...rest }: ItemProps) => {
+  const baseCSS = 'opacity-50 hover:opacity-80 w-full h-10 items-center justify-between inline-flex';
   return (
     <button {...rest} className={twMerge(baseCSS, rest.className)}>
       <div className="w-full p-2 flex gap-2 items-center">
         {loading ? <Icon.LoadingSpin size="24" /> : icon}
-        <Typography.Body
-          className={twMerge('text-[15px]', cssText)}
-          variant="medium-bold"
-        >
+        <Typography.Body className={twMerge('text-[15px]', cssText)} variant="medium-bold">
           {loading ? 'Loading' : children}
         </Typography.Body>
       </div>

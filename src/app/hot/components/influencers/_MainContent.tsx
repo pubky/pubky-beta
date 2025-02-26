@@ -12,15 +12,10 @@ export interface LoadingInfluencers {
 
 export default function MainContent() {
   const { pubky } = usePubkyClientContext();
-  const {
-    data: influencers,
-    isLoading,
-    isError,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
+  const { data: influencers, isLoading, isError } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers');
   if (isError) console.error(isError);
 
-  const [loadingInfluencers, setLoadingInfluencers] =
-    useState<LoadingInfluencers>({});
+  const [loadingInfluencers, setLoadingInfluencers] = useState<LoadingInfluencers>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
 
   useEffect(() => {
@@ -30,7 +25,7 @@ export default function MainContent() {
           acc[profile.details.id] = profile.relationship?.following || false;
           return acc;
         },
-        {} as { [pubky: string]: boolean },
+        {} as { [pubky: string]: boolean }
       );
       setFollowed(initialFollowedState);
     }
@@ -46,8 +41,7 @@ export default function MainContent() {
         <>
           {influencers &&
             influencers.map((influencer) => {
-              const pubkeyUser =
-                pubky && influencer?.details?.id.includes(pubky);
+              const pubkeyUser = pubky && influencer?.details?.id.includes(pubky);
               const isFollowed = followed[influencer?.details?.id];
 
               return (

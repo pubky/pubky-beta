@@ -9,11 +9,7 @@ import { defaultPreferences } from '@/contexts/_filters';
 import { Utils } from '@social/utils-shared';
 import { PubkyAppUser } from 'pubky-app-specs';
 
-export default function ProtectedRoutes({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ProtectedRoutes({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const {
@@ -28,7 +24,7 @@ export default function ProtectedRoutes({
     newUser,
     setNewUser,
     isSessionActive,
-    logout,
+    logout
   } = usePubkyClientContext();
   const { openModal, closeModal } = useModal();
   const [loading, setLoading] = useState(true);
@@ -40,18 +36,13 @@ export default function ProtectedRoutes({
     '/onboarding/sign-up',
     '/logout',
     '/sign-in',
-    '/invite-code',
+    '/invite-code'
   ];
 
   const isDynamicPublicRoute = (path: string) => {
-    const dynamicPublicRoutes = [
-      '/post/[userId]/[postId]',
-      '/profile/[userId]',
-    ];
+    const dynamicPublicRoutes = ['/post/[userId]/[postId]', '/profile/[userId]'];
     return dynamicPublicRoutes.some((route) =>
-      new RegExp(
-        `^${route.replace(/\[.*?\]/g, '[^/]+').replace(/\//g, '\\/')}$`,
-      ).test(path),
+      new RegExp(`^${route.replace(/\[.*?\]/g, '[^/]+').replace(/\//g, '\\/')}$`).test(path)
     );
   };
 
@@ -109,7 +100,7 @@ export default function ProtectedRoutes({
           bio: userDetails.bio,
           image: userDetails.image,
           links: userDetails.links,
-          status: userDetails.status,
+          status: userDetails.status
         } as PubkyAppUser;
         storeProfile(user);
         emptyProfile = false;
@@ -133,11 +124,7 @@ export default function ProtectedRoutes({
           router.push('/onboarding/register');
           return;
         }
-        if (
-          publicRoutes.includes(pathname) ||
-          pathname === '/onboarding/register' ||
-          pathname === '/logout'
-        ) {
+        if (publicRoutes.includes(pathname) || pathname === '/onboarding/register' || pathname === '/logout') {
           setLoading(false);
           return;
         } else {
@@ -152,10 +139,7 @@ export default function ProtectedRoutes({
       }
 
       // Check if the user is trying to access a public route
-      if (
-        pathname === '/onboarding/register' ||
-        publicRoutes.includes(pathname)
-      ) {
+      if (pathname === '/onboarding/register' || publicRoutes.includes(pathname)) {
         router.push('/home');
         return;
       }
@@ -180,12 +164,7 @@ export default function ProtectedRoutes({
     // Check invite code
     const inviteCode = Utils.storage.get('inviteCode');
 
-    if (
-      ['/sign-in', '/onboarding/sign-in', '/onboarding/sign-up'].includes(
-        pathname,
-      ) &&
-      !inviteCode
-    ) {
+    if (['/sign-in', '/onboarding/sign-in', '/onboarding/sign-up'].includes(pathname) && !inviteCode) {
       router.push('/invite-code');
       return;
     }
@@ -195,7 +174,7 @@ export default function ProtectedRoutes({
         const response = await fetch('/api/invite-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ inviteCode }),
+          body: JSON.stringify({ inviteCode })
         });
         const data = await response.json();
 

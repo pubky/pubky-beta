@@ -7,11 +7,7 @@ interface CreateArticleProps {
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function CreateArticle({
-  showModal,
-  setShowModal,
-  setShowModalPost,
-}: CreateArticleProps) {
+export default function CreateArticle({ showModal, setShowModal, setShowModalPost }: CreateArticleProps) {
   return (
     <Modal.Root
       show={showModal}
@@ -21,10 +17,7 @@ export default function CreateArticle({
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       <div id="article-modal" className="flex flex-col gap-4">
         <Modal.Header title="New Article" />
-        <ContentCreateArticle
-          setShowModalArticle={setShowModal}
-          setShowModalPost={setShowModalPost}
-        />
+        <ContentCreateArticle setShowModalArticle={setShowModal} setShowModalPost={setShowModalPost} />
       </div>
     </Modal.Root>
   );

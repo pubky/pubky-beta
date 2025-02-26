@@ -22,15 +22,13 @@ export default function Phrase({
   setConfirmPhrase,
   showWords,
   setShowWords,
-  setSuccess,
+  setSuccess
 }: PhraseProps) {
   const { mnemonic } = usePubkyClientContext();
   const [copyMnemonic, setCopyMnemonic] = useState(false);
   const [randomizedWords, setRandomizedWords] = useState<string[]>([]);
   const [isCorrectOrder, setIsCorrectOrder] = useState(false);
-  const [selectedWords, setSelectedWords] = useState<string[]>(
-    Array(12).fill(''),
-  );
+  const [selectedWords, setSelectedWords] = useState<string[]>(Array(12).fill(''));
   const correctOrder = mnemonic?.split(' ') || [];
 
   useEffect(() => {
@@ -97,13 +95,9 @@ export default function Phrase({
         />
       ) : (
         <>
-          <Typography.Body
-            className="text-opacity-80 mt-4"
-            variant="medium-light"
-          >
-            Use the 12 words below to recover your account at a later date.
-            Write down these words in the right order and store them in a safe
-            place.{' '}
+          <Typography.Body className="text-opacity-80 mt-4" variant="medium-light">
+            Use the 12 words below to recover your account at a later date. Write down these words in the right order
+            and store them in a safe place.{' '}
             <span className="text-white text-opacity-100 font-bold">
               Never share this recovery phrase with anyone as
             </span>{' '}
@@ -125,10 +119,7 @@ export default function Phrase({
                     .slice(0, 6)
                     .map((word, index) => (
                       <Typography.Body key={index} variant="medium-bold">
-                        <span className="text-white text-opacity-50">
-                          {index + 1}.{' '}
-                        </span>{' '}
-                        {word}
+                        <span className="text-white text-opacity-50">{index + 1}. </span> {word}
                       </Typography.Body>
                     ))}
                 </div>
@@ -138,10 +129,7 @@ export default function Phrase({
                     .slice(6, 12)
                     .map((word, index) => (
                       <Typography.Body key={index} variant="medium-bold">
-                        <span className="text-white text-opacity-50">
-                          {index + 7}.{' '}
-                        </span>{' '}
-                        {word}
+                        <span className="text-white text-opacity-50">{index + 7}. </span> {word}
                       </Typography.Body>
                     ))}
                 </div>
@@ -160,11 +148,7 @@ export default function Phrase({
                   onClick={handleCopyMnemonicToClipboard}
                   className="w-max flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
                 >
-                  {copyMnemonic ? (
-                    <Icon.Check size="16" />
-                  ) : (
-                    <Icon.Clipboard size="16" />
-                  )}
+                  {copyMnemonic ? <Icon.Check size="16" /> : <Icon.Clipboard size="16" />}
                   <Typography.Body
                     id="backup-copy-recovery-phrase"
                     className="text-[13px] flex gap-1"
@@ -193,11 +177,7 @@ export default function Phrase({
             <Button.Large
               id="backup-reveal-confirm-recovery-phrase-btn"
               icon={showWords ? <Icon.ArrowRight /> : <Icon.Eye />}
-              onClick={
-                showWords
-                  ? () => setConfirmPhrase(true)
-                  : () => setShowWords(true)
-              }
+              onClick={showWords ? () => setConfirmPhrase(true) : () => setShowWords(true)}
               className="w-auto"
             >
               {showWords ? 'Confirm Recovery Phrase' : 'Reveal Recovery Phrase'}

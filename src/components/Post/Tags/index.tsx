@@ -3,7 +3,7 @@ import LargeView from './_LargeView';
 
 const Tags = {
   Standard,
-  LargeView,
+  LargeView
 };
 
 export default Tags;

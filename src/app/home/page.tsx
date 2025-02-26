@@ -5,7 +5,7 @@ import * as Components from '@/components';
 
 export const metadata = getSeoMetadata({
   title: 'Home | Pubky.app',
-  description: 'Welcome to Pubky.app - Unlock the web.',
+  description: 'Welcome to Pubky.app - Unlock the web.'
 });
 
 export default function Index() {

@@ -13,5 +13,5 @@ export const Influencers = {
   LeftSidebar,
   MainContent,
   RightSidebar,
-  Tags,
+  Tags
 };

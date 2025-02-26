@@ -4,7 +4,7 @@ import LayoutProfile from './components/_LayoutProfile';
 
 export const metadata = getSeoMetadata({
   title: 'Profile | Pubky.app',
-  description: 'Pubky.app - Unlock the web.',
+  description: 'Pubky.app - Unlock the web.'
 });
 
 export default function Index() {

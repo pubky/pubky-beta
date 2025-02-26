@@ -6,10 +6,7 @@ interface DeleteAccountProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function DeleteAccount({
-  showModal,
-  setShowModal,
-}: DeleteAccountProps) {
+export default function DeleteAccount({ showModal, setShowModal }: DeleteAccountProps) {
   return (
     <Modal.Root
       show={showModal}

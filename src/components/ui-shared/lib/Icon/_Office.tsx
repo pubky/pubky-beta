@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const Clipboard = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M8.25 3.75H5.25C5.05109 3.75 4.86032 3.82902 4.71967 3.96967C4.57902 4.11032 4.5 4.30109 4.5 4.5L4.5 20.25C4.5 20.4489 4.57902 20.6397 4.71967 20.7803C4.86032 20.921 5.05109 21 5.25 21H18.75C18.9489 21 19.1397 20.921 19.2803 20.7803C19.421 20.6397 19.5 20.4489 19.5 20.25V4.5C19.5 4.30109 19.421 4.11032 19.2803 3.96967C19.1397 3.82902 18.9489 3.75 18.75 3.75L15.75 3.75V6H8.25V3.75Z"
@@ -44,18 +38,8 @@ export const Clipboard = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const NoteBlank = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      opacity="0.2"
-      d="M20.25 14.9993H15V20.25L20.25 14.9993Z"
-      fill={color}
-    />
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path opacity="0.2" d="M20.25 14.9993H15V20.25L20.25 14.9993Z" fill={color} />
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -72,13 +56,7 @@ export const NoteBlank = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const Note = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path opacity="0.2" d="M27 19.999H20V27L27 19.999Z" fill="#FF6600" />
     <path
       fillRule="evenodd"
@@ -113,18 +91,8 @@ export const Note = ({ size = '32', color = 'white' }: IconProps) => (
   </svg>
 );
 
-export const BookmarkSimple = ({
-  size = '24',
-  color = 'white',
-  opacity = '0.2',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const BookmarkSimple = ({ size = '24', color = 'white', opacity = '0.2' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity={opacity}
       d="M18.75 21L11.9993 17.25L5.25 21V3.75C5.25 3.55109 5.32902 3.36032 5.46967 3.21967C5.61032 3.07902 5.80109 3 6 3H18C18.1989 3 18.3897 3.07902 18.5303 3.21967C18.671 3.36032 18.75 3.55109 18.75 3.75V21Z"
@@ -139,18 +107,8 @@ export const BookmarkSimple = ({
   </svg>
 );
 
-export const Bookmarks = ({
-  size = '32',
-  color = 'white',
-  opacity = '0.2',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const Bookmarks = ({ size = '32', color = 'white', opacity = '0.2' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity={opacity}
       d="M21 28L13.9991 23L7 28V9C7 8.73478 7.10536 8.48043 7.29289 8.29289C7.48043 8.10536 7.73478 8 8 8H20C20.2652 8 20.5196 8.10536 20.7071 8.29289C20.8946 8.48043 21 8.73478 21 9V28Z"
@@ -172,13 +130,7 @@ export const Bookmarks = ({
 );
 
 export const List = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -201,13 +153,7 @@ export const List = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const ListBullets = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M4.125 7.5C4.74632 7.5 5.25 6.99632 5.25 6.375C5.25 5.75368 4.74632 5.25 4.125 5.25C3.50368 5.25 3 5.75368 3 6.375C3 6.99632 3.50368 7.5 4.125 7.5Z"
       fill={color}
@@ -242,13 +188,7 @@ export const ListBullets = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const ListNumbers = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -277,13 +217,7 @@ export const ListNumbers = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const Trash = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M24.9995 7.00001V26C24.9995 26.2652 24.8942 26.5196 24.7066 26.7071C24.5191 26.8946 24.2647 27 23.9995 27H7.99951C7.7343 27 7.47994 26.8946 7.29241 26.7071C7.10487 26.5196 6.99951 26.2652 6.99951 26V7L24.9995 7.00001Z"
@@ -323,13 +257,7 @@ export const Trash = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const File = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path opacity="0.2" d="M19 4V11H26.001L19 4Z" fill={color} />
     <path
       fillRule="evenodd"
@@ -347,13 +275,7 @@ export const File = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const FileText = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 17 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path opacity="0.2" d="M10 2V5.5H13.5005L10 2Z" fill="white" />
     <path
       fillRule="evenodd"
@@ -383,18 +305,8 @@ export const FileText = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const Copy = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      opacity="0.2"
-      d="M21 10.9991V20.9991H27V4.99912H11V10.9991H21Z"
-      fill={color}
-    />
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path opacity="0.2" d="M21 10.9991V20.9991H27V4.99912H11V10.9991H21Z" fill={color} />
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -411,13 +323,7 @@ export const Copy = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const TextAlignLeft = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -446,13 +352,7 @@ export const TextAlignLeft = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const TextAlignRight = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -480,17 +380,8 @@ export const TextAlignRight = ({ size = '32', color = 'white' }: IconProps) => (
   </svg>
 );
 
-export const TextAlignCenter = ({
-  size = '32',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const TextAlignCenter = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"

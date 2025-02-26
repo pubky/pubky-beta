@@ -13,20 +13,9 @@ interface MenuProps {
   className?: string;
 }
 
-export default function Menu({
-  show,
-  setShow,
-  post,
-  title,
-  className,
-}: MenuProps) {
+export default function Menu({ show, setShow, post, title, className }: MenuProps) {
   return (
-    <BottomSheetUI.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
+    <BottomSheetUI.Root show={show} setShow={setShow} title={title} className={className}>
       <ContentMenu post={post} setShowMenu={setShow} />
     </BottomSheetUI.Root>
   );

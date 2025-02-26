@@ -13,18 +13,12 @@ export function Header() {
       <Components.Header title="Home" />
       <Components.HeaderMobile
         leftIcon={
-          <div
-            className="cursor-pointer"
-            onClick={() => setDrawerFilterOpen(true)}
-          >
+          <div className="cursor-pointer" onClick={() => setDrawerFilterOpen(true)}>
             <Icon.SlidersHorizontal size="20" />
           </div>
         }
         rightIcon={
-          <div
-            className="cursor-pointer"
-            onClick={() => setDrawerFeedsOpen(true)}
-          >
+          <div className="cursor-pointer" onClick={() => setDrawerFeedsOpen(true)}>
             <Icon.Activity size="20" />
           </div>
         }

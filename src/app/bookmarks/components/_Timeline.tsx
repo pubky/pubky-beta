@@ -2,11 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Icon } from '@social/ui-shared';
-import {
-  useAlertContext,
-  useFilterContext,
-  usePubkyClientContext,
-} from '@/contexts';
+import { useAlertContext, useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
@@ -35,7 +31,7 @@ export const Timeline = () => {
     sort === 'popularity' ? skip : undefined,
     sort,
     undefined,
-    content,
+    content
   );
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState('');
@@ -61,10 +57,7 @@ export const Timeline = () => {
       }
 
       setTimeline((prev) => {
-        const newPosts = data.filter(
-          (post: PostView) =>
-            !prev.some((p) => p.bookmark?.id === post.bookmark?.id),
-        );
+        const newPosts = data.filter((post: PostView) => !prev.some((p) => p.bookmark?.id === post.bookmark?.id));
         return [...prev, ...newPosts];
       });
     } catch (error) {
@@ -130,11 +123,7 @@ export const Timeline = () => {
       {timeline.map((post) => (
         <div key={post.details.id} className="flex flex-col">
           <div className="flex gap-2 items-center">
-            <Post
-              largeView={!isMobile && layout === 'wide'}
-              key={`post-${post.details.id}`}
-              post={post}
-            />
+            <Post largeView={!isMobile && layout === 'wide'} key={`post-${post.details.id}`} post={post} />
             {post?.details?.content === '[DELETED]' && (
               <>
                 {loadingBookmarks ? (
@@ -144,20 +133,11 @@ export const Timeline = () => {
                     className="cursor-pointer"
                     onClick={() =>
                       isBookmarked && post?.bookmark?.id
-                        ? handleDeleteBookmark(
-                            post?.details?.id,
-                            post?.details?.author,
-                          )
-                        : handleAddBookmark(
-                            post?.details?.id,
-                            post?.details?.author,
-                          )
+                        ? handleDeleteBookmark(post?.details?.id, post?.details?.author)
+                        : handleAddBookmark(post?.details?.id, post?.details?.author)
                     }
                   >
-                    <Icon.BookmarkSimple
-                      size="24"
-                      opacity={isBookmarked ? 1 : 0.2}
-                    />
+                    <Icon.BookmarkSimple size="24" opacity={isBookmarked ? 1 : 0.2} />
                   </div>
                 )}
               </>
@@ -179,34 +159,21 @@ export const Timeline = () => {
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
             <Link href="/home">
-              <Button.Medium
-                icon={<Icon.NoteBlank size="16" />}
-                className="whitespace-nowrap"
-              >
+              <Button.Medium icon={<Icon.NoteBlank size="16" />} className="whitespace-nowrap">
                 Discover Posts
               </Button.Medium>
             </Link>
             <Link href="/hot#popular">
-              <Button.Medium
-                icon={<Icon.UserPlus size="16" />}
-                className="whitespace-nowrap"
-              >
+              <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
                 Follow Popular Users
               </Button.Medium>
             </Link>
             <Link href="hot">
-              <Button.Medium icon={<Icon.Tag size="16" />}>
-                Explore Tags
-              </Button.Medium>
+              <Button.Medium icon={<Icon.Tag size="16" />}>Explore Tags</Button.Medium>
             </Link>
           </div>
           <div className="absolute top-32 z-0">
-            <Image
-              alt="not-found-bookmarks"
-              width={588}
-              height={392}
-              src="/images/webp/not-found/bookmarks.webp"
-            />
+            <Image alt="not-found-bookmarks" width={588} height={392} src="/images/webp/not-found/bookmarks.webp" />
           </div>
         </ContentNotFound>
       )}

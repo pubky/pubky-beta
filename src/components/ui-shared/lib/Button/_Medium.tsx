@@ -36,16 +36,12 @@ export const Medium = ({
 
   switch (variant) {
     case 'line':
-      stateButton = disabled
-        ? 'cursor-default'
-        : 'hover:bg-white hover:bg-opacity-20';
+      stateButton = disabled ? 'cursor-default' : 'hover:bg-white hover:bg-opacity-20';
       cssColorButton = ` border ${colorBorder}  `;
       break;
 
     case 'subtle':
-      stateButton = disabled
-        ? 'cursor-default'
-        : 'hover:bg-white hover:bg-opacity-20';
+      stateButton = disabled ? 'cursor-default' : 'hover:bg-white hover:bg-opacity-20';
       cssColorButton = ``;
       break;
   }
@@ -53,11 +49,7 @@ export const Medium = ({
   const cssButton = `${stateButton} w-full h-12 px-6 py-[15px] rounded-[54px] justify-center items-center gap-2 inline-flex`;
 
   return (
-    <button
-      {...rest}
-      ref={rest.ref}
-      className={twMerge(cssButton, cssColorButton, rest.className)}
-    >
+    <button {...rest} ref={rest.ref} className={twMerge(cssButton, cssColorButton, rest.className)}>
       {loading ? (
         <div>
           <Icon.LoadingSpin size="16" />
@@ -66,10 +58,7 @@ export const Medium = ({
         icon && <div>{icon}</div>
       )}
       {children && (
-        <Typography.Body
-          variant="small-bold"
-          className={twMerge(color, textCSS)}
-        >
+        <Typography.Body variant="small-bold" className={twMerge(color, textCSS)}>
           {children}
         </Typography.Body>
       )}

@@ -14,11 +14,7 @@ export const Time = ({ children, ...rest }: RootProps) => {
       {children ? (
         <>
           <Icon.Clock size="16" color="#FFFFFF4D" />
-          <Typography.Caption
-            {...rest}
-            variant="bold"
-            className="text-white text-opacity-30 uppercase tracking-normal"
-          >
+          <Typography.Caption {...rest} variant="bold" className="text-white text-opacity-30 uppercase tracking-normal">
             {children}
           </Typography.Caption>
         </>

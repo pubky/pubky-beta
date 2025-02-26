@@ -6,7 +6,7 @@ import { BookmarksPage } from './components';
 
 export const metadata = getSeoMetadata({
   title: 'Bookmarks | Pubky.app',
-  description: 'Welcome to Pubky.app - Unlock the web.',
+  description: 'Welcome to Pubky.app - Unlock the web.'
 });
 
 export default function Index() {

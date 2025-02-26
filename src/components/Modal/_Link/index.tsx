@@ -11,12 +11,7 @@ interface LinkProps {
   links: Links[];
 }
 
-export default function Link({
-  showModal,
-  setShowModal,
-  setLinks,
-  links,
-}: LinkProps) {
+export default function Link({ showModal, setShowModal, setLinks, links }: LinkProps) {
   return (
     <Modal.Root
       show={showModal}
@@ -25,11 +20,7 @@ export default function Link({
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       <Modal.Header id="add-profile-link-header" title="Add Profile Link" />
-      <ContentLink
-        setShowModalLink={setShowModal}
-        links={links}
-        setLinks={setLinks}
-      />
+      <ContentLink setShowModalLink={setShowModal} links={links} setLinks={setLinks} />
     </Modal.Root>
   );
 }

@@ -21,12 +21,11 @@ export default function Status({ status, subtitle }: StatusProps) {
   const [dropdownValue, setDropdownValue] = useState({
     value: 'noStatus',
     textOption: labels.loading,
-    iconText: emojis.loading,
+    iconText: emojis.loading
   });
 
   useEffect(() => {
-    const emojiRegex =
-      /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Emoji_Modifier_Base})(\p{Emoji_Modifier})?/gu;
+    const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Emoji_Modifier_Base})(\p{Emoji_Modifier})?/gu;
     if (status && emojiRegex.test(status)) {
       const emojiMatch = status.match(emojiRegex);
       if (emojiMatch) {
@@ -35,7 +34,7 @@ export default function Status({ status, subtitle }: StatusProps) {
         setDropdownValue({
           value: 'custom',
           textOption: text,
-          iconText: emoji,
+          iconText: emoji
         });
         setCustomStatus(text);
         setSelectedEmoji(emoji);
@@ -44,7 +43,7 @@ export default function Status({ status, subtitle }: StatusProps) {
       setDropdownValue({
         value: status ? status : 'noStatus',
         textOption: status ? labels[status] : labels.noStatus,
-        iconText: status ? emojis[status] : emojis.noStatus,
+        iconText: status ? emojis[status] : emojis.noStatus
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,10 +59,7 @@ export default function Status({ status, subtitle }: StatusProps) {
       subtitle={subtitle}
       className={openDropdown ? 'z-20' : ''}
     >
-      <DropDownUI.Content
-        isOpen={openDropdown}
-        className="-right-20 lg:right-0 top-0"
-      >
+      <DropDownUI.Content isOpen={openDropdown} className="-right-20 lg:right-0 top-0">
         <ContentStatus
           setOpenDropdown={setOpenDropdown}
           dropdownValue={dropdownValue}

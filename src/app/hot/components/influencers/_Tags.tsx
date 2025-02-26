@@ -14,9 +14,7 @@ export function Tags({ influencer }: TagsProps) {
   const { addAlert } = useAlertContext();
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const userPubky = influencer?.details?.id || pubky || '';
-  const [profileTags, setProfileTags] = useState<UserTags[]>(
-    influencer?.tags ?? [],
-  );
+  const [profileTags, setProfileTags] = useState<UserTags[]>(influencer?.tags ?? []);
   const [loadingTags, setLoadingTags] = useState('');
 
   useEffect(() => {
@@ -41,9 +39,9 @@ export function Tags({ influencer }: TagsProps) {
                   ...t,
                   taggers: [...t.taggers, pubky || ''],
                   taggers_count: t.taggers_count + 1,
-                  relationship: true,
+                  relationship: true
                 }
-              : t,
+              : t
           );
           setProfileTags(updatedTags);
         }
@@ -53,7 +51,7 @@ export function Tags({ influencer }: TagsProps) {
           label: tag,
           taggers: [pubky || ''],
           taggers_count: 1,
-          relationship: true,
+          relationship: true
         };
         setProfileTags([...profileTags, newTag]);
       }
@@ -78,9 +76,9 @@ export function Tags({ influencer }: TagsProps) {
                 ...t,
                 taggers: t.taggers.filter((tagger) => tagger !== pubky),
                 taggers_count: Math.max(t.taggers_count - 1, 0),
-                relationship: false,
+                relationship: false
               }
-            : t,
+            : t
         )
         .filter((t) => t.taggers_count > 0);
       setProfileTags(updatedTags);
@@ -104,9 +102,7 @@ export function Tags({ influencer }: TagsProps) {
             clicked={isTagFound}
             onClick={(event) => {
               event.stopPropagation();
-              isTagFound
-                ? handleDeleteProfileTag(tag.label)
-                : handleAddProfileTag(tag.label);
+              isTagFound ? handleDeleteProfileTag(tag.label) : handleAddProfileTag(tag.label);
             }}
             color={tag?.label && Utils.generateRandomColor(tag.label)}
           >

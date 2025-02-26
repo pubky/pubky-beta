@@ -2,7 +2,12 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     signOut(hasBackedUp: HasBackedUp): Chainable<void>;
     signIn(backupFilepath: string, passcode?: string): Chainable<void>;
-    onboardAsNewUser(profileName: string, profileBio?: string, skipOnboardingSlides?: SkipOnboardingSlides, pubkyAlias?: string): Chainable<void>;
+    onboardAsNewUser(
+      profileName: string,
+      profileBio?: string,
+      skipOnboardingSlides?: SkipOnboardingSlides,
+      pubkyAlias?: string
+    ): Chainable<void>;
     backupRecoveryFile(passcode?: string): Chainable<void>;
     deleteDownloadsFolder(): Chainable<void>;
     waitForFileExistsWithSuffix(folder: string, suffix: string): Chainable<void>;

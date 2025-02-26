@@ -5,7 +5,7 @@ import { SearchPage } from './components';
 
 export const metadata = getSeoMetadata({
   title: 'Search | Pubky.app',
-  description: 'Pubky.app - Unlock the web.',
+  description: 'Pubky.app - Unlock the web.'
 });
 
 export default function Index() {

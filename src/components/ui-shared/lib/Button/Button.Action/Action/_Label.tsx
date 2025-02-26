@@ -7,10 +7,7 @@ interface LabelProps extends React.HTMLAttributes<HTMLHeadingElement> {
 
 export const Label = ({ children, ...rest }: LabelProps) => {
   return (
-    <Typography.Caption
-      className={twMerge('text-opacity-50', rest.className)}
-      variant="bold"
-    >
+    <Typography.Caption className={twMerge('text-opacity-50', rest.className)} variant="bold">
       {children}
     </Typography.Caption>
   );

@@ -17,5 +17,5 @@ export const SideCard = {
   Rank,
   User,
   UserDetails,
-  UserSmall,
+  UserSmall
 };

@@ -6,11 +6,7 @@ interface ContentLanguagesProps {
   setOpenDropdown: any;
 }
 
-export default function ContentLanguages({
-  dropdownValue,
-  setDropdownValue,
-  setOpenDropdown,
-}: ContentLanguagesProps) {
+export default function ContentLanguages({ dropdownValue, setDropdownValue, setOpenDropdown }: ContentLanguagesProps) {
   return (
     <>
       <DropDownUI.Item
@@ -22,7 +18,7 @@ export default function ContentLanguages({
           setDropdownValue({
             value: 'english',
             textOption: 'English',
-            iconOption: <Icon.UnitedStates size="24" />,
+            iconOption: <Icon.UnitedStates size="24" />
           });
           setOpenDropdown(false);
         }}

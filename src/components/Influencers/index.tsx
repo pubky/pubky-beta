@@ -14,11 +14,7 @@ interface InfluencersProps {
 
 export default function Influencers({ style }: InfluencersProps) {
   const { pubky } = usePubkyClientContext();
-  const {
-    data: influencers,
-    isLoading,
-    isError,
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers', 0, 3);
+  const { data: influencers, isLoading, isError } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers', 0, 3);
 
   if (isError) console.error(isError);
 
@@ -35,13 +31,8 @@ export default function Influencers({ style }: InfluencersProps) {
                 <div key={index}>
                   <SideCard.UserSmall
                     uri={influencer.details.id.replace('pubky:', '')}
-                    uriImage={
-                      influencer?.details?.image || '/images/webp/Userpic.webp'
-                    }
-                    username={
-                      influencer?.details?.name &&
-                      Utils.minifyText(influencer?.details?.name, 15)
-                    }
+                    uriImage={influencer?.details?.image || '/images/webp/Userpic.webp'}
+                    username={influencer?.details?.name && Utils.minifyText(influencer?.details?.name, 15)}
                     // label={Utils.minifyPubky(friend.uri.replace('pubky:', ''))}
                     postsCount={influencer?.counts?.posts}
                     tagsCount={influencer?.counts?.tags}
@@ -51,11 +42,7 @@ export default function Influencers({ style }: InfluencersProps) {
             })}
             {pubky && (
               <Link href="/hot#popular" className="mt-2">
-                <SideCard.Action
-                  icon={<Icon.UsersLeft size="16" />}
-                  textCSS="text-[13px]"
-                  text="See All"
-                />
+                <SideCard.Action icon={<Icon.UsersLeft size="16" />} textCSS="text-[13px]" text="See All" />
               </Link>
             )}
           </>

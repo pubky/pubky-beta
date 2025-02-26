@@ -8,10 +8,7 @@ interface SessionExpiredProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SessionExpired({
-  showModal,
-  setShowModal,
-}: SessionExpiredProps) {
+export default function SessionExpired({ showModal, setShowModal }: SessionExpiredProps) {
   return (
     <Modal.Root
       show={showModal}

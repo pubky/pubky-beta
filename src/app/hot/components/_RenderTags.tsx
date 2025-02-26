@@ -18,12 +18,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
   const { timeframe } = useFilterContext();
   const isMobile = useIsMobile(640);
   const numberImagesUser = isMobile ? 3 : 5;
-  const timeframeLabel =
-    timeframe === 'all_time'
-      ? 'all time'
-      : timeframe === 'this_month'
-        ? 'this month'
-        : 'today';
+  const timeframeLabel = timeframe === 'all_time' ? 'all time' : timeframe === 'this_month' ? 'this month' : 'today';
 
   if (loadingReachTags) {
     return <Skeletons.Simple />;
@@ -34,9 +29,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
 
   return (
     <div className="flex flex-col gap-3">
-      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">
-        Hot Tags
-      </Typography.H2>
+      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">Hot Tags</Typography.H2>
       {hotTags.length === 0 && (
         <Typography.Body className="text-center mt-6 text-opacity-50 lg:text-left lg:mt-0 lg:text-[15px]">
           No tags to show
@@ -48,24 +41,16 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
             <div
               key={index}
               style={{
-                backgroundColor: Utils.hexToRgba(
-                  Utils.generateRandomColor(tag?.label),
-                  0.3,
-                ),
+                backgroundColor: Utils.hexToRgba(Utils.generateRandomColor(tag?.label), 0.3)
               }}
               className={`w-full p-6 flex flex-col gap-2 rounded-lg`}
             >
               <div className="w-full flex md:flex-col gap-4 md:gap-2 justify-between md:justify-start">
                 <div className="flex flex-col gap-2">
                   <div className="flex gap-2">
-                    <PostUtil.Counter className="bg-transparent">
-                      {index + 1}
-                    </PostUtil.Counter>
+                    <PostUtil.Counter className="bg-transparent">{index + 1}</PostUtil.Counter>
                     <Link href={`/search?tags=${tag?.label}`}>
-                      <Typography.Body
-                        className="break-all"
-                        variant="large-bold"
-                      >
+                      <Typography.Body className="break-all" variant="large-bold">
                         {Utils.minifyText(tag?.label, 21)}
                       </Typography.Body>
                     </Link>
@@ -75,20 +60,13 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                   </Typography.Body>
                 </div>
                 <div className="flex">
-                  {tag?.taggers_id
-                    .slice(0, numberImagesUser)
-                    .map((fromItem, fromIndex) => (
-                      <div
-                        key={fromIndex}
-                        className={fromIndex !== 0 ? '-ml-2' : ''}
-                      >
-                        <Hot.UserProfileForTag userId={fromItem} />
-                      </div>
-                    ))}
+                  {tag?.taggers_id.slice(0, numberImagesUser).map((fromItem, fromIndex) => (
+                    <div key={fromIndex} className={fromIndex !== 0 ? '-ml-2' : ''}>
+                      <Hot.UserProfileForTag userId={fromItem} />
+                    </div>
+                  ))}
                   {tag?.taggers_id.length > 5 && (
-                    <PostUtil.Counter className="-ml-2">
-                      +{tag?.taggers_id.length - numberImagesUser}
-                    </PostUtil.Counter>
+                    <PostUtil.Counter className="-ml-2">+{tag?.taggers_id.length - numberImagesUser}</PostUtil.Counter>
                   )}
                 </div>
               </div>

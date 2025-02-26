@@ -14,11 +14,7 @@ interface CreateReplyProps {
   className?: string;
 }
 
-export default function ContentCreateReply({
-  setShowModalReply,
-  post,
-  className,
-}: CreateReplyProps) {
+export default function ContentCreateReply({ setShowModalReply, post, className }: CreateReplyProps) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
@@ -64,13 +60,7 @@ export default function ContentCreateReply({
         }
       }
 
-      const newReply = await createReply(
-        post?.details?.uri,
-        content,
-        postKind,
-        selectedFiles,
-        quote,
-      );
+      const newReply = await createReply(post?.details?.uri, content, postKind, selectedFiles, quote);
 
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
@@ -89,7 +79,7 @@ export default function ContentCreateReply({
             >
               View
             </a>
-          </>,
+          </>
         );
       } else {
         addAlert('Something wrong. Try again', 'warning');
@@ -107,15 +97,9 @@ export default function ContentCreateReply({
 
   return (
     <>
-      <Post
-        post={post}
-        repostView
-        className="lg:mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
-      />
+      <Post post={post} repostView className="lg:mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit" />
       <div className="flex items-center relative">
-        <div
-          className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[49%] top-0 border-[#444447]`}
-        />
+        <div className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[49%] top-0 border-[#444447]`} />
         {lineHorizontalCSS}
         <div className="w-full lg:ml-[23px] mt-6">
           <CreateContent
@@ -138,15 +122,7 @@ export default function ContentCreateReply({
                 id="reply-btn"
                 className="w-auto"
                 variant="line"
-                icon={
-                  <Icon.ChatCircleText
-                    color={
-                      !isValidContent && selectedFiles.length === 0
-                        ? 'gray'
-                        : 'white'
-                    }
-                  />
-                }
+                icon={<Icon.ChatCircleText color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
                 disabled={!isValidContent && selectedFiles.length === 0}
                 loading={sendingReply}
                 onClick={

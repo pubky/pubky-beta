@@ -9,5 +9,5 @@ export const SearchPage = {
   Content,
   Header,
   RightSidebar,
-  MainContent,
+  MainContent
 };

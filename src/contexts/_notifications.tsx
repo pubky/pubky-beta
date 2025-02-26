@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { BodyNotification, NotificationView } from '@/types/User';
 import { useUserNotifications } from '@/hooks/useUser';
@@ -22,12 +16,11 @@ const NotificationsContext = createContext<NotificationsContextType>({
   notifications: [],
   loading: true,
   fetchNotifications: async () => {},
-  loadMoreNotifications: async () => {},
+  loadMoreNotifications: async () => {}
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
-  const { pubky, timestamp, notificationPreferences, mutedUsers } =
-    usePubkyClientContext();
+  const { pubky, timestamp, notificationPreferences, mutedUsers } = usePubkyClientContext();
   const { setUnReadNotification } = useFilterContext();
 
   const limit = 30;
@@ -37,13 +30,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const [hasMore, setHasMore] = useState(true);
   const [prevPubky, setPrevPubky] = useState<string | null>(null);
 
-  const { data: initNotifications, isLoading } = useUserNotifications(
-    pubky ?? '',
-    undefined,
-    undefined,
-    skip,
-    limit,
-  );
+  const { data: initNotifications, isLoading } = useUserNotifications(pubky ?? '', undefined, undefined, skip, limit);
 
   useEffect(() => {
     setLoading(isLoading);
@@ -59,9 +46,8 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
     // Calculate unread count only after we have a valid timestamp
     const unreadCount = filtered.reduce(
-      (count, notification) =>
-        timestamp && notification.timestamp > timestamp ? count + 1 : count,
-      0,
+      (count, notification) => (timestamp && notification.timestamp > timestamp ? count + 1 : count),
+      0
     );
     setUnReadNotification(unreadCount);
   }, [initNotifications, timestamp]);
@@ -69,9 +55,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
       const merged = [...prev, ...newNotifications].filter(
-        (notification, index, self) =>
-          index ===
-          self.findIndex((n) => n.timestamp === notification.timestamp),
+        (notification, index, self) => index === self.findIndex((n) => n.timestamp === notification.timestamp)
       );
 
       return merged.sort((a, b) => b.timestamp - a.timestamp);
@@ -96,9 +80,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       return (
         senderPubky &&
         !mutedUsers?.includes(senderPubky) &&
-        notificationPreferences[
-          notification.body.type as keyof typeof notificationPreferences
-        ]
+        notificationPreferences[notification.body.type as keyof typeof notificationPreferences]
       );
     });
 
@@ -112,9 +94,8 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         updateNotifications(filteredNotifications);
 
         const unreadCount = filteredNotifications.reduce(
-          (count, notification) =>
-            timestamp && notification.timestamp > timestamp ? count + 1 : count,
-          0,
+          (count, notification) => (timestamp && notification.timestamp > timestamp ? count + 1 : count),
+          0
         );
 
         setUnReadNotification(unreadCount);
@@ -163,7 +144,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         notifications,
         loading,
         fetchNotifications,
-        loadMoreNotifications,
+        loadMoreNotifications
       }}
     >
       {children}

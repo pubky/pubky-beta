@@ -9,13 +9,7 @@ interface QuestionProps extends React.HTMLAttributes<HTMLDivElement> {
   setOpen: () => void;
 }
 
-export default function Question({
-  question,
-  answer,
-  open,
-  setOpen,
-  ...rest
-}: QuestionProps) {
+export default function Question({ question, answer, open, setOpen, ...rest }: QuestionProps) {
   const baseCSS =
     'cursor-pointer relative w-full p-6 rounded-2xl border border-white border-opacity-20 hover:border-opacity-30 flex-col justify-start items-start gap-6 inline-flex';
 
@@ -23,12 +17,7 @@ export default function Question({
     <div onClick={() => setOpen()} className={twMerge(baseCSS, rest.className)}>
       <div className="w-full flex items-center justify-between">
         <Typography.Body variant="small-bold">{question}</Typography.Body>
-        <div
-          className={twMerge(
-            'transform transition-transform duration-300',
-            open && 'rotate-90'
-          )}
-        >
+        <div className={twMerge('transform transition-transform duration-300', open && 'rotate-90')}>
           <Icon.Next size="16" />
         </div>
       </div>

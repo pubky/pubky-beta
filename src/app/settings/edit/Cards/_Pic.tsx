@@ -27,7 +27,7 @@ export default function Pic({ image, setImage, loading }: PicProps) {
         try {
           const pngBlob = await Utils.svgToPng(svgCode, size);
           const pngFile = new File([pngBlob], `${id}.png`, {
-            type: 'image/png',
+            type: 'image/png'
           });
 
           setDefaultImage(pngFile);
@@ -94,15 +94,10 @@ export default function Pic({ image, setImage, loading }: PicProps) {
   };
 
   const getButtonWidthImage = () => {
-    return image === defaultImage
-      ? 'w-[120px] lg:w-[85%] xl:w-8/12'
-      : 'w-[38px] h-[38px]';
+    return image === defaultImage ? 'w-[120px] lg:w-[85%] xl:w-8/12' : 'w-[38px] h-[38px]';
   };
   return (
-    <Card.Primary
-      className="justify-start z-10 w-full col-span-2"
-      title="Picture"
-    >
+    <Card.Primary className="justify-start z-10 w-full col-span-2" title="Picture">
       {image && (
         <div className="relative flex items-center justify-center">
           <ImageByUri
@@ -121,14 +116,7 @@ export default function Pic({ image, setImage, loading }: PicProps) {
           </Button.Transparent>
         </div>
       )}
-      <input
-        id="fileInput"
-        type="file"
-        accept="image/*"
-        onChange={UploadPic}
-        className="hidden"
-        disabled={loading}
-      />
+      <input id="fileInput" type="file" accept="image/*" onChange={UploadPic} className="hidden" disabled={loading} />
     </Card.Primary>
   );
 }

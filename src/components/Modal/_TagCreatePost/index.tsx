@@ -7,12 +7,7 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function TagCreatePost({
-  showModal,
-  setShowModal,
-  arrayTags,
-  setArrayTags,
-}: TagProps) {
+export default function TagCreatePost({ showModal, setShowModal, arrayTags, setArrayTags }: TagProps) {
   return (
     <Modal.Root
       show={showModal}
@@ -23,10 +18,7 @@ export default function TagCreatePost({
       <div className="w-full items-stretch flex-col inline-flex gap-6">
         <Modal.Header title="Tag" />
         <Modal.Content className="flex flex-row md:w-[350px]">
-          <ContentTagCreatePost
-            arrayTags={arrayTags}
-            setArrayTags={setArrayTags}
-          />
+          <ContentTagCreatePost arrayTags={arrayTags} setArrayTags={setArrayTags} />
         </Modal.Content>
       </div>
     </Modal.Root>

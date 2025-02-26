@@ -3,7 +3,7 @@ export interface NetworkRequest {
   method: string;
   url: string;
   requestBody: any;
- }
+}
 
 export const interceptNetworkRequest = (interceptedRequests: NetworkRequest[]) => {
   cy.intercept('**/api/invite-code', (req) => {
@@ -11,7 +11,7 @@ export const interceptNetworkRequest = (interceptedRequests: NetworkRequest[]) =
       timestamp: new Date().toISOString(),
       method: req.method,
       url: req.url,
-      requestBody: req.body,
+      requestBody: req.body
     };
     interceptedRequests.push(requestData);
   });
@@ -19,8 +19,7 @@ export const interceptNetworkRequest = (interceptedRequests: NetworkRequest[]) =
 
 export const saveNetworkRequestLog = (interceptedRequests: NetworkRequest[], testSuite: string) => {
   const logFilePath = `dist/cypress/apps/web-e2e/invite-code-network-logs/${testSuite}.json`;
-  cy.writeFile(logFilePath, JSON.stringify(interceptedRequests, null, 2), { flag: 'w' })
-  .then(() => {
+  cy.writeFile(logFilePath, JSON.stringify(interceptedRequests, null, 2), { flag: 'w' }).then(() => {
     console.log('Network log saved to', logFilePath);
   });
 };
@@ -36,7 +35,7 @@ export const addTagsWithModal = (tags: string[]) => {
     for (const tag of tags) {
       cy.get('input').type(tag);
       cy.get('#add-btn').should('be.visible').click();
-    };
+    }
 
     // TODO: uncomment once bug is fixed, see https://github.com/pubky/pubky-app/issues/541
     // check current tags in modal
@@ -64,6 +63,7 @@ export const passInviteCode = () => {
       // Ensure we moved past the invite code page
       cy.location('pathname').should('eq', '/onboarding/sign-in');
       // TODO: improve detection of page finished loading and redirecting
-      cy.wait(1000);    }
+      cy.wait(1000);
+    }
   });
 };

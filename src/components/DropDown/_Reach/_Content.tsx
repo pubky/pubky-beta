@@ -6,7 +6,7 @@ const icons = {
   followers: <Icon.UsersLeft />,
   friends: <Icon.Smiley />,
   all: <Icon.Broadcast />,
-  loading: <Icon.LoadingSpin className="animate-spin" />,
+  loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
 interface ContentReachProps {
@@ -14,10 +14,7 @@ interface ContentReachProps {
   setOpenDropdown: any;
 }
 
-export default function ContentReach({
-  setDropdownValue,
-  setOpenDropdown,
-}: ContentReachProps) {
+export default function ContentReach({ setDropdownValue, setOpenDropdown }: ContentReachProps) {
   const { reach, setReach } = useFilterContext();
 
   return (
@@ -31,7 +28,7 @@ export default function ContentReach({
           setDropdownValue({
             value: 'all',
             textOption: 'All',
-            iconOption: icons.all,
+            iconOption: icons.all
           });
           setReach('all');
           setOpenDropdown(false);
@@ -46,7 +43,7 @@ export default function ContentReach({
           setDropdownValue({
             value: 'following',
             textOption: 'Following',
-            iconOption: icons.following,
+            iconOption: icons.following
           });
           setReach('following');
           setOpenDropdown(false);
@@ -61,7 +58,7 @@ export default function ContentReach({
           setDropdownValue({
             value: 'friends',
             textOption: 'Friends',
-            iconOption: icons.friends,
+            iconOption: icons.friends
           });
           setReach('friends');
           setOpenDropdown(false);

@@ -10,25 +10,19 @@ interface SortFriends {
   disabled?: boolean;
 }
 
-export default function SortFriends({
-  type = 'icon',
-  subtitle,
-  disabled = false,
-}: SortFriends) {
+export default function SortFriends({ type = 'icon', subtitle, disabled = false }: SortFriends) {
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const labels = {
     activeThisMonth: 'Active this month',
     activeAllTime: 'Active all time',
     name: 'Name',
-    key: 'Key',
+    key: 'Key'
   };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: 'active-this-month',
-    ...(type === 'icon'
-      ? { iconOption: <Icon.Calendar /> }
-      : { textOption: labels.activeThisMonth }),
+    ...(type === 'icon' ? { iconOption: <Icon.Calendar /> } : { textOption: labels.activeThisMonth })
   });
 
   return (
@@ -41,11 +35,7 @@ export default function SortFriends({
       subtitle={subtitle}
       disabled={disabled}
     >
-      <DropDownUI.Content
-        title="Sort"
-        subtitle="Sort your friends by"
-        isOpen={openDropdown}
-      >
+      <DropDownUI.Content title="Sort" subtitle="Sort your friends by" isOpen={openDropdown}>
         <DropDownUI.Item
           label="Active this month"
           value="active-this-month"
@@ -54,9 +44,7 @@ export default function SortFriends({
           onClick={() => {
             setDropdownValue({
               value: 'active-this-month',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.Calendar size="24" /> }
-                : { textOption: 'Active this month' }),
+              ...(type === 'icon' ? { iconOption: <Icon.Calendar size="24" /> } : { textOption: 'Active this month' })
             });
             setOpenDropdown(false);
           }}
@@ -69,9 +57,7 @@ export default function SortFriends({
           onClick={() => {
             setDropdownValue({
               value: 'active-all-time',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.Clock size="24" /> }
-                : { textOption: 'Active all time' }),
+              ...(type === 'icon' ? { iconOption: <Icon.Clock size="24" /> } : { textOption: 'Active all time' })
             });
             setOpenDropdown(false);
           }}
@@ -84,9 +70,7 @@ export default function SortFriends({
           onClick={() => {
             setDropdownValue({
               value: 'name',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.ListBullets size="24" /> }
-                : { textOption: 'Name' }),
+              ...(type === 'icon' ? { iconOption: <Icon.ListBullets size="24" /> } : { textOption: 'Name' })
             });
             setOpenDropdown(false);
           }}
@@ -99,9 +83,7 @@ export default function SortFriends({
           onClick={() => {
             setDropdownValue({
               value: 'key',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.Key size="24" /> }
-                : { textOption: 'Key' }),
+              ...(type === 'icon' ? { iconOption: <Icon.Key size="24" /> } : { textOption: 'Key' })
             });
             setOpenDropdown(false);
           }}

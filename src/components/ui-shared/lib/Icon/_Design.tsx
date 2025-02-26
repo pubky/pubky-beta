@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const Pencil = ({ size = '48', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 48 48"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M25.5 12L36 22.5L40.9393 17.5607C41.2206 17.2794 41.3787 16.8978 41.3787 16.5C41.3787 16.1022 41.2206 15.7207 40.9393 15.4394L32.5607 7.06068C32.2794 6.77937 31.8978 6.62134 31.5 6.62134C31.1022 6.62134 30.7206 6.77937 30.4393 7.06068L25.5 12Z"
@@ -38,25 +32,13 @@ export const Pencil = ({ size = '48', color = 'white' }: IconProps) => (
 );
 
 export const Ellipse = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="8" cy="8" r="7.5" stroke={color} />
   </svg>
 );
 
 export const PencilLine = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M24 15L17 7.99997L20.2929 4.70708C20.4804 4.51954 20.7348 4.41418 21 4.41418C21.2652 4.41418 21.5196 4.51954 21.7071 4.70708L27.2929 10.2929C27.4804 10.4804 27.5858 10.7348 27.5858 11C27.5858 11.2652 27.4804 11.5195 27.2929 11.7071L24 15Z"
@@ -84,18 +66,8 @@ export const PencilLine = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const Stack = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      opacity="0.2"
-      d="M3 7.5L12 12.75L21 7.5L12 2.25L3 7.5Z"
-      fill={color}
-    />
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path opacity="0.2" d="M3 7.5L12 12.75L21 7.5L12 2.25L3 7.5Z" fill={color} />
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -118,13 +90,7 @@ export const Stack = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const GridFour = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g opacity="0.32">
       <path
         opacity="0.2"
@@ -154,13 +120,7 @@ export const GridFour = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const SquaresFour = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path opacity="0.2" d="M10.5 4.5H4.5V10.5H10.5V4.5Z" fill="white" />
     <path opacity="0.2" d="M19.5 4.5H13.5V10.5H19.5V4.5Z" fill="white" />
     <path opacity="0.2" d="M10.5 13.5H4.5V19.5H10.5V13.5Z" fill="white" />
@@ -193,13 +153,7 @@ export const SquaresFour = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const SquareHalf = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M15 20H5.04762C4.76977 20 4.50331 19.9197 4.30684 19.7768C4.11037 19.634 4 19.4402 4 19.2381V4.7619C4 4.55984 4.11037 4.36604 4.30684 4.22316C4.50331 4.08027 4.76977 4 5.04762 4H15V20Z"
@@ -221,13 +175,7 @@ export const SquareHalf = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const Eye = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M8 3.5C3 3.5 1 8.00049 1 8.00049C1 8.00049 3 12.5 8 12.5C13 12.5 15 8.00049 15 8.00049C15 8.00049 13 3.5 8 3.5ZM8 10.5005C7.50555 10.5005 7.0222 10.3539 6.61107 10.0792C6.19995 9.80449 5.87952 9.41404 5.6903 8.95723C5.50108 8.50041 5.45157 7.99775 5.54804 7.51279C5.6445 7.02784 5.8826 6.58238 6.23223 6.23275C6.58186 5.88312 7.02732 5.64502 7.51227 5.54856C7.99723 5.45209 8.49989 5.5016 8.95671 5.69082C9.41352 5.88004 9.80397 6.20047 10.0787 6.61159C10.3534 7.02272 10.5 7.50607 10.5 8.00052C10.5 8.66356 10.2366 9.29944 9.76777 9.76828C9.29892 10.2371 8.66304 10.5005 8 10.5005Z"
@@ -249,13 +197,7 @@ export const Eye = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const ThreeColumns = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M15 20.25H8.89286C8.72236 20.25 8.55885 20.171 8.43829 20.0303C8.31773 19.8897 8.25 19.6989 8.25 19.5V5.25C8.25 5.05109 8.31773 4.86032 8.43829 4.71967C8.55885 4.57902 8.72236 4.5 8.89286 4.5H15V20.25Z"
@@ -295,13 +237,7 @@ export const ThreeColumns = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const LineHorizontal = ({ size = '12', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 12 12"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
