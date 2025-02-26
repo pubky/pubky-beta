@@ -33,7 +33,14 @@ export type TSort = 'recent' | 'popularity';
 export type THotTagsReach = 'following' | 'followers' | 'friends' | 'all';
 export type TContacts = 'following' | 'followers' | 'friends';
 export type TContactsLayout = 'ranking' | 'list';
-export type TContent = 'all' | 'posts' | 'articles' | 'images' | 'videos' | 'links' | 'files';
+export type TContent =
+  | 'all'
+  | 'posts'
+  | 'articles'
+  | 'images'
+  | 'videos'
+  | 'links'
+  | 'files';
 export type TTimeframe = 'today' | 'this_month' | 'all_time';
 
 export interface IFileContent {
@@ -88,6 +95,17 @@ export type NotificationPreferences = {
   post_deleted: boolean;
   post_edited: boolean;
 };
+
+export type FilterNotificationPreferences =
+  | 'all'
+  | 'follow'
+  | 'new_friend'
+  | 'tagged'
+  | 'mention'
+  | 'reply'
+  | 'repost'
+  | 'post_deleted'
+  | 'post_edited';
 
 export interface INotification {
   body: BodyNotification;
