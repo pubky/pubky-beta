@@ -71,8 +71,8 @@ export const Text = ({
           placeholder={placeholder}
           className={twMerge(
             baseCSS,
-            inputPaddingRight,
             rest.className,
+            inputPaddingRight,
             error ? 'border-red-600 border-opacity-100' : ''
           )}
         />

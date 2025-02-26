@@ -35,22 +35,25 @@ export default function InputTag({ post, tagsError }: InputTagProps) {
         </>
       )}
       <Input.Label value="New tag" />
-      <Input.Text
-        ref={inputRef}
-        placeholder="tag"
-        value={tag}
-        className="w-full md:w-[500px] mt-2 flex items-center"
-        maxLength={20}
-        autoFocus
-        disabled={loading}
-        onChange={handleChange}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            addTag(tag);
-          }
-        }}
-        action={
-          <div className="flex">
+      <div className="w-full md:w-[500px] mt-2">
+        <div className="flex items-center h-[70px] rounded-2xl border border-white border-opacity-30 border-dashed bg-transparent">
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="tag"
+            className="h-full flex-1 max-w-[calc(100%-100px)] bg-transparent outline-none text-white text-opacity-80 text-[17px] pl-6 pr-1 font-normal font-InterTight leading-snug tracking-wide"
+            value={tag}
+            maxLength={20}
+            autoFocus
+            disabled={loading}
+            onChange={handleChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                addTag(tag);
+              }
+            }}
+          />
+          <div className="flex items-center pr-4">
             <Button.Action
               id="add-btn"
               icon={loading ? <Icon.LoadingSpin size="18" /> : <Icon.Plus size="18" />}
@@ -74,8 +77,8 @@ export default function InputTag({ post, tagsError }: InputTagProps) {
               }}
             />
           </div>
-        }
-      />
+        </div>
+      </div>
       <div className="mt-4 w-full md:w-[500px] hidden md:flex">
         <Post post={post} repostView />
       </div>

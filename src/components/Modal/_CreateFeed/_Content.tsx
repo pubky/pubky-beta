@@ -123,36 +123,37 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
               </>
             )}
             {/* <Input.Label value="Add tag" /> */}
-            <Input.Text
-              placeholder="tag"
-              value={tag}
-              maxLength={20}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-              action={
-                <div className="flex">
-                  <Button.Action
-                    id="add-btn"
-                    icon={<Icon.Plus size="18" />}
-                    variant="custom"
-                    size="medium"
-                    className={tag ? 'flex' : 'hidden'}
-                    onClick={handleAddTag}
-                  />
-                  <Button.Action
-                    id="emoji-btn"
-                    variant="custom"
-                    className="hidden ml-2 lg:flex"
-                    icon={<Icon.Smiley size="32" />}
-                    size="medium"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setShowEmojis(true);
-                    }}
-                  />
-                </div>
-              }
-            />
+            <div className="flex items-center h-[70px] rounded-2xl border border-white border-opacity-30 border-dashed bg-transparent">
+              <input
+                type="text"
+                placeholder="tag"
+                className="h-full flex-1 max-w-[calc(100%-100px)] bg-transparent outline-none text-white text-opacity-80 text-[17px] pl-6 pr-1 font-normal font-InterTight leading-snug tracking-wide"
+                value={tag}
+                maxLength={20}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                autoFocus
+              />
+              <div className="flex items-center pr-4">
+                <Button.Action
+                  icon={<Icon.Plus size="18" />}
+                  className={tag ? 'flex' : 'hidden'}
+                  variant="custom"
+                  size="medium"
+                  onClick={() => handleAddTag()}
+                />
+                <Button.Action
+                  variant="custom"
+                  icon={<Icon.Smiley size="32" />}
+                  size="medium"
+                  className="hidden ml-2 lg:flex"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setShowEmojis(true);
+                  }}
+                />
+              </div>
+            </div>
           </div>
           <div className="mt-2 justify-start items-start">
             {tagsFeed && tagsFeed.length > 0 ? (
