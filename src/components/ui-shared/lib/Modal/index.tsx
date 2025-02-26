@@ -9,5 +9,5 @@ export const Modal = {
   Content,
   Header,
   SubmitAction,
-  Root,
+  Root
 };

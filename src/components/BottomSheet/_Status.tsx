@@ -19,12 +19,11 @@ export default function Status({ status, title, className }: StatusProps) {
   const [statusValue, setStatusValue] = useState({
     value: 'noStatus',
     textOption: labels.loading,
-    iconText: emojis.loading,
+    iconText: emojis.loading
   });
 
   useEffect(() => {
-    const emojiRegex =
-      /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Emoji_Modifier_Base})(\p{Emoji_Modifier})?/gu;
+    const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Emoji_Modifier_Base})(\p{Emoji_Modifier})?/gu;
     if (status && emojiRegex.test(status)) {
       const emojiMatch = status.match(emojiRegex);
       if (emojiMatch) {
@@ -33,7 +32,7 @@ export default function Status({ status, title, className }: StatusProps) {
         setStatusValue({
           value: 'custom',
           textOption: text,
-          iconText: emoji,
+          iconText: emoji
         });
         setCustomStatus(text);
         setSelectedEmoji(emoji);
@@ -42,7 +41,7 @@ export default function Status({ status, title, className }: StatusProps) {
       setStatusValue({
         value: status ? status : 'noStatus',
         textOption: status ? labels[status] : labels.noStatus,
-        iconText: status ? emojis[status] : emojis.noStatus,
+        iconText: status ? emojis[status] : emojis.noStatus
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,19 +55,12 @@ export default function Status({ status, title, className }: StatusProps) {
         onClick={() => setShow(true)}
       >
         {statusValue.iconText} {statusValue.textOption}
-        <div
-          className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}
-        >
+        <div className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}>
           <Icon.DropdownIcon />
         </div>
       </Typography.Body>
 
-      <BottomSheet.Root
-        show={show}
-        setShow={setShow}
-        title={title}
-        className={className}
-      >
+      <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
         <ContentStatus
           setOpenDropdown={setShow}
           dropdownValue={statusValue}

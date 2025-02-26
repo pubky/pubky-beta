@@ -38,8 +38,7 @@ export const Root = ({
   }, [drawerOpen]);
 
   const positionDrawer = position === 'left' ? 'left-0' : 'right-0';
-  const translateClass =
-    position === 'left' ? '-translate-x-full' : 'translate-x-full';
+  const translateClass = position === 'left' ? '-translate-x-full' : 'translate-x-full';
 
   const baseCSS = `${positionDrawer} w-[80%] md:w-[385px] h-full fixed top-0 z-50 transition-transform duration-300 p-12 bg-[#05050A] shadow border-r border-white border-opacity-20`;
 
@@ -99,11 +98,7 @@ export const Root = ({
       <div
         {...rest}
         id="drawer-example"
-        className={twMerge(
-          baseCSS,
-          animateIn ? 'translate-x-none' : translateClass,
-          rest.className,
-        )}
+        className={twMerge(baseCSS, animateIn ? 'translate-x-none' : translateClass, rest.className)}
         tabIndex={-1}
         aria-labelledby="drawer-label"
         onTouchStart={handleTouchStart}

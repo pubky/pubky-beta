@@ -9,8 +9,7 @@ import { UseQueryOptions } from '@tanstack/react-query';
 
 export function NewPostsNotifier() {
   const { reach, sort, content } = useFilterContext();
-  const { timeline, setTimeline, pubky, deletedPosts } =
-    usePubkyClientContext();
+  const { timeline, setTimeline, pubky, deletedPosts } = usePubkyClientContext();
 
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [newPostsCount, setNewPostsCount] = useState(0);
@@ -31,9 +30,7 @@ export function NewPostsNotifier() {
   // Update latestTimestamp whenever the timeline changes
   useEffect(() => {
     if (timeline.length > 0) {
-      const maxIndexedAt = Math.max(
-        ...timeline.map((p) => p.details.indexed_at),
-      );
+      const maxIndexedAt = Math.max(...timeline.map((p) => p.details.indexed_at));
       setLatestTimestamp(maxIndexedAt);
     } else {
       setLatestTimestamp(null);
@@ -82,8 +79,8 @@ export function NewPostsNotifier() {
     content,
     {
       enabled: shouldFetch && latestTimestamp !== null,
-      queryKey: ['new-posts', latestTimestamp],
-    } as UseQueryOptions<unknown, Error>,
+      queryKey: ['new-posts', latestTimestamp]
+    } as UseQueryOptions<unknown, Error>
   );
 
   // Process new data
@@ -95,16 +92,14 @@ export function NewPostsNotifier() {
         (post: PostView) =>
           !timeline.some((p) => p.details.id === post.details.id) &&
           !newPosts.some((p) => p.details.id === post.details.id) &&
-          !deletedPosts.includes(post.details.id),
+          !deletedPosts.includes(post.details.id)
       );
 
       if (filtered.length > 0) {
         setNewPosts((prev) => [...prev, ...filtered]);
         setNewPostsCount((prev) => prev + filtered.length);
 
-        const newMaxTimestamp = Math.max(
-          ...filtered.map((p) => p.details.indexed_at),
-        );
+        const newMaxTimestamp = Math.max(...filtered.map((p) => p.details.indexed_at));
         setLatestTimestamp((prev) => {
           if (prev === null) return newMaxTimestamp;
           return Math.max(prev, newMaxTimestamp);
@@ -126,11 +121,7 @@ export function NewPostsNotifier() {
   return (
     <>
       {newPostsCount > 0 && (
-        <Button.Medium
-          id="show-new-posts-button"
-          className="new-posts-button"
-          onClick={handleShowNewPosts}
-        >
+        <Button.Medium id="show-new-posts-button" className="new-posts-button" onClick={handleShowNewPosts}>
           Show {newPostsCount} new {newPostsCount > 1 ? 'posts' : 'post'}
         </Button.Medium>
       )}

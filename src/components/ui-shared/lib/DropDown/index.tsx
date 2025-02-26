@@ -11,5 +11,5 @@ export const DropDown = {
   Item,
   OptionText,
   Root,
-  Title,
+  Title
 };

@@ -11,11 +11,7 @@ import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '@/components/ImageByUri';
 
-export default function LayoutProfile({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function LayoutProfile({ children }: { children: React.ReactNode }) {
   const { pubky, profile } = usePubkyClientContext();
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -28,9 +24,7 @@ export default function LayoutProfile({
     setLoading(true);
     const pathSegments = pathname?.split('/');
     const lastSegment = pathSegments?.pop();
-    const foundTab = Profile.FilterTabs.tabs.find(
-      (tab) => tab.key === lastSegment,
-    );
+    const foundTab = Profile.FilterTabs.tabs.find((tab) => tab.key === lastSegment);
     setActiveTab(foundTab ? foundTab.id : 0);
     setLoading(false);
   }, [pathname]);
@@ -81,10 +75,7 @@ export default function LayoutProfile({
           onClick={() => setIsAvatarOpen(false)}
           className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50"
         >
-          <div
-            onClick={(event) => event?.stopPropagation()}
-            className="relative p-4 bg-transparent rounded-full"
-          >
+          <div onClick={(event) => event?.stopPropagation()} className="relative p-4 bg-transparent rounded-full">
             <ImageByUri
               alt={profile?.name || Utils.minifyPubky(pubky ?? '')}
               width={362}

@@ -14,14 +14,7 @@ type Image = {
   className?: string;
 };
 
-export const ImageMenu = ({
-  uriImage,
-  width = 48,
-  height = 48,
-  alt = 'user-pic',
-  notifications,
-  ...rest
-}: Image) => {
+export const ImageMenu = ({ uriImage, width = 48, height = 48, alt = 'user-pic', notifications, ...rest }: Image) => {
   return (
     <div className="w-[48px]">
       {notifications && (

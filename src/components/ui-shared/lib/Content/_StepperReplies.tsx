@@ -10,11 +10,7 @@ interface StepperRepliesProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export const StepperReplies = ({
-  urls,
-  postUri,
-  ...rest
-}: StepperRepliesProps) => {
+export const StepperReplies = ({ urls, postUri, ...rest }: StepperRepliesProps) => {
   const renderStep = (stepNumber: number, url: string) => {
     const isFirstStep = stepNumber === 0;
     const currentStep = urls.length + 1;
@@ -27,36 +23,22 @@ export const StepperReplies = ({
         stepNumber < currentStep - 1
           ? 'bg-white bg-opacity-60 border-white'
           : stepNumber === currentStep - 1
-          ? 'bg-white bg-opacity-20 border-white'
-          : 'border-white border-opacity-30'
+            ? 'bg-white bg-opacity-20 border-white'
+            : 'border-white border-opacity-30'
       }`;
-    const activeLine = `${
-      stepNumber < currentStep - 1
-        ? 'bg-white bg-opacity-60'
-        : 'bg-white bg-opacity-30'
-    }`;
+    const activeLine = `${stepNumber < currentStep - 1 ? 'bg-white bg-opacity-60' : 'bg-white bg-opacity-30'}`;
 
     return (
       <React.Fragment key={stepNumber}>
-        <Link
-          className={`${baseCSS} ${activeStep} `}
-          href={Utils.encodePostUri(url)}
-        >
-          {isFirstStep ? (
-            <Icon.ArrowLeft size="16" />
-          ) : (
-            <Icon.Ellipse size="16" />
-          )}
+        <Link className={`${baseCSS} ${activeStep} `} href={Utils.encodePostUri(url)}>
+          {isFirstStep ? <Icon.ArrowLeft size="16" /> : <Icon.Ellipse size="16" />}
         </Link>
         {!isLastStep && <div className={`h-px flex-1 ${activeLine}`} />}
       </React.Fragment>
     );
   };
 
-  const stepComponents = [
-    ...urls.map((url, index) => renderStep(index, url)),
-    renderStep(urls.length, postUri),
-  ];
+  const stepComponents = [...urls.map((url, index) => renderStep(index, url)), renderStep(urls.length, postUri)];
 
   const numberOfSteps = urls.length + 1;
   const widthPercentage = Math.min(15 + (numberOfSteps - 2) * 5, 100);

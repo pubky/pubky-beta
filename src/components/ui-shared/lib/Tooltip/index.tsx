@@ -9,5 +9,5 @@ export const Tooltip = {
   Main,
   Small,
   Root,
-  RootSmall,
+  RootSmall
 };

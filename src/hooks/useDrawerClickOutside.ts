@@ -1,9 +1,6 @@
 import { useEffect, RefObject } from 'react';
 
-export function useDrawerClickOutside(
-  ref: RefObject<HTMLElement>,
-  callback: () => void
-) {
+export function useDrawerClickOutside(ref: RefObject<HTMLElement>, callback: () => void) {
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {

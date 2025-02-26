@@ -19,19 +19,11 @@ export default function FilesCarousel({
   fileContents,
   currentFileIndex,
   title,
-  className,
+  className
 }: FilesCarouselProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
-      <ContentFilesCarousel
-        fileContents={fileContents}
-        currentFileIndex={currentFileIndex}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
+      <ContentFilesCarousel fileContents={fileContents} currentFileIndex={currentFileIndex} />
     </BottomSheet.Root>
   );
 }

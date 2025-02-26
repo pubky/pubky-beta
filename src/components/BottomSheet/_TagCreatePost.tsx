@@ -16,20 +16,12 @@ export default function TagCreatePost({
   arrayTags,
   setArrayTags,
   title,
-  className,
+  className
 }: TagCreatePostProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Tag'}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Tag'} className={className}>
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
-        <ContentTagCreatePost
-          arrayTags={arrayTags}
-          setArrayTags={setArrayTags}
-        />
+        <ContentTagCreatePost arrayTags={arrayTags} setArrayTags={setArrayTags} />
       </div>
     </BottomSheet.Root>
   );

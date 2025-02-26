@@ -20,7 +20,7 @@ interface Errors {
 
 const profileSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
-  bio: z.string().min(3, { message: 'Short bio is required' }).optional(),
+  bio: z.string().min(3, { message: 'Short bio is required' }).optional()
 });
 
 interface ButtonsProps {
@@ -44,7 +44,7 @@ export default function Buttons({
   name,
   image,
   prevImage,
-  status,
+  status
 }: ButtonsProps) {
   const { saveProfile, deleteFile } = usePubkyClientContext();
   const router = useRouter();
@@ -57,32 +57,28 @@ export default function Buttons({
       setLoading(true);
       setErrors({
         name: '',
-        bio: '',
+        bio: ''
       });
 
       const result = profileSchema.safeParse({
         name,
-        bio: bio || undefined,
+        bio: bio || undefined
       });
 
       if (!result.success) {
         const newErrors: FormErrors = result.error.flatten().fieldErrors;
 
-        const errorMessages = Object.keys(newErrors).reduce(
-          (acc: { [key: string]: string }, key) => {
-            acc[key] = newErrors[key].join(', ');
-            return acc;
-          },
-          {},
-        );
+        const errorMessages = Object.keys(newErrors).reduce((acc: { [key: string]: string }, key) => {
+          acc[key] = newErrors[key].join(', ');
+          return acc;
+        }, {});
 
         setErrors((prev) => ({ ...prev, ...errorMessages }));
         setLoading(false);
         return;
       }
 
-      const { userLinks: linksObject, errors: linkErrors } =
-        processUserLinks(links);
+      const { userLinks: linksObject, errors: linkErrors } = processUserLinks(links);
 
       if (linkErrors.length > 0) {
         const newErrors: FormErrors = {};
@@ -96,11 +92,7 @@ export default function Buttons({
 
       await saveProfile(name, bio, image, linksObject, status);
 
-      if (
-        prevImage &&
-        prevImage !== '/images/webp/Userpic.webp' &&
-        prevImage !== image
-      ) {
+      if (prevImage && prevImage !== '/images/webp/Userpic.webp' && prevImage !== image) {
         const { src } = await getFile(String(prevImage));
         await deleteFile(src);
         await deleteFile(String(prevImage));
@@ -115,12 +107,7 @@ export default function Buttons({
   return (
     <div className="w-full max-w-[1200px] justify-between items-center inline-flex mt-6">
       <Link href="/onboarding/sign-up">
-        <Button.Large
-          id="edit-profile-cancel-btn"
-          className="w-auto"
-          variant="secondary"
-          onClick={() => router.back()}
-        >
+        <Button.Large id="edit-profile-cancel-btn" className="w-auto" variant="secondary" onClick={() => router.back()}>
           Cancel
         </Button.Large>
       </Link>

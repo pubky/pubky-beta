@@ -13,21 +13,9 @@ interface EditArticleProps {
   className?: string;
 }
 
-export default function EditArticle({
-  show,
-  setShow,
-  article,
-  setShowMenu,
-  title,
-  className,
-}: EditArticleProps) {
+export default function EditArticle({ show, setShow, article, setShowMenu, title, className }: EditArticleProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
       <ContentEditArticle
         className="p-0 border-none"
         setShowModalEditArticle={setShow}

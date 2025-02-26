@@ -9,5 +9,5 @@ export const Action = {
   Counter,
   Label,
   LabelRoot,
-  Root,
+  Root
 };

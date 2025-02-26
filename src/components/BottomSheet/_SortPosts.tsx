@@ -13,7 +13,7 @@ interface SortPostsProps {
 const icons = {
   recent: <Icon.Asterisk size="24" />,
   popularity: <Icon.Fire size="24" />,
-  loading: <Icon.LoadingSpin className="animate-spin" />,
+  loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
 export default function SortPosts({ title, className }: SortPostsProps) {
@@ -22,7 +22,7 @@ export default function SortPosts({ title, className }: SortPostsProps) {
   const [dropdownValue, setDropdownValue] = useState({
     value: sort || 'recent',
     textOption: sort?.charAt(0).toUpperCase() + sort?.slice(1) || 'Recent',
-    iconOption: icons[sort] || icons.recent,
+    iconOption: icons[sort] || icons.recent
   });
 
   return (
@@ -32,24 +32,13 @@ export default function SortPosts({ title, className }: SortPostsProps) {
         variant="medium"
         onClick={() => setShow(true)}
       >
-        <span className="mr-1">{dropdownValue.iconOption}</span>{' '}
-        {dropdownValue.textOption}
-        <div
-          className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}
-        >
+        <span className="mr-1">{dropdownValue.iconOption}</span> {dropdownValue.textOption}
+        <div className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}>
           <Icon.DropdownIcon />
         </div>
       </Typography.Body>
-      <BottomSheet.Root
-        show={show}
-        setShow={setShow}
-        title={title}
-        className={className}
-      >
-        <ContentSortPosts
-          setDropdownValue={setDropdownValue}
-          setOpenDropdown={setShow}
-        />
+      <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
+        <ContentSortPosts setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
       </BottomSheet.Root>
     </>
   );

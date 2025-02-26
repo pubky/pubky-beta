@@ -6,12 +6,7 @@ interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
   shadowBottom?: boolean;
 }
 
-export const Main = ({
-  children,
-  background = 'bg-[#05050A]',
-  shadowBottom,
-  ...rest
-}: RootProps) => {
+export const Main = ({ children, background = 'bg-[#05050A]', shadowBottom, ...rest }: RootProps) => {
   const baseCSS = `pt-[100px] sm:pt-[120px] lg:pt-[150px] w-full h-full min-w-[400px] pb-20 min-h-screen relative`;
 
   return (
@@ -25,9 +20,8 @@ export const Main = ({
             left: 0,
             width: '100%',
             height: '100px',
-            background:
-              'linear-gradient(180deg, rgba(5, 5, 10, 0) 0%, rgba(5, 5, 10, 1) 100%)',
-            pointerEvents: 'none',
+            background: 'linear-gradient(180deg, rgba(5, 5, 10, 0) 0%, rgba(5, 5, 10, 1) 100%)',
+            pointerEvents: 'none'
           }}
         />
       )}

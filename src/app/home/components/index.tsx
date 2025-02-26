@@ -13,5 +13,5 @@ export const HomePage = {
   Timeline,
   LeftSidebar,
   RightSidebar,
-  MainContent,
+  MainContent
 };

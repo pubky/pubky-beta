@@ -16,20 +16,13 @@ interface NavigatorParentProps {
   };
 }
 
-export default function NavigatorParent({
-  parentPost,
-}: {
-  parentPost: string;
-}) {
+export default function NavigatorParent({ parentPost }: { parentPost: string }) {
   const { pubky } = usePubkyClientContext();
   const [parentURIs, setParentURIs] = useState<string[]>([]);
   const [parentPosts, setParentPosts] = useState<NavigatorParentProps>({});
 
   useEffect(() => {
-    const fetchParentURIs = async (
-      parentURI: string,
-      collectedURIs: string[],
-    ): Promise<string[]> => {
+    const fetchParentURIs = async (parentURI: string, collectedURIs: string[]): Promise<string[]> => {
       if (!parentURI) return collectedURIs;
       collectedURIs.push(parentURI);
       try {
@@ -40,10 +33,7 @@ export default function NavigatorParent({
           const postId = parsed.resource_id!;
           const parentPost = await getPost(authorId, postId, pubky ?? '');
           if (parentPost?.relationships?.replied) {
-            return await fetchParentURIs(
-              parentPost?.relationships?.replied,
-              collectedURIs,
-            );
+            return await fetchParentURIs(parentPost?.relationships?.replied, collectedURIs);
           }
         }
       } catch (error) {
@@ -74,7 +64,7 @@ export default function NavigatorParent({
       try {
         setParentPosts((prevState) => ({
           ...prevState,
-          [parentURI]: { post: null, loading: true },
+          [parentURI]: { post: null, loading: true }
         }));
         const parsed = parse_uri(parentURI);
 
@@ -84,14 +74,14 @@ export default function NavigatorParent({
           const post = await getPost(authorId, postId, pubky ?? '');
           setParentPosts((prevState) => ({
             ...prevState,
-            [parentURI]: { post: post || null, loading: false },
+            [parentURI]: { post: post || null, loading: false }
           }));
         }
       } catch (error) {
         console.error('Error fetching parent post:', error);
         setParentPosts((prevState) => ({
           ...prevState,
-          [parentURI]: { post: null, loading: false },
+          [parentURI]: { post: null, loading: false }
         }));
       }
     };
@@ -104,9 +94,7 @@ export default function NavigatorParent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentURIs, parentPosts]);
 
-  const allParentPostsLoaded = parentURIs.every(
-    (uri) => parentPosts[uri]?.loading === false,
-  );
+  const allParentPostsLoaded = parentURIs.every((uri) => parentPosts[uri]?.loading === false);
 
   if (!allParentPostsLoaded) {
     return <Skeleton.Simple />;

@@ -8,19 +8,9 @@ interface SessionExpiredProps {
   className?: string;
 }
 
-export default function SessionExpired({
-  show,
-  setShow,
-  title,
-  className,
-}: SessionExpiredProps) {
+export default function SessionExpired({ show, setShow, title, className }: SessionExpiredProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Session expired'}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Session expired'} className={className}>
       <ContentSessionExpired />
     </BottomSheet.Root>
   );

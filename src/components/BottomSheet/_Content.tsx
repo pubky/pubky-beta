@@ -18,7 +18,7 @@ const icons = {
   videos: <Icon.Play />,
   links: <Icon.LinkSimple />,
   files: <Icon.DownloadSimple />,
-  loading: <Icon.LoadingSpin className="animate-spin" />,
+  loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
 export default function Content({ title, className }: ContentProps) {
@@ -27,7 +27,7 @@ export default function Content({ title, className }: ContentProps) {
   const [dropdownValue, setDropdownValue] = useState({
     value: content || 'all',
     textOption: content?.charAt(0).toUpperCase() + content?.slice(1) || 'All',
-    iconOption: icons[content] || icons.all,
+    iconOption: icons[content] || icons.all
   });
 
   return (
@@ -37,24 +37,13 @@ export default function Content({ title, className }: ContentProps) {
         variant="medium"
         onClick={() => setShow(true)}
       >
-        <span className="mr-1">{dropdownValue.iconOption}</span>{' '}
-        {dropdownValue.textOption}
-        <div
-          className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}
-        >
+        <span className="mr-1">{dropdownValue.iconOption}</span> {dropdownValue.textOption}
+        <div className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}>
           <Icon.DropdownIcon />
         </div>
       </Typography.Body>
-      <BottomSheet.Root
-        show={show}
-        setShow={setShow}
-        title={title}
-        className={className}
-      >
-        <ContentType
-          setDropdownValue={setDropdownValue}
-          setOpenDropdown={setShow}
-        />
+      <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
+        <ContentType setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
       </BottomSheet.Root>
     </>
   );

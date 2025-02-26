@@ -3,14 +3,7 @@
 import Tooltip from '@/components/Tooltip';
 import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
-import {
-  Button,
-  Icon,
-  Post as PostUI,
-  PostUtil,
-  Tooltip as TooltipUI,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, Post as PostUI, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import React, { useState } from 'react';
 import { useTagsLogic } from './TagsUtils';
@@ -24,17 +17,8 @@ interface TagsProps {
 
 export default function TagsLargeView({ post }: TagsProps) {
   const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
-  const isArticle =
-    String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
-  const {
-    tags,
-    profileImages,
-    loadingTags,
-    handleAddTag,
-    handleDeleteTag,
-    openModal,
-    isMobile,
-  } = useTagsLogic(post);
+  const isArticle = String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
+  const { tags, profileImages, loadingTags, handleAddTag, handleDeleteTag, openModal, isMobile } = useTagsLogic(post);
   const { pubky } = usePubkyClientContext();
 
   return (
@@ -43,9 +27,7 @@ export default function TagsLargeView({ post }: TagsProps) {
         {isArticle ? (
           <div className="flex gap-3 items-center">
             <Icon.Tag size="14" color="gray" />
-            <Typography.Label className="text-opacity-30">
-              Tags Article
-            </Typography.Label>
+            <Typography.Label className="text-opacity-30">Tags Article</Typography.Label>
           </div>
         ) : (
           <PostUI.Time className="grow-0 justify-start">
@@ -53,15 +35,8 @@ export default function TagsLargeView({ post }: TagsProps) {
           </PostUI.Time>
         )}
         {post?.details?.author === pubky && !isArticle && (
-          <TooltipUI.Root
-            delay={50}
-            tagId="1"
-            setShowTooltip={setShowTooltipPostChecked}
-          >
-            <div
-              id="post-status"
-              className="inline-flex items-center ml-2 top-[7px] relative"
-            >
+          <TooltipUI.Root delay={50} tagId="1" setShowTooltip={setShowTooltipPostChecked}>
+            <div id="post-status" className="inline-flex items-center ml-2 top-[7px] relative">
               <Icon.Check size="20" color="#00BA7C" />
               <div
                 id={
@@ -73,22 +48,12 @@ export default function TagsLargeView({ post }: TagsProps) {
               >
                 <Icon.Check
                   size="20"
-                  color={
-                    post?.cached === 'nexus' || post?.cached === undefined
-                      ? '#00BA7C'
-                      : '#A3A3A3'
-                  }
-                  opacity={
-                    post?.cached === 'nexus' || post?.cached === undefined
-                      ? 1
-                      : 0.2
-                  }
+                  color={post?.cached === 'nexus' || post?.cached === undefined ? '#00BA7C' : '#A3A3A3'}
+                  opacity={post?.cached === 'nexus' || post?.cached === undefined ? 1 : 0.2}
                 />
               </div>
             </div>
-            {showTooltipPostChecked && !isMobile && (
-              <Tooltip.CheckedPost cached={post?.cached} />
-            )}
+            {showTooltipPostChecked && !isMobile && <Tooltip.CheckedPost cached={post?.cached} />}
           </TooltipUI.Root>
         )}
       </div>
@@ -101,8 +66,7 @@ export default function TagsLargeView({ post }: TagsProps) {
             .map((fromItem) => profileImages[fromItem])
             .filter(Boolean);
 
-          const extraImagesCount =
-            tagObj?.taggers_count - displayedImages.length;
+          const extraImagesCount = tagObj?.taggers_count - displayedImages.length;
 
           return (
             <React.Fragment key={`${index}-${tagObj?.label}`}>
@@ -111,9 +75,7 @@ export default function TagsLargeView({ post }: TagsProps) {
                   <PostUtil.Tag
                     id={`tag-${index}`}
                     clicked={isTagFound}
-                    color={
-                      tagObj?.label && Utils.generateRandomColor(tagObj?.label)
-                    }
+                    color={tagObj?.label && Utils.generateRandomColor(tagObj?.label)}
                     onClick={() =>
                       pubky
                         ? isTagFound
@@ -127,11 +89,7 @@ export default function TagsLargeView({ post }: TagsProps) {
                       {loadingTags === tagObj?.label ? (
                         <Icon.LoadingSpin size="12" />
                       ) : (
-                        <Typography.Caption
-                          id={`tag-${index}-count`}
-                          variant="bold"
-                          className="text-opacity-60"
-                        >
+                        <Typography.Caption id={`tag-${index}-count`} variant="bold" className="text-opacity-60">
                           {tagObj?.taggers_count}
                         </Typography.Caption>
                       )}
@@ -159,11 +117,7 @@ export default function TagsLargeView({ post }: TagsProps) {
                       uri={image}
                     />
                   ))}
-                  {extraImagesCount > 0 && (
-                    <PostUtil.Counter className="-ml-2">
-                      +{extraImagesCount}
-                    </PostUtil.Counter>
-                  )}
+                  {extraImagesCount > 0 && <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>}
                 </div>
               </PostUI.Footer>
             </React.Fragment>

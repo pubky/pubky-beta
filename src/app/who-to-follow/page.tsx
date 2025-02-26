@@ -5,7 +5,7 @@ import { RecommendedUsers } from './components';
 
 export const metadata = getSeoMetadata({
   title: 'Who to Follow | Pubky.app',
-  description: 'Pubky.app - Unlock the web.',
+  description: 'Pubky.app - Unlock the web.'
 });
 
 export default function Index() {

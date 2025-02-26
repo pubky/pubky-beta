@@ -1,4 +1,4 @@
-import { CheckIndexed } from "./commands";
+import { CheckIndexed } from './commands';
 
 // select an emoji using the emoji picker by its data-full-name attribute
 export const selectEmojis = (emojiName: string[]) => {
@@ -35,19 +35,14 @@ export const latestPostInFeedContentEq = (postContent: string) => {
 };
 
 // check how many images are in a post
-export const checkNumberOfImagesInPost = (
-  expectedNumberOfImages: number,
-  idx: number,
-) => {
+export const checkNumberOfImagesInPost = (expectedNumberOfImages: number, idx: number) => {
   cy.get('#posts-feed')
     .find('#timeline')
     .children()
     .should('have.length.gte', 1)
     .eq(idx)
     .within(() => {
-      cy.get('#post-content-text')
-        .find('img')
-        .should('have.length', expectedNumberOfImages);
+      cy.get('#post-content-text').find('img').should('have.length', expectedNumberOfImages);
     });
 };
 
@@ -59,37 +54,23 @@ export const latestPostHasImages = (expectedNumberOfImages: number) => {
   checkNumberOfImagesInPost(expectedNumberOfImages, 0);
 };
 
-export const createQuickPost = (
-  postContent: string,
-  expectedPostLength?: number,
-) => {
+export const createQuickPost = (postContent: string, expectedPostLength?: number) => {
   cy.get('#quick-post-create-content')
     .should('be.visible')
     .within(() => {
       // input post content within quick post area
-      cy.get('textarea')
-        .should('have.value', '')
-        .get('textarea')
-        .type(postContent);
+      cy.get('textarea').should('have.value', '').get('textarea').type(postContent);
       // verify displayed content length
       cy.log('postContent.length: ', postContent.length);
       expectedPostLength
-        ? cy
-            .get('#content-length')
-            .innerTextShouldEq(`${expectedPostLength} / 1000`)
-        : cy
-            .get('#content-length')
-            .innerTextShouldEq(`${postContent.length} / 1000`);
+        ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 1000`)
+        : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
       // submit
       cy.get('#post-btn').click();
     });
 };
 
-export const createQuickPostWithTags = (
-  postContent: string,
-  tags: string[],
-  expectedPostLength?: number,
-) => {
+export const createQuickPostWithTags = (postContent: string, tags: string[], expectedPostLength?: number) => {
   cy.get('#quick-post-create-content').within(() => {
     cy.get('textarea').should('have.value', '');
     // type the post
@@ -100,12 +81,8 @@ export const createQuickPostWithTags = (
 
     // check displayed content length
     expectedPostLength
-      ? cy
-          .get('#content-length')
-          .innerTextShouldEq(`${expectedPostLength} / 1000`)
-      : cy
-          .get('#content-length')
-          .innerTextShouldEq(`${postContent.length} / 1000`);
+      ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 1000`)
+      : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
 
     // submit the post
     cy.get('#post-btn').click();
@@ -118,7 +95,7 @@ export const replyToPost = ({
   postContent,
   filterText = '',
   postIdx = 0,
-  waitForIndexed = CheckIndexed.Yes,
+  waitForIndexed = CheckIndexed.Yes
 }: {
   replyContent: string;
   postContent?: string;
@@ -149,7 +126,7 @@ export const repostPost = ({
   waitForIndexed,
   postContent,
   filterText,
-  postIdx,
+  postIdx
 }: {
   repostContent?: string;
   waitForIndexed?: CheckIndexed;
@@ -209,11 +186,7 @@ export const fastTagPostInFeed = (tags: string[], postContent: string) => {
 
 // menuBtnIdx: 0 for original post, 1 for reply
 
-export const editPost = (
-  newPostContent: string,
-  postIdx = 0,
-  menuBtnIdx = 0,
-) => {
+export const editPost = (newPostContent: string, postIdx = 0, menuBtnIdx = 0) => {
   // find post and click menu button
   cy.findPostInFeed(postIdx).within(() => {
     // '[id="menu-btn"]' finds all with id
@@ -221,11 +194,7 @@ export const editPost = (
     cy.get('#post-tooltip-menu')
       .should('be.visible')
       .within(() => {
-        cy.get('#edit-post')
-          .should('be.visible')
-          .innerTextShouldEq('Edit post')
-          .get('#edit-post')
-          .click();
+        cy.get('#edit-post').should('be.visible').innerTextShouldEq('Edit post').get('#edit-post').click();
       });
   });
 
@@ -248,11 +217,7 @@ export const deletePost = (postIdx = 0, menuBtnIdx = 0) => {
     cy.get('#post-tooltip-menu')
       .should('be.visible')
       .within(() => {
-        cy.get('#delete-post')
-          .should('be.visible')
-          .innerTextShouldEq('Delete post')
-          .get('#delete-post')
-          .click();
+        cy.get('#delete-post').should('be.visible').innerTextShouldEq('Delete post').get('#delete-post').click();
       });
   });
 
@@ -285,10 +250,7 @@ export const checkPostIsNotAtTopOfFeed = (postContent: string) => {
     });
 };
 
-export const checkPostIsAtIndexInFeed = (
-  postContent: string,
-  index: number,
-) => {
+export const checkPostIsAtIndexInFeed = (postContent: string, index: number) => {
   cy.get('#posts-feed')
     .find('#timeline')
     .children()
@@ -301,15 +263,8 @@ export const checkPostIsAtIndexInFeed = (
 
 // wait for feed timeline to not show "No posts yet" or "Loading"
 export const waitForFeedToLoad = (seconds: number = 6) => {
-  const checkTimelineRecursively = (
-    attempts: number,
-    firstCheck: boolean = true,
-  ) => {
-    if (attempts <= 0)
-      assert(
-        false,
-        "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds",
-      );
+  const checkTimelineRecursively = (attempts: number, firstCheck: boolean = true) => {
+    if (attempts <= 0) assert(false, "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds");
 
     cy.get('#posts-feed')
       .find('#timeline')
@@ -334,12 +289,14 @@ export const waitForBookmarksToLoad = (seconds: number = 6) => {
   const checkBookmarksRecursively = (attempts: number, firstCheck: boolean = true) => {
     if (attempts <= 0) assert(false, "Bookmarks still show 'Save posts for later' or 'Loading' after 5 seconds");
 
-    cy.get('#bookmarked-posts').invoke('text').then((text) => {
-      if (text.includes('Save posts for later') || text.includes('Loading')) {
-        firstCheck ? cy.wait(200) : cy.wait(1000);
-        checkBookmarksRecursively(attempts - 1, false);
-      }
-    });
+    cy.get('#bookmarked-posts')
+      .invoke('text')
+      .then((text) => {
+        if (text.includes('Save posts for later') || text.includes('Loading')) {
+          firstCheck ? cy.wait(200) : cy.wait(1000);
+          checkBookmarksRecursively(attempts - 1, false);
+        }
+      });
   };
   checkBookmarksRecursively(seconds);
 };
@@ -366,9 +323,7 @@ const findAndCountPostsInFeed = (filterText: string, expectedCount: number) => {
     .children()
     .then(($posts) => {
       // Filter posts by text and assert none are found
-      const matchingPosts = $posts.filter((_idx, element) =>
-        element.innerText.includes(filterText),
-      );
+      const matchingPosts = $posts.filter((_idx, element) => element.innerText.includes(filterText));
 
       // Assert that the correct number of posts are found with the provided text
       expect(matchingPosts).to.have.length(expectedCount);
@@ -390,7 +345,7 @@ export const addImage = () => {
     const imagePath = Cypress.config('fixturesFolder') + '/mustache-you.png';
     cy.get('#fileInput').selectFile(
       imagePath,
-      { force: true }, // force to bypass visibility check of hidden input field
+      { force: true } // force to bypass visibility check of hidden input field
     );
   });
 };

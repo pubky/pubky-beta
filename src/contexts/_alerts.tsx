@@ -15,17 +15,14 @@ type AlertContextType = {
 };
 
 const AlertContext = createContext<AlertContextType>({
-  addAlert: () => {},
+  addAlert: () => {}
 });
 
 export function AlertWrapper({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
   const [alerts, setAlerts] = useState<AlertMessage[]>([]);
 
-  const addAlert = (
-    content: ReactNode,
-    variant: 'default' | 'warning' = 'default',
-  ) => {
+  const addAlert = (content: ReactNode, variant: 'default' | 'warning' = 'default') => {
     const id = Date.now();
     setAlerts((prev) => [...prev, { id, content, variant }]);
 

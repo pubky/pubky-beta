@@ -20,27 +20,18 @@ interface LinksProps {
   loading?: boolean;
 }
 
-export default function Links({
-  links,
-  setLinks,
-  errors,
-  loading,
-}: LinksProps) {
+export default function Links({ links, setLinks, errors, loading }: LinksProps) {
   const { openModal } = useModal();
 
   const handleRemoveLink = (indexToRemove: number) => {
     setLinks((prevLinks) => {
-      const updatedLinks = prevLinks.filter(
-        (_, index) => index !== indexToRemove,
-      );
+      const updatedLinks = prevLinks.filter((_, index) => index !== indexToRemove);
       return updatedLinks;
     });
   };
 
   const extractUsername = (url: string): string => {
-    const matchedSocial = socialLinks.find((social) =>
-      url.startsWith(social.url),
-    );
+    const matchedSocial = socialLinks.find((social) => url.startsWith(social.url));
     if (matchedSocial) {
       return url.replace(matchedSocial.url, '');
     }
@@ -64,11 +55,7 @@ export default function Links({
                 error={errors[`link${index}` as keyof typeof errors]}
                 action={
                   <div
-                    className={`${
-                      errors[`link${index}` as keyof typeof errors]
-                        ? 'mt-0'
-                        : 'mt-2'
-                    } cursor-pointer`}
+                    className={`${errors[`link${index}` as keyof typeof errors] ? 'mt-0' : 'mt-2'} cursor-pointer`}
                     onClick={() => handleRemoveLink(index)}
                   >
                     <Icon.Trash color="gray" />
@@ -85,17 +72,8 @@ export default function Links({
           <Button.Transparent
             id="edit-profile-add-link-btn"
             className="w-[100px] mt-2 px-3 py-2 h-8"
-            icon={
-              <Icon.LinkSimple
-                size="16"
-                color={links.length > 3 ? 'gray' : 'white'}
-              />
-            }
-            onClick={
-              links.length > 3
-                ? undefined
-                : () => openModal('link', { links: links, setLinks: setLinks })
-            }
+            icon={<Icon.LinkSimple size="16" color={links.length > 3 ? 'gray' : 'white'} />}
+            onClick={links.length > 3 ? undefined : () => openModal('link', { links: links, setLinks: setLinks })}
             disabled={links.length > 3}
           >
             Add link

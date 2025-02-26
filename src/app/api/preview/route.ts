@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const response = await axios.get(url);
     const html = response.data;
     return new Response(html, {
-      headers: { 'Content-Type': 'text/html' },
+      headers: { 'Content-Type': 'text/html' }
     });
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -21,9 +21,7 @@ export async function GET(req: Request) {
       const statusText = error.response?.statusText || 'Internal Server Error';
       const errorMessage = error.message;
 
-      console.error(
-        `AxiosError: ${statusCode} ${statusText} - ${errorMessage}`,
-      );
+      console.error(`AxiosError: ${statusCode} ${statusText} - ${errorMessage}`);
 
       return NextResponse.json(
         {
@@ -31,17 +29,14 @@ export async function GET(req: Request) {
           details: {
             statusCode,
             statusText,
-            message: errorMessage,
-          },
+            message: errorMessage
+          }
         },
-        { status: statusCode },
+        { status: statusCode }
       );
     }
 
     console.error('Unexpected error:', error);
-    return NextResponse.json(
-      { error: 'An unexpected error occurred' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }

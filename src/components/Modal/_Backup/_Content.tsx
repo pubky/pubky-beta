@@ -21,9 +21,7 @@ interface BackupProps {
 }
 
 const passwordSchema = z.object({
-  password: z
-    .string()
-    .min(6, { message: 'Password must be at least 6 characters long' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters long' })
 });
 
 export default function ContentBackup({
@@ -34,7 +32,7 @@ export default function ContentBackup({
   showWords,
   setShowWords,
   success,
-  setSuccess,
+  setSuccess
 }: BackupProps) {
   const { getRecoveryFile, setSeed, setMnemonic } = usePubkyClientContext();
   const [password, setPassword] = useState('');
@@ -43,13 +41,7 @@ export default function ContentBackup({
   const [phrase, setPhrase] = useState(false);
   const [file, setFile] = useState(false);
 
-  const handleDownloadRecoveryFile = async ({
-    recoveryFile,
-    filename,
-  }: {
-    recoveryFile: Buffer;
-    filename: string;
-  }) => {
+  const handleDownloadRecoveryFile = async ({ recoveryFile, filename }: { recoveryFile: Buffer; filename: string }) => {
     try {
       const element = document.createElement('a');
 
@@ -76,7 +68,7 @@ export default function ContentBackup({
       setErrors('');
 
       const result = passwordSchema.safeParse({
-        password,
+        password
       });
 
       if (!result.success) {
@@ -92,7 +84,7 @@ export default function ContentBackup({
 
       await handleDownloadRecoveryFile({
         recoveryFile: recoveryFileResponse,
-        filename: 'recovery_key.pkarr',
+        filename: 'recovery_key.pkarr'
       });
 
       Utils.storage.remove('seed');
@@ -130,21 +122,15 @@ export default function ContentBackup({
         />
       ) : (
         <>
-          <Typography.Body
-            className="text-opacity-80 my-4"
-            variant="medium-light"
-          >
-            Please choose how you want to back up your account. For security
-            reasons, your recovery phrase or recovery file{' '}
+          <Typography.Body className="text-opacity-80 my-4" variant="medium-light">
+            Please choose how you want to back up your account. For security reasons, your recovery phrase or recovery
+            file{' '}
             <strong className="font-bold text-white text-opacity-100">
               will be deleted once you complete the backup.
             </strong>
           </Typography.Body>
           <div className="flex flex-col sm:flex-row gap-3 md:gap-6">
-            <Card.Primary
-              title="Recovery Phrase"
-              text="Write down 12 words to recover your account at a later date."
-            >
+            <Card.Primary title="Recovery Phrase" text="Write down 12 words to recover your account at a later date.">
               <div className="hidden md:flex justify-center items-center my-10">
                 <Icon.FileText size="128" />
               </div>
@@ -157,10 +143,7 @@ export default function ContentBackup({
                 Recovery Phrase
               </Button.Large>
             </Card.Primary>
-            <Card.Primary
-              title="Recovery File"
-              text="Download a password encrypted, digital file to your computer."
-            >
+            <Card.Primary title="Recovery File" text="Download a password encrypted, digital file to your computer.">
               <div className="hidden md:flex justify-center items-center my-10">
                 <Icon.DownloadSimple size="128" />
               </div>

@@ -5,5 +5,5 @@ import SignIn from './_SignIn';
 export const Card = {
   RecoveryFile,
   RecoveryPhrase,
-  SignIn,
+  SignIn
 };

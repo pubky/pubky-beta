@@ -8,11 +8,7 @@ interface CreateReplyProps {
   post: PostView;
 }
 
-export default function CreateReply({
-  showModal,
-  setShowModal,
-  post,
-}: CreateReplyProps) {
+export default function CreateReply({ showModal, setShowModal, post }: CreateReplyProps) {
   return (
     <Modal.Root
       show={showModal}

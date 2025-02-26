@@ -30,7 +30,7 @@ export const Timeline = () => {
     sort === 'popularity' ? skip : undefined,
     sort,
     searchTags,
-    content,
+    content
   );
 
   const fetchPosts = async () => {
@@ -58,9 +58,7 @@ export const Timeline = () => {
       setTimeline((prev) => {
         const newPosts = data.filter((post) => {
           const isMuted = mutedUsers?.includes(post?.details?.author);
-          const isAlreadyInTimeline = prev.some(
-            (p) => p.details.id === post.details.id,
-          );
+          const isAlreadyInTimeline = prev.some((p) => p.details.id === post.details.id);
           return !isMuted && !isAlreadyInTimeline;
         });
         return [...prev, ...newPosts];
@@ -86,11 +84,7 @@ export const Timeline = () => {
     <div className="flex flex-col gap-3">
       {timeline.map((post) => (
         <div key={post.details.id} className="flex gap-2 items-center">
-          <Post
-            largeView={!isMobile && layout === 'wide'}
-            key={`post-${post.details.id}`}
-            post={post}
-          />
+          <Post largeView={!isMobile && layout === 'wide'} key={`post-${post.details.id}`} post={post} />
         </div>
       ))}
       {(isLoading || fetching) && (
@@ -106,12 +100,7 @@ export const Timeline = () => {
           description="Try searching for something else."
         >
           <div className="absolute top-32 z-0">
-            <Image
-              alt="not-found-search"
-              width={477}
-              height={271}
-              src="/images/webp/not-found/search.webp"
-            />
+            <Image alt="not-found-search" width={477} height={271} src="/images/webp/not-found/search.webp" />
           </div>
         </ContentNotFound>
       )}

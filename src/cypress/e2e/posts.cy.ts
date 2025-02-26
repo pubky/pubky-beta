@@ -1,20 +1,22 @@
 import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 // registers the cy.slowDown and cy.slowDownEnd commands
-import 'cypress-slow-down/commands'
-import { latestPostInFeedContentEq,
-        deletePost,
-        createQuickPost,
-        checkPostIsNotAtTopOfFeed,
-        repostPost,
-        fastTagPostInFeed,
-        replyToPost,
-        waitForFeedToLoad,
-        selectEmojis,
-        createQuickPostWithTags,
-        fastTagWhilstCreatingPost,
-        addImage,
-        waitForBookmarksToLoad} from '../support/posts';
+import 'cypress-slow-down/commands';
+import {
+  latestPostInFeedContentEq,
+  deletePost,
+  createQuickPost,
+  checkPostIsNotAtTopOfFeed,
+  repostPost,
+  fastTagPostInFeed,
+  replyToPost,
+  waitForFeedToLoad,
+  selectEmojis,
+  createQuickPostWithTags,
+  fastTagWhilstCreatingPost,
+  addImage,
+  waitForBookmarksToLoad
+} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from '../support/commands';
 
@@ -29,10 +31,7 @@ describe('posts', () => {
     // create profile to post from
     cy.onboardAsNewUser(username, 'Big on posting.');
     cy.backupRecoveryFile();
-    cy.renameFile(
-      backupDownloadFilePath(),
-      backupDownloadFilePath(username),
-    );
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(username));
   });
 
   beforeEach(() => {
@@ -129,9 +128,7 @@ describe('posts', () => {
       // type the rest of the post
       cy.get('textarea').type(postContentWithoutEmoji);
       // check displayed content length
-      cy.get('#content-length').innerTextShouldEq(
-        `${postContent.length} / 1000`,
-      );
+      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
       // submit
       cy.get('#post-btn').click();
       // wait for textarea to be cleared to ensure post is submitted
@@ -196,12 +193,7 @@ describe('posts', () => {
     const otherUsername = 'Jeremy The Poser';
     const fullUsername = uniquePrefix + '_' + otherUsername;
     const pubkyAlias = 'jPubky';
-    cy.onboardAsNewUser(
-      fullUsername,
-      'My account will be referenced in a post.',
-      SkipOnboardingSlides.Yes,
-      pubkyAlias,
-    );
+    cy.onboardAsNewUser(fullUsername, 'My account will be referenced in a post.', SkipOnboardingSlides.Yes, pubkyAlias);
     cy.signOut(HasBackedUp.No);
     // sign back in as poster
     cy.signIn(backupDownloadFilePath(username));
@@ -310,12 +302,12 @@ describe('posts', () => {
 
   enum ExpectedTags {
     AllThree,
-    WithMiddleRemoved,
+    WithMiddleRemoved
   }
 
   enum ExpectedOrder {
     Alphanumeric,
-    ReverseAlphanumeric,
+    ReverseAlphanumeric
   }
 
   [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
@@ -331,58 +323,37 @@ describe('posts', () => {
         });
       };
 
-      const checkTagsAreDisplayed = (
-        expectedTags: ExpectedTags,
-        expectedOrder: ExpectedOrder,
-      ) => {
+      const checkTagsAreDisplayed = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
         // length is 4 because of the '+' button
         cy.get('#tags')
           .children()
           .its('length')
-          .should(
-            'eq',
-            expectedTags === ExpectedTags.WithMiddleRemoved ? 3 : 4,
-          );
+          .should('eq', expectedTags === ExpectedTags.WithMiddleRemoved ? 3 : 4);
         cy.get('#tags').within(($tags) => {
-          cy.get('#tag-0').innerTextShouldContain(
-            expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1,
-          );
+          cy.get('#tag-0').innerTextShouldContain(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1);
           expectedTags === ExpectedTags.WithMiddleRemoved
             ? cy.wrap($tags).innerTextShouldNotContain(tag2)
             : cy.get('#tag-1').innerTextShouldContain(tag2);
-          cy.get(
-            expectedTags === ExpectedTags.WithMiddleRemoved
-              ? '#tag-1'
-              : '#tag-2',
-          ).innerTextShouldContain(
-            expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3,
+          cy.get(expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2').innerTextShouldContain(
+            expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3
           );
         });
       };
 
-      const checkTagCounters = (
-        expectedTags: ExpectedTags,
-        expectedOrder: ExpectedOrder,
-      ) => {
+      const checkTagCounters = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
         cy.get('#tags').within(() => {
           // ordered reverse alphanumeric
           cy.get('#tag-0')
             .should('exist')
-            .contains(
-              expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1,
-            );
+            .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1);
           cy.get('#tag-0-count').should('exist').contains('1');
           cy.get('#tag-1').should('exist').contains(tag2);
           cy.get('#tag-1-count')
             .should('exist')
-            .contains(
-              expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1',
-            );
+            .contains(expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1');
           cy.get('#tag-2')
             .should('exist')
-            .contains(
-              expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3,
-            );
+            .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
           cy.get('#tag-2-count').should('exist').contains('1');
         });
       };
@@ -394,17 +365,11 @@ describe('posts', () => {
 
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
         // check tags are displayed within the latest post in the feed
-        checkTagsAreDisplayed(
-          ExpectedTags.AllThree,
-          ExpectedOrder.Alphanumeric,
-        );
+        checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
 
         // verify tag can be removed and added back
         clickMiddleTag();
-        checkTagCounters(
-          ExpectedTags.WithMiddleRemoved,
-          ExpectedOrder.Alphanumeric,
-        );
+        checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.Alphanumeric);
         clickMiddleTag();
         checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
       });
@@ -415,17 +380,11 @@ describe('posts', () => {
 
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
         // check tags are still displayed
-        checkTagsAreDisplayed(
-          ExpectedTags.AllThree,
-          ExpectedOrder.ReverseAlphanumeric,
-        );
+        checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
 
         // remove a tag from the post
         clickMiddleTag();
-        checkTagCounters(
-          ExpectedTags.WithMiddleRemoved,
-          ExpectedOrder.ReverseAlphanumeric,
-        );
+        checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
       });
 
       // refresh page before checking tag is still removed
@@ -434,10 +393,7 @@ describe('posts', () => {
 
       // check tag is still removed
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
-        checkTagsAreDisplayed(
-          ExpectedTags.WithMiddleRemoved,
-          ExpectedOrder.ReverseAlphanumeric,
-        );
+        checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
       });
     });
   });
@@ -448,51 +404,33 @@ describe('posts', () => {
     const tag2 = 'cassava';
     const tag3 = 'feijoada';
 
-    const checkTagsAreDisplayed = (
-      expectedTags: ExpectedTags,
-      expectedOrder: ExpectedOrder,
-    ) => {
+    const checkTagsAreDisplayed = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
       cy.get('#post-container').within(($post) => {
         cy.get('#tag-0')
           .should('be.visible')
-          .contains(
-            expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1,
-          );
+          .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1);
         expectedTags === ExpectedTags.WithMiddleRemoved
           ? cy.wrap($post).innerTextShouldNotContain(tag2)
           : cy.get('#tag-1').should('be.visible').contains(tag2);
-        cy.get(
-          expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2',
-        )
+        cy.get(expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2')
           .should('be.visible')
-          .contains(
-            expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3,
-          );
+          .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
       });
     };
 
-    const checkTagCounters = (
-      expectedTags: ExpectedTags,
-      expectedOrder: ExpectedOrder,
-    ) => {
+    const checkTagCounters = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
       cy.get('#post-container').within(() => {
         cy.get('#tag-0')
           .should('exist')
-          .contains(
-            expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1,
-          );
+          .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1);
         cy.get('#tag-0-count').should('exist').contains('1');
         cy.get('#tag-1').should('exist').contains(tag2);
         cy.get('#tag-1-count')
           .should('exist')
-          .contains(
-            expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1',
-          );
+          .contains(expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1');
         cy.get('#tag-2')
           .should('exist')
-          .contains(
-            expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3,
-          );
+          .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
         cy.get('#tag-2-count').should('exist').contains('1');
       });
     };
@@ -529,10 +467,7 @@ describe('posts', () => {
     // remove a tag from the post
     clickMiddleTag();
     checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
-    checkTagCounters(
-      ExpectedTags.WithMiddleRemoved,
-      ExpectedOrder.Alphanumeric,
-    );
+    checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.Alphanumeric);
 
     // add the tag back
     clickMiddleTag();
@@ -543,10 +478,7 @@ describe('posts', () => {
     cy.reload();
 
     // check tags are still displayed
-    checkTagsAreDisplayed(
-      ExpectedTags.AllThree,
-      ExpectedOrder.ReverseAlphanumeric,
-    );
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
     checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
 
     // remove the tag from the post
@@ -556,10 +488,7 @@ describe('posts', () => {
     cy.reload();
 
     // check the tag is removed
-    checkTagsAreDisplayed(
-      ExpectedTags.WithMiddleRemoved,
-      ExpectedOrder.ReverseAlphanumeric,
-    );
+    checkTagsAreDisplayed(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
   });
 
   it('can bookmark multiple posts then remove bookmarks', () => {
@@ -582,10 +511,12 @@ describe('posts', () => {
     cy.get('#header-bookmarks-btn').click();
     cy.location('pathname').should('eq', '/bookmarks');
 
-    cy.countPostsInBookmarks(1).findPostInBookmarks(0).within(() => {
-      // verify the post has been bookmarked
-      cy.get('#post-content-text').innerTextShouldEq(postContent1);
-    });
+    cy.countPostsInBookmarks(1)
+      .findPostInBookmarks(0)
+      .within(() => {
+        // verify the post has been bookmarked
+        cy.get('#post-content-text').innerTextShouldEq(postContent1);
+      });
 
     // navigate back to feed page
     cy.get('#header-logo').click();
@@ -608,20 +539,26 @@ describe('posts', () => {
     waitForBookmarksToLoad();
 
     // verify both posts are now bookmarked (note the most recently bookmarked is at the top)
-    cy.countPostsInBookmarks(2).findPostInBookmarks(0).within(() => {
-      cy.get('#post-content-text').innerTextShouldEq(postContent2);
-    });
+    cy.countPostsInBookmarks(2)
+      .findPostInBookmarks(0)
+      .within(() => {
+        cy.get('#post-content-text').innerTextShouldEq(postContent2);
+      });
     cy.findPostInBookmarks(1, 2).within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent1);
     });
 
     // remove bookmark from both posts
-    cy.countPostsInBookmarks(2).findPostInBookmarks(0).within(() => {
-      cy.get('#bookmark-btn').click();
-    });
-    cy.countPostsInBookmarks(2).findPostInBookmarks(1).within(() => {
-      cy.get('#bookmark-btn').click();
-    });
+    cy.countPostsInBookmarks(2)
+      .findPostInBookmarks(0)
+      .within(() => {
+        cy.get('#bookmark-btn').click();
+      });
+    cy.countPostsInBookmarks(2)
+      .findPostInBookmarks(1)
+      .within(() => {
+        cy.get('#bookmark-btn').click();
+      });
 
     // check both posts are still listed
     cy.countPostsInBookmarks(2);
@@ -637,7 +574,7 @@ describe('posts', () => {
     cy.wait(500);
 
     //verify the post is no longer bookmarked
-    cy.get('#bookmarked-posts').should('contain.text', 'Save posts for later')
+    cy.get('#bookmarked-posts').should('contain.text', 'Save posts for later');
   });
 
   [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
@@ -652,9 +589,7 @@ describe('posts', () => {
       repostPost({ repostContent, postContent, waitForIndexed });
 
       // check repost message is shown (before the alert disappears)
-      cy.get('#message-alert')
-        .should('be.visible')
-        .and('contain.text', 'Repost');
+      cy.get('#message-alert').should('be.visible').and('contain.text', 'Repost');
       cy.slowDown(defaultMs);
 
       // verify the repost with content is displayed correctly in feed
@@ -750,9 +685,7 @@ describe('posts', () => {
 
       // check reply is displayed in feed
       cy.findFirstPostInFeed(waitForIndexed).within(($post) => {
-        cy.wrap($post)
-          .find('#replies-container')
-          .innerTextShouldContain(replyContent);
+        cy.wrap($post).find('#replies-container').innerTextShouldContain(replyContent);
       });
 
       // delete the original post
@@ -766,42 +699,37 @@ describe('posts', () => {
     });
   });
 
-
-  const createArticle = (
-    articleTitle: string,
-    articleContent: string,
-    imageFilename?: string,
-    tags?: string[],
-  ) => {
-    cy.get('#article-modal').should('be.visible').within(() => {
-      cy.get('h1').contains('New Article');
-      cy.get('#article-title-input').type(articleTitle);
-      if (imageFilename) addImage();
-      cy.get('#article-content-input').find('.ql-editor').click().invoke('text', articleContent);
-      // todo: check counter
-      // need to click away from input to enable publish button (either by adding tags or clicking footer)
-      tags ? fastTagWhilstCreatingPost(tags) : cy.get('#footer-actions').click();
-      cy.get('#post-btn').should('be.enabled').click();
-    });
+  const createArticle = (articleTitle: string, articleContent: string, imageFilename?: string, tags?: string[]) => {
+    cy.get('#article-modal')
+      .should('be.visible')
+      .within(() => {
+        cy.get('h1').contains('New Article');
+        cy.get('#article-title-input').type(articleTitle);
+        if (imageFilename) addImage();
+        cy.get('#article-content-input').find('.ql-editor').click().invoke('text', articleContent);
+        // todo: check counter
+        // need to click away from input to enable publish button (either by adding tags or clicking footer)
+        tags ? fastTagWhilstCreatingPost(tags) : cy.get('#footer-actions').click();
+        cy.get('#post-btn').should('be.enabled').click();
+      });
   };
 
   enum ImageExpected {
     Yes = 1,
-    No = 0,
+    No = 0
   }
 
   const checkArticleInFeed = (
     articleTitle: string,
     articleContent: string,
     expectImage: ImageExpected,
-    tags?: string[],
+    tags?: string[]
   ) => {
     cy.findFirstPostInFeed().within(($post) => {
       cy.wrap($post).innerTextShouldContain(articleTitle);
       if (expectImage) cy.wrap($post).find('img').should('be.visible');
       cy.wrap($post).innerTextShouldContain(articleContent);
-      if (tags)
-        tags.forEach((tag) => cy.wrap($post).innerTextShouldContain(tag));
+      if (tags) tags.forEach((tag) => cy.wrap($post).innerTextShouldContain(tag));
     });
   };
 
@@ -818,14 +746,8 @@ describe('posts', () => {
         cy.get('#article-btn').click();
       });
 
-    createArticle(articleTitle, articleContent, 'mustache-you.png', [
-      tag1,
-      tag2,
-    ]);
-    checkArticleInFeed(articleTitle, articleContent, ImageExpected.Yes, [
-      tag1,
-      tag2,
-    ]);
+    createArticle(articleTitle, articleContent, 'mustache-you.png', [tag1, tag2]);
+    checkArticleInFeed(articleTitle, articleContent, ImageExpected.Yes, [tag1, tag2]);
   });
 
   it('can create an article from new post', () => {

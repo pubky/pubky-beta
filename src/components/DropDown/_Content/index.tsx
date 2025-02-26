@@ -17,31 +17,19 @@ export default function Content() {
     videos: <Icon.Play />,
     links: <Icon.LinkSimple />,
     files: <Icon.DownloadSimple size="24" />,
-    loading: <Icon.LoadingSpin className="animate-spin" />,
+    loading: <Icon.LoadingSpin className="animate-spin" />
   };
 
   const [dropdownValue, setDropdownValue] = useState({
     value: content || 'all',
     textOption: content?.charAt(0).toUpperCase() + content?.slice(1) || 'All',
-    iconOption: icons[content] || icons.all,
+    iconOption: icons[content] || icons.all
   });
 
   return (
-    <DropDown
-      open={openDropdown}
-      setOpen={setOpenDropdown}
-      value={dropdownValue}
-      labelIcon="Content"
-      type="text"
-    >
-      <DropDownUI.Content
-        className="right-0 mt-0 px-4 py-2"
-        isOpen={openDropdown}
-      >
-        <ContentType
-          setDropdownValue={setDropdownValue}
-          setOpenDropdown={setOpenDropdown}
-        />
+    <DropDown open={openDropdown} setOpen={setOpenDropdown} value={dropdownValue} labelIcon="Content" type="text">
+      <DropDownUI.Content className="right-0 mt-0 px-4 py-2" isOpen={openDropdown}>
+        <ContentType setDropdownValue={setDropdownValue} setOpenDropdown={setOpenDropdown} />
       </DropDownUI.Content>
     </DropDown>
   );

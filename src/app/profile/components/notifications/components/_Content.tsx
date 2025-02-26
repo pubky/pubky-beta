@@ -2,14 +2,7 @@
 
 import { Content, Typography } from '@social/ui-shared';
 import { useNotificationsContext, usePubkyClientContext } from '@/contexts';
-import {
-  CreatePost,
-  Header,
-  HotTags,
-  Sidebar,
-  Skeleton,
-  WhoFollow,
-} from '@/components';
+import { CreatePost, Header, HotTags, Sidebar, Skeleton, WhoFollow } from '@/components';
 import Notifications from './_Notification';
 import Root from './_Root';
 import { useState, useEffect } from 'react';
@@ -33,10 +26,7 @@ export default function Index() {
     }
   }, [loading]);
 
-  function renderNotifications(
-    notifications: NotificationView[],
-    loadingNotifications: boolean,
-  ) {
+  function renderNotifications(notifications: NotificationView[], loadingNotifications: boolean) {
     if (loadingNotifications) {
       return <Skeleton.Simple />;
     }

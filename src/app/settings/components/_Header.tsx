@@ -12,10 +12,7 @@ export function Header() {
       <Components.Header title="Settings" />
       <Components.HeaderMobile
         leftIcon={
-          <div
-            className="cursor-pointer"
-            onClick={() => router.push('/profile')}
-          >
+          <div className="cursor-pointer" onClick={() => router.push('/profile')}>
             <Icon.ArrowLeft size="20" />
           </div>
         }

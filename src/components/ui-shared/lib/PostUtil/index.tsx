@@ -5,5 +5,5 @@ import { Tag } from './_Tag';
 export const PostUtil = {
   Counter,
   Stat,
-  Tag,
+  Tag
 };

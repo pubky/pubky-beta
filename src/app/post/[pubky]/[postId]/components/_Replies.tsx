@@ -12,15 +12,8 @@ import { ReplyReplies } from './_ReplyReplies';
 import { PostView } from '@/types/Post';
 import { getPost } from '@/services/postService';
 
-export default function Replies({
-  pubkyAuthor,
-  postId,
-}: {
-  pubkyAuthor: string;
-  postId: string;
-}) {
-  const { pubky, setReplies, mutedUsers, replies, deletedPosts } =
-    usePubkyClientContext();
+export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; postId: string }) {
+  const { pubky, setReplies, mutedUsers, replies, deletedPosts } = usePubkyClientContext();
   const limit = 5;
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -32,14 +25,7 @@ export default function Replies({
   const [hasMore, setHasMore] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  const { data: repliesData, isLoading } = usePostReplies(
-    pubkyAuthor,
-    postId,
-    pubky,
-    undefined,
-    limit,
-    start,
-  );
+  const { data: repliesData, isLoading } = usePostReplies(pubkyAuthor, postId, pubky, undefined, limit, start);
 
   const { data: newRepliesData } = usePostReplies(
     pubkyAuthor,
@@ -50,29 +36,21 @@ export default function Replies({
     undefined,
     replies.length > 0 ? replies[0]?.details?.indexed_at + 1 : undefined,
     {
-      enabled: true,
+      enabled: true
       // refetchInterval: 3000,
-    },
+    }
   );
 
-  const mergeReplies = (
-    existingReplies: PostView[],
-    newReplies: PostView[],
-  ) => {
+  const mergeReplies = (existingReplies: PostView[], newReplies: PostView[]) => {
     const existingIds = new Set(existingReplies.map((r) => r.details.id));
-    return [
-      ...existingReplies,
-      ...newReplies.filter((reply) => !existingIds.has(reply.details.id)),
-    ];
+    return [...existingReplies, ...newReplies.filter((reply) => !existingIds.has(reply.details.id))];
   };
 
   const fetchReplies = useCallback(() => {
     if (isLoading || !repliesData) return;
 
     const filteredReplies = repliesData.filter(
-      (reply) =>
-        !mutedUsers?.includes(reply.details.author) &&
-        !deletedPosts.includes(reply.details.id),
+      (reply) => !mutedUsers?.includes(reply.details.author) && !deletedPosts.includes(reply.details.id)
     );
 
     if (filteredReplies.length > 0) {
@@ -81,9 +59,7 @@ export default function Replies({
         return updatedReplies.length !== prev.length ? updatedReplies : prev;
       });
       setReplies((prev) => mergeReplies(prev, filteredReplies));
-      setStart(
-        filteredReplies[filteredReplies.length - 1].details.indexed_at - 1,
-      );
+      setStart(filteredReplies[filteredReplies.length - 1].details.indexed_at - 1);
     }
 
     if (filteredReplies.length < limit) {
@@ -112,7 +88,7 @@ export default function Replies({
         (reply) =>
           !repliesLocal.some((r) => r.details.id === reply.details.id) &&
           !replies.some((r) => r.details.id === reply.details.id) &&
-          !deletedPosts.includes(reply.details.id),
+          !deletedPosts.includes(reply.details.id)
       );
 
       if (filteredNewReplies.length > 0) {
@@ -131,16 +107,11 @@ export default function Replies({
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          hasMore &&
-          !isLoading &&
-          !isInitialLoad
-        ) {
+        if (entries[0].isIntersecting && hasMore && !isLoading && !isInitialLoad) {
           fetchReplies();
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     if (loaderRef.current) {
@@ -148,14 +119,7 @@ export default function Replies({
     }
 
     return () => observer.disconnect();
-  }, [
-    loaderRef.current,
-    hasMore,
-    isLoading,
-    isInitialLoad,
-    start,
-    fetchReplies,
-  ]);
+  }, [loaderRef.current, hasMore, isLoading, isInitialLoad, start, fetchReplies]);
 
   useEffect(() => {
     return () => setReplies([]);
@@ -165,9 +129,7 @@ export default function Replies({
     const fetchNexusData = async () => {
       if (!replies.length) return;
 
-      const homeserverReplies = replies.filter(
-        (reply) => reply.cached === 'homeserver' || reply.cached === undefined,
-      );
+      const homeserverReplies = replies.filter((reply) => reply.cached === 'homeserver' || reply.cached === undefined);
       if (!homeserverReplies.length) return;
 
       try {
@@ -176,21 +138,17 @@ export default function Replies({
           homeserverReplies[0].details.id,
           pubky ?? '',
           undefined,
-          undefined,
+          undefined
         );
 
         if (!nexusData) return;
 
         // Update replies with nexus data
         setReplies((prev) => {
-          const existingReply = prev.find(
-            (p) => p.details.id === nexusData.details.id,
-          );
+          const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
 
           if (existingReply) {
-            return prev.map((p) =>
-              p.details.id === nexusData.details.id ? nexusData : p,
-            );
+            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
           }
 
           return prev;
@@ -198,14 +156,10 @@ export default function Replies({
 
         // Update local replies as well
         setRepliesLocal((prev) => {
-          const existingReply = prev.find(
-            (p) => p.details.id === nexusData.details.id,
-          );
+          const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
 
           if (existingReply) {
-            return prev.map((p) =>
-              p.details.id === nexusData.details.id ? nexusData : p,
-            );
+            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
           }
 
           return prev;
@@ -223,34 +177,22 @@ export default function Replies({
   return (
     <>
       {newRepliesCount > 0 && (
-        <Button.Medium
-          id="show-new-replies-button"
-          className="new-posts-button mt-3"
-          onClick={handleNewReplies}
-        >
+        <Button.Medium id="show-new-replies-button" className="new-posts-button mt-3" onClick={handleNewReplies}>
           Show {newRepliesCount} new {newRepliesCount > 1 ? 'replies' : 'reply'}
         </Button.Medium>
       )}
       {replies.length === 0 && newRepliesCount === 0 && !isLoading ? (
-        <Typography.Body className="text-opacity-50 text-center mt-[100px]">
-          No replies yet.
-        </Typography.Body>
+        <Typography.Body className="text-opacity-50 text-center mt-[100px]">No replies yet.</Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full mt-3">
           {replies.map((reply) => (
-            <div
-              key={`reply-${reply.details.id}`}
-              className="flex flex-col gap-3"
-            >
+            <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3">
               <Post post={reply} />
               {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
             </div>
           ))}
           {hasMore && (
-            <div
-              ref={loaderRef}
-              className="h-20 flex items-center justify-center"
-            >
+            <div ref={loaderRef} className="h-20 flex items-center justify-center">
               {isLoading && <Skeletons.Simple />}
             </div>
           )}

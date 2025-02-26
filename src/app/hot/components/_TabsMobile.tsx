@@ -8,20 +8,20 @@ const tabs = [
     id: 0,
     key: 'tags',
     icon: <Icon.Tag size="24" color="white" />,
-    label: 'Tags',
+    label: 'Tags'
   },
   {
     id: 1,
     key: 'popular',
     icon: <Icon.UsersLeft size="24" color="white" />,
-    label: 'Popular',
+    label: 'Popular'
   },
   {
     id: 2,
     key: 'posts',
     icon: <Icon.FileText size="24" color="white" />,
-    label: 'Posts',
-  },
+    label: 'Posts'
+  }
 ];
 
 const generateTabUrl = (key: string) => {
@@ -31,7 +31,7 @@ const generateTabUrl = (key: string) => {
 export default function TabsMobile({
   activeTab,
   setActiveTab,
-  loading,
+  loading
 }: {
   activeTab: number;
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;
@@ -58,15 +58,11 @@ export default function TabsMobile({
               key={tab.id}
               onClick={() => handleTabClick(tab.id, tab.key)}
               className={`w-full pb-3 items-center gap-1 flex justify-center cursor-pointer border-b border-white ${
-                isActive && !loading
-                  ? 'opacity-100'
-                  : 'opacity-50 hover:opacity-100'
+                isActive && !loading ? 'opacity-100' : 'opacity-50 hover:opacity-100'
               }`}
             >
               {tab.icon}
-              <Typography.Body variant="small-bold">
-                {tab.label}
-              </Typography.Body>
+              <Typography.Body variant="small-bold">{tab.label}</Typography.Body>
             </div>
           );
         })}

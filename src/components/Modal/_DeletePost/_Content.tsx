@@ -10,11 +10,7 @@ interface DeletePostProps {
   post: PostView;
 }
 
-export default function ContentDeletePost({
-  setShowModalDeletePost,
-  setShowMenu,
-  post,
-}: DeletePostProps) {
+export default function ContentDeletePost({ setShowModalDeletePost, setShowMenu, post }: DeletePostProps) {
   const { deletePost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
 
@@ -41,11 +37,7 @@ export default function ContentDeletePost({
         Are you sure you want to delete this post?
       </Typography.Body>
       <div className="flex gap-4 mt-2">
-        <Button.Large
-          id="cancel-btn"
-          variant="secondary"
-          onClick={() => setShowModalDeletePost(false)}
-        >
+        <Button.Large id="cancel-btn" variant="secondary" onClick={() => setShowModalDeletePost(false)}>
           Cancel
         </Button.Large>
         <Modal.SubmitAction

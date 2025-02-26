@@ -7,11 +7,7 @@ interface ReportProfileProps {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ReportProfile({
-  creatorPubky,
-  name,
-  setShowMenu,
-}: ReportProfileProps) {
+export default function ReportProfile({ creatorPubky, name, setShowMenu }: ReportProfileProps) {
   const { openModal } = useModal();
 
   return (
@@ -21,7 +17,7 @@ export default function ReportProfile({
         openModal('reportProfile', {
           pk: creatorPubky,
           name: name,
-          setShowMenu: setShowMenu,
+          setShowMenu: setShowMenu
         })
       }
       icon={<Icon.Flag size="24" />}

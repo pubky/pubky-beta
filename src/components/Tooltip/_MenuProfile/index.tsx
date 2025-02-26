@@ -8,17 +8,10 @@ interface TooltipProfileMenuProps {
   profile: UserView | null;
 }
 
-export default function ProfileMenu({
-  setShowProfileMenu,
-  creatorPubky,
-  profile,
-}: TooltipProfileMenuProps) {
+export default function ProfileMenu({ setShowProfileMenu, creatorPubky, profile }: TooltipProfileMenuProps) {
   return (
     <>
-      <div
-        onClick={() => setShowProfileMenu(false)}
-        className="fixed inset-0"
-      />
+      <div onClick={() => setShowProfileMenu(false)} className="fixed inset-0" />
       <Tooltip.Main
         onClick={(e) => e.stopPropagation()}
         className="px-3 py-2 bottom-0 -translate-x-[105%] translate-y-[90%] cursor-default w-[282px]"

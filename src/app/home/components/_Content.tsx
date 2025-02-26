@@ -16,9 +16,7 @@ export default function ContentHome() {
 
   return (
     <>
-      {layout === 'wide' && (
-        <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />
-      )}
+      {layout === 'wide' && <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />}
       <Content.Grid className="flex gap-6">
         {layout !== 'wide' && <LeftSidebar />}
         <MainContent

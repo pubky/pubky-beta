@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const Link = ({ size = '26', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 26 26"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -27,13 +21,7 @@ export const Link = ({ size = '26', color = 'white' }: IconProps) => (
 );
 
 export const LinkSimple = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -56,13 +44,7 @@ export const LinkSimple = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const DotsNine = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M5.625 6.75C6.24632 6.75 6.75 6.24632 6.75 5.625C6.75 5.00368 6.24632 4.5 5.625 4.5C5.00368 4.5 4.5 5.00368 4.5 5.625C4.5 6.24632 5.00368 6.75 5.625 6.75Z"
       fill={color}
@@ -103,13 +85,7 @@ export const DotsNine = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const DotsThree = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M16 17.5C16.8284 17.5 17.5 16.8284 17.5 16C17.5 15.1716 16.8284 14.5 16 14.5C15.1716 14.5 14.5 15.1716 14.5 16C14.5 16.8284 15.1716 17.5 16 17.5Z"
       fill={color}
@@ -125,17 +101,8 @@ export const DotsThree = ({ size = '32', color = 'white' }: IconProps) => (
   </svg>
 );
 
-export const DotsThreeOutline = ({
-  size = '32',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const DotsThreeOutline = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.1"
       d="M16 19C17.6569 19 19 17.6569 19 16C19 14.3431 17.6569 13 16 13C14.3431 13 13 14.3431 13 16C13 17.6569 14.3431 19 16 19Z"
@@ -172,17 +139,8 @@ export const DotsThreeOutline = ({
   </svg>
 );
 
-export const DotsThreeVertical = ({
-  size = '32',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const DotsThreeVertical = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M16 17.5C16.8284 17.5 17.5 16.8284 17.5 16C17.5 15.1716 16.8284 14.5 16 14.5C15.1716 14.5 14.5 15.1716 14.5 16C14.5 16.8284 15.1716 17.5 16 17.5Z"
       fill={color}
@@ -198,17 +156,8 @@ export const DotsThreeVertical = ({
   </svg>
 );
 
-export const MagnifyingGlass = ({
-  size = '24',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const MagnifyingGlass = ({ size = '24', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g opacity="0.32">
       <path
         opacity="0.2"
@@ -231,17 +180,8 @@ export const MagnifyingGlass = ({
   </svg>
 );
 
-export const MagnifyingGlassLeft = ({
-  size = '32',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const MagnifyingGlassLeft = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M14.4995 25C20.2985 25 24.9995 20.299 24.9995 14.5C24.9995 8.70101 20.2985 4 14.4995 4C8.70052 4 3.99951 8.70101 3.99951 14.5C3.99951 20.299 8.70052 25 14.4995 25Z"
@@ -263,13 +203,7 @@ export const MagnifyingGlassLeft = ({
 );
 
 export const Check = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -280,13 +214,7 @@ export const Check = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const CheckCircle = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M7.99951 14C11.3132 14 13.9995 11.3137 13.9995 8C13.9995 4.68629 11.3132 2 7.99951 2C4.6858 2 1.99951 4.68629 1.99951 8C1.99951 11.3137 4.6858 14 7.99951 14Z"
@@ -308,13 +236,7 @@ export const CheckCircle = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const Bell = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_2995_12159)">
       <path
         opacity="0.2"
@@ -336,25 +258,14 @@ export const Bell = ({ size = '24', color = 'white' }: IconProps) => (
     </g>
     <defs>
       <clipPath id="clip0_2995_12159">
-        <rect
-          width="17.865"
-          height="21.75"
-          fill={color}
-          transform="translate(3 1.5)"
-        />
+        <rect width="17.865" height="21.75" fill={color} transform="translate(3 1.5)" />
       </clipPath>
     </defs>
   </svg>
 );
 
 export const BellSimple = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M7.00009 13.0026C7.00009 11.8149 7.23515 10.6391 7.69172 9.54268C8.14828 8.44631 8.81733 7.45114 9.6603 6.61454C10.5033 5.77794 11.5035 5.11646 12.6033 4.66821C13.7031 4.21997 14.8807 3.99383 16.0683 4.00284C21.0308 4.03963 25.0001 8.15301 25.0001 13.1156V15.0026C25.0001 19.4795 25.9393 22.0775 26.7666 23.4974C26.8556 23.6492 26.9029 23.8219 26.9037 23.998C26.9045 24.174 26.8589 24.3471 26.7714 24.4999C26.6838 24.6526 26.5575 24.7795 26.4052 24.8678C26.2529 24.9561 26.08 25.0026 25.904 25.0026H6.09516C5.91911 25.0026 5.74618 24.956 5.59387 24.8677C5.44156 24.7795 5.31526 24.6525 5.22775 24.4997C5.14023 24.347 5.0946 24.1738 5.09547 23.9978C5.09634 23.8217 5.14368 23.649 5.2327 23.4971C6.06039 22.0772 7.00009 19.4793 7.00009 15.0026V13.0026Z"
@@ -376,13 +287,7 @@ export const BellSimple = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const GearSix = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M21.4905 9.80052C21.4638 9.69192 21.4135 9.59053 21.3432 9.50358C21.2729 9.41663 21.1843 9.34624 21.0837 9.29744L19.5203 8.52441L18.7703 7.22537L18.8825 5.4849C18.8906 5.37337 18.874 5.26143 18.8338 5.15706C18.7937 5.05269 18.731 4.95845 18.6503 4.88106C17.5716 3.85786 16.2663 3.10422 14.8408 2.68166C14.7334 2.65044 14.6205 2.64329 14.51 2.66071C14.3995 2.67813 14.2943 2.71969 14.2017 2.78244L12.7505 3.74981H11.2505L9.79939 2.78239C9.70683 2.71964 9.60157 2.67808 9.4911 2.66066C9.38064 2.64323 9.26769 2.65038 9.16031 2.68159C7.73485 3.10419 6.42951 3.85783 5.3508 4.88102C5.27008 4.95841 5.20742 5.05265 5.16727 5.15702C5.12713 5.26139 5.11048 5.37333 5.11853 5.48486L5.23073 7.22528L4.48073 8.52432L2.91733 9.29737C2.81671 9.34616 2.7281 9.41654 2.65778 9.50348C2.58747 9.59043 2.53718 9.69181 2.51051 9.8004C2.16376 11.2462 2.16377 12.7535 2.51056 14.1993C2.53721 14.3079 2.58748 14.4093 2.65779 14.4962C2.7281 14.5832 2.81671 14.6535 2.91733 14.7023L4.48069 15.4754L5.23069 16.7744L5.11849 18.5149C5.11044 18.6264 5.12707 18.7383 5.16721 18.8427C5.20734 18.9471 5.27 19.0413 5.35071 19.1187C6.42941 20.1419 7.73477 20.8956 9.16026 21.3181C9.26764 21.3493 9.38058 21.3565 9.49103 21.3391C9.60149 21.3216 9.70674 21.2801 9.7993 21.2173L11.2505 20.25H12.7505L14.2016 21.2174C14.2942 21.2801 14.3994 21.3217 14.5099 21.3391C14.6204 21.3565 14.7333 21.3494 14.8407 21.3182C16.2662 20.8956 17.5715 20.1419 18.6502 19.1187C18.7309 19.0414 18.7936 18.9471 18.8337 18.8428C18.8739 18.7384 18.8905 18.6264 18.8825 18.5149L18.7703 16.7745L19.5203 15.4755L21.0837 14.7024C21.1843 14.6536 21.2729 14.5832 21.3432 14.4963C21.4136 14.4093 21.4638 14.308 21.4905 14.1994C21.8372 12.7536 21.8372 11.2463 21.4905 9.80051L21.4905 9.80052ZM12.0005 17.2499C10.9622 17.2499 9.94716 16.942 9.08381 16.3651C8.22045 15.7882 7.54754 14.9683 7.15018 14.009C6.75282 13.0497 6.64885 11.9941 6.85143 10.9757C7.054 9.95727 7.55401 9.02181 8.28824 8.28758C9.02246 7.55336 9.95792 7.05334 10.9763 6.85077C11.9947 6.6482 13.0503 6.75217 14.0096 7.14953C14.9689 7.54689 15.7889 8.21979 16.3658 9.08315C16.9426 9.94651 17.2505 10.9615 17.2505 11.9999C17.2505 13.3923 16.6974 14.7276 15.7129 15.7122C14.7283 16.6968 13.3929 17.2499 12.0005 17.2499V17.2499Z"
@@ -404,13 +309,7 @@ export const GearSix = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const DownloadSimple = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 17 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -433,13 +332,7 @@ export const DownloadSimple = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const UploadSimple = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 26 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -462,20 +355,8 @@ export const UploadSimple = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const LoadingSpin = ({ size = '40', color = 'white' }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 200 200"
-  >
-    <radialGradient
-      id="a11"
-      cx=".66"
-      fx=".66"
-      cy=".3125"
-      fy=".3125"
-      gradientTransform="scale(1.5)"
-    >
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 200 200">
+    <radialGradient id="a11" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)">
       <stop offset="0" stopColor={color}></stop>
       <stop offset=".3" stopColor={color} stopOpacity=".9"></stop>
       <stop offset=".6" stopColor={color} stopOpacity=".6"></stop>
@@ -484,7 +365,7 @@ export const LoadingSpin = ({ size = '40', color = 'white' }: IconProps) => (
     </radialGradient>
     <circle
       style={{
-        transformOrigin: 'center',
+        transformOrigin: 'center'
       }}
       fill="none"
       stroke="url(#a11)"
@@ -509,7 +390,7 @@ export const LoadingSpin = ({ size = '40', color = 'white' }: IconProps) => (
     </circle>
     <circle
       style={{
-        transformOrigin: 'center',
+        transformOrigin: 'center'
       }}
       fill="none"
       opacity=".2"
@@ -526,13 +407,7 @@ export const LoadingSpin = ({ size = '40', color = 'white' }: IconProps) => (
 );
 
 export const SignOut = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -555,13 +430,7 @@ export const SignOut = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const SignIn = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -584,25 +453,13 @@ export const SignIn = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const HomeIndicator = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height="4"
-    viewBox="0 0 32 4"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height="4" viewBox="0 0 32 4" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width={size} height="4" rx="2" fill={color} />
   </svg>
 );
 
 export const Lightbulb = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M9.99938 21.0001C8.32053 19.7407 7.08048 17.985 6.45487 15.9816C5.82926 13.9783 5.8498 11.8289 6.51358 9.83795C7.17736 7.84695 8.45074 6.11526 10.1534 4.88816C11.856 3.66105 13.9015 3.00074 16.0002 3.00073C18.099 3.00073 20.1445 3.66104 21.8471 4.88814C23.5497 6.11524 24.8231 7.84693 25.4869 9.83792C26.1507 11.8289 26.1712 13.9783 25.5456 15.9816C24.92 17.9849 23.68 19.7406 22.0011 21.0001"

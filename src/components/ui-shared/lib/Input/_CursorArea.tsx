@@ -45,11 +45,7 @@ export const CursorArea = ({
         disabled={disabled}
         maxLength={maxLength}
         placeholder={placeholder}
-        className={twMerge(
-          baseCSS,
-          rest.className,
-          error ? inputWithErrorStyle : ''
-        )}
+        className={twMerge(baseCSS, rest.className, error ? inputWithErrorStyle : '')}
       />
       {error && <div className={errorCSS}>{error}</div>}
     </div>

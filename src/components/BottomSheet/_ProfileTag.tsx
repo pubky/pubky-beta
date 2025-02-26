@@ -23,21 +23,11 @@ export default function ProfileTag({
   pubkyUser,
   user,
   title,
-  className,
+  className
 }: ProfileTagProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? `Tag ${user?.details?.name}`}
-      className={className}
-    >
-      <ContentProfileTag
-        profileTags={profileTags}
-        setProfileTags={setProfileTags}
-        pubkyUser={pubkyUser}
-        user={user}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? `Tag ${user?.details?.name}`} className={className}>
+      <ContentProfileTag profileTags={profileTags} setProfileTags={setProfileTags} pubkyUser={pubkyUser} user={user} />
     </BottomSheet.Root>
   );
 }

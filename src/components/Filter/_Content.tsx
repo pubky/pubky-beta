@@ -20,7 +20,7 @@ export default function Content({ disabled = false }: ReachProps) {
     images: <Icon.ImageSquare />,
     videos: <Icon.Play />,
     links: <Icon.LinkSimple />,
-    files: <Icon.DownloadSimple size="24" />,
+    files: <Icon.DownloadSimple size="24" />
   };
 
   useEffect(() => {
@@ -43,9 +43,7 @@ export default function Content({ disabled = false }: ReachProps) {
           value={key}
           selected={loading ? false : content === key}
           icon={icon}
-          onClick={
-            !disabled ? () => handleItemClick(key as TContent) : undefined
-          }
+          onClick={!disabled ? () => handleItemClick(key as TContent) : undefined}
           disabled={disabled}
         />
       ))}

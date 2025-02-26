@@ -12,24 +12,10 @@ interface CreateFeedProps {
   className?: string;
 }
 
-export default function CreateFeed({
-  show,
-  setShow,
-  handleLoadFeeds,
-  title,
-  className,
-}: CreateFeedProps) {
+export default function CreateFeed({ show, setShow, handleLoadFeeds, title, className }: CreateFeedProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Create Feed'}
-      className={className}
-    >
-      <ContentCreateFeed
-        setShowModalCreateFeed={setShow}
-        handleLoadFeeds={handleLoadFeeds}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Create Feed'} className={className}>
+      <ContentCreateFeed setShowModalCreateFeed={setShow} handleLoadFeeds={handleLoadFeeds} />
     </BottomSheet.Root>
   );
 }

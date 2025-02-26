@@ -5,7 +5,7 @@ import Simple from './_Simple';
 export const Skeletons = {
   DisplayText,
   ProfileCard,
-  Simple,
+  Simple
 };
 
 export default Skeletons;

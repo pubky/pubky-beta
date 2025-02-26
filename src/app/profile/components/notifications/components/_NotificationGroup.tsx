@@ -11,9 +11,7 @@ type NotificationGroupProps = {
   notifications: INotification[];
 };
 
-export default function NotificationGroup({
-  notifications,
-}: NotificationGroupProps) {
+export default function NotificationGroup({ notifications }: NotificationGroupProps) {
   const [users, setUsers] = useState<IUserProfile[]>([]);
 
   useEffect(() => {
@@ -29,9 +27,7 @@ export default function NotificationGroup({
         //)
         //);
 
-        const validProfiles = userProfiles.filter(
-          (profile): profile is IUserProfile => profile !== null
-        );
+        const validProfiles = userProfiles.filter((profile): profile is IUserProfile => profile !== null);
         setUsers(validProfiles);
       } catch (error) {
         console.log(error);
@@ -49,14 +45,14 @@ export default function NotificationGroup({
     notificationType === 'follow'
       ? 'followed you'
       : notificationType === 'new_friend'
-      ? notifications.length > 1
-        ? 'are your friends now'
-        : 'is your friend now'
-      : notificationType === 'lost_friend'
-      ? notifications.length > 1
-        ? 'are not your friends anymore'
-        : 'is not your friend anymore'
-      : '';
+        ? notifications.length > 1
+          ? 'are your friends now'
+          : 'is your friend now'
+        : notificationType === 'lost_friend'
+          ? notifications.length > 1
+            ? 'are not your friends anymore'
+            : 'is not your friend anymore'
+          : '';
 
   const icon =
     notificationType === 'follow' ? (
@@ -83,14 +79,9 @@ export default function NotificationGroup({
           {displayedUsers.map((user, index) => (
             <div key={index}>
               {!user ? (
-                <Typography.Body variant="medium-bold">
-                  Loading...
-                </Typography.Body>
+                <Typography.Body variant="medium-bold">Loading...</Typography.Body>
               ) : (
-                <Link
-                  href={`/profile/${user.userId}`}
-                  className="flex gap-2 items-center"
-                >
+                <Link href={`/profile/${user.userId}`} className="flex gap-2 items-center">
                   <ImageByUri
                     width={32}
                     height={32}
@@ -98,10 +89,7 @@ export default function NotificationGroup({
                     alt="user-pic"
                     uri={user.profile.image || '/images/webp/Userpic.webp'}
                   />
-                  <Typography.Body
-                    className="hover:underline hover:decoration-solid"
-                    variant="medium-bold"
-                  >
+                  <Typography.Body className="hover:underline hover:decoration-solid" variant="medium-bold">
                     {Utils.minifyText(user.profile.name, 20)}
                     {index < displayedUsers.length - 1 && <span>, </span>}
                   </Typography.Body>

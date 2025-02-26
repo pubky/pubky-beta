@@ -7,10 +7,7 @@ interface ContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Content = ({ children, ...rest }: ContentProps) => {
   return (
-    <div
-      {...rest}
-      className={twMerge(`grid grid-cols-3 gap-6`, rest.className)}
-    >
+    <div {...rest} className={twMerge(`grid grid-cols-3 gap-6`, rest.className)}>
       {children}
     </div>
   );

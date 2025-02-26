@@ -10,19 +10,9 @@ interface LogoutProps {
   className?: string;
 }
 
-export default function Logout({
-  show,
-  setShow,
-  title,
-  className,
-}: LogoutProps) {
+export default function Logout({ show, setShow, title, className }: LogoutProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Sign out?'}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Sign out?'} className={className}>
       <ContentLogout />
     </BottomSheet.Root>
   );

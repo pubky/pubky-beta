@@ -9,8 +9,7 @@ import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 
 export default function Participants({ author }: { author: string }) {
-  const { pubky, follow, unfollow, replies, mutedUsers } =
-    usePubkyClientContext();
+  const { pubky, follow, unfollow, replies, mutedUsers } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
   const [initLoadingAuthor, setInitLoadingAuthor] = useState(true);
@@ -28,7 +27,7 @@ export default function Participants({ author }: { author: string }) {
     if (authorData) {
       setFollowedUser((prevState) => ({
         ...prevState,
-        [authorData.details.id]: authorData.relationship?.following || false,
+        [authorData.details.id]: authorData.relationship?.following || false
       }));
     }
     setInitLoadingAuthor(false);
@@ -39,17 +38,11 @@ export default function Participants({ author }: { author: string }) {
     setInitLoadingFollowers(true);
 
     try {
-      const uniqueAuthors = [
-        ...new Set(replies.map((reply) => reply.details.author)),
-      ];
+      const uniqueAuthors = [...new Set(replies.map((reply) => reply.details.author))];
 
-      const profiles = await Promise.all(
-        uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? '')),
-      );
+      const profiles = await Promise.all(uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? '')));
 
-      const filteredProfiles = profiles.filter(
-        (profile) => !mutedUsers?.includes(profile.details.id),
-      );
+      const filteredProfiles = profiles.filter((profile) => !mutedUsers?.includes(profile.details.id));
 
       const followedMap = filteredProfiles.reduce(
         (acc, profile) => {
@@ -58,7 +51,7 @@ export default function Participants({ author }: { author: string }) {
           }
           return acc;
         },
-        {} as { [key: string]: boolean },
+        {} as { [key: string]: boolean }
       );
 
       setParticipants(filteredProfiles);
@@ -81,7 +74,7 @@ export default function Participants({ author }: { author: string }) {
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: true,
+        [pubkyFollow]: true
       }));
 
       const result = await follow(pubkyFollow);
@@ -92,12 +85,12 @@ export default function Participants({ author }: { author: string }) {
 
       setFollowedUser((prevState) => ({
         ...prevState,
-        [pubkyFollow]: result,
+        [pubkyFollow]: result
       }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: false,
+        [pubkyFollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -110,7 +103,7 @@ export default function Participants({ author }: { author: string }) {
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: true,
+        [pubkyUnfollow]: true
       }));
 
       const result = await unfollow(pubkyUnfollow);
@@ -121,12 +114,12 @@ export default function Participants({ author }: { author: string }) {
 
       setFollowedUser((prevState) => ({
         ...prevState,
-        [pubkyUnfollow]: !result,
+        [pubkyUnfollow]: !result
       }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: false,
+        [pubkyUnfollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -138,20 +131,13 @@ export default function Participants({ author }: { author: string }) {
     const isFollowed = followedUser[authorId];
     if (pubky === authorId) {
       return (
-        <Button.Medium
-          className="w-[114px] bg-transparent cursor-default"
-          icon={<Icon.User size="16" />}
-        >
+        <Button.Medium className="w-[114px] bg-transparent cursor-default" icon={<Icon.User size="16" />}>
           Me
         </Button.Medium>
       );
     } else if (initLoadingAuthor) {
       return (
-        <Button.Medium
-          disabled
-          icon={<Icon.LoadingSpin size="16" />}
-          className="w-[114px]"
-        >
+        <Button.Medium disabled icon={<Icon.LoadingSpin size="16" />} className="w-[114px]">
           Loading
         </Button.Medium>
       );
@@ -185,20 +171,13 @@ export default function Participants({ author }: { author: string }) {
   const getParticipantButton = (authorId: string) => {
     if (pubky === authorId) {
       return (
-        <Button.Medium
-          className="w-[114px] bg-transparent cursor-default"
-          icon={<Icon.User size="16" />}
-        >
+        <Button.Medium className="w-[114px] bg-transparent cursor-default" icon={<Icon.User size="16" />}>
           Me
         </Button.Medium>
       );
     } else if (initLoadingFollowers) {
       return (
-        <Button.Medium
-          disabled
-          icon={<Icon.LoadingSpin size="16" />}
-          className="w-[114px]"
-        >
+        <Button.Medium disabled icon={<Icon.LoadingSpin size="16" />} className="w-[114px]">
           Loading
         </Button.Medium>
       );
@@ -249,9 +228,7 @@ export default function Participants({ author }: { author: string }) {
                 <React.Fragment key={participant.details.id}>
                   <SideCard.User
                     uri={participant.details.id}
-                    uriImage={
-                      participant?.details?.image || '/images/webp/Userpic.webp'
-                    }
+                    uriImage={participant?.details?.image || '/images/webp/Userpic.webp'}
                     username={Utils.minifyText(participant?.details?.name)}
                     label={Utils.minifyPubky(participant.details.id)}
                     className="mb-2"

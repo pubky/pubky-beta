@@ -17,7 +17,7 @@ export default function ProfileTag({
   profileTags,
   setProfileTags,
   pubkyUser,
-  user,
+  user
 }: ProfileTagProps) {
   return (
     <Modal.Root

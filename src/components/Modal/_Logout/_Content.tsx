@@ -9,10 +9,7 @@ export default function ContentLogout() {
 
   return (
     <>
-      <Typography.Body
-        className="text-left text-opacity-60 my-4"
-        variant="medium"
-      >
+      <Typography.Body className="text-left text-opacity-60 my-4" variant="medium">
         If you sign out without backup you will no longer be able to login.
       </Typography.Body>
       <div className="flex gap-4 mt-2">

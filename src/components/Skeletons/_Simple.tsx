@@ -5,10 +5,7 @@ interface SimpleProps {
   maxRetries?: number;
 }
 
-export default function Simple({
-  retryCount = 0,
-  maxRetries = 3,
-}: SimpleProps) {
+export default function Simple({ retryCount = 0, maxRetries = 3 }: SimpleProps) {
   const getLoadingMessage = () => {
     if (retryCount === 0) return 'Loading...';
     return `Checking for new content... (${retryCount}/${maxRetries})`;
@@ -19,9 +16,7 @@ export default function Simple({
       <div className={`flex w-full justify-center mt-2`}>
         <Icon.LoadingSpin className="animate-spin text-4xl text-center mx-auto" />
       </div>
-      <Typography.Caption className="mt-1 text-opacity-40 text-center">
-        {getLoadingMessage()}
-      </Typography.Caption>
+      <Typography.Caption className="mt-1 text-opacity-40 text-center">{getLoadingMessage()}</Typography.Caption>
     </div>
   );
 }

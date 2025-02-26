@@ -9,13 +9,12 @@ import { LoadingContacts } from '@/types';
 
 export default function Contact({
   contacts,
-  isLoading,
+  isLoading
 }: {
   contacts: UserView[] | [] | undefined;
   isLoading: boolean;
 }) {
-  const { pubky, createTagProfile, deleteTagProfile, follow, unfollow } =
-    usePubkyClientContext();
+  const { pubky, createTagProfile, deleteTagProfile, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
@@ -31,7 +30,7 @@ export default function Contact({
           acc[profile.details.id] = profile.relationship?.following || false;
           return acc;
         },
-        {} as { [pubky: string]: boolean },
+        {} as { [pubky: string]: boolean }
       );
       setFollowed(initialFollowedState);
 
@@ -40,7 +39,7 @@ export default function Contact({
           acc[profile.details.id] = profile.tags || [];
           return acc;
         },
-        {} as { [pubky: string]: UserView['tags'] },
+        {} as { [pubky: string]: UserView['tags'] }
       );
       setProfileTags(initialTagsState);
     }
@@ -49,8 +48,7 @@ export default function Contact({
   const handleAddProfileTag = async (creatorPubky: string, tag: string) => {
     // loading tag
     setLoadingTags(tag);
-    const pubKeyToUse =
-      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+    const pubKeyToUse = (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
       const currentTags = profileTags[creatorPubky] || [];
@@ -63,7 +61,7 @@ export default function Contact({
         tagExists.relationship = true;
         setProfileTags((prev) => ({
           ...prev,
-          [creatorPubky]: [...currentTags],
+          [creatorPubky]: [...currentTags]
         }));
       } else {
         setProfileTags((prev) => ({
@@ -74,9 +72,9 @@ export default function Contact({
               label: tag,
               taggers: [pubky || ''],
               taggers_count: 1,
-              relationship: true,
-            },
-          ],
+              relationship: true
+            }
+          ]
         }));
       }
 
@@ -91,8 +89,7 @@ export default function Contact({
   const handleDeleteProfileTag = async (creatorPubky: string, tag: string) => {
     // loading tag
     setLoadingTags(tag);
-    const pubKeyToUse =
-      (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
+    const pubKeyToUse = (!creatorPubky || creatorPubky === pubky) && pubky ? pubky : creatorPubky;
 
     if (pubKeyToUse) {
       const currentTags = profileTags[creatorPubky] || [];
@@ -101,18 +98,14 @@ export default function Contact({
       if (tagExists) {
         setLoadingTags('');
         tagExists.taggers_count--;
-        tagExists.taggers = tagExists.taggers.filter(
-          (tagger) => tagger !== pubky,
-        );
+        tagExists.taggers = tagExists.taggers.filter((tagger) => tagger !== pubky);
 
         setProfileTags((prev) => ({
           ...prev,
           [creatorPubky]:
             tagExists.taggers_count > 0
-              ? currentTags.map((t) =>
-                  t.label === tag ? { ...t, relationship: false } : t,
-                )
-              : currentTags.filter((t) => t.label !== tag),
+              ? currentTags.map((t) => (t.label === tag ? { ...t, relationship: false } : t))
+              : currentTags.filter((t) => t.label !== tag)
         }));
       }
 
@@ -129,7 +122,7 @@ export default function Contact({
       if (!pubkyFollow) return;
       setLoadingContacts((prev) => ({
         ...prev,
-        [pubkyFollow]: true,
+        [pubkyFollow]: true
       }));
 
       const result = await follow(pubkyFollow);
@@ -140,11 +133,11 @@ export default function Contact({
 
       setFollowed((prevState) => ({
         ...prevState,
-        [pubkyFollow]: result,
+        [pubkyFollow]: result
       }));
       setLoadingContacts((prev) => ({
         ...prev,
-        [pubkyFollow]: false,
+        [pubkyFollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -156,7 +149,7 @@ export default function Contact({
       if (!pubkyUnfollow) return;
       setLoadingContacts((prev) => ({
         ...prev,
-        [pubkyUnfollow]: true,
+        [pubkyUnfollow]: true
       }));
 
       const result = await unfollow(pubkyUnfollow);
@@ -167,11 +160,11 @@ export default function Contact({
 
       setFollowed((prevState) => ({
         ...prevState,
-        [pubkyUnfollow]: !result,
+        [pubkyUnfollow]: !result
       }));
       setLoadingContacts((prev) => ({
         ...prev,
-        [pubkyUnfollow]: false,
+        [pubkyUnfollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -191,50 +184,32 @@ export default function Contact({
               <div className="w-full">
                 <div className="p-6 rounded-2xl bg-white bg-opacity-10 lg:p-0 lg:bg-transparent flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
                   <div className="w-full flex justify-between items-center">
-                    <Link
-                      className="flex gap-2 w-full"
-                      href={`/profile/${contact?.details?.id}`}
-                    >
+                    <Link className="flex gap-2 w-full" href={`/profile/${contact?.details?.id}`}>
                       <ImageByUri
                         width={48}
                         height={48}
-                        uri={
-                          contact?.details?.image || '/images/webp/Userpic.webp'
-                        }
+                        uri={contact?.details?.image || '/images/webp/Userpic.webp'}
                         alt={`profile-pic-${contact?.details?.id}`}
                         className="rounded-full w-[48px] h-[48px] max-w-none"
                       />
                       <div className="flex-col justify-center items-start inline-flex">
-                        <Typography.Body
-                          id="list-profile-name"
-                          variant="medium-bold"
-                        >
-                          {contact?.details.name &&
-                            Utils.minifyText(contact?.details?.name, 20)}
+                        <Typography.Body id="list-profile-name" variant="medium-bold">
+                          {contact?.details.name && Utils.minifyText(contact?.details?.name, 20)}
                         </Typography.Body>
                         <Typography.Label className="text-opacity-30 -mt-1">
-                          {contact?.details?.id &&
-                            Utils.minifyPubky(contact?.details?.id)}
+                          {contact?.details?.id && Utils.minifyPubky(contact?.details?.id)}
                         </Typography.Label>
                       </div>
                     </Link>
 
                     <div className="flex lg:hidden gap-4">
                       <div className="inline-flex flex-col justify-start items-start gap-1">
-                        <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-                          Tags
-                        </Typography.Label>
-                        <Typography.Body variant="medium-bold">
-                          {contact?.counts?.tags ?? 0}
-                        </Typography.Body>
+                        <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Tags</Typography.Label>
+                        <Typography.Body variant="medium-bold">{contact?.counts?.tags ?? 0}</Typography.Body>
                       </div>
                       <div className="inline-flex flex-col justify-start items-start gap-1">
-                        <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-                          Posts
-                        </Typography.Label>
-                        <Typography.Body variant="medium-bold">
-                          {contact?.counts?.posts ?? 0}
-                        </Typography.Body>
+                        <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Posts</Typography.Label>
+                        <Typography.Body variant="medium-bold">{contact?.counts?.posts ?? 0}</Typography.Body>
                       </div>
                     </div>
                   </div>
@@ -249,28 +224,17 @@ export default function Contact({
                           onClick={(event) => {
                             event.stopPropagation();
                             isTagFound
-                              ? handleDeleteProfileTag(
-                                  contact?.details?.id,
-                                  tag?.label,
-                                )
-                              : handleAddProfileTag(
-                                  contact?.details?.id,
-                                  tag?.label,
-                                );
+                              ? handleDeleteProfileTag(contact?.details?.id, tag?.label)
+                              : handleAddProfileTag(contact?.details?.id, tag?.label);
                           }}
-                          color={
-                            tag?.label && Utils.generateRandomColor(tag?.label)
-                          }
+                          color={tag?.label && Utils.generateRandomColor(tag?.label)}
                         >
                           <div className="flex gap-2 items-center">
                             {Utils.minifyText(tag?.label, 20)}
                             {loadingTags === tag?.label ? (
                               <Icon.LoadingSpin size="12" />
                             ) : (
-                              <Typography.Caption
-                                variant="bold"
-                                className="text-opacity-60"
-                              >
+                              <Typography.Caption variant="bold" className="text-opacity-60">
                                 {tag.taggers_count}
                               </Typography.Caption>
                             )}
@@ -280,24 +244,14 @@ export default function Contact({
                     })}
                   </div>
                   <div className="hidden lg:inline-flex flex-col justify-start items-start gap-1 inline-flex">
-                    <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-                      Tags
-                    </Typography.Label>
-                    <Typography.Body
-                      id="list-tags-counter"
-                      variant="medium-bold"
-                    >
+                    <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Tags</Typography.Label>
+                    <Typography.Body id="list-tags-counter" variant="medium-bold">
                       {contact?.counts?.tags ?? 0}
                     </Typography.Body>
                   </div>
                   <div className="hidden lg:inline-flex flex-col justify-start items-start gap-1 inline-flex">
-                    <Typography.Label className="text-[12px] text-opacity-30 -mb-1">
-                      Posts
-                    </Typography.Label>
-                    <Typography.Body
-                      id="list-posts-counter"
-                      variant="medium-bold"
-                    >
+                    <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Posts</Typography.Label>
+                    <Typography.Body id="list-posts-counter" variant="medium-bold">
                       {contact?.counts?.posts ?? 0}
                     </Typography.Body>
                   </div>
@@ -318,9 +272,7 @@ export default function Contact({
                       <Button.Medium
                         id="list-unfollow-button"
                         onClick={
-                          loadingContacts[contact?.details?.id]
-                            ? undefined
-                            : () => unfollowUser(contact?.details?.id)
+                          loadingContacts[contact?.details?.id] ? undefined : () => unfollowUser(contact?.details?.id)
                         }
                         disabled={loadingContacts[contact?.details?.id]}
                         loading={loadingContacts[contact?.details?.id]}
@@ -333,9 +285,7 @@ export default function Contact({
                       <Button.Medium
                         id="list-follow-button"
                         onClick={
-                          loadingContacts[contact?.details?.id]
-                            ? undefined
-                            : () => followUser(contact?.details?.id)
+                          loadingContacts[contact?.details?.id] ? undefined : () => followUser(contact?.details?.id)
                         }
                         disabled={loadingContacts[contact?.details?.id]}
                         loading={loadingContacts[contact?.details?.id]}

@@ -6,11 +6,7 @@ interface UsernameProps extends React.HTMLAttributes<HTMLHeadingElement> {
 }
 export const Username = ({ children, ...rest }: UsernameProps) => {
   return (
-    <Typography.Body
-      {...rest}
-      className={twMerge(rest.className)}
-      variant="medium-bold"
-    >
+    <Typography.Body {...rest} className={twMerge(rest.className)} variant="medium-bold">
       {children}
     </Typography.Body>
   );

@@ -26,40 +26,21 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
   if (!pubky) return;
 
   return (
-    <div
-      className={`flex justify-center lg:hidden ${
-        isVisible ? 'opacity-100' : 'opacity-20'
-      }`}
-    >
+    <div className={`flex justify-center lg:hidden ${isVisible ? 'opacity-100' : 'opacity-20'}`}>
       <div className="max-w-[380px] sm:max-w-[600px] md:max-w-[720px] w-full p-6 bg-gradient-to-t from-[#05050a] via-[#05050a] via-40% to-transparent flex gap-2 w-full justify-between justify-center fixed bottom-0 z-40">
-        <Link
-          href="/home"
-          className={twMerge(buttonCSS, title === 'Home' && activeCSS)}
-        >
+        <Link href="/home" className={twMerge(buttonCSS, title === 'Home' && activeCSS)}>
           <Icon.House size="24" />
         </Link>
-        <Link
-          href="/search"
-          className={twMerge(buttonCSS, title === 'Search' && activeCSS)}
-        >
+        <Link href="/search" className={twMerge(buttonCSS, title === 'Search' && activeCSS)}>
           <Icon.MagnifyingGlassLeft size="24" />
         </Link>
-        <Link
-          href="/hot"
-          className={twMerge(buttonCSS, title === 'HotTags' && activeCSS)}
-        >
+        <Link href="/hot" className={twMerge(buttonCSS, title === 'HotTags' && activeCSS)}>
           <Icon.Fire size="24" />
         </Link>
-        <Link
-          href="/bookmarks"
-          className={twMerge(buttonCSS, title === 'Bookmarks' && activeCSS)}
-        >
+        <Link href="/bookmarks" className={twMerge(buttonCSS, title === 'Bookmarks' && activeCSS)}>
           <Icon.BookmarkSimple size="24" />
         </Link>
-        <Link
-          href="/settings"
-          className={twMerge(buttonCSS, title === 'Settings' && activeCSS)}
-        >
+        <Link href="/settings" className={twMerge(buttonCSS, title === 'Settings' && activeCSS)}>
           <Icon.GearSix size="24" />
         </Link>
         <Link href="/profile" className="w-[48px] relative">

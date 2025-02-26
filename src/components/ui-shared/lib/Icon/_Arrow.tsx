@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const ArrowUp = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -27,13 +21,7 @@ export const ArrowUp = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const DropdownIcon = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -44,13 +32,7 @@ export const DropdownIcon = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const ArrowUpRight = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -67,13 +49,7 @@ export const ArrowUpRight = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const Repost = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -102,13 +78,7 @@ export const Repost = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const ArrowLeft = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -125,13 +95,7 @@ export const ArrowLeft = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const ArrowRight = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -148,13 +112,7 @@ export const ArrowRight = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const CaretRight = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path opacity="0.2" d="M12 6L22 16L12 26V6Z" fill={color} />
     <path
       fillRule="evenodd"
@@ -166,13 +124,7 @@ export const CaretRight = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const CaretLeft = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path opacity="0.2" d="M20 26L10 16L20 6V26Z" fill={color} />
     <path
       fillRule="evenodd"
@@ -184,13 +136,7 @@ export const CaretLeft = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const CaretUp = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path opacity="0.2" d="M6 20L16 10L26 20H6Z" fill={color} />
     <path
       fillRule="evenodd"
@@ -202,13 +148,7 @@ export const CaretUp = ({ size = '32', color = 'white' }: IconProps) => (
 );
 
 export const Next = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -218,17 +158,8 @@ export const Next = ({ size = '32', color = 'white' }: IconProps) => (
   </svg>
 );
 
-export const ArrowsLeftRight = ({
-  size = '32',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const ArrowsLeftRight = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"

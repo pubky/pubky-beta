@@ -10,13 +10,7 @@ interface SectionProps extends React.HTMLAttributes<HTMLAnchorElement> {
   href: string;
 }
 
-export const Section = ({
-  href,
-  icon,
-  text,
-  counter = 0,
-  ...rest
-}: SectionProps) => {
+export const Section = ({ href, icon, text, counter = 0, ...rest }: SectionProps) => {
   const baseCSS =
     'py-2.5 shadow border-b border-white border-opacity-10 justify-between inline-flex cursor-pointer hover:bg-white hover:bg-opacity-10';
   return (
@@ -27,9 +21,7 @@ export const Section = ({
       </div>
       {counter && (
         <div>
-          <PostUtil.Counter className="border-white border-opacity-100">
-            {counter}
-          </PostUtil.Counter>
+          <PostUtil.Counter className="border-white border-opacity-100">{counter}</PostUtil.Counter>
         </div>
       )}
     </Link>

@@ -16,18 +16,9 @@ interface PostRepliesProps {
   isMobile: boolean;
 }
 
-export const PostReplies = ({
-  post,
-  layout,
-  homeView = false,
-  isMobile,
-}: PostRepliesProps) => {
+export const PostReplies = ({ post, layout, homeView = false, isMobile }: PostRepliesProps) => {
   const { pubky, mutedUsers } = usePubkyClientContext();
-  const { data: replies } = usePostReplies(
-    post.details.author,
-    post.details.id,
-    pubky,
-  );
+  const { data: replies } = usePostReplies(post.details.author, post.details.id, pubky);
 
   const lineBaseCSS = `ml-[12px] absolute border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
@@ -44,18 +35,13 @@ export const PostReplies = ({
 
   if (!replies || replies.length === 0) return null;
 
-  const filteredReplies = replies.filter(
-    (reply) => !mutedUsers?.includes(reply?.details?.author),
-  );
+  const filteredReplies = replies.filter((reply) => !mutedUsers?.includes(reply?.details?.author));
 
   const displayedReplies = filteredReplies.slice(0, 2);
 
-  const mutedRepliesCount = replies.filter((reply) =>
-    mutedUsers?.includes(reply?.details?.author),
-  ).length;
+  const mutedRepliesCount = replies.filter((reply) => mutedUsers?.includes(reply?.details?.author)).length;
 
-  const repliesLeft =
-    post?.counts?.replies - displayedReplies.length - mutedRepliesCount;
+  const repliesLeft = post?.counts?.replies - displayedReplies.length - mutedRepliesCount;
 
   const showQuickReply = displayedReplies.length > 0;
 
@@ -66,7 +52,6 @@ export const PostReplies = ({
           {displayedReplies.map((reply) => (
             <Components.Post
               key={reply.details.id}
-
               post={reply}
               largeView={!isMobile && layout === 'wide'}
               line={Boolean(reply?.relationships?.replied)}
@@ -83,9 +68,7 @@ export const PostReplies = ({
                   className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
                 >
                   <Icon.PlusCircle />
-                  {repliesLeft === 1
-                    ? '1 more reply'
-                    : `${repliesLeft} more replies`}
+                  {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
                 </Typography.Body>
               </Link>
             </div>

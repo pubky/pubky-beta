@@ -45,5 +45,5 @@ export {
   SocialLinks,
   Toast,
   ProtectedRoutes,
-  RemindBackup,
+  RemindBackup
 };

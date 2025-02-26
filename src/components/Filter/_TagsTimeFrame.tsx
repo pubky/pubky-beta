@@ -16,7 +16,7 @@ export default function TagsTimeFrame({ disabled }: TimeframeProps) {
   const icons = {
     today: <Icon.Asterisk size="24" />,
     this_month: <Icon.Calendar size="24" />,
-    all_time: <Icon.Clock size="24" />,
+    all_time: <Icon.Clock size="24" />
   };
 
   useEffect(() => {
@@ -32,12 +32,7 @@ export default function TagsTimeFrame({ disabled }: TimeframeProps) {
     <div className="mb-6">
       <SideCard.Header title="Timeframe" className="mb-2" />
       {Object.entries(icons).map(([key, icon]) => {
-        const label =
-          key === 'all_time'
-            ? 'All time'
-            : key === 'this_month'
-              ? 'This month'
-              : 'Today';
+        const label = key === 'all_time' ? 'All time' : key === 'this_month' ? 'This month' : 'Today';
 
         return (
           <SideCard.Item
@@ -47,9 +42,7 @@ export default function TagsTimeFrame({ disabled }: TimeframeProps) {
             value={key}
             selected={loading ? false : timeframe === key}
             icon={icon}
-            onClick={
-              !disabled ? () => handleItemClick(key as TTimeframe) : undefined
-            }
+            onClick={!disabled ? () => handleItemClick(key as TTimeframe) : undefined}
             disabled={disabled}
           />
         );

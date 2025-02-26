@@ -26,14 +26,12 @@ export function processUserLinks(links: Links[]) {
       } else {
         url = `mailto:${cleanUrl}`;
       }
-    } 
+    }
     // Handle other links
     else {
       const urlResult = urlSchema.safeParse(url);
       if (!urlResult.success) {
-        const socialLink = socialLinks.find(
-          (s) => s.name.toLowerCase() === titleLower
-        );
+        const socialLink = socialLinks.find((s) => s.name.toLowerCase() === titleLower);
         if (socialLink) {
           const completedUrl = `${socialLink.url}${url}`;
           const completedResult = urlSchema.safeParse(completedUrl);

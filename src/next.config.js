@@ -14,30 +14,29 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: 'localhost',
+        hostname: 'localhost'
       },
       {
         protocol: 'https',
-        hostname: 'staging.pubky.app',
+        hostname: 'staging.pubky.app'
       },
       {
         protocol: 'https',
-        hostname: 'pubky.app',
+        hostname: 'pubky.app'
       },
       {
         protocol: 'https',
-        hostname: 'nexus.staging.pubky.app',
+        hostname: 'nexus.staging.pubky.app'
       },
       {
         protocol: 'https',
-        hostname: 'nexus.pubky.app',
-      },
-    ],
+        hostname: 'nexus.pubky.app'
+      }
+    ]
   },
   cleanDistDir: false,
   env: {
-    NEXT_PUBLIC_HOMESERVER:
-      process.env.NEXT_PUBLIC_HOMESERVER || '11111111111111111111111111111111',
+    NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER || '11111111111111111111111111111111'
   },
   transpilePackages: ['pubky-app-specs'],
   webpack: (config, { isServer }) => {
@@ -47,22 +46,19 @@ const nextConfig = {
 
     config.experiments = {
       ...config.experiments,
-      asyncWebAssembly: true,
+      asyncWebAssembly: true
     };
 
     config.module.rules.push({
       test: /\.wasm$/,
       type: 'webassembly/async',
-      include: [path.resolve(__dirname, 'pubky-app-specs')],
+      include: [path.resolve(__dirname, 'pubky-app-specs')]
     });
 
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@nx/react/tailwind': path.resolve(
-        __dirname,
-        'stubs/nx-react-tailwind.js',
-      ),
+      '@nx/react/tailwind': path.resolve(__dirname, 'stubs/nx-react-tailwind.js')
     };
 
     return config;
@@ -72,10 +68,10 @@ const nextConfig = {
       {
         source: '/',
         destination: '/onboarding',
-        permanent: true,
-      },
+        permanent: true
+      }
     ];
-  },
+  }
 };
 
 module.exports = nextConfig;

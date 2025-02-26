@@ -17,10 +17,7 @@ export default function CreatePost() {
         isMobile && (isVisible ? 'opacity-100' : 'opacity-20')
       }`}
     >
-      <Button.Create
-        id="new-post-btn"
-        onClick={() => (pubky ? openModal('createPost') : openModal('join'))}
-      />
+      <Button.Create id="new-post-btn" onClick={() => (pubky ? openModal('createPost') : openModal('join'))} />
     </div>
   );
 }

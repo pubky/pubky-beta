@@ -5,11 +5,7 @@ interface PostsLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
   ref?: React.RefObject<HTMLDivElement>;
 }
 
-export default function PostsLayout({
-  children,
-  ref,
-  ...rest
-}: PostsLayoutProps) {
+export default function PostsLayout({ children, ref, ...rest }: PostsLayoutProps) {
   return (
     <div {...rest} ref={ref} className={twMerge(rest.className)}>
       {children}

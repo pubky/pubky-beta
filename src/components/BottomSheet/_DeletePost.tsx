@@ -13,26 +13,10 @@ interface DeletePostProps {
   className?: string;
 }
 
-export default function DeletePost({
-  show,
-  setShow,
-  setShowMenu,
-  post,
-  title,
-  className,
-}: DeletePostProps) {
+export default function DeletePost({ show, setShow, setShowMenu, post, title, className }: DeletePostProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Delete Post'}
-      className={className}
-    >
-      <ContentDeletePost
-        setShowModalDeletePost={setShow}
-        setShowMenu={setShowMenu}
-        post={post}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Delete Post'} className={className}>
+      <ContentDeletePost setShowModalDeletePost={setShow} setShowMenu={setShowMenu} post={post} />
     </BottomSheet.Root>
   );
 }

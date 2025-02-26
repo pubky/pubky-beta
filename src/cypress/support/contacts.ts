@@ -1,4 +1,4 @@
-import { clickFollowButton } from "./profile";
+import { clickFollowButton } from './profile';
 
 export const searchForProfile = (pubky: string, profileName: string) => {
   // type pubkyinto search bar and press enter

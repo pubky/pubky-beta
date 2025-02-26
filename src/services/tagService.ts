@@ -11,7 +11,7 @@ export async function getHotTags(
   skip?: number,
   limit?: number,
   maxTaggers?: number,
-  timeframe?: string,
+  timeframe?: string
 ): Promise<HotTag[]> {
   const queryParams = new URLSearchParams();
 
@@ -39,7 +39,7 @@ export async function getHotTags(
 // Get global tags by reach
 export async function getTagsByReach(
   userId: string,
-  reach: string, // follower | following | friends
+  reach: string // follower | following | friends
 ): Promise<TagsByReach> {
   const response = await fetch(`${BASE_URL}/tag/reached/${userId}/${reach}`);
   if (!response.ok) throw new Error('Failed to fetch tags by reach');
@@ -49,7 +49,7 @@ export async function getTagsByReach(
 // Get global tags by taggers
 export async function getTagTaggers(
   label: string,
-  reach: string, // follower | following | friends
+  reach: string // follower | following | friends
 ): Promise<Taggers> {
   const response = await fetch(`${BASE_URL}/tag/taggers/${label}/${reach}`);
   if (!response.ok) throw new Error('Failed to fetch tag taggers');
@@ -63,7 +63,7 @@ export async function getTagsPost(
   viewerId?: string,
   skip?: number,
   limit?: number,
-  maxTaggers?: number,
+  maxTaggers?: number
 ): Promise<PostTag[]> {
   const queryParams = new URLSearchParams();
 
@@ -80,9 +80,7 @@ export async function getTagsPost(
     queryParams.append('limit_taggers', String(maxTaggers));
   }
 
-  const response = await fetch(
-    `${BASE_URL}/post/${userId}/${postId}/tags?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/post/${userId}/${postId}/tags?${queryParams}`);
   if (!response.ok) throw new Error('Failed to tags post');
   return response.json();
 }
@@ -93,7 +91,7 @@ export async function getTagsUser(
   viewerId?: string,
   skip?: number,
   limit?: number,
-  maxTaggers?: number,
+  maxTaggers?: number
 ): Promise<PostTag[]> {
   const queryParams = new URLSearchParams();
 
@@ -110,9 +108,7 @@ export async function getTagsUser(
     queryParams.append('limit_taggers', String(maxTaggers));
   }
 
-  const response = await fetch(
-    `${BASE_URL}/user/${userId}/tags?${queryParams}`,
-  );
+  const response = await fetch(`${BASE_URL}/user/${userId}/tags?${queryParams}`);
   if (!response.ok) throw new Error('Failed to tags user');
   return response.json();
 }

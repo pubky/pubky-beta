@@ -17,11 +17,7 @@ export const H2 = ({ variant = 'normal', children, ...rest }: H2Props) => {
   return (
     <h2
       {...rest}
-      className={twMerge(
-        `text-2xl font-semibold font-InterTight tracking-wide text-white`,
-        cssClasses,
-        rest.className
-      )}
+      className={twMerge(`text-2xl font-semibold font-InterTight tracking-wide text-white`, cssClasses, rest.className)}
     >
       {children}
     </h2>

@@ -24,10 +24,7 @@ export default function Index() {
   return (
     <Onboarding.Layout currentStep={4}>
       <Typography.Display>Ready to go!</Typography.Display>
-      <Typography.Body
-        variant="large"
-        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0"
-      >
+      <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0">
         Welcome to Pubky. Your keys, your content, your rules.
       </Typography.Body>
       <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
@@ -52,21 +49,14 @@ export default function Index() {
           <Tooltip.Small className="md:hidden w-[278px]">
             <Typography.Body variant="small" className="text-opacity-80">
               You have already done the backup,{' '}
-              <span className="text-white font-bold text-opacity-100">
-                your recovery file/phrase has been deleted
-              </span>
-              .
+              <span className="text-white font-bold text-opacity-100">your recovery file/phrase has been deleted</span>.
             </Typography.Body>
           </Tooltip.Small>
         )}
       </Tooltip.RootSmall>
       <div className="w-full max-w-[1200px] justify-between items-center inline-flex">
         <Link href="/onboarding/pubky">
-          <Button.Large
-            icon={<Icon.ArrowLeft />}
-            className="w-[140px]"
-            variant="secondary"
-          >
+          <Button.Large icon={<Icon.ArrowLeft />} className="w-[140px]" variant="secondary">
             Back
           </Button.Large>
         </Link>
@@ -93,11 +83,7 @@ export default function Index() {
           )}
         </Tooltip.RootSmall>
         <Link href="/home">
-          <Button.Large
-            id="onboarding-start-exploring-btn"
-            icon={<Icon.Check />}
-            className="w-[140px] z-20"
-          >
+          <Button.Large id="onboarding-start-exploring-btn" icon={<Icon.Check />} className="w-[140px] z-20">
             Let&apos;s go!
           </Button.Large>
         </Link>

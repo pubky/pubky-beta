@@ -23,9 +23,7 @@ export default function Feeds() {
 
       const storedFeed = Utils.storage.get('feed');
       if (storedFeed) {
-        const matchingFeed = result.find(
-          (feed) => JSON.stringify(feed.feed) === JSON.stringify(storedFeed),
-        );
+        const matchingFeed = result.find((feed) => JSON.stringify(feed.feed) === JSON.stringify(storedFeed));
         if (matchingFeed) {
           setSelectedFeed(matchingFeed.feed);
         } else {
@@ -75,16 +73,11 @@ export default function Feeds() {
         />
         {feeds?.map((feed, index) => {
           return (
-            <div
-              className="flex w-full gap-4 justify-between"
-              key={`${index}/${feed.name}`}
-            >
+            <div className="flex w-full gap-4 justify-between" key={`${index}/${feed.name}`}>
               <SideCard.Item
                 label={Utils.minifyContent(feed.name, 11)}
                 value={feed.name}
-                selected={
-                  JSON.stringify(selectedFeed) === JSON.stringify(feed.feed)
-                }
+                selected={JSON.stringify(selectedFeed) === JSON.stringify(feed.feed)}
                 onClick={() => handleFeedSelect(feed.feed)}
                 icon={<Icon.Activity size="24" />}
               />

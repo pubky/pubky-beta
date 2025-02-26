@@ -10,13 +10,7 @@ interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
   tagId?: string;
 }
 
-export const Root = ({
-  children,
-  setShowTooltip,
-  delay,
-  tagId = '',
-  ...rest
-}: RootProps) => {
+export const Root = ({ children, setShowTooltip, delay, tagId = '', ...rest }: RootProps) => {
   const [timeout, setTimeout] = useState<number | null>(null);
   const baseCSS = 'relative inline-block';
 

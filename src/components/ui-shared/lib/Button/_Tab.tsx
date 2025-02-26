@@ -8,12 +8,7 @@ interface TabButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   className?: string;
 }
 
-export const Tab = ({
-  children,
-  icon,
-  active = false,
-  ...rest
-}: TabButtonProps) => {
+export const Tab = ({ children, icon, active = false, ...rest }: TabButtonProps) => {
   const bgCSS = active
     ? 'border-t border-white bg-white bg-opacity-20'
     : 'bg-white bg-opacity-10 hover:border-white hover:bg-white hover:bg-opacity-20';

@@ -9,7 +9,7 @@ import {
   CaretRight,
   CaretLeft,
   CaretUp,
-  Next,
+  Next
 } from './_Arrow';
 import { Tag } from './_Commerce';
 import {
@@ -22,7 +22,7 @@ import {
   SquareHalf,
   ThreeColumns,
   Eye,
-  LineHorizontal,
+  LineHorizontal
 } from './_Design';
 import { Plus, Minus, X, PlusCircle } from './_Math';
 import { GitFork } from './_Development';
@@ -36,7 +36,7 @@ import {
   Podcast,
   SlidersHorizontal,
   SpeakerSimpleSlash,
-  SpeakerHigh,
+  SpeakerHigh
 } from './_Media';
 import {
   NoteBlank,
@@ -53,7 +53,7 @@ import {
   Copy,
   TextAlignLeft,
   TextAlignRight,
-  TextAlignCenter,
+  TextAlignCenter
 } from './_Office';
 import {
   DotsNine,
@@ -75,7 +75,7 @@ import {
   DotsThreeOutline,
   UploadSimple,
   SignOut,
-  SignIn,
+  SignIn
 } from './_System';
 import {
   Android,
@@ -93,7 +93,7 @@ import {
   Twitch,
   TikTok,
   Spotify,
-  Discord,
+  Discord
 } from './_Social';
 import { Clock, Calendar } from './_Time';
 import { House, Globe, GlobeSimple, Crosshair } from './_Maps';
@@ -106,36 +106,13 @@ import {
   UsersRight,
   UserCircle,
   Smiley,
-  SmileySad,
+  SmileySad
 } from './_People';
-import {
-  Asterisk,
-  PaperPlaneRight,
-  ChatCircleText,
-  Broadcast,
-  Envelope,
-} from './_Communication';
+import { Asterisk, PaperPlaneRight, ChatCircleText, Broadcast, Envelope } from './_Communication';
 import { Activity } from './_Health';
 import { Fire } from './_Weather';
-import {
-  Key,
-  Lock,
-  LockKeyOpen,
-  Warning,
-  Shield,
-  Question,
-  Flag,
-  WarningOctagon,
-} from './_Security';
-import {
-  Synonym,
-  Slashtags,
-  Blocktank,
-  Bitkit,
-  Bitcoin,
-  Tether,
-  PubkyIcon,
-} from './_Tag';
+import { Key, Lock, LockKeyOpen, Warning, Shield, Question, Flag, WarningOctagon } from './_Security';
+import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether, PubkyIcon } from './_Tag';
 
 export const Icon = {
   Android,
@@ -266,5 +243,5 @@ export const Icon = {
   Warning,
   WarningOctagon,
   Youtube,
-  X,
+  X
 };

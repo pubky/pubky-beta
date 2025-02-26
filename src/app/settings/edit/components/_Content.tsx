@@ -19,11 +19,11 @@ export default function Index() {
   const [loading, setLoading] = useState(false);
   const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
-    { url: '', title: 'x (twitter)', placeHolder: '@user' },
+    { url: '', title: 'x (twitter)', placeHolder: '@user' }
   ]);
   const [errors, setErrors] = useState({
     name: '',
-    bio: '',
+    bio: ''
   });
 
   useEffect(() => {
@@ -38,8 +38,7 @@ export default function Index() {
           setBio(profile?.bio || '');
           setImage(profile?.image || '/images/webp/Userpic.webp');
           setPrevImage(profile.image || '/images/webp/Userpic.webp');
-          if (profile.links && profile.links.length > 0)
-            setLinks(profile?.links);
+          if (profile.links && profile.links.length > 0) setLinks(profile?.links);
         }
       } catch (error) {
         console.log(error);
@@ -53,31 +52,11 @@ export default function Index() {
     <Content.Main>
       <Edit.Header />
       <Content.Grid>
-        <Edit.UserInfo
-          name={name}
-          setName={setName}
-          handler={handler}
-          errors={errors}
-          loading={loading}
-        />
+        <Edit.UserInfo name={name} setName={setName} handler={handler} errors={errors} loading={loading} />
         <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
-          <CardComponent.Bio
-            bio={bio}
-            setBio={setBio}
-            loading={loading}
-            errors={errors}
-          />
-          <CardComponent.Links
-            links={links}
-            setLinks={setLinks}
-            errors={errors}
-            loading={loading}
-          />
-          <CardComponent.Pic
-            image={image}
-            setImage={setImage}
-            loading={loading}
-          />
+          <CardComponent.Bio bio={bio} setBio={setBio} loading={loading} errors={errors} />
+          <CardComponent.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />
+          <CardComponent.Pic image={image} setImage={setImage} loading={loading} />
         </div>
         <Edit.Buttons
           image={image}

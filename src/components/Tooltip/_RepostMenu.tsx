@@ -16,16 +16,13 @@ export default function RepostMenu({
   setShowModalRepost,
   handleRepost,
   handleDeleteRepost,
-  deleteRepost = false,
+  deleteRepost = false
 }: TooltipRepostMenuProps) {
   const tooltipRepostMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutsideTooltip = (event: MouseEvent) => {
-      if (
-        tooltipRepostMenuRef.current &&
-        !tooltipRepostMenuRef.current.contains(event.target as Node)
-      ) {
+      if (tooltipRepostMenuRef.current && !tooltipRepostMenuRef.current.contains(event.target as Node)) {
         setShowRepostMenu(false);
       }
     };

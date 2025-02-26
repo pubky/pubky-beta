@@ -21,10 +21,7 @@ export default function Index() {
   return (
     <Onboarding.Layout currentStep={3}>
       <Typography.Display>Your pubky.</Typography.Display>
-      <Typography.Body
-        variant="large"
-        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0"
-      >
+      <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 lg:mt-0">
         Share your pubky with your friends so they can follow you.
       </Typography.Body>
       <div className="relative my-6 w-full bg-white bg-opacity-10 rounded-lg flex-col justify-center items-center inline-flex">
@@ -60,12 +57,8 @@ export default function Index() {
         Copy pubky to clipboard
       </Button.Large>
       <div className="w-full max-w-[1200px] justify-between items-center inline-flex">
-      <Link href="/logout">
-          <Button.Large
-           icon={<Icon.SignOut size="16" />}
-            className="w-[140px]"
-            variant="secondary"
-          >
+        <Link href="/logout">
+          <Button.Large icon={<Icon.SignOut size="16" />} className="w-[140px]" variant="secondary">
             Sign out
           </Button.Large>
         </Link>
@@ -82,11 +75,7 @@ export default function Index() {
           Copy pubky to clipboard
         </Button.Large>
         <Link href={'/onboarding/confirm'}>
-          <Button.Large
-            id="onboarding-confirm-link"
-            icon={<Icon.ArrowRight />}
-            className="w-[140px] z-20"
-          >
+          <Button.Large id="onboarding-confirm-link" icon={<Icon.ArrowRight />} className="w-[140px] z-20">
             Continue
           </Button.Large>
         </Link>

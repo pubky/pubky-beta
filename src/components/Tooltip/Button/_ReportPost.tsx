@@ -13,9 +13,7 @@ export default function ReportPost({ post, setShowMenu }: ReportPostProps) {
   return (
     <Tooltip.Item
       id="report-post"
-      onClick={() =>
-        openModal('reportPost', { post, setShowMenu: setShowMenu })
-      }
+      onClick={() => openModal('reportPost', { post, setShowMenu: setShowMenu })}
       icon={<Icon.Flag size="24" />}
     >
       Report post

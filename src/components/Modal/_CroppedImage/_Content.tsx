@@ -15,33 +15,22 @@ interface CroppedImageProps {
   setImage: React.Dispatch<React.SetStateAction<File | string | undefined>>;
 }
 
-export default function ContentCroppedImage({
-  setShowModalCroppedImage,
-  image,
-  setImage,
-}: CroppedImageProps) {
+export default function ContentCroppedImage({ setShowModalCroppedImage, image, setImage }: CroppedImageProps) {
   const modalCroppedImageRef = useRef<HTMLDivElement>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] =
-    useState<CroppedArea | null>();
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<CroppedArea | null>();
 
   useEffect(() => {
     const handleClickOutsideModalCroppedImage = (event: MouseEvent) => {
-      if (
-        modalCroppedImageRef.current &&
-        !modalCroppedImageRef.current.contains(event.target as Node)
-      ) {
+      if (modalCroppedImageRef.current && !modalCroppedImageRef.current.contains(event.target as Node)) {
         setShowModalCroppedImage(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutsideModalCroppedImage);
 
     return () => {
-      document.removeEventListener(
-        'mousedown',
-        handleClickOutsideModalCroppedImage,
-      );
+      document.removeEventListener('mousedown', handleClickOutsideModalCroppedImage);
     };
   }, [modalCroppedImageRef, setShowModalCroppedImage]);
 
@@ -73,15 +62,13 @@ export default function ContentCroppedImage({
           0,
           0,
           croppedAreaPixels.width,
-          croppedAreaPixels.height,
+          croppedAreaPixels.height
         );
 
         return new Promise<File>((resolve) => {
           canvas.toBlob((blob) => {
             if (blob) {
-              resolve(
-                new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' }),
-              );
+              resolve(new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' }));
             }
           }, 'image/jpeg');
         });
@@ -113,16 +100,10 @@ export default function ContentCroppedImage({
         />
       </div>
       <div className="flex gap-4 my-6">
-        <Button.Large
-          variant="secondary"
-          onClick={() => setShowModalCroppedImage(false)}
-        >
+        <Button.Large variant="secondary" onClick={() => setShowModalCroppedImage(false)}>
           Cancel
         </Button.Large>
-        <Modal.SubmitAction
-          onClick={handleDone}
-          icon={<Icon.ArrowRight size="16" />}
-        >
+        <Modal.SubmitAction onClick={handleDone} icon={<Icon.ArrowRight size="16" />}>
           Done
         </Modal.SubmitAction>
       </div>

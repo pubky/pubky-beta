@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const Newspaper = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M3 19.5C3.39782 19.5 3.77936 19.342 4.06066 19.0607C4.34196 18.7794 4.5 18.3978 4.5 18L4.5 5.25C4.5 5.05109 4.57902 4.86032 4.71967 4.71967C4.86032 4.57902 5.05109 4.5 5.25 4.5L21 4.5C21.1989 4.5 21.3897 4.57902 21.5303 4.71967C21.671 4.86032 21.75 5.05109 21.75 5.25V18C21.75 18.3978 21.592 18.7794 21.3107 19.0607C21.0294 19.342 20.6478 19.5 20.25 19.5H3Z"
@@ -50,13 +44,7 @@ export const Newspaper = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const ImageSquare = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M3.75 16.5L3.75 4.5C3.75 4.30109 3.82902 4.11032 3.96967 3.96967C4.11032 3.82902 4.30109 3.75 4.5 3.75L19.5 3.75C19.6989 3.75 19.8897 3.82902 20.0303 3.96967C20.171 4.11032 20.25 4.30109 20.25 4.5V15L20.25 15L16.2803 11.0303C16.1397 10.8897 15.9489 10.8107 15.75 10.8107C15.5511 10.8107 15.3603 10.8897 15.2197 11.0303L11.0303 15.2197C10.8897 15.3603 10.6989 15.4393 10.5 15.4393C10.3011 15.4393 10.1103 15.3603 9.96967 15.2197L8.03033 13.2803C7.88967 13.1397 7.69891 13.0607 7.5 13.0607C7.30108 13.0607 7.11032 13.1397 6.96967 13.2803L3.75 16.5Z"
@@ -81,17 +69,8 @@ export const ImageSquare = ({ size = '24', color = 'white' }: IconProps) => (
   </svg>
 );
 
-export const MusicNotesSimple = ({
-  size = '24',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const MusicNotesSimple = ({ size = '24', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M16.875 18.75C18.3247 18.75 19.5 17.5747 19.5 16.125C19.5 14.6753 18.3247 13.5 16.875 13.5C15.4253 13.5 14.25 14.6753 14.25 16.125C14.25 17.5747 15.4253 18.75 16.875 18.75Z"
@@ -124,13 +103,7 @@ export const MusicNotesSimple = ({
 );
 
 export const Play = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M21.3889 11.36L7.8911 3.11108C7.77741 3.0416 7.64726 3.00366 7.51404 3.00117C7.38083 2.99867 7.24935 3.03171 7.13314 3.09689C7.01692 3.16206 6.92017 3.25702 6.85283 3.37199C6.7855 3.48696 6.75 3.6178 6.75 3.75104L6.75 20.2489C6.75 20.3821 6.7855 20.513 6.85283 20.628C6.92017 20.7429 7.01692 20.8379 7.13314 20.9031C7.24935 20.9682 7.38083 21.0013 7.51404 20.9988C7.64726 20.9963 7.77741 20.9583 7.8911 20.8889L21.3889 12.6399C21.4985 12.5729 21.5891 12.4789 21.652 12.3668C21.7148 12.2548 21.7478 12.1285 21.7478 12C21.7478 11.8715 21.7148 11.7452 21.652 11.6331C21.5891 11.521 21.4985 11.427 21.3889 11.36Z"
@@ -146,13 +119,7 @@ export const Play = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const Pause = ({ size = '20', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 20 20"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M7 0H1C0.447715 0 0 0.407014 0 0.909091V19.0909C0 19.593 0.447715 20 1 20H7C7.55228 20 8 19.593 8 19.0909V0.909091C8 0.407014 7.55228 0 7 0Z"
       fill={color}
@@ -165,13 +132,7 @@ export const Pause = ({ size = '20', color = 'white' }: IconProps) => (
 );
 
 export const Podcast = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M12 2.25H12C12.9946 2.25 13.9484 2.64509 14.6517 3.34835C15.3549 4.05161 15.75 5.00544 15.75 6V12C15.75 12.9946 15.3549 13.9484 14.6517 14.6517C13.9484 15.3549 12.9946 15.75 12 15.75H12C11.5075 15.75 11.0199 15.653 10.5649 15.4645C10.11 15.2761 9.69657 14.9999 9.34835 14.6517C9.00013 14.3034 8.72391 13.89 8.53545 13.4351C8.347 12.9801 8.25 12.4925 8.25 12V5.99999C8.25 5.00543 8.64509 4.05161 9.34835 3.34835C10.0516 2.64509 11.0054 2.25 12 2.25Z"
@@ -195,68 +156,19 @@ export const Podcast = ({ size = '24', color = 'white' }: IconProps) => (
       d="M5.2078 12.0047C5.61945 11.9587 5.99049 12.255 6.03655 12.6667C6.20068 14.1334 6.89962 15.4883 7.99976 16.4722C9.0999 17.4561 10.5241 18.0001 12 18.0001C13.4759 18.0001 14.9001 17.4561 16.0002 16.4722C17.1004 15.4883 17.7993 14.1335 17.9635 12.6667C18.0095 12.255 18.3806 11.9587 18.7922 12.0047C19.2039 12.0508 19.5002 12.4218 19.4542 12.8335C19.249 14.6669 18.3753 16.3604 17.0002 17.5903C15.625 18.8201 13.8449 19.5001 12 19.5001C10.1551 19.5001 8.37496 18.8201 6.99981 17.5903C5.62466 16.3604 4.75101 14.6669 4.54586 12.8335C4.4998 12.4218 4.79616 12.0508 5.2078 12.0047Z"
       fill={color}
     />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M15 8.25H12.75V7.125H15V8.25Z"
-      fill={color}
-    />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M15 6H12.75V4.875H15V6Z"
-      fill={color}
-    />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M15 10.5H12.75V9.375H15V10.5Z"
-      fill={color}
-    />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M15 12.75H12.75V11.625H15V12.75Z"
-      fill={color}
-    />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M11.25 8.25H9V7.125H11.25V8.25Z"
-      fill={color}
-    />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M11.25 6H9V4.875H11.25V6Z"
-      fill={color}
-    />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M11.25 10.5H9V9.375H11.25V10.5Z"
-      fill={color}
-    />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M11.25 12.75H9V11.625H11.25V12.75Z"
-      fill={color}
-    />
+    <path fillRule="evenodd" clipRule="evenodd" d="M15 8.25H12.75V7.125H15V8.25Z" fill={color} />
+    <path fillRule="evenodd" clipRule="evenodd" d="M15 6H12.75V4.875H15V6Z" fill={color} />
+    <path fillRule="evenodd" clipRule="evenodd" d="M15 10.5H12.75V9.375H15V10.5Z" fill={color} />
+    <path fillRule="evenodd" clipRule="evenodd" d="M15 12.75H12.75V11.625H15V12.75Z" fill={color} />
+    <path fillRule="evenodd" clipRule="evenodd" d="M11.25 8.25H9V7.125H11.25V8.25Z" fill={color} />
+    <path fillRule="evenodd" clipRule="evenodd" d="M11.25 6H9V4.875H11.25V6Z" fill={color} />
+    <path fillRule="evenodd" clipRule="evenodd" d="M11.25 10.5H9V9.375H11.25V10.5Z" fill={color} />
+    <path fillRule="evenodd" clipRule="evenodd" d="M11.25 12.75H9V11.625H11.25V12.75Z" fill={color} />
   </svg>
 );
 
-export const SlidersHorizontal = ({
-  size = '24',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const SlidersHorizontal = ({ size = '24', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M9.75 9.74939C10.7855 9.74939 11.625 8.90992 11.625 7.87439C11.625 6.83886 10.7855 5.99939 9.75 5.99939C8.71447 5.99939 7.875 6.83886 7.875 7.87439C7.875 8.90992 8.71447 9.74939 9.75 9.74939Z"
@@ -301,17 +213,8 @@ export const SlidersHorizontal = ({
   </svg>
 );
 
-export const SpeakerSimpleSlash = ({
-  size = '32',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const SpeakerSimpleSlash = ({ size = '32', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M10 21H4C3.73478 21 3.48043 20.8946 3.29289 20.7071C3.10536 20.5196 3 20.2652 3 20V12C3 11.7348 3.10536 11.4804 3.29289 11.2929C3.48043 11.1054 3.73478 11 4 11H10L19 4V28L10 21Z"
@@ -351,13 +254,7 @@ export const SpeakerSimpleSlash = ({
 );
 
 export const SpeakerHigh = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M10 21H4C3.73478 21 3.48043 20.8946 3.29289 20.7071C3.10536 20.5196 3 20.2652 3 20V12C3 11.7348 3.10536 11.4804 3.29289 11.2929C3.48043 11.1054 3.73478 11 4 11H10V21Z"

@@ -7,12 +7,7 @@ interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   status?: string;
 }
 
-export default function Avatar({
-  username = 'user-pic',
-  uriImage,
-  status,
-  ...rest
-}: AvatarProps) {
+export default function Avatar({ username = 'user-pic', uriImage, status, ...rest }: AvatarProps) {
   return (
     <div {...rest} className={rest.className}>
       <ImageByUri

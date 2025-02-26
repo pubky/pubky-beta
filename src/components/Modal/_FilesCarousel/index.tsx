@@ -9,12 +9,7 @@ interface FilesCarouselProps {
   currentFileIndex: number;
 }
 
-export default function FilesCarousel({
-  showModal,
-  setShowModal,
-  fileContents,
-  currentFileIndex,
-}: FilesCarouselProps) {
+export default function FilesCarousel({ showModal, setShowModal, fileContents, currentFileIndex }: FilesCarouselProps) {
   return (
     <Modal.Root
       show={showModal}
@@ -22,10 +17,7 @@ export default function FilesCarousel({
       className="max-h-[90vh] overflow-y-auto overflow-x-hidden cursor-default scrollbar-thin scrollbar-webkit"
     >
       <Modal.CloseAction onClick={() => setShowModal(false)} />
-      <ContentFilesCarousel
-        fileContents={fileContents}
-        currentFileIndex={currentFileIndex}
-      />
+      <ContentFilesCarousel fileContents={fileContents} currentFileIndex={currentFileIndex} />
     </Modal.Root>
   );
 }

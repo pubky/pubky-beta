@@ -13,16 +13,7 @@ interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
   boxShadow?: boolean;
   href?: string;
 }
-export const Rank = ({
-  rank,
-  tag,
-  counter,
-  color,
-  images,
-  href,
-  boxShadow = true,
-  ...rest
-}: RankProps) => {
+export const Rank = ({ rank, tag, counter, color, images, href, boxShadow = true, ...rest }: RankProps) => {
   const baseCSS = 'justify-start items-center gap-3 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>

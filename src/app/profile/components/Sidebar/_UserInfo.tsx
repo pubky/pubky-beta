@@ -37,7 +37,7 @@ export default function UserInfo({
   followed,
   setFollowed,
   loadingFollowed,
-  setLoadingFollowed,
+  setLoadingFollowed
 }: UserInfoProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -81,9 +81,7 @@ export default function UserInfo({
 
   return (
     <div
-      className={`w-full self-start ${
-        !scrolled ? 'hidden' : 'block sticky top-[120px]'
-      } z-20 rounded-2xl px-3 py-4`}
+      className={`w-full self-start ${!scrolled ? 'hidden' : 'block sticky top-[120px]'} z-20 rounded-2xl px-3 py-4`}
     >
       <SideCard.Content className="flex-col gap-3 inline-flex mt-0">
         <div className="items-center inline-flex justify-between">
@@ -98,10 +96,7 @@ export default function UserInfo({
             <div>
               <div className="w-full gap-2 justify-between flex items-center">
                 <div className="flex flex-col justify-center">
-                  <Typography.Body
-                    variant="small-bold"
-                    className="leadning-none"
-                  >
+                  <Typography.Body variant="small-bold" className="leadning-none">
                     {Utils.minifyText(name, 8)}
                   </Typography.Body>
                   <Typography.Label className="text-[11px] leading-none text-opacity-30">
@@ -118,9 +113,7 @@ export default function UserInfo({
                   )}
                   <div
                     className="cursor-pointer rounded-full"
-                    onClick={() =>
-                      pubky ? setShowProfileMenu(true) : openModal('join')
-                    }
+                    onClick={() => (pubky ? setShowProfileMenu(true) : openModal('join'))}
                   >
                     <Icon.DotsThreeOutline size="12" />
                   </div>
@@ -129,20 +122,13 @@ export default function UserInfo({
             </div>
           </div>
         </div>
-        <Typography.Body
-          variant="small"
-          className="text-opacity-80 break-words"
-        >
+        <Typography.Body variant="small" className="text-opacity-80 break-words">
           <Parsing>{bio}</Parsing>
         </Typography.Body>
         {initLoadingFollowed ? (
           <Button.Medium
             loading={initLoadingFollowed}
-            className={
-              !creatorPubky || creatorPubky === pubky
-                ? 'hidden'
-                : 'w-full h-[35px]'
-            }
+            className={!creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full h-[35px]'}
           >
             Loading
           </Button.Medium>
@@ -153,30 +139,18 @@ export default function UserInfo({
             loading={loadingFollowed}
             variant="default"
             icon={<Icon.UserMinus size="16" />}
-            className={
-              !creatorPubky || creatorPubky === pubky
-                ? 'hidden'
-                : 'w-full h-[35px]'
-            }
+            className={!creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full h-[35px]'}
           >
             Unfollow
           </Button.Medium>
         ) : (
           <Button.Medium
-            onClick={
-              loadingFollowed
-                ? undefined
-                : () => (pubky ? followUser() : openModal('join'))
-            }
+            onClick={loadingFollowed ? undefined : () => (pubky ? followUser() : openModal('join'))}
             disabled={loadingFollowed}
             loading={loadingFollowed}
             variant="default"
             icon={<Icon.UserPlus size="16" />}
-            className={
-              !creatorPubky || creatorPubky === pubky
-                ? 'hidden'
-                : 'w-full h-[35px]'
-            }
+            className={!creatorPubky || creatorPubky === pubky ? 'hidden' : 'w-full h-[35px]'}
           >
             Follow
           </Button.Medium>

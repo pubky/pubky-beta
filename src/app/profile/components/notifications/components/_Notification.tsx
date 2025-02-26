@@ -14,64 +14,58 @@ const notificationType = {
   follow: {
     type: 'follow',
     icon: <Icon.UserPlus size="24" />,
-    text: 'followed you',
+    text: 'followed you'
   },
   new_friend: {
     type: 'new_friend',
     icon: <Icon.UsersLeft size="24" />,
-    text: 'is your friend now',
+    text: 'is your friend now'
   },
   lost_friend: {
     type: 'lost_friend',
     icon: <Icon.UserMinus size="24" />,
-    text: 'is not your friend anymore',
+    text: 'is not your friend anymore'
   },
   tag_post: {
     type: 'tag_post',
     icon: <Icon.Tag size="24" />,
-    text: 'tagged your post as',
+    text: 'tagged your post as'
   },
   tag_profile: {
     type: 'tag_profile',
     icon: <Icon.Tag size="24" />,
-    text: 'tagged your profile as',
+    text: 'tagged your profile as'
   },
   reply: {
     type: 'reply',
     icon: <Icon.ChatCircleText size="24" />,
-    text: 'replied to your post',
+    text: 'replied to your post'
   },
   repost: {
     type: 'repost',
     icon: <Icon.Repost size="24" />,
-    text: 'reposted your post',
+    text: 'reposted your post'
   },
   mention: {
     type: 'mention',
     icon: <Icon.Note size="24" />,
-    text: 'mentioned you in a post',
+    text: 'mentioned you in a post'
   },
   post_deleted: {
     type: 'post_deleted',
     icon: <Icon.Trash size="24" />,
-    text: 'deleted',
+    text: 'deleted'
   },
   post_edited: {
     type: 'post_edited',
     icon: <Icon.PencilLine size="24" />,
-    text: 'edited',
-  },
+    text: 'edited'
+  }
 };
 
 type NotificationTypeKey = keyof typeof notificationType;
 
-export default function Notification({
-  notification,
-  unread,
-}: {
-  notification: NotificationView;
-  unread?: boolean;
-}) {
+export default function Notification({ notification, unread }: { notification: NotificationView; unread?: boolean }) {
   const { pubky } = usePubkyClientContext();
   const isMobile = useIsMobile();
   const [user, setUser] = useState<UserView | null | undefined>(null);
@@ -109,9 +103,7 @@ export default function Notification({
       userId = notification.body.reposted_by;
     } else if (notification.body.type === notificationType?.mention?.type) {
       userId = notification.body.mentioned_by;
-    } else if (
-      notification.body.type === notificationType?.post_deleted?.type
-    ) {
+    } else if (notification.body.type === notificationType?.post_deleted?.type) {
       userId = notification.body.deleted_by;
     } else if (notification.body.type === notificationType?.post_edited?.type) {
       userId = notification.body.edited_by;
@@ -123,8 +115,7 @@ export default function Notification({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notification]);
 
-  const currentNotificationType =
-    notificationType[notification?.body?.type as NotificationTypeKey];
+  const currentNotificationType = notificationType[notification?.body?.type as NotificationTypeKey];
 
   if (!currentNotificationType) {
     return null;
@@ -148,26 +139,22 @@ export default function Notification({
       : '';
 
   const replyLink =
-    notification?.body?.type === notificationType?.reply?.type &&
-    notification.body.reply_uri
+    notification?.body?.type === notificationType?.reply?.type && notification.body.reply_uri
       ? Utils.encodePostUri(notification.body.reply_uri)
       : '';
 
   const parentPostReplyLink =
-    notification.body.type === notificationType?.reply?.type &&
-    notification.body.parent_post_uri
+    notification.body.type === notificationType?.reply?.type && notification.body.parent_post_uri
       ? Utils.encodePostUri(notification.body.parent_post_uri)
       : '';
 
   const repostLink =
-    notification.body.type === notificationType?.repost?.type &&
-    notification.body.repost_uri
+    notification.body.type === notificationType?.repost?.type && notification.body.repost_uri
       ? Utils.encodePostUri(notification.body.repost_uri)
       : '';
 
   const embedLink =
-    notification.body.type === notificationType?.repost?.type &&
-    notification.body.embed_uri
+    notification.body.type === notificationType?.repost?.type && notification.body.embed_uri
       ? Utils.encodePostUri(notification.body.embed_uri)
       : '';
 
@@ -205,10 +192,7 @@ export default function Notification({
             />
           )}
           {userId && (
-            <Link
-              href={`/profile/${userId}`}
-              className="flex gap-2 items-center"
-            >
+            <Link href={`/profile/${userId}`} className="flex gap-2 items-center">
               {user && (
                 <ImageByUri
                   width={32}
@@ -218,10 +202,7 @@ export default function Notification({
                   uri={user?.details?.image || '/images/webp/Userpic.webp'}
                 />
               )}
-              <Typography.Body
-                className="hover:underline hover:decoration-solid"
-                variant="medium-bold"
-              >
+              <Typography.Body className="hover:underline hover:decoration-solid" variant="medium-bold">
                 {user === null
                   ? Utils.minifyPubky(userId)
                   : user
@@ -263,10 +244,7 @@ export default function Notification({
             notification.body.type === notificationType?.tag_post?.type) && (
             <Link href={`/search?tags=${notification.body.tag_label}`}>
               <PostUtil.Tag
-                color={
-                  notification.body.tag_label &&
-                  Utils.generateRandomColor(notification.body.tag_label)
-                }
+                color={notification.body.tag_label && Utils.generateRandomColor(notification.body.tag_label)}
                 clicked={false}
                 boxShadow={false}
               >
@@ -276,10 +254,7 @@ export default function Notification({
           )}
           {postLink && (
             <Link href={postLink}>
-              <Typography.Body
-                variant="small-bold"
-                className="text-white text-opacity-80 hover:text-opacity-100"
-              >
+              <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
                 View Post
               </Typography.Body>
             </Link>
@@ -287,19 +262,13 @@ export default function Notification({
           {replyLink && parentPostReplyLink && (
             <>
               <Link href={replyLink}>
-                <Typography.Body
-                  variant="small-bold"
-                  className="text-white text-opacity-80 hover:text-opacity-100"
-                >
+                <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
                   View Reply
                 </Typography.Body>
               </Link>
               <Typography.Body variant="small">{' - '}</Typography.Body>
               <Link href={parentPostReplyLink}>
-                <Typography.Body
-                  variant="small-bold"
-                  className="text-white text-opacity-80 hover:text-opacity-100"
-                >
+                <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
                   View Post
                 </Typography.Body>
               </Link>
@@ -308,56 +277,42 @@ export default function Notification({
           {repostLink && embedLink && (
             <>
               <Link href={repostLink}>
-                <Typography.Body
-                  variant="small-bold"
-                  className="text-white text-opacity-80 hover:text-opacity-100"
-                >
+                <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
                   View Repost
                 </Typography.Body>
               </Link>
               <Typography.Body variant="small">{' - '}</Typography.Body>
               <Link href={embedLink}>
-                <Typography.Body
-                  variant="small-bold"
-                  className="text-white text-opacity-80 hover:text-opacity-100"
-                >
+                <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
                   View Post
                 </Typography.Body>
               </Link>
             </>
           )}
-          {notification.body.type === notificationType?.post_deleted?.type &&
-            deletedPostLink && (
-              <Link href={deletedPostLink}>
-                <Typography.Body
-                  variant="small-bold"
-                  className="text-white text-opacity-80 hover:text-opacity-100"
-                >
-                  {notification.body.delete_source === 'reply' ||
-                  notification.body.delete_source === 'repost' ||
-                  notification.body.delete_source === 'tagged_post'
-                    ? 'View Post'
-                    : notification.body.delete_source === 'reply_parent'
-                      ? 'View Reply'
-                      : 'View Repost'}
-                </Typography.Body>
-              </Link>
-            )}
-          {notification.body.type === notificationType?.post_edited?.type &&
-            editedPostLink && (
-              <Link href={editedPostLink}>
-                <Typography.Body
-                  variant="small-bold"
-                  className="text-white text-opacity-80 hover:text-opacity-100"
-                >
-                  {notification.body.edit_source === 'reply'
+          {notification.body.type === notificationType?.post_deleted?.type && deletedPostLink && (
+            <Link href={deletedPostLink}>
+              <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
+                {notification.body.delete_source === 'reply' ||
+                notification.body.delete_source === 'repost' ||
+                notification.body.delete_source === 'tagged_post'
+                  ? 'View Post'
+                  : notification.body.delete_source === 'reply_parent'
                     ? 'View Reply'
-                    : notification.body.edit_source === 'repost'
-                      ? 'View Repost'
-                      : 'View Post'}
-                </Typography.Body>
-              </Link>
-            )}
+                    : 'View Repost'}
+              </Typography.Body>
+            </Link>
+          )}
+          {notification.body.type === notificationType?.post_edited?.type && editedPostLink && (
+            <Link href={editedPostLink}>
+              <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
+                {notification.body.edit_source === 'reply'
+                  ? 'View Reply'
+                  : notification.body.edit_source === 'repost'
+                    ? 'View Repost'
+                    : 'View Post'}
+              </Typography.Body>
+            </Link>
+          )}
         </div>
       </div>
       <div className="grow shrink basis-0 h-8 flex-col justify-center items-end gap-1 inline-flex">

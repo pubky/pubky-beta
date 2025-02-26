@@ -11,8 +11,8 @@ const modules = {
     [{ align: [] }],
     [{ list: 'ordered' }, { list: 'bullet' }],
     ['blockquote', 'code-block'],
-    ['link', 'image'],
-  ],
+    ['link', 'image']
+  ]
 };
 
 const formats = [
@@ -26,22 +26,14 @@ const formats = [
   'blockquote',
   'code-block',
   'link',
-  'image',
+  'image'
 ];
 
-const MarkdownEditorComponent = ({
-  id,
-  placeHolder,
-  autoFocus,
-  onChange,
-  setCharCount,
-  value,
-  maxLength,
-}) => {
+const MarkdownEditorComponent = ({ id, placeHolder, autoFocus, onChange, setCharCount, value, maxLength }) => {
   const { quill, quillRef } = useQuill({
     modules,
     formats,
-    placeholder: placeHolder,
+    placeholder: placeHolder
   });
 
   useEffect(() => {

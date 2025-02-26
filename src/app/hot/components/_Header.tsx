@@ -13,10 +13,7 @@ export function Header() {
       <Components.Header title="Hot" />
       <Components.HeaderMobile
         leftIcon={
-          <div
-            className="cursor-pointer"
-            onClick={() => setDrawerFilterOpen(true)}
-          >
+          <div className="cursor-pointer" onClick={() => setDrawerFilterOpen(true)}>
             <Icon.SlidersHorizontal size="20" />
           </div>
         }

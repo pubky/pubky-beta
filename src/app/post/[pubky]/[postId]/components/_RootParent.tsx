@@ -17,7 +17,7 @@ interface ParentPostState {
 
 export default function RootParent({
   parentURI,
-  postRef,
+  postRef
 }: {
   parentURI: string;
   postRef: React.RefObject<HTMLDivElement>;
@@ -39,10 +39,7 @@ export default function RootParent({
   }, []);
 
   useEffect(() => {
-    const fetchParentURIs = async (
-      parentURI: string,
-      collectedURIs: string[],
-    ): Promise<string[]> => {
+    const fetchParentURIs = async (parentURI: string, collectedURIs: string[]): Promise<string[]> => {
       if (!parentURI) return collectedURIs;
       collectedURIs.push(parentURI);
       try {
@@ -52,10 +49,7 @@ export default function RootParent({
           const postId = parsed.resource_id!;
           const parentPost = await getPost(authorId, postId, pubky ?? '');
           if (parentPost?.relationships?.replied) {
-            return await fetchParentURIs(
-              parentPost?.relationships?.replied,
-              collectedURIs,
-            );
+            return await fetchParentURIs(parentPost?.relationships?.replied, collectedURIs);
           }
         }
       } catch (error) {
@@ -86,7 +80,7 @@ export default function RootParent({
       try {
         setParentPosts((prevState) => ({
           ...prevState,
-          [parentURI]: { post: null, loading: true },
+          [parentURI]: { post: null, loading: true }
         }));
         const parsed = parse_uri(parentURI);
         if (parsed.resource == 'posts') {
@@ -95,14 +89,14 @@ export default function RootParent({
           const post = await getPost(authorId, postId, pubky ?? '');
           setParentPosts((prevState) => ({
             ...prevState,
-            [parentURI]: { post: post || null, loading: false },
+            [parentURI]: { post: post || null, loading: false }
           }));
         }
       } catch (error) {
         console.error('Error fetching parent post:', error);
         setParentPosts((prevState) => ({
           ...prevState,
-          [parentURI]: { post: null, loading: false },
+          [parentURI]: { post: null, loading: false }
         }));
       }
     };
@@ -115,9 +109,7 @@ export default function RootParent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentURIs, parentPosts]);
 
-  const allParentPostsLoaded = parentURIs.every(
-    (uri) => parentPosts[uri]?.loading === false,
-  );
+  const allParentPostsLoaded = parentURIs.every((uri) => parentPosts[uri]?.loading === false);
 
   useEffect(() => {
     if (allParentPostsLoaded && postRef?.current) {
@@ -136,10 +128,7 @@ export default function RootParent({
 
     if (!post?.post)
       return (
-        <div
-          key={parentURI}
-          className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-lg w-[300px]"
-        >
+        <div key={parentURI} className="relative ml-4 px-6 py-2 bg-white bg-opacity-10 rounded-lg w-[300px]">
           <Typography.Body variant="small" className="text-opacity-50">
             This post has been deleted by its author.
           </Typography.Body>
@@ -149,13 +138,7 @@ export default function RootParent({
 
     return (
       <div key={parentURI}>
-        <Post
-          homeView
-          post={post.post}
-          size="full"
-          largeView={!isMobile}
-          line={isLine}
-        />
+        <Post homeView post={post.post} size="full" largeView={!isMobile} line={isLine} />
       </div>
     );
   });

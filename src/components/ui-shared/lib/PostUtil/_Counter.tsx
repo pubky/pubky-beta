@@ -12,11 +12,7 @@ export const Counter = ({ id, children, textCSS, ...rest }: CounterProps) => {
 
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
-      <Typography.Body
-        id={id}
-        className={twMerge(textCSS, 'tracking-tight')}
-        variant="small"
-      >
+      <Typography.Body id={id} className={twMerge(textCSS, 'tracking-tight')} variant="small">
         {children}
       </Typography.Body>
     </div>

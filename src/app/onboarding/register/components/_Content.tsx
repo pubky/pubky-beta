@@ -22,10 +22,7 @@ const profileSchema = z.object({
     .string()
     .min(3, { message: 'Minimum length 3 character.' })
     .max(24, { message: 'Maximum length 24 characters' }),
-  bio: z
-    .string()
-    .max(160, { message: 'Maximum length 160 characters' })
-    .optional(),
+  bio: z.string().max(160, { message: 'Maximum length 160 characters' }).optional()
 });
 
 export default function Index() {
@@ -40,12 +37,12 @@ export default function Index() {
   const [generatedImage, setGeneratedImage] = useState<File>();
   const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
-    { url: '', title: 'x (twitter)', placeHolder: '@user' },
+    { url: '', title: 'x (twitter)', placeHolder: '@user' }
   ]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
-    bio: '',
+    bio: ''
   });
 
   useEffect(() => {
@@ -75,32 +72,28 @@ export default function Index() {
       setLoading(true);
       setErrors({
         name: '',
-        bio: '',
+        bio: ''
       });
 
       const result = profileSchema.safeParse({
         name: name,
-        bio: bio ? bio : undefined,
+        bio: bio ? bio : undefined
       });
 
       if (!result.success) {
         const newErrors: FormErrors = result.error.flatten().fieldErrors;
 
-        const errorMessages = Object.keys(newErrors).reduce(
-          (acc: { [key: string]: string }, key) => {
-            acc[key] = newErrors[key].join(', ');
-            return acc;
-          },
-          {},
-        );
+        const errorMessages = Object.keys(newErrors).reduce((acc: { [key: string]: string }, key) => {
+          acc[key] = newErrors[key].join(', ');
+          return acc;
+        }, {});
 
         setErrors((prev) => ({ ...prev, ...errorMessages }));
         return;
       }
 
       try {
-        const { userLinks: linksObject, errors: linkErrors } =
-          processUserLinks(links);
+        const { userLinks: linksObject, errors: linkErrors } = processUserLinks(links);
 
         if (linkErrors.length > 0) {
           const newErrors: FormErrors = {};
@@ -137,29 +130,15 @@ export default function Index() {
         maxLength={25}
         autoCorrect="off"
         error={errors.name}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setName(e.target.value)
-        }
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
       />
-      <Typography.H2
-        variant="light"
-        className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0"
-      >
+      <Typography.H2 variant="light" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0">
         {Utils.minifyPubky(pubky ?? '')}
       </Typography.H2>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} />
-        <Card.Links
-          links={links}
-          setLinks={setLinks}
-          errors={errors}
-          loading={loading}
-        />
-        <Card.Pic
-          image={image}
-          setImage={setImage}
-          defaultImage={generatedImage}
-        />
+        <Card.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />
+        <Card.Pic image={image} setImage={setImage} defaultImage={generatedImage} />
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between gap-6 items-center inline-flex">
         <Link href="/logout">

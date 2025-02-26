@@ -13,13 +13,10 @@ const icons = {
   wide: <Icon.List />,
   visual: <Icon.SquaresFour color="gray" />,
   focus: <Icon.Crosshair size="24" color="gray" />,
-  loading: <Icon.LoadingSpin className="animate-spin" />,
+  loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
-export default function ContentLayout({
-  setDropdownValue,
-  setOpenDropdown,
-}: ContentLayoutProps) {
+export default function ContentLayout({ setDropdownValue, setOpenDropdown }: ContentLayoutProps) {
   const { layout, setLayout } = useFilterContext();
 
   return (
@@ -33,7 +30,7 @@ export default function ContentLayout({
           setDropdownValue({
             value: 'columns',
             textOption: 'Columns',
-            iconOption: icons.columns,
+            iconOption: icons.columns
           });
           setLayout('columns');
           setOpenDropdown(false);
@@ -48,7 +45,7 @@ export default function ContentLayout({
           setDropdownValue({
             value: 'wide',
             textOption: 'Wide',
-            iconOption: icons.wide,
+            iconOption: icons.wide
           });
           setLayout('wide');
           setOpenDropdown(false);

@@ -7,10 +7,7 @@ interface CounterProps extends React.HTMLAttributes<HTMLHeadingElement> {
 
 export const Counter = ({ children, ...rest }: CounterProps) => {
   return (
-    <Typography.Caption
-      className={twMerge('text-opacity-50', rest.className)}
-      variant="bold"
-    >
+    <Typography.Caption className={twMerge('text-opacity-50', rest.className)} variant="bold">
       {children}
     </Typography.Caption>
   );

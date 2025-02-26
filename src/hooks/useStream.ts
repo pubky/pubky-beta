@@ -1,11 +1,7 @@
 'use client';
 
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import {
-  getStreamPosts,
-  getUserStream,
-  searchUsersByUsername,
-} from '@/services/streamService';
+import { getStreamPosts, getUserStream, searchUsersByUsername } from '@/services/streamService';
 import { TContent, TSort, TSource, TSourceUser } from '@/types';
 
 export function useStreamPost(
@@ -19,7 +15,7 @@ export function useStreamPost(
   sort?: TSort,
   tags?: string[],
   kind?: TContent,
-  options?: UseQueryOptions<unknown, Error>,
+  options?: UseQueryOptions<unknown, Error>
 ) {
   return useQuery({
     queryKey: [
@@ -33,7 +29,7 @@ export function useStreamPost(
       skip,
       sort,
       tags,
-      kind,
+      kind
     ],
     queryFn: () =>
       getStreamPosts(
@@ -46,46 +42,28 @@ export function useStreamPost(
         sort === 'popularity' ? skip : undefined,
         sort,
         tags,
-        kind,
+        kind
       ),
     ...options,
     staleTime: 0,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    retry: false,
+    retry: false
   });
 }
 
-export function useStreamUsers(
-  userId: string,
-  viewerId: string,
-  source: TSourceUser,
-  skip?: number,
-  limit?: number,
-) {
+export function useStreamUsers(userId: string, viewerId: string, source: TSourceUser, skip?: number, limit?: number) {
   return useQuery({
-    queryKey: [
-      source ? `${source}-streamUser` : 'streamUser',
-      userId,
-      viewerId,
-      source,
-      skip,
-      limit,
-    ],
+    queryKey: [source ? `${source}-streamUser` : 'streamUser', userId, viewerId, source, skip, limit],
     queryFn: () => getUserStream(userId, viewerId, source, skip, limit),
-    retry: false,
+    retry: false
   });
 }
 
-export function useStreamSearchUsersByUsername(
-  username: string,
-  viewerId?: string,
-  skip?: number,
-  limit?: number,
-) {
+export function useStreamSearchUsersByUsername(username: string, viewerId?: string, skip?: number, limit?: number) {
   return useQuery({
     queryKey: ['streamSearchUsersByUsername', username, viewerId, skip, limit],
     queryFn: () => searchUsersByUsername(username, viewerId, skip, limit),
-    retry: false,
+    retry: false
   });
 }

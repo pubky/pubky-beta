@@ -15,7 +15,7 @@ const icons = {
   wide: <Icon.List />,
   visual: <Icon.SquaresFour color="gray" />,
   focus: <Icon.Crosshair size="24" color="gray" />,
-  loading: <Icon.LoadingSpin className="animate-spin" />,
+  loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
 export default function Layout({ title, className }: LayoutProps) {
@@ -24,7 +24,7 @@ export default function Layout({ title, className }: LayoutProps) {
   const [dropdownValue, setDropdownValue] = useState({
     value: layout || 'columns',
     textOption: layout.charAt(0).toUpperCase() + layout.slice(1) || 'Columns',
-    iconOption: icons[layout] || icons.columns,
+    iconOption: icons[layout] || icons.columns
   });
 
   return (
@@ -34,24 +34,13 @@ export default function Layout({ title, className }: LayoutProps) {
         variant="medium"
         onClick={() => setShow(true)}
       >
-        <span className="mr-1">{dropdownValue.iconOption}</span>{' '}
-        {dropdownValue.textOption}
-        <div
-          className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}
-        >
+        <span className="mr-1">{dropdownValue.iconOption}</span> {dropdownValue.textOption}
+        <div className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}>
           <Icon.DropdownIcon />
         </div>
       </Typography.Body>
-      <BottomSheet.Root
-        show={show}
-        setShow={setShow}
-        title={title}
-        className={className}
-      >
-        <ContentLayout
-          setDropdownValue={setDropdownValue}
-          setOpenDropdown={setShow}
-        />
+      <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
+        <ContentLayout setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
       </BottomSheet.Root>
     </>
   );

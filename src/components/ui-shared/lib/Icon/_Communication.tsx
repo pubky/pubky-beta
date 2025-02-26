@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const Asterisk = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -32,17 +26,8 @@ export const Asterisk = ({ size = '24', color = 'white' }: IconProps) => (
   </svg>
 );
 
-export const PaperPlaneRight = ({
-  size = '16',
-  color = 'white',
-}: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const PaperPlaneRight = ({ size = '16', color = 'white' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M13.7209 7.56366L3.16373 1.65164C3.07492 1.6019 2.97304 1.58046 2.87171 1.59017C2.77038 1.59989 2.67443 1.6403 2.59669 1.70601C2.51894 1.77171 2.4631 1.85958 2.43663 1.95788C2.41016 2.05617 2.41433 2.1602 2.44856 2.25606L4.43988 7.83175C4.47872 7.94049 4.47872 8.05933 4.43988 8.16808L2.44856 13.7438C2.41433 13.8396 2.41016 13.9437 2.43663 14.0419C2.4631 14.1402 2.51894 14.2281 2.59669 14.2938C2.67443 14.3595 2.77038 14.3999 2.87171 14.4096C2.97304 14.4194 3.07492 14.3979 3.16374 14.3482L13.7209 8.43616C13.7985 8.39274 13.863 8.32942 13.908 8.25274C13.9529 8.17607 13.9766 8.08879 13.9766 7.99991C13.9766 7.91103 13.9529 7.82376 13.908 7.74708C13.863 7.6704 13.7985 7.60709 13.7209 7.56366Z"
@@ -64,13 +49,7 @@ export const PaperPlaneRight = ({
 );
 
 export const ChatCircleText = ({ size = '16', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M2.83928 11.0624C2.09382 9.8057 1.83276 8.32012 2.10511 6.88459C2.37746 5.44906 3.16449 4.16233 4.31841 3.26602C5.47234 2.3697 6.91378 1.92546 8.37206 2.01672C9.83034 2.10798 11.2052 2.72845 12.2383 3.76162C13.2715 4.7948 13.892 6.16961 13.9833 7.6279C14.0745 9.08618 13.6303 10.5276 12.734 11.6816C11.8377 12.8355 10.5509 13.6225 9.11542 13.8949C7.67989 14.1672 6.19431 13.9062 4.93764 13.1607L4.93766 13.1607L2.86537 13.7527C2.77963 13.7772 2.68891 13.7784 2.60259 13.756C2.51627 13.7336 2.43751 13.6886 2.37445 13.6255C2.3114 13.5625 2.26636 13.4837 2.24399 13.3974C2.22163 13.3111 2.22275 13.2203 2.24725 13.1346L2.83933 11.0623L2.83928 11.0624Z"
@@ -98,13 +77,7 @@ export const ChatCircleText = ({ size = '16', color = 'white' }: IconProps) => (
 );
 
 export const Broadcast = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
@@ -144,18 +117,8 @@ export const Broadcast = ({ size = '24', color = 'white' }: IconProps) => (
 );
 
 export const Envelope = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      opacity="0.2"
-      d="M28.0007 7L16.0007 18L4.00073 7H28.0007Z"
-      fill={color}
-    />
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path opacity="0.2" d="M28.0007 7L16.0007 18L4.00073 7H28.0007Z" fill={color} />
     <path
       fillRule="evenodd"
       clipRule="evenodd"

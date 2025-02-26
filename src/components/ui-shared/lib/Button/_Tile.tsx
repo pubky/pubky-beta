@@ -8,12 +8,7 @@ interface TileButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   className?: string;
 }
 
-export const Tile = ({
-  children,
-  icon,
-  disabled = false,
-  ...rest
-}: TileButtonProps) => {
+export const Tile = ({ children, icon, disabled = false, ...rest }: TileButtonProps) => {
   const baseCSS = `w-full h-[66px] p-6 rounded-2xl border border-opacity-30 border-dashed justify-center items-center gap-2 inline-flex border-white hover:border-white hover:bg-white hover:bg-opacity-20`;
   const bodyCSS = disabled ? 'text-gray-500' : 'text-white';
   const disabledCSS = disabled

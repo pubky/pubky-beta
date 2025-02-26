@@ -8,18 +8,10 @@ export default function SocialLinks({ ...rest }: SocialLinksProps) {
   const baseCSS = 'h-6 justify-start items-start gap-6 inline-flex';
   return (
     <div className={twMerge(baseCSS, rest.className)}>
-      <Link
-        target="_blank"
-        href="https://github.com/pubky"
-        className="cursor-pointer opacity-30 hover:opacity-100"
-      >
+      <Link target="_blank" href="https://github.com/pubky" className="cursor-pointer opacity-30 hover:opacity-100">
         <Icon.Github size="24" />
       </Link>
-      <Link
-        target="_blank"
-        href="https://x.com/getpubky"
-        className="cursor-pointer opacity-30 hover:opacity-100"
-      >
+      <Link target="_blank" href="https://x.com/getpubky" className="cursor-pointer opacity-30 hover:opacity-100">
         <Icon.Twitter size="24" />
       </Link>
       <Link
@@ -29,11 +21,7 @@ export default function SocialLinks({ ...rest }: SocialLinksProps) {
       >
         <Icon.Youtube width="24" height="24" />
       </Link>
-      <Link
-        target="_blank"
-        href="https://medium.com/pubky"
-        className="cursor-pointer opacity-30 hover:opacity-100"
-      >
+      <Link target="_blank" href="https://medium.com/pubky" className="cursor-pointer opacity-30 hover:opacity-100">
         <Icon.Medium size="24" />
       </Link>
     </div>

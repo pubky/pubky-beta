@@ -13,13 +13,9 @@ interface RenderInfluencersProps {
   initLoadingInfluencers: boolean;
 }
 
-const RenderInfluencers = ({
-  influencers,
-  initLoadingInfluencers,
-}: RenderInfluencersProps) => {
+const RenderInfluencers = ({ influencers, initLoadingInfluencers }: RenderInfluencersProps) => {
   const { pubky } = usePubkyClientContext();
-  const [loadingInfluencers, setLoadingInfluencers] =
-    useState<LoadingInfluencers>({});
+  const [loadingInfluencers, setLoadingInfluencers] = useState<LoadingInfluencers>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
 
   useEffect(() => {
@@ -29,7 +25,7 @@ const RenderInfluencers = ({
           acc[profile.details.id] = profile.relationship?.following || false;
           return acc;
         },
-        {} as { [pubky: string]: boolean },
+        {} as { [pubky: string]: boolean }
       );
       setFollowed(initialFollowedState);
     }
@@ -41,9 +37,7 @@ const RenderInfluencers = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">
-        Popular Users
-      </Typography.H2>
+      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">Popular Users</Typography.H2>
       {influencers &&
         influencers.map((influencer) => {
           const pubkeyUser = pubky && influencer?.details?.id.includes(pubky);

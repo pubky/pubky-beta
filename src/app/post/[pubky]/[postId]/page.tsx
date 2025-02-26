@@ -24,13 +24,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const response = await fetch(`${BASE_URL}/v0/post/${pubky}/${postId}`);
     const post = await response.json();
-    const fetchedFile =
-      post?.details?.attachments &&
-      (await getFile(post?.details?.attachments[0]));
+    const fetchedFile = post?.details?.attachments && (await getFile(post?.details?.attachments[0]));
     const fileType = fetchedFile?.content_type;
-    const file =
-      fetchedFile &&
-      `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls).main}`;
+    const file = fetchedFile && `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls).main}`;
 
     // title with just 20 characters
     const postTitle =
@@ -56,12 +52,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return getSeoMetadata({
       title,
       description,
-      image,
+      image
     });
   } catch (error) {
     return getSeoMetadata({
       title: '404 | Post',
-      description: 'Post not found or an error occurred',
+      description: 'Post not found or an error occurred'
       // image: `${BASE_URL}/default-error-image.png`, // TODO: Add default error image
     });
   }

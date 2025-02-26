@@ -21,5 +21,5 @@ export const Post = {
   NotFoundContent,
   DeletedContent,
   ValidPostContent,
-  Root,
+  Root
 };

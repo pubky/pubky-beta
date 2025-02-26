@@ -9,11 +9,7 @@ import Link from 'next/link';
 
 export const ReplyReplies = ({ reply }: { reply: PostView }) => {
   const { pubky, mutedUsers } = usePubkyClientContext();
-  const { data: replyReplies } = usePostReplies(
-    reply?.details?.author,
-    reply?.details?.id,
-    pubky,
-  );
+  const { data: replyReplies } = usePostReplies(reply?.details?.author, reply?.details?.id, pubky);
   const lineBaseCSS = `ml-[12px] absolute border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
     <div className="absolute ml-[10px]">
@@ -29,18 +25,13 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
 
   if (!replyReplies || replyReplies.length === 0) return null;
 
-  const filteredReplies = replyReplies.filter(
-    (reply) => !mutedUsers?.includes(reply?.details?.author),
-  );
+  const filteredReplies = replyReplies.filter((reply) => !mutedUsers?.includes(reply?.details?.author));
 
   const displayedReplies = filteredReplies.slice(0, 1);
 
-  const mutedRepliesCount = replyReplies.filter((reply) =>
-    mutedUsers?.includes(reply?.details?.author),
-  ).length;
+  const mutedRepliesCount = replyReplies.filter((reply) => mutedUsers?.includes(reply?.details?.author)).length;
 
-  const repliesLeft =
-    reply?.counts?.replies - displayedReplies.length - mutedRepliesCount;
+  const repliesLeft = reply?.counts?.replies - displayedReplies.length - mutedRepliesCount;
 
   const showQuickReply = displayedReplies.length > 0;
 
@@ -48,12 +39,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
     <>
       {displayedReplies.map((nestedReply) => (
         <div className="flex flex-col gap-3" key={nestedReply?.details?.id}>
-          <Post
-            post={nestedReply}
-            size="full"
-            line={Boolean(reply?.relationships?.replied)}
-            homeView
-          />
+          <Post post={nestedReply} size="full" line={Boolean(reply?.relationships?.replied)} homeView />
         </div>
       ))}
       {repliesLeft > 0 && (
@@ -66,9 +52,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
               className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
             >
               <Icon.PlusCircle />
-              {repliesLeft === 1
-                ? '1 more reply'
-                : `${repliesLeft} more replies`}
+              {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
             </Typography.Body>
           </Link>
         </div>

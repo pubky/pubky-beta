@@ -1,10 +1,4 @@
-import {
-  Button,
-  Icon,
-  PostUtil,
-  SideCard,
-  Typography,
-} from '@social/ui-shared';
+import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { useUtilsTag } from './_Utils';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
@@ -18,12 +12,7 @@ interface TagsProps {
   user?: UserView | null;
 }
 
-export default function Tags({
-  profileTags,
-  setProfileTags,
-  pubkyUser,
-  user,
-}: TagsProps) {
+export default function Tags({ profileTags, setProfileTags, pubkyUser, user }: TagsProps) {
   const {
     addProfileTag,
     selectedTag,
@@ -43,7 +32,7 @@ export default function Tags({
     unfollowUser,
     followUser,
     hasMoreTaggers,
-    loaderTaggers,
+    loaderTaggers
   } = useUtilsTag({ profileTags, setProfileTags, pubkyUser, user });
 
   return (
@@ -56,8 +45,7 @@ export default function Tags({
                 const isTagFound = tag?.relationship || false;
 
                 const displayedImages = tagImages[tag.label] || [];
-                const extraImagesCount =
-                  tag?.taggers_count - displayedImages.length;
+                const extraImagesCount = tag?.taggers_count - displayedImages.length;
 
                 return (
                   <div className="flex gap-2" key={index}>
@@ -65,23 +53,16 @@ export default function Tags({
                       clicked={isTagFound}
                       onClick={(event) => {
                         event.stopPropagation();
-                        isTagFound
-                          ? deleteProfileTag(tag?.label)
-                          : addProfileTag(tag?.label);
+                        isTagFound ? deleteProfileTag(tag?.label) : addProfileTag(tag?.label);
                       }}
-                      color={
-                        tag?.label && Utils.generateRandomColor(tag?.label)
-                      }
+                      color={tag?.label && Utils.generateRandomColor(tag?.label)}
                     >
                       <div className="flex gap-2 items-center">
                         {Utils.minifyText(tag?.label, 21)}
                         {loadingTags === tag?.label ? (
                           <Icon.LoadingSpin size="12" />
                         ) : (
-                          <Typography.Caption
-                            variant="bold"
-                            className="text-opacity-60"
-                          >
+                          <Typography.Caption variant="bold" className="text-opacity-60">
                             {tag?.taggers_count}
                           </Typography.Caption>
                         )}
@@ -114,9 +95,7 @@ export default function Tags({
                       ))}
                       {extraImagesCount > 0 && (
                         <>
-                          <PostUtil.Counter className="-ml-2">
-                            +{extraImagesCount}
-                          </PostUtil.Counter>
+                          <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>
                         </>
                       )}
                       <Button.Action
@@ -139,41 +118,26 @@ export default function Tags({
           {selectedTag && (
             <>
               <div className="flex gap-2 items-center mb-2">
-                <div
-                  onClick={() => setSelectedTag && setSelectedTag(null)}
-                  className="cursor-pointer"
-                >
-                  <Button.Action
-                    variant="custom"
-                    icon={<Icon.CaretLeft size="16" />}
-                    size="small"
-                  />
+                <div onClick={() => setSelectedTag && setSelectedTag(null)} className="cursor-pointer">
+                  <Button.Action variant="custom" icon={<Icon.CaretLeft size="16" />} size="small" />
                 </div>
                 {selectedTag && (
                   <PostUtil.Tag
                     clicked={selectedTag.relationship || false}
                     onClick={(event) => {
                       event.stopPropagation();
-                      selectedTag?.taggers.some(
-                        (fromItem) => fromItem === pubky,
-                      )
+                      selectedTag?.taggers.some((fromItem) => fromItem === pubky)
                         ? deleteProfileTag(selectedTag.label)
                         : addProfileTag(selectedTag.label);
                     }}
-                    color={
-                      selectedTag.label &&
-                      Utils.generateRandomColor(selectedTag.label)
-                    }
+                    color={selectedTag.label && Utils.generateRandomColor(selectedTag.label)}
                   >
                     <div className="flex gap-2 items-center">
                       {Utils.minifyText(selectedTag.label.replace(' ', ''), 20)}
                       {loadingTags === selectedTag?.label ? (
                         <Icon.LoadingSpin size="12" />
                       ) : (
-                        <Typography.Caption
-                          variant="bold"
-                          className="text-opacity-60"
-                        >
+                        <Typography.Caption variant="bold" className="text-opacity-60">
                           {selectedTag?.taggers_count}
                         </Typography.Caption>
                       )}
@@ -195,22 +159,12 @@ export default function Tags({
                 const isFollowed = followedUser[user];
 
                 return (
-                  <div
-                    key={userIndex}
-                    className="w-full flex justify-between gap-10"
-                  >
+                  <div key={userIndex} className="w-full flex justify-between gap-10">
                     <SideCard.User
                       uri={profile?.details?.id.replace('pubky:', '')}
-                      uriImage={
-                        profile?.details?.image || '/images/webp/Userpic.webp'
-                      }
-                      username={
-                        profile?.details?.name &&
-                        Utils.minifyText(profile?.details?.name)
-                      }
-                      label={Utils.minifyPubky(
-                        profile?.details?.id.replace('pubky:', ''),
-                      )}
+                      uriImage={profile?.details?.image || '/images/webp/Userpic.webp'}
+                      username={profile?.details?.name && Utils.minifyText(profile?.details?.name)}
+                      label={Utils.minifyPubky(profile?.details?.id.replace('pubky:', ''))}
                     />
                     {pubkeyUser ? (
                       <SideCard.FollowAction
@@ -219,18 +173,10 @@ export default function Tags({
                         className="bg-transparent cursor-default"
                       />
                     ) : initLoadingFollowers ? (
-                      <SideCard.FollowAction
-                        disabled
-                        icon={<Icon.LoadingSpin size="16" />}
-                        variant="small"
-                      />
+                      <SideCard.FollowAction disabled icon={<Icon.LoadingSpin size="16" />} variant="small" />
                     ) : isFollowed ? (
                       <SideCard.FollowAction
-                        onClick={
-                          loadingFollowers[user]
-                            ? undefined
-                            : () => unfollowUser(user)
-                        }
+                        onClick={loadingFollowers[user] ? undefined : () => unfollowUser(user)}
                         disabled={loadingFollowers[user]}
                         loading={loadingFollowers[user]}
                         icon={<Icon.Minus size="16" />}
@@ -238,11 +184,7 @@ export default function Tags({
                       />
                     ) : (
                       <SideCard.FollowAction
-                        onClick={
-                          loadingFollowers[user]
-                            ? undefined
-                            : () => followUser(user)
-                        }
+                        onClick={loadingFollowers[user] ? undefined : () => followUser(user)}
                         disabled={loadingFollowers[user]}
                         loading={loadingFollowers[user]}
                         icon={<Icon.Plus size="16" />}

@@ -17,7 +17,7 @@ const socialLinks = [
   { name: 'Youtube', url: 'https://youtube.com/@' },
   { name: 'Twitch', url: 'https://twitch.tv/' },
   { name: 'TikTok', url: 'https://tiktok.com/@' },
-  { name: 'Spotify', url: 'https://spotify.com/user/' },
+  { name: 'Spotify', url: 'https://spotify.com/user/' }
 ];
 
 interface LinkProps {
@@ -26,11 +26,7 @@ interface LinkProps {
   links: Links[];
 }
 
-export default function ContentLink({
-  setShowModalLink,
-  setLinks,
-  links,
-}: LinkProps) {
+export default function ContentLink({ setShowModalLink, setLinks, links }: LinkProps) {
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [showHints, setShowHints] = useState(false);
@@ -70,10 +66,7 @@ export default function ContentLink({
     <>
       {showHints ? (
         <div className="flex flex-wrap gap-1.5 my-6">
-          <div
-            onClick={() => setShowHints(false)}
-            className="pr-2 py-2 flex items-center cursor-pointer rounded-full"
-          >
+          <div onClick={() => setShowHints(false)} className="pr-2 py-2 flex items-center cursor-pointer rounded-full">
             <Icon.ArrowLeft />
           </div>
           {socialLinks.map((socialData) => (
@@ -82,9 +75,7 @@ export default function ContentLink({
               className="px-4 py-2 bg-white bg-opacity-10 rounded-full cursor-pointer hover:bg-opacity-20"
               onClick={() => handleSocialClick(socialData)}
             >
-              <Typography.Body variant="medium">
-                {socialData.name}
-              </Typography.Body>
+              <Typography.Body variant="medium">{socialData.name}</Typography.Body>
             </div>
           ))}
         </div>
@@ -99,18 +90,10 @@ export default function ContentLink({
                 className="mt-1"
                 value={title}
                 onKeyDown={handleKeyDown}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setTitle(e.target.value)
-                }
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                 action={
-                  <div
-                    onClick={() => setShowHints(true)}
-                    className="mt-2 cursor-pointer"
-                  >
-                    <Typography.Body
-                      variant="small-bold"
-                      className="text-white text-opacity-80 hover:text-white"
-                    >
+                  <div onClick={() => setShowHints(true)} className="mt-2 cursor-pointer">
+                    <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-white">
                       Hint
                     </Typography.Body>
                   </div>
@@ -125,9 +108,7 @@ export default function ContentLink({
                 className="mt-1"
                 value={url}
                 onKeyDown={handleKeyDown}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setUrl(e.target.value)
-                }
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
                 action={
                   <Button.Action
                     variant="custom"
@@ -142,12 +123,7 @@ export default function ContentLink({
           <div className="w-full mt-4">
             <Modal.SubmitAction
               id="add-profile-link-submit-btn"
-              icon={
-                <Icon.LinkSimple
-                  size="16"
-                  color={disabled ? 'grey' : 'white'}
-                />
-              }
+              icon={<Icon.LinkSimple size="16" color={disabled ? 'grey' : 'white'} />}
               onClick={!disabled ? handleAddLink : undefined}
               disabled={disabled}
             >

@@ -7,8 +7,7 @@ const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 export async function getFile(fileUri: string): Promise<FileView> {
   const fileUriEncoded = encodeURIComponent(fileUri);
 
-  if (!fileUriEncoded || fileUriEncoded === 'null')
-    throw new Error('Invalid file uri');
+  if (!fileUriEncoded || fileUriEncoded === 'null') throw new Error('Invalid file uri');
 
   const response = await fetch(`${BASE_URL}/files/file/${fileUriEncoded}`);
 

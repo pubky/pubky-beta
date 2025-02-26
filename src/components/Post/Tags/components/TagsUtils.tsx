@@ -39,8 +39,8 @@ export const useTagsLogic = (post: PostView) => {
             label: tag,
             taggers_count: 1,
             taggers: [pubky ?? ''],
-            relationship: true,
-          },
+            relationship: true
+          }
         ];
         uniqueTagsChange = 1;
       } else if (!existingTag.taggers.includes(pubky ?? '')) {
@@ -50,9 +50,9 @@ export const useTagsLogic = (post: PostView) => {
                 ...t,
                 taggers_count: t.taggers_count + 1,
                 taggers: [...t.taggers, pubky ?? ''],
-                relationship: true,
+                relationship: true
               }
-            : t,
+            : t
         );
         if (existingTag.taggers_count === 0) uniqueTagsChange = 1;
       }
@@ -63,9 +63,9 @@ export const useTagsLogic = (post: PostView) => {
               ...t,
               taggers_count: t.taggers_count - 1,
               taggers: t.taggers.filter((tg) => tg !== pubky),
-              relationship: false,
+              relationship: false
             }
-          : t,
+          : t
       );
       if (existingTag?.taggers_count === 1) uniqueTagsChange = -1;
     }
@@ -79,14 +79,11 @@ export const useTagsLogic = (post: PostView) => {
               tags: newTags,
               counts: {
                 ...p.counts,
-                unique_tags: Math.max(
-                  0,
-                  p.counts.unique_tags + uniqueTagsChange,
-                ),
-              },
+                unique_tags: Math.max(0, p.counts.unique_tags + uniqueTagsChange)
+              }
             }
-          : p,
-      ),
+          : p
+      )
     );
   };
 
@@ -112,10 +109,7 @@ export const useTagsLogic = (post: PostView) => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const sanitized = e.target.value
-      .toLowerCase()
-      .replace(/\s/g, '')
-      .replace(/!/g, '');
+    const sanitized = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
     setTagInput(sanitized);
   };
 
@@ -131,8 +125,7 @@ export const useTagsLogic = (post: PostView) => {
           if (fromItem && !images[fromItem]) {
             return getUserProfile(fromItem, pubky ?? '')
               .then((profile) => {
-                images[fromItem] =
-                  profile?.details?.image || '/images/webp/Userpic.webp';
+                images[fromItem] = profile?.details?.image || '/images/webp/Userpic.webp';
               })
               .catch(() => {
                 images[fromItem] = '/images/webp/Userpic.webp';
@@ -140,7 +133,7 @@ export const useTagsLogic = (post: PostView) => {
           }
           return null;
         })
-        .filter(Boolean),
+        .filter(Boolean)
     );
 
     await Promise.all(taggerPromises);
@@ -167,6 +160,6 @@ export const useTagsLogic = (post: PostView) => {
     handleKeyDown,
     wrapperRefEmojis,
     openModal,
-    isMobile,
+    isMobile
   };
 };

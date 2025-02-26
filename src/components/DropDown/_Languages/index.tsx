@@ -10,7 +10,7 @@ const labels = {
   spanish: 'Spanish',
   german: 'German',
   french: 'French',
-  italian: 'Italian',
+  italian: 'Italian'
 };
 
 const flags = {
@@ -18,7 +18,7 @@ const flags = {
   spanish: <Icon.Spain size="24" />,
   german: <Icon.Germany size="24" />,
   french: <Icon.France size="24" />,
-  italian: <Icon.Italy size="24" />,
+  italian: <Icon.Italy size="24" />
 };
 
 export default function Languages() {
@@ -27,7 +27,7 @@ export default function Languages() {
   const [dropdownValue, setDropdownValue] = useState({
     value: 'english',
     textOption: labels.english,
-    iconOption: flags.english,
+    iconOption: flags.english
   });
 
   return (
@@ -38,10 +38,7 @@ export default function Languages() {
       type={'text'}
       className={openDropdown ? 'z-20' : ''}
     >
-      <DropDownUI.Content
-        isOpen={openDropdown}
-        className="right-0 top-0 px-4 py-2"
-      >
+      <DropDownUI.Content isOpen={openDropdown} className="right-0 top-0 px-4 py-2">
         <ContentLanguages
           setOpenDropdown={setOpenDropdown}
           dropdownValue={dropdownValue}

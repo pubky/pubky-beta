@@ -34,13 +34,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
     //   ? post.relationships?.replied
     //   : post?.details?.uri;
 
-    const sendReply = await createReply(
-      post?.details?.uri,
-      content,
-      PubkyAppPostKind.Short,
-      selectedFiles,
-      quote,
-    );
+    const sendReply = await createReply(post?.details?.uri, content, PubkyAppPostKind.Short, selectedFiles, quote);
 
     const hashtags = Utils.extractHashtags(content);
     const updatedTags = [...new Set([...arrayTags, ...hashtags])];
@@ -65,7 +59,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
           >
             View
           </a>
-        </>,
+        </>
       );
     }
   };
@@ -94,15 +88,7 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
           <Button.Medium
             className="w-auto"
             variant="line"
-            icon={
-              <Icon.ChatCircleText
-                color={
-                  !isValidContent && selectedFiles.length === 0
-                    ? 'gray'
-                    : 'white'
-                }
-              />
-            }
+            icon={<Icon.ChatCircleText color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
             disabled={!isValidContent && selectedFiles.length === 0}
             loading={sendingReply}
             onClick={

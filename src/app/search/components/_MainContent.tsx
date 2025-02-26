@@ -39,15 +39,12 @@ export function MainContent() {
   const handleSearchTag = () => {
     const searchHistory = Utils.storage.get('searchHistory') || ([] as any);
 
-    if (
-      (inputValue.startsWith('pk:') && inputValue.length === 55) ||
-      inputValue.length === 52
-    ) {
+    if ((inputValue.startsWith('pk:') && inputValue.length === 55) || inputValue.length === 52) {
       const profileId = inputValue.replace(/^pk:/, '');
       if (profileId) {
         const updatedHistory = [
           { type: 'user', value: profileId },
-          ...searchHistory.filter((item: any) => item.value !== profileId),
+          ...searchHistory.filter((item: any) => item.value !== profileId)
         ].slice(0, 5);
         Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
       }
@@ -68,10 +65,7 @@ export function MainContent() {
 
         if (tags.length > 0) {
           tags.forEach((tag) => {
-            updatedHistory = [
-              { type: 'tag', value: tag },
-              ...updatedHistory.filter((item: any) => item.value !== tag),
-            ];
+            updatedHistory = [{ type: 'tag', value: tag }, ...updatedHistory.filter((item: any) => item.value !== tag)];
           });
         }
 
@@ -96,19 +90,14 @@ export function MainContent() {
 
   useEffect(() => {
     const searchTagsString = searchTags.join(',');
-    const searchUrl = searchTagsString
-      ? `/search?tags=${searchTagsString}`
-      : '/search';
+    const searchUrl = searchTagsString ? `/search?tags=${searchTagsString}` : '/search';
     router.replace(searchUrl);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTags]);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
-      if (
-        refSearchInputCard.current &&
-        !refSearchInputCard.current.contains(event.target as Node)
-      ) {
+      if (refSearchInputCard.current && !refSearchInputCard.current.contains(event.target as Node)) {
         setSearchInputCard(false);
       }
     };
@@ -141,9 +130,7 @@ export function MainContent() {
     <Components.PostsLayout className="w-full flex-col inline-flex gap-3">
       <div
         className={`lg:hidden lg:hidden sticky top-20 z-10 transition-transform duration-300 ${
-          isSearchBarVisible
-            ? 'translate-y-0 opacity-100'
-            : '-translate-y-full opacity-0'
+          isSearchBarVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
         }`}
       >
         <Input.Search>
@@ -167,14 +154,11 @@ export function MainContent() {
           <Input.SearchInput
             id="header-search-input"
             value={inputValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setInputValue(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
             maxLength={55}
             onKeyDown={inputValue.trim() === '' ? undefined : handleKeyDown}
             className={`${
-              searchInputCard &&
-              'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
+              searchInputCard && 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
             }`}
             placeholder={!searchTags.length ? 'Search' : ''}
             onClick={() => setSearchInputCard(true)}
@@ -187,10 +171,7 @@ export function MainContent() {
             inputValue={inputValue}
           />
           <Input.SearchActions className="hidden lg:flex">
-            <div
-              className={inputValue && 'cursor-pointer'}
-              onClick={inputValue ? handleSearchTag : undefined}
-            >
+            <div className={inputValue && 'cursor-pointer'} onClick={inputValue ? handleSearchTag : undefined}>
               <Icon.MagnifyingGlass />
             </div>
           </Input.SearchActions>

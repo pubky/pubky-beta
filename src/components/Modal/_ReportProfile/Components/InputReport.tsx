@@ -34,7 +34,7 @@ export default function InputReport({
   loading,
   setShowModal,
   name,
-  pk,
+  pk
 }: InputReportProps) {
   const { pubky } = usePubkyClientContext();
 
@@ -44,13 +44,8 @@ export default function InputReport({
         <>
           <Modal.Header title="Report User" />
           <Typography.Body className="text-left my-6" variant="medium">
-            <span className="opacity-80">
-              Please describe the reason why you&apos;re reporting{' '}
-            </span>
-            <Link
-              href={`/profile/${pk}`}
-              className="font-bold hover:underline hover:decoration-solid"
-            >
+            <span className="opacity-80">Please describe the reason why you&apos;re reporting </span>
+            <Link href={`/profile/${pk}`} className="font-bold hover:underline hover:decoration-solid">
               {Utils.minifyText(name ?? pk, 20)}
             </Link>
             .
@@ -65,31 +60,17 @@ export default function InputReport({
                 uri={profile?.image ?? '/images/webp/Userpic.webp'}
               />
               {pubky ? (
-                <Link
-                  className="cursor-pointer flex gap-4 items-center"
-                  href="/profile"
-                >
-                  <Typography.Body
-                    className={`hover:underline hover:decoration-solid`}
-                    variant="medium-bold"
-                  >
-                    {Utils.minifyText(
-                      profile?.name ?? Utils.minifyPubky(pubky),
-                      24,
-                    )}
+                <Link className="cursor-pointer flex gap-4 items-center" href="/profile">
+                  <Typography.Body className={`hover:underline hover:decoration-solid`} variant="medium-bold">
+                    {Utils.minifyText(profile?.name ?? Utils.minifyPubky(pubky), 24)}
                   </Typography.Body>
                   <div className="flex gap-1 cursor-pointer">
                     {/**<Icon.CheckCircle size="16" color="gray" />*/}
-                    <Typography.Label className="text-opacity-30">
-                      {Utils.minifyPubky(pubky)}
-                    </Typography.Label>
+                    <Typography.Label className="text-opacity-30">{Utils.minifyPubky(pubky)}</Typography.Label>
                   </div>
                 </Link>
               ) : (
-                <Typography.Body
-                  variant="medium-bold"
-                  className="text-opacity-50"
-                >
+                <Typography.Body variant="medium-bold" className="text-opacity-50">
                   Loading...
                 </Typography.Body>
               )}
@@ -106,24 +87,14 @@ export default function InputReport({
               className="w-full max-h-[300px] h-auto mt-4"
             />
             <div className="w-full flex gap-3 mt-3 justify-end">
-              <div className="text-opacity-30 text-white text-sm mt-4 mr-2">
-                {message.length} / 1000
-              </div>
+              <div className="text-opacity-30 text-white text-sm mt-4 mr-2">{message.length} / 1000</div>
             </div>
           </div>
           <div className="flex gap-4 mt-6">
-            <Button.Large
-              id="cancel-report"
-              onClick={() => setShowModal(false)}
-              variant="secondary"
-            >
+            <Button.Large id="cancel-report" onClick={() => setShowModal(false)} variant="secondary">
               Cancel
             </Button.Large>
-            <Button.Large
-              disabled={!message}
-              loading={loading}
-              onClick={() => (message ? handleSubmit() : undefined)}
-            >
+            <Button.Large disabled={!message} loading={loading} onClick={() => (message ? handleSubmit() : undefined)}>
               Report User
             </Button.Large>
           </div>
@@ -132,19 +103,12 @@ export default function InputReport({
       {(sent || error) && (
         <>
           <Modal.Header title={error ? 'Sent Failed' : 'Report Sent'} />
-          <Typography.Body
-            className="text-left text-opacity-60 mt-2 mb-6"
-            variant="medium"
-          >
-            {error
-              ? 'Report not sent correctly, please try again.'
-              : 'Your report will be reviewed soon. Thank you.'}
+          <Typography.Body className="text-left text-opacity-60 mt-2 mb-6" variant="medium">
+            {error ? 'Report not sent correctly, please try again.' : 'Your report will be reviewed soon. Thank you.'}
           </Typography.Body>
           <div className="flex gap-4">
             <Modal.SubmitAction
-              icon={
-                error ? <Icon.Warning size="16" /> : <Icon.Check size="16" />
-              }
+              icon={error ? <Icon.Warning size="16" /> : <Icon.Check size="16" />}
               onClick={() => {
                 if (error) {
                   setError(false);

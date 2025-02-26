@@ -12,25 +12,10 @@ interface CreateRepostProps {
   className?: string;
 }
 
-export default function CreateRepost({
-  show,
-  setShow,
-  post,
-  title,
-  className,
-}: CreateRepostProps) {
+export default function CreateRepost({ show, setShow, post, title, className }: CreateRepostProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Repost'}
-      className={className}
-    >
-      <ContentCreateRepost
-        className="p-0 border-none"
-        setShowModalRepost={setShow}
-        post={post}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Repost'} className={className}>
+      <ContentCreateRepost className="p-0 border-none" setShowModalRepost={setShow} post={post} />
     </BottomSheet.Root>
   );
 }

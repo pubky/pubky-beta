@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const Fire = ({ size = '24', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M9.75 10.5L6.52329 8.01397C5.37299 9.81877 4.5 11.9471 4.5 14.25C4.5 16.2391 5.29018 18.1468 6.6967 19.5533C8.10322 20.9598 10.0109 21.75 12 21.75C13.9891 21.75 15.8968 20.9598 17.3033 19.5533C18.7098 18.1468 19.5 16.2391 19.5 14.25C19.5 7.5 12.75 2.25 12.75 2.25L9.75 10.5Z"

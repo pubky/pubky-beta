@@ -13,28 +13,10 @@ interface ReportProfileProps {
   className?: string;
 }
 
-export default function ReportProfile({
-  show,
-  setShow,
-  pk,
-  name,
-  setShowMenu,
-  title,
-  className,
-}: ReportProfileProps) {
+export default function ReportProfile({ show, setShow, pk, name, setShowMenu, title, className }: ReportProfileProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
-      <ContentReportProfile
-        setShowModal={setShow}
-        pk={pk}
-        name={name}
-        setShowMenu={setShowMenu}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
+      <ContentReportProfile setShowModal={setShow} pk={pk} name={name} setShowMenu={setShowMenu} />
     </BottomSheet.Root>
   );
 }

@@ -16,14 +16,13 @@ export default function EditPost({ post, setShowMenu }: EditPostProps) {
     <>
       {post?.details?.author === pubky && (
         <>
-          {String(post?.details?.kind) ===
-          PubkyAppPostKind[1].toLocaleLowerCase() ? (
+          {String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase() ? (
             <Tooltip.Item
               id="edit-article"
               onClick={() =>
                 openModal('editArticle', {
                   article: post,
-                  setShowMenu: setShowMenu,
+                  setShowMenu: setShowMenu
                 })
               }
               icon={<Icon.Pencil size="24" />}
@@ -33,9 +32,7 @@ export default function EditPost({ post, setShowMenu }: EditPostProps) {
           ) : (
             <Tooltip.Item
               id="edit-post"
-              onClick={() =>
-                openModal('editPost', { post, setShowMenu: setShowMenu })
-              }
+              onClick={() => openModal('editPost', { post, setShowMenu: setShowMenu })}
               icon={<Icon.Pencil size="24" />}
             >
               Edit post

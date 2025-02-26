@@ -13,9 +13,7 @@ interface FormErrors {
 
 const loginSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters long'),
-  recoveryFile: z
-    .any()
-    .refine((file) => file !== null, 'Recovery file is required'),
+  recoveryFile: z.any().refine((file) => file !== null, 'Recovery file is required')
 });
 
 export default function Index() {
@@ -28,7 +26,7 @@ export default function Index() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({
     password: '',
-    recoveryFile: '',
+    recoveryFile: ''
   });
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,34 +39,28 @@ export default function Index() {
     setLoading(true);
     setErrors({
       password: '',
-      recoveryFile: '',
+      recoveryFile: ''
     });
     setLoginError('');
 
     try {
       const result = loginSchema.safeParse({
         password,
-        recoveryFile,
+        recoveryFile
       });
 
       if (!result.success) {
         const newErrors: FormErrors = result.error.flatten().fieldErrors;
-        const errorMessages = Object.keys(newErrors).reduce(
-          (acc: { [key: string]: string }, key) => {
-            acc[key] = newErrors[key].join(', ');
-            return acc;
-          },
-          {},
-        );
+        const errorMessages = Object.keys(newErrors).reduce((acc: { [key: string]: string }, key) => {
+          acc[key] = newErrors[key].join(', ');
+          return acc;
+        }, {});
         setErrors((prev) => ({ ...prev, ...errorMessages }));
         setLoading(false);
         return;
       }
 
-      const response = await loginWithFile(
-        result.data?.password,
-        result.data?.recoveryFile,
-      );
+      const response = await loginWithFile(result.data?.password, result.data?.recoveryFile);
       if (response) router.push('/home');
     } catch (error: unknown | { message: string }) {
       const errorMessage =
@@ -97,10 +89,7 @@ export default function Index() {
       <Header.Root>
         <div className="flex gap-3 lg:gap-6 w-auto">
           <Header.Logo link={logoLink} />
-          <Header.Title
-            titleHeader="Sign in"
-            className="hidden sm:flex justify-end sm:justify-start"
-          />
+          <Header.Title titleHeader="Sign in" className="hidden sm:flex justify-end sm:justify-start" />
         </div>
         <Header.Action icon={<Icon.User size="16" />} link="/onboarding/intro">
           New here?
@@ -114,10 +103,7 @@ export default function Index() {
           </span>{' '}
           Pubky.
         </Typography.Display>
-        <Typography.Body
-          variant="large"
-          className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0"
-        >
+        <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0">
           Choose to sign in with a QR, recovery file, or recovery phrase.
         </Typography.Body>
         <div className="w-full flex-col inline-flex xl:grid sm:grid-cols-2 xl:grid-cols-8 gap-6 mt-6">

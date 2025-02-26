@@ -12,26 +12,10 @@ interface CroppedImageProps {
   className?: string;
 }
 
-export default function CroppedImage({
-  show,
-  setShow,
-  image,
-  setImage,
-  title,
-  className,
-}: CroppedImageProps) {
+export default function CroppedImage({ show, setShow, image, setImage, title, className }: CroppedImageProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Cropped Image'}
-      className={className}
-    >
-      <ContentCroppedImage
-        setShowModalCroppedImage={setShow}
-        image={image}
-        setImage={setImage}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Cropped Image'} className={className}>
+      <ContentCroppedImage setShowModalCroppedImage={setShow} image={image} setImage={setImage} />
     </BottomSheet.Root>
   );
 }

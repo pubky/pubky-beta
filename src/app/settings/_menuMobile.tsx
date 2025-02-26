@@ -3,40 +3,37 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from '@social/ui-shared';
 
-const menuItems: Record<
-  string,
-  { icon: JSX.Element; label: string; path: string; disabled?: boolean }
-> = {
+const menuItems: Record<string, { icon: JSX.Element; label: string; path: string; disabled?: boolean }> = {
   account: {
     icon: <Icon.User size="24" />,
     label: 'Account',
-    path: '/settings/account',
+    path: '/settings/account'
   },
   notifications: {
     icon: <Icon.BellSimple size="24" />,
     label: 'Notifications',
-    path: '/settings/notifications',
+    path: '/settings/notifications'
   },
   privacy_safety: {
     icon: <Icon.Shield size="24" />,
     label: 'Privacy & Safety',
-    path: '/settings/privacy-safety',
+    path: '/settings/privacy-safety'
   },
   muted_users: {
     icon: <Icon.SpeakerSimpleSlash size="24" />,
     label: 'Muted Users',
-    path: '/settings/muted-users',
+    path: '/settings/muted-users'
   },
   language: {
     icon: <Icon.GlobeSimple size="24" />,
     label: 'Language',
-    path: '/settings/language',
+    path: '/settings/language'
   },
   help: {
     icon: <Icon.Question size="24" />,
     label: 'Help',
-    path: '/settings/help',
-  },
+    path: '/settings/help'
+  }
 };
 
 interface MenuMobileProps {
@@ -46,7 +43,7 @@ interface MenuMobileProps {
 
 export default function MenuMobile({
   // selectedItem,
-  setSelectedItem,
+  setSelectedItem
 }: MenuMobileProps) {
   const pathname = usePathname();
   const router = useRouter();

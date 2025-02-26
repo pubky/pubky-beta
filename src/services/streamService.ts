@@ -15,7 +15,7 @@ export async function getStreamPosts(
   skip?: number,
   sort?: TSort,
   tags?: string[],
-  kind?: TContent,
+  kind?: TContent
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams();
 
@@ -26,7 +26,7 @@ export async function getStreamPosts(
   const validatedSource = validateSourceParams(source, {
     authorId,
     viewerId,
-    postId: '',
+    postId: ''
   });
 
   if (validatedSource) {
@@ -84,7 +84,7 @@ export async function getStreamPosts(
       images: 'image',
       videos: 'video',
       links: 'link',
-      files: 'file',
+      files: 'file'
     };
 
     const kindType = kindTypeMap[kind] || kind;
@@ -92,45 +92,34 @@ export async function getStreamPosts(
     queryParams.append('kind', String(kindType));
   }
 
-  const response = await fetch(
-    `${BASE_URL}/stream/posts?${queryParams.toString()}`,
-  );
+  const response = await fetch(`${BASE_URL}/stream/posts?${queryParams.toString()}`);
 
   if (!response.ok) throw new Error('Failed to fetch post stream.');
 
   return response.json();
 }
 
-function validateSourceParams(
-  source: TSource | undefined,
-  params: { [key: string]: any },
-) {
+function validateSourceParams(source: TSource | undefined, params: { [key: string]: any }) {
   switch (source) {
     case 'following':
     case 'followers':
     case 'friends':
     case 'bookmarks':
       if (!params.viewerId) {
-        console.warn(
-          `Source ${source} requires viewerId. Defaulting to 'all'.`,
-        );
+        console.warn(`Source ${source} requires viewerId. Defaulting to 'all'.`);
         return 'all';
       }
       break;
     case 'post_replies':
       if (!params.authorId || !params.postId) {
-        console.warn(
-          `Source ${source} requires authorId and postId. Defaulting to 'all'.`,
-        );
+        console.warn(`Source ${source} requires authorId and postId. Defaulting to 'all'.`);
         return 'all';
       }
       break;
     case 'author':
     case 'author_replies':
       if (!params.authorId) {
-        console.warn(
-          `Source ${source} requires authorId. Defaulting to 'all'.`,
-        );
+        console.warn(`Source ${source} requires authorId. Defaulting to 'all'.`);
         return 'all';
       }
       break;
@@ -144,7 +133,7 @@ export async function getUserStream(
   viewerId: string,
   source: TSourceUser,
   skip?: number,
-  limit?: number,
+  limit?: number
 ): Promise<UserView[]> {
   const queryParams = new URLSearchParams();
 
@@ -173,7 +162,7 @@ export async function searchUsersByUsername(
   username: string,
   viewerId?: string,
   skip?: number,
-  limit?: number,
+  limit?: number
 ): Promise<UserView[]> {
   try {
     if (!username) throw new Error('Username is required');
@@ -183,14 +172,10 @@ export async function searchUsersByUsername(
     if (skip !== undefined) queryParams.append('skip', String(skip));
     if (limit !== undefined) queryParams.append('limit', String(limit));
 
-    const response = await fetch(
-      `${BASE_URL}/stream/users/username?${queryParams.toString()}`,
-    );
+    const response = await fetch(`${BASE_URL}/stream/users/username?${queryParams.toString()}`);
 
     if (!response.ok) {
-      throw new Error(
-        `Failed to search users by username: ${response.status} ${response.statusText}`,
-      );
+      throw new Error(`Failed to search users by username: ${response.status} ${response.statusText}`);
     }
 
     const text = await response.text();

@@ -14,7 +14,7 @@ const defaultPreferences = {
   reply: true,
   repost: true,
   post_deleted: true,
-  post_edited: true,
+  post_edited: true
 };
 
 type NotificationType = keyof typeof defaultPreferences;
@@ -54,13 +54,8 @@ export default function Notifications() {
         </Typography.Body>
         <div className="w-full p-6 bg-white bg-opacity-5 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] rounded-2xl flex-col justify-start items-start gap-6 inline-flex">
           {Object.keys(preferences).map((type) => (
-            <div
-              key={type}
-              className="w-full h-8 justify-between items-center inline-flex"
-            >
-              <Typography.Body variant="small-bold">
-                {getNotificationLabel(type as NotificationType)}
-              </Typography.Body>
+            <div key={type} className="w-full h-8 justify-between items-center inline-flex">
+              <Typography.Body variant="small-bold">{getNotificationLabel(type as NotificationType)}</Typography.Body>
               <Input.Switch
                 checked={preferences[type as NotificationType]}
                 onChange={() => handleToggle(type as NotificationType)}

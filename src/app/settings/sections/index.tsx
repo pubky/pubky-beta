@@ -11,5 +11,5 @@ export const Section = {
   Language,
   MutedUsers,
   Notifications,
-  PrivacySafety,
+  PrivacySafety
 };

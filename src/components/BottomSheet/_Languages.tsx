@@ -14,7 +14,7 @@ const labels = {
   spanish: 'Spanish',
   german: 'German',
   french: 'French',
-  italian: 'Italian',
+  italian: 'Italian'
 };
 
 const flags = {
@@ -22,7 +22,7 @@ const flags = {
   spanish: <Icon.Spain size="24" />,
   german: <Icon.Germany size="24" />,
   french: <Icon.France size="24" />,
-  italian: <Icon.Italy size="24" />,
+  italian: <Icon.Italy size="24" />
 };
 
 export default function Languages({ title, className }: ReachProps) {
@@ -30,7 +30,7 @@ export default function Languages({ title, className }: ReachProps) {
   const [dropdownValue, setDropdownValue] = useState({
     value: 'english',
     textOption: labels.english,
-    iconOption: flags.english,
+    iconOption: flags.english
   });
 
   return (
@@ -40,25 +40,13 @@ export default function Languages({ title, className }: ReachProps) {
         variant="medium"
         onClick={() => setShow(true)}
       >
-        <span className="mr-1">{dropdownValue.iconOption}</span>{' '}
-        {dropdownValue.textOption}
-        <div
-          className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}
-        >
+        <span className="mr-1">{dropdownValue.iconOption}</span> {dropdownValue.textOption}
+        <div className={`ml-1 transition ease duration-300 ${show ? 'rotate-180' : 'rotate-0'}`}>
           <Icon.DropdownIcon />
         </div>
       </Typography.Body>
-      <BottomSheet.Root
-        show={show}
-        setShow={setShow}
-        title={title}
-        className={className}
-      >
-        <ContentLanguages
-          setOpenDropdown={setShow}
-          dropdownValue={dropdownValue}
-          setDropdownValue={setDropdownValue}
-        />
+      <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
+        <ContentLanguages setOpenDropdown={setShow} dropdownValue={dropdownValue} setDropdownValue={setDropdownValue} />
       </BottomSheet.Root>
     </>
   );

@@ -21,30 +21,22 @@ const tagsIcons: { [key: string]: JSX.Element } = {
   '#bitkit': <Icon.Bitkit size="24" />,
   '#bitcoin': <Icon.Bitcoin size="24" />,
   '#tether': <Icon.Tether size="24" />,
-  '#pubky': <Icon.PubkyIcon size="22" />,
+  '#pubky': <Icon.PubkyIcon size="22" />
 };
 
-const Parsing = ({
-  children,
-  fullContent = false,
-  largeView,
-  repostView,
-}: ParsingProps) => {
+const Parsing = ({ children, fullContent = false, largeView, repostView }: ParsingProps) => {
   const [copy, setCopy] = useState(false);
 
   const highlightInlineCode = (text: string): JSX.Element[] => {
     const parts = text.split(/(`[^`]*`)/g);
     return parts.map((part, index) =>
       part.startsWith('`') && part.endsWith('`') && part.length > 2 ? (
-        <span
-          key={index}
-          className="border border-white/10 px-1.5 py-0.5 rounded bg-[#818b981f] text-[#C01343]"
-        >
+        <span key={index} className="border border-white/10 px-1.5 py-0.5 rounded bg-[#818b981f] text-[#C01343]">
           {part.slice(1, -1)}
         </span>
       ) : (
         <span key={index}>{part}</span>
-      ),
+      )
     );
   };
 
@@ -57,7 +49,7 @@ const Parsing = ({
         </strong>
       ) : (
         <span key={index}>{part}</span>
-      ),
+      )
     );
   };
 
@@ -65,7 +57,7 @@ const Parsing = ({
     {
       type: 'startsWith',
       watchFor: 'pk:',
-      render: (pk: string) => <ProfileLink pk={pk} />,
+      render: (pk: string) => <ProfileLink pk={pk} />
     },
     {
       type: 'startsWith',
@@ -84,7 +76,7 @@ const Parsing = ({
             {tag} {icon && <span className="ml-1">{icon}</span>}
           </Link>
         );
-      },
+      }
     },
     {
       watchFor: 'link',
@@ -92,9 +84,7 @@ const Parsing = ({
         const isValidUrl = (value: string) => {
           try {
             const parsedUrl = new URL(value);
-            return (
-              parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:'
-            );
+            return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
           } catch {
             return false;
           }
@@ -113,13 +103,12 @@ const Parsing = ({
             {url}
           </Link>
         );
-      },
+      }
     },
     {
       watchFor: 'email',
       render: (url: string) => {
-        const isValidEmail = (value: string) =>
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+        const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
         if (!isValidEmail(url)) return url;
         return (
@@ -133,15 +122,13 @@ const Parsing = ({
             {url}
           </Link>
         );
-      },
-    },
+      }
+    }
   ];
 
   const cleanText = (text: string) => text.replace(/\n{3,}/g, '\n\n');
   const cleanedText = cleanText(children.toString());
-  const contentText = fullContent
-    ? cleanedText
-    : Utils.minifyContent(cleanedText, 10);
+  const contentText = fullContent ? cleanedText : Utils.minifyContent(cleanedText, 10);
   const lines = contentText.split('\n');
 
   const renderCodeBlock = (codeContent: string, key: string) => {
@@ -173,9 +160,7 @@ const Parsing = ({
             }}
           >
             {copy ? <Icon.Check size="16" /> : <Icon.Clipboard size="16" />}
-            <Typography.Body variant="small-bold">
-              {copy ? 'Copied!' : 'Copy'}
-            </Typography.Body>
+            <Typography.Body variant="small-bold">{copy ? 'Copied!' : 'Copy'}</Typography.Body>
           </div>
         </div>
         <SyntaxHighlighter
@@ -185,7 +170,7 @@ const Parsing = ({
           className="scrollbar-thin scrollbar-webkit"
           customStyle={{
             margin: '0px',
-            borderRadius: '0px',
+            borderRadius: '0px'
           }}
         >
           {codeContent}
@@ -195,9 +180,7 @@ const Parsing = ({
   };
 
   const renderContent = () => {
-    const cssText = largeView
-      ? 'text-2xl leading-[30px]'
-      : 'text-[17px] leading-snug';
+    const cssText = largeView ? 'text-2xl leading-[30px]' : 'text-[17px] leading-snug';
     const elements: JSX.Element[] = [];
     let isCodeBlock = false;
     let codeLines: string[] = [];
@@ -205,9 +188,7 @@ const Parsing = ({
     lines.forEach((line, index) => {
       if (line.trim() === '```') {
         if (isCodeBlock) {
-          elements.push(
-            renderCodeBlock(codeLines.join('\n'), `code-${index}`) || <></>,
-          );
+          elements.push(renderCodeBlock(codeLines.join('\n'), `code-${index}`) || <></>);
           codeLines = [];
           isCodeBlock = false;
         } else {
@@ -217,10 +198,7 @@ const Parsing = ({
         codeLines.push(line);
       } else {
         elements.push(
-          <span
-            key={index}
-            className={`${cssText} opacity-90 font-normal tracking-wide`}
-          >
+          <span key={index} className={`${cssText} opacity-90 font-normal tracking-wide`}>
             {line.includes('**') ? (
               highlightBoldText(line)
             ) : line.includes('`') ? (
@@ -229,16 +207,13 @@ const Parsing = ({
               <LinkParser watchers={watchers as []}>{line}</LinkParser>
             )}
             {index < lines.length - 1 && <br />}
-          </span>,
+          </span>
         );
       }
     });
 
     if (isCodeBlock) {
-      const renderedBlock = renderCodeBlock(
-        codeLines.join('\n'),
-        'code-unclosed',
-      );
+      const renderedBlock = renderCodeBlock(codeLines.join('\n'), 'code-unclosed');
       if (renderedBlock) elements.push(renderedBlock);
     }
 

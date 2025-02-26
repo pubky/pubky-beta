@@ -11,10 +11,7 @@ interface CreatePostProps {
   className?: string;
 }
 
-export default function ContentCreatePost({
-  setShowModalPost,
-  className,
-}: CreatePostProps) {
+export default function ContentCreatePost({ setShowModalPost, className }: CreatePostProps) {
   const { createPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
@@ -53,13 +50,7 @@ export default function ContentCreatePost({
         }
       }
 
-      const newPost = await createPost(
-        content,
-        postKind,
-        selectedFiles,
-        quote,
-        updatedTags,
-      );
+      const newPost = await createPost(content, postKind, selectedFiles, quote, updatedTags);
 
       if (newPost) {
         addAlert(
@@ -71,7 +62,7 @@ export default function ContentCreatePost({
             >
               View
             </a>
-          </>,
+          </>
         );
       } else {
         addAlert('Something wrong. Try again', 'warning');
@@ -111,21 +102,11 @@ export default function ContentCreatePost({
             id="post-btn"
             className="w-auto"
             variant="line"
-            icon={
-              <Icon.PaperPlaneRight
-                color={
-                  !isValidContent && selectedFiles.length === 0
-                    ? 'gray'
-                    : 'white'
-                }
-              />
-            }
+            icon={<Icon.PaperPlaneRight color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
             disabled={!isValidContent && selectedFiles.length === 0}
             loading={sendingPost}
             onClick={
-              (isValidContent || selectedFiles.length > 0) && !sendingPost
-                ? () => handleSubmit(contentPost)
-                : undefined
+              (isValidContent || selectedFiles.length > 0) && !sendingPost ? () => handleSubmit(contentPost) : undefined
             }
           >
             Post

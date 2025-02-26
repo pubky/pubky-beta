@@ -13,10 +13,7 @@ interface CreateArticleProps {
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ContentCreateArticle({
-  setShowModalArticle,
-  setShowModalPost,
-}: CreateArticleProps) {
+export default function ContentCreateArticle({ setShowModalArticle, setShowModalPost }: CreateArticleProps) {
   const { pubky, createArticle, profile } = usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
   const isMobile = useIsMobile();
@@ -36,9 +33,7 @@ export default function ContentCreateArticle({
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [placeholder, setPlaceholder] = useState('');
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null,
-  );
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
 
@@ -56,12 +51,7 @@ export default function ContentCreateArticle({
       const hashtags = Utils.extractHashtags(content);
       const updatedTags = [...new Set([...arrayTags, ...hashtags])];
 
-      const newArticle = await createArticle(
-        contentTitle,
-        content,
-        selectedFile,
-        updatedTags,
-      );
+      const newArticle = await createArticle(contentTitle, content, selectedFile, updatedTags);
 
       if (newArticle) {
         addAlert(
@@ -73,7 +63,7 @@ export default function ContentCreateArticle({
             >
               View
             </a>
-          </>,
+          </>
         );
       } else {
         addAlert('Something wrong. Try again', 'warning');
@@ -277,14 +267,11 @@ export default function ContentCreateArticle({
         return true;
       });
 
-      const newFiles =
-        selectedFile && validFiles.slice(0, 3 - selectedFile.length);
+      const newFiles = selectedFile && validFiles.slice(0, 3 - selectedFile.length);
       //const newPreviews =
       // newFiles && newFiles.map((file) => URL.createObjectURL(file));
 
-      setSelectedFile &&
-        newFiles &&
-        setSelectedFile((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+      setSelectedFile && newFiles && setSelectedFile((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
       //newPreviews &&
       // setFilePreviews((prevPreviews) =>
       //   [...prevPreviews, ...newPreviews].slice(0, 3)
@@ -299,10 +286,7 @@ export default function ContentCreateArticle({
           //id={`${id}`}
           className="w-full rounded-lg flex-col justify-start items-start inline-flex"
         >
-          <div
-            ref={wrapperRef}
-            className="w-full flex justify-between gap-3 items-start flex-col"
-          >
+          <div ref={wrapperRef} className="w-full flex justify-between gap-3 items-start flex-col">
             <div className="w-full">
               <Input.Cursor
                 id="article-title-input"
@@ -314,14 +298,10 @@ export default function ContentCreateArticle({
                 maxLength={50}
                 autoCorrect="off"
                 //error={errors.name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setContentTitle(e.target.value)
-                }
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContentTitle(e.target.value)}
               />
               <Section.UserArea
-                uriPic={
-                  (profile?.image as string) ?? '/images/webp/Userpic.webp'
-                }
+                uriPic={(profile?.image as string) ?? '/images/webp/Userpic.webp'}
                 name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
                 largeView={!isMobile}
               />
@@ -362,22 +342,11 @@ export default function ContentCreateArticle({
                       onChange={handleFileChange}
                       className="hidden"
                     />
-                    <div
-                      className={`${
-                        isDragging && selectedFile
-                          ? 'opacity-100'
-                          : 'opacity-50'
-                      } hover:opacity-100`}
-                    >
+                    <div className={`${isDragging && selectedFile ? 'opacity-100' : 'opacity-50'} hover:opacity-100`}>
                       <Icon.Plus size="64" />
-                      <p className="mt-2 text-white text-sm text-center">
-                        Add image
-                      </p>
+                      <p className="mt-2 text-white text-sm text-center">Add image</p>
                     </div>
-                    <Typography.Body
-                      className="text-red-500 mt-4"
-                      variant="small"
-                    >
+                    <Typography.Body className="text-red-500 mt-4" variant="small">
                       {errorFile}
                     </Typography.Body>
                   </div>
@@ -428,29 +397,13 @@ export default function ContentCreateArticle({
                   variant="line"
                   icon={
                     <Icon.PaperPlaneRight
-                      color={
-                        !charCountArticle ||
-                        !isValidContent ||
-                        isError ||
-                        !contentTitle
-                          ? 'gray'
-                          : 'white'
-                      }
+                      color={!charCountArticle || !isValidContent || isError || !contentTitle ? 'gray' : 'white'}
                     />
                   }
-                  disabled={
-                    !charCountArticle ||
-                    !isValidContent ||
-                    isError ||
-                    !contentTitle
-                  }
+                  disabled={!charCountArticle || !isValidContent || isError || !contentTitle}
                   loading={sendingArticle}
                   onClick={
-                    charCountArticle &&
-                    isValidContent &&
-                    contentTitle &&
-                    !isError &&
-                    !sendingArticle
+                    charCountArticle && isValidContent && contentTitle && !isError && !sendingArticle
                       ? () => handleSubmit(contentArticle)
                       : undefined
                   }

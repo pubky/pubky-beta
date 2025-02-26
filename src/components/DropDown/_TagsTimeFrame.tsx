@@ -11,24 +11,20 @@ interface TagsTime {
   disabled?: boolean;
 }
 
-export default function TagsTimeframe({
-  type = 'icon',
-  subtitle,
-  disabled = false,
-}: TagsTime) {
+export default function TagsTimeframe({ type = 'icon', subtitle, disabled = false }: TagsTime) {
   const { timeframe, setTimeframe } = useFilterContext();
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const labels = {
     today: 'Today',
     month: 'This month',
-    all: 'All time',
+    all: 'All time'
   };
   const [dropdownValue, setDropdownValue] = useState({
     value: timeframe ? timeframe : 'today',
     ...(type === 'icon'
       ? { iconOption: <Icon.Calendar /> }
-      : { textOption: timeframe ? labels[timeframe] : labels.today }),
+      : { textOption: timeframe ? labels[timeframe] : labels.today })
   });
 
   return (
@@ -41,11 +37,7 @@ export default function TagsTimeframe({
       subtitle={subtitle}
       disabled={disabled}
     >
-      <DropDownUI.Content
-        title="Timeframe"
-        subtitle="Show hot tags of"
-        isOpen={openDropdown}
-      >
+      <DropDownUI.Content title="Timeframe" subtitle="Show hot tags of" isOpen={openDropdown}>
         <DropDownUI.Item
           label="Today"
           value="today"
@@ -54,9 +46,7 @@ export default function TagsTimeframe({
           onClick={() => {
             setDropdownValue({
               value: 'today',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.Asterisk /> }
-                : { textOption: 'Today' }),
+              ...(type === 'icon' ? { iconOption: <Icon.Asterisk /> } : { textOption: 'Today' })
             });
             setTimeframe('today');
             setOpenDropdown(false);
@@ -70,9 +60,7 @@ export default function TagsTimeframe({
           onClick={() => {
             setDropdownValue({
               value: 'this_month',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.Calendar /> }
-                : { textOption: 'This month' }),
+              ...(type === 'icon' ? { iconOption: <Icon.Calendar /> } : { textOption: 'This month' })
             });
             setTimeframe('this_month');
             setOpenDropdown(false);
@@ -86,9 +74,7 @@ export default function TagsTimeframe({
           onClick={() => {
             setDropdownValue({
               value: 'all_time',
-              ...(type === 'icon'
-                ? { iconOption: <Icon.Clock /> }
-                : { textOption: 'All time' }),
+              ...(type === 'icon' ? { iconOption: <Icon.Clock /> } : { textOption: 'All time' })
             });
             setTimeframe('all_time');
             setOpenDropdown(false);

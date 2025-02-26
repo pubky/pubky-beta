@@ -71,7 +71,7 @@ export default function CreateContent({
   setIsError,
   setShowModalPost,
   setQuote,
-  styleSearchedUsers,
+  styleSearchedUsers
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -82,9 +82,7 @@ export default function CreateContent({
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
-    null,
-  );
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const searchProfiles = async (text: string) => {
     try {
@@ -139,10 +137,7 @@ export default function CreateContent({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setShowEmojis(false);
         if (setTextArea) setTextArea(false);
       }
@@ -156,12 +151,7 @@ export default function CreateContent({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key === 'Enter' &&
-        isValidContent &&
-        !isError
-      ) {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter' && isValidContent && !isError) {
         handleSubmit(content);
       }
     };
@@ -174,11 +164,8 @@ export default function CreateContent({
   }, [isValidContent, content, arrayTags]);
 
   const removeFile = (index: number) => {
-    setSelectedFiles &&
-      setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-    setFilePreviews((prevPreviews) =>
-      prevPreviews.filter((_, i) => i !== index),
-    );
+    setSelectedFiles && setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setFilePreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
   };
 
   useEffect(() => {
@@ -196,15 +183,11 @@ export default function CreateContent({
         const item = items[i];
         if (item.kind === 'file') {
           const file = item.getAsFile();
-          if (
-            file &&
-            (file.type.startsWith('image/') || file.type.startsWith('video/'))
-          ) {
+          if (file && (file.type.startsWith('image/') || file.type.startsWith('video/'))) {
             if (selectedFiles && selectedFiles.length < 4) {
               const filePreview = URL.createObjectURL(file);
 
-              setSelectedFiles &&
-                setSelectedFiles((prevFiles) => [...prevFiles, file]);
+              setSelectedFiles && setSelectedFiles((prevFiles) => [...prevFiles, file]);
               setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
             } else {
               addAlert('Maximum of 4 files can be uploaded', 'warning');
@@ -224,13 +207,10 @@ export default function CreateContent({
         `${
           largeView ? 'p-12' : 'p-6'
         } w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex`,
-        className,
+        className
       )}
     >
-      <div
-        ref={wrapperRef}
-        className="w-full flex justify-between gap-3 items-start flex-col"
-      >
+      <div ref={wrapperRef} className="w-full flex justify-between gap-3 items-start flex-col">
         <div className={variant ? 'flex w-full gap-4' : 'w-full'}>
           <Section.UserArea
             uriPic={(profile?.image as string) ?? '/images/webp/Userpic.webp'}

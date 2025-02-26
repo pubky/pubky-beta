@@ -7,5 +7,5 @@ export const Header = {
   Action,
   Root,
   Logo,
-  Title,
+  Title
 };

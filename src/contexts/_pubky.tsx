@@ -2,13 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
-import {
-  Client,
-  PublicKey,
-  decryptRecoveryFile,
-  Keypair,
-  createRecoveryFile,
-} from '@synonymdev/pubky';
+import { Client, PublicKey, decryptRecoveryFile, Keypair, createRecoveryFile } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
 import { PostCounts, PostDetails, PostView } from '@/types/Post';
 import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
@@ -24,19 +18,15 @@ import init, {
   PubkyAppPostKind,
   PubkyAppPost,
   PubkyAppPostEmbed,
-  PubkyAppUserLink,
+  PubkyAppUserLink
 } from 'pubky-app-specs';
 import { defaultPreferences } from './_filters';
 
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
-const NEXT_PUBLIC_DEFAULT_HTTP_RELAY =
-  process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY ||
-  'https://demo.httprelay.io/link/';
+const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
 
 const client = TESTNET ? Client.testnet() : new Client();
-const NEXT_PUBLIC_HOMESERVER = PublicKey.from(
-  process.env.NEXT_PUBLIC_HOMESERVER,
-);
+const NEXT_PUBLIC_HOMESERVER = PublicKey.from(process.env.NEXT_PUBLIC_HOMESERVER);
 
 type PubkyClientContextType = {
   pubky: string | undefined;
@@ -47,9 +37,7 @@ type PubkyClientContextType = {
   profile: PubkyAppUser | undefined;
   newUser: boolean;
   setNewUser: React.Dispatch<React.SetStateAction<boolean>>;
-  generateAuthUrl: (
-    caps?: string,
-  ) => Promise<{ url: string; promise: any } | null>;
+  generateAuthUrl: (caps?: string) => Promise<{ url: string; promise: any } | null>;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
   loginWithAuthUrl: (publicKey: string) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
@@ -60,35 +48,35 @@ type PubkyClientContextType = {
     name: string,
     bio?: string,
     links?: PubkyAppUserLink[],
-    image?: File | string,
+    image?: File | string
   ) => Promise<PubkyAppUser | false>;
   saveProfile: (
     name: string,
     bio?: string,
     image?: File | string,
     links?: PubkyAppUserLink[],
-    status?: string,
+    status?: string
   ) => Promise<PubkyAppUser | false>;
   createPost: (
     postContent: string,
     kind: PubkyAppPostKind,
     files?: File[],
     quote?: string,
-    tags?: string[],
+    tags?: string[]
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
   editPost: (postId: string, newContent: string) => Promise<string | false>;
   createArticle: (
     title: string,
     articleContent: string,
     files?: File[],
-    tags?: string[],
+    tags?: string[]
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
   createRepost: (
     originalPostId: string,
     originalauthorId: string,
     repostContent: string,
     kind: PubkyAppPostKind,
-    files?: File[],
+    files?: File[]
   ) => Promise<string | false>;
   createReply: (
     originalPostUri: string,
@@ -96,7 +84,7 @@ type PubkyClientContextType = {
     kind: PubkyAppPostKind,
     files?: File[],
     quote?: string,
-    tags?: string[],
+    tags?: string[]
   ) => Promise<string | false>;
   follow: (user_id: string) => Promise<boolean>;
   unfollow: (user_id: string) => Promise<boolean>;
@@ -105,16 +93,8 @@ type PubkyClientContextType = {
   unmute: (user_id: string) => Promise<boolean>;
   addBookmark: (postId: string, authorId: string) => Promise<boolean | string>;
   deleteBookmark: (postId: string, authorId: string) => Promise<boolean>;
-  createTag: (
-    authorId: string,
-    postId: string,
-    label: string,
-  ) => Promise<boolean>;
-  deleteTag: (
-    author_id: string,
-    post_id: string,
-    tagLabel: string,
-  ) => Promise<boolean>;
+  createTag: (authorId: string, postId: string, label: string) => Promise<boolean>;
+  deleteTag: (author_id: string, post_id: string, tagLabel: string) => Promise<boolean>;
   saveFeed: (feed: ICustomFeed, name: string) => Promise<boolean>;
   deleteFeed: (feed: ICustomFeed) => Promise<boolean>;
   loadFeeds: () => Promise<{ feed: ICustomFeed; name: string }[]>;
@@ -132,16 +112,9 @@ type PubkyClientContextType = {
   timelineProfile: PostView[];
   setTimelineProfile: React.Dispatch<React.SetStateAction<PostView[]>>;
   deletePost: (post: PostView) => Promise<boolean>;
-  deleteAccount: (
-    setProgress: React.Dispatch<React.SetStateAction<number>>,
-  ) => Promise<boolean>;
-  downloadData: (
-    setProgress: React.Dispatch<React.SetStateAction<number>>,
-  ) => Promise<boolean>;
-  importData: (
-    zipFile: File,
-    setProgress: React.Dispatch<React.SetStateAction<number>>,
-  ) => Promise<boolean>;
+  deleteAccount: (setProgress: React.Dispatch<React.SetStateAction<number>>) => Promise<boolean>;
+  downloadData: (setProgress: React.Dispatch<React.SetStateAction<number>>) => Promise<boolean>;
+  importData: (zipFile: File, setProgress: React.Dispatch<React.SetStateAction<number>>) => Promise<boolean>;
   getTimestampNotification: () => Promise<number>;
   putTimestampNotification: () => Promise<boolean>;
   loadSettings: () => Promise<{
@@ -149,11 +122,7 @@ type PubkyClientContextType = {
     privacysafety?: any;
     language?: string;
   } | null>;
-  saveSettings: (
-    notifications: NotificationPreferences,
-    privacysafety?: any,
-    language?: string,
-  ) => Promise<boolean>;
+  saveSettings: (notifications: NotificationPreferences, privacysafety?: any, language?: string) => Promise<boolean>;
   setReplies: React.Dispatch<React.SetStateAction<PostView[]>>;
   replies: PostView[];
   setMutedUsers: React.Dispatch<React.SetStateAction<string[] | undefined>>;
@@ -161,9 +130,7 @@ type PubkyClientContextType = {
   timestamp: number;
   setTimestamp: React.Dispatch<React.SetStateAction<number>>;
   notificationPreferences: NotificationPreferences;
-  setNotificationPreferences: React.Dispatch<
-    React.SetStateAction<NotificationPreferences>
-  >;
+  setNotificationPreferences: React.Dispatch<React.SetStateAction<NotificationPreferences>>;
   newPosts: PostView[];
   setNewPosts: React.Dispatch<React.SetStateAction<PostView[]>>;
   deletedPosts: string[];
@@ -171,39 +138,28 @@ type PubkyClientContextType = {
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
 
-export function PubkyClientWrapper({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function PubkyClientWrapper({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
   const [specsWasmLoaded, setSpecsWasmLoaded] = useState(false);
   const [pubky, setPubky] = useState<string | undefined>(
-    (Utils.storage.get('pubky_public_key') as string) || undefined,
+    (Utils.storage.get('pubky_public_key') as string) || undefined
   );
-  const [specsBuilder, setSpecsBuilder] = useState<
-    PubkySpecsBuilder | undefined
-  >(undefined);
+  const [specsBuilder, setSpecsBuilder] = useState<PubkySpecsBuilder | undefined>(undefined);
   const [newUser, setNewUser] = useState(false);
-  const [seed, setSeed] = useState<string | undefined>(
-    (Utils.storage.get('seed') as string | undefined) || undefined,
-  );
+  const [seed, setSeed] = useState<string | undefined>((Utils.storage.get('seed') as string | undefined) || undefined);
   const [mnemonic, setMnemonic] = useState<string | undefined>(
-    (Utils.storage.get('mnemonic') as string | undefined) || undefined,
+    (Utils.storage.get('mnemonic') as string | undefined) || undefined
   );
   const [profile, setProfile] = useState<PubkyAppUser | undefined>(
-    (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined,
+    (Utils.storage.get('profile') as PubkyAppUser | undefined) || undefined
   );
   const [mutedUsers, setMutedUsers] = useState<string[] | undefined>([]);
   const [timelineProfile, setTimelineProfile] = useState<PostView[]>([]);
   const [replies, setReplies] = useState<PostView[]>([]);
   const [searchTags, setSearchTags] = useState<string[]>([]);
-  const [repliesArray, setRepliesArray] = useState<PostView[]>(
-    {} as PostView[],
-  );
+  const [repliesArray, setRepliesArray] = useState<PostView[]>({} as PostView[]);
   const [timestamp, setTimestamp] = useState<number>(0);
-  const [notificationPreferences, setNotificationPreferences] =
-    useState<NotificationPreferences>(defaultPreferences);
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>(defaultPreferences);
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [deletedPosts, setDeletedPosts] = useState<string[]>([]);
@@ -259,10 +215,8 @@ export function PubkyClientWrapper({
 
   const homeserver = {
     get: (url: string) => client.fetch(url),
-    put: (url: string, body: any) =>
-      client.fetch(url, { method: 'PUT', body, credentials: 'include' }),
-    del: (url: string) =>
-      client.fetch(url, { method: 'DELETE', credentials: 'include' }),
+    put: (url: string, body: any) => client.fetch(url, { method: 'PUT', body, credentials: 'include' }),
+    del: (url: string) => client.fetch(url, { method: 'DELETE', credentials: 'include' })
   };
 
   const logout = () => {
@@ -270,16 +224,9 @@ export function PubkyClientWrapper({
       pubky && client.signout(PublicKey.from(pubky));
 
       // Clear storage and states
-      [
-        'pubky_public_key',
-        'seed',
-        'mnemonic',
-        'profile',
-        'timerRemind',
-        'backup',
-        'feed',
-        'unread',
-      ].forEach(Utils.storage.remove);
+      ['pubky_public_key', 'seed', 'mnemonic', 'profile', 'timerRemind', 'backup', 'feed', 'unread'].forEach(
+        Utils.storage.remove
+      );
 
       setTimeout(() => {
         setProfile(undefined);
@@ -420,10 +367,7 @@ export function PubkyClientWrapper({
     }
   };
 
-  const uploadFile = async (
-    file: File,
-    specsB?: PubkySpecsBuilder,
-  ): Promise<string> => {
+  const uploadFile = async (file: File, specsB?: PubkySpecsBuilder): Promise<string> => {
     let specs = specsB ? specsB : specsBuilder;
 
     // 1. Upload Blob
@@ -434,26 +378,16 @@ export function PubkyClientWrapper({
     await homeserver.put(blobResult.meta.url, blobResult.blob.data);
 
     // 2. Create File Record
-    const fileResult = specs!.createFile(
-      file.name,
-      blobResult.meta.url,
-      file.type,
-      BigInt(file.size),
-    );
+    const fileResult = specs!.createFile(file.name, blobResult.meta.url, file.type, BigInt(file.size));
 
-    await homeserver.put(
-      fileResult.meta.url,
-      JSON.stringify(fileResult.file.toJson()),
-    );
+    await homeserver.put(fileResult.meta.url, JSON.stringify(fileResult.file.toJson()));
 
     return fileResult.meta.url;
   };
 
-  const uploadFileWithAuth = withAuth(
-    async (file: File, specsB?: PubkySpecsBuilder): Promise<string> => {
-      return await uploadFile(file, specsB);
-    },
-  );
+  const uploadFileWithAuth = withAuth(async (file: File, specsB?: PubkySpecsBuilder): Promise<string> => {
+    return await uploadFile(file, specsB);
+  });
 
   const uploadFiles = async (files: File[]): Promise<string[]> => {
     return Promise.all(files.map((file) => uploadFileWithAuth(file)));
@@ -463,7 +397,7 @@ export function PubkyClientWrapper({
     name: string,
     bio?: string,
     links?: PubkyAppUserLink[],
-    image?: File | string,
+    image?: File | string
   ): Promise<PubkyAppUser | false> => {
     try {
       const mnemonic = bip39.generateMnemonic(128);
@@ -499,21 +433,13 @@ export function PubkyClientWrapper({
         file = image;
       }
 
-      const result = specsBuilder.createUser(
-        name || 'anonymous',
-        bio,
-        file,
-        links,
-      );
+      const result = specsBuilder.createUser(name || 'anonymous', bio, file, links);
 
       // Let's bring the full wasm object into JS and assign correct type.
       const user = result.user.toJson() as PubkyAppUser;
 
       // Send the profile to the homeserver
-      const response = await homeserver.put(
-        result.meta.url,
-        JSON.stringify(user),
-      );
+      const response = await homeserver.put(result.meta.url, JSON.stringify(user));
 
       if (!response.ok) {
         const errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -551,7 +477,7 @@ export function PubkyClientWrapper({
       bio?: string,
       image?: File | string,
       links?: PubkyAppUserLink[],
-      status?: string,
+      status?: string
     ): Promise<any | false> => {
       let file: string | undefined;
       if (image instanceof File) {
@@ -562,13 +488,7 @@ export function PubkyClientWrapper({
         file = image;
       }
 
-      const userResult = specsBuilder!.createUser(
-        name || 'anonymous',
-        bio,
-        file,
-        links,
-        status,
-      );
+      const userResult = specsBuilder!.createUser(name || 'anonymous', bio, file, links, status);
 
       const user = userResult.user.toJson() as PubkyAppUser;
 
@@ -579,19 +499,13 @@ export function PubkyClientWrapper({
       await homeserver.put(userResult.meta.url, JSON.stringify(user));
 
       return user;
-    },
+    }
   );
 
   const updateStatus = withAuth(async (newStatus: TStatus | string) => {
     if (!profile) throw new Error('Profile required');
 
-    const userResult = specsBuilder!.createUser(
-      profile.name,
-      profile.bio,
-      profile.image,
-      profile.links,
-      newStatus,
-    );
+    const userResult = specsBuilder!.createUser(profile.name, profile.bio, profile.image, profile.links, newStatus);
 
     const user = userResult.user.toJson() as PubkyAppUser;
 
@@ -610,24 +524,17 @@ export function PubkyClientWrapper({
     parentUri?: string,
     embedUri?: string,
     files?: File[],
-    tags?: string[],
+    tags?: string[]
   ): Promise<{ uri: string; id: string; details: PubkyAppPost } | false> => {
     try {
-      const attachments =
-        (files?.length || 0) > 0 ? await uploadFiles(files!) : undefined;
+      const attachments = (files?.length || 0) > 0 ? await uploadFiles(files!) : undefined;
 
       let embed;
       if (embedUri) {
         embed = new PubkyAppPostEmbed(embedUri, PubkyAppPostKind.Short);
       }
 
-      const postResult = specsBuilder!.createPost(
-        content,
-        kind,
-        parentUri,
-        embed,
-        attachments,
-      );
+      const postResult = specsBuilder!.createPost(content, kind, parentUri, embed, attachments);
 
       const post = postResult.post.toJson() as PubkyAppPost;
       await homeserver.put(postResult.meta.url, JSON.stringify(post));
@@ -641,7 +548,7 @@ export function PubkyClientWrapper({
       return {
         uri: postResult.meta.url,
         id: postResult.meta.id,
-        details: post,
+        details: post
       };
     } catch (error) {
       handleError(error, 'createBasePost');
@@ -656,7 +563,7 @@ export function PubkyClientWrapper({
       kind: PubkyAppPostKind,
       files?: File[],
       quote?: string,
-      tags?: string[],
+      tags?: string[]
     ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
       const result = await createBasePost(
         postContent,
@@ -664,7 +571,7 @@ export function PubkyClientWrapper({
         undefined, // parentUri
         quote,
         files,
-        tags,
+        tags
       );
 
       if (!result) return false;
@@ -683,7 +590,7 @@ export function PubkyClientWrapper({
         uri: result.uri,
         content: result.details.content,
         kind: result.details.kind,
-        attachments: skeletonAttachments,
+        attachments: skeletonAttachments
       };
 
       const newPostView: PostView = {
@@ -692,24 +599,24 @@ export function PubkyClientWrapper({
         counts: {
           replies: 0,
           reposts: 0,
-          tags: tags?.length || 0,
+          tags: tags?.length || 0
         } as PostCounts,
         tags: tags
           ? tags.map((tag) => ({
               label: tag,
               taggers: [pubky],
               taggers_count: 1,
-              relationship: true,
+              relationship: true
             }))
           : [],
-        cached: 'homeserver',
+        cached: 'homeserver'
       } as PostView;
 
       setNewPosts((prev) => [newPostView, ...prev]);
       setTimeline((prev) => [newPostView, ...prev]);
 
       return { uri: result.uri, details: result.details };
-    },
+    }
   );
 
   const createArticle = withAuth(
@@ -717,17 +624,10 @@ export function PubkyClientWrapper({
       title: string,
       articleContent: string,
       files?: File[],
-      tags?: string[],
+      tags?: string[]
     ): Promise<{ uri: string; details: PubkyAppPost } | false> => {
       const content = JSON.stringify({ title, body: articleContent });
-      const result = await createBasePost(
-        content,
-        PubkyAppPostKind.Long,
-        undefined,
-        undefined,
-        files,
-        tags,
-      );
+      const result = await createBasePost(content, PubkyAppPostKind.Long, undefined, undefined, files, tags);
 
       if (!result) return false;
 
@@ -745,7 +645,7 @@ export function PubkyClientWrapper({
         uri: result.uri,
         content: result.details.content,
         kind: result.details.kind,
-        attachments: skeletonAttachments,
+        attachments: skeletonAttachments
       };
 
       const newPostView: PostView = {
@@ -754,23 +654,23 @@ export function PubkyClientWrapper({
         counts: {
           replies: 0,
           reposts: 0,
-          tags: tags?.length || 0,
+          tags: tags?.length || 0
         } as PostCounts,
         tags: tags
           ? tags.map((tag) => ({
               label: tag,
               taggers: [pubky],
-              taggers_count: 1,
+              taggers_count: 1
             }))
           : [],
-        cached: 'homeserver',
+        cached: 'homeserver'
       } as PostView;
 
       setNewPosts((prev) => [newPostView, ...prev]);
       setTimeline((prev) => [newPostView, ...prev]);
 
       return result ? { uri: result.uri, details: result.details } : false;
-    },
+    }
   );
 
   const createRepost = withAuth(
@@ -780,17 +680,10 @@ export function PubkyClientWrapper({
       repostContent: string,
       kind: PubkyAppPostKind,
       files?: File[],
-      tags?: string[],
+      tags?: string[]
     ): Promise<string | false> => {
       const repostedUri = postUriBuilder(originalauthorId, originalPostId);
-      const result = await createBasePost(
-        repostContent,
-        kind,
-        undefined,
-        repostedUri,
-        files,
-        tags,
-      );
+      const result = await createBasePost(repostContent, kind, undefined, repostedUri, files, tags);
 
       if (!result) return false;
 
@@ -800,7 +693,7 @@ export function PubkyClientWrapper({
         indexed_at: Date.now(),
         uri: result.uri,
         content: repostContent,
-        kind: result.details.kind,
+        kind: result.details.kind
       };
 
       const newRepostView: PostView = {
@@ -809,14 +702,14 @@ export function PubkyClientWrapper({
         tags: [],
         cached: 'homeserver',
         relationships: {
-          reposted: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}`, // Colleghiamo il repost al post originale
-        },
+          reposted: `pubky://${originalauthorId}/pub/pubky.app/posts/${originalPostId}` // Colleghiamo il repost al post originale
+        }
       };
 
       setNewPosts((prev) => [newRepostView, ...prev]);
       setTimeline((prev) => [newRepostView, ...prev]);
       return result.uri;
-    },
+    }
   );
 
   const createReply = withAuth(
@@ -826,16 +719,9 @@ export function PubkyClientWrapper({
       kind: PubkyAppPostKind,
       files?: File[],
       quote?: string,
-      tags?: string[],
+      tags?: string[]
     ): Promise<string | false> => {
-      const result = await createBasePost(
-        replyContent,
-        kind,
-        originalPostUri,
-        quote,
-        files,
-        tags,
-      );
+      const result = await createBasePost(replyContent, kind, originalPostUri, quote, files, tags);
 
       if (!result) return false;
 
@@ -853,39 +739,31 @@ export function PubkyClientWrapper({
         uri: result.uri,
         content: replyContent,
         kind: result.details.kind,
-        attachments: skeletonAttachments,
+        attachments: skeletonAttachments
       };
 
       const newReplyView: PostView = {
         details: newReplyDetails,
         counts: { replies: 0, reposts: 0, tags: 0 } as PostCounts,
         tags: [],
-        cached: 'homeserver',
+        cached: 'homeserver'
       } as PostView;
 
       setReplies((prev) => [newReplyView, ...prev]);
 
       return result ? result.uri : false;
-    },
+    }
   );
 
   const editPost = withAuth(async (postId: string, newContent: string) => {
     // optimistic edit post in the timeline
     setTimeline((prevTimeline) =>
-      prevTimeline.map((p) =>
-        p.details.id === postId
-          ? { ...p, details: { ...p.details, content: newContent } }
-          : p,
-      ),
+      prevTimeline.map((p) => (p.details.id === postId ? { ...p, details: { ...p.details, content: newContent } } : p))
     );
 
     // optimistic edit post in the replies
     setReplies((prevReplies) =>
-      prevReplies.map((p) =>
-        p.details.id === postId
-          ? { ...p, details: { ...p.details, content: newContent } }
-          : p,
-      ),
+      prevReplies.map((p) => (p.details.id === postId ? { ...p, details: { ...p.details, content: newContent } } : p))
     );
 
     // Fetch the existing post from the homeserver
@@ -974,23 +852,23 @@ export function PubkyClientWrapper({
           dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
         } catch (err) {
           dataFolder.file(fileName, new Uint8Array(arrayBuffer), {
-            binary: true,
+            binary: true
           });
         }
 
         // Update progress
         setProgress(Math.round(((index + 1) / totalFiles) * 100));
-      }),
+      })
     );
 
     const now = new Date();
-    const formattedDateTime = `${now.getFullYear()}-${String(
-      now.getMonth() + 1,
-    ).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(
-      now.getHours(),
-    ).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(
-      now.getSeconds(),
-    ).padStart(2, '0')}`;
+    const formattedDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      '0'
+    )}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(
+      2,
+      '0'
+    )}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
 
     const content = await zip.generateAsync({ type: 'blob' });
     const url = URL.createObjectURL(content);
@@ -1006,77 +884,66 @@ export function PubkyClientWrapper({
     return true;
   });
 
-  const importData = withAuth(
-    async (
-      zipFile: File,
-      setProgress: React.Dispatch<React.SetStateAction<number>>,
-    ) => {
-      // Load the zip file using JSZip
-      const zip = await JSZip.loadAsync(zipFile);
+  const importData = withAuth(async (zipFile: File, setProgress: React.Dispatch<React.SetStateAction<number>>) => {
+    // Load the zip file using JSZip
+    const zip = await JSZip.loadAsync(zipFile);
 
-      // Get all files in the zip
-      const files = Object.keys(zip.files);
+    // Get all files in the zip
+    const files = Object.keys(zip.files);
 
-      // Extract files under 'data/' directory
-      const dataFiles = files.filter((filename) =>
-        filename.startsWith('data/'),
-      );
+    // Extract files under 'data/' directory
+    const dataFiles = files.filter((filename) => filename.startsWith('data/'));
 
-      // Separate 'profile.json' and other files
-      const profileFileName = 'pub/pubky.app/profile.json';
-      const otherFiles = dataFiles.filter(
-        (filename) => filename !== profileFileName,
-      );
+    // Separate 'profile.json' and other files
+    const profileFileName = 'pub/pubky.app/profile.json';
+    const otherFiles = dataFiles.filter((filename) => filename !== profileFileName);
 
-      // Sort other files in reverse alphanumeric order
-      otherFiles.sort().reverse();
+    // Sort other files in reverse alphanumeric order
+    otherFiles.sort().reverse();
 
-      // Combine 'profile.json' first, then the other files
-      const allFiles = [profileFileName, ...otherFiles];
+    // Combine 'profile.json' first, then the other files
+    const allFiles = [profileFileName, ...otherFiles];
 
-      const totalFiles = allFiles.length;
+    const totalFiles = allFiles.length;
 
-      // Process files one by one
-      for (let index = 0; index < totalFiles; index++) {
-        const filename = allFiles[index];
-        const file = zip.files[filename];
+    // Process files one by one
+    for (let index = 0; index < totalFiles; index++) {
+      const filename = allFiles[index];
+      const file = zip.files[filename];
 
-        if (!file) {
-          console.warn(`File ${filename} not found in the zip.`);
-          continue;
-        }
-
-        // No need to upload directories
-        if (file.dir) {
-          continue;
-        }
-
-        // Read the file content as ArrayBuffer
-        const content = await file.async('arraybuffer');
-
-        // Prepare the destination URL for client.put()
-        // Remove 'data/' prefix
-        const dataUrl = `pubky://${pubky}/${filename.replace('data/', '')}`;
-
-        // Upload the file
-        await homeserver.put(dataUrl, new Uint8Array(content));
-
-        // Update progress
-        setProgress(Math.round(((index + 1) / totalFiles) * 100));
-        setProfile(undefined);
+      if (!file) {
+        console.warn(`File ${filename} not found in the zip.`);
+        continue;
       }
 
-      Utils.storage.remove('profile');
+      // No need to upload directories
+      if (file.dir) {
+        continue;
+      }
+
+      // Read the file content as ArrayBuffer
+      const content = await file.async('arraybuffer');
+
+      // Prepare the destination URL for client.put()
+      // Remove 'data/' prefix
+      const dataUrl = `pubky://${pubky}/${filename.replace('data/', '')}`;
+
+      // Upload the file
+      await homeserver.put(dataUrl, new Uint8Array(content));
+
+      // Update progress
+      setProgress(Math.round(((index + 1) / totalFiles) * 100));
       setProfile(undefined);
-      return true;
-    },
-  );
+    }
+
+    Utils.storage.remove('profile');
+    setProfile(undefined);
+    return true;
+  });
 
   const getTimestampNotification = withAuth(async (): Promise<number> => {
     try {
-      const result = await homeserver.get(
-        specsBuilder!.createLastRead().meta.url,
-      );
+      const result = await homeserver.get(specsBuilder!.createLastRead().meta.url);
       // If response is empty or invalid, return 0 as default timestamp
       if (!result || result.status === 404) {
         return 0;
@@ -1118,11 +985,7 @@ export function PubkyClientWrapper({
   });
 
   const saveSettings = withAuth(
-    async (
-      notifications: NotificationPreferences,
-      privacysafety?: any,
-      language?: string,
-    ) => {
+    async (notifications: NotificationPreferences, privacysafety?: any, language?: string) => {
       const settings = { notifications, privacysafety, language };
 
       const settingsUrl = `${baseUriBuilder(pubky!)}settings`;
@@ -1130,38 +993,27 @@ export function PubkyClientWrapper({
       await homeserver.put(settingsUrl, JSON.stringify(settings));
 
       return true;
-    },
+    }
   );
 
   const deletePost = withAuth(async (post: PostView): Promise<boolean> => {
     // delete the post from the timeline
-    setTimeline((prevTimeline) =>
-      prevTimeline.filter((p) => p.details.id !== post.details.id),
-    );
+    setTimeline((prevTimeline) => prevTimeline.filter((p) => p.details.id !== post.details.id));
 
     // delete the post from the new posts
-    setNewPosts((prevNewPosts) =>
-      prevNewPosts.filter((p) => p.details.id !== post.details.id),
-    );
+    setNewPosts((prevNewPosts) => prevNewPosts.filter((p) => p.details.id !== post.details.id));
 
     // delete the post from the deleted posts
-    setDeletedPosts((prevDeletedPosts) => [
-      ...prevDeletedPosts,
-      post.details.id,
-    ]);
+    setDeletedPosts((prevDeletedPosts) => [...prevDeletedPosts, post.details.id]);
 
     // delete the post from the replies
-    setReplies((prevReplies) =>
-      prevReplies.filter((p) => p.details.id !== post.details.id),
-    );
+    setReplies((prevReplies) => prevReplies.filter((p) => p.details.id !== post.details.id));
 
     // delete the files
     if (post?.details?.attachments) {
-      const fileDeletions = Object.values(post?.details?.attachments).map(
-        async (file) => {
-          await deleteFile(file);
-        },
-      );
+      const fileDeletions = Object.values(post?.details?.attachments).map(async (file) => {
+        await deleteFile(file);
+      });
       await Promise.all(fileDeletions);
     }
 
@@ -1178,14 +1030,11 @@ export function PubkyClientWrapper({
     const capabilities = caps || '/pub/pubky.app/:rw';
 
     try {
-      const authRequest = client.authRequest(
-        NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
-        capabilities,
-      );
+      const authRequest = client.authRequest(NEXT_PUBLIC_DEFAULT_HTTP_RELAY, capabilities);
 
       return {
         url: String(authRequest.url()),
-        promise: authRequest.response(),
+        promise: authRequest.response()
       };
     } catch (error) {
       handleError(error, 'generateAuthUrl');
@@ -1196,10 +1045,7 @@ export function PubkyClientWrapper({
   const follow = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createFollow(user_id);
 
-    const response = await homeserver.put(
-      result.meta.url,
-      JSON.stringify(result.follow.toJson()),
-    );
+    const response = await homeserver.put(result.meta.url, JSON.stringify(result.follow.toJson()));
 
     if (!response.ok) {
       const errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -1246,111 +1092,82 @@ export function PubkyClientWrapper({
     return true;
   });
 
-  const addBookmark = withAuth(
-    async (postId: string, authorId: string): Promise<boolean | string> => {
-      const uriPost = postUriBuilder(authorId, postId);
-      const result = specsBuilder!.createBookmark(uriPost);
+  const addBookmark = withAuth(async (postId: string, authorId: string): Promise<boolean | string> => {
+    const uriPost = postUriBuilder(authorId, postId);
+    const result = specsBuilder!.createBookmark(uriPost);
 
-      const response = await homeserver.put(
-        result.meta.url,
-        JSON.stringify(result.bookmark.toJson()),
-      );
+    const response = await homeserver.put(result.meta.url, JSON.stringify(result.bookmark.toJson()));
 
-      if (!response.ok) {
-        const errorMessage = `Error ${response.status}: ${response.statusText}`;
-        throw new Error(errorMessage);
-      }
+    if (!response.ok) {
+      const errorMessage = `Error ${response.status}: ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
 
-      return result.meta.id;
-    },
-  );
+    return result.meta.id;
+  });
 
-  const deleteBookmark = withAuth(
-    async (postId: string, authorId: string): Promise<boolean> => {
-      const uriPost = postUriBuilder(authorId, postId);
-      const result = specsBuilder!.createBookmark(uriPost);
+  const deleteBookmark = withAuth(async (postId: string, authorId: string): Promise<boolean> => {
+    const uriPost = postUriBuilder(authorId, postId);
+    const result = specsBuilder!.createBookmark(uriPost);
 
-      const response = await homeserver.del(result.meta.url);
+    const response = await homeserver.del(result.meta.url);
 
-      if (!response.ok) {
-        const errorMessage = `Error ${response.status}: ${response.statusText}`;
-        throw new Error(errorMessage);
-      }
+    if (!response.ok) {
+      const errorMessage = `Error ${response.status}: ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
 
-      return true;
-    },
-  );
+    return true;
+  });
 
-  const createTag = withAuth(
-    async (
-      authorId: string,
-      postId: string,
-      label: string,
-    ): Promise<boolean> => {
-      const postUri = postUriBuilder(authorId, postId);
-      const result = specsBuilder!.createTag(postUri, label);
+  const createTag = withAuth(async (authorId: string, postId: string, label: string): Promise<boolean> => {
+    const postUri = postUriBuilder(authorId, postId);
+    const result = specsBuilder!.createTag(postUri, label);
 
-      await homeserver.put(
-        result.meta.url,
-        JSON.stringify(result.tag.toJson()),
-      );
+    await homeserver.put(result.meta.url, JSON.stringify(result.tag.toJson()));
 
-      return true;
-    },
-  );
+    return true;
+  });
 
-  const saveFeed = withAuth(
-    async (feed: ICustomFeed, name: string): Promise<boolean> => {
-      // Map the ICustomFeed to the arguments for `createFeed`:
-      // feed might have e.g. tags, reach, layout, etc.
-      const { tags, reach, layout, sort, content } = feed;
+  const saveFeed = withAuth(async (feed: ICustomFeed, name: string): Promise<boolean> => {
+    // Map the ICustomFeed to the arguments for `createFeed`:
+    // feed might have e.g. tags, reach, layout, etc.
+    const { tags, reach, layout, sort, content } = feed;
 
-      // If feed.tags is null, pass null. Otherwise pass as is.
-      const tagsValue = tags && tags.length > 0 ? tags : null;
-      const contentVal = content == 'all' ? null : content;
+    // If feed.tags is null, pass null. Otherwise pass as is.
+    const tagsValue = tags && tags.length > 0 ? tags : null;
+    const contentVal = content == 'all' ? null : content;
 
-      const result = specsBuilder!.createFeed(
-        tagsValue,
-        reach,
-        layout,
-        sort,
-        contentVal || null,
-        name,
-      );
+    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal || null, name);
 
-      const feedObj = result.feed.toJson();
-      await homeserver.put(result.meta.url, JSON.stringify(feedObj));
+    const feedObj = result.feed.toJson();
+    await homeserver.put(result.meta.url, JSON.stringify(feedObj));
 
-      return true;
-    },
-  );
+    return true;
+  });
 
-  const loadFeeds = withAuth(
-    async (): Promise<{ feed: ICustomFeed; name: string }[]> => {
-      // Define the feeds directory path
-      const feedsDirUrl = `pubky://${pubky}/pub/pubky.app/feeds/`;
-      const feedUris = await client.list(feedsDirUrl);
+  const loadFeeds = withAuth(async (): Promise<{ feed: ICustomFeed; name: string }[]> => {
+    // Define the feeds directory path
+    const feedsDirUrl = `pubky://${pubky}/pub/pubky.app/feeds/`;
+    const feedUris = await client.list(feedsDirUrl);
 
-      // Fetch each feed data
-      const feedsData = await Promise.all(
-        feedUris.map(async (uri) => {
-          try {
-            const response = await homeserver.get(uri);
-            const feed = await response.json();
-            return feed;
-          } catch (error) {
-            console.error(`Error fetching feed from ${uri}:`, error);
-            return null;
-          }
-        }),
-      );
+    // Fetch each feed data
+    const feedsData = await Promise.all(
+      feedUris.map(async (uri) => {
+        try {
+          const response = await homeserver.get(uri);
+          const feed = await response.json();
+          return feed;
+        } catch (error) {
+          console.error(`Error fetching feed from ${uri}:`, error);
+          return null;
+        }
+      })
+    );
 
-      // Filter out any null entries and assert the result type
-      return feedsData.filter(
-        (feed): feed is { feed: ICustomFeed; name: string } => feed !== null,
-      );
-    },
-  );
+    // Filter out any null entries and assert the result type
+    return feedsData.filter((feed): feed is { feed: ICustomFeed; name: string } => feed !== null);
+  });
 
   const deleteFeed = withAuth(async (feed: ICustomFeed): Promise<boolean> => {
     // Map the ICustomFeed to the arguments for `createFeed`:
@@ -1362,14 +1179,7 @@ export function PubkyClientWrapper({
     const contentVal = content == 'all' ? null : content;
 
     // create feed according to specs to compute ID and URL
-    const result = specsBuilder!.createFeed(
-      tagsValue,
-      reach,
-      layout,
-      sort,
-      contentVal || null,
-      'placeholder',
-    );
+    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal || null, 'placeholder');
 
     // Delete the feed from the homeserver
     await homeserver.del(result.meta.url);
@@ -1377,48 +1187,35 @@ export function PubkyClientWrapper({
     return true;
   });
 
-  const deleteTag = withAuth(
-    async (
-      authorId: string,
-      postId: string,
-      tagLabel: string,
-    ): Promise<boolean> => {
-      // Compute tag URL and ID based on tag object content using the builder
-      const uriPost = postUriBuilder(authorId, postId);
-      const result = specsBuilder!.createTag(uriPost, tagLabel);
+  const deleteTag = withAuth(async (authorId: string, postId: string, tagLabel: string): Promise<boolean> => {
+    // Compute tag URL and ID based on tag object content using the builder
+    const uriPost = postUriBuilder(authorId, postId);
+    const result = specsBuilder!.createTag(uriPost, tagLabel);
 
-      await homeserver.del(result.meta.url);
+    await homeserver.del(result.meta.url);
 
-      return true;
-    },
-  );
+    return true;
+  });
 
-  const createTagProfile = withAuth(
-    async (userId: string, label: string): Promise<boolean> => {
-      const uriProfile = userUriBuilder(userId);
-      const result = specsBuilder!.createTag(uriProfile, label);
+  const createTagProfile = withAuth(async (userId: string, label: string): Promise<boolean> => {
+    const uriProfile = userUriBuilder(userId);
+    const result = specsBuilder!.createTag(uriProfile, label);
 
-      await homeserver.put(
-        result.meta.url,
-        JSON.stringify(result.tag.toJson()),
-      );
+    await homeserver.put(result.meta.url, JSON.stringify(result.tag.toJson()));
 
-      return true;
-    },
-  );
+    return true;
+  });
 
-  const deleteTagProfile = withAuth(
-    async (userId: string, label: string): Promise<boolean> => {
-      const uriProfile = userUriBuilder(userId);
+  const deleteTagProfile = withAuth(async (userId: string, label: string): Promise<boolean> => {
+    const uriProfile = userUriBuilder(userId);
 
-      // Compute ID and URL for a from its content (unique)
-      const result = specsBuilder!.createTag(uriProfile, label);
+    // Compute ID and URL for a from its content (unique)
+    const result = specsBuilder!.createTag(uriProfile, label);
 
-      await homeserver.del(result.meta.url);
+    await homeserver.del(result.meta.url);
 
-      return true;
-    },
-  );
+    return true;
+  });
 
   return (
     <PubkyClientContext.Provider
@@ -1488,7 +1285,7 @@ export function PubkyClientWrapper({
         timestamp,
         setTimestamp,
         notificationPreferences,
-        setNotificationPreferences,
+        setNotificationPreferences
       }}
     >
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

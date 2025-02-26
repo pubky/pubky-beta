@@ -28,12 +28,8 @@ export const Contacts = ({ contacts }: ContactsListProps) => {
               alt={contact?.alt}
             />
             <div className="flex-col justify-start items-start inline-flex">
-              <Typography.Body variant="medium-bold">
-                {contact.name}
-              </Typography.Body>
-              <Typography.Caption className="text-neutral-400">
-                {contact.handler}
-              </Typography.Caption>
+              <Typography.Body variant="medium-bold">{contact.name}</Typography.Body>
+              <Typography.Caption className="text-neutral-400">{contact.handler}</Typography.Caption>
             </div>
           </div>
         </div>

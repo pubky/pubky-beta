@@ -5,5 +5,5 @@ import SigninBack from './_SigninBack';
 export const Card = {
   Join,
   NewAccount,
-  SigninBack,
+  SigninBack
 };

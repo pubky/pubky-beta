@@ -14,8 +14,7 @@ export default function CopyTextPost({ post, setShowMenu }: CopyTextPostProps) {
 
   return (
     <>
-      {String(post?.details?.kind) !==
-        PubkyAppPostKind[1].toLocaleLowerCase() && (
+      {String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
         <Tooltip.Item
           id="copy-post-text"
           onClick={() => {

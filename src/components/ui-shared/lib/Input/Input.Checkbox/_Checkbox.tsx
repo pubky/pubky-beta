@@ -10,20 +10,14 @@ interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
   text?: string;
 }
 
-export const Checkbox = ({
-  checked,
-  disabled = false,
-  onCheckChange,
-  text,
-  ...rest
-}: CheckboxProps) => {
+export const Checkbox = ({ checked, disabled = false, onCheckChange, text, ...rest }: CheckboxProps) => {
   const cssStyles = twMerge(
     'grid w-6 h-6 rounded-md border',
     disabled
       ? 'bg-white bg-opacity-10 border-white border-opacity-10'
       : checked
-      ? 'bg-white bg-opacity-30 border-white'
-      : 'bg-white bg-opacity-10 border-white border-opacity-30'
+        ? 'bg-white bg-opacity-30 border-white'
+        : 'bg-white bg-opacity-10 border-white border-opacity-30'
   );
 
   const handleInputChange = () => {
@@ -33,12 +27,7 @@ export const Checkbox = ({
   };
 
   return (
-    <label
-      className={twMerge(
-        'flex gap-2',
-        disabled ? 'cursor-default' : 'cursor-pointer'
-      )}
-    >
+    <label className={twMerge('flex gap-2', disabled ? 'cursor-default' : 'cursor-pointer')}>
       <span className={cssStyles}>{checked && <CheckboxIcon />}</span>
       <input
         {...rest}

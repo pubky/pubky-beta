@@ -12,40 +12,19 @@ interface ItemProps extends React.HTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
 }
 
-export const Item = ({
-  id,
-  icon,
-  label,
-  value,
-  selected,
-  disabled = false,
-  ...rest
-}: ItemProps) => {
+export const Item = ({ id, icon, label, value, selected, disabled = false, ...rest }: ItemProps) => {
   const disabledCSS = disabled ? 'cursor-default' : '';
   const baseCSS = `w-full h-10 py-2 shadow backdrop-blur-[10px] items-center justify-between inline-flex`;
   return (
-    <button
-      id={id}
-      {...rest}
-      key={value}
-      disabled={disabled}
-      className={twMerge(baseCSS, disabledCSS, rest.className)}
-    >
+    <button id={id} {...rest} key={value} disabled={disabled} className={twMerge(baseCSS, disabledCSS, rest.className)}>
       <div className={`w-full justify-start items-center contents`}>
         <div
           className={`flex gap-2 items-center w-full ${
-            disabled
-              ? 'opacity-20'
-              : selected
-                ? 'opacity-100'
-                : 'opacity-50 hover:opacity-80'
+            disabled ? 'opacity-20' : selected ? 'opacity-100' : 'opacity-50 hover:opacity-80'
           }`}
         >
           {icon}
-          <Typography.Body
-            className="leading-[18px] tracking-normal"
-            variant="medium-bold"
-          >
+          <Typography.Body className="leading-[18px] tracking-normal" variant="medium-bold">
             {label}
           </Typography.Body>
         </div>

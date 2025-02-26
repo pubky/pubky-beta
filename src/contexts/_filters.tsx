@@ -13,7 +13,7 @@ import {
   TTimeframe,
   NotificationPreferences,
   TSource,
-  ICustomFeed,
+  ICustomFeed
 } from './../types';
 
 type FilterContextType = {
@@ -37,9 +37,7 @@ type FilterContextType = {
   setUnReadNotification: React.Dispatch<React.SetStateAction<number>>;
   resetDefault: () => void;
   selectedFeed: ICustomFeed | undefined;
-  setSelectedFeed: React.Dispatch<
-    React.SetStateAction<ICustomFeed | undefined>
-  >;
+  setSelectedFeed: React.Dispatch<React.SetStateAction<ICustomFeed | undefined>>;
 };
 
 export const defaultPreferences: NotificationPreferences = {
@@ -52,7 +50,7 @@ export const defaultPreferences: NotificationPreferences = {
   reply: true,
   repost: true,
   post_deleted: true,
-  post_edited: true,
+  post_edited: true
 };
 
 const FilterContext = createContext<FilterContextType>({
@@ -76,38 +74,24 @@ const FilterContext = createContext<FilterContextType>({
   setUnReadNotification: () => {},
   resetDefault: () => {},
   selectedFeed: undefined,
-  setSelectedFeed: () => {},
+  setSelectedFeed: () => {}
 });
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [layout, setLayout] = useState<TLayouts>(
-    (Utils.storage.get('layout') as TLayouts) || 'columns',
-  );
-  const [sort, setSort] = useState<TSort>(
-    (Utils.storage.get('sort') as TSort) || 'recent',
-  );
-  const [reach, setReach] = useState<TSource>(
-    (Utils.storage.get('reach') as TSource) || 'all',
-  );
+  const [layout, setLayout] = useState<TLayouts>((Utils.storage.get('layout') as TLayouts) || 'columns');
+  const [sort, setSort] = useState<TSort>((Utils.storage.get('sort') as TSort) || 'recent');
+  const [reach, setReach] = useState<TSource>((Utils.storage.get('reach') as TSource) || 'all');
   const [hotTagsReach, setHotTagsReach] = useState<THotTagsReach>(
-    (Utils.storage.get('hotTagsReach') as THotTagsReach) || 'all',
+    (Utils.storage.get('hotTagsReach') as THotTagsReach) || 'all'
   );
-  const [contacts, setContacts] = useState<TContacts>(
-    (Utils.storage.get('contacts') as TContacts) || 'following',
-  );
+  const [contacts, setContacts] = useState<TContacts>((Utils.storage.get('contacts') as TContacts) || 'following');
   const [contactsLayout, setContactsLayout] = useState<TContactsLayout>(
-    (Utils.storage.get('contactsLayout') as TContactsLayout) || 'list',
+    (Utils.storage.get('contactsLayout') as TContactsLayout) || 'list'
   );
-  const [content, setContent] = useState<TContent>(
-    (Utils.storage.get('content') as TContent) || 'all',
-  );
-  const [timeframe, setTimeframe] = useState<TTimeframe>(
-    (Utils.storage.get('timeframe') as TTimeframe) || 'all_time',
-  );
-  const [unReadNotification, setUnReadNotification] = useState<number>(
-    (Utils.storage.get('unread') as number) || 0,
-  );
+  const [content, setContent] = useState<TContent>((Utils.storage.get('content') as TContent) || 'all');
+  const [timeframe, setTimeframe] = useState<TTimeframe>((Utils.storage.get('timeframe') as TTimeframe) || 'all_time');
+  const [unReadNotification, setUnReadNotification] = useState<number>((Utils.storage.get('unread') as number) || 0);
   const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
 
   const resetDefault = () => {
@@ -136,16 +120,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     Utils.storage.set('timeframe', timeframe);
     Utils.storage.set('unread', unReadNotification);
     setIsInitialized(true);
-  }, [
-    layout,
-    sort,
-    reach,
-    hotTagsReach,
-    contacts,
-    contactsLayout,
-    content,
-    timeframe,
-  ]);
+  }, [layout, sort, reach, hotTagsReach, contacts, contactsLayout, content, timeframe]);
 
   if (!isInitialized) return null;
 
@@ -172,7 +147,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         setUnReadNotification,
         resetDefault,
         selectedFeed,
-        setSelectedFeed,
+        setSelectedFeed
       }}
     >
       {children}

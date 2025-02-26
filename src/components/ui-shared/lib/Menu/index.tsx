@@ -9,5 +9,5 @@ export const Menu = {
   Header,
   ImageMenu,
   Root,
-  Section,
+  Section
 };

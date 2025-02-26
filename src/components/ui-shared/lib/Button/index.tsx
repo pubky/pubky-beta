@@ -13,5 +13,5 @@ export const Button = {
   Medium,
   Tab,
   Tile,
-  Transparent,
+  Transparent
 };

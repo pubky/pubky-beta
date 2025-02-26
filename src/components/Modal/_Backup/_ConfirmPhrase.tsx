@@ -26,7 +26,7 @@ export default function ConfirmPhrase({
   setIsCorrectOrder,
   selectedWords,
   setSelectedWords,
-  setSuccess,
+  setSuccess
 }: ConfirmPhraseProps) {
   const { setSeed, setMnemonic, mnemonic } = usePubkyClientContext();
   const [copyMnemonic, setCopyMnemonic] = useState(false);
@@ -53,8 +53,7 @@ export default function ConfirmPhrase({
     // if (selectedWords.includes(word)) return;
 
     const firstEmptyOrIncorrectIndex = selectedWords.findIndex(
-      (selectedWord, idx) =>
-        !selectedWord || selectedWord !== correctOrder[idx],
+      (selectedWord, idx) => !selectedWord || selectedWord !== correctOrder[idx]
     );
 
     if (firstEmptyOrIncorrectIndex !== -1) {
@@ -131,9 +130,7 @@ export default function ConfirmPhrase({
             <div className="flex-grow flex-col justify-start items-start gap-2 flex">
               {selectedWords.slice(0, 6).map((word, index) => (
                 <Typography.Body key={index} variant="medium-bold">
-                  <span className="text-white text-opacity-50">
-                    {index + 1}.{' '}
-                  </span>
+                  <span className="text-white text-opacity-50">{index + 1}. </span>
                   <span
                     className={
                       word
@@ -151,9 +148,7 @@ export default function ConfirmPhrase({
             <div className="flex-grow flex-col justify-start items-start gap-2 flex">
               {selectedWords.slice(6, 12).map((word, index) => (
                 <Typography.Body key={index + 6} variant="medium-bold">
-                  <span className="text-white text-opacity-50">
-                    {index + 7}.{' '}
-                  </span>
+                  <span className="text-white text-opacity-50">{index + 7}. </span>
                   <span
                     className={
                       word
@@ -184,15 +179,8 @@ export default function ConfirmPhrase({
                 onClick={handleCopyMnemonicToClipboard}
                 className="w-max flex gap-2 items-center cursor-pointer px-6 py-1.5 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-[64px] shadow-[0px_16px_32px_0px_rgba(0,0,0,0.16)] backdrop-blur-[10px] justify-center items-center gap-1.5 inline-flex"
               >
-                {copyMnemonic ? (
-                  <Icon.Check size="16" />
-                ) : (
-                  <Icon.Clipboard size="16" />
-                )}
-                <Typography.Body
-                  className="text-[13px] flex gap-1"
-                  variant="small-bold"
-                >
+                {copyMnemonic ? <Icon.Check size="16" /> : <Icon.Clipboard size="16" />}
+                <Typography.Body className="text-[13px] flex gap-1" variant="small-bold">
                   Copy <span className="hidden md:flex"> to clipboard</span>
                 </Typography.Body>
               </div>
@@ -206,10 +194,7 @@ export default function ConfirmPhrase({
             <div>
               <Icon.Warning color="#ffd200" size="20" />
             </div>
-            <Typography.Body
-              className="break-words text-[#ffd200] leading-6"
-              variant="medium-bold"
-            >
+            <Typography.Body className="break-words text-[#ffd200] leading-6" variant="medium-bold">
               After confirmation, your recovery phrase will be deleted (!)
             </Typography.Body>
           </div>

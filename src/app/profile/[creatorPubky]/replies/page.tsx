@@ -15,24 +15,19 @@ export async function generateMetadata({ params }: Props) {
   const { creatorPubky } = await params;
   try {
     const profile = await getUserDetails(creatorPubky);
-    const profilePic =
-      profile?.image &&
-      profile.image !== 'null' &&
-      (await getFile(profile.image));
+    const profilePic = profile?.image && profile.image !== 'null' && (await getFile(profile.image));
 
-    const file =
-      profilePic &&
-      `${BASE_URL}/static/files/${JSON.parse(profilePic?.urls).main}`;
+    const file = profilePic && `${BASE_URL}/static/files/${JSON.parse(profilePic?.urls).main}`;
 
     return getSeoMetadata({
       title: `${profile.name} - Replies | Profile`,
       description: profile.bio,
-      image: String(file),
+      image: String(file)
     });
   } catch (error) {
     return getSeoMetadata({
       title: '404 | Profile',
-      description: 'User profile not found or an error occurred',
+      description: 'User profile not found or an error occurred'
       // image: `${BASE_URL}/default-error-image.png`, // TODO: Add default error image
     });
   }

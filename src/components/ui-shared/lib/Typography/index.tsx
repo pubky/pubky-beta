@@ -13,5 +13,5 @@ export const Typography = {
   H2,
   Body,
   Label,
-  Caption,
+  Caption
 };

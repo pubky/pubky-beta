@@ -4,7 +4,7 @@ import TaggedAs from '../components/_TaggedAs';
 
 export const metadata = getSeoMetadata({
   title: 'Tagged as | Pubky.app',
-  description: 'Pubky.app - Unlock the web.',
+  description: 'Pubky.app - Unlock the web.'
 });
 
 export default function Index() {

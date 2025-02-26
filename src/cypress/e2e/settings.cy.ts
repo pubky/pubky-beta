@@ -1,8 +1,4 @@
-import {
-  latestPostInFeedContentEq,
-  createQuickPost,
-  checkPostIsNotAtTopOfFeed,
-} from '../support/posts';
+import { latestPostInFeedContentEq, createQuickPost, checkPostIsNotAtTopOfFeed } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { HasBackedUp } from '../support/commands';
@@ -19,10 +15,7 @@ describe('settings', () => {
 
   it('Account settings function correctly', () => {
     // create a new user
-    cy.onboardAsNewUser(
-      'Mr Account Settings',
-      'I like to test account settings',
-    );
+    cy.onboardAsNewUser('Mr Account Settings', 'I like to test account settings');
     cy.get('#header-settings-btn').click();
 
     // check back up account button shows modal (and store recovery phrase for later)
@@ -32,9 +25,7 @@ describe('settings', () => {
       .within(() => {
         cy.get('#backup-recovery-file-btn').should('be.visible');
         cy.get('#backup-recovery-phrase-btn').should('be.visible').click();
-        cy.get('#backup-reveal-confirm-recovery-phrase-btn')
-          .should('be.visible')
-          .click();
+        cy.get('#backup-reveal-confirm-recovery-phrase-btn').should('be.visible').click();
         cy.get('#backup-copy-recovery-phrase').should('be.visible').click();
         cy.saveCopiedTextToAlias('recoveryPhrase');
         // log recovery phase
@@ -68,10 +59,7 @@ describe('settings', () => {
 
     // navigate to account settings page and click button to download your data
     cy.get('#header-settings-btn').click();
-    cy.get('#download-data-btn')
-      .should('be.visible')
-      .should('contain.text', 'Download')
-      .click();
+    cy.get('#download-data-btn').should('be.visible').should('contain.text', 'Download').click();
 
     // asserting that button reads "Downloading..." is unreliable due to timing
     // so just check that it's back to "Download"
@@ -103,9 +91,7 @@ describe('settings', () => {
     cy.get('#sign-in-recovery-phrase-btn').click();
 
     cy.location('pathname').should('eq', '/onboarding/register');
-    cy.get('#message-alert')
-      .should('be.visible')
-      .should('contain', 'your profile is empty');
+    cy.get('#message-alert').should('be.visible').should('contain', 'your profile is empty');
   });
 
   it.skip('Privacy and Safety settings is displayed correctly', () => {});

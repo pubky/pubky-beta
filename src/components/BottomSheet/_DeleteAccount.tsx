@@ -10,19 +10,9 @@ interface DeleteAccountProps {
   className?: string;
 }
 
-export default function DeleteAccount({
-  show,
-  setShow,
-  title,
-  className,
-}: DeleteAccountProps) {
+export default function DeleteAccount({ show, setShow, title, className }: DeleteAccountProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Delete Account'}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Delete Account'} className={className}>
       <ContentDeleteAccount setShowModalDeleteAccount={setShow} />
     </BottomSheet.Root>
   );

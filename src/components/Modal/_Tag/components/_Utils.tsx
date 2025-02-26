@@ -28,9 +28,7 @@ export const useUtilsTag = (post: PostView) => {
   }>({});
   const [showEmojis, setShowEmojis] = useState(false);
   const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
-  const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>(
-    {},
-  );
+  const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>({});
   const [loading, setLoading] = useState(false);
   const limit = 5;
   const [allTags, setAllTags] = useState<PostTag[]>(post?.tags);
@@ -42,13 +40,7 @@ export const useUtilsTag = (post: PostView) => {
   const [taggers, setTaggers] = useState<string[]>([]);
   const [hasMoreTaggers, setHasMoreTaggers] = useState(false);
 
-  const { data: moreTags, isLoading } = useTagsPost(
-    post.details.author,
-    post.details.id,
-    pubky,
-    skip,
-    limit,
-  );
+  const { data: moreTags, isLoading } = useTagsPost(post.details.author, post.details.id, pubky, skip, limit);
 
   const { data: moreTaggers, isLoading: isLoadingTaggers } = usePostTagTaggers(
     post.details.author,
@@ -56,7 +48,7 @@ export const useUtilsTag = (post: PostView) => {
     selectedTag?.label ?? '',
     pubky,
     skipTaggers,
-    limitTaggers,
+    limitTaggers
   );
 
   useEffect(() => {
@@ -88,8 +80,7 @@ export const useUtilsTag = (post: PostView) => {
       setAllTags((prev) => {
         const updatedTags = [...prev, ...moreTags];
         const uniqueTags = updatedTags.filter(
-          (tag, index, self) =>
-            index === self.findIndex((t) => t.label === tag.label),
+          (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
         );
         setHasMore(uniqueTags.length > prev.length);
         return uniqueTags;
@@ -127,7 +118,7 @@ export const useUtilsTag = (post: PostView) => {
           } catch (error) {
             console.error(`Error fetching profile for user ${userId}`, error);
           }
-        }),
+        })
       );
 
       setUserProfiles((prev) => ({ ...prev, ...profilesMap }));
@@ -147,7 +138,7 @@ export const useUtilsTag = (post: PostView) => {
         } catch (error) {
           return '/images/webp/Userpic.webp';
         }
-      }),
+      })
     );
     return images;
   };
@@ -160,7 +151,7 @@ export const useUtilsTag = (post: PostView) => {
         allTags.map(async (tag) => {
           const images = await fetchProfileImages(tag);
           imagesMap[tag.label] = images.slice(0, 4);
-        }),
+        })
       );
       setTagImages(imagesMap);
     };
@@ -175,7 +166,7 @@ export const useUtilsTag = (post: PostView) => {
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: true,
+        [pubkyFollow]: true
       }));
 
       const result = await follow(pubkyFollow);
@@ -186,12 +177,12 @@ export const useUtilsTag = (post: PostView) => {
 
       setFollowedUser((prevState) => ({
         ...prevState,
-        [pubkyFollow]: result,
+        [pubkyFollow]: result
       }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyFollow]: false,
+        [pubkyFollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -204,7 +195,7 @@ export const useUtilsTag = (post: PostView) => {
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: true,
+        [pubkyUnfollow]: true
       }));
 
       const result = await unfollow(pubkyUnfollow);
@@ -215,12 +206,12 @@ export const useUtilsTag = (post: PostView) => {
 
       setFollowedUser((prevState) => ({
         ...prevState,
-        [pubkyUnfollow]: !result,
+        [pubkyUnfollow]: !result
       }));
 
       setLoadingFollowers((prevLoadingUsers) => ({
         ...prevLoadingUsers,
-        [pubkyUnfollow]: false,
+        [pubkyUnfollow]: false
       }));
     } catch (error) {
       console.log(error);
@@ -228,10 +219,7 @@ export const useUtilsTag = (post: PostView) => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value
-      .toLowerCase()
-      .replace(/\s/g, '')
-      .replace(/!/g, '');
+    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
     setTag(valueWithoutSpaces);
   };
 
@@ -300,6 +288,6 @@ export const useUtilsTag = (post: PostView) => {
     inputRef,
     hasMore,
     hasMoreTaggers,
-    pubky,
+    pubky
   };
 };

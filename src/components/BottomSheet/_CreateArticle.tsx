@@ -10,19 +10,9 @@ interface CreateArticleProps {
   className?: string;
 }
 
-export default function CreateArticle({
-  show,
-  setShow,
-  title,
-  className,
-}: CreateArticleProps) {
+export default function CreateArticle({ show, setShow, title, className }: CreateArticleProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'New Article'}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'New Article'} className={className}>
       <ContentCreateArticle setShowModalArticle={setShow} />
     </BottomSheet.Root>
   );

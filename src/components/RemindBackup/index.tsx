@@ -55,29 +55,20 @@ export default function RemindBackup() {
   };
 
   return (
-    <div
-      className={`max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] w-full m-auto`}
-    >
+    <div className={`max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] w-full m-auto`}>
       {disposableAccount ? (
         <div
           className={`${
             remindMeLater && 'hidden'
           } relative w-full px-6 py-3 sm:px-12 sm:py-9 bg-[#c8ff00]/10 rounded-lg shadow flex-col justify-start items-start gap-2 inline-flex mb-2 lg:mb-4`}
         >
-          <Typography.Body
-            variant="large-bold"
-            className="text-[#c8ff00] text-2xl"
-          >
+          <Typography.Body variant="large-bold" className="text-[#c8ff00] text-2xl">
             Back up your account
           </Typography.Body>
           <div className="w-full md:flex justify-between gap-4">
-            <Typography.Body
-              className="w-full text-[#c8ff00] mb-4 md:mb-0"
-              variant="medium"
-            >
+            <Typography.Body className="w-full text-[#c8ff00] mb-4 md:mb-0" variant="medium">
               Time to back up your account.
-              <br /> Without a backup you lose your account if you close your
-              browser!
+              <br /> Without a backup you lose your account if you close your browser!
             </Typography.Body>
             <div className="w-full flex gap-6 md:justify-end">
               <Button.Large
@@ -112,13 +103,9 @@ export default function RemindBackup() {
                 <div className="relative">
                   <Icon.CheckCircle size="20" color="#c8ff00" />
                 </div>
-                <Typography.Body
-                  className="text-[#c8ff00] text-opacity-80"
-                  variant="small"
-                >
-                  <span className="font-bold">Backup successful!</span> Your
-                  recovery file/phrase has been deleted and now you can make
-                  login via the chosen recovery method.
+                <Typography.Body className="text-[#c8ff00] text-opacity-80" variant="small">
+                  <span className="font-bold">Backup successful!</span> Your recovery file/phrase has been deleted and
+                  now you can make login via the chosen recovery method.
                 </Typography.Body>
               </div>
               <div className="cursor-pointer" onClick={Closed}>

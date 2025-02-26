@@ -11,32 +11,15 @@ interface InputTagProps {
   user?: UserView | null;
 }
 
-export default function InputTag({
-  profileTags,
-  setProfileTags,
-  pubkyUser,
-  user,
-}: InputTagProps) {
-  const {
-    showEmojis,
-    setShowEmojis,
-    wrapperRefEmojis,
-    setTag,
-    tag,
-    inputRef,
-    loading,
-    handleChange,
-    addProfileTag,
-  } = useUtilsTag({ profileTags, setProfileTags, pubkyUser, user });
+export default function InputTag({ profileTags, setProfileTags, pubkyUser, user }: InputTagProps) {
+  const { showEmojis, setShowEmojis, wrapperRefEmojis, setTag, tag, inputRef, loading, handleChange, addProfileTag } =
+    useUtilsTag({ profileTags, setProfileTags, pubkyUser, user });
 
   return (
     <div>
       {showEmojis && (
         <>
-          <div
-            className="fixed inset-0 bg-black bg-opacity-30 z-[9998]"
-            onClick={() => setShowEmojis(false)}
-          />
+          <div className="fixed inset-0 bg-black bg-opacity-30 z-[9998]" onClick={() => setShowEmojis(false)} />
           <div
             id="emoji-picker"
             className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
@@ -72,13 +55,7 @@ export default function InputTag({
           <div className="flex">
             <Button.Action
               id="add-btn"
-              icon={
-                loading ? (
-                  <Icon.LoadingSpin size="18" />
-                ) : (
-                  <Icon.Plus size="18" />
-                )
-              }
+              icon={loading ? <Icon.LoadingSpin size="18" /> : <Icon.Plus size="18" />}
               variant="custom"
               size="medium"
               disabled={loading}

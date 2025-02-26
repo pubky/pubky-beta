@@ -13,26 +13,10 @@ interface LinkProps {
   className?: string;
 }
 
-export default function Link({
-  show,
-  setShow,
-  links,
-  setLinks,
-  title,
-  className,
-}: LinkProps) {
+export default function Link({ show, setShow, links, setLinks, title, className }: LinkProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Add Profile Link'}
-      className={className}
-    >
-      <ContentLink
-        setShowModalLink={setShow}
-        links={links}
-        setLinks={setLinks}
-      />
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Add Profile Link'} className={className}>
+      <ContentLink setShowModalLink={setShow} links={links} setLinks={setLinks} />
     </BottomSheet.Root>
   );
 }

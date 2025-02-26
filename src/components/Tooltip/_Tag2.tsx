@@ -14,9 +14,7 @@ interface TagProps {
 
 export default function Tag2({ tags }: TagProps) {
   const { pubky } = usePubkyClientContext();
-  const [showTooltipProfile, setShowTooltipProfile] = useState<number | null>(
-    null,
-  );
+  const [showTooltipProfile, setShowTooltipProfile] = useState<number | null>(null);
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const [images, setImages] = useState<string[]>([]);
 
@@ -27,7 +25,7 @@ export default function Tag2({ tags }: TagProps) {
           tags.taggers.map(async (fromItem) => {
             const profile = await getUserProfile(fromItem, pubky ?? '');
             return profile?.details?.image ?? '/images/webp/Userpic.webp';
-          }),
+          })
         );
         setImages(fetchedImages);
       }
@@ -38,8 +36,7 @@ export default function Tag2({ tags }: TagProps) {
   }, [tags, pubky]);
 
   const displayedImages = images?.slice(0, 4);
-  const extraImagesCount =
-    tags && tags?.taggers_count - displayedImages?.length;
+  const extraImagesCount = tags && tags?.taggers_count - displayedImages?.length;
 
   return (
     <TooltipUI.Main className="z-40 w-auto left-auto shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-0 translate-y-[70px]">
@@ -62,15 +59,11 @@ export default function Tag2({ tags }: TagProps) {
                   uri={image ? image : '/images/webp/Userpic.webp'}
                 />
 
-                {showTooltipProfile === imageIndex && (
-                  <Tooltip.Profile profileId={tags?.taggers[imageIndex]} />
-                )}
+                {showTooltipProfile === imageIndex && <Tooltip.Profile profileId={tags?.taggers[imageIndex]} />}
               </div>
             ))}
             {!loadingFollowers && Number(extraImagesCount) > 0 && (
-              <PostUtil.Counter className="-ml-2">
-                +{extraImagesCount}
-              </PostUtil.Counter>
+              <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>
             )}
           </div>
         )}

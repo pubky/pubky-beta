@@ -13,7 +13,7 @@ export const Tooltip = {
   RepostMenu,
   Tag,
   Tag2,
-  CheckedPost,
+  CheckedPost
 };
 
 export default Tooltip;

@@ -9,17 +9,12 @@ interface FilesCarouselProps {
   currentFileIndex: number;
 }
 
-export default function ContentFilesCarousel({
-  fileContents,
-  currentFileIndex,
-}: FilesCarouselProps) {
+export default function ContentFilesCarousel({ fileContents, currentFileIndex }: FilesCarouselProps) {
   const [localFileIndex, setLocalFileIndex] = useState(currentFileIndex);
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const mediaFiles = fileContents.filter(
-    (file) =>
-      file?.content_type.startsWith('image') ||
-      file?.content_type.startsWith('video'),
+    (file) => file?.content_type.startsWith('image') || file?.content_type.startsWith('video')
   );
 
   if (mediaFiles.length === 0) return null;
@@ -29,15 +24,11 @@ export default function ContentFilesCarousel({
   }, [currentFileIndex]);
 
   const showPreviousFile = () => {
-    setLocalFileIndex((prevIndex) =>
-      prevIndex === 0 ? mediaFiles.length - 1 : prevIndex - 1,
-    );
+    setLocalFileIndex((prevIndex) => (prevIndex === 0 ? mediaFiles.length - 1 : prevIndex - 1));
   };
 
   const showNextFile = () => {
-    setLocalFileIndex((prevIndex) =>
-      prevIndex === mediaFiles.length - 1 ? 0 : prevIndex + 1,
-    );
+    setLocalFileIndex((prevIndex) => (prevIndex === mediaFiles.length - 1 ? 0 : prevIndex + 1));
   };
 
   const currentFile = mediaFiles[localFileIndex];

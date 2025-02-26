@@ -12,11 +12,7 @@ interface HeaderMobileProps {
   children?: React.ReactNode;
 }
 
-export default function HeaderMobile({
-  leftIcon,
-  rightIcon,
-  children,
-}: HeaderMobileProps) {
+export default function HeaderMobile({ leftIcon, rightIcon, children }: HeaderMobileProps) {
   const pathname = usePathname();
   const { openModal } = useModal();
   const { pubky, isLoggedIn, setSearchTags } = usePubkyClientContext();
@@ -44,9 +40,7 @@ export default function HeaderMobile({
   }, [pathname, setSearchTags]);
 
   return (
-    <HeaderUI.Root
-      className={`flex lg:hidden items-center ${!isVisible && 'hidden'}`}
-    >
+    <HeaderUI.Root className={`flex lg:hidden items-center ${!isVisible && 'hidden'}`}>
       <div className="relative flex w-full items-center">
         {pubky && <div className="absolute left-0">{leftIcon}</div>}
 

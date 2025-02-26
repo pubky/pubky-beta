@@ -5,11 +5,7 @@ import { Post } from '.';
 import { usePost } from '@/hooks/usePost';
 import { useEffect, useState } from 'react';
 
-export default function Root({
-  params,
-}: {
-  params: Promise<{ pubky: string; postId: string }>;
-}) {
+export default function Root({ params }: { params: Promise<{ pubky: string; postId: string }> }) {
   const { pubky, setReplies } = usePubkyClientContext();
   const [resolvedParams, setResolvedParams] = useState<{
     pubky: string;
@@ -26,13 +22,9 @@ export default function Root({
 
   const { pubky: paramsPubky, postId: paramsPostId } = resolvedParams ?? {
     pubky: '',
-    postId: '',
+    postId: ''
   };
-  const { data, isLoading, isError } = usePost(
-    paramsPubky,
-    paramsPostId,
-    pubky,
-  );
+  const { data, isLoading, isError } = usePost(paramsPubky, paramsPostId, pubky);
 
   if (isLoading) {
     return <Post.LoadingContent />;

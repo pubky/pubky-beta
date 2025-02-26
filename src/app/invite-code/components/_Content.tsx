@@ -2,14 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePubkyClientContext } from '@/contexts';
-import {
-  Content,
-  Typography,
-  Header,
-  Input,
-  Icon,
-  Button,
-} from '@social/ui-shared';
+import { Content, Typography, Header, Input, Icon, Button } from '@social/ui-shared';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
@@ -39,7 +32,7 @@ export default function Index() {
       const response = await fetch('/api/invite-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inviteCode }),
+        body: JSON.stringify({ inviteCode })
       });
 
       const data = await response.json();
@@ -125,10 +118,7 @@ export default function Index() {
           <div className="p-12 flex-col justify-center items-center flex">
             <div className="p-7">
               {success || error ? (
-                <Icon.LockKeyOpen
-                  size="130"
-                  color={success ? '#C8FF00' : '#FF0000'}
-                />
+                <Icon.LockKeyOpen size="130" color={success ? '#C8FF00' : '#FF0000'} />
               ) : (
                 <Icon.Lock size="130" />
               )}
@@ -136,11 +126,7 @@ export default function Index() {
                 alt="glow"
                 fill
                 src={
-                  success
-                    ? '/images/webp/glow-2.webp'
-                    : error
-                      ? '/images/webp/glow-3.webp'
-                      : '/images/webp/glow-1.webp'
+                  success ? '/images/webp/glow-2.webp' : error ? '/images/webp/glow-3.webp' : '/images/webp/glow-1.webp'
                 }
               />
             </div>
@@ -148,11 +134,7 @@ export default function Index() {
         </div>
         <div className="w-full max-w-[1200px] justify-between items-center inline-flex">
           <Link href="/onboarding">
-            <Button.Large
-              icon={<Icon.ArrowLeft />}
-              className="w-[140px]"
-              variant="secondary"
-            >
+            <Button.Large icon={<Icon.ArrowLeft />} className="w-[140px]" variant="secondary">
               Back
             </Button.Large>
           </Link>

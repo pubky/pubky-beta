@@ -7,11 +7,7 @@ interface LeftSidebarProps {
 
 export function LeftSidebar({ ref }: LeftSidebarProps) {
   return (
-    <Components.Sidebar
-      ref={ref}
-      id="left-sidebar"
-      className="w-[280px] hidden lg:block"
-    >
+    <Components.Sidebar ref={ref} id="left-sidebar" className="w-[280px] hidden lg:block">
       <Filter.Sort />
       <div className="self-start sticky top-[100px]">
         <Filter.Content />

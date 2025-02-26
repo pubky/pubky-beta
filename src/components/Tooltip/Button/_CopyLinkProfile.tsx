@@ -6,9 +6,7 @@ interface CopyLinkProfileProps {
   creatorPubky: string;
 }
 
-export default function CopyLinkProfile({
-  creatorPubky,
-}: CopyLinkProfileProps) {
+export default function CopyLinkProfile({ creatorPubky }: CopyLinkProfileProps) {
   const { addToast } = useToastContext();
 
   return (

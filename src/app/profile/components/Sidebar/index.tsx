@@ -8,28 +8,15 @@ import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 
-export default function Sidebar({
-  creatorPubky,
-}: {
-  creatorPubky?: string | null;
-}) {
+export default function Sidebar({ creatorPubky }: { creatorPubky?: string | null }) {
   const { pubky, profile } = usePubkyClientContext();
   const userPubky = creatorPubky ?? pubky;
-  const { data: profileUser, isLoading } = useUserProfile(
-    userPubky ?? '',
-    pubky ?? '',
-  );
-  const name = creatorPubky
-    ? profileUser?.details?.name || ''
-    : profile?.name || '';
-  const bio = creatorPubky
-    ? profileUser?.details?.bio || 'No bio.'
-    : profile?.bio || 'No bio.';
+  const { data: profileUser, isLoading } = useUserProfile(userPubky ?? '', pubky ?? '');
+  const name = creatorPubky ? profileUser?.details?.name || '' : profile?.name || '';
+  const bio = creatorPubky ? profileUser?.details?.bio || 'No bio.' : profile?.bio || 'No bio.';
   const links = creatorPubky ? profileUser?.details?.links : profile?.links;
   const image = profileUser?.details?.image ?? '/images/webp/Userpic.webp';
-  const [profileTags, setProfileTags] = useState<UserTags[]>(
-    profileUser?.tags ?? [],
-  );
+  const [profileTags, setProfileTags] = useState<UserTags[]>(profileUser?.tags ?? []);
   const [followed, setFollowed] = useState(false);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);

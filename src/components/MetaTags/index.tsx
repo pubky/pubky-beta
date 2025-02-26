@@ -8,13 +8,7 @@ interface MetaTagsProps {
   video?: string;
 }
 
-const MetaTags = ({
-  username,
-  description,
-  url,
-  image,
-  video,
-}: MetaTagsProps) => {
+const MetaTags = ({ username, description, url, image, video }: MetaTagsProps) => {
   return (
     <Head>
       <meta property="og:title" content={username} />
@@ -42,12 +36,7 @@ const MetaTags = ({
       ) : (
         image && <meta name="twitter:image" content={image} />
       )}
-      {!video && (
-        <meta
-          name="twitter:card"
-          content={image ? 'summary_large_image' : 'summary'}
-        />
-      )}
+      {!video && <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />}
     </Head>
   );
 };

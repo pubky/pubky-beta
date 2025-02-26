@@ -9,20 +9,9 @@ interface CheckLinkProps {
   className?: string;
 }
 
-export default function CheckLink({
-  show,
-  setShow,
-  clickedLink,
-  title,
-  className,
-}: CheckLinkProps) {
+export default function CheckLink({ show, setShow, clickedLink, title, className }: CheckLinkProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Double-check this link'}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Double-check this link'} className={className}>
       <ContentCheckLink setShow={setShow} clickedLink={clickedLink} />
     </BottomSheet.Root>
   );

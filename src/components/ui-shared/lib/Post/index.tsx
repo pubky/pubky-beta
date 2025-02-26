@@ -21,5 +21,5 @@ export const Post = {
   Root,
   Time,
   Username,
-  UserPic,
+  UserPic
 };

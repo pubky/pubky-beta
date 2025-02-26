@@ -19,19 +19,10 @@ export function ValidPostContent({ postRef, data }) {
 
   return (
     <>
-      {data?.relationships?.replied && (
-        <Post.RootParent
-          postRef={postRef}
-          parentURI={data?.relationships?.replied}
-        />
-      )}
+      {data?.relationships?.replied && <Post.RootParent postRef={postRef} parentURI={data?.relationships?.replied} />}
 
       <div ref={postRef} key={data?.details?.uri}>
-        {data?.details?.kind === 'long' ? (
-          <LongPost data={data} user={user} />
-        ) : (
-          <NormalPost data={data} />
-        )}
+        {data?.details?.kind === 'long' ? <LongPost data={data} user={user} /> : <NormalPost data={data} />}
       </div>
       <div className="mt-3">
         <Post.PostRoot uri={data?.details.id} post={data} />
@@ -87,15 +78,8 @@ const LongPost = ({ data, user }) => {
               className="cursor-pointer flex flex-col md:flex-row md:gap-4 md:items-center"
               href={`/profile/${data?.details?.author}`}
             >
-              <Typography.Body
-                className={`text-2xl hover:underline hover:decoration-solid`}
-                variant="medium-bold"
-              >
-                {Utils.minifyText(
-                  user?.data?.details?.name ??
-                    Utils.minifyPubky(data?.details?.author),
-                  24,
-                )}
+              <Typography.Body className={`text-2xl hover:underline hover:decoration-solid`} variant="medium-bold">
+                {Utils.minifyText(user?.data?.details?.name ?? Utils.minifyPubky(data?.details?.author), 24)}
               </Typography.Body>
               <div className="flex gap-1 -mt-1 md:mt-1 cursor-pointer">
                 <Typography.Label className="text-opacity-30">
@@ -104,9 +88,7 @@ const LongPost = ({ data, user }) => {
               </div>
             </Link>
           </div>
-          <PostUI.Time className="mr-2">
-            {Utils.timeAgo(data?.details?.indexed_at, isMobile)}
-          </PostUI.Time>
+          <PostUI.Time className="mr-2">{Utils.timeAgo(data?.details?.indexed_at, isMobile)}</PostUI.Time>
         </div>
         {data?.details?.attachments && data?.details?.attachments[0] && (
           <ImageByUri
@@ -121,7 +103,7 @@ const LongPost = ({ data, user }) => {
         <div
           className="text-white break-words"
           dangerouslySetInnerHTML={{
-            __html: JSON.parse(data?.details?.content).body,
+            __html: JSON.parse(data?.details?.content).body
           }}
         ></div>
       </div>

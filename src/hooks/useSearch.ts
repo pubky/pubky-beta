@@ -14,18 +14,14 @@ export function useSearchPostsByTags(
   return useQuery({
     queryKey: ['searchPostsByTags', label, sorting, start, end, skip, limit],
     queryFn: () => searchPostsByTags(label, sorting, start, end, skip, limit),
-    retry: false,
+    retry: false
   });
 }
 
-export function useSearchUsers(
-  username: string,
-  skip?: number,
-  limit?: number
-) {
+export function useSearchUsers(username: string, skip?: number, limit?: number) {
   return useQuery({
     queryKey: ['searchUsers', username, skip, limit],
     queryFn: () => searchUsers(username, skip, limit),
-    retry: false,
+    retry: false
   });
 }

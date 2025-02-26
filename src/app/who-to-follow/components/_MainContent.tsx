@@ -17,22 +17,14 @@ const ContactsContent = () => {
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
-  const { data: contactUsers, isLoading } = useStreamUsers(
-    pubky ?? '',
-    pubky ?? '',
-    'recommended',
-    skip,
-    limit,
-  );
+  const { data: contactUsers, isLoading } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended', skip, limit);
 
   const fetchUsers = () => {
     if (isLoading || !hasMore) return;
 
     if (contactUsers && Array.isArray(contactUsers)) {
       setUsersList((prev) => {
-        const newUsers = contactUsers.filter(
-          (user) => !prev.some((u) => u.details.id === user.details.id),
-        );
+        const newUsers = contactUsers.filter((user) => !prev.some((u) => u.details.id === user.details.id));
         setHasMore(newUsers.length >= limit);
         return [...prev, ...newUsers];
       });
@@ -60,9 +52,7 @@ const ContactsContent = () => {
         </Root>
       ) : (
         <div className="mt-[100px] col-span-3 flex justify-center items-center gap-6">
-          <Typography.H2 className="font-normal text-opacity-30">
-            No users to follow
-          </Typography.H2>
+          <Typography.H2 className="font-normal text-opacity-30">No users to follow</Typography.H2>
         </div>
       )}
       {hasMore && <div ref={loader} />}

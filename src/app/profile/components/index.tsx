@@ -21,5 +21,5 @@ export const Profile = {
   Bookmarks,
   Posts,
   Replies,
-  Sidebar,
+  Sidebar
 };

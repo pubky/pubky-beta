@@ -25,28 +25,20 @@ function LinkPreview({ url }: { url: string }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `/api/preview?url=${encodeURIComponent(url)}`,
-        );
+        const response = await fetch(`/api/preview?url=${encodeURIComponent(url)}`);
         const data = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(data, 'text/html');
         const title = doc.querySelector('title')?.textContent || '';
-        const description =
-          doc
-            .querySelector('meta[name="description"]')
-            ?.getAttribute('content') || '';
-        const image =
-          doc
-            .querySelector('meta[property="og:image"]')
-            ?.getAttribute('content') || '';
+        const description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+        const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
 
         const validImage = image ? await isValidImage(image) : false;
 
         setPreviewData({
           title,
           description,
-          image: validImage ? image : null,
+          image: validImage ? image : null
         });
         setLoading(false);
       } catch (error) {
@@ -79,26 +71,18 @@ function LinkPreview({ url }: { url: string }) {
         <div className="grow shrink basis-0 flex-col justify-start items-start inline-flex">
           {previewData.title && (
             <Typography.H2 className="break-all">
-              {previewData.title.length > 82
-                ? previewData.title.slice(0, 82) + '...'
-                : previewData.title}
+              {previewData.title.length > 82 ? previewData.title.slice(0, 82) + '...' : previewData.title}
             </Typography.H2>
           )}
           {previewData.description ? (
-            <Typography.Body
-              variant="small"
-              className="break-all text-opacity-80 leading-5"
-            >
+            <Typography.Body variant="small" className="break-all text-opacity-80 leading-5">
               {' '}
               {previewData.description.length > 150
                 ? previewData.description.slice(0, 150) + '...'
                 : previewData.description}
             </Typography.Body>
           ) : (
-            <Typography.Body
-              variant="small"
-              className="break-all text-opacity-80 leading-5"
-            >
+            <Typography.Body variant="small" className="break-all text-opacity-80 leading-5">
               {' '}
               {url.length > 60 ? url.slice(0, 60) + '...' : url}
             </Typography.Body>

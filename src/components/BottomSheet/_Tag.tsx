@@ -12,20 +12,9 @@ interface TagProps {
   className?: string;
 }
 
-export default function Tag({
-  show,
-  setShow,
-  post,
-  title,
-  className,
-}: TagProps) {
+export default function Tag({ show, setShow, post, title, className }: TagProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title ?? 'Tag Post'}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Tag Post'} className={className}>
       <div className="w-full items-stretch flex-col inline-flex gap-6 -mt-6">
         <ContentTag post={post} />
       </div>

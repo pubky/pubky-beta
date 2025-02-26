@@ -32,13 +32,7 @@ export const UserSmall = ({
   ...rest
 }: UserSmallProps) => {
   return (
-    <div
-      {...rest}
-      className={twMerge(
-        `justify-between items-center inline-flex w-full`,
-        rest.className,
-      )}
-    >
+    <div {...rest} className={twMerge(`justify-between items-center inline-flex w-full`, rest.className)}>
       <Link href={`/profile/${uri}`} className="gap-1 inline-flex ">
         <ImageByUri
           width={width}
@@ -51,9 +45,7 @@ export const UserSmall = ({
         <div className="flex-col justify-start items-start inline-flex">
           <Typography.Body variant="small-bold">{username}</Typography.Body>
           {label ? (
-            <Typography.Label className="text-[11px] text-opacity-50 leading-none">
-              {label}
-            </Typography.Label>
+            <Typography.Label className="text-[11px] text-opacity-50 leading-none">{label}</Typography.Label>
           ) : (
             <div className="flex gap-2 opacity-50 -mt-1">
               <div className="gap-1 flex items-center">

@@ -5,5 +5,5 @@ import UserArea from './_UserArea';
 export const Section = {
   FooterArea,
   InputArea,
-  UserArea,
+  UserArea
 };

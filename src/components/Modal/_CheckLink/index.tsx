@@ -7,11 +7,7 @@ interface CheckLinkProps {
   clickedLink: string;
 }
 
-export default function CheckLink({
-  showModal,
-  setShowModal,
-  clickedLink,
-}: CheckLinkProps) {
+export default function CheckLink({ showModal, setShowModal, clickedLink }: CheckLinkProps) {
   return (
     <Modal.Root
       show={showModal}

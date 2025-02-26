@@ -32,7 +32,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     start,
     undefined,
     undefined,
-    'recent',
+    'recent'
   );
 
   const fetchPosts = async () => {
@@ -49,9 +49,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
       const lastPost = data[data.length - 1] as PostView;
 
       setTimeline((prev) => {
-        const newPosts = data.filter(
-          (post) => !prev.some((p) => p.details.id === post.details.id),
-        );
+        const newPosts = data.filter((post) => !prev.some((p) => p.details.id === post.details.id));
         return [...prev, ...newPosts];
       });
 
@@ -78,13 +76,9 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     <div className="flex flex-col gap-3">
       {timeline.map((post) => (
         <div key={`reply-${post.details.id}`} className="flex flex-col gap-3">
-          {post?.relationships?.replied && (
-            <Profile.ParentPost parentURI={post?.relationships?.replied} />
-          )}
+          {post?.relationships?.replied && <Profile.ParentPost parentURI={post?.relationships?.replied} />}
           <div className="flex items-center relative">
-            <div
-              className={`ml-[9px] absolute border-l-[1px] h-[51%] -top-3 border-[#444447]`}
-            />
+            <div className={`ml-[9px] absolute border-l-[1px] h-[51%] -top-3 border-[#444447]`} />
             {lineHorizontalCSS}
             <div className="ml-[23px] w-full">
               <Post post={post} />
@@ -105,12 +99,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
           description="Start writing your first reply."
         >
           <div className="absolute top-12 z-0">
-            <Image
-              alt="not-found-replies"
-              width={656}
-              height={438}
-              src="/images/webp/not-found/posts.webp"
-            />
+            <Image alt="not-found-replies" width={656} height={438} src="/images/webp/not-found/posts.webp" />
           </div>
         </ContentNotFound>
       )}

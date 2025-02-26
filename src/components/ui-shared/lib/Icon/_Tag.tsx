@@ -3,13 +3,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const Synonym = ({ size = '200' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 200 200"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M127.394 75.7495H99.9979L107.982 44.26L73.6099 75.5811V94.9463L127.394 95.0305V75.7495ZM93.0227 155.736L127.394 124.415V104.966H73.6099V124.247H100.922L93.0227 155.736Z"
       fill="white"
@@ -24,13 +18,7 @@ export const Synonym = ({ size = '200' }: IconProps) => (
 );
 
 export const Slashtags = ({ size = '200' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 200 200"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -60,13 +48,7 @@ export const Slashtags = ({ size = '200' }: IconProps) => (
 );
 
 export const Blocktank = ({ size = '200' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 200 200"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -89,13 +71,7 @@ export const Blocktank = ({ size = '200' }: IconProps) => (
 );
 
 export const Bitkit = ({ size = '200' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 200 184"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 200 184" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -120,12 +96,7 @@ export const Bitkit = ({ size = '200' }: IconProps) => (
 );
 
 export const Bitcoin = ({ size = '800' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0.004 0 64 64"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0.004 0 64 64" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M63.04 39.741c-4.274 17.143-21.638 27.575-38.783 23.301C7.12 58.768-3.313 41.404.962 24.262 5.234 7.117 22.597-3.317 39.737.957c17.144 4.274 27.576 21.64 23.302 38.784z"
       fill="#f7931a"
@@ -138,12 +109,7 @@ export const Bitcoin = ({ size = '800' }: IconProps) => (
 );
 
 export const Tether = ({ size = '2500' }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 2000 2000"
-    width={size}
-    height={size}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 2000" width={size} height={size}>
     <path
       d="M1000 0c552.26 0 1000 447.74 1000 1000s-447.76 1000-1000 1000S0 1552.38 0 1000 447.68 0 1000 0"
       fill="#53ae94"
@@ -156,13 +122,7 @@ export const Tether = ({ size = '2500' }: IconProps) => (
 );
 
 export const PubkyIcon = ({ size = '24' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 22 33"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 22 33" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"

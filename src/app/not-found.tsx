@@ -3,7 +3,7 @@ import { getSeoMetadata } from '@components/HeaderSEO';
 
 export const metadata = getSeoMetadata({
   title: '404 | Pubky.app',
-  description: 'Pubky.app - Unlock the web.',
+  description: 'Pubky.app - Unlock the web.'
 });
 
 export default function Custom404() {

@@ -1,19 +1,49 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { slowCypressDown } from 'cypress-slow-down'
+import { slowCypressDown } from 'cypress-slow-down';
 // registers the cy.slowDown and cy.slowDownEnd commands
-import 'cypress-slow-down/commands'
-import { cannotFindPostInFeed, checkPostIsAtIndexInFeed, countPostsInFeed, createQuickPost, fastTagPostInFeed, repostPost, waitForFeedToLoad } from '../support/posts';
+import 'cypress-slow-down/commands';
+import {
+  cannotFindPostInFeed,
+  checkPostIsAtIndexInFeed,
+  countPostsInFeed,
+  createQuickPost,
+  fastTagPostInFeed,
+  repostPost,
+  waitForFeedToLoad
+} from '../support/posts';
 import { searchAndFollowProfile } from '../support/contacts';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/commands';
 
 // Profile 1 follows Profile 2 and is friends with Profile 2. Profile 1 also follows Profile 3 and Profile 4.
-const profile1 = {username: "Profile #1", bio: "Follows Profile #2", pubkyAlias: "pubky_1", postText1: `Profile 1's post ${Date.now()}`, postText2: `Profile 1's post to be reposted ${Date.now()}`};
+const profile1 = {
+  username: 'Profile #1',
+  bio: 'Follows Profile #2',
+  pubkyAlias: 'pubky_1',
+  postText1: `Profile 1's post ${Date.now()}`,
+  postText2: `Profile 1's post to be reposted ${Date.now()}`
+};
 // Profile 2 follows Profile 1 and is friends with Profile 1.
-const profile2 = {username: "Profile #2", bio: "Follows Profile #1", pubkyAlias: "pubky_2", postText: `Profile 2's post ${Date.now()}`, repostText: "Repost of Profile 1's post"};
+const profile2 = {
+  username: 'Profile #2',
+  bio: 'Follows Profile #1',
+  pubkyAlias: 'pubky_2',
+  postText: `Profile 2's post ${Date.now()}`,
+  repostText: "Repost of Profile 1's post"
+};
 // Profile 3 follows profile 2 but is not followed back
-const profile3 = {username: "Profile #3", bio: "Follows Profile #2", pubkyAlias: "pubky_3", postText: `Profile 3's post ${Date.now()}`};
+const profile3 = {
+  username: 'Profile #3',
+  bio: 'Follows Profile #2',
+  pubkyAlias: 'pubky_3',
+  postText: `Profile 3's post ${Date.now()}`
+};
 // Profile 4 follows noone and is followed by no-one
-const profile4 = {username: "Profile #4", bio: "Follows no-one", pubkyAlias: "pubky_4", postText: `Profile 4's post ${Date.now()}`};
+const profile4 = {
+  username: 'Profile #4',
+  bio: 'Follows no-one',
+  pubkyAlias: 'pubky_4',
+  postText: `Profile 4's post ${Date.now()}`
+};
 
 describe('feed and filters', () => {
   before(() => {
@@ -35,7 +65,7 @@ describe('feed and filters', () => {
     cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile2.username));
     createQuickPost(profile2.postText);
     // find Profile 1's latest post and repost it
-    repostPost({repostContent: profile2.repostText, filterText: profile1.postText2});
+    repostPost({ repostContent: profile2.repostText, filterText: profile1.postText2 });
     // follow Profile 1
     cy.get(`@${profile1.pubkyAlias}`).then((pubky) => {
       searchAndFollowProfile(`${pubky}`, profile1.username);
@@ -66,7 +96,7 @@ describe('feed and filters', () => {
 
     // * sign back in as profile 1 and follow profile 2, 3 and 4.
     cy.signIn(backupDownloadFilePath(profile1.username));
-    [profile2, profile3, profile4].forEach(profile => {
+    [profile2, profile3, profile4].forEach((profile) => {
       cy.get(`@${profile.pubkyAlias}`).then((pubky) => {
         searchAndFollowProfile(`${pubky}`, profile.username);
       });
@@ -119,13 +149,14 @@ describe('feed and filters', () => {
     cy.findFirstPostInFeedFiltered(profile4.postText).should('be.visible');
 
     // * check some Hot tags are visible
-    cy.get('#right-sidebar').find('#hot-tags').should('be.visible').within(() => {
-      cy.get('#hot-tags-content')
-        .should('be.visible')
-        .innerTextShouldNotContain('No tags yet');
+    cy.get('#right-sidebar')
+      .find('#hot-tags')
+      .should('be.visible')
+      .within(() => {
+        cy.get('#hot-tags-content').should('be.visible').innerTextShouldNotContain('No tags yet');
         // TODO: uncomment when hot tags show as expected, see https://github.com/pubky/pubky-app/issues/842
         //.find('a').should('have.length.above', 5);
-    });
+      });
   });
 
   it('can filter to view only posts and reposts of following', () => {

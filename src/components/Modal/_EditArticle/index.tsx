@@ -9,12 +9,7 @@ interface CreateEditArticleProps {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function EditArticle({
-  showModal,
-  setShowModal,
-  article,
-  setShowMenu,
-}: CreateEditArticleProps) {
+export default function EditArticle({ showModal, setShowModal, article, setShowMenu }: CreateEditArticleProps) {
   return (
     <Modal.Root
       show={showModal}
@@ -24,11 +19,7 @@ export default function EditArticle({
       <Modal.CloseAction onClick={() => setShowModal(false)} />
       <div className="flex flex-col gap-4">
         <Modal.Header title="Edit Article" />
-        <ContentEditArticle
-          setShowModalEditArticle={setShowModal}
-          article={article}
-          setShowMenu={setShowMenu}
-        />
+        <ContentEditArticle setShowModalEditArticle={setShowModal} article={article} setShowMenu={setShowMenu} />
       </div>
     </Modal.Root>
   );

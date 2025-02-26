@@ -19,14 +19,7 @@ export const SubmitAction = ({
   ...rest
 }: SubmitActionProps) => {
   return (
-    <Button.Large
-      icon={icon}
-      loading={loading}
-      disabled={disabled}
-      className="w-full"
-      {...rest}
-      colorText={colorText}
-    >
+    <Button.Large icon={icon} loading={loading} disabled={disabled} className="w-full" {...rest} colorText={colorText}>
       {children}
     </Button.Large>
   );

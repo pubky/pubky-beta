@@ -12,11 +12,9 @@
 @font-face {
   font-family: 'Inter Tight';
   src:
-    url('/Inter_Tight/InterTight-Italic-VariableFont_wght.woff2')
-      format('woff2'),
+    url('/Inter_Tight/InterTight-Italic-VariableFont_wght.woff2') format('woff2'),
     url('/Inter_Tight/InterTight-Italic-VariableFont_wght.woff') format('woff'),
-    url('/Inter_Tight/InterTight-Italic-VariableFont_wght.ttf')
-      format('truetype');
+    url('/Inter_Tight/InterTight-Italic-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;

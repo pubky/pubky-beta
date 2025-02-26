@@ -6,7 +6,7 @@ const faqQuestions = [
   'How can I delete my post?',
   'How do I mute someone?',
   'How can I restore my account?',
-  'How is Pubky different from other social platforms?',
+  'How is Pubky different from other social platforms?'
 ];
 
 export default function Faq() {
@@ -28,11 +28,7 @@ export default function Faq() {
         </Link>
       ))}
       <Link className="w-full" href="/settings/help">
-        <Button.Medium
-          icon={<Icon.Question size="16" />}
-          textCSS="text-[13px]"
-          className="py-2 px-3 h-8"
-        >
+        <Button.Medium icon={<Icon.Question size="16" />} textCSS="text-[13px]" className="py-2 px-3 h-8">
           More FAQ
         </Button.Medium>
       </Link>

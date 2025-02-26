@@ -4,13 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const GitFork = ({ size = '32', color = 'white' }: IconProps) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       opacity="0.2"
       d="M23.5 11.9997C25.433 11.9997 27 10.4327 27 8.49969C27 6.5667 25.433 4.99969 23.5 4.99969C21.567 4.99969 20 6.5667 20 8.49969C20 10.4327 21.567 11.9997 23.5 11.9997Z"

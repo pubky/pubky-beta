@@ -16,7 +16,7 @@ import { ImageByUri } from '@/components/ImageByUri';
 
 export default function CreatorpubkyLayout({
   params,
-  children,
+  children
 }: {
   params: Promise<{ creatorPubky: string }>;
   children: React.ReactNode;
@@ -35,11 +35,7 @@ export default function CreatorpubkyLayout({
   }, [params]);
 
   const creatorPubky = resolvedParams?.creatorPubky || '';
-  const {
-    data: profile,
-    isLoading,
-    isError,
-  } = useUserProfile(creatorPubky, pubky ?? '');
+  const { data: profile, isLoading, isError } = useUserProfile(creatorPubky, pubky ?? '');
   const loader = useRef(null);
   let content;
 
@@ -47,8 +43,7 @@ export default function CreatorpubkyLayout({
     setLoading(true);
     const pathSegments = pathname?.split('/');
     const lastSegment = pathSegments?.pop();
-    const key =
-      creatorPubky && lastSegment === creatorPubky ? 'posts' : lastSegment;
+    const key = creatorPubky && lastSegment === creatorPubky ? 'posts' : lastSegment;
     const foundTab = Profile.FilterTabs.tabs.find((tab) => tab.key === key);
     setActiveTab(foundTab ? foundTab.id : 0);
     setLoading(false);
@@ -60,15 +55,9 @@ export default function CreatorpubkyLayout({
     content = (
       <Content.Grid>
         <div className="px-6 py-2 bg-white bg-opacity-10 rounded-2xl">
-          <Typography.Body
-            variant="small"
-            className="text-opacity-50 text-center"
-          >
+          <Typography.Body variant="small" className="text-opacity-50 text-center">
             This profile was not found or has been deleted by its author.
-            <Link
-              href="/home"
-              className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer"
-            >
+            <Link href="/home" className="ml-2 text-white text-opacity-80 hover:text-opacity-100 cursor-pointer">
               Go home
             </Link>
           </Typography.Body>
@@ -91,19 +80,11 @@ export default function CreatorpubkyLayout({
             <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
               <Profile.Avatar
                 className="lg:pl-12 cursor-pointer"
-                username={
-                  profile?.details?.name || Utils.minifyPubky(creatorPubky)
-                }
-                uriImage={
-                  profile?.details?.image || '/images/webp/Userpic.webp'
-                }
+                username={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
+                uriImage={profile?.details?.image || '/images/webp/Userpic.webp'}
                 onClick={() => setIsAvatarOpen(true)}
               />
-              <Profile.Handle
-                profileUser={profile}
-                pubkey={creatorPubky ?? ''}
-                creatorPubky={creatorPubky}
-              />
+              <Profile.Handle profileUser={profile} pubkey={creatorPubky ?? ''} creatorPubky={creatorPubky} />
             </div>
           </Content.Grid>
         </div>
@@ -130,10 +111,7 @@ export default function CreatorpubkyLayout({
             onClick={() => setIsAvatarOpen(false)}
             className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50"
           >
-            <div
-              onClick={(event) => event?.stopPropagation()}
-              className="relative p-4 bg-transparent rounded-full"
-            >
+            <div onClick={(event) => event?.stopPropagation()} className="relative p-4 bg-transparent rounded-full">
               <ImageByUri
                 alt={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
                 width={362}

@@ -12,10 +12,7 @@ export const Create = ({ icon, ...rest }: CreateButtonProps) => {
   const iconWrapperCSS =
     'relative transition-transform duration-300 ease-in-out transform scale-75 hover:scale-100 md:scale-100 md:hover:scale-125';
   return (
-    <button
-      {...rest}
-      className={twMerge(baseCSS, responsiveCSS, rest.className)}
-    >
+    <button {...rest} className={twMerge(baseCSS, responsiveCSS, rest.className)}>
       {icon ? (
         icon
       ) : (

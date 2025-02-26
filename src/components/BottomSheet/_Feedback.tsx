@@ -10,19 +10,9 @@ interface FeedbackProps {
   className?: string;
 }
 
-export default function Feedback({
-  show,
-  setShow,
-  title,
-  className,
-}: FeedbackProps) {
+export default function Feedback({ show, setShow, title, className }: FeedbackProps) {
   return (
-    <BottomSheet.Root
-      show={show}
-      setShow={setShow}
-      title={title}
-      className={className}
-    >
+    <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
       <ContentFeedback setShowModal={setShow} />
     </BottomSheet.Root>
   );

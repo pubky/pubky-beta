@@ -7,6 +7,6 @@ export function useServerInfo() {
   return useQuery({
     queryKey: ['serverInfo'],
     queryFn: getServerInfo,
-    retry: false,
+    retry: false
   });
 }
