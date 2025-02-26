@@ -2,6 +2,10 @@ import { Icon } from '../../index';
 
 export interface InputTagProps {
   /**
+   * The id of the tag input
+   */
+  id?: string;
+  /**
    * The current value of the tag input
    */
   value: string;
@@ -76,6 +80,7 @@ export interface InputTagProps {
 }
 
 export const Tag = ({
+  id,
   value,
   onChange,
   onAddTag,
@@ -120,6 +125,7 @@ export const Tag = ({
       className={`flex items-center ${containerSizeClasses} border border-white border-opacity-30 border-dashed bg-transparent ${className}`}
     >
       <input
+        id={id}
         ref={ref}
         type="text"
         placeholder="tag"

@@ -262,14 +262,95 @@ describe('feed and filters', () => {
   });
 
   it('can create and delete a custom feed', () => {
+    // function to add a tag when creating a custom feed
+    const addTag = (name: string) => {
+      // type the tag name
+      cy.get('#create-feed-tag-input').type(name);
+      // check the add tag button is visible and click it
+      cy.get('#add-btn').should('be.visible').click();
+      // check the add tag button is not visible
+      cy.get('#create-feed-tag-input').then(($body) => {
+        assert($body.find('#add-btn').length === 0, 'Add tag button should not exist.');
+      });
+    };
+
+    // profile 2's post's tags
+    const tag1 = 'p2tag3';
+    const tag2 = 'p2tag4';
+
     // * sign up as a new user
-    //cy.onboardAsNewUser('Custom Feed User', 'Custom Feed User', true);
+    cy.onboardAsNewUser('Custom Feed Guy', 'I make custom feeds');
+
+    // * check latest post is profile 4's post
+    cy.findPostInFeed().within(($post) => {
+      cy.wrap($post).contains(profile4.postText);
+    });
+
     // * confirm only 'All' feed is available
-    // * create a new custom feed with tag 'p3tag1'
-    // * confirm only posts with p3tag1 are visible
+    cy.get('#custom-feeds-tabs').within(($tabs) => {
+      // first tab is 'All'
+      cy.wrap($tabs).children().eq(0).contains('All').should('be.visible');
+      // add tab also exists
+      cy.get('#add-custom-feed').should('be.visible');
+      // no other tabs exist
+      cy.wrap($tabs).children().should('have.length', 2);
+
+      // * add a new custom feed
+      cy.get('#add-custom-feed').click();
+    });
+
+    cy.get('#modal-root').within(() => {
+      cy.get('h1').contains('Create Feed');
+      // add a name to the custom feed
+      cy.get('#create-feed-name-input').type("Mr Feed's Feed");
+      // add two tags to the custom feed (these are not on the most recent post in the 'All' feed)
+      addTag(tag1);
+      addTag(tag2);
+      // check the 2 tags are shown
+      cy.get('#create-feed-tags-container')
+        .children()
+        .should('have.length', 2)
+        .and('contain', tag1)
+        .and('contain', tag2);
+      // save the custom feed
+      cy.get('#create-feed-save-btn').click();
+    });
+
+    // * select the new feed
+    cy.get('#custom-feeds-tabs').within(($tabs) => {
+      cy.wrap($tabs).children().eq(1).contains("Mr Feed's").click();
+    });
+
+    // * first post in feed is profile 2's post with expected tags
+    cy.findFirstPostInFeed().within(($post) => {
+      cy.wrap($post).contains(profile2.postText);
+      // length is 4 because of the '+' button and 3 is max shown
+      cy.wrap($post).find('#tags').children().should('have.length', 4).and('contain', tag1).and('contain', tag2);
+    });
+
     // * select 'All' feed
-    // * confirm all posts are visible
+    cy.get('#custom-feeds-tabs').within(($tabs) => {
+      cy.wrap($tabs).children().eq(0).contains('All').click();
+    });
+
+    // * confirm latest post is profile 4's post again
+    cy.findPostInFeed().within(($post) => {
+      cy.wrap($post).contains(profile4.postText);
+    });
+
     // * delete the custom feed
+    cy.get('#custom-feeds-tabs').within(($tabs) => {
+      cy.wrap($tabs).children().eq(1).contains("Mr Feed's");
+      cy.wrap($tabs).children().eq(1).find('#delete-custom-feed').click();
+    });
+
     // * confirm only 'All' feed is available
+    cy.get('#custom-feeds-tabs').within(($tabs) => {
+      cy.wrap($tabs).children().eq(0).contains('All').should('be.visible');
+      cy.get('#add-custom-feed').should('be.visible');
+      cy.wrap($tabs).children().should('have.length', 2);
+    });
   });
+
+  it('can create a custom feed with filters', () => {});
 });

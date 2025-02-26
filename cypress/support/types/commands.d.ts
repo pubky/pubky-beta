@@ -23,6 +23,7 @@ declare global {
       innerTextShouldNotEq(text: string): Chainable<Subject>;
       saveCopiedPubkyToAlias(alias: string): Chainable<void>;
       saveCopiedTextToAlias(alias: string): Chainable<void>;
+      assertElementDoesNotExist(selector: string): Chainable<void>;
       waitReload(time?: number): Chainable<void>;
       waitReloadWhileElementDoesNotExist(selector: string, attempts?: number): Chainable<void>;
       findPostInBookmarks(postIdx: number, expectedCount?: number): Chainable<JQuery<HTMLElement>>;

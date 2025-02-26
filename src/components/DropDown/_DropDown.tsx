@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { DropDown as DropDownUI } from '@social/ui-shared';
 
 interface DropDownProps extends React.HTMLAttributes<HTMLDivElement> {
+  idPrefix?: string;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   value: {
@@ -20,6 +21,7 @@ interface DropDownProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function DropDown({
+  idPrefix,
   open,
   setOpen,
   value,
@@ -46,7 +48,7 @@ export default function DropDown({
   }, [dropdownRef, setOpen]);
 
   return (
-    <DropDownUI.Root {...rest} reference={dropdownRef}>
+    <DropDownUI.Root idPrefix={idPrefix} {...rest} reference={dropdownRef}>
       {type === 'text' ? (
         <DropDownUI.OptionText
           onClick={disabled ? undefined : () => setOpen(!open)}

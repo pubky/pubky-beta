@@ -23,7 +23,14 @@ export default function Layout() {
   });
 
   return (
-    <DropDown open={openDropdown} setOpen={setOpenDropdown} value={dropdownValue} labelIcon="Layout" type="text">
+    <DropDown
+      idPrefix="layout"
+      open={openDropdown}
+      setOpen={setOpenDropdown}
+      value={dropdownValue}
+      labelIcon="Layout"
+      type="text"
+    >
       <DropDownUI.Content className="right-0 mt-0 px-4 py-2" isOpen={openDropdown}>
         <ContentLayout setDropdownValue={setDropdownValue} setOpenDropdown={setOpenDropdown} />
       </DropDownUI.Content>

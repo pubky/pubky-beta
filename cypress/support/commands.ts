@@ -238,6 +238,12 @@ Cypress.Commands.add('saveCopiedTextToAlias', (alias: string) => {
     });
 });
 
+Cypress.Commands.add('assertElementDoesNotExist', (selector) => {
+  cy.get('body').then(($body) => {
+    assert($body.find(selector).length === 0, `${selector} exists. It should not.`);
+  });
+});
+
 Cypress.Commands.add('waitReload', (time = 2000) => {
   cy.wait(time).reload();
 });
