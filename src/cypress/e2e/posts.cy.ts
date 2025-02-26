@@ -30,7 +30,7 @@ describe('posts', () => {
     cy.backupRecoveryFile();
     cy.renameFile(
       backupDownloadFilePath(),
-      backupDownloadFilePath(username + '.pkarr'),
+      backupDownloadFilePath(username),
     );
   });
 
@@ -42,7 +42,7 @@ describe('posts', () => {
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
-        cy.signIn(backupDownloadFilePath(username + '.pkarr'));
+        cy.signIn(backupDownloadFilePath(username));
       }
     });
   });
@@ -205,7 +205,7 @@ describe('posts', () => {
     );
     cy.signOut(false);
     // sign back in as poster
-    cy.signIn(backupDownloadFilePath(username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(username));
 
     const postContent = `I can post with a profile reference! ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
@@ -260,7 +260,7 @@ describe('posts', () => {
     createQuickPost(postContent);
     cy.signOut(false);
     // sign back in as poster
-    cy.signIn(backupDownloadFilePath(username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(username));
 
     // try to delete the post made by the other account
     cy.findFirstPostInFeed(false).within(() => {

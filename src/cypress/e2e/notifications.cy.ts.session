@@ -14,7 +14,7 @@ const signUp = (profile: { username: string, pubkyAlias: string }) => {
   cy.session(profile.username, () => {
     cy.onboardAsNewUser(profile.username, "", true, profile.pubkyAlias);
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile.username + '.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile.username));
   });
 };
 

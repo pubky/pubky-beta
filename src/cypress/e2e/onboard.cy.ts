@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { backupFilename } from '../support/auth';
+import { defaultBackupFilename } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 
 describe('onboarding', () => {
@@ -25,7 +25,7 @@ describe('onboarding', () => {
 
     // verify backup file
     const downloadsFolder = Cypress.config('downloadsFolder');
-    const expectedFilePath = path.join(downloadsFolder, backupFilename());
+    const expectedFilePath = path.join(downloadsFolder, defaultBackupFilename());
     cy.readFile(expectedFilePath).should('exist');
 
     cy.signOut(true);

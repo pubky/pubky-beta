@@ -23,7 +23,7 @@ describe('feed and filters', () => {
     // * create profile 1 of 4 and post
     cy.onboardAsNewUser(profile1.username, profile1.bio, true, profile1.pubkyAlias);
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile1.username));
     createQuickPost(profile1.postText1);
     createQuickPost(profile1.postText2);
     cy.signOut(true);
@@ -31,7 +31,7 @@ describe('feed and filters', () => {
     // * create profile 2 of 4, post and repost profile 1's post
     cy.onboardAsNewUser(profile2.username, profile2.bio, true, profile2.pubkyAlias);
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile2.username));
     createQuickPost(profile2.postText);
     // find Profile 1's latest post and repost it
     repostPost({repostContent: profile2.repostText, filterText: profile1.postText2});
@@ -44,7 +44,7 @@ describe('feed and filters', () => {
     // * create profile 3 of 4, post and repost profile 2's post
     cy.onboardAsNewUser(profile3.username, profile3.bio, true, profile3.pubkyAlias);
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile3.username + '.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile3.username));
     createQuickPost(profile3.postText);
     // follow profile 2
     cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
@@ -55,7 +55,7 @@ describe('feed and filters', () => {
     // * create profile 4 of 4 and post
     cy.onboardAsNewUser(profile4.username, profile4.bio, true, profile4.pubkyAlias);
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile4.username + '.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile4.username));
     createQuickPost(profile4.postText);
     // tag profile 3's post 5 times for max popularity
     fastTagPostInFeed(['p3tag1', 'p3tag2', 'p3tag3', 'p3tag4', 'p3tag5'], profile3.postText);
@@ -64,7 +64,7 @@ describe('feed and filters', () => {
     cy.signOut(true);
 
     // * sign back in as profile 1 and follow profile 2, 3 and 4.
-    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile1.username));
     [profile2, profile3, profile4].forEach(profile => {
       cy.get(`@${profile.pubkyAlias}`).then((pubky) => {
         searchAndFollowProfile(`${pubky}`, profile.username);
@@ -228,4 +228,6 @@ describe('feed and filters', () => {
     checkPostIsAtIndexInFeed(profile4.postText, 2);
     checkPostIsAtIndexInFeed(profile2.repostText, 3);
   });
+
+  it('can create a custom feed', () => {});
 });
