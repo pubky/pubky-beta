@@ -13,6 +13,7 @@ import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
 import { clickFollowButton } from '../support/profile';
 import { addTagsWithModal } from '../support/common';
 import { checkLatestNotification } from '../support/profile';
+import { HasBackedUp, SkipOnboardingSlides } from '../support/commands';
 
 const profile1 = { username: 'Notif #1', pubkyAlias: 'pubky_1' };
 const profile2 = { username: 'Notif #2', pubkyAlias: 'pubky_2' };
@@ -24,22 +25,22 @@ describe('notifications', () => {
     cy.deleteDownloadsFolder();
 
     // * create profile 1
-    cy.onboardAsNewUser(profile1.username, '', true, profile1.pubkyAlias);
+    cy.onboardAsNewUser(profile1.username, '', SkipOnboardingSlides.Yes, profile1.pubkyAlias);
     cy.backupRecoveryFile();
     cy.renameFile(
       backupDownloadFilePath(),
-      backupDownloadFilePath(profile1.username + '.pkarr'),
+      backupDownloadFilePath(profile1.username),
     );
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * create profile 2
-    cy.onboardAsNewUser(profile2.username, '', true, profile2.pubkyAlias);
+    cy.onboardAsNewUser(profile2.username, '', SkipOnboardingSlides.Yes, profile2.pubkyAlias);
     cy.backupRecoveryFile();
     cy.renameFile(
       backupDownloadFilePath(),
-      backupDownloadFilePath(profile2.username + '.pkarr'),
+      backupDownloadFilePath(profile2.username),
     );
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
   });
 
   beforeEach(() => {
@@ -53,7 +54,7 @@ describe('notifications', () => {
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
-        cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+        cy.signIn(backupDownloadFilePath(profile1.username));
       }
     });
   });
@@ -65,9 +66,9 @@ describe('notifications', () => {
     });
 
     // * profile 2 checks notification for new follower
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile2.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     // check notification counter on profile picture is 1
@@ -84,9 +85,9 @@ describe('notifications', () => {
     clickFollowButton();
 
     // * profile 1 checks notification for new follower and friend
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
-    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile1.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     // check notification counter on profile picture is 1
@@ -128,9 +129,9 @@ describe('notifications', () => {
     addTagsWithModal([profileTag]);
 
     // * profile 2 checks for notification for tagged profile
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile2.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     // check notification counter on profile picture is 1
@@ -161,9 +162,9 @@ describe('notifications', () => {
       });
 
     // * profile 1 checks for notification for tagged post
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
-    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile1.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -187,9 +188,9 @@ describe('notifications', () => {
     });
 
     // * profile 2 checks for notification for being mentioned in a post
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile2.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     // check notification counter on profile picture is 1
@@ -212,14 +213,14 @@ describe('notifications', () => {
     );
 
     // * profile 2 replies to profile 1's post (1)
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile2.username));
     replyToPost({ replyContent: 'I replied to your post!' });
     cy.wait(1000); // TODO: remove workaround for notifictation counter not showing for profile 1
 
     // * profile 1 checks for notification for being replied to
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile1.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -240,13 +241,13 @@ describe('notifications', () => {
     );
 
     // * profile 2 reposts profile 1's post (1)
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile2.username));
     repostPost({ repostContent: 'I reposted your post!' });
 
     // * profile 1 checks for notification for being reposted
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile1.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -267,20 +268,20 @@ describe('notifications', () => {
     );
 
     // * profile 2 replies to profile 1's post (1)
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
     cy.reload();
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile2.username));
     replyToPost({ replyContent: 'I replied to your post!' });
 
     // * profile 1 deletes own post (1)
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile1.username));
     deletePost(0);
 
     // * profile 2 checks for notification for post (1) being deleted
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile2.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -305,20 +306,20 @@ describe('notifications', () => {
     );
 
     // * profile 2 reposts profile 1's post
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile2.username));
     repostPost({ repostContent: 'I reposted your post!' });
 
     // * profile 1 deletes own post (1)
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
     cy.reload();
-    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile1.username));
     deletePost(1);
 
     // * profile 2 checks for notification for post being deleted
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile2.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -340,20 +341,20 @@ describe('notifications', () => {
     );
 
     // * profile 2 replies to profile 1's post (1)
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
     cy.reload();
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile2.username));
     replyToPost({ replyContent: 'I replied to your post!' });
 
     // * profile 1 edits own post (1)
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile1.username));
     editPost('I edited my post!', 0);
 
     // * profile 2 checks for notification for post (1) being edited
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile2.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -379,20 +380,20 @@ describe('notifications', () => {
     );
 
     // * profile 2 reposts profile 1's post (1)
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile2.username));
     repostPost({ repostContent: 'I reposted your post!' });
 
     // * profile 1 edits own post (1)
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
     cy.reload();
-    cy.signIn(backupDownloadFilePath(profile1.username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(profile1.username));
     editPost('I edited my post!', 1);
 
     // * profile 2 checks for notification for post (1) being edited
-    cy.signOut(true);
-    cy.signIn(backupDownloadFilePath(profile2.username + '.pkarr'));
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath(profile2.username));
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
     cy.get('#header-notification-counter').should('have.text', '1');

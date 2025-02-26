@@ -1,6 +1,7 @@
 import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 import { searchAndFollowProfile } from '../support/contacts';
+import { HasBackedUp } from '../support/commands';
 
 describe('contacts', () => {
   before(() => {
@@ -28,7 +29,7 @@ describe('contacts', () => {
 
     // Backup
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('pubky1.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('pubky1'));
 
     // Copy and store pubky for account 1
     cy.get('#header-profile-pic').click();
@@ -38,14 +39,14 @@ describe('contacts', () => {
     cy.get('@pubky1').then((ss) => { cy.log(`pubky1: ${ss}`); });
 
     // Sign out of account 1
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // Create account 2
     cy.onboardAsNewUser('#2 Friend', "Man's second best friend");
 
     // Backup
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('pubky2.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('pubky2'));
 
     // Copy and store pubky for account 2
     cy.get('#header-profile-pic').click();
@@ -139,14 +140,14 @@ describe('contacts', () => {
     cy.get('#profile-tab-content').should('contain.text', 'Looking for friends?');
 
     // Sign out
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     //
     // follow back and make a friend
     //
 
     // Sign in account 1
-    cy.signIn(backupDownloadFilePath('pubky1.pkarr'));
+    cy.signIn(backupDownloadFilePath('pubky1'));
     cy.get('#header-profile-pic').click();
 
     // Check account 1 (own) profile for follower

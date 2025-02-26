@@ -31,7 +31,7 @@ export default function ContentBookmarks() {
         {layout !== 'wide' && <LeftSidebar />}
         <Components.PostsLayout className="w-full flex-col inline-flex gap-3">
           <Components.PostsLayout
-            id="posts-feed"
+            id="bookmarked-posts"
             className="w-full flex-col inline-flex gap-3"
           >
             <BookmarksPage.Timeline />

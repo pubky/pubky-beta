@@ -1,22 +1,22 @@
 import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 // registers the cy.slowDown and cy.slowDownEnd commands
-import 'cypress-slow-down/commands';
-import {
-  latestPostInFeedContentEq,
-  deletePost,
-  createQuickPost,
-  checkPostIsNotAtTopOfFeed,
-  repostPost,
-  fastTagPostInFeed,
-  replyToPost,
-  waitForFeedToLoad,
-  selectEmojis,
-  createQuickPostWithTags,
-  fastTagWhilstCreatingPost,
-  addImage,
-} from '../support/posts';
+import 'cypress-slow-down/commands'
+import { latestPostInFeedContentEq,
+        deletePost,
+        createQuickPost,
+        checkPostIsNotAtTopOfFeed,
+        repostPost,
+        fastTagPostInFeed,
+        replyToPost,
+        waitForFeedToLoad,
+        selectEmojis,
+        createQuickPostWithTags,
+        fastTagWhilstCreatingPost,
+        addImage,
+        waitForBookmarksToLoad} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
+import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from '../support/commands';
 
 const username = 'Poster';
 
@@ -31,7 +31,7 @@ describe('posts', () => {
     cy.backupRecoveryFile();
     cy.renameFile(
       backupDownloadFilePath(),
-      backupDownloadFilePath(username + '.pkarr'),
+      backupDownloadFilePath(username),
     );
   });
 
@@ -43,7 +43,7 @@ describe('posts', () => {
     // sign in if not already
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
-        cy.signIn(backupDownloadFilePath(username + '.pkarr'));
+        cy.signIn(backupDownloadFilePath(username));
       }
     });
   });
@@ -158,15 +158,13 @@ describe('posts', () => {
     });
 
     // wait for post to be indexed then verify the post has expected content and 1 image
-    cy.findFirstPostInFeed(true).within(() => {
+    cy.findFirstPostInFeed(CheckIndexed.Yes).within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('#post-content-text').find('img').should('have.length', 1);
     });
   });
 
-  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
-  //[true, false].forEach((waitForIndexed) => {
-  [true].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can post with embedded link (waitForIndexed: ${waitForIndexed})`, () => {
       const link = 'https://www.youtube.com/watch?v=989-7xsRLR4';
       const embedLink = 'https://www.youtube.com/embed/989-7xsRLR4';
@@ -193,7 +191,7 @@ describe('posts', () => {
 
   it('can post with profile reference', () => {
     // create profile to refer to in a post
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
     const uniquePrefix = Cypress._.uniqueId(Date.now().toString().slice(-3));
     const otherUsername = 'Jeremy The Poser';
     const fullUsername = uniquePrefix + '_' + otherUsername;
@@ -201,12 +199,12 @@ describe('posts', () => {
     cy.onboardAsNewUser(
       fullUsername,
       'My account will be referenced in a post.',
-      true,
+      SkipOnboardingSlides.Yes,
       pubkyAlias,
     );
-    cy.signOut(false);
+    cy.signOut(HasBackedUp.No);
     // sign back in as poster
-    cy.signIn(backupDownloadFilePath(username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(username));
 
     const postContent = `I can post with a profile reference! ${Date.now()}`;
     cy.get('#quick-post-create-content').within(() => {
@@ -255,16 +253,16 @@ describe('posts', () => {
   // todo: consider combining with 'can delete a post' test
   it("cannot delete other profile's post", () => {
     // create profile to create a post to try and delete
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
     cy.onboardAsNewUser('Del Boy', 'Try delete my post.');
     const postContent = `Noone else can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
-    cy.signOut(false);
+    cy.signOut(HasBackedUp.No);
     // sign back in as poster
-    cy.signIn(backupDownloadFilePath(username + '.pkarr'));
+    cy.signIn(backupDownloadFilePath(username));
 
     // try to delete the post made by the other account
-    cy.findFirstPostInFeed(false).within(() => {
+    cy.findFirstPostInFeed(CheckIndexed.No).within(() => {
       // open post menu and check delete is not available
       cy.get('#menu-btn').should('be.visible').click();
       cy.get('#post-tooltip-menu')
@@ -275,7 +273,7 @@ describe('posts', () => {
     });
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can tag whilst creating post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can post with tags! ${Date.now()}`;
       const tag1 = 'alpacas';
@@ -320,7 +318,7 @@ describe('posts', () => {
     ReverseAlphanumeric,
   }
 
-  [true, false].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can tag and remove tags from existing post on feed page (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
       const tag1 = 'bananas';
@@ -564,12 +562,12 @@ describe('posts', () => {
     );
   });
 
-  // todo: consider creating user to create the post to bookmark
-  it('can bookmark post then remove bookmark', () => {
-    const postContent = `This post will be bookmarked! ${Date.now()}`;
+  it('can bookmark multiple posts then remove bookmarks', () => {
+    const postContent1 = `This post will be bookmarked! ${Date.now()}`;
+    const postContent2 = `This post will also be bookmarked! ${Date.now()}`;
 
     // create a post to bookmark
-    createQuickPost(postContent);
+    createQuickPost(postContent1);
 
     // bookmark the post
     cy.slowDown(fastMs);
@@ -584,34 +582,65 @@ describe('posts', () => {
     cy.get('#header-bookmarks-btn').click();
     cy.location('pathname').should('eq', '/bookmarks');
 
-    // if posts-feed area contains "No bookmarks yet", reload the page
-    // cy.get('#posts-feed').innerTextContains('No bookmarks yet').then((noBookmarksYet) => {
-    //   if (noBookmarksYet) cy.reload();
-    // });
+    cy.countPostsInBookmarks(1).findPostInBookmarks(0).within(() => {
+      // verify the post has been bookmarked
+      cy.get('#post-content-text').innerTextShouldEq(postContent1);
+    });
 
-    cy.get('#posts-feed')
-      .children()
-      .eq(0)
-      .should('have.length', 1)
-      .children()
-      .eq(0)
-      .within(() => {
-        // verify the post has been bookmarked
-        cy.get('#post-content-text').innerTextShouldEq(postContent);
+    // navigate back to feed page
+    cy.get('#header-logo').click();
+    cy.location('pathname').should('eq', '/home');
 
-        // remove the bookmark
-        cy.get('#bookmark-btn').click();
-      });
+    // create a second post to bookmark
+    createQuickPost(postContent2);
 
-    // refresh to update the bookmarks page
-    cy.waitReload();
+    // bookmark the second post
+    cy.findFirstPostInFeed().within(() => {
+      cy.get('#bookmark-btn').click();
+    });
+
+    // navigate to bookmarks page
+    cy.get('#header-bookmarks-btn').click();
+    cy.location('pathname').should('eq', '/bookmarks');
+
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/1083
+    cy.reload();
+    waitForBookmarksToLoad();
+
+    // verify both posts are now bookmarked (note the most recently bookmarked is at the top)
+    cy.countPostsInBookmarks(2).findPostInBookmarks(0).within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent2);
+    });
+    cy.findPostInBookmarks(1, 2).within(() => {
+      cy.get('#post-content-text').innerTextShouldEq(postContent1);
+    });
+
+    // remove bookmark from both posts
+    cy.countPostsInBookmarks(2).findPostInBookmarks(0).within(() => {
+      cy.get('#bookmark-btn').click();
+    });
+    cy.countPostsInBookmarks(2).findPostInBookmarks(1).within(() => {
+      cy.get('#bookmark-btn').click();
+    });
+
+    // check both posts are still listed
+    cy.countPostsInBookmarks(2);
+
+    // navigate to feed page and back to bookmarks page
+    cy.get('#header-logo').click();
+    cy.location('pathname').should('eq', '/home');
+    cy.get('#header-bookmarks-btn').click();
+    cy.location('pathname').should('eq', '/bookmarks');
+
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/1083
+    cy.reload();
+    cy.wait(500);
 
     //verify the post is no longer bookmarked
-    cy.get('#posts-feed').should('contain.text', 'Save posts for later');
+    cy.get('#bookmarked-posts').should('contain.text', 'Save posts for later')
   });
 
-  // [true, false].forEach((waitForIndexed) => {
-  [true, false].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to repost
       const postContent = `This post will be reposted with content! ${Date.now()}`;
@@ -705,7 +734,7 @@ describe('posts', () => {
     });
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`cannot see reply of a deleted post in feed (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to reply to
       const postContent = `This post will be replied to! ${Date.now()}`;
@@ -737,26 +766,23 @@ describe('posts', () => {
     });
   });
 
+
   const createArticle = (
     articleTitle: string,
     articleContent: string,
     imageFilename?: string,
     tags?: string[],
   ) => {
-    cy.get('#article-modal')
-      .should('be.visible')
-      .within(() => {
-        cy.get('h1').contains('New Article');
-        cy.get('#article-title-input').type(articleTitle);
-        if (imageFilename) addImage();
-        cy.get('#article-content-input').click().invoke('text', articleContent);
-        // todo: check counter
-        // need to click away from input to enable publish button (either by adding tags or clicking footer)
-        tags
-          ? fastTagWhilstCreatingPost(tags)
-          : cy.get('#footer-actions').click();
-        cy.get('#post-btn').should('be.enabled').click();
-      });
+    cy.get('#article-modal').should('be.visible').within(() => {
+      cy.get('h1').contains('New Article');
+      cy.get('#article-title-input').type(articleTitle);
+      if (imageFilename) addImage();
+      cy.get('#article-content-input').find('.ql-editor').click().invoke('text', articleContent);
+      // todo: check counter
+      // need to click away from input to enable publish button (either by adding tags or clicking footer)
+      tags ? fastTagWhilstCreatingPost(tags) : cy.get('#footer-actions').click();
+      cy.get('#post-btn').should('be.enabled').click();
+    });
   };
 
   enum ImageExpected {

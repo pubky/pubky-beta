@@ -12,9 +12,9 @@ const profile2 = { username: "Notif #2", pubkyAlias: "pubky_2" };
 
 const signUp = (profile: { username: string, pubkyAlias: string }) => {
   cy.session(profile.username, () => {
-    cy.onboardAsNewUser(profile.username, "", true, profile.pubkyAlias);
+    cy.onboardAsNewUser(profile.username, "", SkipOnboardingSlides.Yes, profile.pubkyAlias);
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile.username + '.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile.username));
   });
 };
 
@@ -66,7 +66,7 @@ describe('notifications', {
       searchAndFollowProfile(`${pubky}`, profile2.username);
     });
 
-   // cy.signOut(true);
+   // cy.signOut(HasBackedUp.Yes);
 
     // * profile 2 checks notification for new follower
     signUp(profile2);

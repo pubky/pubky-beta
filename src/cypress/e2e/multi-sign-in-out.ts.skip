@@ -15,14 +15,14 @@ describe('multi-sign-in-out', () => {
     // create profile to post from
     cy.onboardAsNewUser(username, "Big on posting.");
     cy.backupRecoveryFile();
-    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(username + '.pkarr'));
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(username));
   });
 
   it('sign up then sign out then in then out then in then..', () => {
     const t = 10_000;
     for (let i = 0; i < t; i++) {
-      cy.signOut(true);
-      cy.signIn(backupDownloadFilePath(username + '.pkarr'));
+      cy.signOut(HasBackedUp.Yes);
+      cy.signIn(backupDownloadFilePath(username));
     };
   });
 });
