@@ -7,6 +7,7 @@ import { Button, Icon, Input, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface CreateFeedProps {
   setShowModalCreateFeed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,6 +28,7 @@ export default function ContentCreateFeed({
   const [loading, setLoading] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
   useEffect(() => {
     setTagsFeed(searchTags);
@@ -93,22 +95,6 @@ export default function ContentCreateFeed({
       .replace(/!/g, '');
     setTag(valueWithoutSpaces);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRefEmojis.current &&
-        !wrapperRefEmojis.current.contains(event.target as Node)
-      ) {
-        setShowEmojis(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRefEmojis]);
 
   return (
     <>
